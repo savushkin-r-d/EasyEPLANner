@@ -4199,7 +4199,7 @@ namespace TechObject
             bool isValidType = false;
 
             Device.Device device = Device.DeviceManager.GetInstance().
-                GetDevice(deviceName);
+                GetDeviceByEplanName(deviceName);
             Device.DeviceType deviceType = device.DeviceType;
             Device.DeviceSubType deviceSubType = device.DeviceSubType;
 

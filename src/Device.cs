@@ -3094,7 +3094,36 @@ namespace Device
         }
 
         /// <summary>
-        /// Получение устройства по его имени из глобального списка.
+        /// Возвращает устройство по его имени в Eplan
+        /// </summary>
+        /// <param name="devName">Имя устройств в Eplan</param>
+        /// <returns></returns>
+        public IODevice GetDeviceByEplanName(string devName)
+        {
+            foreach (IODevice device in devices)
+            {
+                if (device.EPlanName == devName) 
+                {
+                    return device;
+                }
+            }
+
+            // Если не нашли, возвратим заглушку.
+            string name;
+            string objectName;
+            int objectNumber;
+            string deviceType;
+            int deviceNumber;
+
+            // Устройства нет, вернет состояние заглушки.
+            CheckDeviceName(devName, out name, out objectName,
+                out objectNumber, out deviceType, out deviceNumber);
+            return new IODevice(name, "заглушка", deviceType,
+                deviceNumber, objectName, objectNumber);
+        }
+
+        /// <summary>
+        /// Получение устройства по его имени (ОУ) из глобального списка.
         /// </summary>
         /// <param name="devName">Имя устройства.</param>
         /// <returns>Устройство с заданными именем или устройство-заглушка.</returns>
