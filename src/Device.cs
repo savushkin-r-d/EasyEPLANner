@@ -2183,12 +2183,14 @@ namespace Device
         {
             string res = base.Check();
 
-            if (parameters.Count < 2)
+            if (this.DeviceSubType != DeviceSubType.QT_IOLINK)
             {
-                res += string.Format("{0} - не указан диапазон измерений\n",
-                        name);
+                if (parameters.Count < 2)
+                {
+                    res += string.Format("{0} - не указан диапазон измерений\n",
+                            name);
+                }
             }
-
             return res;
         }
     }
