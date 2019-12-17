@@ -1,0 +1,6 @@
+[submodule "submodule/TreeViewAdv"]
+	path = submodule/TreeViewAdv
+	url = https://github.com/savushkin-r-d/TreeViewAdv.git
+[submodule "submodule/ObjectListview"]
+	path = submodule/ObjectListview
+	url = https://github.com/savushkin-r-d/ObjectListView.git
