@@ -3102,7 +3102,7 @@ namespace Device
         {
             foreach (IODevice device in devices)
             {
-                if (device.EPlanName == devName) 
+                if (device.Name == devName) 
                 {
                     return device;
                 }
