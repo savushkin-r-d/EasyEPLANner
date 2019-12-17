@@ -80,7 +80,8 @@ namespace EasyEPlanner
                 {
                     case (int)PI.WM.MOVE:
                     case (int)PI.WM.SIZE:
-                        IntPtr dialogPtr = PI.GetParent(devicesTreeViewAdv.Handle);
+                        IntPtr dialogPtr = 
+                            PI.GetParent(devicesTreeViewAdv.Handle);
 
                         PI.RECT rctDialog;
                         PI.RECT rctPanel;
@@ -199,8 +200,6 @@ namespace EasyEPlanner
 
             string windowName = "Основные данные изделия";
 
-            bool isDocked = false;
-
             IntPtr res = PI.FindWindowByCaption(
                 IntPtr.Zero, windowName);                  //1.1
             if (res != IntPtr.Zero)
@@ -259,7 +258,6 @@ namespace EasyEPlanner
                             if (resList.Count > 0)
                             {
                                 dialogHandle = resList[0];
-                                isDocked = true;
                                 res = dialogHandle;
                                 wndDevVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
                                 break;
@@ -325,7 +323,6 @@ namespace EasyEPlanner
                                 if (resList.Count > 0)
                                 {
                                     dialogHandle = resList[0];
-                                    isDocked = true;
                                     wndDevVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
                                     break;
                                 }
@@ -361,25 +358,24 @@ namespace EasyEPlanner
             PI.SetParent(devicesTreeViewAdv.Handle, dialogHandle);                //5 
             PI.SetParent(toolStrip.Handle, dialogHandle);
 
-            int dy = 0;
-            if (isDocked)
-            {
-                dy = 2;
-                //TODO: Доработать открытие формы в окне.
-            }
+            IntPtr dialogPtr = PI.GetParent(devicesTreeViewAdv.Handle);
 
-            PI.RECT dialogRect;
-            PI.GetWindowRect(dialogHandle, out dialogRect);
+            PI.RECT rctDialog;
+            PI.RECT rctPanel;
+            PI.GetWindowRect(dialogPtr, out rctDialog);
+            PI.GetWindowRect(panelPtr, out rctPanel);
 
-            toolStrip.Location = new Point(0, dy);
-            devicesTreeViewAdv.Location = new Point(0, dy + toolStrip.Height);
+            int w = rctDialog.Right - rctDialog.Left;
+            int h = rctDialog.Bottom - rctDialog.Top;
 
-            int w = dialogRect.Right - dialogRect.Left;
-            int h = dialogRect.Bottom - dialogRect.Top - toolStrip.Height - dy;
-
-            devicesTreeViewAdv.Width = w;
-            devicesTreeViewAdv.Height = h;
+            toolStrip.Location =
+                new Point(0, 0);
+            devicesTreeViewAdv.Location =
+                new Point(0, 0 + toolStrip.Height);
             toolStrip.Width = w;
+            devicesTreeViewAdv.Width = w;
+            devicesTreeViewAdv.Height = h - toolStrip.Height;
+            devicesTreeViewAdv.AutoSizeColumn(treeColumn1);
 
             uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);        //6
             dialogHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_CALLWNDPROC,

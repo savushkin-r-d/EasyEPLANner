@@ -132,7 +132,8 @@ namespace EasyEPlanner
                 {
                     case (int)PI.WM.MOVE:
                     case (int)PI.WM.SIZE:
-                        IntPtr dialogPtr = PI.GetParent(modesTreeViewAdv.Handle);
+                        IntPtr dialogPtr = PI.
+                            GetParent(modesTreeViewAdv.Handle);
 
                         PI.RECT rctDialog;
                         PI.RECT rctPanel;
@@ -142,9 +143,8 @@ namespace EasyEPlanner
                         int w = rctDialog.Right - rctDialog.Left;
                         int h = rctDialog.Bottom - rctDialog.Top;
 
-                        toolStrip.Location =
-                            new Point(0, 0);
-                        modesTreeViewAdv.Location =
+                        toolStrip.Location = new Point(0, 0);
+                        modesTreeViewAdv.Location = 
                             new Point(0, 0 + toolStrip.Height);
 
                         toolStrip.Width = w;
@@ -251,8 +251,6 @@ namespace EasyEPlanner
 
             string windowName = "Штекеры";
 
-            bool isDocked = false;
-
             IntPtr res = PI.FindWindowByCaption(
                 IntPtr.Zero, windowName);                  //1.1
 
@@ -312,7 +310,6 @@ namespace EasyEPlanner
                             if (resList.Count > 0)
                             {
                                 dialogHandle = resList[0];
-                                isDocked = true;
                                 res = dialogHandle;
                                 wndModeVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
                                 break;
@@ -378,7 +375,6 @@ namespace EasyEPlanner
                                 if (resList.Count > 0)
                                 {
                                     dialogHandle = resList[0];
-                                    isDocked = true;
                                     wndModeVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
                                     break;
                                 }
@@ -413,25 +409,22 @@ namespace EasyEPlanner
             PI.SetParent(modesTreeViewAdv.Handle, dialogHandle);         //5 
             PI.SetParent(toolStrip.Handle, dialogHandle);
 
-            int dy = 0;
-            if (isDocked)
-            {
-                dy = 2;
-                //TODO: Доработать открытие формы в окне.
-            }
+            IntPtr dialogPtr = PI.GetParent(modesTreeViewAdv.Handle);
 
-            PI.RECT dialogRect;
-            PI.GetWindowRect(dialogHandle, out dialogRect);
+            PI.RECT rctDialog;
+            PI.RECT rctPanel;
+            PI.GetWindowRect(dialogPtr, out rctDialog);
+            PI.GetWindowRect(panelPtr, out rctPanel);
 
-            toolStrip.Location = new Point(0, dy);
-            modesTreeViewAdv.Location = new Point(0, dy + toolStrip.Height);
+            int w = rctDialog.Right - rctDialog.Left;
+            int h = rctDialog.Bottom - rctDialog.Top;
 
-            int w = dialogRect.Right - dialogRect.Left;
-            int h = dialogRect.Bottom - dialogRect.Top - toolStrip.Height - dy;
+            toolStrip.Location = new Point(0, 0);
+            modesTreeViewAdv.Location = new Point(0, 0 + toolStrip.Height);
 
-            modesTreeViewAdv.Width = w;
-            modesTreeViewAdv.Height = h;
             toolStrip.Width = w;
+            modesTreeViewAdv.Width = w;
+            modesTreeViewAdv.Height = h - toolStrip.Height;
 
             uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);        //6
             dialogHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_CALLWNDPROC,
