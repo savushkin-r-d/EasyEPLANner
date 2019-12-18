@@ -806,7 +806,7 @@ namespace EasyEPlanner
                 else
                 {
                     if (devSubTypesLastSelected != null &&
-                        !devSubTypesLastSelected.Contains(dev.DeviceSubType))
+                        !devSubTypesLastSelected.Contains(dev.GetDeviceSubType))
                     {
                         devNode.IsHidden = true;
                     }

@@ -358,9 +358,9 @@ namespace Device
         }
 
         /// <summary>
-        /// Тип устройства.
+        /// Подтип устройства.
         /// </summary>
-        public DeviceSubType DeviceSubType
+        public DeviceSubType GetDeviceSubType
         {
             get
             {
@@ -1630,7 +1630,7 @@ namespace Device
                 else
                 {
                     var vtug = IOManager.GetInstance()[AO[0].node][AO[0].module - 1].devices[AO[0].physicalKlemme][0];
-                    switch (vtug.DeviceSubType)
+                    switch (vtug.GetDeviceSubType)
                     {
                         case DeviceSubType.DEV_VTUG_8:
                             rtParameters["R_VTUG_SIZE"] = 1;
@@ -2183,7 +2183,7 @@ namespace Device
         {
             string res = base.Check();
 
-            if (this.DeviceSubType != DeviceSubType.QT_IOLINK)
+            if (this.GetDeviceSubType != DeviceSubType.QT_IOLINK)
             {
                 if (parameters.Count < 2)
                 {
@@ -2858,7 +2858,7 @@ namespace Device
                 if (dev != null)
                 {
                     List<string> propertiesList =
-                        IODevice.GetDeviceProperties(dev.DeviceType, dev.DeviceSubType);
+                        IODevice.GetDeviceProperties(dev.DeviceType, dev.GetDeviceSubType);
                     if (propertiesList != null)
                     {
                         foreach (string strProp in propertiesList)
@@ -3007,7 +3007,7 @@ namespace Device
             foreach (IODevice dev in devices)
             {
                 countDev[(int)dev.DeviceType + 1]++;
-                countSubDev[(int)dev.DeviceType + 1, (int)dev.DeviceSubType + 1]++;
+                countSubDev[(int)dev.DeviceType + 1, (int)dev.GetDeviceSubType + 1]++;
             }
 
             //Сводная таблица.

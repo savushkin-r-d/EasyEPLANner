@@ -1262,12 +1262,20 @@ namespace EasyEPlanner
                 if (!deviceConnections[moduleString].Contains(ValveTerminal))
                 {
                     string devices = deviceConnections[moduleString];
+                    bool isASInterface = CheckASInterface(devices);
                     bool deletingComments = NeedDeletingComments(devices);
-                    if (deletingComments)
+
+                    if (deletingComments == true && isASInterface == false)
                     {
                         devices = SortDevices(devices);
                         devices = DeleteDevicesComments(devices);
                         devices = DeleteRepeatedDevices(devices);
+                    }
+
+                    if (deletingComments == true && isASInterface == true)
+                    {
+                        devices = DeleteRepeatedDevices(devices);
+                        devices = SortASInterfaceDevices(devices);
                     }
 
                     int clamp = Convert.ToInt32(clampNumberString);
@@ -1365,6 +1373,42 @@ namespace EasyEPlanner
             }
 
             return IOModuleDevices;
+        }
+
+        /// <summary>
+        /// Функция, проверяющая являются ли переданные устройства
+        /// устройствами с AS-интерфейсом
+        /// </summary>
+        /// <param name="devices">Список ОУ устройств через разделитель</param>
+        /// <returns></returns>
+        private bool CheckASInterface(string devices)
+        {
+            bool isASInterface = false;
+            const int MinimalDevicesCount = 2;
+            MatchCollection deviceMatches = Regex.Matches(devices, 
+                DeviceNamePattern);
+            
+            if (deviceMatches.Count < MinimalDevicesCount)
+            {
+                return isASInterface;
+            }
+
+            // Проверяем только первое устройство т.к остальные тоже будут
+            // с AS-интерфейсом (согласно правилам использования Add-In).
+            const int devicesCountForCheck = 1;
+            for (int devicesCounter = 0; devicesCounter <= devicesCountForCheck; devicesCounter++)
+            {
+                Device.IODevice device = Device.DeviceManager.GetInstance().
+                    GetDevice(deviceMatches[devicesCounter].Value);
+                if (device.GetDeviceSubType == Device.DeviceSubType.V_AS_MIXPROOF ||
+                    device.GetDeviceSubType == Device.DeviceSubType.V_AS_DO1_DI2)
+                {
+                    isASInterface = true;
+                    return isASInterface;
+                }
+            }
+            
+            return isASInterface;
         }
 
         /// <summary>
@@ -1497,6 +1541,84 @@ namespace EasyEPlanner
             }
 
             return devices;
+        }
+
+        /// <summary>
+        /// Функция для сортировки AS интерфейса по параметру R_AS_NUMBER
+        /// </summary>
+        /// <param name="devices">Строка с устройствами</param>
+        /// <returns></returns>
+        private string SortASInterfaceDevices(string devices)
+        {
+            string sortedDevices = string.Empty;
+            
+            MatchCollection deviceMatches = Regex.Matches(devices,
+                DeviceNamePattern);
+            if (deviceMatches.Count <= 1)
+            {
+                return devices;
+            }
+
+            List<Device.IODevice> devicesList = new List<Device.IODevice>();
+            foreach (Match match in deviceMatches)
+            {
+                Device.IODevice device = Device.DeviceManager.GetInstance().
+                    GetDevice(match.Value);
+                devicesList.Add(device);
+            }
+
+            devicesList.Sort(ASInterfaceDevicesComparer);
+
+            int lastASNumber = 0;
+            string devicesWithoutASNumber = NewLine;
+            foreach (Device.IODevice device in devicesList)
+            {
+                string numberAsString = device.GetRuntimeParameter("R_AS_NUMBER");
+                if (numberAsString == null)
+                {
+                    devicesWithoutASNumber += device.EPlanName
+                        + NewLine;
+                    continue;
+                }
+
+                int number;
+                int.TryParse(numberAsString, out number);
+
+                const int MinimalNumber = 0;
+                const int MaximalValue = 64;
+                if (number <= MinimalNumber && number > MaximalValue)
+                {
+                    devicesWithoutASNumber += device.EPlanName
+                        + NewLine;
+                    continue;
+                }
+
+                if (lastASNumber != number)
+                {
+                    //TODO: Проверка порядковых номеров устройств и вставка
+                    // пробелов (придумать как делить строки),
+                    // что бы оставить строку с отсутствующим номером пустой.
+                }
+
+                lastASNumber = number;
+            }
+
+            return sortedDevices;
+        }
+
+        /// <summary>
+        /// Компаратор для сравнения устройств с
+        /// AS-интерфейсом (сортировки).
+        /// </summary>
+        /// <param name="device1">Устройство 1</param>
+        /// <param name="device2">Устройство 2</param>
+        /// <returns></returns>
+        private int ASInterfaceDevicesComparer(Device.Device device1, 
+            Device.Device device2)
+        {
+            int res = 0;
+            //TODO: Comparer
+            return res;
         }
 
         /// <summary>
