@@ -1407,8 +1407,8 @@ namespace EasyEPlanner
             {
                 Device.IODevice device = Device.DeviceManager.GetInstance().
                     GetDevice(deviceMatches[devicesCounter].Value);
-                if (device.GetDeviceSubType == Device.DeviceSubType.V_AS_MIXPROOF ||
-                    device.GetDeviceSubType == Device.DeviceSubType.V_AS_DO1_DI2)
+                if (device.DeviceSubType == Device.DeviceSubType.V_AS_MIXPROOF ||
+                    device.DeviceSubType == Device.DeviceSubType.V_AS_DO1_DI2)
                 {
                     isASInterface = true;
                     return isASInterface;
@@ -1437,9 +1437,9 @@ namespace EasyEPlanner
                 {
                     Device.IODevice device = Device.DeviceManager.
                         GetInstance().GetDevice(deviceMatches[i].Value);
-                    if (device.GetDeviceSubType == Device.DeviceSubType.
+                    if (device.DeviceSubType == Device.DeviceSubType.
                         V_AS_DO1_DI2 ||
-                        device.GetDeviceSubType == Device.DeviceSubType.
+                        device.DeviceSubType == Device.DeviceSubType.
                         V_AS_MIXPROOF)
                     {
                         return false;
@@ -1639,8 +1639,6 @@ namespace EasyEPlanner
         private int ASInterfaceDevicesComparer(Device.IODevice device1, 
             Device.IODevice device2)
         {
-            int res = 0;
-
             string device1ASNumberString = device1.
                 GetRuntimeParameter("R_AS_NUMBER");
             string device2ASNumberString = device2.
@@ -1666,16 +1664,7 @@ namespace EasyEPlanner
                 //TODO : error, incorrect values
             }
 
-            if (device1ASNumber > device2ASNumber)
-            {
-                res = 1;
-                return res;
-            }
-            else
-            {
-                res = -1;
-                return res;
-            }
+            return device1ASNumber.CompareTo(device2ASNumber);
         }
 
         /// <summary>

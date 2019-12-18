@@ -4201,7 +4201,7 @@ namespace TechObject
             Device.Device device = Device.DeviceManager.GetInstance().
                 GetDeviceByEplanName(deviceName);
             Device.DeviceType deviceType = device.DeviceType;
-            Device.DeviceSubType deviceSubType = device.GetDeviceSubType;
+            Device.DeviceSubType deviceSubType = device.DeviceSubType;
 
             Device.DeviceType[] validTypes;
             Device.DeviceSubType[] validSubTypes;
