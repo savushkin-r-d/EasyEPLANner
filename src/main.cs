@@ -1190,13 +1190,20 @@ namespace EasyEPlanner
                 string clampNumberString = key.Remove(0, key.
                     IndexOf(ChannelPostfix) + ChannelPostfixSize);
                 string devices = deviceConnections[key];
-
+                bool isASInterface = CheckASInterface(devices);
                 bool deletingComments = NeedDeletingComments(devices);
-                if (deletingComments)
+                
+                if (deletingComments == true)
                 {
                     devices = SortDevices(devices);
                     devices = DeleteDevicesComments(devices);
                     devices = DeleteRepeatedDevices(devices);
+                }
+
+                if (isASInterface == true)
+                {
+                    devices = DeleteRepeatedDevices(devices);
+                    devices = SortASInterfaceDevices(devices);
                 }
 
                 int clamp = Convert.ToInt32(clampNumberString);
@@ -1265,14 +1272,14 @@ namespace EasyEPlanner
                     bool isASInterface = CheckASInterface(devices);
                     bool deletingComments = NeedDeletingComments(devices);
 
-                    if (deletingComments == true && isASInterface == false)
+                    if (deletingComments == true)
                     {
                         devices = SortDevices(devices);
                         devices = DeleteDevicesComments(devices);
                         devices = DeleteRepeatedDevices(devices);
                     }
 
-                    if (deletingComments == true && isASInterface == true)
+                    if (isASInterface == true)
                     {
                         devices = DeleteRepeatedDevices(devices);
                         devices = SortASInterfaceDevices(devices);
@@ -1423,6 +1430,22 @@ namespace EasyEPlanner
                 DeviceNamePattern);
             if (deviceMatches.Count > 1)
             {
+                // Если первое устройство с подтипом AS-интерфейс, 
+                // то все такие 
+                const int devicesCountForCheck = 1;
+                for (int i = 0; i < devicesCountForCheck; i++)
+                {
+                    Device.IODevice device = Device.DeviceManager.
+                        GetInstance().GetDevice(deviceMatches[i].Value);
+                    if (device.GetDeviceSubType == Device.DeviceSubType.
+                        V_AS_DO1_DI2 ||
+                        device.GetDeviceSubType == Device.DeviceSubType.
+                        V_AS_MIXPROOF)
+                    {
+                        return false;
+                    }
+                }
+
                 return true;
             }
             else
@@ -1585,8 +1608,8 @@ namespace EasyEPlanner
                 int.TryParse(numberAsString, out number);
 
                 const int MinimalNumber = 0;
-                const int MaximalValue = 64;
-                if (number <= MinimalNumber && number > MaximalValue)
+                const int MaximalNumber = 64;
+                if (number <= MinimalNumber && number > MaximalNumber)
                 {
                     devicesWithoutASNumber += device.EPlanName
                         + NewLine;
@@ -1613,12 +1636,46 @@ namespace EasyEPlanner
         /// <param name="device1">Устройство 1</param>
         /// <param name="device2">Устройство 2</param>
         /// <returns></returns>
-        private int ASInterfaceDevicesComparer(Device.Device device1, 
-            Device.Device device2)
+        private int ASInterfaceDevicesComparer(Device.IODevice device1, 
+            Device.IODevice device2)
         {
             int res = 0;
-            //TODO: Comparer
-            return res;
+
+            string device1ASNumberString = device1.
+                GetRuntimeParameter("R_AS_NUMBER");
+            string device2ASNumberString = device2.
+                GetRuntimeParameter("R_AS_NUMBER");
+
+            if (device1ASNumberString == null ||
+                device2ASNumberString == null ||
+                device2ASNumberString == device1ASNumberString)
+            {
+                //TODO : error, incorrect values
+            }
+
+            int device1ASNumber;
+            int device2ASNumber;
+            bool device1ASNumberParsed = int.TryParse(device1ASNumberString, 
+                out device1ASNumber);
+            bool device2ASNumberParsed = int.TryParse(device2ASNumberString, 
+                out device2ASNumber);
+
+            if (device1ASNumberParsed == false ||
+                device2ASNumberParsed == false)
+            {
+                //TODO : error, incorrect values
+            }
+
+            if (device1ASNumber > device2ASNumber)
+            {
+                res = 1;
+                return res;
+            }
+            else
+            {
+                res = -1;
+                return res;
+            }
         }
 
         /// <summary>
