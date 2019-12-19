@@ -313,28 +313,20 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Вызов синхронизации названий устройств и модулей во втором потоке
+        /// Вызов синхронизации названий устройств и модулей.
+        /// устройств и модулей
         /// </summary>
         public void UpdateModulesBinding()
         {
-            System.Threading.Thread thread = new System.Threading.Thread(
-                    new System.Threading.ThreadStart(UpdateModulesBindingWithLog));
-            thread.Start();
-        }
-
-        /// <summary>
-        /// Вызываемая в параллельном потоке функция синхронизации названий
-        /// устройств и модулей
-        /// </summary>
-        private void UpdateModulesBindingWithLog()
-        {
-            log.DisableOkButton();
-            log.Clear();
-            log.SetProgress(0);
-
             string errors = string.Empty;
             try
             {
+                log.Clear();
+                log.DisableOkButton();
+                log.SetProgress(0);
+                log.AddMessage("Выполняется синхронизация...\n ");
+                log.ShowLog();
+
                 errors = EplanIOManager.GetInstance().UpdateModulesBinding();
             }
             catch (System.Exception ex)
@@ -343,16 +335,17 @@ namespace EasyEPlanner
             }
             finally
             {
-                if (errors != string.Empty)
+                if (errors != null)
                 {
                     log.AddMessage(errors);
-                    log.ShowLog();
+                    log.AddMessage("Во время синхронизации произошли ошибки.\n ");
                 }
 
                 if (log != null)
                 {
-                    log.EnableOkButton();
+                    log.AddMessage("Синхронизация завершена. ");
                     log.SetProgress(100);
+                    log.EnableOkButton();
                 }
             }
         }

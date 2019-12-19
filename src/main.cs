@@ -1854,7 +1854,8 @@ namespace EasyEPlanner
         /// <summary>
         /// Синхронизация названий устройств и модулей
         /// </summary>
-        /// <returns>Возвращает сообщения об ошибках во время выполнения.</returns>
+        /// <returns>Возвращает сообщения об ошибках во время выполнения.
+        /// </returns>
         public string Execute()
         {
             EplanIOManager.GetInstance().ReadConfiguration();
@@ -1956,7 +1957,8 @@ namespace EasyEPlanner
                         // которую при обновлении функционального текста 
                         // преобразуем обратно.
                         string replacedDeviceDescription = device.Description.
-                            Replace(PlusSymbol.ToString(), symbolForPlusReplacing);
+                            Replace(PlusSymbol.ToString(), 
+                            symbolForPlusReplacing);
                         functionalText += NewLine + replacedDeviceDescription +
                             NewLine + channel.komment;
                     }
@@ -2063,7 +2065,8 @@ namespace EasyEPlanner
                 }
 
                 int clamp = Convert.ToInt32(clampNumberString);
-                //SynchronizeIOModule(synchronizedModule, clamp, devices);
+                SynchronizeIOModule(synchronizedModule, clamp, devices, 
+                    isASInterface);
             }
         }
 
@@ -2075,7 +2078,7 @@ namespace EasyEPlanner
         /// <param name="clamp">Номер клеммы</param>
         /// <param name="synchronizedModule">Обновляемый модуль</param>
         private void SynchronizeIOModule(Function synchronizedModule,
-            int clamp, string functionalText, bool isASInterfase = false)
+            int clamp, string functionalText, bool? isASInterfase = false)
         {
             // Конвертируем символ "плюс" обратно.
             functionalText = functionalText.
@@ -2263,10 +2266,10 @@ namespace EasyEPlanner
             }
 
             List<bool> checkingList = new List<bool>();
-            foreach (string deviceName in deviceMatches)
+            foreach (Match deviceMatch in deviceMatches)
             {
                 Device.IODevice device = Device.DeviceManager.GetInstance().
-                    GetDevice(deviceName);
+                    GetDevice(deviceMatch.Value);
                 if (device.DeviceSubType == Device.DeviceSubType.V_AS_MIXPROOF ||
                     device.DeviceSubType == Device.DeviceSubType.V_AS_DO1_DI2)
                 {
@@ -2278,7 +2281,7 @@ namespace EasyEPlanner
                 }
             }
 
-            checkingList.Distinct();
+            checkingList = checkingList.Distinct().ToList();
 
             if (checkingList.Count == 2)
             {
@@ -2286,8 +2289,7 @@ namespace EasyEPlanner
                 errorMessage += "Проверьте все AS-i модули. В привязке " +
                     "присутствуют не AS-i подтипы.\n ";
             }
-
-            if (checkingList.Count == 1)
+            else if (checkingList.Count == 1)
             {
                 if (checkingList[0] == true)
                 {
@@ -2313,9 +2315,10 @@ namespace EasyEPlanner
                 DeviceNamePattern);
 
             string errorMessageBuffer = string.Empty;
-            foreach (string deviceName in deviceMatches)
+            foreach (Match deviceMatch in deviceMatches)
             {
-                Device.IODevice device = Device.DeviceManager.GetInstance().GetDevice(deviceName);
+                Device.IODevice device = Device.DeviceManager.GetInstance().
+                    GetDevice(deviceMatch.Value);
                 string parameter = device.GetRuntimeParameter("R_AS_NUMBER");
                 if (parameter == null)
                 {
@@ -2328,13 +2331,15 @@ namespace EasyEPlanner
                     bool isNumber = int.TryParse(parameter, out ASNumber);
                     if (isNumber == false)
                     {
-                        errorMessageBuffer += $"В устройстве {device.EPlanName} " +
-                            $"некорректно задан параметр R_AS_NUMBER.\n ";
+                        errorMessageBuffer += $"В устройстве " +
+                            $"{device.EPlanName} некорректно задан параметр " +
+                            $"R_AS_NUMBER.\n ";
                     }
                     if (isNumber == true && ASNumber < 1 && ASNumber > 62)
                     {
-                        errorMessageBuffer += $"В устройстве {device.EPlanName} " +
-                            $"некорректно задан диапазон R_AS_NUMBER (от 1 до 62).\n ";
+                        errorMessageBuffer += $"В устройстве " +
+                            $"{device.EPlanName} некорректно задан диапазон " +
+                            $"R_AS_NUMBER (от 1 до 62).\n ";
                     }
                 }
             }
@@ -2492,8 +2497,8 @@ namespace EasyEPlanner
                 }
                 else
                 {
-                    devices += device.EPlanName + NewLine + device.Description +
-                        NewLine;
+                    devices += device.EPlanName + NewLine + 
+                        device.Description + NewLine;
                 }
 
             }
@@ -2531,7 +2536,8 @@ namespace EasyEPlanner
             string devicesWithoutASNumber = NewLine;
             foreach (Device.IODevice device in devicesList)
             {
-                string numberAsString = device.GetRuntimeParameter("R_AS_NUMBER");
+                string numberAsString = device.
+                    GetRuntimeParameter("R_AS_NUMBER");
                 if (numberAsString == null)
                 {
                     devicesWithoutASNumber += device.EPlanName
@@ -2556,16 +2562,13 @@ namespace EasyEPlanner
                     int difference = number - lastASNumber;
                     if (difference > 1)
                     {
-                        int countOfWhiteSpaces = difference * 10;
-                        sortedDevices += new string(WhiteSpace, countOfWhiteSpaces) + device.EPlanName;
+                        sortedDevices += string.Join(NewLine, difference) 
+                            + device.EPlanName;
                     }
                     else
                     {
-                        sortedDevices += WhiteSpace + device.EPlanName;
+                        sortedDevices += NewLine + device.EPlanName;
                     }
-                    //TODO: Проверка порядковых номеров устройств и вставка
-                    // пробелов (придумать как делить строки),
-                    // что бы оставить строку с отсутствующим номером пустой.
                 }
 
                 lastASNumber = number;
