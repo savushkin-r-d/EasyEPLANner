@@ -196,8 +196,9 @@ namespace EasyEPlanner
                 }
                 else
                 {
-                    //Получение текущего проекта.
-                    EplanIOManager.GetInstance().UpdateModulesBinding();
+                    // Синхронизация названий модулей и устройств в текущем
+                    // проекте.
+                    ProjectManager.GetInstance().UpdateModulesBinding();
                 }
 
             }
@@ -1010,744 +1011,6 @@ namespace EasyEPlanner
             return false;
         }
 
-        /// <summary>
-        /// Синхронизация названий устройств и модулей
-        /// </summary>
-        public void UpdateModulesBinding()
-        {
-            ReadConfiguration();
-            EplanDeviceManager.GetInstance().
-                SynchAndReadConfigurationFromScheme();
-            EplanDeviceManager.GetInstance().ReadConfigurationFromIOModules();
-            EplanDeviceManager.GetInstance().CheckConfiguration();
-
-            SelectionSet selection = new SelectionSet();
-            Project currentProject = selection.GetCurrentProject(true);
-            DMObjectsFinder objectFinder = new DMObjectsFinder(currentProject);
-
-            FunctionsFilter functionsFilter = new FunctionsFilter();
-            FunctionPropertyList properties = new FunctionPropertyList();
-            properties.FUNC_MAINFUNCTION = true;
-            functionsFilter.SetFilteredPropertyList(properties);
-            functionsFilter.Category = Function.Enums.Category.PLCBox;
-            Function[] functions = objectFinder.GetFunctions(functionsFilter);
-
-            currentProject.LockAllObjects();
-
-            Dictionary<string, string> deviceConnections = 
-                CollectIOModulesData(functions);
-
-            bool containsNewValveTerminal = GetProjectVersionFromDevices
-                (deviceConnections);
-            if (!containsNewValveTerminal)
-            {
-                SynchronizeAsOldProject(deviceConnections, functions);
-                return;
-            }
-            else
-            {
-                SynchronizeAsNewProject(deviceConnections, functions);
-                return;
-            }
-        }
-
-        /// <summary>
-        /// Сбор данных привязок для обновления
-        /// </summary>
-        /// <param name="functions">Главные функции для поиска обновленных 
-        /// данных</param>
-        /// <returns></returns>
-        private Dictionary<string, string> CollectIOModulesData
-            (Function[] functions)
-        {
-            Dictionary<string, string> deviceConnections = new 
-                Dictionary<string, string>();
-
-            foreach (Device.IODevice device in Device.DeviceManager.
-                GetInstance().Devices)
-            {
-                foreach (Device.IODevice.IOChannel channel in device.Channels)
-                {
-                    if (!channel.IsEmpty())
-                    {
-                        CollectModuleData(device, channel, functions,
-                            ref deviceConnections);
-                    }
-                }
-            }
-
-            return deviceConnections;
-        }
-
-        /// <summary>
-        /// Добавление данных привязки конкретного модуля
-        /// </summary>
-        /// <param name="channel">Канал устройства</param>
-        /// <param name="device">Устройство</param>
-        /// <param name="deviceConnections">Словарь с собранными данными 
-        /// привязок устройств</param>
-        /// <param name="functions">Главные функции для поиска обновленных 
-        /// данных</param>
-        private void CollectModuleData(Device.IODevice device, 
-            Device.IODevice.IOChannel channel, Function[] functions,
-            ref Dictionary<string, string> deviceConnections)
-        {
-            const string IOModulePrefix = "A";
-            const string ASInterfaceModule = "655";
-
-            string visibleName = IOModulePrefix + channel.fullModule;
-            Function moduleFunction = functions.
-                FirstOrDefault(x => x.VisibleName.Contains(visibleName));
-            if (moduleFunction != null)
-            {
-                visibleName += ChannelPostfix + channel.GetKlemme.ToString();
-                string functionalText = device.EPlanName;
-                // Для модулей ASi не нужно добавлять комментарии 
-                // к имени устройств.
-                if (!moduleFunction.ArticleReferences[0].PartNr.
-                    Contains(ASInterfaceModule))
-                {
-                    if (device.Description.Contains(PlusSymbol))
-                    {
-                        // Так как в комментариях может использоваться знак 
-                        // "плюс", то заменим его на какую-то константу, 
-                        // которую при обновлении функционального текста 
-                        // преобразуем обратно.
-                        string replacedDeviceDescription = device.Description.
-                            Replace(PlusSymbol.ToString(), symbolForPlusReplacing);
-                        functionalText += NewLine + replacedDeviceDescription +
-                            NewLine + channel.komment;
-                    }
-                    else
-                    {
-                        functionalText += NewLine + device.Description +
-                            NewLine + channel.komment;
-                    }
-                }
-                else
-                {
-                    functionalText += WhiteSpace;
-                }
-
-                if (deviceConnections.ContainsKey(visibleName))
-                {
-                    deviceConnections[visibleName] += functionalText;
-                }
-                else
-                {
-                    deviceConnections.Add(visibleName,functionalText);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Проверка версии проекта через устройства.
-        /// У старых проектов пневмоостров Festo - DEV_VTUG, а у новых - Y.
-        /// Остальное не влияет, все одинаково.
-        /// </summary>
-        /// <param name="deviceConnections">Устройства для проверки</param>
-        /// <returns></returns>
-        private bool GetProjectVersionFromDevices(Dictionary<string, string> 
-            deviceConnections)
-        {
-            bool isProjectWithValveTerminal = default;
-
-            if (deviceConnections.Values.
-                Where(x => x.Contains(ValveTerminal)).Count() > 0)
-            {
-                isProjectWithValveTerminal = true;
-                return isProjectWithValveTerminal;
-            }
-            else
-            {
-                isProjectWithValveTerminal = false;
-                return isProjectWithValveTerminal;
-            }
-        }
-
-        /// <summary>
-        /// Синхронизация старого проекта
-        /// </summary>
-        /// <param name="deviceConnections">Устройства для синхронизации.
-        /// Первый ключ - модуль, второй - устройства</param>
-        /// <param name="functions">Функции обновляемых объектов</param>
-        /// <returns></returns>
-        private void SynchronizeAsOldProject(Dictionary<string, string>
-            deviceConnections, Function[] functions)
-        {
-            foreach (string key in deviceConnections.Keys)
-            {
-                string visibleName = key.Substring(0, key.
-                    IndexOf(ChannelPostfix));
-                Function synchronizedModule = functions.FirstOrDefault(x => x.
-                VisibleName.Contains(visibleName));
-
-                if (synchronizedModule == null)
-                {
-                    continue;
-                }
-
-                string clampNumberString = key.Remove(0, key.
-                    IndexOf(ChannelPostfix) + ChannelPostfixSize);
-                string devices = deviceConnections[key];
-                bool isASInterface = CheckASInterface(devices);
-                bool deletingComments = NeedDeletingComments(devices);
-                
-                if (deletingComments == true)
-                {
-                    devices = SortDevices(devices);
-                    devices = DeleteDevicesComments(devices);
-                    devices = DeleteRepeatedDevices(devices);
-                }
-
-                if (isASInterface == true)
-                {
-                    devices = DeleteRepeatedDevices(devices);
-                    devices = SortASInterfaceDevices(devices);
-                }
-
-                int clamp = Convert.ToInt32(clampNumberString);
-                SynchronizeIOModule(synchronizedModule, clamp, devices);
-            }
-        }
-
-        /// <summary>
-        /// Синхронизация привязки к I/O модулю
-        /// </summary>
-        /// <param name="functionalText">Обновленный функциональный текст
-        /// </param>
-        /// <param name="clamp">Номер клеммы</param>
-        /// <param name="synchronizedModule">Обновляемый модуль</param>
-        private void SynchronizeIOModule(Function synchronizedModule, 
-            int clamp, string functionalText)
-        {
-            // Конвертируем символ "плюс" обратно.
-            functionalText = functionalText.
-                Replace(symbolForPlusReplacing, PlusSymbol.ToString());
-
-            Function[] placedFunctions = synchronizedModule.SubFunctions.
-                Where(x => x.IsPlaced == true).ToArray();
-
-            Function clampFunction = placedFunctions.
-                        Where(x => x.Page.PageType == 
-                        DocumentTypeManager.DocumentType.Circuit).
-                        FirstOrDefault(x => x.Properties.
-                        FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToInt() == clamp);
-
-            // Если null - клеммы нет на схеме.
-            if (clampFunction != null)
-            {
-                clampFunction.Properties.FUNC_TEXT = functionalText;
-            }
-        }
-
-        /// <summary>
-        /// Синхронизация нового проекта
-        /// </summary>
-        /// <param name="deviceConnections">Объекты для обновления</param>
-        /// <param name="functions">Функции обновляемых объектов</param>
-        private void SynchronizeAsNewProject(Dictionary<string, string>
-            deviceConnections, Function[] functions)
-        {
-            foreach (string moduleString in deviceConnections.Keys)
-            {
-                string visibleName = moduleString.Substring(
-                    0, moduleString.IndexOf(ChannelPostfix));
-                Function synchronizedModule = functions.
-                    FirstOrDefault(x => x.VisibleName.Contains(visibleName));
-
-                if (synchronizedModule == null)
-                {
-                    continue;
-                }
-
-                string clampNumberString = moduleString.Remove(0, 
-                    moduleString.IndexOf(ChannelPostfix) + ChannelPostfixSize);
-
-                // Если нет пневмоострова Y - то синхронизация ничем 
-                // не отличается от старого проекта.
-                if (!deviceConnections[moduleString].Contains(ValveTerminal))
-                {
-                    string devices = deviceConnections[moduleString];
-                    bool isASInterface = CheckASInterface(devices);
-                    bool deletingComments = NeedDeletingComments(devices);
-
-                    if (deletingComments == true)
-                    {
-                        devices = SortDevices(devices);
-                        devices = DeleteDevicesComments(devices);
-                        devices = DeleteRepeatedDevices(devices);
-                    }
-
-                    if (isASInterface == true)
-                    {
-                        devices = DeleteRepeatedDevices(devices);
-                        devices = SortASInterfaceDevices(devices);
-                    }
-
-                    int clamp = Convert.ToInt32(clampNumberString);
-                    SynchronizeIOModule(synchronizedModule, clamp, devices);
-                }
-                else
-                {
-                    string functionalText = deviceConnections[moduleString].
-                        Split(PlusSymbol).
-                        FirstOrDefault(x => x.Contains(ValveTerminal)).
-                        Insert(0, PlusSymbol.ToString());
-                    int clamp = Convert.ToInt32(clampNumberString);
-                    // Синхронизация пневмоострова.
-                    SynchronizeIOModule(synchronizedModule, clamp,
-                        functionalText);
-
-                    // Синхронизация устройств привязанных к пневмоострову.
-                    Dictionary<int, string> IOModuleDevices =
-                        GetIOModuleDevices(deviceConnections[moduleString]);
-                    string functionName = GetDeviceFunctionName(
-                        deviceConnections[moduleString]);
-                    Function synchronizedDevice = functions.
-                        FirstOrDefault(x => x.Name.Contains(functionName));
-                    SynchronizeIOModuleDevices(synchronizedDevice,
-                        IOModuleDevices);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Получение имени функции устройства в котором обновляется привязка
-        /// (в частности, пневмоострова)
-        /// </summary>
-        /// <param name="functionalText">>Функциональный текст устройства, 
-        /// к которому привязано устройство</param>
-        /// <returns></returns>
-        private string GetDeviceFunctionName(string functionalText)
-        {
-            const string FunctionNamePattern = "(\\+[A-Z0-9_]+-[Y0-9]+)";
-            Match functionNameMatch = Regex.Match(functionalText, 
-                FunctionNamePattern);
-
-            if (functionNameMatch.Success)
-            {
-                return functionNameMatch.Value;
-            }
-            else
-            {
-                return string.Empty;
-            }
-        }
-
-        /// <summary>
-        /// Получение устройств, привязанных к устройству.
-        /// </summary>
-        /// <param name="IOModuleFunctionalText">Функциональный текст 
-        /// IO модуля, к которому привязано устройство</param>
-        /// <returns></returns>
-        private Dictionary<int, string> GetIOModuleDevices
-            (string IOModuleFunctionalText)
-        {
-            const string ClampNumberParameter = "R_VTUG_NUMBER";
-
-            string[] devicesArray = IOModuleFunctionalText.Split(PlusSymbol);
-            Dictionary<int, string> IOModuleDevices = 
-                new Dictionary<int, string>();
-
-            foreach (string deviceString in devicesArray)
-            {
-                if (string.IsNullOrEmpty(deviceString) ||
-                    string.IsNullOrWhiteSpace(deviceString) ||
-                    deviceString.Contains(ValveTerminal))
-                {
-                    continue;
-                }
-
-                string deviceName = Regex.Match(deviceString.
-                    Insert(0, PlusSymbol.ToString()), DeviceNamePattern).Value;
-                Device.IODevice device = Device.DeviceManager.
-                    GetInstance().GetDevice(deviceName);
-                string runtimeParameter = device.GetRuntimeParameter(
-                    ClampNumberParameter);
-                int clamp = Convert.ToInt32(runtimeParameter);
-
-                if (IOModuleDevices.ContainsKey(clamp))
-                {
-                    IOModuleDevices[clamp] += deviceString.
-                        Insert(0, PlusSymbol.ToString());
-                }
-                else
-                {
-                    IOModuleDevices.Add(clamp, deviceString.
-                        Insert(0, PlusSymbol.ToString()));
-                }
-            }
-
-            return IOModuleDevices;
-        }
-
-        /// <summary>
-        /// Функция, проверяющая являются ли переданные устройства
-        /// устройствами с AS-интерфейсом
-        /// </summary>
-        /// <param name="devices">Список ОУ устройств через разделитель</param>
-        /// <returns></returns>
-        private bool CheckASInterface(string devices)
-        {
-            bool isASInterface = false;
-            const int MinimalDevicesCount = 2;
-            MatchCollection deviceMatches = Regex.Matches(devices, 
-                DeviceNamePattern);
-            
-            if (deviceMatches.Count < MinimalDevicesCount)
-            {
-                return isASInterface;
-            }
-
-            // Проверяем только первое устройство т.к остальные тоже будут
-            // с AS-интерфейсом (согласно правилам использования Add-In).
-            const int devicesCountForCheck = 1;
-            for (int devicesCounter = 0; devicesCounter <= devicesCountForCheck; devicesCounter++)
-            {
-                Device.IODevice device = Device.DeviceManager.GetInstance().
-                    GetDevice(deviceMatches[devicesCounter].Value);
-                if (device.DeviceSubType == Device.DeviceSubType.V_AS_MIXPROOF ||
-                    device.DeviceSubType == Device.DeviceSubType.V_AS_DO1_DI2)
-                {
-                    isASInterface = true;
-                    return isASInterface;
-                }
-            }
-            
-            return isASInterface;
-        }
-
-        /// <summary>
-        /// Функция, проверяющая необходимость удаления комментариев в 
-        /// функциональном тексте.
-        /// </summary>
-        /// <param name="devices">Строка со списком устройств</param>
-        /// <returns></returns>
-        private bool NeedDeletingComments(string devices)
-        {
-            MatchCollection deviceMatches = Regex.Matches(devices,
-                DeviceNamePattern);
-            if (deviceMatches.Count > 1)
-            {
-                // Если первое устройство с подтипом AS-интерфейс, 
-                // то все такие 
-                const int devicesCountForCheck = 1;
-                for (int i = 0; i < devicesCountForCheck; i++)
-                {
-                    Device.IODevice device = Device.DeviceManager.
-                        GetInstance().GetDevice(deviceMatches[i].Value);
-                    if (device.DeviceSubType == Device.DeviceSubType.
-                        V_AS_DO1_DI2 ||
-                        device.DeviceSubType == Device.DeviceSubType.
-                        V_AS_MIXPROOF)
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Функция убирает комментарии в функциональном тексте при привязке
-        /// нескольких устройств к одной клемме.
-        /// </summary>
-        /// <param name="devices">Строка со списком устройств</param>
-        /// <returns></returns>
-        private string DeleteDevicesComments(string devices)
-        {
-            MatchCollection deviceMatches = Regex.Matches(devices,
-                DeviceNamePattern);
-
-            if (deviceMatches.Count <= 1)
-            {
-                return devices;
-            }
-
-            string devicesWithoutComments = string.Empty;
-            foreach (Match match in deviceMatches)
-            {
-                devicesWithoutComments += match.Value + WhiteSpace;
-            }
-
-            return devicesWithoutComments;
-        }
-
-        /// <summary>
-        /// Удаляет повторяющиеся привязанные устройства.
-        /// </summary>
-        /// <param name="devicesWithoutComments">Устройства без комментариев
-        /// </param>
-        /// <returns></returns>
-        private string DeleteRepeatedDevices(string devicesWithoutComments)
-        {
-            List<string> devicesList = new List<string>();
-
-            MatchCollection deviceMatches = Regex.Matches(
-                devicesWithoutComments, DeviceNamePattern);
-            foreach (Match match in deviceMatches)
-            {
-                devicesList.Add(match.Value);
-            }
-
-            devicesList = devicesList.Distinct().ToList();
-
-            string devicesWithoutRepeating = string.Empty;
-            foreach (string device in devicesList)
-            {
-                devicesWithoutRepeating += device + WhiteSpace;
-            }
-
-            return devicesWithoutRepeating;
-        }
-
-        /// <summary>
-        /// Сортировка устройств для корректного отображения.
-        /// </summary>
-        /// <param name="devices">Устройства для сортировки</param>
-        /// <returns></returns>
-        private string SortDevices(string devices)
-        {
-            MatchCollection deviceMatches = Regex.Matches(devices,
-                DeviceNamePattern);
-            if (deviceMatches.Count <= 1)
-            {
-                return devices;
-            }
-
-            // valveTerminal - для вставки VTUG в старых проектах первым.
-            Device.Device valveTerminal = null;
-            List<Device.Device> devicesList = new List<Device.Device>();
-            foreach (Match match in deviceMatches)
-            {
-                Device.Device device = Device.DeviceManager.GetInstance().
-                    GetDevice(match.Value);
-                if (device.DeviceType != Device.DeviceType.DEV_VTUG)
-                {
-                    devicesList.Add(device);
-                }
-                else
-                {
-                    valveTerminal = device;
-                }
-            }
-
-            devicesList.Sort(DevicesComparer);
-
-            if (valveTerminal != null)
-            {
-                devicesList.Insert(0, valveTerminal);
-            }
-
-            devices = string.Empty;
-            foreach (Device.Device device in devicesList)
-            {
-                if (device.Description.Contains(PlusSymbol))
-                {
-                    string replacedDeviceDescription = device.Description.
-                        Replace(PlusSymbol.ToString(), symbolForPlusReplacing);
-                    devices += device.EPlanName + NewLine + 
-                        replacedDeviceDescription + NewLine;
-                }
-                else
-                {
-                    devices += device.EPlanName + NewLine + device.Description +
-                        NewLine;
-                }
-
-            }
-
-            return devices;
-        }
-
-        /// <summary>
-        /// Функция для сортировки AS интерфейса по параметру R_AS_NUMBER
-        /// </summary>
-        /// <param name="devices">Строка с устройствами</param>
-        /// <returns></returns>
-        private string SortASInterfaceDevices(string devices)
-        {
-            string sortedDevices = string.Empty;
-            
-            MatchCollection deviceMatches = Regex.Matches(devices,
-                DeviceNamePattern);
-            if (deviceMatches.Count <= 1)
-            {
-                return devices;
-            }
-
-            List<Device.IODevice> devicesList = new List<Device.IODevice>();
-            foreach (Match match in deviceMatches)
-            {
-                Device.IODevice device = Device.DeviceManager.GetInstance().
-                    GetDevice(match.Value);
-                devicesList.Add(device);
-            }
-
-            devicesList.Sort(ASInterfaceDevicesComparer);
-
-            int lastASNumber = 0;
-            string devicesWithoutASNumber = NewLine;
-            foreach (Device.IODevice device in devicesList)
-            {
-                string numberAsString = device.GetRuntimeParameter("R_AS_NUMBER");
-                if (numberAsString == null)
-                {
-                    devicesWithoutASNumber += device.EPlanName
-                        + NewLine;
-                    continue;
-                }
-
-                int number;
-                int.TryParse(numberAsString, out number);
-
-                const int MinimalNumber = 0;
-                const int MaximalNumber = 64;
-                if (number <= MinimalNumber && number > MaximalNumber)
-                {
-                    devicesWithoutASNumber += device.EPlanName
-                        + NewLine;
-                    continue;
-                }
-
-                if (lastASNumber != number)
-                {
-                    //TODO: Проверка порядковых номеров устройств и вставка
-                    // пробелов (придумать как делить строки),
-                    // что бы оставить строку с отсутствующим номером пустой.
-                }
-
-                lastASNumber = number;
-            }
-
-            return sortedDevices;
-        }
-
-        /// <summary>
-        /// Компаратор для сравнения устройств с
-        /// AS-интерфейсом (сортировки).
-        /// </summary>
-        /// <param name="device1">Устройство 1</param>
-        /// <param name="device2">Устройство 2</param>
-        /// <returns></returns>
-        private int ASInterfaceDevicesComparer(Device.IODevice device1, 
-            Device.IODevice device2)
-        {
-            string device1ASNumberString = device1.
-                GetRuntimeParameter("R_AS_NUMBER");
-            string device2ASNumberString = device2.
-                GetRuntimeParameter("R_AS_NUMBER");
-
-            if (device1ASNumberString == null ||
-                device2ASNumberString == null ||
-                device2ASNumberString == device1ASNumberString)
-            {
-                //TODO : error, incorrect values
-            }
-
-            int device1ASNumber;
-            int device2ASNumber;
-            bool device1ASNumberParsed = int.TryParse(device1ASNumberString, 
-                out device1ASNumber);
-            bool device2ASNumberParsed = int.TryParse(device2ASNumberString, 
-                out device2ASNumber);
-
-            if (device1ASNumberParsed == false ||
-                device2ASNumberParsed == false)
-            {
-                //TODO : error, incorrect values
-            }
-
-            return device1ASNumber.CompareTo(device2ASNumber);
-        }
-
-        /// <summary>
-        /// Синхронизация привязки устройств привязанных к модулю.
-        /// Реализовано сразу два типа синхронизации
-        /// </summary>
-        /// <param name="synchronizedModule">Синхронизируемый модуль</param>
-        /// <param name="IOModuleDevices">Устройства для синхронизации</param>
-        private void SynchronizeIOModuleDevices(Function synchronizedModule, 
-            Dictionary<int, string> IOModuleDevices)
-        {
-            DocumentTypeManager.DocumentType circuitDocument =
-                    DocumentTypeManager.DocumentType.Circuit;
-            DocumentTypeManager.DocumentType overviewDocument =
-                    DocumentTypeManager.DocumentType.Overview;
-
-            foreach (int clamp in IOModuleDevices.Keys)
-            {
-                string functionalText = 
-                    SortDevices(IOModuleDevices[clamp]);
-                // Конвертируем символ "плюс" обратно.
-                functionalText = functionalText.
-                    Replace(symbolForPlusReplacing, PlusSymbol.ToString());
-
-                string functionalTextWithoutComments =
-                    DeleteDevicesComments(functionalText);
-
-                // На электрических схемах при множественной привязке
-                // комментарий не пишем.
-                SynchronizeDevice(synchronizedModule, clamp,
-                    functionalTextWithoutComments, circuitDocument);
-
-                // На странице "Обзор" при множественной привязке надо писать
-                // комментарии.
-                SynchronizeDevice(synchronizedModule, clamp, functionalText,
-                    overviewDocument);
-            }
-        }
-
-        /// <summary>
-        /// Синхронизация привязки устройства.
-        /// </summary>
-        /// <param name="objectFunction">Функция обновляемого объекта</param>
-        /// <param name="clamp">Номер клеммы</param>
-        /// <param name="functionalText">Функциональный текст</param>
-        /// <param name="documentType">Тип страницы для поиска подфункции
-        /// </param>
-        private void SynchronizeDevice(Function objectFunction, int clamp, 
-            string functionalText, 
-            DocumentTypeManager.DocumentType documentType)
-        {
-            const string ClampFunctionDefenitionName = "Дискретный выход";
-
-            Function[] placedFunctions = objectFunction.SubFunctions.
-                Where(x => x.IsPlaced == true).ToArray();
-
-            Function clampFunction = placedFunctions.
-                Where(x => x.Page.PageType == documentType &&
-                x.FunctionDefinition.Name.GetString(ISOCode.Language.L_ru_RU).
-                Contains(ClampFunctionDefenitionName)).
-                FirstOrDefault(y => y.Properties.
-                FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToInt() == clamp);
-
-            // Если null - клеммы нет на схеме.
-            if (clampFunction != null)
-            {
-                clampFunction.Properties.FUNC_TEXT = functionalText;
-            }
-        }
-
-        /// <summary>
-        /// Компаратор для сравнения устройств (сортировки)
-        /// </summary>
-        /// <param name="x">Устройство 1</param>
-        /// <param name="y">Устройство 2</param>
-        /// <returns></returns>
-        private int DevicesComparer(Device.Device x, Device.Device y)
-        {
-            int res;
-            res = Device.Device.Compare(x, y);
-            return res;
-        }
-
         public string SaveAsLuaTable(string prefix) 
         {
             return iOManager.SaveAsLuaTable(prefix);
@@ -1755,15 +1018,6 @@ namespace EasyEPlanner
 
         private IO.IOManager iOManager;     // Экземпляр класса.
         private static EplanIOManager instance; // Экземпляр класса.  
-
-        const string NewLine = "\r\n"; // Возврат каретки и перенос строки.
-        const string DeviceNamePattern = "(\\+[A-Z0-9_]*-[A-Z0-9_]+)"; // ОУ.
-        const string ValveTerminal = "-Y"; // Обозначение пневмоострова.
-        const string ChannelPostfix = "_CH"; // Постфикс канала.
-        const int ChannelPostfixSize = 3; // Размер постфикса канала.
-        const char PlusSymbol = '+'; // Для обратной вставки после Split.
-        const string WhiteSpace = " "; // Пробел для разделения ОУ.
-        const string symbolForPlusReplacing = "plus"; // Замена символа "плюс".
     }
 
     //-------------------------------------------------------------------------
@@ -2571,5 +1825,871 @@ namespace EasyEPlanner
 
         private static EplanDeviceManager instance; // Экземпляр класса.
         private Device.DeviceManager deviceManager;     
+    }
+
+    /// <summary>
+    /// Класс, реализующий синхронизацию модулей и названий устройств.
+    /// </summary>
+    class ModulesBindingUpdate
+    {
+        /// <summary>
+        /// Экземпляр класса синхронизации названий и модулей
+        /// </summary>
+        /// <returns></returns>
+        public static ModulesBindingUpdate GetInstance()
+        {
+            return modulesBindingUpdate;
+        }
+
+        /// <summary>
+        /// Синхронизация названий устройств и модулей
+        /// </summary>
+        /// <returns>Возвращает сообщения об ошибках во время выполнения.</returns>
+        public string Execute()
+        {
+            EplanIOManager.GetInstance().ReadConfiguration();
+            EplanDeviceManager.GetInstance().
+                SynchAndReadConfigurationFromScheme();
+            EplanDeviceManager.GetInstance().ReadConfigurationFromIOModules();
+            EplanDeviceManager.GetInstance().CheckConfiguration();
+
+            SelectionSet selection = new SelectionSet();
+            Project currentProject = selection.GetCurrentProject(true);
+            DMObjectsFinder objectFinder = new DMObjectsFinder(currentProject);
+
+            FunctionsFilter functionsFilter = new FunctionsFilter();
+            FunctionPropertyList properties = new FunctionPropertyList();
+            properties.FUNC_MAINFUNCTION = true;
+            functionsFilter.SetFilteredPropertyList(properties);
+            functionsFilter.Category = Function.Enums.Category.PLCBox;
+            Function[] functions = objectFinder.GetFunctions(functionsFilter);
+
+            currentProject.LockAllObjects();
+
+            Dictionary<string, string> deviceConnections =
+                CollectIOModulesData(functions);
+
+            bool containsNewValveTerminal = GetProjectVersionFromDevices
+                (deviceConnections);
+            if (!containsNewValveTerminal)
+            {
+                SynchronizeAsOldProject(deviceConnections, functions);
+            }
+            else
+            {
+                SynchronizeAsNewProject(deviceConnections, functions);
+            }
+
+            return errorMessage;
+        }
+
+        /// <summary>
+        /// Сбор данных привязок для обновления
+        /// </summary>
+        /// <param name="functions">Главные функции для поиска обновленных 
+        /// данных</param>
+        /// <returns></returns>
+        private Dictionary<string, string> CollectIOModulesData
+            (Function[] functions)
+        {
+            Dictionary<string, string> deviceConnections = new
+                Dictionary<string, string>();
+
+            foreach (Device.IODevice device in Device.DeviceManager.
+                GetInstance().Devices)
+            {
+                foreach (Device.IODevice.IOChannel channel in device.Channels)
+                {
+                    if (!channel.IsEmpty())
+                    {
+                        CollectModuleData(device, channel, functions,
+                            ref deviceConnections);
+                    }
+                }
+            }
+
+            return deviceConnections;
+        }
+
+        /// <summary>
+        /// Добавление данных привязки конкретного модуля
+        /// </summary>
+        /// <param name="channel">Канал устройства</param>
+        /// <param name="device">Устройство</param>
+        /// <param name="deviceConnections">Словарь с собранными данными 
+        /// привязок устройств</param>
+        /// <param name="functions">Главные функции для поиска обновленных 
+        /// данных</param>
+        private void CollectModuleData(Device.IODevice device,
+            Device.IODevice.IOChannel channel, Function[] functions,
+            ref Dictionary<string, string> deviceConnections)
+        {
+            const string IOModulePrefix = "A";
+            const string ASInterfaceModule = "655";
+
+            string visibleName = IOModulePrefix + channel.fullModule;
+            Function moduleFunction = functions.
+                FirstOrDefault(x => x.VisibleName.Contains(visibleName));
+            if (moduleFunction != null)
+            {
+                visibleName += ChannelPostfix + channel.GetKlemme.ToString();
+                string functionalText = device.EPlanName;
+                // Для модулей ASi не нужно добавлять комментарии 
+                // к имени устройств.
+                if (!moduleFunction.ArticleReferences[0].PartNr.
+                    Contains(ASInterfaceModule))
+                {
+                    if (device.Description.Contains(PlusSymbol))
+                    {
+                        // Так как в комментариях может использоваться знак 
+                        // "плюс", то заменим его на какую-то константу, 
+                        // которую при обновлении функционального текста 
+                        // преобразуем обратно.
+                        string replacedDeviceDescription = device.Description.
+                            Replace(PlusSymbol.ToString(), symbolForPlusReplacing);
+                        functionalText += NewLine + replacedDeviceDescription +
+                            NewLine + channel.komment;
+                    }
+                    else
+                    {
+                        functionalText += NewLine + device.Description +
+                            NewLine + channel.komment;
+                    }
+                }
+                else
+                {
+                    functionalText += WhiteSpace;
+                }
+
+                if (deviceConnections.ContainsKey(visibleName))
+                {
+                    deviceConnections[visibleName] += functionalText;
+                }
+                else
+                {
+                    deviceConnections.Add(visibleName, functionalText);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Проверка версии проекта через устройства.
+        /// У старых проектов пневмоостров Festo - DEV_VTUG, а у новых - Y.
+        /// Остальное не влияет, все одинаково.
+        /// </summary>
+        /// <param name="deviceConnections">Устройства для проверки</param>
+        /// <returns></returns>
+        private bool GetProjectVersionFromDevices(Dictionary<string, string>
+            deviceConnections)
+        {
+            bool isProjectWithValveTerminal = default;
+
+            if (deviceConnections.Values.
+                Where(x => x.Contains(ValveTerminal)).Count() > 0)
+            {
+                isProjectWithValveTerminal = true;
+                return isProjectWithValveTerminal;
+            }
+            else
+            {
+                isProjectWithValveTerminal = false;
+                return isProjectWithValveTerminal;
+            }
+        }
+
+        /// <summary>
+        /// Синхронизация старого проекта
+        /// </summary>
+        /// <param name="deviceConnections">Устройства для синхронизации.
+        /// Первый ключ - модуль, второй - устройства</param>
+        /// <param name="functions">Функции обновляемых объектов</param>
+        /// <returns></returns>
+        private void SynchronizeAsOldProject(Dictionary<string, string>
+            deviceConnections, Function[] functions)
+        {
+            foreach (string key in deviceConnections.Keys)
+            {
+                string visibleName = key.Substring(0, key.
+                    IndexOf(ChannelPostfix));
+                Function synchronizedModule = functions.FirstOrDefault(x => x.
+                VisibleName.Contains(visibleName));
+
+                if (synchronizedModule == null)
+                {
+                    continue;
+                }
+
+                string clampNumberString = key.Remove(0, key.
+                    IndexOf(ChannelPostfix) + ChannelPostfixSize);
+                string devices = deviceConnections[key];
+                bool? isASInterface = IsASInterface(devices);
+                bool deletingComments = NeedDeletingComments(devices);
+
+                if (deletingComments == true)
+                {
+                    devices = SortDevices(devices);
+                    devices = DeleteDevicesComments(devices);
+                    devices = DeleteRepeatedDevices(devices);
+                }
+
+                if (isASInterface == true)
+                {
+                    bool validASNumbers = CheckASNumbers(devices);
+                    if (validASNumbers == true)
+                    {
+                        devices = DeleteRepeatedDevices(devices);
+                        devices = SortASInterfaceDevices(devices);
+                    }
+                    else
+                    {
+                        // Если некорректные параметры - пропуск модуля.
+                        continue;
+                    }
+                }
+                else if (isASInterface == null)
+                {
+                    // Если AS-интерфейс привязан некорректно - пропуск модуля.
+                    continue;
+                }
+
+                int clamp = Convert.ToInt32(clampNumberString);
+                //SynchronizeIOModule(synchronizedModule, clamp, devices);
+            }
+        }
+
+        /// <summary>
+        /// Синхронизация привязки к I/O модулю
+        /// </summary>
+        /// <param name="functionalText">Обновленный функциональный текст
+        /// </param>
+        /// <param name="clamp">Номер клеммы</param>
+        /// <param name="synchronizedModule">Обновляемый модуль</param>
+        private void SynchronizeIOModule(Function synchronizedModule,
+            int clamp, string functionalText, bool isASInterfase = false)
+        {
+            // Конвертируем символ "плюс" обратно.
+            functionalText = functionalText.
+                Replace(symbolForPlusReplacing, PlusSymbol.ToString());
+
+            Function[] placedFunctions = synchronizedModule.SubFunctions.
+                Where(x => x.IsPlaced == true).ToArray();
+
+            Function clampFunction = placedFunctions.
+                        Where(x => x.Page.PageType ==
+                        DocumentTypeManager.DocumentType.Circuit).
+                        FirstOrDefault(x => x.Properties.
+                        FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToInt() == clamp);
+
+            // Если null - клеммы нет на схеме.
+            if (clampFunction != null)
+            {
+                clampFunction.Properties.FUNC_TEXT = functionalText;
+                // Если AS-интерфейс, в доп поле [20] записать нумерацию
+                if (isASInterfase == true)
+                {
+                    clampFunction.Properties.
+                        FUNC_SUPPLEMENTARYFIELD[20] = ASINumbering;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Синхронизация нового проекта
+        /// </summary>
+        /// <param name="deviceConnections">Объекты для обновления</param>
+        /// <param name="functions">Функции обновляемых объектов</param>
+        private void SynchronizeAsNewProject(Dictionary<string, string>
+            deviceConnections, Function[] functions)
+        {
+            foreach (string moduleString in deviceConnections.Keys)
+            {
+                string visibleName = moduleString.Substring(
+                    0, moduleString.IndexOf(ChannelPostfix));
+                Function synchronizedModule = functions.
+                    FirstOrDefault(x => x.VisibleName.Contains(visibleName));
+
+                if (synchronizedModule == null)
+                {
+                    continue;
+                }
+
+                string clampNumberString = moduleString.Remove(0,
+                    moduleString.IndexOf(ChannelPostfix) + ChannelPostfixSize);
+
+                // Если нет пневмоострова Y - то синхронизация ничем 
+                // не отличается от старого проекта.
+                if (!deviceConnections[moduleString].Contains(ValveTerminal))
+                {
+                    string devices = deviceConnections[moduleString];
+                    bool? isASInterface = IsASInterface(devices);
+                    bool deletingComments = NeedDeletingComments(devices);
+
+                    if (deletingComments == true)
+                    {
+                        devices = SortDevices(devices);
+                        devices = DeleteDevicesComments(devices);
+                        devices = DeleteRepeatedDevices(devices);
+                    }
+
+                    if (isASInterface == true)
+                    {
+                        devices = DeleteRepeatedDevices(devices);
+                        devices = SortASInterfaceDevices(devices);
+                    }
+
+                    int clamp = Convert.ToInt32(clampNumberString);
+                    SynchronizeIOModule(synchronizedModule, clamp, devices);
+                }
+                else
+                {
+                    string functionalText = deviceConnections[moduleString].
+                        Split(PlusSymbol).
+                        FirstOrDefault(x => x.Contains(ValveTerminal)).
+                        Insert(0, PlusSymbol.ToString());
+                    int clamp = Convert.ToInt32(clampNumberString);
+                    // Синхронизация пневмоострова.
+                    SynchronizeIOModule(synchronizedModule, clamp,
+                        functionalText);
+
+                    // Синхронизация устройств привязанных к пневмоострову.
+                    Dictionary<int, string> IOModuleDevices =
+                        GetIOModuleDevices(deviceConnections[moduleString]);
+                    string functionName = GetDeviceFunctionName(
+                        deviceConnections[moduleString]);
+                    Function synchronizedDevice = functions.
+                        FirstOrDefault(x => x.Name.Contains(functionName));
+                    SynchronizeIOModuleDevices(synchronizedDevice,
+                        IOModuleDevices);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Получение имени функции устройства в котором обновляется привязка
+        /// (в частности, пневмоострова)
+        /// </summary>
+        /// <param name="functionalText">>Функциональный текст устройства, 
+        /// к которому привязано устройство</param>
+        /// <returns></returns>
+        private string GetDeviceFunctionName(string functionalText)
+        {
+            const string FunctionNamePattern = "(\\+[A-Z0-9_]+-[Y0-9]+)";
+            Match functionNameMatch = Regex.Match(functionalText,
+                FunctionNamePattern);
+
+            if (functionNameMatch.Success)
+            {
+                return functionNameMatch.Value;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Получение устройств, привязанных к устройству.
+        /// </summary>
+        /// <param name="IOModuleFunctionalText">Функциональный текст 
+        /// IO модуля, к которому привязано устройство</param>
+        /// <returns></returns>
+        private Dictionary<int, string> GetIOModuleDevices
+            (string IOModuleFunctionalText)
+        {
+            const string ClampNumberParameter = "R_VTUG_NUMBER";
+
+            string[] devicesArray = IOModuleFunctionalText.Split(PlusSymbol);
+            Dictionary<int, string> IOModuleDevices =
+                new Dictionary<int, string>();
+
+            foreach (string deviceString in devicesArray)
+            {
+                if (string.IsNullOrEmpty(deviceString) ||
+                    string.IsNullOrWhiteSpace(deviceString) ||
+                    deviceString.Contains(ValveTerminal))
+                {
+                    continue;
+                }
+
+                string deviceName = Regex.Match(deviceString.
+                    Insert(0, PlusSymbol.ToString()), DeviceNamePattern).Value;
+                Device.IODevice device = Device.DeviceManager.
+                    GetInstance().GetDevice(deviceName);
+                string runtimeParameter = device.GetRuntimeParameter(
+                    ClampNumberParameter);
+                int clamp = Convert.ToInt32(runtimeParameter);
+
+                if (IOModuleDevices.ContainsKey(clamp))
+                {
+                    IOModuleDevices[clamp] += deviceString.
+                        Insert(0, PlusSymbol.ToString());
+                }
+                else
+                {
+                    IOModuleDevices.Add(clamp, deviceString.
+                        Insert(0, PlusSymbol.ToString()));
+                }
+            }
+
+            return IOModuleDevices;
+        }
+
+        /// <summary>
+        /// Функция, проверяющая являются ли переданные устройства
+        /// устройствами с AS-интерфейсом
+        /// </summary>
+        /// <param name="devices">Список ОУ устройств через разделитель</param>
+        /// <returns></returns>
+        private bool? IsASInterface(string devices)
+        {
+            bool? isASInterface = false;
+            const int MinimalDevicesCount = 2;
+            MatchCollection deviceMatches = Regex.Matches(devices,
+                DeviceNamePattern);
+
+            if (deviceMatches.Count < MinimalDevicesCount)
+            {
+                return isASInterface;
+            }
+
+            List<bool> checkingList = new List<bool>();
+            foreach (string deviceName in deviceMatches)
+            {
+                Device.IODevice device = Device.DeviceManager.GetInstance().
+                    GetDevice(deviceName);
+                if (device.DeviceSubType == Device.DeviceSubType.V_AS_MIXPROOF ||
+                    device.DeviceSubType == Device.DeviceSubType.V_AS_DO1_DI2)
+                {
+                    checkingList.Add(true);
+                }
+                else
+                {
+                    checkingList.Add(false);
+                }
+            }
+
+            checkingList.Distinct();
+
+            if (checkingList.Count == 2)
+            {
+                isASInterface = null;
+                errorMessage += "Проверьте все AS-i модули. В привязке " +
+                    "присутствуют не AS-i подтипы.\n ";
+            }
+
+            if (checkingList.Count == 1)
+            {
+                if (checkingList[0] == true)
+                {
+                    isASInterface = true;
+                }
+                else
+                {
+                    isASInterface = false;
+                }
+            }
+
+            return isASInterface;
+        }
+
+        /// <summary>
+        /// Проверяет наличие параметра R_AS_NUMBER в AS-i устройстве.
+        /// </summary>
+        /// <param name="devices"></param>
+        /// <returns></returns>
+        private bool CheckASNumbers(string devices)
+        {
+            MatchCollection deviceMatches = Regex.Matches(devices,
+                DeviceNamePattern);
+
+            string errorMessageBuffer = string.Empty;
+            foreach (string deviceName in deviceMatches)
+            {
+                Device.IODevice device = Device.DeviceManager.GetInstance().GetDevice(deviceName);
+                string parameter = device.GetRuntimeParameter("R_AS_NUMBER");
+                if (parameter == null)
+                {
+                    errorMessageBuffer += $"В устройстве {device.EPlanName} " +
+                        $"отсутствует R_AS_NUMBER.\n ";
+                }
+                else
+                {
+                    int ASNumber;
+                    bool isNumber = int.TryParse(parameter, out ASNumber);
+                    if (isNumber == false)
+                    {
+                        errorMessageBuffer += $"В устройстве {device.EPlanName} " +
+                            $"некорректно задан параметр R_AS_NUMBER.\n ";
+                    }
+                    if (isNumber == true && ASNumber < 1 && ASNumber > 62)
+                    {
+                        errorMessageBuffer += $"В устройстве {device.EPlanName} " +
+                            $"некорректно задан диапазон R_AS_NUMBER (от 1 до 62).\n ";
+                    }
+                }
+            }
+
+            bool validParameters;
+            if (errorMessageBuffer != string.Empty)
+            {
+                validParameters = false;
+                errorMessage += errorMessageBuffer;
+            }
+            else
+            {
+                validParameters = true;
+            }
+
+            return validParameters;
+        }
+
+        /// <summary>
+        /// Функция, проверяющая необходимость удаления комментариев в 
+        /// функциональном тексте.
+        /// </summary>
+        /// <param name="devices">Строка со списком устройств</param>
+        /// <returns></returns>
+        private bool NeedDeletingComments(string devices)
+        {
+            MatchCollection deviceMatches = Regex.Matches(devices,
+                DeviceNamePattern);
+            if (deviceMatches.Count > 1)
+            {
+                // Если первое устройство с подтипом AS-интерфейс, 
+                // то все такие 
+                const int devicesCountForCheck = 1;
+                for (int i = 0; i < devicesCountForCheck; i++)
+                {
+                    Device.IODevice device = Device.DeviceManager.
+                        GetInstance().GetDevice(deviceMatches[i].Value);
+                    if (device.DeviceSubType == Device.DeviceSubType.
+                        V_AS_DO1_DI2 ||
+                        device.DeviceSubType == Device.DeviceSubType.
+                        V_AS_MIXPROOF)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Функция убирает комментарии в функциональном тексте при привязке
+        /// нескольких устройств к одной клемме.
+        /// </summary>
+        /// <param name="devices">Строка со списком устройств</param>
+        /// <returns></returns>
+        private string DeleteDevicesComments(string devices)
+        {
+            MatchCollection deviceMatches = Regex.Matches(devices,
+                DeviceNamePattern);
+
+            if (deviceMatches.Count <= 1)
+            {
+                return devices;
+            }
+
+            string devicesWithoutComments = string.Empty;
+            foreach (Match match in deviceMatches)
+            {
+                devicesWithoutComments += match.Value + WhiteSpace;
+            }
+
+            return devicesWithoutComments;
+        }
+
+        /// <summary>
+        /// Удаляет повторяющиеся привязанные устройства.
+        /// </summary>
+        /// <param name="devicesWithoutComments">Устройства без комментариев
+        /// </param>
+        /// <returns></returns>
+        private string DeleteRepeatedDevices(string devicesWithoutComments)
+        {
+            List<string> devicesList = new List<string>();
+
+            MatchCollection deviceMatches = Regex.Matches(
+                devicesWithoutComments, DeviceNamePattern);
+            foreach (Match match in deviceMatches)
+            {
+                devicesList.Add(match.Value);
+            }
+
+            devicesList = devicesList.Distinct().ToList();
+
+            string devicesWithoutRepeating = string.Empty;
+            foreach (string device in devicesList)
+            {
+                devicesWithoutRepeating += device + WhiteSpace;
+            }
+
+            return devicesWithoutRepeating;
+        }
+
+        /// <summary>
+        /// Сортировка устройств для корректного отображения.
+        /// </summary>
+        /// <param name="devices">Устройства для сортировки</param>
+        /// <returns></returns>
+        private string SortDevices(string devices)
+        {
+            MatchCollection deviceMatches = Regex.Matches(devices,
+                DeviceNamePattern);
+            if (deviceMatches.Count <= 1)
+            {
+                return devices;
+            }
+
+            // valveTerminal - для вставки VTUG в старых проектах первым.
+            Device.Device valveTerminal = null;
+            List<Device.Device> devicesList = new List<Device.Device>();
+            foreach (Match match in deviceMatches)
+            {
+                Device.Device device = Device.DeviceManager.GetInstance().
+                    GetDevice(match.Value);
+                if (device.DeviceType != Device.DeviceType.DEV_VTUG)
+                {
+                    devicesList.Add(device);
+                }
+                else
+                {
+                    valveTerminal = device;
+                }
+            }
+
+            devicesList.Sort(DevicesComparer);
+
+            if (valveTerminal != null)
+            {
+                devicesList.Insert(0, valveTerminal);
+            }
+
+            devices = string.Empty;
+            foreach (Device.Device device in devicesList)
+            {
+                if (device.Description.Contains(PlusSymbol))
+                {
+                    string replacedDeviceDescription = device.Description.
+                        Replace(PlusSymbol.ToString(), symbolForPlusReplacing);
+                    devices += device.EPlanName + NewLine +
+                        replacedDeviceDescription + NewLine;
+                }
+                else
+                {
+                    devices += device.EPlanName + NewLine + device.Description +
+                        NewLine;
+                }
+
+            }
+
+            return devices;
+        }
+
+        /// <summary>
+        /// Функция для сортировки AS интерфейса по параметру R_AS_NUMBER
+        /// </summary>
+        /// <param name="devices">Строка с устройствами</param>
+        /// <returns></returns>
+        private string SortASInterfaceDevices(string devices)
+        {
+            string sortedDevices = string.Empty;
+
+            MatchCollection deviceMatches = Regex.Matches(devices,
+                DeviceNamePattern);
+            if (deviceMatches.Count <= 1)
+            {
+                return devices;
+            }
+
+            List<Device.IODevice> devicesList = new List<Device.IODevice>();
+            foreach (Match match in deviceMatches)
+            {
+                Device.IODevice device = Device.DeviceManager.GetInstance().
+                    GetDevice(match.Value);
+                devicesList.Add(device);
+            }
+
+            devicesList.Sort(ASInterfaceDevicesComparer);
+
+            int lastASNumber = 0;
+            string devicesWithoutASNumber = NewLine;
+            foreach (Device.IODevice device in devicesList)
+            {
+                string numberAsString = device.GetRuntimeParameter("R_AS_NUMBER");
+                if (numberAsString == null)
+                {
+                    devicesWithoutASNumber += device.EPlanName
+                        + NewLine;
+                    continue;
+                }
+
+                int number;
+                int.TryParse(numberAsString, out number);
+
+                const int MinimalNumber = 0;
+                const int MaximalNumber = 64;
+                if (number <= MinimalNumber && number > MaximalNumber)
+                {
+                    devicesWithoutASNumber += device.EPlanName
+                        + WhiteSpace;
+                    continue;
+                }
+
+                if (lastASNumber != number)
+                {
+                    int difference = number - lastASNumber;
+                    if (difference > 1)
+                    {
+                        int countOfWhiteSpaces = difference * 10;
+                        sortedDevices += new string(WhiteSpace, countOfWhiteSpaces) + device.EPlanName;
+                    }
+                    else
+                    {
+                        sortedDevices += WhiteSpace + device.EPlanName;
+                    }
+                    //TODO: Проверка порядковых номеров устройств и вставка
+                    // пробелов (придумать как делить строки),
+                    // что бы оставить строку с отсутствующим номером пустой.
+                }
+
+                lastASNumber = number;
+            }
+
+            sortedDevices += devicesWithoutASNumber;
+
+            return sortedDevices;
+        }
+
+        /// <summary>
+        /// Компаратор для сравнения устройств с
+        /// AS-интерфейсом (сортировки).
+        /// </summary>
+        /// <param name="device1">Устройство 1</param>
+        /// <param name="device2">Устройство 2</param>
+        /// <returns></returns>
+        private int ASInterfaceDevicesComparer(Device.IODevice device1,
+            Device.IODevice device2)
+        {
+            string device1ASNumberString = device1.
+                GetRuntimeParameter("R_AS_NUMBER");
+            string device2ASNumberString = device2.
+                GetRuntimeParameter("R_AS_NUMBER");
+
+            int device1ASNumber;
+            int device2ASNumber;
+
+            int.TryParse(device1ASNumberString, out device1ASNumber);
+            int.TryParse(device2ASNumberString, out device2ASNumber);
+
+            return device1ASNumber.CompareTo(device2ASNumber);
+        }
+
+        /// <summary>
+        /// Синхронизация привязки устройств привязанных к модулю.
+        /// Реализовано сразу два типа синхронизации
+        /// </summary>
+        /// <param name="synchronizedModule">Синхронизируемый модуль</param>
+        /// <param name="IOModuleDevices">Устройства для синхронизации</param>
+        private void SynchronizeIOModuleDevices(Function synchronizedModule,
+            Dictionary<int, string> IOModuleDevices)
+        {
+            DocumentTypeManager.DocumentType circuitDocument =
+                    DocumentTypeManager.DocumentType.Circuit;
+            DocumentTypeManager.DocumentType overviewDocument =
+                    DocumentTypeManager.DocumentType.Overview;
+
+            foreach (int clamp in IOModuleDevices.Keys)
+            {
+                string functionalText =
+                    SortDevices(IOModuleDevices[clamp]);
+                // Конвертируем символ "плюс" обратно.
+                functionalText = functionalText.
+                    Replace(symbolForPlusReplacing, PlusSymbol.ToString());
+
+                string functionalTextWithoutComments =
+                    DeleteDevicesComments(functionalText);
+
+                // На электрических схемах при множественной привязке
+                // комментарий не пишем.
+                SynchronizeDevice(synchronizedModule, clamp,
+                    functionalTextWithoutComments, circuitDocument);
+
+                // На странице "Обзор" при множественной привязке надо писать
+                // комментарии.
+                SynchronizeDevice(synchronizedModule, clamp, functionalText,
+                    overviewDocument);
+            }
+        }
+
+        /// <summary>
+        /// Синхронизация привязки устройства.
+        /// </summary>
+        /// <param name="objectFunction">Функция обновляемого объекта</param>
+        /// <param name="clamp">Номер клеммы</param>
+        /// <param name="functionalText">Функциональный текст</param>
+        /// <param name="documentType">Тип страницы для поиска подфункции
+        /// </param>
+        private void SynchronizeDevice(Function objectFunction, int clamp,
+            string functionalText,
+            DocumentTypeManager.DocumentType documentType)
+        {
+            const string ClampFunctionDefenitionName = "Дискретный выход";
+
+            Function[] placedFunctions = objectFunction.SubFunctions.
+                Where(x => x.IsPlaced == true).ToArray();
+
+            Function clampFunction = placedFunctions.
+                Where(x => x.Page.PageType == documentType &&
+                x.FunctionDefinition.Name.GetString(ISOCode.Language.L_ru_RU).
+                Contains(ClampFunctionDefenitionName)).
+                FirstOrDefault(y => y.Properties.
+                FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToInt() == clamp);
+
+            // Если null - клеммы нет на схеме.
+            if (clampFunction != null)
+            {
+                clampFunction.Properties.FUNC_TEXT = functionalText;
+            }
+        }
+
+        /// <summary>
+        /// Компаратор для сравнения устройств (сортировки)
+        /// </summary>
+        /// <param name="x">Устройство 1</param>
+        /// <param name="y">Устройство 2</param>
+        /// <returns></returns>
+        private int DevicesComparer(Device.Device x, Device.Device y)
+        {
+            int res;
+            res = Device.Device.Compare(x, y);
+            return res;
+        }
+
+        const string NewLine = "\r\n"; // Возврат каретки и перенос строки.
+        const string DeviceNamePattern = "(\\+[A-Z0-9_]*-[A-Z0-9_]+)"; // ОУ.
+        const string ValveTerminal = "-Y"; // Обозначение пневмоострова.
+        const string ChannelPostfix = "_CH"; // Постфикс канала.
+        const int ChannelPostfixSize = 3; // Размер постфикса канала.
+        const char PlusSymbol = '+'; // Для обратной вставки после Split.
+        const char WhiteSpace = ' '; // Пробел для разделения ОУ.
+        const string symbolForPlusReplacing = "plus"; // Замена символа "плюс".
+
+        const string ASINumbering = "1\r\n2\r\n" + // Нумерация AS-i клапанов
+            "3\r\n4\r\n5\r\n6\r\n7\r\n8\r\n9\r\n10\r\n11\r\n12\r\n13\r\n" +
+            "14\r\n15\r\n16\r\n17\r\n18\r\n19\r\n20\r\n21\r\n22\r\n23\r\n" +
+            "24\r\n25\r\n26\r\n27\r\n28\r\n29\r\n30\r\n31\r\n32\r\n33\r\n" +
+            "34\r\n35\r\n36\r\n37\r\n38\r\n39\r\n40\r\n41\r\n42\r\n43\r\n" +
+            "44\r\n45\r\n46\r\n47\r\n48\r\n49\r\n50\r\n51\r\n52\r\n53\r\n" +
+            "54\r\n55\r\n56\r\n57\r\n58\r\n59\r\n60\r\n61\r\n62\r\n"; 
+
+        static ModulesBindingUpdate modulesBindingUpdate = 
+            new ModulesBindingUpdate(); // Static экземпляр класса для доступа.
+        string errorMessage; // Сообщение об ошибках во время работы.
     }
 }

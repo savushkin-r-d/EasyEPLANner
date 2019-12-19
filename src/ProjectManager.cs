@@ -312,6 +312,50 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Вызов синхронизации названий устройств и модулей во втором потоке
+        /// </summary>
+        public void UpdateModulesBinding()
+        {
+            System.Threading.Thread thread = new System.Threading.Thread(
+                    new System.Threading.ThreadStart(UpdateModulesBindingWithLog));
+            thread.Start();
+        }
+
+        /// <summary>
+        /// Вызываемая в параллельном потоке функция синхронизации названий
+        /// устройств и модулей
+        /// </summary>
+        private void UpdateModulesBindingWithLog()
+        {
+            log.DisableOkButton();
+            log.Clear();
+            log.SetProgress(0);
+
+            string errors = string.Empty;
+            try
+            {
+                errors = ModulesBindingUpdate.GetInstance().Execute();
+            }
+            catch (System.Exception ex)
+            {
+                log.AddMessage("Exception - " + ex);
+            }
+            finally
+            {
+                if (errors != string.Empty)
+                {
+                    log.AddMessage(errors);
+                    log.ShowLog();
+                }
+
+                if (log != null)
+                {
+                    log.EnableOkButton();
+                    log.SetProgress(100);
+                }
+            }
+        }
 
         /// <summary>
         /// Экспорт из проекта базы каналов.
