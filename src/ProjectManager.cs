@@ -335,7 +335,7 @@ namespace EasyEPlanner
             string errors = string.Empty;
             try
             {
-                errors = ModulesBindingUpdate.GetInstance().Execute();
+                errors = EplanIOManager.GetInstance().UpdateModulesBinding();
             }
             catch (System.Exception ex)
             {

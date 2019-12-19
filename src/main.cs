@@ -1011,6 +1011,16 @@ namespace EasyEPlanner
             return false;
         }
 
+        /// <summary>
+        /// Функция синхронизации названий устройств и модулей в привязке.
+        /// </summary>
+        /// <returns></returns>
+        public string UpdateModulesBinding()
+        {
+            string errors = ModulesBindingUpdate.GetInstance().Execute();
+            return errors;
+        }
+
         public string SaveAsLuaTable(string prefix) 
         {
             return iOManager.SaveAsLuaTable(prefix);
