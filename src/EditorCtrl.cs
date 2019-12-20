@@ -583,8 +583,6 @@ namespace Editor
 
             wasShown = true;
 
-            bool isDocked = false;
-
             string windowName = "Комментарий";
             IntPtr res = PI.FindWindowByCaption(
                 IntPtr.Zero, windowName);            //1.1;
@@ -644,7 +642,7 @@ namespace Editor
                             if (resList.Count > 0)
                             {
                                 dialogHandle = resList[0];
-                                isDocked = true;
+
                                 res = dialogHandle;
                                 wndEditVisiblePtr = dialogHandle; // Сохраняем дескриптор окна.
                                 break;
@@ -710,7 +708,7 @@ namespace Editor
                                 if (resList.Count > 0)
                                 {
                                     dialogHandle = resList[0];
-                                    isDocked = true;
+
                                     wndEditVisiblePtr = dialogHandle; // Сохраняем дескриптор окна.
                                     break;
                                 }
@@ -750,21 +748,22 @@ namespace Editor
             PI.SetParent(editorTView.Handle, dialogHandle);         //5
             PI.SetParent(toolStrip.Handle, dialogHandle);
 
-            int dy = 1;
-            if (isDocked)
-            {
-                dy = 3;
-                // TODO: доработать открытие формы в окне.
-            }
+            IntPtr dialogPtr = PI.GetParent(editorTView.Handle);
 
-            PI.RECT dialogRect;
-            PI.GetWindowRect(dialogHandle, out dialogRect);
+            PI.RECT rctDialog;
+            PI.RECT rctPanel;
+            PI.GetWindowRect(dialogPtr, out rctDialog);
+            PI.GetWindowRect(panelPtr, out rctPanel);
 
-            toolStrip.Location = new Point(0, dy);
-            editorTView.Location = new Point(0, dy + toolStrip.Height + dy);
+            int w = rctDialog.Right - rctDialog.Left;
+            int h = rctDialog.Bottom - rctDialog.Top;
 
-            editorTView.Width = dialogRect.Right - dialogRect.Left - 2;
-            editorTView.Height = dialogRect.Bottom - dialogRect.Top - toolStrip.Height - dy;
+            toolStrip.Location = new Point(0, 0);
+            editorTView.Location = new Point(0, toolStrip.Height);
+
+            toolStrip.Width = w;
+            editorTView.Width = w;
+            editorTView.Height = h - toolStrip.Height;
 
             uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);        //6
             dialogHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_CALLWNDPROC,
