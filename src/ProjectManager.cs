@@ -321,12 +321,6 @@ namespace EasyEPlanner
             string errors = string.Empty;
             try
             {
-                log.Clear();
-                log.DisableOkButton();
-                log.SetProgress(0);
-                log.AddMessage("Выполняется синхронизация...\n ");
-                log.ShowLog();
-
                 errors = EplanIOManager.GetInstance().UpdateModulesBinding();
             }
             catch (System.Exception ex)
@@ -335,10 +329,11 @@ namespace EasyEPlanner
             }
             finally
             {
-                if (errors != null)
+                if (errors != string.Empty)
                 {
+                    log.Clear();
+                    log.ShowLog();
                     log.AddMessage(errors);
-                    log.AddMessage("Во время синхронизации произошли ошибки.\n ");
                 }
 
                 if (log != null)

@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System;
 using System.Windows.Forms;
 using IO;
+using System.Linq;
 
 /// <summary>
 /// Пространство имен технологических устройств проекта (клапана, насосы...).
@@ -3701,6 +3702,121 @@ namespace Device
                 return cap;
             }
         }
+
+        /// <summary>
+        /// Функция, проверяющая являются ли переданные устройства
+        /// устройствами с AS-интерфейсом
+        /// </summary>
+        /// <param name="devices">Список ОУ устройств через разделитель</param>
+        /// <returns></returns>
+        public bool? IsASInterface(string devices, out string errors)
+        {
+            bool? isASInterface = false;
+            errors = string.Empty;
+            const int MinimalDevicesCount = 2;
+            MatchCollection deviceMatches = Regex.Matches(devices,
+                DeviceNamePattern);
+
+            if (deviceMatches.Count < MinimalDevicesCount)
+            {
+                return isASInterface;
+            }
+
+            List<bool> checkingList = new List<bool>();
+            foreach (Match deviceMatch in deviceMatches)
+            {
+                IODevice device = DeviceManager.GetInstance().
+                    GetDevice(deviceMatch.Value);
+                if (device.DeviceSubType == DeviceSubType.V_AS_MIXPROOF ||
+                    device.DeviceSubType == DeviceSubType.V_AS_DO1_DI2)
+                {
+                    checkingList.Add(true);
+                }
+                else
+                {
+                    checkingList.Add(false);
+                }
+            }
+
+            checkingList = checkingList.Distinct().ToList();
+
+            if (checkingList.Count == 2)
+            {
+                isASInterface = null;
+                errors += "Проверьте все AS-i модули. В привязке " +
+                    "присутствуют не AS-i подтипы.\n ";
+            }
+            else if (checkingList.Count == 1)
+            {
+                if (checkingList[0] == true)
+                {
+                    isASInterface = true;
+                }
+                else
+                {
+                    isASInterface = false;
+                }
+            }
+
+            return isASInterface;
+        }
+
+        /// <summary>
+        /// Проверяет наличие параметра R_AS_NUMBER в AS-i устройстве.
+        /// </summary>
+        /// <param name="devices"></param>
+        /// <returns></returns>
+        public bool CheckASNumbers(string devices, out string errors)
+        {
+            MatchCollection deviceMatches = Regex.Matches(devices,
+                DeviceNamePattern);
+
+            errors = string.Empty;
+            string errorsBuffer = string.Empty;
+            foreach (Match deviceMatch in deviceMatches)
+            {
+                IODevice device = DeviceManager.GetInstance().
+                    GetDevice(deviceMatch.Value);
+                string parameter = device.GetRuntimeParameter("R_AS_NUMBER");
+                if (parameter == null)
+                {
+                    errorsBuffer += $"В устройстве {device.EPlanName} " +
+                        $"отсутствует R_AS_NUMBER.\n ";
+                }
+                else
+                {
+                    int ASNumber;
+                    bool isNumber = int.TryParse(parameter, out ASNumber);
+                    if (isNumber == false)
+                    {
+                        errorsBuffer += $"В устройстве " +
+                            $"{device.EPlanName} некорректно задан параметр " +
+                            $"R_AS_NUMBER.\n ";
+                    }
+                    if (isNumber == true && ASNumber < 1 && ASNumber > 62)
+                    {
+                        errorsBuffer += $"В устройстве " +
+                            $"{device.EPlanName} некорректно задан диапазон " +
+                            $"R_AS_NUMBER (от 1 до 62).\n ";
+                    }
+                }
+            }
+
+            bool isValid = false;
+            if (errorsBuffer != string.Empty)
+            {
+                isValid = false;
+                errors += errorsBuffer;
+            }
+            else
+            {
+                isValid = true;
+            }
+
+            return isValid;
+        }
+
+        const string DeviceNamePattern = "(\\+[A-Z0-9_]*-[A-Z0-9_]+)"; // ОУ.
 
         private static IODevice cap = new IODevice("Заглушка", "", 0, "", 0);
         private List<IODevice> devices;       ///Устройства проекта.     

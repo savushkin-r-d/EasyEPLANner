@@ -1045,7 +1045,7 @@ namespace EasyEPlanner
 
             int nn; // Номер клеммы
             string nnString = oF2.Properties.FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
-            // Если клемма - число, возвращаем res
+            // Если клемма - не число, возвращаем res
             bool isDigit = Int32.TryParse(nnString, out nn);
             if (isDigit == false)
             {
@@ -1083,26 +1083,35 @@ namespace EasyEPlanner
                 return res;
             }
 
-            string komment = "";
-
-            int endPos = devsDescr.IndexOf("\n");
-            if (endPos > 0)
-            {
-                komment = devsDescr.Substring(endPos + 1);
-                devsDescr = devsDescr.Substring(0, endPos);
-            }
-
+            string komment = string.Empty;
+            string klemmeKomment = string.Empty;
+            Match actionMatch;
             MatchEvaluator deviceEvaluator = new MatchEvaluator(GetInstance().RussianToEnglish);
-            devsDescr = Regex.Replace(devsDescr, RussianLettersAsEnglish, deviceEvaluator);
-
-            string klemmeKomment = "";
-            Match actionMatch = Regex.Match(komment, ChannelComment, RegexOptions.IgnoreCase);
-
-            komment = Regex.Replace(komment, ChannelComment, "", RegexOptions.IgnoreCase);
-            komment = komment.Replace("\n", ". ").Trim();
-            if (komment.Length > 0 && komment[komment.Length - 1] != '.')
+            bool? isASInterface = Device.DeviceManager.GetInstance().IsASInterface(devsDescr, out _);
+            if (isASInterface == false)
             {
-                komment += ".";
+                int endPos = devsDescr.IndexOf("\n");
+                if (endPos > 0)
+                {
+                    komment = devsDescr.Substring(endPos + 1);
+                    devsDescr = devsDescr.Substring(0, endPos);
+                }
+
+                devsDescr = Regex.Replace(devsDescr, RussianLettersAsEnglish, deviceEvaluator);
+
+                actionMatch = Regex.Match(komment, ChannelComment, RegexOptions.IgnoreCase);
+
+                komment = Regex.Replace(komment, ChannelComment, "", RegexOptions.IgnoreCase);
+                komment = komment.Replace("\n", ". ").Trim();
+                if (komment.Length > 0 && komment[komment.Length - 1] != '.')
+                {
+                    komment += ".";
+                }
+            }
+            else
+            {
+                devsDescr = Regex.Replace(devsDescr, RussianLettersAsEnglish, deviceEvaluator);
+                actionMatch = Regex.Match(komment, ChannelComment, RegexOptions.IgnoreCase);
             }
 
             Match descrMatch = Regex.Match(
@@ -1364,34 +1373,45 @@ namespace EasyEPlanner
                                 }
                             }
 
-                            //Для многострочного описания убираем tab+\r\n
-                            descr = descr.Replace("\t\r\n", "");
-                            descr = descr.Replace("\t\n", "");
-
-                            string komment = "";
-
-                            int endPos = descr.IndexOf("\n");
-                            if (endPos > 0)
-                            {
-                                komment = descr.Substring(endPos + 1);
-                                descr = descr.Substring(0, endPos);
-                            }
-
+                            string klemmeKomment = string.Empty;
+                            Match actionMatch;
+                            string komment = string.Empty;
                             MatchEvaluator deviceEvaluator = new MatchEvaluator(RussianToEnglish);
-                            descr = Regex.Replace(descr, RussianLettersAsEnglish, deviceEvaluator);
-
-                            string klemmeKomment = "";
-                            
-                            Match actionMatch = Regex.Match(komment, ChannelComment,
-                                RegexOptions.IgnoreCase);
-
-                            komment = Regex.Replace(komment, ChannelComment,
-                                "", RegexOptions.IgnoreCase);
-                            komment = komment.Replace("\n", ". ").Trim();
-                            if (komment.Length > 0 && komment[komment.Length - 1] != '.')
+                            // Собственная обработка для AS-i
+                            bool? isASInterface = Device.DeviceManager.GetInstance().IsASInterface(descr, out _);
+                            if (isASInterface == false)
                             {
-                                komment += ".";
+                                //Для многострочного описания убираем tab+\r\n
+                                descr = descr.Replace("\t\r\n", "");
+                                descr = descr.Replace("\t\n", "");
+
+                                int endPos = descr.IndexOf("\n");
+                                if (endPos > 0)
+                                {
+                                    komment = descr.Substring(endPos + 1);
+                                    descr = descr.Substring(0, endPos);
+                                }
+
+                                descr = Regex.Replace(descr, RussianLettersAsEnglish, deviceEvaluator);
+
+                                actionMatch = Regex.Match(komment, ChannelComment,
+                                    RegexOptions.IgnoreCase);
+
+                                komment = Regex.Replace(komment, ChannelComment,
+                                    "", RegexOptions.IgnoreCase);
+                                komment = komment.Replace("\n", ". ").Trim();
+                                if (komment.Length > 0 && komment[komment.Length - 1] != '.')
+                                {
+                                    komment += ".";
+                                }
                             }
+                            else
+                            {
+                                descr = Regex.Replace(descr, RussianLettersAsEnglish, deviceEvaluator);
+                                actionMatch = Regex.Match(komment, ChannelComment,
+                                    RegexOptions.IgnoreCase);
+                            }
+                            
 
                             Match descrMatch = Regex.Match(
                                 descr, Device.DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
@@ -2034,7 +2054,9 @@ namespace EasyEPlanner
                 string clampNumberString = key.Remove(0, key.
                     IndexOf(ChannelPostfix) + ChannelPostfixSize);
                 string devices = deviceConnections[key];
-                bool? isASInterface = IsASInterface(devices);
+                string errors = string.Empty;
+                bool? isASInterface = Device.DeviceManager.GetInstance().IsASInterface(devices, out errors);
+                errorMessage += errors;
                 bool deletingComments = NeedDeletingComments(devices);
 
                 if (deletingComments == true)
@@ -2046,7 +2068,8 @@ namespace EasyEPlanner
 
                 if (isASInterface == true)
                 {
-                    bool validASNumbers = CheckASNumbers(devices);
+                    bool validASNumbers = Device.DeviceManager.GetInstance().CheckASNumbers(devices, out errors);
+                    errorMessage += errors;
                     if (validASNumbers == true)
                     {
                         devices = DeleteRepeatedDevices(devices);
@@ -2078,7 +2101,7 @@ namespace EasyEPlanner
         /// <param name="clamp">Номер клеммы</param>
         /// <param name="synchronizedModule">Обновляемый модуль</param>
         private void SynchronizeIOModule(Function synchronizedModule,
-            int clamp, string functionalText, bool? isASInterfase = false)
+            int clamp, string functionalText, bool? isASInterface = false)
         {
             // Конвертируем символ "плюс" обратно.
             functionalText = functionalText.
@@ -2098,7 +2121,7 @@ namespace EasyEPlanner
             {
                 clampFunction.Properties.FUNC_TEXT = functionalText;
                 // Если AS-интерфейс, в доп поле [20] записать нумерацию
-                if (isASInterfase == true)
+                if (isASInterface == true)
                 {
                     clampFunction.Properties.
                         FUNC_SUPPLEMENTARYFIELD[20] = ASINumbering;
@@ -2134,7 +2157,9 @@ namespace EasyEPlanner
                 if (!deviceConnections[moduleString].Contains(ValveTerminal))
                 {
                     string devices = deviceConnections[moduleString];
-                    bool? isASInterface = IsASInterface(devices);
+                    string errors = string.Empty;
+                    bool? isASInterface = Device.DeviceManager.GetInstance().IsASInterface(devices, out errors);
+                    errorMessage += errors;
                     bool deletingComments = NeedDeletingComments(devices);
 
                     if (deletingComments == true)
@@ -2146,12 +2171,27 @@ namespace EasyEPlanner
 
                     if (isASInterface == true)
                     {
-                        devices = DeleteRepeatedDevices(devices);
-                        devices = SortASInterfaceDevices(devices);
+                        bool validASNumbers = Device.DeviceManager.GetInstance().CheckASNumbers(devices, out errors);
+                        errorMessage += errors;
+                        if (validASNumbers == true)
+                        {
+                            devices = DeleteRepeatedDevices(devices);
+                            devices = SortASInterfaceDevices(devices);
+                        }
+                        else
+                        {
+                            // Если некорректные параметры - пропуск модуля.
+                            continue;
+                        }
+                    }
+                    else if (isASInterface == null)
+                    {
+                        // Если AS-интерфейс привязан некорректно - пропуск модуля.
+                        continue;
                     }
 
                     int clamp = Convert.ToInt32(clampNumberString);
-                    SynchronizeIOModule(synchronizedModule, clamp, devices);
+                    SynchronizeIOModule(synchronizedModule, clamp, devices, isASInterface);
                 }
                 else
                 {
@@ -2248,117 +2288,6 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Функция, проверяющая являются ли переданные устройства
-        /// устройствами с AS-интерфейсом
-        /// </summary>
-        /// <param name="devices">Список ОУ устройств через разделитель</param>
-        /// <returns></returns>
-        private bool? IsASInterface(string devices)
-        {
-            bool? isASInterface = false;
-            const int MinimalDevicesCount = 2;
-            MatchCollection deviceMatches = Regex.Matches(devices,
-                DeviceNamePattern);
-
-            if (deviceMatches.Count < MinimalDevicesCount)
-            {
-                return isASInterface;
-            }
-
-            List<bool> checkingList = new List<bool>();
-            foreach (Match deviceMatch in deviceMatches)
-            {
-                Device.IODevice device = Device.DeviceManager.GetInstance().
-                    GetDevice(deviceMatch.Value);
-                if (device.DeviceSubType == Device.DeviceSubType.V_AS_MIXPROOF ||
-                    device.DeviceSubType == Device.DeviceSubType.V_AS_DO1_DI2)
-                {
-                    checkingList.Add(true);
-                }
-                else
-                {
-                    checkingList.Add(false);
-                }
-            }
-
-            checkingList = checkingList.Distinct().ToList();
-
-            if (checkingList.Count == 2)
-            {
-                isASInterface = null;
-                errorMessage += "Проверьте все AS-i модули. В привязке " +
-                    "присутствуют не AS-i подтипы.\n ";
-            }
-            else if (checkingList.Count == 1)
-            {
-                if (checkingList[0] == true)
-                {
-                    isASInterface = true;
-                }
-                else
-                {
-                    isASInterface = false;
-                }
-            }
-
-            return isASInterface;
-        }
-
-        /// <summary>
-        /// Проверяет наличие параметра R_AS_NUMBER в AS-i устройстве.
-        /// </summary>
-        /// <param name="devices"></param>
-        /// <returns></returns>
-        private bool CheckASNumbers(string devices)
-        {
-            MatchCollection deviceMatches = Regex.Matches(devices,
-                DeviceNamePattern);
-
-            string errorMessageBuffer = string.Empty;
-            foreach (Match deviceMatch in deviceMatches)
-            {
-                Device.IODevice device = Device.DeviceManager.GetInstance().
-                    GetDevice(deviceMatch.Value);
-                string parameter = device.GetRuntimeParameter("R_AS_NUMBER");
-                if (parameter == null)
-                {
-                    errorMessageBuffer += $"В устройстве {device.EPlanName} " +
-                        $"отсутствует R_AS_NUMBER.\n ";
-                }
-                else
-                {
-                    int ASNumber;
-                    bool isNumber = int.TryParse(parameter, out ASNumber);
-                    if (isNumber == false)
-                    {
-                        errorMessageBuffer += $"В устройстве " +
-                            $"{device.EPlanName} некорректно задан параметр " +
-                            $"R_AS_NUMBER.\n ";
-                    }
-                    if (isNumber == true && ASNumber < 1 && ASNumber > 62)
-                    {
-                        errorMessageBuffer += $"В устройстве " +
-                            $"{device.EPlanName} некорректно задан диапазон " +
-                            $"R_AS_NUMBER (от 1 до 62).\n ";
-                    }
-                }
-            }
-
-            bool validParameters;
-            if (errorMessageBuffer != string.Empty)
-            {
-                validParameters = false;
-                errorMessage += errorMessageBuffer;
-            }
-            else
-            {
-                validParameters = true;
-            }
-
-            return validParameters;
-        }
-
-        /// <summary>
         /// Функция, проверяющая необходимость удаления комментариев в 
         /// функциональном тексте.
         /// </summary>
@@ -2385,7 +2314,6 @@ namespace EasyEPlanner
                         return false;
                     }
                 }
-
                 return true;
             }
             else
@@ -2562,12 +2490,25 @@ namespace EasyEPlanner
                     int difference = number - lastASNumber;
                     if (difference > 1)
                     {
-                        sortedDevices += string.Join(NewLine, difference) 
-                            + device.EPlanName;
+                        string NewLines = string.Empty;
+                        for (int i = 0; i < difference; i++)
+                        {
+                            NewLines += NewLine;
+                        }
+
+                        sortedDevices += NewLines + device.EPlanName;
                     }
                     else
                     {
-                        sortedDevices += NewLine + device.EPlanName;
+                        if (lastASNumber == 0 && number == 1)
+                        {
+                            sortedDevices += device.EPlanName;
+                        }
+                        else
+                        {
+                            sortedDevices += NewLine + device.EPlanName;
+
+                        }
                     }
                 }
 
