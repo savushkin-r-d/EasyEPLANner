@@ -2039,6 +2039,8 @@ namespace EasyEPlanner
         private void SynchronizeAsOldProject(Dictionary<string, string>
             deviceConnections, Function[] functions)
         {
+            synchronizedDevices.Clear();
+
             foreach (string key in deviceConnections.Keys)
             {
                 string visibleName = key.Substring(0, key.
@@ -2091,6 +2093,8 @@ namespace EasyEPlanner
                 SynchronizeIOModule(synchronizedModule, clamp, devices, 
                     isASInterface);
             }
+
+            ClearNotExistingBinding();
         }
 
         /// <summary>
@@ -2120,6 +2124,7 @@ namespace EasyEPlanner
             if (clampFunction != null)
             {
                 clampFunction.Properties.FUNC_TEXT = functionalText;
+                AddSynchronizedDevice(synchronizedModule, clamp);
                 // Если AS-интерфейс, в доп поле [20] записать нумерацию
                 if (isASInterface == true)
                 {
@@ -2137,6 +2142,8 @@ namespace EasyEPlanner
         private void SynchronizeAsNewProject(Dictionary<string, string>
             deviceConnections, Function[] functions)
         {
+            synchronizedDevices.Clear();
+
             foreach (string moduleString in deviceConnections.Keys)
             {
                 string visibleName = moduleString.Substring(
@@ -2215,6 +2222,8 @@ namespace EasyEPlanner
                         IOModuleDevices);
                 }
             }
+
+            ClearNotExistingBinding();
         }
 
         /// <summary>
@@ -2545,6 +2554,53 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Функция очищающая привязку с модулей ввода/вывода и других
+        /// устройств, если устройства нет на ФСА, а привязка есть
+        /// </summary>
+        private void ClearNotExistingBinding()
+        {
+            foreach (Function device in synchronizedDevices.Keys)
+            {
+                string[] clamps = synchronizedDevices[device].Split(WhiteSpace);
+                Function[] terminals = device.SubFunctions.
+                    Where(x => x.IsPlaced == true &&
+                    x.Properties.FUNC_TEXT.ToString(ISOCode.Language.L___) != "Резерв" &&
+                    clamps.Contains(x.Properties.FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToInt().ToString()) == false &&
+                    x.Category == Function.Enums.Category.PLCTerminal).ToArray();
+
+                if (terminals != null)
+                {
+                    foreach (Function deviceTerminals in terminals)
+                    {
+                        deviceTerminals.Properties.FUNC_TEXT = string.Empty;
+                    }
+                }
+                else 
+                {
+                    continue;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Добавляет в словарь синхронизированных устройств новое устройство
+        /// </summary>
+        /// <param name="synchronizedDevice">Функция устройства</param>
+        /// <param name="clamp">Номер клеммы</param>
+        private void AddSynchronizedDevice(Function synchronizedDevice, int clamp)
+        {
+            if (synchronizedDevices.ContainsKey(synchronizedDevice))
+            {
+                synchronizedDevices[synchronizedDevice] += 
+                    $"{WhiteSpace}{clamp}";
+            }
+            else
+            {
+                synchronizedDevices[synchronizedDevice] = clamp.ToString();
+            }
+        }
+
+        /// <summary>
         /// Синхронизация привязки устройств привязанных к модулю.
         /// Реализовано сразу два типа синхронизации
         /// </summary>
@@ -2609,6 +2665,7 @@ namespace EasyEPlanner
             if (clampFunction != null)
             {
                 clampFunction.Properties.FUNC_TEXT = functionalText;
+                AddSynchronizedDevice(objectFunction, clamp);
             }
         }
 
@@ -2645,5 +2702,9 @@ namespace EasyEPlanner
         static ModulesBindingUpdate modulesBindingUpdate = 
             new ModulesBindingUpdate(); // Static экземпляр класса для доступа.
         string errorMessage; // Сообщение об ошибках во время работы.
+        
+        // Синхронизированные устройства, Функция - список клемм.
+        Dictionary<Function, string> synchronizedDevices = 
+            new Dictionary<Function, string>(); 
     }
 }
