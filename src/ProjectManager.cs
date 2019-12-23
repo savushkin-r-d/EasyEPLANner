@@ -321,7 +321,11 @@ namespace EasyEPlanner
             string errors = string.Empty;
             try
             {
+                log.Clear();
+                log.ShowLog();
+                log.AddMessage("Выполняется синхронизация..");
                 errors = EplanIOManager.GetInstance().UpdateModulesBinding();
+                log.Clear();
             }
             catch (System.Exception ex)
             {
@@ -331,8 +335,6 @@ namespace EasyEPlanner
             {
                 if (errors != string.Empty)
                 {
-                    log.Clear();
-                    log.ShowLog();
                     log.AddMessage(errors);
                 }
 
