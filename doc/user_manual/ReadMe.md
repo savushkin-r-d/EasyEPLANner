@@ -816,9 +816,19 @@ PT_IOLINK | **IO-Link** датчик давления
 
 Ниже на рисунках показано, как должно быть настроено.
 
-// TODO: insert images
+<p align="center"><img src="images/EplanFunctionalTextASI.png"></p>
 
 <p align="center"><b>Рисунок</b> - <i>Настройка отображения функционального текста</i></p>
+
+<p align="center"><img src="images/EplanUserFieldASI.png"></p>
+
+<p align="center"><b>Рисунок</b> - <i>Настройка отображения Доп. поле [20]</i></p>
+
+<p align="center"><img src="images/EplanFunctionalTextResultASI.png"></p>
+
+<p align="center"><b>Рисунок</b> - <i>Результат настройки</i></p>
+
+То есть, отображение должно быть настроено так, что бы напротив цифры 1 из Доп. поле [20] было первое значение привязки, а функция синхронизации сама расположит модули в нужном порядке.
 
 #### 8.2 Экспорт XML для EasyServer ####
 
