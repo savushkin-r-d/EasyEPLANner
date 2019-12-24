@@ -2541,24 +2541,38 @@ namespace EasyEPlanner
                 string[] clamps = synchronizedDevices[device].
                     Split(WhiteSpace);
 
-                Function[] terminals = device.SubFunctions.
+                List<Function> terminals = device.SubFunctions.
                     Where(x => x.IsPlaced == true &&
-                    x.Properties.FUNC_TEXT.ToString(
-                        ISOCode.Language.L___) != NotDeletableFunctionalText &&
                     clamps.Contains(x.Properties.
                     FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToInt().
                     ToString()) == false &&
-                    x.Category == Function.Enums.Category.PLCTerminal).
-                    ToArray();
+                    x.Category == Function.Enums.Category.PLCTerminal).ToList();
 
-                if (terminals != null)
+                if (terminals != null && terminals.Count > 0)
                 {
-                    foreach (Function deviceTerminals in terminals)
+                    List<Function> sortedTerminals = new List<Function>();
+                    foreach (Function terminal in terminals)
                     {
-                        deviceTerminals.Properties.FUNC_TEXT = string.Empty;
+                        string functionalTextRuru = terminal.Properties.FUNC_TEXT.
+                            ToString(ISOCode.Language.L_ru_RU);
+                        if (functionalTextRuru == string.Empty)
+                        {
+                            functionalTextRuru = terminal.Properties.FUNC_TEXT.
+                                ToString(ISOCode.Language.L___);
+                        }
+
+                        if (functionalTextRuru != NotDeletableFunctionalText)
+                        {
+                            sortedTerminals.Add(terminal);
+                        }
+                    }
+
+                    foreach (Function terminal in sortedTerminals)
+                    {
+                        terminal.Properties.FUNC_TEXT = string.Empty;
                     }
                 }
-                else 
+                else
                 {
                     continue;
                 }
