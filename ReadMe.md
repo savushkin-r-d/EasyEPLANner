@@ -13,7 +13,7 @@
 2. [WAGO - PFC200](https://github.com/WAGO).
 
 ### Пользовательская документация
-По [этой](https://github.com/savushkin-r-d/EasyEPLANner/tree/master/doc/user_manual) ссылке вы можете найти последнюю версию пользовательской документации к проекту.
+По [этой](https://github.com/savushkin-r-d/EasyEPLANner/tree/master/docs/user_manual) ссылке вы можете найти последнюю версию пользовательской документации к проекту.
 
 ### Содействие (Contributing)
 Если вы хотите посодействовать в разработке нашего проекта, то перед началом ознакомьтесь с тем, [как лучше всего это сделать](https://github.com/savushkin-r-d/EasyEPLANner/blob/master/docs/contributing.md).
