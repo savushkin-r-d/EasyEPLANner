@@ -312,6 +312,40 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Вызов синхронизации названий устройств и модулей.
+        /// устройств и модулей
+        /// </summary>
+        public void UpdateModulesBinding()
+        {
+            var errors = string.Empty;
+            try
+            {
+                log.Clear();
+                log.ShowLog();
+                log.AddMessage("Выполняется синхронизация..");
+                errors = EplanIOManager.GetInstance().UpdateModulesBinding();
+                log.Clear();
+            }
+            catch (System.Exception ex)
+            {
+                log.AddMessage("Exception - " + ex);
+            }
+            finally
+            {
+                if (errors != string.Empty)
+                {
+                    log.AddMessage(errors);
+                }
+
+                if (log != null)
+                {
+                    log.AddMessage("Синхронизация завершена. ");
+                    log.SetProgress(100);
+                    log.EnableOkButton();
+                }
+            }
+        }
 
         /// <summary>
         /// Экспорт из проекта базы каналов.

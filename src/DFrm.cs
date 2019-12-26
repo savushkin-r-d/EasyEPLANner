@@ -1090,12 +1090,12 @@ namespace EasyEPlanner
                             int crPos = oldDevStr.IndexOf('\r');
                             if (crPos < 0)
                             {
-                                newDevStr = oldDevStr + ' ' + dev.EPlanName;
+                                newDevStr = oldDevStr + "\r\n" + dev.EPlanName;
                             }
                             else
                             {
                                 newDevStr = oldDevStr.Insert(crPos,
-                                    ' ' + dev.EPlanName);
+                                    "\r\n" + dev.EPlanName);
                             }
                         }
                     }
