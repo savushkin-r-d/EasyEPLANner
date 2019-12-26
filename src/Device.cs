@@ -3714,15 +3714,14 @@ namespace Device
             bool? isASInterface = false;
             errors = string.Empty;
             const int MinimalDevicesCount = 2;
-            MatchCollection deviceMatches = Regex.Matches(devices,
-                DeviceNamePattern);
+            var deviceMatches = Regex.Matches(devices, DeviceNamePattern);
 
             if (deviceMatches.Count < MinimalDevicesCount)
             {
                 return isASInterface;
             }
 
-            List<bool> checkingList = new List<bool>();
+            var checkingList = new List<bool>();
             foreach (Match deviceMatch in deviceMatches)
             {
                 IODevice device = DeviceManager.GetInstance().
@@ -3768,11 +3767,10 @@ namespace Device
         /// <returns></returns>
         public bool CheckASNumbers(string devices, out string errors)
         {
-            MatchCollection deviceMatches = Regex.Matches(devices,
-                DeviceNamePattern);
+            var deviceMatches = Regex.Matches(devices, DeviceNamePattern);
 
             errors = string.Empty;
-            string errorsBuffer = string.Empty;
+            var errorsBuffer = string.Empty;
             foreach (Match deviceMatch in deviceMatches)
             {
                 IODevice device = DeviceManager.GetInstance().
@@ -3785,7 +3783,7 @@ namespace Device
                 }
                 else
                 {
-                    int ASNumber;
+                    var ASNumber = new int();
                     bool isNumber = int.TryParse(parameter, out ASNumber);
                     if (isNumber == false)
                     {
@@ -3802,7 +3800,7 @@ namespace Device
                 }
             }
 
-            bool isValid = false;
+            var isValid = false;
             if (errorsBuffer != string.Empty)
             {
                 isValid = false;

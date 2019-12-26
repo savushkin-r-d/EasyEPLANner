@@ -318,7 +318,7 @@ namespace EasyEPlanner
         /// </summary>
         public void UpdateModulesBinding()
         {
-            string errors = string.Empty;
+            var errors = string.Empty;
             try
             {
                 log.Clear();

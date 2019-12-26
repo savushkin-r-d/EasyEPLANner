@@ -188,7 +188,8 @@ namespace EasyEPlanner
         {
             try
             {
-                Project currentProject = EProjectManager.GetInstance().GetCurrentPrj();
+                Project currentProject = EProjectManager.GetInstance().
+                    GetCurrentPrj();
                 if (currentProject == null)
                 {
                     MessageBox.Show("Нет открытого проекта!", "EPlaner",
@@ -1884,12 +1885,12 @@ namespace EasyEPlanner
             EplanDeviceManager.GetInstance().ReadConfigurationFromIOModules();
             EplanDeviceManager.GetInstance().CheckConfiguration();
 
-            SelectionSet selection = new SelectionSet();
+            var selection = new SelectionSet();
             Project project = selection.GetCurrentProject(true);
-            DMObjectsFinder objectFinder = new DMObjectsFinder(project);
+            var objectFinder = new DMObjectsFinder(project);
 
-            FunctionsFilter functionsFilter = new FunctionsFilter();
-            FunctionPropertyList properties = new FunctionPropertyList();
+            var functionsFilter = new FunctionsFilter();
+            var properties = new FunctionPropertyList();
             properties.FUNC_MAINFUNCTION = true;
             functionsFilter.SetFilteredPropertyList(properties);
             functionsFilter.Category = Function.Enums.Category.PLCBox;
@@ -1900,8 +1901,8 @@ namespace EasyEPlanner
 
             Dictionary<string, string> deviceConnections =
                 CollectIOModulesData(devicesFunctions);
-            bool containsNewValveTerminal = GetProjectVersionFromDevices
-                (deviceConnections);
+            bool containsNewValveTerminal = GetProjectVersionFromDevices(
+                deviceConnections);
 
             synchronizedDevices.Clear();
 
@@ -1928,8 +1929,7 @@ namespace EasyEPlanner
         private Dictionary<string, string> CollectIOModulesData
             (Function[] devicesFunctions)
         {
-            Dictionary<string, string> deviceConnections = new
-                Dictionary<string, string>();
+            var deviceConnections = new Dictionary<string, string>();
 
             foreach (Device.IODevice device in Device.DeviceManager.
                 GetInstance().Devices)
@@ -1964,11 +1964,12 @@ namespace EasyEPlanner
             const string ASInterfaceModule = "655";
 
             string deviceVisibleName = IOModulePrefix + channel.fullModule;
-            Function deviceFunction = deviceFunctions.
+            var deviceFunction = deviceFunctions.
                 FirstOrDefault(x => x.VisibleName.Contains(deviceVisibleName));
             if (deviceFunction != null)
             {
-                deviceVisibleName += ChannelPostfix + channel.GetKlemme.ToString();
+                deviceVisibleName += ChannelPostfix + channel.GetKlemme.
+                    ToString();
                 string functionalText = device.EPlanName;
                 // Для модулей ASi не нужно добавлять комментарии 
                 // к имени устройств.
@@ -1982,7 +1983,7 @@ namespace EasyEPlanner
                         // которую при обновлении функционального текста 
                         // преобразуем обратно.
                         string replacedDeviceDescription = device.Description.
-                            Replace(PlusSymbol.ToString(), 
+                            Replace(PlusSymbol.ToString(),
                             SymbolForPlusReplacing);
                         functionalText += NewLine + replacedDeviceDescription +
                             NewLine + channel.komment;
@@ -2019,7 +2020,7 @@ namespace EasyEPlanner
         private bool GetProjectVersionFromDevices(Dictionary<string, string>
             deviceConnections)
         {
-            bool isProjectWithValveTerminal = default;
+            var isProjectWithValveTerminal = new bool();
 
             if (deviceConnections.Values.
                 Where(x => x.Contains(ValveTerminal)).Count() > 0)
@@ -2049,7 +2050,7 @@ namespace EasyEPlanner
             {
                 string deviceVisibleName = key.Substring(0, key.
                     IndexOf(ChannelPostfix));
-                Function synchronizingDevice = functions.FirstOrDefault(x => x.
+                var synchronizingDevice = functions.FirstOrDefault(x => x.
                 VisibleName.Contains(deviceVisibleName));
 
                 if (synchronizingDevice == null)
@@ -2060,7 +2061,7 @@ namespace EasyEPlanner
                 string clampNumberAsString = key.Remove(0, key.
                     IndexOf(ChannelPostfix) + ChannelPostfixSize);
                 string bindedDevices = deviceConnections[key];
-                string errors = string.Empty;
+                var errors = string.Empty;
                 bool? isASInterface = Device.DeviceManager.GetInstance().
                     IsASInterface(bindedDevices, out errors);
                 errorMessage += errors;
@@ -2095,8 +2096,8 @@ namespace EasyEPlanner
                     continue;
                 }
 
-                int clamp = Convert.ToInt32(clampNumberAsString);
-                SynchronizeIOModule(synchronizingDevice, clamp, bindedDevices, 
+                var clamp = Convert.ToInt32(clampNumberAsString);
+                SynchronizeIOModule(synchronizingDevice, clamp, bindedDevices,
                     isASInterface);
             }
         }
@@ -2116,10 +2117,10 @@ namespace EasyEPlanner
             functionalText = functionalText.
                 Replace(SymbolForPlusReplacing, PlusSymbol.ToString());
 
-            Function[] placedFunctions = synchronizingDevice.SubFunctions.
+            var placedFunctions = synchronizingDevice.SubFunctions.
                 Where(x => x.IsPlaced == true).ToArray();
 
-            Function clampFunction = placedFunctions.
+            var clampFunction = placedFunctions.
                         Where(x => x.Page.PageType ==
                         DocumentTypeManager.DocumentType.Circuit).
                         FirstOrDefault(x => x.Properties.
@@ -2134,7 +2135,7 @@ namespace EasyEPlanner
                 if (isASInterface == true)
                 {
                     clampFunction.Properties.
-                        FUNC_SUPPLEMENTARYFIELD[SequenceNumbersField] = 
+                        FUNC_SUPPLEMENTARYFIELD[SequenceNumbersField] =
                         ASINumbering;
                 }
             }
@@ -2154,8 +2155,9 @@ namespace EasyEPlanner
             {
                 string deviceVisibleName = key.Substring(
                     0, key.IndexOf(ChannelPostfix));
-                Function synchronizingDevice = functions.
-                    FirstOrDefault(x => x.VisibleName.Contains(deviceVisibleName));
+                var synchronizingDevice = functions.
+                    FirstOrDefault(x => x.VisibleName.
+                    Contains(deviceVisibleName));
 
                 if (synchronizingDevice == null)
                 {
@@ -2169,18 +2171,17 @@ namespace EasyEPlanner
                 // не отличается от старого проекта.
                 if (!deviceConnections[key].Contains(ValveTerminal))
                 {
-                    Dictionary<string, string> connections = 
-                        new Dictionary<string, string>();
+                    var connections = new Dictionary<string, string>();
                     connections[key] = deviceConnections[key];
-                    SynchronizeAsOldProject(connections, functions);                  
+                    SynchronizeAsOldProject(connections, functions);
                 }
                 else
                 {
-                    string bindedDevices = deviceConnections[key].
+                    var bindedDevices = deviceConnections[key].
                         Split(PlusSymbol).
                         FirstOrDefault(x => x.Contains(ValveTerminal)).
                         Insert(0, PlusSymbol.ToString());
-                    int clamp = Convert.ToInt32(clampNumberAsString);
+                    var clamp = Convert.ToInt32(clampNumberAsString);
                     // Синхронизация пневмоострова.
                     SynchronizeIOModule(synchronizingDevice, clamp,
                         bindedDevices);
@@ -2190,8 +2191,9 @@ namespace EasyEPlanner
                         GetValveTerminalDevices(deviceConnections[key]);
                     deviceVisibleName = GetValveTerminalFunctionName(
                         deviceConnections[key]);
-                    Function synchronizingIOModuleDevice = functions.
-                        FirstOrDefault(x => x.Name.Contains(deviceVisibleName));
+                    var synchronizingIOModuleDevice = functions.
+                        FirstOrDefault(x => x.Name.Contains(
+                            deviceVisibleName));
                     SynchronizeIOModuleDevices(synchronizingIOModuleDevice,
                         bindedIOModuleDevices);
                 }
@@ -2207,7 +2209,7 @@ namespace EasyEPlanner
         private string GetValveTerminalFunctionName(string bindedDevices)
         {
             const string FunctionNamePattern = "(\\+[A-Z0-9_]+-[Y0-9]+)";
-            Match functionNameMatch = Regex.Match(bindedDevices,
+            var functionNameMatch = Regex.Match(bindedDevices,
                 FunctionNamePattern);
 
             if (functionNameMatch.Success)
@@ -2232,8 +2234,7 @@ namespace EasyEPlanner
             const string ClampNumberParameter = "R_VTUG_NUMBER";
 
             string[] devicesArray = functionalText.Split(PlusSymbol);
-            Dictionary<int, string> valveTerminalDevices =
-                new Dictionary<int, string>();
+            var valveTerminalDevices = new Dictionary<int, string>();
 
             foreach (string deviceString in devicesArray)
             {
@@ -2250,7 +2251,7 @@ namespace EasyEPlanner
                     GetInstance().GetDevice(deviceName);
                 string clampNumber = device.GetRuntimeParameter(
                     ClampNumberParameter);
-                int clamp = Convert.ToInt32(clampNumber);
+                var clamp = Convert.ToInt32(clampNumber);
 
                 if (valveTerminalDevices.ContainsKey(clamp))
                 {
@@ -2275,8 +2276,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         private bool NeedDeletingComments(string devices)
         {
-            MatchCollection deviceMatches = Regex.Matches(devices,
-                DeviceNamePattern);
+            var deviceMatches = Regex.Matches(devices, DeviceNamePattern);
 
             if (deviceMatches.Count > MinimalDevicesCountForCheck)
             {
@@ -2310,15 +2310,14 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string DeleteDevicesComments(string devices)
         {
-            MatchCollection devicesMatches = Regex.Matches(devices,
-                DeviceNamePattern);
+            var devicesMatches = Regex.Matches(devices, DeviceNamePattern);
 
             if (devicesMatches.Count <= MinimalDevicesCountForCheck)
             {
                 return devices;
             }
 
-            string devicesWithoutComments = string.Empty;
+            var devicesWithoutComments = string.Empty;
             foreach (Match match in devicesMatches)
             {
                 devicesWithoutComments += match.Value + WhiteSpace;
@@ -2335,10 +2334,10 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string DeleteRepeatedDevices(string devicesWithoutComments)
         {
-            List<string> devicesList = new List<string>();
+            var devicesList = new List<string>();
 
-            MatchCollection devicesMatches = Regex.Matches(
-                devicesWithoutComments, DeviceNamePattern);
+            var devicesMatches = Regex.Matches(devicesWithoutComments,
+                DeviceNamePattern);
             foreach (Match match in devicesMatches)
             {
                 devicesList.Add(match.Value);
@@ -2346,7 +2345,7 @@ namespace EasyEPlanner
 
             devicesList = devicesList.Distinct().ToList();
 
-            string devicesWithoutRepeating = string.Empty;
+            var devicesWithoutRepeating = string.Empty;
             foreach (string device in devicesList)
             {
                 devicesWithoutRepeating += device + WhiteSpace;
@@ -2362,8 +2361,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string SortDevices(string devices)
         {
-            MatchCollection devicesMatches = Regex.Matches(devices,
-                DeviceNamePattern);
+            var devicesMatches = Regex.Matches(devices, DeviceNamePattern);
 
             if (devicesMatches.Count <= MinimalDevicesCountForCheck)
             {
@@ -2372,7 +2370,7 @@ namespace EasyEPlanner
 
             // valveTerminal - для вставки VTUG в старых проектах первым.
             Device.Device valveTerminal = null;
-            List<Device.Device> devicesList = new List<Device.Device>();
+            var devicesList = new List<Device.Device>();
             foreach (Match match in devicesMatches)
             {
                 Device.Device device = Device.DeviceManager.GetInstance().
@@ -2394,7 +2392,7 @@ namespace EasyEPlanner
                 devicesList.Insert(0, valveTerminal);
             }
 
-            string sortedDevices = string.Empty;
+            var sortedDevices = string.Empty;
             foreach (Device.Device device in devicesList)
             {
                 if (device.Description.Contains(PlusSymbol))
@@ -2408,7 +2406,7 @@ namespace EasyEPlanner
                 }
                 else
                 {
-                    sortedDevices += device.EPlanName + NewLine + 
+                    sortedDevices += device.EPlanName + NewLine +
                         device.Description + NewLine;
                 }
             }
@@ -2423,15 +2421,14 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string SortASInterfaceDevices(string devices)
         {
-            MatchCollection devicesMatches = Regex.Matches(devices,
-                DeviceNamePattern);
+            var devicesMatches = Regex.Matches(devices, DeviceNamePattern);
 
             if (devicesMatches.Count <= MinimalDevicesCountForCheck)
             {
                 return devices;
             }
 
-            List<Device.IODevice> devicesList = new List<Device.IODevice>();
+            var devicesList = new List<Device.IODevice>();
             foreach (Match match in devicesMatches)
             {
                 Device.IODevice device = Device.DeviceManager.GetInstance().
@@ -2443,7 +2440,7 @@ namespace EasyEPlanner
 
             int lastASNumber = 0;
             string devicesWithoutASNumber = NewLine;
-            string sortedDevices = string.Empty;
+            var sortedDevices = string.Empty;
 
             foreach (Device.IODevice device in devicesList)
             {
@@ -2474,7 +2471,7 @@ namespace EasyEPlanner
                     int difference = number - lastASNumber;
                     if (difference > NormalDifference)
                     {
-                        string NewLines = string.Empty;
+                        var NewLines = string.Empty;
                         for (int i = 0; i < difference; i++)
                         {
                             NewLines += NewLine;
@@ -2484,7 +2481,7 @@ namespace EasyEPlanner
                     }
                     else
                     {
-                        if (lastASNumber == 0 && 
+                        if (lastASNumber == 0 &&
                             number == MinimalASNumber)
                         {
                             sortedDevices += device.EPlanName;
@@ -2541,20 +2538,21 @@ namespace EasyEPlanner
                 string[] clamps = synchronizedDevices[device].
                     Split(WhiteSpace);
 
-                List<Function> terminals = device.SubFunctions.
+                var terminals = device.SubFunctions.
                     Where(x => x.IsPlaced == true &&
                     clamps.Contains(x.Properties.
                     FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToInt().
                     ToString()) == false &&
-                    x.Category == Function.Enums.Category.PLCTerminal).ToList();
+                    x.Category == Function.Enums.Category.PLCTerminal).
+                    ToList();
 
                 if (terminals != null && terminals.Count > 0)
                 {
-                    List<Function> sortedTerminals = new List<Function>();
+                    var sortedTerminals = new List<Function>();
                     foreach (Function terminal in terminals)
                     {
-                        string functionalTextRuru = terminal.Properties.FUNC_TEXT.
-                            ToString(ISOCode.Language.L_ru_RU);
+                        string functionalTextRuru = terminal.Properties.
+                            FUNC_TEXT.ToString(ISOCode.Language.L_ru_RU);
                         if (functionalTextRuru == string.Empty)
                         {
                             functionalTextRuru = terminal.Properties.FUNC_TEXT.
@@ -2584,12 +2582,12 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="synchronizedDevice">Функция устройства</param>
         /// <param name="clamp">Номер клеммы</param>
-        private void AddSynchronizedDevice(Function synchronizedDevice, 
+        private void AddSynchronizedDevice(Function synchronizedDevice,
             int clamp)
         {
             if (synchronizedDevices.ContainsKey(synchronizedDevice))
             {
-                synchronizedDevices[synchronizedDevice] += 
+                synchronizedDevices[synchronizedDevice] +=
                     $"{WhiteSpace}{clamp}";
             }
             else
@@ -2650,10 +2648,10 @@ namespace EasyEPlanner
         {
             const string ClampFunctionDefenitionName = "Дискретный выход";
 
-            Function[] placedFunctions = synchronizingModule.SubFunctions.
+            var placedFunctions = synchronizingModule.SubFunctions.
                 Where(x => x.IsPlaced == true).ToArray();
 
-            Function clampFunction = placedFunctions.
+            var clampFunction = placedFunctions.
                 Where(x => x.Page.PageType == documentType &&
                 x.FunctionDefinition.Name.GetString(ISOCode.Language.L_ru_RU).
                 Contains(ClampFunctionDefenitionName)).
@@ -2698,14 +2696,14 @@ namespace EasyEPlanner
             "24\r\n25\r\n26\r\n27\r\n28\r\n29\r\n30\r\n31\r\n32\r\n33\r\n" +
             "34\r\n35\r\n36\r\n37\r\n38\r\n39\r\n40\r\n41\r\n42\r\n43\r\n" +
             "44\r\n45\r\n46\r\n47\r\n48\r\n49\r\n50\r\n51\r\n52\r\n53\r\n" +
-            "54\r\n55\r\n56\r\n57\r\n58\r\n59\r\n60\r\n61\r\n62\r\n"; 
+            "54\r\n55\r\n56\r\n57\r\n58\r\n59\r\n60\r\n61\r\n62\r\n";
 
-        static ModulesBindingUpdate modulesBindingUpdate = 
+        static ModulesBindingUpdate modulesBindingUpdate =
             new ModulesBindingUpdate(); // Static экземпляр класса для доступа.
         string errorMessage; // Сообщение об ошибках во время работы.
-        
+
         // Синхронизированные устройства, Функция - список клемм.
-        Dictionary<Function, string> synchronizedDevices = 
-            new Dictionary<Function, string>(); 
+        Dictionary<Function, string> synchronizedDevices =
+            new Dictionary<Function, string>();
     }
 }
