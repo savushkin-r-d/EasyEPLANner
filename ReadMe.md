@@ -5,7 +5,7 @@
 
 ### EasyEplanner
 
-<img src="doc/user_manual/images/EasyEplannerPreview.png">
+<img src="docs/user_manual/images/EasyEplannerPreview.png">
 
 Надстройка EasyEPlanner разработана как Add-In к EPLAN, на данный момент используется версия EPLAN 2.8. Надстройка используется при разработке проектов в EPLAN и позволяет автоматизировать работу инженера по автоматизации, а так же инженера-программиста, который описывает проект на языке программирования LUA. С помощью EasyEPlanner описываются технологические объекты (Танк, Бойлер и др.), операции этих объектов, шаги операций, устанавливаются ограничения для операций, а так же множество других свойств технологического объекта. В конечном итоге, EasyEPlanner генерирует LUA файлы, которые загружаются в контроллер. В данный момент поддерживаются контроллеры следующих производителей:
 
@@ -16,7 +16,7 @@
 По [этой](https://github.com/savushkin-r-d/EasyEPLANner/tree/master/doc/user_manual) ссылке вы можете найти последнюю версию пользовательской документации к проекту.
 
 ### Содействие (Contributing)
-Если вы хотите посодействовать в разработке нашего проекта, то перед началом ознакомьтесь с тем, [как лучше всего это сделать](https://github.com/savushkin-r-d/EasyEPLANner/blob/master/doc/contributing.md).
+Если вы хотите посодействовать в разработке нашего проекта, то перед началом ознакомьтесь с тем, [как лучше всего это сделать](https://github.com/savushkin-r-d/EasyEPLANner/blob/master/docs/contributing.md).
 
 ### Обратная связь (Feedback)
 Если вы хотите связаться с нами, можно использовать несколько способов:
@@ -25,10 +25,10 @@
 * Канал в [Slack](https://slack.com/) - easyeplaner.slack.com
 
 ### Нормы поведения(Code of conduct)
-Мы [используем](https://github.com/savushkin-r-d/EasyEPLANner/blob/master/doc/CODE_OF_CONDUCT.md) стандартные нормы поведения (общения), которые предоставляет сервис GitHub
+Мы [используем](https://github.com/savushkin-r-d/EasyEPLANner/blob/master/docs/CODE_OF_CONDUCT.md) стандартные нормы поведения (общения), которые предоставляет сервис GitHub
 
 ### Правила кодирования (Code style)
-Для разработки используется язык программирования - C#, а так же Lua. У нас есть [собственный набор соглашений](https://github.com/savushkin-r-d/EasyEPLANner/blob/master/doc/codestyle.md), которых нужно придерживаться что бы код был удобным и читабельным.
+Для разработки используется язык программирования - C#, а так же Lua. У нас есть [собственный набор соглашений](https://github.com/savushkin-r-d/EasyEPLANner/blob/master/docs/codestyle.md), которых нужно придерживаться что бы код был удобным и читабельным.
 
 ### Лицензия
 Проект лицензирован под [MIT](LICENSE.txt) лицензией.
