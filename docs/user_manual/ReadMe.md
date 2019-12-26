@@ -393,7 +393,7 @@
 4. V_DO1_DI2: **DO** - _1_, **DI** - _2_;
 5. V_DO2_DI2, V_DO2_DI2_BISTABLE: **DO** - _2_; **DI** - _2_;
 6. V_MIXPROOF, V_BOTTOM_MIXPROOF: **DO** - _3_; **DI** - _2_;
-7. V_IOLINK_MIXPROOF, V_AS_MIXPROOF, V_AS_DO1_DI2: **AO** - _1_, **AI** - _1_;
+7. V_IOLINK_MIXPROOF, V_AS_MIXPROOF, V_AS_DO1_DI2, V_IOLINK_DO1_DI2: **AO** - _1_, **AI** - _1_;
 8. V_IOLINK_VTUG_DO1: **AO** - _1_;
 9. V_IOLINK_VTUG_DO1_FB_OFF, V_IOLINK_VTUG_DO1_FB_ON: **AO** - _1_, **DI** - _1_.
 
@@ -468,6 +468,7 @@ V_IOLINK_MIXPROOF | Клапан противосмешивающий с **IO-Li
 V_AS_MIXPROOF | Клапан противосмешивающий с **AS интерфейсом**.
 V_BOTTOM_MIXPROOF | Клапан донный. 
 V_AS_DO1_DI2 | Клапан с одним каналом управления и двумя обратными связями с **AS интерфейсом**.
+V_IOLINK_DO1_DI2 | Клапан с одним каналом управления и двумя обратными связями с **IO-Link**.
 V_DO2_DI2_BISTABLE | Клапан с двумя каналами управления и двумя обратными связями бистабильный.
 V_IOLINK_VTUG_DO1 | **IO-Link VTUG** клапан с одним каналом управления.
 V_IOLINK_VTUG_DO1_FB_OFF | **IO-Link VTUG** клапан с одним каналом управления и одной обратной связью (_выключенное состояние_).
