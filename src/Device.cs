@@ -74,6 +74,7 @@ namespace Device
         V_IOLINK_VTUG_DO1_FB_OFF, ///< IO-Link VTUG клапан с одним каналом управления и одной обратной связью (выключенное состояние).
         V_IOLINK_VTUG_DO1_FB_ON,  ///< IO-Link VTUG клапан с одним каналом управления и одной обратной связью (включенное состояние).
         V_IOLINK_MIXPROOF, ///< Клапан микспруф с IO-Link
+        V_IOLINK_DO1_DI2,  ///< Клапан с одним каналом управления и двумя обратными связями с IO-Link интерфейсом. 
 
         //LS
         LS_MIN = 1,     ///< Подключение по схеме минимум.
@@ -469,6 +470,8 @@ namespace Device
                             return "V_BOTTOM_MIXPROOF";
                         case DeviceSubType.V_AS_DO1_DI2:
                             return "V_AS_DO1_DI2";
+                        case DeviceSubType.V_IOLINK_DO1_DI2:
+                            return "V_IOLINK_DO1_DI2";
                         case DeviceSubType.V_DO2_DI2_BISTABLE:
                             return "V_DO2_DI2_BISTABLE";
                         case DeviceSubType.V_IOLINK_VTUG_DO1:
@@ -628,6 +631,7 @@ namespace Device
                         case DeviceSubType.V_AS_DO1_DI2:
                         case DeviceSubType.V_BOTTOM_MIXPROOF:                            
                         case DeviceSubType.V_IOLINK_MIXPROOF:
+                        case DeviceSubType.V_IOLINK_DO1_DI2:
                             return new List<string>(new string[] 
                             { 
                                 "ST", 
@@ -1753,6 +1757,17 @@ namespace Device
                     parameters.Add("P_FB", 1);
 
                     rtParameters.Add("R_AS_NUMBER", null);
+                    break;
+
+                case "V_IOLINK_DO1_DI2":
+                    AO.Add(new IOChannel("AO", -1, -1, -1, ""));
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+
+                    parameters.Add("P_ON_TIME", null);
+                    parameters.Add("P_FB", 1);
+                    
+                    IOLinkSizeIn = 32;
+                    IOLinkSizeOut = 8;
                     break;
 
                 case "V_IOLINK_VTUG_DO1":
