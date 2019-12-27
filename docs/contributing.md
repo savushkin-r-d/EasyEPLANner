@@ -45,4 +45,4 @@ PB (pull request) не обязательно должен представля�
 
 Помимо issue для связи с нами можно использовать:
 + [Google groups](https://groups.google.com/forum/#!forum/easyeplanner)
-+ Slack - easyeplaner.slack.com
++ Slack - easyeplanner.slack.com
