@@ -22,7 +22,7 @@
 Если вы хотите связаться с нами, можно использовать несколько способов:
 
 * [Google группа](https://groups.google.com/forum/#!forum/easyeplanner)
-* Канал в [Slack](https://slack.com/) - easyeplaner.slack.com
+* Канал в [Slack](https://slack.com/) - easyeplanner.slack.com
 
 ### Нормы поведения(Code of conduct)
 Мы [используем](https://github.com/savushkin-r-d/EasyEPLANner/blob/master/docs/CODE_OF_CONDUCT.md) стандартные нормы поведения (общения), которые предоставляет сервис GitHub
