@@ -4077,8 +4077,10 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public virtual string SaveAsLuaTable(string prefix)
         {
-
-            if (deviceIndex.Count == 0) return "";
+            if (deviceIndex.Count == 0) 
+            {
+                return "";
+            }
 
             string res = prefix;
             if (LuaName != "")
@@ -4086,18 +4088,27 @@ namespace TechObject
                 res += LuaName + " = ";
             }
 
-            res += "--" + name + "\n" +
-                 prefix + "\t{\n";
+            res += "--" + name + "\n" + prefix + "\t{\n";
 
             res += prefix + "\t";
-            Device.DeviceManager deviceManager = Device.DeviceManager.GetInstance();
+            Device.DeviceManager deviceManager = Device.DeviceManager.
+                GetInstance();
+            int devicesCounter = 0;
             foreach (int index in deviceIndex)
             {
                 if (deviceManager.GetDeviceByIndex(index).Name != "Заглушка")
                 {
-                    res += "'" + deviceManager.GetDeviceByIndex(index).Name + "', ";
+                    devicesCounter++;
+                    res += "'" + deviceManager.GetDeviceByIndex(index).Name + 
+                        "', ";
                 }
             }
+
+            if (devicesCounter == 0)
+            {
+                return "";
+            }
+
             res = res.Remove(res.Length - 2, 2);
             res += "\n";
 
