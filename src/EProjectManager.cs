@@ -180,6 +180,8 @@ namespace EasyEPlanner
             {
                 Editor.Editor.GetInstance().CloseEditor();
             }
+
+            DFrm.GetInstance().CloseEditor();
         }
 
         private Project currentProject = null;

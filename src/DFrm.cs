@@ -69,6 +69,20 @@ namespace EasyEPlanner
         private IntPtr wndHandle = IntPtr.Zero;
         private IntPtr panelPtr = IntPtr.Zero;
 
+        /// <summary>
+        /// Функция для обработки завершения работы окна устройств.
+        /// </summary>
+        public void CloseEditor()
+        {
+            PI.UnhookWindowsHookEx(dialogHookPtr);
+
+            PI.SetParent(devicesTreeViewAdv.Handle, this.Handle);
+            PI.SetParent(toolStrip.Handle, this.Handle);
+
+            System.Threading.Thread.Sleep(1);
+            deviceIsShown = false;
+        }
+
         private IntPtr DlgWndHookCallbackFunction(int code, IntPtr wParam, IntPtr lParam)
         {
             PI.CWPSTRUCT msg =

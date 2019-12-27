@@ -43,7 +43,10 @@
             // 
             // toolStrip
             // 
+            this.toolStrip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.toolStrip.AutoSize = false;
+            this.toolStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
             this.toolStripButton2,
@@ -141,10 +144,11 @@
             // 
             // devicesTreeViewAdv
             // 
+            this.devicesTreeViewAdv.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.devicesTreeViewAdv.BackColor = System.Drawing.SystemColors.Window;
             this.devicesTreeViewAdv.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.devicesTreeViewAdv.DefaultToolTipProvider = null;
-            this.devicesTreeViewAdv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.devicesTreeViewAdv.DragDropMarkColor = System.Drawing.Color.Black;
             this.devicesTreeViewAdv.FullRowSelect = true;
             this.devicesTreeViewAdv.FullRowSelectActiveColor = System.Drawing.Color.Empty;
