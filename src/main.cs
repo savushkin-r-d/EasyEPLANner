@@ -119,8 +119,9 @@ namespace EasyEPlanner
 
         public bool Execute(ActionCallingContext ctx)
         {
-            MessageBox.Show($"Версия надстройки - 1.0.0", "Версия надстройки",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show($"Версия надстройки - {GetVersion()}", 
+                "Версия надстройки", MessageBoxButtons.OK, 
+                MessageBoxIcon.Information);
             return true;
         }
 
@@ -134,6 +135,20 @@ namespace EasyEPlanner
 
         public void GetActionProperties(ref ActionProperties actionProperties)
         {
+        }
+
+        /// <summary>
+        /// Получить версию надстройки
+        /// </summary>
+        /// <returns></returns>
+        private string GetVersion()
+        {
+            int year = 2019;
+            int month = 12;
+            int day = 30;
+            int version = 1;
+            string fullVersion = $"{year}.{month}.{day}.{version}";
+            return fullVersion;
         }
     }
 
