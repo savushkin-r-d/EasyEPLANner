@@ -562,7 +562,11 @@ namespace Device
                     break;
 
                 case DeviceType.FS:
+                    return dt.ToString();
+
                 case DeviceType.GS:
+                    return dt.ToString();
+
                 case DeviceType.LT:
                     switch (dst)
                     {
@@ -578,11 +582,36 @@ namespace Device
                             return "LT_TRUNC";
                     }
                     break;
+
                 case DeviceType.HA:
+                    return dt.ToString();
+
                 case DeviceType.HL:
+                    return dt.ToString();
+
                 case DeviceType.SB:
+                    return dt.ToString();
+
                 case DeviceType.DI:
+                    switch (dst)
+                    {
+                        case DeviceSubType.DI:
+                            return "DI";
+                        case DeviceSubType.DI_VIRT:
+                            return "DI_VIRT";
+                    }
+                    break;
+
                 case DeviceType.DO:
+                    switch (dst)
+                    {
+                        case DeviceSubType.DO:
+                            return "DO";
+                        case DeviceSubType.DO_VIRT:
+                            return "DO_VIRT";
+                    }
+                    break;
+
                 case DeviceType.PT:
                     switch (dst)
                     {
@@ -593,12 +622,30 @@ namespace Device
                             return "PT_IOLINK";
                     }
                     break;
+
                 case DeviceType.AI:
+                    switch (dst)
+                    {
+                        case DeviceSubType.AI:
+                            return "AI";
+                        case DeviceSubType.AI_VIRT:
+                            return "AI_VIRT";
+                    }
+                    break;
+
                 case DeviceType.AO:
+                    switch (dst)
+                    {
+                        case DeviceSubType.AO:
+                            return "AO";
+                        case DeviceSubType.AO_VIRT:
+                            return "AO_VIRT";
+                    }
+                    break;
+
                 case DeviceType.WT:
                     return dt.ToString();
             }
-
             return "";
         }
 
