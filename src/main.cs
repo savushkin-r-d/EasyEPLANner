@@ -143,12 +143,9 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string GetVersion()
         {
-            int year = 2019;
-            int month = 12;
-            int day = 30;
-            int version = 1;
-            string fullVersion = $"{year}.{month}.{day}.{version}";
-            return fullVersion;
+            Version version = Assembly.GetExecutingAssembly().GetName().
+                Version;
+            return version.ToString();
         }
     }
 
