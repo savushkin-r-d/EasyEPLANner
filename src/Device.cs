@@ -1473,8 +1473,11 @@ namespace Device
                     case "AIAO":
                         return 4;
 
-                    default:
+                    case "DODI":
                         return 5;
+
+                    default:
+                        return 6;
                 }
             }
 

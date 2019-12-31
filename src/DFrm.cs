@@ -9,6 +9,7 @@ using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.Base;
+using Eplan.EplApi.HEServices;
 
 namespace EasyEPlanner
 {
@@ -978,89 +979,91 @@ namespace EasyEPlanner
         /// 
         private void treeView_DoubleClick(object sender, TreeNodeAdvMouseEventArgs e)
         {
-            TreeNodeAdv node = devicesTreeViewAdv.SelectedNodes.Last();
-            Node nd = node.Tag as Node;
-            if (nd == null)
+            DeviceBinder deviceBinder = new DeviceBinder(this);
+            deviceBinder.Bind();
+
+            TreeNodeAdv selectedTreeNode = devicesTreeViewAdv.SelectedNodes.Last();
+            Node node = selectedTreeNode.Tag as Node;
+            if (node == null)
             {
                 return;
             }
 
-            Device.IODevice.IOChannel ch = nd.Tag as Device.IODevice.IOChannel;
-            if (ch == null)
+            Device.IODevice.IOChannel channel = node.Tag as Device.IODevice.IOChannel;
+            if (channel == null)
             {
                 return;
             }
 
-            Device.IODevice dev = nd.Parent.Tag as Device.IODevice;
-            if (dev == null)
+            Device.IODevice device = node.Parent.Tag as Device.IODevice;
+            if (device == null)
             {
                 return;
             }
 
             //Получение текущего проекта.
-            Eplan.EplApi.HEServices.SelectionSet selection =
-                new Eplan.EplApi.HEServices.SelectionSet();
+            SelectionSet selection = new SelectionSet();
             selection.LockSelectionByDefault = false;
 
-            StorableObject obj = selection.GetSelectedObject(true);
+            StorableObject selectedObject = selection.GetSelectedObject(true);
 
-            if (!(obj is Function))
+            if (!(selectedObject is Function))
             {
                 return;
             }
 
-            Function f = obj as Function;
+            Function objectFunction = selectedObject as Function;
 
-            if (f.Category != Function.Enums.Category.PLCTerminal)
+            if (objectFunction.Category != Function.Enums.Category.PLCTerminal)
             {
                 return;
             }
 
-            String newDevStr = dev.EPlanName + "\r\n" + dev.Description +
-                "\r\n" + ch.komment;
+            String newDeviceFunctionalText = device.EPlanName + "\r\n" + device.Description +
+                "\r\n" + channel.komment;
 
-            string oldDevStr = f.Properties.FUNC_TEXT_AUTOMATIC.ToString(
+            string oldDeviceFunctionalText = objectFunction.Properties.FUNC_TEXT_AUTOMATIC.ToString(
                     ISOCode.Language.L___);
-            if (oldDevStr == "")
+            if (string.IsNullOrEmpty(oldDeviceFunctionalText))
             {
-                oldDevStr = f.Properties.FUNC_TEXT_AUTOMATIC.ToString(
+                oldDeviceFunctionalText = objectFunction.Properties.FUNC_TEXT_AUTOMATIC.ToString(
                     ISOCode.Language.L_ru_RU);
             }
-            if (oldDevStr == "")
+            if (string.IsNullOrEmpty(oldDeviceFunctionalText))
             {
-                oldDevStr = f.Properties.FUNC_TEXT.ToString(
+                oldDeviceFunctionalText = objectFunction.Properties.FUNC_TEXT.ToString(
                     ISOCode.Language.L_ru_RU);
             }
 
             string setDevsCh = "", resetDevsCh = "";
 
-            if (f.Properties.FUNC_TEXT.IsEmpty ||
-                f.Properties.FUNC_TEXT == "Резерв")
+            if (objectFunction.Properties.FUNC_TEXT.IsEmpty ||
+                objectFunction.Properties.FUNC_TEXT == "Резерв")
             {
                 //Если нет функционального текста, устанавливаем его.
                 if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
                 {
-                    //С Cntrl устанавливаем только название устройства.
-                    newDevStr = dev.EPlanName;
+                    //С Ctrl устанавливаем только название устройства.
+                    newDeviceFunctionalText = device.EPlanName;
                 }
 
-                setDevsCh = newDevStr;
+                setDevsCh = newDeviceFunctionalText;
             }
             else
             {
-                if (f.Properties.FUNC_TEXT == newDevStr) //Замена на "Резерв".
+                if (objectFunction.Properties.FUNC_TEXT == newDeviceFunctionalText) //Замена на "Резерв".
                 {
-                    resetDevsCh = newDevStr;
-                    newDevStr = "Резерв";
+                    resetDevsCh = newDeviceFunctionalText;
+                    newDeviceFunctionalText = "Резерв";
                 }
                 else
                 {
                     if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
                     {
-                        if (!(oldDevStr + "\n").Contains(ch.komment + "\n"))
+                        if (!(oldDeviceFunctionalText + "\n").Contains(channel.komment + "\n"))
                         {
                             MessageBox.Show(
-                                "Действие канала устройства (\"" + ch.komment +
+                                "Действие канала устройства (\"" + channel.komment +
                                 "\") отличается от действия уже привязанного канала модуля!",
                                 "EPlaner",
                                 MessageBoxButtons.OK,
@@ -1069,41 +1072,41 @@ namespace EasyEPlanner
                             return;
                         }
 
-                        if (oldDevStr.Contains(dev.EPlanName))
+                        if (oldDeviceFunctionalText.Contains(device.EPlanName))
                         {
-                            resetDevsCh = newDevStr;
-                            newDevStr = oldDevStr.Replace(dev.EPlanName, "").Trim();
+                            resetDevsCh = newDeviceFunctionalText;
+                            newDeviceFunctionalText = oldDeviceFunctionalText.Replace(device.EPlanName, "").Trim();
 
-                            if (newDevStr.Length > 0)
+                            if (newDeviceFunctionalText.Length > 0)
                             {
                                 //Если строка начинается не с символа "+",
                                 //заменяем ее на "Резерв".
-                                if (newDevStr[0] != '+')
+                                if (newDeviceFunctionalText[0] != '+')
                                 {
-                                    newDevStr = "Резерв";
+                                    newDeviceFunctionalText = "Резерв";
                                 }
                             }
                         }
                         else
                         {
-                            setDevsCh = newDevStr;
-                            int crPos = oldDevStr.IndexOf('\r');
-                            if (crPos < 0)
+                            setDevsCh = newDeviceFunctionalText;
+                            int cursorPosition = oldDeviceFunctionalText.IndexOf('\r');
+                            if (cursorPosition < 0)
                             {
-                                newDevStr = oldDevStr + "\r\n" + dev.EPlanName;
+                                newDeviceFunctionalText = oldDeviceFunctionalText + "\r\n" + device.EPlanName;
                             }
                             else
                             {
-                                newDevStr = oldDevStr.Insert(crPos,
-                                    "\r\n" + dev.EPlanName);
+                                newDeviceFunctionalText = oldDeviceFunctionalText.Insert(cursorPosition,
+                                    "\r\n" + device.EPlanName);
                             }
                         }
                     }
                     //Замена на новое устройство.
                     else
                     {
-                        resetDevsCh = oldDevStr;
-                        setDevsCh = newDevStr;
+                        resetDevsCh = oldDeviceFunctionalText;
+                        setDevsCh = newDeviceFunctionalText;
                     }
                 }
             }
@@ -1114,25 +1117,24 @@ namespace EasyEPlanner
                 //TODO. Вместо pF = f.ParentFunction использовать поиск 
                 // главной функции модуля по названию: "+BUT_MEL1-A205:7" ->
                 // "+BUT_MEL1-A205".
-                Function pF = f.ParentFunction;
+                Function parentFunction = objectFunction.ParentFunction;
 
                 string name = "";
 
-                if (pF != null && pF.Articles.Count() > 0 &&
-                    !pF.Articles[0].Properties[
+                if (parentFunction != null && parentFunction.Articles.Count() > 0 &&
+                    !parentFunction.Articles[0].Properties[
                     Eplan.EplApi.DataModel.Properties.Article.ARTICLE_TYPENR].IsEmpty)
                 {
-                    name = pF.Articles[0].Properties[
+                    name = parentFunction.Articles[0].Properties[
                         Eplan.EplApi.DataModel.Properties.Article.ARTICLE_TYPENR];
                 }
 
-                bool isStub;
                 IO.IOModuleInfo moduleInfo = new IO.IOModuleInfo();
-                moduleInfo = moduleInfo.GetIOModuleInfo(name, out isStub);
+                moduleInfo = moduleInfo.GetIOModuleInfo(name, out _);
 
                 //Очистка привязки предыдущего устройства.
                 Dictionary<String, String> res =
-                    EplanDeviceManager.GetAssigment(f, moduleInfo, resetDevsCh);
+                    EplanDeviceManager.GetAssigment(objectFunction, moduleInfo, resetDevsCh);
 
                 foreach (KeyValuePair<String, String> devInfo in res)
                 {
@@ -1143,17 +1145,17 @@ namespace EasyEPlanner
                 }
             }
 
-            f.Properties.FUNC_TEXT = newDevStr;
+            objectFunction.Properties.FUNC_TEXT = newDeviceFunctionalText;
 
             //Привязка канала устройства.
             if (setDevsCh != "")
             {
-                const string PATTERN = @"=*-A(?<n>\d+)";         //-A101
+                const string Pattern = @"=*-A(?<n>\d+)";         //-A101
                 System.Text.RegularExpressions.Regex regex =
-                    new System.Text.RegularExpressions.Regex(PATTERN);
+                    new System.Text.RegularExpressions.Regex(Pattern);
 
                 // Инициализация пустой функции устройства
-                Function pF = new Function();
+                Function parentFunction = new Function();
 
                 //Проверка устройства, к которому привязывается device
                 //1. Проверяем имя функции на содержание пневмоострова (Y).
@@ -1167,26 +1169,26 @@ namespace EasyEPlanner
                 //5. Присваивание значений, если нашли совпадение и выход из цикла.
 
                 bool IsPLCBox = false; // Был ли PLCBox
-                if (f.Name.Contains("Y") == true)                                   //1
+                if (objectFunction.Name.Contains("Y") == true)                                   //1
                 {
-                    string[] splitFuncName = f.Name.Split('+');                     //2
-                    splitFuncName = splitFuncName[1].Split(':');
-                    string valveTerminalname = splitFuncName[0];
+                    string[] splitFunctionName = objectFunction.Name.Split('+');                     //2
+                    splitFunctionName = splitFunctionName[1].Split(':');
+                    string valveTerminalname = splitFunctionName[0];
 
                     //Initialize the DMObjectsFinder with a project.
                     Project project = selection.GetCurrentProject(false);           //3
-                    DMObjectsFinder oFinder = new DMObjectsFinder(project);
-                    FunctionsFilter oFunctionsFilter = new FunctionsFilter();
+                    DMObjectsFinder objectFinder = new DMObjectsFinder(project);
+                    FunctionsFilter functionsFilter = new FunctionsFilter();
 
-                    FunctionPropertyList props = new FunctionPropertyList();
-                    props.FUNC_MAINFUNCTION = true;
+                    FunctionPropertyList properties = new FunctionPropertyList();
+                    properties.FUNC_MAINFUNCTION = true;
 
-                    oFunctionsFilter.SetFilteredPropertyList(props);
-                    oFunctionsFilter.Category = Function.Enums.Category.PLCBox;
+                    functionsFilter.SetFilteredPropertyList(properties);
+                    functionsFilter.Category = Function.Enums.Category.PLCBox;
 
-                    Function[] arrFuncs = oFinder.GetFunctions(oFunctionsFilter);
+                    Function[] Functions = objectFinder.GetFunctions(functionsFilter);
 
-                    foreach (Function function in arrFuncs)                         //4
+                    foreach (Function function in Functions)                         //4
                     {
                         Function[] subFunctions = function.SubFunctions;
                         if (subFunctions != null)
@@ -1197,8 +1199,8 @@ namespace EasyEPlanner
                                     FUNC_TEXT_AUTOMATIC.ToString(ISOCode.Language.L___);
                                 if (functionalText.Contains(valveTerminalname) == true)
                                 {
-                                    f = subFunction;                                //5
-                                    pF = f.ParentFunction;
+                                    objectFunction = subFunction;                                //5
+                                    parentFunction = objectFunction.ParentFunction;
                                     IsPLCBox = true;
                                     break;
                                 }
@@ -1212,10 +1214,10 @@ namespace EasyEPlanner
                     //TODO. Вместо pF = f.ParentFunction использовать поиск 
                     // главной функции модуля по названию: "+BUT_MEL1-A205:7" ->
                     // "+BUT_MEL1-A205".
-                    pF = f.ParentFunction;
+                    parentFunction = objectFunction.ParentFunction;
                 }
 
-                if (pF == null)
+                if (parentFunction == null)
                 {
                     MessageBox.Show(
                         "Данная клемма названа некорректно. Измените ее" +
@@ -1229,71 +1231,49 @@ namespace EasyEPlanner
                     return;
                 }
 
-                if (pF != null)
+                if (parentFunction != null)
                 {
                     System.Text.RegularExpressions.Match match =
-                        regex.Match(pF.VisibleName);
+                        regex.Match(parentFunction.VisibleName);
                     if (match.Success)
                     {
-                        string name = "";
-                        if (pF != null && pF.Articles.Count() > 0 &&
-                            !pF.Articles[0].Properties[
+                        string name = string.Empty;
+                        if (parentFunction != null && parentFunction.Articles.Count() > 0 &&
+                            !parentFunction.Articles[0].Properties[
                             Eplan.EplApi.DataModel.Properties.Article.ARTICLE_TYPENR].IsEmpty)
                         {
-                            name = pF.Articles[0].Properties[
+                            name = parentFunction.Articles[0].Properties[
                                 Eplan.EplApi.DataModel.Properties.Article.ARTICLE_TYPENR];
                         }
 
-                        int n = Convert.ToInt32(
+                        int deviceDesignationNumber = Convert.ToInt32(
                             match.Groups["n"].Value);
 
-                        int module_n = n % 100;
-                        int node_n;
-                        int klemme_n = f.Properties.FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToInt();
+                        int moduleNumber = deviceDesignationNumber % 100;
+                        int nodeNumber;
+                        int clampNumber = objectFunction.Properties.FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToInt();
 
                         // Есть ли PXC A1 в проекте
                         if (IO.IOManager.GetInstance().IONodes[0].Type ==
                             IO.IONode.TYPES.T_PHOENIX_CONTACT_MAIN)
                         {
                             // Если есть "A1", то учитываем, что он первый
-                            node_n = n / 100;
+                            nodeNumber = deviceDesignationNumber / 100;
                         }
                         else
                         {
                             // Если нету, оставляем как было
-                            node_n = n / 100 - 1;
+                            nodeNumber = deviceDesignationNumber / 100 - 1;
                         }
 
-                        bool isStub;
                         IO.IOModuleInfo moduleInfo = new IO.IOModuleInfo();
-                        moduleInfo = moduleInfo.GetIOModuleInfo(name, out isStub);
-                        int logicalPort = Array.IndexOf(moduleInfo.ChannelClamps, klemme_n) + 1;
-                        int moduleOffset = IO.IOManager.GetInstance().IONodes[node_n].IOModules[module_n - 1].InOffset;
+                        moduleInfo = moduleInfo.GetIOModuleInfo(name, out _);
+                        int logicalPort = Array.IndexOf(moduleInfo.ChannelClamps, clampNumber) + 1;
+                        int moduleOffset = IO.IOManager.GetInstance().IONodes[nodeNumber].IOModules[moduleNumber - 1].InOffset;
 
-                        ch.SetChannel(node_n, module_n, klemme_n, n, logicalPort, moduleOffset);
+                        channel.SetChannel(nodeNumber, moduleNumber, clampNumber, deviceDesignationNumber, logicalPort, moduleOffset);
                     }
                 }
-            }
-
-            if (noAssigmentBtn.Checked)
-            {
-                devicesTreeViewAdv.BeginUpdate();
-
-                List<TreeNodeAdv> treeNodes = devicesTreeViewAdv.AllNodes.ToList();
-                TreeNodeAdv treeNode = treeNodes[0];
-                RefreshOperationTree.Execute(treeNode);
-
-                treeNodes.Clear();
-                treeNodes = devicesTreeViewAdv.AllNodes.ToList();
-                treeNode = treeNodes[0];
-                OnHideOperationTree.Execute(treeNode);
-
-                devicesTreeViewAdv.EndUpdate();
-                devicesTreeViewAdv.Refresh();
-            }
-            else
-            {
-                devicesTreeViewAdv.Refresh();
             }
         }
 
@@ -1560,6 +1540,156 @@ namespace EasyEPlanner
         public void RefreshTree()
         {
             Refresh(Device.DeviceManager.GetInstance(), "");
+        }
+
+        /// <summary>
+        /// Класс, реализующий привязку канала устройства к модулю I/O
+        /// </summary>
+        public class DeviceBinder
+        {
+            /// <summary>
+            /// Конструктор, в который передается экземпляр формы для доступа
+            /// к объектам формы.
+            /// </summary>
+            /// <param name="devicesForm">Форма с объектами</param>
+            public DeviceBinder(DFrm devicesForm)
+            {
+                this.DevicesForm = devicesForm;
+            }
+
+            /// <summary>
+            /// Закрытый конструктор для безопасности использования
+            /// </summary>
+            private DeviceBinder() { }
+
+            /// <summary>
+            /// Функция привязки
+            /// </summary>
+            public void Bind()
+            {
+                try
+                {
+                    InitBaseData();
+
+                    RefreshTree();
+                }
+                catch
+                {
+                    return;
+                }
+            }
+
+            /// <summary>
+            /// Инициализация базовых данных необходимых для привязки
+            /// </summary>
+            private void InitBaseData()
+            {
+                SelectedNode = DevicesForm.devicesTreeViewAdv.SelectedNodes.Last();
+                NodeFromSelectedNode = SelectedNode.Tag as Node;
+                if (NodeFromSelectedNode == null)
+                {
+                    const string Message = "Некорректно выбран объект в списке";
+                    throw new Exception(Message);
+                }
+
+                Channel = NodeFromSelectedNode.Tag as Device.IODevice.IOChannel;
+                if (Channel == null)
+                {
+                    const string Message = "Канал не найден";
+                    throw new Exception(Message);
+                }
+
+                Device = NodeFromSelectedNode.Parent.Tag as Device.IODevice;
+                if (Device == null)
+                {
+                    const string Message = "Устройство не найдено";
+                    throw new Exception(Message);
+                }
+
+                SelectionSet selection = new SelectionSet();
+                selection.LockSelectionByDefault = false;
+
+                Project = selection.GetCurrentProject(false);
+
+                SelectedObject = selection.GetSelectedObject(true);
+                if (SelectedObject is Function == false)
+                {
+                    const string Message = "Отсутствует функция у выбранного объекта";
+                    throw new Exception(Message);
+                }
+
+                IOModuleFunction = SelectedObject as Function;
+                if (IOModuleFunction.Category != Function.Enums.Category.PLCTerminal)
+                {
+                    const string Message = "Выбранная функция не является устройством ввода-вывода";
+                    throw new Exception(Message);
+                }
+            }
+
+            /// <summary>
+            /// Обновление дерева устройств после привязки
+            /// </summary>
+            private void RefreshTree()
+            {
+                if (DevicesForm.noAssigmentBtn.Checked)
+                {
+                    DevicesForm.devicesTreeViewAdv.BeginUpdate();
+                    List<TreeNodeAdv> treeNodes = DevicesForm.
+                        devicesTreeViewAdv.AllNodes.ToList();
+                    TreeNodeAdv treeNode = treeNodes[0];
+                    RefreshOperationTree.Execute(treeNode);
+                    treeNodes.Clear();
+                    treeNodes = DevicesForm.devicesTreeViewAdv.
+                        AllNodes.ToList();
+                    treeNode = treeNodes[0];
+                    OnHideOperationTree.Execute(treeNode);
+                    DevicesForm.devicesTreeViewAdv.EndUpdate();                
+                    DevicesForm.devicesTreeViewAdv.Refresh();
+                }
+                else
+                {
+                    DevicesForm.devicesTreeViewAdv.Refresh();
+                }
+            }
+
+            #region Закрытые поля
+            /// <summary>
+            /// Выбранный узел на дереве
+            /// </summary>
+            private TreeNodeAdv SelectedNode { get; set; }
+
+            /// <summary>
+            /// Описание Tag выбранного узла на дереве
+            /// </summary>
+            /// 
+            private Node NodeFromSelectedNode { get; set; }
+            /// <summary>
+            /// Текущий проект
+            /// </summary>
+            private Project Project { get; set; }
+
+            /// <summary>
+            /// Привязываемое устройство
+            /// </summary>
+            private Device.IODevice Device { get; set; }
+
+            /// <summary>
+            /// Привязываемый канал
+            /// </summary>
+            private Device.IODevice.IOChannel Channel { get; set; }
+
+            /// <summary>
+            /// Выбранный объект на графической схеме
+            /// </summary>
+            private StorableObject SelectedObject { get; set; }
+
+            /// <summary>
+            /// Функция модуля ввода-вывода
+            /// </summary>
+            private Function IOModuleFunction { get; set; }
+
+            private DFrm DevicesForm { get; set; }
+            #endregion
         }
     }
 }
