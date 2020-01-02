@@ -1660,14 +1660,15 @@ namespace EasyEPlanner
                 {
                     try
                     {
-                        TreeNodeAdv selectedNode = DevicesForm.devicesTreeViewAdv.
-                            SelectedNodes.Last();
+                        TreeNodeAdv selectedNode = DevicesForm.
+                            devicesTreeViewAdv.SelectedNodes.Last();
 
                         return selectedNode;
                     }
                     catch
                     {
-                        const string Message = "Некорректно выбран узел в дереве";
+                        const string Message = "Некорректно выбран узел в " +
+                            "дереве";
                         throw new Exception(Message);
                     }
                 }
@@ -1680,6 +1681,7 @@ namespace EasyEPlanner
                 public Node GetNodeFromSelectedNode(TreeNodeAdv selectedNode)
                 {
                     Node nodeFromSelectedNode = selectedNode.Tag as Node;
+                    
                     if (nodeFromSelectedNode == null)
                     {
                         const string Message =
@@ -1693,12 +1695,15 @@ namespace EasyEPlanner
                 /// <summary>
                 /// Получить привязываемый канал
                 /// </summary>
-                /// <param name="nodeFromSelectedNode">Узел с информацией</param>
+                /// <param name="nodeFromSelectedNode">Узел с информацией
+                /// </param>
                 /// <returns>Канал</returns>
-                public Device.IODevice.IOChannel GetChannel(Node nodeFromSelectedNode)
+                public Device.IODevice.IOChannel GetChannel(
+                    Node nodeFromSelectedNode)
                 {
                     Device.IODevice.IOChannel channel = nodeFromSelectedNode.
                         Tag as Device.IODevice.IOChannel;
+                    
                     if (channel == null)
                     {
                         const string Message = "Канал не найден";
@@ -1711,11 +1716,14 @@ namespace EasyEPlanner
                 /// <summary>
                 /// Получить привязываемое устройство
                 /// </summary>
-                /// <param name="nodeFromSelectedNode">Узел с информацией</param>
+                /// <param name="nodeFromSelectedNode">Узел с информацией
+                /// </param>
                 /// <returns>Устройство</returns>
                 public Device.IODevice GetDevice(Node nodeFromSelectedNode)
                 {
-                    Device.IODevice device = nodeFromSelectedNode.Parent.Tag as Device.IODevice;
+                    Device.IODevice device = nodeFromSelectedNode.Parent.
+                        Tag as Device.IODevice;
+                    
                     if (device == null)
                     {
                         const string Message = "Устройство не найдено";
@@ -1728,26 +1736,28 @@ namespace EasyEPlanner
                 /// <summary>
                 /// Получить текущий проект
                 /// </summary>
-                /// <param name="selection">Перечень выбранных объектов из Eplan API</param>
                 /// <returns>Проект</returns>
                 public Project GetProject()
                 {
                     SelectionSet selection = GetSelectionSet();
                     const bool useDialog = false;
+                    
                     Project project = selection.GetCurrentProject(useDialog);
+                    
                     return project;
                 }
 
                 /// <summary>
                 /// Получить объект выбранный на графической схеме
                 /// </summary>
-                /// <param name="selection">Перечень выбранных объектов из Eplan API</param>
                 /// <returns>Выбранный на схеме объект</returns>
                 public StorableObject GetSelectedObject()
                 {
                     SelectionSet selection = GetSelectionSet();
                     const bool isFirstObject = true;
-                    StorableObject selectedObject = selection.GetSelectedObject(isFirstObject);
+                    StorableObject selectedObject = selection.
+                        GetSelectedObject(isFirstObject);
+                    
                     if (selectedObject is Function == false)
                     {
                         const string Message =
@@ -1772,11 +1782,14 @@ namespace EasyEPlanner
                 /// <summary>
                 /// Получить функцию выбранной клеммы
                 /// </summary>
-                /// <param name="selectedObject">Выбранный на схеме объект</param>
+                /// <param name="selectedObject">Выбранный на схеме объект
+                /// </param>
                 /// <returns>Функция клеммы модуля ввода-вывода</returns>
-                public Function GetSelectedClampFunction(StorableObject selectedObject)
+                public Function GetSelectedClampFunction(
+                    StorableObject selectedObject)
                 {
                     Function clampFunction = selectedObject as Function;
+                    
                     if (clampFunction.Category != Function.Enums.Category.
                         PLCTerminal)
                     {
@@ -1793,8 +1806,10 @@ namespace EasyEPlanner
                 /// Получить функцию модуля ввода-вывода.
                 /// Модуль, куда привязывается устройство.
                 /// </summary>
-                /// <param name="clampFunction">Функция клеммы модуля ввода-вывода</param>
-                public Function GetSelectedIOModuleFunction(Function clampFunction)
+                /// <param name="clampFunction">Функция клеммы модуля 
+                /// ввода-вывода</param>
+                public Function GetSelectedIOModuleFunction(
+                    Function clampFunction)
                 {
                     try
                     {
@@ -1805,7 +1820,8 @@ namespace EasyEPlanner
                         if (clampFunction.Name.Contains(ValveTerminalName))
                         {
                             isValveTerminalClampFunction =
-                                CheckAndGetIOModuleFunction(clampFunction, out IOModuleFunction);
+                                CheckAndGetIOModuleFunction(clampFunction, 
+                                out IOModuleFunction);
                         }
 
                         if (isValveTerminalClampFunction == false)
@@ -1816,8 +1832,8 @@ namespace EasyEPlanner
                         if (IOModuleFunction == null)
                         {
                             MessageBox.Show(
-                                "Данная клемма названа некорректно. Измените ее" +
-                                "название (пример корректного названия " +
+                                "Данная клемма названа некорректно. Измените" +
+                                " ее название (пример корректного названия " +
                                 "\"===DSS1+CAB4-A409\"), затем повторите " +
                                 "попытку привязки устройства.",
                                 "EPlaner",
@@ -1831,7 +1847,8 @@ namespace EasyEPlanner
                     }
                     catch
                     {
-                        const string Message = "Не найдена клемма пневмоострова";
+                        const string Message = "Не найдена клемма " +
+                            "пневмоострова";
                         throw new Exception(Message);
                     }
                 }
@@ -1840,26 +1857,33 @@ namespace EasyEPlanner
                 /// Проверка клеммы модуля ввода-вывода на принадлежность к 
                 /// пневмоострову и возврат параметра указывающего на это
                 /// </summary>
-                /// <param name="clampFunction">Функция клеммы модуля ввода-вывода</param>
-                /// <param name="IOModuleFunction">Возвращаемая функция модуля ввода-вывода</param>
-                /// <returns>Значение, является ли пневмоостровом функция модуля ввода-вывода или не является</returns>
-                private bool CheckAndGetIOModuleFunction(Function clampFunction,
-                    out Function IOModuleFunction)
+                /// <param name="clampFunction">Функция клеммы модуля 
+                /// ввода-вывода</param>
+                /// <param name="IOModuleFunction">Возвращаемая функция 
+                /// модуля ввода-вывода</param>
+                /// <returns>Значение, является ли пневмоостровом функция 
+                /// модуля ввода-вывода или не является</returns>
+                private bool CheckAndGetIOModuleFunction(
+                    Function clampFunction, out Function IOModuleFunction)
                 {
                     IOModuleFunction = null;
-                    const string valveTerminalPattern = @"([A-Z0-9]+\-[Y0-9]+)";
+                    const string valveTerminalPattern = 
+                        @"([A-Z0-9]+\-[Y0-9]+)";
                     string valveTerminalName = Regex.
                         Match(clampFunction.Name, valveTerminalPattern).Value;
 
                     if (string.IsNullOrEmpty(valveTerminalName))
                     {
-                        const string Message = "Ошибка поиска ОУ пневмоострова";
+                        const string Message = "Ошибка поиска ОУ " +
+                            "пневмоострова";
                         throw new Exception(Message);
                     }
 
-                    DMObjectsFinder objectFinder = new DMObjectsFinder(GetProject());
+                    DMObjectsFinder objectFinder = 
+                        new DMObjectsFinder(GetProject());
                     FunctionsFilter functionsFilter = new FunctionsFilter();
-                    FunctionPropertyList properties = new FunctionPropertyList();
+                    FunctionPropertyList properties = 
+                        new FunctionPropertyList();
                     properties.FUNC_MAINFUNCTION = true;
                     functionsFilter.SetFilteredPropertyList(properties);
                     functionsFilter.Category = Function.Enums.Category.PLCBox;
