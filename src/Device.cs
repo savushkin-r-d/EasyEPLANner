@@ -84,6 +84,8 @@ namespace Device
         LS_IOLINK_MIN,  ///< IO-Link уровень. Подключение по схеме минимум.
         LS_IOLINK_MAX,  ///< IO-Link уровень. Подключение по схеме максимум.
 
+        LS_VIRT,        ///< Виртуальный датчик уровня.
+
         //M,  
         M = 1,          ///< Мотор без управления частотой вращения.
         M_FREQ,         ///< Мотор с управлением частотой вращения.
@@ -137,6 +139,8 @@ namespace Device
         LT_TRUNC,       ///Текущий уровень для танка с усеченным цилиндром
 
         LT_IOLINK,      ///< IO-Link текущий уровень без дополнительных параметров.
+
+        LT_VIRT,        ///< Виртуальный текущий уровень.
 
         //Y
         Y = 1,          /// Обычный пневмоостров Festo
@@ -522,6 +526,8 @@ namespace Device
                             return "LS_IOLINK_MIN";
                         case DeviceSubType.LS_IOLINK_MAX:
                             return "LS_IOLINK_MAX";
+                        case DeviceSubType.LS_VIRT:
+                            return "LS_VIRT";
                     }
                     break;
 
@@ -580,6 +586,8 @@ namespace Device
                             return "LT_CYL";
                         case DeviceSubType.LT_TRUNC:
                             return "LT_TRUNC";
+                        case DeviceSubType.LT_VIRT:
+                            return "LT_VIRT";
                     }
                     break;
 
@@ -2358,8 +2366,6 @@ namespace Device
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.LT;
             ArticleName = articleName;
-
-            AI.Add(new IOChannel("AI", -1, -1, -1, ""));
         }
 
         public override string SetSubType(string subtype)
@@ -2370,16 +2376,22 @@ namespace Device
             switch (subtype)
             {
                 case "LT":
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+
                     parameters.Add("P_C0", null);
                     break;
 
                 case "LT_CYL":
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+
                     parameters.Add("P_C0", null);
                     parameters.Add("P_MAX_P", null);
                     parameters.Add("P_R", null);
                     break;
 
                 case "LT_CONE":
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+
                     parameters.Add("P_C0", null);
                     parameters.Add("P_MAX_P", null);
                     parameters.Add("P_R", null);
@@ -2387,6 +2399,8 @@ namespace Device
                     break;
 
                 case "LT_TRUNC":
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+
                     parameters.Add("P_C0", null);
                     parameters.Add("P_MAX_P", null);
                     parameters.Add("P_R", null);
@@ -2397,15 +2411,19 @@ namespace Device
                     IOLinkSizeIn = 1;
                     break;
 
+                case "LT_VIRT":
+                    dSubType = DeviceSubType.LT_VIRT;
+                    break;
+
                 case "":
                     errStr = string.Format("\"{0}\" - не задан тип" +
-                        " (LT, LT_CYL, LT_CONE, LT_TRUNC, LT_IOLINK).\n",
+                        " (LT, LT_CYL, LT_CONE, LT_TRUNC, LT_IOLINK, LT_VIRT).\n",
                         Name);
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (LT, LT_CYL, LT_CONE, LT_TRUNC, LT_IOLINK).\n",
+                        " (LT, LT_CYL, LT_CONE, LT_TRUNC, LT_IOLINK, LT_VIRT).\n",
                         Name);
                     break;
             }
@@ -2669,8 +2687,6 @@ namespace Device
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.LS;
             ArticleName = articleName;
-
-            parameters.Add("P_DT", null);
         }
 
         public override string SetSubType(string subtype)
@@ -2681,30 +2697,44 @@ namespace Device
             switch (subtype)
             {
                 case "LS_MIN":
+                    parameters.Add("P_DT", null);
+
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
                     break;
 
                 case "LS_MAX":
+                    parameters.Add("P_DT", null);
+
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
                     break;
 
                 case "LS_IOLINK_MIN":
+                    parameters.Add("P_DT", null);
+
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     IOLinkSizeIn = 1;
                     break;
 
                 case "LS_IOLINK_MAX":
+                    parameters.Add("P_DT", null);
+
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     IOLinkSizeIn = 1;
                     break;
 
+                case "LS_VIRT":
+                    dSubType = DeviceSubType.LS_VIRT;
+                    break;
+
                 case "":
-                    errStr = string.Format("\"{0}\" - не задан тип (LS_MIN, LS_MAX, LS_IOLINK_MIN, LS_IOLINK_MAX).\n",
+                    errStr = string.Format("\"{0}\" - не задан тип (LS_MIN, " +
+                        "LS_MAX, LS_IOLINK_MIN, LS_IOLINK_MAX, LS_VIRT).\n",
                         Name);
                     break;
 
                 default:
-                    errStr = string.Format("\"{0}\" - неверный тип (LS_MIN, LS_MAX, LS_IOLINK_MIN, LS_IOLINK_MAX).\n",
+                    errStr = string.Format("\"{0}\" - неверный тип (LS_MIN, " +
+                        "LS_MAX, LS_IOLINK_MIN, LS_IOLINK_MAX, LS_VIRT).\n",
                         Name);
                     break;
             }
