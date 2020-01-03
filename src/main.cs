@@ -767,15 +767,15 @@ namespace EasyEPlanner
                     }
 
                     // Номер узла/модуля
-                    int n = Convert.ToInt32(match.Groups["n"].Value);
+                    int physicalNumber = Convert.ToInt32(match.Groups["n"].Value);
 
                     // Проверка узлов
-                    if (n % 100 == 0 || n == 1)                                      //3
+                    if (physicalNumber % 100 == 0 || physicalNumber == 1)                                      //3
                     {
                         is_exist_any_node = true;
 
                         // Имя узла/модуля
-                        string name = $"A{n}";
+                        string name = $"A{physicalNumber}";
 
                         string IP = "";
                         if (!oF.Properties.FUNC_PLCGROUP_STARTADDRESS.IsEmpty)
@@ -835,18 +835,18 @@ namespace EasyEPlanner
                             if (isContainsA1 == true)
                             {
                                 // Если это PXC А1
-                                if (n == 1)
+                                if (physicalNumber == 1)
                                 {
                                     iOManager.AddNode(1, type, IP, name);
                                 }
                                 else
                                 {
-                                    iOManager.AddNode(n / 100 + 1, type, IP, name);
+                                    iOManager.AddNode(physicalNumber / 100 + 1, type, IP, name);
                                 }
                             }
                             else
                             {
-                                iOManager.AddNode(n / 100, type, IP, name);
+                                iOManager.AddNode(physicalNumber / 100, type, IP, name);
                             }
                         }
                         else
@@ -877,22 +877,22 @@ namespace EasyEPlanner
                         continue;
                     }
 
-                    int n = Convert.ToInt32(match_name.Groups["n"].Value);
+                    int physicalNumber = Convert.ToInt32(match_name.Groups["n"].Value);
 
-                    if (n % 100 != 0 && n != 1)                                 //4
+                    if (physicalNumber % 100 != 0 && physicalNumber != 1)                                 //4
                     {
-                        int module_n = n % 100;
+                        int module_n = physicalNumber % 100;
                         int node_n;
 
                         // Если есть "A1", то учитываем, что он первый
                         if (isContainsA1 == true)
                         {
-                            node_n = n / 100;
+                            node_n = physicalNumber / 100;
                         }
                         else
                         {
                             // А1 нету, оставляем как было
-                            node_n = n / 100 - 1;
+                            node_n = physicalNumber / 100 - 1;
                         }
 
                         string name = "";
@@ -962,7 +962,7 @@ namespace EasyEPlanner
                             iOManager[node_n].AO_count += moduleInfo.AO_count;
 
                             IO.IOModule new_module =
-                                new IO.IOModule(inOffset, outOffset, moduleInfo);
+                                new IO.IOModule(inOffset, outOffset, moduleInfo, physicalNumber);
 
                             iOManager[node_n].SetModule(new_module, module_n);
                         }
@@ -1038,11 +1038,11 @@ namespace EasyEPlanner
     /// </summary>
     class EplanDeviceManager : Device.IDeviceManager
     {
-        public static Dictionary<String, String> GetAssigment(
+        public static Dictionary<string, string> GetAssigment(
             Function oF2, IO.IOModuleInfo moduleInfo, string devsDescr = "")
         {
-            Dictionary<String, String> res =
-                new Dictionary<String, String>();
+            Dictionary<string, string> res =
+                new Dictionary<string, string>();
 
             int nn; // Номер клеммы
             string nnString = oF2.Properties.FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();

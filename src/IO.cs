@@ -618,15 +618,25 @@ namespace IO
         /// <param name="outAddressSpaceOffset">Смещение выходного адресного 
         /// пространства модуля.</param>
         /// <param name="info">Описание модуля.</param>
+        /// <param name="physicalNumber">Физический номер (ОУ) устройства
+        /// </param>
         public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
-            IOModuleInfo info)
+            IOModuleInfo info, int physicalNumber)
         {
             this.inAddressSpaceOffset = inAddressSpaceOffset;
             this.outAddressSpaceOffset = outAddressSpaceOffset;
             this.info = info;
+            this.physicalNumber = physicalNumber;
 
             devicesChannels = new List<Device.IODevice.IOChannel>[80];
             devices = new List<Device.IODevice>[80];
+        }
+
+        public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
+            IOModuleInfo info) : this(inAddressSpaceOffset, 
+                outAddressSpaceOffset, info, 0)
+        {
+            // Делегировано в конструктор с 4 параметрами.
         }
 
         public void AssignChannelToDevice(int chN, Device.IODevice dev,
@@ -857,6 +867,30 @@ namespace IO
             }
         }
 
+        /// <summary>
+        /// Номер устройства (ОУ) прим., 202.
+        /// </summary>
+        public int PhysicalNumber { get; set; }
+
+        /// <summary>
+        /// Является ли модуль IO-Link 
+        /// </summary>
+        /// <returns></returns>
+        public bool isIOLink()
+        {
+            bool isIOLink = false;
+
+            const int PhoenixContactIOLinkModuleNumber = 1027843;
+            const int WAGOIOLinkModuleNumber = 657;
+
+            if (Info.Number == PhoenixContactIOLinkModuleNumber ||
+                Info.Number == WAGOIOLinkModuleNumber)
+            {
+                isIOLink = true;
+            }
+
+            return isIOLink;
+        }
 
         /// Привязанные устройства.
         public List<Device.IODevice>[] devices;
@@ -870,6 +904,8 @@ namespace IO
         private int outAddressSpaceOffset;
 
         private IOModuleInfo info;
+
+        private int physicalNumber;
 
         ///Описание модуля.       
         #endregion
