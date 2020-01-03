@@ -870,7 +870,13 @@ namespace IO
         /// <summary>
         /// Номер устройства (ОУ) прим., 202.
         /// </summary>
-        public int PhysicalNumber { get; set; }
+        public int PhysicalNumber
+        {
+            get
+            {
+                return physicalNumber;
+            }
+        }
 
         /// <summary>
         /// Является ли модуль IO-Link 
