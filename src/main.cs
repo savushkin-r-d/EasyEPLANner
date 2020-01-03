@@ -69,6 +69,8 @@ namespace EasyEPlanner
             menuID = oMenu.AddMenuItem("Синхронизация названий устройств и модулей", "BindingSynchronization",
                 "Синхронизация названий устройств и модулей", menuID, 1, false, false);
 
+            menuID = oMenu.AddMenuItem("О дополнении", "AboutProgramm", "", menuID, 1, true, false);
+
             ProjectManager.GetInstance().Init(EplanIOManager.GetInstance(),
                 EplanDeviceManager.GetInstance(), Editor.Editor.GetInstance(),
                 TechObject.TechObjectManager.GetInstance(), new LogFrm());
@@ -107,6 +109,44 @@ namespace EasyEPlanner
 
         // Путь к надстройке
         public static string OriginalAssemblyPath;
+    }
+
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    public class AboutProgramm : IEplAction
+    {
+        ~AboutProgramm() { }
+
+        public bool Execute(ActionCallingContext ctx)
+        {
+            MessageBox.Show($"Версия надстройки - {GetVersion()}", 
+                "Версия надстройки", MessageBoxButtons.OK, 
+                MessageBoxIcon.Information);
+            return true;
+        }
+
+        public bool OnRegister(ref string Name, ref int Ordinal)
+        {
+            Name = "AboutProgramm";
+            Ordinal = 30;
+
+            return true;
+        }
+
+        public void GetActionProperties(ref ActionProperties actionProperties)
+        {
+        }
+
+        /// <summary>
+        /// Получить версию надстройки
+        /// </summary>
+        /// <returns></returns>
+        private string GetVersion()
+        {
+            Version version = Assembly.GetExecutingAssembly().GetName().
+                Version;
+            return version.ToString();
+        }
     }
 
     //-------------------------------------------------------------------------
