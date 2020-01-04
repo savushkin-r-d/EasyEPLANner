@@ -900,20 +900,20 @@ namespace Device
 
             List<IOChannel> resCh = IO.FindAll(delegate (IOChannel ch)
             {
-                return ch.komment == komment;
+                return ch.Comment == komment;
             });
             if (addressSpace == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI)
             {
                 resCh.AddRange(AI.FindAll(delegate (IOChannel ch)
                 {
-                    return ch.komment == komment;
+                    return ch.Comment == komment;
                 }));
             }
             if (addressSpace == IOModuleInfo.ADDRESS_SPACE_TYPE.DODI)
             {
                 resCh.AddRange(DI.FindAll(delegate (IOChannel ch)
                 {
-                    return ch.komment == komment;
+                    return ch.Comment == komment;
                 }));
             }
 
@@ -976,20 +976,20 @@ namespace Device
 
             List<IOChannel> resCh = IO.FindAll(delegate (IOChannel ch)
             {
-                return ch.komment == komment;
+                return ch.Comment == komment;
             });
             if (addressSpace == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI)
             {
                 resCh.AddRange(AI.FindAll(delegate (IOChannel ch)
                 {
-                    return ch.komment == komment;
+                    return ch.Comment == komment;
                 }));
             }
             if (addressSpace == IOModuleInfo.ADDRESS_SPACE_TYPE.DODI)
             {
                 resCh.AddRange(DI.FindAll(delegate (IOChannel ch)
                 {
-                    return ch.komment == komment;
+                    return ch.Comment == komment;
                 }));
             }
 
@@ -1001,7 +1001,7 @@ namespace Device
                     {
                         error = string.Format("\"{0}\" : канал {1}.\"{2}\" уже привязан к A{3}.{4} \"{5}\".",
                             name, addressSpace, komment,
-                            100 * (ch.node + 1) + ch.module, ch.physicalKlemme, ch.komment);
+                            100 * (ch.Node + 1) + ch.Module, ch.PhysicalClamp, ch.Comment);
                         return false;
                     }
 
@@ -1059,7 +1059,7 @@ namespace Device
                 if (ch.IsEmpty())
                 {
                     res += string.Format("\"{0}\" : не привязанный канал DO \"{1}\".\n",
-                        name, ch.komment);
+                        name, ch.Comment);
                 }
             }
             foreach (IOChannel ch in DI)
@@ -1067,7 +1067,7 @@ namespace Device
                 if (ch.IsEmpty())
                 {
                     res += string.Format("\"{0}\" : не привязанный канал  DI \"{1}\".\n",
-                        name, ch.komment);
+                        name, ch.Comment);
                 }
             }
             foreach (IOChannel ch in AO)
@@ -1075,7 +1075,7 @@ namespace Device
                 if (ch.IsEmpty())
                 {
                     res += string.Format("\"{0}\" : не привязанный канал  AO \"{1}\".\n",
-                        name, ch.komment);
+                        name, ch.Comment);
                 }
             }
             foreach (IOChannel ch in AI)
@@ -1083,7 +1083,7 @@ namespace Device
                 if (ch.IsEmpty())
                 {
                     res += string.Format("\"{0}\" : не привязанный канал  AI \"{1}\".\n",
-                        name, ch.komment);
+                        name, ch.Comment);
                 }
             }
 
@@ -1293,7 +1293,7 @@ namespace Device
                     {
                         IOChannel resCh = DI.Find(delegate (IOChannel ch)
                         {
-                            return ch.komment == descr;
+                            return ch.Comment == descr;
                         });
 
                         if (resCh != null)
@@ -1315,7 +1315,7 @@ namespace Device
                     {
                         IOChannel resCh = DO.Find(delegate (IOChannel ch)
                         {
-                            return ch.komment == descr;
+                            return ch.Comment == descr;
                         });
 
                         if (resCh != null)
@@ -1419,10 +1419,10 @@ namespace Device
             {
                 this.node = node;
                 this.module = module;
-                this.physicalKlemme = physicalKlemme;
+                this.physicalClamp = physicalKlemme;
 
                 this.fullModule = fullModule;
-                this.logicalKlemme = logicalKlemme;
+                this.logicalClamp = logicalKlemme;
                 this.moduleOffset = moduleOffset;
             }
 
@@ -1433,9 +1433,9 @@ namespace Device
             {
                 node = -1;
                 module = -1;
-                physicalKlemme = -1;
+                physicalClamp = -1;
                 fullModule = -1;
-                logicalKlemme = -1;
+                logicalClamp = -1;
                 moduleOffset = -1;
             }
 
@@ -1450,8 +1450,8 @@ namespace Device
 
                 this.node = node;
                 this.module = module;
-                this.physicalKlemme = klemme;
-                this.komment = komment;
+                this.physicalClamp = klemme;
+                this.comment = komment;
             }
 
             private int ToInt()
@@ -1491,7 +1491,7 @@ namespace Device
 
                 if (IOManager.GetInstance()[node] != null &&
                     IOManager.GetInstance()[node][module - 1] != null &&
-                    physicalKlemme >= 0)
+                    physicalClamp >= 0)
                 {
                     res += prefix + "{\n";
 
@@ -1504,31 +1504,31 @@ namespace Device
                         case "DO":
                         case "AO":
                             offset = md.OutOffset;
-                            if (physicalKlemme <= IOManager.GetInstance()[node][module - 1].Info.ChannelAddressesOut.Length)
+                            if (physicalClamp <= IOManager.GetInstance()[node][module - 1].Info.ChannelAddressesOut.Length)
                             {
-                                offset += md.Info.ChannelAddressesOut[physicalKlemme];
+                                offset += md.Info.ChannelAddressesOut[physicalClamp];
                             }
                             break;
 
                         case "DI":
                         case "AI":
                             offset = md.InOffset;
-                            if (physicalKlemme <= IOManager.GetInstance()[node][module - 1].Info.ChannelAddressesIn.Length)
+                            if (physicalClamp <= IOManager.GetInstance()[node][module - 1].Info.ChannelAddressesIn.Length)
                             {
-                                offset += md.Info.ChannelAddressesIn[physicalKlemme];
+                                offset += md.Info.ChannelAddressesIn[physicalClamp];
                             }
                             break;
                     }
 
-                    if (komment != "")
+                    if (comment != "")
                     {
-                        res += prefix + "-- " + komment + "\n";
+                        res += prefix + "-- " + comment + "\n";
                     }
 
                     res += prefix + $"node          = {node},\n";
                     res += prefix + $"offset        = {offset},\n";
-                    res += prefix + $"physical_port = {physicalKlemme},\n";
-                    res += prefix + $"logical_port  = {logicalKlemme},\n";
+                    res += prefix + $"physical_port = {physicalClamp},\n";
+                    res += prefix + $"logical_port  = {logicalClamp},\n";
                     res += prefix + $"module_offset = {moduleOffset}\n";
 
                     res += prefix + "},\n";
@@ -1545,7 +1545,7 @@ namespace Device
             /// <summary>
             /// Номер узла.
             /// </summary>
-            public int GetNode
+            public int Node
             {
                 get
                 {
@@ -1556,7 +1556,7 @@ namespace Device
             /// <summary>
             /// Номер модуля.
             /// </summary>
-            public int GetModule
+            public int Module
             {
                 get
                 {
@@ -1567,23 +1567,78 @@ namespace Device
             /// <summary>
             /// Номер клеммы.
             /// </summary>
-            public int GetKlemme
+            public int PhysicalClamp
             {
                 get
                 {
-                    return physicalKlemme;
+                    return physicalClamp;
+                }
+            }
+
+            /// <summary>
+            /// Полный номер модуля
+            /// </summary>
+            public int FullModule
+            {
+                get
+                {
+                    return fullModule;
+                }
+            }
+
+            /// <summary>
+            /// Комментарий
+            /// </summary>
+            public string Comment
+            {
+                get
+                {
+                    return comment;
+                }
+            }
+
+            /// <summary>
+            /// Имя канала (DI,DO, AI,AO)
+            /// </summary>
+            public string Name
+            {
+                get
+                {
+                    return name;
+                }
+            }
+
+            /// <summary>
+            /// Логический номер клеммы
+            /// </summary>
+            public int LogicalClamp
+            {
+                get
+                {
+                    return logicalClamp;
+                }
+            }
+
+            /// <summary>
+            /// Сдвиг начала модуля
+            /// </summary>
+            public int ModuleOffset
+            {
+                get
+                {
+                    return moduleOffset;
                 }
             }
 
             #region Закрытые поля
-            public int node;            ///Номер узла.
-            public int module;          ///Номер модуля.
-            public int fullModule;      ///Полный номер модуля.
-            public int physicalKlemme;  ///Номер физический клеммы.
-            public string komment;      ///Комментарий.
-            public string name;         ///Имя канала (DO, DI, AO ,AI).
-            public int logicalKlemme;   ///Логический номер клеммы.
-            public int moduleOffset;    ///Сдвиг начала модуля.
+            private int node;            ///Номер узла.
+            private int module;          ///Номер модуля.
+            private int fullModule;      ///Полный номер модуля.
+            private int physicalClamp;   ///Номер физический клеммы.
+            private string comment;      ///Комментарий.
+            private string name;         ///Имя канала (DO, DI, AO ,AI).
+            private int logicalClamp;    ///Логический номер клеммы.
+            private int moduleOffset;    ///Сдвиг начала модуля.
             #endregion
         }
 
@@ -1624,20 +1679,20 @@ namespace Device
             if ((dSubType == DeviceSubType.V_IOLINK_VTUG_DO1 ||
                     dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF ||
                     dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON) &&
-                AO[0].node >= 0 && AO[0].module > 0)
+                AO[0].Node >= 0 && AO[0].Module > 0)
             {
                 // DEV_VTUG - поддержка старых проектов
                 if (
-                    IOManager.GetInstance()[AO[0].node][AO[0].module - 1].devices[AO[0].physicalKlemme][0] != null &&
-                    IOManager.GetInstance()[AO[0].node][AO[0].module - 1].devices[AO[0].physicalKlemme][0].DeviceType != DeviceType.Y &&
-                    IOManager.GetInstance()[AO[0].node][AO[0].module - 1].devices[AO[0].physicalKlemme][0].DeviceType != DeviceType.DEV_VTUG)
+                    IOManager.GetInstance()[AO[0].Node][AO[0].Module - 1].devices[AO[0].PhysicalClamp][0] != null &&
+                    IOManager.GetInstance()[AO[0].Node][AO[0].Module - 1].devices[AO[0].PhysicalClamp][0].DeviceType != DeviceType.Y &&
+                    IOManager.GetInstance()[AO[0].Node][AO[0].Module - 1].devices[AO[0].PhysicalClamp][0].DeviceType != DeviceType.DEV_VTUG)
                 {
-                    res += string.Format("\"{0}\" - первым в списке привязанных устройств должен идти пневомоостров Festo VTUG.\n",
+                    res += string.Format("\"{0}\" - первым в списке привязанных устройств должен идти пневмоостров Festo VTUG.\n",
                         name);
                 }
                 else
                 {
-                    var vtug = IOManager.GetInstance()[AO[0].node][AO[0].module - 1].devices[AO[0].physicalKlemme][0];
+                    var vtug = IOManager.GetInstance()[AO[0].Node][AO[0].Module - 1].devices[AO[0].PhysicalClamp][0];
                     switch (vtug.DeviceSubType)
                     {
                         case DeviceSubType.DEV_VTUG_8:
@@ -2993,12 +3048,12 @@ namespace Device
                     string chNodeName = "";
                     if (!ch.IsEmpty())
                     {
-                        chNodeName = ch.name + " " + ch.komment +
-                            $" (A{ch.fullModule}:" + ch.physicalKlemme + ")";
+                        chNodeName = ch.Name + " " + ch.Comment +
+                            $" (A{ch.FullModule}:" + ch.PhysicalClamp + ")";
                     }
                     else
                     {
-                        chNodeName = ch.name + " " + ch.komment;
+                        chNodeName = ch.Name + " " + ch.Comment;
                     }
                     devNode.Nodes.Add(chNodeName);
                 }

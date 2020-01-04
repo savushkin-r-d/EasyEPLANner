@@ -1963,12 +1963,12 @@ namespace EasyEPlanner
             const string IOModulePrefix = "A";
             const string ASInterfaceModule = "655";
 
-            string deviceVisibleName = IOModulePrefix + channel.fullModule;
+            string deviceVisibleName = IOModulePrefix + channel.FullModule;
             var deviceFunction = deviceFunctions.
                 FirstOrDefault(x => x.VisibleName.Contains(deviceVisibleName));
             if (deviceFunction != null)
             {
-                deviceVisibleName += ChannelPostfix + channel.GetKlemme.
+                deviceVisibleName += ChannelPostfix + channel.PhysicalClamp.
                     ToString();
                 string functionalText = device.EPlanName;
                 // Для модулей ASi не нужно добавлять комментарии 
@@ -1986,12 +1986,12 @@ namespace EasyEPlanner
                             Replace(PlusSymbol.ToString(),
                             SymbolForPlusReplacing);
                         functionalText += NewLine + replacedDeviceDescription +
-                            NewLine + channel.komment;
+                            NewLine + channel.Comment;
                     }
                     else
                     {
                         functionalText += NewLine + device.Description +
-                            NewLine + channel.komment;
+                            NewLine + channel.Comment;
                     }
                 }
                 else

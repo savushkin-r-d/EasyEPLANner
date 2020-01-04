@@ -727,8 +727,8 @@ namespace IO
                             {
 
                                 devName += dev.EPlanName + dev.GetConnectionType() + dev.GetRange() + ": " +
-                                        devicesChannels[clamp][devIdx].name + ": " + dev.Description + " " +
-                                        devicesChannels[clamp][devIdx].komment;
+                                        devicesChannels[clamp][devIdx].Name + ": " + dev.Description + " " +
+                                        devicesChannels[clamp][devIdx].Comment;
                                 devName = devName.Replace('\n', ' ');
                                 devIdx++;
                             }
@@ -769,8 +769,8 @@ namespace IO
 
                                 asConnection[devIdx, 0] = clamp.ToString() + "(" + (devIdx + 1).ToString() + ")";
                                 string devDescription = dev.EPlanName + dev.GetConnectionType() + dev.GetRange() + ": " +
-                                    devicesChannels[clamp][devIdx].name + ": " + dev.Description + " " +
-                                    devicesChannels[clamp][devIdx].komment;
+                                    devicesChannels[clamp][devIdx].Name + ": " + dev.Description + " " +
+                                    devicesChannels[clamp][devIdx].Comment;
                                 devDescription = devDescription.Replace('\n', ' ');
 
                                 asConnection[devIdx, 1] = devDescription;

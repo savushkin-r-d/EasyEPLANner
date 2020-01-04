@@ -766,8 +766,8 @@ namespace EasyEPlanner
                     {
                         if (!ch.IsEmpty())
                         {
-                            newNodeCh = new Node(ch.name + " " + ch.komment +
-                                $" (A{ch.fullModule}:" + ch.physicalKlemme + ")");
+                            newNodeCh = new Node(ch.Name + " " + ch.Comment +
+                                $" (A{ch.FullModule}:" + ch.PhysicalClamp + ")");
                             newNodeCh.Tag = ch;
                             devNode.Nodes.Add(newNodeCh);
 
@@ -782,7 +782,7 @@ namespace EasyEPlanner
                         }
                         else
                         {
-                            newNodeCh = new Node(ch.name + " " + ch.komment);
+                            newNodeCh = new Node(ch.Name + " " + ch.Comment);
                             newNodeCh.Tag = ch;
                             devNode.Nodes.Add(newNodeCh);
 
@@ -1199,12 +1199,12 @@ namespace EasyEPlanner
                 if (!ch.IsEmpty())
                 {
                     e.Font = itemFontIsDevice;
-                    e.Text = ch.name + " " + ch.komment +
-                        $" (A{ch.fullModule}:" + ch.physicalKlemme + ")";
+                    e.Text = ch.Name + " " + ch.Comment +
+                        $" (A{ch.FullModule}:" + ch.PhysicalClamp + ")";
                 }
                 else
                 {
-                    e.Text = ch.name + " " + ch.komment;
+                    e.Text = ch.Name + " " + ch.Comment;
                 }
             }
         }

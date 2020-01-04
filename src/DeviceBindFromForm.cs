@@ -101,10 +101,10 @@ namespace EasyEPlanner
                 string channelType = GetIOLinkChannelType();
                 NewFunctionalText = SelectedDevice.EPlanName +
                     "\r\n" + SelectedDevice.Description +
-                    "\r\n" + SelectedChannel.komment +
+                    "\r\n" + SelectedChannel.Comment +
                     "\r\n" + channelType;
 
-                if (string.IsNullOrEmpty(SelectedChannel.komment))
+                if (string.IsNullOrEmpty(SelectedChannel.Comment))
                 {
                     NewFunctionalText = SelectedDevice.EPlanName +
                         "\r\n" + SelectedDevice.Description +
@@ -115,7 +115,7 @@ namespace EasyEPlanner
             {
                 NewFunctionalText = SelectedDevice.EPlanName +
                     "\r\n" + SelectedDevice.Description +
-                    "\r\n" + SelectedChannel.komment;
+                    "\r\n" + SelectedChannel.Comment;
             }
 
             var oldFunctionalText = SelectedClampFunction
@@ -155,11 +155,11 @@ namespace EasyEPlanner
                         Keys.Control)
                     {
                         if (!(oldFunctionalText + "\r\n").
-                            Contains(SelectedChannel.komment + "\r\n"))
+                            Contains(SelectedChannel.Comment + "\r\n"))
                         {
                             MessageBox.Show(
                                 "Действие канала устройства (\"" +
-                                SelectedChannel.komment + "\") " +
+                                SelectedChannel.Comment + "\") " +
                                 "отличается от действия уже " +
                                 "привязанного канала модуля!",
                                 "EPlaner",
@@ -360,7 +360,7 @@ namespace EasyEPlanner
             const string AO = "AO";
             const string IOLink = "IO-Link";
 
-            var name = SelectedChannel.name;
+            var name = SelectedChannel.Name;
             if (name == AI || name == AO)
             {
                 return IOLink;
