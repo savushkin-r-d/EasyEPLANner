@@ -102,7 +102,14 @@ namespace EasyEPlanner
                 NewFunctionalText = SelectedDevice.EPlanName +
                     "\r\n" + SelectedDevice.Description +
                     "\r\n" + SelectedChannel.komment +
-                    channelType;
+                    "\r\n" + channelType;
+
+                if (string.IsNullOrEmpty(SelectedChannel.komment))
+                {
+                    NewFunctionalText = SelectedDevice.EPlanName +
+                        "\r\n" + SelectedDevice.Description +
+                        "\r\n" + channelType;
+                }
             }
             else
             {
@@ -187,14 +194,15 @@ namespace EasyEPlanner
                                 .IndexOf('\r');
                             if (cursorPosition < 0)
                             {
-                                NewFunctionalText = oldFunctionalText +
-                                    "\r\n" + SelectedDevice.EPlanName;
+                                string text = "\r\n" + SelectedDevice.
+                                    EPlanName;
+                                NewFunctionalText = oldFunctionalText + text;
                             }
                             else
                             {
+                                string text = "\n" + SelectedDevice.EPlanName;
                                 NewFunctionalText = oldFunctionalText.
-                                    Insert(cursorPosition,
-                                    "\r\n" + SelectedDevice.EPlanName);
+                                    Insert(cursorPosition, text);
                             }
                         }
                     }
@@ -302,6 +310,7 @@ namespace EasyEPlanner
                 .IONodes[nodeNumber].
                 IOModules[moduleNumber - 1].InOffset;
 
+            SelectedClampFunction.Properties.FUNC_TEXT = NewFunctionalText;
             SelectedChannel.SetChannel(nodeNumber, moduleNumber,
                 clampNumber, deviceNumber, logicalPort, moduleOffset);
         }
