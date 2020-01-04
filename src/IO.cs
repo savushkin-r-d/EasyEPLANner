@@ -262,7 +262,7 @@ namespace IO
 
                 modules.Add(new IOModuleInfo(1027843, "AXL F IOL8 2H",
                     "IO-Link Master",
-                    ADDRESS_SPACE_TYPE.AOAI,
+                    ADDRESS_SPACE_TYPE.AOAIDODI,
                     "IO-Link Master", "AXL F",
                     new int[] { 30, 31, 32, 33, 70, 71, 72, 73 },
                     new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -567,6 +567,7 @@ namespace IO
             AI,
             AOAI,
             DODI,
+            AOAIDODI,
         };
 
 
@@ -817,18 +818,28 @@ namespace IO
                 int offsetOut = 3;
                 foreach (int clamp in Info.ChannelClamps)
                 {
-                    if (devices[clamp] != null)
+                    if (devices[clamp] != null && devices[clamp][0] != null)
                     {
-                        if (devices[clamp][0] != null)
+                        int deviceOffset;
+                        if (devicesChannels[clamp][0].Name == "DI" ||
+                            devicesChannels[clamp][0].Name == "DO")
+                        {
+                            int analogOffset = devicesChannels[clamp][0].ModuleOffset + 2;
+                            int convertToDiscrete = analogOffset * 16; //2 байта = 1 слово (сдвиг в словах)
+                            int logicalPort = devicesChannels[clamp][0].LogicalClamp - 1;
+                            int discreteOffset = convertToDiscrete + logicalPort;
+                            info.ChannelAddressesIn[clamp] = discreteOffset;
+                            info.ChannelAddressesOut[clamp] = discreteOffset;
+                        }
+                        else
                         {
                             info.ChannelAddressesIn[clamp] = offsetIn;
                             info.ChannelAddressesOut[clamp] = offsetOut;
-                            int deviceOffset = 
-                                devices[clamp][0].GetMaxIOLinkSize();
+                            deviceOffset = devices[clamp][0].GetMaxIOLinkSize();
                             offsetIn += deviceOffset;
                             offsetOut += deviceOffset;
-
                         }
+
                     }
                 }
             }

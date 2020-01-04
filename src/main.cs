@@ -937,22 +937,32 @@ namespace EasyEPlanner
                                 case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.DI:
                                     inOffset = iOManager[node_n].DI_count;
                                     break;
+
                                 case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.DO:
                                     outOffset = iOManager[node_n].DO_count;
                                     break;
+
                                 case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AI:
                                     inOffset = iOManager[node_n].AI_count;
                                     break;
+
                                 case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AO:
                                     outOffset = iOManager[node_n].AO_count;
                                     break;
+
                                 case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI:
                                     inOffset = iOManager[node_n].AI_count;
                                     outOffset = iOManager[node_n].AO_count;
                                     break;
+
                                 case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.DODI:
                                     inOffset = iOManager[node_n].DI_count;
                                     outOffset = iOManager[node_n].DO_count;
+                                    break;
+
+                                case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI:
+                                    inOffset = iOManager[node_n].AI_count;
+                                    outOffset = iOManager[node_n].AO_count;
                                     break;
                             }
 
@@ -1376,7 +1386,7 @@ namespace EasyEPlanner
 
                             string klemmeKomment = string.Empty;
                             Match actionMatch;
-                            string komment = string.Empty;
+                            string comment = string.Empty;
                             MatchEvaluator deviceEvaluator = new MatchEvaluator(RussianToEnglish);
                             // Собственная обработка для AS-i
                             bool? isASInterface = Device.DeviceManager.GetInstance().IsASInterface(descr, out _);
@@ -1389,35 +1399,35 @@ namespace EasyEPlanner
                                 int endPos = descr.IndexOf("\n");
                                 if (endPos > 0)
                                 {
-                                    komment = descr.Substring(endPos + 1);
+                                    comment = descr.Substring(endPos + 1);
                                     descr = descr.Substring(0, endPos);
                                 }
 
                                 descr = Regex.Replace(descr, RussianLettersAsEnglish, deviceEvaluator);
 
-                                actionMatch = Regex.Match(komment, ChannelComment,
+                                actionMatch = Regex.Match(comment, ChannelComment,
                                     RegexOptions.IgnoreCase);
 
-                                komment = Regex.Replace(komment, ChannelComment,
+                                comment = Regex.Replace(comment, ChannelComment,
                                     "", RegexOptions.IgnoreCase);
-                                komment = komment.Replace("\n", ". ").Trim();
-                                if (komment.Length > 0 && komment[komment.Length - 1] != '.')
+                                comment = comment.Replace("\n", ". ").Trim();
+                                if (comment.Length > 0 && comment[comment.Length - 1] != '.')
                                 {
-                                    komment += ".";
+                                    comment += ".";
                                 }
                             }
                             else
                             {
                                 descr = Regex.Replace(descr, RussianLettersAsEnglish, deviceEvaluator);
-                                actionMatch = Regex.Match(komment, ChannelComment,
+                                actionMatch = Regex.Match(comment, ChannelComment,
                                     RegexOptions.IgnoreCase);
                             }
-                            
 
-                            Match descrMatch = Regex.Match(
+                            MatchCollection descriptionMatches = Regex.Matches(
                                 descr, Device.DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
+                            int devicesMatchesCount = descriptionMatches.Count;
 
-                            if (!descrMatch.Success && !descr.Equals("Pезерв"))
+                            if (devicesMatchesCount < 1 && !descr.Equals("Pезерв"))
                             {
                                 ProjectManager.GetInstance().AddLogMessage(
                                     string.Format(
@@ -1425,38 +1435,99 @@ namespace EasyEPlanner
                                     oF.VisibleName, nn, descr));
                             }
 
-                            while (descrMatch.Success)
+                            foreach (Match descriptionMatch in descriptionMatches)
                             {
-                                string devName = descrMatch.Groups["name"].Value;
+                                string devName = descriptionMatch.Groups["name"].Value;
 
                                 if (actionMatch.Success)
                                 {
                                     klemmeKomment = actionMatch.Value;
                                 }
 
-                                string errStr = "";
+                                string error = "";
 
                                 int logicalPort = Array.IndexOf(moduleInfo.ChannelClamps, nn) + 1;
                                 int moduleOffset = IO.IOManager.GetInstance().IONodes[node_n].IOModules[module_n - 1].InOffset;
 
+                                string channelName = string.Empty;
+                                
+                                if (devicesMatchesCount > 1 &&
+                                    moduleInfo.AddressSpaceType == IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI)
+                                {
+                                    channelName = "IO-Link";
+                                }
+                                else if (moduleInfo.AddressSpaceType == IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI)
+                                {
+                                    channelName = GetChannelNameFromComment(comment);
+                                    CheckChannelName(channelName);
+                                }
+
                                 Device.DeviceManager.GetInstance().AddDeviceChannel(
                                     Device.DeviceManager.GetInstance().GetDevice(devName),
                                     moduleInfo.AddressSpaceType, node_n,
-                                    module_n, nn, klemmeKomment, out errStr, n, logicalPort, moduleOffset);
+                                    module_n, nn, klemmeKomment, out error, n, logicalPort, moduleOffset, channelName);
 
-                                if (errStr != "")
+                                if (error != "")
                                 {
-                                    errStr = string.Format("\"{0}:{1}\" : {2}",
-                                       oF.VisibleName, nn, errStr);
+                                    error = string.Format("\"{0}:{1}\" : {2}",
+                                       oF.VisibleName, nn, error);
 
-                                    ProjectManager.GetInstance().AddLogMessage(errStr);
+                                    ProjectManager.GetInstance().AddLogMessage(error);
                                 }
-
-                                descrMatch = descrMatch.NextMatch();
-                            }
+                            }                        
                         }
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Возвращает имя канала (IOLink, DI,DO) из комментария.
+        /// </summary>
+        /// <param name="comment">Комментарий</param>
+        /// <returns></returns>
+        private string GetChannelNameFromComment(string comment)
+        {
+            var channelName = string.Empty;
+            const string IOLink = "IO-Link";
+            const string DI = "DI";
+            const string DO = "DO";
+
+            if (comment.Contains(IOLink) &&
+                !comment.Contains(DI) &&
+                !comment.Contains(DO))
+            {
+                channelName = IOLink;
+            }
+
+            if (comment.Contains(DI) &&
+                !comment.Contains(IOLink) &&
+                !comment.Contains(DO))
+            {
+                channelName = DI;
+            }
+
+            if (comment.Contains(DO) &&
+                !comment.Contains(IOLink) &&
+                !comment.Contains(DI))
+            {
+                channelName = DO;
+            }
+
+            return channelName;
+        }
+
+        /// <summary>
+        /// Проверить имя канала на пустоту
+        /// </summary>
+        /// <param name="channelName"></param>
+        private void CheckChannelName(string channelName)
+        {
+            if (string.IsNullOrEmpty(channelName))
+            {
+                //TODO: device name
+                const string Message = "Неправильно задан комментарий для устройства";
+                throw new Exception(Message);
             }
         }
 
