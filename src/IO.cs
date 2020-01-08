@@ -1417,6 +1417,33 @@ namespace IO
             }
         }
 
+        /// <summary>
+        /// Получить модуль ввода-вывода по его физическому номеру (прим., 202)
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public IOModule GetModuleByPhysicalNumber(int number)
+        {
+            IOModule findedModule = null;
+            foreach (IONode node in iONodes)
+            {
+                foreach (IOModule module in node.IOModules)
+                {
+                    if (module.PhysicalNumber == number)
+                    {
+                        return module;
+                    }
+                }
+            }
+
+            if (findedModule == null)
+            {
+                const string Message = "Модуль не найден";
+                throw new Exception(Message);
+            }
+            return findedModule;
+        }
+
         #region Закрытые поля.
         private List<IONode> iONodes;     ///Узлы проекта.
         private static IOManager instance;  ///Экземпляр класса.

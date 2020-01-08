@@ -977,8 +977,8 @@ namespace EasyEPlanner
         /// 
         private void treeView_DoubleClick(object sender, TreeNodeAdvMouseEventArgs e)
         {
-            DeviceBind deviceBind = new DeviceBind(this);
-            deviceBind.Bind();
+            DeviceBinder deviceBinder = new DeviceBinder(this);
+            deviceBinder.Bind();
         }
 
         /// <summary>
