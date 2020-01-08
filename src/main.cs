@@ -2051,47 +2051,64 @@ namespace EasyEPlanner
             string deviceVisibleName = IOModulePrefix + channel.FullModule;
             var deviceFunction = deviceFunctions.
                 FirstOrDefault(x => x.VisibleName.Contains(deviceVisibleName));
-            if (deviceFunction != null)
+            if (deviceFunction == null)
             {
-                deviceVisibleName += ChannelPostfix + channel.PhysicalClamp.
-                    ToString();
-                string functionalText = device.EPlanName;
-                // Для модулей ASi не нужно добавлять комментарии 
-                // к имени устройств.
-                if (!deviceFunction.ArticleReferences[0].PartNr.
-                    Contains(ASInterfaceModule))
+                return;
+            }
+            
+            deviceVisibleName += ChannelPostfix + channel.PhysicalClamp.
+                ToString();
+            string functionalText = device.EPlanName;
+            // Для модулей ASi не нужно добавлять комментарии 
+            // к имени устройств.
+            if (!deviceFunction.ArticleReferences[0].PartNr.
+                Contains(ASInterfaceModule))
+            {
+                if (device.Description.Contains(PlusSymbol))
                 {
-                    if (device.Description.Contains(PlusSymbol))
+                    // Так как в комментариях может использоваться знак 
+                    // "плюс", то заменим его на какую-то константу, 
+                    // которую при обновлении функционального текста 
+                    // преобразуем обратно.
+                    string replacedDeviceDescription = device.Description.
+                        Replace(PlusSymbol.ToString(),
+                        SymbolForPlusReplacing);
+                    functionalText += NewLine + replacedDeviceDescription;
+                    
+                    if (!string.IsNullOrEmpty(channel.Comment))
                     {
-                        // Так как в комментариях может использоваться знак 
-                        // "плюс", то заменим его на какую-то константу, 
-                        // которую при обновлении функционального текста 
-                        // преобразуем обратно.
-                        string replacedDeviceDescription = device.Description.
-                            Replace(PlusSymbol.ToString(),
-                            SymbolForPlusReplacing);
-                        functionalText += NewLine + replacedDeviceDescription +
-                            NewLine + channel.Comment;
-                    }
-                    else
-                    {
-                        functionalText += NewLine + device.Description +
-                            NewLine + channel.Comment;
+                        functionalText += NewLine + channel.Comment;
                     }
                 }
                 else
                 {
-                    functionalText += WhiteSpace;
+                    functionalText += NewLine + device.Description;
+
+                    if(!string.IsNullOrEmpty(channel.Comment))
+                    {
+                        functionalText += NewLine + channel.Comment;
+                    }
                 }
 
-                if (deviceConnections.ContainsKey(deviceVisibleName))
+                if (deviceFunction.ArticleReferences[0].PartNr.
+                    Contains(PhoenixContactIOLinkModule.ToString()))
                 {
-                    deviceConnections[deviceVisibleName] += functionalText;
+                    functionalText += NewLine + 
+                        channel.GetChannelTypeForIOLink();
                 }
-                else
-                {
-                    deviceConnections.Add(deviceVisibleName, functionalText);
-                }
+            }
+            else
+            {
+                functionalText += WhiteSpace;
+            }
+
+            if (deviceConnections.ContainsKey(deviceVisibleName))
+            {
+                deviceConnections[deviceVisibleName] += functionalText;
+            }
+            else
+            {
+                deviceConnections.Add(deviceVisibleName, functionalText);
             }
         }
 
@@ -2773,7 +2790,8 @@ namespace EasyEPlanner
         const char WhiteSpace = ' '; // Пробел для разделения ОУ.
         const string SymbolForPlusReplacing = "plus"; // Замена символа "плюс".
         const int MinimalDevicesCountForCheck = 1; // Минимальное количество
-        // устройств в строке, нужное для выполнения функции.
+        // устройств в строке, нужное для выполнения функции проверки.
+        const int PhoenixContactIOLinkModule = 1027843; // Номер модуля.
 
         const string ASINumbering = "1\r\n2\r\n" + // Нумерация AS-i клапанов
             "3\r\n4\r\n5\r\n6\r\n7\r\n8\r\n9\r\n10\r\n11\r\n12\r\n13\r\n" +
