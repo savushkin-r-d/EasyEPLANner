@@ -1636,6 +1636,37 @@ namespace Device
                 return res;
             }
 
+            /// <summary>
+            /// Возвращает тип канала для IO-Link модуля
+            /// </summary>
+            /// <returns>Тип канала</returns>
+            public string GetChannelTypeForIOLink()
+            {
+                var type = this.Name;
+                const string IOLink = "IO-Link";
+                const string AO = "AO";
+                const string AI = "AI";
+                const string DO = "DO";
+                const string DI = "DI";
+
+                if (type == AO || type == AI)
+                {
+                    return IOLink;
+                }
+
+                if (type == DI)
+                {
+                    return DI;
+                }
+                    
+                if (type == DO)
+                {
+                    return DO;
+                }
+
+                return type;
+            }
+
             public bool IsEmpty()
             {
                 return node == -1;

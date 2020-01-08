@@ -243,7 +243,7 @@ namespace EasyEPlanner
 
             if (isIOLink == true && manufacturer.Contains("PXC"))
             {
-                string channelType = GetIOLinkChannelType();
+                string channelType = SelectedChannel.GetChannelTypeForIOLink();
                 functionalText += channelType;
             }
 
@@ -384,27 +384,6 @@ namespace EasyEPlanner
             }
 
             return isIOLink;
-        }
-
-        /// <summary>
-        /// Получить тип канала для IO-Link модуля
-        /// </summary>
-        /// <returns></returns>
-        private string GetIOLinkChannelType()
-        {
-            const string AI = "AI";
-            const string AO = "AO";
-            const string IOLink = "IO-Link";
-
-            var name = SelectedChannel.Name;
-            if (name == AI || name == AO)
-            {
-                return IOLink;
-            }
-            else
-            {
-                return name;
-            }
         }
 
         /// <summary>
