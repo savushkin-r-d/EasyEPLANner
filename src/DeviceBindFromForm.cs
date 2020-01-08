@@ -222,7 +222,26 @@ namespace EasyEPlanner
                 functionalText += SelectedChannel.Comment + "\r\n";
             }
 
-            if (isIOLink == true)
+            string manufacturer = string.Empty;
+            try
+            {
+                if (SelectedIOModuleFunction != null &&
+                    SelectedIOModuleFunction.Articles.Count() > 0 &&
+                    !SelectedIOModuleFunction.Articles[0]
+                    .Properties[Eplan.EplApi.DataModel.Properties
+                    .Article.ARTICLE_TYPENR].IsEmpty)
+                {
+                    manufacturer = SelectedIOModuleFunction.Articles[0]
+                        .Properties[Eplan.EplApi.DataModel.Properties
+                        .Article.ARTICLE_MANUFACTURER];
+                }
+            }
+            catch
+            {
+                manufacturer = "Не определено";
+            }
+
+            if (isIOLink == true && manufacturer.Contains("PXC"))
             {
                 string channelType = GetIOLinkChannelType();
                 functionalText += channelType;
