@@ -824,8 +824,9 @@ namespace IO
                         if (devicesChannels[clamp][0].Name == "DI" ||
                             devicesChannels[clamp][0].Name == "DO")
                         {
-                            int analogOffset = devicesChannels[clamp][0].ModuleOffset + 2;
-                            int convertToDiscrete = analogOffset * 16; //2 байта = 1 слово (сдвиг в словах)
+                            int wordToByte = devicesChannels[clamp][0].ModuleOffset * 2;
+                            int startDiscreteOffset = wordToByte + 2;
+                            int convertToDiscrete = startDiscreteOffset * 8;
                             int logicalPort = devicesChannels[clamp][0].LogicalClamp - 1;
                             int discreteOffset = convertToDiscrete + logicalPort;
                             info.ChannelAddressesIn[clamp] = discreteOffset;

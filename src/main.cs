@@ -1438,10 +1438,15 @@ namespace EasyEPlanner
                             foreach (Match descriptionMatch in descriptionMatches)
                             {
                                 string devName = descriptionMatch.Groups["name"].Value;
+                                Device.IODevice device = Device.DeviceManager.GetInstance().GetDevice(devName);
 
                                 if (actionMatch.Success)
                                 {
                                     klemmeKomment = actionMatch.Value;
+                                    if (klemmeKomment.Contains("\r\n"))
+                                    {
+                                        klemmeKomment = klemmeKomment.Replace("\r\n", "");
+                                    }
                                 }
 
                                 string error = "";
@@ -1449,6 +1454,7 @@ namespace EasyEPlanner
                                 int logicalPort = Array.IndexOf(moduleInfo.ChannelClamps, nn) + 1;
                                 int moduleOffset = IO.IOManager.GetInstance().IONodes[node_n].IOModules[module_n - 1].InOffset;
 
+                                bool haveChannelError = false;
                                 string channelName = string.Empty;
                                 
                                 if (devicesMatchesCount > 1 &&
@@ -1459,11 +1465,11 @@ namespace EasyEPlanner
                                 else if (moduleInfo.AddressSpaceType == IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI)
                                 {
                                     channelName = GetChannelNameFromComment(comment);
-                                    CheckChannelName(channelName);
+                                    CheckChannelName(channelName, out haveChannelError);
                                 }
 
                                 Device.DeviceManager.GetInstance().AddDeviceChannel(
-                                    Device.DeviceManager.GetInstance().GetDevice(devName),
+                                    device,
                                     moduleInfo.AddressSpaceType, node_n,
                                     module_n, nn, klemmeKomment, out error, n, logicalPort, moduleOffset, channelName);
 
@@ -1473,6 +1479,12 @@ namespace EasyEPlanner
                                        oF.VisibleName, nn, error);
 
                                     ProjectManager.GetInstance().AddLogMessage(error);
+                                }
+
+                                if (haveChannelError == true)
+                                {
+                                    string message = $"Неправильно задан комментарий для устройства A{n}, клемма - {nn}. ";
+                                    ProjectManager.GetInstance().AddLogMessage(message);
                                 }
                             }                        
                         }
@@ -1486,7 +1498,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="comment">Комментарий</param>
         /// <returns></returns>
-        private string GetChannelNameFromComment(string comment)
+        public string GetChannelNameFromComment(string comment)
         {
             var channelName = string.Empty;
             const string IOLink = "IO-Link";
@@ -1521,13 +1533,15 @@ namespace EasyEPlanner
         /// Проверить имя канала на пустоту
         /// </summary>
         /// <param name="channelName"></param>
-        private void CheckChannelName(string channelName)
+        private void CheckChannelName(string channelName, out bool error)
         {
+            error = false;
+
             if (string.IsNullOrEmpty(channelName))
             {
-                //TODO: device name
-                const string Message = "Неправильно задан комментарий для устройства";
-                throw new Exception(Message);
+                error = true;
+                // TODO: Errors handler
+                //throw new Exception(Message);
             }
         }
 

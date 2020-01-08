@@ -98,24 +98,11 @@ namespace EasyEPlanner
 
             if (isIOLink)
             {
-                string channelType = GetIOLinkChannelType();
-                NewFunctionalText = SelectedDevice.EPlanName +
-                    "\r\n" + SelectedDevice.Description +
-                    "\r\n" + SelectedChannel.Comment +
-                    "\r\n" + channelType;
-
-                if (string.IsNullOrEmpty(SelectedChannel.Comment))
-                {
-                    NewFunctionalText = SelectedDevice.EPlanName +
-                        "\r\n" + SelectedDevice.Description +
-                        "\r\n" + channelType;
-                }
+                NewFunctionalText = GenerateFunctionalText(isIOLink);
             }
             else
             {
-                NewFunctionalText = SelectedDevice.EPlanName +
-                    "\r\n" + SelectedDevice.Description +
-                    "\r\n" + SelectedChannel.Comment;
+                NewFunctionalText = GenerateFunctionalText(isIOLink);
             }
 
             var oldFunctionalText = SelectedClampFunction
@@ -217,6 +204,34 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Генерирование функционального текста для вставки
+        /// </summary>
+        /// <param name="isIOLink">Является ли модуль IO-Link</param>
+        /// <returns>Функциональный текст</returns>
+        private string GenerateFunctionalText(bool isIOLink)
+        {
+            string functionalText = SelectedDevice.EPlanName + "\r\n";
+
+            if (string.IsNullOrEmpty(SelectedDevice.Description) == false)
+            {
+                functionalText += SelectedDevice.Description + "\r\n";
+            }
+
+            if (string.IsNullOrEmpty(SelectedChannel.Comment) == false)
+            {
+                functionalText += SelectedChannel.Comment + "\r\n";
+            }
+
+            if (isIOLink == true)
+            {
+                string channelType = GetIOLinkChannelType();
+                functionalText += channelType;
+            }
+
+            return functionalText;
+        }
+
+        /// <summary>
         /// Очистить канал от старой привязки
         /// </summary>
         private void ResetChannel()
@@ -249,8 +264,10 @@ namespace EasyEPlanner
                 var device = Device.DeviceManager.GetInstance()
                     .GetDevice(deviceName);
 
+                string channelName = EplanDeviceManager.GetInstance().GetChannelNameFromComment(deviceComment);
+
                 device.ClearChannel(moduleInfo.AddressSpaceType,
-                    deviceComment);
+                    deviceComment, channelName);
             }
         }
 

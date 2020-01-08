@@ -867,7 +867,7 @@ namespace Device
         /// <param name="error">Строка с описанием ошибки при возникновении таковой.</param>
         public bool ClearChannel(
             IOModuleInfo.ADDRESS_SPACE_TYPE addressSpace,
-            string komment)
+            string komment, string channelName)
         {
             List<IOChannel> IO = null;
 
@@ -896,6 +896,9 @@ namespace Device
                 case IOModuleInfo.ADDRESS_SPACE_TYPE.DODI:
                     IO = DO;
                     break;
+                case IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI:
+                    IO = new List<IOChannel>();
+                    break;
             }
 
             List<IOChannel> resCh = IO.FindAll(delegate (IOChannel ch)
@@ -915,6 +918,34 @@ namespace Device
                 {
                     return ch.Comment == komment;
                 }));
+            }
+            if (addressSpace == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI)
+            {
+                if (channelName == "IO-Link")
+                {
+                    resCh.AddRange(AI.FindAll(delegate (IOChannel ch)
+                    {
+                        return ch.Comment == komment;
+                    }));
+                    resCh.AddRange(AO.FindAll(delegate (IOChannel ch)
+                    {
+                        return ch.Comment == komment;
+                    }));
+                }
+                else if (channelName == "DI")
+                {
+                    resCh.AddRange(DI.FindAll(delegate (IOChannel ch)
+                    {
+                        return ch.Comment == komment;
+                    }));
+                }
+                else if (channelName == "DO")
+                {
+                    resCh.AddRange(DO.FindAll(delegate (IOChannel ch)
+                    {
+                        return ch.Comment == komment;
+                    }));
+                }
             }
 
             if (resCh.Count > 0)
@@ -1534,7 +1565,24 @@ namespace Device
                     switch (name)
                     {
                         case "DO":
-                        //TODO: Save DO for IO-Link (offset - 4)
+                            if (md.isIOLink())
+                            {
+                                offset = 0;
+                                if (physicalClamp <= IOManager.GetInstance()[node][module - 1].Info.ChannelAddressesOut.Length)
+                                {
+                                    offset += md.Info.ChannelAddressesOut[physicalClamp];
+                                }
+                            }
+                            else
+                            {
+                                offset = md.OutOffset;
+                                if (physicalClamp <= IOManager.GetInstance()[node][module - 1].Info.ChannelAddressesOut.Length)
+                                {
+                                    offset += md.Info.ChannelAddressesOut[physicalClamp];
+                                }
+                            }
+                            break;
+
                         case "AO":
                             offset = md.OutOffset;
                             if (physicalClamp <= IOManager.GetInstance()[node][module - 1].Info.ChannelAddressesOut.Length)
@@ -1544,7 +1592,24 @@ namespace Device
                             break;
 
                         case "DI":
-                            //TODO: Save DI for IO-Link (offset - 4)
+                            if (md.isIOLink())
+                            {
+                                offset = 0;
+                                if (physicalClamp <= IOManager.GetInstance()[node][module - 1].Info.ChannelAddressesIn.Length)
+                                {
+                                    offset += md.Info.ChannelAddressesIn[physicalClamp];
+                                }
+                            }
+                            else
+                            {
+                                offset = md.InOffset;
+                                if (physicalClamp <= IOManager.GetInstance()[node][module - 1].Info.ChannelAddressesIn.Length)
+                                {
+                                    offset += md.Info.ChannelAddressesIn[physicalClamp];
+                                }
+                            }
+                            break;
+
                         case "AI":
                             offset = md.InOffset;
                             if (physicalClamp <= IOManager.GetInstance()[node][module - 1].Info.ChannelAddressesIn.Length)
