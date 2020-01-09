@@ -348,7 +348,6 @@ namespace EasyEPlanner
             string manufacturer = GetSelectedIOModuleArticleProperty(
                 propertyNumber);
 
-
             if (isIOLink == true && manufacturer.Contains(PhoenixContact))
             {
                 string channelType = SelectedChannel.GetChannelTypeForIOLink();

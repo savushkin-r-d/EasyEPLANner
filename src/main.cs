@@ -1482,7 +1482,8 @@ namespace EasyEPlanner
 
                                 if (haveChannelError == true)
                                 {
-                                    string message = $"Неправильно задан комментарий для устройства A{physicalNumber}, клемма - {clamp}. ";
+                                    string message = $"Неправильно задан комментарий для " +
+                                        $"устройства A{physicalNumber}, клемма - {clamp}. ";
                                     ProjectManager.GetInstance().AddLogMessage(message);
                                 }
                             }                        
@@ -1531,11 +1532,10 @@ namespace EasyEPlanner
         /// <summary>
         /// Проверить имя канала на пустоту
         /// </summary>
-        /// <param name="channelName"></param>
+        /// <param name="channelName">Имя канала</param>
         private void CheckChannelName(string channelName, out bool error)
         {
             error = false;
-
             if (string.IsNullOrEmpty(channelName))
             {
                 error = true;
@@ -2057,10 +2057,11 @@ namespace EasyEPlanner
             deviceVisibleName += ChannelPostfix + channel.PhysicalClamp.
                 ToString();
             string functionalText = device.EPlanName;
+            string devicePartNumber = deviceFunction.ArticleReferences[0]
+                .PartNr;
             // Для модулей ASi не нужно добавлять комментарии 
             // к имени устройств.
-            if (!deviceFunction.ArticleReferences[0].PartNr.
-                Contains(ASInterfaceModule))
+            if (!devicePartNumber.Contains(ASInterfaceModule))
             {
                 if (device.Description.Contains(PlusSymbol))
                 {
@@ -2088,11 +2089,13 @@ namespace EasyEPlanner
                     }
                 }
 
-                if (deviceFunction.ArticleReferences[0].PartNr.
-                    Contains(PhoenixContactIOLinkModule.ToString()))
+                if (devicePartNumber.Contains(IO.IOManager.IOLinkModules
+                    .PhoenixContactStandard.ToString()) ||
+                    devicePartNumber.Contains(IO.IOManager.IOLinkModules
+                    .PhoenixContactSmart.ToString()))
                 {
-                    functionalText += NewLine + 
-                        channel.GetChannelTypeForIOLink();
+                    functionalText += NewLine + channel
+                        .GetChannelTypeForIOLink();
                 }
             }
             else
@@ -2789,7 +2792,6 @@ namespace EasyEPlanner
         const string SymbolForPlusReplacing = "plus"; // Замена символа "плюс".
         const int MinimalDevicesCountForCheck = 1; // Минимальное количество
         // устройств в строке, нужное для выполнения функции проверки.
-        const int PhoenixContactIOLinkModule = 1027843; // Номер модуля.
 
         const string ASINumbering = "1\r\n2\r\n" + // Нумерация AS-i клапанов
             "3\r\n4\r\n5\r\n6\r\n7\r\n8\r\n9\r\n10\r\n11\r\n12\r\n13\r\n" +
