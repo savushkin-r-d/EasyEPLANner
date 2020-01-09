@@ -1175,33 +1175,32 @@ namespace EasyEPlanner
         public void ReadConfigurationFromIOModules()
         {
             //Получение текущего проекта, для которого осуществляется экспорт.
-            Project cProject = EProjectManager.GetInstance().GetCurrentPrj();
-            if (cProject == null)
+            Project project = EProjectManager.GetInstance().GetCurrentPrj();
+            if (project == null)
             {
                 return;
             }
 
             //Initialize the DMObjectsFinder with a project.
-            DMObjectsFinder oFinder = new DMObjectsFinder(cProject);
-            FunctionsFilter oFunctionsFilter = new FunctionsFilter();
+            var objectsFinder = new DMObjectsFinder(project);
+            var plcFunctionsFilter = new FunctionsFilter();
 
-            FunctionPropertyList props = new FunctionPropertyList();
-            props.FUNC_MAINFUNCTION = true;
-            //props.FUNC_ARTICLE_MANUFACTURER[ 1 ] = "WAGO";
+            var properties = new FunctionPropertyList();
+            properties.FUNC_MAINFUNCTION = true;
 
-            oFunctionsFilter.SetFilteredPropertyList(props);
-            oFunctionsFilter.Category = Function.Enums.Category.PLCBox;
+            plcFunctionsFilter.SetFilteredPropertyList(properties);
+            plcFunctionsFilter.Category = Function.Enums.Category.PLCBox;
 
             //Get function with given name from project.
-            Function[] arrFuncs = oFinder.GetFunctions(oFunctionsFilter); //1
+            Function[] functions = objectsFinder.GetFunctions(plcFunctionsFilter); //1
 
             //Шаблоны для разбора названий модулей и узлов IO.
-            const string PATTERN = @"=*-A(?<n>\d+)";                //-A101
-            Regex regex = new Regex(PATTERN);
+            const string IOPattern = @"=*-A(?<n>\d+)"; //-A101
+            var regex = new Regex(IOPattern);
 
-            FunctionsFilter oFunctionsFilter2 = new FunctionsFilter();
-            oFunctionsFilter2.ExactNameMatching = true;
-            oFunctionsFilter2.Category = Function.Enums.Category.PLCTerminal;
+            var clampFuntionFilter = new FunctionsFilter();
+            clampFuntionFilter.ExactNameMatching = true;
+            clampFuntionFilter.Category = Function.Enums.Category.PLCTerminal;
 
             //Если нет модулей IO - не считываем привязку
             int nodesCount = IO.IOManager.GetInstance().IONodes.Count;
@@ -1211,7 +1210,7 @@ namespace EasyEPlanner
                 return;
             }
 
-            // Есть ли PXC A1 в проекте
+            // Есть ли узел с ОУ "A1" в проекте
             bool isContainsA1 = false;
             if (IO.IOManager.GetInstance().IONodes[0].Type ==
                 IO.IONode.TYPES.T_PHOENIX_CONTACT_MAIN)
@@ -1219,163 +1218,162 @@ namespace EasyEPlanner
                 isContainsA1 = true;
             }
 
-            foreach (Function oF in arrFuncs)
+            foreach (Function function in functions)
             {
-                Match match = regex.Match(oF.VisibleName);
+                var match = regex.Match(function.VisibleName);
                 if (match.Success)
                 {
                     //Признак пропуска данного устройства.
-                    if (!oF.Properties.FUNC_SUPPLEMENTARYFIELD[1].IsEmpty)
+                    if (!function.Properties.FUNC_SUPPLEMENTARYFIELD[1].IsEmpty)
                     {
                         continue;
                     }
 
-                    int n = Convert.ToInt32(match.Groups["n"].Value);
+                    int physicalNumber = Convert.ToInt32(match.Groups["n"].Value);
 
                     // Проверка модулей узлов
-                    if (n % 100 != 0 && n != 1)                                      //4
+                    if (physicalNumber % 100 != 0 && physicalNumber != 1)   //4
                     {
-                        int module_n = n % 100;
-                        int node_n;
+                        int module = physicalNumber % 100;
+                        int node;
 
                         // Если есть "A1", то учитываем, что он первый
                         if (isContainsA1 == true)
                         {
-                            node_n = n / 100;
+                            node = physicalNumber / 100;
                         }
                         else
                         {
                             // Если нету, оставляем как было
-                            node_n = n / 100 - 1;
+                            node = physicalNumber / 100 - 1;
                         }
 
-                        if (oF.Articles.GetLength(0) == 0)
+                        if (function.Articles.GetLength(0) == 0)
                         {
                             ProjectManager.GetInstance().AddLogMessage("У модуля \"" +
-                                oF.VisibleName + "\" не задано изделие.");
+                                function.VisibleName + "\" не задано изделие.");
                             continue;
                         }
 
-                        string name = "";
-                        if (!oF.Articles[0].Properties[
+                        var name = string.Empty;
+                        if (!function.Articles[0].Properties[
                             Eplan.EplApi.DataModel.Properties.Article.ARTICLE_TYPENR].IsEmpty)
                         {
-                            name = oF.Articles[0].Properties[
+                            name = function.Articles[0].Properties[
                                 Eplan.EplApi.DataModel.Properties.Article.ARTICLE_TYPENR].ToString().Trim();
                         }
 
-                        bool isStub;
-                        IO.IOModuleInfo moduleInfo = new IO.IOModuleInfo();
-                        moduleInfo = moduleInfo.GetIOModuleInfo(name, out isStub);
+                        var moduleInfo = new IO.IOModuleInfo();
+                        moduleInfo = moduleInfo.GetIOModuleInfo(name, out _);
 
-                        foreach (Function oF2 in oF.SubFunctions)
+                        foreach (Function subFunction in function.SubFunctions)
                         {
-                            int nn; // Номер клеммы
-                            string nnString = oF2.Properties.FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
+                            int clamp; // Номер клеммы
+                            string clampString = subFunction.Properties.FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
                             // Если клемма - число, пропускаем
-                            bool isDigit = Int32.TryParse(nnString, out nn);
+                            bool isDigit = Int32.TryParse(clampString, out clamp);
                             if (isDigit == false)
                             {
                                 continue;
                             }
 
-                            if (Array.IndexOf(moduleInfo.ChannelClamps, nn) < 0)
+                            if (Array.IndexOf(moduleInfo.ChannelClamps, clamp) < 0)
                             {
                                 continue;
                             }
 
-                            if (oF2.Page.PageType != DocumentTypeManager.DocumentType.Circuit)
+                            if (subFunction.Page.PageType != DocumentTypeManager.DocumentType.Circuit)
                             {
                                 continue;
                             }
 
-                            string descr = oF2.Properties.FUNC_TEXT_AUTOMATIC.ToString(
+                            string description = subFunction.Properties.FUNC_TEXT_AUTOMATIC.ToString(
                                 ISOCode.Language.L___);
-                            if (descr == "")
+                            if (description == "")
                             {
-                                descr = oF2.Properties.FUNC_TEXT_AUTOMATIC.ToString(
+                                description = subFunction.Properties.FUNC_TEXT_AUTOMATIC.ToString(
                                     ISOCode.Language.L_ru_RU);
                             }
-                            if (descr == "")
+                            if (description == "")
                             {
-                                descr = oF2.Properties.FUNC_TEXT.ToString(
+                                description = subFunction.Properties.FUNC_TEXT.ToString(
                                     ISOCode.Language.L_ru_RU);
                             }
 
-                            if (descr == null || descr == "")
+                            if (description == null || description == "")
                             {
                                 continue;
                             }
 
                             // Проверка пневмоостровов FESTO
-                            const string FESTO_PATTERN = @"=*-Y(?<n>\d+)";
-                            Regex festo_regex = new Regex(FESTO_PATTERN);
-                            Match festo_match = festo_regex.Match(descr);
+                            const string FestoPattern = @"=*-Y(?<n>\d+)";
+                            var festoRegex = new Regex(FestoPattern);
+                            var festoMatch = festoRegex.Match(description);
                             // Нашло совпадение (Есть пневмоостров)
-                            if (festo_match.Success)
+                            if (festoMatch.Success)
                             {
                                 // Инициализация начальных данных
                                 Function[] subFunctions = new Function[0];
 
-                                int descrName;
+                                int eplanNameLength;
                                 // Вырезается ОУ устройства для привязки, без комментария
-                                if (descr.Contains("\r\n") == true)
+                                if (description.Contains("\r\n") == true)
                                 {
-                                    descrName = descr.IndexOf("\r\n");
-                                    if (descrName > 0)
+                                    eplanNameLength = description.IndexOf("\r\n");
+                                    if (eplanNameLength > 0)
                                     {
-                                        descr = descr.Substring(0, descrName);
+                                        description = description.Substring(0, eplanNameLength);
                                     }
                                 }
                                 else
                                 {
-                                    descrName = descr.IndexOf("\n");
-                                    if (descrName > 0)
+                                    eplanNameLength = description.IndexOf("\n");
+                                    if (eplanNameLength > 0)
                                     {
-                                        descr = descr.Substring(0, descrName);
+                                        description = description.Substring(0, eplanNameLength);
                                     }
                                 }
 
                                 // Поиск по функциям
-                                foreach (Function f in arrFuncs)
+                                foreach (Function valveTerminalFunction in functions)
                                 {
                                     // Нашли нужную функцию устройства
-                                    if (f.Name.Contains(descr))
+                                    if (valveTerminalFunction.Name.Contains(description))
                                     {
-                                        subFunctions = f.SubFunctions;
+                                        subFunctions = valveTerminalFunction.SubFunctions;
                                         break;
                                     }
                                 }
 
                                 // Перебираем подфункции
-                                foreach (Function subFunction in subFunctions)
+                                foreach (Function valteTerminalSubFunction in subFunctions)
                                 {
                                     // Если это клемма
-                                    if (subFunction.Category == Function.Enums.Category.PLCTerminal)
+                                    if (valteTerminalSubFunction.Category == Function.Enums.Category.PLCTerminal)
                                     {
                                         // Проверяем номер клеммы и текст
-                                        string terminalNumber = subFunction.Properties.
+                                        string terminalNumber = valteTerminalSubFunction.Properties.
                                             FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
-                                        string terminalBindedDevice = subFunction.Properties.
+                                        string terminalBindedDevice = valteTerminalSubFunction.Properties.
                                             FUNC_TEXT_AUTOMATIC.ToString(ISOCode.Language.L___);
-                                        bool isInt = Int32.TryParse(terminalNumber, out int doNotUse);
+                                        bool isInt = Int32.TryParse(terminalNumber, out _);
                                         // Если клемма - число, и есть текст для привязки
                                         if (isInt == true && terminalBindedDevice.Length != 0 && terminalBindedDevice != "Резерв")
                                         {
-                                            Match festoDescrMatch = Regex.Match(
+                                            var festoDescrMatch = Regex.Match(
                                                 terminalBindedDevice, Device.DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
                                             while (festoDescrMatch.Success)
                                             {
-                                                string devName = festoDescrMatch.Groups["name"].Value;
+                                                string deviceName = festoDescrMatch.Groups["name"].Value;
 
                                                 // Дополняется descr и отправляется, будто привязано к I/O
-                                                descr += $" {devName}";
+                                                description += $" {deviceName}";
 
                                                 // Дополнительно установить параметр R_VTUG_NUMBER
                                                 int vtugNumber = Convert.ToInt32(terminalNumber);
                                                 Dictionary<string, double> runtimeParams = new Dictionary<string, double>();
                                                 runtimeParams.Add("R_VTUG_NUMBER", vtugNumber);
-                                                SetUpDeviceRuntimeParameters(runtimeParams, devName);
+                                                SetUpDeviceRuntimeParameters(runtimeParams, deviceName);
 
                                                 festoDescrMatch = festoDescrMatch.NextMatch();
                                             }
@@ -1384,26 +1382,26 @@ namespace EasyEPlanner
                                 }
                             }
 
-                            string klemmeKomment = string.Empty;
+                            var clampComment = string.Empty;
                             Match actionMatch;
-                            string comment = string.Empty;
-                            MatchEvaluator deviceEvaluator = new MatchEvaluator(RussianToEnglish);
+                            var comment = string.Empty;
+                            var deviceEvaluator = new MatchEvaluator(RussianToEnglish);
                             // Собственная обработка для AS-i
-                            bool? isASInterface = Device.DeviceManager.GetInstance().IsASInterface(descr, out _);
+                            bool? isASInterface = Device.DeviceManager.GetInstance().IsASInterface(description, out _);
                             if (isASInterface == false)
                             {
                                 //Для многострочного описания убираем tab+\r\n
-                                descr = descr.Replace("\t\r\n", "");
-                                descr = descr.Replace("\t\n", "");
+                                description = description.Replace("\t\r\n", "");
+                                description = description.Replace("\t\n", "");
 
-                                int endPos = descr.IndexOf("\n");
-                                if (endPos > 0)
+                                int endPosition = description.IndexOf("\n");
+                                if (endPosition > 0)
                                 {
-                                    comment = descr.Substring(endPos + 1);
-                                    descr = descr.Substring(0, endPos);
+                                    comment = description.Substring(endPosition + 1);
+                                    description = description.Substring(0, endPosition);
                                 }
 
-                                descr = Regex.Replace(descr, RussianLettersAsEnglish, deviceEvaluator);
+                                description = Regex.Replace(description, RussianLettersAsEnglish, deviceEvaluator);
 
                                 actionMatch = Regex.Match(comment, ChannelComment,
                                     RegexOptions.IgnoreCase);
@@ -1418,41 +1416,40 @@ namespace EasyEPlanner
                             }
                             else
                             {
-                                descr = Regex.Replace(descr, RussianLettersAsEnglish, deviceEvaluator);
+                                description = Regex.Replace(description, RussianLettersAsEnglish, deviceEvaluator);
                                 actionMatch = Regex.Match(comment, ChannelComment,
                                     RegexOptions.IgnoreCase);
                             }
 
                             MatchCollection descriptionMatches = Regex.Matches(
-                                descr, Device.DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
+                                description, Device.DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
                             int devicesMatchesCount = descriptionMatches.Count;
 
-                            if (devicesMatchesCount < 1 && !descr.Equals("Pезерв"))
+                            if (devicesMatchesCount < 1 && !description.Equals("Pезерв"))
                             {
                                 ProjectManager.GetInstance().AddLogMessage(
-                                    string.Format(
-                                    "\"{0}:{1}\" - неверное имя привязанного устройства - \"{2}\".",
-                                    oF.VisibleName, nn, descr));
+                                    string.Format("\"{0}:{1}\" - неверное имя привязанного устройства - \"{2}\".",
+                                    function.VisibleName, clamp, description));
                             }
 
                             foreach (Match descriptionMatch in descriptionMatches)
                             {
-                                string devName = descriptionMatch.Groups["name"].Value;
-                                Device.IODevice device = Device.DeviceManager.GetInstance().GetDevice(devName);
+                                string deviceName = descriptionMatch.Groups["name"].Value;
+                                Device.IODevice device = Device.DeviceManager.GetInstance().GetDevice(deviceName);
 
                                 if (actionMatch.Success)
                                 {
-                                    klemmeKomment = actionMatch.Value;
-                                    if (klemmeKomment.Contains("\r\n"))
+                                    clampComment = actionMatch.Value;
+                                    if (clampComment.Contains("\r\n"))
                                     {
-                                        klemmeKomment = klemmeKomment.Replace("\r\n", "");
+                                        clampComment = clampComment.Replace("\r\n", "");
                                     }
                                 }
 
                                 string error = "";
 
-                                int logicalPort = Array.IndexOf(moduleInfo.ChannelClamps, nn) + 1;
-                                int moduleOffset = IO.IOManager.GetInstance().IONodes[node_n].IOModules[module_n - 1].InOffset;
+                                int logicalPort = Array.IndexOf(moduleInfo.ChannelClamps, clamp) + 1;
+                                int moduleOffset = IO.IOManager.GetInstance().IONodes[node].IOModules[module - 1].InOffset;
 
                                 bool haveChannelError = false;
                                 string channelName = string.Empty;
@@ -1468,22 +1465,24 @@ namespace EasyEPlanner
                                     CheckChannelName(channelName, out haveChannelError);
                                 }
 
-                                Device.DeviceManager.GetInstance().AddDeviceChannel(
-                                    device,
-                                    moduleInfo.AddressSpaceType, node_n,
-                                    module_n, nn, klemmeKomment, out error, n, logicalPort, moduleOffset, channelName);
+                                Device.DeviceManager.GetInstance()
+                                    .AddDeviceChannel(device, 
+                                    moduleInfo.AddressSpaceType, node,
+                                    module, clamp, clampComment, out error, 
+                                    physicalNumber, logicalPort, moduleOffset, 
+                                    channelName);
 
                                 if (error != "")
                                 {
                                     error = string.Format("\"{0}:{1}\" : {2}",
-                                       oF.VisibleName, nn, error);
+                                       function.VisibleName, clamp, error);
 
                                     ProjectManager.GetInstance().AddLogMessage(error);
                                 }
 
                                 if (haveChannelError == true)
                                 {
-                                    string message = $"Неправильно задан комментарий для устройства A{n}, клемма - {nn}. ";
+                                    string message = $"Неправильно задан комментарий для устройства A{physicalNumber}, клемма - {clamp}. ";
                                     ProjectManager.GetInstance().AddLogMessage(message);
                                 }
                             }                        
@@ -1541,7 +1540,6 @@ namespace EasyEPlanner
             {
                 error = true;
                 // TODO: Errors handler
-                //throw new Exception(Message);
             }
         }
 
@@ -1563,7 +1561,7 @@ namespace EasyEPlanner
         ///</summary>
         public void CheckConfiguration(bool useLog = false)
         {
-            string res = deviceManager.CheckDevicesConnection();
+            string res = deviceManager.CheckDevicesConnectionAndCalculateIOLink();
             if (res != "" && useLog == false) ProjectManager.GetInstance().AddLogMessage(res);
         }
 
