@@ -862,97 +862,23 @@ namespace Device
         /// <summary>
         /// Сброс канала ввода\вывода.
         /// </summary>
-        /// <param name="addressSpace">Тип адресного пространства канала.</param>   
-        /// <param name="komment">Комментарий к каналу.</param>
-        /// <param name="error">Строка с описанием ошибки при возникновении таковой.</param>
+        /// <param name="addressSpace">Тип адресного пространства канала.
+        /// </param>   
+        /// <param name="comment">Комментарий к каналу.</param>
+        /// <param name="error">Строка с описанием ошибки при возникновении 
+        /// таковой.</param>
         public bool ClearChannel(
             IOModuleInfo.ADDRESS_SPACE_TYPE addressSpace,
-            string komment, string channelName)
+            string comment, string channelName)
         {
-            List<IOChannel> IO = null;
+            List<IOChannel> findedChannels = GetChannels(addressSpace, 
+                channelName, comment);
 
-            switch (addressSpace)
+            if (findedChannels.Count > 0)
             {
-                case IOModuleInfo.ADDRESS_SPACE_TYPE.DO:
-                    IO = DO;
-                    break;
-
-                case IOModuleInfo.ADDRESS_SPACE_TYPE.DI:
-                    IO = DI;
-                    break;
-
-                case IOModuleInfo.ADDRESS_SPACE_TYPE.AO:
-                    IO = AO;
-                    break;
-
-                case IOModuleInfo.ADDRESS_SPACE_TYPE.AI:
-                    IO = AI;
-                    break;
-
-                case IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI:
-                    IO = AO;
-                    break;
-
-                case IOModuleInfo.ADDRESS_SPACE_TYPE.DODI:
-                    IO = DO;
-                    break;
-                case IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI:
-                    IO = new List<IOChannel>();
-                    break;
-            }
-
-            List<IOChannel> resCh = IO.FindAll(delegate (IOChannel ch)
-            {
-                return ch.Comment == komment;
-            });
-            if (addressSpace == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI)
-            {
-                resCh.AddRange(AI.FindAll(delegate (IOChannel ch)
+                foreach (IOChannel channel in findedChannels)
                 {
-                    return ch.Comment == komment;
-                }));
-            }
-            if (addressSpace == IOModuleInfo.ADDRESS_SPACE_TYPE.DODI)
-            {
-                resCh.AddRange(DI.FindAll(delegate (IOChannel ch)
-                {
-                    return ch.Comment == komment;
-                }));
-            }
-            if (addressSpace == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI)
-            {
-                if (channelName == "IO-Link")
-                {
-                    resCh.AddRange(AI.FindAll(delegate (IOChannel ch)
-                    {
-                        return ch.Comment == komment;
-                    }));
-                    resCh.AddRange(AO.FindAll(delegate (IOChannel ch)
-                    {
-                        return ch.Comment == komment;
-                    }));
-                }
-                else if (channelName == "DI")
-                {
-                    resCh.AddRange(DI.FindAll(delegate (IOChannel ch)
-                    {
-                        return ch.Comment == komment;
-                    }));
-                }
-                else if (channelName == "DO")
-                {
-                    resCh.AddRange(DO.FindAll(delegate (IOChannel ch)
-                    {
-                        return ch.Comment == komment;
-                    }));
-                }
-            }
-
-            if (resCh.Count > 0)
-            {
-                foreach (IOChannel ch in resCh)
-                {
-                    ch.Clear();
+                    channel.Clear();
                 }
                 return true;
             }
@@ -965,127 +891,130 @@ namespace Device
         /// <summary>
         /// Установка канала ввода\вывода.
         /// </summary>
-        /// <param name="addressSpace">Тип адресного пространства канала.</param>
+        /// <param name="addressSpace">Тип адресного пространства канала.
+        /// </param>
         /// <param name="node">Номер узла.</param>
         /// <param name="module">Номер модуля.</param>
         /// <param name="physicalKlemme">Номер клеммы.</param>
-        /// <param name="komment">Комментарий к каналу.</param>
-        /// <param name="error">Строка с описанием ошибки при возникновении таковой.</param>
+        /// <param name="comment">Комментарий к каналу.</param>
+        /// <param name="error">Строка с описанием ошибки при возникновении 
+        /// таковой.</param>
         public bool SetChannel(IOModuleInfo.ADDRESS_SPACE_TYPE addressSpace,
-            int node, int module, int physicalKlemme, string komment, out string error,
-            int fullModule, int logicalPort, int moduleOffset, string channelName)
+            int node, int module, int physicalKlemme, string comment, 
+            out string error, int fullModule, int logicalPort, 
+            int moduleOffset, string channelName)
         {
             error = "";
-            List<IOChannel> IO = null;
 
-            switch (addressSpace)
+            List<IOChannel> findedChannels = GetChannels(addressSpace, 
+                channelName, comment);
+
+            if (findedChannels.Count > 0)
             {
-                case IOModuleInfo.ADDRESS_SPACE_TYPE.DO:
-                    IO = DO;
-                    break;
-
-                case IOModuleInfo.ADDRESS_SPACE_TYPE.DI:
-                    IO = DI;
-                    break;
-
-                case IOModuleInfo.ADDRESS_SPACE_TYPE.AO:
-                    IO = AO;
-                    break;
-
-                case IOModuleInfo.ADDRESS_SPACE_TYPE.AI:
-                    IO = AI;
-                    break;
-
-                case IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI:
-                    IO = AO;
-                    break;
-
-                case IOModuleInfo.ADDRESS_SPACE_TYPE.DODI:
-                    IO = DO;
-                    break;
-
-                case IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI:
-                    IO = new List<IOChannel>();
-                    break;
-            }
-
-            List<IOChannel> resCh = IO.FindAll(delegate (IOChannel ch)
-            {
-                return ch.Comment == komment;
-            });
-            if (addressSpace == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI)
-            {
-                resCh.AddRange(AI.FindAll(delegate (IOChannel ch)
+                foreach (IOChannel channel in findedChannels)
                 {
-                    return ch.Comment == komment;
-                }));
-            }
-            if (addressSpace == IOModuleInfo.ADDRESS_SPACE_TYPE.DODI)
-            {
-                resCh.AddRange(DI.FindAll(delegate (IOChannel ch)
-                {
-                    return ch.Comment == komment;
-                }));
-            }
-            if (addressSpace == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI)
-            {
-                if (channelName == "IO-Link")
-                {
-                    resCh.AddRange(AI.FindAll(delegate (IOChannel ch)
+                    if (!channel.IsEmpty())
                     {
-                        return ch.Comment == komment;
-                    }));
-                    resCh.AddRange(AO.FindAll(delegate (IOChannel ch)
-                    {
-                        return ch.Comment == komment;
-                    }));
-                }
-                else if (channelName == "DI")
-                {
-                    resCh.AddRange(DI.FindAll(delegate (IOChannel ch)
-                    {
-                        return ch.Comment == komment;
-                    }));
-                }
-                else if (channelName == "DO")
-                {
-                    resCh.AddRange(DO.FindAll(delegate (IOChannel ch)
-                    {
-                        return ch.Comment == komment;
-                    }));
-                }
-            }
-
-            if (resCh.Count > 0)
-            {
-                foreach (IOChannel ch in resCh)
-                {
-                    if (!ch.IsEmpty())
-                    {
-                        error = string.Format("\"{0}\" : канал {1}.\"{2}\" уже привязан к A{3}.{4} \"{5}\".",
-                            name, addressSpace, komment,
-                            100 * (ch.Node + 1) + ch.Module, ch.PhysicalClamp, ch.Comment);
+                        error = string.Format(
+                            "\"{0}\" : канал {1}.\"{2}\" уже привязан " +
+                            "к A{3}.{4} \"{5}\".",
+                            name, addressSpace, comment,
+                            100 * (channel.Node + 1) + channel.Module, 
+                            channel.PhysicalClamp, channel.Comment);
                         return false;
                     }
 
-                    ch.SetChannel(node, module, physicalKlemme, fullModule, logicalPort, moduleOffset);
-                    List<IONode> wNodes = IOManager.GetInstance().IONodes;
-
-                    if (wNodes.Count > node && wNodes[node].IOModules.Count > module - 1)
+                    channel.SetChannel(node, module, physicalKlemme, 
+                        fullModule, logicalPort, moduleOffset);
+                    
+                    List<IONode> nodes = IOManager.GetInstance().IONodes;
+                    if (nodes.Count > node && 
+                        nodes[node].IOModules.Count > module - 1)
                     {
-                        wNodes[node].IOModules[module - 1].AssignChannelToDevice(physicalKlemme, this, ch);
+                        nodes[node].IOModules[module - 1]
+                            .AssignChannelToDevice(
+                            physicalKlemme, this, channel);
                     }
-
                 }
-
                 return true;
             }
             else
             {
-                error = string.Format("\"{0}\" : нет такого канала {1}:\"{2}\".",
-                    name, addressSpace, komment);
+                error = string.Format(
+                    "\"{0}\" : нет такого канала {1}:\"{2}\".",
+                    name, addressSpace, comment);
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Получить каналы устройства, которые привязывались или будут
+        /// привязываться к модулю ввода-вывода
+        /// </summary>
+        /// <param name="addressSpace">Тип адресного пространства
+        /// модуля ввода-вывода</param>
+        /// <param name="channelName">Имя канала для IO-Link</param>
+        /// <param name="comment">Комментарий канала</param>
+        /// <returns></returns>
+        private List<IOChannel> GetChannels(
+            IOModuleInfo.ADDRESS_SPACE_TYPE addressSpace, string channelName,
+            string comment)
+        {
+            var IO = new List<IOChannel>();
+
+            switch (addressSpace)
+            {
+                case IOModuleInfo.ADDRESS_SPACE_TYPE.DO:
+                    IO.AddRange(DO);
+                    break;
+
+                case IOModuleInfo.ADDRESS_SPACE_TYPE.DI:
+                    IO.AddRange(DI);
+                    break;
+
+                case IOModuleInfo.ADDRESS_SPACE_TYPE.AO:
+                    IO.AddRange(AO);
+                    break;
+
+                case IOModuleInfo.ADDRESS_SPACE_TYPE.AI:
+                    IO.AddRange(AI);
+                    break;
+
+                case IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI:
+                    IO.AddRange(AO);
+                    IO.AddRange(AI);
+                    break;
+
+                case IOModuleInfo.ADDRESS_SPACE_TYPE.DODI:
+                    IO.AddRange(DO);
+                    IO.AddRange(DI);
+                    break;
+
+                case IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI:
+                    switch (channelName)
+                    {
+                        case "IO-Link":
+                            IO.AddRange(AO);
+                            IO.AddRange(AI);
+                            break;
+
+                        case "DO":
+                            IO.AddRange(DO);
+                            break;
+
+                        case "DI":
+                            IO.AddRange(DI);
+                            break;
+                    }
+                    break;
+            }
+
+            List<IOChannel> findedChannels = IO.FindAll(delegate (IOChannel channel)
+            {
+                return channel.Comment == comment;
+            });
+
+            return findedChannels;
         }
 
         /// <summary>
@@ -1436,17 +1365,17 @@ namespace Device
         /// <summary>
         /// Свойство содержащее изделие, которое используется для устройства
         /// </summary>
-        public string ArticleName { get; set; } = "";
+        public string ArticleName { get; set; } = string.Empty;
 
         #region Закрытые поля.
-        public List<IOChannel> DO; ///Каналы дискретных выходов.
-        public List<IOChannel> DI; ///Каналы дискретных входов.
-        public List<IOChannel> AO; ///Каналы аналоговых выходов.
-        public List<IOChannel> AI; ///Каналы аналоговых входов.
+        protected List<IOChannel> DO; ///Каналы дискретных выходов.
+        protected List<IOChannel> DI; ///Каналы дискретных входов.
+        protected List<IOChannel> AO; ///Каналы аналоговых выходов.
+        protected List<IOChannel> AI; ///Каналы аналоговых входов.
 
-        public Dictionary<string, object> parameters;   ///Параметры.
-        public Dictionary<string, object> rtParameters; ///Рабочие параметры.
-        public Dictionary<string, object> properties;
+        protected Dictionary<string, object> parameters;   ///Параметры.
+        protected Dictionary<string, object> rtParameters; ///Рабочие параметры.
+        protected Dictionary<string, object> properties;
 
         internal int IOLinkSizeIn = 0;
         internal int IOLinkSizeOut = 0;
@@ -1473,19 +1402,19 @@ namespace Device
 
             /// <param name="node">Номер узла.</param>
             /// <param name="module">Номер модуля.</param>
-            /// <param name="physicalKlemme">Физический номер клеммы.</param>
-            /// <param name="fullModule">Полный номер модуля (А101).</param>
-            /// <param name="logicalKlemme">Порядковый логический номер клеммы.</param>
+            /// <param name="physicalClamp">Физический номер клеммы.</param>
+            /// <param name="fullModule">Полный номер модуля (101).</param>
+            /// <param name="logicalClamp">Порядковый логический номер клеммы.</param>
             /// <param name="moduleOffset">Сдвиг модуля к которому привязан канал.</param>
-            public void SetChannel(int node, int module, int physicalKlemme, int fullModule,
-                int logicalKlemme, int moduleOffset)
+            public void SetChannel(int node, int module, int physicalClamp, int fullModule,
+                int logicalClamp, int moduleOffset)
             {
                 this.node = node;
                 this.module = module;
-                this.physicalClamp = physicalKlemme;
+                this.physicalClamp = physicalClamp;
 
                 this.fullModule = fullModule;
-                this.logicalClamp = logicalKlemme;
+                this.logicalClamp = logicalClamp;
                 this.moduleOffset = moduleOffset;
             }
 
@@ -1505,16 +1434,16 @@ namespace Device
             /// <param name="name">Имя канала (DO, DI, AO, AI).</param>
             /// <param name="node">Номер узла.</param>
             /// <param name="module">Номер модуля.</param>
-            /// <param name="klemme">Номер клеммы.</param>
-            /// <param name="komment">Комментарий к каналу.</param>
-            public IOChannel(string name, int node, int module, int klemme, string komment)
+            /// <param name="clamp">Номер клеммы.</param>
+            /// <param name="comment">Комментарий к каналу.</param>
+            public IOChannel(string name, int node, int module, int clamp, string comment)
             {
                 this.name = name;
 
                 this.node = node;
                 this.module = module;
-                this.physicalClamp = klemme;
-                this.comment = komment;
+                this.physicalClamp = clamp;
+                this.comment = comment;
             }
 
             private int ToInt()
@@ -1558,64 +1487,27 @@ namespace Device
                 {
                     res += prefix + "{\n";
 
-                    IOModule md =
-                        IOManager.GetInstance()[node][module - 1];
-                    int offset = -1;
-
+                    int offset;
                     switch (name)
                     {
                         case "DO":
-                            if (md.isIOLink())
-                            {
-                                offset = 0;
-                                if (physicalClamp <= IOManager.GetInstance()[node][module - 1].Info.ChannelAddressesOut.Length)
-                                {
-                                    offset += md.Info.ChannelAddressesOut[physicalClamp];
-                                }
-                            }
-                            else
-                            {
-                                offset = md.OutOffset;
-                                if (physicalClamp <= IOManager.GetInstance()[node][module - 1].Info.ChannelAddressesOut.Length)
-                                {
-                                    offset += md.Info.ChannelAddressesOut[physicalClamp];
-                                }
-                            }
+                            offset = CalculateDO();
                             break;
 
                         case "AO":
-                            offset = md.OutOffset;
-                            if (physicalClamp <= IOManager.GetInstance()[node][module - 1].Info.ChannelAddressesOut.Length)
-                            {
-                                offset += md.Info.ChannelAddressesOut[physicalClamp];
-                            }
+                            offset = CalculateAO();
                             break;
 
                         case "DI":
-                            if (md.isIOLink())
-                            {
-                                offset = 0;
-                                if (physicalClamp <= IOManager.GetInstance()[node][module - 1].Info.ChannelAddressesIn.Length)
-                                {
-                                    offset += md.Info.ChannelAddressesIn[physicalClamp];
-                                }
-                            }
-                            else
-                            {
-                                offset = md.InOffset;
-                                if (physicalClamp <= IOManager.GetInstance()[node][module - 1].Info.ChannelAddressesIn.Length)
-                                {
-                                    offset += md.Info.ChannelAddressesIn[physicalClamp];
-                                }
-                            }
+                            offset = CalculateDI();
                             break;
 
                         case "AI":
-                            offset = md.InOffset;
-                            if (physicalClamp <= IOManager.GetInstance()[node][module - 1].Info.ChannelAddressesIn.Length)
-                            {
-                                offset += md.Info.ChannelAddressesIn[physicalClamp];
-                            }
+                            offset = CalculateAI();
+                            break;
+
+                        default:
+                            offset = -1;
                             break;
                     }
 
@@ -1634,6 +1526,104 @@ namespace Device
                 }
 
                 return res;
+            }
+
+            /// <summary>
+            /// Расчет AI адреса для сохранения в файл
+            /// </summary>
+            /// <returns>Адрес</returns>
+            private int CalculateAI() 
+            {
+                int offset = -1;
+
+                if (physicalClamp <= IOManager.GetInstance()[node][module - 1]
+                    .Info.ChannelAddressesIn.Length)
+                {
+                    IOModule md = IOManager.GetInstance()[node][module - 1];
+                    offset = md.InOffset;
+                    offset += md.Info.ChannelAddressesIn[physicalClamp];
+
+                    return offset;
+                }
+
+                return offset;
+            }
+
+            /// <summary>
+            /// Расчет AO адреса для сохранения в файл
+            /// </summary>
+            /// <returns>Адрес</returns>
+            private int CalculateAO() 
+            {
+                int offset = -1;
+
+                if (physicalClamp <= IOManager.GetInstance()[node][module - 1]
+                    .Info.ChannelAddressesOut.Length)
+                {
+                    IOModule md = IOManager.GetInstance()[node][module - 1];
+                    offset = md.OutOffset;
+                    offset += md.Info.ChannelAddressesOut[physicalClamp];
+                    
+                    return offset;
+                }
+
+                return offset;
+            }
+
+            /// <summary>
+            /// Расчет DI адреса для сохранения в файл
+            /// </summary>
+            /// <returns>Адрес</returns>
+            private int CalculateDI() 
+            {
+                int offset = -1;
+
+                if (physicalClamp <= IOManager.GetInstance()[node][module - 1]
+                    .Info.ChannelAddressesIn.Length)
+                {
+                    IOModule md = IOManager.GetInstance()[node][module - 1];
+                    if (md.isIOLink() == true)
+                    {
+                        offset = 0;
+                    }
+                    else
+                    {
+                        offset = md.InOffset;
+                    }
+                    offset += md.Info.ChannelAddressesIn[physicalClamp];
+
+                    return offset;
+                }
+
+                return offset;
+            }
+
+            /// <summary>
+            /// Расчет DO адреса для сохранения в файл
+            /// </summary>
+            /// <returns>Адрес</returns>
+            private int CalculateDO() 
+            {
+                int offset = -1;
+
+                if (physicalClamp <= IOManager.GetInstance()[node][module - 1]
+                    .Info.ChannelAddressesOut.Length)
+                {
+                    IOModule md = IOManager.GetInstance()[node][module - 1];
+                    if (md.isIOLink() == true)
+                    {
+                        offset = 0;
+                    }
+                    else
+                    {
+                        offset = md.OutOffset;
+                    }
+                    offset += md.Info.ChannelAddressesOut[physicalClamp];
+                    
+                    return offset;
+                }
+
+                return offset;
             }
 
             /// <summary>
@@ -1695,7 +1685,7 @@ namespace Device
             }
 
             /// <summary>
-            /// Номер клеммы.
+            /// Физический номер клеммы.
             /// </summary>
             public int PhysicalClamp
             {
@@ -1739,7 +1729,7 @@ namespace Device
             }
 
             /// <summary>
-            /// Логический номер клеммы
+            /// Логический номер клеммы (порядковый)
             /// </summary>
             public int LogicalClamp
             {
@@ -3263,7 +3253,7 @@ namespace Device
         /// Проверка устройств на каналы без привязки и
         /// расчет IOLink адресов
         /// </summary>
-        public string CheckDevicesConnection()
+        public string CheckDevicesConnectionAndCalculateIOLink()
         {
             string res = "";
 
@@ -3282,11 +3272,11 @@ namespace Device
         /// </summary>
         private void CalculateIOLinkAddresses()
         {
-            foreach (IONode wn in IOManager.GetInstance().IONodes)
+            foreach (IONode node in IOManager.GetInstance().IONodes)
             {
-                foreach (IOModule wm in wn.IOModules)
+                foreach (IOModule module in node.IOModules)
                 {
-                    wm.CalculateIOlinkAdress();
+                    module.CalculateIOLinkAdress();
                 }
             }
         }
