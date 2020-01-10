@@ -2092,14 +2092,7 @@ namespace EasyEPlanner
                     }
                 }
 
-                int PhoenixContactStandard = (int) IO.IOManager.IOLinkModules
-                    .PhoenixContactStandard;
-                int PhoenixContactSmart = (int)IO.IOManager.IOLinkModules
-                    .PhoenixContactSmart;
-
-                if (devicePartNumber.Contains(PhoenixContactStandard
-                    .ToString()) || devicePartNumber.Contains(
-                        PhoenixContactSmart.ToString()))
+                if (IsPhoenixContactIOLinkModule(devicePartNumber))
                 {
                     functionalText += NewLine + channel
                         .GetChannelTypeForIOLink();
@@ -2167,6 +2160,30 @@ namespace EasyEPlanner
             }
 
             return repairedDevicesConnections;
+        }
+
+        /// <summary>
+        /// Проверка, является ли данный модуль IO-Link модулем 
+        /// от Phoenix Contact
+        /// </summary>
+        /// <param name="partNumber">Номер детали из API</param>
+        /// <returns></returns>
+        private bool IsPhoenixContactIOLinkModule(string partNumber)
+        {
+            var isIOLinkModule = false;
+
+            int PhoenixContactStandard = (int)IO.IOManager.IOLinkModules
+                .PhoenixContactStandard;
+            int PhoenixContactSmart = (int)IO.IOManager.IOLinkModules
+                .PhoenixContactSmart;
+
+            if (partNumber.Contains(PhoenixContactStandard.ToString()) ||
+                partNumber.Contains(PhoenixContactSmart.ToString()))
+            {
+                isIOLinkModule = true;
+            }
+
+            return isIOLinkModule;
         }
 
         /// <summary>
