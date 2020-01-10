@@ -1482,7 +1482,7 @@ namespace EasyEPlanner
 
                                 if (haveChannelError == true)
                                 {
-                                    string message = $"Неправильно задан комментарий для " +
+                                    string message = $"Неправильно задан функциональный текст для " +
                                         $"устройства A{physicalNumber}, клемма - {clamp}. ";
                                     ProjectManager.GetInstance().AddLogMessage(message);
                                 }
@@ -1984,6 +1984,9 @@ namespace EasyEPlanner
 
             Dictionary<string, string> deviceConnections =
                 CollectIOModulesData(devicesFunctions);
+
+            deviceConnections = RepairIOLink(deviceConnections);
+
             bool containsNewValveTerminal = GetProjectVersionFromDevices(
                 deviceConnections);
 
@@ -2089,10 +2092,14 @@ namespace EasyEPlanner
                     }
                 }
 
-                if (devicePartNumber.Contains(IO.IOManager.IOLinkModules
-                    .PhoenixContactStandard.ToString()) ||
-                    devicePartNumber.Contains(IO.IOManager.IOLinkModules
-                    .PhoenixContactSmart.ToString()))
+                int PhoenixContactStandard = (int) IO.IOManager.IOLinkModules
+                    .PhoenixContactStandard;
+                int PhoenixContactSmart = (int)IO.IOManager.IOLinkModules
+                    .PhoenixContactSmart;
+
+                if (devicePartNumber.Contains(PhoenixContactStandard
+                    .ToString()) || devicePartNumber.Contains(
+                        PhoenixContactSmart.ToString()))
                 {
                     functionalText += NewLine + channel
                         .GetChannelTypeForIOLink();
@@ -2111,6 +2118,55 @@ namespace EasyEPlanner
             {
                 deviceConnections.Add(deviceVisibleName, functionalText);
             }
+        }
+
+        /// <summary>
+        /// Корректировка функционального текста в словаре соединений 
+        /// (привязки к каналам) для IO-Link модулей ввода-вывода
+        /// </summary>
+        private Dictionary<string,string> RepairIOLink(
+            Dictionary<string, string> devicesConnections)
+        {
+            var repairedDevicesConnections = new Dictionary<string, string>();
+            const string IOLink = "IO-Link";
+
+            foreach(string key in devicesConnections.Keys)
+            {
+                var repairedDevices = string.Empty;
+                if (devicesConnections[key].Contains(ValveTerminal))
+                {
+                    var devices = devicesConnections[key]
+                        .Split(PlusSymbol);
+
+                    foreach (string device in devices)
+                    {
+                        if (device.Length <= 0)
+                        {
+                            continue;
+                        }
+
+                        string repairedDevice = device;
+                        repairedDevice = device.Insert(0, PlusSymbol
+                            .ToString());
+                        if (!device.Contains(ValveTerminal))
+                        {
+                            repairedDevice = repairedDevice.Replace(
+                                IOLink, string.Empty);
+                        }
+
+                        repairedDevices += repairedDevice;
+                    }
+
+                    repairedDevicesConnections.Add(key, repairedDevices);
+                }
+                else
+                {
+                    string devices = devicesConnections[key];
+                    repairedDevicesConnections.Add(key, devices);
+                }
+            }
+
+            return repairedDevicesConnections;
         }
 
         /// <summary>
