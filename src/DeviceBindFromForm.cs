@@ -48,6 +48,8 @@ namespace EasyEPlanner
                     ResetChannel();
                 }
 
+                SetFunctionalTextInClamp();
+
                 if (!string.IsNullOrEmpty(SetDevicesChannel))
                 {
                     BindChannel();
@@ -159,8 +161,10 @@ namespace EasyEPlanner
                             return;
                         }
 
-                        if (oldFunctionalText.Contains(SelectedDevice
-                            .EPlanName))
+                        var functionalTextContainsDevice = 
+                            FunctionalTextContainsDevice(oldFunctionalText, 
+                            SelectedDevice.EPlanName);
+                        if (functionalTextContainsDevice == true)
                         {
                             ResetDevicesChannel = NewFunctionalText;
                             NewFunctionalText = oldFunctionalText
@@ -180,20 +184,8 @@ namespace EasyEPlanner
                         else
                         {
                             SetDevicesChannel = NewFunctionalText;
-                            var cursorPosition = oldFunctionalText
-                                .IndexOf('\r');
-                            if (cursorPosition < 0)
-                            {
-                                string text = NewLine + SelectedDevice.
-                                    EPlanName;
-                                NewFunctionalText = oldFunctionalText + text;
-                            }
-                            else
-                            {
-                                string text = "\n" + SelectedDevice.EPlanName;
-                                NewFunctionalText = oldFunctionalText.
-                                    Insert(cursorPosition, text);
-                            }
+                            string text = NewLine + SelectedDevice.EPlanName;
+                            NewFunctionalText = oldFunctionalText + text;
                         }
                     }
                     else
@@ -234,6 +226,14 @@ namespace EasyEPlanner
                 device.ClearChannel(moduleInfo.AddressSpaceType,
                     deviceComment, channelName);
             }
+        }
+
+        /// <summary>
+        /// Установка функционального текста в клемму
+        /// </summary>
+        private void SetFunctionalTextInClamp()
+        {
+            SelectedClampFunction.Properties.FUNC_TEXT = NewFunctionalText;
         }
 
         /// <summary>
@@ -284,7 +284,6 @@ namespace EasyEPlanner
                 .IONodes[nodeNumber].
                 IOModules[moduleNumber - 1].InOffset;
 
-            SelectedClampFunction.Properties.FUNC_TEXT = NewFunctionalText;
             SelectedChannel.SetChannel(nodeNumber, moduleNumber,
                 clampNumber, deviceNumber, logicalPort, moduleOffset);
         }
@@ -295,33 +294,6 @@ namespace EasyEPlanner
         private void RefreshTree()
         {
             DevicesForm.RefreshTreeAfterBinding();
-        }
-
-        /// <summary>
-        /// Наличие IO-Link у модуля
-        /// </summary>
-        /// <returns></returns>
-        private bool CheckIOLink()
-        {
-            var isIOLink = false;
-            string IOModuleFunctionName = SelectedClampFunction
-                .ParentFunction.VisibleName;
-            var IOModuleMatch = Regex.Match(IOModuleFunctionName,
-                IOModuleNamePattern);
-
-            if (IOModuleMatch.Success == false)
-            {
-                return isIOLink;
-            }
-
-            var IOModuleNumber = Convert.ToInt32(IOModuleMatch.Groups["n"]
-                .Value);
-
-            IOModule module = IOManager.GetInstance()
-                .GetModuleByPhysicalNumber(IOModuleNumber);
-            isIOLink = module.isIOLink();
-
-            return isIOLink;
         }
 
         /// <summary>
@@ -358,6 +330,33 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Наличие IO-Link у модуля
+        /// </summary>
+        /// <returns></returns>
+        private bool CheckIOLink()
+        {
+            var isIOLink = false;
+            string IOModuleFunctionName = SelectedClampFunction
+                .ParentFunction.VisibleName;
+            var IOModuleMatch = Regex.Match(IOModuleFunctionName,
+                IOModuleNamePattern);
+
+            if (IOModuleMatch.Success == false)
+            {
+                return isIOLink;
+            }
+
+            var IOModuleNumber = Convert.ToInt32(IOModuleMatch.Groups["n"]
+                .Value);
+
+            IOModule module = IOManager.GetInstance()
+                .GetModuleByPhysicalNumber(IOModuleNumber);
+            isIOLink = module.isIOLink();
+
+            return isIOLink;
+        }
+
+        /// <summary>
         /// Получение свойств выбранного модуля ввода-вывода по их глобальному
         /// индексу, который указан в перечислении.
         /// Предполагаем, что там всего 1 устройство - модуль ввода-вывода.
@@ -376,6 +375,34 @@ namespace EasyEPlanner
                     .Properties[propetyNumber];
             }
             return result;
+        }
+
+        /// <summary>
+        /// Содержит ли функциональный текст с устройствами конкретное
+        /// устройство
+        /// </summary>
+        /// <param name="deviceName">Имя устройства для поиска</param>
+        /// <param name="functionalText">Функциональный текст с устройствами
+        /// </param>
+        /// <returns></returns>
+        private bool FunctionalTextContainsDevice(string functionalText,
+            string deviceName)
+        {
+            var isContains = false;
+            var matches = Regex.Matches(functionalText,
+                            DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
+
+            foreach (Match match in matches)
+            {
+                string value = match.Value;
+                value = value.Replace(NewLine, string.Empty);
+                if (value == deviceName)
+                {
+                    isContains = true;
+                }
+            }
+
+            return isContains;
         }
 
         #region Закрытые поля
@@ -573,17 +600,6 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Получить выборку из выбранных объектов в Eplan API
-        /// </summary>
-        /// <returns></returns>
-        private SelectionSet GetSelectionSet()
-        {
-            var selection = new SelectionSet();
-            selection.LockSelectionByDefault = false;
-            return selection;
-        }
-
-        /// <summary>
         /// Получить функцию выбранной клеммы
         /// </summary>
         /// <param name="selectedObject">Выбранный на схеме объект
@@ -652,6 +668,17 @@ namespace EasyEPlanner
                 const string Message = "Не найдена клемма пневмоострова";
                 throw new Exception(Message);
             }
+        }
+
+        /// <summary>
+        /// Получить выборку из выбранных объектов в Eplan API
+        /// </summary>
+        /// <returns></returns>
+        private SelectionSet GetSelectionSet()
+        {
+            var selection = new SelectionSet();
+            selection.LockSelectionByDefault = false;
+            return selection;
         }
 
         /// <summary>
