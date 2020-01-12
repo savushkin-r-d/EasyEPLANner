@@ -3905,7 +3905,7 @@ namespace Device
         /// </summary>
         /// <param name="devices">Список ОУ устройств через разделитель</param>
         /// <returns></returns>
-        public bool? IsASInterface(string devices, out string errors)
+        public bool? IsASInterfaceDevices(string devices, out string errors)
         {
             bool? isASInterface = false;
             errors = string.Empty;
@@ -4008,6 +4008,25 @@ namespace Device
             }
 
             return isValid;
+        }
+
+        /// <summary>
+        /// Является ли привязка множественной
+        /// </summary>
+        /// <param name="devices">Список устройств</param>
+        /// <returns></returns>
+        public bool IsMultipleBinding(string devices)
+        {
+            var isMultiple = false;
+
+            var matches = Regex.Matches(devices, DeviceNamePattern);
+
+            if (matches.Count > 1)
+            {
+                isMultiple = true;
+            }
+
+            return isMultiple;
         }
 
         const string DeviceNamePattern = "(\\+[A-Z0-9_]*-[A-Z0-9_]+)"; // ОУ.

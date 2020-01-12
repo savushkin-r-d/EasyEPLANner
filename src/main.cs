@@ -1098,8 +1098,8 @@ namespace EasyEPlanner
             string klemmeKomment = string.Empty;
             Match actionMatch;
             MatchEvaluator deviceEvaluator = new MatchEvaluator(GetInstance().RussianToEnglish);
-            bool? isASInterface = Device.DeviceManager.GetInstance().IsASInterface(devsDescr, out _);
-            if (isASInterface == false)
+            bool isMultipleBinding = Device.DeviceManager.GetInstance().IsMultipleBinding(devsDescr);
+            if (isMultipleBinding == false)
             {
                 int endPos = devsDescr.IndexOf("\n");
                 if (endPos > 0)
@@ -1305,12 +1305,14 @@ namespace EasyEPlanner
                                 continue;
                             }
 
+                            MatchCollection descriptionMatches = Regex.Matches(
+                                description, Device.DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
                             // Проверка пневмоостровов FESTO
                             const string FestoPattern = @"=*-Y(?<n>\d+)";
                             var festoRegex = new Regex(FestoPattern);
                             var festoMatch = festoRegex.Match(description);
                             // Нашло совпадение (Есть пневмоостров)
-                            if (festoMatch.Success)
+                            if (festoMatch.Success && descriptionMatches.Count == 1)
                             {
                                 // Инициализация начальных данных
                                 Function[] subFunctions = new Function[0];
@@ -1367,7 +1369,7 @@ namespace EasyEPlanner
                                                 string deviceName = festoDescrMatch.Groups["name"].Value;
 
                                                 // Дополняется descr и отправляется, будто привязано к I/O
-                                                description += $" {deviceName}";
+                                                description += $"\r\n{deviceName}";
 
                                                 // Дополнительно установить параметр R_VTUG_NUMBER
                                                 int vtugNumber = Convert.ToInt32(terminalNumber);
@@ -1387,8 +1389,8 @@ namespace EasyEPlanner
                             var comment = string.Empty;
                             var deviceEvaluator = new MatchEvaluator(RussianToEnglish);
                             // Собственная обработка для AS-i
-                            bool? isASInterface = Device.DeviceManager.GetInstance().IsASInterface(description, out _);
-                            if (isASInterface == false)
+                            bool isMultipleBinding = Device.DeviceManager.GetInstance().IsMultipleBinding(description);
+                            if (isMultipleBinding == false)
                             {
                                 //Для многострочного описания убираем tab+\r\n
                                 description = description.Replace("\t\r\n", "");
@@ -1421,10 +1423,9 @@ namespace EasyEPlanner
                                     RegexOptions.IgnoreCase);
                             }
 
-                            MatchCollection descriptionMatches = Regex.Matches(
+                            descriptionMatches = Regex.Matches(
                                 description, Device.DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
                             int devicesMatchesCount = descriptionMatches.Count;
-
                             if (devicesMatchesCount < 1 && !description.Equals("Pезерв"))
                             {
                                 ProjectManager.GetInstance().AddLogMessage(
@@ -2239,7 +2240,7 @@ namespace EasyEPlanner
                 string bindedDevices = deviceConnections[key];
                 var errors = string.Empty;
                 bool? isASInterface = Device.DeviceManager.GetInstance().
-                    IsASInterface(bindedDevices, out errors);
+                    IsASInterfaceDevices(bindedDevices, out errors);
                 errorMessage += errors;
                 bool deletingComments = NeedDeletingComments(bindedDevices);
 
