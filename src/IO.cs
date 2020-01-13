@@ -39,9 +39,11 @@ namespace IO
                     "16-Channel Digital Output Module 24 V DC",
                     ADDRESS_SPACE_TYPE.DO,
                     "Дискретный выход", "750-1500",
-                    new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 },
+                    new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 
+                        14, 15, 16 },
                     new int[0],
-                    new int[] { -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 },
+                    new int[] { -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 
+                        12, 13, 14, 15 },
                     16, 0, 0, 0, Color.Red));
 
                 modules.Add(new IOModuleInfo(1515, "750-1515",
@@ -102,8 +104,10 @@ namespace IO
                     "16-Channel Digital Input Module 24 V DC",
                     ADDRESS_SPACE_TYPE.DI,
                     "Дискретный вход", "750-1400",
-                    new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 },
-                    new int[] { -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 },
+                    new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 
+                        14, 15, 16 },
+                    new int[] { -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 
+                        13, 14, 15 },
                     new int[0],
                     0, 16, 0, 0, Color.Yellow));
 
@@ -121,7 +125,8 @@ namespace IO
                     ADDRESS_SPACE_TYPE.DI,
                     "Дискретный вход", "750-1400",
                     new int[] { 1, 6, 9, 14 },
-                    new int[] { -1, 0, -1, -1, -1, -1, 1, -1, -1, 2, -1, -1, -1, -1, 3, -1, -1 },
+                    new int[] { -1, 0, -1, -1, -1, -1, 1, -1, -1, 2, -1, 
+                        -1, -1, -1, 3, -1, -1 },
                     new int[0],
                     0, 4, 0, 0, Color.Yellow));
 
@@ -184,7 +189,8 @@ namespace IO
                     ADDRESS_SPACE_TYPE.AI,
                     "Аналоговый вход", "750-400",
                     new int[] { 1, 2, 3, 4, 5, 6, 7, 8 },
-                    new int[] { -1, 0, 1, 2, 3, 4, 5, 6, 7, -1, -1, -1, -1, -1, -1, -1, -1 },
+                    new int[] { -1, 0, 1, 2, 3, 4, 5, 6, 7, -1, -1, -1, 
+                        -1, -1, -1, -1, -1 },
                     new int[0],
                     0, 0, 0, 8, Color.Lime));
 
@@ -202,8 +208,10 @@ namespace IO
                     ADDRESS_SPACE_TYPE.AOAI,
                     "AS-интерфейс мастер", "750-600",
                     new int[] { 1, 6, 9, 14 },
-                    new int[] { -1, 0, -1, -1, -1, -1, 1, -1, -1, 2, -1, -1, -1, -1, 3, -1, -1 },
-                    new int[] { -1, 0, -1, -1, -1, -1, 1, -1, -1, 2, -1, -1, -1, -1, 3, -1, -1 },
+                    new int[] { -1, 0, -1, -1, -1, -1, 1, -1, -1, 2, -1, 
+                        -1, -1, -1, 3, -1, -1 },
+                    new int[] { -1, 0, -1, -1, -1, -1, 1, -1, -1, 2, -1, 
+                        -1, -1, -1, 3, -1, -1 },
                     0, 0, 12, 12, Color.Gray));
 
                 modules.Add(new IOModuleInfo(600, "750-600",
@@ -262,39 +270,55 @@ namespace IO
 
                 modules.Add(new IOModuleInfo(1027843, "AXL F IOL8 2H",
                     "IO-Link Master",
-                    ADDRESS_SPACE_TYPE.AOAI,
+                    ADDRESS_SPACE_TYPE.AOAIDODI,
                     "IO-Link Master", "AXL F",
                     new int[] { 30, 31, 32, 33, 70, 71, 72, 73 },
-                    new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                    -1, -1, -1, 0, 1, 2, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4, 5, 6, 7},
-                    new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                    -1, -1, -1, 0, 1, 2, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4, 5, 6, 7},
+                    new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, 0, 1, 2, 3, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, 4, 5, 6, 7},
+                    new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, 0, 1, 2, 3, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, 4, 5, 6, 7},
                     512, 512, 32, 32, Color.Orange));
 
                 modules.Add(new IOModuleInfo(2701916, "AXL F DI8/1 DO8/1 1H",
                     "8-channel Digital I/O module 24V DC, 500 mA, 1-wire connection",
                     ADDRESS_SPACE_TYPE.DODI,
                     "Цифровой вход/выход", "AXL F",
-                    new int[] { 00, 01, 02, 03, 10, 11, 12, 13, 20, 21, 22, 23, 30, 31, 32, 33 },
-                    new int[] { 0, 1, -1, -1, -1, -1, -1, -1, -1, 2, 3, -1, -1, -1, -1, -1, -1,
-                    -1, -1, 4, 5, -1, -1, -1, -1, -1, -1, -1, -1, 6, 7, -1, -1, -1 },
-                    new int[] {  -1, -1, 0, 1, -1, -1, -1, -1, -1, -1, 2, 3, -1, -1, -1, -1, -1,
-                    -1, -1, -1, 4, 5, -1, -1, -1, -1, -1, -1, -1, -1, 6, 7, -1, -1},
+                    new int[] { 00, 01, 02, 03, 10, 11, 12, 13, 20, 21, 22, 
+                        23, 30, 31, 32, 33 },
+                    new int[] { 0, 1, -1, -1, -1, -1, -1, -1, -1, 2, 3, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, 4, 5, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, 6, 7, -1, -1, -1 },
+                    new int[] {  -1, -1, 0, 1, -1, -1, -1, -1, -1, -1, 2, 3, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, 4, 5, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, 6, 7, -1, -1},
                     16, 16, 1, 1, Color.Violet));
 
                 modules.Add(new IOModuleInfo(2702071, "AXL F DI8/3 DO8/3 2H",
                     "8-channel Digital I/O Module 24V DC, 500 mA, 3-wire connection",
                     ADDRESS_SPACE_TYPE.DODI,
                     "Цифровой вход/выход", "AXL F",
-                    new int[] { 00, 01, 02, 03, 20, 21, 22, 23, 40, 41, 42, 43, 60, 61, 62, 63 },
-                    new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 8, 9, 10, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                     -1, -1, -1, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-                    new int[] { 8, 9, 10, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 12, 13, 14, 15, -1, -1,
-                    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                    new int[] { 00, 01, 02, 03, 20, 21, 22, 23, 40, 41, 42, 
+                        43, 60, 61, 62, 63 },
+                    new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, 8, 9, 10, 11, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, 12, 13, 14, 15, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                    new int[] { 8, 9, 10, 11, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, 12, 13, 14, 15, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
                     16, 16, 1, 1, Color.Violet));
 
                 modules.Add(new IOModuleInfo(2688491, "AXL F AI4 I 1H",
@@ -302,8 +326,9 @@ namespace IO
                     ADDRESS_SPACE_TYPE.AI,
                     "Аналоговый вход", "AXL F",
                     new int[] { 00, 01, 02, 03 },
-                    new int[] { 0, 1, 2, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
+                    new int[] { 0, 1, 2, 3, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1 },
                     new int[0],
                     64, 64, 4, 4, Color.Green));
 
@@ -313,19 +338,24 @@ namespace IO
                     "Аналоговый выход", "AXL F",
                     new int[] { 10, 11, 12, 13 },
                     new int[0],
-                    new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 1, 2, 3, -1, -1, -1,
-                    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
+                    new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 
+                        1, 2, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1 },
                     64, 64, 4, 4, Color.Yellow));
 
                 modules.Add(new IOModuleInfo(2688048, "AXL F DO16/3 2F",
                     "16-channel Digital Output Module 24V DC, 500 mA, 3-wire connection",
                     ADDRESS_SPACE_TYPE.DO,
                     "Цифровой выход", "AXL F",
-                    new int[] { 00, 01, 02, 03, 04, 05, 06, 07, 40, 41, 42, 43, 44, 45, 46, 47 },
+                    new int[] { 00, 01, 02, 03, 04, 05, 06, 07, 40, 41, 42, 
+                        43, 44, 45, 46, 47 },
                     new int[0],
-                    new int[] { 0, 1, 2, 3, 4, 5, 6, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 8, 9, 10, 11, 12, 13, 14, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                    new int[] { 0, 1, 2, 3, 4, 5, 6, 7, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, 8, 9, 10, 11, 12, 13, 14, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
                     16, 16, 1, 1, Color.Red));
 
                 modules.Add(new IOModuleInfo(2688556, "AXL F RTD4 1H",
@@ -333,8 +363,9 @@ namespace IO
                     ADDRESS_SPACE_TYPE.AI,
                     "Аналоговый вход", "AXL F",
                     new int[] { 00, 01, 02, 03 },
-                    new int[] { 0, 1, 2, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
+                    new int[] { 0, 1, 2, 3, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1 },
                     new int[0],
                     64, 64, 4, 4, Color.Green));
 
@@ -342,10 +373,14 @@ namespace IO
                     "16-channel Digital Input Module 24V DC, 4-wire connection",
                     ADDRESS_SPACE_TYPE.DI,
                     "Цифровой вход", "AXL F",
-                    new int[] { 00, 01, 02, 03, 04, 05, 06, 07, 40, 41, 42, 43, 44, 45, 46, 47 },
-                    new int[] { 0, 1, 2, 3, 4, 5, 6, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 8, 9, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                    new int[] { 00, 01, 02, 03, 04, 05, 06, 07, 40, 41, 42, 
+                        43, 44, 45, 46, 47 },
+                    new int[] { 0, 1, 2, 3, 4, 5, 6, 7, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+                        -1, 8, 9, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
                     new int[0],
                     16, 16, 1, 1, Color.Red));
 
@@ -354,8 +389,9 @@ namespace IO
                     ADDRESS_SPACE_TYPE.AI,
                     "Счетчик", "AXL F",
                     new int[] { 00, 04 },
-                    new int[] { 3, -1, -1, -1, 5, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
+                    new int[] { 3, -1, -1, -1, 5, -1, -1, -1, -1, -1, -1, 
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
                     new int[0],
                     224, 224, 14, 14, Color.Orange));
             }
@@ -363,8 +399,10 @@ namespace IO
             IOModuleInfo res = modules.Find( x => x.Name == name);
 
             if (res != null)
+            {
                 return res;
-
+            }
+                
             isStub = true;
             return stub;
         }
@@ -375,13 +413,13 @@ namespace IO
         /// </summary>
         private IOModuleInfo(int n, string name, string descr,
             ADDRESS_SPACE_TYPE addressSpaceType, string typeName,
-            string groupName, int[] channelClamps,
-            int[] clampsAddressIn, int[] clampsAddressOut,
-            int DO_count, int DI_count, int AO_count, int AI_count, Color color)
+            string groupName, int[] channelClamps, int[] clampsAddressIn, 
+            int[] clampsAddressOut, int DO_count, int DI_count, int AO_count, 
+            int AI_count, Color color)
         {
             this.n = n;
             this.name = name;
-            this.descr = descr;
+            this.description = descr;
 
             this.addressSpaceType = addressSpaceType;
             this.typeName = typeName;
@@ -433,7 +471,7 @@ namespace IO
         {
             get
             {
-                return descr;
+                return description;
             }
         }
 
@@ -567,6 +605,7 @@ namespace IO
             AI,
             AOAI,
             DODI,
+            AOAIDODI,
         };
 
 
@@ -575,7 +614,7 @@ namespace IO
         private string name;             ///Имя.
         private string typeName;         ///Имя типа (дискретный выход, аналоговый выход, ...).
         private string groupName;        ///Серия модуля (750-800, 750-1500, ...).
-        private string descr;            ///Описание.
+        private string description;      ///Описание.
 
         ///Тип адресного пространства ( DO, DI, AO, AI ).
         private ADDRESS_SPACE_TYPE addressSpaceType;
@@ -596,8 +635,8 @@ namespace IO
 
         ///Заглушка, для возврата в случае поиска неописанных модулей. 
         private static IOModuleInfo stub = new IOModuleInfo(0,
-            "не определен", "", ADDRESS_SPACE_TYPE.NONE, "", "", new int[0], new int[0], new int[0],
-            0, 0, 0, 0, Color.LightGray);
+            "не определен", "", ADDRESS_SPACE_TYPE.NONE, "", "", new int[0], 
+            new int[0], new int[0], 0, 0, 0, 0, Color.LightGray);
         #endregion
 
     }
@@ -618,15 +657,25 @@ namespace IO
         /// <param name="outAddressSpaceOffset">Смещение выходного адресного 
         /// пространства модуля.</param>
         /// <param name="info">Описание модуля.</param>
+        /// <param name="physicalNumber">Физический номер (из ОУ) устройства.
+        /// </param>
         public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
-            IOModuleInfo info)
+            IOModuleInfo info, int physicalNumber)
         {
             this.inAddressSpaceOffset = inAddressSpaceOffset;
             this.outAddressSpaceOffset = outAddressSpaceOffset;
             this.info = info;
+            this.physicalNumber = physicalNumber;
 
             devicesChannels = new List<Device.IODevice.IOChannel>[80];
             devices = new List<Device.IODevice>[80];
+        }
+
+        public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
+            IOModuleInfo info) : this(inAddressSpaceOffset, 
+                outAddressSpaceOffset, info, 0)
+        {
+            // Делегировано в конструктор с 4 параметрами.
         }
 
         public void AssignChannelToDevice(int chN, Device.IODevice dev,
@@ -690,7 +739,8 @@ namespace IO
 
             if (Info.ChannelClamps.GetLength(0) != 0)
             {
-                if (Info.AddressSpaceType == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI)
+                if (Info.AddressSpaceType == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI ||
+                    Info.AddressSpaceType == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI)
                 {
                     foreach (int clamp in Info.ChannelClamps)
                     {
@@ -717,8 +767,8 @@ namespace IO
                             {
 
                                 devName += dev.EPlanName + dev.GetConnectionType() + dev.GetRange() + ": " +
-                                        devicesChannels[clamp][devIdx].name + ": " + dev.Description + " " +
-                                        devicesChannels[clamp][devIdx].komment;
+                                        devicesChannels[clamp][devIdx].Name + ": " + dev.Description + " " +
+                                        devicesChannels[clamp][devIdx].Comment;
                                 devName = devName.Replace('\n', ' ');
                                 devIdx++;
                             }
@@ -759,8 +809,8 @@ namespace IO
 
                                 asConnection[devIdx, 0] = clamp.ToString() + "(" + (devIdx + 1).ToString() + ")";
                                 string devDescription = dev.EPlanName + dev.GetConnectionType() + dev.GetRange() + ": " +
-                                    devicesChannels[clamp][devIdx].name + ": " + dev.Description + " " +
-                                    devicesChannels[clamp][devIdx].komment;
+                                    devicesChannels[clamp][devIdx].Name + ": " + dev.Description + " " +
+                                    devicesChannels[clamp][devIdx].Comment;
                                 devDescription = devDescription.Replace('\n', ' ');
 
                                 asConnection[devIdx, 1] = devDescription;
@@ -781,47 +831,11 @@ namespace IO
         /// <summary>
         /// Расчет адреса данных привязанных IO-link устройств.
         /// </summary>       
-        public void CalculateIOlinkAdress()
+        public void CalculateIOLinkAdress()
         {
-            if (Info.Name == "750-657") //IO-link Master
-            {
-                int offsetIn = 3;
-                int offsetOut = 3;
-                foreach (int clamp in Info.ChannelClamps)
-                {
-                    if (devices[clamp] != null)
-                    {
-                        if (devices[clamp][0] != null)
-                        {
-                            info.ChannelAddressesIn[clamp] = offsetIn;
-                            info.ChannelAddressesOut[clamp] = offsetOut;
-                            offsetIn += devices[clamp][0].IOLinkSizeIn;
-                            offsetOut += devices[clamp][0].IOLinkSizeOut;
-                        }
-                    }
-                }
-            }
-            if (Info.Name == "AXL F IOL8 2H") //IO-link Master
-            {
-                int offsetIn = 3; // Сервисные байты
-                int offsetOut = 3;
-                foreach (int clamp in Info.ChannelClamps)
-                {
-                    if (devices[clamp] != null)
-                    {
-                        if (devices[clamp][0] != null)
-                        {
-                            info.ChannelAddressesIn[clamp] = offsetIn;
-                            info.ChannelAddressesOut[clamp] = offsetOut;
-                            int deviceOffset = 
-                                devices[clamp][0].GetMaxIOLinkSize();
-                            offsetIn += deviceOffset;
-                            offsetOut += deviceOffset;
-
-                        }
-                    }
-                }
-            }
+            IOLinkCalculator calculator = new IOLinkCalculator(devices, 
+                devicesChannels, Info);
+            calculator.Calculate();
         }
 
         /// <summary>
@@ -857,6 +871,40 @@ namespace IO
             }
         }
 
+        /// <summary>
+        /// Номер устройства (из ОУ) прим., 202.
+        /// </summary>
+        public int PhysicalNumber
+        {
+            get
+            {
+                return physicalNumber;
+            }
+        }
+
+        /// <summary>
+        /// Является ли модуль IO-Link 
+        /// </summary>
+        /// <returns></returns>
+        public bool isIOLink()
+        {
+            bool isIOLink = false;
+
+            int wago = (int) IOManager.IOLinkModules.Wago;
+            int phoenixContactStandard = (int) IOManager.IOLinkModules
+                .PhoenixContactStandard;
+            int phoenixContactSmart = (int) IOManager.IOLinkModules
+                .PhoenixContactSmart;
+
+            if (Info.Number == wago ||
+                Info.Number == phoenixContactStandard ||
+                Info.Number == phoenixContactSmart)
+            {
+                isIOLink = true;
+            }
+
+            return isIOLink;
+        }
 
         /// Привязанные устройства.
         public List<Device.IODevice>[] devices;
@@ -868,13 +916,11 @@ namespace IO
         private int inAddressSpaceOffset;
         ///Смещение выходного адресного пространства модуля.
         private int outAddressSpaceOffset;
-
+        ///Описание модуля
         private IOModuleInfo info;
-
-        ///Описание модуля.       
+        ///Физический номер модуля
+        private int physicalNumber;
         #endregion
-
-
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -1056,7 +1102,8 @@ namespace IO
             for (int i = 0; i < iOModules.Count; i++)
             {
                 iOModules[i].SaveAsConnectionArray(ref res, ref idx, i + 1, modulesCount, modulesColor);
-                if (iOModules[i].Info.AddressSpaceType == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI)
+                if (iOModules[i].Info.AddressSpaceType == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI ||
+                    iOModules[i].Info.AddressSpaceType == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI)
                 {
                     iOModules[i].SaveASInterfaceConnection(nodeIdx, i + 1, asInterfaceConnection);
                 }
@@ -1214,6 +1261,33 @@ namespace IO
         }
 
         /// <summary>
+        /// Получить модуль ввода-вывода по его физическому номеру (прим., 202)
+        /// </summary>
+        /// <param name="number">Физический номер</param>
+        /// <returns>Модуль ввода-вывода</returns>
+        public IOModule GetModuleByPhysicalNumber(int number)
+        {
+            IOModule findedModule = null;
+            foreach (IONode node in iONodes)
+            {
+                foreach (IOModule module in node.IOModules)
+                {
+                    if (module.PhysicalNumber == number)
+                    {
+                        return module;
+                    }
+                }
+            }
+
+            if (findedModule == null)
+            {
+                const string Message = "Модуль не найден";
+                throw new Exception(Message);
+            }
+            return findedModule;
+        }
+
+        /// <summary>
         /// Добавление модуля в узел в заданную позицию.
         /// </summary>        
         /// <param name="n">Номер (c единицы).</param>
@@ -1332,7 +1406,6 @@ namespace IO
                 idx++;
                 DateTime localDate = DateTime.Now;
                 res[idx, 3] = localDate.ToString(new CultureInfo("ru-RU"));
-                //idx++;
                 string nodeName = "Узел №" + (i + 1).ToString() + " Адрес: " + iONodes[i].IP_address;
                 res[idx, 0] = nodeName;
                 idx++;
@@ -1363,9 +1436,144 @@ namespace IO
             }
         }
 
+        /// <summary>
+        /// Номера IO-Link модулей, которые используются
+        /// </summary>
+        public enum IOLinkModules
+        {
+            Wago = 657,
+            PhoenixContactSmart = 1088132,
+            PhoenixContactStandard = 1027843,
+        }
+
         #region Закрытые поля.
         private List<IONode> iONodes;     ///Узлы проекта.
         private static IOManager instance;  ///Экземпляр класса.
         #endregion
+    }
+
+    /// <summary>
+    /// Класс, рассчитывающий IO-Link адреса
+    /// </summary>
+    sealed class IOLinkCalculator
+    {
+        /// <summary>
+        /// Закрытый конструктор для безопасности.
+        /// </summary>
+        private IOLinkCalculator() { }
+
+        /// <summary>
+        /// Конструктор стандартный
+        /// </summary>
+        /// <param name="devices">Список привязанных устройств</param>
+        /// <param name="devicesChannels">Список привязанных каналов</param>
+        /// <param name="moduleInfo">Информация о модуле ввода-вывода</param>
+        public IOLinkCalculator(List<Device.IODevice>[] devices, 
+            List<Device.IODevice.IOChannel>[] devicesChannels,
+            IOModuleInfo moduleInfo) 
+        {
+            this.devices = devices;
+            this.devicesChannels = devicesChannels;
+            this.moduleInfo = moduleInfo;
+        }
+
+        public void Calculate()
+        {
+            int moduleNumber = moduleInfo.Number;
+
+            switch (moduleNumber)
+            {
+                case (int) IOManager.IOLinkModules.Wago:
+                    CalculateForWago();
+                    break;
+
+                case (int) IOManager.IOLinkModules.PhoenixContactStandard:
+                    CalculateForPhoenixContact();
+                    break;
+
+                case (int) IOManager.IOLinkModules.PhoenixContactSmart:
+                    // TODO: Будет добавлено после появления SMART модуля
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Расчет для IO-Link модуля от Wago.
+        /// </summary>
+        private void CalculateForWago() 
+        {
+            foreach (int clamp in moduleInfo.ChannelClamps)
+            {
+                if (devices[clamp] != null && devices[clamp][0] != null)
+                {
+                    moduleInfo.ChannelAddressesIn[clamp] = offsetIn;
+                    moduleInfo.ChannelAddressesOut[clamp] = offsetOut;
+                    offsetIn += devices[clamp][0].IOLinkSizeIn;
+                    offsetOut += devices[clamp][0].IOLinkSizeOut;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Расчет для стандартного IO-Link модуля от Phoenix Contact.
+        /// </summary>
+        private void CalculateForPhoenixContact() 
+        {
+            foreach (int clamp in moduleInfo.ChannelClamps)
+            {
+                if (devices[clamp] != null && devices[clamp][0] != null)
+                {
+                    int deviceOffset;
+                    Device.IODevice.IOChannel channel = 
+                        devicesChannels[clamp][0];
+                    Device.IODevice device = devices[clamp][0];
+                    if (channel.Name == "DI" || channel.Name == "DO")
+                    {
+                        int moduleOffset = channel.ModuleOffset;
+                        int logicalClamp = channel.LogicalClamp;
+                        int discreteOffset = CalculateDiscreteOffsetForIOLink(
+                            moduleOffset, logicalClamp);
+                        moduleInfo.ChannelAddressesIn[clamp] = discreteOffset;
+                        moduleInfo.ChannelAddressesOut[clamp] = discreteOffset;
+                    }
+                    else
+                    {
+                        moduleInfo.ChannelAddressesIn[clamp] = offsetIn;
+                        moduleInfo.ChannelAddressesOut[clamp] = offsetOut;
+                        deviceOffset = device.GetMaxIOLinkSize();
+                        offsetIn += deviceOffset;
+                        offsetOut += deviceOffset;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Расчет дискретного смещения для IO-Link модуля Phoenix Contact.
+        /// </summary>
+        /// <param name="logicalClamp">Порядковый номер привязанной 
+        /// клеммы</param>
+        /// <param name="moduleOffset">Начало смещения модуля в словах (word)
+        /// </param>
+        /// <returns>Дискретное смещение</returns>
+        private int CalculateDiscreteOffsetForIOLink(int moduleOffset,
+            int logicalClamp)
+        {
+            int convertToBytes = moduleOffset * 2;
+            int startingDiscreteOffsetInBytes = convertToBytes + 2;
+            int convertToBits = startingDiscreteOffsetInBytes * 8;
+            logicalClamp -= 1;
+            int discreteOffset = convertToBits + logicalClamp;
+
+            return discreteOffset;
+        }
+
+        List<Device.IODevice>[] devices;
+        List<Device.IODevice.IOChannel>[] devicesChannels;
+        IOModuleInfo moduleInfo;
+
+        // Сервисные слова.
+        int offsetIn = 3;
+        int offsetOut = 3;
     }
 }
