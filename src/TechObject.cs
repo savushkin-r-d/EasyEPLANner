@@ -3980,18 +3980,20 @@ namespace TechObject
             return clone;
         }
 
-        virtual public void ModifyDevNames(int newTechObjectN, int oldTechObjectN,
-            string techObjectName)
+        virtual public void ModifyDevNames(int newTechObjectN, 
+            int oldTechObjectN, string techObjectName)
         {
             List<int> tmpIndex = new List<int>();
             foreach (int index in deviceIndex)
             {
                 tmpIndex.Add(index);
             }
-            Device.DeviceManager deviceManager = Device.DeviceManager.GetInstance();
+            
+            Device.DeviceManager deviceManager = Device.DeviceManager
+                .GetInstance();
             foreach (int index in deviceIndex)
             {
-                string newDevName = "";
+                var newDevName = string.Empty;
                 Device.IODevice device = deviceManager.GetDeviceByIndex(index);
                 int objNum = device.ObjectNumber;
                 string objName = device.ObjectName;
@@ -4005,26 +4007,29 @@ namespace TechObject
                         if (objNum == newTechObjectN && oldTechObjectN != -1)
                         {
                             newDevName = objName + oldTechObjectN +
-                                device.DeviceType.ToString() + device.DeviceNumber;
+                                device.DeviceType.ToString() + device.
+                                DeviceNumber;
                         }
                         if (oldTechObjectN == -1 ||
                             oldTechObjectN == objNum)
                         {
                             //COAG1V1 --> COAG2V1
                             newDevName = objName + newTechObjectN +
-                                device.DeviceType.ToString() + device.DeviceNumber;
+                                device.DeviceType.ToString() + device.
+                                DeviceNumber;
                         }
                     }
                 }
 
-                if (newDevName != "")
+                if (newDevName != string.Empty)
                 {
+                    int indexOfDeletingElement = tmpIndex.IndexOf(index);
                     tmpIndex.Remove(index);
-                    int tmpDevInd =
-                        Device.DeviceManager.GetInstance().GetDeviceListNumber(newDevName);
+                    int tmpDevInd = Device.DeviceManager.GetInstance()
+                        .GetDeviceListNumber(newDevName);
                     if (tmpDevInd >= 0)
                     {
-                        tmpIndex.Add(tmpDevInd);
+                        tmpIndex.Insert(indexOfDeletingElement, tmpDevInd);
                     }
                 }
             }
@@ -4040,10 +4045,12 @@ namespace TechObject
             {
                 tmpIndex.Add(index);
             }
-            Device.DeviceManager deviceManager = Device.DeviceManager.GetInstance();
+
+            Device.DeviceManager deviceManager = Device.DeviceManager
+                .GetInstance();
             foreach (int index in deviceIndex)
             {
-                string newDevName = "";
+                string newDevName = string.Empty;
                 Device.IODevice device = deviceManager.GetDeviceByIndex(index);
                 int objNum = newTechObjectNumber;
                 string objName = device.ObjectName;
@@ -4055,14 +4062,15 @@ namespace TechObject
                         device.DeviceType.ToString() + device.DeviceNumber;
                 }
 
-                if (newDevName != "")
+                if (newDevName != string.Empty)
                 {
+                    int indexOfDeletingElement = tmpIndex.IndexOf(index);
                     tmpIndex.Remove(index);
-                    int tmpDevInd =
-                        Device.DeviceManager.GetInstance().GetDeviceListNumber(newDevName);
+                    int tmpDevInd = Device.DeviceManager.GetInstance()
+                        .GetDeviceListNumber(newDevName);
                     if (tmpDevInd >= 0)
                     {
-                        tmpIndex.Add(tmpDevInd);
+                        tmpIndex.Insert(indexOfDeletingElement, tmpDevInd);
                     }
                 }
             }
