@@ -3547,7 +3547,7 @@ namespace TechObject
             if (isMode)
             {
                 actions.Add(new Action("Сигналы для включения", this, "required_FB",
-                    new Device.DeviceType[1] { Device.DeviceType.DI }));
+                    new Device.DeviceType[2] { Device.DeviceType.DI, Device.DeviceType.GS }));
                 actions.Add(new ActionWash("Мойка( DI, DO, устройства)", this, "wash_data"));
                 actions.Add(new Action_DI_DO("Группы DI -> DO DO ...", this, "DI_DO"));
                 actions.Add(new Action_AI_AO("Группы AI -> AO AO ...", this, "AI_AO"));
