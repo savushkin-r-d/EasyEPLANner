@@ -1232,7 +1232,8 @@ namespace Device
                 res += prefix + "\t},\n";
             }
 
-            if (DO.Count > 0)
+            int bindedDO = CountOfBindedChannels(DO);
+            if (DO.Count > 0 && bindedDO > 0)
             {
                 res += prefix + "DO =\n";
                 res += prefix + "\t{\n";
@@ -1243,7 +1244,8 @@ namespace Device
                 res += prefix + "\t},\n";
             }
 
-            if (DI.Count > 0)
+            int bindedDI = CountOfBindedChannels(DI);
+            if (DI.Count > 0 && bindedDI > 0)
             {
                 res += prefix + "DI =\n";
                 res += prefix + "\t{\n";
@@ -1254,7 +1256,8 @@ namespace Device
                 res += prefix + "\t},\n";
             }
 
-            if (AO.Count > 0)
+            int bindedAO = CountOfBindedChannels(AO);
+            if (AO.Count > 0 && bindedAO > 0)
             {
                 res += prefix + "AO =\n";
                 res += prefix + "\t{\n";
@@ -1265,7 +1268,8 @@ namespace Device
                 res += prefix + "\t},\n";
             }
 
-            if (AI.Count > 0)
+            int bindedAI = CountOfBindedChannels(AI);
+            if (AI.Count > 0 && bindedAI > 0)
             {
                 res += prefix + "AI =\n";
                 res += prefix + "\t{\n";
@@ -1275,7 +1279,6 @@ namespace Device
                 }
                 res += prefix + "\t},\n";
             }
-
 
             if (rtParameters.Count > 0)
             {
@@ -1415,6 +1418,28 @@ namespace Device
         public int GetMaxIOLinkSize()
         {
             return IOLinkSizeOut > IOLinkSizeIn ? IOLinkSizeOut : IOLinkSizeIn;
+        }
+
+        /// <summary>
+        /// Возвращает количество каналов, которые привязаны к модулю
+        /// ввода-вывода
+        /// </summary>
+        /// <param name="channels">Список каналов устройства 
+        /// (AO,AI,DO,DI)</param>
+        /// <returns></returns>
+        private int CountOfBindedChannels(List<IOChannel> channels)
+        {
+            var count = 0;
+
+            foreach (IOChannel channel in channels)
+            {
+                if (channel.IsEmpty() == false)
+                {
+                    count++;
+                }
+            }
+
+            return count;
         }
 
         /// <summary>
