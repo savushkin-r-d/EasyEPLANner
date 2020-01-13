@@ -4015,8 +4015,8 @@ namespace TechObject
                         {
                             //COAG1V1 --> COAG2V1
                             newDevName = objName + newTechObjectN +
-                                device.DeviceType.ToString() + device.
-                                DeviceNumber;
+                                device.DeviceType.ToString() + device
+                                .DeviceNumber;
                         }
                     }
                 }
