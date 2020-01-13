@@ -1431,7 +1431,7 @@ namespace Device
         {
             var count = 0;
 
-            foreach (IOChannel channel in channels)
+            foreach (var channel in channels)
             {
                 if (channel.IsEmpty() == false)
                 {
