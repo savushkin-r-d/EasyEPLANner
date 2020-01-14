@@ -742,15 +742,28 @@ namespace IO
                 if (Info.AddressSpaceType == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI ||
                     Info.AddressSpaceType == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI)
                 {
-                    foreach (int clamp in Info.ChannelClamps)
+                    if (this.isIOLink() == true)
                     {
-                        res[idx, 0] = p;
-                        res[idx, 1] = moduleName;
-                        res[idx, 2] = clamp.ToString();
-                        res[idx, 3] = "AS interface";
-                        idx++;
+                        foreach (int clamp in Info.ChannelClamps)
+                        {
+                            res[idx, 0] = p;
+                            res[idx, 1] = moduleName;
+                            res[idx, 2] = clamp.ToString();
+                            res[idx, 3] = "IO-Link";
+                            idx++;
+                        }
                     }
-
+                    else
+                    {
+                        foreach (int clamp in Info.ChannelClamps)
+                        {
+                            res[idx, 0] = p;
+                            res[idx, 1] = moduleName;
+                            res[idx, 2] = clamp.ToString();
+                            res[idx, 3] = "AS interface";
+                            idx++;
+                        }
+                    }
                 }
                 else
                 {
@@ -797,34 +810,31 @@ namespace IO
                 if (Info.ChannelClamps.GetLength(0) != 0)
                 {
                     object[,] asConnection = new object[Info.ChannelClamps.GetLength(0) * 128, 2];
+                    int devIdx = 0;
                     foreach (int clamp in Info.ChannelClamps)
                     {
 
                         if (devices[clamp] != null)
                         {
-
-                            int devIdx = 0;
+                            int deviceCounter = 0;
                             foreach (Device.IODevice dev in devices[clamp])
                             {
 
-                                asConnection[devIdx, 0] = clamp.ToString() + "(" + (devIdx + 1).ToString() + ")";
+                                asConnection[devIdx, 0] = clamp.ToString() + "(" + (deviceCounter + 1).ToString() + ")";
                                 string devDescription = dev.EPlanName + dev.GetConnectionType() + dev.GetRange() + ": " +
-                                    devicesChannels[clamp][devIdx].Name + ": " + dev.Description + " " +
-                                    devicesChannels[clamp][devIdx].Comment;
+                                    devicesChannels[clamp][deviceCounter].Name + ": " + dev.Description + " " +
+                                    devicesChannels[clamp][deviceCounter].Comment;
                                 devDescription = devDescription.Replace('\n', ' ');
 
                                 asConnection[devIdx, 1] = devDescription;
 
                                 devIdx++;
-
+                                deviceCounter++;
                             }
-
                         }
-
                     }
                     asInterfaceConnection.Add(key, asConnection);
                 }
-
             }
         }
 

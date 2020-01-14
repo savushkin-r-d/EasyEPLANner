@@ -20,7 +20,7 @@ namespace EasyEPlanner
     class ExcelRepoter
     {
         /// <summary>
-        /// Создание и сохрание Excel файла с параметрами проекта 
+        /// Создание и сохранение Excel файла с параметрами проекта 
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
@@ -220,7 +220,7 @@ namespace EasyEPlanner
             column.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
 
             int totalStart = totalCountRows + 3;
-            int totalEnd = totalStart;//totalCountRows + 3 + modulesCount.Count;
+            int totalEnd = totalStart;
             int idx = 0;
             int total = 0;
             //Выделение отдельным блоком модулей AS-interface
@@ -228,7 +228,7 @@ namespace EasyEPlanner
             {
                 object[,] ASInterface = new object[asInterfaceConnection.Count * 130, 4];
                 idx = 0;
-                ASInterface[idx, 0] = "AS-interface";
+                ASInterface[idx, 0] = "AS-interface/IO-Link";
                 idx++;
                 foreach (string key in asInterfaceConnection.Keys)
                 {
@@ -260,7 +260,6 @@ namespace EasyEPlanner
                     }
 
                 }
-                //totalStart = totalEnd + 2;
                 totalEnd = totalStart + idx;
                 xlWorkSheet.Range["A" + totalStart.ToString(), "D" + totalEnd.ToString()].Value2 = ASInterface;
                 totalStart = totalEnd + 2;
@@ -285,8 +284,6 @@ namespace EasyEPlanner
 
             //Форматирование таблицы
 
-            //int totalStart = totalCountRows + 3;
-            //int totalEnd = totalCountRows + 3 + modulesCount.Count;
             totalEnd = totalStart + modulesCount.Count;
 
             rangeCurrent = xlWorkSheet.Range["A" + totalStart.ToString(), "B" + totalEnd.ToString()];
@@ -330,7 +327,7 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Создание страницы с устройствами для опеарций и шагов техобъектов
+        /// Создание страницы с устройствами для операций и шагов техобъектов
         /// </summary>
         private static void CreateObjectDevicesPage(ref Excel.Worksheet xlWorkSheet,
                 ref Excel._Application xlApp)
@@ -349,7 +346,7 @@ namespace EasyEPlanner
                 "Мойка (DO)", "Мойка (Устройства)", "Группы DI-->DO"};
             xlWorkSheet.Range["A1", "L1"].EntireColumn.AutoFit();
 
-            //Заполнение старницы данными
+            //Заполнение страницы данными
             TreeView tree = TechObject.TechObjectManager.GetInstance().SaveDevicesAsTree();
             int row = 2;
             WriteTreeNode(ref xlWorkSheet, tree.Nodes, ref row);
