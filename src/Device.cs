@@ -2611,6 +2611,7 @@ namespace Device
                     break;
 
                 case "LT_IOLINK":
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     IOLinkSizeIn = 1;
                     break;
 
