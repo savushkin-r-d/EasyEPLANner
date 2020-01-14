@@ -221,7 +221,7 @@ namespace EasyEPlanner
                 var device = DeviceManager.GetInstance().GetDevice(deviceName);
 
                 string channelName = EplanDeviceManager.GetInstance().
-                    GetChannelNameFromComment(deviceComment);
+                    GetChannelNameFromString(deviceComment);
 
                 device.ClearChannel(moduleInfo.AddressSpaceType,
                     deviceComment, channelName);
@@ -320,7 +320,9 @@ namespace EasyEPlanner
             string manufacturer = GetSelectedIOModuleArticleProperty(
                 propertyNumber);
 
-            if (isIOLink == true && manufacturer.Contains(PhoenixContact))
+            if (isIOLink == true && 
+                manufacturer.Contains(PhoenixContact) &&
+                SelectedDevice.Channels.Count > 1)
             {
                 string channelType = SelectedChannel.GetChannelTypeForIOLink();
                 functionalText += channelType;

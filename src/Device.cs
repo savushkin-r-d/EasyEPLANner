@@ -1713,7 +1713,6 @@ namespace Device
             public string GetChannelTypeForIOLink()
             {
                 var type = this.Name;
-                const string IOLink = "IO-Link";
                 const string AO = "AO";
                 const string AI = "AI";
                 const string DO = "DO";
@@ -1721,7 +1720,7 @@ namespace Device
 
                 if (type == AO || type == AI)
                 {
-                    return IOLink;
+                    return string.Empty;
                 }
 
                 if (type == DI)

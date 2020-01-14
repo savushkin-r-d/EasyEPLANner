@@ -1465,8 +1465,8 @@ namespace EasyEPlanner
 
                             descriptionMatches = Regex.Matches(
                                 description, Device.DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
-                            int devicesMatchesCount = descriptionMatches.Count;
-                            if (devicesMatchesCount < 1 && !description.Equals("Pезерв"))
+                            int devicesCount = descriptionMatches.Count;
+                            if (devicesCount < 1 && !description.Equals("Pезерв"))
                             {
                                 ProjectManager.GetInstance().AddLogMessage(
                                     string.Format("\"{0}:{1}\" - неверное имя привязанного устройства - \"{2}\".",
@@ -1487,23 +1487,23 @@ namespace EasyEPlanner
                                     }
                                 }
 
-                                string error = "";
-
+                                string error = string.Empty;
+                                string channelName = "IO-Link";
                                 int logicalPort = Array.IndexOf(moduleInfo.ChannelClamps, clamp) + 1;
                                 int moduleOffset = IO.IOManager.GetInstance().IONodes[node].IOModules[module - 1].InOffset;
-
-                                bool haveChannelError = false;
-                                string channelName = string.Empty;
                                 
-                                if (devicesMatchesCount > 1 &&
+                                if (devicesCount == 1 &&
                                     moduleInfo.AddressSpaceType == IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI)
                                 {
-                                    channelName = "IO-Link";
-                                }
-                                else if (moduleInfo.AddressSpaceType == IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI)
-                                {
-                                    channelName = GetChannelNameFromComment(comment);
-                                    CheckChannelName(channelName, out haveChannelError);
+                                    if (device.Channels.Count == 1)
+                                    {
+                                        List<Device.IODevice.IOChannel> chanels = device.Channels;
+                                        channelName = GetChannelNameFromString(chanels.First().Name);
+                                    }
+                                    else
+                                    {
+                                        channelName = GetChannelNameFromString(comment);
+                                    }
                                 }
 
                                 Device.DeviceManager.GetInstance()
@@ -1520,13 +1520,6 @@ namespace EasyEPlanner
 
                                     ProjectManager.GetInstance().AddLogMessage(error);
                                 }
-
-                                if (haveChannelError == true)
-                                {
-                                    string message = $"Неправильно задан функциональный текст для " +
-                                        $"устройства A{physicalNumber}, клемма - {clamp}. ";
-                                    ProjectManager.GetInstance().AddLogMessage(message);
-                                }
                             }                        
                         }
                     }
@@ -1535,53 +1528,42 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Возвращает имя канала (IOLink, DI,DO) из комментария.
+        /// Возвращает имя канала (IO-Link, DI, DO) из строки.
         /// </summary>
-        /// <param name="comment">Комментарий</param>
+        /// <param name="source">Строка для поиска</param>
         /// <returns></returns>
-        public string GetChannelNameFromComment(string comment)
+        public string GetChannelNameFromString(string source)
         {
             var channelName = string.Empty;
             const string IOLink = "IO-Link";
             const string DI = "DI";
             const string DO = "DO";
+            const string AI = "AI";
+            const string AO = "AO";
 
-            if (comment.Contains(IOLink) &&
-                !comment.Contains(DI) &&
-                !comment.Contains(DO))
+            if ((source.Contains(AI) ||
+                source.Contains(AO)) &&
+                !source.Contains(DI) &&
+                !source.Contains(DO))
             {
                 channelName = IOLink;
             }
 
-            if (comment.Contains(DI) &&
-                !comment.Contains(IOLink) &&
-                !comment.Contains(DO))
+            if (source.Contains(DI) &&
+                !source.Contains(IOLink) &&
+                !source.Contains(DO))
             {
                 channelName = DI;
             }
 
-            if (comment.Contains(DO) &&
-                !comment.Contains(IOLink) &&
-                !comment.Contains(DI))
+            if (source.Contains(DO) &&
+                !source.Contains(IOLink) &&
+                !source.Contains(DI))
             {
                 channelName = DO;
             }
 
             return channelName;
-        }
-
-        /// <summary>
-        /// Проверить имя канала на пустоту
-        /// </summary>
-        /// <param name="channelName">Имя канала</param>
-        private void CheckChannelName(string channelName, out bool error)
-        {
-            error = false;
-            if (string.IsNullOrEmpty(channelName))
-            {
-                error = true;
-                // TODO: Errors handler
-            }
         }
 
         /// <summary>
@@ -2026,8 +2008,6 @@ namespace EasyEPlanner
             Dictionary<string, string> deviceConnections =
                 CollectIOModulesData(devicesFunctions);
 
-            deviceConnections = RepairIOLink(deviceConnections);
-
             bool containsNewValveTerminal = GetProjectVersionFromDevices(
                 deviceConnections);
 
@@ -2133,7 +2113,8 @@ namespace EasyEPlanner
                     }
                 }
 
-                if (IsPhoenixContactIOLinkModule(devicePartNumber))
+                if (IsPhoenixContactIOLinkModule(devicePartNumber) &&
+                    device.Channels.Count > 1)
                 {
                     functionalText += NewLine + channel
                         .GetChannelTypeForIOLink();
@@ -2152,55 +2133,6 @@ namespace EasyEPlanner
             {
                 deviceConnections.Add(deviceVisibleName, functionalText);
             }
-        }
-
-        /// <summary>
-        /// Корректировка функционального текста в словаре соединений 
-        /// (привязки к каналам) для IO-Link модулей ввода-вывода
-        /// </summary>
-        private Dictionary<string,string> RepairIOLink(
-            Dictionary<string, string> devicesConnections)
-        {
-            var repairedDevicesConnections = new Dictionary<string, string>();
-            const string IOLink = "IO-Link";
-
-            foreach(string key in devicesConnections.Keys)
-            {
-                var repairedDevices = string.Empty;
-                if (devicesConnections[key].Contains(ValveTerminal))
-                {
-                    var devices = devicesConnections[key]
-                        .Split(PlusSymbol);
-
-                    foreach (string device in devices)
-                    {
-                        if (device.Length <= 0)
-                        {
-                            continue;
-                        }
-
-                        string repairedDevice = device;
-                        repairedDevice = device.Insert(0, PlusSymbol
-                            .ToString());
-                        if (!device.Contains(ValveTerminal))
-                        {
-                            repairedDevice = repairedDevice.Replace(
-                                IOLink, string.Empty);
-                        }
-
-                        repairedDevices += repairedDevice;
-                    }
-
-                    repairedDevicesConnections.Add(key, repairedDevices);
-                }
-                else
-                {
-                    string devices = devicesConnections[key];
-                    repairedDevicesConnections.Add(key, devices);
-                }
-            }
-
-            return repairedDevicesConnections;
         }
 
         /// <summary>
