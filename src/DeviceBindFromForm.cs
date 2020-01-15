@@ -221,7 +221,7 @@ namespace EasyEPlanner
                 var device = DeviceManager.GetInstance().GetDevice(deviceName);
 
                 string channelName = EplanDeviceManager.GetInstance().
-                    GetChannelNameFromString(deviceComment);
+                    GetChannelNameForIOLinkModuleFromString(deviceComment);
 
                 device.ClearChannel(moduleInfo.AddressSpaceType,
                     deviceComment, channelName);
