@@ -3124,21 +3124,6 @@ namespace Device
         /// имеющимся описанием.
         /// </summary>
         void SynchAndReadConfigurationFromScheme();
-
-        /// <summary>
-        /// Сохранение в виде таблицы Lua.
-        /// </summary>
-        /// <param name="prefix">Префикс (для выравнивания).</param>
-        /// <returns>Описание в виде таблицы Lua.</returns>
-        string SaveAsLuaTable(string prefix);
-
-        /// <summary>
-        /// Сохранение устройств в виде скрипта Lua. Для последующего доступа
-        /// по имени. Строки в виде: "S1V23 = V( 123 ) ".
-        /// </summary>
-        string SaveDevicesAsLuaScript();
-
-        void GetObjectForXML(TreeNode rootNode);
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------

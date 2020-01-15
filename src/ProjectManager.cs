@@ -242,13 +242,17 @@ namespace EasyEPlanner
         /// Инициализация.
         /// </summary>
         public void Init(IIOManager iOManager, IDeviceManager deviceManager,
-            IEditor editor, ITechObjectManager techObjectManager, ILog log)
+            IEditor editor, ITechObjectManager techObjectManager, ILog log,
+            IOManager IOManager, DeviceManager DeviceManager)
         {
             this.iOManager = iOManager;
             this.deviceManager = deviceManager;
             this.editor = editor;
             this.techObjectManager = techObjectManager;
             this.log = log;
+
+            this.IOManager = IOManager;
+            this.DeviceManager = DeviceManager;
         }
 
         /// <summary>
@@ -395,7 +399,7 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Экспорт поекта в базу каналов.
+        /// Экспорт проекта в базу каналов.
         /// </summary>
         /// <param name="prjName">Имя проекта</param>
         private void SaveAsXML(string path)
@@ -404,7 +408,7 @@ namespace EasyEPlanner
 
             TreeNode rootNode = new TreeNode("subtypes");
             techObjectManager.GetObjectForXML(rootNode);
-            deviceManager.GetObjectForXML(rootNode);
+            DeviceManager.GetObjectForXML(rootNode);
 
             XmlDocument xmlDoc = new XmlDocument();
             if (!File.Exists(path))
@@ -563,7 +567,7 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Создание узлов и каналов в новой путсой базе каналов
+        /// Создание узлов и каналов в новой пустой базе каналов
         /// </summary>
         private static void CreateNewChannels(XmlDocument xmlDoc,
             XmlElement subtypesNode, TreeNodeCollection Nodes)
@@ -953,7 +957,7 @@ namespace EasyEPlanner
             return res;
         }
 
-        //Участвующие в операции устройства, подсвеченные на карте Eplan'a.
+        //Участвующие в операции устройства, подсвеченные на карте Eplan.
         List<object> highlightedObjects = new List<object>();
 
         public void RemoveHighLighting()
@@ -1168,13 +1172,13 @@ namespace EasyEPlanner
                     deviceManager.CheckConfiguration(par.silentMode);
                 }
 
-                mainIOFileWriter.Write(iOManager.SaveAsLuaTable(""));
+                mainIOFileWriter.Write(IOManager.SaveAsLuaTable(""));
                 if (par.silentMode == false)
                 {
                     log.SetProgress(50);
                 }
 
-                mainIOFileWriter.Write(deviceManager.SaveAsLuaTable(""));
+                mainIOFileWriter.Write(DeviceManager.SaveAsLuaTable(""));
 
 
                 string FILE_NAME2 = par.path + @"\" + MAIN_TECH_OBJECTS_FILE_NAME;
@@ -1198,7 +1202,7 @@ namespace EasyEPlanner
                 mainTechDevicesFileWriter.WriteLine("-- ----------------------------------------------------------------------------");
                 mainTechDevicesFileWriter.WriteLine("-- ----------------------------------------------------------------------------");
 
-                mainTechDevicesFileWriter.Write(deviceManager.SaveDevicesAsLuaScript());
+                mainTechDevicesFileWriter.Write(DeviceManager.SaveDevicesAsLuaScript());
 
                 string FILE_NAME4 = par.path + @"\" + MAIN_RESTRICTIONS_FILE_NAME;
                 mainRestrictionsFileWriter = new StreamWriter(FILE_NAME4,
@@ -1364,6 +1368,9 @@ namespace EasyEPlanner
         private IEditor editor;                 /// Редактор технологических объектов.
         private ITechObjectManager techObjectManager; /// Менеджер технологических объектов.
         private ILog log;
+
+        private IOManager IOManager; // Менеджер модулей ввода/вывода
+        private DeviceManager DeviceManager; // Менеджер устройств
 
         private static ProjectManager instance;       /// Экземпляр класса.         
     }

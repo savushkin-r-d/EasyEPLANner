@@ -71,9 +71,15 @@ namespace EasyEPlanner
 
             menuID = oMenu.AddMenuItem("О дополнении", "AboutProgramm", "", menuID, 1, true, false);
 
-            ProjectManager.GetInstance().Init(EplanIOManager.GetInstance(),
-                EplanDeviceManager.GetInstance(), Editor.Editor.GetInstance(),
-                TechObject.TechObjectManager.GetInstance(), new LogFrm());
+            ProjectManager.GetInstance().Init(
+                EplanIOManager.GetInstance(),
+                EplanDeviceManager.GetInstance(), 
+                Editor.Editor.GetInstance(),
+                TechObject.TechObjectManager.GetInstance(), 
+                new LogFrm(),
+                IO.IOManager.GetInstance(),
+                Device.DeviceManager.GetInstance()
+                );
 
             // Вызов GetInstance() для создания объекта EProjectManager.
             EProjectManager.GetInstance();
@@ -1072,11 +1078,6 @@ namespace EasyEPlanner
             return errors;
         }
 
-        public string SaveAsLuaTable(string prefix) 
-        {
-            return iOManager.SaveAsLuaTable(prefix);
-        }
-
         private IO.IOManager iOManager;     // Экземпляр класса.
         private static EplanIOManager instance; // Экземпляр класса.  
     }
@@ -1896,21 +1897,6 @@ namespace EasyEPlanner
             }
 
             return m.ToString();
-        }
-
-        public string SaveAsLuaTable(string prefix)
-        {
-            return deviceManager.SaveAsLuaTable(prefix);
-        }
-
-        public string SaveDevicesAsLuaScript()
-        {
-            return deviceManager.SaveDevicesAsLuaScript();
-        }
-
-        public void GetObjectForXML(TreeNode node)
-        {
-            deviceManager.GetObjectForXML(node);
         }
 
         public static EplanDeviceManager GetInstance()

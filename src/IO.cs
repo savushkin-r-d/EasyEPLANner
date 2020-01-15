@@ -646,7 +646,7 @@ namespace IO
     /// <summary>
     /// Модуль ввода-вывода IO.
     /// </summary>
-    class IOModule
+    public class IOModule
     {
 
         /// <summary>
@@ -937,7 +937,7 @@ namespace IO
     /// <summary>
     /// Узел модулей ввода-вывода IO.
     /// </summary>
-    class IONode
+    public class IONode
     {
 
         /// <summary>
@@ -1177,13 +1177,6 @@ namespace IO
         void ReadConfiguration();
 
         /// <summary>
-        /// Сохранение в виде таблицы Lua.
-        /// </summary>
-        /// <param name="prefix">Префикс (для выравнивания).</param>
-        /// <returns>Описание в виде таблицы Lua.</returns>
-        string SaveAsLuaTable(string prefix);
-
-        /// <summary>
         /// Обновление подписи к клеммам модулей IO
         /// в соответствии с актуальным названием устройства.
         /// </summary>
@@ -1195,7 +1188,7 @@ namespace IO
     /// Все узлы модулей ввода-вывода IO. Содержит минимальную функциональность, 
     /// необходимую для экспорта для PAC.
     /// </summary>
-    class IOManager
+    public class IOManager
     {
         /// <summary>
         /// Конструктор.
@@ -1227,7 +1220,7 @@ namespace IO
         /// <param name="offset">Смещение.</param>
         /// <param name="addressSpaceType">Тип адресного пространства.</param>
         public IOModule GetModuleByOffset(int n, int offset,
-            IO.IOModuleInfo.ADDRESS_SPACE_TYPE addressSpaceType)
+            IOModuleInfo.ADDRESS_SPACE_TYPE addressSpaceType)
         {
             IOModule res = null;
 
