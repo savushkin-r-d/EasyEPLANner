@@ -205,7 +205,7 @@ namespace EasyEPlanner
                 oProgress.EndPart();
 
                 oProgress.BeginPart(20, "Считывание устройств");
-                deviceManager.SynchAndReadConfigurationFromScheme();
+                projectConfiguration.ReadDevices();
                 oProgress.EndPart();
 
                 oProgress.BeginPart(20, "Считывание привязки устройств");
@@ -243,16 +243,19 @@ namespace EasyEPlanner
         /// </summary>
         public void Init(IIOManager iOManager, IDeviceManager deviceManager,
             IEditor editor, ITechObjectManager techObjectManager, ILog log,
-            IOManager IOManager, DeviceManager DeviceManager)
+            IOManager IOManager, DeviceManager DeviceManager,
+            ProjectConfiguration projectConfiguration)
         {
             this.iOManager = iOManager;
             this.deviceManager = deviceManager;
             this.editor = editor;
             this.techObjectManager = techObjectManager;
             this.log = log;
-
+            
+            //TODO: скорректировать метод не забыть.
             this.IOManager = IOManager;
             this.DeviceManager = DeviceManager;
+            this.projectConfiguration = projectConfiguration;
         }
 
         /// <summary>
@@ -404,7 +407,7 @@ namespace EasyEPlanner
         /// <param name="prjName">Имя проекта</param>
         private void SaveAsXML(string path)
         {
-            deviceManager.SynchAndReadConfigurationFromScheme();
+            projectConfiguration.SynchronizeDevices();
 
             TreeNode rootNode = new TreeNode("subtypes");
             techObjectManager.GetObjectForXML(rootNode);
@@ -1371,6 +1374,7 @@ namespace EasyEPlanner
 
         private IOManager IOManager; // Менеджер модулей ввода/вывода
         private DeviceManager DeviceManager; // Менеджер устройств
+        private ProjectConfiguration projectConfiguration; // Конфигурация проекта
 
         private static ProjectManager instance;       /// Экземпляр класса.         
     }

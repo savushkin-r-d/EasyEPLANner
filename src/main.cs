@@ -71,6 +71,7 @@ namespace EasyEPlanner
 
             menuID = oMenu.AddMenuItem("О дополнении", "AboutProgramm", "", menuID, 1, true, false);
 
+            // Скорректировать метод не забыть.
             ProjectManager.GetInstance().Init(
                 EplanIOManager.GetInstance(),
                 EplanDeviceManager.GetInstance(), 
@@ -78,7 +79,8 @@ namespace EasyEPlanner
                 TechObject.TechObjectManager.GetInstance(), 
                 new LogFrm(),
                 IO.IOManager.GetInstance(),
-                Device.DeviceManager.GetInstance()
+                Device.DeviceManager.GetInstance(),
+                ProjectConfiguration.GetInstance()
                 );
 
             // Вызов GetInstance() для создания объекта EProjectManager.
@@ -1586,92 +1588,6 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        ///Синхронизация проекта Eplan'а и описания Lua-скрипта.
-        ///
-        ///1.Создаем массив целочисленных флагов, количество элементов в котором
-        ///равняется количеству элементов в массиве ранее считанных устройств.
-        ///Все элементы массива флагов устанавливаются в 0.
-        ///Далее будем считать, что если флаг = 0, то индекс объекта не изменился,
-        ///если флаг = -1, то индекс объекта помечен на удаление, если флаг > 0,
-        ///то изменяем старый индекс в операции на значение флага.
-        ///2. Для каждого элемента массива предыдущих устройств проверяем 
-        ///соответствие элементу нового списка.
-        ///2.1. Пробуем проверить равенство объектов в двух списках устройств.
-        ///Если элемент нового списка входит в старый, то проверяем равенство их
-        ///имен.
-        ///2.2.Если имена неравны, проверяем равенство их индексов в списках. 
-        ///Индексы не совпадают - в массиве флагов изменяем соответствующий 
-        ///элемент на новый индекс.
-        ///2.3. Проверяем индексы одинаковых объектов, если они неравны, то 
-        ///аналогично изменяем флаг на новый индекс.
-        ///2.4. Если объект, находящийся в старом списке был уже удален, то 
-        ///обрабатываем исключение. Устанавливаем флаг элемента старого списка 
-        ///в -1.
-        ///3. Вызываем функцию синхронизации индексов.
-        /// </summary>
-        public void SynchAndReadConfigurationFromScheme()
-        {
-            if (deviceManager.Devices.Count == 0)
-            {
-                ReadConfigurationFromScheme();
-                return;
-            }
-
-            Device.IODevice[] prevDevices =
-                new Device.IODevice[deviceManager.Devices.Count];
-            deviceManager.Devices.CopyTo(prevDevices);
-
-            ReadConfigurationFromScheme();
-
-            int[] indexArray = new int[prevDevices.Length];             //1            
-            for (int i = 0; i < prevDevices.Length; i++)
-            {
-                indexArray[i] = 0;
-            }
-
-            bool needSynch = false;
-            for (int k = 0; k < prevDevices.Length; k++)                //2
-            {
-                Device.IODevice prevDev = prevDevices[k];
-
-                try
-                {
-                    if (prevDev.EplanObjectFunction != null)
-                    {
-                        if (k < deviceManager.Devices.Count &&
-                            prevDev.Name == deviceManager.Devices[k].Name)
-                        {
-                            continue;
-                        }
-
-                        needSynch = true;
-                        int idx = -1;
-                        foreach (Device.IODevice newDev in deviceManager.Devices)
-                        {
-                            idx++;
-                            if (newDev.EplanObjectFunction ==
-                                    prevDev.EplanObjectFunction)    //2.1
-                            {
-                                indexArray[k] = idx;
-                                break;
-                            }
-                        }
-                    }
-                }
-                catch                                                 //2.4
-                {
-                    indexArray[k] = -1;
-                }
-            }
-
-            //3
-            if (needSynch)
-            {
-                TechObject.TechObjectManager.GetInstance().Synch(indexArray);
-            }
-        }
-
-        /// <summary>
         /// Считывание информации об устройствах проекта на основе 
         /// схемы автоматизации.
         /// Информацию получаем на основе названий устройств. Эти названия 
@@ -1962,8 +1878,8 @@ namespace EasyEPlanner
         public string Execute()
         {
             EplanIOManager.GetInstance().ReadConfiguration();
-            EplanDeviceManager.GetInstance().
-                SynchAndReadConfigurationFromScheme();
+            //EplanDeviceManager.GetInstance().SynchAndReadConfigurationFromScheme();
+            ProjectConfiguration.GetInstance().SynchronizeDevices();
             EplanDeviceManager.GetInstance().ReadConfigurationFromIOModules();
             EplanDeviceManager.GetInstance().CheckConfiguration();
 
