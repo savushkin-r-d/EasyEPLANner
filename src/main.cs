@@ -1487,7 +1487,7 @@ namespace EasyEPlanner
                                     }
                                 }
 
-                                string error = string.Empty;
+                                var error = string.Empty;
                                 string channelName = "IO-Link";
                                 int logicalPort = Array.IndexOf(moduleInfo.ChannelClamps, clamp) + 1;
                                 int moduleOffset = IO.IOManager.GetInstance().IONodes[node].IOModules[module - 1].InOffset;
@@ -1498,11 +1498,11 @@ namespace EasyEPlanner
                                     if (device.Channels.Count == 1)
                                     {
                                         List<Device.IODevice.IOChannel> chanels = device.Channels;
-                                        channelName = GetChannelNameFromString(chanels.First().Name);
+                                        channelName = GetChannelNameForIOLinkModuleFromString(chanels.First().Name);
                                     }
                                     else
                                     {
-                                        channelName = GetChannelNameFromString(comment);
+                                        channelName = GetChannelNameForIOLinkModuleFromString(comment);
                                     }
                                 }
 
@@ -1528,42 +1528,32 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Возвращает имя канала (IO-Link, DI, DO) из строки.
+        /// Возвращает имя канала (IO-Link, DI, DO) из строки для IO-Link
+        /// модуля.
         /// </summary>
         /// <param name="source">Строка для поиска</param>
         /// <returns></returns>
-        public string GetChannelNameFromString(string source)
+        public string GetChannelNameForIOLinkModuleFromString(string source)
         {
-            var channelName = string.Empty;
             const string IOLink = "IO-Link";
             const string DI = "DI";
             const string DO = "DO";
-            const string AI = "AI";
-            const string AO = "AO";
-
-            if ((source.Contains(AI) ||
-                source.Contains(AO)) &&
-                !source.Contains(DI) &&
-                !source.Contains(DO))
-            {
-                channelName = IOLink;
-            }
 
             if (source.Contains(DI) &&
                 !source.Contains(IOLink) &&
                 !source.Contains(DO))
             {
-                channelName = DI;
+                return DI;
             }
 
             if (source.Contains(DO) &&
                 !source.Contains(IOLink) &&
                 !source.Contains(DI))
             {
-                channelName = DO;
+                return DO;
             }
 
-            return channelName;
+            return IOLink;
         }
 
         /// <summary>
