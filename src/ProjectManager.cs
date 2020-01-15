@@ -205,7 +205,10 @@ namespace EasyEPlanner
                 oProgress.EndPart();
 
                 oProgress.BeginPart(20, "Считывание устройств");
-                projectConfiguration.ReadDevices();
+                projectConfiguration.SynchronizeDevices();
+                //TODO: разработать алгоритм, что бы отдельно было считывание
+                // устройств и синхронизация в зависимости от считывания (при
+                // закрытии проекта синхронизируется
                 oProgress.EndPart();
 
                 oProgress.BeginPart(20, "Считывание привязки устройств");
