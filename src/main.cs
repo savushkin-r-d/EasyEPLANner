@@ -1089,6 +1089,7 @@ namespace EasyEPlanner
     /// </summary>
     class EplanDeviceManager : Device.IDeviceManager
     {
+        // Можно реализовать силами DeviceBinder. Или я не так понял его смысл
         public static Dictionary<string, string> GetAssigment(
             Function oF2, IO.IOModuleInfo moduleInfo, string devsDescr = "")
         {
@@ -1608,7 +1609,6 @@ namespace EasyEPlanner
         ///в -1.
         ///3. Вызываем функцию синхронизации индексов.
         /// </summary>
-        /// <param name="devicesArray">Массив устройств до обновления списка.</param>
         public void SynchAndReadConfigurationFromScheme()
         {
             if (deviceManager.Devices.Count == 0)

@@ -156,6 +156,7 @@
       <DependentUpon>ModeFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="PInvokeUtil.cs" />
+    <Compile Include="ProjectConfiguration.cs" />
     <Compile Include="ProjectManager.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
