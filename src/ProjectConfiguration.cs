@@ -20,12 +20,6 @@ namespace EasyEPlanner
         /// </summary>
         public void SynchronizeDevices()
         {
-            if (devicesIsRead == false)
-            {
-                ReadDevices();
-                return;
-            }
-
             int devicesCount = deviceManager.Devices.Count;
             Device.IODevice[] prevDevices = new Device.IODevice[devicesCount];
             deviceManager.Devices.CopyTo(prevDevices);
@@ -140,6 +134,17 @@ namespace EasyEPlanner
         public void Check() 
         {
 
+        }
+
+        /// <summary>
+        /// Свойство, указывающее прочитаны устройства или нет.
+        /// </summary>
+        public bool DevicesIsRead
+        {
+            get
+            {
+                return devicesIsRead;
+            }
         }
 
         /// <summary>
