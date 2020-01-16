@@ -1175,12 +1175,12 @@ namespace EasyEPlanner
                 if (par.silentMode == false)
                 {
                     log.SetProgress(1);
-                    deviceManager.CheckConfiguration();
+                    projectConfiguration.Check();
                     IOManager.CalculateIOLinkAdresses();
                 }
                 else
                 {
-                    deviceManager.CheckConfiguration(par.silentMode);
+                    projectConfiguration.Check(par.silentMode);
                     IOManager.CalculateIOLinkAdresses();
                 }
 

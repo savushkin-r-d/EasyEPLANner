@@ -132,9 +132,18 @@ namespace EasyEPlanner
         /// <summary>
         /// Проверка конфигурации.
         /// </summary>
-        public void Check() 
+        /// <param name="silentMode">Тихий режим (без окна логов)</param>
+        public void Check(bool silentMode = false) 
         {
+            string errors;
+            
+            errors = deviceManager.Check();
+            errors += IOManager.Check();
 
+            if (errors != string.Empty && silentMode == false)
+            {
+                ProjectManager.GetInstance().AddLogMessage(errors);
+            }
         }
 
         /// <summary>

@@ -3113,11 +3113,6 @@ namespace Device
         /// Получение описания привязки модулей ввода\вывода.
         /// </summary>
         void ReadConfigurationFromIOModules();
-
-        /// <summary>
-        /// Проверка конфигурации устройств проекта.
-        /// </summary>
-        void CheckConfiguration(bool useLog = false);
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -3331,12 +3326,11 @@ namespace Device
         }
 
         /// <summary>
-        /// Проверка устройств на каналы без привязки и
-        /// расчет IOLink адресов
+        /// Проверка устройств на каналы без привязки
         /// </summary>
         public string Check()
         {
-            string res = "";
+            var res = string.Empty;
 
             foreach (IODevice dev in devices)
             {

@@ -1034,12 +1034,6 @@ namespace EasyEPlanner
                     }
                 }
             }
-
-            string err_str = iOManager.Check();
-            if (err_str != "")
-            {
-                ProjectManager.GetInstance().AddLogMessage(err_str);
-            }
         }
 
         /// <summary>
@@ -1574,17 +1568,6 @@ namespace EasyEPlanner
             }
         }
 
-        ///<summary>Проверка конфигурации.
-        ///</summary>
-        public void CheckConfiguration(bool useLog = false)
-        {
-            string res = deviceManager.Check();
-            if (res != string.Empty && useLog == false)
-            {
-                ProjectManager.GetInstance().AddLogMessage(res);
-            }
-        }
-
         public void ClearDevices()
         {
             deviceManager.Devices.Clear();
@@ -1880,11 +1863,22 @@ namespace EasyEPlanner
         /// </returns>
         public string Execute()
         {
+            ProjectConfiguration.GetInstance().ReadIO();
+            if (ProjectConfiguration.GetInstance().DevicesIsRead == true)
+            {
+                ProjectConfiguration.GetInstance().SynchronizeDevices();
+            }
+            else
+            {
+                ProjectConfiguration.GetInstance().ReadDevices();
+            }
+            ProjectConfiguration.GetInstance().ReadBinding();
+
             EplanIOManager.GetInstance().ReadConfiguration();
             //EplanDeviceManager.GetInstance().SynchAndReadConfigurationFromScheme();
-            ProjectConfiguration.GetInstance().SynchronizeDevices();
             EplanDeviceManager.GetInstance().ReadConfigurationFromIOModules();
-            EplanDeviceManager.GetInstance().CheckConfiguration();
+
+            ProjectConfiguration.GetInstance().Check();
             IO.IOManager.GetInstance().CalculateIOLinkAdresses();
 
             var selection = new SelectionSet();

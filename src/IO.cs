@@ -1365,7 +1365,7 @@ namespace IO
         /// </summary>
         public string Check()
         {
-            string str = "";
+            var str = string.Empty;
 
             int idx = 100;
             foreach (IONode node in iONodes)
