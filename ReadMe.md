@@ -35,4 +35,4 @@ We using C# and LUA programming languages for development. We have [own set of a
 
 
 ### License
-The project is licensed under[MIT](LICENSE.txt) license.
+The project is licensed under [MIT](LICENSE.txt) license.
