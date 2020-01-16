@@ -17,7 +17,6 @@ The Easyplanner is designed as an Add-In to EPLAN, currently, we using EPLAN 2.8
 ### User documentation
 By [this] (docs/user_manual/ReadMe.md) link you can find the latest version of user documentation for the project.
 
-По [этой](docs/user_manual/readme.md) ссылке вы можете найти последнюю версию пользовательской документации к проекту.
 
 ### Содействие (Contributing)
 Если вы хотите посодействовать в разработке нашего проекта, то перед началом ознакомьтесь с тем, [как лучше всего это сделать](docs/contributing.md).
