@@ -3,7 +3,7 @@
 ### Repository
 
 This repository is an open source project - EasyEplanner.
-We not only work on the project, but also solve various problems related to the life and development of the project.
+We not only work on the project, but also solve various problems related to the project life and development.
 
 ### EasyEplanner
 
