@@ -209,9 +209,9 @@ namespace EasyEPlanner
             var moduleInfo = new IOModuleInfo();
             moduleInfo = moduleInfo.GetIOModuleInfo(name, out _);
 
-            Dictionary<string, string> devicesComments =
-                EplanDeviceManager.GetAssigment(SelectedClampFunction,
-                moduleInfo, ResetDevicesChannel);
+            Dictionary<string, string> devicesComments = ProjectConfiguration
+                .GetInstance().GetBindingForResettingChannel(
+                SelectedClampFunction, moduleInfo, ResetDevicesChannel);
 
             foreach (KeyValuePair<string, string> pair in devicesComments)
             {
