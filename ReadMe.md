@@ -15,20 +15,24 @@
 ### Пользовательская документация
 По [этой](docs/user_manual/readme.md) ссылке вы можете найти последнюю версию пользовательской документации к проекту.
 
-### Содействие (Contributing)
-Если вы хотите посодействовать в разработке нашего проекта, то перед началом ознакомьтесь с тем, [как лучше всего это сделать](docs/contributing.md).
+###  Contributing
+If you want to contribute to the development of our project then  check out [how to do it batter](docs/contributing.md) befor you start .
 
-### Обратная связь (Feedback)
-Если вы хотите связаться с нами, можно использовать несколько способов:
 
-* [Google группа](https://groups.google.com/forum/#!forum/easyeplanner);
-* Канал в [Slack](https://slack.com) - easyeplanner.slack.com.
+### Feedback
+If you wont to contact with us you can use some ways:
+* [Google group](https://groups.google.com/forum/#!forum/easyeplanner);
+* Chennel in [Slack](https://slack.com) - easyeplanner.slack.com.
 
-### Нормы поведения(Code of conduct)
-Мы [используем](docs/CODE_OF_CONDUCT.md) стандартные нормы поведения (общения), которые предоставляет сервис GitHub.
 
-### Правила кодирования (Code style)
-Для разработки используется язык программирования - C#, а так же Lua. У нас есть [собственный набор соглашений](docs/codestyle.md), которых нужно придерживаться что бы код был удобным и читабельным.
+### Code of conduct
+We [use](docs/CODE_OF_CONDUCT.md)
+standart behavior(communication),provided by the GitHub service.
 
-### Лицензия
-Проект лицензирован под [MIT](LICENSE.txt) лицензией.
+
+### Code style
+For development, a programming language is used - C #, as well as Lua. We have [own set of agreements](docs/codestyle.md), which you need to adhere to make the code convenient and readable.
+
+
+### License
+The project is licensed under[MIT](LICENSE.txt) license.
