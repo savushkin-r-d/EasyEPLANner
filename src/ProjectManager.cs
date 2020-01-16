@@ -232,8 +232,7 @@ namespace EasyEPlanner
                 }
 
                 oProgress.BeginPart(20, "Проверка данных");
-                techObjectManager.CheckConfiguration();
-
+                projectConfiguration.Check();
                 oProgress.EndPart(true);
             }
             catch (System.Exception ex)

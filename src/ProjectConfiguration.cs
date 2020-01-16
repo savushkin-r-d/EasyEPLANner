@@ -139,6 +139,7 @@ namespace EasyEPlanner
             
             errors = deviceManager.Check();
             errors += IOManager.Check();
+            errors += techObjectManager.Check();
 
             if (errors != string.Empty && silentMode == false)
             {
@@ -179,10 +180,12 @@ namespace EasyEPlanner
         {
             this.IOManager = IO.IOManager.GetInstance();
             this.deviceManager = Device.DeviceManager.GetInstance();
+            this.techObjectManager = TechObject.TechObjectManager.GetInstance();
         }
 
         private IO.IOManager IOManager;
         private Device.DeviceManager deviceManager;
+        private TechObject.TechObjectManager techObjectManager;
 
         static ProjectConfiguration instance = new ProjectConfiguration();
 

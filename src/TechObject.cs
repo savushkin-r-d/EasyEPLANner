@@ -2446,13 +2446,18 @@ namespace TechObject
         /// <summary>
         /// Проверка шагов состояния
         /// </summary>
-        public void Check()
+        /// <returns>Строка с ошибками</returns>
+        public string Check()
         {
+            var errors = string.Empty;
             List<Step> steps = Steps;
+
             foreach (Step step in steps)
             {
-                step.Check();
+                errors += step.Check();
             }
+
+            return errors;
         }
 
         #region Реализация ITreeViewItem
@@ -3050,14 +3055,20 @@ namespace TechObject
         /// <summary>
         /// Проверка состояний состоящих из шагов
         /// </summary>
-        public void Check()
+        /// <returns>Строка с ошибками</returns>
+        public string Check()
         {
+            var errors = string.Empty;
             List<State> stepsManager = stepsMngr;
+
             foreach (State state in stepsManager)
             {
-                state.Check();
+                errors += state.Check();
             }
+
+            return errors;
         }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {
@@ -3760,7 +3771,6 @@ namespace TechObject
         }
 
         #region Реализация ITreeViewItem
-
         override public string[] DisplayText
         {
             get
@@ -3883,12 +3893,15 @@ namespace TechObject
 
             return devToDraw;
         }
+        #endregion
 
         /// <summary>
         /// Проверка действий в шаге
         /// </summary>
-        public void Check()
+        /// <returns>Строка с ошибками</returns>
+        public string Check()
         {
+            var errors = string.Empty;
             List<int> devicesInAction = new List<int>();
             foreach (Action a in actions)
             {
@@ -3913,10 +3926,11 @@ namespace TechObject
                 string msg = $"Неправильно заданы устройства в шаге " +
                     $"\"{GetStepName()}\", операции \"{mode.Name}\"," +
                     $"технологического объекта \"{techObject.DisplayText[0]}\"";
-                EasyEPlanner.ProjectManager.GetInstance().AddLogMessage(msg);
+                errors += msg;
             }
+
+            return errors;
         }
-        #endregion
 
         private bool IsMode ///< Признак шага операции.
         {
@@ -5304,7 +5318,6 @@ namespace TechObject
         void SetCDBXTagView(bool combineTag);
         string SaveRestrictionAsLua(string prefixStr);
         List<TechObject> GetTechObjects();      
-        void CheckConfiguration();
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -5610,8 +5623,10 @@ namespace TechObject
         /// Проверка технологического объекта
         /// на правильность ввода и др.
         /// </summary>
-        public virtual void CheckConfiguration()
+        /// <returns>Строка с ошибками</returns>
+        public string Check()
         {
+            var errors = string.Empty;
             List<TechObject> TObjects = GetTechObjects();
 
             foreach (TechObject obj in TObjects)
@@ -5620,12 +5635,13 @@ namespace TechObject
                 {
                     string objName = obj.EditText[0] + " " + obj.TechNumber;
                     string msg = string.Format("Не выбран базовый объект - \"{0}\"\n", objName);
-                    EasyEPlanner.ProjectManager.GetInstance().AddLogMessage(msg);
+                    errors += msg;
                 }
 
-                // Проверка операций объекта
-                obj.Check();
+                errors += obj.Check();
             }
+
+            return errors;
 
         }
 
@@ -6785,15 +6801,19 @@ namespace TechObject
         /// <summary>
         /// Проверка операций технологического объекта
         /// </summary>
-        public void Check()
+        /// <returns>Строка с ошибками</returns>
+        public string Check()
         {
+            var errors = string.Empty;
+
             ModesManager modesManager = GetModesManager;
             List<Mode> modes = modesManager.GetModes;
             foreach (Mode mode in modes)
             {
-                mode.Check();
+                errors += mode.Check();
             }
 
+            return errors;
         }
 
         #region Реализация ITreeViewItem
