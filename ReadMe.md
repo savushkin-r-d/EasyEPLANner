@@ -7,7 +7,7 @@ We not only work on the project, but also solve various problems related to the 
 
 ### EasyEplanner
 
-<img src="docs/user_manual/images/EasyEplannerPreview.png">.
+<img src="docs/user_manual/images/EasyEplannerPreview.png">..
 
 The Easyplanner add-in is designed as an Add-In to EPLAN, currently, EPLAN version 2.8 is used. The add-in is used when developing projects in EPLAN and allows you to automate the work of an automation engineer, as well as a software engineer who describes the project in the LUA programming language. Using Easy Planner, technological objects are described (Tank, Boiler, etc.), operations of these objects, steps of operations, restrictions for operations are set, as well as many other properties of the technological object. Eventually, Easyplanner generates LUA files that are uploaded to the controller. Currently, controllers from the following manufacturers are supported:
 
