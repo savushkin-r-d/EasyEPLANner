@@ -15,7 +15,7 @@
 ### Пользовательская документация
 По [этой](docs/user_manual/readme.md) ссылке вы можете найти последнюю версию пользовательской документации к проекту.
 
-###  Contributing
+### Contributing
 If you want to contribute to the development of our project then  check out [how to do it better](docs/contributing.md) before you start.
 
 
