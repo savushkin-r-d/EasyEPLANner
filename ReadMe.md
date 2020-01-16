@@ -27,7 +27,7 @@ If you wont to contact with us you can use some ways:
 
 ### Code of conduct
 We [using](docs/CODE_OF_CONDUCT.md)
-standart behavior(communication),provided by the GitHub service.
+standart behavior rules (communication), provided by the GitHub service.
 
 
 ### Code style
