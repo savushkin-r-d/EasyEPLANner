@@ -22,7 +22,7 @@ If you want to contribute to the development of our project then  check out [how
 ### Feedback
 If you wont to contact with us you can use some ways:
 * [Google group](https://groups.google.com/forum/#!forum/easyeplanner);
-* Chennel in [Slack](https://slack.com) - easyeplanner.slack.com.
+* Channel in [Slack](https://slack.com) - easyeplanner.slack.com.
 
 
 ### Code of conduct
