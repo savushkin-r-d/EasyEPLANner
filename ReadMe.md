@@ -1,19 +1,22 @@
 # EasyEplanner - Open Source
 
-### Репозиторий
-Данный репозиторий (хранилище) представляет собой проект с открытым исходным кодом - EasyEplanner. Мы не только работаем над проектом, но и решаем различные задачи связанные с жизнью и развитием проекта.
+### Repository
+
+This repository is an open source project - EasyEplanner.
+We not only work on the project, but also solve various problems related to the project life and development.
 
 ### EasyEplanner
 
 <img src="docs/user_manual/images/EasyEplannerPreview.png">
 
-Надстройка EasyEPlanner разработана как Add-In к EPLAN, на данный момент используется версия EPLAN 2.8. Надстройка используется при разработке проектов в EPLAN и позволяет автоматизировать работу инженера по автоматизации, а так же инженера-программиста, который описывает проект на языке программирования LUA. С помощью EasyEPlanner описываются технологические объекты (Танк, Бойлер и др.), операции этих объектов, шаги операций, устанавливаются ограничения для операций, а так же множество других свойств технологического объекта. В конечном итоге, EasyEPlanner генерирует LUA файлы, которые загружаются в контроллер. В данный момент поддерживаются контроллеры следующих производителей:
+The Easyplanner is designed as an Add-In to EPLAN, currently, we using EPLAN 2.8 version. The add-in is used when developing projects in EPLAN and allows you to automate the work of an automation engineer, as well as a software engineer who describes the project in the LUA programming language. Using Easy Planner, technological objects are described (Tank, Boiler, etc.), operations of these objects, steps of operations, restrictions for operations are set, as well as many other properties of the technological object. Eventually, Easyplanner generates LUA files that are uploaded to the controller. Currently, controllers from the following manufacturers are supported:
 
 1. [Phoenix Contact - PLCNext](https://github.com/plcnext);
 2. [WAGO - PFC200](https://github.com/WAGO).
 
-### Пользовательская документация
-По [этой](docs/user_manual/readme.md) ссылке вы можете найти последнюю версию пользовательской документации к проекту.
+### User documentation
+By [this](docs/user_manual/ReadMe.md) link you can find the latest version of user documentation for the project.
+
 
 ### Содействие (Contributing)
 Если вы хотите посодействовать в разработке нашего проекта, то перед началом ознакомьтесь с тем, [как лучше всего это сделать](docs/contributing.md).
