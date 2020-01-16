@@ -31,7 +31,7 @@ standart behavior rules (communication), provided by the GitHub service.
 
 
 ### Code style
-For development, a programming language is used - C #, as well as Lua. We have [own set of agreements](docs/codestyle.md), which you need to adhere to make the code convenient and readable.
+We using C# and LUA programming languages for development. We have [own set of agreements](docs/codestyle.md), which you need to stick to make the code convenient and readable.
 
 
 ### License
