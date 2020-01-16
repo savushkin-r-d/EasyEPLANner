@@ -839,9 +839,9 @@ namespace IO
         }
 
         /// <summary>
-        /// Расчет адреса данных привязанных IO-link устройств.
+        /// Расчет IO-Link адресов привязанных устройств.
         /// </summary>       
-        public void CalculateIOLinkAdress()
+        public void CalculateIOLinkAdresses()
         {
             IOLinkCalculator calculator = new IOLinkCalculator(devices, 
                 devicesChannels, Info);
@@ -1390,6 +1390,21 @@ namespace IO
             }
 
             return str;
+        }
+
+        /// <summary>
+        /// Расчет IO-Link адресов привязанных устройств для всех модулей
+        /// ввода-вывода.
+        /// </summary>
+        public void CalculateIOLinkAdresses()
+        {
+            foreach (IONode node in IOManager.GetInstance().IONodes)
+            {
+                foreach (IOModule module in node.IOModules)
+                {
+                    module.CalculateIOLinkAdresses();
+                }
+            }
         }
 
         public object[,] SaveAsConnectionArray(string prjName, Dictionary<string, int> modulesCount, Dictionary<string, Color> modulesColor, Dictionary<string, object[,]> asInterfaceConnection)

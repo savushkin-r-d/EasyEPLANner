@@ -3334,7 +3334,7 @@ namespace Device
         /// Проверка устройств на каналы без привязки и
         /// расчет IOLink адресов
         /// </summary>
-        public string CheckDevicesConnectionAndCalculateIOLink()
+        public string Check()
         {
             string res = "";
 
@@ -3343,23 +3343,7 @@ namespace Device
                 res += dev.Check();
             }
 
-            CalculateIOLinkAddresses();
-
             return res;
-        }
-
-        /// <summary>
-        /// Расчет IOLink адресов модулей
-        /// </summary>
-        private void CalculateIOLinkAddresses()
-        {
-            foreach (IONode node in IOManager.GetInstance().IONodes)
-            {
-                foreach (IOModule module in node.IOModules)
-                {
-                    module.CalculateIOLinkAdress();
-                }
-            }
         }
 
         /// <summary>

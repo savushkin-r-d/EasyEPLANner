@@ -1578,8 +1578,11 @@ namespace EasyEPlanner
         ///</summary>
         public void CheckConfiguration(bool useLog = false)
         {
-            string res = deviceManager.CheckDevicesConnectionAndCalculateIOLink();
-            if (res != "" && useLog == false) ProjectManager.GetInstance().AddLogMessage(res);
+            string res = deviceManager.Check();
+            if (res != string.Empty && useLog == false)
+            {
+                ProjectManager.GetInstance().AddLogMessage(res);
+            }
         }
 
         public void ClearDevices()
@@ -1882,6 +1885,7 @@ namespace EasyEPlanner
             ProjectConfiguration.GetInstance().SynchronizeDevices();
             EplanDeviceManager.GetInstance().ReadConfigurationFromIOModules();
             EplanDeviceManager.GetInstance().CheckConfiguration();
+            IO.IOManager.GetInstance().CalculateIOLinkAdresses();
 
             var selection = new SelectionSet();
             Project project = selection.GetCurrentProject(true);

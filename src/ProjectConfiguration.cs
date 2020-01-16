@@ -109,7 +109,8 @@ namespace EasyEPlanner
         /// </summary>
         public void ReadDevices() 
         {
-
+            //TODO: Временно, для тестов
+            EplanDeviceManager.GetInstance().ReadConfigurationFromScheme();
         }
 
         /// <summary>
@@ -143,7 +144,14 @@ namespace EasyEPlanner
         {
             get
             {
-                return devicesIsRead;
+                if (deviceManager.Devices.Count > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
@@ -162,10 +170,7 @@ namespace EasyEPlanner
         {
             this.IOManager = IO.IOManager.GetInstance();
             this.deviceManager = Device.DeviceManager.GetInstance();
-            devicesIsRead = false;
         }
-
-        private bool devicesIsRead;
 
         private IO.IOManager IOManager;
         private Device.DeviceManager deviceManager;

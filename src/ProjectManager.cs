@@ -1176,10 +1176,12 @@ namespace EasyEPlanner
                 {
                     log.SetProgress(1);
                     deviceManager.CheckConfiguration();
+                    IOManager.CalculateIOLinkAdresses();
                 }
                 else
                 {
                     deviceManager.CheckConfiguration(par.silentMode);
+                    IOManager.CalculateIOLinkAdresses();
                 }
 
                 mainIOFileWriter.Write(IOManager.SaveAsLuaTable(""));
