@@ -15,7 +15,7 @@ The Easyplanner is designed as an Add-In to EPLAN, currently, we using EPLAN 2.8
 2. [WAGO - PFC200](https://github.com/WAGO).
 
 ### User documentation
-By [this] (docs/user_manual/ReadMe.md) link you can find the latest version of user documentation for the project.
+By [this](docs/user_manual/ReadMe.md) link you can find the latest version of user documentation for the project.
 
 
 ### Содействие (Contributing)
