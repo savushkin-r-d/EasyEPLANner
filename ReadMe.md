@@ -16,7 +16,7 @@
 По [этой](docs/user_manual/readme.md) ссылке вы можете найти последнюю версию пользовательской документации к проекту.
 
 ###  Contributing
-If you want to contribute to the development of our project then  check out [how to do it batter](docs/contributing.md) befor you start .
+If you want to contribute to the development of our project then  check out [how to do it better](docs/contributing.md) befor you start .
 
 
 ### Feedback
