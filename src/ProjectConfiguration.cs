@@ -136,7 +136,7 @@ namespace EasyEPlanner
         public void Check(bool silentMode = false) 
         {
             string errors;
-            
+
             errors = deviceManager.Check();
             errors += IOManager.Check();
             errors += techObjectManager.Check();

@@ -200,11 +200,11 @@ namespace EasyEPlanner
 
             try
             {
-                oProgress.BeginPart(20, "Считывание IO");
+                oProgress.BeginPart(15, "Считывание IO");
                 iOManager.ReadConfiguration();
                 oProgress.EndPart();
 
-                oProgress.BeginPart(20, "Считывание устройств");
+                oProgress.BeginPart(15, "Считывание устройств");
                 if (projectConfiguration.DevicesIsRead == true)
                 {
                     projectConfiguration.SynchronizeDevices();
@@ -215,13 +215,13 @@ namespace EasyEPlanner
                 }
                 oProgress.EndPart();
 
-                oProgress.BeginPart(20, "Считывание привязки устройств");
+                oProgress.BeginPart(25, "Считывание привязки устройств");
                 deviceManager.ReadConfigurationFromIOModules();
                 oProgress.EndPart();
 
                 if (loadFromLua)
                 {
-                    oProgress.BeginPart(20, "Считывание технологических объектов");
+                    oProgress.BeginPart(15, "Считывание технологических объектов");
                     res = LoadDescriptionFromFile(out LuaStr, out errStr, projectName, "\\main.objects.lua");
                     techObjectManager.LoadFromLuaStr(LuaStr, projectName);
                     errStr = "";
@@ -231,8 +231,12 @@ namespace EasyEPlanner
                     oProgress.EndPart();
                 }
 
-                oProgress.BeginPart(20, "Проверка данных");
+                oProgress.BeginPart(15, "Проверка данных");
                 projectConfiguration.Check();
+                oProgress.EndPart();
+
+                oProgress.BeginPart(15, "Расчет IO-Link");
+                IOManager.CalculateIOLinkAdresses();
                 oProgress.EndPart(true);
             }
             catch (System.Exception ex)
@@ -1136,7 +1140,6 @@ namespace EasyEPlanner
             if (!par.silentMode)
             {
                 log.ShowLog();
-
                 log.DisableOkButton();
                 log.SetProgress(0);
             }
@@ -1174,13 +1177,6 @@ namespace EasyEPlanner
                 if (par.silentMode == false)
                 {
                     log.SetProgress(1);
-                    projectConfiguration.Check();
-                    IOManager.CalculateIOLinkAdresses();
-                }
-                else
-                {
-                    projectConfiguration.Check(par.silentMode);
-                    IOManager.CalculateIOLinkAdresses();
                 }
 
                 mainIOFileWriter.Write(IOManager.SaveAsLuaTable(""));
@@ -1190,7 +1186,6 @@ namespace EasyEPlanner
                 }
 
                 mainIOFileWriter.Write(DeviceManager.SaveAsLuaTable(""));
-
 
                 string FILE_NAME2 = par.path + @"\" + MAIN_TECH_OBJECTS_FILE_NAME;
                 mainTechObjectsFileWriter = new StreamWriter(FILE_NAME2,
