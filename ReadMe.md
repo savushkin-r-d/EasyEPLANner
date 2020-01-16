@@ -18,20 +18,24 @@ The Easyplanner is designed as an Add-In to EPLAN, currently, we using EPLAN 2.8
 By [this](docs/user_manual/ReadMe.md) link you can find the latest version of user documentation for the project.
 
 
-### Содействие (Contributing)
-Если вы хотите посодействовать в разработке нашего проекта, то перед началом ознакомьтесь с тем, [как лучше всего это сделать](docs/contributing.md).
+### Contributing
+If you want to contribute to the development of our project then  check out [how to do it better](docs/contributing.md) before you start.
 
-### Обратная связь (Feedback)
-Если вы хотите связаться с нами, можно использовать несколько способов:
 
-* [Google группа](https://groups.google.com/forum/#!forum/easyeplanner);
-* Канал в [Slack](https://slack.com) - easyeplanner.slack.com.
+### Feedback
+If you wont to contact with us you can use some ways:
+* [Google group](https://groups.google.com/forum/#!forum/easyeplanner);
+* Channel in [Slack](https://slack.com) - easyeplanner.slack.com.
 
-### Нормы поведения(Code of conduct)
-Мы [используем](docs/CODE_OF_CONDUCT.md) стандартные нормы поведения (общения), которые предоставляет сервис GitHub.
 
-### Правила кодирования (Code style)
-Для разработки используется язык программирования - C#, а так же Lua. У нас есть [собственный набор соглашений](docs/codestyle.md), которых нужно придерживаться что бы код был удобным и читабельным.
+### Code of conduct
+We [using](docs/CODE_OF_CONDUCT.md)
+standart behavior rules (communication), provided by the GitHub service.
 
-### Лицензия
-Проект лицензирован под [MIT](LICENSE.txt) лицензией.
+
+### Code style
+We use C# and LUA programming languages for development. We have [own set of agreements](docs/codestyle.md), which you must follow to make the code convenient and readable.
+
+
+### License
+The project is licensed under [MIT](LICENSE.txt) license.
