@@ -2529,6 +2529,10 @@ namespace Device
                     IOLinkSizeIn = 1;
                     break;
 
+                case "DEV_SPAE":
+                    IOLinkSizeIn = 1;
+                    break;
+
                 case "":
                     errStr = string.Format("\"{0}\" - не задан тип" +
                         " (PT, PT_IOLINK).\n", Name);
