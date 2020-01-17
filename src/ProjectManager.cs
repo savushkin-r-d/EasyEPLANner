@@ -162,8 +162,11 @@ namespace EasyEPlanner
                 PInvoke.IniFile iniFile = new PInvoke.IniFile(path);
 
                 // Считывание и возврат пути каталога проектов
-                string projectsFolder = iniFile.ReadString("path", "folder_path", "");
+                string projectsFolders =
+                iniFile.ReadString("path", "folder_path", "");
+                string projectsFolder = projectsFolders.Split(';')[0];
                 if (projectsFolder.Last() == '\\')
+                  
                 {
                     return projectsFolder;
                 }
