@@ -1064,16 +1064,6 @@ namespace EasyEPlanner
             return false;
         }
 
-        /// <summary>
-        /// Функция синхронизации названий устройств и модулей в привязке.
-        /// </summary>
-        /// <returns></returns>
-        public string UpdateModulesBinding()
-        {
-            string errors = ModulesBindingUpdate.GetInstance().Execute();
-            return errors;
-        }
-
         private IO.IOManager iOManager;     // Экземпляр класса.
         private static EplanIOManager instance; // Экземпляр класса.  
     }

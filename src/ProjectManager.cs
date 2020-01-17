@@ -330,8 +330,8 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Вызов синхронизации названий устройств и модулей.
-        /// устройств и модулей
+        /// Обновление подписей к клеммам модулей IO
+        /// в соответствии с актуальным названием устройств.
         /// </summary>
         public void UpdateModulesBinding()
         {
@@ -341,7 +341,7 @@ namespace EasyEPlanner
                 log.Clear();
                 log.ShowLog();
                 log.AddMessage("Выполняется синхронизация..");
-                errors = EplanIOManager.GetInstance().UpdateModulesBinding();
+                errors = ModulesBindingUpdate.GetInstance().Execute();
                 log.Clear();
             }
             catch (System.Exception ex)
