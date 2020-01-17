@@ -399,7 +399,7 @@ namespace EasyEPlanner
             deviceIsShown = true;
         }
 
-        public DFrm()
+        private DFrm()
         {
             InitializeComponent();
 

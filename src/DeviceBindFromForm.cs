@@ -488,11 +488,6 @@ namespace EasyEPlanner
             this.DevicesForm = devicesForm;
         }
 
-        public StartValuesForBinding()
-        {
-            this.DevicesForm = new DFrm();
-        }
-
         /// <summary>
         /// Получить выбранный узел из дерева каналов и устройств
         /// </summary>
