@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Device;
 using IO;
+using StaticHelper;
 
 namespace EasyEPlanner
 {
@@ -25,7 +26,7 @@ namespace EasyEPlanner
         public DeviceBinder(DFrm devicesForm)
         {
             this.DevicesForm = devicesForm;
-            this.startValues = new StartValues(DevicesForm);
+            this.startValues = new StartValuesForBinding(DevicesForm);
         }
 
         /// <summary>
@@ -79,10 +80,10 @@ namespace EasyEPlanner
                     .GetChannel(NodeFromSelectedNode);
                 SelectedDevice = startValues
                     .GetDevice(NodeFromSelectedNode);
-                SelectedObject = startValues.GetSelectedObject();
-                SelectedClampFunction = startValues
-                    .GetSelectedClampFunction(SelectedObject);
-                SelectedIOModuleFunction = startValues
+                SelectedObject = ApiHelper.GetSelectedObject();
+                SelectedClampFunction = ApiHelper.GetClampFunction(
+                    SelectedObject);
+                SelectedIOModuleFunction = ApiHelper
                     .GetSelectedIOModuleFunction(SelectedClampFunction);
             }
             catch
@@ -110,15 +111,8 @@ namespace EasyEPlanner
                 NewFunctionalText = GenerateFunctionalText(isIOLink);
             }
 
-            var oldFunctionalText = SelectedClampFunction
-                .Properties.FUNC_TEXT_AUTOMATIC
-                .ToString(ISOCode.Language.L___);
-            if (string.IsNullOrEmpty(oldFunctionalText))
-            {
-                oldFunctionalText = SelectedClampFunction.Properties
-                    .FUNC_TEXT_AUTOMATIC
-                    .ToString(ISOCode.Language.L_ru_RU);
-            }
+            var oldFunctionalText = ApiHelper.GetFunctionalText(
+                SelectedClampFunction);
 
             if (SelectedClampFunction.Properties.FUNC_TEXT.IsEmpty ||
                 SelectedClampFunction.Properties.FUNC_TEXT == Reserve)
@@ -466,7 +460,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Инициализатор первоначальных значений для работы привязки
         /// </summary>
-        private StartValues startValues;
+        private StartValuesForBinding startValues;
 
         /// <summary>
         /// Форма с данными
@@ -483,15 +477,20 @@ namespace EasyEPlanner
     /// <summary>
     /// Инициализатор стартовых значений для привязки
     /// </summary>
-    public sealed class StartValues
+    public sealed class StartValuesForBinding
     {
         /// <summary>
         /// Конструктор принимающий форму с данными
         /// </summary>
         /// <param name="devicesForm">Форма с данными</param>
-        public StartValues(DFrm devicesForm)
+        public StartValuesForBinding(DFrm devicesForm)
         {
             this.DevicesForm = devicesForm;
+        }
+
+        public StartValuesForBinding()
+        {
+            this.DevicesForm = new DFrm();
         }
 
         /// <summary>
@@ -567,169 +566,6 @@ namespace EasyEPlanner
             }
 
             return device;
-        }
-
-        /// <summary>
-        /// Получить текущий проект
-        /// </summary>
-        /// <returns>Проект</returns>
-        public Project GetProject()
-        {
-            SelectionSet selection = GetSelectionSet();
-            const bool useDialog = false;
-            Project project = selection.GetCurrentProject(useDialog);
-            return project;
-        }
-
-        /// <summary>
-        /// Получить объект выбранный на графической схеме
-        /// </summary>
-        /// <returns>Выбранный на схеме объект</returns>
-        public StorableObject GetSelectedObject()
-        {
-            SelectionSet selection = GetSelectionSet();
-            const bool isFirstObject = true;
-            StorableObject selectedObject = selection.
-                GetSelectedObject(isFirstObject);
-
-            if (selectedObject is Function == false)
-            {
-                const string Message = "Выбранный на схеме объект не найден";
-                throw new Exception(Message);
-            }
-
-            return selectedObject;
-        }
-
-        /// <summary>
-        /// Получить функцию выбранной клеммы
-        /// </summary>
-        /// <param name="selectedObject">Выбранный на схеме объект
-        /// </param>
-        /// <returns>Функция клеммы модуля ввода-вывода</returns>
-        public Function GetSelectedClampFunction(StorableObject selectedObject)
-        {
-            var clampFunction = selectedObject as Function;
-
-            if (clampFunction.Category != Function.Enums.Category.PLCTerminal)
-            {
-                const string Message = "Выбранная функция не является " +
-                    "клеммой модуля ввода-вывода";
-                throw new Exception(Message);
-            }
-
-            return clampFunction;
-        }
-
-        /// <summary>
-        /// Получить функцию модуля ввода-вывода.
-        /// Модуль, куда привязывается устройство.
-        /// </summary>
-        /// <param name="clampFunction">Функция клеммы модуля 
-        /// ввода-вывода</param>
-        public Function GetSelectedIOModuleFunction(Function clampFunction)
-        {
-            try
-            {
-                const string ValveTerminalName = "Y";
-                var isValveTerminalClampFunction = false;
-                Function IOModuleFunction = null;
-
-                if (clampFunction.Name.Contains(ValveTerminalName))
-                {
-                    IOModuleFunction = GetIOModuleFunction(clampFunction);
-                    if (IOModuleFunction != null)
-                    {
-                        isValveTerminalClampFunction = true;
-                    }
-                }
-
-                if (isValveTerminalClampFunction == false)
-                {
-                    IOModuleFunction = clampFunction.ParentFunction;
-                }
-
-                if (IOModuleFunction == null)
-                {
-                    MessageBox.Show(
-                        "Данная клемма названа некорректно. Измените" +
-                        " ее название (пример корректного названия " +
-                        "\"===DSS1+CAB4-A409\"), затем повторите " +
-                        "попытку привязки устройства.",
-                        "EPlaner",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Exclamation);
-
-                    throw new Exception();
-                }
-
-                return IOModuleFunction;
-            }
-            catch
-            {
-                const string Message = "Не найдена клемма пневмоострова";
-                throw new Exception(Message);
-            }
-        }
-
-        /// <summary>
-        /// Получить выборку из выбранных объектов в Eplan API
-        /// </summary>
-        /// <returns></returns>
-        private SelectionSet GetSelectionSet()
-        {
-            var selection = new SelectionSet();
-            selection.LockSelectionByDefault = false;
-            return selection;
-        }
-
-        /// <summary>
-        /// Проверка клеммы модуля ввода-вывода на принадлежность к 
-        /// пневмоострову и возврат параметра указывающего на это
-        /// </summary>
-        /// <param name="clampFunction">Функция клеммы модуля 
-        /// ввода-вывода</param>   
-        /// <returns>Функция модуля ввода-вывода</returns>
-        private Function GetIOModuleFunction(Function clampFunction)
-        {
-            var IOModuleFunction = new Function();
-            const string valveTerminalPattern = @"([A-Z0-9]+\-[Y0-9]+)";
-            string valveTerminalName = Regex
-                .Match(clampFunction.Name, valveTerminalPattern).Value;
-
-            if (string.IsNullOrEmpty(valveTerminalName))
-            {
-                const string Message = "Ошибка поиска ОУ пневмоострова";
-                throw new Exception(Message);
-            }
-
-            var objectFinder = new DMObjectsFinder(GetProject());
-            var functionsFilter = new FunctionsFilter();
-            var properties = new FunctionPropertyList();
-            properties.FUNC_MAINFUNCTION = true;
-            functionsFilter.SetFilteredPropertyList(properties);
-            functionsFilter.Category = Function.Enums.Category.PLCBox;
-            Function[] functions = objectFinder.GetFunctions(functionsFilter);
-
-            foreach (Function function in functions)
-            {
-                Function[] subFunctions = function.SubFunctions;
-                if (subFunctions != null)
-                {
-                    foreach (Function subFunction in subFunctions)
-                    {
-                        var functionalText = subFunction.Properties
-                            .FUNC_TEXT_AUTOMATIC
-                            .ToString(ISOCode.Language.L___);
-                        if (functionalText.Contains(valveTerminalName))
-                        {
-                            IOModuleFunction = subFunction.ParentFunction;
-                            return IOModuleFunction;
-                        }
-                    }
-                }
-            }
-            return IOModuleFunction;
         }
 
         #region Закрытые поля

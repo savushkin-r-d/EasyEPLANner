@@ -26,6 +26,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Eplan.EplApi.Starter;
 using Eplan.EplApi.DataModel.EObjects;
+using StaticHelper;
 
 [assembly: EplanSignedAssemblyAttribute(true)]
 #endregion
@@ -1218,20 +1219,9 @@ namespace EasyEPlanner
                                 continue;
                             }
 
-                            string description = subFunction.Properties.FUNC_TEXT_AUTOMATIC.ToString(
-                                ISOCode.Language.L___);
-                            if (description == "")
-                            {
-                                description = subFunction.Properties.FUNC_TEXT_AUTOMATIC.ToString(
-                                    ISOCode.Language.L_ru_RU);
-                            }
-                            if (description == "")
-                            {
-                                description = subFunction.Properties.FUNC_TEXT.ToString(
-                                    ISOCode.Language.L_ru_RU);
-                            }
-
-                            if (description == null || description == "")
+                            string description = ApiHelper.GetFunctionalText(
+                                subFunction);
+                            if (description == string.Empty)
                             {
                                 continue;
                             }

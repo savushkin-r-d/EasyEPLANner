@@ -165,6 +165,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="StaticHelper.cs" />
     <Compile Include="TechObject.cs" />
     <Compile Include="EditorCtrl.cs">
       <SubType>UserControl</SubType>

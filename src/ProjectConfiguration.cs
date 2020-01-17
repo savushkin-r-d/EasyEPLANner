@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using StaticHelper;
 
 namespace EasyEPlanner
 {
@@ -121,7 +122,7 @@ namespace EasyEPlanner
 
             if (needSynch)                                                  //3
             {
-                TechObject.TechObjectManager.GetInstance().Synch(indexArray);
+                techObjectManager.Synch(indexArray);
             }
         }
 
@@ -155,16 +156,27 @@ namespace EasyEPlanner
         /// его сброса
         /// </summary>
         public Dictionary<string, string> GetBindingForResettingChannel(
-            Function clampFunction, IO.IOModuleInfo moduleInfo, 
-            string devsDescr = "")
+            Function deviceClampFunction, IO.IOModuleInfo moduleInfo, 
+            string devicesDescription = "")
         {
             const string EmptyString = "";
-            Dictionary<string, string> res = new Dictionary<string, string>();
-            int clampNumber;
-            string clampString = clampFunction.Properties
+            var res = new Dictionary<string, string>();
+            string clampNumberAsString = deviceClampFunction.Properties
                 .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
-            
-            bool isDigit = Int32.TryParse(clampString, out clampNumber);
+
+            if (deviceClampFunction.Name.Contains("-Y"))
+            {
+                Function IOModuleFunction = ApiHelper
+                    .GetSelectedIOModuleFunction(deviceClampFunction);
+                string bindedDevice = deviceClampFunction.Name;
+                Function IOModuleClampFunction = ApiHelper
+                    .GetClampFunction(IOModuleFunction, bindedDevice);
+                clampNumberAsString = IOModuleClampFunction.Properties
+                .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
+            }
+
+            int clampNumber;
+            bool isDigit = int.TryParse(clampNumberAsString, out clampNumber);
             if (isDigit == false)
             {
                 return res;
@@ -175,54 +187,49 @@ namespace EasyEPlanner
                 return res;
             }
 
-            DocumentTypeManager.DocumentType pageType = clampFunction.Page
-                .PageType;
+            DocumentTypeManager.DocumentType pageType = deviceClampFunction
+                .Page.PageType;
             if (pageType != DocumentTypeManager.DocumentType.Circuit &&
                 pageType != DocumentTypeManager.DocumentType.Overview)
             {
                 return res;
             }
 
-            if (devsDescr == EmptyString)
+            if (devicesDescription == EmptyString)
             {
-                devsDescr = clampFunction.Properties.FUNC_TEXT_AUTOMATIC
-                    .ToString(ISOCode.Language.L___);
-                if (devsDescr == EmptyString)
-                {
-                    devsDescr = clampFunction.Properties.FUNC_TEXT_AUTOMATIC
-                        .ToString(ISOCode.Language.L_ru_RU);
-                }
-                if (devsDescr == EmptyString)
-                {
-                    devsDescr = clampFunction.Properties.FUNC_TEXT
-                        .ToString(ISOCode.Language.L_ru_RU);
-                }
+                devicesDescription = ApiHelper.GetFunctionalText(
+                    deviceClampFunction);
             }
 
-            if (devsDescr == null || devsDescr == EmptyString)
+            if (devicesDescription == EmptyString)
             {
                 return res;
             }
 
-            string comment = EmptyString;
-            string clampComment = EmptyString;
+            var comment = EmptyString;
+            var clampComment = EmptyString;
             Match actionMatch;
-            MatchEvaluator deviceEvaluator = new MatchEvaluator(GetInstance().RussianToEnglish);
-            bool isMultipleBinding = deviceManager.IsMultipleBinding(devsDescr);
+            var deviceEvaluator = new MatchEvaluator(RussianToEnglish);
+            bool isMultipleBinding = deviceManager.IsMultipleBinding(
+                devicesDescription);
             if (isMultipleBinding == false)
             {
-                int endPos = devsDescr.IndexOf("\n");
+                int endPos = devicesDescription.IndexOf("\n");
                 if (endPos > 0)
                 {
-                    comment = devsDescr.Substring(endPos + 1);
-                    devsDescr = devsDescr.Substring(0, endPos);
+                    comment = devicesDescription.Substring(endPos + 1);
+                    devicesDescription = devicesDescription.Substring(0, 
+                        endPos);
                 }
 
-                devsDescr = Regex.Replace(devsDescr, RusAsEngPattern, deviceEvaluator);
+                devicesDescription = Regex.Replace(devicesDescription, 
+                    RusAsEngPattern, deviceEvaluator);
 
-                actionMatch = Regex.Match(comment, ChannelCommentPattern, RegexOptions.IgnoreCase);
+                actionMatch = Regex.Match(comment, ChannelCommentPattern, 
+                    RegexOptions.IgnoreCase);
 
-                comment = Regex.Replace(comment, ChannelCommentPattern, "", RegexOptions.IgnoreCase);
+                comment = Regex.Replace(comment, ChannelCommentPattern, 
+                    EmptyString, RegexOptions.IgnoreCase);
                 comment = comment.Replace("\n", ". ").Trim();
                 if (comment.Length > 0 && comment[comment.Length - 1] != '.')
                 {
@@ -231,13 +238,14 @@ namespace EasyEPlanner
             }
             else
             {
-                devsDescr = Regex.Replace(devsDescr, RusAsEngPattern, deviceEvaluator);
-                actionMatch = Regex.Match(comment, ChannelCommentPattern, RegexOptions.IgnoreCase);
+                devicesDescription = Regex.Replace(devicesDescription, 
+                    RusAsEngPattern, deviceEvaluator);
+                actionMatch = Regex.Match(comment, ChannelCommentPattern, 
+                    RegexOptions.IgnoreCase);
             }
 
-            Match descrMatch = Regex.Match(
-                devsDescr, Device.DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
-
+            var descrMatch = Regex.Match(devicesDescription, 
+                Device.DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
             while (descrMatch.Success)
             {
                 string devName = descrMatch.Groups["name"].Value;
