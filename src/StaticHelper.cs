@@ -245,6 +245,10 @@ namespace StaticHelper
                 functionalText = function.Properties.FUNC_TEXT
                     .ToString(ISOCode.Language.L_ru_RU);
             }
+            if(string.IsNullOrEmpty(functionalText))
+            {
+                return string.Empty;
+            }
 
             return functionalText;
         }
