@@ -104,7 +104,7 @@ namespace EasyEPlanner
             errStr = "";
 
             StreamReader sr = null;
-            string path = GetPtusaProjectsPath() + projectName + fileName;
+            string path = GetPtusaProjectsPath(projectName,fileName) + projectName + fileName;
 
             try
             {
@@ -133,7 +133,7 @@ namespace EasyEPlanner
         /// Путь к файлам .lua (к проекту)
         /// </summary>
         /// <returns></returns>
-        public string GetPtusaProjectsPath()
+        public string GetPtusaProjectsPath(string projectName, string fileName)
         {
             try
             {
@@ -162,27 +162,27 @@ namespace EasyEPlanner
                 PInvoke.IniFile iniFile = new PInvoke.IniFile(path);
 
                 // Считывание и возврат пути каталога проектов
-                string projectsFolders = 
+                string projectsFolders =
                     iniFile.ReadString("path", "folder_path", "");
                 string[] projectsFolderArray = projectsFolders.Split(';');
                 string projectsFolder = "";
-                for(int i = 0; i < projectsFolderArray.Length;i++)
+                for (int i = 0; i < projectsFolderArray.Length; i++)
                 {
-                    if(projectsFolderArray[i] != "")
+                    if (projectsFolderArray[i] != "")
                     {
-                        projectsFolder = projectsFolderArray[i] ;
-                        break;
+                        projectsFolder = projectsFolderArray[i];
+                        if (projectsFolder.Last() != '\\')
+                        {
+                            projectsFolder += '\\';
+                        }
+                        
+                        string projectsPath = projectsFolder + projectName + fileName;
+                        if (File.Exists(projectsPath))
+                        {
+                            return projectsFolder;
+                        }
                     }
                 }
-             
-                if (projectsFolder.Last() == '\\')
-                {
-                    return projectsFolder;
-                }
-                else
-                {
-                    return projectsFolder + "\\";
-                }           
             }
             catch
             {
