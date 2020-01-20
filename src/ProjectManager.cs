@@ -157,14 +157,24 @@ namespace EasyEPlanner
                     StreamWriter sr = new StreamWriter(path, true);
                     sr.WriteLine("[path]\nfolder_path=");
                     sr.Close();
-                    sr.Flush();
-                }
+                    sr.Flush();         }
                 PInvoke.IniFile iniFile = new PInvoke.IniFile(path);
 
                 // Считывание и возврат пути каталога проектов
                 string projectsFolders =
                     iniFile.ReadString("path", "folder_path", "");
-                string projectsFolder = projectsFolders.Split(';')[0];
+                string projectsFolder = "";
+
+                string[] projectsFoldersArray = projectsFolders.Split(';');
+                for (int i = 0; i < projectsFolder.Length; i++)
+                {
+                    if (projectsFoldersArray[i] != "")
+                    {
+                        projectsFolders = projectsFoldersArray[i];
+                        break;
+                    }
+                }
+
                 if (projectsFolder.Last() == '\\')
                   
                 {
