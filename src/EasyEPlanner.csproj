@@ -133,6 +133,7 @@
   <ItemGroup>
     <Compile Include="ConfigurationChecker.cs" />
     <Compile Include="Device.cs" />
+    <Compile Include="DeviceReader.cs" />
     <Compile Include="DFrm.cs">
       <SubType>Form</SubType>
     </Compile>
