@@ -11,7 +11,7 @@ using StaticHelper;
 namespace EasyEPlanner
 {
     /// <summary>
-    /// Класс для работы с конфигурацией проекта
+    /// Класс-фасад для работы с конфигурацией проекта
     /// </summary>
     public class ProjectConfiguration
     {
@@ -23,6 +23,8 @@ namespace EasyEPlanner
             this.IOManager = IO.IOManager.GetInstance();
             this.deviceManager = Device.DeviceManager.GetInstance();
             this.techObjectManager = TechObject.TechObjectManager.GetInstance();
+
+            this.configurationChecker = new ConfigurationChecker();
         }
 
         /// <summary>
@@ -273,12 +275,9 @@ namespace EasyEPlanner
         /// <param name="silentMode">Тихий режим (без окна логов)</param>
         public void Check(bool silentMode = false) 
         {
-            string errors;
+            configurationChecker.Check();
 
-            errors = deviceManager.Check();
-            errors += IOManager.Check();
-            errors += techObjectManager.Check();
-
+            string errors = configurationChecker.Errors;
             if (errors != string.Empty && silentMode == false)
             {
                 ProjectManager.GetInstance().AddLogMessage(errors);
@@ -362,6 +361,8 @@ namespace EasyEPlanner
         private IO.IOManager IOManager;
         private Device.DeviceManager deviceManager;
         private TechObject.TechObjectManager techObjectManager;
+
+        ConfigurationChecker configurationChecker;
 
         static ProjectConfiguration instance;
 

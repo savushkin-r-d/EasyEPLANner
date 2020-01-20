@@ -131,6 +131,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationChecker.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="DFrm.cs">
       <SubType>Form</SubType>
