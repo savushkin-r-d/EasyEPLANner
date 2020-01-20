@@ -201,7 +201,7 @@ namespace EasyEPlanner
             try
             {
                 oProgress.BeginPart(15, "Считывание IO");
-                iOManager.ReadConfiguration();
+                projectConfiguration.ReadIO();
                 oProgress.EndPart();
 
                 oProgress.BeginPart(15, "Считывание устройств");
@@ -251,12 +251,11 @@ namespace EasyEPlanner
         /// <summary>
         /// Инициализация.
         /// </summary>
-        public void Init(IIOManager iOManager, IDeviceManager deviceManager,
+        public void Init(IDeviceManager deviceManager,
             IEditor editor, ITechObjectManager techObjectManager, ILog log,
             IOManager IOManager, DeviceManager DeviceManager,
             ProjectConfiguration projectConfiguration)
         {
-            this.iOManager = iOManager;
             this.deviceManager = deviceManager;
             this.editor = editor;
             this.techObjectManager = techObjectManager;
@@ -1369,7 +1368,6 @@ namespace EasyEPlanner
             }
         }
 
-        private IIOManager iOManager;       /// Менеджер модулей ввода\вывода IO.
         private IDeviceManager deviceManager;   /// Менеджер устройств.
         private IEditor editor;                 /// Редактор технологических объектов.
         private ITechObjectManager techObjectManager; /// Менеджер технологических объектов.

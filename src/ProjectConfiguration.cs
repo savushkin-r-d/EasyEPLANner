@@ -23,6 +23,7 @@ namespace EasyEPlanner
             this.configurationChecker = new ConfigurationChecker();
             this.deviceReader = new DeviceReader();
             this.deviceSynchronizer = new DeviceSynchronizer();
+            this.IOReader = new IOReader();
         }
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace EasyEPlanner
         /// </summary>
         public void ReadIO() 
         {
-
+            IOReader.Read();
         }
 
         /// <summary>
@@ -113,6 +114,7 @@ namespace EasyEPlanner
         ConfigurationChecker configurationChecker;
         DeviceReader deviceReader;
         DeviceSynchronizer deviceSynchronizer;
+        IOReader IOReader;
 
         static ProjectConfiguration instance;
 

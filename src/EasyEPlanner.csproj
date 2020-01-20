@@ -146,6 +146,7 @@
     <Compile Include="ExcelRepoter.cs" />
     <Compile Include="DeviceBindFromForm.cs" />
     <Compile Include="IO.cs" />
+    <Compile Include="IOReader.cs" />
     <Compile Include="LogFrm.cs">
       <SubType>Form</SubType>
     </Compile>
