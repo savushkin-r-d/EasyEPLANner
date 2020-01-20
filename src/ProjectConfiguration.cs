@@ -30,6 +30,11 @@ namespace EasyEPlanner
         /// </summary>
         public static ProjectConfiguration GetInstance()
         {
+            if (instance == null)
+            {
+                instance = new ProjectConfiguration();
+            }
+
             return instance;
         }
   
@@ -358,7 +363,7 @@ namespace EasyEPlanner
         private Device.DeviceManager deviceManager;
         private TechObject.TechObjectManager techObjectManager;
 
-        static ProjectConfiguration instance = new ProjectConfiguration();
+        static ProjectConfiguration instance;
 
     }
 }
