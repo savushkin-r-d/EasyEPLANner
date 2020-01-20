@@ -177,6 +177,37 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Копировать устройства в массив
+        /// </summary>
+        /// <param name="array">Массив для копируемых данных</param>
+        public void CopyDevices(Device.IODevice[] array)
+        {
+            deviceManager.Devices.CopyTo(array);
+        }
+
+        /// <summary>
+        /// Количество считанных устройств
+        /// </summary>
+        public int DevicesCount
+        {
+            get
+            {
+                return deviceManager.Devices.Count;
+            }
+        }
+
+        /// <summary>
+        /// Считанные устройства
+        /// </summary>
+        public List<Device.IODevice> Devices
+        {
+            get
+            {
+                return deviceManager.Devices;
+            }
+        }
+
+        /// <summary>
         /// Свойство, указывающее прочитаны устройства или нет.
         /// </summary>
         public bool DevicesIsRead
