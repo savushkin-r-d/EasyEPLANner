@@ -30,11 +30,6 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Закрытый конструктор для безопасности использования
-        /// </summary>
-        private DeviceBinder() { }
-
-        /// <summary>
         /// Привязать выбранный канал устройства к модулю ввода-вывода
         /// </summary>
         public void Bind()
