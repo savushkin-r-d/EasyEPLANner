@@ -104,7 +104,7 @@ namespace EasyEPlanner
             errStr = "";
 
             StreamReader sr = null;
-            string path = GetPtusaProjectsPath() + projectName + fileName;
+            string path = GetPtusaProjectsPath(projectName, fileName ) + projectName + fileName;
 
             try
             {
@@ -133,7 +133,7 @@ namespace EasyEPlanner
         /// Путь к файлам .lua (к проекту)
         /// </summary>
         /// <returns></returns>
-        public string GetPtusaProjectsPath()
+        public string GetPtusaProjectsPath(string projectName, string fileName)
         {
             try
             {
@@ -157,7 +157,8 @@ namespace EasyEPlanner
                     StreamWriter sr = new StreamWriter(path, true);
                     sr.WriteLine("[path]\nfolder_path=");
                     sr.Close();
-                    sr.Flush();         }
+                    sr.Flush();         
+                }
                 PInvoke.IniFile iniFile = new PInvoke.IniFile(path);
 
                 // Считывание и возврат пути каталога проектов
@@ -171,19 +172,18 @@ namespace EasyEPlanner
                     if (projectsFoldersArray[i] != "")
                     {
                         projectsFolders = projectsFoldersArray[i];
-                        break;
+                        if (projectsFolder.Last() != '\\')
+                        {
+                            projectsFolder += "\\";
+                        }
+
+                        string fullPath = projectsFolder + projectName + fileName;
+                        if (File.Exists(fullPath))
+                        {
+                            return projectsFolder;
+                        }
                     }
                 }
-
-                if (projectsFolder.Last() == '\\')
-                  
-                {
-                    return projectsFolder;
-                }
-                else
-                {
-                    return projectsFolder + "\\";
-                }           
             }
             catch
             {
