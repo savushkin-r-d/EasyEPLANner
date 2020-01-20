@@ -164,8 +164,17 @@ namespace EasyEPlanner
                 // Считывание и возврат пути каталога проектов
                 string projectsFolders = 
                     iniFile.ReadString("path", "folder_path", "");
-                string projectsFolder = projectsFolders.Split(';')[0];
-
+                string[] projectsFolderArray = projectsFolders.Split(';');
+                string projectsFolder = "";
+                for(int i = 0; i < projectsFolderArray.Length;i++)
+                {
+                    if(projectsFolderArray[i] != "")
+                    {
+                        projectsFolder = projectsFolderArray[i] ;
+                        break;
+                    }
+                }
+             
                 if (projectsFolder.Last() == '\\')
                 {
                     return projectsFolder;
