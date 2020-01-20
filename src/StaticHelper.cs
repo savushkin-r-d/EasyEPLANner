@@ -124,7 +124,37 @@ namespace StaticHelper
         /// ввода-вывода</param>
         public static Function GetIOModuleFunction(Function clampFunction)
         {
-            return clampFunction.ParentFunction;
+            const string ValveTerminalName = "-Y";
+            var isValveTerminalClampFunction = false;
+            Function IOModuleFunction = null;
+            if (clampFunction.Name.Contains(ValveTerminalName))
+            {
+                IOModuleFunction = GetValveTerminalIOModuleFunction(
+                    clampFunction);
+                if (IOModuleFunction != null)
+                {
+                    isValveTerminalClampFunction = true;
+                }
+            }
+
+            if (isValveTerminalClampFunction == false)
+            {
+                IOModuleFunction = clampFunction.ParentFunction;
+            }
+
+            if (IOModuleFunction == null)
+            {
+                MessageBox.Show(
+                    "Данная клемма названа некорректно. Измените" +
+                    " ее название (пример корректного названия " +
+                    "\"===DSS1+CAB4-A409\"), затем повторите " +
+                    "попытку привязки устройства.",
+                    "EPlaner",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Exclamation);
+            }
+
+            return IOModuleFunction;
         }
 
         /// <summary>
@@ -133,7 +163,7 @@ namespace StaticHelper
         /// <param name="clampFunction">Функция клеммы модуля 
         /// ввода-вывода</param>   
         /// <returns>Функция модуля ввода-вывода</returns>
-        public static Function GetValveTerminalIOModuleFunction(
+        private static Function GetValveTerminalIOModuleFunction(
             Function clampFunction)
         {
             var IOModuleFunction = new Function();
@@ -174,55 +204,6 @@ namespace StaticHelper
                 }
             }
             return IOModuleFunction;
-        }
-
-        /// <summary>
-        /// Получить функцию модуля ввода-вывода.
-        /// Модуль, куда привязывается устройство.
-        /// </summary>
-        /// <param name="clampFunction">Функция клеммы модуля 
-        /// ввода-вывода</param>
-        public static Function GetSelectedIOModuleFunction(Function clampFunction)
-        {
-            try
-            {
-                const string ValveTerminalName = "-Y";
-                var isValveTerminalClampFunction = false;
-                Function IOModuleFunction = null;
-                if (clampFunction.Name.Contains(ValveTerminalName))
-                {
-                    IOModuleFunction = GetValveTerminalIOModuleFunction(clampFunction);
-                    if (IOModuleFunction != null)
-                    {
-                        isValveTerminalClampFunction = true;
-                    }
-                }
-
-                if (isValveTerminalClampFunction == false)
-                {
-                    IOModuleFunction = GetIOModuleFunction(clampFunction);
-                }
-
-                if (IOModuleFunction == null)
-                {
-                    MessageBox.Show(
-                        "Данная клемма названа некорректно. Измените" +
-                        " ее название (пример корректного названия " +
-                        "\"===DSS1+CAB4-A409\"), затем повторите " +
-                        "попытку привязки устройства.",
-                        "EPlaner",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Exclamation);
-                    throw new Exception();
-                }
-
-                return IOModuleFunction;
-            }
-            catch
-            {
-                const string Message = "Не найдена клемма пневмоострова";
-                throw new Exception(Message);
-            }
         }
 
         /// <summary>

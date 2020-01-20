@@ -84,7 +84,7 @@ namespace EasyEPlanner
                 SelectedClampFunction = ApiHelper.GetClampFunction(
                     SelectedObject);
                 SelectedIOModuleFunction = ApiHelper
-                    .GetSelectedIOModuleFunction(SelectedClampFunction);
+                    .GetIOModuleFunction(SelectedClampFunction);
             }
             catch
             {

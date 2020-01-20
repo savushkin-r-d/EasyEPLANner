@@ -167,7 +167,7 @@ namespace EasyEPlanner
             if (deviceClampFunction.Name.Contains("-Y"))
             {
                 Function IOModuleFunction = ApiHelper
-                    .GetSelectedIOModuleFunction(deviceClampFunction);
+                    .GetIOModuleFunction(deviceClampFunction);
                 string bindedDevice = deviceClampFunction.Name;
                 Function IOModuleClampFunction = ApiHelper
                     .GetClampFunction(IOModuleFunction, bindedDevice);
