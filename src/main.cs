@@ -773,10 +773,6 @@ namespace EasyEPlanner
             const string IOPattern = @"=*-A(?<n>\d+)"; //-A101
             var regex = new Regex(IOPattern);
 
-            var clampFuntionFilter = new FunctionsFilter();
-            clampFuntionFilter.ExactNameMatching = true;
-            clampFuntionFilter.Category = Function.Enums.Category.PLCTerminal;
-
             //Если нет модулей IO - не считываем привязку
             int nodesCount = IO.IOManager.GetInstance().IONodes.Count;
             if (nodesCount == 0)
