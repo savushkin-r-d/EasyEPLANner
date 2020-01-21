@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StaticHelper;
 using System.Text.RegularExpressions;
 
@@ -39,8 +37,8 @@ namespace EasyEPlanner
         /// главная функция, производитель изделия WAGO/ Phoenix.
         /// 2. Обрабатываем функциональные объекты со следующим именем:
         /// -Аxxx, где А - признак элемента IO, xxx - номер.
-        /// Так же учитываем контроллер Phoenix Contact с ОУ "А1", если он есть.
-        /// 3.  Вначале обрабатываем элементы с номером, кратным 100 - это узел 
+        /// Также учитываем контроллер Phoenix Contact с ОУ "А1", если он есть.
+        /// 3. Вначале обрабатываем элементы с номером, кратным 100 - это узел 
         /// IO. Добавляем их в список узлов IO. Тип узла получаем из 
         /// изделия.
         /// 4. Обрабатываем остальные элементы - модули IO. Помещаем их в 
@@ -56,7 +54,7 @@ namespace EasyEPlanner
             if (isContainsNodes == false)
             {
                 ProjectManager.GetInstance().AddLogMessage(
-                    "Не найден ни один узловой модуль (A100, A200, ...).");
+                    $"Не найден ни один узловой модуль (A100, A200, ...).");
                 return;
             }
 
@@ -98,7 +96,6 @@ namespace EasyEPlanner
             foreach (Function function in functionsForSearching)
             {
                 Match match = IONameRegex.Match(function.VisibleName);
-
                 if (match.Success)
                 {
                     int number = Convert.ToInt32(match.Groups["n"].Value);
@@ -106,7 +103,6 @@ namespace EasyEPlanner
                 }
             }
 
-            const int numberA1 = 1;
             if (theNumbers.Contains(numberA1) == true)
             {
                 return true;
@@ -139,13 +135,13 @@ namespace EasyEPlanner
                 {
                     if (isContainsA1 == true)
                     {
-                        if (nodeNumber == 1)
+                        if (nodeNumber == numberA1)
                         {
-                            IOManager.AddNode(1, type, ipAdress, name);
+                            IOManager.AddNode(numberA1, type, ipAdress, name);
                         }
                         else
                         {
-                            IOManager.AddNode(nodeNumber/100 + 1, type, 
+                            IOManager.AddNode(nodeNumber/100 + numberA1, type, 
                                 ipAdress, name);
                         }
                     }
@@ -157,9 +153,9 @@ namespace EasyEPlanner
                 }
                 else
                 {
-                    ProjectManager.GetInstance().AddLogMessage("У модуля \"" +
-                        function.VisibleName + "\" не задан параметр " +
-                        "изделия (номер типа изделия).");
+                    ProjectManager.GetInstance().AddLogMessage($"У модуля \"" +
+                        $"{function.VisibleName}\" не задан параметр изделия" +
+                        $" (номер типа изделия).");
                 }
             }
         }
@@ -179,7 +175,7 @@ namespace EasyEPlanner
 
             var match = IONameRegex.Match(function.VisibleName);
             int nodeNumber = Convert.ToInt32(match.Groups["n"].Value);
-            if (nodeNumber % 100 != 0 && nodeNumber != 1)
+            if (nodeNumber % 100 != 0 && nodeNumber != numberA1)
             {
                 skip = true;
                 return skip;
@@ -202,8 +198,8 @@ namespace EasyEPlanner
             }
             else
             {
-                ProjectManager.GetInstance().AddLogMessage("У узла \"" +
-                    function.VisibleName + "\" не задан IP-адрес.");
+                ProjectManager.GetInstance().AddLogMessage($"У узла \"" +
+                    $"{function.VisibleName}\" не задан IP-адрес.");
             }
 
             return ipAddress;
@@ -217,7 +213,6 @@ namespace EasyEPlanner
         private string GetNodeTypeFromFunction(Function function)
         {
             var type = string.Empty;
-
             foreach (Article article in function.Articles)
             {
                 if (!article.Properties[Eplan.EplApi.DataModel
@@ -267,9 +262,6 @@ namespace EasyEPlanner
                     continue;
                 }
 
-                string type = GetModuleTypeFromFunction(function);
-                IO.IOModuleInfo moduleInfo = GetIOModuleInfo(function, type);
-
                 Match match = IONameRegex.Match(function.VisibleName);
                 int moduleNumber = Convert.ToInt32(match.Groups["n"].Value);
                 int shortModuleNumber = moduleNumber % 100;
@@ -280,61 +272,36 @@ namespace EasyEPlanner
                 }
                 else
                 {
-                    shortNodeNumber = moduleNumber/100 - 1;
+                    shortNodeNumber = moduleNumber/100 - numberA1;
                 }
 
-                int inOffset = 0;
-                int outOffset = 0;
+                string type = GetModuleTypeFromFunction(function);
+                IO.IONode node = IOManager[shortNodeNumber];
                 if (IOManager[shortNodeNumber] != null)
                 {
-                    switch (moduleInfo.AddressSpaceType)
-                    {
-                        case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.DI:
-                            inOffset = IOManager[shortNodeNumber].DI_count;
-                            break;
+                    IO.IOModuleInfo moduleInfo = GetIOModuleInfo(function, 
+                        type);
 
-                        case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.DO:
-                            outOffset = IOManager[shortNodeNumber].DO_count;
-                            break;
+                    int inOffset;
+                    int outOffset;
+                    GetInAndOutOffset(shortNodeNumber, moduleInfo,
+                        out inOffset, out outOffset);
 
-                        case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AI:
-                            inOffset = IOManager[shortNodeNumber].AI_count;
-                            break;
-
-                        case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AO:
-                            outOffset = IOManager[shortNodeNumber].AO_count;
-                            break;
-
-                        case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI:
-                        case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI:
-                            inOffset = IOManager[shortNodeNumber].AI_count;
-                            outOffset = IOManager[shortNodeNumber].AO_count;
-                            break;
-
-                        case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.DODI:
-                            inOffset = IOManager[shortNodeNumber].DI_count;
-                            outOffset = IOManager[shortNodeNumber].DO_count;
-                            break;
-                    }
-
-                    IO.IOModule newModule = new IO.IOModule(inOffset,
+                    IO.IOModule nodeModule = new IO.IOModule(inOffset,
                         outOffset, moduleInfo, moduleNumber);
 
-                    IOManager[shortNodeNumber].DI_count += moduleInfo.DI_count;
-                    IOManager[shortNodeNumber].DO_count += moduleInfo.DO_count;
-                    IOManager[shortNodeNumber].AI_count += moduleInfo.AI_count;
-                    IOManager[shortNodeNumber].AO_count += moduleInfo.AO_count;
-
-                    IOManager[shortNodeNumber].SetModule(newModule, 
-                        shortModuleNumber);
+                    node.DI_count += moduleInfo.DI_count;
+                    node.DO_count += moduleInfo.DO_count;
+                    node.AI_count += moduleInfo.AI_count;
+                    node.AO_count += moduleInfo.AO_count;
+                    node.SetModule(nodeModule, shortModuleNumber);
                 }
                 else
                 {
-                    ProjectManager.GetInstance().AddLogMessage("Для \"" +
-                       function.VisibleName + "\" - \"" + type +
-                       "\", не найден узел номер " + ++shortNodeNumber + ".");
+                    ProjectManager.GetInstance().AddLogMessage($"Для" +
+                        $" \"{function.VisibleName}\" - \"{type}\", " +
+                        $"не найден узел номер {++shortNodeNumber}.");
                 }
-
             }
         }
 
@@ -353,7 +320,7 @@ namespace EasyEPlanner
 
             Match match = IONameRegex.Match(function.VisibleName);
             int moduleNumber = Convert.ToInt32(match.Groups["n"].Value);
-            if (moduleNumber % 100 == 0 || moduleNumber == 1)
+            if (moduleNumber % 100 == 0 || moduleNumber == numberA1)
             {
                 skip = true;
                 return skip;
@@ -370,7 +337,6 @@ namespace EasyEPlanner
         private string GetModuleTypeFromFunction(Function function)
         {
             var type = string.Empty;
-
             if (!function.Articles[0].Properties[Eplan.EplApi.DataModel
                 .Properties.Article.ARTICLE_TYPENR].IsEmpty)
             {
@@ -380,9 +346,9 @@ namespace EasyEPlanner
             }
             else
             {
-                ProjectManager.GetInstance().AddLogMessage("У модуля" +
-                    " \"" + function.VisibleName + "\" не задан " +
-                    "параметр изделия (номер для заказа).");
+                ProjectManager.GetInstance().AddLogMessage($"У модуля \"" +
+                        $"{function.VisibleName}\" не задан параметр изделия" +
+                        $" (номер типа изделия).");
             }
 
             return type;
@@ -399,15 +365,49 @@ namespace EasyEPlanner
             bool isStub;
             var moduleInfo = new IO.IOModuleInfo();
             moduleInfo = moduleInfo.GetIOModuleInfo(type, out isStub);
-
             if (isStub && type != string.Empty)
             {
-                ProjectManager.GetInstance().AddLogMessage("Неизвестный " +
-                    "модуль \"" + function.VisibleName + "\" - \"" +
-                    type + "\".");
+                ProjectManager.GetInstance().AddLogMessage($"Неизвестный " +
+                    $"модуль \"{function.VisibleName}\" - \"{type}\".");
             }
 
             return moduleInfo;
+        }
+
+        private void GetInAndOutOffset(int shortNodeNumber, 
+            IO.IOModuleInfo moduleInfo, out int inOffset, out int outOffset)
+        {
+            inOffset = 0;
+            outOffset = 0;
+            switch (moduleInfo.AddressSpaceType)
+            {
+                case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.DI:
+                    inOffset = IOManager[shortNodeNumber].DI_count;
+                    break;
+
+                case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.DO:
+                    outOffset = IOManager[shortNodeNumber].DO_count;
+                    break;
+
+                case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AI:
+                    inOffset = IOManager[shortNodeNumber].AI_count;
+                    break;
+
+                case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AO:
+                    outOffset = IOManager[shortNodeNumber].AO_count;
+                    break;
+
+                case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI:
+                case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI:
+                    inOffset = IOManager[shortNodeNumber].AI_count;
+                    outOffset = IOManager[shortNodeNumber].AO_count;
+                    break;
+
+                case IO.IOModuleInfo.ADDRESS_SPACE_TYPE.DODI:
+                    inOffset = IOManager[shortNodeNumber].DI_count;
+                    outOffset = IOManager[shortNodeNumber].DO_count;
+                    break;
+            }
         }
 
         /// <summary>
@@ -418,7 +418,6 @@ namespace EasyEPlanner
         private bool NeedSkipFunction(Function function)
         {
             var skip = false;
-
             Match match = IONameRegex.Match(function.VisibleName);
             if (match.Success == false ||
                 !function.Properties.FUNC_SUPPLEMENTARYFIELD[1].IsEmpty)
@@ -429,8 +428,8 @@ namespace EasyEPlanner
 
             if (function.Articles.GetLength(0) == 0)
             {
-                ProjectManager.GetInstance().AddLogMessage("У модуля \"" +
-                    function.VisibleName + "\" не задано изделие.");
+                ProjectManager.GetInstance().AddLogMessage($"У модуля \"" +
+                    $"{function.VisibleName}\" не задано изделие.");
                 skip = true;
                 return skip;
             }
@@ -472,6 +471,12 @@ namespace EasyEPlanner
         /// Обрабатывающий Regex.
         /// </summary>
         Regex IONameRegex;
+
+        /// <summary>
+        /// Номер узла А1, характерного для проектов, где используется 
+        /// Phoenix Contact контроллер для управляющей программы
+        /// </summary>
+        const int numberA1 = 1;
 
         /// <summary>
         /// Экземпляр IOManager
