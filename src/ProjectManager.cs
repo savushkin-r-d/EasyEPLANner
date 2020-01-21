@@ -104,7 +104,7 @@ namespace EasyEPlanner
             errStr = "";
 
             StreamReader sr = null;
-            string path = GetPtusaProjectsPath(projectName,fileName) + projectName + fileName;
+            string path = GetPtusaProjectsPath(projectName) + projectName + fileName;
 
             try
             {
@@ -133,7 +133,7 @@ namespace EasyEPlanner
         /// Путь к файлам .lua (к проекту)
         /// </summary>
         /// <returns></returns>
-        public string GetPtusaProjectsPath(string projectName, string fileName)
+        public string GetPtusaProjectsPath(string projectName)
         {
             try
             {
@@ -176,8 +176,8 @@ namespace EasyEPlanner
                             projectsFolder += '\\';
                         }
                         
-                        string projectsPath = projectsFolder + projectName + fileName;
-                        if (File.Exists(projectsPath))
+                        string projectsPath = projectsFolder + projectName;//+ fileName;
+                        if (Directory.Exists(projectsPath))
                         {
                             return projectsFolder;
                         }
