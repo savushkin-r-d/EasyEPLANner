@@ -142,6 +142,7 @@ namespace EasyEPlanner
         /// </summary>
         private void PrepareForReading() 
         {
+            deviceManager.Clear();
             var objectFinder = new DMObjectsFinder(ApiHelper.GetProject());
 
             var propertyList = new FunctionPropertyList();
