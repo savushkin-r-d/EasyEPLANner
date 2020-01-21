@@ -22,6 +22,7 @@ namespace EasyEPlanner
         {
             this.configurationChecker = new ConfigurationChecker();
             this.deviceReader = new DeviceReader();
+            this.deviceBindingReader = new DeviceBindingReader();
             this.deviceSynchronizer = new DeviceSynchronizer();
             this.IOReader = new IOReader();
         }
@@ -68,7 +69,7 @@ namespace EasyEPlanner
         /// </summary>
         public void ReadBinding() 
         {
-
+            deviceBindingReader.Read();
         }
 
         /// <summary>
@@ -113,6 +114,7 @@ namespace EasyEPlanner
 
         ConfigurationChecker configurationChecker;
         DeviceReader deviceReader;
+        DeviceBindingReader deviceBindingReader;
         DeviceSynchronizer deviceSynchronizer;
         IOReader IOReader;
 
