@@ -288,7 +288,7 @@ namespace EasyEPlanner
                         out inOffset, out outOffset);
 
                     IO.IOModule nodeModule = new IO.IOModule(inOffset,
-                        outOffset, moduleInfo, moduleNumber);
+                        outOffset, moduleInfo, moduleNumber, function);
 
                     node.DI_count += moduleInfo.DI_count;
                     node.DO_count += moduleInfo.DO_count;

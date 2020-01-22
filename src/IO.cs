@@ -1,9 +1,8 @@
-﻿///@file IO.cs
-///@brief Классы, реализующие минимальную функциональность, необходимую для 
+﻿///@brief Классы, реализующие минимальную функциональность, необходимую для 
 ///экспорта описания модулей IO для PAC.
 
 using System;
-using System.Collections.Generic;   //Использование List.
+using System.Collections.Generic;
 using System.Globalization;
 using System.Drawing;
 
@@ -30,10 +29,12 @@ namespace IO
             if (modules == null)
             {
                 modules = new List<IOModuleInfo>();
-                // В Phoenix Contact особенность, адресное пространство кратно 32
-                // в связи с этим, увеличивается цифра DO/DI count в два раза в отличие от WAGO.
-                // При добавлении модуля учитывать, что первый [0] индекс массива только для Phoenix,
-                // а в WAGO его необходимо ставить -1
+                // В Phoenix Contact особенность, адресное пространство 
+                // кратно 32, в связи с этим, увеличивается цифра DO/DI count 
+                // в два раза в отличие от WAGO.
+                // При добавлении модуля учитывать, что первый [0] индекс 
+                // массива только для Phoenix, а в WAGO его необходимо 
+                // ставить -1.
 
                 modules.Add(new IOModuleInfo(1504, "750-1504",
                     "16-Channel Digital Output Module 24 V DC",
@@ -648,7 +649,6 @@ namespace IO
     /// </summary>
     public class IOModule
     {
-
         /// <summary>
         /// Конструктор.
         /// </summary>
@@ -659,13 +659,16 @@ namespace IO
         /// <param name="info">Описание модуля.</param>
         /// <param name="physicalNumber">Физический номер (из ОУ) устройства.
         /// </param>
+        /// <param name="function">Eplan функция модуля.</param>
         public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
-            IOModuleInfo info, int physicalNumber)
+            IOModuleInfo info, int physicalNumber, 
+            Eplan.EplApi.DataModel.Function function)
         {
             this.inAddressSpaceOffset = inAddressSpaceOffset;
             this.outAddressSpaceOffset = outAddressSpaceOffset;
             this.info = info;
             this.physicalNumber = physicalNumber;
+            this.function = function;
 
             devicesChannels = new List<Device.IODevice.IOChannel>[80];
             devices = new List<Device.IODevice>[80];
@@ -673,9 +676,9 @@ namespace IO
 
         public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
             IOModuleInfo info) : this(inAddressSpaceOffset, 
-                outAddressSpaceOffset, info, 0)
+                outAddressSpaceOffset, info, 0, null)
         {
-            // Делегировано в конструктор с 4 параметрами.
+            // Делегировано в конструктор с 5 параметрами.
         }
 
         public void AssignChannelToDevice(int chN, Device.IODevice dev,
@@ -791,7 +794,6 @@ namespace IO
                         idx++;
                     }
                 }
-
             }
             else
             {
@@ -803,7 +805,6 @@ namespace IO
 
         public void SaveASInterfaceConnection(int nodeIdx, int moduleIdx, Dictionary<string, object[,]> asInterfaceConnection)
         {
-
             string key = "Узел №" + nodeIdx.ToString() + " Модуль №" + moduleIdx.ToString();
             if (!asInterfaceConnection.ContainsKey(key))
             {
@@ -813,7 +814,6 @@ namespace IO
                     int devIdx = 0;
                     foreach (int clamp in Info.ChannelClamps)
                     {
-
                         if (devices[clamp] != null)
                         {
                             int deviceCounter = 0;
@@ -893,6 +893,17 @@ namespace IO
         }
 
         /// <summary>
+        /// Eplan функция модуля.
+        /// </summary>
+        public Eplan.EplApi.DataModel.Function Function 
+        { 
+            get 
+            {
+                return function;
+            } 
+        }
+
+        /// <summary>
         /// Является ли модуль IO-Link 
         /// </summary>
         /// <returns></returns>
@@ -922,14 +933,30 @@ namespace IO
         public List<Device.IODevice.IOChannel>[] devicesChannels;
 
         #region Закрытые поля.
-        ///Смещение входного адресного пространства модуля.
+        /// <summary>
+        /// Смещение входного адресного пространства модуля.
+        /// </summary>
         private int inAddressSpaceOffset;
-        ///Смещение выходного адресного пространства модуля.
+
+        /// <summary>
+        /// Смещение выходного адресного пространства модуля.
+        /// </summary>
         private int outAddressSpaceOffset;
-        ///Описание модуля
+
+        /// <summary>
+        /// Описание модуля
+        /// </summary>
         private IOModuleInfo info;
-        ///Физический номер модуля
+
+        /// <summary>
+        /// Физический номер модуля
+        /// </summary>
         private int physicalNumber;
+
+        /// <summary>
+        /// Eplan функция модуля ввода-вывода.
+        /// </summary>
+        Eplan.EplApi.DataModel.Function function;
         #endregion
     }
     //-------------------------------------------------------------------------
@@ -939,12 +966,12 @@ namespace IO
     /// </summary>
     public class IONode
     {
-
         /// <summary>
         /// Конструктор.
         /// </summary>
         /// <param name="typeStr">Тип.</param>
-        /// <param name="n">Номер (также используется как адрес для COM-порта).</param>
+        /// <param name="n">Номер (также используется как адрес для COM-порта).
+        /// </param>
         /// <param name="IP">IP-адрес.</param>
         public IONode(string typeStr, int n, string IP, string name)
         {
@@ -980,7 +1007,7 @@ namespace IO
                     break;
             }
 
-            this.IP = IP;
+            this.ip = IP;
             this.n = n;
             this.name = name;
 
@@ -1051,7 +1078,6 @@ namespace IO
             }
 
             iOModules.Insert(position, iOModule);
-
         }
 
         /// <summary>
@@ -1084,7 +1110,7 @@ namespace IO
             str += prefix + "name    = \'" + name + "\',\n";
             str += prefix + "ntype   = " + (int)type + ", " + "--" + typeStr + "\n";
             str += prefix + "n       = " + n + ",\n";
-            str += prefix + "IP      = \'" + IP + "\',\n";
+            str += prefix + "IP      = \'" + ip + "\',\n";
             str += prefix + "modules =\n";
             str += prefix + "\t{\n";
 
@@ -1139,45 +1165,114 @@ namespace IO
             T_PHOENIX_CONTACT_MAIN = 201, /// Модуль Phoenix Contact с управляющей программой.
         };
 
-        public int DI_count { get; set; } ///Количество дискретных входов.
-        public int DO_count { get; set; } ///Количество дискретных выходов.
-        public int AI_count { get; set; } ///Количество аналоговых входов.
-        public int AO_count { get; set; } ///Количество аналоговых выходов.
-
-        public List<IOModule> IOModules { get { return iOModules; } }
-
-        public string IP_address { get { return IP; } }
-
-        public TYPES Type { get { return type; } }
-
-        public string TypeStr { get { return typeStr; } }
-
-        public int N { get { return n; } }
-
-        #region Закрытые поля.
-        private List<IOModule> iOModules;      ///Модули узла.
-        private string typeStr;               ///Тип узла (строка).
-        private TYPES type;                   ///Тип узла.
-        private string IP;                    ///IP.
-        private int n;                        ///Номер.
-        private string name;                  ///Имя узла (прим.,A100)
-        #endregion
-    }
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    /// <summary>
-    /// Интерфейс менеджера описания IO для проекта.
-    /// </summary>
-    public interface IIOManager
-    {
+        /// <summary>
+        /// Количество дискретных входов.
+        /// </summary>
+        public int DI_count { get; set; }
 
         /// <summary>
-        /// Получение описания IO на основе проекта.
+        /// Количество дискретных выходов.
         /// </summary>
-        void ReadConfiguration();
+        public int DO_count { get; set; }
+
+        /// <summary>
+        /// Количество аналоговых входов.
+        /// </summary>
+        public int AI_count { get; set; }
+
+        /// <summary>
+        /// Количество аналоговых выходов.
+        /// </summary>
+        public int AO_count { get; set; }
+
+        /// <summary>
+        /// Модули ввода-вывода узла.
+        /// </summary>
+        public List<IOModule> IOModules 
+        { 
+            get 
+            { 
+                return iOModules; 
+            } 
+        }
+
+        /// <summary>
+        /// IP-адрес.
+        /// </summary>
+        public string IP 
+        { 
+            get 
+            { 
+                return ip; 
+            } 
+        }
+
+        /// <summary>
+        /// Тип узла.
+        /// </summary>
+        public TYPES Type 
+        { 
+            get 
+            { 
+                return type; 
+            } 
+        }
+
+        /// <summary>
+        /// Тип узла (строка).
+        /// </summary>
+        public string TypeStr 
+        { 
+            get 
+            { 
+                return typeStr; 
+            } 
+        }
+
+        /// <summary>
+        /// Номер.
+        /// </summary>
+        public int N 
+        { 
+            get 
+            { 
+                return n; 
+            } 
+        }
+
+        #region Закрытые поля.
+        /// <summary>
+        /// Модули узла.
+        /// </summary>
+        private List<IOModule> iOModules;
+
+        /// <summary>
+        /// Тип узла (строка).
+        /// </summary>
+        private string typeStr;
+
+        /// <summary>
+        /// Тип узла.
+        /// </summary>
+        private TYPES type;
+
+        /// <summary>
+        /// IP-адрес.
+        /// </summary>
+        private string ip;
+
+        /// <summary>
+        /// Номер.
+        /// </summary>
+        private int n;
+
+        /// <summary>
+        /// Имя узла (прим., А100).
+        /// </summary>
+        private string name;
+        #endregion
     }
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
+
     /// <summary>
     /// Все узлы модулей ввода-вывода IO. Содержит минимальную функциональность, 
     /// необходимую для экспорта для PAC.
@@ -1374,10 +1469,10 @@ namespace IO
                 {
                     if (node == node2) continue;
 
-                    if (node.IP_address == node2.IP_address && node.IP_address != "")
+                    if (node.IP == node2.IP && node.IP != "")
                     {
                         str += "\"A" + 100 * node.N + "\" : IP адрес совпадает с \"A" +
-                            100 * node2.N + "\" - " + node.IP_address + ".\n";
+                            100 * node2.N + "\" - " + node.IP + ".\n";
                     }
                 }
 
@@ -1418,7 +1513,7 @@ namespace IO
                 idx++;
                 DateTime localDate = DateTime.Now;
                 res[idx, 3] = localDate.ToString(new CultureInfo("ru-RU"));
-                string nodeName = "Узел №" + (i + 1).ToString() + " Адрес: " + iONodes[i].IP_address;
+                string nodeName = "Узел №" + (i + 1).ToString() + " Адрес: " + iONodes[i].IP;
                 res[idx, 0] = nodeName;
                 idx++;
 
