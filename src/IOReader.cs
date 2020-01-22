@@ -479,7 +479,7 @@ namespace EasyEPlanner
         const int numberA1 = 1;
 
         /// <summary>
-        /// Экземпляр IOManager
+        /// Менеджер узлов и модулей ввода-вывода.
         /// </summary>
         IO.IOManager IOManager;
     }
