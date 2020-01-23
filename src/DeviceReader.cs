@@ -382,9 +382,22 @@ namespace EasyEPlanner
             return deviceLocation;
         }
 
+        /// <summary>
+        /// Получить имя изделия устройства.
+        /// </summary>
+        /// <param name="function">Функция устройства</param>
+        /// <returns></returns>
         private string GetArticleName(Function function)
         {
             var articleName = string.Empty;
+
+            ArticleReference[] articlesRefs = function.ArticleReferences;
+            if (articlesRefs.Length > 0 &&
+                function.ArticleReferences[0].PartNr != string.Empty &&
+                function.ArticleReferences[0].PartNr != null)
+            {
+                articleName = function.ArticleReferences[0].PartNr;
+            }
 
             return articleName;
         }
