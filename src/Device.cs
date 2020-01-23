@@ -154,7 +154,8 @@ namespace Device
 
         //PT
         PT = 1,         ///< Датчик давления
-        PT_IOLINK       ///< IOLink датчик давления
+        PT_IOLINK,      ///< IO-Link датчик давления
+        DEV_SPAE        ///< IO-Link датчик давления воздуха    
     };
 
     /// <summary>
@@ -628,6 +629,9 @@ namespace Device
 
                         case DeviceSubType.PT_IOLINK:
                             return "PT_IOLINK";
+
+                        case DeviceSubType.DEV_SPAE:
+                            return "DEV_SPAE";
                     }
                     break;
 
@@ -767,6 +771,9 @@ namespace Device
                             return new List<string>(new string[] { "ST", "M", "V", "P_MIN_V", "P_MAX_V", "P_CZ" });
 
                         case DeviceSubType.PT_IOLINK:
+                            return new List<string>(new string[] { "M", "V" });
+
+                        case DeviceSubType.DEV_SPAE:
                             return new List<string>(new string[] { "M", "V" });
                     }
                     break;
@@ -2509,10 +2516,6 @@ namespace Device
             ArticleName = articleName;
 
             AI.Add(new IOChannel("AI", -1, -1, -1, ""));
-
-            parameters.Add("P_C0", null);
-            parameters.Add("P_MIN_V", null);
-            parameters.Add("P_MAX_V", null);
         }
 
         public override string SetSubType(string subType)
@@ -2523,20 +2526,30 @@ namespace Device
             switch (subType)
             {
                 case "PT":
+                    parameters.Add("P_C0", null);
+                    parameters.Add("P_MIN_V", null);
+                    parameters.Add("P_MAX_V", null);
                     break;
 
                 case "PT_IOLINK":
+                    parameters.Add("P_C0", null);
+                    parameters.Add("P_MIN_V", null);
+                    parameters.Add("P_MAX_V", null);
+                    IOLinkSizeIn = 1;
+                    break;
+
+                case "DEV_SPAE":
                     IOLinkSizeIn = 1;
                     break;
 
                 case "":
                     errStr = string.Format("\"{0}\" - не задан тип" +
-                        " (PT, PT_IOLINK).\n", Name);
+                        " (PT, PT_IOLINK, DEV_SPAE).\n", Name);
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (PT, PT_IOLINK).\n", Name);
+                        " (PT, PT_IOLINK, DEV_SPAE).\n", Name);
                     break;
             }
             return errStr;
