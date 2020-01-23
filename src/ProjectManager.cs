@@ -216,7 +216,7 @@ namespace EasyEPlanner
                 oProgress.EndPart();
 
                 oProgress.BeginPart(25, "Считывание привязки устройств");
-                deviceManager.ReadConfigurationFromIOModules();
+                projectConfiguration.ReadBinding();
                 oProgress.EndPart();
 
                 if (loadFromLua)
@@ -251,19 +251,16 @@ namespace EasyEPlanner
         /// <summary>
         /// Инициализация.
         /// </summary>
-        public void Init(IDeviceManager deviceManager,
-            IEditor editor, ITechObjectManager techObjectManager, ILog log,
-            IOManager IOManager, DeviceManager DeviceManager,
+        public void Init(IEditor editor, ITechObjectManager techObjectManager, 
+            ILog log, IOManager IOManager, DeviceManager deviceManager,
             ProjectConfiguration projectConfiguration)
         {
-            this.deviceManager = deviceManager;
             this.editor = editor;
             this.techObjectManager = techObjectManager;
             this.log = log;
             
-            //TODO: скорректировать метод не забыть.
             this.IOManager = IOManager;
-            this.DeviceManager = DeviceManager;
+            this.deviceManager = deviceManager;
             this.projectConfiguration = projectConfiguration;
         }
 
@@ -420,7 +417,7 @@ namespace EasyEPlanner
 
             TreeNode rootNode = new TreeNode("subtypes");
             techObjectManager.GetObjectForXML(rootNode);
-            DeviceManager.GetObjectForXML(rootNode);
+            deviceManager.GetObjectForXML(rootNode);
 
             XmlDocument xmlDoc = new XmlDocument();
             if (!File.Exists(path))
@@ -1184,7 +1181,7 @@ namespace EasyEPlanner
                     log.SetProgress(50);
                 }
 
-                mainIOFileWriter.Write(DeviceManager.SaveAsLuaTable(""));
+                mainIOFileWriter.Write(deviceManager.SaveAsLuaTable(""));
 
                 string FILE_NAME2 = par.path + @"\" + MAIN_TECH_OBJECTS_FILE_NAME;
                 mainTechObjectsFileWriter = new StreamWriter(FILE_NAME2,
@@ -1207,7 +1204,7 @@ namespace EasyEPlanner
                 mainTechDevicesFileWriter.WriteLine("-- ----------------------------------------------------------------------------");
                 mainTechDevicesFileWriter.WriteLine("-- ----------------------------------------------------------------------------");
 
-                mainTechDevicesFileWriter.Write(DeviceManager.SaveDevicesAsLuaScript());
+                mainTechDevicesFileWriter.Write(deviceManager.SaveDevicesAsLuaScript());
 
                 string FILE_NAME4 = par.path + @"\" + MAIN_RESTRICTIONS_FILE_NAME;
                 mainRestrictionsFileWriter = new StreamWriter(FILE_NAME4,
@@ -1368,13 +1365,12 @@ namespace EasyEPlanner
             }
         }
 
-        private IDeviceManager deviceManager;   /// Менеджер устройств.
         private IEditor editor;                 /// Редактор технологических объектов.
         private ITechObjectManager techObjectManager; /// Менеджер технологических объектов.
         private ILog log;
 
         private IOManager IOManager; // Менеджер модулей ввода/вывода
-        private DeviceManager DeviceManager; // Менеджер устройств
+        private DeviceManager deviceManager; // Менеджер устройств
         private ProjectConfiguration projectConfiguration; // Конфигурация проекта
 
         private static ProjectManager instance;       /// Экземпляр класса.         

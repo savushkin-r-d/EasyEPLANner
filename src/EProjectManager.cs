@@ -368,7 +368,6 @@ namespace EasyEPlanner
             {
                 EProjectManager.GetInstance().SaveAndClose();
 
-                EplanDeviceManager.GetInstance().ClearDevices();
                 DFrm.GetInstance().ShowNoDevices();
 
                 EProjectManager.GetInstance().ResetCurrentPrj();

@@ -233,5 +233,35 @@ namespace StaticHelper
 
             return functionalText;
         }
+
+        /// <summary>
+        /// Возвращает имя канала (IO-Link, DI, DO) из строки для IO-Link
+        /// модуля.
+        /// </summary>
+        /// <param name="source">Строка для поиска</param>
+        /// <returns></returns>
+        public static string GetChannelNameForIOLinkModuleFromString(
+            string source)
+        {
+            const string IOLink = "IO-Link";
+            const string DI = "DI";
+            const string DO = "DO";
+
+            if (source.Contains(DI) &&
+                !source.Contains(IOLink) &&
+                !source.Contains(DO))
+            {
+                return DI;
+            }
+
+            if (source.Contains(DO) &&
+                !source.Contains(IOLink) &&
+                !source.Contains(DI))
+            {
+                return DO;
+            }
+
+            return string.Empty;
+        }
     }
 }

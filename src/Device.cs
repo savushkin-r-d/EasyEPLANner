@@ -1048,7 +1048,7 @@ namespace Device
                 case IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI:
                     switch (channelName)
                     {
-                        case "IO-Link":
+                        default:
                             IO.AddRange(AO);
                             IO.AddRange(AI);
                             break;
@@ -1704,36 +1704,6 @@ namespace Device
                 }
 
                 return offset;
-            }
-
-            /// <summary>
-            /// Возвращает тип канала для IO-Link модуля
-            /// </summary>
-            /// <returns>Тип канала</returns>
-            public string GetChannelTypeForIOLink()
-            {
-                var type = this.Name;
-                const string AO = "AO";
-                const string AI = "AI";
-                const string DO = "DO";
-                const string DI = "DI";
-
-                if (type == AO || type == AI)
-                {
-                    return string.Empty;
-                }
-
-                if (type == DI)
-                {
-                    return DI;
-                }
-                    
-                if (type == DO)
-                {
-                    return DO;
-                }
-
-                return type;
             }
 
             public bool IsEmpty()
@@ -3102,18 +3072,7 @@ namespace Device
             return errStr;
         }
     }
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    /// <summary>
-    /// Интерфейс менеджера описания устройств для проекта.
-    /// </summary>
-    public interface IDeviceManager
-    {
-        /// <summary>
-        /// Получение описания привязки модулей ввода\вывода.
-        /// </summary>
-        void ReadConfigurationFromIOModules();
-    }
+
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     /// <summary>
