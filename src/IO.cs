@@ -972,8 +972,8 @@ namespace IO
         /// <param name="typeStr">Тип.</param>
         /// <param name="n">Номер (также используется как адрес для COM-порта).
         /// </param>
-        /// <param name="IP">IP-адрес.</param>
-        public IONode(string typeStr, int n, string IP, string name)
+        /// <param name="ip">IP-адрес.</param>
+        public IONode(string typeStr, int n, string ip, string name)
         {
             this.typeStr = typeStr;
             switch (typeStr)
@@ -1007,7 +1007,7 @@ namespace IO
                     break;
             }
 
-            this.ip = IP;
+            this.ip = ip;
             this.n = n;
             this.name = name;
 
