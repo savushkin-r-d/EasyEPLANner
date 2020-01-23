@@ -1,12 +1,5 @@
 ﻿using Eplan.EplApi.DataModel;
-using Eplan.EplApi.Base;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using StaticHelper;
 
 namespace EasyEPlanner
 {
@@ -95,7 +88,7 @@ namespace EasyEPlanner
             configurationChecker.Check();
 
             string errors = configurationChecker.Errors;
-            if (errors != string.Empty && silentMode == false)
+            if (errors != "" && silentMode == false)
             {
                 ProjectManager.GetInstance().AddLogMessage(errors);
             }

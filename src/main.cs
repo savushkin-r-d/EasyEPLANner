@@ -536,7 +536,6 @@ namespace EasyEPlanner
                     ModeFrm.GetInstance().ShowModes(
                         TechObject.TechObjectManager.GetInstance(),
                         false, false, null, null, OnSetNewValueFunction, isRebuiltTree);
-                    //false, false, null, "", OnSetNewValueFunction, isRebuiltTree);
                 }
             }
             catch (Exception ex)
@@ -848,28 +847,33 @@ namespace EasyEPlanner
                     string replacedDeviceDescription = device.Description.
                         Replace(PlusSymbol.ToString(),
                         SymbolForPlusReplacing);
-                    functionalText += NewLine + replacedDeviceDescription;
+                    functionalText += ConstVars.NewLineWithCarriageReturn + 
+                        replacedDeviceDescription;
                     
                     if (!string.IsNullOrEmpty(channel.Comment))
                     {
-                        functionalText += NewLine + channel.Comment;
+                        functionalText += ConstVars.NewLineWithCarriageReturn + 
+                            channel.Comment;
                     }
                 }
                 else
                 {
-                    functionalText += NewLine + device.Description;
+                    functionalText += ConstVars.NewLineWithCarriageReturn + 
+                        device.Description;
 
                     if(!string.IsNullOrEmpty(channel.Comment))
                     {
-                        functionalText += NewLine + channel.Comment;
+                        functionalText += ConstVars.NewLineWithCarriageReturn + 
+                            channel.Comment;
                     }
                 }
 
                 if (IsPhoenixContactIOLinkModule(devicePartNumber) &&
                     device.Channels.Count > 1)
                 {
-                    functionalText += NewLine + ApiHelper
-                        .GetChannelNameForIOLinkModuleFromString(channel.Name);
+                    functionalText += ConstVars.NewLineWithCarriageReturn + 
+                        ApiHelper.GetChannelNameForIOLinkModuleFromString(
+                            channel.Name);
                 }
             }
             else
@@ -924,7 +928,9 @@ namespace EasyEPlanner
             var isProjectWithValveTerminal = new bool();
 
             if (deviceConnections.Values.
-                Where(x => x.Contains(ValveTerminal)).Count() > 0)
+                Where(x => x
+                .Contains(Device.DeviceManager.ValveTerminalName))
+                .Count() > 0)
             {
                 isProjectWithValveTerminal = true;
                 return isProjectWithValveTerminal;
@@ -962,7 +968,7 @@ namespace EasyEPlanner
                 string clampNumberAsString = key.Remove(0, key.
                     IndexOf(ChannelPostfix) + ChannelPostfixSize);
                 string bindedDevices = deviceConnections[key];
-                var errors = string.Empty;
+                var errors = "";
                 bool? isASInterface = Device.DeviceManager.GetInstance().
                     IsASInterfaceDevices(bindedDevices, out errors);
                 errorMessage += errors;
@@ -1070,7 +1076,8 @@ namespace EasyEPlanner
 
                 // Если нет пневмоострова Y - то синхронизация ничем 
                 // не отличается от старого проекта.
-                if (!deviceConnections[key].Contains(ValveTerminal))
+                if (!deviceConnections[key]
+                    .Contains(Device.DeviceManager.ValveTerminalName))
                 {
                     var connections = new Dictionary<string, string>();
                     connections[key] = deviceConnections[key];
@@ -1080,8 +1087,9 @@ namespace EasyEPlanner
                 {
                     var bindedDevices = deviceConnections[key].
                         Split(PlusSymbol).
-                        FirstOrDefault(x => x.Contains(ValveTerminal)).
-                        Insert(0, PlusSymbol.ToString());
+                        FirstOrDefault(x => x
+                        .Contains(Device.DeviceManager.ValveTerminalName))
+                        .Insert(0, PlusSymbol.ToString());
                     var clamp = Convert.ToInt32(clampNumberAsString);
                     // Синхронизация пневмоострова.
                     SynchronizeIOModule(synchronizingDevice, clamp,
@@ -1119,7 +1127,7 @@ namespace EasyEPlanner
             }
             else
             {
-                return string.Empty;
+                return "";
             }
         }
 
@@ -1141,13 +1149,15 @@ namespace EasyEPlanner
             {
                 if (string.IsNullOrEmpty(deviceString) ||
                     string.IsNullOrWhiteSpace(deviceString) ||
-                    deviceString.Contains(ValveTerminal))
+                    deviceString
+                    .Contains(Device.DeviceManager.ValveTerminalName))
                 {
                     continue;
                 }
 
                 string deviceName = Regex.Match(deviceString.
-                    Insert(0, PlusSymbol.ToString()), DeviceNamePattern).Value;
+                    Insert(0, PlusSymbol.ToString()),
+                    Device.DeviceManager.DeviceNamePattern).Value;
                 Device.IODevice device = Device.DeviceManager.
                     GetInstance().GetDevice(deviceName);
                 string clampNumber = device.GetRuntimeParameter(
@@ -1177,7 +1187,8 @@ namespace EasyEPlanner
         /// <returns></returns>
         private bool NeedDeletingComments(string devices)
         {
-            var deviceMatches = Regex.Matches(devices, DeviceNamePattern);
+            var deviceMatches = Regex.Matches(devices, 
+                Device.DeviceManager.DeviceNamePattern);
 
             if (deviceMatches.Count > MinimalDevicesCountForCheck)
             {
@@ -1211,14 +1222,15 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string DeleteDevicesComments(string devices)
         {
-            var devicesMatches = Regex.Matches(devices, DeviceNamePattern);
+            var devicesMatches = Regex.Matches(devices, 
+                Device.DeviceManager.DeviceNamePattern);
 
             if (devicesMatches.Count <= MinimalDevicesCountForCheck)
             {
                 return devices;
             }
 
-            var devicesWithoutComments = string.Empty;
+            var devicesWithoutComments = "";
             foreach (Match match in devicesMatches)
             {
                 devicesWithoutComments += match.Value + WhiteSpace;
@@ -1238,7 +1250,7 @@ namespace EasyEPlanner
             var devicesList = new List<string>();
 
             var devicesMatches = Regex.Matches(devicesWithoutComments,
-                DeviceNamePattern);
+                Device.DeviceManager.DeviceNamePattern);
             foreach (Match match in devicesMatches)
             {
                 devicesList.Add(match.Value);
@@ -1246,7 +1258,7 @@ namespace EasyEPlanner
 
             devicesList = devicesList.Distinct().ToList();
 
-            var devicesWithoutRepeating = string.Empty;
+            var devicesWithoutRepeating = "";
             foreach (string device in devicesList)
             {
                 devicesWithoutRepeating += device + WhiteSpace;
@@ -1262,7 +1274,8 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string SortDevices(string devices)
         {
-            var devicesMatches = Regex.Matches(devices, DeviceNamePattern);
+            var devicesMatches = Regex.Matches(devices, 
+                Device.DeviceManager.DeviceNamePattern);
 
             if (devicesMatches.Count <= MinimalDevicesCountForCheck)
             {
@@ -1293,7 +1306,7 @@ namespace EasyEPlanner
                 devicesList.Insert(0, valveTerminal);
             }
 
-            var sortedDevices = string.Empty;
+            var sortedDevices = "";
             foreach (Device.Device device in devicesList)
             {
                 if (device.Description.Contains(PlusSymbol))
@@ -1302,13 +1315,17 @@ namespace EasyEPlanner
                     // конфликтов. Потом вернем обратно.
                     string replacedDeviceDescription = device.Description.
                         Replace(PlusSymbol.ToString(), SymbolForPlusReplacing);
-                    sortedDevices += device.EPlanName + NewLine +
-                        replacedDeviceDescription + NewLine;
+                    sortedDevices += device.EPlanName + 
+                        ConstVars.NewLineWithCarriageReturn +
+                        replacedDeviceDescription +
+                        ConstVars.NewLineWithCarriageReturn;
                 }
                 else
                 {
-                    sortedDevices += device.EPlanName + NewLine +
-                        device.Description + NewLine;
+                    sortedDevices += device.EPlanName + 
+                        ConstVars.NewLineWithCarriageReturn +
+                        device.Description +
+                        ConstVars.NewLineWithCarriageReturn;
                 }
             }
 
@@ -1322,7 +1339,8 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string SortASInterfaceDevices(string devices)
         {
-            var devicesMatches = Regex.Matches(devices, DeviceNamePattern);
+            var devicesMatches = Regex.Matches(devices, 
+                Device.DeviceManager.DeviceNamePattern);
 
             if (devicesMatches.Count <= MinimalDevicesCountForCheck)
             {
@@ -1340,8 +1358,8 @@ namespace EasyEPlanner
             devicesList.Sort(ASInterfaceDevicesComparer);
 
             int lastASNumber = 0;
-            string devicesWithoutASNumber = NewLine;
-            var sortedDevices = string.Empty;
+            string devicesWithoutASNumber = ConstVars.NewLineWithCarriageReturn;
+            var sortedDevices = "";
 
             foreach (Device.IODevice device in devicesList)
             {
@@ -1350,7 +1368,7 @@ namespace EasyEPlanner
                 if (numberAsString == null)
                 {
                     devicesWithoutASNumber += device.EPlanName
-                        + NewLine;
+                        + ConstVars.NewLineWithCarriageReturn;
                     continue;
                 }
 
@@ -1372,10 +1390,10 @@ namespace EasyEPlanner
                     int difference = number - lastASNumber;
                     if (difference > NormalDifference)
                     {
-                        var NewLines = string.Empty;
+                        var NewLines = "";
                         for (int i = 0; i < difference; i++)
                         {
-                            NewLines += NewLine;
+                            NewLines += ConstVars.NewLineWithCarriageReturn;
                         }
 
                         sortedDevices += NewLines + device.EPlanName;
@@ -1389,7 +1407,8 @@ namespace EasyEPlanner
                         }
                         else
                         {
-                            sortedDevices += NewLine + device.EPlanName;
+                            sortedDevices += ConstVars
+                                .NewLineWithCarriageReturn + device.EPlanName;
 
                         }
                     }
@@ -1432,8 +1451,6 @@ namespace EasyEPlanner
         /// </summary>
         private void ClearNotExistingBinding()
         {
-            const string NotDeletableFunctionalText = "Резерв";
-
             foreach (Function device in synchronizedDevices.Keys)
             {
                 string[] clamps = synchronizedDevices[device].
@@ -1454,13 +1471,13 @@ namespace EasyEPlanner
                     {
                         string functionalTextRuru = terminal.Properties.
                             FUNC_TEXT.ToString(ISOCode.Language.L_ru_RU);
-                        if (functionalTextRuru == string.Empty)
+                        if (functionalTextRuru == "")
                         {
                             functionalTextRuru = terminal.Properties.FUNC_TEXT.
                                 ToString(ISOCode.Language.L___);
                         }
 
-                        if (functionalTextRuru != NotDeletableFunctionalText)
+                        if (functionalTextRuru != ConstVars.Reserve)
                         {
                             sortedTerminals.Add(terminal);
                         }
@@ -1468,7 +1485,7 @@ namespace EasyEPlanner
 
                     foreach (Function terminal in sortedTerminals)
                     {
-                        terminal.Properties.FUNC_TEXT = string.Empty;
+                        terminal.Properties.FUNC_TEXT = "";
                     }
                 }
                 else
@@ -1580,9 +1597,6 @@ namespace EasyEPlanner
             return res;
         }
 
-        const string NewLine = "\r\n"; // Возврат каретки и перенос строки.
-        const string DeviceNamePattern = "(\\+[A-Z0-9_]*-[A-Z0-9_]+)"; // ОУ.
-        const string ValveTerminal = "-Y"; // Обозначение пневмоострова.
         const string ChannelPostfix = "_CH"; // Постфикс канала.
         const int ChannelPostfixSize = 3; // Размер постфикса канала.
         const char PlusSymbol = '+'; // Для обратной вставки после Split.

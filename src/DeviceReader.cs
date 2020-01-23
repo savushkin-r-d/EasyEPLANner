@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using StaticHelper;
 using System.Text.RegularExpressions;
 using Eplan.EplApi.Base;
+using Device;
 
 namespace EasyEPlanner
 {
@@ -14,7 +15,7 @@ namespace EasyEPlanner
     {
         public DeviceReader()
         {
-            this.deviceManager = Device.DeviceManager.GetInstance();
+            this.deviceManager = DeviceManager.GetInstance();
         }
 
         /// <summary>
@@ -25,12 +26,12 @@ namespace EasyEPlanner
             Function deviceClampFunction, IO.IOModuleInfo moduleInfo,
             string devicesDescription = "")
         {
-            const string EmptyString = "";
             var res = new Dictionary<string, string>();
             string clampNumberAsString = deviceClampFunction.Properties
                 .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
 
-            if (deviceClampFunction.Name.Contains("-Y"))
+            if (deviceClampFunction.Name.Contains(DeviceManager
+                .ValveTerminalName))
             {
                 Function IOModuleFunction = ApiHelper
                     .GetIOModuleFunction(deviceClampFunction);
@@ -61,26 +62,25 @@ namespace EasyEPlanner
                 return res;
             }
 
-            if (devicesDescription == EmptyString)
+            if (devicesDescription == "")
             {
                 devicesDescription = ApiHelper.GetFunctionalText(
                     deviceClampFunction);
             }
 
-            if (devicesDescription == EmptyString)
+            if (devicesDescription == "")
             {
                 return res;
             }
 
-            var comment = EmptyString;
-            var clampComment = EmptyString;
+            var comment = "";
+            var clampComment = "";
             Match actionMatch;
-            var deviceEvaluator = new MatchEvaluator(RussianToEnglish);
             bool isMultipleBinding = deviceManager.IsMultipleBinding(
                 devicesDescription);
             if (isMultipleBinding == false)
             {
-                int endPos = devicesDescription.IndexOf("\n");
+                int endPos = devicesDescription.IndexOf(ConstVars.NewLine);
                 if (endPos > 0)
                 {
                     comment = devicesDescription.Substring(endPos + 1);
@@ -89,14 +89,16 @@ namespace EasyEPlanner
                 }
 
                 devicesDescription = Regex.Replace(devicesDescription,
-                    RusAsEngPattern, deviceEvaluator);
+                    ConstVars.RusAsEngPattern, ConstVars.RusAsEnsEvaluator);
 
-                actionMatch = Regex.Match(comment, ChannelCommentPattern,
+                actionMatch = Regex.Match(comment,
+                    IODevice.IOChannel.ChannelCommentPattern,
                     RegexOptions.IgnoreCase);
 
-                comment = Regex.Replace(comment, ChannelCommentPattern,
-                    EmptyString, RegexOptions.IgnoreCase);
-                comment = comment.Replace("\n", ". ").Trim();
+                comment = Regex.Replace(comment,
+                    IODevice.IOChannel.ChannelCommentPattern,
+                    "", RegexOptions.IgnoreCase);
+                comment = comment.Replace(ConstVars.NewLine, ". ").Trim();
                 if (comment.Length > 0 && comment[comment.Length - 1] != '.')
                 {
                     comment += ".";
@@ -105,13 +107,14 @@ namespace EasyEPlanner
             else
             {
                 devicesDescription = Regex.Replace(devicesDescription,
-                    RusAsEngPattern, deviceEvaluator);
-                actionMatch = Regex.Match(comment, ChannelCommentPattern,
+                    ConstVars.RusAsEngPattern, ConstVars.RusAsEnsEvaluator);
+                actionMatch = Regex.Match(comment,
+                    IODevice.IOChannel.ChannelCommentPattern,
                     RegexOptions.IgnoreCase);
             }
 
             var descrMatch = Regex.Match(devicesDescription,
-                Device.DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
+                DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
             while (descrMatch.Success)
             {
                 string devName = descrMatch.Groups["name"].Value;
@@ -182,7 +185,7 @@ namespace EasyEPlanner
                     subType, parameters, runtimeParameters, properties,
                     deviceLocation, function, out error, articleName);
 
-                if (error != string.Empty)
+                if (error != "")
                 {
                     ProjectManager.GetInstance().AddLogMessage(error);
                 }
@@ -200,7 +203,7 @@ namespace EasyEPlanner
         {
             var skip = false;
 
-            if (function.VisibleName == string.Empty ||
+            if (function.VisibleName == "" ||
                     function.Page == null ||
                     function.Page.PageType != DocumentTypeManager.
                     DocumentType.ProcessAndInstrumentationDiagram)
@@ -227,7 +230,8 @@ namespace EasyEPlanner
         private string GetName(Function function)
         {
             var name = function.Name;
-            name = Regex.Replace(name, RusAsEngPattern, deviceEvaluator);
+            name = Regex.Replace(name, ConstVars.RusAsEngPattern,
+                    ConstVars.RusAsEnsEvaluator);
             return name;
         }
 
@@ -238,7 +242,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string GetDescription(Function function)
         {
-            var description = string.Empty;
+            var description = "";
             string descriptionPattern = "([\'\"])";
 
             if (!function.Properties.FUNC_COMMENT.IsEmpty)
@@ -246,19 +250,19 @@ namespace EasyEPlanner
                 description = function.Properties.FUNC_COMMENT
                     .ToString(ISOCode.Language.L___);
 
-                if (description == string.Empty)
+                if (description == "")
                 {
                     description = function.Properties.FUNC_COMMENT
                         .ToString(ISOCode.Language.L_ru_RU);
                 }
 
                 description = Regex.Replace(description,
-                    descriptionPattern, string.Empty);
+                    descriptionPattern, "");
             }
 
             if (description == null)
             {
-                description = string.Empty;
+                description = "";
             }
 
             return description;
@@ -271,27 +275,27 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string GetSubType(Function function)
         {
-            var subType = string.Empty;
+            var subType = "";
 
             if (!function.Properties.FUNC_SUPPLEMENTARYFIELD[2].IsEmpty)
             {
                 subType = function.Properties.FUNC_SUPPLEMENTARYFIELD[2]
                     .ToString(ISOCode.Language.L___);
 
-                if (subType == string.Empty)
+                if (subType == "")
                 {
                     subType = function.Properties.FUNC_SUPPLEMENTARYFIELD[2]
                         .ToString(ISOCode.Language.L_ru_RU);
                 }
 
                 subType = subType.Trim();
-                subType = Regex.Replace(subType, RusAsEngPattern,
-                    deviceEvaluator);
+                subType = Regex.Replace(subType, 
+                    ConstVars.RusAsEngPattern, ConstVars.RusAsEnsEvaluator);
             }
 
             if (subType == null)
             {
-                subType = string.Empty;
+                subType = "";
             }
 
             return subType;
@@ -304,26 +308,26 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string GetProperties(Function function)
         {
-            var properties = string.Empty;
+            var properties = "";
 
             if (!function.Properties.FUNC_SUPPLEMENTARYFIELD[4].IsEmpty)
             {
                 properties = function.Properties.FUNC_SUPPLEMENTARYFIELD[4]
                     .ToString(ISOCode.Language.L___);
 
-                if (properties == string.Empty)
+                if (properties == "")
                 {
                     properties = function.Properties.FUNC_SUPPLEMENTARYFIELD[4]
                         .ToString(ISOCode.Language.L_ru_RU);
                 };
 
-                properties = Regex.Replace(properties, RusAsEngPattern, 
-                    deviceEvaluator);
+                properties = Regex.Replace(properties,
+                    ConstVars.RusAsEngPattern, ConstVars.RusAsEnsEvaluator);
             }
 
             if (properties == null)
             {
-                properties = string.Empty;
+                properties = "";
             }
 
             return properties;
@@ -336,7 +340,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string GetRuntimeParameters(Function function)
         {
-            var runtimeParameters = string.Empty;
+            var runtimeParameters = "";
 
             if (!function.Properties.FUNC_SUPPLEMENTARYFIELD[5].IsEmpty)
             {
@@ -344,7 +348,7 @@ namespace EasyEPlanner
                     .FUNC_SUPPLEMENTARYFIELD[5]
                     .ToString(ISOCode.Language.L___);
 
-                if (runtimeParameters == string.Empty)
+                if (runtimeParameters == "")
                 {
                     runtimeParameters = function.Properties.
                         FUNC_SUPPLEMENTARYFIELD[5]
@@ -353,11 +357,11 @@ namespace EasyEPlanner
 
                 if (runtimeParameters == null)
                 {
-                    runtimeParameters = string.Empty;
+                    runtimeParameters = "";
                 }
 
                 runtimeParameters = Regex.Replace(runtimeParameters,
-                    RusAsEngPattern, deviceEvaluator);
+                    ConstVars.RusAsEngPattern, ConstVars.RusAsEnsEvaluator);
             }
 
             return runtimeParameters;
@@ -389,11 +393,11 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string GetArticleName(Function function)
         {
-            var articleName = string.Empty;
+            var articleName = "";
 
             ArticleReference[] articlesRefs = function.ArticleReferences;
             if (articlesRefs.Length > 0 &&
-                function.ArticleReferences[0].PartNr != string.Empty &&
+                function.ArticleReferences[0].PartNr != "" &&
                 function.ArticleReferences[0].PartNr != null)
             {
                 articleName = function.ArticleReferences[0].PartNr;
@@ -409,71 +413,36 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string GetParameters(Function function)
         {
-            var parameters = string.Empty;
+            var parameters = "";
 
             if (!function.Properties.FUNC_SUPPLEMENTARYFIELD[3].IsEmpty)
             {
                 parameters = function.Properties.FUNC_SUPPLEMENTARYFIELD[3]
                     .ToString(ISOCode.Language.L___);
 
-                if (parameters == string.Empty)
+                if (parameters == "")
                 {
                     parameters = function.Properties.FUNC_SUPPLEMENTARYFIELD[3]
                         .ToString(ISOCode.Language.L_ru_RU);
                 };
 
-                parameters = Regex.Replace(parameters, RusAsEngPattern, 
-                    deviceEvaluator);
+                parameters = Regex.Replace(parameters, 
+                    ConstVars.RusAsEngPattern, ConstVars.RusAsEnsEvaluator);
             }
 
             if (parameters == null)
             {
-                parameters = string.Empty;
+                parameters = "";
             }
 
             return parameters;
         }
 
         /// <summary>
-        /// MatchEvaluator для regular expression,
-        /// замена русских букв на английские
-        /// </summary>
-        private static string RussianToEnglish(Match m)
-        {
-            switch (m.ToString()[0])
-            {
-                case 'А':
-                    return "A";
-                case 'В':
-                    return "B";
-                case 'С':
-                    return "C";
-                case 'Е':
-                    return "E";
-                case 'К':
-                    return "K";
-                case 'М':
-                    return "M";
-                case 'Н':
-                    return "H";
-                case 'Х':
-                    return "X";
-                case 'Р':
-                    return "P";
-                case 'О':
-                    return "O";
-                case 'Т':
-                    return "T";
-            }
-
-            return m.ToString();
-        }
-
-        /// <summary>
         /// Копировать устройства в массив
         /// </summary>
         /// <param name="array">Массив для копируемых данных</param>
-        public void CopyDevices(Device.IODevice[] array)
+        public void CopyDevices(IODevice[] array)
         {
             deviceManager.Devices.CopyTo(array);
         }
@@ -492,7 +461,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Считанные устройства
         /// </summary>
-        public List<Device.IODevice> Devices
+        public List<IODevice> Devices
         {
             get
             {
@@ -519,37 +488,6 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Шаблон для поиска русских букв.
-        /// </summary>
-        const string RusAsEngPattern = @"[АВСЕКМНХРОТ]";
-
-        /// <summary>
-        /// Шаблон для разбора комментария к устройству.
-        /// </summary>
-        const string ChannelCommentPattern =
-            @"(Открыть мини(?n:\s+|$))|" +
-            @"(Открыть НС(?n:\s+|$))|" +
-            @"(Открыть ВС(?n:\s+|$))|" +
-            @"(Открыть(?n:\s+|$))|" +
-            @"(Закрыть(?n:\s+|$))|" +
-            @"(Открыт(?n:\s+|$))|" +
-            @"(Закрыт(?n:\s+|$))|" +
-            @"(Объем(?n:\s+|$))|" +
-            @"(Поток(?n:\s+|$))|" +
-            @"(Пуск(?n:\s+|$))|" +
-            @"(Реверс(?n:\s+|$))|" +
-            @"(Обратная связь(?n:\s+|$))|" +
-            @"(Частота вращения(?n:\s+|$))|" +
-            @"(Авария(?n:\s+|$))|" +
-            @"(Напряжение моста\(\+Ud\)(?n:\s+|$))|" +
-            @"(Референсное напряжение\(\+Uref\)(?n:\s+|$))";
-
-        /// <summary>
-        /// Evaluator для замены заглавных русских букв на английские.
-        /// </summary>
-        MatchEvaluator deviceEvaluator = new MatchEvaluator(RussianToEnglish);
-
-        /// <summary>
         /// Функции для поиска устройств.
         /// </summary>
         Function[] deviceFunctions;
@@ -557,6 +495,6 @@ namespace EasyEPlanner
         /// <summary>
         /// Менеджер устройств.
         /// </summary>
-        Device.DeviceManager deviceManager;
+        DeviceManager deviceManager;
     }
 }

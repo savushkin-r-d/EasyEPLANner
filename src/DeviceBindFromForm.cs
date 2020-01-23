@@ -1,7 +1,5 @@
 ﻿using Aga.Controls.Tree;
-using Eplan.EplApi.Base;
 using Eplan.EplApi.DataModel;
-using Eplan.EplApi.HEServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,9 +91,7 @@ namespace EasyEPlanner
         /// Подготовка функционального текста для записи в функцию
         /// </summary>
         private void PrepareFunctionalText()
-        {
-            const string Reserve = "Резерв";
-            
+        {            
             bool isIOLink = CheckIOLink();
             if (isIOLink)
             {
@@ -110,7 +106,7 @@ namespace EasyEPlanner
                 SelectedClampFunction);
 
             if (SelectedClampFunction.Properties.FUNC_TEXT.IsEmpty ||
-                SelectedClampFunction.Properties.FUNC_TEXT == Reserve)
+                SelectedClampFunction.Properties.FUNC_TEXT == ConstVars.Reserve)
             {
                 //Если нет функционального текста, устанавливаем его.
                 if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
@@ -128,15 +124,17 @@ namespace EasyEPlanner
                     NewFunctionalText)
                 {
                     ResetDevicesChannel = NewFunctionalText;
-                    NewFunctionalText = Reserve;
+                    NewFunctionalText = ConstVars.Reserve;
                 }
                 else
                 {
                     if ((Control.ModifierKeys & Keys.Control) ==
                         Keys.Control)
                     {
-                        if (!(oldFunctionalText + NewLine).
-                            Contains(SelectedChannel.Comment + NewLine))
+                        if (!(oldFunctionalText + ConstVars
+                            .NewLineWithCarriageReturn)
+                            .Contains(SelectedChannel.Comment +
+                            ConstVars.NewLineWithCarriageReturn))
                         {
                             MessageBox.Show(
                                 "Действие канала устройства (\"" +
@@ -157,7 +155,7 @@ namespace EasyEPlanner
                         {
                             ResetDevicesChannel = NewFunctionalText;
                             NewFunctionalText = oldFunctionalText
-                                .Replace(SelectedDevice.EPlanName, string.Empty)
+                                .Replace(SelectedDevice.EPlanName, "")
                                 .Trim();
 
                             if (NewFunctionalText.Length > 0)
@@ -166,14 +164,15 @@ namespace EasyEPlanner
                                 //заменяем ее на "Резерв".
                                 if (NewFunctionalText[0] != '+')
                                 {
-                                    NewFunctionalText = Reserve;
+                                    NewFunctionalText = ConstVars.Reserve;
                                 }
                             }
                         }
                         else
                         {
                             SetDevicesChannel = NewFunctionalText;
-                            string text = NewLine + SelectedDevice.EPlanName;
+                            string text = ConstVars.NewLineWithCarriageReturn +
+                                SelectedDevice.EPlanName;
                             NewFunctionalText = oldFunctionalText + text;
                         }
                     }
@@ -235,7 +234,7 @@ namespace EasyEPlanner
                 return;
             }
 
-            var regex = new Regex(IOModuleNamePattern);
+            var regex = new Regex(IOManager.IONamePattern);
             var match = regex.Match(SelectedIOModuleFunction.VisibleName);
             if (match.Success == false)
             {
@@ -294,14 +293,17 @@ namespace EasyEPlanner
         {
             const string PhoenixContact = "PXC";
 
-            string functionalText = SelectedDevice.EPlanName + NewLine;
+            string functionalText = SelectedDevice.EPlanName + 
+                ConstVars.NewLineWithCarriageReturn;
             if (string.IsNullOrEmpty(SelectedDevice.Description) == false)
             {
-                functionalText += SelectedDevice.Description + NewLine;
+                functionalText += SelectedDevice.Description +
+                    ConstVars.NewLineWithCarriageReturn;
             }
             if (string.IsNullOrEmpty(SelectedChannel.Comment) == false)
             {
-                functionalText += SelectedChannel.Comment + NewLine;
+                functionalText += SelectedChannel.Comment +
+                    ConstVars.NewLineWithCarriageReturn;
             }
 
             int propertyNumber = (int) Eplan.EplApi.DataModel.Properties
@@ -332,7 +334,7 @@ namespace EasyEPlanner
             string IOModuleFunctionName = SelectedClampFunction
                 .ParentFunction.VisibleName;
             var IOModuleMatch = Regex.Match(IOModuleFunctionName,
-                IOModuleNamePattern);
+                IOManager.IONamePattern);
 
             if (IOModuleMatch.Success == false)
             {
@@ -358,7 +360,7 @@ namespace EasyEPlanner
         /// <returns>Строка со значением</returns>
         private string GetSelectedIOModuleArticleProperty(int propetyNumber)
         {
-            var result = string.Empty;
+            var result = "";
             if (SelectedIOModuleFunction != null &&
                 SelectedIOModuleFunction.Articles.Count() > 0 &&
                 !SelectedIOModuleFunction.Articles[0]
@@ -388,7 +390,7 @@ namespace EasyEPlanner
             foreach (Match match in matches)
             {
                 string value = match.Value;
-                value = value.Replace(NewLine, string.Empty);
+                value = value.Replace(ConstVars.NewLineWithCarriageReturn, "");
                 if (value == deviceName)
                 {
                     isContains = true;
@@ -450,11 +452,6 @@ namespace EasyEPlanner
         private string ResetDevicesChannel { get; set; }
 
         /// <summary>
-        /// Шаблон для разбора имени модуля ввода-вывода (-А101)
-        /// </summary>
-        const string IOModuleNamePattern = @"=*-A(?<n>\d+)";
-
-        /// <summary>
         /// Инициализатор первоначальных значений для работы привязки
         /// </summary>
         private StartValuesForBinding startValues;
@@ -463,11 +460,6 @@ namespace EasyEPlanner
         /// Форма с данными
         /// </summary>
         private DFrm DevicesForm { get; set; }
-
-        /// <summary>
-        /// Шаблон для добавления новой строки
-        /// </summary>
-        const string NewLine = "\r\n";
         #endregion
     }
 

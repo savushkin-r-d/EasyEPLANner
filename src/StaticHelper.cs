@@ -87,9 +87,8 @@ namespace StaticHelper
         {
             var clampFunction = new Function();
 
-            const string valveTerminalPattern = @"([A-Z0-9]+\-[Y0-9]+)";
-            deviceName = Regex
-                .Match(deviceName, valveTerminalPattern).Value;
+            deviceName = Regex.Match(deviceName, 
+                Device.DeviceManager.valveTerminalPattern).Value;
             Function[] subFunctions = IOModuleFunction.SubFunctions;
             if (subFunctions != null)
             {
@@ -124,10 +123,10 @@ namespace StaticHelper
         /// ввода-вывода</param>
         public static Function GetIOModuleFunction(Function clampFunction)
         {
-            const string ValveTerminalName = "-Y";
             var isValveTerminalClampFunction = false;
             Function IOModuleFunction = null;
-            if (clampFunction.Name.Contains(ValveTerminalName))
+            if (clampFunction.Name
+                .Contains(Device.DeviceManager.ValveTerminalName))
             {
                 IOModuleFunction = GetValveTerminalIOModuleFunction(
                     clampFunction);
@@ -167,10 +166,9 @@ namespace StaticHelper
             Function clampFunction)
         {
             var IOModuleFunction = new Function();
-            const string valveTerminalPattern = @"([A-Z0-9]+\-[Y0-9]+)";
-            string valveTerminalName = Regex
-                .Match(clampFunction.Name, valveTerminalPattern).Value;
 
+            string valveTerminalName = Regex.Match(clampFunction.Name, 
+                Device.DeviceManager.valveTerminalPattern).Value;
             if (string.IsNullOrEmpty(valveTerminalName))
             {
                 const string Message = "Ошибка поиска ОУ пневмоострова";
@@ -228,7 +226,7 @@ namespace StaticHelper
             }
             if(string.IsNullOrEmpty(functionalText))
             {
-                return string.Empty;
+                return "";
             }
 
             return functionalText;
@@ -261,7 +259,74 @@ namespace StaticHelper
                 return DO;
             }
 
-            return string.Empty;
+            return "";
         }
+
+        /// <summary>
+        /// MatchEvaluator для regular expression,
+        /// замена русских букв на английские
+        /// </summary>
+        public static string RussianToEnglish(Match m)
+        {
+            switch (m.ToString()[0])
+            {
+                case 'А':
+                    return "A";
+                case 'В':
+                    return "B";
+                case 'С':
+                    return "C";
+                case 'Е':
+                    return "E";
+                case 'К':
+                    return "K";
+                case 'М':
+                    return "M";
+                case 'Н':
+                    return "H";
+                case 'Х':
+                    return "X";
+                case 'Р':
+                    return "P";
+                case 'О':
+                    return "O";
+                case 'Т':
+                    return "T";
+            }
+
+            return m.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Класс содержащий общие константы  для проекта.
+    /// </summary>
+    public static class ConstVars
+    {
+        /// <summary>
+        /// Evaluator для замены заглавных русских букв на английские.
+        /// </summary>
+        public static MatchEvaluator RusAsEnsEvaluator = new MatchEvaluator(
+            ApiHelper.RussianToEnglish);
+
+        /// <summary>
+        /// Шаблон для поиска русских букв.
+        /// </summary>
+        public const string RusAsEngPattern = @"[АВСЕКМНХРОТ]";
+
+        /// <summary>
+        /// Символ переноса строки.
+        /// </summary>
+        public const string NewLine = "\n";
+
+        /// <summary>
+        /// Символ переноса строки с возвратом каретки.
+        /// </summary>
+        public const string NewLineWithCarriageReturn = "\r\n";
+
+        /// <summary>
+        /// Текст "Резерв".
+        /// </summary>
+        public const string Reserve = "Резерв";
     }
 }

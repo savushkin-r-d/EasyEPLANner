@@ -20,7 +20,7 @@ namespace EasyEPlanner
             this.IOManager = IO.IOManager.GetInstance();
             this.isContainsNodes = false;
             this.isContainsA1 = false;
-            this.IONameRegex = new Regex(IONamePattern);
+            this.IONameRegex = new Regex(IO.IOManager.IONamePattern);
             this.functionsForSearching = new List<Function>();
         }
 
@@ -131,7 +131,7 @@ namespace EasyEPlanner
                 string ipAdress = GetIPAdressFromFunction(function);
                 string type = GetNodeTypeFromFunction(function);
 
-                if (type != string.Empty)
+                if (type != "")
                 {
                     if (isContainsA1 == true)
                     {
@@ -191,7 +191,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string GetIPAdressFromFunction(Function function)
         {
-            var ipAddress = string.Empty;
+            var ipAddress = "";
             if (!function.Properties.FUNC_PLCGROUP_STARTADDRESS.IsEmpty)
             {
                 ipAddress = function.Properties.FUNC_PLCGROUP_STARTADDRESS;
@@ -212,7 +212,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string GetNodeTypeFromFunction(Function function)
         {
-            var type = string.Empty;
+            var type = "";
             foreach (Article article in function.Articles)
             {
                 if (!article.Properties[Eplan.EplApi.DataModel
@@ -336,7 +336,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string GetModuleTypeFromFunction(Function function)
         {
-            var type = string.Empty;
+            var type = "";
             if (!function.Articles[0].Properties[Eplan.EplApi.DataModel
                 .Properties.Article.ARTICLE_TYPENR].IsEmpty)
             {
@@ -365,7 +365,7 @@ namespace EasyEPlanner
             bool isStub;
             var moduleInfo = new IO.IOModuleInfo();
             moduleInfo = moduleInfo.GetIOModuleInfo(type, out isStub);
-            if (isStub && type != string.Empty)
+            if (isStub && type != "")
             {
                 ProjectManager.GetInstance().AddLogMessage($"Неизвестный " +
                     $"модуль \"{function.VisibleName}\" - \"{type}\".");
@@ -461,11 +461,6 @@ namespace EasyEPlanner
         /// Функции для поиска узлов и модулей ввода-вывода.
         /// </summary>
         List<Function> functionsForSearching;
-        
-        /// <summary>
-        /// Шаблон для разбора имени узла или модуля ввода-вывода
-        /// </summary>
-        string IONamePattern = @"=*-A(?<n>\d+)";
 
         /// <summary>
         /// Обрабатывающий Regex.

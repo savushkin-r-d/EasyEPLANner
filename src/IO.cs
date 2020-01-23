@@ -1454,7 +1454,7 @@ namespace IO
         /// </summary>
         public string Check()
         {
-            var str = string.Empty;
+            var str = "";
 
             int idx = 100;
             foreach (IONode node in iONodes)
@@ -1552,6 +1552,11 @@ namespace IO
             PhoenixContactSmart = 1088132,
             PhoenixContactStandard = 1027843,
         }
+
+        /// <summary>
+        /// Шаблон для разбора имени узла, модуля ввода-вывода (прим., А100).
+        /// </summary>
+        public const string IONamePattern = @"=*-A(?<n>\d+)";
 
         #region Закрытые поля.
         private List<IONode> iONodes;     ///Узлы проекта.

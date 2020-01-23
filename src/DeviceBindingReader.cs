@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Device;
 
 namespace EasyEPlanner
 {
@@ -17,7 +18,7 @@ namespace EasyEPlanner
         /// </summary>
         public DeviceBindingReader()
         {
-            this.deviceManager = Device.DeviceManager.GetInstance();
+            this.deviceManager = DeviceManager.GetInstance();
             this.IOManager = IO.IOManager.GetInstance();
         }
 
@@ -81,7 +82,7 @@ namespace EasyEPlanner
 
             string description = ApiHelper.GetFunctionalText(clampFunction);
             var descriptionMatches = Regex.Matches(description, 
-                Device.DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
+                DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
             
             const string ValveTerminalNamePattern = @"=*-Y(?<n>\d+)";
             var valveTerminalRegex = new Regex(ValveTerminalNamePattern);
@@ -137,7 +138,7 @@ namespace EasyEPlanner
 
             string description = ApiHelper.GetFunctionalText(
                 clampFunction);
-            if (description == string.Empty)
+            if (description == "" || description.Contains(ConstVars.Reserve))
             {
                 skip = true;
                 return skip;
@@ -166,13 +167,13 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string GetValveTerminalNameFromDescription(string description)
         {
-            const string NewLine = "\n";
-            const string NewLineWithCarriage = "\r\n";
             int eplanNameLength;
 
-            if (description.Contains(NewLineWithCarriage) == true)
+            if (description.Contains(ConstVars.NewLineWithCarriageReturn) == 
+                true)
             {
-                eplanNameLength = description.IndexOf(NewLineWithCarriage);
+                eplanNameLength = description.IndexOf(ConstVars
+                    .NewLineWithCarriageReturn);
                 if (eplanNameLength > 0)
                 {
                     description = description.Substring(0, eplanNameLength);
@@ -180,7 +181,7 @@ namespace EasyEPlanner
             }
             else
             {
-                eplanNameLength = description.IndexOf(NewLine);
+                eplanNameLength = description.IndexOf(ConstVars.NewLine);
                 if (eplanNameLength > 0)
                 {
                     description = description.Substring(0, eplanNameLength);
@@ -217,10 +218,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string ReadValveTerminalClampsBinding(Function[] subFunctions)
         {
-            var description = string.Empty;
-            const string NewLineWithCarriage = "\r\n";
-            const string Reserve = "Резерв";
-
+            var description = "";
             foreach (Function function in subFunctions)
             {
                 if (function.Category != Function.Enums.Category.PLCTerminal)
@@ -236,14 +234,15 @@ namespace EasyEPlanner
                 bool isInt = int.TryParse(clampNumber, out _);
                 if (isInt == true && 
                     clampBindedDevice.Length != 0 && 
-                    clampBindedDevice != Reserve)
+                    clampBindedDevice != ConstVars.Reserve)
                 {
-                    var deviceMatch = Regex.Match(clampBindedDevice, Device
-                        .DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
+                    var deviceMatch = Regex.Match(clampBindedDevice, 
+                        DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
                     while (deviceMatch.Success)
                     {
                         string deviceName = deviceMatch.Groups["name"].Value;
-                        description += $"{NewLineWithCarriage}{deviceName}";
+                        description += $"{ConstVars.NewLineWithCarriageReturn}" +
+                            $"{deviceName}";
 
                         // Дополнительно установить параметр R_VTUG_NUMBER
                         int vtugNumber = Convert.ToInt32(clampNumber);
@@ -267,7 +266,7 @@ namespace EasyEPlanner
         private void SetDeviceRuntimeParameters(
             Dictionary<string, double> parameters, string deviceName)
         {
-            Device.IODevice dev = Device.DeviceManager.GetInstance()
+            Device.IODevice dev = DeviceManager.GetInstance()
                 .GetDevice(deviceName);
             foreach (KeyValuePair<string, double> parameter in parameters)
             {
@@ -275,36 +274,44 @@ namespace EasyEPlanner
             }
         }
 
-
+        /// <summary>
+        /// Проверка на множественную привязку и корректировка, если надо.
+        /// </summary>
+        /// <param name="description">Описание устройства</param>
+        /// <param name="actionMatch">Действие канала</param>
+        /// <param name="comment">Комментарий к устройству</param>
         private void CorrectDataIfMultipleBinding(ref string description, 
             out Match actionMatch, out string comment)
         {
             actionMatch = Match.Empty;
-            comment = string.Empty;
-            var deviceEvaluator = new MatchEvaluator(RussianToEnglish);
-            bool isMultipleBinding = Device.DeviceManager.GetInstance()
+            comment = "";
+            bool isMultipleBinding = DeviceManager.GetInstance()
                 .IsMultipleBinding(description);
             if (isMultipleBinding == false)
             {
                 //Для многострочного описания убираем tab+\r\n
-                description = description.Replace("\t\r\n", "");
-                description = description.Replace("\t\n", "");
+                description = description.Replace(
+                    $"\t{ConstVars.NewLineWithCarriageReturn}", "");
+                description = description.Replace(
+                    $"\t{ConstVars.NewLine}", "");
 
-                int endPosition = description.IndexOf("\n");
+                int endPosition = description.IndexOf(ConstVars.NewLine);
                 if (endPosition > 0)
                 {
                     comment = description.Substring(endPosition + 1);
                     description = description.Substring(0, endPosition);
                 }
 
-                description = Regex.Replace(description, RusAsEngPattern, 
-                    deviceEvaluator);
-                actionMatch = Regex.Match(comment, ChannelCommentPattern,
+                description = Regex.Replace(description,
+                    ConstVars.RusAsEngPattern, ConstVars.RusAsEnsEvaluator);
+                actionMatch = Regex.Match(comment, 
+                    IODevice.IOChannel.ChannelCommentPattern,
                     RegexOptions.IgnoreCase);
 
-                comment = Regex.Replace(comment, ChannelCommentPattern,
+                comment = Regex.Replace(comment,
+                    IODevice.IOChannel.ChannelCommentPattern,
                     "", RegexOptions.IgnoreCase);
-                comment = comment.Replace("\n", ". ").Trim();
+                comment = comment.Replace(ConstVars.NewLine, ". ").Trim();
                 if (comment.Length > 0 && comment[comment.Length - 1] != '.')
                 {
                     comment += ".";
@@ -312,13 +319,24 @@ namespace EasyEPlanner
             }
             else
             {
-                description = Regex.Replace(description, RusAsEngPattern, 
-                    deviceEvaluator);
-                actionMatch = Regex.Match(comment, ChannelCommentPattern,
+                description = Regex.Replace(description,
+                    ConstVars.RusAsEngPattern,
+                    ConstVars.RusAsEnsEvaluator);
+                actionMatch = Regex.Match(comment,
+                    IODevice.IOChannel.ChannelCommentPattern,
                     RegexOptions.IgnoreCase);
             }
         }
 
+        /// <summary>
+        /// Установить привязку устройства.
+        /// </summary>
+        /// <param name="description">Описание устройства</param>
+        /// <param name="actionMatch">Действие канала</param>
+        /// <param name="module">Модуль ввода-вывода</param>
+        /// <param name="node">Узел ввода-вывода</param>
+        /// <param name="clampFunction">Функция клеммы</param>
+        /// <param name="comment">Комментарий к устройству</param>
         private void SetBind(string description, Match actionMatch, 
             IO.IOModule module, IO.IONode node, Function clampFunction, 
             string comment)
@@ -327,31 +345,33 @@ namespace EasyEPlanner
                 .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString());
             
             var descriptionMatches = Regex.Matches(description,
-                Device.DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
+                DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
             int devicesCount = descriptionMatches.Count;
-            if (devicesCount < 1 && !description.Equals("Pезерв"))
+            if (devicesCount < 1 && !description.Equals(ConstVars.Reserve))
             {
                 ProjectManager.GetInstance().AddLogMessage(
-                    $"\"{clampFunction.VisibleName}:{clamp}\" - неверное " +
+                    $"\"{module.Function.VisibleName}:{clamp}\" - неверное " +
                     $"имя привязанного устройства - \"{description}\".");
             }
 
             foreach (Match descriptionMatch in descriptionMatches)
             {
                 string deviceName = descriptionMatch.Groups["name"].Value;
-                Device.IODevice device = deviceManager.GetDevice(deviceName);
+                IODevice device = deviceManager.GetDevice(deviceName);
 
-                var clampComment = string.Empty;
+                var clampComment = "";
                 if (actionMatch.Success)
                 {
                     clampComment = actionMatch.Value;
-                    if (clampComment.Contains("\r\n"))
+                    if (clampComment.Contains(
+                        ConstVars.NewLineWithCarriageReturn))
                     {
-                        clampComment = clampComment.Replace("\r\n", "");
+                        clampComment = clampComment.Replace(
+                            ConstVars.NewLineWithCarriageReturn, "");
                     }
                 }
 
-                var error = string.Empty;
+                var error = "";
                 string channelName = "IO-Link";
                 int logicalPort = Array
                     .IndexOf(module.Info.ChannelClamps, clamp) + 1;
@@ -363,7 +383,7 @@ namespace EasyEPlanner
                 {
                     if (device.Channels.Count == 1)
                     {
-                        List<Device.IODevice.IOChannel> chanels = 
+                        List<IODevice.IOChannel> chanels = 
                             device.Channels;
                         channelName = ApiHelper
                             .GetChannelNameForIOLinkModuleFromString(
@@ -376,81 +396,20 @@ namespace EasyEPlanner
                     }
                 }
 
-                Device.DeviceManager.GetInstance().AddDeviceChannel(device,
+                DeviceManager.GetInstance().AddDeviceChannel(device,
                         module.Info.AddressSpaceType, node.N - 1, 
                         module.PhysicalNumber % 100, clamp, clampComment, 
                         out error, module.PhysicalNumber, logicalPort, 
                         moduleOffset, channelName);
 
-                if (error != string.Empty)
+                if (error != "")
                 {
                     error = string.Format("\"{0}:{1}\" : {2}",
-                        clampFunction.VisibleName, clamp, error);
+                        module.Function.VisibleName , clamp, error);
                     ProjectManager.GetInstance().AddLogMessage(error);
                 }
             }
         }
-
-        /// <summary>
-        /// MatchEvaluator для regular expression,
-        /// замена русских букв на английские
-        /// </summary>
-        private static string RussianToEnglish(Match m)
-        {
-            switch (m.ToString()[0])
-            {
-                case 'А':
-                    return "A";
-                case 'В':
-                    return "B";
-                case 'С':
-                    return "C";
-                case 'Е':
-                    return "E";
-                case 'К':
-                    return "K";
-                case 'М':
-                    return "M";
-                case 'Н':
-                    return "H";
-                case 'Х':
-                    return "X";
-                case 'Р':
-                    return "P";
-                case 'О':
-                    return "O";
-                case 'Т':
-                    return "T";
-            }
-
-            return m.ToString();
-        }
-
-        /// <summary>
-        /// Шаблон для поиска русских букв.
-        /// </summary>
-        const string RusAsEngPattern = @"[АВСЕКМНХРОТ]";
-
-        /// <summary>
-        /// Шаблон для разбора комментария к устройству.
-        /// </summary>
-        const string ChannelCommentPattern =
-            @"(Открыть мини(?n:\s+|$))|" +
-            @"(Открыть НС(?n:\s+|$))|" +
-            @"(Открыть ВС(?n:\s+|$))|" +
-            @"(Открыть(?n:\s+|$))|" +
-            @"(Закрыть(?n:\s+|$))|" +
-            @"(Открыт(?n:\s+|$))|" +
-            @"(Закрыт(?n:\s+|$))|" +
-            @"(Объем(?n:\s+|$))|" +
-            @"(Поток(?n:\s+|$))|" +
-            @"(Пуск(?n:\s+|$))|" +
-            @"(Реверс(?n:\s+|$))|" +
-            @"(Обратная связь(?n:\s+|$))|" +
-            @"(Частота вращения(?n:\s+|$))|" +
-            @"(Авария(?n:\s+|$))|" +
-            @"(Напряжение моста\(\+Ud\)(?n:\s+|$))|" +
-            @"(Референсное напряжение\(\+Uref\)(?n:\s+|$))";
 
         /// <summary>
         /// Функции для поиска модулей ввода-вывода
@@ -460,7 +419,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Менеджер устройств.
         /// </summary>
-        Device.DeviceManager deviceManager;
+        DeviceManager deviceManager;
 
         /// <summary>
         /// Менеджер узлов и модулей ввода-вывода.

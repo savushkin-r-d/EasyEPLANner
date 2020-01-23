@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EasyEPlanner
+﻿namespace EasyEPlanner
 {
+    /// <summary>
+    /// Класс, проверяющий текущую конфигурацию проекта.
+    /// </summary>
     public class ConfigurationChecker
     {
         public ConfigurationChecker()
@@ -17,7 +14,7 @@ namespace EasyEPlanner
 
         public void Check() 
         {
-            errors = string.Empty;
+            errors = "";
             errors = deviceManager.Check();
             errors += IOManager.Check();
             errors += techObjectManager.Check();
