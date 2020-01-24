@@ -166,28 +166,44 @@ namespace EasyEPlanner
                     iniFile.ReadString("path", "folder_path", "");
                 string[] projectsFolderArray = projectsFolders.Split(';');
                 string projectsFolder = "";
-                for (int i = 0; i < projectsFolderArray.Length; i++)
+                bool projectAnyPath = false;
+                string firstPath = "";
+                foreach (string pathFromArry in projectsFolderArray)
                 {
-                    if (projectsFolderArray[i] != "")
+                    if (pathFromArry != "")
                     {
-                        projectsFolder = projectsFolderArray[i];
+                        if (projectAnyPath == false)
+                        {
+                            firstPath = pathFromArry;
+                            projectAnyPath = true;
+                        }
+                        projectsFolder = pathFromArry;
                         if (projectsFolder.Last() != '\\')
                         {
                             projectsFolder += '\\';
                         }
-                        
-                        string projectsPath = projectsFolder + projectName;//+ fileName;
+                        string projectsPath = projectsFolder + projectName;
                         if (Directory.Exists(projectsPath))
                         {
                             return projectsFolder;
                         }
                     }
                 }
+                if (projectAnyPath == false && firstPath != "")
+                {
+                    MessageBox.Show("Путь к каталогу с проектами не найден.\n" +
+                        "Пожалуйста, проверьте конфигурацию!", "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    return firstPath;
+                }
+
             }
             catch
             {
                 MessageBox.Show("Файл конфигурации не найден - будет создан новый со стандартным описанием." +
-                    " Пожалуйста, измените путь к каталогу с проектами, где хранятся Lua файлы!", 
+                    " Пожалуйста, измените путь к каталогу с проектами, где хранятся Lua файлы!",
                     "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             return "";
