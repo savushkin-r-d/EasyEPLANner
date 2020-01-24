@@ -1,20 +1,10 @@
-﻿///@file Device.cs
-///@brief Классы, реализующие минимальную функциональность, необходимую для 
-///экспорта описания устройств для PAC.
-///
-/// @author  Иванюк Дмитрий Сергеевич.
-///
-/// @par Текущая версия:
-/// @$Rev: --- $.\n
-/// @$Author: sedr $.\n
-/// @$Date:: 2019-10-21#$.
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System;
 using System.Windows.Forms;
 using IO;
 using System.Linq;
+using StaticHelper;
 
 /// <summary>
 /// Пространство имен технологических устройств проекта (клапана, насосы...).
@@ -154,7 +144,8 @@ namespace Device
 
         //PT
         PT = 1,         ///< Датчик давления
-        PT_IOLINK       ///< IOLink датчик давления
+        PT_IOLINK,      ///< IO-Link датчик давления
+        DEV_SPAE        ///< IO-Link датчик давления воздуха    
     };
 
     /// <summary>
@@ -628,6 +619,9 @@ namespace Device
 
                         case DeviceSubType.PT_IOLINK:
                             return "PT_IOLINK";
+
+                        case DeviceSubType.DEV_SPAE:
+                            return "DEV_SPAE";
                     }
                     break;
 
@@ -767,6 +761,9 @@ namespace Device
                             return new List<string>(new string[] { "ST", "M", "V", "P_MIN_V", "P_MAX_V", "P_CZ" });
 
                         case DeviceSubType.PT_IOLINK:
+                            return new List<string>(new string[] { "M", "V" });
+
+                        case DeviceSubType.DEV_SPAE:
                             return new List<string>(new string[] { "M", "V" });
                     }
                     break;
@@ -910,7 +907,7 @@ namespace Device
             }
             else
             {
-                return string.Empty; 
+                return ""; 
             }
         }
 
@@ -1048,7 +1045,7 @@ namespace Device
                 case IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI:
                     switch (channelName)
                     {
-                        case "IO-Link":
+                        default:
                             IO.AddRange(AO);
                             IO.AddRange(AI);
                             break;
@@ -1445,7 +1442,7 @@ namespace Device
         /// <summary>
         /// Свойство содержащее изделие, которое используется для устройства
         /// </summary>
-        public string ArticleName { get; set; } = string.Empty;
+        public string ArticleName { get; set; } = "";
 
         #region Закрытые поля.
         protected List<IOChannel> DO; ///Каналы дискретных выходов.
@@ -1706,36 +1703,6 @@ namespace Device
                 return offset;
             }
 
-            /// <summary>
-            /// Возвращает тип канала для IO-Link модуля
-            /// </summary>
-            /// <returns>Тип канала</returns>
-            public string GetChannelTypeForIOLink()
-            {
-                var type = this.Name;
-                const string AO = "AO";
-                const string AI = "AI";
-                const string DO = "DO";
-                const string DI = "DI";
-
-                if (type == AO || type == AI)
-                {
-                    return string.Empty;
-                }
-
-                if (type == DI)
-                {
-                    return DI;
-                }
-                    
-                if (type == DO)
-                {
-                    return DO;
-                }
-
-                return type;
-            }
-
             public bool IsEmpty()
             {
                 return node == -1;
@@ -1828,6 +1795,27 @@ namespace Device
                     return moduleOffset;
                 }
             }
+
+            /// <summary>
+            /// Шаблон для разбора комментария к устройству.
+            /// </summary>
+            public const string ChannelCommentPattern =
+                @"(Открыть мини(?n:\s+|$))|" +
+                @"(Открыть НС(?n:\s+|$))|" +
+                @"(Открыть ВС(?n:\s+|$))|" +
+                @"(Открыть(?n:\s+|$))|" +
+                @"(Закрыть(?n:\s+|$))|" +
+                @"(Открыт(?n:\s+|$))|" +
+                @"(Закрыт(?n:\s+|$))|" +
+                @"(Объем(?n:\s+|$))|" +
+                @"(Поток(?n:\s+|$))|" +
+                @"(Пуск(?n:\s+|$))|" +
+                @"(Реверс(?n:\s+|$))|" +
+                @"(Обратная связь(?n:\s+|$))|" +
+                @"(Частота вращения(?n:\s+|$))|" +
+                @"(Авария(?n:\s+|$))|" +
+                @"(Напряжение моста\(\+Ud\)(?n:\s+|$))|" +
+                @"(Референсное напряжение\(\+Uref\)(?n:\s+|$))";
 
             #region Закрытые поля
             private int node;            ///Номер узла.
@@ -2509,10 +2497,6 @@ namespace Device
             ArticleName = articleName;
 
             AI.Add(new IOChannel("AI", -1, -1, -1, ""));
-
-            parameters.Add("P_C0", null);
-            parameters.Add("P_MIN_V", null);
-            parameters.Add("P_MAX_V", null);
         }
 
         public override string SetSubType(string subType)
@@ -2523,20 +2507,30 @@ namespace Device
             switch (subType)
             {
                 case "PT":
+                    parameters.Add("P_C0", null);
+                    parameters.Add("P_MIN_V", null);
+                    parameters.Add("P_MAX_V", null);
                     break;
 
                 case "PT_IOLINK":
+                    parameters.Add("P_C0", null);
+                    parameters.Add("P_MIN_V", null);
+                    parameters.Add("P_MAX_V", null);
+                    IOLinkSizeIn = 1;
+                    break;
+
+                case "DEV_SPAE":
                     IOLinkSizeIn = 1;
                     break;
 
                 case "":
                     errStr = string.Format("\"{0}\" - не задан тип" +
-                        " (PT, PT_IOLINK).\n", Name);
+                        " (PT, PT_IOLINK, DEV_SPAE).\n", Name);
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (PT, PT_IOLINK).\n", Name);
+                        " (PT, PT_IOLINK, DEV_SPAE).\n", Name);
                     break;
             }
             return errStr;
@@ -3102,44 +3096,7 @@ namespace Device
             return errStr;
         }
     }
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    /// <summary>
-    /// Интерфейс менеджера описания устройств для проекта.
-    /// </summary>
-    public interface IDeviceManager
-    {
-        /// <summary>
-        /// Получение описания привязки модулей ввода\вывода.
-        /// </summary>
-        void ReadConfigurationFromIOModules();
 
-        /// <summary>
-        /// Проверка конфигурации устройств проекта.
-        /// </summary>
-        void CheckConfiguration(bool useLog = false);
-
-        /// <summary>
-        /// Получение описания устройств проекта и синхронизация с уже
-        /// имеющимся описанием.
-        /// </summary>
-        void SynchAndReadConfigurationFromScheme();
-
-        /// <summary>
-        /// Сохранение в виде таблицы Lua.
-        /// </summary>
-        /// <param name="prefix">Префикс (для выравнивания).</param>
-        /// <returns>Описание в виде таблицы Lua.</returns>
-        string SaveAsLuaTable(string prefix);
-
-        /// <summary>
-        /// Сохранение устройств в виде скрипта Lua. Для последующего доступа
-        /// по имени. Строки в виде: "S1V23 = V( 123 ) ".
-        /// </summary>
-        string SaveDevicesAsLuaScript();
-
-        void GetObjectForXML(TreeNode rootNode);
-    }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
     /// <summary>
@@ -3352,35 +3309,18 @@ namespace Device
         }
 
         /// <summary>
-        /// Проверка устройств на каналы без привязки и
-        /// расчет IOLink адресов
+        /// Проверка устройств на каналы без привязки
         /// </summary>
-        public string CheckDevicesConnectionAndCalculateIOLink()
+        public string Check()
         {
-            string res = "";
+            var res = "";
 
-            foreach (IODevice dev in devices)
+            foreach (var dev in devices)
             {
                 res += dev.Check();
             }
 
-            CalculateIOLinkAddresses();
-
             return res;
-        }
-
-        /// <summary>
-        /// Расчет IOLink адресов модулей
-        /// </summary>
-        private void CalculateIOLinkAddresses()
-        {
-            foreach (IONode node in IOManager.GetInstance().IONodes)
-            {
-                foreach (IOModule module in node.IOModules)
-                {
-                    module.CalculateIOLinkAdress();
-                }
-            }
         }
 
         /// <summary>
@@ -3617,9 +3557,9 @@ namespace Device
                 out objectNumber, out deviceType, out deviceNumber);
 
             // Если изделия нет или пустое, то оставляем пустое
-            if (articleName == string.Empty || articleName == null)
+            if (articleName == "" || articleName == null)
             {
-                articleName = string.Empty;
+                articleName = "";
             }
 
             switch (deviceType)
@@ -4010,7 +3950,7 @@ namespace Device
         public bool? IsASInterfaceDevices(string devices, out string errors)
         {
             bool? isASInterface = false;
-            errors = string.Empty;
+            errors = "";
             const int MinimalDevicesCount = 2;
             var deviceMatches = Regex.Matches(devices, DeviceNamePattern);
 
@@ -4022,8 +3962,7 @@ namespace Device
             var checkingList = new List<bool>();
             foreach (Match deviceMatch in deviceMatches)
             {
-                IODevice device = DeviceManager.GetInstance().
-                    GetDevice(deviceMatch.Value);
+                var device = GetDevice(deviceMatch.Value);
                 if (device.DeviceSubType == DeviceSubType.V_AS_MIXPROOF ||
                     device.DeviceSubType == DeviceSubType.V_AS_DO1_DI2)
                 {
@@ -4067,12 +4006,11 @@ namespace Device
         {
             var deviceMatches = Regex.Matches(devices, DeviceNamePattern);
 
-            errors = string.Empty;
-            var errorsBuffer = string.Empty;
+            errors = "";
+            var errorsBuffer = "";
             foreach (Match deviceMatch in deviceMatches)
             {
-                IODevice device = DeviceManager.GetInstance().
-                    GetDevice(deviceMatch.Value);
+                var device = GetDevice(deviceMatch.Value);
                 string parameter = device.GetRuntimeParameter("R_AS_NUMBER");
                 if (parameter == null)
                 {
@@ -4099,7 +4037,7 @@ namespace Device
             }
 
             var isValid = false;
-            if (errorsBuffer != string.Empty)
+            if (errorsBuffer != "")
             {
                 isValid = false;
                 errors += errorsBuffer;
@@ -4131,7 +4069,20 @@ namespace Device
             return isMultiple;
         }
 
-        const string DeviceNamePattern = "(\\+[A-Z0-9_]*-[A-Z0-9_]+)"; // ОУ.
+        /// <summary>
+        /// Шаблон для получение ОУ устройства.
+        /// </summary>
+        public const string DeviceNamePattern = "(\\+[A-Z0-9_]*-[A-Z0-9_]+)";
+
+        /// <summary>
+        /// Используемое имя для пневмоострова.
+        /// </summary>
+        public const string ValveTerminalName = "-Y";
+
+        /// <summary>
+        /// Шаблон для разбора ОУ пневмоострова
+        /// </summary>
+        public const string valveTerminalPattern = @"([A-Z0-9]+\-[Y0-9]+)";
 
         private static IODevice cap = new IODevice("Заглушка", "", 0, "", 0);
         private List<IODevice> devices;       ///Устройства проекта.     

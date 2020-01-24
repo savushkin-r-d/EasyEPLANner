@@ -550,7 +550,8 @@ DEV_VTUG_8 | SPECIAL Festo valve terminal
 DEV_VTUG_16 | SPECIAL Festo valve terminal
 DEV_VTUG_24 | SPECIAL Festo valve terminal
 PT | Датчик давления
-PT_IOLINK | **IO-Link** датчик давления
+PT_IOLINK | **IO-Link** датчик давления 
+DEV_SPAE | **IO-Link** датчик давления воздуха
 
 Пример приведен ниже:
 

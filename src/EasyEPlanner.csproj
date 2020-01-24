@@ -131,7 +131,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationChecker.cs" />
     <Compile Include="Device.cs" />
+    <Compile Include="DeviceBindingReader.cs" />
+    <Compile Include="DeviceReader.cs" />
+    <Compile Include="DeviceSynchronizer.cs" />
     <Compile Include="DFrm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -143,6 +147,7 @@
     <Compile Include="ExcelRepoter.cs" />
     <Compile Include="DeviceBindFromForm.cs" />
     <Compile Include="IO.cs" />
+    <Compile Include="IOReader.cs" />
     <Compile Include="LogFrm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -156,6 +161,7 @@
       <DependentUpon>ModeFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="PInvokeUtil.cs" />
+    <Compile Include="ProjectConfiguration.cs" />
     <Compile Include="ProjectManager.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -164,6 +170,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="StaticHelper.cs" />
     <Compile Include="TechObject.cs" />
     <Compile Include="EditorCtrl.cs">
       <SubType>UserControl</SubType>

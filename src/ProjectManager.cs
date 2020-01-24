@@ -228,21 +228,28 @@ namespace EasyEPlanner
 
             try
             {
-                oProgress.BeginPart(20, "Считывание IO");
-                iOManager.ReadConfiguration();
+                oProgress.BeginPart(15, "Считывание IO");
+                projectConfiguration.ReadIO();
                 oProgress.EndPart();
 
-                oProgress.BeginPart(20, "Считывание устройств");
-                deviceManager.SynchAndReadConfigurationFromScheme();
+                oProgress.BeginPart(15, "Считывание устройств");
+                if (projectConfiguration.DevicesIsRead == true)
+                {
+                    projectConfiguration.SynchronizeDevices();
+                }
+                else
+                {
+                    projectConfiguration.ReadDevices();
+                }
                 oProgress.EndPart();
 
-                oProgress.BeginPart(20, "Считывание привязки устройств");
-                deviceManager.ReadConfigurationFromIOModules();
+                oProgress.BeginPart(25, "Считывание привязки устройств");
+                projectConfiguration.ReadBinding();
                 oProgress.EndPart();
 
                 if (loadFromLua)
                 {
-                    oProgress.BeginPart(20, "Считывание технологических объектов");
+                    oProgress.BeginPart(15, "Считывание технологических объектов");
                     res = LoadDescriptionFromFile(out LuaStr, out errStr, projectName, "\\main.objects.lua");
                     techObjectManager.LoadFromLuaStr(LuaStr, projectName);
                     errStr = "";
@@ -252,9 +259,12 @@ namespace EasyEPlanner
                     oProgress.EndPart();
                 }
 
-                oProgress.BeginPart(20, "Проверка данных");
-                techObjectManager.CheckConfiguration();
+                oProgress.BeginPart(15, "Проверка данных");
+                projectConfiguration.Check();
+                oProgress.EndPart();
 
+                oProgress.BeginPart(15, "Расчет IO-Link");
+                IOManager.CalculateIOLinkAdresses();
                 oProgress.EndPart(true);
             }
             catch (System.Exception ex)
@@ -269,14 +279,17 @@ namespace EasyEPlanner
         /// <summary>
         /// Инициализация.
         /// </summary>
-        public void Init(IIOManager iOManager, IDeviceManager deviceManager,
-            IEditor editor, ITechObjectManager techObjectManager, ILog log)
+        public void Init(IEditor editor, ITechObjectManager techObjectManager, 
+            ILog log, IOManager IOManager, DeviceManager deviceManager,
+            ProjectConfiguration projectConfiguration)
         {
-            this.iOManager = iOManager;
-            this.deviceManager = deviceManager;
             this.editor = editor;
             this.techObjectManager = techObjectManager;
             this.log = log;
+            
+            this.IOManager = IOManager;
+            this.deviceManager = deviceManager;
+            this.projectConfiguration = projectConfiguration;
         }
 
         /// <summary>
@@ -341,18 +354,18 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Вызов синхронизации названий устройств и модулей.
-        /// устройств и модулей
+        /// Обновление подписей к клеммам модулей IO
+        /// в соответствии с актуальным названием устройств.
         /// </summary>
         public void UpdateModulesBinding()
         {
-            var errors = string.Empty;
+            var errors = "";
             try
             {
                 log.Clear();
                 log.ShowLog();
                 log.AddMessage("Выполняется синхронизация..");
-                errors = EplanIOManager.GetInstance().UpdateModulesBinding();
+                errors = ModulesBindingUpdate.GetInstance().Execute();
                 log.Clear();
             }
             catch (System.Exception ex)
@@ -361,7 +374,7 @@ namespace EasyEPlanner
             }
             finally
             {
-                if (errors != string.Empty)
+                if (errors != "")
                 {
                     log.AddMessage(errors);
                 }
@@ -423,12 +436,12 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Экспорт поекта в базу каналов.
+        /// Экспорт проекта в базу каналов.
         /// </summary>
         /// <param name="prjName">Имя проекта</param>
         private void SaveAsXML(string path)
         {
-            deviceManager.SynchAndReadConfigurationFromScheme();
+            projectConfiguration.SynchronizeDevices();
 
             TreeNode rootNode = new TreeNode("subtypes");
             techObjectManager.GetObjectForXML(rootNode);
@@ -591,7 +604,7 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Создание узлов и каналов в новой путсой базе каналов
+        /// Создание узлов и каналов в новой пустой базе каналов
         /// </summary>
         private static void CreateNewChannels(XmlDocument xmlDoc,
             XmlElement subtypesNode, TreeNodeCollection Nodes)
@@ -981,7 +994,7 @@ namespace EasyEPlanner
             return res;
         }
 
-        //Участвующие в операции устройства, подсвеченные на карте Eplan'a.
+        //Участвующие в операции устройства, подсвеченные на карте Eplan.
         List<object> highlightedObjects = new List<object>();
 
         public void RemoveHighLighting()
@@ -1151,7 +1164,6 @@ namespace EasyEPlanner
             if (!par.silentMode)
             {
                 log.ShowLog();
-
                 log.DisableOkButton();
                 log.SetProgress(0);
             }
@@ -1189,21 +1201,15 @@ namespace EasyEPlanner
                 if (par.silentMode == false)
                 {
                     log.SetProgress(1);
-                    deviceManager.CheckConfiguration();
-                }
-                else
-                {
-                    deviceManager.CheckConfiguration(par.silentMode);
                 }
 
-                mainIOFileWriter.Write(iOManager.SaveAsLuaTable(""));
+                mainIOFileWriter.Write(IOManager.SaveAsLuaTable(""));
                 if (par.silentMode == false)
                 {
                     log.SetProgress(50);
                 }
 
                 mainIOFileWriter.Write(deviceManager.SaveAsLuaTable(""));
-
 
                 string FILE_NAME2 = par.path + @"\" + MAIN_TECH_OBJECTS_FILE_NAME;
                 mainTechObjectsFileWriter = new StreamWriter(FILE_NAME2,
@@ -1387,11 +1393,13 @@ namespace EasyEPlanner
             }
         }
 
-        private IIOManager iOManager;       /// Менеджер модулей ввода\вывода IO.
-        private IDeviceManager deviceManager;   /// Менеджер устройств.
         private IEditor editor;                 /// Редактор технологических объектов.
         private ITechObjectManager techObjectManager; /// Менеджер технологических объектов.
         private ILog log;
+
+        private IOManager IOManager; // Менеджер модулей ввода/вывода
+        private DeviceManager deviceManager; // Менеджер устройств
+        private ProjectConfiguration projectConfiguration; // Конфигурация проекта
 
         private static ProjectManager instance;       /// Экземпляр класса.         
     }

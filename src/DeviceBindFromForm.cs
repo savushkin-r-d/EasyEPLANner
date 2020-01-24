@@ -1,7 +1,5 @@
 ﻿using Aga.Controls.Tree;
-using Eplan.EplApi.Base;
 using Eplan.EplApi.DataModel;
-using Eplan.EplApi.HEServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Device;
 using IO;
+using StaticHelper;
 
 namespace EasyEPlanner
 {
@@ -25,13 +24,8 @@ namespace EasyEPlanner
         public DeviceBinder(DFrm devicesForm)
         {
             this.DevicesForm = devicesForm;
-            this.startValues = new StartValues(DevicesForm);
+            this.startValues = new StartValuesForBinding(DevicesForm);
         }
-
-        /// <summary>
-        /// Закрытый конструктор для безопасности использования
-        /// </summary>
-        private DeviceBinder() { }
 
         /// <summary>
         /// Привязать выбранный канал устройства к модулю ввода-вывода
@@ -79,11 +73,11 @@ namespace EasyEPlanner
                     .GetChannel(NodeFromSelectedNode);
                 SelectedDevice = startValues
                     .GetDevice(NodeFromSelectedNode);
-                SelectedObject = startValues.GetSelectedObject();
-                SelectedClampFunction = startValues
-                    .GetSelectedClampFunction(SelectedObject);
-                SelectedIOModuleFunction = startValues
-                    .GetSelectedIOModuleFunction(SelectedClampFunction);
+                SelectedObject = ApiHelper.GetSelectedObject();
+                SelectedClampFunction = ApiHelper.GetClampFunction(
+                    SelectedObject);
+                SelectedIOModuleFunction = ApiHelper
+                    .GetIOModuleFunction(SelectedClampFunction);
             }
             catch
             {
@@ -97,9 +91,7 @@ namespace EasyEPlanner
         /// Подготовка функционального текста для записи в функцию
         /// </summary>
         private void PrepareFunctionalText()
-        {
-            const string Reserve = "Резерв";
-            
+        {            
             bool isIOLink = CheckIOLink();
             if (isIOLink)
             {
@@ -110,18 +102,11 @@ namespace EasyEPlanner
                 NewFunctionalText = GenerateFunctionalText(isIOLink);
             }
 
-            var oldFunctionalText = SelectedClampFunction
-                .Properties.FUNC_TEXT_AUTOMATIC
-                .ToString(ISOCode.Language.L___);
-            if (string.IsNullOrEmpty(oldFunctionalText))
-            {
-                oldFunctionalText = SelectedClampFunction.Properties
-                    .FUNC_TEXT_AUTOMATIC
-                    .ToString(ISOCode.Language.L_ru_RU);
-            }
+            var oldFunctionalText = ApiHelper.GetFunctionalText(
+                SelectedClampFunction);
 
             if (SelectedClampFunction.Properties.FUNC_TEXT.IsEmpty ||
-                SelectedClampFunction.Properties.FUNC_TEXT == Reserve)
+                SelectedClampFunction.Properties.FUNC_TEXT == CommonConst.Reserve)
             {
                 //Если нет функционального текста, устанавливаем его.
                 if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
@@ -139,15 +124,17 @@ namespace EasyEPlanner
                     NewFunctionalText)
                 {
                     ResetDevicesChannel = NewFunctionalText;
-                    NewFunctionalText = Reserve;
+                    NewFunctionalText = CommonConst.Reserve;
                 }
                 else
                 {
                     if ((Control.ModifierKeys & Keys.Control) ==
                         Keys.Control)
                     {
-                        if (!(oldFunctionalText + NewLine).
-                            Contains(SelectedChannel.Comment + NewLine))
+                        if (!(oldFunctionalText + CommonConst
+                            .NewLineWithCarriageReturn)
+                            .Contains(SelectedChannel.Comment +
+                            CommonConst.NewLineWithCarriageReturn))
                         {
                             MessageBox.Show(
                                 "Действие канала устройства (\"" +
@@ -168,7 +155,7 @@ namespace EasyEPlanner
                         {
                             ResetDevicesChannel = NewFunctionalText;
                             NewFunctionalText = oldFunctionalText
-                                .Replace(SelectedDevice.EPlanName, string.Empty)
+                                .Replace(SelectedDevice.EPlanName, "")
                                 .Trim();
 
                             if (NewFunctionalText.Length > 0)
@@ -177,14 +164,15 @@ namespace EasyEPlanner
                                 //заменяем ее на "Резерв".
                                 if (NewFunctionalText[0] != '+')
                                 {
-                                    NewFunctionalText = Reserve;
+                                    NewFunctionalText = CommonConst.Reserve;
                                 }
                             }
                         }
                         else
                         {
                             SetDevicesChannel = NewFunctionalText;
-                            string text = NewLine + SelectedDevice.EPlanName;
+                            string text = CommonConst.NewLineWithCarriageReturn +
+                                SelectedDevice.EPlanName;
                             NewFunctionalText = oldFunctionalText + text;
                         }
                     }
@@ -209,9 +197,9 @@ namespace EasyEPlanner
             var moduleInfo = new IOModuleInfo();
             moduleInfo = moduleInfo.GetIOModuleInfo(name, out _);
 
-            Dictionary<string, string> devicesComments =
-                EplanDeviceManager.GetAssigment(SelectedClampFunction,
-                moduleInfo, ResetDevicesChannel);
+            Dictionary<string, string> devicesComments = ProjectConfiguration
+                .GetInstance().GetBindingForResettingChannel(
+                SelectedClampFunction, moduleInfo, ResetDevicesChannel);
 
             foreach (KeyValuePair<string, string> pair in devicesComments)
             {
@@ -220,8 +208,8 @@ namespace EasyEPlanner
 
                 var device = DeviceManager.GetInstance().GetDevice(deviceName);
 
-                string channelName = EplanDeviceManager.GetInstance().
-                    GetChannelNameForIOLinkModuleFromString(deviceComment);
+                string channelName = ApiHelper
+                    .GetChannelNameForIOLinkModuleFromString(deviceComment);
 
                 device.ClearChannel(moduleInfo.AddressSpaceType,
                     deviceComment, channelName);
@@ -246,7 +234,7 @@ namespace EasyEPlanner
                 return;
             }
 
-            var regex = new Regex(IOModuleNamePattern);
+            var regex = new Regex(IOManager.IONamePattern);
             var match = regex.Match(SelectedIOModuleFunction.VisibleName);
             if (match.Success == false)
             {
@@ -305,14 +293,17 @@ namespace EasyEPlanner
         {
             const string PhoenixContact = "PXC";
 
-            string functionalText = SelectedDevice.EPlanName + NewLine;
+            string functionalText = SelectedDevice.EPlanName + 
+                CommonConst.NewLineWithCarriageReturn;
             if (string.IsNullOrEmpty(SelectedDevice.Description) == false)
             {
-                functionalText += SelectedDevice.Description + NewLine;
+                functionalText += SelectedDevice.Description +
+                    CommonConst.NewLineWithCarriageReturn;
             }
             if (string.IsNullOrEmpty(SelectedChannel.Comment) == false)
             {
-                functionalText += SelectedChannel.Comment + NewLine;
+                functionalText += SelectedChannel.Comment +
+                    CommonConst.NewLineWithCarriageReturn;
             }
 
             int propertyNumber = (int) Eplan.EplApi.DataModel.Properties
@@ -324,7 +315,9 @@ namespace EasyEPlanner
                 manufacturer.Contains(PhoenixContact) &&
                 SelectedDevice.Channels.Count > 1)
             {
-                string channelType = SelectedChannel.GetChannelTypeForIOLink();
+                string channelType = ApiHelper
+                    .GetChannelNameForIOLinkModuleFromString(
+                    SelectedChannel.Name);
                 functionalText += channelType;
             }
 
@@ -341,7 +334,7 @@ namespace EasyEPlanner
             string IOModuleFunctionName = SelectedClampFunction
                 .ParentFunction.VisibleName;
             var IOModuleMatch = Regex.Match(IOModuleFunctionName,
-                IOModuleNamePattern);
+                IOManager.IONamePattern);
 
             if (IOModuleMatch.Success == false)
             {
@@ -367,7 +360,7 @@ namespace EasyEPlanner
         /// <returns>Строка со значением</returns>
         private string GetSelectedIOModuleArticleProperty(int propetyNumber)
         {
-            var result = string.Empty;
+            var result = "";
             if (SelectedIOModuleFunction != null &&
                 SelectedIOModuleFunction.Articles.Count() > 0 &&
                 !SelectedIOModuleFunction.Articles[0]
@@ -397,7 +390,7 @@ namespace EasyEPlanner
             foreach (Match match in matches)
             {
                 string value = match.Value;
-                value = value.Replace(NewLine, string.Empty);
+                value = value.Replace(CommonConst.NewLineWithCarriageReturn, "");
                 if (value == deviceName)
                 {
                     isContains = true;
@@ -459,37 +452,27 @@ namespace EasyEPlanner
         private string ResetDevicesChannel { get; set; }
 
         /// <summary>
-        /// Шаблон для разбора имени модуля ввода-вывода (-А101)
-        /// </summary>
-        const string IOModuleNamePattern = @"=*-A(?<n>\d+)";
-
-        /// <summary>
         /// Инициализатор первоначальных значений для работы привязки
         /// </summary>
-        private StartValues startValues;
+        private StartValuesForBinding startValues;
 
         /// <summary>
         /// Форма с данными
         /// </summary>
         private DFrm DevicesForm { get; set; }
-
-        /// <summary>
-        /// Шаблон для добавления новой строки
-        /// </summary>
-        const string NewLine = "\r\n";
         #endregion
     }
 
     /// <summary>
     /// Инициализатор стартовых значений для привязки
     /// </summary>
-    public sealed class StartValues
+    public sealed class StartValuesForBinding
     {
         /// <summary>
         /// Конструктор принимающий форму с данными
         /// </summary>
         /// <param name="devicesForm">Форма с данными</param>
-        public StartValues(DFrm devicesForm)
+        public StartValuesForBinding(DFrm devicesForm)
         {
             this.DevicesForm = devicesForm;
         }
@@ -567,169 +550,6 @@ namespace EasyEPlanner
             }
 
             return device;
-        }
-
-        /// <summary>
-        /// Получить текущий проект
-        /// </summary>
-        /// <returns>Проект</returns>
-        public Project GetProject()
-        {
-            SelectionSet selection = GetSelectionSet();
-            const bool useDialog = false;
-            Project project = selection.GetCurrentProject(useDialog);
-            return project;
-        }
-
-        /// <summary>
-        /// Получить объект выбранный на графической схеме
-        /// </summary>
-        /// <returns>Выбранный на схеме объект</returns>
-        public StorableObject GetSelectedObject()
-        {
-            SelectionSet selection = GetSelectionSet();
-            const bool isFirstObject = true;
-            StorableObject selectedObject = selection.
-                GetSelectedObject(isFirstObject);
-
-            if (selectedObject is Function == false)
-            {
-                const string Message = "Выбранный на схеме объект не найден";
-                throw new Exception(Message);
-            }
-
-            return selectedObject;
-        }
-
-        /// <summary>
-        /// Получить функцию выбранной клеммы
-        /// </summary>
-        /// <param name="selectedObject">Выбранный на схеме объект
-        /// </param>
-        /// <returns>Функция клеммы модуля ввода-вывода</returns>
-        public Function GetSelectedClampFunction(StorableObject selectedObject)
-        {
-            var clampFunction = selectedObject as Function;
-
-            if (clampFunction.Category != Function.Enums.Category.PLCTerminal)
-            {
-                const string Message = "Выбранная функция не является " +
-                    "клеммой модуля ввода-вывода";
-                throw new Exception(Message);
-            }
-
-            return clampFunction;
-        }
-
-        /// <summary>
-        /// Получить функцию модуля ввода-вывода.
-        /// Модуль, куда привязывается устройство.
-        /// </summary>
-        /// <param name="clampFunction">Функция клеммы модуля 
-        /// ввода-вывода</param>
-        public Function GetSelectedIOModuleFunction(Function clampFunction)
-        {
-            try
-            {
-                const string ValveTerminalName = "Y";
-                var isValveTerminalClampFunction = false;
-                Function IOModuleFunction = null;
-
-                if (clampFunction.Name.Contains(ValveTerminalName))
-                {
-                    IOModuleFunction = GetIOModuleFunction(clampFunction);
-                    if (IOModuleFunction != null)
-                    {
-                        isValveTerminalClampFunction = true;
-                    }
-                }
-
-                if (isValveTerminalClampFunction == false)
-                {
-                    IOModuleFunction = clampFunction.ParentFunction;
-                }
-
-                if (IOModuleFunction == null)
-                {
-                    MessageBox.Show(
-                        "Данная клемма названа некорректно. Измените" +
-                        " ее название (пример корректного названия " +
-                        "\"===DSS1+CAB4-A409\"), затем повторите " +
-                        "попытку привязки устройства.",
-                        "EPlaner",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Exclamation);
-
-                    throw new Exception();
-                }
-
-                return IOModuleFunction;
-            }
-            catch
-            {
-                const string Message = "Не найдена клемма пневмоострова";
-                throw new Exception(Message);
-            }
-        }
-
-        /// <summary>
-        /// Получить выборку из выбранных объектов в Eplan API
-        /// </summary>
-        /// <returns></returns>
-        private SelectionSet GetSelectionSet()
-        {
-            var selection = new SelectionSet();
-            selection.LockSelectionByDefault = false;
-            return selection;
-        }
-
-        /// <summary>
-        /// Проверка клеммы модуля ввода-вывода на принадлежность к 
-        /// пневмоострову и возврат параметра указывающего на это
-        /// </summary>
-        /// <param name="clampFunction">Функция клеммы модуля 
-        /// ввода-вывода</param>   
-        /// <returns>Функция модуля ввода-вывода</returns>
-        private Function GetIOModuleFunction(Function clampFunction)
-        {
-            var IOModuleFunction = new Function();
-            const string valveTerminalPattern = @"([A-Z0-9]+\-[Y0-9]+)";
-            string valveTerminalName = Regex
-                .Match(clampFunction.Name, valveTerminalPattern).Value;
-
-            if (string.IsNullOrEmpty(valveTerminalName))
-            {
-                const string Message = "Ошибка поиска ОУ пневмоострова";
-                throw new Exception(Message);
-            }
-
-            var objectFinder = new DMObjectsFinder(GetProject());
-            var functionsFilter = new FunctionsFilter();
-            var properties = new FunctionPropertyList();
-            properties.FUNC_MAINFUNCTION = true;
-            functionsFilter.SetFilteredPropertyList(properties);
-            functionsFilter.Category = Function.Enums.Category.PLCBox;
-            Function[] functions = objectFinder.GetFunctions(functionsFilter);
-
-            foreach (Function function in functions)
-            {
-                Function[] subFunctions = function.SubFunctions;
-                if (subFunctions != null)
-                {
-                    foreach (Function subFunction in subFunctions)
-                    {
-                        var functionalText = subFunction.Properties
-                            .FUNC_TEXT_AUTOMATIC
-                            .ToString(ISOCode.Language.L___);
-                        if (functionalText.Contains(valveTerminalName))
-                        {
-                            IOModuleFunction = subFunction.ParentFunction;
-                            return IOModuleFunction;
-                        }
-                    }
-                }
-            }
-            return IOModuleFunction;
         }
 
         #region Закрытые поля
