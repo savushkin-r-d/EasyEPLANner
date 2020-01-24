@@ -80,7 +80,7 @@ namespace EasyEPlanner
                 devicesDescription);
             if (isMultipleBinding == false)
             {
-                int endPos = devicesDescription.IndexOf(ConstVars.NewLine);
+                int endPos = devicesDescription.IndexOf(CommonConst.NewLine);
                 if (endPos > 0)
                 {
                     comment = devicesDescription.Substring(endPos + 1);
@@ -89,7 +89,7 @@ namespace EasyEPlanner
                 }
 
                 devicesDescription = Regex.Replace(devicesDescription,
-                    ConstVars.RusAsEngPattern, ConstVars.RusAsEnsEvaluator);
+                    CommonConst.RusAsEngPattern, CommonConst.RusAsEnsEvaluator);
 
                 actionMatch = Regex.Match(comment,
                     IODevice.IOChannel.ChannelCommentPattern,
@@ -98,7 +98,7 @@ namespace EasyEPlanner
                 comment = Regex.Replace(comment,
                     IODevice.IOChannel.ChannelCommentPattern,
                     "", RegexOptions.IgnoreCase);
-                comment = comment.Replace(ConstVars.NewLine, ". ").Trim();
+                comment = comment.Replace(CommonConst.NewLine, ". ").Trim();
                 if (comment.Length > 0 && comment[comment.Length - 1] != '.')
                 {
                     comment += ".";
@@ -107,7 +107,7 @@ namespace EasyEPlanner
             else
             {
                 devicesDescription = Regex.Replace(devicesDescription,
-                    ConstVars.RusAsEngPattern, ConstVars.RusAsEnsEvaluator);
+                    CommonConst.RusAsEngPattern, CommonConst.RusAsEnsEvaluator);
                 actionMatch = Regex.Match(comment,
                     IODevice.IOChannel.ChannelCommentPattern,
                     RegexOptions.IgnoreCase);
@@ -163,7 +163,7 @@ namespace EasyEPlanner
         /// </summary>
         private void ReadDevices() 
         {
-            foreach (Function function in deviceFunctions)
+            foreach (var function in deviceFunctions)
             {
                 bool skip = NeedToSkip(function);
                 if (skip == true)
@@ -230,8 +230,8 @@ namespace EasyEPlanner
         private string GetName(Function function)
         {
             var name = function.Name;
-            name = Regex.Replace(name, ConstVars.RusAsEngPattern,
-                    ConstVars.RusAsEnsEvaluator);
+            name = Regex.Replace(name, CommonConst.RusAsEngPattern,
+                    CommonConst.RusAsEnsEvaluator);
             return name;
         }
 
@@ -290,7 +290,7 @@ namespace EasyEPlanner
 
                 subType = subType.Trim();
                 subType = Regex.Replace(subType, 
-                    ConstVars.RusAsEngPattern, ConstVars.RusAsEnsEvaluator);
+                    CommonConst.RusAsEngPattern, CommonConst.RusAsEnsEvaluator);
             }
 
             if (subType == null)
@@ -322,7 +322,7 @@ namespace EasyEPlanner
                 };
 
                 properties = Regex.Replace(properties,
-                    ConstVars.RusAsEngPattern, ConstVars.RusAsEnsEvaluator);
+                    CommonConst.RusAsEngPattern, CommonConst.RusAsEnsEvaluator);
             }
 
             if (properties == null)
@@ -361,7 +361,7 @@ namespace EasyEPlanner
                 }
 
                 runtimeParameters = Regex.Replace(runtimeParameters,
-                    ConstVars.RusAsEngPattern, ConstVars.RusAsEnsEvaluator);
+                    CommonConst.RusAsEngPattern, CommonConst.RusAsEnsEvaluator);
             }
 
             return runtimeParameters;
@@ -395,7 +395,7 @@ namespace EasyEPlanner
         {
             var articleName = "";
 
-            ArticleReference[] articlesRefs = function.ArticleReferences;
+            var articlesRefs = function.ArticleReferences;
             if (articlesRefs.Length > 0 &&
                 function.ArticleReferences[0].PartNr != "" &&
                 function.ArticleReferences[0].PartNr != null)
@@ -427,7 +427,7 @@ namespace EasyEPlanner
                 };
 
                 parameters = Regex.Replace(parameters, 
-                    ConstVars.RusAsEngPattern, ConstVars.RusAsEnsEvaluator);
+                    CommonConst.RusAsEngPattern, CommonConst.RusAsEnsEvaluator);
             }
 
             if (parameters == null)

@@ -6808,7 +6808,7 @@ namespace TechObject
 
             ModesManager modesManager = GetModesManager;
             List<Mode> modes = modesManager.GetModes;
-            foreach (Mode mode in modes)
+            foreach (var mode in modes)
             {
                 errors += mode.Check();
             }

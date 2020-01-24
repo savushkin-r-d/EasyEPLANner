@@ -301,7 +301,7 @@ namespace StaticHelper
     /// <summary>
     /// Класс содержащий общие константы  для проекта.
     /// </summary>
-    public static class ConstVars
+    public static class CommonConst
     {
         /// <summary>
         /// Evaluator для замены заглавных русских букв на английские.

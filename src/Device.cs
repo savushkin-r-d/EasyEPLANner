@@ -3302,7 +3302,7 @@ namespace Device
         {
             var res = "";
 
-            foreach (IODevice dev in devices)
+            foreach (var dev in devices)
             {
                 res += dev.Check();
             }
@@ -3949,7 +3949,7 @@ namespace Device
             var checkingList = new List<bool>();
             foreach (Match deviceMatch in deviceMatches)
             {
-                IODevice device = GetDevice(deviceMatch.Value);
+                var device = GetDevice(deviceMatch.Value);
                 if (device.DeviceSubType == DeviceSubType.V_AS_MIXPROOF ||
                     device.DeviceSubType == DeviceSubType.V_AS_DO1_DI2)
                 {
@@ -3997,7 +3997,7 @@ namespace Device
             var errorsBuffer = "";
             foreach (Match deviceMatch in deviceMatches)
             {
-                IODevice device = GetDevice(deviceMatch.Value);
+                var device = GetDevice(deviceMatch.Value);
                 string parameter = device.GetRuntimeParameter("R_AS_NUMBER");
                 if (parameter == null)
                 {

@@ -66,7 +66,7 @@ namespace EasyEPlanner
         /// </summary>
         private void PrepareForReading()
         {
-            Project project = ApiHelper.GetProject();
+            var project = ApiHelper.GetProject();
             var objectsFinder = new DMObjectsFinder(project);
             var functionsFilter = new FunctionsFilter();
 
@@ -93,7 +93,7 @@ namespace EasyEPlanner
         private bool CheckA1()
         {
             List<int> theNumbers = new List<int>();
-            foreach (Function function in functionsForSearching)
+            foreach (var function in functionsForSearching)
             {
                 Match match = IONameRegex.Match(function.VisibleName);
                 if (match.Success)
@@ -116,7 +116,7 @@ namespace EasyEPlanner
         /// </summary>
         private void ReadNodes()
         {
-            foreach (Function function in functionsForSearching)
+            foreach (var function in functionsForSearching)
             {
                 bool needToSkip = NeedSkipNode(function);
                 if (needToSkip == true)
@@ -125,7 +125,7 @@ namespace EasyEPlanner
                 }
 
                 isContainsNodes = true;
-                Match match = IONameRegex.Match(function.VisibleName);
+                var match = IONameRegex.Match(function.VisibleName);
                 int nodeNumber = Convert.ToInt32(match.Groups["n"].Value);
                 string name = $"A{nodeNumber}";
                 string ipAdress = GetIPAdressFromFunction(function);
@@ -213,7 +213,7 @@ namespace EasyEPlanner
         private string GetNodeTypeFromFunction(Function function)
         {
             var type = "";
-            foreach (Article article in function.Articles)
+            foreach (var article in function.Articles)
             {
                 if (!article.Properties[Eplan.EplApi.DataModel
                     .Properties.Article.ARTICLE_TYPENR].IsEmpty)
@@ -254,7 +254,7 @@ namespace EasyEPlanner
         /// <param name="isContainsNodes">Прочитаны или нет узлы</param>
         private void ReadModules(bool isContainsNodes)
         {
-            foreach (Function function in functionsForSearching)
+            foreach (var function in functionsForSearching)
             {
                 bool needSkipModule = NeedSkipModule(function);
                 if (needSkipModule == true)
@@ -262,7 +262,7 @@ namespace EasyEPlanner
                     continue;
                 }
 
-                Match match = IONameRegex.Match(function.VisibleName);
+                var match = IONameRegex.Match(function.VisibleName);
                 int moduleNumber = Convert.ToInt32(match.Groups["n"].Value);
                 int shortModuleNumber = moduleNumber % 100;
                 int shortNodeNumber;
@@ -318,7 +318,7 @@ namespace EasyEPlanner
                 return skip;
             }
 
-            Match match = IONameRegex.Match(function.VisibleName);
+            var match = IONameRegex.Match(function.VisibleName);
             int moduleNumber = Convert.ToInt32(match.Groups["n"].Value);
             if (moduleNumber % 100 == 0 || moduleNumber == numberA1)
             {
@@ -418,7 +418,7 @@ namespace EasyEPlanner
         private bool NeedSkipFunction(Function function)
         {
             var skip = false;
-            Match match = IONameRegex.Match(function.VisibleName);
+            var match = IONameRegex.Match(function.VisibleName);
             if (match.Success == false ||
                 !function.Properties.FUNC_SUPPLEMENTARYFIELD[1].IsEmpty)
             {

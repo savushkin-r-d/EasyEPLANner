@@ -106,7 +106,7 @@ namespace EasyEPlanner
                 SelectedClampFunction);
 
             if (SelectedClampFunction.Properties.FUNC_TEXT.IsEmpty ||
-                SelectedClampFunction.Properties.FUNC_TEXT == ConstVars.Reserve)
+                SelectedClampFunction.Properties.FUNC_TEXT == CommonConst.Reserve)
             {
                 //Если нет функционального текста, устанавливаем его.
                 if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
@@ -124,17 +124,17 @@ namespace EasyEPlanner
                     NewFunctionalText)
                 {
                     ResetDevicesChannel = NewFunctionalText;
-                    NewFunctionalText = ConstVars.Reserve;
+                    NewFunctionalText = CommonConst.Reserve;
                 }
                 else
                 {
                     if ((Control.ModifierKeys & Keys.Control) ==
                         Keys.Control)
                     {
-                        if (!(oldFunctionalText + ConstVars
+                        if (!(oldFunctionalText + CommonConst
                             .NewLineWithCarriageReturn)
                             .Contains(SelectedChannel.Comment +
-                            ConstVars.NewLineWithCarriageReturn))
+                            CommonConst.NewLineWithCarriageReturn))
                         {
                             MessageBox.Show(
                                 "Действие канала устройства (\"" +
@@ -164,14 +164,14 @@ namespace EasyEPlanner
                                 //заменяем ее на "Резерв".
                                 if (NewFunctionalText[0] != '+')
                                 {
-                                    NewFunctionalText = ConstVars.Reserve;
+                                    NewFunctionalText = CommonConst.Reserve;
                                 }
                             }
                         }
                         else
                         {
                             SetDevicesChannel = NewFunctionalText;
-                            string text = ConstVars.NewLineWithCarriageReturn +
+                            string text = CommonConst.NewLineWithCarriageReturn +
                                 SelectedDevice.EPlanName;
                             NewFunctionalText = oldFunctionalText + text;
                         }
@@ -294,16 +294,16 @@ namespace EasyEPlanner
             const string PhoenixContact = "PXC";
 
             string functionalText = SelectedDevice.EPlanName + 
-                ConstVars.NewLineWithCarriageReturn;
+                CommonConst.NewLineWithCarriageReturn;
             if (string.IsNullOrEmpty(SelectedDevice.Description) == false)
             {
                 functionalText += SelectedDevice.Description +
-                    ConstVars.NewLineWithCarriageReturn;
+                    CommonConst.NewLineWithCarriageReturn;
             }
             if (string.IsNullOrEmpty(SelectedChannel.Comment) == false)
             {
                 functionalText += SelectedChannel.Comment +
-                    ConstVars.NewLineWithCarriageReturn;
+                    CommonConst.NewLineWithCarriageReturn;
             }
 
             int propertyNumber = (int) Eplan.EplApi.DataModel.Properties
@@ -390,7 +390,7 @@ namespace EasyEPlanner
             foreach (Match match in matches)
             {
                 string value = match.Value;
-                value = value.Replace(ConstVars.NewLineWithCarriageReturn, "");
+                value = value.Replace(CommonConst.NewLineWithCarriageReturn, "");
                 if (value == deviceName)
                 {
                     isContains = true;

@@ -847,23 +847,23 @@ namespace EasyEPlanner
                     string replacedDeviceDescription = device.Description.
                         Replace(PlusSymbol.ToString(),
                         SymbolForPlusReplacing);
-                    functionalText += ConstVars.NewLineWithCarriageReturn + 
+                    functionalText += CommonConst.NewLineWithCarriageReturn + 
                         replacedDeviceDescription;
                     
                     if (!string.IsNullOrEmpty(channel.Comment))
                     {
-                        functionalText += ConstVars.NewLineWithCarriageReturn + 
+                        functionalText += CommonConst.NewLineWithCarriageReturn + 
                             channel.Comment;
                     }
                 }
                 else
                 {
-                    functionalText += ConstVars.NewLineWithCarriageReturn + 
+                    functionalText += CommonConst.NewLineWithCarriageReturn + 
                         device.Description;
 
                     if(!string.IsNullOrEmpty(channel.Comment))
                     {
-                        functionalText += ConstVars.NewLineWithCarriageReturn + 
+                        functionalText += CommonConst.NewLineWithCarriageReturn + 
                             channel.Comment;
                     }
                 }
@@ -871,7 +871,7 @@ namespace EasyEPlanner
                 if (IsPhoenixContactIOLinkModule(devicePartNumber) &&
                     device.Channels.Count > 1)
                 {
-                    functionalText += ConstVars.NewLineWithCarriageReturn + 
+                    functionalText += CommonConst.NewLineWithCarriageReturn + 
                         ApiHelper.GetChannelNameForIOLinkModuleFromString(
                             channel.Name);
                 }
@@ -1316,16 +1316,16 @@ namespace EasyEPlanner
                     string replacedDeviceDescription = device.Description.
                         Replace(PlusSymbol.ToString(), SymbolForPlusReplacing);
                     sortedDevices += device.EPlanName + 
-                        ConstVars.NewLineWithCarriageReturn +
+                        CommonConst.NewLineWithCarriageReturn +
                         replacedDeviceDescription +
-                        ConstVars.NewLineWithCarriageReturn;
+                        CommonConst.NewLineWithCarriageReturn;
                 }
                 else
                 {
                     sortedDevices += device.EPlanName + 
-                        ConstVars.NewLineWithCarriageReturn +
+                        CommonConst.NewLineWithCarriageReturn +
                         device.Description +
-                        ConstVars.NewLineWithCarriageReturn;
+                        CommonConst.NewLineWithCarriageReturn;
                 }
             }
 
@@ -1358,7 +1358,7 @@ namespace EasyEPlanner
             devicesList.Sort(ASInterfaceDevicesComparer);
 
             int lastASNumber = 0;
-            string devicesWithoutASNumber = ConstVars.NewLineWithCarriageReturn;
+            var devicesWithoutASNumber = CommonConst.NewLineWithCarriageReturn;
             var sortedDevices = "";
 
             foreach (Device.IODevice device in devicesList)
@@ -1368,7 +1368,7 @@ namespace EasyEPlanner
                 if (numberAsString == null)
                 {
                     devicesWithoutASNumber += device.EPlanName
-                        + ConstVars.NewLineWithCarriageReturn;
+                        + CommonConst.NewLineWithCarriageReturn;
                     continue;
                 }
 
@@ -1393,7 +1393,7 @@ namespace EasyEPlanner
                         var NewLines = "";
                         for (int i = 0; i < difference; i++)
                         {
-                            NewLines += ConstVars.NewLineWithCarriageReturn;
+                            NewLines += CommonConst.NewLineWithCarriageReturn;
                         }
 
                         sortedDevices += NewLines + device.EPlanName;
@@ -1407,7 +1407,7 @@ namespace EasyEPlanner
                         }
                         else
                         {
-                            sortedDevices += ConstVars
+                            sortedDevices += CommonConst
                                 .NewLineWithCarriageReturn + device.EPlanName;
 
                         }
@@ -1477,7 +1477,7 @@ namespace EasyEPlanner
                                 ToString(ISOCode.Language.L___);
                         }
 
-                        if (functionalTextRuru != ConstVars.Reserve)
+                        if (functionalTextRuru != CommonConst.Reserve)
                         {
                             sortedTerminals.Add(terminal);
                         }

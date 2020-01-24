@@ -53,11 +53,11 @@ namespace EasyEPlanner
         /// </summary>
         private void ReadBinding()
         {
-            foreach (IO.IONode node in IOManager.IONodes)
+            foreach (var node in IOManager.IONodes)
             {
-                foreach (IO.IOModule module in node.IOModules)
+                foreach (var module in node.IOModules)
                 {
-                    foreach (Function function in module.Function.SubFunctions)
+                    foreach (var function in module.Function.SubFunctions)
                     {
                         ReadModuleClampBinding(node, module, function);
                     }
@@ -138,7 +138,7 @@ namespace EasyEPlanner
 
             string description = ApiHelper.GetFunctionalText(
                 clampFunction);
-            if (description == "" || description.Contains(ConstVars.Reserve))
+            if (description == "" || description.Contains(CommonConst.Reserve))
             {
                 skip = true;
                 return skip;
@@ -169,10 +169,10 @@ namespace EasyEPlanner
         {
             int eplanNameLength;
 
-            if (description.Contains(ConstVars.NewLineWithCarriageReturn) == 
+            if (description.Contains(CommonConst.NewLineWithCarriageReturn) == 
                 true)
             {
-                eplanNameLength = description.IndexOf(ConstVars
+                eplanNameLength = description.IndexOf(CommonConst
                     .NewLineWithCarriageReturn);
                 if (eplanNameLength > 0)
                 {
@@ -181,7 +181,7 @@ namespace EasyEPlanner
             }
             else
             {
-                eplanNameLength = description.IndexOf(ConstVars.NewLine);
+                eplanNameLength = description.IndexOf(CommonConst.NewLine);
                 if (eplanNameLength > 0)
                 {
                     description = description.Substring(0, eplanNameLength);
@@ -199,7 +199,7 @@ namespace EasyEPlanner
         private Function[] GetClampsByValveTerminalName(string description)
         {
             var subFunctions = new Function[0];
-            foreach (Function valveTerminalFunction in functionsForSearching)
+            foreach (var valveTerminalFunction in functionsForSearching)
             {
                 if (valveTerminalFunction.Name.Contains(description))
                 {
@@ -219,7 +219,7 @@ namespace EasyEPlanner
         private string ReadValveTerminalClampsBinding(Function[] subFunctions)
         {
             var description = "";
-            foreach (Function function in subFunctions)
+            foreach (var function in subFunctions)
             {
                 if (function.Category != Function.Enums.Category.PLCTerminal)
                 {
@@ -234,14 +234,14 @@ namespace EasyEPlanner
                 bool isInt = int.TryParse(clampNumber, out _);
                 if (isInt == true && 
                     clampBindedDevice.Length != 0 && 
-                    clampBindedDevice != ConstVars.Reserve)
+                    clampBindedDevice != CommonConst.Reserve)
                 {
                     var deviceMatch = Regex.Match(clampBindedDevice, 
                         DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
                     while (deviceMatch.Success)
                     {
                         string deviceName = deviceMatch.Groups["name"].Value;
-                        description += $"{ConstVars.NewLineWithCarriageReturn}" +
+                        description += $"{CommonConst.NewLineWithCarriageReturn}" +
                             $"{deviceName}";
 
                         // Дополнительно установить параметр R_VTUG_NUMBER
@@ -266,8 +266,7 @@ namespace EasyEPlanner
         private void SetDeviceRuntimeParameters(
             Dictionary<string, double> parameters, string deviceName)
         {
-            Device.IODevice dev = DeviceManager.GetInstance()
-                .GetDevice(deviceName);
+            var dev = DeviceManager.GetInstance().GetDevice(deviceName);
             foreach (KeyValuePair<string, double> parameter in parameters)
             {
                 dev.SetRuntimeParameter(parameter.Key, parameter.Value);
@@ -291,11 +290,11 @@ namespace EasyEPlanner
             {
                 //Для многострочного описания убираем tab+\r\n
                 description = description.Replace(
-                    $"\t{ConstVars.NewLineWithCarriageReturn}", "");
+                    $"\t{CommonConst.NewLineWithCarriageReturn}", "");
                 description = description.Replace(
-                    $"\t{ConstVars.NewLine}", "");
+                    $"\t{CommonConst.NewLine}", "");
 
-                int endPosition = description.IndexOf(ConstVars.NewLine);
+                int endPosition = description.IndexOf(CommonConst.NewLine);
                 if (endPosition > 0)
                 {
                     comment = description.Substring(endPosition + 1);
@@ -303,7 +302,7 @@ namespace EasyEPlanner
                 }
 
                 description = Regex.Replace(description,
-                    ConstVars.RusAsEngPattern, ConstVars.RusAsEnsEvaluator);
+                    CommonConst.RusAsEngPattern, CommonConst.RusAsEnsEvaluator);
                 actionMatch = Regex.Match(comment, 
                     IODevice.IOChannel.ChannelCommentPattern,
                     RegexOptions.IgnoreCase);
@@ -311,7 +310,7 @@ namespace EasyEPlanner
                 comment = Regex.Replace(comment,
                     IODevice.IOChannel.ChannelCommentPattern,
                     "", RegexOptions.IgnoreCase);
-                comment = comment.Replace(ConstVars.NewLine, ". ").Trim();
+                comment = comment.Replace(CommonConst.NewLine, ". ").Trim();
                 if (comment.Length > 0 && comment[comment.Length - 1] != '.')
                 {
                     comment += ".";
@@ -320,8 +319,8 @@ namespace EasyEPlanner
             else
             {
                 description = Regex.Replace(description,
-                    ConstVars.RusAsEngPattern,
-                    ConstVars.RusAsEnsEvaluator);
+                    CommonConst.RusAsEngPattern,
+                    CommonConst.RusAsEnsEvaluator);
                 actionMatch = Regex.Match(comment,
                     IODevice.IOChannel.ChannelCommentPattern,
                     RegexOptions.IgnoreCase);
@@ -347,7 +346,7 @@ namespace EasyEPlanner
             var descriptionMatches = Regex.Matches(description,
                 DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
             int devicesCount = descriptionMatches.Count;
-            if (devicesCount < 1 && !description.Equals(ConstVars.Reserve))
+            if (devicesCount < 1 && !description.Equals(CommonConst.Reserve))
             {
                 ProjectManager.GetInstance().AddLogMessage(
                     $"\"{module.Function.VisibleName}:{clamp}\" - неверное " +
@@ -357,17 +356,17 @@ namespace EasyEPlanner
             foreach (Match descriptionMatch in descriptionMatches)
             {
                 string deviceName = descriptionMatch.Groups["name"].Value;
-                IODevice device = deviceManager.GetDevice(deviceName);
+                var device = deviceManager.GetDevice(deviceName);
 
                 var clampComment = "";
                 if (actionMatch.Success)
                 {
                     clampComment = actionMatch.Value;
                     if (clampComment.Contains(
-                        ConstVars.NewLineWithCarriageReturn))
+                        CommonConst.NewLineWithCarriageReturn))
                     {
                         clampComment = clampComment.Replace(
-                            ConstVars.NewLineWithCarriageReturn, "");
+                            CommonConst.NewLineWithCarriageReturn, "");
                     }
                 }
 
