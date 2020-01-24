@@ -119,8 +119,9 @@ namespace EasyEPlanner
 
         public bool Execute(ActionCallingContext ctx)
         {
-            MessageBox.Show($"Версия надстройки - {GetVersion()}", 
-                "Версия надстройки", MessageBoxButtons.OK, 
+            string message = $"Версия надстройки - {GetVersion()}\n" +
+               "Проект распространяется под лицензией MIT.";
+            MessageBox.Show(message, "Версия надстройки", MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
             return true;
         }
