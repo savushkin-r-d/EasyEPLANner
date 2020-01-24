@@ -546,9 +546,9 @@ DO_VIRT | Виртуальный дискретный входной сигна�
 АО | Аналоговый выходной сигнал
 АО_VIRT | Виртуальный аналоговый выходной сигнал
 Y | Пневмоостров Festo
-DEV_VTUG_8 | SPECIAL Festo valve terminal
-DEV_VTUG_16 | SPECIAL Festo valve terminal
-DEV_VTUG_24 | SPECIAL Festo valve terminal
+DEV_VTUG_8 | SPECIAL Festo valve terminal (16 клапанов)
+DEV_VTUG_16 | SPECIAL Festo valve terminal (32 клапанов)
+DEV_VTUG_24 | SPECIAL Festo valve terminal (48 клапанов)
 PT | Датчик давления
 PT_IOLINK | **IO-Link** датчик давления
 
