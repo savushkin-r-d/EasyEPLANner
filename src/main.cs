@@ -54,7 +54,12 @@ namespace EasyEPlanner
             menuID = oMenu.AddMenuItem(
                 "Экспорт технологических устройств в Excel",
                 "ExportTechDevsToExcel",
-                "Экспорт технологических устройств в Excel", menuID, 1, false, true);
+                "Экспорт технологических устройств в Excel", menuID, 1, false, false);
+
+            menuID = oMenu.AddMenuItem(
+                "Экспорт спецификации устройств проекта в Excel",
+                "ProjectSpecificationExport",
+                "Экспорт спецификации устройств проекта в Excel", menuID, 1, false, true);
 
             menuID = oMenu.AddMenuItem("Редактировать технологические объекты",
                 "ShowTechObjectsAction",
