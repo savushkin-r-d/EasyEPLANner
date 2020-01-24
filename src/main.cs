@@ -58,7 +58,7 @@ namespace EasyEPlanner
 
             menuID = oMenu.AddMenuItem(
                 "Экспорт спецификации устройств проекта в Excel",
-                "ProjectSpecificationExport",
+                "ExportProjectSpecificationToExcel",
                 "Экспорт спецификации устройств проекта в Excel", menuID, 1, false, true);
 
             menuID = oMenu.AddMenuItem("Редактировать технологические объекты",
@@ -334,6 +334,46 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="actionProperties"> This object needs to be filled with 
         /// information about the action.</param>
+        public void GetActionProperties(ref ActionProperties actionProperties)
+        {
+        }
+    }
+    //-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    public class ExportProjectSpecificationToExcel : IEplAction
+    {
+        ~ExportProjectSpecificationToExcel() { }
+
+        public bool Execute(ActionCallingContext ctx)
+        {
+            try
+            {
+                Project currentProject = EProjectManager.GetInstance().GetCurrentPrj();
+                if (currentProject == null)
+                {
+                    MessageBox.Show("Нет открытого проекта!", "EPlaner",
+                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+                else
+                {
+                    //TODO: save function
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            return true;
+        }
+
+        public bool OnRegister(ref string Name, ref int Ordinal)
+        {
+            Name = "ExportProjectSpecificationToExcel";
+            Ordinal = 30;
+
+            return true;
+        }
+
         public void GetActionProperties(ref ActionProperties actionProperties)
         {
         }
