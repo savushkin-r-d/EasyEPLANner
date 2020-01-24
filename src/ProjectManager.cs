@@ -167,11 +167,19 @@ namespace EasyEPlanner
                 string projectsFolder = "";
 
                 string[] projectsFoldersArray = projectsFolders.Split(';');
-                for (int i = 0; i < projectsFolder.Length; i++)
+                string firstPath = "";
+                bool firstPathIsSaved = false;
+                foreach(string pathFromArray in projectsFoldersArray)
                 {
-                    if (projectsFoldersArray[i] != "")
+                    if (pathFromArray != "")
                     {
-                        projectsFolders = projectsFoldersArray[i];
+                        projectsFolder = pathFromArray;
+                        if (!firstPathIsSaved)
+                        { 
+                            firstPath = pathFromArray;
+                            firstPathIsSaved = true;
+                        }
+
                         if (projectsFolder.Last() != '\\')
                         {
                             projectsFolder += "\\";
@@ -183,6 +191,16 @@ namespace EasyEPlanner
                             return projectsFolder;
                         }
                     }
+                }
+
+                if(firstPath !="")
+                {
+                    return firstPath;
+                }
+                else
+                {
+                    MessageBox.Show("Путь к каталогу с проектами не найден.\nПожалуйста, проверьте конфигурацию",
+                   "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch
