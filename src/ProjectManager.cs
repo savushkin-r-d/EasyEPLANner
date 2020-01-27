@@ -190,7 +190,7 @@ namespace EasyEPlanner
                     }
                 }
 
-                if (firstPathIsSaved == false && firstPath != "")
+                if (firstPathIsSaved == false && firstPath == "")
                 {
                     MessageBox.Show("Путь к каталогу с проектами не найден.\n" +
                         "Пожалуйста, проверьте конфигурацию!", "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Error);
