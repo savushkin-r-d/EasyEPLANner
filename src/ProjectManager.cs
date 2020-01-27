@@ -197,7 +197,7 @@ namespace EasyEPlanner
                 }
                 else
                 {
-                    return firstPath;
+                    return firstPath + '\\';
                 }
             }
             catch
