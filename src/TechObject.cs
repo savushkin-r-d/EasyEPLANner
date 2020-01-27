@@ -3416,7 +3416,10 @@ namespace TechObject
         // Возврат параметров базовой операции
         public BaseOperationProperty[] BaseOperationProperties
         {
-            get { return baseOperationProperties; }
+            get 
+            {
+                return baseOperationProperties; 
+            }
         }
 
         #region Реализация ITreeViewItem
@@ -7042,28 +7045,31 @@ namespace TechObject
     }
 
     // Имитационное хранилище БД
-    public static class DBImitation
+    public class DBImitation
     {
         // Базовые операции
-        private static BaseOperation[] baseOperationsList = new BaseOperation[]
+        private static BaseOperation[] baseOperationsList() 
         {
-            new BaseOperation("", ""),
-            new BaseOperation("Мойка", "WASHING_CIP"),
-            new BaseOperation("Наполнение", "luaName1"),
-            new BaseOperation("Хранение", "luaName2"),
-            new BaseOperation("Выдача", "luaName3"),
-        };
+            return new BaseOperation[]
+            {
+                new BaseOperation("", ""),
+                new BaseOperation("Мойка", "WASHING_CIP"),
+                new BaseOperation("Наполнение", "luaName1"),
+                new BaseOperation("Хранение", "luaName2"),
+                new BaseOperation("Выдача", "luaName3"),
+            };
+        } 
 
         // Возврат базовых операций
         public static BaseOperation[] GetBaseOperations()
         {
-            return baseOperationsList;
+            return baseOperationsList();
         }
 
         // Возврат базовых технологических объектов
         public static BaseTechObject[] GetBaseTechObjects()
         {
-            return baseTechObjectArr;
+            return baseTechObjectArr();
         }
 
         // Имитиация хранимой процедуры поиска ОУ по имени базового технологического объекта
@@ -7071,7 +7077,7 @@ namespace TechObject
         {
             string nameEplan = "";
 
-            foreach (BaseTechObject baseTechObject in baseTechObjectArr)
+            foreach (BaseTechObject baseTechObject in baseTechObjectArr())
             {
                 if (baseTechObject.GetName() == baseTechObjectName)
                 {
@@ -7085,7 +7091,7 @@ namespace TechObject
         // Получение тех. объекта по номеру
         public static BaseTechObject GetTObject(string name)
         {
-            foreach (BaseTechObject baseTechObject in baseTechObjectArr)
+            foreach (BaseTechObject baseTechObject in baseTechObjectArr())
             {
                 if (name == baseTechObject.GetName())
                 {
@@ -7099,14 +7105,14 @@ namespace TechObject
         public static string FindOperationLuaName(string name)
         {
             var luaName = "";
-            luaName = baseOperationsList.First(x => x.GetName().Contains(name)).GetLuaName();
+            luaName = baseOperationsList().First(x => x.GetName().Contains(name)).GetLuaName();
             return luaName;
         }
 
         // Возврат параметров базовой перации по имени из БД
         public static BaseOperationProperty[] GetOperParams(string baseOperName, string baseObjectName)
         {
-            BaseTechObject currObj = baseTechObjectArr.First(x => x.GetName().Equals(baseObjectName));
+            BaseTechObject currObj = baseTechObjectArr().First(x => x.GetName().Equals(baseObjectName));
             BaseOperation currOper = currObj.BaseOperations.First(x => x.GetName().Equals(baseOperName));
             BaseOperationProperty[] operationParams = currOper.BaseOperationProperties;
             if (operationParams == null) return new BaseOperationProperty[0];
@@ -7117,74 +7123,98 @@ namespace TechObject
 
         // ------TANK PARAMS ----------------------
         // Мойка
-        private static BaseOperationProperty[] tankWashParams = new BaseOperationProperty[]
+        private static BaseOperationProperty[] tankWashParams()
         {
-            new BaseOperationProperty("CIP_WASH_END", "Мойка завершена", ""),
-            new BaseOperationProperty("DI_CIP_FREE", "МСА свободна", "")
-        };
+            return new BaseOperationProperty[] 
+            {
+                new BaseOperationProperty("CIP_WASH_END", "Мойка завершена", ""),
+                new BaseOperationProperty("DI_CIP_FREE", "МСА свободна", "")
+            };
+        }
 
         // Наполнение
-        private static BaseOperationProperty[] tankFillParams = new BaseOperationProperty[]
+        private static  BaseOperationProperty[] tankFillParams()
         {
-            new BaseOperationProperty("Param1", "Параметр 1", ""),
-            new BaseOperationProperty("Param2", "Параметр 2", "")
-        };
-
+            return new BaseOperationProperty[]
+            {
+                new BaseOperationProperty("Param1", "Параметр 1", ""),
+                new BaseOperationProperty("Param2", "Параметр 2", "")
+            };
+        }
+             
         // Хранение
-        private static BaseOperationProperty[] tankStorageParams = new BaseOperationProperty[]
+        private static BaseOperationProperty[] tankStorageParams()
         {
-            new BaseOperationProperty("Param3", "Параметр 3", ""),
-            new BaseOperationProperty("Param4", "Параметр 4", "")
-        };
+            return new BaseOperationProperty[]
+            {
+                new BaseOperationProperty("Param3", "Параметр 3", ""),
+                new BaseOperationProperty("Param4", "Параметр 4", "")
+            };
+        }
 
         // Выдача
-        private static BaseOperationProperty[] tankDeliveryParams = new BaseOperationProperty[]
+        private static BaseOperationProperty[] tankDeliveryParams() 
         {
-            new BaseOperationProperty("Param5", "Параметр 5", ""),
-            new BaseOperationProperty("Param6", "Параметр 6", "")
-        };
+            return new BaseOperationProperty[]
+            {
+                new BaseOperationProperty("Param5", "Параметр 5", ""),
+                new BaseOperationProperty("Param6", "Параметр 6", "")
+            };
+        }
 
         //---------------------- TEST EMPTY PARAMS ------------------------
-        private static BaseOperationProperty[] emptyParams = new BaseOperationProperty[0];
+        private static BaseOperationProperty[] emptyParams() 
+        {
+            return new BaseOperationProperty[0];
+        }
 
         //---------------- Init operations ---------------------------------------------
 
         // Базовые операции
-        private static BaseOperation[] baseTankOperations = new BaseOperation[]
+        private static BaseOperation[] baseTankOperations() 
         {
-            new BaseOperation("", ""),
-            new BaseOperation("Мойка", "WASHING_CIP", tankWashParams),
-            new BaseOperation("Наполнение", "luaName1", tankFillParams),
-            new BaseOperation("Хранение", "luaName2", tankStorageParams),
-            new BaseOperation("Выдача", "luaName3", tankDeliveryParams),
-        };
+            return new BaseOperation[]
+            {
+                new BaseOperation("", ""),
+                new BaseOperation("Мойка", "WASHING_CIP", tankWashParams()),
+                new BaseOperation("Наполнение", "luaName1", tankFillParams()),
+                new BaseOperation("Хранение", "luaName2", tankStorageParams()),
+                new BaseOperation("Выдача", "luaName3", tankDeliveryParams()),
+            };
+        }
 
-        private static BaseOperation[] baseTestOperations = new BaseOperation[]
+        private static BaseOperation[] baseTestOperations() 
         {
-            new BaseOperation("", ""),
-            new BaseOperation("Мойка", "WASHING_CIP", emptyParams),
-            new BaseOperation("Наполнение", "luaName1", emptyParams),
-            new BaseOperation("Хранение", "luaName2", emptyParams),
-            new BaseOperation("Выдача", "luaName3", emptyParams),
-        };
+            return new BaseOperation[]
+            {
+                new BaseOperation("", ""),
+                new BaseOperation("Мойка", "WASHING_CIP", emptyParams()),
+                new BaseOperation("Наполнение", "luaName1", emptyParams()),
+                new BaseOperation("Хранение", "luaName2", emptyParams()),
+                new BaseOperation("Выдача", "luaName3", emptyParams()),
+            };
+        }
 
         //---------------- Init objects ---------------------------------------------
 
-        public static BaseTechObject[] baseTechObjectArr = new BaseTechObject[]
+        public static BaseTechObject[] baseTechObjectArr()
         {
-            new BaseTechObject("", "", 0, baseTestOperations),
-            new BaseTechObject("Автомат", "automat", 2, baseTestOperations),
-            new BaseTechObject("Бойлер", "boil", 2, baseTestOperations),
-            new BaseTechObject("Мастер", "master", 1, baseTestOperations),
-            new BaseTechObject("Линия", "line", 2, baseTestOperations),
-            new BaseTechObject("Линия приемки", "line_in", 2, baseTestOperations),
-            new BaseTechObject("Линия выдачи", "line_out", 2, baseTestOperations),
-            new BaseTechObject("Пастеризатор", "pasteurizator", 2, baseTestOperations),
-            new BaseTechObject("Пост", "post", 2, baseTestOperations),
-            new BaseTechObject("Танк", "tank", 1, baseTankOperations),
-            new BaseTechObject("Узел подогрева", "heater_node", 2, baseTestOperations),
-            new BaseTechObject("Узел охлаждения", "cooler_node", 2, baseTestOperations),
-            new BaseTechObject("Узел перемешивания", "mix_node", 2, baseTestOperations)
-        };
+            return new BaseTechObject[]
+            {
+                new BaseTechObject("", "", 0, baseTestOperations()),
+                new BaseTechObject("Автомат", "automat", 2, baseTestOperations()),
+                new BaseTechObject("Бойлер", "boil", 2, baseTestOperations()),
+                new BaseTechObject("Мастер", "master", 1, baseTestOperations()),
+                new BaseTechObject("Линия", "line", 2, baseTestOperations()),
+                new BaseTechObject("Линия приемки", "line_in", 2, baseTestOperations()),
+                new BaseTechObject("Линия выдачи", "line_out", 2, baseTestOperations()),
+                new BaseTechObject("Пастеризатор", "pasteurizator", 2, baseTestOperations()),
+                new BaseTechObject("Пост", "post", 2, baseTestOperations()),
+                new BaseTechObject("Танк", "tank", 1, baseTankOperations()),
+                new BaseTechObject("Узел подогрева", "heater_node", 2, baseTestOperations()),
+                new BaseTechObject("Узел охлаждения", "cooler_node", 2, baseTestOperations()),
+                new BaseTechObject("Узел перемешивания", "mix_node", 2, baseTestOperations())
+            };
+        }     
     }
 }
