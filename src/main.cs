@@ -601,12 +601,11 @@ namespace EasyEPlanner
                 }
                 else
                 {
-                    string path = ProjectManager.GetInstance().GetPtusaProjectsPath() +
-                        EProjectManager.GetInstance().GetModifyingCurrentProjectName();
                     string projectName = EProjectManager.GetInstance().GetCurrentProjectName();
                     EProjectManager.GetInstance().CheckProjectName(ref projectName);
-
-                    ProjectManager.GetInstance().SaveAsLua(projectName, path, silentMode);
+                    string path = ProjectManager.GetInstance().GetPtusaProjectsPath(projectName) +
+                      projectName;
+                    ProjectManager.GetInstance().SaveAsLua(projectName, path, silentMode);                 
                 }
             }
             catch (Exception ex)

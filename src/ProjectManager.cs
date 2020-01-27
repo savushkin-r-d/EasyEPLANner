@@ -104,7 +104,7 @@ namespace EasyEPlanner
             errStr = "";
 
             StreamReader sr = null;
-            string path = GetPtusaProjectsPath() + projectName + fileName;
+            string path = GetPtusaProjectsPath(projectName) + projectName + fileName;
 
             try
             {
@@ -133,7 +133,7 @@ namespace EasyEPlanner
         /// Путь к файлам .lua (к проекту)
         /// </summary>
         /// <returns></returns>
-        public string GetPtusaProjectsPath()
+        public string GetPtusaProjectsPath(string projectName)
         {
             try
             {
@@ -162,20 +162,48 @@ namespace EasyEPlanner
                 PInvoke.IniFile iniFile = new PInvoke.IniFile(path);
 
                 // Считывание и возврат пути каталога проектов
-                string projectsFolder = iniFile.ReadString("path", "folder_path", "");
-                if (projectsFolder.Last() == '\\')
+                string projectsFolders =
+                    iniFile.ReadString("path", "folder_path", "");
+                string[] projectsFolderArray = projectsFolders.Split(';');
+                string projectsFolder = "";
+                bool firstPathIsSaved = false;
+                string firstPath = "";
+                foreach (string pathFromArray in projectsFolderArray)
                 {
-                    return projectsFolder;
+                    if (pathFromArray != "")
+                    {
+                        if (firstPathIsSaved == false)
+                        {
+                            firstPath = pathFromArray;
+                            firstPathIsSaved = true;
+                        }
+                        projectsFolder = pathFromArray;
+                        if (projectsFolder.Last() != '\\')
+                        {
+                            projectsFolder += '\\';
+                        }
+                        string projectsPath = projectsFolder + projectName;
+                        if (Directory.Exists(projectsPath))
+                        {
+                            return projectsFolder;
+                        }
+                    }
+                }
+
+                if (firstPathIsSaved == false && firstPath == "")
+                {
+                    MessageBox.Show("Путь к каталогу с проектами не найден.\n" +
+                        "Пожалуйста, проверьте конфигурацию!", "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
-                    return projectsFolder + "\\";
-                }           
+                    return firstPath + '\\';
+                }
             }
             catch
             {
                 MessageBox.Show("Файл конфигурации не найден - будет создан новый со стандартным описанием." +
-                    " Пожалуйста, измените путь к каталогу с проектами, где хранятся Lua файлы!", 
+                    " Пожалуйста, измените путь к каталогу с проектами, где хранятся Lua файлы!",
                     "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             return "";
