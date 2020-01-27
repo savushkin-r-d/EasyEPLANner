@@ -2658,7 +2658,7 @@ namespace Device
             {
                 case "TE":
                     parameters.Add("P_C0", null);
-                    parameters.Add("P_ERR", -1000);
+                    parameters.Add("P_ERR", null);
                     break;
 
                 case "TE_IOLINK":
