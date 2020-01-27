@@ -5558,7 +5558,7 @@ namespace TechObject
 
                             res += objName + ".steps = \t\t--Шаги операций.\n";
                             res += prefix + "{\n";
-                            res += prefix + baseOperation.GetLuaName().ToUpper() + " = \n";
+                            res += prefix + baseOperation.GetLuaName().ToUpper() + " =\n";
                             res += prefix + prefix + "{\n";
                             res += prefix + prefix + "DRAINAGE = " + mode.stepsMngr[0].steps.First(x => x.GetStepName().Contains("Дренаж")).GetStepNumber() + ",\n";
                             res += prefix + prefix + "}\n";
@@ -5566,7 +5566,9 @@ namespace TechObject
 
                             foreach (BaseOperationProperty param in baseOperation.BaseOperationProperties)
                             {
-                                res += objName + "." + param.GetLuaName() + " = " + param.GetValue() + "\n";
+                                string val = param.GetValue() == "" ? "nil" : param.GetValue();
+                                res += objName + "." + param.GetLuaName() + 
+                                    " = " + val + "\n";
                             }
 
                             res += "\n"; // Отступ перед новым объектом
@@ -6593,7 +6595,7 @@ namespace TechObject
         {
             modes.SetNewOwnerDevNames(newTechObjectName, this.TechNumber);
         }
-
+        
         /// <summary>
         /// Получение менеджера параметров.
         /// </summary>
