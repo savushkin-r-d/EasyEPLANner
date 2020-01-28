@@ -637,7 +637,7 @@ namespace Editor
             return null;
         }
 
-        public bool IsUseDevList
+        public virtual bool IsUseDevList
         {
             get
             {

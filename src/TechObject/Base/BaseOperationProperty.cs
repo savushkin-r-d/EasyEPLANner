@@ -42,6 +42,7 @@ namespace TechObject
         #region реализация ITreeView
         public override bool SetNewValue(string newValue)
         {
+            newValue = newValue.Trim();
             this.value = newValue;
             return true;
         }
@@ -59,6 +60,14 @@ namespace TechObject
             get
             {
                 return new string[] { name, value.ToString() };
+            }
+        }
+
+        override public bool IsUseDevList
+        {
+            get
+            {
+                return true;
             }
         }
         #endregion
