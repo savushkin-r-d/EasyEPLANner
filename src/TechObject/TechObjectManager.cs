@@ -235,17 +235,17 @@ namespace TechObject
                         {
                             case "mix_node_mix":
                                 res += techObjNameForFile + ".mix_node = " + 
-                                    attachedTechObjNameForFile + "\n";
+                                    "prg." + attachedTechObjNameForFile + "\n";
                                 break;
 
                             case "cooler_node_cooler":
-                                res += techObjNameForFile + ".cooler_node = " + 
-                                    attachedTechObjNameForFile + "\n";
+                                res += techObjNameForFile + ".cooler_node = " +
+                                    "prg." + attachedTechObjNameForFile + "\n";
                                 break;
 
                             case "heater_node_heater":
-                                res += techObjNameForFile + ".heater_node = " + 
-                                    attachedTechObjNameForFile + "\n";
+                                res += techObjNameForFile + ".heater_node = " +
+                                    "prg." + attachedTechObjNameForFile + "\n";
                                 break;
                         }
 
