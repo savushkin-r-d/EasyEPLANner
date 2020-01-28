@@ -233,17 +233,17 @@ namespace TechObject
 
                         switch (attachedTechObjectType)
                         {
-                            case "mixer_node_tank":
-                                res += techObjNameForFile + ".mixer_node = " + 
+                            case "mix_node_mix":
+                                res += techObjNameForFile + ".mix_node = " + 
                                     attachedTechObjNameForFile + "\n";
                                 break;
 
-                            case "cooler_node_tank":
+                            case "cooler_node_cooler":
                                 res += techObjNameForFile + ".cooler_node = " + 
                                     attachedTechObjNameForFile + "\n";
                                 break;
 
-                            case "heater_node_tank":
+                            case "heater_node_heater":
                                 res += techObjNameForFile + ".heater_node = " + 
                                     attachedTechObjNameForFile + "\n";
                                 break;
@@ -333,10 +333,10 @@ namespace TechObject
                     res += "\n"; // Отступ, если изменен тип объекта
                 }
                 var basicObj = DataBase.Imitation
-                    .GetNameEplan(obj.DisplayText[1]).ToLower().Split('_');
+                    .GetNameEplan(obj.DisplayText[1]).ToLower();
                 var objName = obj.NameEplanForFile.ToLower() + obj.TechNumber;
-                res += "add_functionality(" + objName + ", " + "basic_" + 
-                    basicObj[0] + ")\n";
+                res += "add_functionality(prg." + objName + ", " + "basic_" + 
+                    basicObj + ")\n";
 
                 previouslyObjectName = obj.NameEplanForFile.ToLower();
             }
