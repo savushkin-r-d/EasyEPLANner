@@ -140,16 +140,18 @@ namespace Editor
         {
             // Получение списка базовых аппаратов
             baseTechObjectList = new List<string>();
-            TechObject.BaseTechObject[] baseTechObjects = TechObject.DBImitation.GetBaseTechObjects();
-            foreach (TechObject.BaseTechObject baseTechObject in baseTechObjects)
+            TechObject.BaseTechObject[] baseTechObjects = DataBase.Imitation
+                .GetBaseTechObjects();
+            foreach (var baseTechObject in baseTechObjects)
             {
                 baseTechObjectList.Add(baseTechObject.GetName());
             }
 
             // Получение списка базовых операций
             baseModeList = new List<string>();
-            TechObject.BaseOperation[] baseOperations = TechObject.DBImitation.GetBaseOperations();
-            foreach (TechObject.BaseOperation baseOperation in baseOperations)
+            TechObject.BaseOperation[] baseOperations = DataBase.Imitation
+                .GetBaseOperations();
+            foreach (var baseOperation in baseOperations)
             {
                 baseModeList.Add(baseOperation.GetName());
             }

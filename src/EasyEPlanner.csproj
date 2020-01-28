@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigurationChecker.cs" />
+    <Compile Include="DBImitation\Imitation.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="DeviceBindingReader.cs" />
     <Compile Include="DeviceReader.cs" />
@@ -171,13 +172,35 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="StaticHelper.cs" />
-    <Compile Include="TechObject.cs" />
     <Compile Include="EditorCtrl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="EditorCtrl.Designer.cs">
       <DependentUpon>EditorCtrl.cs</DependentUpon>
     </Compile>
+    <Compile Include="TechObject\Action.cs" />
+    <Compile Include="TechObject\Action_AI_AO.cs" />
+    <Compile Include="TechObject\Action_DI_DO.cs" />
+    <Compile Include="TechObject\Action_Wash.cs" />
+    <Compile Include="TechObject\Action_WashSeats.cs" />
+    <Compile Include="TechObject\Base\BaseOperation.cs" />
+    <Compile Include="TechObject\Base\BaseOperationProperty.cs" />
+    <Compile Include="TechObject\Base\BaseTechObject.cs" />
+    <Compile Include="TechObject\LocalRestriction.cs" />
+    <Compile Include="TechObject\Mode.cs" />
+    <Compile Include="TechObject\ModesManager.cs" />
+    <Compile Include="TechObject\OperationParam.cs" />
+    <Compile Include="TechObject\OperationParams.cs" />
+    <Compile Include="TechObject\Param.cs" />
+    <Compile Include="TechObject\Params.cs" />
+    <Compile Include="TechObject\ParamsManager.cs" />
+    <Compile Include="TechObject\Restriction.cs" />
+    <Compile Include="TechObject\RestrictionManager.cs" />
+    <Compile Include="TechObject\State.cs" />
+    <Compile Include="TechObject\Step.cs" />
+    <Compile Include="TechObject\TechObject.cs" />
+    <Compile Include="TechObject\TechObjectManager.cs" />
+    <Compile Include="TechObject\TimersManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DFrm.resx">
@@ -262,6 +285,7 @@
     <None Include="Resources\save.ico" />
     <None Include="Resources\To Do%27s.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
