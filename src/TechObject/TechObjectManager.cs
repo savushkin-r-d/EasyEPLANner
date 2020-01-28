@@ -235,17 +235,17 @@ namespace TechObject
                         {
                             case "mix_node_mix":
                                 res += techObjNameForFile + ".mix_node = " + 
-                                    attachedTechObjNameForFile + "\n";
+                                    "prg." + attachedTechObjNameForFile + "\n";
                                 break;
 
                             case "cooler_node_cooler":
-                                res += techObjNameForFile + ".cooler_node = " + 
-                                    attachedTechObjNameForFile + "\n";
+                                res += techObjNameForFile + ".cooler_node = " +
+                                    "prg." + attachedTechObjNameForFile + "\n";
                                 break;
 
                             case "heater_node_heater":
-                                res += techObjNameForFile + ".heater_node = " + 
-                                    attachedTechObjNameForFile + "\n";
+                                res += techObjNameForFile + ".heater_node = " +
+                                    "prg." + attachedTechObjNameForFile + "\n";
                                 break;
                         }
 
@@ -280,8 +280,8 @@ namespace TechObject
                     switch (baseOperation.GetName())
                     {
                         case "Мойка":
-                            var objName = "prg." + obj.NameEplan.ToLower() + 
-                                obj.TechNumber.ToString();
+                            var objName = "prg." + obj.NameEplanForFile
+                                .ToLower() + obj.TechNumber.ToString();
 
                             res += objName + ".operations = \t\t--Операции.\n";
                             res += prefix + "{\n";
@@ -292,14 +292,28 @@ namespace TechObject
 
                             res += objName + ".steps = \t\t--Шаги операций.\n";
                             res += prefix + "{\n";
-                            res += prefix + baseOperation.GetLuaName()
+                            var containsDrainage = mode.stepsMngr[0].steps
+                                .Where(x => x.GetStepName()
+                                .Contains("Дренаж")).FirstOrDefault();
+                                
+                            if (containsDrainage != null)
+                            {
+                                res += prefix + baseOperation.GetLuaName()
                                 .ToUpper() + " =\n";
-                            res += prefix + prefix + "{\n";
-                            res += prefix + prefix + "DRAINAGE = " + 
-                                mode.stepsMngr[0].steps.First(x => x
-                                .GetStepName().Contains("Дренаж"))
-                                .GetStepNumber() + ",\n";
-                            res += prefix + prefix + "}\n";
+                                res += prefix + prefix + "{\n";
+                                res += prefix + prefix + "DRAINAGE = " +
+                                    mode.stepsMngr[0].steps.Where(x => x
+                                    .GetStepName().Contains("Дренаж"))
+                                    .FirstOrDefault()
+                                    .GetStepNumber() + ",\n";
+                                res += prefix + prefix + "}\n";
+                            }
+                            else
+                            {
+                                res += prefix + baseOperation.GetLuaName()
+                                    .ToUpper() + " = nil,\n";
+                            }
+
                             res += prefix + "}\n";
 
                             foreach (BaseOperationProperty param in 

@@ -103,33 +103,13 @@ namespace DataBase
             };
         }
 
-        // Наполнение
-        private static BaseOperationProperty[] tankFillParams()
+        // ------LINE PARAMS ----------------------
+        //Мойка
+        private static BaseOperationProperty[] lineWashParams()
         {
             return new BaseOperationProperty[]
             {
-                new BaseOperationProperty("Param1", "Параметр 1", ""),
-                new BaseOperationProperty("Param2", "Параметр 2", "")
-            };
-        }
-
-        // Хранение
-        private static BaseOperationProperty[] tankStorageParams()
-        {
-            return new BaseOperationProperty[]
-            {
-                new BaseOperationProperty("Param3", "Параметр 3", ""),
-                new BaseOperationProperty("Param4", "Параметр 4", "")
-            };
-        }
-
-        // Выдача
-        private static BaseOperationProperty[] tankDeliveryParams()
-        {
-            return new BaseOperationProperty[]
-            {
-                new BaseOperationProperty("Param5", "Параметр 5", ""),
-                new BaseOperationProperty("Param6", "Параметр 6", "")
+                new BaseOperationProperty("CIP_WASH_END", "Мойка завершена", "")
             };
         }
 
@@ -148,9 +128,19 @@ namespace DataBase
             {
                 new BaseOperation("", ""),
                 new BaseOperation("Мойка", "WASHING_CIP", tankWashParams()),
-                new BaseOperation("Наполнение", "luaName1", tankFillParams()),
-                new BaseOperation("Хранение", "luaName2", tankStorageParams()),
-                new BaseOperation("Выдача", "luaName3", tankDeliveryParams()),
+                new BaseOperation("Наполнение", "luaName1", emptyParams()),
+                new BaseOperation("Хранение", "luaName2", emptyParams()),
+                new BaseOperation("Выдача", "luaName3", emptyParams()),
+            };
+        }
+
+        private static BaseOperation[] baseLineOperations()
+        {
+            return new BaseOperation[]
+            {
+                new BaseOperation("",""),
+                new BaseOperation("Мойка", "WASHING_CIP", lineWashParams()),
+                new BaseOperation("Работа", "luaName1", emptyParams())
             };
         }
 
@@ -176,9 +166,9 @@ namespace DataBase
                 new BaseTechObject("Автомат", "automat", 2, baseTestOperations()),
                 new BaseTechObject("Бойлер", "boil", 2, baseTestOperations()),
                 new BaseTechObject("Мастер", "master", 1, baseTestOperations()),
-                new BaseTechObject("Линия", "line", 2, baseTestOperations()),
-                new BaseTechObject("Линия приемки", "line", 2, baseTestOperations()),
-                new BaseTechObject("Линия выдачи", "line", 2, baseTestOperations()),
+                new BaseTechObject("Линия", "line", 2, baseLineOperations()),
+                new BaseTechObject("Линия приемки", "line", 2, baseLineOperations()),
+                new BaseTechObject("Линия выдачи", "line", 2, baseLineOperations()),
                 new BaseTechObject("Пастеризатор", "pasteurizator", 2, baseTestOperations()),
                 new BaseTechObject("Пост", "post", 2, baseTestOperations()),
                 new BaseTechObject("Танк", "tank", 1, baseTankOperations()),
