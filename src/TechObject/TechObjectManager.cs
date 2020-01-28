@@ -311,7 +311,7 @@ namespace TechObject
                             else
                             {
                                 res += prefix + baseOperation.GetLuaName()
-                                    .ToUpper() + " = nil,\n";
+                                    .ToUpper() + " = { },\n";
                             }
 
                             res += prefix + "}\n";
