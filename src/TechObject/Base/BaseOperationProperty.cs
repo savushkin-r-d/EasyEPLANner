@@ -9,24 +9,20 @@ namespace TechObject
     /// <summary>    
     /// Свойство для базовой операции.
     /// </summary>
-    public class BaseOperationProperty : Editor.ObjectProperty
+    public abstract class BaseOperationProperty : Editor.ObjectProperty
     {
-        public BaseOperationProperty(string luaName, string name, object value) 
-            : base(name, value)
+        public BaseOperationProperty(string luaName, string name, bool canSave) 
+            : base(name, "")
         {
             this.luaName = luaName;
             this.name = name;
-            this.value = value;
+            this.value = "";
+            this.canSave = canSave;
         }
 
         public string GetLuaName()
         {
             return luaName;
-        }
-
-        public string GetName()
-        {
-            return name;
         }
 
         public string GetValue()
@@ -37,6 +33,24 @@ namespace TechObject
         public void SetValue(string value)
         {
             this.value = value;
+        }
+
+        public virtual bool isShowed()
+        {
+            return true;
+        }
+
+        override public bool IsUseDevList
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public virtual bool СanSave()
+        {
+            return canSave;
         }
 
         #region реализация ITreeView
@@ -62,18 +76,37 @@ namespace TechObject
                 return new string[] { name, value.ToString() };
             }
         }
-
-        override public bool IsUseDevList
-        {
-            get
-            {
-                return true;
-            }
-        }
         #endregion
 
         private string luaName; // Lua имя свойства
         private string name; // Имя свойства
         private object value; // Значение
+
+        private bool canSave; // Необходимость сохранения свойства.
+    }
+
+    public class ShowedBaseOperationProperty : BaseOperationProperty
+    {
+        public ShowedBaseOperationProperty(string luaName, string name,
+            bool canSave) : base (luaName, name, canSave) { }
+    }
+
+    public class NonShowedBaseOperationProperty : BaseOperationProperty
+    {
+        public NonShowedBaseOperationProperty(string luaName, string name,
+            bool canSave) : base(luaName, name, canSave) { }
+
+        public override bool isShowed()
+        {
+            return false;
+        }
+
+        override public bool IsUseDevList
+        {
+            get
+            {
+                return false;
+            }
+        }
     }
 }

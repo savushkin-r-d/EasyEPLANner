@@ -319,10 +319,13 @@ namespace TechObject
                             foreach (BaseOperationProperty param in 
                                 baseOperation.BaseOperationProperties)
                             {
-                                string val = param.GetValue() == 
+                                if (param.СanSave())
+                                {
+                                    string val = param.GetValue() ==
                                     "" ? "nil" : param.GetValue();
-                                res += objName + "." + param.GetLuaName() +
-                                    " = " + val + "\n";
+                                    res += objName + "." + param.GetLuaName() +
+                                        " = " + val + "\n";
+                                }                               
                             }
 
                             res += "\n"; // Отступ перед новым объектом

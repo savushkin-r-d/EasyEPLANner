@@ -10,7 +10,7 @@ namespace DataBase
     /// <summary>
     /// Имитация базы данных.
     /// </summary>
-    public class Imitation
+    public partial class Imitation
     {
         // Базовые операции
         private static BaseOperation[] baseOperationsList()
@@ -90,60 +90,13 @@ namespace DataBase
             return operationParams;
         }
 
-        //---------------- Init params ---------------------------------------------
-
-        // ------TANK PARAMS ----------------------
-        // Мойка
-        private static BaseOperationProperty[] tankWashParams()
-        {
-            return new BaseOperationProperty[]
-            {
-                new BaseOperationProperty("CIP_WASH_END", "Мойка завершена", ""),
-                new BaseOperationProperty("DI_CIP_FREE", "МСА свободна", "")
-            };
-        }
-
-        // ------LINE PARAMS ----------------------
-        //Мойка
-        private static BaseOperationProperty[] lineWashParams()
-        {
-            return new BaseOperationProperty[]
-            {
-                new BaseOperationProperty("CIP_WASH_END", "Мойка завершена", "")
-            };
-        }
-
-        //---------------------- TEST EMPTY PARAMS ------------------------
+        //---------------- Empty params ---------------------------------------
         private static BaseOperationProperty[] emptyParams()
         {
             return new BaseOperationProperty[0];
         }
 
-        //---------------- Init operations ---------------------------------------------
-
-        // Базовые операции
-        private static BaseOperation[] baseTankOperations()
-        {
-            return new BaseOperation[]
-            {
-                new BaseOperation("", ""),
-                new BaseOperation("Мойка", "WASHING_CIP", tankWashParams()),
-                new BaseOperation("Наполнение", "luaName1", emptyParams()),
-                new BaseOperation("Хранение", "luaName2", emptyParams()),
-                new BaseOperation("Выдача", "luaName3", emptyParams()),
-            };
-        }
-
-        private static BaseOperation[] baseLineOperations()
-        {
-            return new BaseOperation[]
-            {
-                new BaseOperation("",""),
-                new BaseOperation("Мойка", "WASHING_CIP", lineWashParams()),
-                new BaseOperation("Работа", "luaName1", emptyParams())
-            };
-        }
-
+        //---------------- Empty operations -----------------------------------
         private static BaseOperation[] baseTestOperations()
         {
             return new BaseOperation[]
@@ -156,8 +109,7 @@ namespace DataBase
             };
         }
 
-        //---------------- Init objects ---------------------------------------------
-
+        //---------------- Init objects ---------------------------------------
         public static BaseTechObject[] baseTechObjectArr()
         {
             return new BaseTechObject[]

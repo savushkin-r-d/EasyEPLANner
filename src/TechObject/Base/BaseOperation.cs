@@ -100,13 +100,23 @@ namespace TechObject
         // Добавление полей в массив для отображения на дереве
         private void SetItems()
         {
-            items = new Editor.ITreeViewItem[baseOperationProperties.Length];
-            var counter = 0;
-            foreach (var operParam in baseOperationProperties)
+            //items = new Editor.ITreeViewItem[baseOperationProperties.Length];
+            //var counter = 0;
+            //foreach (var operParam in baseOperationProperties)
+            //{
+            //    items[counter] = operParam;
+            //    counter++;
+            //}
+
+            var showedParameters = new List<BaseOperationProperty>();
+            foreach(var parameter in baseOperationProperties)
             {
-                items[counter] = operParam;
-                counter++;
+                if (parameter.isShowed())
+                {
+                    showedParameters.Add(parameter);
+                }
             }
+            items = showedParameters.ToArray();
         }
 
         // Сохранение в виде таблицы Lua
@@ -116,8 +126,11 @@ namespace TechObject
             res += prefix + "props =\n" + prefix + "\t{\n";
             foreach (var operParam in baseOperationProperties)
             {
-                res += "\t" + prefix + operParam.GetLuaName() + " = \'" + 
-                    operParam.GetValue() + "\',\n";
+                if (operParam.СanSave())
+                {
+                    res += "\t" + prefix + operParam.GetLuaName() + " = \'" + 
+                        operParam.GetValue() + "\',\n";
+                }
             }
             res += prefix + "\t},\n";
             return res;
