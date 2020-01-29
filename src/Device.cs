@@ -2080,18 +2080,6 @@ namespace Device
 
             AO.Add(new IOChannel("AO", -1, -1, -1, ""));
         }
-
-        public override string Check()
-        {
-            string res = base.Check();
-
-            if (ArticleName == "")
-            {
-                res += $"\"{name}\" - не задано изделие.\n";
-            }
-
-            return res;
-        }
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -2904,18 +2892,6 @@ namespace Device
             }
 
             return errStr;
-        }
-
-        public override string Check()
-        {
-            string res = base.Check();
-
-            if (ArticleName == "")
-            {
-                res += $"\"{name}\" - не задано изделие.\n";
-            }
-
-            return res;
         }
     }
     //-------------------------------------------------------------------------
