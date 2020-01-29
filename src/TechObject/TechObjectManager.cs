@@ -316,7 +316,7 @@ namespace TechObject
 
                             res += prefix + "}\n";
 
-                            foreach (BaseOperationProperty param in 
+                            foreach (BaseProperty param in 
                                 baseOperation.BaseOperationProperties)
                             {
                                 if (param.СanSave())

@@ -9,9 +9,9 @@ namespace TechObject
     /// <summary>    
     /// Свойство для базовой операции.
     /// </summary>
-    public abstract class BaseOperationProperty : Editor.ObjectProperty
+    public abstract class BaseProperty : Editor.ObjectProperty
     {
-        public BaseOperationProperty(string luaName, string name, bool canSave) 
+        public BaseProperty(string luaName, string name, bool canSave) 
             : base(name, "")
         {
             this.luaName = luaName;
@@ -85,16 +85,22 @@ namespace TechObject
         private bool canSave; // Необходимость сохранения свойства.
     }
 
-    public class ShowedBaseOperationProperty : BaseOperationProperty
+    public class ShowedBaseProperty : BaseProperty
     {
-        public ShowedBaseOperationProperty(string luaName, string name,
-            bool canSave) : base (luaName, name, canSave) { }
+        public ShowedBaseProperty(string luaName, string name, bool canSave)
+            : base (luaName, name, canSave) { }
+
+        public ShowedBaseProperty(string luaName, string name) : base(luaName,
+            name, true) { }
     }
 
-    public class NonShowedBaseOperationProperty : BaseOperationProperty
+    public class NonShowedBaseProperty : BaseProperty
     {
-        public NonShowedBaseOperationProperty(string luaName, string name,
-            bool canSave) : base(luaName, name, canSave) { }
+        public NonShowedBaseProperty(string luaName, string name, bool canSave)
+            : base(luaName, name, canSave) { }
+
+        public NonShowedBaseProperty(string luaName, string name)
+            : base(luaName, name, true) { }
 
         public override bool isShowed()
         {

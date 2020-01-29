@@ -144,7 +144,7 @@ namespace Editor
                 .GetBaseTechObjects();
             foreach (var baseTechObject in baseTechObjects)
             {
-                baseTechObjectList.Add(baseTechObject.GetName());
+                baseTechObjectList.Add(baseTechObject.Name);
             }
 
             // Получение списка базовых операций

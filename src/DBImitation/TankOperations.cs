@@ -9,15 +9,15 @@ namespace DataBase
 {
     public partial class Imitation
     {
-        private static BaseOperation[] baseTankOperations()
+        public static BaseOperation[] BaseTankOperations()
         {
             return new BaseOperation[]
             {
                 new BaseOperation("", ""),
                 new BaseOperation("Мойка", "WASHING_CIP", WashParams()),
-                new BaseOperation("Наполнение", "luaName1", emptyParams()),
-                new BaseOperation("Хранение", "luaName2", emptyParams()),
-                new BaseOperation("Выдача", "luaName3", emptyParams()),
+                new BaseOperation("Наполнение", "luaName1", EmptyProperties()),
+                new BaseOperation("Хранение", "luaName2", EmptyProperties()),
+                new BaseOperation("Выдача", "luaName3", EmptyProperties()),
             };
         }
     }

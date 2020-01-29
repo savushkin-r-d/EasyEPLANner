@@ -134,6 +134,7 @@
     <Compile Include="ConfigurationChecker.cs" />
     <Compile Include="DBImitation\Imitation.cs" />
     <Compile Include="DBImitation\LineOperations.cs" />
+    <Compile Include="DBImitation\ObjectProperties.cs" />
     <Compile Include="DBImitation\OperationsParams.cs" />
     <Compile Include="DBImitation\TankOperations.cs" />
     <Compile Include="Device.cs" />
@@ -187,7 +188,7 @@
     <Compile Include="TechObject\Action_Wash.cs" />
     <Compile Include="TechObject\Action_WashSeats.cs" />
     <Compile Include="TechObject\Base\BaseOperation.cs" />
-    <Compile Include="TechObject\Base\BaseOperationProperty.cs" />
+    <Compile Include="TechObject\Base\BaseProperty.cs" />
     <Compile Include="TechObject\Base\BaseTechObject.cs" />
     <Compile Include="TechObject\LocalRestriction.cs" />
     <Compile Include="TechObject\Mode.cs" />

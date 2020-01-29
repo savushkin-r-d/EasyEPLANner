@@ -9,30 +9,30 @@ namespace DataBase
 {
     public partial class Imitation
     {
-        private static BaseOperationProperty[] lineWashParams()
+        private static BaseProperty[] LineWashParams()
         {
-            return new BaseOperationProperty[]
+            return new BaseProperty[]
             {
-                new ShowedBaseOperationProperty("CIP_WASH_END", "Мойка завершена", true)
+                new ShowedBaseProperty("CIP_WASH_END", "Мойка завершена", true)
             };
         }
 
-        private static BaseOperationProperty[] tankWashParams()
+        private static BaseProperty[] TankWashParams()
         {
-            return new BaseOperationProperty[]
+            return new BaseProperty[]
             {
-                new ShowedBaseOperationProperty("CIP_WASH_END", "Мойка завершена", true),
-                new ShowedBaseOperationProperty("DI_CIP_FREE", "МСА свободна", true)
+                new ShowedBaseProperty("CIP_WASH_END", "Мойка завершена", true),
+                new ShowedBaseProperty("DI_CIP_FREE", "МСА свободна", true)
             };
         }
 
-        private static BaseOperationProperty[] WashParams()
+        private static BaseProperty[] WashParams()
         {
-            var parameters = new BaseOperationProperty[]
+            var parameters = new BaseProperty[]
             {
-                new ShowedBaseOperationProperty("CIP_WASH_END", "Мойка завершена", true),
-                new ShowedBaseOperationProperty("DI_CIP_FREE", "МСА свободна", true),
-                new NonShowedBaseOperationProperty("DRAINAGE", "Номер шага дренаж", false)
+                new ShowedBaseProperty("CIP_WASH_END", "Мойка завершена", true),
+                new ShowedBaseProperty("DI_CIP_FREE", "МСА свободна", true),
+                new NonShowedBaseProperty("DRAINAGE", "Номер шага дренаж", false)
             };
 
             return parameters;

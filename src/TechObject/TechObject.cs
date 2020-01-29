@@ -161,7 +161,7 @@ namespace TechObject
                 prefix + "name_eplan = \'" + NameEplan + "\',\n" +
                 prefix + "name_BC    = \'" + NameBC + "\',\n" +
                 prefix + "cooper_param_number = " + CooperParamNumber + ",\n" +
-                prefix + "base_tech_object = \'" + baseTechObject.GetName() + 
+                prefix + "base_tech_object = \'" + baseTechObject.Name + 
                 "\',\n" +
                 prefix + "attached_objects = \'" + AttachedObjects + "\',\n";
 
@@ -519,15 +519,15 @@ namespace TechObject
         {
             // Если не выбран базовый объект, то пустое имя
             // Если выбран, то сравниваем имена
-            if (baseTechObject.GetS88Level() != 0)
+            if (baseTechObject.S88Level != 0)
             {
-                string baseObjectNameEplan = baseTechObject.GetNameEplan()
+                string baseObjectNameEplan = baseTechObject.EplanName
                     .ToLower();
                 string thisObjectNameEplan = NameEplan.ToLower();
                 // Если тех. объект не содержит базовое ОУ, то добавить его.
                 if (thisObjectNameEplan.Contains(baseObjectNameEplan) == false)
                 {
-                    NameEplanForFile = baseTechObject.GetNameEplan() + "_" + 
+                    NameEplanForFile = baseTechObject.EplanName + "_" + 
                         NameEplan;
                 }
                 else
@@ -544,7 +544,7 @@ namespace TechObject
         //  Получение имени базовой операции
         public string GetBaseTechObjectName()
         {
-            return baseTechObject.GetName();
+            return baseTechObject.Name;
         }
 
         /// <summary>
@@ -584,7 +584,7 @@ namespace TechObject
             {
                 return new string[] {
                     getN( this ) + ". " + name + ' ' + 
-                    techNumber.EditText[ 1 ], baseTechObject.GetName() };
+                    techNumber.EditText[ 1 ], baseTechObject.Name };
             }
         }
 
@@ -606,20 +606,20 @@ namespace TechObject
         override public bool SetNewValue(string newValue, bool isExtraValue)
         {
             // Получил имя базового аппарата из LUA и записал в класс
-            baseTechObject.SetName(newValue);
+            baseTechObject.Name = newValue;
 
             // Нашел базовый объект и присвоил значения из него переменным
             BaseTechObject techObjFromDB = DataBase.Imitation
                 .GetTObject(newValue);
 
             // Установил ОУ
-            string nameEplan = techObjFromDB.GetNameEplan();
-            baseTechObject.SetNameEplan(nameEplan);
+            string nameEplan = techObjFromDB.EplanName;
+            baseTechObject.EplanName = nameEplan;
 
             //Установил S88Level
-            int s88Level = techObjFromDB.GetS88Level();
-            baseTechObject.SetS88Level(s88Level);
-            S88Level = baseTechObject.GetS88Level();
+            int s88Level = techObjFromDB.S88Level;
+            baseTechObject.S88Level = s88Level;
+            S88Level = baseTechObject.S88Level;
 
             // Т.к установили новое значение, произошла смена базового объекта
             // Надо сравнить ОУ и изменить его, если требуется
@@ -648,7 +648,7 @@ namespace TechObject
         {
             get
             {
-                return new string[] { name, baseTechObject.GetName() };
+                return new string[] { name, baseTechObject.Name };
             }
         }
 

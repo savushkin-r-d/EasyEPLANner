@@ -9,13 +9,13 @@ namespace DataBase
 {
     public partial class Imitation
     {
-        private static BaseOperation[] baseLineOperations()
+        public static BaseOperation[] BaseLineOperations()
         {
             return new BaseOperation[]
             {
                 new BaseOperation("",""),
-                new BaseOperation("Мойка", "WASHING_CIP", lineWashParams()),
-                new BaseOperation("Работа", "luaName1", emptyParams())
+                new BaseOperation("Мойка", "WASHING_CIP", LineWashParams()),
+                new BaseOperation("Работа", "luaName1", EmptyProperties())
             };
         }
     }

@@ -34,7 +34,7 @@ namespace DataBase
         // Возврат базовых технологических объектов
         public static BaseTechObject[] GetBaseTechObjects()
         {
-            return baseTechObjectArr();
+            return BaseTechObjectArr();
         }
 
         // Имитиация хранимой процедуры поиска ОУ по имени базового 
@@ -43,11 +43,11 @@ namespace DataBase
         {
             string nameEplan = "";
 
-            foreach (BaseTechObject baseTechObject in baseTechObjectArr())
+            foreach (BaseTechObject baseTechObject in BaseTechObjectArr())
             {
-                if (baseTechObject.GetName() == baseTechObjectName)
+                if (baseTechObject.Name == baseTechObjectName)
                 {
-                    nameEplan = baseTechObject.GetNameEplan();
+                    nameEplan = baseTechObject.EplanName;
                 }
             }
 
@@ -57,9 +57,9 @@ namespace DataBase
         // Получение тех. объекта по номеру
         public static BaseTechObject GetTObject(string name)
         {
-            foreach (BaseTechObject baseTechObject in baseTechObjectArr())
+            foreach (BaseTechObject baseTechObject in BaseTechObjectArr())
             {
-                if (name == baseTechObject.GetName())
+                if (name == baseTechObject.Name)
                 {
                     return baseTechObject;
                 }
@@ -77,56 +77,59 @@ namespace DataBase
         }
 
         // Возврат параметров базовой операции по имени из БД
-        public static BaseOperationProperty[] GetOperParams(
+        public static BaseProperty[] GetOperParams(
             string baseOperName, string baseObjectName)
         {
-            BaseTechObject currObj = baseTechObjectArr()
-                .First(x => x.GetName().Equals(baseObjectName));
+            BaseTechObject currObj = BaseTechObjectArr()
+                .Where(x => x.Name.Equals(baseObjectName)).FirstOrDefault();
             BaseOperation currOper = currObj.BaseOperations
-                .First(x => x.GetName().Equals(baseOperName));
-            BaseOperationProperty[] operationParams = 
-                currOper.BaseOperationProperties;
-            if (operationParams == null) return new BaseOperationProperty[0];
+                .Where(x => x.GetName().Equals(baseOperName)).FirstOrDefault();
+            
+            if (currOper == null) 
+            {
+                return new BaseProperty[0];
+            } 
+
+            BaseProperty[] operationParams = currOper.BaseOperationProperties;
+
+            if (operationParams == null)
+            {
+                return new BaseProperty[0];
+            }
+
             return operationParams;
         }
 
         //---------------- Empty params ---------------------------------------
-        private static BaseOperationProperty[] emptyParams()
+        public static BaseProperty[] EmptyProperties()
         {
-            return new BaseOperationProperty[0];
+            return new BaseProperty[0];
         }
 
         //---------------- Empty operations -----------------------------------
-        private static BaseOperation[] baseTestOperations()
+        public static BaseOperation[] BaseEmptyOperations()
         {
-            return new BaseOperation[]
-            {
-                new BaseOperation("", ""),
-                new BaseOperation("Мойка", "WASHING_CIP", emptyParams()),
-                new BaseOperation("Наполнение", "luaName1", emptyParams()),
-                new BaseOperation("Хранение", "luaName2", emptyParams()),
-                new BaseOperation("Выдача", "luaName3", emptyParams()),
-            };
+            return new BaseOperation[0];
         }
 
         //---------------- Init objects ---------------------------------------
-        public static BaseTechObject[] baseTechObjectArr()
+        public static BaseTechObject[] BaseTechObjectArr()
         {
             return new BaseTechObject[]
             {
-                new BaseTechObject("", "", 0, baseTestOperations()),
-                new BaseTechObject("Автомат", "automat", 2, baseTestOperations()),
-                new BaseTechObject("Бойлер", "boil", 2, baseTestOperations()),
-                new BaseTechObject("Мастер", "master", 1, baseTestOperations()),
-                new BaseTechObject("Линия", "line", 2, baseLineOperations()),
-                new BaseTechObject("Линия приемки", "line", 2, baseLineOperations()),
-                new BaseTechObject("Линия выдачи", "line", 2, baseLineOperations()),
-                new BaseTechObject("Пастеризатор", "pasteurizator", 2, baseTestOperations()),
-                new BaseTechObject("Пост", "post", 2, baseTestOperations()),
-                new BaseTechObject("Танк", "tank", 1, baseTankOperations()),
-                new BaseTechObject("Узел подогрева", "heater_node", 2, baseTestOperations()),
-                new BaseTechObject("Узел охлаждения", "cooler_node", 2, baseTestOperations()),
-                new BaseTechObject("Узел перемешивания", "mix_node", 2, baseTestOperations())
+                new BaseTechObject(), // Пустой объект.
+                new BaseAutomat(),
+                new BaseBoiler(),
+                new BaseMaster(),
+                new BaseLine(),
+                new BaseLineIn(),
+                new BaseLineOut(),
+                new BasePOU(),
+                new BasePost(),
+                new BaseTank(),
+                new BaseHeater(),
+                new BaseCooler(),
+                new BaseMixer()
             };
         }
     }

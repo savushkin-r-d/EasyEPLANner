@@ -34,7 +34,7 @@ namespace TechObject
 
         // Конструктор для инициализации базовой операции и параметров
         public BaseOperation(string name, string luaName, 
-            BaseOperationProperty[] baseOperationProperties)
+            BaseProperty[] baseOperationProperties)
         {
             this.operationName = name;
             this.luaOperationName = luaName;
@@ -75,8 +75,8 @@ namespace TechObject
         public void Init(string baseOperName)
         {
             // Базовый объект для поиска операции по этому объекту
-            TechObject baseTechObject = owner.Owner.Owner;
-            string baseTechObjectName = baseTechObject.GetBaseTechObjectName();
+            TechObject techObject = owner.Owner.Owner;
+            string baseTechObjectName = techObject.GetBaseTechObjectName();
 
             if (baseTechObjectName != "")
             {
@@ -86,7 +86,7 @@ namespace TechObject
                 SetLuaName(luaName); // Установка имени операции для файла Lua
 
                 // Инициализирую список параметров
-                baseOperationProperties = new BaseOperationProperty[0]; 
+                baseOperationProperties = new BaseProperty[0]; 
 
                 // Инициализация операции в зависимости от выбранной 
                 //операции и базового объекта
@@ -100,15 +100,7 @@ namespace TechObject
         // Добавление полей в массив для отображения на дереве
         private void SetItems()
         {
-            //items = new Editor.ITreeViewItem[baseOperationProperties.Length];
-            //var counter = 0;
-            //foreach (var operParam in baseOperationProperties)
-            //{
-            //    items[counter] = operParam;
-            //    counter++;
-            //}
-
-            var showedParameters = new List<BaseOperationProperty>();
+            var showedParameters = new List<BaseProperty>();
             foreach(var parameter in baseOperationProperties)
             {
                 if (parameter.isShowed())
@@ -149,7 +141,7 @@ namespace TechObject
         }
 
         // Возврат параметров базовой операции
-        public BaseOperationProperty[] BaseOperationProperties
+        public BaseProperty[] BaseOperationProperties
         {
             get
             {
@@ -187,7 +179,7 @@ namespace TechObject
 
         private Editor.ITreeViewItem[] items = new Editor.ITreeViewItem[0];
         // Свойства базовой операции для имитационного хранилища
-        private BaseOperationProperty[] baseOperationProperties;
+        private BaseProperty[] baseOperationProperties;
 
         private string operationName; /// Имя базовой операции
         private string luaOperationName; /// Имя базовой операции для файла Lua
