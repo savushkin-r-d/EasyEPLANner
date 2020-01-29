@@ -164,6 +164,7 @@ namespace DataBase
             {
                 new BaseTechObject("", "", 0, baseTestOperations()),
                 new BaseTechObject("Автомат", "automat", 2, baseTestOperations()),
+                new BaseTechObject("Бачок", "cw_tank", 2, baseTestOperations()),
                 new BaseTechObject("Бойлер", "boil", 2, baseTestOperations()),
                 new BaseTechObject("Мастер", "master", 1, baseTestOperations()),
                 new BaseTechObject("Линия", "line", 2, baseLineOperations()),
