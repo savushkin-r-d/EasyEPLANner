@@ -25,12 +25,13 @@ namespace TechObject
 
         // Конструктор для имитации БД
         public BaseTechObject(string name, string nameEplan, int s88Level, 
-            BaseOperation[] baseOperations)
+            BaseOperation[] baseOperations, string basicName)
         {
             this.name = name;
             this.nameEplan = nameEplan;
             this.s88Level = s88Level;
             this.baseOperations = baseOperations;
+            this.basicName = basicName;
         }
 
         public string GetName()
@@ -63,6 +64,11 @@ namespace TechObject
             return s88Level;
         }
 
+        public string GetBasicName()
+        {
+            return basicName;
+        }
+
         public BaseOperation[] BaseOperations
         {
             get { return baseOperations; }
@@ -71,6 +77,7 @@ namespace TechObject
         private string name; // Отображаемое имя технологического объекта
         private string nameEplan; // ОУ объекта в Eplan
         private int s88Level; // Уровень объекта по S88
+        private string basicName; // Базовое имя для функциональности
 
         // Базовые операции базового объекта
         private BaseOperation[] baseOperations = new BaseOperation[0]; 
