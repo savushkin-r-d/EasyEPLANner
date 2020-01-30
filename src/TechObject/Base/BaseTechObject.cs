@@ -18,6 +18,7 @@ namespace TechObject
             S88Level = 0;
             BaseOperations = new BaseOperation[0];
             BaseProperties = new BaseProperty[0];
+            BasicName = "";
         }
 
         public string Name
@@ -72,6 +73,19 @@ namespace TechObject
             }
         }
 
+        public string BasicName
+        {
+            get 
+            {
+                return basicName;
+            }
+
+            set
+            {
+                basicName = value;
+            }
+        }
+
         public BaseProperty[] BaseProperties
         {
             get
@@ -88,6 +102,7 @@ namespace TechObject
         private string name; // Отображаемое имя технологического объекта.
         private string eplanName; // ОУ объекта в Eplan.
         private int s88Level; // Уровень объекта по S88.
+        private string basicName; // Базовое имя объекта (для функциональности)
 
         private BaseOperation[] objectOperations;  // Базовые операции объекта.
         private BaseProperty[] objectProperties; // Свойства объекта
@@ -102,6 +117,7 @@ namespace TechObject
             EplanName = "automat";
             BaseOperations = DataBase.Imitation.BaseEmptyOperations();
             BaseProperties = DataBase.Imitation.AutomatProperties();
+            BasicName = "automat";
         }
     }
 
@@ -114,6 +130,21 @@ namespace TechObject
             EplanName = "master";
             BaseOperations = DataBase.Imitation.BaseEmptyOperations();
             BaseProperties = DataBase.Imitation.EmptyProperties();
+            BasicName = "master";
+        }
+    }
+
+	//Бачок
+    public class BaseWaterTank : BaseTechObject
+    {
+        public BaseWaterTank() : base()
+        {
+            S88Level = 2;
+            Name = "Бачок";
+            EplanName = "_tank";
+            BaseOperations = DataBase.Imitation.BaseEmptyOperations();
+            BaseProperties = DataBase.Imitation.EmptyProperties();
+            BasicName = "cooler";
         }
     }
 
@@ -126,6 +157,7 @@ namespace TechObject
             EplanName = "boil";
             BaseOperations = DataBase.Imitation.BaseEmptyOperations();
             BaseProperties = DataBase.Imitation.EmptyProperties();
+            BasicName = "boiler";
         }
     }
 
@@ -138,6 +170,7 @@ namespace TechObject
             EplanName = "line";
             BaseOperations = DataBase.Imitation.BaseLineOperations();
             BaseProperties = DataBase.Imitation.LineProperties();
+            BasicName = "line";
         }
     }
 
@@ -150,6 +183,7 @@ namespace TechObject
             EplanName = "line";
             BaseOperations = DataBase.Imitation.BaseLineOperations();
             BaseProperties = DataBase.Imitation.LineProperties();
+            BasicName = "line";
         }
     }
 
@@ -162,6 +196,7 @@ namespace TechObject
             EplanName = "line";
             BaseOperations = DataBase.Imitation.BaseLineOperations();
             BaseProperties = DataBase.Imitation.LineProperties();
+            BasicName = "line";
         }
     }
 
@@ -174,6 +209,7 @@ namespace TechObject
             EplanName = "pasteurizator";
             BaseOperations = DataBase.Imitation.BaseEmptyOperations();
             BaseProperties = DataBase.Imitation.EmptyProperties();
+            BasicName = "pasteurizator";
         }
     }
 
@@ -186,6 +222,7 @@ namespace TechObject
             EplanName = "post";
             BaseOperations = DataBase.Imitation.BaseEmptyOperations();
             BaseProperties = DataBase.Imitation.EmptyProperties();
+            BasicName = "post";
         }
     }
 
@@ -198,6 +235,7 @@ namespace TechObject
             EplanName = "tank";
             BaseOperations = DataBase.Imitation.BaseTankOperations();
             BaseProperties = DataBase.Imitation.TankProperties();
+            BasicName = "tank";
         }
     }
 
@@ -210,6 +248,7 @@ namespace TechObject
             EplanName = "heater_node";
             BaseOperations = DataBase.Imitation.BaseEmptyOperations();
             BaseProperties = DataBase.Imitation.EmptyProperties();
+            BasicName = "heater_node";
         }
     }
 
@@ -222,6 +261,7 @@ namespace TechObject
             EplanName = "cooler_node";
             BaseOperations = DataBase.Imitation.BaseEmptyOperations();
             BaseProperties = DataBase.Imitation.EmptyProperties();
+            BasicName = "cooler_node";
         }
     }
 
@@ -234,6 +274,7 @@ namespace TechObject
             EplanName = "mix_node";
             BaseOperations = DataBase.Imitation.BaseEmptyOperations();
             BaseProperties = DataBase.Imitation.EmptyProperties();
+            BasicName = "mix_node";
         }
     }
 }

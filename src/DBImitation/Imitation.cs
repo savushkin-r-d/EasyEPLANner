@@ -39,19 +39,19 @@ namespace DataBase
 
         // Имитиация хранимой процедуры поиска ОУ по имени базового 
         //технологического объекта
-        public static string GetNameEplan(string baseTechObjectName)
+        public static string GetBasicName(string baseTechObjectName)
         {
-            string nameEplan = "";
+            string basicName = "";
 
             foreach (BaseTechObject baseTechObject in BaseTechObjectArr())
             {
                 if (baseTechObject.Name == baseTechObjectName)
                 {
-                    nameEplan = baseTechObject.EplanName;
+                    basicName = baseTechObject.BasicName;
                 }
             }
 
-            return nameEplan;
+            return basicName;
         }
 
         // Получение тех. объекта по номеру
@@ -119,6 +119,7 @@ namespace DataBase
             {
                 new BaseTechObject(), // Пустой объект.
                 new BaseAutomat(),
+                new BaseWaterTank(),
                 new BaseBoiler(),
                 new BaseMaster(),
                 new BaseLine(),
