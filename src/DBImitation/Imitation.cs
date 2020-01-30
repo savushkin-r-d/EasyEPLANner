@@ -12,25 +12,6 @@ namespace DataBase
     /// </summary>
     public partial class Imitation
     {
-        // Базовые операции
-        private static BaseOperation[] baseOperationsList()
-        {
-            return new BaseOperation[]
-            {
-                new BaseOperation("", ""),
-                new BaseOperation("Мойка", "WASHING_CIP"),
-                new BaseOperation("Наполнение", "luaName1"),
-                new BaseOperation("Хранение", "luaName2"),
-                new BaseOperation("Выдача", "luaName3"),
-            };
-        }
-
-        // Возврат базовых операций
-        public static BaseOperation[] GetBaseOperations()
-        {
-            return baseOperationsList();
-        }
-
         // Возврат базовых технологических объектов
         public static BaseTechObject[] GetBaseTechObjects()
         {
@@ -65,39 +46,6 @@ namespace DataBase
                 }
             }
             return null;
-        }
-
-        // Поиск Lua имени операции
-        public static string FindOperationLuaName(string name)
-        {
-            var luaName = "";
-            luaName = baseOperationsList().First(x => x.GetName()
-            .Contains(name)).GetLuaName();
-            return luaName;
-        }
-
-        // Возврат параметров базовой операции по имени из БД
-        public static BaseProperty[] GetOperParams(
-            string baseOperName, string baseObjectName)
-        {
-            BaseTechObject currObj = BaseTechObjectArr()
-                .Where(x => x.Name.Equals(baseObjectName)).FirstOrDefault();
-            BaseOperation currOper = currObj.BaseOperations
-                .Where(x => x.GetName().Equals(baseOperName)).FirstOrDefault();
-            
-            if (currOper == null) 
-            {
-                return new BaseProperty[0];
-            } 
-
-            BaseProperty[] operationParams = currOper.BaseOperationProperties;
-
-            if (operationParams == null)
-            {
-                return new BaseProperty[0];
-            }
-
-            return operationParams;
         }
 
         //---------------- Empty params ---------------------------------------

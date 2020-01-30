@@ -277,7 +277,7 @@ namespace TechObject
                 foreach (Mode mode in modes)
                 {
                     var baseOperation = mode.GetBaseOperation();
-                    switch (baseOperation.GetName())
+                    switch (baseOperation.Name)
                     {
                         case "Мойка":
                             var objName = "prg." + obj.NameEplanForFile
@@ -285,7 +285,7 @@ namespace TechObject
 
                             res += objName + ".operations = \t\t--Операции.\n";
                             res += prefix + "{\n";
-                            res += prefix + baseOperation.GetLuaName()
+                            res += prefix + baseOperation.LuaName
                                 .ToUpper() + " = " + mode.GetModeNumber() + 
                                 ",\t\t--Мойка CIP.\n";
                             res += prefix + "}\n";
@@ -298,7 +298,7 @@ namespace TechObject
                                 
                             if (containsDrainage != null)
                             {
-                                res += prefix + baseOperation.GetLuaName()
+                                res += prefix + baseOperation.LuaName
                                 .ToUpper() + " =\n";
                                 res += prefix + prefix + "{\n";
                                 res += prefix + prefix + "DRAINAGE = " +
@@ -310,7 +310,7 @@ namespace TechObject
                             }
                             else
                             {
-                                res += prefix + baseOperation.GetLuaName()
+                                res += prefix + baseOperation.LuaName
                                     .ToUpper() + " = { },\n";
                             }
 

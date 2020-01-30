@@ -25,13 +25,6 @@ namespace TechObject
             this.owner = owner;
         }
 
-        // Конструктор для инициализации хранилища с именами базовых операций
-        public BaseOperation(string name, string luaName)
-        {
-            this.operationName = name;
-            this.luaOperationName = luaName;
-        }
-
         // Конструктор для инициализации базовой операции и параметров
         public BaseOperation(string name, string luaName, 
             BaseProperty[] baseOperationProperties)
@@ -41,34 +34,43 @@ namespace TechObject
             this.baseOperationProperties = baseOperationProperties;
         }
 
-        public string GetName()
+        public string Name
         {
-            return operationName;
-        }
-
-        public string GetLuaName()
-        {
-            return luaOperationName;
-        }
-
-        public void SetName(string operationName)
-        {
-            this.operationName = operationName;
-        }
-
-        public void SetLuaName(string luaName)
-        {
-            this.luaOperationName = luaName;
-        }
-
-        // Получение количества параметров у операции
-        public int GetParamsCount()
-        {
-            if (BaseOperationProperties == null)
+            get
             {
-                return 0;
+                return operationName;
             }
-            return baseOperationProperties.Length;
+
+            set
+            {
+                operationName = value;
+            }
+        }
+
+        public string LuaName
+        {
+            get
+            {
+                return luaOperationName;
+            }
+
+            set
+            {
+                luaOperationName = value;
+            }
+        }
+
+        public int ParametersCount
+        {
+            get
+            {
+                if (BaseOperationProperties == null)
+                {
+                    return 0;
+                }
+
+                return baseOperationProperties.Length;
+            }
         }
 
         // Инициализация полей при выборе базовой операции
@@ -78,23 +80,27 @@ namespace TechObject
             TechObject techObject = owner.Owner.Owner;
             string baseTechObjectName = techObject.GetBaseTechObjectName();
 
-            if (baseTechObjectName != "")
+            if (baseTechObjectName == "")
             {
-                SetName(baseOperName); // Установка имени базовой операции
-                var luaName = DataBase.Imitation
-                    .FindOperationLuaName(baseOperName);
-                SetLuaName(luaName); // Установка имени операции для файла Lua
-
-                // Инициализирую список параметров
-                baseOperationProperties = new BaseProperty[0]; 
-
-                // Инициализация операции в зависимости от выбранной 
-                //операции и базового объекта
-                baseOperationProperties = DataBase.Imitation.GetOperParams(
-                    baseOperName, baseTechObjectName);
-
-                SetItems();
+                return;
             }
+
+            BaseOperation operation = techObject.BaseTechObject
+                .GetBaseOperationByName(baseOperName);
+            if (operation != null)
+            {
+                Name = operation.Name;
+                LuaName = operation.LuaName;
+                baseOperationProperties = operation.BaseOperationProperties;
+            }
+            else
+            {
+                Name = "";
+                LuaName = "";
+                baseOperationProperties = new BaseProperty[0];
+            }
+
+            SetItems();
         }
 
         // Добавление полей в массив для отображения на дереве

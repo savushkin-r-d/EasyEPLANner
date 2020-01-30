@@ -288,6 +288,17 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Очистить базовые операции
+        /// </summary>
+        public void ClearBaseOperations()
+        {
+            foreach (Mode m in GetModes) 
+            {
+                m.ClearBaseOperation();
+            }
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {

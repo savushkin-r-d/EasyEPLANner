@@ -11,6 +11,9 @@ namespace TechObject
     /// </summary>
     public class BaseTechObject
     {
+        /// <summary>
+        /// Базовая инициализация
+        /// </summary>
         public BaseTechObject()
         {
             Name = "";
@@ -21,6 +24,9 @@ namespace TechObject
             BasicName = "";
         }
 
+        /// <summary>
+        /// Имя базового объекта.
+        /// </summary>
         public string Name
         {
             get
@@ -34,6 +40,9 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// ОУ базового объекта
+        /// </summary>
         public string EplanName
         {
             get
@@ -47,6 +56,9 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Уровень по S88 иерархии
+        /// </summary>
         public int S88Level
         {
             get
@@ -60,6 +72,9 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Базовые операции объекта
+        /// </summary>
         public BaseOperation[] BaseOperations
         {
             get 
@@ -73,6 +88,9 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Имя объекта для базовой функциональности
+        /// </summary>
         public string BasicName
         {
             get 
@@ -86,6 +104,9 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Свойства базового объекта
+        /// </summary>
         public BaseProperty[] BaseProperties
         {
             get
@@ -99,15 +120,51 @@ namespace TechObject
             }
         }
 
-        private string name; // Отображаемое имя технологического объекта.
-        private string eplanName; // ОУ объекта в Eplan.
-        private int s88Level; // Уровень объекта по S88.
-        private string basicName; // Базовое имя объекта (для функциональности)
+        /// <summary>
+        /// Получить базовую операцию по имени.
+        /// </summary>
+        /// <param name="name">Имя</param>
+        /// <returns></returns>
+        public BaseOperation GetBaseOperationByName(string name)
+        {
+            var operation = BaseOperations.Where(x => x.Name == name)
+                .FirstOrDefault();
+            return operation;
+        }
 
-        private BaseOperation[] objectOperations;  // Базовые операции объекта.
-        private BaseProperty[] objectProperties; // Свойства объекта
+        /// <summary>
+        /// Список операций базового объекта
+        /// </summary>
+        /// <returns></returns>
+        public List<string> BaseOperationsList
+        {
+            get
+            {
+                return BaseOperations.Select(x => x.Name).ToList();
+            }
+        }
+
+        /// <summary>
+        /// Копия объекта
+        /// </summary>
+        /// <returns></returns>
+        public virtual BaseTechObject Clone()
+        {
+            return new BaseTechObject();
+        }
+
+        private string name;
+        private string eplanName;
+        private int s88Level;
+        private string basicName;
+
+        private BaseOperation[] objectOperations;
+        private BaseProperty[] objectProperties;
     }
 
+    /// <summary>
+    /// Базовый автомат
+    /// </summary>
     public class BaseAutomat : BaseTechObject
     {
         public BaseAutomat() : base()
@@ -119,8 +176,16 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.AutomatProperties();
             BasicName = "automat";
         }
+
+        public override BaseTechObject Clone()
+        {
+            return new BaseAutomat();
+        }
     }
 
+    /// <summary>
+    /// Базовый мастер
+    /// </summary>
     public class BaseMaster : BaseTechObject
     {
         public BaseMaster() : base()
@@ -132,9 +197,16 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "master";
         }
+
+        public override BaseTechObject Clone()
+        {
+            return new BaseMaster();
+        }
     }
 
-	//Бачок
+	/// <summary>
+    /// Базовый бачок
+    /// </summary>
     public class BaseWaterTank : BaseTechObject
     {
         public BaseWaterTank() : base()
@@ -146,8 +218,16 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "cooler";
         }
+
+        public override BaseTechObject Clone()
+        {
+            return new BaseWaterTank();
+        }
     }
 
+    /// <summary>
+    /// Базовый бойлер
+    /// </summary>
     public class BaseBoiler : BaseTechObject
     {
         public BaseBoiler() : base()
@@ -159,8 +239,16 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "boiler";
         }
+
+        public override BaseTechObject Clone()
+        {
+            return new BaseBoiler();
+        }
     }
 
+    /// <summary>
+    /// Базовая линия
+    /// </summary>
     public class BaseLine : BaseTechObject
     {
         public BaseLine() : base()
@@ -172,8 +260,16 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.LineProperties();
             BasicName = "line";
         }
+
+        public override BaseTechObject Clone()
+        {
+            return new BaseLine();
+        }
     }
 
+    /// <summary>
+    /// Базовая линия приемки
+    /// </summary>
     public class BaseLineIn : BaseTechObject
     {
         public BaseLineIn() : base()
@@ -185,8 +281,16 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.LineProperties();
             BasicName = "line";
         }
+
+        public override BaseTechObject Clone()
+        {
+            return new BaseLineIn();
+        }
     }
 
+    /// <summary>
+    /// Базовая линия выдачи
+    /// </summary>
     public class BaseLineOut : BaseTechObject
     {
         public BaseLineOut() : base()
@@ -198,8 +302,16 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.LineProperties();
             BasicName = "line";
         }
+
+        public override BaseTechObject Clone()
+        {
+            return new BaseLineOut();
+        }
     }
 
+    /// <summary>
+    /// Базовый пастеризатор
+    /// </summary>
     public class BasePOU : BaseTechObject
     {
         public BasePOU() : base()
@@ -211,8 +323,16 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "pasteurizator";
         }
+
+        public override BaseTechObject Clone()
+        {
+            return new BasePOU();
+        }
     }
 
+    /// <summary>
+    /// Базовый пост
+    /// </summary>
     public class BasePost : BaseTechObject
     {
         public BasePost() : base()
@@ -224,8 +344,16 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "post";
         }
+
+        public override BaseTechObject Clone()
+        {
+            return new BasePost();
+        }
     }
 
+    /// <summary>
+    /// Базовый танк
+    /// </summary>
     public class BaseTank : BaseTechObject
     {
         public BaseTank() : base()
@@ -237,8 +365,16 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.TankProperties();
             BasicName = "tank";
         }
+
+        public override BaseTechObject Clone()
+        {
+            return new BaseTank();
+        }
     }
 
+    /// <summary>
+    /// Базовый узел подогрева
+    /// </summary>
     public class BaseHeater : BaseTechObject
     {
         public BaseHeater() : base()
@@ -250,8 +386,16 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "heater_node";
         }
+
+        public override BaseTechObject Clone()
+        {
+            return new BaseHeater();
+        }
     }
 
+    /// <summary>
+    /// Базовый узел охлаждения
+    /// </summary>
     public class BaseCooler : BaseTechObject
     {
         public BaseCooler() : base()
@@ -263,8 +407,16 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "cooler_node";
         }
+
+        public override BaseTechObject Clone()
+        {
+            return new BaseCooler();
+        }
     }
 
+    /// <summary>
+    /// Базовый узел перемешивания
+    /// </summary>
     public class BaseMixer : BaseTechObject
     {
         public BaseMixer() : base()
@@ -275,6 +427,11 @@ namespace TechObject
             BaseOperations = DataBase.Imitation.BaseEmptyOperations();
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "mix_node";
+        }
+
+        public override BaseTechObject Clone()
+        {
+            return new BaseMixer();
         }
     }
 }

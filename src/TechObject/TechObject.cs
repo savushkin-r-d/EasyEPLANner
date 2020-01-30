@@ -253,6 +253,8 @@ namespace TechObject
 
             clone.getN = getN;
 
+            clone.baseTechObject = BaseTechObject.Clone();
+
             clone.modes = modes.Clone(clone);
             clone.modes.ChngeOwner(clone);
             clone.modes.ModifyDevNames(TechNumber);
@@ -548,6 +550,17 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Базовый технологический объект
+        /// </summary>
+        public BaseTechObject BaseTechObject
+        {
+            get
+            {
+                return baseTechObject;
+            }
+        }
+
+        /// <summary>
         /// Номер параметра со временем совместного включения операций 
         /// для шагов.
         /// </summary>
@@ -555,7 +568,10 @@ namespace TechObject
 
         public string Name
         {
-            get { return name; }
+            get 
+            { 
+                return name; 
+            }
         }
 
         /// <summary>
@@ -605,22 +621,18 @@ namespace TechObject
 
         override public bool SetNewValue(string newValue, bool isExtraValue)
         {
+            if (baseTechObject.Name != "" && newValue != baseTechObject.Name)
+            {
+                this.GetModesManager.ClearBaseOperations();
+            }
             // Получил имя базового аппарата из LUA и записал в класс
             baseTechObject.Name = newValue;
-
             // Нашел базовый объект и присвоил значения из него переменным
             BaseTechObject techObjFromDB = DataBase.Imitation
                 .GetTObject(newValue);
-
-            // Установил ОУ
-            string nameEplan = techObjFromDB.EplanName;
-            baseTechObject.EplanName = nameEplan;
-
-            //Установил S88Level
-            int s88Level = techObjFromDB.S88Level;
-            baseTechObject.S88Level = s88Level;
-            S88Level = baseTechObject.S88Level;
-
+            // Обновил базовый объект
+            baseTechObject = techObjFromDB;
+            S88Level = techObjFromDB.S88Level;
             // Т.к установили новое значение, произошла смена базового объекта
             // Надо сравнить ОУ и изменить его, если требуется
             CompareEplanNames();
