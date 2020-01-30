@@ -2587,9 +2587,6 @@ namespace Device
                     break;
 
                 case "PT_IOLINK":
-                    parameters.Add("P_C0", null);
-                    parameters.Add("P_MIN_V", null);
-                    parameters.Add("P_MAX_V", null);
                     IOLinkSizeIn = 1;
                     break;
 
