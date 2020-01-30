@@ -133,10 +133,15 @@ namespace TechObject
         {
             foreach (Editor.ObjectProperty extraParam in extraParams)
             {
-                baseOperationProperties
-                    .First(x => x.GetLuaName()
+                var property = baseOperationProperties
+                    .Where(x => x.GetLuaName()
                     .Equals(extraParam.DisplayText[0]))
-                    .SetValue(extraParam.DisplayText[1]);
+                    .FirstOrDefault();
+
+                if (property != null)
+                {
+                    property.SetValue(extraParam.DisplayText[1]);
+                }
             }
         }
 

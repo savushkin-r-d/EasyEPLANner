@@ -37,7 +37,7 @@ namespace DataBase
             return BaseTechObjectArr();
         }
 
-        // Имитиация хранимой процедуры поиска ОУ по имени базового 
+        // Имитиация хранимой процедуры поиска базового имени по имени базового 
         //технологического объекта
         public static string GetBasicName(string baseTechObjectName)
         {
