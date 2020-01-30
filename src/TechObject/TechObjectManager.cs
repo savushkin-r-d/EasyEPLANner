@@ -347,7 +347,7 @@ namespace TechObject
                     res += "\n"; // Отступ, если изменен тип объекта
                 }
                 var basicObj = DataBase.Imitation
-                    .GetNameEplan(obj.DisplayText[1]).ToLower();
+                    .GetBasicName(obj.DisplayText[1]).ToLower();
                 var objName = obj.NameEplanForFile.ToLower() + obj.TechNumber;
                 res += "add_functionality(prg." + objName + ", " + "basic_" + 
                     basicObj + ")\n";

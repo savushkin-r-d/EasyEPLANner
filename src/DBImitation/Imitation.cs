@@ -37,21 +37,21 @@ namespace DataBase
             return baseTechObjectArr();
         }
 
-        // Имитиация хранимой процедуры поиска ОУ по имени базового 
+        // Имитиация хранимой процедуры поиска базового имени по имени базового 
         //технологического объекта
-        public static string GetNameEplan(string baseTechObjectName)
+        public static string GetBasicName(string baseTechObjectName)
         {
-            string nameEplan = "";
+            string basicName = "";
 
             foreach (BaseTechObject baseTechObject in baseTechObjectArr())
             {
                 if (baseTechObject.GetName() == baseTechObjectName)
                 {
-                    nameEplan = baseTechObject.GetNameEplan();
+                    basicName = baseTechObject.GetBasicName();
                 }
             }
 
-            return nameEplan;
+            return basicName;
         }
 
         // Получение тех. объекта по номеру
@@ -162,19 +162,20 @@ namespace DataBase
         {
             return new BaseTechObject[]
             {
-                new BaseTechObject("", "", 0, baseTestOperations()),
-                new BaseTechObject("Автомат", "automat", 2, baseTestOperations()),
-                new BaseTechObject("Бойлер", "boil", 2, baseTestOperations()),
-                new BaseTechObject("Мастер", "master", 1, baseTestOperations()),
-                new BaseTechObject("Линия", "line", 2, baseLineOperations()),
-                new BaseTechObject("Линия приемки", "line", 2, baseLineOperations()),
-                new BaseTechObject("Линия выдачи", "line", 2, baseLineOperations()),
-                new BaseTechObject("Пастеризатор", "pasteurizator", 2, baseTestOperations()),
-                new BaseTechObject("Пост", "post", 2, baseTestOperations()),
-                new BaseTechObject("Танк", "tank", 1, baseTankOperations()),
-                new BaseTechObject("Узел подогрева", "heater_node", 2, baseTestOperations()),
-                new BaseTechObject("Узел охлаждения", "cooler_node", 2, baseTestOperations()),
-                new BaseTechObject("Узел перемешивания", "mix_node", 2, baseTestOperations())
+                new BaseTechObject("", "", 0, baseTestOperations(),""),
+                new BaseTechObject("Автомат", "automat", 2, baseTestOperations(),"automat"),
+                new BaseTechObject("Бачок", "_tank", 2, baseTestOperations(), "cooler"),
+                new BaseTechObject("Бойлер", "boil", 2, baseTestOperations(), "boil"),
+                new BaseTechObject("Мастер", "master", 1, baseTestOperations(), "master"),
+                new BaseTechObject("Линия", "line", 2, baseLineOperations(), "line"),
+                new BaseTechObject("Линия приемки", "line", 2, baseLineOperations(), "line"),
+                new BaseTechObject("Линия выдачи", "line", 2, baseLineOperations(), "line"),
+                new BaseTechObject("Пастеризатор", "pasteurizator", 2, baseTestOperations(), "pasteurizator"),
+                new BaseTechObject("Пост", "post", 2, baseTestOperations(), "post"),
+                new BaseTechObject("Танк", "tank", 1, baseTankOperations(), "tank"),
+                new BaseTechObject("Узел подогрева", "heater_node", 2, baseTestOperations(), "heater_node"),
+                new BaseTechObject("Узел охлаждения", "cooler_node", 2, baseTestOperations(), "cooler_node"),
+                new BaseTechObject("Узел перемешивания", "mix_node", 2, baseTestOperations(), "mix_node")
             };
         }
     }
