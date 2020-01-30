@@ -13,11 +13,11 @@ namespace DataBase
         {
             return new BaseOperation[]
             {
-                new BaseOperation("", ""),
+                new BaseOperation("", "", EmptyProperties()),
                 new BaseOperation("Мойка", "WASHING_CIP", WashParams()),
-                new BaseOperation("Наполнение", "luaName1", EmptyProperties()),
-                new BaseOperation("Хранение", "luaName2", EmptyProperties()),
-                new BaseOperation("Выдача", "luaName3", EmptyProperties()),
+                //new BaseOperation("Наполнение", "luaName1", EmptyProperties()),
+                //new BaseOperation("Хранение", "luaName2", EmptyProperties()),
+                //new BaseOperation("Выдача", "luaName3", EmptyProperties()),
             };
         }
     }
