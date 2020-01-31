@@ -680,8 +680,6 @@ namespace Device
                         case DeviceSubType.V_AS_MIXPROOF:
                         case DeviceSubType.V_AS_DO1_DI2:
                         case DeviceSubType.V_BOTTOM_MIXPROOF:                            
-                        case DeviceSubType.V_IOLINK_MIXPROOF:
-                        case DeviceSubType.V_IOLINK_DO1_DI2:
                             return new List<string>(new string[] 
                             { 
                                 "ST", 
@@ -690,6 +688,21 @@ namespace Device
                                 "P_FB", 
                                 "FB_OFF_ST", 
                                 "FB_ON_ST" 
+                            });
+                        case DeviceSubType.V_IOLINK_MIXPROOF:
+                        case DeviceSubType.V_IOLINK_DO1_DI2:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "P_ON_TIME",
+                                "P_FB",
+                                "FB_OFF_ST",
+                                "FB_ON_ST",
+                                "V",
+                                "BLINK",
+                                "CS",
+                                "ERR"
                             });
                     }
                     break;

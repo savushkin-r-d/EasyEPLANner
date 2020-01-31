@@ -296,13 +296,42 @@ namespace EasyEPlanner
         /// Узлы, в которых устанавливается протоколирование элементов.
         /// </summary>
         private static HashSet<string> Protocol =
-            new HashSet<string>(new string[] { "TE_V", "QT_V", "FQT_F", "PT_V", "LT_V", "AO_V", "VC_V", "AI_V", "M_V", "LT_CLEVEL" });
+            new HashSet<string>(new string[] 
+            { 
+                "TE_V", 
+                "QT_V", 
+                "FQT_F", 
+                "PT_V", 
+                "VC_V", 
+                "M_V",
+                "M_ST",
+                "LT_CLEVEL",
+                "V_ST",
+                "LS_ST",
+                "FS_ST",
+                "GS_ST",
+                "SB_ST",
+                "DI_ST",
+                "DO_ST",
+            });
 
         /// <summary>
         /// Узлы, в которых устанавливается опрос по времени.
         /// </summary>
         private static HashSet<string> Period =
-            new HashSet<string>(new string[] { "TE_V", "QT_V", "LT_V", "PT_V", "AO_V", "AI_V", "FQT_F", "M_V", "VC_V", "LT_CLEVEL" });
+            new HashSet<string>(new string[] { 
+                "TE_V", 
+                "QT_V", 
+                "LT_V", 
+                "PT_V", 
+                "AO_V", 
+                "AI_V", 
+                "FQT_F", 
+                "M_V", 
+                "VC_V", 
+                "LT_CLEVEL",
+                "V_V"
+            });
 
         /// <summary>
         /// Сохранение описания в виде таблицы Excel.
@@ -820,8 +849,11 @@ namespace EasyEPlanner
                 Period.Contains(subtypeName);
             bool needSetProtocol =
                 Protocol.Contains(subtypeName) ||
-                Node.Text.Contains("OBJECT") && (Node.Text.Contains("ST") ||
-                Node.Text.Contains("MODES") || Node.Text.Contains("OPERATIONS")) && (!Node.Text.Contains("STEPS"));
+                Node.Text.Contains("OBJECT") && 
+                (Node.Text.Contains("ST") ||
+                Node.Text.Contains("MODES") || 
+                Node.Text.Contains("OPERATIONS")) && 
+                (!Node.Text.Contains("STEPS"));
             string prefixChannels = "channels";
             string nsChannels = "http://brestmilk.by/channels/";
             XmlElement channel = xmlDoc.CreateElement(prefixChannels, "channel", nsChannels);
@@ -835,7 +867,7 @@ namespace EasyEPlanner
                 channelElm.InnerText = "0";
                 channel.AppendChild(channelElm);
                 channelElm = xmlDoc.CreateElement(prefixChannels, "requestperiod", nsChannels);
-                if (!subtypeName.Contains("LE"))
+                if (!subtypeName.Contains("LE") && !subtypeName.Equals("V_V"))
                 {
                     channelElm.InnerText = "3000";
                 }
@@ -864,13 +896,22 @@ namespace EasyEPlanner
             channelElm = xmlDoc.CreateElement(prefixChannels, "delta", nsChannels);
             if (needSetPeriod)
             {
-                if (!subtypeName.Contains("QT"))
-                {
-                    channelElm.InnerText = "0.2";
-                }
-                else
+                if (subtypeName.Contains("QT"))
                 {
                     channelElm.InnerText = "0.3";
+                }
+                else if (subtypeName.Equals("V_V"))
+                {
+                    channelElm.InnerText = "1";
+                }
+                else if (subtypeName.Equals("VC_V") || 
+                    subtypeName.Equals("M_V"))
+                {
+                    channelElm.InnerText = "0.5";
+                }
+                else 
+                {
+                    channelElm.InnerText = "0.2";
                 }
             }
             else
