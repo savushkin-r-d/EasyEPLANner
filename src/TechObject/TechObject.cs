@@ -127,14 +127,14 @@ namespace TechObject
 
             private TechObject owner;
 
-            // Иерархический номер для агрегата
-            public string unitS88Number = "2";
-
             override public bool IsEditable
             {
                 get
                 {
-                    if (owner.s88Level.EditText[1] != unitS88Number)
+                    if (owner.baseTechObject.GetName() == "Танк" ||
+                        owner.baseTechObject.GetName() == "Линия" ||
+                        owner.baseTechObject.GetName() == "Линия приемки" ||
+                        owner.baseTechObject.GetName() == "Линия выдачи")
                     {
                         return true;
                     }
