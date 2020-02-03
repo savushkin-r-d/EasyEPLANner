@@ -156,9 +156,6 @@ namespace TechObject
         private string SaveVariablesAsLuaTable(string prefix, 
             out Dictionary<int, string> attachedObjectsDict)
         {
-            // Флаг на поиск привязанных агрегатов в аппарате
-            const int objS88Level = 1;
-
             // Словарь с агрегатами, привязанных к аппарату, 
             //обращение по номеру аппарата
             var attachedObjects = new Dictionary<int, string>();
@@ -180,8 +177,7 @@ namespace TechObject
 
                 // Если есть привязка, помечаю, какие агрегаты к 
                 //какому аппарату привязаны
-                if (objects[i].S88Level == objS88Level & 
-                    objects[i].AttachedObjects != string.Empty)
+                if (objects[i].AttachedObjects != string.Empty)
                 {
                     // Т.к объекты начинаются с 1
                     attachedObjects[i + 1] = objects[i].AttachedObjects;
@@ -231,22 +227,20 @@ namespace TechObject
                             res += "\n"; // Отступ, если изменен тип объекта
                         }
 
-                        switch (attachedTechObjectType)
+                        if (attachedTechObjectType.Contains("mix_node")) 
                         {
-                            case "mix_node_mix":
-                                res += techObjNameForFile + ".mix_node = " + 
+                            res += techObjNameForFile + ".mix_node = " +
                                     "prg." + attachedTechObjNameForFile + "\n";
-                                break;
-
-                            case "cooler_node_cooler":
-                                res += techObjNameForFile + ".cooler_node = " +
+                        }
+                        else if (attachedTechObjectType.Contains("cooler_node")) 
+                        {
+                            res += techObjNameForFile + ".cooler_node = " +
                                     "prg." + attachedTechObjNameForFile + "\n";
-                                break;
-
-                            case "heater_node_heater":
-                                res += techObjNameForFile + ".heater_node = " +
+                        }
+                        else if (attachedTechObjectType.Contains("heater_node")) 
+                        {
+                            res += techObjNameForFile + ".heater_node = " +
                                     "prg." + attachedTechObjNameForFile + "\n";
-                                break;
                         }
 
                         previouslyObjectName = techObj.NameEplanForFile
