@@ -293,7 +293,8 @@ namespace TechObject
         {
             if (operExtraParams.Keys.Count > 0)
             {
-                var extraParams = ConvertLuaTableToCArray(operExtraParams);
+                var extraParams = StaticHelper.LuaHelper
+                    .ConvertLuaTableToCArray(operExtraParams);
                 return modes.AddMode(modeName, baseOperationName, extraParams);
             }
             else
@@ -301,39 +302,6 @@ namespace TechObject
                 return modes.AddMode(modeName, baseOperationName);
             }
 
-        }
-
-        // Конвертация значений LuaTable в C#
-        public Editor.ObjectProperty[] ConvertLuaTableToCArray(LuaTable table)
-        {
-            var Keys = new string[table.Values.Count];
-            var Values = new string[table.Values.Count];
-            var res = new Editor.ObjectProperty[Keys.Length];
-
-            table.Values.CopyTo(Values, 0);
-            table.Keys.CopyTo(Keys, 0);
-
-            for (int i = 0; i < Keys.Length; i++)
-            {
-                res[i] = new Editor.ObjectProperty(Keys[i], Values[i]);
-            }
-            return res;
-        }
-
-        public static string ConvertLuaTableToString(object table)
-        {
-            var luaTable = table as LuaTable;
-            var values = new object[luaTable.Values.Count];
-            luaTable.Values.CopyTo(values, 0);
-
-            var result = string.Empty;
-            foreach(object obj in values)
-            {
-                result += obj.ToString() + " ";
-            }
-            result.Trim();
-
-            return result;
         }
 
         // Получение операции. 

@@ -277,15 +277,6 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Изменение принадлежности параметров к операции
-        /// </summary>
-        /// <param name="parameter"></param>
-        private void ChangeParameterOperations(Param parameter) 
-        {
-            //TODO: изменение параметров объекта при изменении операций
-        }
-
-        /// <summary>
         /// При перемщении, удалении объекта нужно менять родителей у 
         /// ограничений
         /// </summary>
@@ -343,11 +334,6 @@ namespace TechObject
             }
 
             //TODO: коррекция параметров при удалении
-            var parameters = owner.Params.Items[0] as Params;
-            foreach (Param parameter in parameters.Items)
-            {
-                ChangeParameterOperations(parameter);
-            }
 
             return true;
         }

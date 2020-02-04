@@ -75,7 +75,8 @@ namespace TechObject
             {
                 if (operN.GetType().Name == "LuaTable")
                 {
-                    oper.SetValue(TechObject.ConvertLuaTableToString(operN));
+                    oper.SetValue(StaticHelper.LuaHelper
+                        .ConvertLuaTableToString(operN));
                 }
                 else
                 {
