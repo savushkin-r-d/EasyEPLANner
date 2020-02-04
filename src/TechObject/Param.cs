@@ -23,7 +23,7 @@ namespace TechObject
             }
             if (isUseOperation)
             {
-                this.oper = new Editor.ObjectProperty("Операция", -1);
+                this.oper = new ParamProperty("Операция", -1);
             }
 
             this.meter = new Editor.ObjectProperty("Размерность", meter);

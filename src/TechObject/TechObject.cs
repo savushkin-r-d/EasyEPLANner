@@ -323,11 +323,11 @@ namespace TechObject
         // Получение операции. 
         public Mode GetMode(int i)
         {
-            if (modes.GetModes != null)
+            if (modes.Modes != null)
             {
-                if (modes.GetModes.Count > i)
+                if (modes.Modes.Count > i)
                 {
-                    return modes.GetModes[i];
+                    return modes.Modes[i];
                 }
             }
             return null;
@@ -461,7 +461,7 @@ namespace TechObject
             }
         }
 
-        public ModesManager GetModesManager
+        public ModesManager ModesManager
         {
             get
             {
@@ -483,7 +483,7 @@ namespace TechObject
         {
             if (oldObject != null)
             {
-                modes.ChangeCrossRestriction(oldObject.GetModesManager);
+                modes.ChangeCrossRestriction(oldObject.ModesManager);
             }
             else
             {
@@ -566,8 +566,8 @@ namespace TechObject
         {
             var errors = string.Empty;
 
-            ModesManager modesManager = GetModesManager;
-            List<Mode> modes = modesManager.GetModes;
+            ModesManager modesManager = ModesManager;
+            List<Mode> modes = modesManager.Modes;
             foreach (var mode in modes)
             {
                 errors += mode.Check();

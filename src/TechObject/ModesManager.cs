@@ -197,7 +197,7 @@ namespace TechObject
             }
         }
 
-        public List<Mode> GetModes
+        public List<Mode> Modes
         {
             get
             {
@@ -226,9 +226,9 @@ namespace TechObject
             for (int i = 0; i < modes.Count; i++)
             {
                 if ((oldModesMngr != null) && 
-                    (i < oldModesMngr.GetModes.Count))
+                    (i < oldModesMngr.Modes.Count))
                 {
-                    modes[i].ChangeCrossRestriction(oldModesMngr.GetModes[i]);
+                    modes[i].ChangeCrossRestriction(oldModesMngr.Modes[i]);
                 }
                 else
                 {
@@ -237,9 +237,9 @@ namespace TechObject
             }
             if (oldModesMngr != null)
             {
-                if (oldModesMngr.GetModes.Count > modes.Count)
+                if (oldModesMngr.Modes.Count > modes.Count)
                 {
-                    for (int i = modes.Count; i < oldModesMngr.GetModes.Count; 
+                    for (int i = modes.Count; i < oldModesMngr.Modes.Count; 
                         i++)
                     {
                         int tobjNum = TechObjectManager.GetInstance()

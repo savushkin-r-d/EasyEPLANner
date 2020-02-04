@@ -285,7 +285,7 @@ namespace TechObject
                 i++)
             {
                 TechObject to = TechObjectManager.GetInstance().Objects[i];
-                for (int j = 0; j < to.GetModesManager.GetModes.Count; j++)
+                for (int j = 0; j < to.ModesManager.Modes.Count; j++)
                 {
                     string restrictPair = "{ " + (i + 1).ToString() + ", " + 
                         (j + 1).ToString() + " }";
@@ -532,8 +532,8 @@ namespace TechObject
                 {
                     for (int i = prev + 1;
                         i < TechObjectManager.GetInstance()
-                        .GetTechObj[objNum - 1].GetModesManager
-                        .GetModes.Count; i++)
+                        .GetTechObj[objNum - 1].ModesManager
+                        .Modes.Count; i++)
                     {
                         if (restrictStr.Contains("{ " + objNum.ToString() + 
                             ", " + i.ToString() + " }"))

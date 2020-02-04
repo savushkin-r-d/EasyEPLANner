@@ -21,6 +21,11 @@ namespace TechObject
             items.Add(new OperationParam(par));
         }
 
+        public void DeleteParam(Param par)
+        {
+            items.Remove(par);
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {

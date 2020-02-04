@@ -609,7 +609,7 @@ namespace EasyEPlanner
                 parentNode.Tag = to.GetType().FullName;
                 root.Nodes.Add(parentNode);
 
-                List<TechObject.Mode> modes = to.GetModesManager.GetModes;
+                List<TechObject.Mode> modes = to.ModesManager.Modes;
 
                 foreach (TechObject.Mode mode in modes)
                 {
