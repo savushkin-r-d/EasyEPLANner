@@ -30,6 +30,7 @@ namespace TechObject
             if (!containsThisParam)
             {
                 items.Add(new OperationParam(par));
+                items.Sort(CompareParams);
             }
         }
 
@@ -43,6 +44,18 @@ namespace TechObject
                     break;
                 }
             }
+        }
+
+        /// <summary>
+        /// Сравнение между собой параметров операции
+        /// </summary>
+        /// <param name="x">Параметр 1</param>
+        /// <param name="y">Параметр 2</param>
+        /// <returns></returns>
+        private static int CompareParams(Editor.ITreeViewItem x, 
+            Editor.ITreeViewItem y)
+        {
+            return 1;
         }
 
         #region Реализация ITreeViewItem
