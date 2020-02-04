@@ -55,6 +55,13 @@ namespace TechObject
         private static int CompareParams(Editor.ITreeViewItem x, 
             Editor.ITreeViewItem y)
         {
+            var firstParam = x as OperationParam;
+            var secondParam = y as OperationParam;
+
+            //TODO: Получить название параметров 1 и 2.
+            //TODO: Найти их реальные номера.
+            //TODO: сравнить между собой и выдать результат.
+
             return 1;
         }
 
