@@ -719,8 +719,6 @@ namespace Device
                                 "M",
                                 "P_ON_TIME",
                                 "P_FB",
-                                "FB_OFF_ST",
-                                "FB_ON_ST",
                                 "V",
                                 "BLINK",
                                 "CS",
@@ -762,8 +760,7 @@ namespace Device
                                 "M", 
                                 "P_ON_TIME", 
                                 "V", 
-                                "R", 
-                                "ERR" 
+                                "R"
                             });
 
                         case DeviceSubType.M_ATV:
