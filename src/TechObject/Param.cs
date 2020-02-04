@@ -205,6 +205,21 @@ namespace TechObject
             return name;
         }
 
+        /// <summary>
+        /// Возвращает объект-свойство LuaName
+        /// </summary>
+        public Editor.ObjectProperty LuaNameProperty
+        {
+            get
+            {
+                return nameLua;
+            }
+        }
+
+        /// <summary>
+        /// Возвращает имя параметра для Lua
+        /// </summary>
+        /// <returns></returns>
         public string GetNameLua()
         {
             if (nameLua.EditText[1] != "")
@@ -230,6 +245,22 @@ namespace TechObject
             return meter.EditText[1];
         }
 
+        /// <summary>
+        /// Возвращает или устанавливает список операций, 
+        /// к которым принадлежит параметр.
+        /// </summary>
+        public string Operations
+        {
+            get
+            {
+                return oper.EditText[1];
+            }
+            set
+            {
+                oper.EditText[1] = value;
+            }
+        }
+
         public bool IsUseOperation()
         {
             return oper != null;
@@ -238,12 +269,12 @@ namespace TechObject
         private GetN getN;
 
         private bool isRuntime;
-        public string name;
+        private string name;
         private List<Editor.ITreeViewItem> items; ///Данные для редактирования.
-        public Editor.ObjectProperty nameLua;     ///Имя в Lua.
-        public Editor.ObjectProperty value;       ///Значение.
-        public Editor.ObjectProperty meter;       ///Размерность.
+        private Editor.ObjectProperty nameLua;     ///Имя в Lua.
+        private Editor.ObjectProperty value;       ///Значение.
+        private Editor.ObjectProperty meter;       ///Размерность.
 
-        public Editor.ObjectProperty oper;        ///Номер связанной операции.
+        private Editor.ObjectProperty oper;        ///Номер связанной операции.
     }
 }

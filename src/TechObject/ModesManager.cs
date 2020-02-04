@@ -277,6 +277,15 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Изменение принадлежности параметров к операции
+        /// </summary>
+        /// <param name="parameter"></param>
+        private void ChangeParameterOperations(Param parameter) 
+        {
+            //TODO: изменение параметров объекта при изменении операций
+        }
+
+        /// <summary>
         /// При перемщении, удалении объекта нужно менять родителей у 
         /// ограничений
         /// </summary>
@@ -314,26 +323,33 @@ namespace TechObject
         override public bool Delete(object child)
         {
             Mode mode = child as Mode;
-
-            if (mode != null)
+            if (mode == null)
             {
-                int idx = modes.IndexOf(mode) + 1;
-
-                int tobjNum = TechObjectManager.GetInstance()
-                    .GetTechObjectN(owner);
-                TechObjectManager.GetInstance()
-                    .ChangeModeNum(tobjNum, idx, -1);
-
-                modes.Remove(mode);
-
-                foreach (Mode newMode in modes)
-                {
-                    ChangeRestrictionModeOwner(newMode);
-                }
-                return true;
+                return false;
             }
 
-            return false;
+            int idx = modes.IndexOf(mode) + 1;
+
+            int tobjNum = TechObjectManager.GetInstance()
+                .GetTechObjectN(owner);
+            TechObjectManager.GetInstance()
+                .ChangeModeNum(tobjNum, idx, -1);
+
+            modes.Remove(mode);
+
+            foreach (Mode newMode in modes)
+            {
+                ChangeRestrictionModeOwner(newMode);
+            }
+
+            //TODO: коррекция параметров при удалении
+            var parameters = owner.Params.Items[0] as Params;
+            foreach (Param parameter in parameters.Items)
+            {
+                ChangeParameterOperations(parameter);
+            }
+
+            return true;
         }
 
         override public Editor.ITreeViewItem MoveUp(object child)
@@ -358,6 +374,8 @@ namespace TechObject
                     {
                         ChangeRestrictionModeOwner(newMode);
                     }
+
+                    //TODO: корректировка параметров при перемещении операции
 
                     return modes[index];
                 }
@@ -389,6 +407,8 @@ namespace TechObject
                         ChangeRestrictionModeOwner(newMode);
                     }
 
+                    //TODO: корректировка параметров при перемещении операции
+
                     return modes[index];
                 }
             }
@@ -416,6 +436,8 @@ namespace TechObject
                 ChangeRestrictionModeOwner(newMode);
                 newMode.ChangeCrossRestriction(mode);
 
+                //TODO: замена параметров при замене операции
+
                 return newMode;
             }
 
@@ -441,6 +463,8 @@ namespace TechObject
 
                 ChangeRestrictionModeOwner(newMode);
                 newMode.ChangeCrossRestriction();
+
+                //TODO: дополнение параметров при вставке копии
 
                 return newMode;
             }
