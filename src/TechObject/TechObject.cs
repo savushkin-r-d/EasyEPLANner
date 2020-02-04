@@ -320,6 +320,22 @@ namespace TechObject
             return res;
         }
 
+        public static string ConvertLuaTableToString(object table)
+        {
+            var luaTable = table as LuaTable;
+            var values = new object[luaTable.Values.Count];
+            luaTable.Values.CopyTo(values, 0);
+
+            var result = string.Empty;
+            foreach(object obj in values)
+            {
+                result += obj.ToString() + " ";
+            }
+            result.Trim();
+
+            return result;
+        }
+
         // Получение операции. 
         public Mode GetMode(int i)
         {

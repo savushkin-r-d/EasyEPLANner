@@ -173,8 +173,16 @@ proc_oper_params = function( par, operation, idx, obj )
         for fields, value in ipairs( par ) do
             local pr = obj:GetParamsManager():GetFParam( value.nameLua or "" )
             if pr ~= nil then
-                if pr:GetOperationN() == idx then
-                    operation:GetOperationParams():AddParam( pr )
+                if type( value.oper ) == "table" then
+                    for field, operationNumber in ipairs(value.oper) do
+                        if operationNumber == idx then
+                            operation:GetOperationParams():AddParam( pr )
+                        end
+                    end
+                elseif type (value.oper) == "number" then
+                    if value.oper == idx then
+                        operation:GetOperationParams():AddParam( pr )
+                    end
                 end
             end
         end

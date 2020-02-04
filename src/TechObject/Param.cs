@@ -60,13 +60,7 @@ namespace TechObject
             res += prefix + "\tmeter = \'" + meter.EditText[1] + "\',\n";
             if (oper != null)
             {
-                var operations = oper.EditText[1]
-                    .Split(' ')
-                    .Aggregate(new StringBuilder(), 
-                    (current, next) => current
-                    .Append(current.Length == 0 ? "" : ", ")
-                    .Append(next))
-                    .ToString();
+                var operations = oper.EditText[1].Trim().Replace(' ', ',');
                 res += prefix + "\toper = { " + operations + " },\n";
             }
             res += prefix + "\tnameLua = \'" + nameLua.EditText[1] + "\'\n";
@@ -75,29 +69,36 @@ namespace TechObject
             return res;
         }
 
-        public void SetOperationN(int operN)
+        public void SetOperationN(object operN)
         {
             if (oper != null)
             {
-                oper.SetValue(operN);
+                if (operN.GetType().Name == "LuaTable")
+                {
+                    oper.SetValue(TechObject.ConvertLuaTableToString(operN));
+                }
+                else
+                {
+                    oper.SetValue(operN);
+                }
             }
         }
 
-        public int GetOperationN()
+        public string GetOperationN()
         {
             if (oper != null)
             {
                 try
                 {
-                    return Convert.ToInt32(oper.EditText[1]);
+                    return oper.EditText[1];
                 }
                 catch (Exception)
                 {
-                    return 0;
+                    return "-1";
                 }
             }
 
-            return 0;
+            return "-1";
         }
 
         #region Реализация ITreeViewItem
