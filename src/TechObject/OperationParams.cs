@@ -18,12 +18,31 @@ namespace TechObject
 
         public void AddParam(Param par)
         {
-            items.Add(new OperationParam(par));
+            bool containsThisParam = false;
+            foreach (OperationParam param in items)
+            {
+                if (par.GetNameLua() == param.Param.GetNameLua())
+                {
+                    containsThisParam = true;
+                }
+            }
+
+            if (!containsThisParam)
+            {
+                items.Add(new OperationParam(par));
+            }
         }
 
-        public void DeleteParam(Param par)
+        public void DeleteParam(Param paramForDelete)
         {
-            items.Remove(par);
+            foreach (OperationParam param in items)
+            {
+                if (paramForDelete.GetNameLua() == param.Param.GetNameLua())
+                {
+                    items.Remove(param);
+                    break;
+                }
+            }
         }
 
         #region Реализация ITreeViewItem

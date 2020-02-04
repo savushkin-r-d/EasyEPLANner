@@ -19,6 +19,14 @@ namespace TechObject
             items.Add(par.nameLua);
         }
 
+        public Param Param
+        {
+            get
+            {
+                return par;
+            }
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {

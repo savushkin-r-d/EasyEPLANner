@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace TechObject
 {
@@ -59,7 +60,14 @@ namespace TechObject
             res += prefix + "\tmeter = \'" + meter.EditText[1] + "\',\n";
             if (oper != null)
             {
-                res += prefix + "\toper = " + oper.EditText[1] + ",\n";
+                var operations = oper.EditText[1]
+                    .Split(' ')
+                    .Aggregate(new StringBuilder(), 
+                    (current, next) => current
+                    .Append(current.Length == 0 ? "" : ", ")
+                    .Append(next))
+                    .ToString();
+                res += prefix + "\toper = { " + operations + " },\n";
             }
             res += prefix + "\tnameLua = \'" + nameLua.EditText[1] + "\'\n";
 

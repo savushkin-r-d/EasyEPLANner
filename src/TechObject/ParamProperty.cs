@@ -53,35 +53,36 @@ namespace TechObject
         /// <summary>
         /// Установка параметров в операции
         /// </summary>
-        /// <param name="modesNumbersWithParam"></param>
+        /// <param name="modesNumbersWithParam">Список операций, в который
+        /// надо добавить этот параметр</param>
         public void SetOperationParameters(List<int> modesNumbersWithParam)
         {
-            //var parameter = this.Parent;
-            //var parameters = parameter.Parent;
-            //var parametersManager = parameters.Parent;
-            //var techObject = parametersManager.Parent;
-            //var modesManager = (techObject as TechObject).ModesManager;
-            //var modes = modesManager.Modes;
-            
-            //if (modes.Count < modesNumbersWithParam.Max())
-            //{
-            //    throw new Exception();
-            //}
+            var parameter = this.Parent;
+            var parameters = parameter.Parent;
+            var parametersManager = parameters.Parent;
+            var techObject = parametersManager.Parent;
+            var modesManager = (techObject as TechObject).ModesManager;
+            var modes = modesManager.Modes;
 
-            //foreach(var mode in modes)
-            //{
-            //    var modeParams = mode.GetOperationParams();
-            //    bool isModeForAddParam = modesNumbersWithParam
-            //        .Contains(mode.GetModeNumber());
-            //    if (isModeForAddParam)
-            //    {
-            //        modeParams.AddParam(parameter as Param);
-            //    }
-            //    else
-            //    {
-            //        modeParams.DeleteParam(parameter as Param);
-            //    }
-            //}
+            if (modes.Count < modesNumbersWithParam.Max())
+            {
+                throw new Exception();
+            }
+
+            foreach (var mode in modes)
+            {
+                var modeParams = mode.GetOperationParams();
+                bool isModeForAddParam = modesNumbersWithParam
+                    .Contains(mode.GetModeNumber());
+                if (isModeForAddParam)
+                {
+                    modeParams.AddParam(parameter as Param);
+                }
+                else
+                {
+                    modeParams.DeleteParam(parameter as Param);
+                }
+            }
         }
     }
 }
