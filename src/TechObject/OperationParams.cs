@@ -72,11 +72,11 @@ namespace TechObject
 
             if (firstNumber > secondNumber)
             {
-                return -1;
+                return 1;
             }
             else if (firstNumber < secondNumber)
             {
-                return 1;
+                return -1;
             }
             else
             {
@@ -99,14 +99,8 @@ namespace TechObject
         {
             get
             {
-                if (items.Count > 0)
-                {
-                    return items.ToArray();
-                }
-                else
-                {
-                    return null;
-                }
+
+                return items.ToArray();
             }
         }
         #endregion

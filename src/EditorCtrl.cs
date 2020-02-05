@@ -1366,6 +1366,12 @@ namespace Editor
                 {
                     editorTView.RefreshObjects(selectedItem.Parent.Items);
                 }
+                else if (selectedItem.GetType().Name == "ParamProperty")
+                {
+                    var parent = selectedItem.Parent.Parent.Parent.Parent.Items;
+                    editorTView.RefreshObjects(parent);
+                    editorTView.RefreshObject(selectedItem);
+                }
                 else
                 {
                     editorTView.RefreshObject(selectedItem);
