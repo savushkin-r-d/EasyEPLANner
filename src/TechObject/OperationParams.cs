@@ -49,20 +49,39 @@ namespace TechObject
         /// <summary>
         /// Сравнение между собой параметров операции
         /// </summary>
-        /// <param name="x">Параметр 1</param>
-        /// <param name="y">Параметр 2</param>
+        /// <param name="firsItem">Параметр 1</param>
+        /// <param name="seconditem">Параметр 2</param>
         /// <returns></returns>
-        private static int CompareParams(Editor.ITreeViewItem x, 
-            Editor.ITreeViewItem y)
+        private static int CompareParams(Editor.ITreeViewItem firsItem, 
+            Editor.ITreeViewItem seconditem)
         {
-            var firstParam = x as OperationParam;
-            var secondParam = y as OperationParam;
+            var firstParam = firsItem as OperationParam;
+            var secondParam = seconditem as OperationParam;
 
-            //TODO: Получить название параметров 1 и 2.
-            //TODO: Найти их реальные номера.
-            //TODO: сравнить между собой и выдать результат.
+            var firstNumberString = firstParam.DisplayText[0]
+                .Split('.')
+                .Where(x => x.Any(y => char.IsDigit(y)) == true)
+                .FirstOrDefault();
+            var secondNumberString = secondParam.DisplayText[0]
+                .Split('.')
+                .Where(x => x.Any(y => char.IsDigit(y)) == true)
+                .FirstOrDefault();
 
-            return 1;
+            int.TryParse(firstNumberString, out int firstNumber);
+            int.TryParse(secondNumberString, out int secondNumber);
+
+            if (firstNumber > secondNumber)
+            {
+                return -1;
+            }
+            else if (firstNumber < secondNumber)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         #region Реализация ITreeViewItem
