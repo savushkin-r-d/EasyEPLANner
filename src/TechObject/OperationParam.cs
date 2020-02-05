@@ -16,7 +16,15 @@ namespace TechObject
             this.par = par;
 
             items = new List<Editor.ITreeViewItem>();
-            items.Add(par.nameLua);
+            items.Add(par.LuaNameProperty);
+        }
+
+        public Param Param
+        {
+            get
+            {
+                return par;
+            }
         }
 
         #region Реализация ITreeViewItem

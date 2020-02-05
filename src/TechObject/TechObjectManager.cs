@@ -266,8 +266,8 @@ namespace TechObject
             var res = "";
             foreach (TechObject obj in objects)
             {
-                var modesManager = obj.GetModesManager;
-                var modes = modesManager.GetModes;
+                var modesManager = obj.ModesManager;
+                var modes = modesManager.Modes;
                 foreach (Mode mode in modes)
                 {
                     var baseOperation = mode.GetBaseOperation();
@@ -506,7 +506,7 @@ namespace TechObject
                 }
 
 
-                int stCount = item.GetModesManager.GetModes.Count / 33;
+                int stCount = item.ModesManager.Modes.Count / 33;
                 for (int i = 0; i <= stCount; i++)
                 {
                     string number = "[ " + (i + 1).ToString() + " ]";
@@ -524,7 +524,7 @@ namespace TechObject
                     }
                 }
 
-                for (int i = 1; i <= item.GetModesManager.GetModes.Count; i++)
+                for (int i = 1; i <= item.ModesManager.Modes.Count; i++)
                 {
                     string number = "[ " + i.ToString() + " ]";
                     if (cdbxTagView == true)
@@ -718,9 +718,9 @@ namespace TechObject
                     techObj.EditText[0] + " " + techObj.TechNumber.ToString();
                 TreeNode objNode = new TreeNode(techName);
                 objNode.Tag = techObj;
-                foreach (Mode mode in techObj.GetModesManager.GetModes)
+                foreach (Mode mode in techObj.ModesManager.Modes)
                 {
-                    string modeName = techObj.GetModesManager.GetModeN(mode)
+                    string modeName = techObj.ModesManager.GetModeN(mode)
                         .ToString() + ". " + mode.EditText[0];
                     TreeNode modeNode = new TreeNode();
                     Step commonStep = mode.MainSteps[0];

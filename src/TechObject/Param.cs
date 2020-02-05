@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace TechObject
 {
@@ -23,7 +24,7 @@ namespace TechObject
             }
             if (isUseOperation)
             {
-                this.oper = new Editor.ObjectProperty("Операция", -1);
+                this.oper = new ParamProperty("Операция", -1);
             }
 
             this.meter = new Editor.ObjectProperty("Размерность", meter);
@@ -59,7 +60,8 @@ namespace TechObject
             res += prefix + "\tmeter = \'" + meter.EditText[1] + "\',\n";
             if (oper != null)
             {
-                res += prefix + "\toper = " + oper.EditText[1] + ",\n";
+                var operations = oper.EditText[1].Trim().Replace(' ', ',');
+                res += prefix + "\toper = { " + operations + " },\n";
             }
             res += prefix + "\tnameLua = \'" + nameLua.EditText[1] + "\'\n";
 
@@ -67,29 +69,37 @@ namespace TechObject
             return res;
         }
 
-        public void SetOperationN(int operN)
+        public void SetOperationN(object operN)
         {
             if (oper != null)
             {
-                oper.SetValue(operN);
+                if (operN.GetType().Name == "LuaTable")
+                {
+                    oper.SetValue(StaticHelper.LuaHelper
+                        .ConvertLuaTableToString(operN));
+                }
+                else
+                {
+                    oper.SetValue(operN);
+                }
             }
         }
 
-        public int GetOperationN()
+        public string GetOperationN()
         {
             if (oper != null)
             {
                 try
                 {
-                    return Convert.ToInt32(oper.EditText[1]);
+                    return oper.EditText[1];
                 }
                 catch (Exception)
                 {
-                    return 0;
+                    return "-1";
                 }
             }
 
-            return 0;
+            return "-1";
         }
 
         #region Реализация ITreeViewItem
@@ -196,6 +206,21 @@ namespace TechObject
             return name;
         }
 
+        /// <summary>
+        /// Возвращает объект-свойство LuaName
+        /// </summary>
+        public Editor.ObjectProperty LuaNameProperty
+        {
+            get
+            {
+                return nameLua;
+            }
+        }
+
+        /// <summary>
+        /// Возвращает имя параметра для Lua
+        /// </summary>
+        /// <returns></returns>
         public string GetNameLua()
         {
             if (nameLua.EditText[1] != "")
@@ -221,6 +246,22 @@ namespace TechObject
             return meter.EditText[1];
         }
 
+        /// <summary>
+        /// Возвращает или устанавливает список операций, 
+        /// к которым принадлежит параметр.
+        /// </summary>
+        public string Operations
+        {
+            get
+            {
+                return oper.EditText[1];
+            }
+            set
+            {
+                oper.EditText[1] = value;
+            }
+        }
+
         public bool IsUseOperation()
         {
             return oper != null;
@@ -229,12 +270,12 @@ namespace TechObject
         private GetN getN;
 
         private bool isRuntime;
-        public string name;
+        private string name;
         private List<Editor.ITreeViewItem> items; ///Данные для редактирования.
-        public Editor.ObjectProperty nameLua;     ///Имя в Lua.
-        public Editor.ObjectProperty value;       ///Значение.
-        public Editor.ObjectProperty meter;       ///Размерность.
+        private Editor.ObjectProperty nameLua;     ///Имя в Lua.
+        private Editor.ObjectProperty value;       ///Значение.
+        private Editor.ObjectProperty meter;       ///Размерность.
 
-        public Editor.ObjectProperty oper;        ///Номер связанной операции.
+        private Editor.ObjectProperty oper;        ///Номер связанной операции.
     }
 }

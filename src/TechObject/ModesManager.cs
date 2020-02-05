@@ -197,7 +197,7 @@ namespace TechObject
             }
         }
 
-        public List<Mode> GetModes
+        public List<Mode> Modes
         {
             get
             {
@@ -226,9 +226,9 @@ namespace TechObject
             for (int i = 0; i < modes.Count; i++)
             {
                 if ((oldModesMngr != null) && 
-                    (i < oldModesMngr.GetModes.Count))
+                    (i < oldModesMngr.Modes.Count))
                 {
-                    modes[i].ChangeCrossRestriction(oldModesMngr.GetModes[i]);
+                    modes[i].ChangeCrossRestriction(oldModesMngr.Modes[i]);
                 }
                 else
                 {
@@ -237,9 +237,9 @@ namespace TechObject
             }
             if (oldModesMngr != null)
             {
-                if (oldModesMngr.GetModes.Count > modes.Count)
+                if (oldModesMngr.Modes.Count > modes.Count)
                 {
-                    for (int i = modes.Count; i < oldModesMngr.GetModes.Count; 
+                    for (int i = modes.Count; i < oldModesMngr.Modes.Count; 
                         i++)
                     {
                         int tobjNum = TechObjectManager.GetInstance()
@@ -314,26 +314,28 @@ namespace TechObject
         override public bool Delete(object child)
         {
             Mode mode = child as Mode;
-
-            if (mode != null)
+            if (mode == null)
             {
-                int idx = modes.IndexOf(mode) + 1;
-
-                int tobjNum = TechObjectManager.GetInstance()
-                    .GetTechObjectN(owner);
-                TechObjectManager.GetInstance()
-                    .ChangeModeNum(tobjNum, idx, -1);
-
-                modes.Remove(mode);
-
-                foreach (Mode newMode in modes)
-                {
-                    ChangeRestrictionModeOwner(newMode);
-                }
-                return true;
+                return false;
             }
 
-            return false;
+            int idx = modes.IndexOf(mode) + 1;
+
+            int tobjNum = TechObjectManager.GetInstance()
+                .GetTechObjectN(owner);
+            TechObjectManager.GetInstance()
+                .ChangeModeNum(tobjNum, idx, -1);
+
+            modes.Remove(mode);
+
+            foreach (Mode newMode in modes)
+            {
+                ChangeRestrictionModeOwner(newMode);
+            }
+
+            //TODO: коррекция параметров при удалении
+
+            return true;
         }
 
         override public Editor.ITreeViewItem MoveUp(object child)
@@ -358,6 +360,8 @@ namespace TechObject
                     {
                         ChangeRestrictionModeOwner(newMode);
                     }
+
+                    //TODO: корректировка параметров при перемещении операции
 
                     return modes[index];
                 }
@@ -389,6 +393,8 @@ namespace TechObject
                         ChangeRestrictionModeOwner(newMode);
                     }
 
+                    //TODO: корректировка параметров при перемещении операции
+
                     return modes[index];
                 }
             }
@@ -416,6 +422,8 @@ namespace TechObject
                 ChangeRestrictionModeOwner(newMode);
                 newMode.ChangeCrossRestriction(mode);
 
+                //TODO: замена параметров при замене операции
+
                 return newMode;
             }
 
@@ -441,6 +449,8 @@ namespace TechObject
 
                 ChangeRestrictionModeOwner(newMode);
                 newMode.ChangeCrossRestriction();
+
+                //TODO: дополнение параметров при вставке копии
 
                 return newMode;
             }
