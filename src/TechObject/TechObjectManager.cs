@@ -156,9 +156,6 @@ namespace TechObject
         private string SaveVariablesAsLuaTable(string prefix, 
             out Dictionary<int, string> attachedObjectsDict)
         {
-            // Флаг на поиск привязанных агрегатов в аппарате
-            const int objS88Level = 1;
-
             // Словарь с агрегатами, привязанных к аппарату, 
             //обращение по номеру аппарата
             var attachedObjects = new Dictionary<int, string>();
@@ -180,8 +177,7 @@ namespace TechObject
 
                 // Если есть привязка, помечаю, какие агрегаты к 
                 //какому аппарату привязаны
-                if (objects[i].S88Level == objS88Level & 
-                    objects[i].AttachedObjects != string.Empty)
+                if (objects[i].AttachedObjects != string.Empty)
                 {
                     // Т.к объекты начинаются с 1
                     attachedObjects[i + 1] = objects[i].AttachedObjects;
@@ -231,22 +227,20 @@ namespace TechObject
                             res += "\n"; // Отступ, если изменен тип объекта
                         }
 
-                        switch (attachedTechObjectType)
+                        if (attachedTechObjectType.Contains("mix_node")) 
                         {
-                            case "mix_node_mix":
-                                res += techObjNameForFile + ".mix_node = " + 
+                            res += techObjNameForFile + ".mix_node = " +
                                     "prg." + attachedTechObjNameForFile + "\n";
-                                break;
-
-                            case "cooler_node_cooler":
-                                res += techObjNameForFile + ".cooler_node = " +
+                        }
+                        else if (attachedTechObjectType.Contains("cooler_node")) 
+                        {
+                            res += techObjNameForFile + ".cooler_node = " +
                                     "prg." + attachedTechObjNameForFile + "\n";
-                                break;
-
-                            case "heater_node_heater":
-                                res += techObjNameForFile + ".heater_node = " +
+                        }
+                        else if (attachedTechObjectType.Contains("heater_node")) 
+                        {
+                            res += techObjNameForFile + ".heater_node = " +
                                     "prg." + attachedTechObjNameForFile + "\n";
-                                break;
                         }
 
                         previouslyObjectName = techObj.NameEplanForFile
@@ -272,8 +266,8 @@ namespace TechObject
             var res = "";
             foreach (TechObject obj in objects)
             {
-                var modesManager = obj.GetModesManager;
-                var modes = modesManager.GetModes;
+                var modesManager = obj.ModesManager;
+                var modes = modesManager.Modes;
                 foreach (Mode mode in modes)
                 {
                     var baseOperation = mode.GetBaseOperation();
@@ -515,7 +509,7 @@ namespace TechObject
                 }
 
 
-                int stCount = item.GetModesManager.GetModes.Count / 33;
+                int stCount = item.ModesManager.Modes.Count / 33;
                 for (int i = 0; i <= stCount; i++)
                 {
                     string number = "[ " + (i + 1).ToString() + " ]";
@@ -533,7 +527,7 @@ namespace TechObject
                     }
                 }
 
-                for (int i = 1; i <= item.GetModesManager.GetModes.Count; i++)
+                for (int i = 1; i <= item.ModesManager.Modes.Count; i++)
                 {
                     string number = "[ " + i.ToString() + " ]";
                     if (cdbxTagView == true)
@@ -727,9 +721,9 @@ namespace TechObject
                     techObj.EditText[0] + " " + techObj.TechNumber.ToString();
                 TreeNode objNode = new TreeNode(techName);
                 objNode.Tag = techObj;
-                foreach (Mode mode in techObj.GetModesManager.GetModes)
+                foreach (Mode mode in techObj.ModesManager.Modes)
                 {
-                    string modeName = techObj.GetModesManager.GetModeN(mode)
+                    string modeName = techObj.ModesManager.GetModeN(mode)
                         .ToString() + ". " + mode.EditText[0];
                     TreeNode modeNode = new TreeNode();
                     Step commonStep = mode.MainSteps[0];

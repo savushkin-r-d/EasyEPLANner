@@ -156,7 +156,7 @@ namespace TechObject
         private string name;
         private string eplanName;
         private int s88Level;
-        private string basicName;
+        private string basicName; // Базовое имя для функциональности
 
         private BaseOperation[] objectOperations;
         private BaseProperty[] objectProperties;

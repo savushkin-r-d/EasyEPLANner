@@ -209,6 +209,7 @@
     <Compile Include="TechObject\OperationParam.cs" />
     <Compile Include="TechObject\OperationParams.cs" />
     <Compile Include="TechObject\Param.cs" />
+    <Compile Include="TechObject\ParamProperty.cs" />
     <Compile Include="TechObject\Params.cs" />
     <Compile Include="TechObject\ParamsManager.cs" />
     <Compile Include="TechObject\Restriction.cs" />

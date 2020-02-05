@@ -13,10 +13,10 @@ namespace TechObject
     {
         public ParamsManager()
         {
-            parFLoat = new Params(
-                "Параметры float", "par_float", "init_params_float", false);
-            parUInt = new Params(
-                "Параметры uint", "par_uint", "init_params_uint", false);
+            parFLoat = new Params("Параметры float", "par_float", 
+                "init_params_float", false, true);
+            parUInt = new Params("Параметры uint", "par_uint", 
+                "init_params_uint", false);
             parFLoatRunTime = new Params("Рабочие параметры float", 
                 "rt_par_float", "init_rt_params_float", true);
             parUIntRunTime = new Params("Рабочие параметры uint", 

@@ -10,12 +10,13 @@ namespace TechObject
     public class Params : Editor.TreeViewItem
     {
         public Params(string name, string nameLua, string initFunctionName,
-            bool isRunTimeParams)
+            bool isRunTimeParams, bool isUseOperation = false)
         {
             this.name = name;
             this.nameLua = nameLua;
             this.initFunctionName = initFunctionName;
             this.isRunTimeParams = isRunTimeParams;
+            this.isUseOperation = isUseOperation;
 
             parameters = new List<Param>();
         }
@@ -173,8 +174,7 @@ namespace TechObject
                 string newMeter = parameters[parameters.Count - 1].GetMeter();
                 string newNameLua = parameters[parameters.Count - 1]
                     .GetNameLua();
-                bool useOperation = parameters[parameters.Count - 1]
-                    .IsUseOperation();
+                bool useOperation = isUseOperation;
 
                 newParam = new Param(GetIdx, newName, isRunTimeParams, 
                     newValue, newMeter, newNameLua, useOperation);
@@ -187,7 +187,7 @@ namespace TechObject
             else
             {
                 newParam = new Param(GetIdx, "Название параметра", 
-                    isRunTimeParams);
+                    isRunTimeParams, 0, "шт", "", isUseOperation);
             }
 
             parameters.Add(newParam);
@@ -322,6 +322,7 @@ namespace TechObject
         private string nameLua;
         private string initFunctionName;
         private bool isRunTimeParams;
+        private bool isUseOperation;
 
         private string name;
 

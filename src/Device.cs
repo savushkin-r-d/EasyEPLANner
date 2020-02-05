@@ -667,12 +667,33 @@ namespace Device
                         case DeviceSubType.V_DO1:
                         case DeviceSubType.V_DO2:
                         case DeviceSubType.V_IOLINK_VTUG_DO1:
-                            return new List<string>(new string[] { "ST", "M" });
-                        case DeviceSubType.V_DO1_DI1_FB_OFF:
+                            return new List<string>(new string[] 
+                            { 
+                                "ST", 
+                                "M" 
+                            });
+
                         case DeviceSubType.V_DO1_DI1_FB_ON:
-                        case DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF:
                         case DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON:
-                            return new List<string>(new string[] { "ST", "M", "P_ON_TIME", "P_FB", "FB_OFF_ST" });
+                            return new List<string>(new string[] 
+                            { 
+                                "ST", 
+                                "M", 
+                                "P_ON_TIME", 
+                                "P_FB", 
+                            });
+
+                        case DeviceSubType.V_DO1_DI1_FB_OFF:
+                        case DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF:
+                            return new List<string>(new string[] 
+                            { 
+                                "ST", 
+                                "M", 
+                                "P_ON_TIME", 
+                                "P_FB", 
+                                "FB_OFF_ST" 
+                            });
+
                         case DeviceSubType.V_DO1_DI2:
                         case DeviceSubType.V_DO2_DI2:
                         case DeviceSubType.V_DO2_DI2_BISTABLE:
@@ -680,8 +701,6 @@ namespace Device
                         case DeviceSubType.V_AS_MIXPROOF:
                         case DeviceSubType.V_AS_DO1_DI2:
                         case DeviceSubType.V_BOTTOM_MIXPROOF:                            
-                        case DeviceSubType.V_IOLINK_MIXPROOF:
-                        case DeviceSubType.V_IOLINK_DO1_DI2:
                             return new List<string>(new string[] 
                             { 
                                 "ST", 
@@ -691,11 +710,30 @@ namespace Device
                                 "FB_OFF_ST", 
                                 "FB_ON_ST" 
                             });
+
+                        case DeviceSubType.V_IOLINK_MIXPROOF:
+                        case DeviceSubType.V_IOLINK_DO1_DI2:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "P_ON_TIME",
+                                "P_FB",
+                                "V",
+                                "BLINK",
+                                "CS",
+                                "ERR"
+                            });
                     }
                     break;
 
                 case DeviceType.VC:
-                    return new List<string>(new string[] { "ST", "M", "V" });
+                    return new List<string>(new string[] 
+                    { 
+                        "ST", 
+                        "M", 
+                        "V" 
+                    });
 
                 case DeviceType.M:
                     switch (dst)
@@ -706,65 +744,264 @@ namespace Device
                         case DeviceSubType.M_REV_FREQ:
                         case DeviceSubType.M_REV_2:
                         case DeviceSubType.M_REV_FREQ_2:
+                            return new List<string>(new string[] 
+                            { 
+                                "ST", 
+                                "M", 
+                                "P_ON_TIME", 
+                                "V", 
+                                "R", 
+                            });
+
                         case DeviceSubType.M_REV_2_ERROR:
-                            return new List<string>(new string[] { "ST", "M", "P_ON_TIME", "V" });
+                            return new List<string>(new string[] 
+                            { 
+                                "ST", 
+                                "M", 
+                                "P_ON_TIME", 
+                                "V", 
+                                "R"
+                            });
+
+                        case DeviceSubType.M_ATV:
+                            return new List<string>(new string[] 
+                            { 
+                                "R", 
+                                "FRQ", 
+                                "RPM", 
+                                "EST" 
+                            });
                     }
                     break;
 
                 case DeviceType.LS:
+                    switch (dst)
+                    {
+                        case DeviceSubType.LS_MIN:
+                            return new List<string>(new string[] 
+                            { 
+                                "ST", 
+                                "M", 
+                                "P_DT" 
+                            });
+
+                        case DeviceSubType.LS_MAX:
+                            return new List<string>(new string[] 
+                            { 
+                                "ST", 
+                                "M", 
+                                "P_DT" 
+                            });
+
+                        case DeviceSubType.LS_IOLINK_MIN:
+                            return new List<string>(new string[] 
+                            { 
+                                "ST",
+                                "M"
+                            });
+
+                        case DeviceSubType.LS_IOLINK_MAX:
+                            return new List<string>(new string[] 
+                            { 
+                                "ST", 
+                                "M" 
+                            });
+
+                        case DeviceSubType.LS_VIRT:
+                            return new List<string>(new string[] 
+                            { 
+                                "ST", 
+                                "M" 
+                            });
+                    }
+                    break;
+
                 case DeviceType.FS:
                 case DeviceType.GS:
-                    return new List<string>(new string[] { "ST", "M", "P_DT" });
+                    return new List<string>(new string[] 
+                    { 
+                        "ST", 
+                        "M", 
+                        "P_DT" 
+                    });
 
                 case DeviceType.TE:
                     switch (dst)
                     {
                         case DeviceSubType.TE:
-                            return new List<string>(new string[] { "M", "P_CZ", "V" });
+                            return new List<string>(new string[] 
+                            { 
+                                "M", 
+                                "P_CZ", 
+                                "V" 
+                            });
+
                         case DeviceSubType.TE_IOLINK:
-                            return new List<string>(new string[] { "M", "V" });
+                            return new List<string>(new string[] 
+                            { 
+                                "M", 
+                                "V", 
+                                "P_CZ" 
+                            });
                     }
                     break;
+
                 case DeviceType.LT:
                     switch (dst)
                     {
                         case DeviceSubType.LT:
-                            return new List<string>(new string[] { "M", "P_CZ", "V" });
+                            return new List<string>(new string[] 
+                            { 
+                                "M", 
+                                "P_CZ", 
+                                "V" 
+                            });
+
                         case DeviceSubType.LT_CYL:
-                            return new List<string>(new string[] { "M", "P_CZ", "V", "P_MAX_P", "P_R", "CLEVEL" });
+                            return new List<string>(new string[] 
+                            { 
+                                "M", 
+                                "P_CZ", 
+                                "V", 
+                                "P_MAX_P", 
+                                "P_R", 
+                                "CLEVEL" 
+                            });
+
                         case DeviceSubType.LT_CONE:
-                            return new List<string>(new string[] { "M", "P_CZ", "V", "P_MAX_P", "P_R", "P_H_CONE", "CLEVEL" });
+                            return new List<string>(new string[] 
+                            { 
+                                "M", 
+                                "P_CZ", 
+                                "V", 
+                                "P_MAX_P", 
+                                "P_R", 
+                                "P_H_CONE", 
+                                "CLEVEL" 
+                            });
+
                         case DeviceSubType.LT_TRUNC:
-                            return new List<string>(new string[] { "M", "P_CZ", "V", "P_MAX_P", "P_R", "P_H_TRUNC", "CLEVEL" });
+                            return new List<string>(new string[] 
+                            { 
+                                "M", 
+                                "P_CZ", 
+                                "V", 
+                                "P_MAX_P", 
+                                "P_R", 
+                                "P_H_TRUNC", 
+                                "CLEVEL" 
+                            });
 
                         case DeviceSubType.LT_IOLINK:
-                            return new List<string>(new string[] { "M", "V" });
+                            return new List<string>(new string[] 
+                            { 
+                                "M", 
+                                "P_CZ", 
+                                "V" 
+                            });
                     }
                     break;
 
                 case DeviceType.HA:
-                    return new List<string>(new string[] { "ST", "M" });
+                    return new List<string>(new string[] 
+                    { 
+                        "ST", 
+                        "M" 
+                    });
+
                 case DeviceType.HL:
+                    return new List<string>(new string[] 
+                    { 
+                        "ST", 
+                        "M" 
+                    });
+
                 case DeviceType.SB:
                 case DeviceType.DI:
-                    return new List<string>(new string[] { "ST", "M", "P_DT" });
+                    switch (dst)
+                    {
+                        case DeviceSubType.DI:
+                            return new List<string>(new string[] 
+                            { 
+                                "ST", 
+                                "M", 
+                                "P_DT" 
+                            });
+
+                        case DeviceSubType.DI_VIRT:
+                            return new List<string>(new string[] 
+                            { 
+                                "ST", 
+                                "M" 
+                            });
+                    }
+                    break;
+
                 case DeviceType.DO:
-                    return new List<string>(new string[] { "ST", "M" });
+                    return new List<string>(new string[] 
+                    { 
+                        "ST", 
+                        "M" 
+                    });
 
 
                 case DeviceType.AI:
+                    switch (dst)
+                    {
+                        case DeviceSubType.AI:
+                            return new List<string>(new string[] 
+                            { 
+                                "M", 
+                                "ST", 
+                                "P_MIN_V", 
+                                "P_MAX_V" 
+                            });
+
+                        case DeviceSubType.AI_VIRT:
+                            return new List<string>(new string[] 
+                            { 
+                                "M", 
+                                "ST" 
+                            });
+                    }
+                    break;
+
                 case DeviceType.AO:
+                    return new List<string>(new string[] 
+                    { 
+                        "M", 
+                        "V" 
+                    });
+
                 case DeviceType.PT:
                     switch (dst)
                     {
                         case DeviceSubType.PT:
-                            return new List<string>(new string[] { "ST", "M", "V", "P_MIN_V", "P_MAX_V", "P_CZ" });
+                            return new List<string>(new string[] 
+                            { 
+                                "ST", 
+                                "M", 
+                                "V", 
+                                "P_MIN_V", 
+                                "P_MAX_V", 
+                                "P_CZ" 
+                            });
 
                         case DeviceSubType.PT_IOLINK:
-                            return new List<string>(new string[] { "M", "V" });
+                            return new List<string>(new string[] 
+                            { 
+                                "M", 
+                                "V", 
+                                "P_MIN_V", 
+                                "P_MAX_V" 
+                            });
 
                         case DeviceSubType.DEV_SPAE:
-                            return new List<string>(new string[] { "M", "V" });
+                            return new List<string>(new string[] 
+                            { 
+                                "M", 
+                                "V" 
+                            });
                     }
                     break;
 
@@ -772,9 +1009,49 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.FQT:
-                            return new List<string>(new string[] { "ST", "M", "V", "ABS_V" });
+                            return new List<string>(new string[] 
+                            { 
+                                "ST", 
+                                "M", 
+                                "V", 
+                                "ABS_V" 
+                            });
+
                         case DeviceSubType.FQT_F:
-                            return new List<string>(new string[] { "ST", "M", "V", "P_MIN_FLOW", "P_MAX_FLOW", "P_CZ", "F", "P_DT", "ABS_V" });
+                            return new List<string>(new string[] 
+                            { 
+                                "ST", 
+                                "M", 
+                                "V", 
+                                "P_MIN_FLOW", 
+                                "P_MAX_FLOW", 
+                                "P_CZ", 
+                                "F", 
+                                "P_DT", 
+                                "ABS_V" 
+                            });
+
+                        case DeviceSubType.FQT_F_OK:
+                            return new List<string>(new string[] 
+                            { 
+                                "ST", 
+                                "M", 
+                                "V", 
+                                "P_MIN_FLOW", 
+                                "P_MAX_FLOW", 
+                                "P_CZ", 
+                                "F", 
+                                "P_DT", 
+                                "ABS_V", 
+                                "OK" 
+                            });
+
+                        case DeviceSubType.FQT_VIRT:
+                            return new List<string>(new string[] 
+                            { 
+                                "ABS_V", 
+                                "F"
+                            });
                     }
                     break;
 
@@ -782,19 +1059,52 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.QT:
-                            return new List<string>(new string[] { "ST", "M", "V", "P_MIN_V", "P_MAX_V", "P_CZ" });
+                            return new List<string>(new string[] 
+                            { 
+                                "ST",
+                                "M",
+                                "V", 
+                                "P_MIN_V",
+                                "P_MAX_V", 
+                                "P_CZ" 
+                            });
+
                         case DeviceSubType.QT_OK:
-                            return new List<string>(new string[] { "ST", "M", "V", "OK", "P_MIN_V", "P_MAX_V", "P_CZ" });
+                            return new List<string>(new string[] 
+                            { 
+                                "ST", 
+                                "M", 
+                                "V", 
+                                "OK",
+                                "P_MIN_V", 
+                                "P_MAX_V", 
+                                "P_CZ" 
+                            });
+
                         case DeviceSubType.QT_IOLINK:
-                            return new List<string>(new string[] { "ST", "M", "V", "OK", "P_MIN_V", "P_MAX_V" });
+                            return new List<string>(new string[] 
+                            { 
+                                "ST", 
+                                "M", 
+                                "V", 
+                                "P_CZ" 
+                            });
                     }
                     break;
 
 
                 case DeviceType.WT:
-                    return new List<string>(new string[] { "ST", "M", "V", "P_NOMINAL_W", "P_DT", "P_RKP" });
+                    return new List<string>(new string[] 
+                    { 
+                        "ST", 
+                        "M", 
+                        "V", 
+                        "P_NOMINAL_W", 
+                        "P_DT",
+                        "P_RKP", 
+                        "P_CZ" 
+                    });
             }
-
             return null;
         }
 
@@ -2080,18 +2390,6 @@ namespace Device
 
             AO.Add(new IOChannel("AO", -1, -1, -1, ""));
         }
-
-        public override string Check()
-        {
-            string res = base.Check();
-
-            if (ArticleName == "")
-            {
-                res += $"\"{name}\" - не задано изделие.\n";
-            }
-
-            return res;
-        }
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -2197,8 +2495,6 @@ namespace Device
         {
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.DI;
-
-            parameters.Add("P_DT", null);
         }
 
         public override string SetSubType(string subtype)
@@ -2214,7 +2510,8 @@ namespace Device
 
                 case "DI":
                 case "":
-                    dSubType = DeviceSubType.NONE;
+                    parameters.Add("P_DT", null);
+                    dSubType = DeviceSubType.DI;
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
                     break;
 
@@ -2256,7 +2553,7 @@ namespace Device
 
                 case "DO":
                 case "":
-                    dSubType = DeviceSubType.NONE;
+                    dSubType = DeviceSubType.DO;
                     DO.Add(new IOChannel("DO", -1, -1, -1, ""));
                     break;
 
@@ -2302,7 +2599,7 @@ namespace Device
 
                 case "AI":
                 case "":
-                    dSubType = DeviceSubType.NONE;
+                    dSubType = DeviceSubType.AI;
 
                     parameters.Add("P_C0", null);
                     parameters.Add("P_MIN_V", null);
@@ -2364,7 +2661,7 @@ namespace Device
 
                 case "AO":
                 case "":
-                    dSubType = DeviceSubType.NONE;
+                    dSubType = DeviceSubType.AO;
 
                     parameters.Add("P_MIN_V", null);
                     parameters.Add("P_MAX_V", null);
@@ -2599,9 +2896,6 @@ namespace Device
                     break;
 
                 case "PT_IOLINK":
-                    parameters.Add("P_C0", null);
-                    parameters.Add("P_MIN_V", null);
-                    parameters.Add("P_MAX_V", null);
                     IOLinkSizeIn = 1;
                     break;
 
@@ -2904,18 +3198,6 @@ namespace Device
             }
 
             return errStr;
-        }
-
-        public override string Check()
-        {
-            string res = base.Check();
-
-            if (ArticleName == "")
-            {
-                res += $"\"{name}\" - не задано изделие.\n";
-            }
-
-            return res;
         }
     }
     //-------------------------------------------------------------------------

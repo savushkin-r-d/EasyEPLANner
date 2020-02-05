@@ -127,14 +127,14 @@ namespace TechObject
 
             private TechObject owner;
 
-            // Иерархический номер для агрегата
-            public string unitS88Number = "2";
-
             override public bool IsEditable
             {
                 get
                 {
-                    if (owner.s88Level.EditText[1] != unitS88Number)
+                    if (owner.baseTechObject.Name == "Танк" ||
+                        owner.baseTechObject.Name == "Линия" ||
+                        owner.baseTechObject.Name == "Линия приемки" ||
+                        owner.baseTechObject.Name == "Линия выдачи")
                     {
                         return true;
                     }
@@ -295,7 +295,8 @@ namespace TechObject
         {
             if (operExtraParams.Keys.Count > 0)
             {
-                var extraParams = ConvertLuaTableToCArray(operExtraParams);
+                var extraParams = StaticHelper.LuaHelper
+                    .ConvertLuaTableToCArray(operExtraParams);
                 return modes.AddMode(modeName, baseOperationName, extraParams);
             }
             else
@@ -305,31 +306,14 @@ namespace TechObject
 
         }
 
-        // Конвертация значений LuaTable в C#
-        public Editor.ObjectProperty[] ConvertLuaTableToCArray(LuaTable table)
-        {
-            var Keys = new string[table.Values.Count];
-            var Values = new string[table.Values.Count];
-            var res = new Editor.ObjectProperty[Keys.Length];
-
-            table.Values.CopyTo(Values, 0);
-            table.Keys.CopyTo(Keys, 0);
-
-            for (int i = 0; i < Keys.Length; i++)
-            {
-                res[i] = new Editor.ObjectProperty(Keys[i], Values[i]);
-            }
-            return res;
-        }
-
         // Получение операции. 
         public Mode GetMode(int i)
         {
-            if (modes.GetModes != null)
+            if (modes.Modes != null)
             {
-                if (modes.GetModes.Count > i)
+                if (modes.Modes.Count > i)
                 {
-                    return modes.GetModes[i];
+                    return modes.Modes[i];
                 }
             }
             return null;
@@ -463,7 +447,7 @@ namespace TechObject
             }
         }
 
-        public ModesManager GetModesManager
+        public ModesManager ModesManager
         {
             get
             {
@@ -485,7 +469,7 @@ namespace TechObject
         {
             if (oldObject != null)
             {
-                modes.ChangeCrossRestriction(oldObject.GetModesManager);
+                modes.ChangeCrossRestriction(oldObject.ModesManager);
             }
             else
             {
@@ -582,8 +566,8 @@ namespace TechObject
         {
             var errors = string.Empty;
 
-            ModesManager modesManager = GetModesManager;
-            List<Mode> modes = modesManager.GetModes;
+            ModesManager modesManager = ModesManager;
+            List<Mode> modes = modesManager.Modes;
             foreach (var mode in modes)
             {
                 errors += mode.Check();
@@ -623,7 +607,7 @@ namespace TechObject
         {
             if (baseTechObject.Name != "" && newValue != baseTechObject.Name)
             {
-                this.GetModesManager.ClearBaseOperations();
+                this.ModesManager.ClearBaseOperations();
             }
             // Получил имя базового аппарата из LUA и записал в класс
             baseTechObject.Name = newValue;
