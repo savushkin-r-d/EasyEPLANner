@@ -17,7 +17,7 @@ namespace TechObject
             Name = "Автомат";
             EplanName = "automat";
             BaseOperations = DataBase.Imitation.BaseEmptyOperations();
-            BaseProperties = DataBase.Imitation.AutomatProperties();
+            BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "automat";
         }
 

@@ -25,7 +25,12 @@ namespace TechObject
             this.owner = owner;
         }
 
-        // Конструктор для инициализации базовой операции и параметров
+        /// <summary>
+        /// Конструктор для инициализации базовой операции и параметров
+        /// </summary>
+        /// <param name="name">Имя операции</param>
+        /// <param name="luaName">Lua имя операции</param>
+        /// <param name="baseOperationProperties">Свойства операции</param>
         public BaseOperation(string name, string luaName, 
             BaseProperty[] baseOperationProperties)
         {
@@ -34,6 +39,9 @@ namespace TechObject
             this.baseOperationProperties = baseOperationProperties;
         }
 
+        /// <summary>
+        /// Получить имя операции
+        /// </summary>
         public string Name
         {
             get
@@ -47,6 +55,9 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Получить Lua имя операции
+        /// </summary>
         public string LuaName
         {
             get
@@ -60,38 +71,27 @@ namespace TechObject
             }
         }
 
-        public int ParametersCount
-        {
-            get
-            {
-                if (BaseOperationProperties == null)
-                {
-                    return 0;
-                }
-
-                return baseOperationProperties.Length;
-            }
-        }
-
-        // Инициализация полей при выборе базовой операции
+        /// <summary>
+        /// Инициализация базовой операции по имени
+        /// </summary>
+        /// <param name="baseOperName">Имя операции</param>
         public void Init(string baseOperName)
         {
-            // Базовый объект для поиска операции по этому объекту
-            TechObject techObject = owner.Owner.Owner;
-            string baseTechObjectName = techObject.GetBaseTechObjectName();
-
+            BaseTechObject baseTechObject = owner.Owner.Owner.BaseTechObject;
+            string baseTechObjectName = baseTechObject.Name;
             if (baseTechObjectName == "")
             {
                 return;
             }
 
-            BaseOperation operation = techObject.BaseTechObject
-                .GetBaseOperationByName(baseOperName);
+            BaseOperation operation = baseTechObject.GetBaseOperationByName(
+                baseOperName);
             if (operation != null)
             {
                 Name = operation.Name;
                 LuaName = operation.LuaName;
-                baseOperationProperties = operation.BaseOperationProperties;
+                baseOperationProperties =
+                    FindBaseOperationProperties(operation);
             }
             else
             {
@@ -103,11 +103,39 @@ namespace TechObject
             SetItems();
         }
 
-        // Добавление полей в массив для отображения на дереве
+        /// <summary>
+        /// Поиск свойств операции объекта
+        /// </summary>
+        /// <param name="operation">Базовая операция</param>
+        /// <returns></returns>
+        private BaseProperty[] FindBaseOperationProperties(BaseOperation operation)
+        {
+            var baseTechObject = owner.Owner.Owner.BaseTechObject;
+            var baseTechObjectProperties = baseTechObject.BaseProperties;
+            var baseOperationProperties = operation.Properties;
+            var properties = new List<BaseProperty>();
+
+            foreach(var property in baseOperationProperties)
+            {
+                var samePropertyAtTechObject = baseTechObjectProperties
+                    .Where(x => x.GetLuaName() == property.GetLuaName())
+                    .FirstOrDefault();
+                if (samePropertyAtTechObject != null)
+                {
+                    properties.Add(property);
+                }
+            }
+
+            return properties.ToArray();
+        }
+
+        /// <summary>
+        /// Добавление полей в массив для отображения на дереве
+        /// </summary>
         private void SetItems()
         {
             var showedParameters = new List<BaseProperty>();
-            foreach(var parameter in baseOperationProperties)
+            foreach(var parameter in Properties)
             {
                 if (parameter.isShowed())
                 {
@@ -117,14 +145,31 @@ namespace TechObject
             items = showedParameters.ToArray();
         }
 
-        // Сохранение в виде таблицы Lua
+        /// <summary>
+        /// Сохранение в виде таблицы Lua
+        /// </summary>
+        /// <param name="prefix">Префикс (отступ)</param>
+        /// <returns></returns>
         public string SaveAsLuaTable(string prefix)
         {
             var res = "";
-            res += prefix + "props =\n" + prefix + "\t{\n";
-            foreach (var operParam in baseOperationProperties)
+            
+            if (Properties == null)
             {
-                if (operParam.СanSave())
+                return res;
+            }
+
+            var propertiesCountForSave = Properties
+                .Where(x => x.CanSave() == true).Count();
+            if (propertiesCountForSave <= 0)
+            {
+                return res;
+            } 
+
+            res += prefix + "props =\n" + prefix + "\t{\n";
+            foreach (var operParam in Properties)
+            {
+                if (operParam.CanSave())
                 {
                     res += "\t" + prefix + operParam.GetLuaName() + " = \'" + 
                         operParam.GetValue() + "\',\n";
@@ -134,12 +179,15 @@ namespace TechObject
             return res;
         }
 
-        // Установка параметров базовой операции
+        /// <summary>
+        /// Установка свойств базовой операции
+        /// </summary>
+        /// <param name="extraParams">Свойства операции</param>
         public void SetExtraProperties(Editor.ObjectProperty[] extraParams)
         {
             foreach (Editor.ObjectProperty extraParam in extraParams)
             {
-                var property = baseOperationProperties
+                var property = Properties
                     .Where(x => x.GetLuaName()
                     .Equals(extraParam.DisplayText[0]))
                     .FirstOrDefault();
@@ -151,8 +199,10 @@ namespace TechObject
             }
         }
 
-        // Возврат параметров базовой операции
-        public BaseProperty[] BaseOperationProperties
+        /// <summary>
+        /// Получить свойства базовой операции
+        /// </summary>
+        public BaseProperty[] Properties
         {
             get
             {

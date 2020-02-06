@@ -48,7 +48,7 @@ namespace TechObject
             }
         }
 
-        public virtual bool СanSave()
+        public virtual bool CanSave()
         {
             return canSave;
         }

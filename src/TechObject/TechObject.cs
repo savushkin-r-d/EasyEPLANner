@@ -527,12 +527,6 @@ namespace TechObject
             }
         }
 
-        //  Получение имени базовой операции
-        public string GetBaseTechObjectName()
-        {
-            return baseTechObject.Name;
-        }
-
         /// <summary>
         /// Базовый технологический объект
         /// </summary>

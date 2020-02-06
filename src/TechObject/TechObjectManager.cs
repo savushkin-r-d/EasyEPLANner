@@ -310,10 +310,10 @@ namespace TechObject
 
                             res += prefix + "}\n";
 
-                            foreach (BaseProperty param in 
-                                baseOperation.BaseOperationProperties)
+                            foreach (BaseProperty param in baseOperation
+                                .Properties)
                             {
-                                if (param.СanSave())
+                                if (param.CanSave())
                                 {
                                     string val = param.GetValue() ==
                                     "" ? "nil" : param.GetValue();

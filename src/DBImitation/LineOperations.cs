@@ -14,8 +14,7 @@ namespace DataBase
             return new BaseOperation[]
             {
                 new BaseOperation("","", EmptyProperties()),
-                new BaseOperation("Мойка", "WASHING_CIP", LineWashParams()),
-                //new BaseOperation("Работа", "luaName1", EmptyProperties())
+                new BaseOperation("Мойка", "WASHING_CIP", WashParams()),
             };
         }
     }

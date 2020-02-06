@@ -149,11 +149,7 @@ namespace TechObject
                 prefix + "base_operation = \'" + baseOperation.Name + 
                 "\',\n";
 
-            // Запись параметров базовой операции, если они есть
-            if (baseOperation.ParametersCount > 0)
-            {
-                res += baseOperation.SaveAsLuaTable(prefix);
-            }
+            res += baseOperation.SaveAsLuaTable(prefix);
 
             string tmp = "";
             //Совместимость с предыдущей версией (до введения состояния для
