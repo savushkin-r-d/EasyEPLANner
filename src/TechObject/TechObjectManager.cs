@@ -146,7 +146,7 @@ namespace TechObject
 
             res += SaveParamsAsLuaTable(prefix);
             res += SaveFunctionalityAsLuaTable();
-            res += "\nreturn prg";
+            res += "return prg";
             res.Replace("\t", "    ");
 
             return res;
@@ -165,15 +165,23 @@ namespace TechObject
 
             for (int i = 0; i < objects.Count; i++)
             {
-                if (previouslyObjectName != objects[i].NameEplanForFile
+                if (previouslyObjectName != objects[i].NameEplan
                     .ToLower() && previouslyObjectName != "")
                 {
                     res += "\n";
                 }
 
-                res += prefix + objects[i].NameEplanForFile.ToLower() + 
-                    objects[i].TechNumber + " = OBJECT" + 
+                var varForSave = objects[i].NameEplanForFile
+                    .ToLower() + objects[i].TechNumber + " = OBJECT" +
                     GetTechObjectN(objects[i]) + ",\n";
+                if (objects[i].NameEplanForFile.ToLower() == "")
+                {
+                    res += prefix + "--" + varForSave;
+                }
+                else
+                {
+                    res += prefix + varForSave;
+                }
 
                 // Если есть привязка, помечаю, какие агрегаты к 
                 //какому аппарату привязаны
@@ -184,9 +192,8 @@ namespace TechObject
                 }
 
                 // Записал, обозначил, что этот объект уже записан
-                previouslyObjectName = objects[i].NameEplanForFile.ToLower();
+                previouslyObjectName = objects[i].NameEplan.ToLower();
             }
-
             attachedObjectsDict = attachedObjects;
 
             return res;
@@ -338,18 +345,27 @@ namespace TechObject
 
             foreach (TechObject obj in objects)
             {
+                var basicObj = DataBase.Imitation
+                    .GetBasicName(obj.DisplayText[1]).ToLower();
+
                 if (previouslyObjectName != obj.NameEplanForFile.ToLower() && 
                     previouslyObjectName != "")
                 {
                     res += "\n"; // Отступ, если изменен тип объекта
                 }
-                var basicObj = DataBase.Imitation
-                    .GetBasicName(obj.DisplayText[1]).ToLower();
-                var objName = obj.NameEplanForFile.ToLower() + obj.TechNumber;
-                res += "add_functionality(prg." + objName + ", " + "basic_" + 
-                    basicObj + ")\n";
 
-                previouslyObjectName = obj.NameEplanForFile.ToLower();
+                var objName = obj.NameEplanForFile.ToLower() + obj.TechNumber;
+                var functionalityForSave = "add_functionality(prg." + 
+                    objName + ", " + "basic_" + basicObj + ")\n";
+                if (basicObj == "")
+                {
+                    res += "--" + functionalityForSave;
+                }
+                else
+                {
+                    res += functionalityForSave;
+                }
+                previouslyObjectName = obj.NameEplanForFile.ToLower();       
             }
             return res;
         }
