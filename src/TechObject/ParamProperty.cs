@@ -20,7 +20,7 @@ namespace TechObject
         {
             try
             {
-                string[] numbersStrings = newValue.Split(' ');
+                string[] numbersStrings = newValue.Trim().Split(' ');
                 var numbers = new List<int>();
                 foreach (string numberString in numbersStrings)
                 {
