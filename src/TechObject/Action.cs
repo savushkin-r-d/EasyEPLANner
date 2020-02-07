@@ -107,7 +107,7 @@ namespace TechObject
             deviceIndex = tmpIndex;
         }
 
-        public void ModifyDevNames(string newTechObjectName,
+        virtual public void ModifyDevNames(string newTechObjectName,
             int newTechObjectNumber, string oldTechObjectName)
         {
             List<int> tmpIndex = new List<int>();
