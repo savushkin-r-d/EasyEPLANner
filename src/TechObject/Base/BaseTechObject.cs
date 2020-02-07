@@ -17,6 +17,11 @@ namespace TechObject
             this.nameEplan = "";
         }
 
+        public BaseTechObject(TechObject owner)
+        {
+            this.Owner = owner;
+        }
+
         public BaseTechObject(string name, string nameEplan)
         {
             this.name = name;
@@ -71,7 +76,67 @@ namespace TechObject
 
         public BaseOperation[] BaseOperations
         {
-            get { return baseOperations; }
+            get 
+            { 
+                return baseOperations; 
+            }
+            set
+            {
+                baseOperations = value;
+            }
+        }
+
+        public string BasicName
+        {
+            get
+            {
+                return basicName;
+            }
+            set
+            {
+                basicName = value;
+            }
+        }
+
+        public TechObject Owner
+        {
+            get
+            {
+                return techObject;
+            }
+            set
+            {
+                techObject = value;
+            }
+        }
+
+        public BaseTechObject Clone(ModesManager modesManager)
+        {
+            var baseTechobject = new BaseTechObject();
+            baseTechobject.name = this.name;
+            baseTechobject.nameEplan = this.nameEplan;
+            baseTechobject.basicName = this.basicName;
+            baseTechobject.s88Level = this.s88Level;
+            baseTechobject.Owner = modesManager.Owner;
+
+            var baseOperations = new List<BaseOperation>();
+            foreach(var mode in modesManager.Modes)
+            {
+                var operation = mode.GetBaseOperation();
+                baseOperations.Add(operation/*clonedOperation*/);
+            }
+
+            baseTechobject.BaseOperations = baseOperations.ToArray();
+
+            return baseTechobject;
+        }
+
+        public void ResetBaseOperations()
+        {
+            foreach (BaseOperation operation in BaseOperations)
+            {
+                operation.Init("");
+            }
         }
 
         private string name; // Отображаемое имя технологического объекта
@@ -80,6 +145,8 @@ namespace TechObject
         private string basicName; // Базовое имя для функциональности
 
         // Базовые операции базового объекта
-        private BaseOperation[] baseOperations = new BaseOperation[0]; 
+        private BaseOperation[] baseOperations = new BaseOperation[0];
+        // Владелец объекта
+        private TechObject techObject;
     }
 }

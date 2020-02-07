@@ -89,7 +89,7 @@ namespace TechObject
             Mode clone = (Mode)MemberwiseClone();
             clone.getN = getN;
             clone.owner = newOwner;
-
+            clone.baseOperation = baseOperation.Clone(clone);
             if (name != "")
             {
                 clone.name = name;

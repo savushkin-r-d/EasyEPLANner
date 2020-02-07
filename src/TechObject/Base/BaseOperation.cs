@@ -30,6 +30,7 @@ namespace TechObject
         {
             this.operationName = name;
             this.luaOperationName = luaName;
+            this.baseOperationProperties = new BaseOperationProperty[0];
         }
 
         // Конструктор для инициализации базовой операции и параметров
@@ -95,6 +96,13 @@ namespace TechObject
 
                 SetItems();
             }
+            else
+            {
+                SetName("");
+                SetLuaName("");
+                baseOperationProperties = new BaseOperationProperty[0];
+                SetItems();
+            }
         }
 
         // Добавление полей в массив для отображения на дереве
@@ -147,6 +155,29 @@ namespace TechObject
             {
                 return baseOperationProperties;
             }
+            set
+            {
+                baseOperationProperties = value;
+            }
+        }
+
+        public BaseOperation Clone(Mode owner)
+        {
+            var properties = new BaseOperationProperty[
+                baseOperationProperties.Length];
+            for (int i = 0; i < baseOperationProperties.Length; i++)
+            {
+                properties[i] = new BaseOperationProperty(
+                    baseOperationProperties[i].GetLuaName(),
+                    baseOperationProperties[i].GetName(),
+                    baseOperationProperties[i].GetValue());
+            }
+            var operation = new BaseOperation(operationName, luaOperationName, 
+                properties);
+            operation.owner = owner;
+            operation.SetItems();
+
+            return operation;
         }
 
         #region Реализация ITreeViewItem

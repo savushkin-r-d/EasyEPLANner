@@ -226,7 +226,7 @@ namespace TechObject
                 this);
 
             // Экземпляр класса базового агрегата
-            baseTechObject = new BaseTechObject(); 
+            baseTechObject = new BaseTechObject(this); 
 
             modes = new ModesManager(this);
             timers = new TimersManager();
@@ -260,6 +260,8 @@ namespace TechObject
             clone.modes.ModifyRestrictObj(oldObjN, newObjN);
 
             clone.parameters = parameters.Clone();
+
+            clone.baseTechObject = baseTechObject.Clone(clone.modes);
 
             clone.SetItems();
 
@@ -589,6 +591,13 @@ namespace TechObject
 
         override public bool SetNewValue(string newValue, bool isExtraValue)
         {
+            bool resetBaseOperations = false;
+            if (newValue != baseTechObject.GetName() &&
+                baseTechObject.GetName() != "")
+            {
+                resetBaseOperations = true;
+            }
+
             // Получил имя базового аппарата из LUA и записал в класс
             baseTechObject.SetName(newValue);
 
@@ -604,6 +613,11 @@ namespace TechObject
             int s88Level = techObjFromDB.GetS88Level();
             baseTechObject.SetS88Level(s88Level);
             S88Level = baseTechObject.GetS88Level();
+
+            if (resetBaseOperations == true)
+            {
+                baseTechObject.ResetBaseOperations();
+            }
 
             // Т.к установили новое значение, произошла смена базового объекта
             // Надо сравнить ОУ и изменить его, если требуется
