@@ -123,7 +123,7 @@ namespace TechObject
             foreach(var mode in modesManager.Modes)
             {
                 var operation = mode.GetBaseOperation();
-                baseOperations.Add(operation/*clonedOperation*/);
+                baseOperations.Add(operation);
             }
 
             baseTechobject.BaseOperations = baseOperations.ToArray();
