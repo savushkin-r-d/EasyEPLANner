@@ -81,12 +81,25 @@ namespace DataBase
             string baseOperName, string baseObjectName)
         {
             BaseTechObject currObj = baseTechObjectArr()
-                .First(x => x.GetName().Equals(baseObjectName));
+                .FirstOrDefault(x => x.GetName().Equals(baseObjectName));
+            if (currObj == null)
+            {
+                return new BaseOperationProperty[0];
+            }
+
             BaseOperation currOper = currObj.BaseOperations
-                .First(x => x.GetName().Equals(baseOperName));
+                .FirstOrDefault(x => x.GetName().Equals(baseOperName));
+            if (currOper == null)
+            {
+                return new BaseOperationProperty[0];
+            }
+
             BaseOperationProperty[] operationParams = 
                 currOper.BaseOperationProperties;
-            if (operationParams == null) return new BaseOperationProperty[0];
+            if (operationParams == null)
+            {
+                return new BaseOperationProperty[0];
+            }
             return operationParams;
         }
 
