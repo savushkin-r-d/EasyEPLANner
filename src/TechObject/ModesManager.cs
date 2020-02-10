@@ -84,8 +84,7 @@ namespace TechObject
             foreach (Mode mode in modes)
             {
                 string tmp = "";
-                string comment = $"\t\t--Операция №{i.ToString()} " +
-                    $"({mode.Name})";
+                string comment = $"\t\t--{mode.Name}";
 
                 tmp += mode.SaveRestrictionAsLua(prefix + "\t\t");
                 if (tmp != "")
