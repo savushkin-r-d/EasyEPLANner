@@ -21,8 +21,6 @@ namespace TechObject
             : base(name, "")
         {
             this.luaName = luaName;
-            this.name = name;
-            this.value = "";
             this.canSave = canSave;
         }
 
@@ -34,32 +32,6 @@ namespace TechObject
             get
             {
                 return luaName;
-            }
-        }
-
-        /// <summary>
-        /// Значение свойства.
-        /// </summary>
-        public string Value
-        {
-            get
-            {
-                return value.ToString();
-            }
-            set
-            {
-                this.value = value;
-            }
-        }
-
-        /// <summary>
-        /// Имя свойства.
-        /// </summary>
-        public string Name
-        {
-            get
-            {
-                return name;
             }
         }
 
@@ -93,7 +65,7 @@ namespace TechObject
         public override bool SetNewValue(string newValue)
         {
             newValue = newValue.Trim();
-            this.value = newValue;
+            SetValue(newValue);
             return true;
         }
 
@@ -101,7 +73,7 @@ namespace TechObject
         {
             get
             {
-                return new string[] { luaName, value.ToString() };
+                return new string[] { luaName, base.Value };
             }
         }
 
@@ -109,14 +81,12 @@ namespace TechObject
         {
             get
             {
-                return new string[] { name, value.ToString() };
+                return new string[] { base.Name, base.Value };
             }
         }
         #endregion
 
         private string luaName;
-        private string name;
-        private object value;
         private bool canSave;
     }
 }

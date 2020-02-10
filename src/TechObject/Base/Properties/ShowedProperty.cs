@@ -19,7 +19,7 @@ namespace TechObject
         {
             var newProperty = new ShowedBaseProperty(this.LuaName, this.Name,
                 this.CanSave());
-            newProperty.Value = this.Value;
+            newProperty.SetValue(this.Value);
             return newProperty;
         }
     }
