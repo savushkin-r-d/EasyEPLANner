@@ -185,7 +185,7 @@ namespace TechObject
         {
             string res = "";
             string tmp = "";
-            string comment = $"\t\t--{this.Name}{getN(this)}";
+            string comment = $"\t\t--{this.Name} {this.TechNumber}";
 
             tmp += modes.SaveRestrictionAsLua(prefix);
             if (tmp != "")
