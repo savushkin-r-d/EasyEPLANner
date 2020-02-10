@@ -73,7 +73,7 @@ namespace TechObject
         {
             get
             {
-                return new string[] { luaName, base.Value };
+                return new string[] { luaName, Value };
             }
         }
 
@@ -81,7 +81,7 @@ namespace TechObject
         {
             get
             {
-                return new string[] { base.Name, base.Value };
+                return new string[] { Name, Value };
             }
         }
         #endregion

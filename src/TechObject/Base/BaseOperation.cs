@@ -79,11 +79,11 @@ namespace TechObject
         /// <param name="baseOperName">Имя операции</param>
         public void Init(string baseOperName)
         {
-            BaseTechObject baseTechObject = owner.Owner.Owner.BaseTechObject;
-            string baseTechObjectName = baseTechObject.Name;
+            TechObject techObject = owner.Owner.Owner;
+            string baseTechObjectName = techObject.BaseTechObject.Name;
             if (baseTechObjectName != "")
             {
-                BaseOperation operation = baseTechObject
+                BaseOperation operation = techObject.BaseTechObject
                     .GetBaseOperationByName(baseOperName);
                 if (operation != null)
                 {

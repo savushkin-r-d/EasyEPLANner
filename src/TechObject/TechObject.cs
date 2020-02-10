@@ -593,22 +593,16 @@ namespace TechObject
 
         override public bool SetNewValue(string newValue, bool isExtraValue)
         {
-            bool resetBaseOperations = false;
             if (baseTechObject.Name != "" && newValue != baseTechObject.Name)
-            {
-                resetBaseOperations = true;
-            }
-
-            baseTechObject.Name = newValue;
-            BaseTechObject techObjFromDB = DataBase.Imitation.GetTObject(
-                newValue);
-            baseTechObject = techObjFromDB;
-            S88Level = techObjFromDB.S88Level;
-
-            if (resetBaseOperations == true)
             {
                 baseTechObject.ResetBaseOperations();
             }
+
+            BaseTechObject techObjFromDB = DataBase.Imitation.GetTObject(
+                newValue);
+            techObjFromDB.Owner = baseTechObject.Owner;
+            baseTechObject = techObjFromDB;
+            S88Level = baseTechObject.S88Level;
 
             // Т.к установили новое значение, произошла смена базового объекта
             // Надо сравнить ОУ и изменить его, если требуется
