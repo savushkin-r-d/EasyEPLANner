@@ -388,7 +388,7 @@ namespace EasyEPlanner
             xlApp.ActiveWindow.SplitRow = 1;
             xlApp.ActiveWindow.FreezePanes = true;
             row = xlWorkSheet.UsedRange.Rows.Count;
-            xlWorkSheet.Range["A1", "C" + row.ToString()].EntireColumn.AutoFit();
+            xlWorkSheet.Range["A1", "G" + row.ToString()].EntireColumn.AutoFit();
 
             // Установка переноса текста в ячейке.
             xlWorkSheet.Outline.SummaryRow = Excel.XlSummaryRow.xlSummaryAbove;
@@ -455,16 +455,20 @@ namespace EasyEPlanner
                 int firstGroupRow = row + 1;
                 if (node.Tag is string[])
                 {
-                    string cellAddress = ParseColNum(node.Level) + row.ToString();
-
-                    xlWorkSheet.Range[cellAddress,
-                     "L" + row.ToString()].Value2 = node.Tag as string[];
+                    string[] values = node.Tag as string[];
+                    string firstCellAddress = ParseColNum(node.Level) + 
+                        row.ToString();
+                    string secondCellAddress = ParseColNum(
+                        node.Level + values.Length - 1) + row.ToString();
+                    xlWorkSheet.Range[firstCellAddress, secondCellAddress]
+                        .Value2 = values;
                 }
                 else
                 {
                     string[] srt = new string[] { node.Text };
 
-                    string cellAddress = ParseColNum(node.Level) + row.ToString();
+                    string cellAddress = ParseColNum(node.Level) + 
+                        row.ToString();
 
                     xlWorkSheet.Range[cellAddress, cellAddress].Value2 = srt;
 
@@ -473,9 +477,8 @@ namespace EasyEPlanner
                 WriteTreeNode(ref xlWorkSheet, node.Nodes, ref row);
                 if (firstGroupRow != row)
                 {
-                    (xlWorkSheet.Rows[
-                                string.Format("{0}:{1}", firstGroupRow, row - 1),
-                                System.Reflection.Missing.Value]
+                    (xlWorkSheet.Rows[string.Format("{0}:{1}", firstGroupRow, 
+                                row - 1), System.Reflection.Missing.Value]
                                 as Excel.Range).Group();
                 }
             }
