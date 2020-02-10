@@ -11,6 +11,12 @@ namespace TechObject
     /// </summary>
     public abstract class BaseProperty : Editor.ObjectProperty
     {
+        /// <summary>
+        /// Абстрактный метод копирования объекта.
+        /// </summary>
+        /// <returns></returns>
+        public abstract new BaseProperty Clone();
+
         public BaseProperty(string luaName, string name, bool canSave) 
             : base(name, "")
         {
@@ -20,21 +26,47 @@ namespace TechObject
             this.canSave = canSave;
         }
 
-        public string GetLuaName()
+        /// <summary>
+        /// Lua имя свойства.
+        /// </summary>
+        public string LuaName
         {
-            return luaName;
+            get
+            {
+                return luaName;
+            }
         }
 
-        public string GetValue()
+        /// <summary>
+        /// Значение свойства.
+        /// </summary>
+        public string Value
         {
-            return value.ToString();
+            get
+            {
+                return value.ToString();
+            }
+            set
+            {
+                this.value = value;
+            }
         }
 
-        public void SetValue(string value)
+        /// <summary>
+        /// Имя свойства.
+        /// </summary>
+        public string Name
         {
-            this.value = value;
+            get
+            {
+                return name;
+            }
         }
 
+        /// <summary>
+        /// Нужно ли отображать свойство в дереве объектов.
+        /// </summary>
+        /// <returns></returns>
         public virtual bool isShowed()
         {
             return true;
@@ -48,6 +80,10 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Нужно ли сохранять это свойство в файле описания.
+        /// </summary>
+        /// <returns></returns>
         public virtual bool CanSave()
         {
             return canSave;
@@ -78,41 +114,9 @@ namespace TechObject
         }
         #endregion
 
-        private string luaName; // Lua имя свойства
-        private string name; // Имя свойства
-        private object value; // Значение
-
-        private bool canSave; // Необходимость сохранения свойства.
-    }
-
-    public class ShowedBaseProperty : BaseProperty
-    {
-        public ShowedBaseProperty(string luaName, string name, bool canSave)
-            : base (luaName, name, canSave) { }
-
-        public ShowedBaseProperty(string luaName, string name) : base(luaName,
-            name, true) { }
-    }
-
-    public class NonShowedBaseProperty : BaseProperty
-    {
-        public NonShowedBaseProperty(string luaName, string name, bool canSave)
-            : base(luaName, name, canSave) { }
-
-        public NonShowedBaseProperty(string luaName, string name)
-            : base(luaName, name, true) { }
-
-        public override bool isShowed()
-        {
-            return false;
-        }
-
-        override public bool IsUseDevList
-        {
-            get
-            {
-                return false;
-            }
-        }
+        private string luaName;
+        private string name;
+        private object value;
+        private bool canSave;
     }
 }

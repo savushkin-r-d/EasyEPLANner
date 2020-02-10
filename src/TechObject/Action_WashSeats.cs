@@ -52,6 +52,16 @@ namespace TechObject
             }
         }
 
+        override public void ModifyDevNames(string newTechObjectName,
+            int newTechObjectNumber, string oldTechObjectName)
+        {
+            foreach (Action subAction in subAction_WashGroupSeats)
+            {
+                subAction.ModifyDevNames(newTechObjectName, 
+                    newTechObjectNumber, oldTechObjectName);
+            }
+        }
+
         /// <summary>
         /// Добавление устройства к действию.
         /// </summary>

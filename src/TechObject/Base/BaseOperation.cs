@@ -15,6 +15,7 @@ namespace TechObject
         {
             this.operationName = "";
             this.luaOperationName = "";
+            this.baseOperationProperties = new BaseProperty[0];
             this.owner = owner;
         }
 
@@ -22,6 +23,7 @@ namespace TechObject
         {
             this.operationName = name;
             this.luaOperationName = luaName;
+            this.baseOperationProperties = new BaseProperty[0];
             this.owner = owner;
         }
 
@@ -79,19 +81,17 @@ namespace TechObject
         {
             BaseTechObject baseTechObject = owner.Owner.Owner.BaseTechObject;
             string baseTechObjectName = baseTechObject.Name;
-            if (baseTechObjectName == "")
+            if (baseTechObjectName != "")
             {
-                return;
-            }
-
-            BaseOperation operation = baseTechObject.GetBaseOperationByName(
-                baseOperName);
-            if (operation != null)
-            {
-                Name = operation.Name;
-                LuaName = operation.LuaName;
-                baseOperationProperties =
-                    FindBaseOperationProperties(operation);
+                BaseOperation operation = baseTechObject
+                    .GetBaseOperationByName(baseOperName);
+                if (operation != null)
+                {
+                    Name = operation.Name;
+                    LuaName = operation.LuaName;
+                    baseOperationProperties =
+                        FindBaseOperationProperties(operation);
+                }
             }
             else
             {
@@ -118,7 +118,7 @@ namespace TechObject
             foreach(var property in baseOperationProperties)
             {
                 var samePropertyAtTechObject = baseTechObjectProperties
-                    .Where(x => x.GetLuaName() == property.GetLuaName())
+                    .Where(x => x.LuaName == property.LuaName)
                     .FirstOrDefault();
                 if (samePropertyAtTechObject != null)
                 {
@@ -171,8 +171,8 @@ namespace TechObject
             {
                 if (operParam.CanSave())
                 {
-                    res += "\t" + prefix + operParam.GetLuaName() + " = \'" + 
-                        operParam.GetValue() + "\',\n";
+                    res += "\t" + prefix + operParam.LuaName + " = \'" + 
+                        operParam.Value + "\',\n";
                 }
             }
             res += prefix + "\t},\n";
@@ -188,7 +188,7 @@ namespace TechObject
             foreach (Editor.ObjectProperty extraParam in extraParams)
             {
                 var property = Properties
-                    .Where(x => x.GetLuaName()
+                    .Where(x => x.LuaName
                     .Equals(extraParam.DisplayText[0]))
                     .FirstOrDefault();
 
@@ -208,6 +208,30 @@ namespace TechObject
             {
                 return baseOperationProperties;
             }
+            set
+            {
+                baseOperationProperties = value;
+            }
+        }
+
+        /// <summary>
+        /// Копирование объекта
+        /// </summary>
+        /// <param name="owner">Новая операция-владелец объекта</param>
+        /// <returns></returns>
+        public BaseOperation Clone(Mode owner)
+        {
+            var properties = new BaseProperty[baseOperationProperties.Length];
+            for (int i = 0; i < baseOperationProperties.Length; i++)
+            {
+                properties[i] = baseOperationProperties[i].Clone();
+            }
+            var operation = new BaseOperation(operationName, luaOperationName, 
+                properties);
+            operation.owner = owner;
+            operation.SetItems();
+
+            return operation;
         }
 
         #region Реализация ITreeViewItem
@@ -239,11 +263,10 @@ namespace TechObject
         #endregion
 
         private Editor.ITreeViewItem[] items = new Editor.ITreeViewItem[0];
-        // Свойства базовой операции для имитационного хранилища
+        
         private BaseProperty[] baseOperationProperties;
-
-        private string operationName; /// Имя базовой операции
-        private string luaOperationName; /// Имя базовой операции для файла Lua
+        private string operationName;
+        private string luaOperationName;
 
         private Mode owner;
     }

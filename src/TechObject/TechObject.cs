@@ -226,7 +226,7 @@ namespace TechObject
                 this);
 
             // Экземпляр класса базового агрегата
-            baseTechObject = new BaseTechObject(); 
+            baseTechObject = new BaseTechObject(this); 
 
             modes = new ModesManager(this);
             timers = new TimersManager();
@@ -241,30 +241,25 @@ namespace TechObject
             TechObject clone = (TechObject)MemberwiseClone();
 
             clone.techNumber = new TechObjectN(clone, newNumber);
-
             clone.techType = new Editor.ObjectProperty("Тип", TechType);
             clone.nameBC = new Editor.ObjectProperty("Имя объекта Monitor",
                 NameBC);
             clone.nameEplan = new NameInEplan(NameEplan, clone);
-
             clone.s88Level = new ObjS88Level(S88Level, clone);
             clone.attachedObjects = new AttachedToObjects(AttachedObjects, 
                 clone);
 
             clone.getN = getN;
 
-            clone.baseTechObject = BaseTechObject.Clone();
-
             clone.modes = modes.Clone(clone);
             clone.modes.ChngeOwner(clone);
             clone.modes.ModifyDevNames(TechNumber);
-
             clone.modes.ModifyRestrictObj(oldObjN, newObjN);
 
             clone.parameters = parameters.Clone();
+            clone.baseTechObject = baseTechObject.Clone(clone);
 
             clone.SetItems();
-
             return clone;
         }
 
@@ -571,7 +566,6 @@ namespace TechObject
         }
 
         #region Реализация ITreeViewItem
-
         override public string[] DisplayText
         {
             get
@@ -599,18 +593,23 @@ namespace TechObject
 
         override public bool SetNewValue(string newValue, bool isExtraValue)
         {
+            bool resetBaseOperations = false;
             if (baseTechObject.Name != "" && newValue != baseTechObject.Name)
             {
-                this.ModesManager.ClearBaseOperations();
+                resetBaseOperations = true;
             }
-            // Получил имя базового аппарата из LUA и записал в класс
+
             baseTechObject.Name = newValue;
-            // Нашел базовый объект и присвоил значения из него переменным
-            BaseTechObject techObjFromDB = DataBase.Imitation
-                .GetTObject(newValue);
-            // Обновил базовый объект
+            BaseTechObject techObjFromDB = DataBase.Imitation.GetTObject(
+                newValue);
             baseTechObject = techObjFromDB;
             S88Level = techObjFromDB.S88Level;
+
+            if (resetBaseOperations == true)
+            {
+                baseTechObject.ResetBaseOperations();
+            }
+
             // Т.к установили новое значение, произошла смена базового объекта
             // Надо сравнить ОУ и изменить его, если требуется
             CompareEplanNames();

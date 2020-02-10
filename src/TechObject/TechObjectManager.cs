@@ -322,9 +322,9 @@ namespace TechObject
                             {
                                 if (param.CanSave())
                                 {
-                                    string val = param.GetValue() ==
-                                    "" ? "nil" : param.GetValue();
-                                    res += objName + "." + param.GetLuaName() +
+                                    string val = param.Value ==
+                                    "" ? "nil" : param.Value;
+                                    res += objName + "." + param.LuaName +
                                         " = " + val + "\n";
                                 }                               
                             }

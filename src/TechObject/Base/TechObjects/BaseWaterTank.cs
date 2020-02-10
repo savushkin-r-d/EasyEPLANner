@@ -21,8 +21,9 @@ namespace TechObject
             BasicName = "cooler";
         }
 
-        public override BaseTechObject Clone()
+        public override BaseTechObject Clone(TechObject techObject)
         {
+            //TODO: clone alghoritm
             return new BaseWaterTank();
         }
     }

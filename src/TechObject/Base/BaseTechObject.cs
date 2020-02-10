@@ -22,6 +22,18 @@ namespace TechObject
             BaseOperations = new BaseOperation[0];
             BaseProperties = new BaseProperty[0];
             BasicName = "";
+            Owner = null;
+        }
+
+        public BaseTechObject(TechObject owner)
+        {
+            Name = "";
+            EplanName = "";
+            S88Level = 0;
+            BaseOperations = new BaseOperation[0];
+            BaseProperties = new BaseProperty[0];
+            BasicName = "";
+            Owner = owner;
         }
 
         /// <summary>
@@ -121,6 +133,22 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Владелец объекта.
+        /// </summary>
+        public TechObject Owner
+        {
+            get
+            {
+                return owner;
+            }
+
+            set
+            {
+                owner = value;
+            }
+        }
+
+        /// <summary>
         /// Получить базовую операцию по имени.
         /// </summary>
         /// <param name="name">Имя</param>
@@ -147,16 +175,45 @@ namespace TechObject
         /// <summary>
         /// Копия объекта
         /// </summary>
+        /// <param name="techObject">Копируемый объект</param>
         /// <returns></returns>
-        public virtual BaseTechObject Clone()
+        public virtual BaseTechObject Clone(TechObject techObject)
         {
-            return new BaseTechObject();
+            var baseTechobject = new BaseTechObject();
+            baseTechobject.name = this.name;
+            baseTechobject.eplanName = this.eplanName;
+            baseTechobject.basicName = this.basicName;
+            baseTechobject.s88Level = this.s88Level;
+            baseTechobject.Owner = techObject.ModesManager.Owner;
+
+            var baseOperations = new List<BaseOperation>();
+            foreach (var mode in techObject.ModesManager.Modes)
+            {
+                var operation = mode.GetBaseOperation();
+                baseOperations.Add(operation);
+            }
+
+            baseTechobject.BaseOperations = baseOperations.ToArray();
+
+            return baseTechobject;
+        }
+
+        /// <summary>
+        /// Сброс базовых операций объекта
+        /// </summary>
+        public void ResetBaseOperations()
+        {
+            foreach (BaseOperation operation in BaseOperations)
+            {
+                operation.Init("");
+            }
         }
 
         private string name;
         private string eplanName;
         private int s88Level;
-        private string basicName; // Базовое имя для функциональности
+        private string basicName;
+        private TechObject owner;
 
         private BaseOperation[] objectOperations;
         private BaseProperty[] objectProperties;

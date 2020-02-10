@@ -190,6 +190,8 @@
     <Compile Include="TechObject\Base\BaseOperation.cs" />
     <Compile Include="TechObject\Base\BaseProperty.cs" />
     <Compile Include="TechObject\Base\BaseTechObject.cs" />
+    <Compile Include="TechObject\Base\Properties\NonShowedProperty.cs" />
+    <Compile Include="TechObject\Base\Properties\ShowedProperty.cs" />
     <Compile Include="TechObject\Base\TechObjects\BaseBoiler.cs" />
     <Compile Include="TechObject\Base\TechObjects\BaseCooler.cs" />
     <Compile Include="TechObject\Base\TechObjects\BaseHeater.cs" />

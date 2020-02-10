@@ -21,8 +21,9 @@ namespace TechObject
             BasicName = "tank";
         }
 
-        public override BaseTechObject Clone()
+        public override BaseTechObject Clone(TechObject techObject)
         {
+            //TODO: clone alghoritm
             return new BaseTank();
         }
     }
