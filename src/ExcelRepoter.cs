@@ -367,12 +367,30 @@ namespace EasyEPlanner
         private static void CreateObjectParamsPage(ref Excel.Worksheet xlWorkSheet,
             ref Excel._Application xlApp)
         {
+            // Добавление листа в книгу.
             xlWorkSheet = xlApp.Sheets.Add(Type.Missing, xlWorkSheet) as Excel.Worksheet;
             xlWorkSheet.Name = "Параметры объектов";
+
+            // Настройка имен столбцов.
+            xlWorkSheet.Range["A1", "A1"].Value2 = new string[] { "Технологический объект" };
+            Excel.Range excelCells = xlWorkSheet.get_Range("B1", "C1").Cells;
+            excelCells.Merge(System.Reflection.Missing.Value);
+            excelCells.Value = "Параметры";
+            xlWorkSheet.Range["D1", "G1"].Value2 = new string[] { "Значение", 
+                "Размерность", "Операция", "Lua имя"};
+            
+            // Получить и записать данные
             TreeView tree = TechObject.TechObjectManager.GetInstance().SaveParamsAsTree();
-            int row = 1;
+            int row = 2;
             WriteTreeNode(ref xlWorkSheet, tree.Nodes, ref row);
-            xlWorkSheet.Cells.EntireColumn.AutoFit();
+
+            // Форматирование страницы.
+            xlApp.ActiveWindow.SplitRow = 1;
+            xlApp.ActiveWindow.FreezePanes = true;
+            row = xlWorkSheet.UsedRange.Rows.Count;
+            xlWorkSheet.Range["A1", "C" + row.ToString()].EntireColumn.AutoFit();
+
+            // Установка переноса текста в ячейке.
             xlWorkSheet.Outline.SummaryRow = Excel.XlSummaryRow.xlSummaryAbove;
         }
 
@@ -438,7 +456,6 @@ namespace EasyEPlanner
                 if (node.Tag is string[])
                 {
                     string cellAddress = ParseColNum(node.Level) + row.ToString();
-
 
                     xlWorkSheet.Range[cellAddress,
                      "L" + row.ToString()].Value2 = node.Tag as string[];
