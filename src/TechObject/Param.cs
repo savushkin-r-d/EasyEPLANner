@@ -254,7 +254,14 @@ namespace TechObject
         {
             get
             {
-                return oper.EditText[1];
+                if (oper != null)
+                {
+                    return oper.EditText[1];
+                }
+                else
+                {
+                    return "";
+                }
             }
             set
             {
