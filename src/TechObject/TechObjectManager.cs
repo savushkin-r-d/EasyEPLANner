@@ -815,9 +815,16 @@ namespace TechObject
                             Param param = techObj.Params.Items[j]
                                 .Items[i] as Param;
                             string parName = (i + 1).ToString() + ". " + 
-                                param.EditText[0] + " , " + param.GetMeter();
+                                param.EditText[0];
                             TreeNode parNode = new TreeNode(parName);
-                            parNode.Tag = param;
+                            parNode.Tag = new string[] 
+                            {
+                                parName,
+                                param.GetValue(),
+                                param.GetMeter(),
+                                param.Operations,
+                                param.GetNameLua(),
+                            };
                             parTypeNode.Nodes.Add(parNode);
                         }
                     }
