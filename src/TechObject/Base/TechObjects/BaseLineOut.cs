@@ -26,7 +26,7 @@ namespace TechObject
             var cloned = DataBase.Imitation.BaseTechObjectArr()
                 .Where(x => x.Name == this.Name)
                 .FirstOrDefault();
-            cloned.Owner = techObject.ModesManager.Owner;
+            cloned.Owner = techObject;
             return cloned;
         }
     }
