@@ -203,9 +203,9 @@ namespace TechObject
         /// </summary>
         public void ResetBaseOperations()
         {
-            foreach (BaseOperation operation in BaseOperations)
+            foreach (Mode operation in Owner.ModesManager.Modes)
             {
-                operation.Init("");
+                operation.GetBaseOperation().Init("");
             }
         }
 

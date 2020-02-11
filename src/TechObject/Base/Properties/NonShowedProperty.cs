@@ -18,7 +18,7 @@ namespace TechObject
         {
             var newProperty = new NonShowedBaseProperty(this.LuaName,
                 this.Name, this.CanSave());
-            newProperty.SetValue(this.Value);
+            newProperty.SetNewValue(this.Value);
             return newProperty;
         }
 
