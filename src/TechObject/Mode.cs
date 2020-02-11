@@ -429,7 +429,10 @@ namespace TechObject
             bool isBaseOper)
         {
             // Инициализация базовой операции по имени
-            baseOperation.Init(newBaseOperationName);
+            if (baseOperation.Name != newBaseOperationName)
+            {
+                baseOperation.Init(newBaseOperationName);
+            }
             return true;
         }
 

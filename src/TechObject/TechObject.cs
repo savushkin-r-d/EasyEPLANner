@@ -250,6 +250,8 @@ namespace TechObject
                 clone);
 
             clone.getN = getN;
+      
+            clone.baseTechObject = baseTechObject.Clone(clone);
 
             clone.modes = modes.Clone(clone);
             clone.modes.ChngeOwner(clone);
@@ -257,7 +259,6 @@ namespace TechObject
             clone.modes.ModifyRestrictObj(oldObjN, newObjN);
 
             clone.parameters = parameters.Clone();
-            clone.baseTechObject = baseTechObject.Clone(clone);
 
             clone.SetItems();
             return clone;

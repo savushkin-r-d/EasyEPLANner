@@ -227,11 +227,11 @@ namespace TechObject
             {
                 properties[i] = baseOperationProperties[i].Clone();
             }
-            var operation = new BaseOperation(operationName, luaOperationName, 
-                properties);
-            operation.owner = owner;
+            var operation = new BaseOperation(this.operationName, 
+                this.luaOperationName, properties);
+            operation.owner = this.owner;
+            
             operation.SetItems();
-
             return operation;
         }
 

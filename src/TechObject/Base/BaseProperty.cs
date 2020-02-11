@@ -63,14 +63,14 @@ namespace TechObject
 
         public virtual void Clear()
         {
-            this.SetNewValue("");
+            this.SetValue("");
         }
 
         #region реализация ITreeView
         public override bool SetNewValue(string newValue)
         {
             newValue = newValue.Trim();
-            SetValue(newValue);
+            base.SetNewValue(newValue);
             return true;
         }
 

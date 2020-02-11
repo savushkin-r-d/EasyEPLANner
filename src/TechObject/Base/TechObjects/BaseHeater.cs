@@ -23,22 +23,11 @@ namespace TechObject
 
         public override BaseTechObject Clone(TechObject techObject)
         {
-            var baseTechobject = new BaseHeater();
-            baseTechobject.Name = this.Name;
-            baseTechobject.EplanName = this.EplanName;
-            baseTechobject.BasicName = this.BasicName;
-            baseTechobject.S88Level = this.S88Level;
-            baseTechobject.Owner = techObject.ModesManager.Owner;
-
-            var baseOperations = new List<BaseOperation>();
-            foreach (var mode in techObject.ModesManager.Modes)
-            {
-                var operation = mode.GetBaseOperation();
-                baseOperations.Add(operation);
-            }
-
-            baseTechobject.BaseOperations = baseOperations.ToArray();
-            return baseTechobject;
+            var cloned = DataBase.Imitation.BaseTechObjectArr()
+                .Where(x => x.Name == this.Name)
+                .FirstOrDefault();
+            cloned.Owner = techObject.ModesManager.Owner;
+            return cloned;
         }
     }
 }
