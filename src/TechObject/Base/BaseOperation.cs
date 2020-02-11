@@ -122,6 +122,7 @@ namespace TechObject
                     .FirstOrDefault();
                 if (samePropertyAtTechObject != null)
                 {
+                    property.Clear();
                     properties.Add(property);
                 }
             }

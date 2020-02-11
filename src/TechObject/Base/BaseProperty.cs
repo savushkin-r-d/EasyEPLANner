@@ -61,6 +61,11 @@ namespace TechObject
             return canSave;
         }
 
+        public virtual void Clear()
+        {
+            this.SetNewValue("");
+        }
+
         #region реализация ITreeView
         public override bool SetNewValue(string newValue)
         {
