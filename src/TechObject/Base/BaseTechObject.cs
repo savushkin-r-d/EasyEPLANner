@@ -11,9 +11,6 @@ namespace TechObject
     /// </summary>
     public class BaseTechObject
     {
-        /// <summary>
-        /// Базовая инициализация
-        /// </summary>
         public BaseTechObject()
         {
             Name = "";
@@ -179,7 +176,7 @@ namespace TechObject
         /// <returns></returns>
         public virtual BaseTechObject Clone(TechObject techObject)
         {
-            var cloned = DataBase.Imitation.BaseTechObjectArr()
+            var cloned = DataBase.Imitation.BaseTechObjects()
                 .Where(x => x.Name == this.Name)
                 .FirstOrDefault();
             cloned.Owner = techObject;

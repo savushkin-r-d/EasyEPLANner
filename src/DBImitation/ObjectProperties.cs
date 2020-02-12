@@ -15,7 +15,8 @@ namespace DataBase
             {
                 new ShowedBaseProperty("CIP_WASH_END", "Мойка завершена"),
                 new ShowedBaseProperty("DI_CIP_FREE", "МСА свободна"),
-                new NonShowedBaseProperty("DRAINAGE", "Номер шага дренаж", false)
+                new NonShowedBaseProperty("DRAINAGE", "Номер шага дренаж", 
+                false)
             };
         }
 

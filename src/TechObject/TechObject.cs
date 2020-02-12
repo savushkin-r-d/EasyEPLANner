@@ -599,7 +599,7 @@ namespace TechObject
                 baseTechObject.ResetBaseOperations();
             }
 
-            BaseTechObject techObjFromDB = DataBase.Imitation.GetTObject(
+            BaseTechObject techObjFromDB = DataBase.Imitation.GetTechObject(
                 newValue);
             techObjFromDB.Owner = baseTechObject.Owner;
             baseTechObject = techObjFromDB;

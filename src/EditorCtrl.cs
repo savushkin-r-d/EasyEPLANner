@@ -139,7 +139,7 @@ namespace Editor
         /// </summary>
         private void InitTreeListEditors()
         {
-            baseTechObjectList = DataBase.Imitation.GetBaseTechObjects()
+            baseTechObjectList = DataBase.Imitation.BaseTechObjects()
                 .Select(x => x.Name).ToList();
         }
 

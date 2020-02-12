@@ -21,9 +21,14 @@ namespace TechObject
             BasicName = "cooler_node";
         }
 
+        /// <summary>
+        /// Клонировать объект
+        /// </summary>
+        /// <param name="techObject">Новый владелец базового объекта</param>
+        /// <returns></returns>
         public override BaseTechObject Clone(TechObject techObject)
         {
-            var cloned = DataBase.Imitation.BaseTechObjectArr()
+            var cloned = DataBase.Imitation.BaseTechObjects()
                 .Where(x => x.Name == this.Name)
                 .FirstOrDefault();
             cloned.Owner = techObject;

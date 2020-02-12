@@ -9,7 +9,7 @@ namespace DataBase
 {
     public partial class Imitation
     {
-        public static BaseOperation[] BaseTankOperations()
+        public static BaseOperation[] TankOperations()
         {
             return new BaseOperation[]
             {

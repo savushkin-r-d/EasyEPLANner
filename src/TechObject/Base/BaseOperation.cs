@@ -108,7 +108,8 @@ namespace TechObject
         /// </summary>
         /// <param name="operation">Базовая операция</param>
         /// <returns></returns>
-        private BaseProperty[] FindBaseOperationProperties(BaseOperation operation)
+        private BaseProperty[] FindBaseOperationProperties(BaseOperation 
+            operation)
         {
             var baseTechObject = owner.Owner.Owner.BaseTechObject;
             var baseTechObjectProperties = baseTechObject.BaseProperties;

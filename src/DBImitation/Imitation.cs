@@ -12,19 +12,16 @@ namespace DataBase
     /// </summary>
     public partial class Imitation
     {
-        // Возврат базовых технологических объектов
-        public static BaseTechObject[] GetBaseTechObjects()
-        {
-            return BaseTechObjectArr();
-        }
-
-        // Имитиация хранимой процедуры поиска базового имени по имени базового 
-        //технологического объекта
+        /// <summary>
+        /// Получить базовое название объекта по его обычному названию.
+        /// </summary>
+        /// <param name="baseTechObjectName">Название объекта</param>
+        /// <returns></returns>
         public static string GetBasicName(string baseTechObjectName)
         {
             string basicName = "";
 
-            foreach (BaseTechObject baseTechObject in BaseTechObjectArr())
+            foreach (BaseTechObject baseTechObject in BaseTechObjects())
             {
                 if (baseTechObject.Name == baseTechObjectName)
                 {
@@ -35,10 +32,14 @@ namespace DataBase
             return basicName;
         }
 
-        // Получение тех. объекта по номеру
-        public static BaseTechObject GetTObject(string name)
+        /// <summary>
+        /// Получить базовый технологический объект по обычному названию.
+        /// </summary>
+        /// <param name="name">Название объекта</param>
+        /// <returns></returns>
+        public static BaseTechObject GetTechObject(string name)
         {
-            foreach (BaseTechObject baseTechObject in BaseTechObjectArr())
+            foreach (BaseTechObject baseTechObject in BaseTechObjects())
             {
                 if (name == baseTechObject.Name)
                 {
@@ -48,20 +49,29 @@ namespace DataBase
             return null;
         }
 
-        //---------------- Empty params ---------------------------------------
+        /// <summary>
+        /// Получить пустой массив свойств.
+        /// </summary>
+        /// <returns></returns>
         public static BaseProperty[] EmptyProperties()
         {
             return new BaseProperty[0];
         }
 
-        //---------------- Empty operations -----------------------------------
+        /// <summary>
+        /// Получить пустой массив операций.
+        /// </summary>
+        /// <returns></returns>
         public static BaseOperation[] BaseEmptyOperations()
         {
             return new BaseOperation[0];
         }
 
-        //---------------- Init objects ---------------------------------------
-        public static BaseTechObject[] BaseTechObjectArr()
+        /// <summary>
+        /// Получить массив всех базовых объектов.
+        /// </summary>
+        /// <returns></returns>
+        public static BaseTechObject[] BaseTechObjects()
         {
             return new BaseTechObject[]
             {
