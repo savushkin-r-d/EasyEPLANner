@@ -594,6 +594,11 @@ namespace TechObject
 
         override public bool SetNewValue(string newValue, bool isExtraValue)
         {
+            if (baseTechObject.Name == newValue)
+            {
+                return false;
+            }
+
             if (baseTechObject.Name != "" && newValue != baseTechObject.Name)
             {
                 baseTechObject.ResetBaseOperations();

@@ -432,8 +432,10 @@ namespace TechObject
             if (baseOperation.Name != newBaseOperationName)
             {
                 baseOperation.Init(newBaseOperationName);
+                return true;
             }
-            return true;
+
+            return false;
         }
 
         override public bool IsEditable
