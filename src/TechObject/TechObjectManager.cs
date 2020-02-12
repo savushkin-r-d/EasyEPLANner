@@ -816,6 +816,121 @@ namespace TechObject
             return tree;
         }
 
+        public TreeView SaveObjectsWithoutActionsAsTree()
+        {
+            TreeView tree = new TreeView();
+
+            bool objectTitleIsWrited = false;
+            foreach(TechObject techObj in objects)
+            {
+                if (objectTitleIsWrited == false)
+                {
+                    TreeNode titleNode = new TreeNode();
+                    titleNode.Tag = new string[] { "Технологический объект", 
+                        "Номер", "ОУ", "Имя объекта Monitor" };
+                    tree.Nodes.Add(titleNode);
+                    objectTitleIsWrited = true;
+                }
+
+                string techName = GetTechObjectN(techObj).ToString() + ". " +
+                    techObj.EditText[0] + " " + techObj.TechNumber.ToString();
+                TreeNode objNode = new TreeNode(techName);
+                objNode.Tag = new string[] { techName, techObj.TechNumber
+                    .ToString(), techObj.NameEplan, techObj.NameBC };
+
+                TreeNode modesNodes = new TreeNode("Операции");
+                foreach(Mode mode in techObj.ModesManager.Modes)
+                {
+                    TreeNode modeNode = new TreeNode(mode.DisplayText[0]);
+                    modeNode.Tag = mode;
+
+                    foreach(State state in mode.stepsMngr) 
+                    {
+                        TreeNode stateNodes = new TreeNode(state.DisplayText[0]);
+                        stateNodes.Tag = state;
+
+                        if (state.Steps.Count > 1)
+                        {
+                            foreach (Step step in state.Steps)
+                            {
+                                if (!step.DisplayText.Contains("Во время операции"))
+                                {
+                                    stateNodes.Nodes.Add(step.DisplayText[0]);
+                                }
+                            }
+
+                            modeNode.Nodes.Add(stateNodes);
+                        }
+                    }
+
+                    TreeNode operationParameterNodes = new TreeNode("Параметры");
+                    modeNode.Tag = mode;
+                    bool operationParameterTitleIsWrited = false;
+                    for(int i = 0; i < mode.GetOperationParams().Items.Length; i++)
+                    {
+                        if (operationParameterTitleIsWrited == false)
+                        {
+                            TreeNode titleNode = new TreeNode();
+                            titleNode.Tag = new string[] { "Параметр",
+                                "Lua имя" };
+                            operationParameterNodes.Nodes.Add(titleNode);
+                            operationParameterTitleIsWrited = true;
+                        }
+
+                        string name = mode.GetOperationParams().Items[i].DisplayText[0];                       
+                        OperationParam operationParameter = mode
+                            .GetOperationParams().Items[i] as OperationParam;
+                        TreeNode operationParameterNode = new TreeNode(name);
+                        operationParameterNode.Tag = new string[] { name, operationParameter.Param.GetNameLua() };
+                        operationParameterNodes.Nodes.Add(operationParameterNode);
+                    }
+                    if (operationParameterNodes.Nodes.Count > 1)
+                    {
+                        modeNode.Nodes.Add(operationParameterNodes);
+                    }
+
+                    modesNodes.Nodes.Add(modeNode);
+                }
+
+                TreeNode parametersNodes = new TreeNode("Параметры");
+                bool parameterTitleisWrited = false;
+                for (int i = 0; i < techObj.Params.Items[0].Items.Length; i++)
+                {
+                    Param parameter = techObj.Params.Items[0].Items[i] as 
+                        Param;
+                    if (parameterTitleisWrited == false)
+                    {
+                        TreeNode titleNode = new TreeNode();
+                        titleNode.Tag = new string[] { "Параметр", "Значение",
+                            "Размерность", "Операция" , "Lua имя" };
+                        parametersNodes.Nodes.Add(titleNode);
+                        parameterTitleisWrited = true;
+                    }
+
+                    string parameterName = (i + 1).ToString() + ". " +
+                                parameter.EditText[0];
+                    TreeNode parameterNode = new TreeNode();
+                    parameterNode.Tag = new string[] { parameterName, 
+                        parameter.GetValue(), parameter.GetMeter(), 
+                        parameter.GetOperationN(), parameter.GetNameLua() };
+                    parametersNodes.Nodes.Add(parameterNode);
+                }
+                
+                if (modesNodes.Nodes.Count > 0)
+                {
+                    objNode.Nodes.Add(modesNodes);
+                }
+                if (modesNodes.Nodes.Count > 0)
+                {
+                    objNode.Nodes.Add(parametersNodes);
+                }
+
+                tree.Nodes.Add(objNode);
+            }
+
+            return tree;
+        }
+
         /// <summary>
         /// Проверка и исправление ограничений при удалении/перемещении объекта
         /// </summary>

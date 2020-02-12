@@ -35,8 +35,8 @@ namespace EasyEPlanner
             try
             {
                 xlApp = new Excel.Application();
-                xlApp.Visible = false;
-                xlApp.UserControl = true;
+                //xlApp.Visible = false;
+                //xlApp.UserControl = true;
                 xlWorkBook = xlApp.Workbooks.Add();
 
                 string prjName = fileName.Remove(fileName.IndexOf(".xlsx"));
@@ -44,25 +44,29 @@ namespace EasyEPlanner
 
                 CreateModulesPage(prjName, ref xlWorkSheet, ref xlApp);
 
-                ProjectManager.GetInstance().SetLogProgress(20);
+                ProjectManager.GetInstance().SetLogProgress(5);
 
                 CreateInformDevicePage(ref xlWorkSheet, ref xlApp);
 
-                ProjectManager.GetInstance().SetLogProgress(30);
+                ProjectManager.GetInstance().SetLogProgress(20);
 
                 CreateTotalDevicePage(ref xlWorkSheet, ref xlApp);
 
-                ProjectManager.GetInstance().SetLogProgress(40);
+                ProjectManager.GetInstance().SetLogProgress(35);
 
                 CreateDeviceConnectionPage(ref xlWorkSheet, ref xlApp);
 
-                ProjectManager.GetInstance().SetLogProgress(55);
+                ProjectManager.GetInstance().SetLogProgress(50);
 
                 CreateObjectParamsPage(ref xlWorkSheet, ref xlApp);
 
-                ProjectManager.GetInstance().SetLogProgress(70);
+                ProjectManager.GetInstance().SetLogProgress(65);
 
                 CreateObjectDevicesPage(ref xlWorkSheet, ref xlApp);
+
+                ProjectManager.GetInstance().SetLogProgress(80);
+
+                CreateObjectsPageWithoutActions(ref xlWorkSheet, ref xlApp);
 
                 ProjectManager.GetInstance().SetLogProgress(85);
 
@@ -73,16 +77,16 @@ namespace EasyEPlanner
             }
             finally
             {
-                xlWorkBook.Close(false);
-                xlApp.Quit();
+                //xlWorkBook.Close(false);
+                //xlApp.Quit();
 
                 xlWorkBook = null;
                 xlWorkSheet = null;
                 xlApp = null;
                 KillExcelProcess(ID);
-                GC.Collect();
+                //GC.Collect();
 
-                Process.Start(fileName);
+                //Process.Start(fileName);
             }
 
             return 0;
@@ -438,6 +442,25 @@ namespace EasyEPlanner
                             xlWorkSheet) as Excel.Worksheet;
             xlWorkSheet.Name = "Подключение устройств";
             TreeView tree = Device.DeviceManager.GetInstance().SaveConnectionAsTree();
+            int row = 1;
+            WriteTreeNode(ref xlWorkSheet, tree.Nodes, ref row);
+            xlWorkSheet.Cells.EntireColumn.AutoFit();
+            xlWorkSheet.Outline.SummaryRow = Excel.XlSummaryRow.xlSummaryAbove;
+        }
+
+        /// <summary>
+        /// Создание страницы с информацией об объектах (слепок редактора).
+        /// </summary>
+        /// <param name="xlWorkSheet"></param>
+        /// <param name="xlApp"></param>
+        private static void CreateObjectsPageWithoutActions(
+            ref Excel.Worksheet xlWorkSheet, ref Excel._Application xlApp)
+        {
+            xlWorkSheet = xlApp.Sheets.Add(Type.Missing, xlWorkSheet) as 
+                Excel.Worksheet;
+            xlWorkSheet.Name = "Технологические объекты";
+            TreeView tree = TechObject.TechObjectManager.GetInstance()
+                .SaveObjectsWithoutActionsAsTree();
             int row = 1;
             WriteTreeNode(ref xlWorkSheet, tree.Nodes, ref row);
             xlWorkSheet.Cells.EntireColumn.AutoFit();
