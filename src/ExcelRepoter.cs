@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System;
+using System.IO;
 
 namespace EasyEPlanner
 {
@@ -22,9 +23,10 @@ namespace EasyEPlanner
         /// <summary>
         /// Создание и сохранение Excel файла с параметрами проекта 
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="fileName">Имя файла</param>
+        /// <param name="autoSave">Вызвано автосохранением</param>
         /// <returns></returns>
-        public static int ExportTechDevs(string fileName)
+        public static int ExportTechDevs(string fileName, bool autoSave = false)
         {
             Excel._Application xlApp = null;
             Excel.Workbook xlWorkBook = null;
@@ -35,58 +37,77 @@ namespace EasyEPlanner
             try
             {
                 xlApp = new Excel.Application();
-                //xlApp.Visible = false;
-                //xlApp.UserControl = true;
+                xlApp.Visible = false;
+                xlApp.UserControl = true;
                 xlWorkBook = xlApp.Workbooks.Add();
 
                 string prjName = fileName.Remove(fileName.IndexOf(".xlsx"));
                 prjName = prjName.Substring(prjName.LastIndexOf("\\") + 1);
 
-                CreateModulesPage(prjName, ref xlWorkSheet, ref xlApp);
+                if (!autoSave)
+                {
+                    CreateModulesPage(prjName, ref xlWorkSheet, ref xlApp);
 
-                ProjectManager.GetInstance().SetLogProgress(5);
+                    ProjectManager.GetInstance().SetLogProgress(5);
 
-                CreateInformDevicePage(ref xlWorkSheet, ref xlApp);
+                    CreateInformDevicePage(ref xlWorkSheet, ref xlApp);
 
-                ProjectManager.GetInstance().SetLogProgress(20);
+                    ProjectManager.GetInstance().SetLogProgress(20);
 
-                CreateTotalDevicePage(ref xlWorkSheet, ref xlApp);
+                    CreateTotalDevicePage(ref xlWorkSheet, ref xlApp);
 
-                ProjectManager.GetInstance().SetLogProgress(35);
+                    ProjectManager.GetInstance().SetLogProgress(35);
 
-                CreateDeviceConnectionPage(ref xlWorkSheet, ref xlApp);
+                    CreateDeviceConnectionPage(ref xlWorkSheet, ref xlApp);
 
-                ProjectManager.GetInstance().SetLogProgress(50);
+                    ProjectManager.GetInstance().SetLogProgress(50);
 
-                CreateObjectParamsPage(ref xlWorkSheet, ref xlApp);
+                    CreateObjectParamsPage(ref xlWorkSheet, ref xlApp);
 
-                ProjectManager.GetInstance().SetLogProgress(65);
+                    ProjectManager.GetInstance().SetLogProgress(65);
 
-                CreateObjectDevicesPage(ref xlWorkSheet, ref xlApp);
+                    CreateObjectDevicesPage(ref xlWorkSheet, ref xlApp);
 
-                ProjectManager.GetInstance().SetLogProgress(80);
-
-                CreateObjectsPageWithoutActions(ref xlWorkSheet, ref xlApp);
-
-                ProjectManager.GetInstance().SetLogProgress(85);
+                    ProjectManager.GetInstance().SetLogProgress(80);
+                }
+                else
+                {
+                    CreateObjectsPageWithoutActions(ref xlWorkSheet, ref xlApp);
+                }
 
                 xlWorkSheet = xlApp.Sheets[1] as Excel.Worksheet;
                 xlWorkSheet.Select();
 
-                xlWorkBook.SaveAs(fileName);
+                if (autoSave)
+                {
+                    if (File.Exists(fileName))
+                    {
+                        File.Delete(fileName);
+                    }
+
+                    xlWorkBook.SaveAs(fileName, Type.Missing, Type.Missing, "Read", 
+                        true);
+                }
+                else
+                {
+                    xlWorkBook.SaveAs(fileName);
+                }
             }
             finally
             {
-                //xlWorkBook.Close(false);
-                //xlApp.Quit();
+                xlWorkBook.Close(false);
+                xlApp.Quit();
 
                 xlWorkBook = null;
                 xlWorkSheet = null;
                 xlApp = null;
                 KillExcelProcess(ID);
-                //GC.Collect();
+                GC.Collect();
 
-                //Process.Start(fileName);
+                if (autoSave == false)
+                {
+                    Process.Start(fileName);
+                }
             }
 
             return 0;
@@ -430,6 +451,7 @@ namespace EasyEPlanner
             string endPos = "Q" + res.GetLength(0);
             xlWorkSheet.Range["A1", endPos].Value2 = res;
             xlWorkSheet.Cells.EntireColumn.AutoFit();
+
         }
 
         /// <summary>
@@ -456,8 +478,7 @@ namespace EasyEPlanner
         private static void CreateObjectsPageWithoutActions(
             ref Excel.Worksheet xlWorkSheet, ref Excel._Application xlApp)
         {
-            xlWorkSheet = xlApp.Sheets.Add(Type.Missing, xlWorkSheet) as 
-                Excel.Worksheet;
+            xlWorkSheet = xlApp.ActiveSheet as Excel.Worksheet;
             xlWorkSheet.Name = "Технологические объекты";
             TreeView tree = TechObject.TechObjectManager.GetInstance()
                 .SaveObjectsWithoutActionsAsTree();
@@ -465,6 +486,14 @@ namespace EasyEPlanner
             WriteTreeNode(ref xlWorkSheet, tree.Nodes, ref row);
             xlWorkSheet.Cells.EntireColumn.AutoFit();
             xlWorkSheet.Outline.SummaryRow = Excel.XlSummaryRow.xlSummaryAbove;
+            xlWorkSheet.Range["A1", "A" + row.ToString()].Columns.ColumnWidth = 40;
+            xlWorkSheet.Range["C1", "C" + row.ToString()].Columns.ColumnWidth = 55;
+            xlWorkSheet.Range["E1", "E" + row.ToString()].Columns.ColumnWidth = 45;
+            xlWorkSheet.Outline.ShowLevels(5,0);
+            xlWorkSheet.Outline.ShowLevels(4, 0);
+            xlWorkSheet.Outline.ShowLevels(3, 0);
+            xlWorkSheet.Outline.ShowLevels(2, 0);
+            xlWorkSheet.Outline.ShowLevels(1, 0);
         }
 
         /// <summary>

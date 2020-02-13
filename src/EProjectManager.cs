@@ -165,8 +165,21 @@ namespace EasyEPlanner
 
         public void SaveAndClose()
         {
+            string projectName = GetCurrentProjectName();
+            CheckProjectName(ref projectName);
+            int beforeSaveHashCode = ProjectManager.GetInstance()
+                .GetFileHashCode(projectName, "\\main.objects.lua");
             EProjectManager.GetInstance().SyncAndSave();
+            int afterSaveHashCode = ProjectManager.GetInstance()
+                .GetFileHashCode(projectName, "\\main.objects.lua");
             EProjectManager.GetInstance().StopEditModes();
+
+            if (beforeSaveHashCode != afterSaveHashCode)
+            {
+                string path = currentProject.ProjectDirectoryPath + @"\DOC\" +
+                        currentProject.ProjectName + " auto report.xlsx";
+                ExcelRepoter.ExportTechDevs(path, true);
+            }
 
             // Проверка и сохранение состояний окон.
             ModeFrm.CheckShown();

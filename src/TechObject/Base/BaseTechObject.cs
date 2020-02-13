@@ -20,6 +20,8 @@ namespace TechObject
         public BaseTechObject(TechObject owner)
         {
             this.Owner = owner;
+            this.name = "";
+            this.nameEplan = "";
         }
 
         public BaseTechObject(string name, string nameEplan)

@@ -851,6 +851,12 @@ namespace TechObject
 
                         if (state.Steps.Count > 1)
                         {
+                            bool stepsTitleIsWrited = false;
+                            if (stepsTitleIsWrited == false)
+                            {
+                                stepsTitleIsWrited = true;
+                                stateNodes.Nodes.Add("Шаги");
+                            }
                             foreach (Step step in state.Steps)
                             {
                                 if (!step.DisplayText.Contains("Во время операции"))
@@ -871,8 +877,7 @@ namespace TechObject
                         if (operationParameterTitleIsWrited == false)
                         {
                             TreeNode titleNode = new TreeNode();
-                            titleNode.Tag = new string[] { "Параметр",
-                                "Lua имя" };
+                            titleNode.Tag = new string[] { "Описание параметра", "Lua имя" };
                             operationParameterNodes.Nodes.Add(titleNode);
                             operationParameterTitleIsWrited = true;
                         }
@@ -901,8 +906,9 @@ namespace TechObject
                     if (parameterTitleisWrited == false)
                     {
                         TreeNode titleNode = new TreeNode();
-                        titleNode.Tag = new string[] { "Параметр", "Значение",
-                            "Размерность", "Операция" , "Lua имя" };
+                        titleNode.Tag = new string[] { "Имя параметра", 
+                            "Значение", "Размерность", "Операция" , 
+                            "Lua имя" };
                         parametersNodes.Nodes.Add(titleNode);
                         parameterTitleisWrited = true;
                     }

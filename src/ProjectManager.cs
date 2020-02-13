@@ -277,6 +277,20 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Получить хэш-код файла проекта
+        /// </summary>
+        /// <param name="projectName">Имя проекта</param>
+        /// <param name="fileName">Имя файла для считывания</param>
+        /// <returns></returns>
+        public int GetFileHashCode(string projectName, string fileName)
+        {
+            string luaString = "";
+            LoadDescriptionFromFile(out luaString, out _, projectName, 
+                fileName);
+            return luaString.GetHashCode();
+        }
+
+        /// <summary>
         /// Инициализация.
         /// </summary>
         public void Init(IEditor editor, ITechObjectManager techObjectManager, 
