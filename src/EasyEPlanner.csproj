@@ -133,6 +133,10 @@
   <ItemGroup>
     <Compile Include="ConfigurationChecker.cs" />
     <Compile Include="DBImitation\Imitation.cs" />
+    <Compile Include="DBImitation\LineOperations.cs" />
+    <Compile Include="DBImitation\ObjectProperties.cs" />
+    <Compile Include="DBImitation\OperationsParams.cs" />
+    <Compile Include="DBImitation\TankOperations.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="DeviceBindingReader.cs" />
     <Compile Include="DeviceReader.cs" />
@@ -184,8 +188,23 @@
     <Compile Include="TechObject\Action_Wash.cs" />
     <Compile Include="TechObject\Action_WashSeats.cs" />
     <Compile Include="TechObject\Base\BaseOperation.cs" />
-    <Compile Include="TechObject\Base\BaseOperationProperty.cs" />
+    <Compile Include="TechObject\Base\BaseProperty.cs" />
     <Compile Include="TechObject\Base\BaseTechObject.cs" />
+    <Compile Include="TechObject\Base\Properties\NonShowedProperty.cs" />
+    <Compile Include="TechObject\Base\Properties\ShowedProperty.cs" />
+    <Compile Include="TechObject\Base\TechObjects\BaseBoiler.cs" />
+    <Compile Include="TechObject\Base\TechObjects\BaseCooler.cs" />
+    <Compile Include="TechObject\Base\TechObjects\BaseHeater.cs" />
+    <Compile Include="TechObject\Base\TechObjects\BaseLine.cs" />
+    <Compile Include="TechObject\Base\TechObjects\BaseLineIn.cs" />
+    <Compile Include="TechObject\Base\TechObjects\BaseLineOut.cs" />
+    <Compile Include="TechObject\Base\TechObjects\BaseMaster.cs" />
+    <Compile Include="TechObject\Base\TechObjects\BaseAutomat.cs" />
+    <Compile Include="TechObject\Base\TechObjects\BaseMixer.cs" />
+    <Compile Include="TechObject\Base\TechObjects\BasePost.cs" />
+    <Compile Include="TechObject\Base\TechObjects\BasePOU.cs" />
+    <Compile Include="TechObject\Base\TechObjects\BaseTank.cs" />
+    <Compile Include="TechObject\Base\TechObjects\BaseWaterTank.cs" />
     <Compile Include="TechObject\LocalRestriction.cs" />
     <Compile Include="TechObject\Mode.cs" />
     <Compile Include="TechObject\ModesManager.cs" />

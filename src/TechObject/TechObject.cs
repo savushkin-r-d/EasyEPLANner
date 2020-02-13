@@ -131,10 +131,10 @@ namespace TechObject
             {
                 get
                 {
-                    if (owner.baseTechObject.GetName() == "Танк" ||
-                        owner.baseTechObject.GetName() == "Линия" ||
-                        owner.baseTechObject.GetName() == "Линия приемки" ||
-                        owner.baseTechObject.GetName() == "Линия выдачи")
+                    if (owner.baseTechObject.Name == "Танк" ||
+                        owner.baseTechObject.Name == "Линия" ||
+                        owner.baseTechObject.Name == "Линия приемки" ||
+                        owner.baseTechObject.Name == "Линия выдачи")
                     {
                         return true;
                     }
@@ -161,7 +161,7 @@ namespace TechObject
                 prefix + "name_eplan = \'" + NameEplan + "\',\n" +
                 prefix + "name_BC    = \'" + NameBC + "\',\n" +
                 prefix + "cooper_param_number = " + CooperParamNumber + ",\n" +
-                prefix + "base_tech_object = \'" + baseTechObject.GetName() + 
+                prefix + "base_tech_object = \'" + baseTechObject.Name + 
                 "\',\n" +
                 prefix + "attached_objects = \'" + AttachedObjects + "\',\n";
 
@@ -241,30 +241,26 @@ namespace TechObject
             TechObject clone = (TechObject)MemberwiseClone();
 
             clone.techNumber = new TechObjectN(clone, newNumber);
-
             clone.techType = new Editor.ObjectProperty("Тип", TechType);
             clone.nameBC = new Editor.ObjectProperty("Имя объекта Monitor",
                 NameBC);
             clone.nameEplan = new NameInEplan(NameEplan, clone);
-
             clone.s88Level = new ObjS88Level(S88Level, clone);
             clone.attachedObjects = new AttachedToObjects(AttachedObjects, 
                 clone);
 
             clone.getN = getN;
+      
+            clone.baseTechObject = baseTechObject.Clone(clone);
 
             clone.modes = modes.Clone(clone);
             clone.modes.ChngeOwner(clone);
             clone.modes.ModifyDevNames(TechNumber);
-
             clone.modes.ModifyRestrictObj(oldObjN, newObjN);
 
             clone.parameters = parameters.Clone();
 
-            clone.baseTechObject = baseTechObject.Clone(clone.modes);
-
             clone.SetItems();
-
             return clone;
         }
 
@@ -505,15 +501,15 @@ namespace TechObject
         {
             // Если не выбран базовый объект, то пустое имя
             // Если выбран, то сравниваем имена
-            if (baseTechObject.GetS88Level() != 0)
+            if (baseTechObject.S88Level != 0)
             {
-                string baseObjectNameEplan = baseTechObject.GetNameEplan()
+                string baseObjectNameEplan = baseTechObject.EplanName
                     .ToLower();
                 string thisObjectNameEplan = NameEplan.ToLower();
                 // Если тех. объект не содержит базовое ОУ, то добавить его.
                 if (thisObjectNameEplan.Contains(baseObjectNameEplan) == false)
                 {
-                    NameEplanForFile = baseTechObject.GetNameEplan() + "_" + 
+                    NameEplanForFile = baseTechObject.EplanName + "_" + 
                         NameEplan;
                 }
                 else
@@ -527,10 +523,15 @@ namespace TechObject
             }
         }
 
-        //  Получение имени базовой операции
-        public string GetBaseTechObjectName()
+        /// <summary>
+        /// Базовый технологический объект
+        /// </summary>
+        public BaseTechObject BaseTechObject
         {
-            return baseTechObject.GetName();
+            get
+            {
+                return baseTechObject;
+            }
         }
 
         /// <summary>
@@ -541,7 +542,10 @@ namespace TechObject
 
         public string Name
         {
-            get { return name; }
+            get 
+            { 
+                return name; 
+            }
         }
 
         /// <summary>
@@ -563,14 +567,13 @@ namespace TechObject
         }
 
         #region Реализация ITreeViewItem
-
         override public string[] DisplayText
         {
             get
             {
                 return new string[] {
                     getN( this ) + ". " + name + ' ' + 
-                    techNumber.EditText[ 1 ], baseTechObject.GetName() };
+                    techNumber.EditText[ 1 ], baseTechObject.Name };
             }
         }
 
@@ -591,33 +594,21 @@ namespace TechObject
 
         override public bool SetNewValue(string newValue, bool isExtraValue)
         {
-            bool resetBaseOperations = false;
-            if (newValue != baseTechObject.GetName() &&
-                baseTechObject.GetName() != "")
+            if (baseTechObject.Name == newValue)
             {
-                resetBaseOperations = true;
+                return false;
             }
 
-            // Получил имя базового аппарата из LUA и записал в класс
-            baseTechObject.SetName(newValue);
-
-            // Нашел базовый объект и присвоил значения из него переменным
-            BaseTechObject techObjFromDB = DataBase.Imitation
-                .GetTObject(newValue);
-
-            // Установил ОУ
-            string nameEplan = techObjFromDB.GetNameEplan();
-            baseTechObject.SetNameEplan(nameEplan);
-
-            //Установил S88Level
-            int s88Level = techObjFromDB.GetS88Level();
-            baseTechObject.SetS88Level(s88Level);
-            S88Level = baseTechObject.GetS88Level();
-
-            if (resetBaseOperations == true)
+            if (baseTechObject.Name != "" && newValue != baseTechObject.Name)
             {
                 baseTechObject.ResetBaseOperations();
             }
+
+            BaseTechObject techObjFromDB = DataBase.Imitation.GetTechObject(
+                newValue);
+            techObjFromDB.Owner = baseTechObject.Owner;
+            baseTechObject = techObjFromDB;
+            S88Level = baseTechObject.S88Level;
 
             // Т.к установили новое значение, произошла смена базового объекта
             // Надо сравнить ОУ и изменить его, если требуется
@@ -646,7 +637,7 @@ namespace TechObject
         {
             get
             {
-                return new string[] { name, baseTechObject.GetName() };
+                return new string[] { name, baseTechObject.Name };
             }
         }
 

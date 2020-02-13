@@ -430,6 +430,22 @@ namespace Editor
             value = val;
         }
 
+        public string Value
+        {
+            get
+            {
+                return value.ToString();
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+        }
+
         #region Реализация ITreeViewItem
 
         public ITreeViewItem Parent

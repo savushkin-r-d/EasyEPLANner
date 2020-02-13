@@ -352,6 +352,7 @@ namespace StaticHelper
             {
                 res[i] = new Editor.ObjectProperty(Keys[i], Values[i]);
             }
+
             return res;
         }
 
