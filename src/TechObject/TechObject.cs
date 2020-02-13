@@ -154,7 +154,8 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix)
         {
-            string res = prefix + "{\n" +
+            string res = "[ " + getN(this) + " ] =\n"+
+                prefix + "{\n" +
                 prefix + "n          = " + TechNumber + ",\n" +
                 prefix + "tech_type  = " + TechType + ",\n" +
                 prefix + "name       = \'" + name + "\',\n" +
