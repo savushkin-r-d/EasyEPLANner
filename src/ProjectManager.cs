@@ -1369,7 +1369,7 @@ namespace EasyEPlanner
                     "require(\"line\")", 
                     "require(\"master\")"));
                 prgFileWriter.WriteLine("-- Основные объекты проекта (объекты, описанные в Eplan'е).");
-                prgFileWriter.WriteLine(techObjectManager.SavePrgAsLuaTable("\t"));
+                prgFileWriter.WriteLine(techObjectManager.SavePrgAsLuaTable("    "));
 
                 if (par.silentMode == false)
                 {
