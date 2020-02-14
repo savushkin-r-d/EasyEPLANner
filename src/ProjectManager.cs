@@ -313,6 +313,9 @@ namespace EasyEPlanner
                 "SB_ST",
                 "DI_ST",
                 "DO_ST",
+                "SB_ST",
+                "HL_ST",
+                "HA_ST",
             });
 
         /// <summary>

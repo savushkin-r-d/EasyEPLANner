@@ -740,6 +740,14 @@ namespace Device
                     {
                         case DeviceSubType.M:
                         case DeviceSubType.M_FREQ:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "P_ON_TIME",
+                                "V"
+                            });
+
                         case DeviceSubType.M_REV:
                         case DeviceSubType.M_REV_FREQ:
                         case DeviceSubType.M_REV_2:
@@ -913,10 +921,17 @@ namespace Device
                     return new List<string>(new string[] 
                     { 
                         "ST", 
-                        "M" 
+                        "M",
                     });
 
                 case DeviceType.SB:
+                    return new List<string>(new string[]
+                    {
+                        "ST",
+                        "M",
+                        "P_DT"
+                    });
+
                 case DeviceType.DI:
                     switch (dst)
                     {
@@ -954,7 +969,8 @@ namespace Device
                                 "M", 
                                 "ST", 
                                 "P_MIN_V", 
-                                "P_MAX_V" 
+                                "P_MAX_V",
+                                "V"
                             });
 
                         case DeviceSubType.AI_VIRT:
