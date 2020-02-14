@@ -149,6 +149,7 @@
     </Compile>
     <Compile Include="Editor.cs" />
     <Compile Include="EProjectManager.cs" />
+    <Compile Include="ExcelDataCollector.cs" />
     <Compile Include="ExcelRepoter.cs" />
     <Compile Include="DeviceBindFromForm.cs" />
     <Compile Include="IO.cs" />

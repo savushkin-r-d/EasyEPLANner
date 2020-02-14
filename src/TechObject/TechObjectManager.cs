@@ -728,113 +728,6 @@ namespace TechObject
             }
         }
 
-        public TreeView SaveDevicesAsTree()
-        {
-            TreeView tree = new TreeView();
-            foreach (TechObject techObj in objects)
-            {
-                string techName = GetTechObjectN(techObj).ToString() + ". " +
-                    techObj.EditText[0] + " " + techObj.TechNumber.ToString();
-                TreeNode objNode = new TreeNode(techName);
-                objNode.Tag = techObj;
-                foreach (Mode mode in techObj.ModesManager.Modes)
-                {
-                    string modeName = techObj.ModesManager.GetModeN(mode)
-                        .ToString() + ". " + mode.EditText[0];
-                    TreeNode modeNode = new TreeNode();
-                    Step commonStep = mode.MainSteps[0];
-                    string[] res = new string[] { 
-                        modeName, 
-                        "",
-                        commonStep.GetActions[ 0 ].EditText[ 1 ],
-                        commonStep.GetActions[ 2 ].EditText[ 1 ],
-                        commonStep.GetActions[ 3 ].EditText[ 1 ],
-                        commonStep.GetActions[ 4 ].EditText[ 1 ],
-                        commonStep.GetActions[ 5 ].EditText[ 1 ],
-                        commonStep.GetActions[ 6 ].Items[ 0 ].EditText[ 1 ],
-                        commonStep.GetActions[ 6 ].Items[ 1 ].EditText[ 1 ],
-                        commonStep.GetActions[ 6 ].Items[ 2 ].EditText[ 1 ],
-                        commonStep.GetActions[ 7 ].EditText[ 1 ]
-                    };
-
-                    modeNode.Tag = res;
-
-                    for (int i = 1; i < mode.MainSteps.Count; i++)
-                    {
-                        commonStep = mode.MainSteps[i];
-                        string stepName;
-                        TreeNode stepNode = new TreeNode();
-
-                        stepName = i.ToString() + ". " + commonStep.EditText[0];
-                        string[] resStep = new string[] { 
-                            stepName, 
-                            commonStep.GetActions[ 0 ].EditText[ 1 ],
-                            commonStep.GetActions[ 2 ].EditText[ 1 ],
-                            commonStep.GetActions[ 3 ].EditText[ 1 ],
-                            commonStep.GetActions[ 4 ].EditText[ 1 ], 
-                            "", 
-                            "", 
-                            "", 
-                            "",
-                            ""
-                        };
-
-                        stepNode.Tag = resStep;
-                        modeNode.Nodes.Add(stepNode);
-                    }
-                    objNode.Nodes.Add(modeNode);
-                }
-
-                tree.Nodes.Add(objNode);
-            }
-            return tree;
-        }
-
-        public TreeView SaveParamsAsTree()
-        {
-            TreeView tree = new TreeView();
-            foreach (TechObject techObj in objects)
-            {
-                string techName = GetTechObjectN(techObj).ToString() + ". " +
-                    techObj.EditText[0] + " " + techObj.TechNumber.ToString();
-                TreeNode objNode = new TreeNode(techName);
-                objNode.Tag = techObj;
-                string[] ParamsType = { "S_PAR_F", "S_PAR_UI", "RT_PAR_F", 
-                    "RT_PAR_UI" };
-                for (int j = 0; j < techObj.Params.Items.Length; j++)
-                {
-
-                    if (techObj.Params.Items[j].Items != null)
-                    {
-                        TreeNode parTypeNode = new TreeNode(ParamsType[j]);
-                        parTypeNode.Tag = ParamsType[j];
-                        objNode.Nodes.Add(parTypeNode);
-                        for (int i = 0; i < techObj.Params.Items[j].Items
-                            .Length; i++)
-                        {
-                            Param param = techObj.Params.Items[j]
-                                .Items[i] as Param;
-                            string parName = (i + 1).ToString() + ". " + 
-                                param.EditText[0];
-                            TreeNode parNode = new TreeNode(parName);
-                            parNode.Tag = new string[] 
-                            {
-                                parName,
-                                param.GetValue(),
-                                param.GetMeter(),
-                                param.Operations,
-                                param.GetNameLua(),
-                            };
-                            parTypeNode.Nodes.Add(parNode);
-                        }
-                    }
-                }
-
-                tree.Nodes.Add(objNode);
-            }
-            return tree;
-        }
-
         /// <summary>
         /// Проверка и исправление ограничений при удалении/перемещении объекта
         /// </summary>
@@ -1051,8 +944,8 @@ namespace TechObject
             else
             {
                 newTechObject =
-                    new TechObject("Гребенка", GetTechObjectN, 1, 1, "COMB", 
-                    -1, "Grebenka", "");
+                    new TechObject("Мастер", GetTechObjectN, 1, 1, "Master", 
+                    -1, "MasterObj", "");
             }
 
             objects.Add(newTechObject);

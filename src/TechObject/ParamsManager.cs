@@ -115,6 +115,17 @@ namespace TechObject
             return clone;
         }
 
+        /// <summary>
+        /// Получить параметры объекта.
+        /// </summary>
+        public Params Parameters
+        {
+            get
+            {
+                return parFLoat;
+            }
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {

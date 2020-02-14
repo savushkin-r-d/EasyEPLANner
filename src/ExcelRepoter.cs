@@ -1,93 +1,139 @@
-﻿///@file ExcelRepoter.cs
-///@brief Классы, реализующие минимальную функциональность, необходимую для 
-///экспорта описания проекта в Excel.
-///
-/// @author  Иванюк Дмитрий Сергеевич.
-///
-/// @par Текущая версия:
-/// @$Rev: --- $.\n
-/// @$Author: sedr $.\n
-/// @$Date:: 2019-10-21#$.
-
-using Excel = Microsoft.Office.Interop.Excel;
+﻿using Excel = Microsoft.Office.Interop.Excel;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System;
+using System.IO;
 
 namespace EasyEPlanner
 {
+    /// <summary>
+    /// Класс, отвечающий за генерацию Excel документов
+    /// </summary>
     class ExcelRepoter
     {
         /// <summary>
         /// Создание и сохранение Excel файла с параметрами проекта 
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="fileName">Имя файла</param>
+        /// <param name="autoSave">Вызвано автосохранением</param>
         /// <returns></returns>
-        public static int ExportTechDevs(string fileName)
+        public static int ExportTechDevs(string fileName, bool autoSave = false)
         {
-            Excel._Application xlApp = null;
-            Excel.Workbook xlWorkBook = null;
-            Excel.Worksheet xlWorkSheet = null;
+            Excel._Application app = null;
+            Excel.Workbook workBook = null;
+            Excel.Worksheet workSheet = null;
+
             List<int> ID = new List<int>();
             GetExcelProcess(ID);
 
             try
             {
-                xlApp = new Excel.Application();
-                xlApp.Visible = false;
-                xlApp.UserControl = true;
-                xlWorkBook = xlApp.Workbooks.Add();
+                app = new Excel.Application();
+                app.Visible = false;
+                app.UserControl = true;
+                workBook = app.Workbooks.Add();
 
                 string prjName = fileName.Remove(fileName.IndexOf(".xlsx"));
                 prjName = prjName.Substring(prjName.LastIndexOf("\\") + 1);
 
-                CreateModulesPage(prjName, ref xlWorkSheet, ref xlApp);
+                if (!autoSave)
+                {
+                    GenerateFullExcelFile(prjName, ref workSheet, ref app);
+                }
+                else
+                {
+                    GenerateExcelAutoReport(ref workSheet, ref app);
+                }
 
-                ProjectManager.GetInstance().SetLogProgress(20);
+                workSheet = app.Sheets[1] as Excel.Worksheet;
+                workSheet.Select();
 
-                CreateInformDevicePage(ref xlWorkSheet, ref xlApp);
-
-                ProjectManager.GetInstance().SetLogProgress(30);
-
-                CreateTotalDevicePage(ref xlWorkSheet, ref xlApp);
-
-                ProjectManager.GetInstance().SetLogProgress(40);
-
-                CreateDeviceConnectionPage(ref xlWorkSheet, ref xlApp);
-
-                ProjectManager.GetInstance().SetLogProgress(55);
-
-                CreateObjectParamsPage(ref xlWorkSheet, ref xlApp);
-
-                ProjectManager.GetInstance().SetLogProgress(70);
-
-                CreateObjectDevicesPage(ref xlWorkSheet, ref xlApp);
-
-                ProjectManager.GetInstance().SetLogProgress(85);
-
-                xlWorkSheet = xlApp.Sheets[1] as Excel.Worksheet;
-                xlWorkSheet.Select();
-
-                xlWorkBook.SaveAs(fileName);
+                SaveExcelFile(autoSave, workBook, fileName);
             }
             finally
             {
-                xlWorkBook.Close(false);
-                xlApp.Quit();
+                workBook.Close(false);
+                app.Quit();
 
-                xlWorkBook = null;
-                xlWorkSheet = null;
-                xlApp = null;
+                workBook = null;
+                workSheet = null;
+                app = null;        
+                
                 KillExcelProcess(ID);
                 GC.Collect();
 
-                Process.Start(fileName);
+                if (autoSave == false)
+                {
+                    Process.Start(fileName);
+                }
             }
-
             return 0;
         }
 
+        /// <summary>
+        /// Генерировать полный Excel файл
+        /// </summary>
+        private static void GenerateFullExcelFile(string prjName, 
+            ref Excel.Worksheet workSheet, ref Excel._Application app)
+        {
+            CreateModulesPage(prjName, ref workSheet, ref app);
+            ProjectManager.GetInstance().SetLogProgress(5);
+
+            CreateInformDevicePage(ref workSheet, ref app);
+            ProjectManager.GetInstance().SetLogProgress(20);
+
+            CreateTotalDevicePage(ref workSheet, ref app);
+            ProjectManager.GetInstance().SetLogProgress(35);
+
+            CreateDeviceConnectionPage(ref workSheet, ref app);
+            ProjectManager.GetInstance().SetLogProgress(50);
+
+            CreateObjectParamsPage(ref workSheet, ref app);
+            ProjectManager.GetInstance().SetLogProgress(65);
+
+            CreateObjectDevicesPage(ref workSheet, ref app);
+            ProjectManager.GetInstance().SetLogProgress(80);
+        }
+
+        /// <summary>
+        /// Генерировать отчет по технологическим объектом (для SCADA).
+        /// </summary>
+        private static void GenerateExcelAutoReport(
+            ref Excel.Worksheet workSheet, ref Excel._Application app)
+        {
+            CreateObjectsPageWithoutActions(ref workSheet, ref app);
+        }
+
+        /// <summary>
+        /// Сохранить Excel файл
+        /// </summary>
+        /// <param name="autoSave">Автосохранение</param>
+        /// <param name="workBook">Книга</param>
+        /// <param name="fileName">Имя файла</param>
+        private static void SaveExcelFile(bool autoSave, 
+            Excel.Workbook workBook, string fileName)
+        {
+            object miss = Type.Missing;
+            if (autoSave)
+            {
+                if (File.Exists(fileName))
+                {
+                    File.Delete(fileName);
+                }
+
+                workBook.SaveAs(fileName, miss, miss, "Read", true);
+            }
+            else
+            {
+                workBook.SaveAs(fileName);
+            }
+        }
+
+        /// <summary>
+        /// Уничтожить процесс Excel в системе
+        /// </summary>
+        /// <param name="ID">Уникальный номер процесса</param>
         private static void KillExcelProcess(List<int> ID)
         {
             Process[] ps2 = Process.GetProcessesByName("EXCEL");
@@ -115,6 +161,10 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Получить номер процесса Excel в системе
+        /// </summary>
+        /// <param name="ID">Список всех процессов системы</param>
         private static void GetExcelProcess(List<int> ID)
         {
             Process[] ps2 = Process.GetProcessesByName("EXCEL");
@@ -130,34 +180,34 @@ namespace EasyEPlanner
         /// <summary>
         /// Создание страницы с модулями IO
         /// </summary>
-        private static void CreateModulesPage(string prjName, ref Excel.Worksheet xlWorkSheet,
-            ref Excel._Application xlApp)
+        private static void CreateModulesPage(string prjName, 
+            ref Excel.Worksheet workSheet, ref Excel._Application app)
         {
-            xlWorkSheet = xlApp.ActiveSheet as Excel.Worksheet;
+            workSheet = app.ActiveSheet as Excel.Worksheet;
+            workSheet.Name = "Модули ввода-вывода";
+            workSheet.Cells.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
 
-            xlWorkSheet.Name = "Модули ввода-вывода";
+            var modulesCount = new Dictionary<string, int>();
+            var modulesColor = new Dictionary<string, System.Drawing.Color>();
+            var asInterfaceConnection = new Dictionary<string, object[,]>();
 
-            xlWorkSheet.Cells.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
-
-            Dictionary<string, int> modulesCount = new Dictionary<string, int>();
-
-            Dictionary<string, System.Drawing.Color> modulesColor = new Dictionary<string, System.Drawing.Color>();
-            Dictionary<string, object[,]> asInterfaceConnection = new Dictionary<string, object[,]>();
-
-            object[,] res = IO.IOManager.GetInstance().SaveAsConnectionArray(prjName, modulesCount, modulesColor, asInterfaceConnection);
+            object[,] res = ExcelDataCollector.SaveIOAsConnectionArray(prjName, 
+                modulesCount, modulesColor, asInterfaceConnection);
 
             string endPos = "D" + (res.GetLength(0) + 0);
-            xlWorkSheet.Range["A1", endPos].Value2 = res;
+            workSheet.Range["A1", endPos].Value2 = res;
             int finalRows = res.GetLength(0) + 2;
 
             //Форматирование страницы
-            xlApp.ScreenUpdating = false;
-            xlApp.DisplayAlerts = false;
-            xlWorkSheet.UsedRange.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            app.ScreenUpdating = false;
+            app.DisplayAlerts = false;
+            workSheet.UsedRange.Borders.LineStyle = Excel.XlLineStyle
+                .xlContinuous;
+            workSheet.UsedRange.WrapText = false;
 
-            Excel.Range rangeCurrent = xlWorkSheet.Range["A1", "A1"];
+            Excel.Range rangeCurrent = workSheet.Range["A1", "A1"];
             Excel.Range rangeStart = rangeCurrent;
-            int totalCountRows = xlWorkSheet.UsedRange.Rows.Count;
+            int totalCountRows = workSheet.UsedRange.Rows.Count;
             int i = 1;
             string arr2 = rangeCurrent.Text as string;
             do
@@ -167,27 +217,31 @@ namespace EasyEPlanner
                 arr2 = rangeCurrent.Text as string;
                 if (arr1 != arr2)
                 {
-                    xlWorkSheet.Range[rangeStart, rangeCurrent.Offset[-1, 0]].Merge();
+                    workSheet.Range[rangeStart, rangeCurrent.Offset[-1, 0]]
+                        .Merge();
                     Excel.Range moduleNameRange = rangeStart.Offset[0, 1];
                     string moduleName = moduleNameRange.Text as string;
 
                     if (modulesColor.ContainsKey(moduleName))
                     {
-                        moduleNameRange.Interior.Color = modulesColor[moduleName];
+                        moduleNameRange.Interior.Color = modulesColor[
+                            moduleName];
                     }
 
                     int moduleIdx;
                     if (Int32.TryParse(arr1, out moduleIdx))
                     {
-                        xlWorkSheet.Range[rangeStart.Offset[0, 1], rangeCurrent.Offset[-1, 1]].Merge();
-                        xlWorkSheet.Range[rangeStart, rangeCurrent.Offset[-1, 3]].
-                            BorderAround(Type.Missing, Excel.XlBorderWeight.xlThick);
+                        workSheet.Range[rangeStart.Offset[0, 1], 
+                            rangeCurrent.Offset[-1, 1]].Merge();
+                        workSheet.Range[rangeStart, 
+                            rangeCurrent.Offset[-1, 3]].BorderAround(
+                            Type.Missing, Excel.XlBorderWeight.xlThick);
                     }
                     else
                     {
-                        xlWorkSheet.Range[rangeStart, rangeCurrent.Offset[-1, 3]].Borders.LineStyle =
+                        workSheet.Range[rangeStart, 
+                            rangeCurrent.Offset[-1, 3]].Borders.LineStyle =
                             Excel.XlLineStyle.xlLineStyleNone;
-
                     }
                     rangeStart = rangeCurrent;
                 }
@@ -195,26 +249,24 @@ namespace EasyEPlanner
             }
             while (i <= totalCountRows);
 
-            xlWorkSheet.UsedRange.WrapText = false;
-
             // Форматирование по ширине содержимого.
-            xlWorkSheet.Cells.EntireColumn.AutoFit();
-            xlWorkSheet.Cells.EntireColumn.WrapText = true;
+            workSheet.Cells.EntireColumn.AutoFit();
+            workSheet.Cells.EntireColumn.WrapText = true;
 
-            Excel.Range column = xlWorkSheet.Range["B2", "B" + finalRows.ToString()];
+            Excel.Range column = workSheet.Range["B2", "B" + 
+                finalRows.ToString()];
             column.Orientation = 90;
+            
             // 6.43 - 50 пикселей
             column.ColumnWidth = 6.43;
             column.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            column = workSheet.Range["A2", "A" + finalRows.ToString()];
 
-
-            column = xlWorkSheet.Range["A2", "A" + finalRows.ToString()];
             //26.43 - 190 пикселей
             column.ColumnWidth = 26.43;
             column.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            column = workSheet.Range["C2", "C" + finalRows.ToString()];
 
-
-            column = xlWorkSheet.Range["C2", "C" + finalRows.ToString()];
             // 2.14 - 20 пикселей
             column.ColumnWidth = 6.43;
             column.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
@@ -223,10 +275,12 @@ namespace EasyEPlanner
             int totalEnd = totalStart;
             int idx = 0;
             int total = 0;
+
             //Выделение отдельным блоком модулей AS-interface
             if (asInterfaceConnection.Count != 0)
             {
-                object[,] ASInterface = new object[asInterfaceConnection.Count * 130, 4];
+                var ASInterface = new object[
+                    asInterfaceConnection.Count * 130, 4];
                 idx = 0;
                 ASInterface[idx, 0] = "AS-interface/IO-Link";
                 idx++;
@@ -246,7 +300,8 @@ namespace EasyEPlanner
                         {
                             if (connections[ii, jj] != null)
                             {
-                                ASInterface[idx, startColumn + jj] = connections[ii, jj];
+                                ASInterface[idx, startColumn + jj] = 
+                                    connections[ii, jj];
                             }
                             else
                             {
@@ -261,12 +316,12 @@ namespace EasyEPlanner
 
                 }
                 totalEnd = totalStart + idx;
-                xlWorkSheet.Range["A" + totalStart.ToString(), "D" + totalEnd.ToString()].Value2 = ASInterface;
+                workSheet.Range["A" + totalStart.ToString(), "D" + 
+                    totalEnd.ToString()].Value2 = ASInterface;
                 totalStart = totalEnd + 2;
             }
 
             //Создание сводной таблицы используемых модулей на основании словаря
-
             object[,] modulesTotal = new object[modulesCount.Count + 1, 2];
             idx = 0;
             total = 0;
@@ -283,18 +338,18 @@ namespace EasyEPlanner
             modulesTotal[idx, 1] = total;
 
             //Форматирование таблицы
-
             totalEnd = totalStart + modulesCount.Count;
 
-            rangeCurrent = xlWorkSheet.Range["A" + totalStart.ToString(), "B" + totalEnd.ToString()];
+            rangeCurrent = workSheet.Range["A" + totalStart.ToString(), "B" + 
+                totalEnd.ToString()];
             rangeCurrent.Value2 = modulesTotal;
             rangeCurrent.Orientation = 0;
             rangeCurrent.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
             rangeCurrent.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
             rangeCurrent.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
 
-
-            rangeCurrent = xlWorkSheet.Range["A" + totalStart.ToString(), "A" + totalStart.ToString()];
+            rangeCurrent = workSheet.Range["A" + totalStart.ToString(), "A" + 
+                totalStart.ToString()];
             rangeStart = rangeCurrent;
 
             // Окрас ячеек
@@ -312,9 +367,9 @@ namespace EasyEPlanner
 
                     if (modulesColor.ContainsKey(moduleName))
                     {
-                        moduleNameRange.Interior.Color = modulesColor[moduleName];
+                        moduleNameRange.Interior.Color = modulesColor[
+                            moduleName];
                     }
-
                     rangeStart = rangeCurrent;
                 }
                 i++;
@@ -323,131 +378,187 @@ namespace EasyEPlanner
 
             rangeCurrent = null;
             rangeStart = null;
-
         }
 
         /// <summary>
         /// Создание страницы с устройствами для операций и шагов техобъектов
         /// </summary>
-        private static void CreateObjectDevicesPage(ref Excel.Worksheet xlWorkSheet,
-                ref Excel._Application xlApp)
+        private static void CreateObjectDevicesPage(
+            ref Excel.Worksheet workSheet, ref Excel._Application app)
         {
-            xlWorkSheet = xlApp.Sheets.Add(Type.Missing, xlWorkSheet) as Excel.Worksheet;
-
-            xlWorkSheet.Name = "Операции и устройства";
-
-            Excel.Range excelCells = xlWorkSheet.get_Range("A1", "C1").Cells;
+            workSheet = app.Sheets.Add(Type.Missing, workSheet) as 
+                Excel.Worksheet;
+            workSheet.Name = "Операции и устройства";
+            Excel.Range excelCells = workSheet.get_Range("A1", "C1").Cells;
+            
             // Производим объединение
             excelCells.Merge(System.Reflection.Missing.Value);
             excelCells.Value = "Технологические объекты";
-            xlWorkSheet.Range["D1", "L1"].Value2 =
-                new string[] { "Вкл.устройства", "Выкл. устройства",
-                "Верхние седла", "Нижние седла" , "Сигналы для включения", "Мойка (DI)",
-                "Мойка (DO)", "Мойка (Устройства)", "Группы DI-->DO"};
-            xlWorkSheet.Range["A1", "L1"].EntireColumn.AutoFit();
+            workSheet.Range["D1", "L1"].Value2 = new string[] 
+            { 
+                "Вкл.устройства", 
+                "Выкл. устройства",
+                "Верхние седла", 
+                "Нижние седла" , 
+                "Сигналы для включения", 
+                "Мойка (DI)",
+                "Мойка (DO)", 
+                "Мойка (Устройства)", 
+                "Группы DI-->DO"
+            };
+            workSheet.Range["A1", "L1"].EntireColumn.AutoFit();
 
             //Заполнение страницы данными
-            TreeView tree = TechObject.TechObjectManager.GetInstance().SaveDevicesAsTree();
+            TreeView tree = ExcelDataCollector
+                .SaveTechObjectOperationsAndActionsAsTree();
             int row = 2;
-            WriteTreeNode(ref xlWorkSheet, tree.Nodes, ref row);
+            WriteTreeNode(ref workSheet, tree.Nodes, ref row);
 
             //Форматирование страницы
-            xlApp.ActiveWindow.SplitRow = 1;
-            xlApp.ActiveWindow.FreezePanes = true;
-            row = xlWorkSheet.UsedRange.Rows.Count;
-            xlWorkSheet.Range["A1", "C" + row.ToString()].EntireColumn.AutoFit();
+            app.ActiveWindow.SplitRow = 1;
+            app.ActiveWindow.FreezePanes = true;
+            row = workSheet.UsedRange.Rows.Count;
+            workSheet.Range["A1", "C" + row.ToString()].EntireColumn.AutoFit();
+            
             // установка переноса текста в ячейке.
-            xlWorkSheet.UsedRange.WrapText = true;
-            xlWorkSheet.Outline.SummaryRow = Excel.XlSummaryRow.xlSummaryAbove;
+            workSheet.UsedRange.WrapText = true;
+            workSheet.Outline.SummaryRow = Excel.XlSummaryRow.xlSummaryAbove;
         }
 
         /// <summary>
         /// Создание страницы с параметрами техобъектов проекта
         /// </summary>
-        private static void CreateObjectParamsPage(ref Excel.Worksheet xlWorkSheet,
-            ref Excel._Application xlApp)
+        private static void CreateObjectParamsPage(
+            ref Excel.Worksheet workSheet, ref Excel._Application app)
         {
             // Добавление листа в книгу.
-            xlWorkSheet = xlApp.Sheets.Add(Type.Missing, xlWorkSheet) as Excel.Worksheet;
-            xlWorkSheet.Name = "Параметры объектов";
+            workSheet = app.Sheets.Add(Type.Missing, workSheet) as 
+                Excel.Worksheet;
+            workSheet.Name = "Параметры объектов";
 
             // Настройка имен столбцов.
-            xlWorkSheet.Range["A1", "A1"].Value2 = new string[] { "Технологический объект" };
-            Excel.Range excelCells = xlWorkSheet.get_Range("B1", "C1").Cells;
+            workSheet.Range["A1", "A1"].Value2 = new string[] 
+            { 
+                "Технологический объект" 
+            };
+            Excel.Range excelCells = workSheet.get_Range("B1", "C1").Cells;
             excelCells.Merge(System.Reflection.Missing.Value);
             excelCells.Value = "Параметры";
-            xlWorkSheet.Range["D1", "G1"].Value2 = new string[] { "Значение", 
-                "Размерность", "Операция", "Lua имя"};
+            workSheet.Range["D1", "G1"].Value2 = new string[] 
+            { 
+                "Значение", 
+                "Размерность", 
+                "Операция", 
+                "Lua имя"
+            };
             
             // Получить и записать данные
-            TreeView tree = TechObject.TechObjectManager.GetInstance().SaveParamsAsTree();
+            TreeView tree = ExcelDataCollector.SaveParamsAsTree();
             int row = 2;
-            WriteTreeNode(ref xlWorkSheet, tree.Nodes, ref row);
+            WriteTreeNode(ref workSheet, tree.Nodes, ref row);
 
             // Форматирование страницы.
-            xlApp.ActiveWindow.SplitRow = 1;
-            xlApp.ActiveWindow.FreezePanes = true;
-            row = xlWorkSheet.UsedRange.Rows.Count;
-            xlWorkSheet.Range["A1", "G" + row.ToString()].EntireColumn.AutoFit();
+            app.ActiveWindow.SplitRow = 1;
+            app.ActiveWindow.FreezePanes = true;
+            row = workSheet.UsedRange.Rows.Count;
+            workSheet.Range["A1", "G" + row.ToString()].EntireColumn.AutoFit();
 
             // Установка переноса текста в ячейке.
-            xlWorkSheet.Outline.SummaryRow = Excel.XlSummaryRow.xlSummaryAbove;
+            workSheet.Outline.SummaryRow = Excel.XlSummaryRow.xlSummaryAbove;
         }
 
         /// <summary>
         /// Создание страницы с описанием устройств
         /// </summary>
-        private static void CreateInformDevicePage(ref Excel.Worksheet xlWorkSheet,
-            ref Excel._Application xlApp)
+        private static void CreateInformDevicePage(
+            ref Excel.Worksheet workSheet, ref Excel._Application app)
         {
-            xlWorkSheet = xlApp.Sheets.Add(Type.Missing,
-                   xlWorkSheet) as Excel.Worksheet;
-
-            xlWorkSheet.Name = "Техустройства";
-            xlWorkSheet.Range["A1", "D1"].Value2 =
-                new string[] { "название", "описание", "тип", "подтип" };
-            object[,] res = Device.DeviceManager.GetInstance().SaveAsArray();
+            workSheet = app.Sheets.Add(Type.Missing, workSheet) as 
+                Excel.Worksheet;
+            workSheet.Name = "Техустройства";
+            workSheet.Range["A1", "D1"].Value2 = new string[] 
+            { 
+                "Название", 
+                "Описание", 
+                "Тип", 
+                "Подтип" 
+            };
+            object[,] res = ExcelDataCollector.SaveDevicesInformationAsArray();
             string endPos = "Q" + (res.GetLength(0) + 1);
-            xlWorkSheet.Range["A2", endPos].Value2 = res;
+            workSheet.Range["A2", endPos].Value2 = res;
+            
             // Форматирование по ширине содержимого.
-            xlWorkSheet.Cells.EntireColumn.AutoFit();
+            workSheet.Cells.EntireColumn.AutoFit();
         }
 
         /// <summary>
         /// Создание страницы с итоговыми данными по устройствам
         /// </summary>
-        private static void CreateTotalDevicePage(ref Excel.Worksheet xlWorkSheet,
-            ref Excel._Application xlApp)
+        private static void CreateTotalDevicePage(
+            ref Excel.Worksheet workSheet, ref Excel._Application app)
         {
-            xlWorkSheet = xlApp.Sheets.Add(Type.Missing,
-                            xlWorkSheet) as Excel.Worksheet;
-            xlWorkSheet.Name = "Сводная таблица устройств";
-            object[,] res = Device.DeviceManager.GetInstance().SaveSummaryAsArray();
+            workSheet = app.Sheets.Add(Type.Missing, workSheet) as 
+                Excel.Worksheet;
+            workSheet.Name = "Сводная таблица устройств";
+            object[,] res = ExcelDataCollector.SaveDevicesSummaryAsArray();
             string endPos = "Q" + res.GetLength(0);
-            xlWorkSheet.Range["A1", endPos].Value2 = res;
-            xlWorkSheet.Cells.EntireColumn.AutoFit();
+            workSheet.Range["A1", endPos].Value2 = res;
+            workSheet.Cells.EntireColumn.AutoFit();
         }
 
         /// <summary>
         /// Создание страницы с итоговыми данными по устройствам
         /// </summary>
-        private static void CreateDeviceConnectionPage(ref Excel.Worksheet xlWorkSheet,
-            ref Excel._Application xlApp)
+        private static void CreateDeviceConnectionPage(
+            ref Excel.Worksheet workSheet, ref Excel._Application app)
         {
-            xlWorkSheet = xlApp.Sheets.Add(Type.Missing,
-                            xlWorkSheet) as Excel.Worksheet;
-            xlWorkSheet.Name = "Подключение устройств";
-            TreeView tree = Device.DeviceManager.GetInstance().SaveConnectionAsTree();
+            workSheet = app.Sheets.Add(Type.Missing, workSheet) as 
+                Excel.Worksheet;
+            workSheet.Name = "Подключение устройств";
+            TreeView tree = ExcelDataCollector.SaveDeviceConnectionAsTree();
             int row = 1;
-            WriteTreeNode(ref xlWorkSheet, tree.Nodes, ref row);
-            xlWorkSheet.Cells.EntireColumn.AutoFit();
-            xlWorkSheet.Outline.SummaryRow = Excel.XlSummaryRow.xlSummaryAbove;
+            WriteTreeNode(ref workSheet, tree.Nodes, ref row);
+            workSheet.Cells.EntireColumn.AutoFit();
+            workSheet.Outline.SummaryRow = Excel.XlSummaryRow.xlSummaryAbove;
+        }
+
+        /// <summary>
+        /// Создание страницы с информацией об объектах (слепок редактора).
+        /// </summary>
+        /// <param name="workSheet"></param>
+        /// <param name="app"></param>
+        private static void CreateObjectsPageWithoutActions(
+            ref Excel.Worksheet workSheet, ref Excel._Application app)
+        {
+            const int widthColumnA = 40;
+            const int widthColumnC = 55;
+            const int widthColumnE = 45;
+            const int MaxNodeLevel = 5;
+
+            workSheet = app.ActiveSheet as Excel.Worksheet;
+            workSheet.Name = "Технологические объекты";
+            TreeView tree = ExcelDataCollector
+                .SaveObjectsWithoutActionsAsTree();
+            int row = 1;
+            WriteTreeNode(ref workSheet, tree.Nodes, ref row);
+            workSheet.Cells.EntireColumn.AutoFit();
+            workSheet.Outline.SummaryRow = Excel.XlSummaryRow.xlSummaryAbove;
+            workSheet.Range["A1", "A" + row.ToString()].Columns
+                .ColumnWidth = widthColumnA;
+            workSheet.Range["C1", "C" + row.ToString()].Columns
+                .ColumnWidth = widthColumnC;
+            workSheet.Range["E1", "E" + row.ToString()].Columns
+                .ColumnWidth = widthColumnE;
+            for (int i = MaxNodeLevel; i > 0; i--)
+            {
+                workSheet.Outline.ShowLevels(i, 0);
+            }
         }
 
         /// <summary>
         /// Запись узла дерева в Excel таблицу
         /// </summary>
-        private static void WriteTreeNode(ref Excel.Worksheet xlWorkSheet,
+        private static void WriteTreeNode(ref Excel.Worksheet workSheet,
             TreeNodeCollection Nodes, ref int row)
         {
             foreach (TreeNode node in Nodes)
@@ -460,24 +571,23 @@ namespace EasyEPlanner
                         row.ToString();
                     string secondCellAddress = ParseColNum(
                         node.Level + values.Length - 1) + row.ToString();
-                    xlWorkSheet.Range[firstCellAddress, secondCellAddress]
+                    workSheet.Range[firstCellAddress, secondCellAddress]
                         .Value2 = values;
                 }
                 else
                 {
                     string[] srt = new string[] { node.Text };
-
                     string cellAddress = ParseColNum(node.Level) + 
                         row.ToString();
-
-                    xlWorkSheet.Range[cellAddress, cellAddress].Value2 = srt;
+                    workSheet.Range[cellAddress, cellAddress].Value2 = srt;
 
                 }
                 row++;
-                WriteTreeNode(ref xlWorkSheet, node.Nodes, ref row);
+                
+                WriteTreeNode(ref workSheet, node.Nodes, ref row);
                 if (firstGroupRow != row)
                 {
-                    (xlWorkSheet.Rows[string.Format("{0}:{1}", firstGroupRow, 
+                    (workSheet.Rows[string.Format("{0}:{1}", firstGroupRow, 
                                 row - 1), System.Reflection.Missing.Value]
                                 as Excel.Range).Group();
                 }

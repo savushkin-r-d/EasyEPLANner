@@ -1,16 +1,4 @@
-﻿///@file ProjectManager.cs
-///@brief Классы, реализующие минимальную функциональность, необходимую для 
-///экспорта описания проекта для PAC.
-///
-/// @author  Иванюк Дмитрий Сергеевич.
-///
-/// @par Текущая версия:
-/// @$Rev: --- $.\n
-/// @$Author: sedr $.\n
-/// @$Date:: 2019-10-21#$.
-/// 
-
-using Device;
+﻿using Device;
 using Editor;
 using IO;
 using System.Collections.Generic;
@@ -274,6 +262,20 @@ namespace EasyEPlanner
             }
 
             return res;
+        }
+
+        /// <summary>
+        /// Получить хэш-код файла проекта
+        /// </summary>
+        /// <param name="projectName">Имя проекта</param>
+        /// <param name="fileName">Имя файла для считывания</param>
+        /// <returns></returns>
+        public int GetFileHashCode(string projectName, string fileName)
+        {
+            string luaString = "";
+            LoadDescriptionFromFile(out luaString, out _, projectName, 
+                fileName);
+            return luaString.GetHashCode();
         }
 
         /// <summary>
