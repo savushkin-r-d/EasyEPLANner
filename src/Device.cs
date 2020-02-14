@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System;
-using System.Windows.Forms;
 using IO;
 using System.Linq;
-using StaticHelper;
+using System.Windows.Forms;
 
 /// <summary>
 /// Пространство имен технологических устройств проекта (клапана, насосы...).
@@ -92,7 +91,7 @@ namespace Device
         M_REV_FREQ_2_ERROR,
         /// <summary>
         /// Мотор, управляемый частотником Altivar. Связь с частотником по Ethernet.
-        /// Реверс и аварии опциональны.
+        /// Реверс и аварии опционально.
         /// </summary>
         M_ATV,
 
@@ -415,7 +414,7 @@ namespace Device
         protected DeviceType dType = DeviceType.NONE;
         protected DeviceSubType dSubType = DeviceSubType.NONE;
 
-        protected int dLocation; /// Номер узла, в котором должно располагаться утсройство.
+        protected int dLocation; /// Номер узла, в котором должно располагаться устройство.
 
         protected string objectName;    /// Объект устройства (R в R1V12).
         protected int objectNumber;     /// Номер объекта (1 в R1V12)
@@ -3611,173 +3610,6 @@ namespace Device
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Сохранение в виде таблицы (массива строк, чисел и т.д.).
-        /// </summary>
-        public object[,] SaveAsArray()
-        {
-            int MAX_TYPE_CNT = Enum.GetValues(typeof(DeviceType)).Length;
-            const int MAX_SUBTYPE_CNT = 20;
-            int[] countDev = new int[MAX_TYPE_CNT];
-            int[,] countSubDev = new int[MAX_TYPE_CNT, MAX_SUBTYPE_CNT];
-
-            int RowsCnt = devices.Count;
-            const int MAX_COL = 20;
-
-            object[,] res = new object[RowsCnt, MAX_COL];
-
-            int idx = 0;
-            foreach (IODevice dev in devices)
-            {
-                idx += dev.SaveAsArray(ref res, idx, MAX_COL);
-            }
-
-            return res;
-        }
-
-        public TreeView SaveConnectionAsTree()
-        {
-            TreeView tree = new TreeView();
-            foreach (DeviceType devType in Enum.GetValues(typeof(DeviceType)))
-            {
-                TreeNode typeNode = new TreeNode(devType.ToString());
-                typeNode.Tag = devType;
-                tree.Nodes.Add(typeNode);
-            }
-
-            foreach (IODevice dev in devices)
-            {
-                TreeNode parent = null;
-                TreeNode devNode = null;
-
-                foreach (TreeNode node in tree.Nodes)
-                {
-                    if ((DeviceType)node.Tag == dev.DeviceType)
-                    {
-                        parent = node;
-                        break;
-                    }
-                }
-
-                //Не найден тип устройства.
-                if (parent == null)
-                {
-                    break;
-                }
-
-                if (dev.ObjectName != "")
-                {
-                    string objectName = dev.ObjectName + dev.ObjectNumber;
-                    TreeNode devParent = null;
-
-                    foreach (TreeNode node in parent.Nodes)
-                    {
-                        if ((node.Tag is String) &&
-                            (string)node.Tag == objectName)
-                        {
-                            devParent = node;
-                            break;
-                        }
-                    }
-
-                    if (devParent == null)
-                    {
-                        devParent = new TreeNode(objectName);
-                        devParent.Tag = objectName;
-                        parent.Nodes.Add(devParent);
-                    }
-
-
-                    devNode = new TreeNode(dev.Name + " - " + dev.Description);
-                    devNode.Tag = dev;
-                    devParent.Nodes.Add(devNode);
-
-                }
-                else
-                {
-
-                    devNode = new TreeNode(dev.Name + " - " + dev.Description);
-                    devNode.Tag = dev;
-                    parent.Nodes.Add(devNode);
-                }
-                foreach (IODevice.IOChannel ch in dev.Channels)
-                {
-                    string chNodeName = "";
-                    if (!ch.IsEmpty())
-                    {
-                        chNodeName = ch.Name + " " + ch.Comment +
-                            $" (A{ch.FullModule}:" + ch.PhysicalClamp + ")";
-                    }
-                    else
-                    {
-                        chNodeName = ch.Name + " " + ch.Comment;
-                    }
-                    devNode.Nodes.Add(chNodeName);
-                }
-
-            }
-
-            return tree;
-        }
-
-        /// <summary>
-        /// Сохранение сводной информации в виде таблицы.
-        /// </summary>
-        public object[,] SaveSummaryAsArray()
-        {
-            int MAX_TYPE_CNT = Enum.GetValues(typeof(DeviceType)).Length;
-            const int MAX_SUBTYPE_CNT = 20;
-            int[] countDev = new int[MAX_TYPE_CNT];
-            int[,] countSubDev = new int[MAX_TYPE_CNT, MAX_SUBTYPE_CNT];
-
-            const int MAX_ROW = 200;
-            const int MAX_COL = 20;
-
-            object[,] res = new object[MAX_ROW, MAX_COL];
-
-            foreach (IODevice dev in devices)
-            {
-                countDev[(int)dev.DeviceType + 1]++;
-                countSubDev[(int)dev.DeviceType + 1, (int)dev.DeviceSubType + 1]++;
-            }
-
-            //Сводная таблица.
-            int idx = 0;
-            foreach (DeviceType devType in Enum.GetValues(typeof(DeviceType)))
-            {
-                if (devType == DeviceType.V || devType == DeviceType.M ||
-                    devType == DeviceType.LS)
-                {
-                    for (int i = 0; i < MAX_SUBTYPE_CNT; i++)
-                    {
-                        if (countSubDev[(int)devType + 1, i] > 0)
-                        {
-                            res[idx, 0] = IODevice.GetDeviceSubTypeStr(
-                                devType, (DeviceSubType)i - 1);
-                            res[idx, 1] = countSubDev[(int)devType + 1, i];
-
-                            idx++;
-                        }
-                    }
-                }
-                else
-                {
-                    if (countDev[(int)devType + 1] > 0)
-                    {
-                        res[idx, 0] = devType.ToString();
-                        res[idx, 1] = countDev[(int)devType + 1];
-
-                        idx++;
-                    }
-                }
-            }
-
-            res[idx, 0] = "Всего";
-            res[idx, 1] = devices.Count;
-
-            return res;
         }
 
         /// <summary>

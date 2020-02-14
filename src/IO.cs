@@ -1496,45 +1496,6 @@ namespace IO
             }
         }
 
-        public object[,] SaveAsConnectionArray(string prjName, Dictionary<string, int> modulesCount, Dictionary<string, Color> modulesColor, Dictionary<string, object[,]> asInterfaceConnection)
-        {
-            const int MAX_COL = 4;
-            int MAX_ROW = iONodes.Count;
-            foreach (IONode ioNode in iONodes)
-            {
-                MAX_ROW += ioNode.IOModules.Count;
-            }
-            MAX_ROW *= 16;
-            object[,] res = new object[MAX_ROW, MAX_COL];
-            int idx = 0;
-            for (int i = 0; i < iONodes.Count; i++)
-            {
-                res[idx, 3] = prjName;
-                idx++;
-                DateTime localDate = DateTime.Now;
-                res[idx, 3] = localDate.ToString(new CultureInfo("ru-RU"));
-                string nodeName = "Узел №" + (i + 1).ToString() + " Адрес: " + iONodes[i].IP;
-                res[idx, 0] = nodeName;
-                idx++;
-
-                res[idx, 0] = 0;
-                nodeName = iONodes[i].TypeStr.Replace("750-", "");
-                res[idx, 1] = nodeName;
-
-                if (!modulesColor.ContainsKey(nodeName))
-                {
-                    modulesColor.Add(nodeName, Color.Gray);
-                }
-
-                idx++;
-
-                iONodes[i].SaveAsConnectionArray(ref res, ref idx, modulesCount, modulesColor, i + 1, asInterfaceConnection);
-            }
-
-
-            return res;
-        }
-
         public List<IONode> IONodes
         {
             get

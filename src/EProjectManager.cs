@@ -1,21 +1,9 @@
-///@file EProjectManager.cs
-///@brief Класс для работы с проектом Eplan'а.
-///
-/// @author  Иванюк Дмитрий Сергеевич.
-///
-/// @par Текущая версия:
-/// @$Rev: --- $.\n
-/// @$Author: sedr $.\n
-/// @$Date:: 2019-10-21#$.
-///
 using System;
-
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.ApplicationFramework;
 using System.Text.RegularExpressions;
 using Eplan.EplApi.EServices.Ged;
 using Eplan.EplApi.DataModel.Graphics;
-
 
 namespace EasyEPlanner
 {
@@ -163,15 +151,23 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Сохранить данные и закончить работу с дополнением (при закрытии
+        /// проекта или Eplan).
+        /// </summary>
         public void SaveAndClose()
         {
+            string searchingFileName = "\\main.objects.lua";
             string projectName = GetCurrentProjectName();
             CheckProjectName(ref projectName);
+
             int beforeSaveHashCode = ProjectManager.GetInstance()
-                .GetFileHashCode(projectName, "\\main.objects.lua");
+                .GetFileHashCode(projectName, searchingFileName);
+
             EProjectManager.GetInstance().SyncAndSave();
+
             int afterSaveHashCode = ProjectManager.GetInstance()
-                .GetFileHashCode(projectName, "\\main.objects.lua");
+                .GetFileHashCode(projectName, searchingFileName);
             EProjectManager.GetInstance().StopEditModes();
 
             if (beforeSaveHashCode != afterSaveHashCode)
@@ -204,7 +200,7 @@ namespace EasyEPlanner
 
         public static bool isPreCloseProjectComplete = false;
 
-        //Обработчик событий Eplan'а.
+        //Обработчик событий Eplan.
         private EplanEventListener eplanEventListener = new EplanEventListener();
 
         private ActionManager ActMnr = new ActionManager();

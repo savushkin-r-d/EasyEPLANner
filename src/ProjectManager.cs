@@ -1,16 +1,4 @@
-﻿///@file ProjectManager.cs
-///@brief Классы, реализующие минимальную функциональность, необходимую для 
-///экспорта описания проекта для PAC.
-///
-/// @author  Иванюк Дмитрий Сергеевич.
-///
-/// @par Текущая версия:
-/// @$Rev: --- $.\n
-/// @$Author: sedr $.\n
-/// @$Date:: 2019-10-21#$.
-/// 
-
-using Device;
+﻿using Device;
 using Editor;
 using IO;
 using System.Collections.Generic;
