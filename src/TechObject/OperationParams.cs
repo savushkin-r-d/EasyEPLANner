@@ -84,6 +84,17 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Копировать параметры операции
+        /// </summary>
+        /// <returns></returns>
+        public OperationParams Clone()
+        {
+            var clonedOperationParams = new OperationParams();
+
+            return clonedOperationParams;
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {
