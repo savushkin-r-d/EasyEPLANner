@@ -15,6 +15,7 @@ namespace TechObject
         {
             this.operationName = "";
             this.luaOperationName = "";
+            this.baseOperationProperties = new BaseProperty[0];
             this.owner = owner;
         }
 
@@ -22,122 +23,174 @@ namespace TechObject
         {
             this.operationName = name;
             this.luaOperationName = luaName;
+            this.baseOperationProperties = new BaseProperty[0];
             this.owner = owner;
         }
 
-        // Конструктор для инициализации хранилища с именами базовых операций
-        public BaseOperation(string name, string luaName)
-        {
-            this.operationName = name;
-            this.luaOperationName = luaName;
-            this.baseOperationProperties = new BaseOperationProperty[0];
-        }
-
-        // Конструктор для инициализации базовой операции и параметров
+        /// <summary>
+        /// Конструктор для инициализации базовой операции и параметров
+        /// </summary>
+        /// <param name="name">Имя операции</param>
+        /// <param name="luaName">Lua имя операции</param>
+        /// <param name="baseOperationProperties">Свойства операции</param>
         public BaseOperation(string name, string luaName, 
-            BaseOperationProperty[] baseOperationProperties)
+            BaseProperty[] baseOperationProperties)
         {
             this.operationName = name;
             this.luaOperationName = luaName;
             this.baseOperationProperties = baseOperationProperties;
         }
 
-        public string GetName()
+        /// <summary>
+        /// Получить имя операции
+        /// </summary>
+        public string Name
         {
-            return operationName;
-        }
-
-        public string GetLuaName()
-        {
-            return luaOperationName;
-        }
-
-        public void SetName(string operationName)
-        {
-            this.operationName = operationName;
-        }
-
-        public void SetLuaName(string luaName)
-        {
-            this.luaOperationName = luaName;
-        }
-
-        // Получение количества параметров у операции
-        public int GetParamsCount()
-        {
-            if (BaseOperationProperties == null)
+            get
             {
-                return 0;
+                return operationName;
             }
-            return baseOperationProperties.Length;
+
+            set
+            {
+                operationName = value;
+            }
         }
 
-        // Инициализация полей при выборе базовой операции
+        /// <summary>
+        /// Получить Lua имя операции
+        /// </summary>
+        public string LuaName
+        {
+            get
+            {
+                return luaOperationName;
+            }
+
+            set
+            {
+                luaOperationName = value;
+            }
+        }
+
+        /// <summary>
+        /// Инициализация базовой операции по имени
+        /// </summary>
+        /// <param name="baseOperName">Имя операции</param>
         public void Init(string baseOperName)
         {
-            // Базовый объект для поиска операции по этому объекту
-            TechObject baseTechObject = owner.Owner.Owner;
-            string baseTechObjectName = baseTechObject.GetBaseTechObjectName();
-
+            TechObject techObject = owner.Owner.Owner;
+            string baseTechObjectName = techObject.BaseTechObject.Name;
             if (baseTechObjectName != "")
             {
-                SetName(baseOperName); // Установка имени базовой операции
-                var luaName = DataBase.Imitation
-                    .FindOperationLuaName(baseOperName);
-                SetLuaName(luaName); // Установка имени операции для файла Lua
-
-                // Инициализирую список параметров
-                baseOperationProperties = new BaseOperationProperty[0]; 
-
-                // Инициализация операции в зависимости от выбранной 
-                //операции и базового объекта
-                baseOperationProperties = DataBase.Imitation.GetOperParams(
-                    baseOperName, baseTechObjectName);
-
-                SetItems();
+                BaseOperation operation = techObject.BaseTechObject
+                    .GetBaseOperationByName(baseOperName);
+                if (operation != null)
+                {
+                    Name = operation.Name;
+                    LuaName = operation.LuaName;
+                    baseOperationProperties =
+                        FindBaseOperationProperties(operation);
+                }
             }
             else
             {
-                SetName("");
-                SetLuaName("");
-                baseOperationProperties = new BaseOperationProperty[0];
-                SetItems();
+                Name = "";
+                LuaName = "";
+                baseOperationProperties = new BaseProperty[0];
             }
+
+            SetItems();
         }
 
-        // Добавление полей в массив для отображения на дереве
+        /// <summary>
+        /// Поиск свойств операции объекта
+        /// </summary>
+        /// <param name="operation">Базовая операция</param>
+        /// <returns></returns>
+        private BaseProperty[] FindBaseOperationProperties(BaseOperation 
+            operation)
+        {
+            var baseTechObject = owner.Owner.Owner.BaseTechObject;
+            var baseTechObjectProperties = baseTechObject.BaseProperties;
+            var baseOperationProperties = operation.Properties;
+            var properties = new List<BaseProperty>();
+
+            foreach(var property in baseOperationProperties)
+            {
+                var samePropertyAtTechObject = baseTechObjectProperties
+                    .Where(x => x.LuaName == property.LuaName)
+                    .FirstOrDefault();
+                if (samePropertyAtTechObject != null)
+                {
+                    property.Clear();
+                    properties.Add(property);
+                }
+            }
+
+            return properties.ToArray();
+        }
+
+        /// <summary>
+        /// Добавление полей в массив для отображения на дереве
+        /// </summary>
         private void SetItems()
         {
-            items = new Editor.ITreeViewItem[baseOperationProperties.Length];
-            var counter = 0;
-            foreach (var operParam in baseOperationProperties)
+            var showedParameters = new List<BaseProperty>();
+            foreach(var parameter in Properties)
             {
-                items[counter] = operParam;
-                counter++;
+                if (parameter.isShowed())
+                {
+                    showedParameters.Add(parameter);
+                }
             }
+            items = showedParameters.ToArray();
         }
 
-        // Сохранение в виде таблицы Lua
+        /// <summary>
+        /// Сохранение в виде таблицы Lua
+        /// </summary>
+        /// <param name="prefix">Префикс (отступ)</param>
+        /// <returns></returns>
         public string SaveAsLuaTable(string prefix)
         {
             var res = "";
-            res += prefix + "props =\n" + prefix + "\t{\n";
-            foreach (var operParam in baseOperationProperties)
+            
+            if (Properties == null)
             {
-                res += "\t" + prefix + operParam.GetLuaName() + " = \'" + 
-                    operParam.GetValue() + "\',\n";
+                return res;
+            }
+
+            var propertiesCountForSave = Properties
+                .Where(x => x.CanSave() == true).Count();
+            if (propertiesCountForSave <= 0)
+            {
+                return res;
+            } 
+
+            res += prefix + "props =\n" + prefix + "\t{\n";
+            foreach (var operParam in Properties)
+            {
+                if (operParam.CanSave())
+                {
+                    res += "\t" + prefix + operParam.LuaName + " = \'" + 
+                        operParam.Value + "\',\n";
+                }
             }
             res += prefix + "\t},\n";
             return res;
         }
 
-        // Установка параметров базовой операции
+        /// <summary>
+        /// Установка свойств базовой операции
+        /// </summary>
+        /// <param name="extraParams">Свойства операции</param>
         public void SetExtraProperties(Editor.ObjectProperty[] extraParams)
         {
             foreach (Editor.ObjectProperty extraParam in extraParams)
             {
-                var property = baseOperationProperties
-                    .Where(x => x.GetLuaName()
+                var property = Properties
+                    .Where(x => x.LuaName
                     .Equals(extraParam.DisplayText[0]))
                     .FirstOrDefault();
 
@@ -148,8 +201,10 @@ namespace TechObject
             }
         }
 
-        // Возврат параметров базовой операции
-        public BaseOperationProperty[] BaseOperationProperties
+        /// <summary>
+        /// Получить свойства базовой операции
+        /// </summary>
+        public BaseProperty[] Properties
         {
             get
             {
@@ -161,22 +216,23 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Копирование объекта
+        /// </summary>
+        /// <param name="owner">Новая операция-владелец объекта</param>
+        /// <returns></returns>
         public BaseOperation Clone(Mode owner)
         {
-            var properties = new BaseOperationProperty[
-                baseOperationProperties.Length];
+            var properties = new BaseProperty[baseOperationProperties.Length];
             for (int i = 0; i < baseOperationProperties.Length; i++)
             {
-                properties[i] = new BaseOperationProperty(
-                    baseOperationProperties[i].GetLuaName(),
-                    baseOperationProperties[i].GetName(),
-                    baseOperationProperties[i].GetValue());
+                properties[i] = baseOperationProperties[i].Clone();
             }
-            var operation = new BaseOperation(operationName, luaOperationName, 
-                properties);
-            operation.owner = owner;
+            var operation = new BaseOperation(this.operationName, 
+                this.luaOperationName, properties);
+            operation.owner = this.owner;
+            
             operation.SetItems();
-
             return operation;
         }
 
@@ -209,11 +265,10 @@ namespace TechObject
         #endregion
 
         private Editor.ITreeViewItem[] items = new Editor.ITreeViewItem[0];
-        // Свойства базовой операции для имитационного хранилища
-        private BaseOperationProperty[] baseOperationProperties;
-
-        private string operationName; /// Имя базовой операции
-        private string luaOperationName; /// Имя базовой операции для файла Lua
+        
+        private BaseProperty[] baseOperationProperties;
+        private string operationName;
+        private string luaOperationName;
 
         private Mode owner;
     }

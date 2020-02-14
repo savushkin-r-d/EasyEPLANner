@@ -7,6 +7,7 @@ using EasyEPlanner;
 using PInvoke;
 using BrightIdeasSoftware;
 using System.Collections;
+using System.Linq;
 
 namespace Editor
 {
@@ -127,8 +128,8 @@ namespace Editor
         public List<ITreeViewItem> treeViewItemsList;
 
         // Списки для editorTView.
-        List<string> baseModeList;
         List<string> baseTechObjectList;
+
         // Редакторы для editorTView
         ComboBox comboBoxCellEditor;
         TextBox textBoxCellEditor;
@@ -138,23 +139,8 @@ namespace Editor
         /// </summary>
         private void InitTreeListEditors()
         {
-            // Получение списка базовых аппаратов
-            baseTechObjectList = new List<string>();
-            TechObject.BaseTechObject[] baseTechObjects = DataBase.Imitation
-                .GetBaseTechObjects();
-            foreach (var baseTechObject in baseTechObjects)
-            {
-                baseTechObjectList.Add(baseTechObject.GetName());
-            }
-
-            // Получение списка базовых операций
-            baseModeList = new List<string>();
-            TechObject.BaseOperation[] baseOperations = DataBase.Imitation
-                .GetBaseOperations();
-            foreach (var baseOperation in baseOperations)
-            {
-                baseModeList.Add(baseOperation.GetName());
-            }
+            baseTechObjectList = DataBase.Imitation.BaseTechObjects()
+                .Select(x => x.Name).ToList();
         }
 
         /// <summary>
@@ -1265,7 +1251,15 @@ namespace Editor
                 switch (item.GetType().Name)
                 {
                     case "Mode":
-                        InitComboBoxCellEditor(baseModeList);
+                        var baseOperations = GetBaseOperationsList(item);
+                        if (baseOperations.Count == 0)
+                        {
+                            e.Cancel = true;
+                            IsCellEditing = false;
+                            return;
+                        }
+
+                        InitComboBoxCellEditor(baseOperations);
                         comboBoxCellEditor.Text = e.Value.ToString();
                         comboBoxCellEditor.Bounds = e.CellBounds;
                         e.Control = comboBoxCellEditor;
@@ -1292,6 +1286,26 @@ namespace Editor
                 e.Control = textBoxCellEditor;
                 textBoxCellEditor.Focus();
                 editorTView.Freeze();
+            }
+        }
+
+        /// <summary>
+        /// Получить список базовых операций ITreeViewItem.
+        /// Если его нету - вернуть пустой список.
+        /// </summary>
+        /// <param name="item">ITreeViewItem</param>
+        /// <returns></returns>
+        public List<string> GetBaseOperationsList(ITreeViewItem item)
+        {
+            if (item is TechObject.Mode == true)
+            {
+                var mode = (TechObject.Mode)item;
+                var baseObject = mode.Owner.Owner.BaseTechObject;
+                return baseObject.BaseOperationsList;
+            }
+            else
+            {
+                return new List<string>();
             }
         }
 

@@ -13,142 +13,194 @@ namespace TechObject
     {
         public BaseTechObject()
         {
-            this.name = "";
-            this.nameEplan = "";
+            Name = "";
+            EplanName = "";
+            S88Level = 0;
+            BaseOperations = new BaseOperation[0];
+            BaseProperties = new BaseProperty[0];
+            BasicName = "";
+            Owner = null;
         }
 
         public BaseTechObject(TechObject owner)
         {
-            this.Owner = owner;
-            this.name = "";
-            this.nameEplan = "";
+            Name = "";
+            EplanName = "";
+            S88Level = 0;
+            BaseOperations = new BaseOperation[0];
+            BaseProperties = new BaseProperty[0];
+            BasicName = "";
+            Owner = owner;
         }
 
-        public BaseTechObject(string name, string nameEplan)
+        /// <summary>
+        /// Имя базового объекта.
+        /// </summary>
+        public string Name
         {
-            this.name = name;
-            this.nameEplan = nameEplan;
+            get
+            {
+                return name;
+            }
+
+            set
+            {
+                name = value;
+            }
         }
 
-        // Конструктор для имитации БД
-        public BaseTechObject(string name, string nameEplan, int s88Level, 
-            BaseOperation[] baseOperations, string basicName)
+        /// <summary>
+        /// ОУ базового объекта
+        /// </summary>
+        public string EplanName
         {
-            this.name = name;
-            this.nameEplan = nameEplan;
-            this.s88Level = s88Level;
-            this.baseOperations = baseOperations;
-            this.basicName = basicName;
+            get
+            {
+                return eplanName;
+            }
+
+            set
+            {
+                eplanName = value;
+            }
         }
 
-        public string GetName()
+        /// <summary>
+        /// Уровень по S88 иерархии
+        /// </summary>
+        public int S88Level
         {
-            return name;
+            get
+            {
+                return s88Level;
+            }
+
+            set
+            {
+                s88Level = value;
+            }
         }
 
-        public string GetNameEplan()
-        {
-            return nameEplan;
-        }
-
-        public void SetName(string name)
-        {
-            this.name = name;
-        }
-
-        public void SetNameEplan(string nameEplan)
-        {
-            this.nameEplan = nameEplan;
-        }
-
-        public void SetS88Level(int s88Level)
-        {
-            this.s88Level = s88Level;
-        }
-
-        public int GetS88Level()
-        {
-            return s88Level;
-        }
-
-        public string GetBasicName()
-        {
-            return basicName;
-        }
-
+        /// <summary>
+        /// Базовые операции объекта
+        /// </summary>
         public BaseOperation[] BaseOperations
         {
             get 
             { 
-                return baseOperations; 
+                return objectOperations; 
             }
+
             set
             {
-                baseOperations = value;
+                objectOperations = value;
             }
         }
 
+        /// <summary>
+        /// Имя объекта для базовой функциональности
+        /// </summary>
         public string BasicName
         {
-            get
+            get 
             {
                 return basicName;
             }
+
             set
             {
                 basicName = value;
             }
         }
 
+        /// <summary>
+        /// Свойства базового объекта
+        /// </summary>
+        public BaseProperty[] BaseProperties
+        {
+            get
+            {
+                return objectProperties;
+            }
+
+            set
+            {
+                objectProperties = value;
+            }
+        }
+
+        /// <summary>
+        /// Владелец объекта.
+        /// </summary>
         public TechObject Owner
         {
             get
             {
-                return techObject;
+                return owner;
             }
+
             set
             {
-                techObject = value;
+                owner = value;
             }
         }
 
-        public BaseTechObject Clone(ModesManager modesManager)
+        /// <summary>
+        /// Получить базовую операцию по имени.
+        /// </summary>
+        /// <param name="name">Имя</param>
+        /// <returns></returns>
+        public BaseOperation GetBaseOperationByName(string name)
         {
-            var baseTechobject = new BaseTechObject();
-            baseTechobject.name = this.name;
-            baseTechobject.nameEplan = this.nameEplan;
-            baseTechobject.basicName = this.basicName;
-            baseTechobject.s88Level = this.s88Level;
-            baseTechobject.Owner = modesManager.Owner;
-
-            var baseOperations = new List<BaseOperation>();
-            foreach(var mode in modesManager.Modes)
-            {
-                var operation = mode.GetBaseOperation();
-                baseOperations.Add(operation);
-            }
-
-            baseTechobject.BaseOperations = baseOperations.ToArray();
-
-            return baseTechobject;
+            var operation = BaseOperations.Where(x => x.Name == name)
+                .FirstOrDefault();
+            return operation;
         }
 
+        /// <summary>
+        /// Список операций базового объекта
+        /// </summary>
+        /// <returns></returns>
+        public List<string> BaseOperationsList
+        {
+            get
+            {
+                return BaseOperations.Select(x => x.Name).ToList();
+            }
+        }
+
+        /// <summary>
+        /// Копия объекта
+        /// </summary>
+        /// <param name="techObject">Копируемый объект</param>
+        /// <returns></returns>
+        public virtual BaseTechObject Clone(TechObject techObject)
+        {
+            var cloned = DataBase.Imitation.BaseTechObjects()
+                .Where(x => x.Name == this.Name)
+                .FirstOrDefault();
+            cloned.Owner = techObject;
+            return cloned;
+        }
+
+        /// <summary>
+        /// Сброс базовых операций объекта
+        /// </summary>
         public void ResetBaseOperations()
         {
-            foreach (BaseOperation operation in BaseOperations)
+            foreach (Mode operation in Owner.ModesManager.Modes)
             {
-                operation.Init("");
+                operation.GetBaseOperation().Init("");
             }
         }
 
-        private string name; // Отображаемое имя технологического объекта
-        private string nameEplan; // ОУ объекта в Eplan
-        private int s88Level; // Уровень объекта по S88
-        private string basicName; // Базовое имя для функциональности
+        private string name;
+        private string eplanName;
+        private int s88Level;
+        private string basicName;
+        private TechObject owner;
 
-        // Базовые операции базового объекта
-        private BaseOperation[] baseOperations = new BaseOperation[0];
-        // Владелец объекта
-        private TechObject techObject;
+        private BaseOperation[] objectOperations;
+        private BaseProperty[] objectProperties;
     }
 }

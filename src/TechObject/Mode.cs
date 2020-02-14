@@ -147,14 +147,10 @@ namespace TechObject
         {
             string res = prefix + "{\n" +
                 prefix + "name = \'" + name + "\',\n" +
-                prefix + "base_operation = \'" + baseOperation.GetName() + 
+                prefix + "base_operation = \'" + baseOperation.Name + 
                 "\',\n";
 
-            // Запись параметров базовой операции, если они есть
-            if (baseOperation.GetParamsCount() > 0)
-            {
-                res += baseOperation.SaveAsLuaTable(prefix);
-            }
+            res += baseOperation.SaveAsLuaTable(prefix);
 
             string tmp = "";
             //Совместимость с предыдущей версией (до введения состояния для
@@ -395,6 +391,14 @@ namespace TechObject
             return errors;
         }
 
+        /// <summary>
+        /// Очистка базовой операции
+        /// </summary>
+        public void ClearBaseOperation()
+        {
+            this.SetNewValue("", true);
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {
@@ -402,7 +406,7 @@ namespace TechObject
             {
                 string res = getN(this) + ". " + name;
 
-                return new string[] { res, baseOperation.GetName() };
+                return new string[] { res, baseOperation.Name };
             }
         }
 
@@ -425,8 +429,13 @@ namespace TechObject
             bool isBaseOper)
         {
             // Инициализация базовой операции по имени
-            baseOperation.Init(newBaseOperationName);
-            return true;
+            if (baseOperation.Name != newBaseOperationName)
+            {
+                baseOperation.Init(newBaseOperationName);
+                return true;
+            }
+
+            return false;
         }
 
         override public bool IsEditable
@@ -450,7 +459,7 @@ namespace TechObject
         {
             get
             {
-                return new string[] { name, baseOperation.GetName() };
+                return new string[] { name, baseOperation.Name };
             }
         }
 
