@@ -45,7 +45,7 @@ namespace TechObject
             return param;
         }
 
-        public bool getIsRuntime()
+        public bool IsRuntimeParameter()
         {
             return isRunTimeParams;
         }

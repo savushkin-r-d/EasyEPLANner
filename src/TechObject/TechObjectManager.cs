@@ -569,7 +569,7 @@ namespace TechObject
                 string sUi = obj + ".S_PAR_UI";
                 string rtFl = obj + ".RT_PAR_F";
                 string rtUi = obj + ".RT_PAR_UI";
-                int count = item.GetParamsManager().Items[0].Items.Length;
+                int count = item.GetParamsManager().Float.Items.Length;
 
                 for (int i = 1; i <= count; i++)
                 {

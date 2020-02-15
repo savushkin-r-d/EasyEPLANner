@@ -102,7 +102,7 @@ namespace TechObject
                 clone.stepsMngr.Add(stepsMngr[idx].Clone());
             }
 
-            clone.operPar = operPar.Clone();
+            clone.operPar = operPar.Clone(clone);
 
             clone.restrictionMngr = restrictionMngr.Clone();
             clone.SetItems();

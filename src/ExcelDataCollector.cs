@@ -301,9 +301,9 @@ namespace EasyEPlanner
             TechObject.TechObject techObject)
         {
             bool parameterTitleisWrited = false;
-            for (int i = 0; i < techObject.Params.Items[0].Items.Length; i++)
+            for (int i = 0; i < techObject.Params.Float.Items.Length; i++)
             {
-                Param parameter = techObject.Params.Items[0].Items[i] as Param;
+                var parameter = techObject.Params.Float.Items[i] as Param;
                 if (parameterTitleisWrited == false)
                 {
                     var titleNode = new TreeNode();
