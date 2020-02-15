@@ -116,9 +116,9 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Получить параметры объекта.
+        /// Получить Float параметры объекта.
         /// </summary>
-        public Params Parameters
+        public Params Float
         {
             get
             {
@@ -179,7 +179,7 @@ namespace TechObject
             {
                 pars.Clear();
                 Params copyPars = copyObject as Params;
-                bool isRunTimeParams = copyPars.getIsRuntime();
+                bool isRunTimeParams = copyPars.IsRuntimeParameter();
                 foreach (Param par in copyPars.Items)
                 {
                     pars.InsertCopy(par);

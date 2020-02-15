@@ -254,12 +254,12 @@ namespace TechObject
       
             clone.baseTechObject = baseTechObject.Clone(clone);
 
-            clone.modes = modes.Clone(clone);
+            clone.parameters = parameters.Clone();
+
             clone.modes.ChngeOwner(clone);
+            clone.modes = modes.Clone(clone);
             clone.modes.ModifyDevNames(TechNumber);
             clone.modes.ModifyRestrictObj(oldObjN, newObjN);
-
-            clone.parameters = parameters.Clone();
 
             clone.SetItems();
             return clone;

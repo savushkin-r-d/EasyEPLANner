@@ -84,6 +84,30 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Копировать параметры операции
+        /// </summary>
+        /// <param name="clone">Клонированная операция</param>
+        /// <returns></returns>
+        public OperationParams Clone(Mode clone)
+        {
+            var clonedOperationParams = new OperationParams();
+            TechObject clonedObject = clone.Owner.Owner;
+            Params objectParameters = clonedObject.Params.Float;
+            foreach(Editor.ITreeViewItem item in Items)
+            {
+                var operationParam = item as OperationParam;
+                string luaName = operationParam.Param.GetNameLua();
+                Param searchedParam = objectParameters.GetParam(luaName);
+                if (searchedParam != null)
+                {
+                    clonedOperationParams.AddParam(searchedParam);
+                }
+            }
+
+            return clonedOperationParams;
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {
