@@ -206,6 +206,7 @@
     <Compile Include="TechObject\Base\TechObjects\BasePOU.cs" />
     <Compile Include="TechObject\Base\TechObjects\BaseTank.cs" />
     <Compile Include="TechObject\Base\TechObjects\BaseWaterTank.cs" />
+    <Compile Include="TechObject\Equipment.cs" />
     <Compile Include="TechObject\LocalRestriction.cs" />
     <Compile Include="TechObject\Mode.cs" />
     <Compile Include="TechObject\ModesManager.cs" />

@@ -172,6 +172,8 @@ namespace TechObject
 
             res += modes.SaveAsLuaTable(prefix);
 
+            res += equipment.SaveAsLuaTable(prefix);
+
             res += prefix + "},\n";
 
             return res;
@@ -233,6 +235,8 @@ namespace TechObject
             timers = new TimersManager();
             parameters = new ParamsManager();
 
+            equipment = new Equipment(this);
+
             SetItems();
         }
 
@@ -261,13 +265,15 @@ namespace TechObject
             clone.modes.ModifyDevNames(TechNumber);
             clone.modes.ModifyRestrictObj(oldObjN, newObjN);
 
+            clone.equipment = equipment.Clone(clone);
+
             clone.SetItems();
             return clone;
         }
 
         private void SetItems()
         {
-            items = new Editor.ITreeViewItem[10];
+            items = new Editor.ITreeViewItem[11];
             items[0] = this.s88Level;
             items[1] = this.techNumber;
             items[2] = this.techType;
@@ -279,6 +285,7 @@ namespace TechObject
             items[7] = modes;
             items[8] = parameters;
             items[9] = timers;
+            items[10] = equipment;
         }
         /// <summary>
         /// Добавление операции.
@@ -718,5 +725,7 @@ namespace TechObject
 
         private ObjS88Level s88Level; // Уровень объекта в спецификации S88
         private AttachedToObjects attachedObjects; // Привязанные агрегаты
+
+        private Equipment equipment; // Оборудование объекта
     }
 }
