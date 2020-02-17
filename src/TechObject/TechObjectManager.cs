@@ -275,15 +275,15 @@ namespace TechObject
             {
                 var modesManager = obj.ModesManager;
                 var modes = modesManager.Modes;
+                var objName = "prg." + obj.NameEplanForFile.ToLower() + 
+                    obj.TechNumber.ToString();
+
                 foreach (Mode mode in modes)
                 {
                     var baseOperation = mode.GetBaseOperation();
                     switch (baseOperation.Name)
                     {
                         case "Мойка":
-                            var objName = "prg." + obj.NameEplanForFile
-                                .ToLower() + obj.TechNumber.ToString();
-
                             res += objName + ".operations = \t\t--Операции.\n";
                             res += prefix + "{\n";
                             res += prefix + baseOperation.LuaName
@@ -332,6 +332,30 @@ namespace TechObject
                             res += "\n"; // Отступ перед новым объектом
                             break;
                     }
+                }
+
+                var equipment = obj.Equipment;
+                bool needWhiteSpace = false;
+                foreach(Editor.ITreeViewItem item in equipment.Items)
+                {
+                    var property = item as BaseProperty;
+                    
+                    if (property.Value != "")
+                    {
+                        res += objName + $".{property.LuaName} = {property.Value}\n";
+                    }
+                    else
+                    {
+                        res += objName + $".{property.LuaName} = nil\n";
+                    }
+
+                    needWhiteSpace = true;
+                }
+
+                if (needWhiteSpace)
+                {
+                    res += "\n";
+                    needWhiteSpace = false;
                 }
             }
             return res;
