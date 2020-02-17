@@ -9,6 +9,10 @@ namespace DataBase
 {
     public partial class Imitation
     {
+        /// <summary>
+        /// Получить свойства базового объекта "Танк"
+        /// </summary>
+        /// <returns></returns>
         public static BaseProperty[] TankProperties()
         {
             return new BaseProperty[]
@@ -20,6 +24,10 @@ namespace DataBase
             };
         }
 
+        /// <summary>
+        /// Получить свойства базового объекта "Линия"
+        /// </summary>
+        /// <returns></returns>
         public static BaseProperty[] LineProperties()
         {
             return new BaseProperty[]

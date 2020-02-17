@@ -610,6 +610,7 @@ namespace TechObject
             if (baseTechObject.Name != "" && newValue != baseTechObject.Name)
             {
                 baseTechObject.ResetBaseOperations();
+                equipment.Clear();
             }
 
             BaseTechObject techObjFromDB = DataBase.Imitation.GetTechObject(
@@ -617,6 +618,7 @@ namespace TechObject
             techObjFromDB.Owner = baseTechObject.Owner;
             baseTechObject = techObjFromDB;
             S88Level = baseTechObject.S88Level;
+            equipment.AddItems(baseTechObject.Equipment);
 
             // Т.к установили новое значение, произошла смена базового объекта
             // Надо сравнить ОУ и изменить его, если требуется

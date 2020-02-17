@@ -11,10 +11,34 @@ namespace TechObject
     /// </summary>
     public class Equipment : Editor.TreeViewItem
     {
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="owner">Владелец</param>
         public Equipment(TechObject owner)
         {
             this.owner = owner;
             items = new List<Editor.ITreeViewItem>();
+        }
+
+        /// <summary>
+        /// Очистить список оборудования
+        /// </summary>
+        public void Clear()
+        {
+            items.Clear();
+        }
+        
+        /// <summary>
+        /// Добавить оборудование
+        /// </summary>
+        /// <param name="properties">Список оборудования</param>
+        public void AddItems(BaseProperty[] properties)
+        {
+            foreach(BaseProperty property in properties)
+            {
+                items.Add(property);
+            }
         }
 
         /// <summary>

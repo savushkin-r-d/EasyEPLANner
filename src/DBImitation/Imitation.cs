@@ -59,15 +59,6 @@ namespace DataBase
         }
 
         /// <summary>
-        /// Получить пустой массив операций.
-        /// </summary>
-        /// <returns></returns>
-        public static BaseOperation[] BaseEmptyOperations()
-        {
-            return new BaseOperation[0];
-        }
-
-        /// <summary>
         /// Получить массив всех базовых объектов.
         /// </summary>
         /// <returns></returns>

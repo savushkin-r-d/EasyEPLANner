@@ -19,6 +19,7 @@ namespace TechObject
             BaseOperations = DataBase.Imitation.TankOperations();
             BaseProperties = DataBase.Imitation.TankProperties();
             BasicName = "tank";
+            Equipment = DataBase.Imitation.EmptyEquipment();
         }
 
         /// <summary>

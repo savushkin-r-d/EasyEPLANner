@@ -19,6 +19,7 @@ namespace TechObject
             BaseOperations = DataBase.Imitation.BaseEmptyOperations();
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "mix_node";
+            Equipment = DataBase.Imitation.BaseMixerEquipment();
         }
 
         /// <summary>

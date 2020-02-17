@@ -20,6 +20,7 @@ namespace TechObject
             BaseProperties = new BaseProperty[0];
             BasicName = "";
             Owner = null;
+            Equipment = new BaseProperty[0];
         }
 
         public BaseTechObject(TechObject owner)
@@ -31,6 +32,7 @@ namespace TechObject
             BaseProperties = new BaseProperty[0];
             BasicName = "";
             Owner = owner;
+            Equipment = new BaseProperty[0];
         }
 
         /// <summary>
@@ -146,6 +148,22 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Оборудование базового объекта
+        /// </summary>
+        public BaseProperty[] Equipment
+        {
+            get
+            {
+                return equipment;
+            }
+            
+            set
+            {
+                equipment = value;
+            }
+        }
+
+        /// <summary>
         /// Получить базовую операцию по имени.
         /// </summary>
         /// <param name="name">Имя</param>
@@ -202,5 +220,6 @@ namespace TechObject
 
         private BaseOperation[] objectOperations;
         private BaseProperty[] objectProperties;
+        private BaseProperty[] equipment;
     }
 }
