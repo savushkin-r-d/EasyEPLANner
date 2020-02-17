@@ -42,6 +42,15 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Добавить оборудование
+        /// </summary>
+        /// <param name="property">Оборудование</param>
+        public void AddItem(BaseProperty property)
+        {
+            items.Add(property);
+        }
+
+        /// <summary>
         /// Копировать оборудование
         /// </summary>
         /// <param name="clone">Новый владелец</param>
@@ -50,27 +59,13 @@ namespace TechObject
         {
             var equipment = new Equipment(clone);
 
-            //TODO: код для клонирования
-
-            return equipment;
-        }
-
-        /// <summary>
-        /// Сохранение в виде таблицы Lua
-        /// </summary>
-        /// <param name="prefix">Отступ</param>
-        /// <returns></returns>
-        public string SaveAsLuaTable(string prefix)
-        {
-            var res = "";
-            if (items.Count == 0)
+            foreach(Editor.ITreeViewItem item in items)
             {
-                return res;
+                var property = item as BaseProperty;
+                equipment.AddItem(property.Clone());
             }
 
-            //TODO: Код для сохранения
-
-            return res;
+            return equipment;
         }
 
         #region Реализация ITreeViewItem
@@ -101,7 +96,7 @@ namespace TechObject
         }
         #endregion
 
-        TechObject owner;
-        List<Editor.ITreeViewItem> items;
+        private TechObject owner;
+        private List<Editor.ITreeViewItem> items;
     }
 }

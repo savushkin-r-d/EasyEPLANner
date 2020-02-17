@@ -172,8 +172,6 @@ namespace TechObject
 
             res += modes.SaveAsLuaTable(prefix);
 
-            res += equipment.SaveAsLuaTable(prefix);
-
             res += prefix + "},\n";
 
             return res;
@@ -553,6 +551,17 @@ namespace TechObject
             get 
             { 
                 return name; 
+            }
+        }
+
+        /// <summary>
+        /// Получить оборудование объекта.
+        /// </summary>
+        public Equipment Equipment
+        {
+            get
+            {
+                return equipment;
             }
         }
 
