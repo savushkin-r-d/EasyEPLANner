@@ -963,7 +963,7 @@ namespace Editor
             {
                 ITreeViewItem item = editorTView.SelectedObject as ITreeViewItem;
                 noOnChange = true;
-                editorTView.RefreshObject(item.Parent);
+                editorTView.RefreshObject(item);
                 noOnChange = false;
                 OnModify();
             }
