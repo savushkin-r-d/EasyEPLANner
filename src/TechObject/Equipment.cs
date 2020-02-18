@@ -68,6 +68,32 @@ namespace TechObject
             return equipment;
         }
 
+        /// <summary>
+        /// Сохранение в виде Lua таблицы
+        /// </summary>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        public string SaveAsLuaTable(string prefix)
+        {
+            var res = "";
+
+            if (items.Count == 0)
+            {
+                return res;
+            }
+
+            res += prefix + "equipment = \n" +
+                prefix + "{\n";
+            foreach(Editor.ITreeViewItem item in items)
+            {
+                var property = item as BaseProperty;
+                res += prefix + $"{property.LuaName} = \'{property.Value}\',\n";
+            }
+            res += prefix + "},\n";
+
+            return res;
+        }
+
         #region Реализация ITreeViewItem
         public override string[] DisplayText
         {

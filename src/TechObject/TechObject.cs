@@ -172,6 +172,8 @@ namespace TechObject
 
             res += modes.SaveAsLuaTable(prefix);
 
+            res += equipment.SaveAsLuaTable(prefix);
+
             res += prefix + "},\n";
 
             return res;
