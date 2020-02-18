@@ -20,6 +20,13 @@ init = function()
         local timers_count = value.timers or 1
         obj:SetTimersCount( timers_count )
 
+        --Оборудование
+        if value.equipment ~= nil then
+            for field, value in pairs( value.equipment ) do
+                obj: AddEquipment(field, value)
+            end
+        end
+
         --Параметры
         proc_params( value.par_float, "par_float", obj )
         proc_params( value.par_uint, "par_uint", obj )

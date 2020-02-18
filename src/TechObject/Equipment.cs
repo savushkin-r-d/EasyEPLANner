@@ -30,7 +30,7 @@ namespace TechObject
         }
         
         /// <summary>
-        /// Добавить оборудование
+        /// Добавить оборудование.
         /// </summary>
         /// <param name="properties">Список оборудования</param>
         public void AddItems(BaseProperty[] properties)
@@ -42,12 +42,29 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Добавить оборудование
+        /// Добавить оборудование.
         /// </summary>
         /// <param name="property">Оборудование</param>
-        public void AddItem(BaseProperty property)
+        private void AddItem(BaseProperty property)
         {
             items.Add(property);
+        }
+
+        /// <summary>
+        /// Добавить оборудование
+        /// </summary>
+        /// <param name="name">Lua имя</param>
+        /// <param name="value">Значение</param>
+        public void AddEquipment(string name, string value)
+        {
+            foreach (Editor.ITreeViewItem item in items)
+            {
+                var property = item as BaseProperty;
+                if (property.LuaName == name)
+                {
+                    property.SetValue(value);
+                }
+            }
         }
 
         /// <summary>

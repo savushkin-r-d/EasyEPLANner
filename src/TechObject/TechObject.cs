@@ -310,6 +310,16 @@ namespace TechObject
 
         }
 
+        /// <summary>
+        /// Добавить элемент оборудования
+        /// </summary>
+        /// <param name="equipmentName">Имя</param>
+        /// <param name="value">Значение</param>
+        public void AddEquipment(string equipmentName, string value)
+        {
+            equipment.AddEquipment(equipmentName, value);
+        }
+
         // Получение операции. 
         public Mode GetMode(int i)
         {
