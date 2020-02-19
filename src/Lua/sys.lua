@@ -23,7 +23,7 @@ init = function()
         --Оборудование
         if value.equipment ~= nil then
             for field, value in pairs( value.equipment ) do
-                obj: AddEquipment(field, value)
+                obj:AddEquipment(field, value)
             end
         end
 
