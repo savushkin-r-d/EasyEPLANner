@@ -31,7 +31,7 @@ namespace DataBase
             {
                 new ShowedBaseProperty("mix", "Мешалка"),
                 new ShowedBaseProperty("bar", "Датчик решетки люка"),
-                new ShowedBaseProperty("hatch", "Датчик люка")
+                new ShowedBaseProperty("hatch", "Датчик крышки люка")
             };
         }
     }
