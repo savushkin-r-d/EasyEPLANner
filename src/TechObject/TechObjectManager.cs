@@ -183,18 +183,6 @@ namespace TechObject
                 res += prefix + dev.Name + " = " + dev.DeviceType.ToString() + 
                     "(\'" + dev.Name + "\'),\n";
             }
-            res += "\n";
-
-            int i = 0;
-            foreach (Device.IODevice dev in Device.DeviceManager.GetInstance()
-                .Devices)
-            {
-                if (dev.DeviceType == Device.DeviceType.Y ||
-                    dev.DeviceType == Device.DeviceType.DEV_VTUG) continue;
-
-                res += "\t\t__" + dev.Name + " = DEVICE( " + i + " ),\n";
-                i++;
-            }
 
             res += prefix + "},\n\n";
             res = res.Replace("\t", "    ");
