@@ -100,13 +100,14 @@ namespace TechObject
             }
 
             res += prefix + "equipment = \n" +
-                prefix + "{\n";
+                prefix + "\t{\n";
             foreach(Editor.ITreeViewItem item in items)
             {
                 var property = item as BaseProperty;
-                res += prefix + $"{property.LuaName} = \'{property.Value}\',\n";
+                res += prefix + $"\t{property.LuaName} = " +
+                    $"\'{property.Value}\',\n";
             }
-            res += prefix + "},\n";
+            res += prefix + "\t},\n";
 
             return res;
         }

@@ -163,8 +163,8 @@ namespace TechObject
         /// <returns></returns>
         private string SaveDevicesToPrgLua(string prefix)
         {
-            var res = prefix + "control_modules = \n" +
-                prefix + "{\n";
+            var res = prefix + "control_modules =\n" +
+                prefix + "\t{\n";
 
             foreach (Device.IODevice dev in Device.DeviceManager.GetInstance()
                 .Devices)
@@ -180,8 +180,8 @@ namespace TechObject
                 {
                     res += "\t";
                 }
-                res += dev.Name + " = " + dev.DeviceType.ToString() + "(\'" + 
-                    dev.Name + "\'),\n";
+                res += prefix + dev.Name + " = " + dev.DeviceType.ToString() + 
+                    "(\'" + dev.Name + "\'),\n";
             }
             res += "\n";
 
@@ -192,7 +192,8 @@ namespace TechObject
                 if (dev.DeviceType == Device.DeviceType.Y ||
                     dev.DeviceType == Device.DeviceType.DEV_VTUG) continue;
 
-                res += "\t__" + dev.Name + " = DEVICE( " + ++i + " ),\n";
+                res += "\t\t__" + dev.Name + " = DEVICE( " + i + " ),\n";
+                i++;
             }
 
             res += prefix + "},\n\n";
@@ -434,7 +435,8 @@ namespace TechObject
 
                 if (value != "")
                 {
-                    res += objName + $".{luaName} = {value}\n";
+                    res += objName + $".{luaName} = " +
+                        $"prg.control_modules.{value}\n";
                 }
                 else
                 {
