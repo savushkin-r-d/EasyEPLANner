@@ -172,6 +172,8 @@ namespace TechObject
 
             res += modes.SaveAsLuaTable(prefix);
 
+            res += equipment.SaveAsLuaTable(prefix);
+
             res += prefix + "},\n";
 
             return res;
@@ -233,6 +235,8 @@ namespace TechObject
             timers = new TimersManager();
             parameters = new ParamsManager();
 
+            equipment = new Equipment(this);
+
             SetItems();
         }
 
@@ -261,13 +265,15 @@ namespace TechObject
             clone.modes.ModifyDevNames(TechNumber);
             clone.modes.ModifyRestrictObj(oldObjN, newObjN);
 
+            clone.equipment = equipment.Clone(clone);
+
             clone.SetItems();
             return clone;
         }
 
         private void SetItems()
         {
-            items = new Editor.ITreeViewItem[10];
+            items = new Editor.ITreeViewItem[11];
             items[0] = this.s88Level;
             items[1] = this.techNumber;
             items[2] = this.techType;
@@ -279,6 +285,7 @@ namespace TechObject
             items[7] = modes;
             items[8] = parameters;
             items[9] = timers;
+            items[10] = equipment;
         }
         /// <summary>
         /// Добавление операции.
@@ -301,6 +308,16 @@ namespace TechObject
                 return modes.AddMode(modeName, baseOperationName);
             }
 
+        }
+
+        /// <summary>
+        /// Добавить элемент оборудования
+        /// </summary>
+        /// <param name="equipmentName">Имя</param>
+        /// <param name="value">Значение</param>
+        public void AddEquipment(string equipmentName, string value)
+        {
+            equipment.AddEquipment(equipmentName, value);
         }
 
         // Получение операции. 
@@ -550,6 +567,17 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Получить оборудование объекта.
+        /// </summary>
+        public Equipment Equipment
+        {
+            get
+            {
+                return equipment;
+            }
+        }
+
+        /// <summary>
         /// Проверка операций технологического объекта
         /// </summary>
         /// <returns>Строка с ошибками</returns>
@@ -603,6 +631,7 @@ namespace TechObject
             if (baseTechObject.Name != "" && newValue != baseTechObject.Name)
             {
                 baseTechObject.ResetBaseOperations();
+                equipment.Clear();
             }
 
             BaseTechObject techObjFromDB = DataBase.Imitation.GetTechObject(
@@ -610,6 +639,7 @@ namespace TechObject
             techObjFromDB.Owner = baseTechObject.Owner;
             baseTechObject = techObjFromDB;
             S88Level = baseTechObject.S88Level;
+            equipment.AddItems(baseTechObject.Equipment);
 
             // Т.к установили новое значение, произошла смена базового объекта
             // Надо сравнить ОУ и изменить его, если требуется
@@ -718,5 +748,7 @@ namespace TechObject
 
         private ObjS88Level s88Level; // Уровень объекта в спецификации S88
         private AttachedToObjects attachedObjects; // Привязанные агрегаты
+
+        private Equipment equipment; // Оборудование объекта
     }
 }

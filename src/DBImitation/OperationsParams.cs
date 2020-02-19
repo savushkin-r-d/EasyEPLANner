@@ -9,6 +9,10 @@ namespace DataBase
 {
     public partial class Imitation
     {
+        /// <summary>
+        /// Получить параметры операции "Мойка".
+        /// </summary>
+        /// <returns></returns>
         private static BaseProperty[] WashParams()
         {
             var parameters = new BaseProperty[]

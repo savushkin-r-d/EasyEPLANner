@@ -19,6 +19,7 @@ namespace TechObject
             BaseOperations = DataBase.Imitation.LineOperations();
             BaseProperties = DataBase.Imitation.LineProperties();
             BasicName = "line";
+            Equipment = DataBase.Imitation.EmptyEquipment();
         }
 
         /// <summary>

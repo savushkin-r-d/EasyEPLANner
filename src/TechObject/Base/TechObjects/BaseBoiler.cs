@@ -19,6 +19,7 @@ namespace TechObject
             BaseOperations = DataBase.Imitation.BaseEmptyOperations();
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "boiler";
+            Equipment = DataBase.Imitation.EmptyEquipment();
         }
 
         /// <summary>

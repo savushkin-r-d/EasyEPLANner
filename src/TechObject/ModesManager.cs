@@ -67,7 +67,7 @@ namespace TechObject
                 res += mode.SaveAsLuaTable(prefix + "\t\t");
             }
 
-            res += prefix + "\t}\n";
+            res += prefix + "\t},\n";
             return res;
         }
 

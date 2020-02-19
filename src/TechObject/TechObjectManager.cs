@@ -128,40 +128,81 @@ namespace TechObject
             return res;
         }
 
-        // Сохранение файла prg.lua
+        /// <summary>
+        /// Сохранить Prg.lua как таблицу Lua
+        /// </summary>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
         public string SavePrgAsLuaTable(string prefix)
         {
-            // Словарь привязанных агрегатов к аппарату
             var attachedObjects = new Dictionary<int, string>();
 
             var res = "";
             res += "local prg =\n\t{\n";
-            res += SaveVariablesAsLuaTable(prefix, out attachedObjects);
+            res += SaveDevicesToPrgLua(prefix);
+            res += SaveVariablesToPrgLua(prefix, out attachedObjects);
             res += "\t}\n";
 
             if (attachedObjects.Count > 0)
             {
-                res += SaveBindingAsLuaTable(attachedObjects);
+                res += SaveObjectsBindingToPrgLua(attachedObjects);
             }
 
-            res += SaveParamsAsLuaTable(prefix);
-            res += SaveFunctionalityAsLuaTable();
+            res += SaveObjectsInformationToPrgLua(prefix);
+            res += SaveFunctionalityToPrgLua();
             res += "return prg";
             res.Replace("\t", "    ");
 
             return res;
         }
 
-        // Сохранение переменных prg.lua
-        private string SaveVariablesAsLuaTable(string prefix, 
+        /// <summary>
+        /// Сохранить устройства в prg.lua
+        /// </summary>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        private string SaveDevicesToPrgLua(string prefix)
+        {
+            var res = prefix + "control_modules =\n" +
+                prefix + "\t{\n";
+
+            foreach (Device.IODevice dev in Device.DeviceManager.GetInstance()
+                .Devices)
+            {
+                if (dev.DeviceType == Device.DeviceType.Y ||
+                    dev.DeviceType == Device.DeviceType.DEV_VTUG) continue;
+
+                if (dev.ObjectNumber > 0 && dev.ObjectName == "")
+                {
+                    res += "\t_";
+                }
+                else
+                {
+                    res += "\t";
+                }
+                res += prefix + dev.Name + " = " + dev.DeviceType.ToString() + 
+                    "(\'" + dev.Name + "\'),\n";
+            }
+
+            res += prefix + "},\n\n";
+            res = res.Replace("\t", "    ");
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить переменные в prg.lua
+        /// </summary>
+        /// <param name="prefix">Отступ</param>
+        /// <param name="attachedObjectsDict">Привязанные объекты</param>
+        /// <returns></returns>
+        private string SaveVariablesToPrgLua(string prefix, 
             out Dictionary<int, string> attachedObjectsDict)
         {
-            // Словарь с агрегатами, привязанных к аппарату, 
-            //обращение по номеру аппарата
             var attachedObjects = new Dictionary<int, string>();
 
             var res = "";
-            var previouslyObjectName = ""; // Имя предыдущего объекта
+            var previouslyObjectName = "";
 
             for (int i = 0; i < objects.Count; i++)
             {
@@ -183,15 +224,12 @@ namespace TechObject
                     res += prefix + varForSave;
                 }
 
-                // Если есть привязка, помечаю, какие агрегаты к 
-                //какому аппарату привязаны
                 if (objects[i].AttachedObjects != string.Empty)
                 {
                     // Т.к объекты начинаются с 1
                     attachedObjects[i + 1] = objects[i].AttachedObjects;
                 }
 
-                // Записал, обозначил, что этот объект уже записан
                 previouslyObjectName = objects[i].NameEplan.ToLower();
             }
             attachedObjectsDict = attachedObjects;
@@ -199,23 +237,27 @@ namespace TechObject
             return res;
         }
 
-        // Сохранение привязок prg.lua
-        private string SaveBindingAsLuaTable(
+        /// <summary>
+        /// Сохранить привязку объектов к объектам в prg.lua
+        /// </summary>
+        /// <param name="attachedObjects">Словарь привязанных объектов</param>
+        /// <returns></returns>
+        private string SaveObjectsBindingToPrgLua(
             Dictionary<int, string> attachedObjects)
         {
             var res = "";
-            res += "\n"; // Пустая строка для разделения
+            res += "\n";
 
-            string previouslyObjectName = ""; // Предыдущий объект
-            bool isInt = false; // Проверка на число
+            string previouslyObjectName = "";
+            bool isDigit = false;
             foreach (var val in attachedObjects)
             {
                 var techObj = GetTObject(val.Key);
                 var attachedObjs = val.Value.Split(' ');
                 foreach (string value in attachedObjs)
                 {
-                    isInt = int.TryParse(value, out _);
-                    if (isInt)
+                    isDigit = int.TryParse(value, out _);
+                    if (isDigit)
                     {
                         var attachedTechObject = GetTObject(
                             Convert.ToInt32(value));
@@ -231,7 +273,7 @@ namespace TechObject
                         if (previouslyObjectName != techObj.NameEplanForFile
                             .ToLower() && previouslyObjectName != "")
                         {
-                            res += "\n"; // Отступ, если изменен тип объекта
+                            res += "\n";
                         }
 
                         if (attachedTechObjectType.Contains("mix_node")) 
@@ -267,78 +309,144 @@ namespace TechObject
             return res;
         }
 
-        // Сохранение информации о базовой операции, сигналах и шагах в prg.lua
-        private string SaveParamsAsLuaTable(string prefix)
+        /// <summary>
+        /// Сохранить информацию об операциях объекта в prg.lua
+        /// </summary>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        private string SaveObjectsInformationToPrgLua(string prefix)
         {
             var res = "";
             foreach (TechObject obj in objects)
             {
-                var modesManager = obj.ModesManager;
-                var modes = modesManager.Modes;
-                foreach (Mode mode in modes)
-                {
-                    var baseOperation = mode.GetBaseOperation();
-                    switch (baseOperation.Name)
-                    {
-                        case "Мойка":
-                            var objName = "prg." + obj.NameEplanForFile
-                                .ToLower() + obj.TechNumber.ToString();
+                var objName = "prg." + obj.NameEplanForFile.ToLower() + 
+                    obj.TechNumber.ToString();
 
-                            res += objName + ".operations = \t\t--Операции.\n";
-                            res += prefix + "{\n";
-                            res += prefix + baseOperation.LuaName
-                                .ToUpper() + " = " + mode.GetModeNumber() + 
-                                ",\t\t--Мойка CIP.\n";
-                            res += prefix + "}\n";
+                res += SaveObjectOperationsParametersToPrgLua(obj, objName, 
+                    prefix);
 
-                            res += objName + ".steps = \t\t--Шаги операций.\n";
-                            res += prefix + "{\n";
-                            var containsDrainage = mode.stepsMngr[0].steps
-                                .Where(x => x.GetStepName()
-                                .Contains("Дренаж")).FirstOrDefault();
-                                
-                            if (containsDrainage != null)
-                            {
-                                res += prefix + baseOperation.LuaName
-                                .ToUpper() + " =\n";
-                                res += prefix + prefix + "{\n";
-                                res += prefix + prefix + "DRAINAGE = " +
-                                    mode.stepsMngr[0].steps.Where(x => x
-                                    .GetStepName().Contains("Дренаж"))
-                                    .FirstOrDefault()
-                                    .GetStepNumber() + ",\n";
-                                res += prefix + prefix + "}\n";
-                            }
-                            else
-                            {
-                                res += prefix + baseOperation.LuaName
-                                    .ToUpper() + " = { },\n";
-                            }
-
-                            res += prefix + "}\n";
-
-                            foreach (BaseProperty param in baseOperation
-                                .Properties)
-                            {
-                                if (param.CanSave())
-                                {
-                                    string val = param.Value ==
-                                    "" ? "nil" : param.Value;
-                                    res += objName + "." + param.LuaName +
-                                        " = " + val + "\n";
-                                }                               
-                            }
-
-                            res += "\n"; // Отступ перед новым объектом
-                            break;
-                    }
-                }
+                res += SaveObjectEquipmentToPrgLua(obj, objName);
             }
             return res;
         }
 
-        // Сохранение базовой функциональности объектов
-        public string SaveFunctionalityAsLuaTable()
+        /// <summary>
+        /// Сохранить информацию об операциях объекта в prg.lua
+        /// </summary>
+        /// <param name="obj">Объект</param>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        private string SaveObjectOperationsParametersToPrgLua(TechObject obj,
+            string objName, string prefix)
+        {
+            var res = "";
+
+            var modesManager = obj.ModesManager;
+            var modes = modesManager.Modes;
+            foreach (Mode mode in modes)
+            {
+                var baseOperation = mode.GetBaseOperation();
+                switch (baseOperation.Name)
+                {
+                    case "Мойка":
+                        res += objName + ".operations = \t\t--Операции.\n";
+                        res += prefix + "{\n";
+                        res += prefix + baseOperation.LuaName
+                            .ToUpper() + " = " + mode.GetModeNumber() +
+                            ",\t\t--Мойка CIP.\n";
+                        res += prefix + "}\n";
+
+                        res += objName + ".steps = \t\t--Шаги операций.\n";
+                        res += prefix + "{\n";
+                        var containsDrainage = mode.stepsMngr[0].steps
+                            .Where(x => x.GetStepName()
+                            .Contains("Дренаж")).FirstOrDefault();
+
+                        if (containsDrainage != null)
+                        {
+                            res += prefix + baseOperation.LuaName
+                            .ToUpper() + " =\n";
+                            res += prefix + prefix + "{\n";
+                            res += prefix + prefix + "DRAINAGE = " +
+                                mode.stepsMngr[0].steps.Where(x => x
+                                .GetStepName().Contains("Дренаж"))
+                                .FirstOrDefault()
+                                .GetStepNumber() + ",\n";
+                            res += prefix + prefix + "}\n";
+                        }
+                        else
+                        {
+                            res += prefix + baseOperation.LuaName
+                                .ToUpper() + " = { },\n";
+                        }
+
+                        res += prefix + "}\n";
+
+                        foreach (BaseProperty param in baseOperation
+                            .Properties)
+                        {
+                            if (param.CanSave())
+                            {
+                                string val = param.Value ==
+                                "" ? "nil" : param.Value;
+                                res += objName + "." + param.LuaName +
+                                    " = " + val + "\n";
+                            }
+                        }
+
+                        res += "\n";
+                        break;
+                }
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить оборудование технологического объекта
+        /// </summary>
+        /// <param name="obj">Объект</param>
+        /// <param name="objName">Имя для сохранения</param>
+        /// <returns></returns>
+        private string SaveObjectEquipmentToPrgLua(TechObject obj, 
+            string objName)
+        {
+            var res = "";
+            var equipment = obj.Equipment;
+            bool needWhiteSpace = false;
+            foreach (Editor.ITreeViewItem item in equipment.Items)
+            {
+                var property = item as BaseProperty;
+                var value = property.Value;
+                var luaName = property.LuaName;
+
+                if (value != "")
+                {
+                    res += objName + $".{luaName} = " +
+                        $"prg.control_modules.{value}\n";
+                }
+                else
+                {
+                    res += objName + $".{luaName} = nil\n";
+                }
+
+                needWhiteSpace = true;
+            }
+
+            if (needWhiteSpace)
+            {
+                res += "\n";
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить базовую функциональность в prg.lua
+        /// </summary>
+        /// <returns></returns>
+        private string SaveFunctionalityToPrgLua()
         {
             var previouslyObjectName = "";
             var res = "";
@@ -351,7 +459,7 @@ namespace TechObject
                 if (previouslyObjectName != obj.NameEplanForFile.ToLower() && 
                     previouslyObjectName != "")
                 {
-                    res += "\n"; // Отступ, если изменен тип объекта
+                    res += "\n";
                 }
 
                 var objName = obj.NameEplanForFile.ToLower() + obj.TechNumber;

@@ -133,10 +133,10 @@
   <ItemGroup>
     <Compile Include="ConfigurationChecker.cs" />
     <Compile Include="DBImitation\Imitation.cs" />
-    <Compile Include="DBImitation\LineOperations.cs" />
+    <Compile Include="DBImitation\BaseOperationsDB.cs" />
     <Compile Include="DBImitation\ObjectProperties.cs" />
     <Compile Include="DBImitation\OperationsParams.cs" />
-    <Compile Include="DBImitation\TankOperations.cs" />
+    <Compile Include="DBImitation\TechObjectsEquipmentDB.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="DeviceBindingReader.cs" />
     <Compile Include="DeviceReader.cs" />
@@ -206,6 +206,7 @@
     <Compile Include="TechObject\Base\TechObjects\BasePOU.cs" />
     <Compile Include="TechObject\Base\TechObjects\BaseTank.cs" />
     <Compile Include="TechObject\Base\TechObjects\BaseWaterTank.cs" />
+    <Compile Include="TechObject\Equipment.cs" />
     <Compile Include="TechObject\LocalRestriction.cs" />
     <Compile Include="TechObject\Mode.cs" />
     <Compile Include="TechObject\ModesManager.cs" />
