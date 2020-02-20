@@ -12,7 +12,7 @@ namespace EasyEPlanner
 {
     public partial class IdleForm : Form
     {
-        public IdleForm()
+        private IdleForm()
         {
             InitializeComponent();
         }
@@ -20,21 +20,30 @@ namespace EasyEPlanner
         /// <summary>
         /// Инициализация формы
         /// </summary>
-        public async void Init()
+        public async void RunCountdown()
         {
             timerLabel.Text = $"Осталось: {startingCountdown} с.";
-            await Task.Run(RunCountdown);
+            await Task.Run(RunTimer);
         }
 
         /// <summary>
         /// Запуск отсчета времени
         /// </summary>
-        private void RunCountdown()
+        private void RunTimer()
         {
             countdownTimer = new Timer();
             countdownTimer.Interval = countdownInterval;
             countdownTimer.Tick += new EventHandler(ChangeTimeInLabel);
             countdownTimer.Start();
+        }
+
+        /// <summary>
+        /// Остановить таймер.
+        /// </summary>
+        private void StopCountdown()
+        {
+            countdownTimer.Stop();
+            countdownTimer.Tick -= new EventHandler(ChangeTimeInLabel);
         }
 
         /// <summary>
@@ -51,6 +60,7 @@ namespace EasyEPlanner
             }
             else
             {
+                StopCountdown();
                 //TODO: Инициирование закрытия Eplan.
             }
         }
@@ -62,10 +72,24 @@ namespace EasyEPlanner
         /// <param name="e"></param>
         private void acceptButton_Click(object sender, EventArgs e)
         {
-            countdownTimer.Stop();
-            countdownTimer.Tick -= new EventHandler(ChangeTimeInLabel);
-            countdownTimer.Interval = int.MaxValue;
-            this.Hide();
+            StopCountdown();
+            idleForm.Hide();
+        }
+
+        /// <summary>
+        /// Возвращает форму.
+        /// </summary>
+        public static IdleForm Form
+        {
+            get
+            {
+                if (idleForm == null)
+                {
+                    idleForm = new IdleForm();
+                }
+
+                return idleForm;
+            }
         }
 
         /// <summary>
@@ -82,5 +106,10 @@ namespace EasyEPlanner
         /// Интервал опроса таймера
         /// </summary>
         private const int countdownInterval = 1000;
+
+        /// <summary>
+        /// Форма с отсчетом
+        /// </summary>
+        private static IdleForm idleForm = null;
     }
 }

@@ -54,8 +54,8 @@ namespace EasyEPlanner
         /// </summary>
         private static void ShowCountdownWindow()
         {
-            idleForm.Init();
-            idleForm.Show();
+            IdleForm.Form.Show();
+            IdleForm.Form.RunCountdown();
         }
 
         /// <summary>
@@ -82,14 +82,14 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Максимальное время простоя в секундах
+        /// Максимальное время простоя в миллисекундах
         /// </summary>
-        private const uint MaxIdleTime = 120000;
+        private const uint MaxIdleTime = 10000; //10 сек
 
         /// <summary>
-        /// Интервал проверки простоя в секундах
+        /// Интервал проверки простоя в миллисекундах
         /// </summary>
-        private const int idleInterval = 10000;
+        private const int idleInterval = 5000; // 5 сек
 
         /// <summary>
         /// Таймер
@@ -100,10 +100,5 @@ namespace EasyEPlanner
         /// Делегат функции для таймера
         /// </summary>
         private static TimerCallback callbackFunction;
-
-        /// <summary>
-        /// Форма с отсчетом
-        /// </summary>
-        private static IdleForm idleForm = new IdleForm();
     }
 }
