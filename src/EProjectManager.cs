@@ -487,11 +487,13 @@ namespace EasyEPlanner
                     Editor.EditorCtrl.SaveCfg(false);
                 }
             }
+
+            IdleModule.Stop();
         }
 
         private void OnMainStart(IEventParameter iEventParameter)
         {
-
+            IdleModule.Start();
         }
     }
 }
