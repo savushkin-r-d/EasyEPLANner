@@ -475,7 +475,9 @@ namespace Editor
 
             drawDev_toolStripButton.Checked = false;
 
-            ProjectManager.GetInstance().RemoveHighLighting();
+            bool isClosingProject = true;
+            ProjectManager.GetInstance().RemoveHighLighting(isClosingProject);
+
             System.Threading.Thread.Sleep(1);
 
             IsShown = false;
