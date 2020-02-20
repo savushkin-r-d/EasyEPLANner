@@ -152,6 +152,12 @@
     <Compile Include="ExcelDataCollector.cs" />
     <Compile Include="ExcelRepoter.cs" />
     <Compile Include="DeviceBindFromForm.cs" />
+    <Compile Include="IdleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IdleForm.Designer.cs">
+      <DependentUpon>IdleForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="IdleModule.cs" />
     <Compile Include="IO.cs" />
     <Compile Include="IOReader.cs" />
@@ -228,6 +234,9 @@
   <ItemGroup>
     <EmbeddedResource Include="DFrm.resx">
       <DependentUpon>DFrm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IdleForm.resx">
+      <DependentUpon>IdleForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LogFrm.resx">
       <DependentUpon>LogFrm.cs</DependentUpon>

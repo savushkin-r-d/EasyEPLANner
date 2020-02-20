@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using PInvoke;
+using System.Threading;
 
 namespace EasyEPlanner
 {
@@ -18,8 +16,7 @@ namespace EasyEPlanner
         /// </summary>
         public async static void Start()
         {
-            PrepareForRunning();
-            await Task.Run(RunAfterPreparing);
+            await Task.Run(Run);
         }
 
         /// <summary>
@@ -27,30 +24,45 @@ namespace EasyEPlanner
         /// </summary>
         public static void Stop()
         {
-            //TODO: Остановка модуля
+            idleTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            idleTimer.Dispose();
         }
 
         /// <summary>
-        /// Подготовить к запуску модуль простоя приложения
+        /// Запуск модуля
         /// </summary>
-        private static void PrepareForRunning()
+        private static void Run()
         {
-            //TODO: подготовка модуля к запуску
+            callbackFunction = new TimerCallback(CheckIdle);
+            idleTimer = new Timer(callbackFunction, null, 0, idleInterval);
         }
 
         /// <summary>
-        /// Запуск модуля после подготовки
+        /// Проверка состояния простоя
         /// </summary>
-        private static void RunAfterPreparing()
+        /// <param name="obj">Состояние из таймера</param>
+        private static void CheckIdle(object obj)
         {
-            //TODO: запуск модуля после подготовки
+            if (GetLastInputTime() > MaxIdleTime)
+            {
+                ShowCountdownWindow();
+            }
+        }
+
+        /// <summary>
+        /// Показать окно с обратным отсчетом
+        /// </summary>
+        private static void ShowCountdownWindow()
+        {
+            idleForm.Init();
+            idleForm.Show();
         }
 
         /// <summary>
         /// Получить время последнего ввода пользователя
         /// </summary>
-        /// <returns>Время в секундах</returns>
-        static uint GetLastInputTime()
+        /// <returns>Время в миллисекундах</returns>
+        private static uint GetLastInputTime()
         {
             uint idleTime = 0;
             PI.LASTINPUTINFO lastInputInfo = new PI.LASTINPUTINFO();
@@ -66,7 +78,32 @@ namespace EasyEPlanner
                 idleTime = envTicks - lastInputTick;
             }
 
-            return ((idleTime > 0) ? (idleTime / 1000) : 0);
+            return ((idleTime > 0) ? idleTime : 0);
         }
+
+        /// <summary>
+        /// Максимальное время простоя в секундах
+        /// </summary>
+        private const uint MaxIdleTime = 120000;
+
+        /// <summary>
+        /// Интервал проверки простоя в секундах
+        /// </summary>
+        private const int idleInterval = 10000;
+
+        /// <summary>
+        /// Таймер
+        /// </summary>
+        private static Timer idleTimer;
+
+        /// <summary>
+        /// Делегат функции для таймера
+        /// </summary>
+        private static TimerCallback callbackFunction;
+
+        /// <summary>
+        /// Форма с отсчетом
+        /// </summary>
+        private static IdleForm idleForm = new IdleForm();
     }
 }
