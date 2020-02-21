@@ -12,7 +12,7 @@ namespace EasyEPlanner
     public static class IdleModule
     {
         /// <summary>
-        /// Запустить модуль простоя приложения
+        /// Запустить поток модуля простоя приложения
         /// </summary>
         public static void Start()
         {
@@ -29,17 +29,20 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Закрытие приложения
+        /// Закрыть приложение.
         /// </summary>
         public static void CloseApplication()
         {
-            EProjectManager.GetInstance().GetCurrentPrj().Close();
+            if (EProjectManager.GetInstance().GetCurrentPrj() != null)
+            {
+                EProjectManager.GetInstance().GetCurrentPrj().Close();
+            }
             Process eplanProcess = Process.GetCurrentProcess();
             eplanProcess.CloseMainWindow();
         }
 
         /// <summary>
-        /// Запуск модуля
+        /// Запустить модуль
         /// </summary>
         private static void Run()
         {
@@ -63,7 +66,7 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Показать окно с обратным отсчетом
+        /// Показать форму с таймером и запустить таймер
         /// </summary>
         private static void ShowCountdownWindow()
         {

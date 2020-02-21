@@ -11,7 +11,7 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Инициализация формы
+        /// Инициализация таймера и запуск формы.
         /// </summary>
         public void RunCountdown()
         {
@@ -21,13 +21,13 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Запуск отсчета времени
+        /// Запуск отсчета времени.
         /// </summary>
         private void RunTimer()
         {
             countdownTimer = new Timer();
             countdownTimer.Interval = countdownInterval;
-            countdownTimer.Tick += new EventHandler(ChangeTimeInLabel);
+            countdownTimer.Tick += new EventHandler(TimerWorking);
             countdownTimer.Start();
         }
 
@@ -37,15 +37,15 @@ namespace EasyEPlanner
         private void StopCountdown()
         {
             countdownTimer.Stop();
-            countdownTimer.Tick -= new EventHandler(ChangeTimeInLabel);
+            countdownTimer.Tick -= new EventHandler(TimerWorking);
         }
 
         /// <summary>
-        /// Изменение состояния таймера
+        /// Работа таймера.
         /// </summary>
         /// <param name="sencder"></param>
         /// <param name="e"></param>
-        private void ChangeTimeInLabel(object sencder, EventArgs e)
+        private void TimerWorking(object sencder, EventArgs e)
         {
             startingCountdown--;
             if (startingCountdown > 0)
@@ -61,7 +61,7 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Подтверждение
+        /// Подтверждение активности.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -73,7 +73,7 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Возвращает форму.
+        /// Получить форму.
         /// </summary>
         public static IdleForm Form
         {
@@ -93,22 +93,22 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Таймер
+        /// Таймер.
         /// </summary>
         private Timer countdownTimer;
 
         /// <summary>
-        /// Стартовое значение таймера
+        /// Стартовое значение таймера.
         /// </summary>
         private int startingCountdown = 60;
 
         /// <summary>
-        /// Интервал опроса таймера
+        /// Интервал опроса таймера в миллисекундах.
         /// </summary>
         private const int countdownInterval = 1000;
 
         /// <summary>
-        /// Форма с отсчетом
+        /// Форма с таймером.
         /// </summary>
         private static IdleForm idleForm = null;
     }
