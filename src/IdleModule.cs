@@ -29,16 +29,29 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Перезапуск таймера
+        /// </summary>
+        public static void Restart()
+        {
+            isRunning = true;
+            IdleForm.Form.RestartCountdown();
+        }
+
+        /// <summary>
         /// Закрыть приложение.
         /// </summary>
         public static void CloseApplication()
         {
-            if (EProjectManager.GetInstance().GetCurrentPrj() != null)
-            {
-                EProjectManager.GetInstance().GetCurrentPrj().Close();
-            }
             Process eplanProcess = Process.GetCurrentProcess();
-            eplanProcess.CloseMainWindow();
+            var isClosed = eplanProcess.CloseMainWindow();
+            if (isClosed == false)
+            {
+                Restart();
+            }
+            else
+            {
+                eplanProcess.Close();
+            }
         }
 
         /// <summary>

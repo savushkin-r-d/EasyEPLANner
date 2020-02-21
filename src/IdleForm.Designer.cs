@@ -72,7 +72,9 @@
             this.Controls.Add(this.DisplayingInfoLabel);
             this.Controls.Add(this.acceptButton);
             this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(286, 180);
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(286, 180);
             this.Name = "IdleForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
