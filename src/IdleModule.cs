@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using PInvoke;
 using System.Threading;
+using System.Diagnostics;
 
 namespace EasyEPlanner
 {
@@ -14,9 +14,10 @@ namespace EasyEPlanner
         /// <summary>
         /// Запустить модуль простоя приложения
         /// </summary>
-        public async static void Start()
+        public static void Start()
         {
-            await Task.Run(Run);
+            idleThread = new Thread(Run);
+            idleThread.Start();
         }
 
         /// <summary>
@@ -24,8 +25,18 @@ namespace EasyEPlanner
         /// </summary>
         public static void Stop()
         {
-            idleTimer.Change(Timeout.Infinite, Timeout.Infinite);
-            idleTimer.Dispose();
+            isRunning = false;
+        }
+
+        public static void CloseApplication()
+        {
+            EProjectManager.GetInstance().GetCurrentPrj().Close();
+            Process oCurrent = Process.GetCurrentProcess();
+
+            const int closeCommand = 000;
+
+            PI.SendMessage(oCurrent.MainWindowHandle,  (uint)PI.WM.COMMAND, 
+                closeCommand, 0);
         }
 
         /// <summary>
@@ -33,15 +44,18 @@ namespace EasyEPlanner
         /// </summary>
         private static void Run()
         {
-            callbackFunction = new TimerCallback(CheckIdle);
-            idleTimer = new Timer(callbackFunction, null, 0, idleInterval);
+            isRunning = true;
+            while (isRunning)
+            {
+                CheckIdle();
+                Thread.Sleep(idleInterval);
+            }
         }
 
         /// <summary>
         /// Проверка состояния простоя
         /// </summary>
-        /// <param name="obj">Состояние из таймера</param>
-        private static void CheckIdle(object obj)
+        private static void CheckIdle()
         {
             if (GetLastInputTime() > MaxIdleTime)
             {
@@ -92,13 +106,13 @@ namespace EasyEPlanner
         private const int idleInterval = 5000; // 5 сек
 
         /// <summary>
-        /// Таймер
+        /// Флаг запуска потока.
         /// </summary>
-        private static Timer idleTimer;
+        private static bool isRunning = true;
 
         /// <summary>
-        /// Делегат функции для таймера
+        /// Поток модуля простоя
         /// </summary>
-        private static TimerCallback callbackFunction;
+        private static Thread idleThread;
     }
 }

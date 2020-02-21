@@ -20,10 +20,11 @@ namespace EasyEPlanner
         /// <summary>
         /// Инициализация формы
         /// </summary>
-        public async void RunCountdown()
+        public void RunCountdown()
         {
+            Application.Run(this);
             timerLabel.Text = $"Осталось: {startingCountdown} с.";
-            await Task.Run(RunTimer);
+            RunTimer();
         }
 
         /// <summary>
@@ -61,7 +62,8 @@ namespace EasyEPlanner
             else
             {
                 StopCountdown();
-                //TODO: Инициирование закрытия Eplan.
+                IdleModule.Stop();
+                IdleModule.CloseApplication();
             }
         }
 
@@ -73,7 +75,8 @@ namespace EasyEPlanner
         private void acceptButton_Click(object sender, EventArgs e)
         {
             StopCountdown();
-            idleForm.Hide();
+            this.Hide();
+            this.Close();
         }
 
         /// <summary>
@@ -84,6 +87,10 @@ namespace EasyEPlanner
             get
             {
                 if (idleForm == null)
+                {
+                    idleForm = new IdleForm();
+                }
+                if (idleForm.IsDisposed == true)
                 {
                     idleForm = new IdleForm();
                 }
