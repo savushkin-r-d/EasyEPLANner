@@ -11,17 +11,16 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Инициализация таймера и запуск формы.
+        /// Инициализация таймера.
         /// </summary>
         public void RunCountdown()
         {
-            Application.Run(this);
             timerLabel.Text = $"Осталось: {startingCountdown} с.";
             RunTimer();
         }
 
         /// <summary>
-        /// Запуск отсчета времени.
+        /// Запуск отсчета времени и запуск формы.
         /// </summary>
         private void RunTimer()
         {
@@ -29,6 +28,8 @@ namespace EasyEPlanner
             countdownTimer.Interval = countdownInterval;
             countdownTimer.Tick += new EventHandler(TimerWorking);
             countdownTimer.Start();
+
+            Application.Run(this);
         }
 
         /// <summary>
