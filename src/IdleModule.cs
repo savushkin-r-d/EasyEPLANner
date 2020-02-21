@@ -28,15 +28,14 @@ namespace EasyEPlanner
             isRunning = false;
         }
 
+        /// <summary>
+        /// Закрытие приложения
+        /// </summary>
         public static void CloseApplication()
         {
             EProjectManager.GetInstance().GetCurrentPrj().Close();
-            Process oCurrent = Process.GetCurrentProcess();
-
-            const int closeCommand = 000;
-
-            PI.SendMessage(oCurrent.MainWindowHandle,  (uint)PI.WM.COMMAND, 
-                closeCommand, 0);
+            Process eplanProcess = Process.GetCurrentProcess();
+            eplanProcess.CloseMainWindow();
         }
 
         /// <summary>
@@ -98,12 +97,12 @@ namespace EasyEPlanner
         /// <summary>
         /// Максимальное время простоя в миллисекундах
         /// </summary>
-        private const uint MaxIdleTime = 10000; //10 сек
+        private const uint MaxIdleTime = 3600000;
 
         /// <summary>
         /// Интервал проверки простоя в миллисекундах
         /// </summary>
-        private const int idleInterval = 5000; // 5 сек
+        private const int idleInterval = 60000;
 
         /// <summary>
         /// Флаг запуска потока.
