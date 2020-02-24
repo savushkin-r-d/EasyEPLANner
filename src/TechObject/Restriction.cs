@@ -573,6 +573,13 @@ namespace TechObject
             ChangeRestrictList();
         }
 
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+        }
 
         public SortedDictionary<int, List<int>> RestrictDictionary
         {

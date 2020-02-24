@@ -37,7 +37,7 @@ namespace TechObject
                         .FirstOrDefault()
                         .GetRestrictionManager()
                         .Restrictions
-                        .Where(x => x.LuaName == "Ограничения внутри объекта")
+                        .Where(x => x.Name == "Ограничения внутри объекта")
                         .FirstOrDefault()
                         .SetValue(newDict);
                 }
