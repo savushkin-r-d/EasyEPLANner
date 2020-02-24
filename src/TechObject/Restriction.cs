@@ -121,6 +121,10 @@ namespace TechObject
             return res;
         }
 
+        public virtual void SetValue(SortedDictionary<int, List<int>> dict)
+        {
+            // Затычка для LocalRestriction.
+        }
 
         /// <summary>
         /// Установка новых ограничений
@@ -181,7 +185,7 @@ namespace TechObject
         /// <param name="oldRestriction">Предыдущая версия словаря 
         /// ограничений</param>
         /// <returns></returns>
-        private SortedDictionary<int, List<int>> GetDeletedRestriction(
+        protected SortedDictionary<int, List<int>> GetDeletedRestriction(
             SortedDictionary<int, List<int>> oldRestriction)
         {
             SortedDictionary<int, List<int>> delRestriction =
@@ -227,7 +231,7 @@ namespace TechObject
         /// <summary>
         /// Установка перекрестных ограничеий
         /// </summary>
-        private void SetCrossRestriction()
+        protected void SetCrossRestriction()
         {
             // Для ограничений на последующие операции
             // не должны проставляться симметричные ограничения.
@@ -252,7 +256,7 @@ namespace TechObject
         /// <summary>
         /// Удаление перекрестных ограничеий
         /// </summary>
-        private void ClearCrossRestriction(SortedDictionary<int, 
+        protected void ClearCrossRestriction(SortedDictionary<int, 
             List<int>> diffDict)
         {
             // Для ограничений на последующие операции
@@ -278,7 +282,7 @@ namespace TechObject
         /// <summary>
         /// Изменение словаря огарничений на основании строки ограничний
         /// </summary>
-        private void ChangeRestrictList()
+        protected void ChangeRestrictList()
         {
             var res = new SortedDictionary<int, List<int>>();
             for (int i = 0; i < TechObjectManager.GetInstance().Objects.Count; 
@@ -382,7 +386,7 @@ namespace TechObject
         /// <summary>
         /// Изменение строки ограничений на основании словаря ограничений
         /// </summary>
-        private void ChangeRestrictStr()
+        protected void ChangeRestrictStr()
         {
             string res = "";
             SortedDictionary<int, List<int>>.KeyCollection keyColl =
@@ -662,7 +666,7 @@ namespace TechObject
         private string name;
         private string restrictStr;
         protected string luaName;
-        private SortedDictionary<int, List<int>> restrictList;
+        protected SortedDictionary<int, List<int>> restrictList;
 
         private int ownerObjNum;
         private int ownerModeNum;
