@@ -1043,11 +1043,21 @@ namespace EasyEPlanner
         //Участвующие в операции устройства, подсвеченные на карте Eplan.
         List<object> highlightedObjects = new List<object>();
 
-        public void RemoveHighLighting()
+        /// <summary>
+        /// Отключить подсветку устройств
+        /// </summary>
+        /// <param name="isClosingProject">Флаг закрытия проекта</param>
+        public void RemoveHighLighting(bool isClosingProject = false)
         {
             foreach (object obj in highlightedObjects)
             {
-                (obj as Eplan.EplApi.DataModel.Graphics.GraphicalPlacement).Remove();
+                var drawedObject = obj as Eplan.EplApi.DataModel.Graphics
+                    .GraphicalPlacement;
+                if (isClosingProject)
+                {
+                    drawedObject.SmartLock();
+                }
+                drawedObject.Remove();
             }
 
             highlightedObjects.Clear();
