@@ -613,18 +613,29 @@ namespace EasyEPlanner
 
                 foreach (TechObject.Mode mode in modes)
                 {
+                    var restrict = checkedMode as TechObject.Restriction;
                     modeNum++;
 
                     Node childNode = new Node(mode.DisplayText[0]);
                     childNode.Tag = mode.GetType().FullName;
                     parentNode.Nodes.Add(childNode);
 
+                    if (restrict != null)
+                    {
+                        var restrictManager = restrict.Parent;
+                        var operation = restrictManager.Parent as TechObject.Mode;
+                        var modeManager = mode.Parent;
+                        var techObj = modeManager.Parent as TechObject.TechObject;
+                        if (to.Name == techObj.Name && mode.Name == operation.Name)
+                        {
+                            childNode.IsHidden = true;
+                        }
+                    }
+
                     string checkedStr;
                     if (checkedMode != null)
                     {
                         checkedStr = checkedMode.EditText[1];
-                        TechObject.Restriction restrict = checkedMode as TechObject.Restriction;
-
                         if (restrict != null)
                         {
                             if (restrict.RestrictDictionary != null)
