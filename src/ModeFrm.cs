@@ -613,46 +613,60 @@ namespace EasyEPlanner
 
                 foreach (TechObject.Mode mode in modes)
                 {
+                    var restriction = checkedMode as TechObject.Restriction;
                     modeNum++;
 
                     Node childNode = new Node(mode.DisplayText[0]);
                     childNode.Tag = mode.GetType().FullName;
                     parentNode.Nodes.Add(childNode);
 
+                    if (restriction != null)
+                    {
+                        var restrictionManager = restriction.Parent;
+                        var operation = restrictionManager.Parent as 
+                            TechObject.Mode;
+                        var modeManager = mode.Parent;
+                        var techObj = modeManager.Parent as 
+                            TechObject.TechObject;
+                        if (to.Name == techObj.Name && 
+                            mode.Name == operation.Name)
+                        {
+                            childNode.IsHidden = true;
+                        }
+                    }
+
                     string checkedStr;
                     if (checkedMode != null)
                     {
                         checkedStr = checkedMode.EditText[1];
-                        TechObject.Restriction restrict = checkedMode as TechObject.Restriction;
-
-                        if (restrict != null)
+                        if (restriction != null)
                         {
-                            if (restrict.RestrictDictionary != null)
+                            if (restriction.RestrictDictionary != null)
                             {
-                                if (restrict.RestrictDictionary.ContainsKey(toNum))
+                                if (restriction.RestrictDictionary
+                                    .ContainsKey(toNum))
                                 {
-                                    if (restrict.RestrictDictionary[toNum].Contains(modeNum))
+                                    if (restriction.RestrictDictionary[toNum]
+                                        .Contains(modeNum))
                                     {
-                                        childNode.CheckState = CheckState.Checked;
+                                        childNode.CheckState = CheckState
+                                            .Checked;
                                     }
                                     else
                                     {
-                                        childNode.CheckState = CheckState.Unchecked;
+                                        childNode.CheckState = CheckState
+                                            .Unchecked;
                                     }
                                 }
 
                             }
                         }
-
-
-
                     }
                     else
                     {
                         checkedStr = "";
                         childNode.CheckState = CheckState.Unchecked;
                     }
-
                 }
 
                 if (showOneNode == true)
