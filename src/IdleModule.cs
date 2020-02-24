@@ -117,7 +117,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Интервал проверки простоя в миллисекундах
         /// </summary>
-        private const int idleInterval = 60000;
+        private const int idleInterval = 60 * 1000;
 
         /// <summary>
         /// Флаг запуска потока.
