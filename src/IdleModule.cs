@@ -112,12 +112,12 @@ namespace EasyEPlanner
         /// <summary>
         /// Максимальное время простоя в миллисекундах
         /// </summary>
-        private const uint MaxIdleTime = 6000/*3600000*/;
+        private const uint MaxIdleTime = 60 * 60 * 1000;
 
         /// <summary>
         /// Интервал проверки простоя в миллисекундах
         /// </summary>
-        private const int idleInterval = 1000/*60000*/;
+        private const int idleInterval = 60 * 1000;
 
         /// <summary>
         /// Флаг запуска потока.
