@@ -112,7 +112,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Максимальное время простоя в миллисекундах
         /// </summary>
-        private const uint MaxIdleTime = 3600000;
+        private const uint MaxIdleTime = 60 * 60 * 1000;
 
         /// <summary>
         /// Интервал проверки простоя в миллисекундах
