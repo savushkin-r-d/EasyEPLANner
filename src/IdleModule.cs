@@ -29,15 +29,6 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Перезапуск таймера
-        /// </summary>
-        public static void Restart()
-        {
-            isRunning = true;
-            IdleForm.Form.RestartCountdown();
-        }
-
-        /// <summary>
         /// Закрыть приложение.
         /// </summary>
         public static void CloseApplication()
@@ -46,7 +37,15 @@ namespace EasyEPlanner
             var isClosed = eplanProcess.CloseMainWindow();
             if (isClosed == false)
             {
-                Restart();
+                var project = EProjectManager.GetInstance().GetCurrentPrj();
+                if (project != null)
+                {
+                    EProjectManager.GetInstance().SyncAndSave();
+                    Thread.Sleep(500);
+                    project.Close();
+                }
+                Thread.Sleep(500);
+                eplanProcess.Kill();          
             }
             else
             {
@@ -113,12 +112,12 @@ namespace EasyEPlanner
         /// <summary>
         /// Максимальное время простоя в миллисекундах
         /// </summary>
-        private const uint MaxIdleTime = 3600000;
+        private const uint MaxIdleTime = 6000/*3600000*/;
 
         /// <summary>
         /// Интервал проверки простоя в миллисекундах
         /// </summary>
-        private const int idleInterval = 60000;
+        private const int idleInterval = 1000/*60000*/;
 
         /// <summary>
         /// Флаг запуска потока.

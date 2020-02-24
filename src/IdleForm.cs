@@ -20,16 +20,6 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Перезапуск таймера.
-        /// </summary>
-        public void RestartCountdown()
-        {
-            startingCountdown = 60;
-            countdownTimer.Tick += new EventHandler(TimerWorking);
-            countdownTimer.Start();
-        }
-
-        /// <summary>
         /// Запуск отсчета времени и запуск формы.
         /// </summary>
         private void RunTimer()
