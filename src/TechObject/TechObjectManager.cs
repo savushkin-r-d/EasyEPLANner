@@ -151,7 +151,7 @@ namespace TechObject
             res += SaveObjectsInformationToPrgLua(prefix);
             res += SaveFunctionalityToPrgLua();
             res += "return prg";
-            res.Replace("\t", "    ");
+            res = res.Replace("\t", "    ");
 
             return res;
         }
