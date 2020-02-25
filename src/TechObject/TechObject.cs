@@ -578,6 +578,19 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Глобальный порядковый номер объекта.
+        /// </summary>
+        public int GlobalNumber
+        {
+            get
+            {
+                var number = this.DisplayText[0].Split('.')[0];
+                number = number.Trim();
+                return int.Parse(number);
+            }
+        }
+
+        /// <summary>
         /// Проверка операций технологического объекта
         /// </summary>
         /// <returns>Строка с ошибками</returns>
