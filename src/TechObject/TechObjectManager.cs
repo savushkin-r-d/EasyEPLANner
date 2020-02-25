@@ -147,7 +147,7 @@ namespace TechObject
             res += SaveParamsAsLuaTable(prefix);
             res += SaveFunctionalityAsLuaTable();
             res += "return prg";
-            res.Replace("\t", "    ");
+            res = res.Replace("\t", "    ");
 
             return res;
         }
