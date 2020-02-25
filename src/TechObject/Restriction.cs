@@ -323,6 +323,7 @@ namespace TechObject
                 if (!restrictList[ObjNum].Contains(ModeNum))
                 {
                     restrictList[ObjNum].Add(ModeNum);
+                    restrictList[ObjNum].Sort();
                 }
             }
             else
@@ -330,6 +331,7 @@ namespace TechObject
                 List<int> restrictMode = new List<int>();
                 restrictMode.Add(ModeNum);
                 restrictList.Add(ObjNum, restrictMode);
+                restrictList[ObjNum].Sort();
             }
 
             //Компануем строку для отображения

@@ -30,16 +30,17 @@ namespace TechObject
                 if (techObject.TechType == selectedTechObject.TechType)
                 {
                     var newDict = MakeSimilarObjectDictionary(dict, techObject);
-                    techObject
-                        .ModesManager
-                        .Modes
+
+                    var mode = techObject.ModesManager.Modes
                         .Where(x => x.Name == selectedMode.Name)
-                        .FirstOrDefault()
-                        .GetRestrictionManager()
+                        .FirstOrDefault();
+
+                    var restrictions = mode.GetRestrictionManager()
                         .Restrictions
                         .Where(x => x.Name == "Ограничения внутри объекта")
-                        .FirstOrDefault()
-                        .SetValue(newDict);
+                        .FirstOrDefault();
+
+                    restrictions.SetValue(newDict);
                 }
             }
         }
@@ -66,17 +67,16 @@ namespace TechObject
                     newOperations.Add(value);
                 }
             }
-            newDict.Add( techObject.TechNumber, newOperations);
+            newDict.Add( techObject.GlobalNumber , newOperations);
             
             return newDict;
         }
 
-        public override void SetValue(SortedDictionary<int, List<int>> dictionaty)
+        public override void SetValue(SortedDictionary<int, List<int>> dictionary)
         {
             var oldRestriction = new SortedDictionary<int, List<int>>(restrictList);
             restrictList = null;
-            restrictList = new SortedDictionary<int, List<int>>(dictionaty);
-            //Компануем строку для отображения
+            restrictList = new SortedDictionary<int, List<int>>(dictionary);
             ChangeRestrictStr();
 
             SortedDictionary<int, List<int>> deletedRestriction =
