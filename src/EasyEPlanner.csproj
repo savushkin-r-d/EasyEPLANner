@@ -217,6 +217,7 @@
     <Compile Include="TechObject\LocalRestriction.cs" />
     <Compile Include="TechObject\Mode.cs" />
     <Compile Include="TechObject\ModesManager.cs" />
+    <Compile Include="TechObject\NextModeRestriction.cs" />
     <Compile Include="TechObject\OperationParam.cs" />
     <Compile Include="TechObject\OperationParams.cs" />
     <Compile Include="TechObject\Param.cs" />

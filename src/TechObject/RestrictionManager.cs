@@ -22,7 +22,7 @@ namespace TechObject
             var ThisObjResriction = new LocalRestriction(
                 "Ограничения внутри объекта", "", "LocalRestriction", 
                 new SortedDictionary<int, List<int>>());
-            var NextModeResriction = new LocalRestriction(
+            var NextModeResriction = new NextModeRestriction(
                 "Ограничения на последующие операции", "", 
                 "NextModeRestriction", new SortedDictionary<int, List<int>>());
             restrictions.Add(ThisObjResriction);
