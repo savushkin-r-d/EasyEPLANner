@@ -346,6 +346,28 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Проверить, выбрана ли такая базовая операция или нет
+        /// </summary>
+        /// <param name="baseOperationName">Проверяемое имя базовой операции
+        /// </param>
+        /// <returns></returns>
+        private bool CheckTheSameBaseOperations(string baseOperationName)
+        {
+            var objectAlreadyContainsThisOperation = false;
+            var modes = this.owner;
+
+            foreach(var mode in modes.Modes)
+            {
+                if (mode.GetBaseOperation().Name == baseOperationName)
+                {
+                    objectAlreadyContainsThisOperation = true;
+                }
+            }
+
+            return objectAlreadyContainsThisOperation;
+        }
+
         // Установка параметров базовой операции
         public void SetBaseOperExtraParams(Editor.ObjectProperty[] extraParams)
         {
@@ -430,8 +452,11 @@ namespace TechObject
         public override bool SetNewValue(string newBaseOperationName, 
             bool isBaseOper)
         {
+            bool uniqueBaseOperation = CheckTheSameBaseOperations(
+                newBaseOperationName);
             // Инициализация базовой операции по имени
-            if (baseOperation.Name != newBaseOperationName)
+            if (baseOperation.Name != newBaseOperationName &&
+                uniqueBaseOperation == true)
             {
                 baseOperation.Init(newBaseOperationName);
                 return true;
