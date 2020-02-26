@@ -37,7 +37,7 @@ namespace DataBase
         }
 
         /// <summary>
-        /// Получить список оборудования базового танка
+        /// Получить список оборудования базового танка.
         /// </summary>
         /// <returns></returns>
         static public BaseProperty[] TankEquipment()
