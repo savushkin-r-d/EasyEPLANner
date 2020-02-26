@@ -283,17 +283,17 @@ namespace Editor
         //Ширина, которую нужно учитывать при форматировании колонок.
         private const int deltaWidth = 5;
 
-        private int GlobalHookKeyboardCallbackFunction(int code,
+        private IntPtr GlobalHookKeyboardCallbackFunction(int code,
             PI.WM wParam, PI.KBDLLHOOKSTRUCT lParam)
         {
             if (code < 0 || editorTView == null)
             {
-                return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam).ToInt32();
+                return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
             }
 
             if (!(IsCellEditing || editorTView.Focused))
             {
-                return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam).ToInt32();
+                return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
             }
 
             uint c = (uint)lParam.vkCode;
@@ -310,7 +310,7 @@ namespace Editor
                 {
                     if (IsCellEditing || editorTView.Focused)
                     {
-                        return 1;
+                        return (IntPtr) 1;
                     }
                 }
             }
@@ -328,7 +328,7 @@ namespace Editor
                         {
                             cancelChanges = true;
                             editorTView.FinishCellEdit();
-                            return 1;
+                            return (IntPtr) 1;
                         }
                         break;
 
@@ -336,7 +336,7 @@ namespace Editor
                         if (IsCellEditing)
                         {
                             editorTView.FinishCellEdit();
-                            return 1;
+                            return (IntPtr) 1;
                         }
                         break;
 
@@ -350,7 +350,7 @@ namespace Editor
                                 PI.SendMessage(PI.GetFocus(),
                                     (int)PI.WM.COPY, 0, 0);
 
-                                return 1;
+                                return (IntPtr) 1;
                             }
 
                             if (editorTView.Focused)
@@ -359,7 +359,7 @@ namespace Editor
                                     (int)PI.WM.KEYDOWN,
                                     (int)Keys.C, 0);
 
-                                return 1;
+                                return (IntPtr) 1;
                             }
 
                             if (editorTView.Focused)
@@ -368,21 +368,7 @@ namespace Editor
                                     (int)PI.WM.KEYDOWN,
                                     (int)Keys.C, 0);
 
-                                return 1;
-                            }
-                        }
-                        break;
-
-                    case (uint)Keys.X:                                  //X
-                        ctrlState = PI.GetKeyState((int)
-                            PI.VIRTUAL_KEY.VK_CONTROL);
-                        if ((ctrlState & SHIFTED) > 0)
-                        {
-                            if (IsCellEditing)
-                            {
-                                PI.SendMessage(PI.GetFocus(),
-                                    (int)PI.WM.CUT, 0, 0);
-                                return 1;
+                                return (IntPtr) 1;
                             }
                         }
                         break;
@@ -396,7 +382,7 @@ namespace Editor
                             {
                                 PI.SendMessage(PI.GetFocus(),
                                     (int)PI.WM.PASTE, 0, 0);
-                                return 1;
+                                return (IntPtr) 1;
                             }
 
                             if (editorTView.Focused)
@@ -404,31 +390,7 @@ namespace Editor
                                 PI.SendMessage(PI.GetFocus(),
                                     (int)PI.WM.KEYDOWN,
                                     (int)Keys.V, 0);
-                                return 1;
-                            }
-                        }
-                        break;
-
-                    case (uint)Keys.A:                                   //A
-                        ctrlState = PI.GetKeyState(
-                            (int)PI.VIRTUAL_KEY.VK_CONTROL);
-
-                        if ((ctrlState & SHIFTED) > 0)
-                        {
-                            if (IsCellEditing)
-                            {
-                                PI.SendMessage(PI.GetFocus(),
-                                    0x00B1, //EM_SETSEL
-                                    0, -1);
-                                return 1;
-                            }
-
-                            if (editorTView.Focused)
-                            {
-                                PI.SendMessage(PI.GetFocus(),
-                                    (int)PI.WM.KEYDOWN,
-                                    (int)Keys.A, 0);
-                                return 1;
+                                return (IntPtr) 1;
                             }
                         }
                         break;
@@ -438,7 +400,7 @@ namespace Editor
                         {
                             PI.SendMessage(PI.GetFocus(), (int)PI.WM.KEYDOWN,
                                 (int)PI.VIRTUAL_KEY.VK_DELETE, 0);
-                            return 1;
+                            return (IntPtr) 1;
                         }
 
                         break;
@@ -449,11 +411,11 @@ namespace Editor
                     case PI.VIRTUAL_KEY.VK_RIGHT:                       //Right
                         PI.SendMessage(PI.GetFocus(),
                             (int)PI.WM.KEYDOWN, (int)c, 0);
-                        return 1;
+                        return (IntPtr) 1;
                 }
             }
 
-            return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam).ToInt32();
+            return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }
 
         /// <summary>
