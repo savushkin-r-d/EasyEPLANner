@@ -25,5 +25,20 @@ namespace DataBase
 
             return parameters;
         }
+
+        /// <summary>
+        /// Получить параметры операции "Наполнение".
+        /// </summary>
+        /// <returns></returns>
+        private static BaseProperty[] FillParams()
+        {
+            var parameters = new BaseProperty[]
+            {
+                new ShowedBaseProperty("OPERATION_AFTER_FILL",
+                "Операция после наполнения")
+            };
+
+            return parameters;
+        }
     }
 }

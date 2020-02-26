@@ -21,6 +21,8 @@ namespace DataBase
                 new ShowedBaseProperty("DI_CIP_FREE", "МСА свободна"),
                 new NonShowedBaseProperty("DRAINAGE", "Номер шага дренаж", 
                 false),
+                new ShowedBaseProperty("OPERATION_AFTER_FILL", 
+                "Операция после наполнения")
             };
         }
 
