@@ -391,7 +391,7 @@ namespace TechObject
                                 string val = param.Value ==
                                 "" ? "nil" : param.Value;
                                 res += objName + "." + param.LuaName +
-                                    " = " + val + "\n";
+                                    " = prg.control_modules." + val + "\n";
                             }
                         }
 
