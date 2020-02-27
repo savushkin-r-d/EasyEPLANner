@@ -324,7 +324,11 @@ namespace TechObject
                 var objName = "prg." + obj.NameEplanForFile.ToLower() + 
                     obj.TechNumber.ToString();
 
-                res += obj.BaseTechObject.SaveOperationsToPrgLua(objName, prefix);
+                res += obj.BaseTechObject
+                    .SaveObjectInfoToPrgLua(objName, prefix);
+
+                res += obj.BaseTechObject
+                    .SaveOperationsToPrgLua(objName, prefix);
 
                 res += SaveObjectEquipmentToPrgLua(obj, objName);
             }
