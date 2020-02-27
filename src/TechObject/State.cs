@@ -293,7 +293,9 @@ namespace TechObject
 
             if (step != null)
             {
-                if (steps.IndexOf(step) == 0)
+                const string ignoreStateName = "Выполнение";
+                if (steps.IndexOf(step) == 0 &&
+                    steps[0].Owner.name == ignoreStateName)
                 {
                     //Не удаляем шаг операции.
                     return false;
@@ -397,6 +399,13 @@ namespace TechObject
             if (modeStep == null)
             {
                 modeStep = new Step("Во время операции", GetStepN, this, 
+                    isMain);
+                steps.Add(modeStep);
+                return modeStep;
+            }
+            else if (this.Items.Count() == 0)
+            {
+                modeStep = new Step("Во время операции", GetStepN, this,
                     isMain);
                 steps.Add(modeStep);
                 return modeStep;
