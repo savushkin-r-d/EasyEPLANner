@@ -49,6 +49,9 @@ namespace TechObject
 
             var modesManager = this.Owner.ModesManager;
             var modes = modesManager.Modes;
+
+            //TODO: master add
+
             foreach (Mode mode in modes)
             {
                 var baseOperation = mode.GetBaseOperation();
@@ -102,8 +105,30 @@ namespace TechObject
 
                         res += "\n";
                         break;
+
+                    case "Наполнение":
+                        var fillNumber = mode.GetModeNumber();
+                        res += objName + $".operations.FILL = {fillNumber}\n";
+
+                        //TODO: operation after fill
+
+                        break;
+
+                    case "Хранение":
+                        var storingNumber = mode.GetModeNumber();
+                        res += objName + $".operations.STORING = " +
+                            $"{storingNumber}\n";
+                        break;
+
+                    case "Выдача":
+                        var outNumber = mode.GetModeNumber();
+                        res += objName + $".operations.OUT = " +
+                            $"{outNumber}\n";
+                        break;
                 }
             }
+
+            res += "\n";
 
             return res;
         }
