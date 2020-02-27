@@ -148,8 +148,6 @@ namespace TechObject
                 res += SaveObjectsBindingToPrgLua(attachedObjects);
             }
 
-
-
             res += SaveObjectsInformationToPrgLua(prefix);
             res += SaveFunctionalityToPrgLua();
             res += "return prg";
