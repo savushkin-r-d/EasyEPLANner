@@ -93,8 +93,7 @@ namespace TechObject
                         break;
 
                     case "Наполнение":
-                        res += SaveFillOperation(prefix, objName, mode,
-                            baseOperation);
+                        res += SaveFillOperation(objName, mode, baseOperation);
                         break;
 
                     case "Хранение":
@@ -193,11 +192,10 @@ namespace TechObject
         /// Сохранить операцию наполнения.
         /// </summary>
         /// <param name="objName">Имя объекта</param>
-        /// <param name="prefix">Отступ</param>
         /// <param name="mode">Операция</param>
         /// <param name="baseOperation">Базовая операция</param>
         /// <returns></returns>
-        private string SaveFillOperation(string prefix, string objName,
+        private string SaveFillOperation(string objName,
             Mode mode, BaseOperation baseOperation)
         {
             var res = "";

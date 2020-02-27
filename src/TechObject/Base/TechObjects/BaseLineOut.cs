@@ -55,53 +55,83 @@ namespace TechObject
                 switch (baseOperation.Name)
                 {
                     case "Мойка":
-                        res += objName + ".operations = \t\t--Операции.\n";
-                        res += prefix + "{\n";
-                        res += prefix + baseOperation.LuaName
-                            .ToUpper() + " = " + mode.GetModeNumber() +
-                            ",\t\t--Мойка CIP.\n";
-                        res += prefix + "}\n";
-
-                        res += objName + ".steps = \t\t--Шаги операций.\n";
-                        res += prefix + "{\n";
-                        var containsDrainage = mode.stepsMngr[0].steps
-                            .Where(x => x.GetStepName()
-                            .Contains("Дренаж")).FirstOrDefault();
-
-                        if (containsDrainage != null)
-                        {
-                            res += prefix + baseOperation.LuaName
-                            .ToUpper() + " =\n";
-                            res += prefix + prefix + "{\n";
-                            res += prefix + prefix + "DRAINAGE = " +
-                                mode.stepsMngr[0].steps.Where(x => x
-                                .GetStepName().Contains("Дренаж"))
-                                .FirstOrDefault()
-                                .GetStepNumber() + ",\n";
-                            res += prefix + prefix + "}\n";
-                        }
-                        else
-                        {
-                            res += prefix + baseOperation.LuaName
-                                .ToUpper() + " = { },\n";
-                        }
-
-                        res += prefix + "}\n";
-
-                        foreach (BaseProperty param in baseOperation
-                            .Properties)
-                        {
-                            if (param.CanSave())
-                            {
-                                string val = param.Value ==
-                                "" ? "nil" : param.Value;
-                                res += objName + "." + param.LuaName +
-                                    " = prg.control_modules." + val + "\n";
-                            }
-                        }
-
-                        res += "\n";
+                        res += SaveWashOperation(prefix, objName, mode,
+                            baseOperation);
                         break;
+                }
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить операцию мойки в prg.lua
+        /// </summary>
+        /// <param name="prefix">Отступ</param>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="mode">Операция</param>
+        /// <param name="baseOperation">Базовая операция</param>
+        /// <returns></returns>
+        private string SaveWashOperation(string prefix, string objName,
+            Mode mode, BaseOperation baseOperation)
+        {
+            var res = "";
+
+            res += objName + ".operations = \t\t--Операции.\n";
+            res += prefix + "{\n";
+            res += prefix + baseOperation.LuaName
+                .ToUpper() + " = " + mode.GetModeNumber() +
+                ",\t\t--Мойка CIP.\n";
+            res += prefix + "}\n";
+
+            res += objName + ".steps = \t\t--Шаги операций.\n";
+            res += prefix + "{\n";
+            var containsDrainage = mode.stepsMngr[0].steps
+                .Where(x => x.GetStepName()
+                .Contains("Дренаж")).FirstOrDefault();
+
+            if (containsDrainage != null)
+            {
+                res += prefix + baseOperation.LuaName
+                .ToUpper() + " =\n";
+                res += prefix + prefix + "{\n";
+                res += prefix + prefix + "DRAINAGE = " +
+                    mode.stepsMngr[0].steps.Where(x => x
+                    .GetStepName().Contains("Дренаж"))
+                    .FirstOrDefault()
+                    .GetStepNumber() + ",\n";
+                res += prefix + prefix + "}\n";
+            }
+            else
+            {
+                res += prefix + baseOperation.LuaName
+                    .ToUpper() + " = { },\n";
+            }
+
+            res += prefix + "}\n";
+            res += SaveWashOperationParameters(objName, baseOperation);
+            res += "\n";
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить параметры операции мойки
+        /// </summary>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="baseOperation">Базовая операция</param>
+        /// <returns></returns>
+        private string SaveWashOperationParameters(string objName,
+            BaseOperation baseOperation)
+        {
+            var res = "";
+
+            foreach (BaseProperty param in baseOperation.Properties)
+            {
+                if (param.CanSave())
+                {
+                    string val = param.Value == "" ? "nil" : param.Value;
+                    res += objName + "." + param.LuaName +
+                        " = prg.control_modules." + val + "\n";
                 }
             }
 
