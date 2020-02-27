@@ -212,6 +212,19 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Сохранить информацию об операциях объекта в prg.lua
+        /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        public virtual string SaveOperationsToPrgLua(string objName, 
+            string prefix)
+        {
+            var res = "";
+            return res;
+        }
+
         private string name;
         private string eplanName;
         private int s88Level;

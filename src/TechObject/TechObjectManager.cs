@@ -148,6 +148,8 @@ namespace TechObject
                 res += SaveObjectsBindingToPrgLua(attachedObjects);
             }
 
+
+
             res += SaveObjectsInformationToPrgLua(prefix);
             res += SaveFunctionalityToPrgLua();
             res += "return prg";
@@ -322,84 +324,10 @@ namespace TechObject
                 var objName = "prg." + obj.NameEplanForFile.ToLower() + 
                     obj.TechNumber.ToString();
 
-                res += SaveObjectOperationsParametersToPrgLua(obj, objName, 
-                    prefix);
+                res += obj.BaseTechObject.SaveOperationsToPrgLua(objName, prefix);
 
                 res += SaveObjectEquipmentToPrgLua(obj, objName);
             }
-            return res;
-        }
-
-        /// <summary>
-        /// Сохранить информацию об операциях объекта в prg.lua
-        /// </summary>
-        /// <param name="obj">Объект</param>
-        /// <param name="objName">Имя объекта</param>
-        /// <param name="prefix">Отступ</param>
-        /// <returns></returns>
-        private string SaveObjectOperationsParametersToPrgLua(TechObject obj,
-            string objName, string prefix)
-        {
-            var res = "";
-
-            var modesManager = obj.ModesManager;
-            var modes = modesManager.Modes;
-            foreach (Mode mode in modes)
-            {
-                var baseOperation = mode.GetBaseOperation();
-                switch (baseOperation.Name)
-                {
-                    case "Мойка":
-                        res += objName + ".operations = \t\t--Операции.\n";
-                        res += prefix + "{\n";
-                        res += prefix + baseOperation.LuaName
-                            .ToUpper() + " = " + mode.GetModeNumber() +
-                            ",\t\t--Мойка CIP.\n";
-                        res += prefix + "}\n";
-
-                        res += objName + ".steps = \t\t--Шаги операций.\n";
-                        res += prefix + "{\n";
-                        var containsDrainage = mode.stepsMngr[0].steps
-                            .Where(x => x.GetStepName()
-                            .Contains("Дренаж")).FirstOrDefault();
-
-                        if (containsDrainage != null)
-                        {
-                            res += prefix + baseOperation.LuaName
-                            .ToUpper() + " =\n";
-                            res += prefix + prefix + "{\n";
-                            res += prefix + prefix + "DRAINAGE = " +
-                                mode.stepsMngr[0].steps.Where(x => x
-                                .GetStepName().Contains("Дренаж"))
-                                .FirstOrDefault()
-                                .GetStepNumber() + ",\n";
-                            res += prefix + prefix + "}\n";
-                        }
-                        else
-                        {
-                            res += prefix + baseOperation.LuaName
-                                .ToUpper() + " = { },\n";
-                        }
-
-                        res += prefix + "}\n";
-
-                        foreach (BaseProperty param in baseOperation
-                            .Properties)
-                        {
-                            if (param.CanSave())
-                            {
-                                string val = param.Value ==
-                                "" ? "nil" : param.Value;
-                                res += objName + "." + param.LuaName +
-                                    " = prg.control_modules." + val + "\n";
-                            }
-                        }
-
-                        res += "\n";
-                        break;
-                }
-            }
-
             return res;
         }
 
