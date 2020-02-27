@@ -35,7 +35,7 @@ namespace DataBase
             var parameters = new BaseProperty[]
             {
                 new ShowedBaseProperty("OPERATION_AFTER_FILL",
-                "Операция после наполнения")
+                "Номер операции после наполнения")
             };
 
             return parameters;
