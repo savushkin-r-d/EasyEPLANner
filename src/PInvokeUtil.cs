@@ -1906,8 +1906,8 @@ namespace PInvoke
             LLKHF_UP = 0x80,
         }
 
-        public delegate int LowLevelKeyboardProc(int nCode,
-            WM wParam, [In] KBDLLHOOKSTRUCT lParam);
+        public delegate IntPtr LowLevelKeyboardProc([In] int nCode,
+            [In] WM wParam, [In] KBDLLHOOKSTRUCT lParam);
 
         public delegate IntPtr HookProc(int code, IntPtr wParam, IntPtr lParam);
 

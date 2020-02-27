@@ -273,7 +273,12 @@ namespace TechObject
                     foreach (int val in diffDict[key])
                     {
                         Mode mode = to.GetMode(val - 1);
-                        mode.DelRestriction(luaName, ownerObjNum, ownerModeNum);
+                        if (mode != null)
+                        {
+                            mode.DelRestriction(luaName, ownerObjNum, 
+                                ownerModeNum);
+
+                        }
                     }
                 }
             }
