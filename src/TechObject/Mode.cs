@@ -359,7 +359,8 @@ namespace TechObject
 
             foreach(var mode in modes.Modes)
             {
-                if (mode.GetBaseOperation().Name == baseOperationName)
+                if (mode.GetBaseOperation().Name == baseOperationName &&
+                    baseOperationName != "")
                 {
                     objectAlreadyContainsThisOperation = true;
                 }
@@ -452,11 +453,11 @@ namespace TechObject
         public override bool SetNewValue(string newBaseOperationName, 
             bool isBaseOper)
         {
-            bool uniqueBaseOperation = CheckTheSameBaseOperations(
+            bool similarBaseOperation = CheckTheSameBaseOperations(
                 newBaseOperationName);
             // Инициализация базовой операции по имени
             if (baseOperation.Name != newBaseOperationName &&
-                uniqueBaseOperation == true)
+                similarBaseOperation == false)
             {
                 baseOperation.Init(newBaseOperationName);
                 return true;
