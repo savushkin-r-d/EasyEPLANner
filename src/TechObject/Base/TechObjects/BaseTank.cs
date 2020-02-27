@@ -96,7 +96,7 @@ namespace TechObject
         /// <param name="mode">Операция</param>
         /// <param name="baseOperation">Базовая операция</param>
         /// <returns></returns>
-        private string SaveWashOperation(string prefix, string objName, 
+        private string SaveWashOperation(string prefix, string objName,
             Mode mode, BaseOperation baseOperation)
         {
             var res = "";
@@ -147,7 +147,7 @@ namespace TechObject
         /// <param name="objName">Имя объекта</param>
         /// <param name="baseOperation">Базовая операция</param>
         /// <returns></returns>
-        private string SaveWashOperationParameters(string objName, 
+        private string SaveWashOperationParameters(string objName,
             BaseOperation baseOperation)
         {
             var res = "";
@@ -174,7 +174,7 @@ namespace TechObject
         /// <param name="mode">Операция</param>
         /// <param name="baseOperation">Базовая операция</param>
         /// <returns></returns>
-        private string SaveFillOperation(string prefix, string objName, 
+        private string SaveFillOperation(string prefix, string objName,
             Mode mode, BaseOperation baseOperation)
         {
             var res = "";
@@ -182,21 +182,52 @@ namespace TechObject
             var fillNumber = mode.GetModeNumber();
             res += objName + $".operations.FILL = {fillNumber}\n";
 
+            res += SaveFillOperationParameters(objName, baseOperation);
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить параметры операции наполнения.
+        /// </summary>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="baseOperation">Базовая операция</param>
+        /// <returns></returns>
+        private string SaveFillOperationParameters(string objName,
+            BaseOperation baseOperation)
+        {
+            var res = "";
+
             foreach (BaseProperty param in baseOperation.Properties)
             {
                 if (param.CanSave())
                 {
-                    string val = param.Value ==
-                    "" ? "nil" : param.Value;
-                    if (val != "nil")
+                    string val = param.Value == "" ? "nil" : param.Value;
+
+                    switch (param.LuaName)
                     {
-                        res += objName + "." + param.LuaName +
-                        $" = {objName}.operations." + val + "\n";
-                    }
-                    else
-                    {
-                        res += objName + "." + param.LuaName +
-                            $" = {val}\n";
+                        case "OPERATION_AFTER_FILL":
+                            var modes = this.Owner.ModesManager.Modes;
+                            var mode = modes
+                                .Where(x => x.GetModeNumber().ToString() == val)
+                                .FirstOrDefault();
+
+                            if (mode != null)
+                            {
+                                val =mode.GetBaseOperation().LuaName.ToUpper();
+                            }
+
+                            if (val != "nil")
+                            {
+                                res += objName + "." + param.LuaName +
+                                $" = {objName}.operations." + val + "\n";
+                            }
+                            else
+                            {
+                                res += objName + "." + param.LuaName +
+                                    $" = {val}\n";
+                            }
+                            break;
                     }
                 }
             }
