@@ -70,12 +70,12 @@ namespace EasyEPlanner
             if (name.Length > MaxProjectNameLength)
             {
                 string errorMessage = $"Некорректно задано имя проекта - " +
-                    $"длина не должна превышать {MaxProjectNameLength} символов. ";               
+                    $"длина не должна превышать {MaxProjectNameLength} символов. ";
                 ProjectManager.GetInstance().AddLogMessage(errorMessage);
                 name = name.Substring(0, MaxProjectNameLength);
             }
 
-            const string RegexPattern = 
+            const string RegexPattern =
                 "(?<plant>[A-Z]+[1-9]{1})\\-(?<project>[а-яА-Я1-9\\-]+$)";
             Match match = Regex.Match(name, RegexPattern);
             if (!match.Success)
@@ -157,25 +157,10 @@ namespace EasyEPlanner
         /// </summary>
         public void SaveAndClose()
         {
-            string searchingFileName = "\\main.objects.lua";
-            string projectName = GetCurrentProjectName();
-            CheckProjectName(ref projectName);
-
-            int beforeSaveHashCode = ProjectManager.GetInstance()
-                .GetFileHashCode(projectName, searchingFileName);
-
             EProjectManager.GetInstance().SyncAndSave();
-
-            int afterSaveHashCode = ProjectManager.GetInstance()
-                .GetFileHashCode(projectName, searchingFileName);
             EProjectManager.GetInstance().StopEditModes();
 
-            if (beforeSaveHashCode != afterSaveHashCode)
-            {
-                string path = currentProject.ProjectDirectoryPath + @"\DOC\" +
-                        currentProject.ProjectName + " auto report.xlsx";
-                ExcelRepoter.ExportTechDevs(path, true);
-            }
+            ExcelRepoter.AutomaticExportExcelForSCADA(currentProject);
 
             // Проверка и сохранение состояний окон.
             ModeFrm.CheckShown();
