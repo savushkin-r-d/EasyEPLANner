@@ -212,6 +212,7 @@ namespace TechObject
             }
         }
 
+        #region Сохранение в prg.lua
         /// <summary>
         /// Сохранить информацию об операциях объекта в prg.lua
         /// </summary>
@@ -237,6 +238,7 @@ namespace TechObject
             var res = "";
             return res;
         }
+        #endregion
 
         private string name;
         private string eplanName;

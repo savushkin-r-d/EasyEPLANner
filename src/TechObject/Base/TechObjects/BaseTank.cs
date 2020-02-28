@@ -36,6 +36,7 @@ namespace TechObject
             return cloned;
         }
 
+        #region Сохранение в prg.lua
         /// <summary>
         /// Сохранить информацию об объекте в prg.lua
         /// </summary>
@@ -289,5 +290,6 @@ namespace TechObject
 
             return res;
         }
+        #endregion
     }
 }
