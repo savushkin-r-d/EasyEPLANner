@@ -131,8 +131,16 @@ namespace TechObject
                 if (param.CanSave())
                 {
                     string val = param.Value == "" ? "nil" : param.Value;
-                    res += objName + "." + param.LuaName +
-                        " = prg.control_modules." + val + "\n";
+                    if (val != "nil")
+                    {
+                        res += objName + "." + param.LuaName +
+                            " = prg.control_modules." + val + "\n";
+                    }
+                    else
+                    {
+                        res += objName + "." + param.LuaName +
+                            " = " + val + "\n";
+                    }
                 }
             }
 

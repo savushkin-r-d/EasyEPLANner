@@ -18,6 +18,8 @@ namespace EasyEPlanner
         public static string Save(string prefix)
         {
             var attachedObjects = new Dictionary<int, string>();
+            deviceManager = DeviceManager.GetInstance();
+            techObjectManager = TechObjectManager.GetInstance();
 
             var res = "";
             res += "local prg =\n\t{\n";
@@ -48,7 +50,7 @@ namespace EasyEPlanner
             var res = prefix + "control_modules =\n" +
                 prefix + "\t{\n";
 
-            foreach (IODevice dev in DeviceManager.GetInstance().Devices)
+            foreach (IODevice dev in deviceManager.Devices)
             {
                 if (dev.DeviceType == DeviceType.Y ||
                     dev.DeviceType == DeviceType.DEV_VTUG)
@@ -296,9 +298,7 @@ namespace EasyEPlanner
             return res;
         }
 
-        private static DeviceManager deviceManager = DeviceManager
-            .GetInstance();
-        private static TechObjectManager techObjectManager = TechObjectManager
-            .GetInstance();
+        private static DeviceManager deviceManager;
+        private static TechObjectManager techObjectManager;
     }
 }

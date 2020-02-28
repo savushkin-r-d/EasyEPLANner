@@ -48,7 +48,7 @@ namespace TechObject
         {
             var res = "";
 
-            var objects = this.Owner.Parent as TechObjectManager;
+            var objects = TechObjectManager.GetInstance();
             var masterObj = objects.Objects
                 .Where(x => x.Name.Contains("Мастер")).FirstOrDefault();
             if (masterObj != null)
@@ -179,10 +179,17 @@ namespace TechObject
             {
                 if (param.CanSave())
                 {
-                    string val = param.Value ==
-                    "" ? "nil" : param.Value;
-                    res += objName + "." + param.LuaName +
-                        " = prg.control_modules." + val + "\n";
+                    string val = param.Value == "" ? "nil" : param.Value;
+                    if (val != "nil")
+                    {
+                        res += objName + "." + param.LuaName +
+                            " = prg.control_modules." + val + "\n";
+                    }
+                    else
+                    {
+                        res += objName + "." + param.LuaName +
+                            " = " + val + "\n";
+                    }
                 }
             }
 
