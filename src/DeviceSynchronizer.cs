@@ -1,4 +1,6 @@
-﻿namespace EasyEPlanner
+﻿using Eplan.EplApi.Base;
+
+namespace EasyEPlanner
 {
     /// <summary>
     /// Синхронизатор устройств
@@ -28,8 +30,8 @@
         private void PreparePreviouslyDevices()
         {
             int devicesCount = deviceReader.DevicesCount;
-            previouslyDevices = new Device.IODevice[devicesCount];
-            deviceReader.CopyDevices(previouslyDevices);
+            prevDevices = new Device.IODevice[devicesCount];
+            deviceReader.CopyDevices(prevDevices);
         }
 
         /// <summary>
@@ -42,74 +44,66 @@
         ///флаг > 0, то изменяем старый индекс в операции на значение флага.
         ///2. Для каждого элемента массива предыдущих устройств проверяем 
         ///соответствие элементу нового списка.
-        ///2.1. Пробуем проверить равенство объектов в двух списках устройств.
-        ///Если элемент нового списка входит в старый, то проверяем равенство 
-        ///их имен.
-        ///2.2.Если имена неравны, проверяем равенство их индексов в списках. 
-        ///Индексы не совпадают - в массиве флагов изменяем соответствующий 
-        ///элемент на новый индекс.
-        ///2.3. Проверяем индексы одинаковых объектов, если они неравны, то 
-        ///аналогично изменяем флаг на новый индекс.
-        ///2.4. Если объект, находящийся в старом списке был уже удален, то 
+        ///2.1. Если объект, находящийся в старом списке был уже удален, то 
         ///обрабатываем исключение. Устанавливаем флаг элемента старого списка 
         ///в -1.
+        ///2.2. Пробуем проверить равенство объектов в двух списках устройств.
+        ///Если элемент нового списка входит в старый, то проверяем равенство 
+        ///их имен.
         ///3. Вызываем функцию синхронизации индексов, которая убирает
         ///удаленные устройства.
         /// </summary>
         private void SynchronizeDevices()
         {
-            int prevDevicesCount = previouslyDevices.Length;
-            int[] indexArray = new int[prevDevicesCount];                   //1            
-            for (int i = 0; i < prevDevicesCount; i++)
-            {
-                indexArray[i] = 0;
-            }
-
+            int prevDevicesCount = prevDevices.Length;
+            int[] indexArray = new int[prevDevicesCount];                    //1            
             bool needSynch = false;
-            for (int k = 0; k < prevDevicesCount; k++)                      //2
+
+            for (int k = 0; k < prevDevicesCount; k++)                       //2
             {
-                Device.IODevice prevDevice = previouslyDevices[k];
-                try
+                Device.IODevice prevDevice = prevDevices[k];
+                var prevDevEplanObjFunc = prevDevice.EplanObjectFunction;
+
+                if (prevDevEplanObjFunc == null ||
+                    (k < deviceReader.DevicesCount &&
+                    prevDevice.Name == deviceReader.Devices[k].Name))
                 {
-                    if (prevDevice.EplanObjectFunction == null)
-                    {
-                        continue;
-                    }
-
-                    if (k < deviceReader.DevicesCount &&
-                        prevDevice.Name == deviceReader.Devices[k].Name)
-                    {
-                        continue;
-                    }
-
-                    needSynch = true;
-                    int idx = -1;
-                    foreach (Device.IODevice newDev in deviceReader.Devices)
-                    {
-                        idx++;
-                        if (newDev.EplanObjectFunction == prevDevice      //2.1
-                            .EplanObjectFunction)
-                        {
-                            indexArray[k] = idx;
-                            break;
-                        }
-                    }
+                    continue;
                 }
-                catch                                                     //2.4
+
+                needSynch = true;
+                int idx = -1;
+                foreach (Device.IODevice newDev in deviceReader.Devices)
                 {
-                    indexArray[k] = -1;
+                    idx++;
+                    const string deviceSkipSign = "1";                     //2.1
+                    if (prevDevEplanObjFunc.IsValid != true ||
+                        (prevDevEplanObjFunc.Properties
+                        .FUNC_SUPPLEMENTARYFIELD[1].IsEmpty != true &&
+                        prevDevEplanObjFunc.Properties
+                        .FUNC_SUPPLEMENTARYFIELD[1]
+                        .ToString(ISOCode.Language.L___) == deviceSkipSign))
+                    {
+                        indexArray[k] = -1;
+                        break;
+                    }
+
+                    if (newDev.EplanObjectFunction == prevDevEplanObjFunc) //2.2
+                    {
+                        indexArray[k] = idx;
+                        break;
+                    }
                 }
             }
 
-            if (needSynch)                                                  //3
+            if (needSynch)                                                   //3
             {
                 techObjectManager.Synch(indexArray);
             }
         }
 
-        Device.IODevice[] previouslyDevices;
-
-        DeviceReader deviceReader;
-        TechObject.TechObjectManager techObjectManager;
+        private Device.IODevice[] prevDevices;
+        private DeviceReader deviceReader;
+        private TechObject.TechObjectManager techObjectManager;
     }
 }
