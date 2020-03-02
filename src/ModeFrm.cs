@@ -600,6 +600,7 @@ namespace EasyEPlanner
             int toNum = 0;
             int modeNum = 0;
             TechObject.TechObject mainTO = item as TechObject.TechObject;
+            var restriction = checkedMode as TechObject.Restriction;
             //Заполняем узлы дерева устройствами.
             foreach (TechObject.TechObject to in techManager.Objects)
             {
@@ -613,7 +614,6 @@ namespace EasyEPlanner
 
                 foreach (TechObject.Mode mode in modes)
                 {
-                    var restriction = checkedMode as TechObject.Restriction;
                     modeNum++;
 
                     Node childNode = new Node(mode.DisplayText[0]);
@@ -623,13 +623,13 @@ namespace EasyEPlanner
                     if (restriction != null)
                     {
                         var restrictionManager = restriction.Parent;
-                        var operation = restrictionManager.Parent as 
+                        var selectedMode = restrictionManager.Parent as
                             TechObject.Mode;
-                        var modeManager = mode.Parent;
-                        var techObj = modeManager.Parent as 
+                        var modeManager = selectedMode.Parent;
+                        var selectedTO = modeManager.Parent as
                             TechObject.TechObject;
-                        if (to.Name == techObj.Name && 
-                            mode.Name == operation.Name)
+                        if (to.DisplayText[0] == selectedTO.DisplayText[0] && 
+                            mode.Name == selectedMode.Name)
                         {
                             childNode.IsHidden = true;
                         }
