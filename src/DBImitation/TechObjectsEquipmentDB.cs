@@ -25,7 +25,7 @@ namespace DataBase
         /// Получить список оборудования базового узла перемешивания.
         /// </summary>
         /// <returns></returns>
-        static public BaseProperty[] BaseMixerEquipment()
+        static public BaseProperty[] MixerEquipment()
         {
             return new BaseProperty[]
             {
@@ -33,6 +33,22 @@ namespace DataBase
                 new ShowedBaseProperty("bar", "Датчик решетки люка"),
                 new ShowedBaseProperty("hatch", "Датчик крышки люка"),
                 new ShowedBaseProperty("LT", "Датчик текущего уровня")
+            };
+        }
+
+        /// <summary>
+        /// Получить список оборудования базового танка.
+        /// </summary>
+        /// <returns></returns>
+        static public BaseProperty[] TankEquipment()
+        {
+            return new BaseProperty[]
+            {
+                new ShowedBaseProperty("hatch", "Датчик крышки люка"),
+                new ShowedBaseProperty("LS_up", "Датчик верхнего уровня"),
+                new ShowedBaseProperty("LS_down", "Датчик нижнего уровня"),
+                new ShowedBaseProperty("LT", "Датчик текущего уровня"),
+                new ShowedBaseProperty("TE","Датчик температуры")
             };
         }
     }

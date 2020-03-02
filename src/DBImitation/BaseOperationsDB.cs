@@ -41,6 +41,9 @@ namespace DataBase
             {
                 new BaseOperation("", "", EmptyProperties()),
                 new BaseOperation("Мойка", "WASHING_CIP", WashParams()),
+                new BaseOperation("Наполнение", "FILL", FillParams()),
+                new BaseOperation("Хранение", "STORING", EmptyProperties()),
+                new BaseOperation("Выдача", "OUT", EmptyProperties()),
             };
         }
     }
