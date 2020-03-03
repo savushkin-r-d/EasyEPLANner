@@ -751,15 +751,6 @@ namespace Device
                         case DeviceSubType.M_REV_FREQ:
                         case DeviceSubType.M_REV_2:
                         case DeviceSubType.M_REV_FREQ_2:
-                            return new List<string>(new string[] 
-                            { 
-                                "ST", 
-                                "M", 
-                                "P_ON_TIME", 
-                                "V", 
-                                "R", 
-                            });
-
                         case DeviceSubType.M_REV_2_ERROR:
                             return new List<string>(new string[] 
                             { 
@@ -776,8 +767,8 @@ namespace Device
                                 "M",
                                 "ST",
                                 "R", 
-                                "FRQ", 
-                                "RPM", 
+                                "FRQ",
+                                "RPM",
                                 "EST",
                                 "V",
                                 "P_ON_TIME"
@@ -820,19 +811,12 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.TE:
+                        case DeviceSubType.TE_IOLINK:
                             return new List<string>(new string[] 
                             { 
                                 "M", 
                                 "P_CZ", 
                                 "V" 
-                            });
-
-                        case DeviceSubType.TE_IOLINK:
-                            return new List<string>(new string[] 
-                            { 
-                                "M", 
-                                "V", 
-                                "P_CZ" 
                             });
                     }
                     break;
@@ -841,6 +825,7 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.LT:
+                        case DeviceSubType.LT_IOLINK:
                             return new List<string>(new string[] 
                             { 
                                 "M", 
@@ -881,14 +866,6 @@ namespace Device
                                 "P_R", 
                                 "P_H_TRUNC", 
                                 "CLEVEL" 
-                            });
-
-                        case DeviceSubType.LT_IOLINK:
-                            return new List<string>(new string[] 
-                            { 
-                                "M", 
-                                "P_CZ", 
-                                "V" 
                             });
                     }
                     break;
