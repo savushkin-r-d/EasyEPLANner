@@ -772,11 +772,15 @@ namespace Device
 
                         case DeviceSubType.M_ATV:
                             return new List<string>(new string[] 
-                            { 
+                            {
+                                "M",
+                                "ST",
                                 "R", 
                                 "FRQ", 
                                 "RPM", 
-                                "EST" 
+                                "EST",
+                                "V",
+                                "P_ON_TIME"
                             });
                     }
                     break;
@@ -785,33 +789,14 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.LS_MIN:
-                            return new List<string>(new string[] 
-                            { 
-                                "ST", 
-                                "M", 
-                                "P_DT" 
-                            });
-
                         case DeviceSubType.LS_MAX:
-                            return new List<string>(new string[] 
-                            { 
-                                "ST", 
-                                "M", 
-                                "P_DT" 
-                            });
-
                         case DeviceSubType.LS_IOLINK_MIN:
-                            return new List<string>(new string[] 
-                            { 
-                                "ST",
-                                "M"
-                            });
-
                         case DeviceSubType.LS_IOLINK_MAX:
                             return new List<string>(new string[] 
                             { 
                                 "ST", 
-                                "M" 
+                                "M",
+                                "P_DT"
                             });
 
                         case DeviceSubType.LS_VIRT:
