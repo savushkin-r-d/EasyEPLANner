@@ -232,6 +232,7 @@
     <Compile Include="TechObject\TechObject.cs" />
     <Compile Include="TechObject\TechObjectManager.cs" />
     <Compile Include="TechObject\TimersManager.cs" />
+    <Compile Include="XMLReporter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DFrm.resx">
