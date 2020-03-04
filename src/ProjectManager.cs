@@ -42,7 +42,8 @@ namespace EasyEPlanner
         /// </summary>
         public void SaveAsLua(string PAC_Name, string path, bool silentMode)
         {
-            var param = new ParamsForSave(PAC_Name, path, silentMode);
+            var param = new ProjectDescriptionSaver.ParametersForSave(PAC_Name, 
+                path, silentMode);
 
             if (silentMode)
             {
@@ -241,17 +242,15 @@ namespace EasyEPlanner
         /// <summary>
         /// Инициализация.
         /// </summary>
-        public void Init(IEditor editor, ITechObjectManager techObjectManager, 
-            ILog log, IOManager IOManager, DeviceManager deviceManager,
-            ProjectConfiguration projectConfiguration)
+        public void Init()
         {
-            this.editor = editor;
-            this.techObjectManager = techObjectManager;
-            Logs.Init(log);
-            
-            this.IOManager = IOManager;
-            this.deviceManager = deviceManager;
-            this.projectConfiguration = projectConfiguration;
+            this.editor = Editor.Editor.GetInstance();
+            this.techObjectManager = TechObjectManager.GetInstance();
+            Logs.Init(new LogFrm());           
+            this.IOManager = IOManager.GetInstance();
+            DeviceManager.GetInstance();
+            this.projectConfiguration = ProjectConfiguration.GetInstance();
+            EProjectManager.GetInstance();
         }
 
         /// <summary>
@@ -537,25 +536,10 @@ namespace EasyEPlanner
 
         private ProjectManager() { }
 
-        public class ParamsForSave
-        {
-            public string PAC_Name;
-            public string path;
-            public bool silentMode;
-
-            public ParamsForSave(string PAC_Name, string path, bool silentMode)
-            {
-                this.PAC_Name = PAC_Name;
-                this.path = path;
-                this.silentMode = silentMode;
-            }
-        }
-
         private IEditor editor; /// Редактор технологических объектов.
         private ITechObjectManager techObjectManager; /// Менеджер технологических объектов.
 
         private IOManager IOManager; /// Менеджер модулей ввода/вывода
-        private DeviceManager deviceManager; // Менеджер устройств
         private ProjectConfiguration projectConfiguration; // Конфигурация проекта
 
         private static ProjectManager instance; /// Экземпляр класса.         

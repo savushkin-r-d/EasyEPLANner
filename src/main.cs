@@ -72,14 +72,8 @@ namespace EasyEPlanner
 
             menuID = oMenu.AddMenuItem("О дополнении", "AboutProgramm", "", menuID, 1, true, false);
 
-            ProjectManager.GetInstance().Init(Editor.Editor.GetInstance(),
-                TechObject.TechObjectManager.GetInstance(), new LogFrm(),
-                IO.IOManager.GetInstance(), Device.DeviceManager.GetInstance(),
-                ProjectConfiguration.GetInstance());
-
-            // Вызов GetInstance() для создания объекта EProjectManager.
-            EProjectManager.GetInstance();
-
+            ProjectManager.GetInstance().Init();
+            
             return true;
         }
 
