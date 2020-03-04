@@ -15,10 +15,12 @@ namespace EasyEPlanner
     {
         public static void Save(string path)
         {
-            string pathToFiles = path + @"docs\statistics\";
+            string pathToFiles = path + @"\docs\statistics\";
 
-            // 1. Проверить существование папок
-            // 2. Если папок нет -> создать их
+            if (Directory.Exists(pathToFiles) == false)
+            {
+                Directory.CreateDirectory(pathToFiles);
+            }
 
             SaveLOC(pathToFiles);
             SaveTagsCount(pathToFiles);
@@ -26,37 +28,88 @@ namespace EasyEPlanner
             SaveEquipmentModulesCount(pathToFiles);
         }
 
-        private static void SaveLOC(string path)
+        /// <summary>
+        /// Сохранить количество строк кода main.plua в SVG.
+        /// </summary>
+        /// <param name="folderPath"></param>
+        private static void SaveLOC(string folderPath)
         {
-            const string calculatingLOCFileName = "main.plua";
+            folderPath += linesOfCodeMainProgramFileName;
+            //const string calculatingLOCFileName = "main.plua";
             // 1. Написать код, который посчитает мне все строки файла
             // 3. Генерация SVG
             // 4. Записать
         }
 
-        private static void SaveTagsCount(string path)
+        /// <summary>
+        /// Сохранить количество тэгов в SVG.
+        /// </summary>
+        /// <param name="folderPath">Пусть сохранения</param>
+        private static void SaveTagsCount(string folderPath)
         {
-            var tagsCount = XMLReporter.GetTagsCount();
-
-            // 1. Генерация SVG
-            // 2. Записать
+            folderPath += countOfTagsFileName;
+            int tagsCount = XMLReporter.GetTagsCount();
+            string strForWriting = $"{tagsCount} тэг(ов)";
+            string result = svgFilePattern.Replace("place text here",
+                strForWriting);
+            
+            var tagsWriter = new StreamWriter(folderPath, false, Encoding.
+                GetEncoding(1251));
+            tagsWriter.WriteLine(result);
+            tagsWriter.Flush();
+            tagsWriter.Close();
         }
 
-        private static void SaveUnintsCount(string path)
+        /// <summary>
+        /// Сохранить количество аппаратов в SVG.
+        /// </summary>
+        /// <param name="folderPath">Пусть сохранения</param>
+        private static void SaveUnintsCount(string folderPath)
         {
-            var unitsCount = techObjectManager.UnitsCount;
+            folderPath += countOfUnitsFileName;
+            int unitsCount = techObjectManager.UnitsCount;
+            string strForWriting = $"{unitsCount} аппарат(ов)";
+            string result = svgFilePattern.Replace("place text here",
+                strForWriting);
 
-            // 1. Генерация SVG
-            // 2. Записать
+            var unitsWriter = new StreamWriter(folderPath, false, Encoding.
+                GetEncoding(1251));
+            unitsWriter.WriteLine(result);
+            unitsWriter.Flush();
+            unitsWriter.Close();
         }
 
-        private static void SaveEquipmentModulesCount(string path)
+        /// <summary>
+        /// Сохранить количество агрегатов в SVG.
+        /// </summary>
+        /// <param name="folderPath"></param>
+        private static void SaveEquipmentModulesCount(string folderPath)
         {
-            var equipmentModulesCount = techObjectManager.EquipmentModulesCount;
+            folderPath += counstOfEquipmentModulesFileName;
+            int equipmentModulesCount = techObjectManager.EquipmentModulesCount;
+            string stroForWriting = $"{equipmentModulesCount} агрегат(ов)";
+            string result = svgFilePattern.Replace("place text here",
+                stroForWriting);
 
-            // 1. Генерация SVG
-            // 2. Записать
+            var equipmentWriter = new StreamWriter(folderPath, false, Encoding.
+                GetEncoding(1251));
+            equipmentWriter.WriteLine(result);
+            equipmentWriter.Flush();
+            equipmentWriter.Close();
         }
+
+        static string svgFilePattern = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<svg width=\"100\" height=\"20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n" +
+            "\n" +
+            "\t<rect rx=\"4\" x=\"0\" width=\"100\" height=\"20\" fill=\"dimgrey\"\n/>" +
+            "<rect rx=\"4\" x=\"0\" width=\"90.0\" height=\"20\" fill=\"green\"/>\n" +
+            "\n" +
+            "\t<g fill=\"#fff\" text-anchor=\"middle\" font-family=\"DejaVu Sans,Verdana,Geneva,sans-serif\" font-size=\"11\">\n" +
+            "\t\t<text x=\"50.0\" y=\"14\">\n" +
+            "\t\t\tplace text here" +
+            "\t\t</text>" +
+            "\t</g>" +
+            "</svg>";
 
         static string linesOfCodeMainProgramFileName = "lines_total.svg";
         static string countOfTagsFileName = "tags_total.svg";
