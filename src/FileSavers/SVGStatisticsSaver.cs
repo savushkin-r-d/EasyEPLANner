@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using System.IO;
 using TechObject;
 
@@ -16,7 +12,8 @@ namespace EasyEPlanner
         public static void Save(string path)
         {
             string pathToFiles = path + @"\docs\statistics\";
-
+            svgFilePattern = Properties.Resources.ResourceManager
+            .GetString("svgPattern");
             if (Directory.Exists(pathToFiles) == false)
             {
                 Directory.CreateDirectory(pathToFiles);
@@ -43,8 +40,7 @@ namespace EasyEPlanner
                 Encoding.GetEncoding(1251));
             int loc = readedFile.Length;
             string strForWriting = $"{loc.ToString()} строк кода";
-            string result = svgFilePattern.Replace("place text here",
-                strForWriting);
+            string result = string.Format(svgFilePattern, strForWriting);
 
             var locWriter = new StreamWriter(folderPath, false, Encoding.UTF8);
             locWriter.WriteLine(result);
@@ -61,9 +57,8 @@ namespace EasyEPlanner
             folderPath += countOfTagsFileName;
             int tagsCount = XMLReporter.GetTagsCount();
             string strForWriting = $"{tagsCount.ToString()} тэг(ов)";
-            string result = svgFilePattern.Replace("place text here",
-                strForWriting);
-            
+            string result = string.Format(svgFilePattern, strForWriting);
+
             var tagsWriter = new StreamWriter(folderPath, false, Encoding.UTF8);
             tagsWriter.WriteLine(result);
             tagsWriter.Flush();
@@ -79,8 +74,7 @@ namespace EasyEPlanner
             folderPath += countOfUnitsFileName;
             int unitsCount = techObjectManager.UnitsCount;
             string strForWriting = $"{unitsCount.ToString()} аппарат(ов)";
-            string result = svgFilePattern.Replace("place text here",
-                strForWriting);
+            string result = string.Format(svgFilePattern, strForWriting);
 
             var unitsWriter = new StreamWriter(folderPath, false, 
                 Encoding.UTF8);
@@ -97,9 +91,8 @@ namespace EasyEPlanner
         {
             folderPath += counstOfEquipmentModulesFileName;
             int equipmentModulesCount = techObjectManager.EquipmentModulesCount;
-            string stroForWriting = $"{equipmentModulesCount.ToString()} агрегат(ов)";
-            string result = svgFilePattern.Replace("place text here",
-                stroForWriting);
+            string strForWriting = $"{equipmentModulesCount.ToString()} агрегат(ов)";
+            string result = string.Format(svgFilePattern, strForWriting);
 
             var equipmentWriter = new StreamWriter(folderPath, false, 
                 Encoding.UTF8);
@@ -108,18 +101,7 @@ namespace EasyEPlanner
             equipmentWriter.Close();
         }
 
-        static string svgFilePattern = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-            "<svg width=\"100\" height=\"20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n" +
-            "\n" +
-            "\t<rect rx=\"4\" x=\"0\" width=\"100\" height=\"20\" fill=\"dimgrey\"/>\n" +
-            "<rect rx=\"4\" x=\"0\" width=\"90.0\" height=\"20\" fill=\"green\"/>\n" +
-            "\n" +
-            "\t<g fill=\"#fff\" text-anchor=\"middle\" font-family=\"DejaVu Sans,Verdana,Geneva,sans-serif\" font-size=\"11\">\n" +
-            "\t\t<text x=\"50.0\" y=\"14\">\n" +
-            "\t\t\tplace text here \n" +
-            "\t\t</text>\n" +
-            "\t</g>\n" +
-            "</svg>";
+        static string svgFilePattern;
 
         static string linesOfCodeMainProgramFileName = "lines_total.svg";
         static string countOfTagsFileName = "tags_total.svg";
