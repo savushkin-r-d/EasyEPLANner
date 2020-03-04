@@ -176,6 +176,7 @@
     <Compile Include="PInvokeUtil.cs" />
     <Compile Include="PrgLuaSaver.cs" />
     <Compile Include="ProjectConfiguration.cs" />
+    <Compile Include="ProjectDescriptionSaver.cs" />
     <Compile Include="ProjectManager.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

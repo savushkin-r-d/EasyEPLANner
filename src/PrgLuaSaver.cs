@@ -14,7 +14,7 @@ namespace EasyEPlanner
         /// Сохранить Prg.lua как таблицу Lua
         /// </summary>
         /// <param name="prefix">Отступ</param>
-        /// <returns></returns>
+        /// <returns>Возвращает файл в виде строки</returns>
         public static string Save(string prefix)
         {
             var attachedObjects = new Dictionary<int, string>();

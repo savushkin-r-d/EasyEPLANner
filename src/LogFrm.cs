@@ -10,6 +10,10 @@ namespace EasyEPlanner
     /// </summary>
     public interface ILog
     {
+        /// <summary>
+        /// Пусто ли окно логов
+        /// </summary>
+        /// <returns></returns>
         bool IsEmpty();
 
         /// <summary>
@@ -55,6 +59,12 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="val">Процент выполнения операции.</param>
         void SetProgress(int val);
+
+        /// <summary>
+        /// Является ли окно null
+        /// </summary>
+        /// <returns></returns>
+        bool IsNull();
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -105,6 +115,18 @@ namespace EasyEPlanner
             if (richTextBox.Text == "") return true;
 
             return false;
+        }
+
+        public bool IsNull()
+        {
+            if (this != null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         public void Clear()
