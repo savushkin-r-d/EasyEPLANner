@@ -90,7 +90,7 @@ namespace EasyEPlanner
             string errors = configurationChecker.Errors;
             if (errors != "" && silentMode == false)
             {
-                ProjectManager.GetInstance().AddLogMessage(errors);
+                Logs.AddMessage(errors);
             }
         }
 

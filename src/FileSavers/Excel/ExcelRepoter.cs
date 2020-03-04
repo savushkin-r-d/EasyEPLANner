@@ -78,22 +78,22 @@ namespace EasyEPlanner
             ref Excel.Worksheet workSheet, ref Excel._Application app)
         {
             CreateModulesPage(prjName, ref workSheet, ref app);
-            ProjectManager.GetInstance().SetLogProgress(5);
+            Logs.SetProgress(5);
 
             CreateInformDevicePage(ref workSheet, ref app);
-            ProjectManager.GetInstance().SetLogProgress(20);
+            Logs.SetProgress(20);
 
             CreateTotalDevicePage(ref workSheet, ref app);
-            ProjectManager.GetInstance().SetLogProgress(35);
+            Logs.SetProgress(35);
 
             CreateDeviceConnectionPage(ref workSheet, ref app);
-            ProjectManager.GetInstance().SetLogProgress(50);
+            Logs.SetProgress(50);
 
             CreateObjectParamsPage(ref workSheet, ref app);
-            ProjectManager.GetInstance().SetLogProgress(65);
+            Logs.SetProgress(65);
 
             CreateObjectDevicesPage(ref workSheet, ref app);
-            ProjectManager.GetInstance().SetLogProgress(80);
+            Logs.SetProgress(80);
         }
 
         /// <summary>

@@ -38,87 +38,20 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Добавление сообщения в лог.
-        /// </summary>
-        public void AddLogMessage(string msg)
-        {
-            log.AddMessage(msg);
-        }
-
-        /// <summary>
-        /// Установление прогресса.
-        /// </summary>
-        public void SetLogProgress(int msg)
-        {
-            log.SetProgress(msg);
-        }
-
-        /// <summary>
-        /// Отображение окна сообщений лога.
-        /// </summary>
-        public void ShowLog()
-        {
-            log.ShowLog();
-        }
-
-        /// <summary>
-        /// Скрыть окно логов.
-        /// </summary>
-        public void HideLog()
-        {
-            log.HideLog();
-        }
-
-        /// <summary>
-        /// Прокрутить логи до последней строки.
-        /// </summary>
-        public void ShowLogLastLine()
-        {
-            log.ShowLastLine();
-        }
-
-        /// <summary>
-        /// Отключить кнопки на форме логов.
-        /// </summary>
-        public void DisableLogButtons()
-        {
-            log.DisableOkButton();
-        }
-
-        /// <summary>
-        /// Включить кнопки на форме логов.
-        /// </summary>
-        public void EnableLogButtons()
-        {
-            log.EnableOkButton();
-        }
-
-        public bool LogIsNull()
-        {
-            return log.IsNull();
-        }
-
-        public bool LogIsEmpty()
-        {
-            return log.IsEmpty();
-        }
-
-        /// <summary>
         /// Сохранение описания в виде скрипта Lua.
         /// </summary>
         public void SaveAsLua(string PAC_Name, string path, bool silentMode)
         {
-            ParamsForSave param = new ParamsForSave(PAC_Name, path, silentMode);
+            var param = new ParamsForSave(PAC_Name, path, silentMode);
 
             if (silentMode)
             {
-                SaveAsLuaThread(param);
+                ProjectDescriptionSaver.Save(param);
             }
             else
             {
-                System.Threading.Thread t = new System.Threading.Thread(
-                    new System.Threading.ParameterizedThreadStart(SaveAsLuaThread));
-
+                var t = new System.Threading.Thread(new System.Threading
+                    .ParameterizedThreadStart(ProjectDescriptionSaver.Save));
                 t.Start(param);
             }
         }
@@ -245,7 +178,7 @@ namespace EasyEPlanner
             string projectName, bool loadFromLua)
         {
             errStr = "";
-            log.Clear();
+            Logs.Clear();
 
             string LuaStr;
             int res = 0;
@@ -314,7 +247,7 @@ namespace EasyEPlanner
         {
             this.editor = editor;
             this.techObjectManager = techObjectManager;
-            this.log = log;
+            Logs.Init(log);
             
             this.IOManager = IOManager;
             this.deviceManager = deviceManager;
@@ -339,33 +272,30 @@ namespace EasyEPlanner
         /// <param name="projectName">Имя проекта</param>
         private void ExportToExcel(object param)
         {
-            string par = param as string;
-            log.ShowLog();
+            var par = param as string;
+            Logs.Show();
 
-            log.DisableOkButton();
-            log.Clear();
-            log.SetProgress(0);
+            Logs.DisableButtons();
+            Logs.Clear();
+            Logs.SetProgress(0);
 
             try
             {
-
-                log.SetProgress(1);
-
+                Logs.SetProgress(1);
                 ExcelRepoter.ExportTechDevs(par);
-
-                log.AddMessage("Done.");
+                Logs.AddMessage("Done.");
             }
 
             catch (System.Exception ex)
             {
-                log.AddMessage("Exception - " + ex);
+                Logs.AddMessage("Exception - " + ex);
             }
             finally
             {
-                if (log != null)
+                if (Logs.IsNull() == false)
                 {
-                    log.EnableOkButton();
-                    log.SetProgress(100);
+                    Logs.EnableButtons();
+                    Logs.SetProgress(100);
                 }
             }
         }
@@ -379,28 +309,28 @@ namespace EasyEPlanner
             var errors = "";
             try
             {
-                log.Clear();
-                log.ShowLog();
-                log.AddMessage("Выполняется синхронизация..");
+                Logs.Clear();
+                Logs.Show();
+                Logs.AddMessage("Выполняется синхронизация..");
                 errors = ModulesBindingUpdate.GetInstance().Execute();
-                log.Clear();
+                Logs.Clear();
             }
             catch (System.Exception ex)
             {
-                log.AddMessage("Exception - " + ex);
+                Logs.AddMessage("Exception - " + ex);
             }
             finally
             {
                 if (errors != "")
                 {
-                    log.AddMessage(errors);
+                    Logs.AddMessage(errors);
                 }
 
-                if (log != null)
+                if (Logs.IsNull() == false)
                 {
-                    log.AddMessage("Синхронизация завершена. ");
-                    log.SetProgress(100);
-                    log.EnableOkButton();
+                    Logs.AddMessage("Синхронизация завершена. ");
+                    Logs.SetProgress(100);
+                    Logs.EnableButtons();
                 }
             }
         }
@@ -422,32 +352,29 @@ namespace EasyEPlanner
         {
             string par = param as string;
 
-            log.ShowLog();
+            Logs.Show();
 
-            log.DisableOkButton();
-            log.Clear();
-            log.SetProgress(0);
+            Logs.DisableButtons();
+            Logs.Clear();
+            Logs.SetProgress(0);
 
             try
             {
-                log.SetProgress(1);
-
+                Logs.SetProgress(1);
                 XMLReporter.SaveAsXML(par);
-                log.SetProgress(50);
-
-                log.AddMessage("Done.");
+                Logs.SetProgress(50);
+                Logs.AddMessage("Done.");
             }
-
             catch (System.Exception ex)
             {
-                log.AddMessage("Exception - " + ex);
+                Logs.AddMessage("Exception - " + ex);
             }
             finally
             {
-                if (log != null)
+                if (Logs.IsNull() == false)
                 {
-                    log.EnableOkButton();
-                    log.SetProgress(100);
+                    Logs.EnableButtons();
+                    Logs.SetProgress(100);
                 }
             }
         }
@@ -624,14 +551,8 @@ namespace EasyEPlanner
             }
         }
 
-        private void SaveAsLuaThread(object param)
-        {
-            ProjectDescriptionSaver.Save(param);
-        }
-
         private IEditor editor; /// Редактор технологических объектов.
         private ITechObjectManager techObjectManager; /// Менеджер технологических объектов.
-        private ILog log;
 
         private IOManager IOManager; /// Менеджер модулей ввода/вывода
         private DeviceManager deviceManager; // Менеджер устройств

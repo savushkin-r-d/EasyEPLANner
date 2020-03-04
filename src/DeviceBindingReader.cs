@@ -348,9 +348,9 @@ namespace EasyEPlanner
             int devicesCount = descriptionMatches.Count;
             if (devicesCount < 1 && !description.Equals(CommonConst.Reserve))
             {
-                ProjectManager.GetInstance().AddLogMessage(
-                    $"\"{module.Function.VisibleName}:{clamp}\" - неверное " +
-                    $"имя привязанного устройства - \"{description}\".");
+                Logs.AddMessage($"\"{module.Function.VisibleName}:{clamp}\"" +
+                    $" - неверное имя привязанного устройства - " +
+                    $"\"{description}\".");
             }
 
             foreach (Match descriptionMatch in descriptionMatches)
@@ -405,7 +405,7 @@ namespace EasyEPlanner
                 {
                     error = string.Format("\"{0}:{1}\" : {2}",
                         module.Function.VisibleName , clamp, error);
-                    ProjectManager.GetInstance().AddLogMessage(error);
+                    Logs.AddMessage(error);
                 }
             }
         }

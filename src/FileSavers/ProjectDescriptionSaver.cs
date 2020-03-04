@@ -27,9 +27,9 @@ namespace EasyEPlanner
 
             if (!par.silentMode)
             {
-                ProjectManager.GetInstance().ShowLog();
-                ProjectManager.GetInstance().DisableLogButtons();
-                ProjectManager.GetInstance().SetLogProgress(0);
+                Logs.Show();
+                Logs.DisableButtons();
+                Logs.SetProgress(0);
             }
 
             try
@@ -45,8 +45,9 @@ namespace EasyEPlanner
                 {
                     if (!par.silentMode)
                     {
-                        ProjectManager.GetInstance().AddLogMessage("Ошибка подключения к диску с проектами. Подключите диск!");
-                        ProjectManager.GetInstance().SetLogProgress(100);
+                        Logs.AddMessage("Ошибка подключения к диску с " +
+                            "проектами. Подключите диск!");
+                        Logs.SetProgress(100);
                     }
                     return;
                 }
@@ -63,13 +64,13 @@ namespace EasyEPlanner
 
                 if (par.silentMode == false)
                 {
-                    ProjectManager.GetInstance().SetLogProgress(1);
+                    Logs.SetProgress(1);
                 }
 
                 mainIOFileWriter.Write(IOManager.SaveAsLuaTable(""));
                 if (par.silentMode == false)
                 {
-                    ProjectManager.GetInstance().SetLogProgress(50);
+                    Logs.SetProgress(50);
                 }
 
                 mainIOFileWriter.Write(deviceManager.SaveAsLuaTable(""));
@@ -195,14 +196,14 @@ namespace EasyEPlanner
 
                 if (par.silentMode == false)
                 {
-                    if (!ProjectManager.GetInstance().LogIsEmpty())
+                    if (!Logs.IsEmpty())
                     {
-                        ProjectManager.GetInstance().AddLogMessage("Done.");
-                        ProjectManager.GetInstance().ShowLogLastLine();
+                        Logs.AddMessage("Done.");
+                        Logs.ShowLastLine();
                     }
                     else
                     {
-                        ProjectManager.GetInstance().HideLog();
+                        Logs.Hide();
                     }
                 }
             }
@@ -210,10 +211,10 @@ namespace EasyEPlanner
             {
                 if (par.silentMode == false)
                 {
-                    ProjectManager.GetInstance().AddLogMessage("Exception - " + ex);
-                    ProjectManager.GetInstance().AddLogMessage("");
-                    ProjectManager.GetInstance().AddLogMessage("");
-                    ProjectManager.GetInstance().ShowLogLastLine();
+                    Logs.AddMessage("Exception - " + ex);
+                    Logs.AddMessage("");
+                    Logs.AddMessage("");
+                    Logs.ShowLastLine();
                 }
             }
             finally
@@ -252,10 +253,10 @@ namespace EasyEPlanner
                     prgFileWriter.Close();
                 }
 
-                if (!par.silentMode && ProjectManager.GetInstance().LogIsNull() == false)
+                if (!par.silentMode && Logs.IsNull() == false)
                 {
-                    ProjectManager.GetInstance().EnableLogButtons();
-                    ProjectManager.GetInstance().SetLogProgress(100);
+                    Logs.EnableButtons();
+                    Logs.SetProgress(100);
                 }
             }
         }

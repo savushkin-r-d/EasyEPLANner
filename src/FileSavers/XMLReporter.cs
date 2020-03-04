@@ -181,8 +181,8 @@ namespace EasyEPlanner
                         }
                         else
                         {
-                            ProjectManager.GetInstance().AddLogMessage(
-                                "Превышено количество подтипов в базе каналов.");
+                            Logs.AddMessage("Превышено количество подтипов " +
+                                "в базе каналов.");
                             return;
                         }
                     }
@@ -351,8 +351,7 @@ namespace EasyEPlanner
             fifthLevel = xmlDoc.CreateElement(pefixParam, "value", nsParam);
             if (string.IsNullOrEmpty(EProjectManager.GetInstance().GetCurrentProjectName()))
             {
-                ProjectManager.GetInstance()
-                    .AddLogMessage("Не задано PLC_NAME.");
+                Logs.AddMessage("Не задано PLC_NAME.");
                 fifthLevel.InnerText = "PLC_NAME";
             }
             else

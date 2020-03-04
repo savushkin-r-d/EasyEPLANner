@@ -53,8 +53,8 @@ namespace EasyEPlanner
             
             if (isContainsNodes == false)
             {
-                ProjectManager.GetInstance().AddLogMessage(
-                    $"Не найден ни один узловой модуль (A100, A200, ...).");
+                Logs.AddMessage($"Не найден ни один узловой модуль " +
+                    $"(A100, A200, ...).");
                 return;
             }
 
@@ -153,7 +153,7 @@ namespace EasyEPlanner
                 }
                 else
                 {
-                    ProjectManager.GetInstance().AddLogMessage($"У модуля \"" +
+                    Logs.AddMessage($"У модуля \"" +
                         $"{function.VisibleName}\" не задан параметр изделия" +
                         $" (номер типа изделия).");
                 }
@@ -198,7 +198,7 @@ namespace EasyEPlanner
             }
             else
             {
-                ProjectManager.GetInstance().AddLogMessage($"У узла \"" +
+                Logs.AddMessage($"У узла \"" +
                     $"{function.VisibleName}\" не задан IP-адрес.");
             }
 
@@ -298,7 +298,7 @@ namespace EasyEPlanner
                 }
                 else
                 {
-                    ProjectManager.GetInstance().AddLogMessage($"Для" +
+                    Logs.AddMessage($"Для" +
                         $" \"{function.VisibleName}\" - \"{type}\", " +
                         $"не найден узел номер {++shortNodeNumber}.");
                 }
@@ -346,9 +346,9 @@ namespace EasyEPlanner
             }
             else
             {
-                ProjectManager.GetInstance().AddLogMessage($"У модуля \"" +
-                        $"{function.VisibleName}\" не задан параметр изделия" +
-                        $" (номер типа изделия).");
+                Logs.AddMessage($"У модуля \"" +
+                    $"{function.VisibleName}\" не задан параметр изделия" +
+                    $" (номер типа изделия).");
             }
 
             return type;
@@ -367,7 +367,7 @@ namespace EasyEPlanner
             moduleInfo = moduleInfo.GetIOModuleInfo(type, out isStub);
             if (isStub && type != "")
             {
-                ProjectManager.GetInstance().AddLogMessage($"Неизвестный " +
+                Logs.AddMessage($"Неизвестный " +
                     $"модуль \"{function.VisibleName}\" - \"{type}\".");
             }
 
@@ -428,7 +428,7 @@ namespace EasyEPlanner
 
             if (function.Articles.GetLength(0) == 0)
             {
-                ProjectManager.GetInstance().AddLogMessage($"У модуля \"" +
+                Logs.AddMessage($"У модуля \"" +
                     $"{function.VisibleName}\" не задано изделие.");
                 skip = true;
                 return skip;
