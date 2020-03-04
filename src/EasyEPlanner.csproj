@@ -152,6 +152,7 @@
     <Compile Include="FileSavers\Excel\ExcelDataCollector.cs" />
     <Compile Include="FileSavers\Excel\ExcelRepoter.cs" />
     <Compile Include="DeviceBindFromForm.cs" />
+    <Compile Include="FileSavers\SVGStatisticsSaver.cs" />
     <Compile Include="IdleForm.cs">
       <SubType>Form</SubType>
     </Compile>
