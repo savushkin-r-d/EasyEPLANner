@@ -149,8 +149,8 @@
     </Compile>
     <Compile Include="Editor.cs" />
     <Compile Include="EProjectManager.cs" />
-    <Compile Include="ExcelDataCollector.cs" />
-    <Compile Include="ExcelRepoter.cs" />
+    <Compile Include="FileSavers\Excel\ExcelDataCollector.cs" />
+    <Compile Include="FileSavers\Excel\ExcelRepoter.cs" />
     <Compile Include="DeviceBindFromForm.cs" />
     <Compile Include="IdleForm.cs">
       <SubType>Form</SubType>
@@ -174,9 +174,9 @@
       <DependentUpon>ModeFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="PInvokeUtil.cs" />
-    <Compile Include="PrgLuaSaver.cs" />
+    <Compile Include="FileSavers\PrgLuaSaver.cs" />
     <Compile Include="ProjectConfiguration.cs" />
-    <Compile Include="ProjectDescriptionSaver.cs" />
+    <Compile Include="FileSavers\ProjectDescriptionSaver.cs" />
     <Compile Include="ProjectManager.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -233,7 +233,7 @@
     <Compile Include="TechObject\TechObject.cs" />
     <Compile Include="TechObject\TechObjectManager.cs" />
     <Compile Include="TechObject\TimersManager.cs" />
-    <Compile Include="XMLReporter.cs" />
+    <Compile Include="FileSavers\XMLReporter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DFrm.resx">
