@@ -674,14 +674,6 @@ namespace Device
 
                         case DeviceSubType.V_DO1_DI1_FB_ON:
                         case DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON:
-                            return new List<string>(new string[] 
-                            { 
-                                "ST", 
-                                "M", 
-                                "P_ON_TIME", 
-                                "P_FB", 
-                            });
-
                         case DeviceSubType.V_DO1_DI1_FB_OFF:
                         case DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF:
                             return new List<string>(new string[] 
@@ -721,7 +713,9 @@ namespace Device
                                 "V",
                                 "BLINK",
                                 "CS",
-                                "ERR"
+                                "ERR",
+                                "FB_OFF_ST",
+                                "FB_ON_ST"
                             });
                     }
                     break;
@@ -781,19 +775,14 @@ namespace Device
                     {
                         case DeviceSubType.LS_MIN:
                         case DeviceSubType.LS_MAX:
+                        case DeviceSubType.LS_IOLINK_MIN:
+                        case DeviceSubType.LS_IOLINK_MAX:
+                        case DeviceSubType.LS_VIRT:
                             return new List<string>(new string[]
                             {
                                 "ST",
                                 "M",
                                 "P_DT"
-                            });
-                        case DeviceSubType.LS_IOLINK_MIN:
-                        case DeviceSubType.LS_IOLINK_MAX:
-                        case DeviceSubType.LS_VIRT:
-                            return new List<string>(new string[] 
-                            { 
-                                "ST", 
-                                "M" 
                             });
                     }
                     break;
@@ -882,6 +871,7 @@ namespace Device
                     { 
                         "ST", 
                         "M",
+                        "P_DT",
                     });
 
                 case DeviceType.SB:
@@ -924,6 +914,7 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.AI:
+                        case DeviceSubType.AI_VIRT:
                             return new List<string>(new string[] 
                             { 
                                 "M", 
@@ -931,13 +922,6 @@ namespace Device
                                 "P_MIN_V", 
                                 "P_MAX_V",
                                 "V"
-                            });
-
-                        case DeviceSubType.AI_VIRT:
-                            return new List<string>(new string[] 
-                            { 
-                                "M", 
-                                "ST" 
                             });
                     }
                     break;
@@ -969,7 +953,7 @@ namespace Device
                                 "M", 
                                 "V", 
                                 "P_MIN_V", 
-                                "P_MAX_V" 
+                                "P_MAX_V",
                             });
 
                         case DeviceSubType.DEV_SPAE:
@@ -1024,9 +1008,16 @@ namespace Device
 
                         case DeviceSubType.FQT_VIRT:
                             return new List<string>(new string[] 
-                            { 
-                                "ABS_V", 
-                                "F"
+                            {
+                                "ST",
+                                "M",
+                                "V",
+                                "P_MIN_FLOW",
+                                "P_MAX_FLOW",
+                                "P_CZ",
+                                "F",
+                                "P_DT",
+                                "ABS_V",
                             });
                     }
                     break;
