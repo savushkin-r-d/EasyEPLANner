@@ -284,11 +284,11 @@ namespace EasyEPlanner.Properties {
         ///   Ищет локализованную строку, похожую на &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
         ///    &lt;svg width=&quot;100&quot; height=&quot;20&quot; version=&quot;1.1&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
         ///
-        ///        &lt;rect rx=&quot;4&quot; x=&quot;0&quot; width=&quot;100&quot; height=&quot;20&quot; fill=&quot;dimgrey&quot;/&gt;
-        ///        &lt;rect rx=&quot;4&quot; x=&quot;0&quot; width=&quot;90.0&quot; height=&quot;20&quot; fill=&quot;green&quot;/&gt;
+        ///        &lt;rect rx=&quot;4&quot; x=&quot;0&quot; width=&quot;{0}&quot; height=&quot;20&quot; fill=&quot;dimgrey&quot;/&gt;
+        ///        &lt;rect rx=&quot;4&quot; x=&quot;0&quot; width=&quot;{1}&quot; height=&quot;20&quot; fill=&quot;green&quot;/&gt;
         ///
         ///            &lt;g fill=&quot;#fff&quot; text-anchor=&quot;middle&quot; font-family=&quot;DejaVu Sans,Verdana,Geneva,sans-serif&quot; font-size=&quot;11&quot;&gt;
-        ///                &lt;text x=&quot;50.0&quot; y=&quot;14&quot;&gt;{0}&lt;/text&gt;
+        ///                &lt;text x=&quot;50.0&quot; y=&quot;14&quot;&gt;{2}&lt;/text&gt;
         ///            &lt;/g&gt;
         ///   &lt;/svg&gt;.
         /// </summary>

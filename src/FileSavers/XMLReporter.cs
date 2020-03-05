@@ -19,7 +19,12 @@ namespace EasyEPlanner
             TreeNode rootNode = new TreeNode("subtypes");
             techObjectManager.GetObjectForXML(rootNode);
             deviceManager.GetObjectForXML(rootNode);
-            var tagsCount = rootNode.Nodes.Count;
+
+            int tagsCount = 0;
+            foreach(TreeNode node in rootNode.Nodes)
+            {
+                tagsCount += node.Nodes.Count;
+            }
 
             return tagsCount;
         }

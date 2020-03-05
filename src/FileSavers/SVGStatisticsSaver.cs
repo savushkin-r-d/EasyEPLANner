@@ -40,7 +40,7 @@ namespace EasyEPlanner
                 Encoding.GetEncoding(1251));
             int loc = readedFile.Length;
             string strForWriting = $"{loc.ToString()} строк кода";
-            string result = string.Format(svgFilePattern, strForWriting);
+            string result = string.Format(svgFilePattern, 100, 90, strForWriting);
 
             var locWriter = new StreamWriter(folderPath, false, Encoding.UTF8);
             locWriter.WriteLine(result);
@@ -57,7 +57,7 @@ namespace EasyEPlanner
             folderPath += countOfTagsFileName;
             int tagsCount = XMLReporter.GetTagsCount();
             string strForWriting = $"{tagsCount.ToString()} тэг(ов)";
-            string result = string.Format(svgFilePattern, strForWriting);
+            string result = string.Format(svgFilePattern, 100, 90, strForWriting);
 
             var tagsWriter = new StreamWriter(folderPath, false, Encoding.UTF8);
             tagsWriter.WriteLine(result);
@@ -74,7 +74,7 @@ namespace EasyEPlanner
             folderPath += countOfUnitsFileName;
             int unitsCount = techObjectManager.UnitsCount;
             string strForWriting = $"{unitsCount.ToString()} аппарат(ов)";
-            string result = string.Format(svgFilePattern, strForWriting);
+            string result = string.Format(svgFilePattern, 100, 90, strForWriting);
 
             var unitsWriter = new StreamWriter(folderPath, false, 
                 Encoding.UTF8);
@@ -92,7 +92,7 @@ namespace EasyEPlanner
             folderPath += counstOfEquipmentModulesFileName;
             int equipmentModulesCount = techObjectManager.EquipmentModulesCount;
             string strForWriting = $"{equipmentModulesCount.ToString()} агрегат(ов)";
-            string result = string.Format(svgFilePattern, strForWriting);
+            string result = string.Format(svgFilePattern, 100, 90, strForWriting);
 
             var equipmentWriter = new StreamWriter(folderPath, false, 
                 Encoding.UTF8);
