@@ -414,8 +414,8 @@ namespace EasyEPlanner
                 Node.Text.Contains("OBJECT") &&
                 (Node.Text.Contains("ST") ||
                 Node.Text.Contains("MODES") ||
-                Node.Text.Contains("OPERATIONS")) &&
-                (!Node.Text.Contains("STEPS"));
+                Node.Text.Contains("OPERATIONS") ||
+                Node.Text.Contains("STEPS"));
             string prefixChannels = "channels";
             string nsChannels = "http://brestmilk.by/channels/";
             XmlElement channel = xmlDoc.CreateElement(prefixChannels, "channel", nsChannels);
@@ -460,7 +460,7 @@ namespace EasyEPlanner
             {
                 if (subtypeName.Contains("QT"))
                 {
-                    channelElm.InnerText = "0.3";
+                    channelElm.InnerText = "0.1";
                 }
                 else if (subtypeName.Equals("V_V"))
                 {
@@ -595,6 +595,8 @@ namespace EasyEPlanner
                 "SB_ST",
                 "HL_ST",
                 "HA_ST",
+                "AO_V",
+                "AI_V"
             });
 
         /// <summary>
