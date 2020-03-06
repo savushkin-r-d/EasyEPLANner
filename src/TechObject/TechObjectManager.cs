@@ -174,9 +174,23 @@ namespace TechObject
         /// </summary>
         private string CheckTypeField()
         {
-            var msg = "";
-            //TODO: метод проверки поля "Тип" у объектов
-            return msg;
+            var errorsList = new List<string>();
+            foreach(var obj in Objects)
+            {
+                var matches = Objects.Where(x => x.TechType == obj.TechType &&
+                x.TechNumber == obj.TechNumber)
+                    .Select(x => GetTechObjectN(x))
+                    .ToArray();
+
+                if (matches.Count() > 1)
+                {
+                    errorsList.Add($"У объектов {string.Join(",", matches)} " +
+                        $"совпадает поле \"Тип\"\n");
+                }
+            }
+
+            errorsList = errorsList.Distinct().ToList();
+            return string.Join("", errorsList);
         }
 
         /// <summary>
@@ -184,9 +198,23 @@ namespace TechObject
         /// </summary>
         private string CheckObjectMonitorField()
         {
-            var msg = "";
-            //TODO: метод проверки поля "Имя объекта Monitor" у объектов.
-            return msg;
+            var errorsList = new List<string>();
+            foreach(var obj in Objects)
+            {
+                var matches = Objects.Where(x => x.NameBC == obj.NameBC &&
+                x.TechNumber == obj.TechNumber)
+                    .Select(x => GetTechObjectN(x))
+                    .ToArray();
+
+                if (matches.Count() > 1)
+                {
+                    errorsList.Add($"У объектов {string.Join(",", matches)} " +
+                        $"совпадает поле \"Имя объекта Monitor\"\n");
+                }
+            }
+
+            errorsList = errorsList.Distinct().ToList();
+            return string.Join("", errorsList);
         }
 
         /// <summary>
