@@ -72,6 +72,7 @@
 #### Синхронизация и экспорт
 + [Синхронизация названий устройств и модулей](#81-Синхронизация-названий-устройств-и-модулей)
 + [Экспорт XML для EasyServer](#82-Экспорт-XML-для-EasyServer)
+    + [Экспортируемые параметры](#821-Экспортируемые-параметры)
 + [Экспорт технологических устройств в Excel](#83-Экспорт-технологических-устройств-в-Excel)
     + [Экспорт информации в Excel для работы в SCADA](#831-Экспорт-информации-для-SCADA-из-проекта)
 
@@ -947,6 +948,85 @@ DEV_SPAE | **IO-Link** датчик давления воздуха
 Если выбрали в предыдущем меню пункт создания новой базы каналов, то будет предложено сгруппировать тэги технологических объектов в один подтип. После выбора варианта (_да - сгруппировать, нет - не группировать_) будет создана база каналов.
 
 _Примечание:_ для корректного экспорта базы каналов, необходимо, чтобы в редакторе технологических объектов было правильно заполнено поле "Имя объекта Monitor" в объектах. Если эти поля в объектах будут совпадать, то эти объекты будут отключенны (закомментированы) в базе каналов. Например, если есть объекты со значением поля TankObj с одинаковыми номерами (TankObj1 и TankObj1, тип не влияет), то база каналов закомментирует эти объекты. Поэтому, важно, что бы поле "Имя объекта Monitor" было уникально для каждого типа объектов. Например, _Танк молока 1_, _Танк воды 1_ можно обозначить, как _TankMilkObj_ и _TankWaterObj_.
+
+##### 8.2.1 Экспортируемые параметры #####
+
+Если не указан подтип устройства, то эти параметры экспортируются для любого типа этого устройства. Первый уровень списка - устройство, второй - подтип, и параметры через тире.
+
+1. Устройство - **V**
+    * **V_DO1** - ST, M;
+    * **V_DO2** - ST, M;
+    * **V_IOLINK_VTUG_DO1**: - ST, M;
+    * **V_DO1_DI1_FB_ON** - ST, M, P_ON_TIME, P_FB, FB_OFF_ST;
+    * **V_IOLINK_VTUG_DO1_FB_ON** - ST, M, P_ON_TIME, P_FB, FB_OFF_ST;
+    * **V_DO1_DI1_FB_OFF** - ST, M, P_ON_TIME, P_FB, FB_OFF_ST;
+    * **V_IOLINK_VTUG_DO1_FB_OFF** - ST, M, P_ON_TIME, P_FB, FB_OFF_ST;
+    * **V_DO1_DI2** - ST, M, P_ON_TIME, P_FB, FB_OFF_ST, FB_ON_ST;
+    * **V_DO2_DI2** - ST, M, P_ON_TIME, P_FB, FB_OFF_ST, FB_ON_ST;
+    * **V_DO2_DI2_BISTABLE** - ST, M, P_ON_TIME, P_FB, FB_OFF_ST, FB_ON_ST;
+    * **V_MIXPROOF** - ST, M, P_ON_TIME, P_FB, FB_OFF_ST, FB_ON_ST;
+    * **V_AS_MIXPROOF** - ST, M, P_ON_TIME, P_FB, FB_OFF_ST, FB_ON_ST;
+    * **V_AS_DO1_DI2** - ST, M, P_ON_TIME, P_FB, FB_OFF_ST, FB_ON_ST;
+    * **V_BOTTOM_MIXPROOF** - ST, M, P_ON_TIME, P_FB, FB_OFF_ST, FB_ON_ST;
+    * **V_IOLINK_MIXPROOF** - ST, M, P_ON_TIME, P_FB, V, BLINK, CS, ERR, FB_OFF_ST, FB_ON_ST;
+    * **V_IOLINK_DO1_DI2** - ST, M, P_ON_TIME, P_FB, V, BLINK, CS, ERR, FB_OFF_ST, FB_ON_ST.
+2. Устройство - **VC** - ST, M, V.
+3. Устройство - **M**
+    * **M** - ST, M, P_ON_TIME, V;
+    * **M_FREQ** - ST, M, P_ON_TIME, V;
+    * **M_REV** - ST, M, P_ON_TIME, V, R;
+    * **M_REV_FREQ** - ST, M, P_ON_TIME, V, R;
+    * **M_REV_2** - ST, M, P_ON_TIME, V, R;
+    * **M_REV_FREQ_2** - ST, M, P_ON_TIME, V, R;
+    * **M_REV_2_ERROR** - ST, M, P_ON_TIME, V, R;
+    * **M_ATV** - M, ST, R, FRQ, RPM, EST, V, P_ON_TIME.
+4. Устройство - **LS**
+    * **LS_MIN** - ST, M, P_DT;
+    * **LS_MAX** - ST, M, P_DT;
+    * **LS_IOLINK_MAX** - ST, M, P_DT;
+    * **LS_IOLINK_MIN** - ST, M, P_DT;
+    * **LS_VIRT** - ST, M, P_DT.
+5. Устройство - **FS** - ST, M, P_DT.
+6. Устройство - **GS** - ST, M, P_DT.
+7. Устройство - **TE**
+    * **TE** - M, V, P_CZ;
+    * **TE_IOLINK** - M, V, P_CZ.
+8. Устройство - **LT**
+    * **LT** - M, V, P_CZ;
+    * **LT_IOLINK** - M, V, P_CZ;
+    * **LT_CYL** - M, V, P_CZ, P_MAX_P, P_R, CLEVEL;
+    * **LT_CONE** - M, V, P_CZ, P_MAX_P, P_R, CLEVEL, P_H_CONE;
+    * **LT_TRUNC** - M, V, P_CZ, P_MAX_P, P_R, CLEVEL, P_H_TRUNC.
+9. Устройство - **HA** - ST, M.
+10. Устройство - **HL** - ST, M, P_DT.
+11. Устройство - **SB** - ST, M, P_DT.
+12. Устройство - **DI**
+    * **DI** - ST, M, P_DT;
+    * **DI_VIRT** - ST, M.
+13. Устройство - **DO** - ST, M.
+14. Устройство - **AI**
+    * **AI** - M, ST, P_MIN_V, P_MAX_V, V;
+    * **AI_VIRT** - M, ST, P_MIN_V, P_MAX_V, V.
+15. Устройство - **AO** - M, V.
+16. Устройство - **PT**
+    * **PT** - ST, M, V, P_MIN_V, P_MAX_V, P_CZ;
+    * **PT_IOLINK** - M, V, P_MIN_V, P_MAX_V;
+    * **DEV_SPAE** - M, V.
+17. Устройство - **FQT**
+    * **FQT** - ST, M, V, ABS_V;
+    * **FQT_F** - ST, M, V, ABS_V, P_MIN_FLOW, P_MAX_FLOW, P_CZ, F, P_DT;
+    * **FQT_F_OK** - ST, M, V, ABS_V, P_MIN_FLOW, P_MAX_FLOW, P_CZ, F, P_DT, OK;
+    * **FQT_VIRT** - ST, M, V, ABS_V, P_MIN_FLOW, P_MAX_FLOW, P_CZ, F, P_DT.
+18. Устройство - **QT**
+    * **QT** - ST, M, V, P_MIN_V, P_MAX_V, P_CZ;
+    * **QT_OK** - ST, M, V, P_MIN_V, P_MAX_V, P_CZ, OK;
+    * **QT_IOLINK** - ST, M, V, P_CZ.
+19. Устройство - **WT** - ST, M, V, P_NOMINAL_W, P_DT, P_RKP, P_CZ.
+
+Протоколируются: TE_V, QT_V, FQT_F, PT_V, VC_V, M_V, M_ST, LT_CLEVEL, V_ST, LS_ST, FS_ST, GS_ST,
+ SB_ST, DI_ST, DO_ST, SB_ST, HL_ST, HA_ST, AO_V, AI_V.
+
+Устанавливается период: TE_V, QT_V, LT_V, PT_V, AO_V, AI_V, FQT_F, M_V, VC_V, LT_CLEVEL, V_V.
 
 #### 8.3 Экспорт технологических устройств в Excel ####
 
