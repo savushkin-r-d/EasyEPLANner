@@ -149,9 +149,10 @@
     </Compile>
     <Compile Include="Editor.cs" />
     <Compile Include="EProjectManager.cs" />
-    <Compile Include="ExcelDataCollector.cs" />
-    <Compile Include="ExcelRepoter.cs" />
+    <Compile Include="FileSavers\Excel\ExcelDataCollector.cs" />
+    <Compile Include="FileSavers\Excel\ExcelRepoter.cs" />
     <Compile Include="DeviceBindFromForm.cs" />
+    <Compile Include="FileSavers\SVGStatisticsSaver.cs" />
     <Compile Include="IdleForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -161,12 +162,13 @@
     <Compile Include="IdleModule.cs" />
     <Compile Include="IO.cs" />
     <Compile Include="IOReader.cs" />
-    <Compile Include="LogFrm.cs">
+    <Compile Include="Logs\LogFrm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LogFrm.Designer.cs">
+    <Compile Include="Logs\LogFrm.Designer.cs">
       <DependentUpon>LogFrm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Logs\Logs.cs" />
     <Compile Include="ModeFrm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -174,8 +176,9 @@
       <DependentUpon>ModeFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="PInvokeUtil.cs" />
-    <Compile Include="PrgLuaSaver.cs" />
+    <Compile Include="FileSavers\PrgLuaSaver.cs" />
     <Compile Include="ProjectConfiguration.cs" />
+    <Compile Include="FileSavers\ProjectDescriptionSaver.cs" />
     <Compile Include="ProjectManager.cs" />
     <Compile Include="main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -232,7 +235,7 @@
     <Compile Include="TechObject\TechObject.cs" />
     <Compile Include="TechObject\TechObjectManager.cs" />
     <Compile Include="TechObject\TimersManager.cs" />
-    <Compile Include="XMLReporter.cs" />
+    <Compile Include="FileSavers\XMLReporter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DFrm.resx">
@@ -241,7 +244,7 @@
     <EmbeddedResource Include="IdleForm.resx">
       <DependentUpon>IdleForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LogFrm.resx">
+    <EmbeddedResource Include="Logs\LogFrm.resx">
       <DependentUpon>LogFrm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -250,7 +253,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>

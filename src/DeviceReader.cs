@@ -187,7 +187,7 @@ namespace EasyEPlanner
 
                 if (error != "")
                 {
-                    ProjectManager.GetInstance().AddLogMessage(error);
+                    Logs.AddMessage(error);
                 }
             }
 

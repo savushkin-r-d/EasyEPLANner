@@ -518,6 +518,31 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Получить количество аппаратов в проекте
+        /// </summary>
+        public int UnitsCount
+        {
+            get
+            {
+                var units = objects.Where(x => x.S88Level == 1).ToList();
+                return units.Count;
+            }
+        }
+
+        /// <summary>
+        /// Получить количество агрегатов в проекте
+        /// </summary>
+        public int EquipmentModulesCount
+        {
+            get
+            {
+                var equipmentModules = objects.Where(x => x.S88Level == 2)
+                    .ToList();
+                return equipmentModules.Count;
+            }
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {

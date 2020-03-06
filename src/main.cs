@@ -72,14 +72,8 @@ namespace EasyEPlanner
 
             menuID = oMenu.AddMenuItem("О дополнении", "AboutProgramm", "", menuID, 1, true, false);
 
-            ProjectManager.GetInstance().Init(Editor.Editor.GetInstance(),
-                TechObject.TechObjectManager.GetInstance(), new LogFrm(),
-                IO.IOManager.GetInstance(), Device.DeviceManager.GetInstance(),
-                ProjectConfiguration.GetInstance());
-
-            // Вызов GetInstance() для создания объекта EProjectManager.
-            EProjectManager.GetInstance();
-
+            ProjectManager.GetInstance().Init();
+            
             return true;
         }
 
@@ -601,11 +595,16 @@ namespace EasyEPlanner
                 }
                 else
                 {
-                    string projectName = EProjectManager.GetInstance().GetCurrentProjectName();
-                    EProjectManager.GetInstance().CheckProjectName(ref projectName);
-                    string path = ProjectManager.GetInstance().GetPtusaProjectsPath(projectName) +
-                      projectName;
-                    ProjectManager.GetInstance().SaveAsLua(projectName, path, silentMode);                 
+                    string projectName = EProjectManager.GetInstance()
+                        .GetCurrentProjectName();
+                    EProjectManager.GetInstance()
+                        .CheckProjectName(ref projectName);
+                    string path = ProjectManager.GetInstance()
+                        .GetPtusaProjectsPath(projectName) + projectName;
+                    ProjectManager.GetInstance().SaveAsLua(projectName, path, 
+                        silentMode);
+
+                    SVGStatisticsSaver.Save(path);
                 }
             }
             catch (Exception ex)
@@ -617,10 +616,13 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        ///This function is called by the application framework, when registering the add-in.
+        ///This function is called by the application framework, when 
+        ///registering the add-in.
         /// </summary>
-        /// <param name="Name">The action is registered in EPLAN under this name.</param>
-        /// <param name="Ordinal">The action is registered with this overload priority.</param>
+        /// <param name="Name">The action is registered in EPLAN under 
+        /// this name.</param>
+        /// <param name="Ordinal">The action is registered with this overload 
+        /// priority.</param>
         ///<returns>true, if OnRegister succeeds</returns>
         public bool OnRegister(ref string Name, ref int Ordinal)
         {
@@ -632,7 +634,8 @@ namespace EasyEPlanner
         /// <summary>
         /// Documentation function for the action.
         /// </summary>
-        /// <param name="actionProperties"> This object needs to be filled with information about the action.</param>
+        /// <param name="actionProperties"> This object needs to be filled 
+        /// with information about the action.</param>
         public void GetActionProperties(ref ActionProperties actionProperties)
         {
         }

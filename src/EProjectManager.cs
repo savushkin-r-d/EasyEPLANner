@@ -71,7 +71,7 @@ namespace EasyEPlanner
             {
                 string errorMessage = $"Некорректно задано имя проекта - " +
                     $"длина не должна превышать {MaxProjectNameLength} символов. ";
-                ProjectManager.GetInstance().AddLogMessage(errorMessage);
+                Logs.AddMessage(errorMessage);
                 name = name.Substring(0, MaxProjectNameLength);
             }
 
@@ -84,7 +84,7 @@ namespace EasyEPlanner
                     "рекомендуется для имени площадки использовать " +
                     "английский, а для проекта - русский, вместо пробелов - " +
                     "знак минус (прим., LOC1-Название-проекта). ";
-                ProjectManager.GetInstance().AddLogMessage(errorMessage);
+                Logs.AddMessage(errorMessage);
                 name = GetModifyingCurrentProjectName();
             }
         }

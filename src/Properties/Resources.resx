@@ -202,4 +202,17 @@
   <data name="toCheck" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\To Do's1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="svgPattern" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;svg width="100" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
+
+        &lt;rect rx="4" x="0" width="{0}" height="20" fill="dimgrey"/&gt;
+        &lt;rect rx="4" x="0" width="{1}" height="20" fill="green"/&gt;
+
+            &lt;g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11"&gt;
+                &lt;text x="50.0" y="14"&gt;{2}&lt;/text&gt;
+            &lt;/g&gt;
+   &lt;/svg&gt;</value>
+    <comment>Шаблон для генерации SVG файла картинки (progress bar) модулем генерации SVG картинок. Генерация статистики по проекту. {0} - Максимальное значение параметра, {1} - заданное значение параметра, {2} - текст внутри картинки.</comment>
+  </data>
 </root>

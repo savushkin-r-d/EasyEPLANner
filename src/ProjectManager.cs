@@ -38,45 +38,21 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Добавление сообщения в лог.
-        /// </summary>
-        public void AddLogMessage(string msg)
-        {
-            log.AddMessage(msg);
-        }
-
-        /// <summary>
-        /// Установление прогресса.
-        /// </summary>
-        public void SetLogProgress(int msg)
-        {
-            log.SetProgress(msg);
-        }
-
-        /// <summary>
-        /// Отображение окна сообщений лога.
-        /// </summary>
-        public void ShowLog()
-        {
-            log.ShowLog();
-        }
-
-        /// <summary>
         /// Сохранение описания в виде скрипта Lua.
         /// </summary>
         public void SaveAsLua(string PAC_Name, string path, bool silentMode)
         {
-            Params param = new Params(PAC_Name, path, silentMode);
+            var param = new ProjectDescriptionSaver.ParametersForSave(PAC_Name, 
+                path, silentMode);
 
             if (silentMode)
             {
-                SaveAsLuaThread(param);
+                ProjectDescriptionSaver.Save(param);
             }
             else
             {
-                System.Threading.Thread t = new System.Threading.Thread(
-                    new System.Threading.ParameterizedThreadStart(SaveAsLuaThread));
-
+                var t = new System.Threading.Thread(new System.Threading
+                    .ParameterizedThreadStart(ProjectDescriptionSaver.Save));
                 t.Start(param);
             }
         }
@@ -203,7 +179,7 @@ namespace EasyEPlanner
             string projectName, bool loadFromLua)
         {
             errStr = "";
-            log.Clear();
+            Logs.Clear();
 
             string LuaStr;
             int res = 0;
@@ -266,17 +242,15 @@ namespace EasyEPlanner
         /// <summary>
         /// Инициализация.
         /// </summary>
-        public void Init(IEditor editor, ITechObjectManager techObjectManager, 
-            ILog log, IOManager IOManager, DeviceManager deviceManager,
-            ProjectConfiguration projectConfiguration)
+        public void Init()
         {
-            this.editor = editor;
-            this.techObjectManager = techObjectManager;
-            this.log = log;
-            
-            this.IOManager = IOManager;
-            this.deviceManager = deviceManager;
-            this.projectConfiguration = projectConfiguration;
+            this.editor = Editor.Editor.GetInstance();
+            this.techObjectManager = TechObjectManager.GetInstance();
+            Logs.Init(new LogFrm());           
+            this.IOManager = IOManager.GetInstance();
+            DeviceManager.GetInstance();
+            this.projectConfiguration = ProjectConfiguration.GetInstance();
+            EProjectManager.GetInstance();
         }
 
         /// <summary>
@@ -297,33 +271,30 @@ namespace EasyEPlanner
         /// <param name="projectName">Имя проекта</param>
         private void ExportToExcel(object param)
         {
-            string par = param as string;
-            log.ShowLog();
+            var par = param as string;
+            Logs.Show();
 
-            log.DisableOkButton();
-            log.Clear();
-            log.SetProgress(0);
+            Logs.DisableButtons();
+            Logs.Clear();
+            Logs.SetProgress(0);
 
             try
             {
-
-                log.SetProgress(1);
-
+                Logs.SetProgress(1);
                 ExcelRepoter.ExportTechDevs(par);
-
-                log.AddMessage("Done.");
+                Logs.AddMessage("Done.");
             }
 
             catch (System.Exception ex)
             {
-                log.AddMessage("Exception - " + ex);
+                Logs.AddMessage("Exception - " + ex);
             }
             finally
             {
-                if (log != null)
+                if (Logs.IsNull() == false)
                 {
-                    log.EnableOkButton();
-                    log.SetProgress(100);
+                    Logs.EnableButtons();
+                    Logs.SetProgress(100);
                 }
             }
         }
@@ -337,28 +308,28 @@ namespace EasyEPlanner
             var errors = "";
             try
             {
-                log.Clear();
-                log.ShowLog();
-                log.AddMessage("Выполняется синхронизация..");
+                Logs.Clear();
+                Logs.Show();
+                Logs.AddMessage("Выполняется синхронизация..");
                 errors = ModulesBindingUpdate.GetInstance().Execute();
-                log.Clear();
+                Logs.Clear();
             }
             catch (System.Exception ex)
             {
-                log.AddMessage("Exception - " + ex);
+                Logs.AddMessage("Exception - " + ex);
             }
             finally
             {
                 if (errors != "")
                 {
-                    log.AddMessage(errors);
+                    Logs.AddMessage(errors);
                 }
 
-                if (log != null)
+                if (Logs.IsNull() == false)
                 {
-                    log.AddMessage("Синхронизация завершена. ");
-                    log.SetProgress(100);
-                    log.EnableOkButton();
+                    Logs.AddMessage("Синхронизация завершена. ");
+                    Logs.SetProgress(100);
+                    Logs.EnableButtons();
                 }
             }
         }
@@ -380,32 +351,29 @@ namespace EasyEPlanner
         {
             string par = param as string;
 
-            log.ShowLog();
+            Logs.Show();
 
-            log.DisableOkButton();
-            log.Clear();
-            log.SetProgress(0);
+            Logs.DisableButtons();
+            Logs.Clear();
+            Logs.SetProgress(0);
 
             try
             {
-                log.SetProgress(1);
-
+                Logs.SetProgress(1);
                 XMLReporter.SaveAsXML(par);
-                log.SetProgress(50);
-
-                log.AddMessage("Done.");
+                Logs.SetProgress(50);
+                Logs.AddMessage("Done.");
             }
-
             catch (System.Exception ex)
             {
-                log.AddMessage("Exception - " + ex);
+                Logs.AddMessage("Exception - " + ex);
             }
             finally
             {
-                if (log != null)
+                if (Logs.IsNull() == false)
                 {
-                    log.EnableOkButton();
-                    log.SetProgress(100);
+                    Logs.EnableButtons();
+                    Logs.SetProgress(100);
                 }
             }
         }
@@ -566,296 +534,12 @@ namespace EasyEPlanner
             }
         }
 
-        private ProjectManager()
-        {
-        }
-
-        private const int MAIN_IO_FILE_VERSION = 1;
-        private const int MAIN_TECH_OBJECTS_FILE_VERSION = 1;
-        private const int MAIN_TECH_DEVICES_FILE_VERSION = 1;
-        private const int MAIN_RESTRICTIONS_FILE_VERSION = 1;
-        private const int MAIN_PRG_FILE_VERSION = 1;
-
-        private const string MAIN_IO_FILE_NAME = "main.io.lua";
-        private const string MAIN_WAGO_FILE_NAME = "main.wago.lua";
-        private const string MAIN_TECH_OBJECTS_FILE_NAME = "main.objects.lua";
-        private const string MAIN_TECH_DEVICES_FILE_NAME = "main.devices.lua";
-        private const string MAIN_RESTRICTIONS_FILE_NAME = "main.restrictions.lua";
-
-        private const string MAIN_FILE_NAME = "main.plua";
-        private const string MAIN_MODBUS_SRV_FILE_NAME = "main.modbus_srv.lua";
-        private const string MAIN_PROFIBUS_FILE_NAME = "main.profibus.lua";
-        private const string MAIN_PRG_FILE_NAME = "prg.lua";
-
-        private class Params
-        {
-            public string PAC_Name;
-            public string path;
-            public bool silentMode;
-
-            public Params(string PAC_Name, string path, bool silentMode)
-            {
-                this.PAC_Name = PAC_Name;
-                this.path = path;
-                this.silentMode = silentMode;
-            }
-        }
-
-        private void SaveAsLuaThread(object param)
-        {
-            Params par = param as Params;
-
-            StreamWriter mainIOFileWriter = null;
-            StreamWriter mainTechObjectsFileWriter = null;
-            StreamWriter mainTechDevicesFileWriter = null;
-
-            StreamWriter mainRestrictionsFileWriter = null;
-            StreamWriter mainFileWriter = null;
-            StreamWriter prgFileWriter = null;
-
-            if (!par.silentMode)
-            {
-                log.ShowLog();
-                log.DisableOkButton();
-                log.SetProgress(0);
-            }
-
-            try
-            {
-                try
-                {
-                    if (!Directory.Exists(par.path))
-                    {
-                        Directory.CreateDirectory(par.path);
-                    }
-                }
-                catch (DriveNotFoundException)
-                {
-                    if (!par.silentMode)
-                    {
-                        log.AddMessage("Ошибка подключения к диску с проектами. Подключите диск!");
-                        log.SetProgress(100);
-                    }
-                    return;
-                }
-
-                string FILE_NAME = par.path + @"\" + MAIN_IO_FILE_NAME;
-                mainIOFileWriter = new StreamWriter(FILE_NAME,
-                    false, System.Text.Encoding.GetEncoding(1251));
-
-                mainIOFileWriter.WriteLine("--version  = {0}", MAIN_IO_FILE_VERSION);
-                mainIOFileWriter.WriteLine("-- ----------------------------------------------------------------------------");
-                mainIOFileWriter.WriteLine("PAC_name       = \'{0}\'", par.PAC_Name);
-                ushort crc = CRC16(par.PAC_Name);
-                mainIOFileWriter.WriteLine("PAC_id         = \'{0}\'", crc);
-                mainIOFileWriter.WriteLine("-- ----------------------------------------------------------------------------");
-
-                if (par.silentMode == false)
-                {
-                    log.SetProgress(1);
-                }
-
-                mainIOFileWriter.Write(IOManager.SaveAsLuaTable(""));
-                if (par.silentMode == false)
-                {
-                    log.SetProgress(50);
-                }
-
-                mainIOFileWriter.Write(deviceManager.SaveAsLuaTable(""));
-
-                string FILE_NAME2 = par.path + @"\" + MAIN_TECH_OBJECTS_FILE_NAME;
-                mainTechObjectsFileWriter = new StreamWriter(FILE_NAME2,
-                    false, System.Text.Encoding.GetEncoding(1251));
-
-                mainTechObjectsFileWriter.WriteLine("--version  = {0}", MAIN_TECH_OBJECTS_FILE_VERSION);
-                mainTechObjectsFileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);
-                mainTechObjectsFileWriter.WriteLine("-- ----------------------------------------------------------------------------");
-                mainTechObjectsFileWriter.WriteLine("-- ----------------------------------------------------------------------------");
-
-                string LuaStr = techObjectManager.SaveAsLuaTable("");
-                mainTechObjectsFileWriter.WriteLine(LuaStr);
-
-                string FILE_NAME3 = par.path + @"\" + MAIN_TECH_DEVICES_FILE_NAME;
-                mainTechDevicesFileWriter = new StreamWriter(FILE_NAME3,
-                    false, System.Text.Encoding.GetEncoding(1251));
-
-                mainTechDevicesFileWriter.WriteLine("--version  = {0}", MAIN_TECH_DEVICES_FILE_VERSION);
-                mainTechDevicesFileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);
-                mainTechDevicesFileWriter.WriteLine("-- ----------------------------------------------------------------------------");
-                mainTechDevicesFileWriter.WriteLine("-- ----------------------------------------------------------------------------");
-
-                mainTechDevicesFileWriter.Write(deviceManager.SaveDevicesAsLuaScript());
-
-                string FILE_NAME4 = par.path + @"\" + MAIN_RESTRICTIONS_FILE_NAME;
-                mainRestrictionsFileWriter = new StreamWriter(FILE_NAME4,
-                    false, System.Text.Encoding.GetEncoding(1251));
-
-                mainRestrictionsFileWriter.WriteLine("--version  = {0}", MAIN_RESTRICTIONS_FILE_VERSION);
-                mainRestrictionsFileWriter.WriteLine("-- ----------------------------------------------------------------------------");
-                mainRestrictionsFileWriter.WriteLine("-- ----------------------------------------------------------------------------");
-                mainRestrictionsFileWriter.Write(techObjectManager.SaveRestrictionAsLua(""));
-
-                string mainFileName = par.path + @"\" + MAIN_FILE_NAME;
-                if (!File.Exists(mainFileName))
-                {
-                    //Создаем пустое описание управляющей программы.
-                    mainFileWriter = new StreamWriter(mainFileName,
-                        false, System.Text.Encoding.GetEncoding(1251));
-                    mainFileWriter.WriteLine("--Проект \'{0}\'", par.PAC_Name);
-
-                    mainFileWriter.WriteLine("------------------------------------------------------------------------------");
-                    mainFileWriter.WriteLine("------------------------------------------------------------------------------");
-                    mainFileWriter.WriteLine("--Пользовательская функция инициализации, выполняемая однократно в PAC.");
-                    mainFileWriter.WriteLine("");
-                    mainFileWriter.WriteLine("function user_init()");
-                    mainFileWriter.WriteLine("end");
-                    mainFileWriter.WriteLine("------------------------------------------------------------------------------");
-                    mainFileWriter.WriteLine("------------------------------------------------------------------------------");
-                    mainFileWriter.WriteLine("--Пользовательская функция, выполняемая каждый цикл в PAC.");
-                    mainFileWriter.WriteLine("");
-                    mainFileWriter.WriteLine("function user_eval()");
-                    mainFileWriter.WriteLine("end");
-                    mainFileWriter.WriteLine("------------------------------------------------------------------------------");
-                    mainFileWriter.WriteLine("------------------------------------------------------------------------------");
-                    mainFileWriter.WriteLine("--Функция инициализации параметров, выполняемая однократно в PAC.");
-                    mainFileWriter.WriteLine("");
-                    mainFileWriter.WriteLine("function init_params()");
-                    mainFileWriter.WriteLine("end");
-                    mainFileWriter.WriteLine("------------------------------------------------------------------------------");
-                    mainFileWriter.WriteLine("------------------------------------------------------------------------------");
-                }
-                if (mainFileWriter != null)
-                {
-                    mainFileWriter.Flush();
-                    mainFileWriter.Close();
-                    mainFileWriter = null;
-                }
-
-                string modbusSrvFileName = par.path + @"\" + MAIN_MODBUS_SRV_FILE_NAME;
-                if (!File.Exists(modbusSrvFileName))
-                {
-                    //Создаем пустое описание сервера MODBUS.
-                    mainFileWriter = new StreamWriter(modbusSrvFileName,
-                        false, System.Text.Encoding.GetEncoding(1251));
-                    mainFileWriter.WriteLine("--version  = 1");
-                    mainFileWriter.WriteLine("------------------------------------------------------------------------------");
-                }
-                if (mainFileWriter != null)
-                {
-                    mainFileWriter.Flush();
-                    mainFileWriter.Close();
-                    mainFileWriter = null;
-                }
-
-                string profibusFileName = par.path + @"\" + MAIN_PROFIBUS_FILE_NAME;
-                if (!File.Exists(profibusFileName))
-                {
-                    //Создаем пустое описание конфигурации PROFIBUS.
-                    mainFileWriter = new StreamWriter(profibusFileName,
-                        false, System.Text.Encoding.GetEncoding(1251));
-                    mainFileWriter.WriteLine("--version  = 1");
-                    mainFileWriter.WriteLine("------------------------------------------------------------------------------");
-                    mainFileWriter.WriteLine("system = system or { }");
-                    mainFileWriter.WriteLine("system.init_profibus = function()");
-                    mainFileWriter.WriteLine("end");
-                }
-                if (mainFileWriter != null)
-                {
-                    mainFileWriter.Flush();
-                    mainFileWriter.Close();
-                    mainFileWriter = null;
-                }
-
-                string FILE_NAME6 = par.path + @"\" + MAIN_PRG_FILE_NAME;
-                prgFileWriter = new StreamWriter(FILE_NAME6,
-                    false, System.Text.Encoding.GetEncoding(1251));
-
-                prgFileWriter.WriteLine("--version  = {0}", MAIN_PRG_FILE_VERSION);
-                prgFileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);
-                prgFileWriter.WriteLine("-- ----------------------------------------------------------------------------");
-                prgFileWriter.WriteLine("-- ----------------------------------------------------------------------------");
-                prgFileWriter.WriteLine(string.Format("--Базовая функциональность\n{0}\n{1}\n{2}\n{3}\n", 
-                    "require( \"tank\" )", 
-                    "require(\"mixer\")", 
-                    "require(\"line\")", 
-                    "require(\"master\")"));
-                prgFileWriter.WriteLine("-- Основные объекты проекта (объекты, описанные в Eplan'е).");
-                prgFileWriter.WriteLine(PrgLuaSaver.Save("\t"));
-
-                if (par.silentMode == false)
-                {
-                    if (!log.IsEmpty())
-                    {
-                        log.AddMessage("Done.");
-                        log.ShowLastLine();
-                    }
-                    else
-                    {
-                        log.HideLog();
-                    }
-                }
-            }
-
-            catch (System.Exception ex)
-            {
-                if (par.silentMode == false)
-                {
-                    log.AddMessage("Exception - " + ex);
-                    log.AddMessage("");
-                    log.AddMessage("");
-                    log.ShowLastLine();
-                }
-            }
-            finally
-            {
-                if (mainIOFileWriter != null)
-                {
-                    mainIOFileWriter.Flush();
-                    mainIOFileWriter.Close();
-
-                    // Делаем копию с другим именем (IO.lua и WAGO.lua идентичный)
-                    File.Copy(par.path + @"\" + MAIN_IO_FILE_NAME, 
-                        par.path + @"\" + MAIN_WAGO_FILE_NAME, true);
-                }
-
-                if (mainTechObjectsFileWriter != null)
-                {
-                    mainTechObjectsFileWriter.Flush();
-                    mainTechObjectsFileWriter.Close();
-                }
-
-                if (mainTechDevicesFileWriter != null)
-                {
-                    mainTechDevicesFileWriter.Flush();
-                    mainTechDevicesFileWriter.Close();
-                }
-
-                if (mainRestrictionsFileWriter != null)
-                {
-                    mainRestrictionsFileWriter.Flush();
-                    mainRestrictionsFileWriter.Close();
-                }
-
-                if (prgFileWriter != null)
-                {
-                    prgFileWriter.Flush();
-                    prgFileWriter.Close();
-                }
-
-                if (!par.silentMode && log != null)
-                {
-                    log.EnableOkButton();
-                    log.SetProgress(100);
-                }
-            }
-        }
+        private ProjectManager() { }
 
         private IEditor editor; /// Редактор технологических объектов.
         private ITechObjectManager techObjectManager; /// Менеджер технологических объектов.
-        private ILog log;
 
         private IOManager IOManager; /// Менеджер модулей ввода/вывода
-        private DeviceManager deviceManager; // Менеджер устройств
         private ProjectConfiguration projectConfiguration; // Конфигурация проекта
 
         private static ProjectManager instance; /// Экземпляр класса.         

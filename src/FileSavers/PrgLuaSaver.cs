@@ -14,7 +14,7 @@ namespace EasyEPlanner
         /// Сохранить Prg.lua как таблицу Lua
         /// </summary>
         /// <param name="prefix">Отступ</param>
-        /// <returns></returns>
+        /// <returns>Возвращает файл в виде строки</returns>
         public static string Save(string prefix)
         {
             var attachedObjects = new Dictionary<int, string>();
@@ -187,7 +187,7 @@ namespace EasyEPlanner
                         string msg = $"В объекте \"{techObj.EditText[0]} " +
                             $"{techObj.TechNumber}\" ошибка заполнения поля " +
                             $"\"Привязанные устройства\"\n";
-                        ProjectManager.GetInstance().AddLogMessage(msg);
+                        Logs.AddMessage(msg);
                     }
                 }
             }
