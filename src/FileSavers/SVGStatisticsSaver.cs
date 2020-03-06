@@ -33,7 +33,7 @@ namespace EasyEPlanner
         /// сохранить LOC</param>
         private static void SaveLOC(string folderPath, string locFilePath)
         {
-            const int maxLOCCount = 100;
+            const int maxLOCCount = 1000;
 
             folderPath += linesOfCodeMainProgramFileName;
             locFilePath += @"\main.plua";
@@ -58,7 +58,7 @@ namespace EasyEPlanner
         /// <param name="folderPath">Путь к каталогу</param>
         private static void SaveTagsCount(string folderPath)
         {
-            const int maxTagsCount = 6000;
+            const int maxTagsCount = 5000;
 
             folderPath += countOfTagsFileName;
             int tagsCount = XMLReporter.GetTagsCount();
@@ -79,7 +79,7 @@ namespace EasyEPlanner
         /// <param name="folderPath">Путь к каталогу</param>
         private static void SaveUnintsCount(string folderPath)
         {
-            const int maxUnitsCount = 25;
+            const int maxUnitsCount = 10;
 
             folderPath += countOfUnitsFileName;
             int unitsCount = techObjectManager.UnitsCount;
@@ -101,7 +101,7 @@ namespace EasyEPlanner
         /// <param name="folderPath">Путь к каталогу</param>
         private static void SaveEquipmentModulesCount(string folderPath)
         {
-            const int maxEquipCount = 25;
+            const int maxEquipCount = 50;
 
             folderPath += counstOfEquipmentModulesFileName;
             int equipCount = techObjectManager.EquipmentModulesCount;
