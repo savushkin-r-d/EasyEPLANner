@@ -252,9 +252,8 @@ namespace TechObject
             {
                 TechObject item = Objects[num - 1];
 
-
-                TreeNode objNode = new TreeNode(item.NameBC + 
-                    item.TechNumber.ToString());
+                var objNode = new TreeNode($"{num}.{item.NameBC}" +
+                    $"{item.TechNumber.ToString()}");
 
                 TreeNode objModesNode = new TreeNode(item.NameBC + 
                     item.TechNumber.ToString() + "_Операции");
