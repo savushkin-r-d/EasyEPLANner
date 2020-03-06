@@ -440,7 +440,8 @@ namespace TechObject
                     .GetDeviceByIndex(i);
                 string msg = $"Неправильно заданы устройства в шаге " +
                     $"\"{GetStepName()}\", операции \"{mode.Name}\"," +
-                    $"технологического объекта \"{techObject.DisplayText[0]}\"";
+                    $"технологического объекта " +
+                    $"\"{techObject.DisplayText[0]}\"\n";
                 errors += msg;
             }
 

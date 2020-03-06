@@ -156,23 +156,37 @@ namespace TechObject
         public string Check()
         {
             var errors = string.Empty;
-            List<TechObject> TObjects = GetTechObjects();
 
-            foreach (TechObject obj in TObjects)
+            errors += CheckTypeField();
+            errors += CheckObjectMonitorField();
+
+            foreach (TechObject obj in Objects)
             {
-                if (obj.DisplayText[1].Length == 0)
-                {
-                    string objName = obj.EditText[0] + " " + obj.TechNumber;
-                    string msg = string.Format("Не выбран базовый объект - " +
-                        "\"{0}\"\n", objName);
-                    errors += msg;
-                }
-
                 errors += obj.Check();
             }
 
             return errors;
 
+        }
+
+        /// <summary>
+        /// Проверить поле тип у объекта.
+        /// </summary>
+        private string CheckTypeField()
+        {
+            var msg = "";
+            //TODO: метод проверки поля "Тип" у объектов
+            return msg;
+        }
+
+        /// <summary>
+        /// Проверить поле имени объекта Monitor у объекта.
+        /// </summary>
+        private string CheckObjectMonitorField()
+        {
+            var msg = "";
+            //TODO: метод проверки поля "Имя объекта Monitor" у объектов.
+            return msg;
         }
 
         /// <summary>
