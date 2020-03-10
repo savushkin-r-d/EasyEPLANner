@@ -814,12 +814,23 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.LT:
-                        case DeviceSubType.LT_IOLINK:
                             return new List<string>(new string[] 
                             { 
                                 "M", 
                                 "P_CZ", 
                                 "V" 
+                            });
+
+                        case DeviceSubType.LT_IOLINK:
+                            return new List<string>(new string[] 
+                            {
+                                "M",
+                                "P_CZ",
+                                "V",
+                                "P_H_CONE",
+                                "P_MAX_P",
+                                "P_R",
+                                "CLEVEL"
                             });
 
                         case DeviceSubType.LT_CYL:
