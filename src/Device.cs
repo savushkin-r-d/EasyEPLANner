@@ -814,12 +814,23 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.LT:
-                        case DeviceSubType.LT_IOLINK:
                             return new List<string>(new string[] 
                             { 
                                 "M", 
                                 "P_CZ", 
                                 "V" 
+                            });
+
+                        case DeviceSubType.LT_IOLINK:
+                            return new List<string>(new string[] 
+                            {
+                                "M",
+                                "P_CZ",
+                                "V",
+                                "P_H_CONE",
+                                "P_MAX_P",
+                                "P_R",
+                                "CLEVEL"
                             });
 
                         case DeviceSubType.LT_CYL:
@@ -2966,6 +2977,12 @@ namespace Device
 
                 case "LT_IOLINK":
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+
+                    parameters.Add("P_C0", null);
+                    parameters.Add("P_MAX_P", null);
+                    parameters.Add("P_R", null);
+                    parameters.Add("P_H_CONE", 0);
+
                     IOLinkSizeIn = 1;
                     break;
 
