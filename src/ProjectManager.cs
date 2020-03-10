@@ -337,11 +337,15 @@ namespace EasyEPlanner
         /// <summary>
         /// Экспорт из проекта базы каналов.
         /// </summary>
-        public void SaveAsCDBX(string projectName, bool combineTag = false)
+        public void SaveAsCDBX(string projectName, bool combineTag = false,
+            bool useNewNames = false)
         {
             techObjectManager.SetCDBXTagView(combineTag);
+            techObjectManager.SetCDBXNewNames(useNewNames);
+
             System.Threading.Thread t = new System.Threading.Thread(
-                    new System.Threading.ParameterizedThreadStart(SaveAsXMLThread));
+                    new System.Threading.ParameterizedThreadStart(
+                        SaveAsXMLThread));
 
             t.Start(projectName);
 

@@ -21,6 +21,7 @@ namespace TechObject
         void SetCDBXTagView(bool combineTag);
         string SaveRestrictionAsLua(string prefixStr);
         List<TechObject> GetTechObjects();
+        void SetCDBXNewNames(bool useNewNames);
     }
 
     /// <summary>
@@ -309,7 +310,16 @@ namespace TechObject
                 TreeNode objParamsNode = new TreeNode(item.NameBC + 
                     item.TechNumber.ToString() + "_Параметры");
 
-                string obj = "OBJECT" + num.ToString();
+                string obj = "";
+                if (cdbxNewNames == true)
+                {
+                    obj = item.NameBC.ToUpper() + item.TechNumber.ToString();
+                }
+                else
+                {
+                    obj = "OBJECT" + num.ToString();
+                }
+
                 string mode = obj + ".MODES";
                 string oper = obj + ".OPERATIONS";
                 string av = obj + ".AVAILABILITY";
@@ -323,7 +333,6 @@ namespace TechObject
                     objModesNode.Nodes.Add(obj + ".CMD", obj + ".CMD");
                 }
 
-
                 int stCount = item.ModesManager.Modes.Count / 33;
                 for (int i = 0; i <= stCount; i++)
                 {
@@ -331,14 +340,13 @@ namespace TechObject
 
                     if (cdbxTagView == true)
                     {
-                        objNode.Nodes.Add("OBJECT" + num.ToString() + ".ST" + 
-                            number, "OBJECT" + num.ToString() + ".ST" + number);
+                        objNode.Nodes.Add(obj + ".ST" + number, 
+                            obj + ".ST" + number);
                     }
                     else
                     {
-                        objModesNode.Nodes.Add("OBJECT" + num.ToString() + 
-                            ".ST" + number, "OBJECT" + num.ToString() + ".ST" + 
-                            number);
+                        objModesNode.Nodes.Add(obj + ".ST" + number,
+                            obj + ".ST" + number);
                     }
                 }
 
@@ -360,8 +368,6 @@ namespace TechObject
                         objAvOperNode.Nodes.Add(av + number, av + number);
                         objStepsNode.Nodes.Add(step + number, step + number);
                     }
-
-
                 }
 
                 string sFl = obj + ".S_PAR_F";
@@ -434,9 +440,14 @@ namespace TechObject
                 }
                 else
                 {
-                    rootNode.Nodes.AddRange(new TreeNode[] { objModesNode, 
-                        objOperStateNode, objAvOperNode, objStepsNode, 
-                        objParamsNode });
+                    rootNode.Nodes.AddRange(new TreeNode[] 
+                    { 
+                        objModesNode, 
+                        objOperStateNode, 
+                        objAvOperNode, 
+                        objStepsNode, 
+                        objParamsNode 
+                    });
                 }
             }
         }
@@ -781,9 +792,16 @@ namespace TechObject
             cdbxTagView = combineTag;
         }
 
+        public void SetCDBXNewNames(bool useNewNames)
+        {
+            cdbxNewNames = useNewNames;
+        }
+
         #endregion
 
         private bool cdbxTagView;
+        private bool cdbxNewNames;
+
         private LuaInterface.Lua lua;              /// Экземпляр Lua.
         private List<TechObject> objects;          /// Технологические объекты.
         private static TechObjectManager instance; /// Единственный экземпляр.
