@@ -2967,10 +2967,10 @@ namespace Device
                 case "LT_IOLINK":
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
+                    parameters.Add("P_C0", null);
                     parameters.Add("P_MAX_P", null);
                     parameters.Add("P_R", null);
                     parameters.Add("P_H_CONE", 0);
-                    parameters.Add("P_H_TRUNC", 0);
 
                     IOLinkSizeIn = 1;
                     break;
@@ -3002,18 +3002,6 @@ namespace Device
             if (ArticleName == "" && dSubType != DeviceSubType.LT_VIRT)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
-            }
-
-            if (parameters.ContainsKey("P_H_TRUNC") && 
-                parameters.ContainsKey("P_H_CONE"))
-            {
-                int isTrunc = Convert.ToInt32(parameters["P_H_TRUNC"]);
-                int isCone = Convert.ToInt32(parameters["P_H_CONE"]);
-                if (isCone == 1 && isTrunc == 1)
-                {
-                    res += $"\"{name}\" - некорректно указаны параметры " +
-                        $"датчика (P_H_CONE и P_H_TRUNC).\n";
-                }
             }
 
             return res;
