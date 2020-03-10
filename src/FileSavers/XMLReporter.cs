@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.IO;
 using TechObject;
 using Device;
+using System.Text.RegularExpressions;
 
 namespace EasyEPlanner
 {
@@ -86,7 +87,38 @@ namespace EasyEPlanner
                     if (!item.ChildNodes[6].InnerText.Contains("PID"))
                     {
                         TreeNode[] nodes = rootNode.Nodes.Cast<TreeNode>()
-                            .Where(r => r.Text == item.ChildNodes[6].InnerText).ToArray();
+                                .Where(r => r.Text == item.ChildNodes[6]
+                                .InnerText).ToArray();
+
+                        if (item.ChildNodes[9].ChildNodes[0].ChildNodes[4] != null &&
+                            item.ChildNodes[9].ChildNodes[0].ChildNodes[4].InnerText.Contains("OBJECT"))
+                        {
+                            string searchPattern = @"(?<name>OBJECT)(?<n>[0-9]+)+";
+
+                            // rewrite;
+                            if (nodes.Length == 1)
+                            {
+                                // newNum
+                                string newNodeName = nodes[0].Nodes[0].Text;
+                                string newNum = Regex.Match(newNodeName, searchPattern).Groups["n"].Value;
+
+                                // oldNum
+                                string oldNodeName = item.ChildNodes[9].ChildNodes[0].ChildNodes[4].InnerText;
+                                string oldNum = Regex.Match(oldNodeName, searchPattern).Groups["n"].Value;
+
+                                // Equals
+                                if (newNum != oldNum)
+                                {
+                                    foreach(XmlElement channel in item.ChildNodes[9].ChildNodes)
+                                    {
+                                        channel.ChildNodes[4].InnerText = 
+                                            Regex.Replace(channel.ChildNodes[4].InnerText, 
+                                            searchPattern, "OBJECT" + newNum);
+                                    }
+                                }
+                            }
+                        }                 
+
                         if (nodes.Length == 0)
                         {
                             // нужно закомментировать не использующиеся узлы
@@ -94,6 +126,8 @@ namespace EasyEPlanner
                         }
                         else
                         {
+                            item.ChildNodes[3].InnerText = "-1";
+
                             foreach (XmlElement chan in item.ChildNodes[9].ChildNodes)
                             {
                                 foreach (TreeNode node in nodes)
