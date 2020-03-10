@@ -153,23 +153,7 @@ namespace TechObject
                 "\',\n";
 
             res += baseOperation.SaveAsLuaTable(prefix);
-
             string tmp = "";
-            //Совместимость с предыдущей версией (до введения состояния для
-            //операции).
-            if (stepsMngr.Count > 0)
-            {
-                tmp = stepsMngr[0].SaveAsLuaTable(prefix);
-                if (tmp != "")
-                {
-                    res += prefix + "--Совместимость с предыдущей версией" +
-                        " (до введения состояния для операции).\n";
-                    res += tmp;
-                    res += prefix + "--Совместимость с предыдущей версией.\n";
-                    res += "\n";
-                }
-            }
-
             int i = 1;
             string tmp_2 = "";
 
