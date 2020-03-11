@@ -351,77 +351,12 @@ namespace EasyEPlanner
                 {
                     MessageBox.Show("Нет открытого проекта!", "EPlaner",
                         MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return true;
                 }
-                else
-                {
-                    DialogResult newNamesQuestion = MessageBox.Show(
-                        "Использовать новый формат записи объектов?",
-                        "Запись базы каналов", MessageBoxButtons.YesNoCancel, 
-                        MessageBoxIcon.Question);
-                    
-                    bool useNewNames = false;
-                    if (newNamesQuestion == DialogResult.Yes)
-                    {
-                        useNewNames = true;
-                    }
 
-                    DialogResult result = MessageBox.Show(
-                        "Желаете создать новый файл базы каналов?",
-                        "Запись базы каналов", MessageBoxButtons.YesNoCancel, 
-                        MessageBoxIcon.Question);
-
-                    if (result == DialogResult.Yes)
-                    {
-                        var FBD = new FolderBrowserDialog();
-                        if (FBD.ShowDialog() == DialogResult.OK)
-                        {
-                            DialogResult resultTag = MessageBox.Show(
-                                "Сгруппировать теги технологических " +
-                                "объектов в один подтип?","Запись базы каналов", 
-                                MessageBoxButtons.YesNo, 
-                                MessageBoxIcon.Question);
-
-                            if (resultTag == DialogResult.Yes)
-                            {
-                                ProjectManager.GetInstance().SaveAsCDBX(
-                                FBD.SelectedPath + "\\" + 
-                                currentProject.ProjectName + ".cdbx", true, 
-                                useNewNames);
-                            }
-                            else
-                            {
-                                ProjectManager.GetInstance().SaveAsCDBX(
-                                FBD.SelectedPath + "\\" + 
-                                currentProject.ProjectName + ".cdbx", false, 
-                                useNewNames);
-                            }
-                        }
-                    }
-                    else if (result == DialogResult.No)
-                    {
-                        var OPF = new OpenFileDialog();
-                        OPF.Filter = "Файлы базы каналов|*.cdbx";
-                        if (OPF.ShowDialog() == DialogResult.OK)
-                        {
-                            DialogResult resultTag = MessageBox.Show(
-                                "Сгруппировать теги технологических " +
-                                "объектов в один подтип?",
-                                "Запись базы каналов", MessageBoxButtons.YesNo, 
-                                MessageBoxIcon.Question);
-
-                            if (resultTag == DialogResult.Yes)
-                            {
-                                ProjectManager.GetInstance().SaveAsCDBX(
-                                    OPF.FileName, true, useNewNames);
-                            }
-                            else
-                            {
-                                ProjectManager.GetInstance().SaveAsCDBX(
-                                    OPF.FileName, false, useNewNames);
-                            }
-                        }
-                    }
-                }
+                var exportForm = new XMLReporterDialog();
+                exportForm.SetProjectName(currentProject.ProjectName);
+                exportForm.ShowDialog();
             }
             catch (Exception ex)
             {
