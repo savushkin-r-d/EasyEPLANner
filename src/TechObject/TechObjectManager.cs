@@ -161,7 +161,7 @@ namespace TechObject
             errors += CheckTypeField();
             errors += CheckObjectMonitorField();
 
-            foreach (TechObject obj in Objects)
+            foreach (var obj in Objects)
             {
                 errors += obj.Check();
             }

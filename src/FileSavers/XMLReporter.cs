@@ -79,6 +79,9 @@ namespace EasyEPlanner
 
                 foreach (XmlElement item in elm.ChildNodes)
                 {
+                    const int channelsLocation = 9;
+                    XmlNodeList subTypeChannels = item
+                        .ChildNodes[channelsLocation].ChildNodes;
                     if (subtupesId.Contains(item.ChildNodes[0].InnerText))
                     {
                         subtupesId.Remove(item.ChildNodes[0].InnerText);
@@ -90,45 +93,25 @@ namespace EasyEPlanner
                                 .Where(r => r.Text == item.ChildNodes[6]
                                 .InnerText).ToArray();
 
-                        if (item.ChildNodes[9].ChildNodes[0].ChildNodes[4] != null &&
-                            item.ChildNodes[9].ChildNodes[0].ChildNodes[4].InnerText.Contains("OBJECT"))
+                        const int channelDescrNum = 4;
+                        XmlNode firstChannelDescr = subTypeChannels[0]
+                            .ChildNodes[channelDescrNum];
+                        if (firstChannelDescr != null &&
+                            firstChannelDescr.InnerText.Contains("OBJECT") &&
+                            nodes.Length == 1)
                         {
-                            string searchPattern = @"(?<name>OBJECT)(?<n>[0-9]+)+";
-
-                            // rewrite;
-                            if (nodes.Length == 1)
-                            {
-                                // newNum
-                                string newNodeName = nodes[0].Nodes[0].Text;
-                                string newNum = Regex.Match(newNodeName, searchPattern).Groups["n"].Value;
-
-                                // oldNum
-                                string oldNodeName = item.ChildNodes[9].ChildNodes[0].ChildNodes[4].InnerText;
-                                string oldNum = Regex.Match(oldNodeName, searchPattern).Groups["n"].Value;
-
-                                // Equals
-                                if (newNum != oldNum)
-                                {
-                                    foreach(XmlElement channel in item.ChildNodes[9].ChildNodes)
-                                    {
-                                        channel.ChildNodes[4].InnerText = 
-                                            Regex.Replace(channel.ChildNodes[4].InnerText, 
-                                            searchPattern, "OBJECT" + newNum);
-                                    }
-                                }
-                            }
+                            RewriteSubType(subTypeChannels, nodes.First());     
                         }                 
 
                         if (nodes.Length == 0)
                         {
-                            // нужно закомментировать не использующиеся узлы
+                            // Комментирование удаленных узлов.
                             item.ChildNodes[3].InnerText = "0";
                         }
                         else
                         {
                             item.ChildNodes[3].InnerText = "-1";
-
-                            foreach (XmlElement chan in item.ChildNodes[9].ChildNodes)
+                            foreach (XmlElement chan in subTypeChannels)
                             {
                                 foreach (TreeNode node in nodes)
                                 {
@@ -227,9 +210,39 @@ namespace EasyEPlanner
                     }
                 }
             }
-
             xmlDoc.Save(path);
+        }
 
+        /// <summary>
+        /// Перезаписать номера каналов подтипа (в OBJECT).
+        /// </summary>
+        /// <param name="channels">Список каналов</param>
+        /// <param name="node">Подтип для перезаписи</param>
+        private static void RewriteSubType(XmlNodeList channels,
+            TreeNode node)
+        {
+            string searchPattern = @"(?<name>OBJECT)(?<n>[0-9]+)+";
+            const int channelDescrNum = 4;
+
+            string newNodeName = node.FirstNode.Text;
+            string newNum = Regex.Match(newNodeName, searchPattern).Groups["n"]
+                .Value;
+
+            XmlNode firstChannel = channels[0];
+            string oldNodeName = firstChannel.ChildNodes[channelDescrNum]
+                .InnerText;
+            string oldNum = Regex.Match(oldNodeName, searchPattern).Groups["n"]
+                .Value;
+
+            if (newNum != oldNum)
+            {
+                foreach (XmlElement channel in channels)
+                {
+                    channel.ChildNodes[channelDescrNum].InnerText = 
+                        Regex.Replace(channel.ChildNodes[channelDescrNum]
+                        .InnerText, searchPattern, "OBJECT" + newNum);
+                }
+            }
         }
 
         /// <summary>
