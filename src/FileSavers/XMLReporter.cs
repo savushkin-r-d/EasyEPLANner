@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.IO;
 using TechObject;
 using Device;
+using System.Text.RegularExpressions;
 
 namespace EasyEPlanner
 {
@@ -78,6 +79,9 @@ namespace EasyEPlanner
 
                 foreach (XmlElement item in elm.ChildNodes)
                 {
+                    const int channelsLocation = 9;
+                    XmlNodeList subTypeChannels = item
+                        .ChildNodes[channelsLocation].ChildNodes;
                     if (subtupesId.Contains(item.ChildNodes[0].InnerText))
                     {
                         subtupesId.Remove(item.ChildNodes[0].InnerText);
@@ -86,15 +90,28 @@ namespace EasyEPlanner
                     if (!item.ChildNodes[6].InnerText.Contains("PID"))
                     {
                         TreeNode[] nodes = rootNode.Nodes.Cast<TreeNode>()
-                            .Where(r => r.Text == item.ChildNodes[6].InnerText).ToArray();
+                                .Where(r => r.Text == item.ChildNodes[6]
+                                .InnerText).ToArray();
+
+                        const int channelDescrNum = 4;
+                        XmlNode firstChannelDescr = subTypeChannels[0]
+                            .ChildNodes[channelDescrNum];
+                        if (firstChannelDescr != null &&
+                            firstChannelDescr.InnerText.Contains("OBJECT") &&
+                            nodes.Length == 1)
+                        {
+                            RewriteSubType(subTypeChannels, nodes.First());     
+                        }                 
+
                         if (nodes.Length == 0)
                         {
-                            // нужно закомментировать не использующиеся узлы
+                            // Комментирование удаленных узлов.
                             item.ChildNodes[3].InnerText = "0";
                         }
                         else
                         {
-                            foreach (XmlElement chan in item.ChildNodes[9].ChildNodes)
+                            item.ChildNodes[3].InnerText = "-1";
+                            foreach (XmlElement chan in subTypeChannels)
                             {
                                 foreach (TreeNode node in nodes)
                                 {
@@ -193,9 +210,39 @@ namespace EasyEPlanner
                     }
                 }
             }
-
             xmlDoc.Save(path);
+        }
 
+        /// <summary>
+        /// Перезаписать номера каналов подтипа (в OBJECT).
+        /// </summary>
+        /// <param name="channels">Список каналов</param>
+        /// <param name="node">Подтип для перезаписи</param>
+        private static void RewriteSubType(XmlNodeList channels,
+            TreeNode node)
+        {
+            string searchPattern = @"(?<name>OBJECT)(?<n>[0-9]+)+";
+            const int channelDescrNum = 4;
+
+            string newNodeName = node.FirstNode.Text;
+            string newNum = Regex.Match(newNodeName, searchPattern).Groups["n"]
+                .Value;
+
+            XmlNode firstChannel = channels[0];
+            string oldNodeName = firstChannel.ChildNodes[channelDescrNum]
+                .InnerText;
+            string oldNum = Regex.Match(oldNodeName, searchPattern).Groups["n"]
+                .Value;
+
+            if (newNum != oldNum)
+            {
+                foreach (XmlElement channel in channels)
+                {
+                    channel.ChildNodes[channelDescrNum].InnerText = 
+                        Regex.Replace(channel.ChildNodes[channelDescrNum]
+                        .InnerText, searchPattern, "OBJECT" + newNum);
+                }
+            }
         }
 
         /// <summary>

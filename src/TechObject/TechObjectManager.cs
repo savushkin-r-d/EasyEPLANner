@@ -21,6 +21,7 @@ namespace TechObject
         void SetCDBXTagView(bool combineTag);
         string SaveRestrictionAsLua(string prefixStr);
         List<TechObject> GetTechObjects();
+        void SetCDBXNewNames(bool useNewNames);
     }
 
     /// <summary>
@@ -156,23 +157,65 @@ namespace TechObject
         public string Check()
         {
             var errors = string.Empty;
-            List<TechObject> TObjects = GetTechObjects();
 
-            foreach (TechObject obj in TObjects)
+            errors += CheckTypeField();
+            errors += CheckObjectMonitorField();
+
+            foreach (var obj in Objects)
             {
-                if (obj.DisplayText[1].Length == 0)
-                {
-                    string objName = obj.EditText[0] + " " + obj.TechNumber;
-                    string msg = string.Format("Не выбран базовый объект - " +
-                        "\"{0}\"\n", objName);
-                    errors += msg;
-                }
-
                 errors += obj.Check();
             }
 
             return errors;
 
+        }
+
+        /// <summary>
+        /// Проверить поле тип у объекта.
+        /// </summary>
+        private string CheckTypeField()
+        {
+            var errorsList = new List<string>();
+            foreach(var obj in Objects)
+            {
+                var matches = Objects.Where(x => x.TechType == obj.TechType &&
+                x.TechNumber == obj.TechNumber)
+                    .Select(x => GetTechObjectN(x))
+                    .ToArray();
+
+                if (matches.Count() > 1)
+                {
+                    errorsList.Add($"У объектов {string.Join(",", matches)} " +
+                        $"совпадает поле \"Тип\"\n");
+                }
+            }
+
+            errorsList = errorsList.Distinct().ToList();
+            return string.Join("", errorsList);
+        }
+
+        /// <summary>
+        /// Проверить поле имени объекта Monitor у объекта.
+        /// </summary>
+        private string CheckObjectMonitorField()
+        {
+            var errorsList = new List<string>();
+            foreach(var obj in Objects)
+            {
+                var matches = Objects.Where(x => x.NameBC == obj.NameBC &&
+                x.TechNumber == obj.TechNumber)
+                    .Select(x => GetTechObjectN(x))
+                    .ToArray();
+
+                if (matches.Count() > 1)
+                {
+                    errorsList.Add($"У объектов {string.Join(",", matches)} " +
+                        $"совпадает поле \"Имя объекта Monitor\"\n");
+                }
+            }
+
+            errorsList = errorsList.Distinct().ToList();
+            return string.Join("", errorsList);
         }
 
         /// <summary>
@@ -267,7 +310,16 @@ namespace TechObject
                 TreeNode objParamsNode = new TreeNode(item.NameBC + 
                     item.TechNumber.ToString() + "_Параметры");
 
-                string obj = "OBJECT" + num.ToString();
+                string obj = "";
+                if (cdbxNewNames == true)
+                {
+                    obj = item.NameBC.ToUpper() + item.TechNumber.ToString();
+                }
+                else
+                {
+                    obj = "OBJECT" + num.ToString();
+                }
+
                 string mode = obj + ".MODES";
                 string oper = obj + ".OPERATIONS";
                 string av = obj + ".AVAILABILITY";
@@ -281,7 +333,6 @@ namespace TechObject
                     objModesNode.Nodes.Add(obj + ".CMD", obj + ".CMD");
                 }
 
-
                 int stCount = item.ModesManager.Modes.Count / 33;
                 for (int i = 0; i <= stCount; i++)
                 {
@@ -289,14 +340,13 @@ namespace TechObject
 
                     if (cdbxTagView == true)
                     {
-                        objNode.Nodes.Add("OBJECT" + num.ToString() + ".ST" + 
-                            number, "OBJECT" + num.ToString() + ".ST" + number);
+                        objNode.Nodes.Add(obj + ".ST" + number, 
+                            obj + ".ST" + number);
                     }
                     else
                     {
-                        objModesNode.Nodes.Add("OBJECT" + num.ToString() + 
-                            ".ST" + number, "OBJECT" + num.ToString() + ".ST" + 
-                            number);
+                        objModesNode.Nodes.Add(obj + ".ST" + number,
+                            obj + ".ST" + number);
                     }
                 }
 
@@ -318,8 +368,6 @@ namespace TechObject
                         objAvOperNode.Nodes.Add(av + number, av + number);
                         objStepsNode.Nodes.Add(step + number, step + number);
                     }
-
-
                 }
 
                 string sFl = obj + ".S_PAR_F";
@@ -392,9 +440,14 @@ namespace TechObject
                 }
                 else
                 {
-                    rootNode.Nodes.AddRange(new TreeNode[] { objModesNode, 
-                        objOperStateNode, objAvOperNode, objStepsNode, 
-                        objParamsNode });
+                    rootNode.Nodes.AddRange(new TreeNode[] 
+                    { 
+                        objModesNode, 
+                        objOperStateNode, 
+                        objAvOperNode, 
+                        objStepsNode, 
+                        objParamsNode 
+                    });
                 }
             }
         }
@@ -739,9 +792,16 @@ namespace TechObject
             cdbxTagView = combineTag;
         }
 
+        public void SetCDBXNewNames(bool useNewNames)
+        {
+            cdbxNewNames = useNewNames;
+        }
+
         #endregion
 
         private bool cdbxTagView;
+        private bool cdbxNewNames;
+
         private LuaInterface.Lua lua;              /// Экземпляр Lua.
         private List<TechObject> objects;          /// Технологические объекты.
         private static TechObjectManager instance; /// Единственный экземпляр.

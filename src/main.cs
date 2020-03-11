@@ -335,9 +335,7 @@ namespace EasyEPlanner
     //-------------------------------------------------------------------------
     public class SaveAsXMLAction : IEplAction
     {
-        ~SaveAsXMLAction()
-        {
-        }
+        ~SaveAsXMLAction() { }
 
         /// <summary>
         ///This function is called when executing the action.
@@ -347,58 +345,18 @@ namespace EasyEPlanner
         {
             try
             {
-                Project currentProject = EProjectManager.GetInstance().GetCurrentPrj();
+                Project currentProject = EProjectManager.GetInstance()
+                    .GetCurrentPrj();
                 if (currentProject == null)
                 {
                     MessageBox.Show("Нет открытого проекта!", "EPlaner",
                         MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return true;
                 }
-                else
-                {
-                    DialogResult result = MessageBox.Show("Желаете создать новый файл базы каналов?",
-                        "Запись базы каналов", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                    if (result == DialogResult.Yes)
-                    {
-                        FolderBrowserDialog FBD = new FolderBrowserDialog();
-                        if (FBD.ShowDialog() == DialogResult.OK)
-                        {
-                            DialogResult resultTag = MessageBox.Show("Сгруппировать теги технологических объектов в один подтип?",
-                            "Запись базы каналов", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-                            if (resultTag == DialogResult.Yes)
-                            {
-                                ProjectManager.GetInstance().SaveAsCDBX(
-                                FBD.SelectedPath + "\\" + currentProject.ProjectName + ".cdbx", true);
-                            }
-                            else
-                            {
-                                ProjectManager.GetInstance().SaveAsCDBX(
-                                FBD.SelectedPath + "\\" + currentProject.ProjectName + ".cdbx");
-                            }
-
-                        }
-                    }
-                    else if (result == DialogResult.No)
-                    {
-                        OpenFileDialog OPF = new OpenFileDialog();
-                        OPF.Filter = "Файлы базы каналов|*.cdbx";
-                        if (OPF.ShowDialog() == DialogResult.OK)
-                        {
-                            DialogResult resultTag = MessageBox.Show("Сгруппировать теги технологических объектов в один подтип?",
-                            "Запись базы каналов", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                            if (resultTag == DialogResult.Yes)
-                            {
-                                ProjectManager.GetInstance().SaveAsCDBX(OPF.FileName, true);
-                            }
-                            else
-                            {
-                                ProjectManager.GetInstance().SaveAsCDBX(OPF.FileName);
-                            }
-                        }
-                    }
-
-                }
+                var exportForm = new XMLReporterDialog();
+                exportForm.SetProjectName(currentProject.ProjectName);
+                exportForm.ShowDialog();
             }
             catch (Exception ex)
             {
@@ -409,10 +367,13 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        ///This function is called by the application framework, when registering the add-in.
+        ///This function is called by the application framework,
+        ///when registering the add-in.
         /// </summary>
-        /// <param name="Name">The action is registered in EPLAN under this name.</param>
-        /// <param name="Ordinal">The action is registered with this overload priority.</param>
+        /// <param name="Name">The action is registered in EPLAN 
+        /// under this name.</param>
+        /// <param name="Ordinal">The action is registered with 
+        /// this overload priority.</param>
         ///<returns>true, if OnRegister succeeds</returns>
         public bool OnRegister(ref string Name, ref int Ordinal)
         {
@@ -425,7 +386,8 @@ namespace EasyEPlanner
         /// <summary>
         /// Documentation function for the action.
         /// </summary>
-        /// <param name="actionProperties"> This object needs to be filled with information about the action.</param>
+        /// <param name="actionProperties"> This object needs to be filled 
+        /// with information about the action.</param>
         public void GetActionProperties(ref ActionProperties actionProperties)
         {
         }

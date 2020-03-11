@@ -598,6 +598,14 @@ namespace TechObject
         {
             var errors = string.Empty;
 
+            if (this.DisplayText[1].Length == 0)
+            {
+                string objName = this.EditText[0] + " " + this.TechNumber;
+                string msg = string.Format("Не выбран базовый объект - " +
+                    "\"{0}\"\n", objName);
+                errors += msg;
+            }
+
             ModesManager modesManager = ModesManager;
             List<Mode> modes = modesManager.Modes;
             foreach (var mode in modes)
