@@ -818,7 +818,8 @@ namespace Device
                             { 
                                 "M", 
                                 "P_CZ", 
-                                "V" 
+                                "V",
+                                "P_ERR"
                             });
 
                         case DeviceSubType.LT_IOLINK:
@@ -830,7 +831,8 @@ namespace Device
                                 "P_H_CONE",
                                 "P_MAX_P",
                                 "P_R",
-                                "CLEVEL"
+                                "CLEVEL",
+                                "P_ERR"
                             });
 
                         case DeviceSubType.LT_CYL:
@@ -841,7 +843,8 @@ namespace Device
                                 "V", 
                                 "P_MAX_P", 
                                 "P_R", 
-                                "CLEVEL" 
+                                "CLEVEL",
+                                "P_ERR"
                             });
 
                         case DeviceSubType.LT_CONE:
@@ -853,7 +856,8 @@ namespace Device
                                 "P_MAX_P", 
                                 "P_R", 
                                 "P_H_CONE", 
-                                "CLEVEL" 
+                                "CLEVEL",
+                                "P_ERR"
                             });
 
                         case DeviceSubType.LT_TRUNC:
@@ -865,7 +869,15 @@ namespace Device
                                 "P_MAX_P", 
                                 "P_R", 
                                 "P_H_TRUNC", 
-                                "CLEVEL" 
+                                "CLEVEL",
+                                "P_ERR"
+                            });
+
+                        case DeviceSubType.LT_VIRT:
+                            return new List<string>(new string[]
+                            {
+                                "M",
+                                "V",
                             });
                     }
                     break;
@@ -2947,6 +2959,7 @@ namespace Device
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
                     parameters.Add("P_C0", null);
+                    parameters.Add("P_ERR", null);
                     break;
 
                 case "LT_CYL":
@@ -2955,6 +2968,7 @@ namespace Device
                     parameters.Add("P_C0", null);
                     parameters.Add("P_MAX_P", null);
                     parameters.Add("P_R", null);
+                    parameters.Add("P_ERR", null);
                     break;
 
                 case "LT_CONE":
@@ -2964,6 +2978,7 @@ namespace Device
                     parameters.Add("P_MAX_P", null);
                     parameters.Add("P_R", null);
                     parameters.Add("P_H_CONE", null);
+                    parameters.Add("P_ERR", null);
                     break;
 
                 case "LT_TRUNC":
@@ -2973,6 +2988,7 @@ namespace Device
                     parameters.Add("P_MAX_P", null);
                     parameters.Add("P_R", null);
                     parameters.Add("P_H_TRUNC", null);
+                    parameters.Add("P_ERR", null);
                     break;
 
                 case "LT_IOLINK":
@@ -2982,6 +2998,7 @@ namespace Device
                     parameters.Add("P_MAX_P", null);
                     parameters.Add("P_R", null);
                     parameters.Add("P_H_CONE", 0);
+                    parameters.Add("P_ERR", null);
 
                     IOLinkSizeIn = 1;
                     break;
