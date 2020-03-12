@@ -198,31 +198,11 @@ namespace EasyEPlanner
                 //Создаем пустое описание управляющей программы.
                 var fileWriter = new StreamWriter(fileName,
                     false, Encoding.GetEncoding(1251));
-                fileWriter.WriteLine("--Проект \'{0}\'", par.PAC_Name);
-
-                fileWriter.WriteLine(new string('-', numberOfDashes));
-                fileWriter.WriteLine(new string('-', numberOfDashes));
-                fileWriter.WriteLine("--Пользовательская функция " +
-                    "инициализации, выполняемая однократно в PAC.");
-                fileWriter.WriteLine("");
-                fileWriter.WriteLine("function user_init()");
-                fileWriter.WriteLine("end");
-                fileWriter.WriteLine(new string('-', numberOfDashes));
-                fileWriter.WriteLine(new string('-', numberOfDashes));
-                fileWriter.WriteLine("--Пользовательская функция, " +
-                    "выполняемая каждый цикл в PAC.");
-                fileWriter.WriteLine("");
-                fileWriter.WriteLine("function user_eval()");
-                fileWriter.WriteLine("end");
-                fileWriter.WriteLine(new string('-', numberOfDashes));
-                fileWriter.WriteLine(new string('-', numberOfDashes));
-                fileWriter.WriteLine("--Функция инициализации параметров, " +
-                    "выполняемая однократно в PAC.");
-                fileWriter.WriteLine("");
-                fileWriter.WriteLine("function init_params()");
-                fileWriter.WriteLine("end");
-                fileWriter.WriteLine(new string('-', numberOfDashes));
-                fileWriter.WriteLine(new string('-', numberOfDashes));
+                string mainPluaFilePattern = Properties.Resources
+                    .ResourceManager.GetString("mainPluaFilePattern");
+                mainPluaFilePattern = mainPluaFilePattern
+                    .Replace("ProjectName", par.PAC_Name);
+                fileWriter.WriteLine(mainPluaFilePattern);
 
                 fileWriter.Flush();
                 fileWriter.Close();
