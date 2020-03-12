@@ -121,6 +121,25 @@ namespace EasyEPlanner.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на --Проект &apos;ProjectName&apos;
+        ///
+        ///prg = require(&quot;prg&quot;)                        --Технологические объекты.
+        ///------------------------------------------------------------------------------
+        ///------------------------------------------------------------------------------
+        ///--Пользовательская функция инициализации, выполняемая однократно в PAC.
+        ///
+        ///function user_init()
+        ///end
+        ///------------------------------------------------------------------------------
+        ///------------------------------------------------------------------------ [остаток строки не уместился]&quot;;.
+        /// </summary>
+        public static string mainPluaFilePattern {
+            get {
+                return ResourceManager.GetString("mainPluaFilePattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap mode {
