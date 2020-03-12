@@ -24,8 +24,9 @@ namespace TechObject
         {
             vGroups = new List<Action>();
             vGroups.Add(new Action("DI", owner, "DI",
-                new Device.DeviceType[1] { 
-                    Device.DeviceType.DI }));
+                new Device.DeviceType[2] { 
+                    Device.DeviceType.DI,
+                    Device.DeviceType.SB }));
             vGroups.Add(new Action("DO", owner, "DO",
                 new Device.DeviceType[1] { 
                     Device.DeviceType.DO }));
