@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using Device;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
+using System;
+using StaticHelper;
 
 namespace EasyEPlanner
 {
@@ -33,40 +33,32 @@ namespace EasyEPlanner
         private string CheckProjectIPAddresses()
         {
             string errors = "";
+            string startIPstr = "";
+            string endIPstr = "";
             string startIpProperty = "EPLAN.Project.UserSupplementaryField1";
             string endIpProperty = "EPLAN.Project.UserSupplementaryField2";
             string ipProperty = "IP";
 
-            var project = StaticHelper.ApiHelper.GetProject();
-            if (project.Properties[startIpProperty].IsEmpty ||
-                project.Properties[endIpProperty].IsEmpty)
+            try
             {
-                errors += "Не задан диапазон IP-адресов проекта.\n";
-                return errors;
+                startIPstr = ApiHelper.GetProjectProperty(startIpProperty);
+                endIPstr = ApiHelper.GetProjectProperty(endIpProperty);
             }
-
-            string startIPstr = Regex.Match(project.Properties[startIpProperty]
-                .ToString(Eplan.EplApi.Base.ISOCode.Language.L___), 
-                StaticHelper.CommonConst.IPAddressPattern).Value;
-            string endIPstr = Regex.Match(project.Properties[endIpProperty]
-                .ToString(Eplan.EplApi.Base.ISOCode.Language.L___), 
-                StaticHelper.CommonConst.IPAddressPattern).Value;
-            if (startIPstr == "" || endIPstr == "")
+            catch (Exception e)
             {
-                errors += "Некорректно задан диапазон IP-адресов проекта.\n";
+                errors += e.Message;
                 return errors;
             }
 
             int[] startIP = startIPstr.Split('.').Select(int.Parse).ToArray();
             int[] endIP = endIPstr.Split('.').Select(int.Parse).ToArray();
 
-            var devices = deviceManager.Devices
+            var deivcesWithIP = deviceManager.Devices
                 .Where(x => x.Properties.ContainsKey(ipProperty)).ToArray();
-            foreach(var device in devices)
+            foreach (var device in deivcesWithIP)
             {
                 string IPstr = Regex.Match(device.Properties[ipProperty]
-                    .ToString(), StaticHelper.CommonConst.IPAddressPattern)
-                    .Value;
+                    .ToString(), CommonConst.IPAddressPattern).Value;
                 if (IPstr == "")
                 {
                     continue;

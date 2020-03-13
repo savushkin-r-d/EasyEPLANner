@@ -234,6 +234,34 @@ namespace StaticHelper
         }
 
         /// <summary>
+        /// Получить свойство проекта.
+        /// </summary>
+        /// <param name="propertyName">Имя свойства</param>
+        /// <returns></returns>
+        public static string GetProjectProperty(string propertyName)
+        {
+            string result = "";
+            var project = GetProject();
+            if (project.Properties[propertyName].IsEmpty)
+            {
+                string errMsg = "Не задан диапазон IP-адресов проекта.\n";
+                throw new Exception(errMsg);
+            }
+
+            result = Regex.Match(project.Properties[propertyName]
+                .ToString(ISOCode.Language.L___), CommonConst.IPAddressPattern)
+                .Value;
+            if (result == "")
+            {
+                string errMsg = "Некорректно задан диапазон IP-адресов " +
+                    "проекта.\n";
+                throw new Exception(errMsg);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Возвращает имя канала (IO-Link, DI, DO) из строки для IO-Link
         /// модуля.
         /// </summary>
