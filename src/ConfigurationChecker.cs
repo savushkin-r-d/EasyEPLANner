@@ -23,10 +23,14 @@ namespace EasyEPlanner
             errors = deviceManager.Check();
             errors += IOManager.Check();
             errors += techObjectManager.Check();
-            errors += CheckIPAdresses();
+            errors += CheckProjectIPAddresses();
         }
 
-        private string CheckIPAdresses()
+        /// <summary>
+        /// Проверка IP-адресов проекта.
+        /// </summary>
+        /// <returns></returns>
+        private string CheckProjectIPAddresses()
         {
             string errors = "";
             string startIpProperty = "EPLAN.Project.UserSupplementaryField1";
@@ -60,18 +64,19 @@ namespace EasyEPlanner
                 .Where(x => x.Properties.ContainsKey(ipProperty)).ToArray();
             foreach(var device in devices)
             {
-                string ipStr = Regex.Match(device.Properties[ipProperty].ToString(), 
-                    StaticHelper.CommonConst.IPAddressPattern).Value;
-                if (ipStr == "")
+                string IPstr = Regex.Match(device.Properties[ipProperty]
+                    .ToString(), StaticHelper.CommonConst.IPAddressPattern)
+                    .Value;
+                if (IPstr == "")
                 {
                     continue;
                 }
 
-                int[] deviceIP = ipStr.Split('.').Select(int.Parse).ToArray();
-                for (int IPPair = 0; IPPair < deviceIP.Length; IPPair++)
+                int[] devIPPairs = IPstr.Split('.').Select(int.Parse).ToArray();
+                for (int IPPair = 0; IPPair < devIPPairs.Length; IPPair++)
                 {
-                    if (deviceIP[IPPair] > endIP[IPPair] ||
-                        deviceIP[IPPair] < startIP[IPPair])
+                    if (devIPPairs[IPPair] > endIP[IPPair] ||
+                        devIPPairs[IPPair] < startIP[IPPair])
                     {
                         errors += $"IP-адрес устройства {device.EPlanName} " +
                             $"вышел за диапазон\n";
