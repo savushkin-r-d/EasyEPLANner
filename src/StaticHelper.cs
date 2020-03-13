@@ -329,6 +329,14 @@ namespace StaticHelper
         /// Текст "Резерв".
         /// </summary>
         public const string Reserve = "Резерв";
+
+        /// <summary>
+        /// Шаблон поиска IP-адреса.
+        /// </summary>
+        public const string IPAddressPattern = @"\b(25[0-5]|2[0-4][0-9]|" +
+            @"[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|" +
+            @"[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|" +
+            @"[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b";
     }
 
     public static class LuaHelper
