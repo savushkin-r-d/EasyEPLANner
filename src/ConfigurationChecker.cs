@@ -71,7 +71,28 @@ namespace EasyEPlanner
                         devIPPairs[IPPair] < startIP[IPPair])
                     {
                         errors += $"IP-адрес устройства {device.EPlanName} " +
-                            $"вышел за диапазон\n";
+                            $"вышел за диапазон.\n";
+                    }
+                }
+            }
+
+            var plcWithIP = IOManager.IONodes;
+            foreach(var node in plcWithIP)
+            {
+                string IPstr = node.IP;
+                if (IPstr == "")
+                {
+                    continue;
+                }
+
+                int[] nodeIPPairs = IPstr.Split('.').Select(int.Parse).ToArray();
+                for (int IPPair = 0; IPPair < nodeIPPairs.Length; IPPair++)
+                {
+                    if(nodeIPPairs[IPPair] > endIP[IPPair] ||
+                        nodeIPPairs[IPPair] < startIP[IPPair])
+                    {
+                        errors += $"IP-адрес узла A{node.FullN} " +
+                            $"вышел за диапазон.\n";
                     }
                 }
             }

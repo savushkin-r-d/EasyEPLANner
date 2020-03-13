@@ -1240,6 +1240,24 @@ namespace IO
             } 
         }
 
+        /// <summary>
+        /// Полный номер узла.
+        /// </summary>
+        public int FullN
+        {
+            get
+            {
+                if (n == 1)
+                {
+                    return n;
+                }
+                else
+                {
+                    return n * 100;
+                }
+            }
+        }
+
         #region Закрытые поля.
         /// <summary>
         /// Модули узла.
