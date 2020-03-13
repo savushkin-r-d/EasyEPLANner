@@ -153,7 +153,6 @@ namespace TechObject
                 "\',\n";
 
             res += baseOperation.SaveAsLuaTable(prefix);
-            string tmp = "";
             int i = 1;
             string tmp_2 = "";
 
