@@ -154,7 +154,7 @@ namespace TechObject
 
             res += baseOperation.SaveAsLuaTable(prefix);
             int i = 1;
-            string tmp_2 = "";
+            string tmp = "";
 
             for (int j = 0; j < stepsMngr.Count; j++)
             {
