@@ -15,7 +15,7 @@ namespace TechObject
         {
             S88Level = 2;
             Name = "Линия выдачи";
-            EplanName = "line";
+            EplanName = "line_out";
             BaseOperations = DataBase.Imitation.LineOperations();
             BaseProperties = DataBase.Imitation.LineProperties();
             BasicName = "line";
