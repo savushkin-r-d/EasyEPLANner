@@ -118,6 +118,15 @@ namespace EasyEPlanner
         /// </summary>
         public long EndingIPInterval { get; set; }
 
+        /// <summary>
+        /// Сбросить интервал IP-адресов проекта.
+        /// </summary>
+        public void ResetIPAddressesInterval()
+        {
+            StartingIPInterval = 0;
+            EndingIPInterval = 0;
+        }
+
         ConfigurationChecker configurationChecker;
         DeviceReader deviceReader;
         DeviceBindingReader deviceBindingReader;

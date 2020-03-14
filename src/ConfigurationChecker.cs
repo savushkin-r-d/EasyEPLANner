@@ -44,6 +44,7 @@ namespace EasyEPlanner
             }
             catch (Exception e)
             {
+                ProjectConfiguration.GetInstance().ResetIPAddressesInterval();
                 errors += e.Message;
                 return errors;
             }
@@ -52,6 +53,7 @@ namespace EasyEPlanner
             long endIP = IPConverter.ConvertIPStrToLong(endIPstr);
             if (endIP - startIP <= 0)
             {
+                ProjectConfiguration.GetInstance().ResetIPAddressesInterval();
                 errors += "Некорректно задан диапазон IP-адресов проекта.\n";
                 return errors;
             }
