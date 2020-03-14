@@ -50,19 +50,10 @@ namespace EasyEPlanner
                 return errors;
             }
 
-            int[] startIP = startIPstr.Split('.').Select(int.Parse).ToArray();
-            int[] endIP = endIPstr.Split('.').Select(int.Parse).ToArray();
+            long startIP = ConvertIpStringToIpInt(startIPstr);
+            long endIP = ConvertIpStringToIpInt(endIPstr);
 
-            bool correctValues = false;
-            for (int IPPair = 0; IPPair < startIP.Length; IPPair++)
-            {
-                if (startIP[IPPair] < endIP[IPPair])
-                {
-                    correctValues = true;
-                    break;
-                }
-            }
-            if (correctValues == false)
+            if (endIP - startIP <= 0)
             {
                 errors += "Некорректно задан диапазон IP-адресов проекта.\n";
                 return errors;
@@ -79,20 +70,16 @@ namespace EasyEPlanner
                     continue;
                 }
 
-                int[] devIPPairs = IPstr.Split('.').Select(int.Parse).ToArray();
-                for (int IPPair = 0; IPPair < devIPPairs.Length; IPPair++)
+                long devIP = ConvertIpStringToIpInt(IPstr);
+                if (devIP - startIP < 0 || endIP - devIP < 0)
                 {
-                    if (devIPPairs[IPPair] > endIP[IPPair] ||
-                        devIPPairs[IPPair] < startIP[IPPair])
-                    {
-                        errors += $"IP-адрес устройства {device.EPlanName} " +
-                            $"вышел за диапазон.\n";
-                    }
-                }
+                    errors += $"IP-адрес устройства {device.EPlanName} " +
+                    $"вышел за диапазон.\n";
+                }               
             }
 
             var plcWithIP = IOManager.IONodes;
-            foreach(var node in plcWithIP)
+            foreach (var node in plcWithIP)
             {
                 string IPstr = node.IP;
                 if (IPstr == "")
@@ -100,19 +87,40 @@ namespace EasyEPlanner
                     continue;
                 }
 
-                int[] nodeIPPairs = IPstr.Split('.').Select(int.Parse).ToArray();
-                for (int IPPair = 0; IPPair < nodeIPPairs.Length; IPPair++)
+                long nodeIP = ConvertIpStringToIpInt(IPstr);
+
+                if (nodeIP - startIP < 0 || endIP - nodeIP < 0)
                 {
-                    if(nodeIPPairs[IPPair] > endIP[IPPair] ||
-                        nodeIPPairs[IPPair] < startIP[IPPair])
-                    {
-                        errors += $"IP-адрес узла A{node.FullN} " +
-                            $"вышел за диапазон.\n";
-                    }
+                    errors += $"IP-адрес узла A{node.FullN} " +
+                        $"вышел за диапазон.\n";
                 }
             }
 
             return errors;
+        }
+
+        private long ConvertIpStringToIpInt(string IP)
+        {
+            long convertedIP = 0;
+            string[] IPPairs = IP.Split('.');
+            for(int i = 0; i < IPPairs.Length; i++)
+            {
+                if (IPPairs[i].Length == 1)
+                {
+                    IPPairs[i] = "00" + IPPairs[i];
+                    continue;
+                }
+
+                if (IPPairs[i].Length == 2)
+                {
+                    IPPairs[i] = "0" + IPPairs[i];
+                    continue;
+                }
+            }
+
+            string IPstring = string.Concat(IPPairs);
+            convertedIP = Convert.ToInt64(IPstring);
+            return convertedIP;
         }
 
         public string Errors 
