@@ -1495,7 +1495,14 @@ namespace IO
                 }
             }
 
-            str += CheckIONodesIP();
+            long startingIP = EasyEPlanner.ProjectConfiguration
+                .GetInstance().StartingIPInterval;
+            long endingIP = EasyEPlanner.ProjectConfiguration.GetInstance()
+                .EndingIPInterval;
+            if (startingIP != 0 && endingIP != 0)
+            {
+                str += CheckIONodesIP(startingIP, endingIP);
+            }           
 
             return str;
         }
@@ -1503,19 +1510,12 @@ namespace IO
         /// <summary>
         /// Проверка IP-адресов узлов ввода-вывода
         /// </summary>
+        /// <param name="endingIP">Конец интервала адресов</param>
+        /// <param name="startingIP">Начало интервала адресов</param>
         /// <returns>Ошибки</returns>
-        private string CheckIONodesIP()
+        private string CheckIONodesIP(long startingIP, long endingIP)
         {
             string errors = "";
-            long startingIP = EasyEPlanner.ProjectConfiguration
-                .GetInstance().StartingIPInterval;
-            long endingIP = EasyEPlanner.ProjectConfiguration.GetInstance()
-                .EndingIPInterval;
-            if (startingIP == 0 || endingIP == 0)
-            {
-                return errors;
-            }
-
             var plcWithIP = IONodes;
             foreach (var node in plcWithIP)
             {

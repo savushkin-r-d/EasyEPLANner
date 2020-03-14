@@ -3645,7 +3645,14 @@ namespace Device
                 res += dev.Check();
             }
 
-            res += CheckDevicesIP();
+            long startingIP = EasyEPlanner.ProjectConfiguration
+                .GetInstance().StartingIPInterval;
+            long endingIP = EasyEPlanner.ProjectConfiguration.GetInstance()
+                .EndingIPInterval;
+            if (startingIP != 0 && endingIP != 0)
+            {
+                res += CheckDevicesIP(startingIP, endingIP);
+            }           
 
             return res;
         }
@@ -3653,19 +3660,13 @@ namespace Device
         /// <summary>
         /// Проверить IP-адреса устройств.
         /// </summary>
+        /// <param name="startingIP">Начало интервала адресов</param>
+        /// <param name="endingIP">Конец интервала адресов</param>
         /// <returns>Ошибки</returns>
-        private string CheckDevicesIP()
+        private string CheckDevicesIP(long startingIP, long endingIP)
         {
             string errors = "";
             string ipProperty = "IP";
-            long startingIP = EasyEPlanner.ProjectConfiguration
-                .GetInstance().StartingIPInterval;
-            long endingIP = EasyEPlanner.ProjectConfiguration.GetInstance()
-                .EndingIPInterval;
-            if (startingIP == 0 || endingIP == 0)
-            {
-                return errors;
-            }
 
             var devicesWithIP = Devices
                 .Where(x => x.Properties.ContainsKey(ipProperty)).ToArray();

@@ -21,7 +21,7 @@ namespace EasyEPlanner
         {
             errors = "";
             errors += CheckProjectIPAddresses();
-            errors = deviceManager.Check();
+            errors += deviceManager.Check();
             errors += IOManager.Check();
             errors += techObjectManager.Check();
         }
