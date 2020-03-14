@@ -29,7 +29,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Проверка IP-адресов проекта.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Ошибки</returns>
         private string CheckProjectIPAddresses()
         {
             string errors = "";
@@ -52,6 +52,21 @@ namespace EasyEPlanner
 
             int[] startIP = startIPstr.Split('.').Select(int.Parse).ToArray();
             int[] endIP = endIPstr.Split('.').Select(int.Parse).ToArray();
+
+            bool correctValues = false;
+            for (int IPPair = 0; IPPair < startIP.Length; IPPair++)
+            {
+                if (startIP[IPPair] < endIP[IPPair])
+                {
+                    correctValues = true;
+                    break;
+                }
+            }
+            if (correctValues == false)
+            {
+                errors += "Некорректно задан диапазон IP-адресов проекта.\n";
+                return errors;
+            }
 
             var deivcesWithIP = deviceManager.Devices
                 .Where(x => x.Properties.ContainsKey(ipProperty)).ToArray();
