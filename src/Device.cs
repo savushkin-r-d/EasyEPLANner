@@ -3645,7 +3645,49 @@ namespace Device
                 res += dev.Check();
             }
 
+            res += CheckDevicesIP();
+
             return res;
+        }
+
+        /// <summary>
+        /// Проверить IP-адреса устройств.
+        /// </summary>
+        /// <returns>Ошибки</returns>
+        private string CheckDevicesIP()
+        {
+            string errors = "";
+            string ipProperty = "IP";
+            long startingIP = EasyEPlanner.ProjectConfiguration
+                .GetInstance().StartingIPInterval;
+            long endingIP = EasyEPlanner.ProjectConfiguration.GetInstance()
+                .EndingIPInterval;
+            if (startingIP == 0 || endingIP == 0)
+            {
+                return errors;
+            }
+
+            var devicesWithIP = Devices
+                .Where(x => x.Properties.ContainsKey(ipProperty)).ToArray();
+            foreach (var device in devicesWithIP)
+            {
+                string IPstr = Regex.Match(device.Properties[ipProperty]
+                    .ToString(), StaticHelper.CommonConst.IPAddressPattern)
+                    .Value;
+                if (IPstr == "")
+                {
+                    continue;
+                }
+
+                long devIP = StaticHelper.IPConverter.ConvertIPStrToLong(IPstr);
+                if (devIP - startingIP < 0 || endingIP - devIP < 0)
+                {
+                    errors += $"IP-адрес устройства {device.EPlanName} " +
+                    $"вышел за диапазон.\n";
+                }
+            }
+
+            return errors;
         }
 
         /// <summary>

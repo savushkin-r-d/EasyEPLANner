@@ -1493,11 +1493,50 @@ namespace IO
                             100 * node2.N + "\" - " + node.IP + ".\n";
                     }
                 }
-
             }
+
+            str += CheckIONodesIP();
 
             return str;
         }
+
+        /// <summary>
+        /// Проверка IP-адресов узлов ввода-вывода
+        /// </summary>
+        /// <returns>Ошибки</returns>
+        private string CheckIONodesIP()
+        {
+            string errors = "";
+            long startingIP = EasyEPlanner.ProjectConfiguration
+                .GetInstance().StartingIPInterval;
+            long endingIP = EasyEPlanner.ProjectConfiguration.GetInstance()
+                .EndingIPInterval;
+            if (startingIP == 0 || endingIP == 0)
+            {
+                return errors;
+            }
+
+            var plcWithIP = IONodes;
+            foreach (var node in plcWithIP)
+            {
+                string IPstr = node.IP;
+                if (IPstr == "")
+                {
+                    continue;
+                }
+
+                long nodeIP = StaticHelper.IPConverter
+                    .ConvertIPStrToLong(IPstr);
+                if (nodeIP - startingIP < 0 || endingIP - nodeIP < 0)
+                {
+                    errors += $"IP-адрес узла A{node.FullN} " +
+                        $"вышел за диапазон.\n";
+                }
+            }
+
+            return errors;
+        }
+
 
         /// <summary>
         /// Расчет IO-Link адресов привязанных устройств для всех модулей
