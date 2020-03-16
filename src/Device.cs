@@ -805,7 +805,8 @@ namespace Device
                             { 
                                 "M", 
                                 "P_CZ", 
-                                "V" 
+                                "V",
+                                "ST"
                             });
                     }
                     break;
