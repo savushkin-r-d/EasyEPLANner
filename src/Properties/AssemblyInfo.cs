@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "OJSC Savushkin product" )]
 [assembly: AssemblyProduct( "EPLAN project designer" )]
-[assembly: AssemblyCopyright( "Copyright ©  2012 - 2019" )]
+[assembly: AssemblyCopyright( "Copyright ©  2012 - 2020" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
