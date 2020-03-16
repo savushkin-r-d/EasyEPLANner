@@ -750,7 +750,20 @@ namespace TechObject
 
             if (child is Equipment)
             {
-                //TODO: для вкладки оборудование замена значений.
+                var objEquips = (child as Equipment).Items as BaseProperty[];
+                var copyEquips = (copyObject as Equipment)
+                    .Items as BaseProperty[];
+                foreach(var objEquip in objEquips)
+                {
+                    foreach(var copyEquip in copyEquips)
+                    {
+                        if (objEquip.LuaName == copyEquip.LuaName)
+                        {
+                            objEquip.SetNewValue(copyEquip.Value);
+                        }
+                    }
+                }
+                return child as Editor.ITreeViewItem;
             }
             return null;
         }

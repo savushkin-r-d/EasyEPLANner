@@ -31,12 +31,6 @@ namespace TechObject
                 return true;
             }
         }
-
-        public override Editor.ITreeViewItem Replace(object child, 
-            object copyObject)
-        {
-            return null; //TODO: надо ли этот метод?
-        }
         #endregion
     }
 }

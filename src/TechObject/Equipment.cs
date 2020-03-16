@@ -150,7 +150,13 @@ namespace TechObject
         public override Editor.ITreeViewItem Replace(object child, 
             object copyObject)
         {
-            return null; //TODO: замена значений
+            var property = child as ShowedBaseProperty;
+            if (property != null && copyObject is ShowedBaseProperty)
+            {
+                property.SetNewValue((copyObject as ShowedBaseProperty).Value);
+                return property as Editor.ITreeViewItem;
+            }
+            return null;
         }
         #endregion
 
