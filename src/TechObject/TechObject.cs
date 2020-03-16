@@ -747,6 +747,11 @@ namespace TechObject
                     return paramMan;
                 }
             }
+
+            if (child is Equipment)
+            {
+                //TODO: для вкладки оборудование замена значений.
+            }
             return null;
         }
         #endregion

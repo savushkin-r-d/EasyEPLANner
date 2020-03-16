@@ -22,5 +22,21 @@ namespace TechObject
             newProperty.SetNewValue(this.Value);
             return newProperty;
         }
+
+        #region реализация ItreeViewItem
+        public override bool IsReplaceable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override Editor.ITreeViewItem Replace(object child, 
+            object copyObject)
+        {
+            return null; //TODO: надо ли этот метод?
+        }
+        #endregion
     }
 }

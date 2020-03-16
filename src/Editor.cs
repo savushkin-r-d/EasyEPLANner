@@ -552,7 +552,7 @@ namespace Editor
             return null;
         }
 
-        public bool IsReplaceable
+        public virtual bool IsReplaceable
         {
             get
             {
@@ -560,7 +560,7 @@ namespace Editor
             }
         }
 
-        public ITreeViewItem Replace(object child, object copyObject)
+        public virtual ITreeViewItem Replace(object child, object copyObject)
         {
             return null;
         }
