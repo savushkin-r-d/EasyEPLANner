@@ -345,7 +345,7 @@ namespace TechObject
         public void ModifyDevNames(int oldNumber)
         {
             modes.ModifyDevNames(oldNumber);
-            equipment.ModifyDevNames(oldNumber);
+            equipment.ModifyDevNames();
         }
 
         public void ModifyDevNames(string newTechObjectName)
