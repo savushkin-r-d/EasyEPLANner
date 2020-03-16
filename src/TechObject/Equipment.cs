@@ -158,6 +158,38 @@ namespace TechObject
             }
             return null;
         }
+
+        public override object Copy()
+        {
+            return this;
+        }
+
+        override public bool IsCopyable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool Delete(object child)
+        {
+            if (child is BaseProperty)
+            {
+                var property = child as BaseProperty;
+                property.SetNewValue("");
+                return true;
+            }
+            return false;
+        }
+
+        public override bool IsDeletable
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         private TechObject owner;

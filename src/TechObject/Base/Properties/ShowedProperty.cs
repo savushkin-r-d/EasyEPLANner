@@ -31,6 +31,27 @@ namespace TechObject
                 return true;
             }
         }
+
+        public override object Copy()
+        {
+            return this;
+        }
+
+        override public bool IsCopyable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool IsDeletable
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
     }
 }

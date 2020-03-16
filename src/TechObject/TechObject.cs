@@ -750,10 +750,10 @@ namespace TechObject
 
             if (child is Equipment)
             {
-                var objEquips = (child as Equipment).Items as BaseProperty[];
+                var objEquips = (child as Equipment).Items.Select(x => x as BaseProperty).ToArray();
                 var copyEquips = (copyObject as Equipment)
-                    .Items as BaseProperty[];
-                foreach(var objEquip in objEquips)
+                    .Items.Select(x => x as BaseProperty).ToArray();
+                foreach (var objEquip in objEquips)
                 {
                     foreach(var copyEquip in copyEquips)
                     {
