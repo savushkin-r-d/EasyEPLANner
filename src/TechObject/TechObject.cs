@@ -703,6 +703,21 @@ namespace TechObject
             }
         }
 
+        public override bool Delete(object child)
+        {
+            if (child is Equipment)
+            {
+                var equipment = child as Equipment;
+                var objEquips = equipment.Items
+                    .Select(x => x as BaseProperty).ToArray();
+                foreach(var equip in objEquips)
+                {
+                    equip.SetNewValue("");
+                }
+            }
+            return false;
+        }
+
         override public bool IsMoveable
         {
             get
@@ -753,9 +768,9 @@ namespace TechObject
             if (child is Equipment && copyObject is Equipment)
             {
                 var equipment = child as Equipment;
-                var objEquips = equipment.Items
+                BaseProperty[] objEquips = equipment.Items
                     .Select(x => x as BaseProperty).ToArray();
-                var copyEquips = (copyObject as Equipment)
+                BaseProperty[] copyEquips = (copyObject as Equipment)
                     .Items.Select(x => x as BaseProperty).ToArray();
                 foreach (var objEquip in objEquips)
                 {

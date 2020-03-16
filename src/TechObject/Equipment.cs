@@ -122,7 +122,7 @@ namespace TechObject
                     .GetDevice(oldDevName);
                 if (device.Description != "заглушка")
                 {
-                    var newDevName = newTechObjName + techNumber + 
+                    string newDevName = newTechObjName + techNumber + 
                         device.DeviceType.ToString() + device.DeviceNumber;
                     var newDevice = Device.DeviceManager.GetInstance()
                         .GetDevice(newDevName);
@@ -136,8 +136,8 @@ namespace TechObject
 
         public void ModifyDevNames()
         {
-            var techNumber = owner.TechNumber;
-            var eplanName = owner.NameEplan;
+            int techNumber = owner.TechNumber;
+            string eplanName = owner.NameEplan;
 
             var properties = items.Select(x => x as BaseProperty).ToArray();
             foreach (var property in properties)
@@ -147,7 +147,7 @@ namespace TechObject
                     .GetDevice(oldDevName);
                 if (device.Description != "заглушка")
                 {
-                    var newDevName = eplanName + techNumber +
+                    string newDevName = eplanName + techNumber +
                         device.DeviceType.ToString() + device.DeviceNumber;
                     var newDevice = Device.DeviceManager.GetInstance()
                         .GetDevice(newDevName);
