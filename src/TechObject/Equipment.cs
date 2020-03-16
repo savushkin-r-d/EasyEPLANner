@@ -114,12 +114,6 @@ namespace TechObject
 
         public void ModifyDevNames(string newTechObjName, int techNumber)
         {
-            var eplanName = owner.NameEplan;
-            if (eplanName == newTechObjName)
-            {
-                return;
-            }
-
             var properties = items.Select(x => x as BaseProperty).ToArray();
             foreach (var property in properties)
             {

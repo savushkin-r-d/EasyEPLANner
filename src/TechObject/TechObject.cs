@@ -750,9 +750,11 @@ namespace TechObject
                 }
             }
 
-            if (child is Equipment)
+            if (child is Equipment && copyObject is Equipment)
             {
-                var objEquips = (child as Equipment).Items.Select(x => x as BaseProperty).ToArray();
+                var equipment = child as Equipment;
+                var objEquips = equipment.Items
+                    .Select(x => x as BaseProperty).ToArray();
                 var copyEquips = (copyObject as Equipment)
                     .Items.Select(x => x as BaseProperty).ToArray();
                 foreach (var objEquip in objEquips)
@@ -765,6 +767,7 @@ namespace TechObject
                         }
                     }
                 }
+                equipment.ModifyDevNames(this.NameEplan, this.TechNumber);
                 return child as Editor.ITreeViewItem;
             }
             return null;
