@@ -41,11 +41,30 @@ namespace EasyEPlanner
             {
                 startIPstr = ApiHelper.GetProjectProperty(startIpProperty);
                 endIPstr = ApiHelper.GetProjectProperty(endIpProperty);
+
+                startIPstr = Regex
+                    .Match(startIPstr, CommonConst.IPAddressPattern).Value;
+                endIPstr = Regex
+                    .Match(endIPstr, CommonConst.IPAddressPattern).Value;
+                if (startIPstr == "" || endIPstr == "")
+                {
+                    string errMsg = $"Некорректно задан диапазон " +
+                        $"IP-адресов проекта.\n";
+                    throw new Exception(errMsg);
+                }
             }
             catch (Exception e)
             {
                 ProjectConfiguration.GetInstance().ResetIPAddressesInterval();
-                errors += e.Message;
+                if (e.Message.Contains(startIpProperty) || 
+                    e.Message.Contains(endIpProperty))
+                {
+                    errors += "Не задан диапазон IP-адресов проекта.\n";
+                }
+                else
+                {
+                    errors += e.Message;
+                }
                 return errors;
             }
 

@@ -244,20 +244,12 @@ namespace StaticHelper
             var project = GetProject();
             if (project.Properties[propertyName].IsEmpty)
             {
-                string errMsg = "Не задан диапазон IP-адресов проекта.\n";
+                string errMsg = $"Не задано свойство {propertyName}\n";
                 throw new Exception(errMsg);
             }
 
-            result = Regex.Match(project.Properties[propertyName]
-                .ToString(ISOCode.Language.L___), CommonConst.IPAddressPattern)
-                .Value;
-            if (result == "")
-            {
-                string errMsg = "Некорректно задан диапазон IP-адресов " +
-                    "проекта.\n";
-                throw new Exception(errMsg);
-            }
-
+            result = project.Properties[propertyName]
+                .ToString(ISOCode.Language.L___);
             return result;
         }
 
