@@ -112,6 +112,20 @@ namespace TechObject
             return res;
         }
 
+        public void ModifyDevNames(string newTechObjName, int TechNumber)
+        {
+            var techNumber = owner.TechNumber;
+            var eplanName = owner.NameEplan;
+            //TODO: Замена ОУ объекта.
+        }
+
+        public void ModifyDevNames(int oldNumber)
+        {
+            var techNumber = owner.TechNumber;
+            var eplanName = owner.NameEplan;
+            //TODO: Замена номера объекта.
+        }
+
         #region Реализация ITreeViewItem
         public override string[] DisplayText
         {

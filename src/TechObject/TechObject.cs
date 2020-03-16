@@ -32,7 +32,7 @@ namespace TechObject
             /// </summary>
             public override bool SetNewValue(string newValue)
             {
-                owner.SetNewEplanName(newValue);
+                owner.ModifyDevNames(newValue);
                 base.SetNewValue(newValue);
                 owner.CompareEplanNames();
 
@@ -345,11 +345,13 @@ namespace TechObject
         public void ModifyDevNames(int oldNumber)
         {
             modes.ModifyDevNames(oldNumber);
+            equipment.ModifyDevNames(oldNumber);
         }
 
-        public void SetNewEplanName(string newTechObjectName)
+        public void ModifyDevNames(string newTechObjectName)
         {
-            modes.SetNewOwnerDevNames(newTechObjectName, this.TechNumber);
+            modes.ModifyDevNames(newTechObjectName, this.TechNumber);
+            equipment.ModifyDevNames(newTechObjectName, this.TechNumber);
         }
 
         /// <summary>
