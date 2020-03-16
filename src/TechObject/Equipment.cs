@@ -201,6 +201,7 @@ namespace TechObject
             if (property != null && copyObject is ShowedBaseProperty)
             {
                 property.SetNewValue((copyObject as ShowedBaseProperty).Value);
+                ModifyDevNames(owner.NameEplan, owner.TechNumber);
                 return property as Editor.ITreeViewItem;
             }
             return null;
