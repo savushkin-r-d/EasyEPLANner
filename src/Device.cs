@@ -1741,6 +1741,17 @@ namespace Device
         }
 
         /// <summary>
+        /// Получить свойства устройства.
+        /// </summary>
+        public Dictionary<string, object> Properties
+        {
+            get
+            {
+                return properties;
+            }
+        }
+
+        /// <summary>
         /// Свойство содержащее изделие, которое используется для устройства
         /// </summary>
         public string ArticleName { get; set; } = "";
@@ -3635,7 +3646,50 @@ namespace Device
                 res += dev.Check();
             }
 
+            long startingIP = EasyEPlanner.ProjectConfiguration
+                .GetInstance().StartingIPInterval;
+            long endingIP = EasyEPlanner.ProjectConfiguration.GetInstance()
+                .EndingIPInterval;
+            if (startingIP != 0 && endingIP != 0)
+            {
+                res += CheckDevicesIP(startingIP, endingIP);
+            }           
+
             return res;
+        }
+
+        /// <summary>
+        /// Проверить IP-адреса устройств.
+        /// </summary>
+        /// <param name="startingIP">Начало интервала адресов</param>
+        /// <param name="endingIP">Конец интервала адресов</param>
+        /// <returns>Ошибки</returns>
+        private string CheckDevicesIP(long startingIP, long endingIP)
+        {
+            string errors = "";
+            string ipProperty = "IP";
+
+            var devicesWithIP = Devices
+                .Where(x => x.Properties.ContainsKey(ipProperty)).ToArray();
+            foreach (var device in devicesWithIP)
+            {
+                string IPstr = Regex.Match(device.Properties[ipProperty]
+                    .ToString(), StaticHelper.CommonConst.IPAddressPattern)
+                    .Value;
+                if (IPstr == "")
+                {
+                    continue;
+                }
+
+                long devIP = StaticHelper.IPConverter.ConvertIPStrToLong(IPstr);
+                if (devIP - startingIP < 0 || endingIP - devIP < 0)
+                {
+                    errors += $"IP-адрес устройства {device.EPlanName} " +
+                    $"вышел за диапазон.\n";
+                }
+            }
+
+            return errors;
         }
 
         /// <summary>

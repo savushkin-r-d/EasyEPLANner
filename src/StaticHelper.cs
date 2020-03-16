@@ -234,6 +234,26 @@ namespace StaticHelper
         }
 
         /// <summary>
+        /// Получить свойство проекта.
+        /// </summary>
+        /// <param name="propertyName">Имя свойства</param>
+        /// <returns></returns>
+        public static string GetProjectProperty(string propertyName)
+        {
+            string result = "";
+            var project = GetProject();
+            if (project.Properties[propertyName].IsEmpty)
+            {
+                string errMsg = $"Не задано свойство {propertyName}\n";
+                throw new Exception(errMsg);
+            }
+
+            result = project.Properties[propertyName]
+                .ToString(ISOCode.Language.L___);
+            return result;
+        }
+
+        /// <summary>
         /// Возвращает имя канала (IO-Link, DI, DO) из строки для IO-Link
         /// модуля.
         /// </summary>
@@ -329,6 +349,53 @@ namespace StaticHelper
         /// Текст "Резерв".
         /// </summary>
         public const string Reserve = "Резерв";
+
+        /// <summary>
+        /// Шаблон поиска IP-адреса.
+        /// </summary>
+        public const string IPAddressPattern = @"\b(25[0-5]|2[0-4][0-9]|" +
+            @"[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|" +
+            @"[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|" +
+            @"[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b";
+    }
+
+    /// <summary>
+    /// Класс, содержащий методы конвертирования IP-адреса в разные форматы.
+    /// </summary>
+    public static class IPConverter
+    {
+        /// <summary>
+        /// Конвертировать IP-адрес из строкового типа в long.
+        /// Из вида "000.000.000.000".
+        /// </summary>
+        /// <param name="IP">Строка с адресом</param>
+        /// <returns></returns>
+        public static long ConvertIPStrToLong(string IP)
+        {
+            long convertedIP;
+            const int oneDigit = 1;
+            const int twoDigits = 2;
+
+            string[] IPPairs = IP.Split('.');
+            for (int i = 0; i < IPPairs.Length; i++)
+            {
+                if (IPPairs[i].Length == oneDigit)
+                {
+                    IPPairs[i] = string.Format("00{0}", IPPairs[i]);
+                    continue;
+                }
+
+                if (IPPairs[i].Length == twoDigits)
+                {
+                    IPPairs[i] = string.Format("0{0}", IPPairs[i]);
+                    continue;
+                }
+            }
+
+            string IPstring = string.Concat(IPPairs);
+            convertedIP = Convert.ToInt64(IPstring);
+            return convertedIP;
+        }
     }
 
     public static class LuaHelper
