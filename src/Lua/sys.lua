@@ -79,29 +79,8 @@ proc_operation = function( value, mode, state_n )
     proc_seats( mode, state_n, -1, value.opened_lower_seat_v, "opened_lower_seat_v" )
     proc( mode, state_n, value.required_FB,    -1, "required_FB" )
 
-    --Группа устройств DI->DO.
-    local group_n = 0
-    if value.DI_DO ~= nil then
-        for field, value in pairs( value.DI_DO ) do
-            for field, value in pairs( value ) do
-                mode[ state_n ][ -1 ]:AddDev( "DI_DO", value, group_n )
-            end
-
-            group_n = group_n + 1
-        end
-    end
-
-    --Группа устройств AI->AO.
-    local group_n = 0
-    if value.AI_AO ~= nil then
-        for field, value in pairs( value.AI_AO ) do
-            for field, value in pairs( value ) do
-                mode[ state_n ][ -1 ]:AddDev( "AI_AO", value, group_n )
-            end
-
-            group_n = group_n + 1
-        end
-    end
+    proc_seats(mode, state_n, -1, value.DI_DO, "DI_DO")
+    proc_seats(mode, state_n, -1, value.AI_AO, "AI_AO")
 
     --Группа устройств, управляемых по ОС с выдачей сигнала.
     if value.wash_data ~= nil then
@@ -153,29 +132,8 @@ proc_operation = function( value, mode, state_n )
                 "opened_lower_seat_v" )
             proc( mode, state_n, value.required_FB, step_n, "required_FB" )
 
-            --Группа устройств DI->DO.
-            local group_n = 0
-            if value.DI_DO ~= nil then
-                for field, value in pairs( value.DI_DO ) do
-                    for field, value in pairs( value ) do
-                        mode[ state_n ][ step_n ]:AddDev( "DI_DO", value, group_n )
-                    end
-
-                    group_n = group_n + 1
-                end
-            end
-
-            --Группа устройств AI->AO.
-            local group_n = 0
-            if value.AI_AO ~= nil then
-                for field, value in pairs( value.AI_AO ) do
-                    for field, value in pairs( value ) do
-                        mode[ state_n ][ step_n ]:AddDev( "AI_AO", value, group_n )
-                    end
-
-                    group_n = group_n + 1
-                end
-            end
+            proc_seats(mode, state_n, step_n, value.DI_DO, "DI_DO")
+            proc_seats(mode, state_n, step_n, value.AI_AO, "AI_AO")
 
             --Группа устройств, управляемых по ОС с выдачей сигнала.
             if value.wash_data ~= nil then
@@ -269,14 +227,11 @@ end
 proc_seats = function( mode, state_n, step_n, seats, n )
     --Группа устройств промывки седел.
     if seats ~= nil then
-
         local group_n = 0
         for field, group in pairs( seats ) do
-
             for field, v in pairs( group ) do
                 mode[ state_n ][ step_n ]:AddDev( n, v, group_n )
             end
-
             group_n = group_n + 1
         end
     end
