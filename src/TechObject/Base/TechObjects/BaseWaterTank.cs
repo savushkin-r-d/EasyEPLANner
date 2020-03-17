@@ -16,7 +16,7 @@ namespace TechObject
             S88Level = 2;
             Name = "Бачок";
             EplanName = "_tank";
-            BaseOperations = DataBase.Imitation.BaseEmptyOperations();
+            BaseOperations = DataBase.Imitation.WaterTankOperations();
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "cooler";
             Equipment = DataBase.Imitation.EmptyEquipment();
