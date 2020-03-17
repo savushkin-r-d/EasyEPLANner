@@ -151,6 +151,66 @@ proc_operation = function( value, mode, state_n )
                 "opened_upper_seat_v" )
             proc_seats( mode, state_n, step_n, value.opened_lower_seat_v,
                 "opened_lower_seat_v" )
+            proc( mode, state_n, value.required_FB, step_n, "required_FB" )
+
+            --Группа устройств DI->DO.
+            local group_n = 0
+            if value.DI_DO ~= nil then
+                for field, value in pairs( value.DI_DO ) do
+                    for field, value in pairs( value ) do
+                        mode[ state_n ][ step_n ]:AddDev( "DI_DO", value, group_n )
+                    end
+
+                    group_n = group_n + 1
+                end
+            end
+
+            --Группа устройств AI->AO.
+            local group_n = 0
+            if value.AI_AO ~= nil then
+                for field, value in pairs( value.AI_AO ) do
+                    for field, value in pairs( value ) do
+                        mode[ state_n ][ step_n ]:AddDev( "AI_AO", value, group_n )
+                    end
+
+                    group_n = group_n + 1
+                end
+            end
+
+            --Группа устройств, управляемых по ОС с выдачей сигнала.
+            if value.wash_data ~= nil then
+                --DI
+                if value.wash_data.DI ~= nil then
+                    mode[ state_n ][ step_n ]:AddDev( "wash_data", value.wash_data.DI[ 1 ], 0 )
+                end
+
+                --Control signal DO
+                if value.wash_data.DO ~= nil then
+                    for field, value in pairs( value.wash_data.DO ) do
+                        mode[ state_n ][ step_n ]:AddDev( "wash_data", value, 1 )
+                    end
+                end
+
+                --On devices.
+                if value.wash_data.devices ~= nil then
+                    for field, value in pairs( value.wash_data.devices ) do
+                        mode[ state_n ][ step_n ]:AddDev( "wash_data", value, 2 )
+                    end
+                end
+
+                --On reverse devices.
+                if value.wash_data.rev_devices ~= nil then
+                    for field, value in pairs( value.wash_data.rev_devices ) do
+                        mode[ state_n ][ step_n ]:AddDev( "wash_data", value, 3 )
+                    end
+                end
+
+                --Frequency param.
+                if value.wash_data.pump_freq ~= nil then
+                    mode[ state_n ][ step_n ]:AddParam( "wash_data", 1,
+                        value.wash_data.pump_freq )
+                end
+            end -- if value.wash_data ~= nil then
 
             local time_param_n = value.time_param_n or 0
             local next_step_n = value.next_step_n or 0
@@ -158,7 +218,6 @@ proc_operation = function( value, mode, state_n )
             if time_param_n > 0 then
                 mode[ state_n ][ step_n ]:SetPar( time_param_n, next_step_n )
             end
-
         end
     end
 end
