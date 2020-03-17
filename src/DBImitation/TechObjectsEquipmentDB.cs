@@ -51,5 +51,17 @@ namespace DataBase
                 new ShowedBaseProperty("TE","Датчик температуры", "TE1")
             };
         }
+
+        /// <summary>
+        /// Получить список оборудования базового узла охлаждения
+        /// </summary>
+        /// <returns></returns>
+        static public BaseProperty[] CoolerNodeEquipment()
+        {
+            return new BaseProperty[]
+            {
+                new ShowedBaseProperty("TE", "Датчик температуры", "TE1")
+            };
+        }
     }
 }
