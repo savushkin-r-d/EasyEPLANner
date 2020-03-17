@@ -46,5 +46,31 @@ namespace DataBase
                 new BaseOperation("Выдача", "OUT", EmptyProperties()),
             };
         }
+
+        /// <summary>
+        /// Получить операции базового объекта "Узел охлаждения"
+        /// </summary>
+        /// <returns></returns>
+        public static BaseOperation[] CoolerNodeOperations()
+        {
+            return new BaseOperation[]
+            {
+                new BaseOperation("", "", EmptyProperties()),
+                new BaseOperation("Охлаждение", "COOLING", EmptyProperties()),
+            };
+        }
+
+        /// <summary>
+        /// Получить операции базового объекта "Бачок ледяной воды"
+        /// </summary>
+        /// <returns></returns>
+        public static BaseOperation[] WaterTankOperations()
+        {
+            return new BaseOperation[]
+            {
+                new BaseOperation("", "", EmptyProperties()),
+                new BaseOperation("Охлаждение", "COOLING", EmptyProperties()),
+            };
+        }
     }
 }
