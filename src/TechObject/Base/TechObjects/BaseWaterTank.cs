@@ -19,7 +19,7 @@ namespace TechObject
             BaseOperations = DataBase.Imitation.BaseEmptyOperations();
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "cooler";
-            Equipment = DataBase.Imitation.EmptyEquipment();
+            Equipment = DataBase.Imitation.WaterTankEquipment();
         }
 
         /// <summary>
