@@ -18,6 +18,9 @@ namespace EasyEPlanner
             this.deviceBindingReader = new DeviceBindingReader();
             this.deviceSynchronizer = new DeviceSynchronizer();
             this.IOReader = new IOReader();
+
+            StartingIPInterval = 0;
+            EndingIPInterval = 0;
         }
 
         /// <summary>
@@ -105,6 +108,25 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Начальный интервал IP-адресов проекта.
+        /// </summary>
+        public long StartingIPInterval { get; set; }
+
+        /// <summary>
+        /// Конечный интервал IP-адресов проекта.
+        /// </summary>
+        public long EndingIPInterval { get; set; }
+
+        /// <summary>
+        /// Сбросить интервал IP-адресов проекта.
+        /// </summary>
+        public void ResetIPAddressesInterval()
+        {
+            StartingIPInterval = 0;
+            EndingIPInterval = 0;
+        }
+
         ConfigurationChecker configurationChecker;
         DeviceReader deviceReader;
         DeviceBindingReader deviceBindingReader;
@@ -112,6 +134,5 @@ namespace EasyEPlanner
         IOReader IOReader;
 
         static ProjectConfiguration instance;
-
     }
 }
