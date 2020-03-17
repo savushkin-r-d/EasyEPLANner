@@ -241,4 +241,17 @@ end
 ------------------------------------------------------------------------------</value>
     <comment>Шаблон пустого файла main.plua</comment>
   </data>
+  <data name="prgLuaRequireModules" xml:space="preserve">
+    <value>--Базовая функциональность
+require( "tank" )
+require( "mixer" )
+require( "line" )
+require( "master" )
+require( "cooler" )
+require( "boiler" )
+require( "pasteurizator" )
+require( "water_tank" )
+</value>
+    <comment>Шаблон, содержащий список модулей для подключения в prg.lua (require)</comment>
+  </data>
 </root>

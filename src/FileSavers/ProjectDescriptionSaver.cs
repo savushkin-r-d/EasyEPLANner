@@ -266,12 +266,9 @@ namespace EasyEPlanner
             fileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);
             fileWriter.WriteLine(new string('-', numberOfDashes));
             fileWriter.WriteLine(new string('-', numberOfDashes));
-            fileWriter.WriteLine(string.Format(
-                "--Базовая функциональность\n{0}\n{1}\n{2}\n{3}\n",
-                "require( \"tank\" )",
-                "require(\"mixer\")",
-                "require(\"line\")",
-                "require(\"master\")"));
+            string requireModules = Properties.Resources.ResourceManager
+            .GetString("prgLuaRequireModules");
+            fileWriter.WriteLine(requireModules);
             fileWriter.WriteLine("-- Основные объекты проекта (объекты, " +
                 "описанные в Eplan).");
 
