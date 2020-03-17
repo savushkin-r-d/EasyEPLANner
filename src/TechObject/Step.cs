@@ -49,29 +49,30 @@ namespace TechObject
                     Device.DeviceType.V, 
                     Device.DeviceType.DO, 
                     Device.DeviceType.M }));
-            
-            actions[2].DrawStyle = Editor.DrawInfo.Style.RED_BOX;
-            actions.Add(new Action_WashSeats("Верхние седла", this, 
-                "opened_upper_seat_v"));
-            actions[3].DrawStyle = Editor.DrawInfo.Style.GREEN_UPPER_BOX;
-            actions.Add(new Action_WashSeats("Нижние седла", this, 
-                "opened_lower_seat_v"));
-            actions[4].DrawStyle = Editor.DrawInfo.Style.GREEN_LOWER_BOX;
 
-            if (isMode)
-            {
-                actions.Add(new Action("Сигналы для включения", this, 
-                    "required_FB",
-                    new Device.DeviceType[2] { 
-                        Device.DeviceType.DI, 
-                        Device.DeviceType.GS }));
-                actions.Add(new Action_Wash("Мойка( DI, DO, устройства)", this,
-                    "wash_data"));
-                actions.Add(new Action_DI_DO("Группы DI -> DO DO ...", this,
-                    "DI_DO"));
-                actions.Add(new Action_AI_AO("Группы AI -> AO AO ...", this,
-                    "AI_AO"));
-            }
+            actions[2].DrawStyle = Editor.DrawInfo.Style.RED_BOX;
+            actions.Add(new Action_WashSeats("Верхние седла", this,
+                "opened_upper_seat_v"));
+
+            actions[3].DrawStyle = Editor.DrawInfo.Style.GREEN_UPPER_BOX;
+            actions.Add(new Action_WashSeats("Нижние седла", this,
+                "opened_lower_seat_v"));
+
+            actions[4].DrawStyle = Editor.DrawInfo.Style.GREEN_LOWER_BOX;
+            actions.Add(new Action("Сигналы для включения", this,
+                "required_FB",
+                new Device.DeviceType[2] {
+                    Device.DeviceType.DI,
+                    Device.DeviceType.GS }));
+
+            actions.Add(new Action_Wash("Мойка( DI, DO, устройства)", this,
+                "wash_data"));
+
+            actions.Add(new Action_DI_DO("Группы DI -> DO DO ...", this,
+                "DI_DO"));
+
+            actions.Add(new Action_AI_AO("Группы AI -> AO AO ...", this,
+                "AI_AO"));
 
             items.AddRange(actions.ToArray());
 
