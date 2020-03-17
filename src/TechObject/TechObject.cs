@@ -599,13 +599,19 @@ namespace TechObject
         public string Check()
         {
             var errors = string.Empty;
+            bool setBaseTechObj = this.DisplayText[1].Length > 0 ? true : false;
 
-            if (this.DisplayText[1].Length == 0)
+
+            if (setBaseTechObj == false)
             {
                 string objName = this.EditText[0] + " " + this.TechNumber;
                 string msg = string.Format("Не выбран базовый объект - " +
                     "\"{0}\"\n", objName);
                 errors += msg;
+            }
+            else
+            {
+                Equipment.Check();
             }
 
             ModesManager modesManager = ModesManager;

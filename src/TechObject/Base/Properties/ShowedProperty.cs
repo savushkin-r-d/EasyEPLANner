@@ -12,8 +12,10 @@ namespace TechObject
             : base(luaName, name, canSave) { }
 
         public ShowedBaseProperty(string luaName, string name) : base(luaName,
-            name, true)
-        { }
+            name, true) { }
+
+        public ShowedBaseProperty(string luaName, string name, 
+            string defaultValue) : base(luaName, name, true, defaultValue) { }
 
         public override BaseProperty Clone()
         {

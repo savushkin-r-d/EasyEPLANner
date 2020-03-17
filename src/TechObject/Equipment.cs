@@ -159,6 +159,26 @@ namespace TechObject
             }
         }
 
+        public void Check()
+        {
+            var equipment = Items.Select(x => x as BaseProperty).ToArray();
+            foreach (var equip in equipment)
+            {
+                string currentValue = equip.Value;
+                if (currentValue == "")
+                {
+                    string deviceName = owner.NameEplan + owner.TechNumber + 
+                        equip.DefaultValue;
+                    var device = Device.DeviceManager.GetInstance()
+                        .GetDevice(deviceName);
+                    if (device.Description != "заглушка")
+                    {
+                        equip.SetNewValue(deviceName);
+                    }
+                }
+            }
+        }
+
         #region Реализация ITreeViewItem
         public override string[] DisplayText
         {
