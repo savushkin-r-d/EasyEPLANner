@@ -112,6 +112,73 @@ namespace TechObject
             return res;
         }
 
+        public void ModifyDevNames(string newTechObjName, int techNumber)
+        {
+            var properties = items.Select(x => x as BaseProperty).ToArray();
+            foreach (var property in properties)
+            {
+                string oldDevName = property.Value;
+                var device = Device.DeviceManager.GetInstance()
+                    .GetDevice(oldDevName);
+                if (device.Description != "заглушка")
+                {
+                    string newDevName = newTechObjName + techNumber + 
+                        device.DeviceType.ToString() + device.DeviceNumber;
+                    var newDevice = Device.DeviceManager.GetInstance()
+                        .GetDevice(newDevName);
+                    if (newDevice.Description != "заглушка")
+                    {
+                        property.SetNewValue(newDevName);
+                    }
+                }
+            }
+        }
+
+        public void ModifyDevNames()
+        {
+            int techNumber = owner.TechNumber;
+            string eplanName = owner.NameEplan;
+
+            var properties = items.Select(x => x as BaseProperty).ToArray();
+            foreach (var property in properties)
+            {
+                string oldDevName = property.Value;
+                var device = Device.DeviceManager.GetInstance()
+                    .GetDevice(oldDevName);
+                if (device.Description != "заглушка")
+                {
+                    string newDevName = eplanName + techNumber +
+                        device.DeviceType.ToString() + device.DeviceNumber;
+                    var newDevice = Device.DeviceManager.GetInstance()
+                        .GetDevice(newDevName);
+                    if (newDevice.Description != "заглушка")
+                    {
+                        property.SetNewValue(newDevName);
+                    }
+                }
+            }
+        }
+
+        public void Check()
+        {
+            var equipment = Items.Select(x => x as BaseProperty).ToArray();
+            foreach (var equip in equipment)
+            {
+                string currentValue = equip.Value;
+                if (currentValue == "")
+                {
+                    string deviceName = owner.NameEplan + owner.TechNumber + 
+                        equip.DefaultValue;
+                    var device = Device.DeviceManager.GetInstance()
+                        .GetDevice(deviceName);
+                    if (device.Description != "заглушка")
+                    {
+                        equip.SetNewValue(deviceName);
+                    }
+                }
+            }
+        }
+
         #region Реализация ITreeViewItem
         public override string[] DisplayText
         {
@@ -136,6 +203,59 @@ namespace TechObject
             get
             {
                 return items.ToArray();
+            }
+        }
+
+        public override bool IsReplaceable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override Editor.ITreeViewItem Replace(object child, 
+            object copyObject)
+        {
+            var property = child as ShowedBaseProperty;
+            if (property != null && copyObject is ShowedBaseProperty)
+            {
+                property.SetNewValue((copyObject as ShowedBaseProperty).Value);
+                ModifyDevNames(owner.NameEplan, owner.TechNumber);
+                return property as Editor.ITreeViewItem;
+            }
+            return null;
+        }
+
+        public override object Copy()
+        {
+            return this;
+        }
+
+        override public bool IsCopyable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool Delete(object child)
+        {
+            if (child is BaseProperty)
+            {
+                var property = child as BaseProperty;
+                property.SetNewValue("");
+                return true;
+            }
+            return false;
+        }
+
+        public override bool IsDeletable
+        {
+            get
+            {
+                return true;
             }
         }
         #endregion

@@ -495,7 +495,7 @@ namespace Editor
             }
         }
 
-        public bool IsDeletable
+        public virtual bool IsDeletable
         {
             get
             {
@@ -503,12 +503,12 @@ namespace Editor
             }
         }
 
-        public bool Delete(object child)
+        public virtual bool Delete(object child)
         {
             return false;
         }
 
-        public bool IsCopyable
+        public virtual bool IsCopyable
         {
             get
             {
@@ -516,7 +516,7 @@ namespace Editor
             }
         }
 
-        public object Copy()
+        public virtual object Copy()
         {
             return null;
         }
@@ -552,7 +552,7 @@ namespace Editor
             return null;
         }
 
-        public bool IsReplaceable
+        public virtual bool IsReplaceable
         {
             get
             {
@@ -560,7 +560,7 @@ namespace Editor
             }
         }
 
-        public ITreeViewItem Replace(object child, object copyObject)
+        public virtual ITreeViewItem Replace(object child, object copyObject)
         {
             return null;
         }

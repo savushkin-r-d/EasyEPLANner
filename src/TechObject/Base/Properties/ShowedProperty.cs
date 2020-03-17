@@ -12,8 +12,10 @@ namespace TechObject
             : base(luaName, name, canSave) { }
 
         public ShowedBaseProperty(string luaName, string name) : base(luaName,
-            name, true)
-        { }
+            name, true) { }
+
+        public ShowedBaseProperty(string luaName, string name, 
+            string defaultValue) : base(luaName, name, true, defaultValue) { }
 
         public override BaseProperty Clone()
         {
@@ -22,5 +24,36 @@ namespace TechObject
             newProperty.SetNewValue(this.Value);
             return newProperty;
         }
+
+        #region реализация ItreeViewItem
+        public override bool IsReplaceable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override object Copy()
+        {
+            return this;
+        }
+
+        override public bool IsCopyable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool IsDeletable
+        {
+            get
+            {
+                return true;
+            }
+        }
+        #endregion
     }
 }

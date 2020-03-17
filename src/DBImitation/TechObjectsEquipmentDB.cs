@@ -29,10 +29,10 @@ namespace DataBase
         {
             return new BaseProperty[]
             {
-                new ShowedBaseProperty("mix", "Мешалка"),
-                new ShowedBaseProperty("bar", "Датчик решетки люка"),
-                new ShowedBaseProperty("hatch", "Датчик крышки люка"),
-                new ShowedBaseProperty("LT", "Датчик текущего уровня")
+                new ShowedBaseProperty("mix", "Мешалка", "M1"),
+                new ShowedBaseProperty("bar", "Датчик решетки люка", "GS2"),
+                new ShowedBaseProperty("hatch", "Датчик крышки люка", "GS1"),
+                new ShowedBaseProperty("LT", "Датчик текущего уровня", "LT1")
             };
         }
 
@@ -44,11 +44,11 @@ namespace DataBase
         {
             return new BaseProperty[]
             {
-                new ShowedBaseProperty("hatch", "Датчик крышки люка"),
-                new ShowedBaseProperty("LS_up", "Датчик верхнего уровня"),
-                new ShowedBaseProperty("LS_down", "Датчик нижнего уровня"),
-                new ShowedBaseProperty("LT", "Датчик текущего уровня"),
-                new ShowedBaseProperty("TE","Датчик температуры")
+                new ShowedBaseProperty("hatch", "Датчик крышки люка", "GS1"),
+                new ShowedBaseProperty("LS_up", "Датчик верхнего уровня", "LS2"),
+                new ShowedBaseProperty("LS_down", "Датчик нижнего уровня", "LS1"),
+                new ShowedBaseProperty("LT", "Датчик текущего уровня", "LT1"),
+                new ShowedBaseProperty("TE","Датчик температуры", "TE1")
             };
         }
     }

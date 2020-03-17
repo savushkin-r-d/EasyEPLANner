@@ -40,7 +40,7 @@ namespace TechObject
             }
         }
 
-        public void SetNewOwnerDevNames(string newTechObjectName,
+        public void ModifyDevNames(string newTechObjectName,
             int newTechObjectNumber)
         {
             foreach (Mode mode in modes)

@@ -32,7 +32,7 @@ namespace TechObject
             /// </summary>
             public override bool SetNewValue(string newValue)
             {
-                owner.SetNewEplanName(newValue);
+                owner.ModifyDevNames(newValue);
                 base.SetNewValue(newValue);
                 owner.CompareEplanNames();
 
@@ -345,11 +345,13 @@ namespace TechObject
         public void ModifyDevNames(int oldNumber)
         {
             modes.ModifyDevNames(oldNumber);
+            equipment.ModifyDevNames();
         }
 
-        public void SetNewEplanName(string newTechObjectName)
+        public void ModifyDevNames(string newTechObjectName)
         {
-            modes.SetNewOwnerDevNames(newTechObjectName, this.TechNumber);
+            modes.ModifyDevNames(newTechObjectName, this.TechNumber);
+            equipment.ModifyDevNames(newTechObjectName, this.TechNumber);
         }
 
         /// <summary>
@@ -597,13 +599,19 @@ namespace TechObject
         public string Check()
         {
             var errors = string.Empty;
+            bool setBaseTechObj = this.DisplayText[1].Length > 0 ? true : false;
 
-            if (this.DisplayText[1].Length == 0)
+
+            if (setBaseTechObj == false)
             {
                 string objName = this.EditText[0] + " " + this.TechNumber;
                 string msg = string.Format("Не выбран базовый объект - " +
                     "\"{0}\"\n", objName);
                 errors += msg;
+            }
+            else
+            {
+                Equipment.Check();
             }
 
             ModesManager modesManager = ModesManager;
@@ -701,6 +709,21 @@ namespace TechObject
             }
         }
 
+        public override bool Delete(object child)
+        {
+            if (child is Equipment)
+            {
+                var equipment = child as Equipment;
+                var objEquips = equipment.Items
+                    .Select(x => x as BaseProperty).ToArray();
+                foreach(var equip in objEquips)
+                {
+                    equip.SetNewValue("");
+                }
+            }
+            return false;
+        }
+
         override public bool IsMoveable
         {
             get
@@ -746,6 +769,27 @@ namespace TechObject
                     }
                     return paramMan;
                 }
+            }
+
+            if (child is Equipment && copyObject is Equipment)
+            {
+                var equipment = child as Equipment;
+                BaseProperty[] objEquips = equipment.Items
+                    .Select(x => x as BaseProperty).ToArray();
+                BaseProperty[] copyEquips = (copyObject as Equipment)
+                    .Items.Select(x => x as BaseProperty).ToArray();
+                foreach (var objEquip in objEquips)
+                {
+                    foreach(var copyEquip in copyEquips)
+                    {
+                        if (objEquip.LuaName == copyEquip.LuaName)
+                        {
+                            objEquip.SetNewValue(copyEquip.Value);
+                        }
+                    }
+                }
+                equipment.ModifyDevNames(this.NameEplan, this.TechNumber);
+                return child as Editor.ITreeViewItem;
             }
             return null;
         }

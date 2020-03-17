@@ -17,11 +17,12 @@ namespace TechObject
         /// <returns></returns>
         public abstract new BaseProperty Clone();
 
-        public BaseProperty(string luaName, string name, bool canSave) 
-            : base(name, "")
+        public BaseProperty(string luaName, string name, bool canSave, 
+            string defaultValue = "") : base(name, "")
         {
             this.luaName = luaName;
             this.canSave = canSave;
+            this.defaultValue = defaultValue;
         }
 
         /// <summary>
@@ -32,6 +33,14 @@ namespace TechObject
             get
             {
                 return luaName;
+            }
+        }
+
+        public string DefaultValue
+        {
+            get
+            {
+                return defaultValue;
             }
         }
 
@@ -93,5 +102,6 @@ namespace TechObject
 
         private string luaName;
         private bool canSave;
+        private string defaultValue;
     }
 }
