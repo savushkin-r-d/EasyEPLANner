@@ -63,5 +63,19 @@ namespace DataBase
                 new ShowedBaseProperty("TE", "Датчик температуры", "TE1")
             };
         }
+
+        /// <summary>
+        /// Получить Список оборудования для бачка откачки ледяной воды.
+        /// </summary>
+        /// <returns></returns>
+        static public BaseProperty[] WaterTankEquipment()
+        {
+            return new BaseProperty[]
+            {
+                new ShowedBaseProperty("M1", "Насос", "M1"),
+                new ShowedBaseProperty("LS_up", "Датчик верхнего уровня", "LS2"),
+                new ShowedBaseProperty("LS_down", "Датчик нижнего уровня", "LS1"),
+            };
+        }
     }
 }
