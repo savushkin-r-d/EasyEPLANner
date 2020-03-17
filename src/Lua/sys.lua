@@ -165,11 +165,11 @@ proc = function( mode, state_n, devices, step_n, action_name )
     end
 end
 
-proc_groups = function( mode, state_n, step_n, seats, n )
+proc_groups = function( mode, state_n, step_n, groups, n )
     --Группа устройств
-    if seats ~= nil then
+    if groups ~= nil then
         local group_n = 0
-        for field, group in pairs( seats ) do
+        for field, group in pairs( groups ) do
             for field, v in pairs( group ) do
                 mode[ state_n ][ step_n ]:AddDev( n, v, group_n )
             end
