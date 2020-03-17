@@ -77,15 +77,15 @@ proc_operation = function( value, mode, state_n )
     "opened_reverse_devices" )
     proc( mode, state_n, value.closed_devices, -1, "closed_devices" )
 
-    proc_seats( mode, state_n, -1, value.opened_upper_seat_v, 
+    proc_groups( mode, state_n, -1, value.opened_upper_seat_v, 
     "opened_upper_seat_v" )
-    proc_seats( mode, state_n, -1, value.opened_lower_seat_v, 
+    proc_groups( mode, state_n, -1, value.opened_lower_seat_v, 
     "opened_lower_seat_v" )
     
     proc( mode, state_n, value.required_FB,    -1, "required_FB" )
 
-    proc_seats(mode, state_n, -1, value.DI_DO, "DI_DO")
-    proc_seats(mode, state_n, -1, value.AI_AO, "AI_AO")
+    proc_groups(mode, state_n, -1, value.DI_DO, "DI_DO")
+    proc_groups(mode, state_n, -1, value.AI_AO, "AI_AO")
 
     proc_wash_data(mode, state_n, -1, value)
 
@@ -100,14 +100,14 @@ proc_operation = function( value, mode, state_n )
             "opened_reverse_devices" )
             proc( mode, state_n, value.closed_devices, step_n, 
             "closed_devices" )
-            proc_seats( mode, state_n, step_n, value.opened_upper_seat_v,
+            proc_groups( mode, state_n, step_n, value.opened_upper_seat_v,
             "opened_upper_seat_v" )
-            proc_seats( mode, state_n, step_n, value.opened_lower_seat_v,
+            proc_groups( mode, state_n, step_n, value.opened_lower_seat_v,
             "opened_lower_seat_v" )
             proc( mode, state_n, value.required_FB, step_n, "required_FB" )
 
-            proc_seats(mode, state_n, step_n, value.DI_DO, "DI_DO")
-            proc_seats(mode, state_n, step_n, value.AI_AO, "AI_AO")
+            proc_groups(mode, state_n, step_n, value.DI_DO, "DI_DO")
+            proc_groups(mode, state_n, step_n, value.AI_AO, "AI_AO")
 
             proc_wash_data(mode, state_n, step_n, value)
 
@@ -165,8 +165,8 @@ proc = function( mode, state_n, devices, step_n, action_name )
     end
 end
 
-proc_seats = function( mode, state_n, step_n, seats, n )
-    --Группа устройств промывки седел.
+proc_groups = function( mode, state_n, step_n, seats, n )
+    --Группа устройств
     if seats ~= nil then
         local group_n = 0
         for field, group in pairs( seats ) do
