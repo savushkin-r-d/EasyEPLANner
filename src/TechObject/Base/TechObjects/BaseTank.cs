@@ -94,7 +94,7 @@ namespace TechObject
                         break;
 
                     case "Наполнение":
-                        res += SaveFillOperation(objName, mode, baseOperation);
+                        res += SaveFillOperation(objName, mode);
                         break;
 
                     case "Хранение":
@@ -107,7 +107,44 @@ namespace TechObject
                 }
             }
 
+            res += SaveOperationsParameters(objName);
+
             res += "\n";
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить параметры операций базового объекта танк.
+        /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
+        /// <returns></returns>
+        private string SaveOperationsParameters(string objName)
+        {
+            var res = "";
+
+            var modesManager = this.Owner.ModesManager;
+            var modes = modesManager.Modes;
+
+            foreach (Mode mode in modes)
+            {
+                var baseOperation = mode.GetBaseOperation();
+                switch (baseOperation.Name)
+                {
+                    case "Мойка":
+                        res += SaveWashOperationParameters(objName, 
+                            baseOperation);
+                        break;
+
+                    case "Наполнение":
+                        res += SaveFillOperationParameters(objName, 
+                            baseOperation);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
             return res;
         }
 
@@ -156,10 +193,57 @@ namespace TechObject
             }
 
             res += prefix + "}\n";
-
-            res += SaveWashOperationParameters(objName, baseOperation);
-
             res += "\n";
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить операцию наполнения.
+        /// </summary>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="mode">Операция</param>
+        /// <returns></returns>
+        private string SaveFillOperation(string objName, Mode mode)
+        {
+            var res = "";
+
+            var fillNumber = mode.GetModeNumber();
+            res += objName + $".operations.FILL = {fillNumber}\n";
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить операцию хранения
+        /// </summary>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="mode">Операция</param>
+        /// <returns></returns>
+        private string SaveStoringOperation(string objName, Mode mode)
+        {
+            var res = "";
+
+            var storingNumber = mode.GetModeNumber();
+            res += objName + $".operations.STORING = " +
+                $"{storingNumber}\n";
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить операцию выдачи
+        /// </summary>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="mode">Операция</param>
+        /// <returns></returns>
+        private string SaveOutOperation(string objName, Mode mode)
+        {
+            var res = "";
+
+            var outNumber = mode.GetModeNumber();
+            res += objName + $".operations.OUT = " +
+                $"{outNumber}\n";
 
             return res;
         }
@@ -197,26 +281,6 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Сохранить операцию наполнения.
-        /// </summary>
-        /// <param name="objName">Имя объекта</param>
-        /// <param name="mode">Операция</param>
-        /// <param name="baseOperation">Базовая операция</param>
-        /// <returns></returns>
-        private string SaveFillOperation(string objName,
-            Mode mode, BaseOperation baseOperation)
-        {
-            var res = "";
-
-            var fillNumber = mode.GetModeNumber();
-            res += objName + $".operations.FILL = {fillNumber}\n";
-
-            res += SaveFillOperationParameters(objName, baseOperation);
-
-            return res;
-        }
-
-        /// <summary>
         /// Сохранить параметры операции наполнения.
         /// </summary>
         /// <param name="objName">Имя объекта</param>
@@ -243,7 +307,7 @@ namespace TechObject
 
                             if (mode != null)
                             {
-                                val =mode.GetBaseOperation().LuaName.ToUpper();
+                                val = mode.GetBaseOperation().LuaName.ToUpper();
                             }
 
                             if (val != "nil")
@@ -260,40 +324,6 @@ namespace TechObject
                     }
                 }
             }
-
-            return res;
-        }
-
-        /// <summary>
-        /// Сохранить операцию хранения
-        /// </summary>
-        /// <param name="objName">Имя объекта</param>
-        /// <param name="mode">Операция</param>
-        /// <returns></returns>
-        private string SaveStoringOperation(string objName, Mode mode)
-        {
-            var res = "";
-
-            var storingNumber = mode.GetModeNumber();
-            res += objName + $".operations.STORING = " +
-                $"{storingNumber}\n";
-
-            return res;
-        }
-
-        /// <summary>
-        /// Сохранить операцию выдачи
-        /// </summary>
-        /// <param name="objName">Имя объекта</param>
-        /// <param name="mode">Операция</param>
-        /// <returns></returns>
-        private string SaveOutOperation(string objName, Mode mode)
-        {
-            var res = "";
-
-            var outNumber = mode.GetModeNumber();
-            res += objName + $".operations.OUT = " +
-                $"{outNumber}\n";
 
             return res;
         }
