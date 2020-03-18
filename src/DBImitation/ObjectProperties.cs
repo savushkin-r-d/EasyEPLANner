@@ -37,5 +37,13 @@ namespace DataBase
                 new ShowedBaseProperty("CIP_WASH_END", "Мойка завершена")
             };
         }
+
+        public static BaseProperty[] CoolerPIDProperties()
+        {
+            return new BaseProperty[]
+            {
+                new NonShowedBaseProperty("PID_n", "номер ПИД-регулятора"),
+            };
+        }
     }
 }
