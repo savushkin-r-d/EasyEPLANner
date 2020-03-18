@@ -775,14 +775,22 @@ namespace Device
                     {
                         case DeviceSubType.LS_MIN:
                         case DeviceSubType.LS_MAX:
-                        case DeviceSubType.LS_IOLINK_MIN:
-                        case DeviceSubType.LS_IOLINK_MAX:
                         case DeviceSubType.LS_VIRT:
                             return new List<string>(new string[]
                             {
                                 "ST",
                                 "M",
                                 "P_DT"
+                            });
+
+                        case DeviceSubType.LS_IOLINK_MIN:
+                        case DeviceSubType.LS_IOLINK_MAX:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "P_DT",
+                                "V"
                             });
                     }
                     break;
