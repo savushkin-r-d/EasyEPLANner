@@ -102,6 +102,17 @@ namespace TechObject
             return "-1";
         }
 
+        /// <summary>
+        /// Получить глобальный номер параметра.
+        /// </summary>
+        public int GetParameterNumber
+        {
+            get
+            {
+                return getN(this);
+            }
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {
