@@ -61,6 +61,19 @@ namespace DataBase
         }
 
         /// <summary>
+        /// Получить операции базового объекта "Узел охлаждения ПИД"
+        /// </summary>
+        /// <returns></returns>
+        public static BaseOperation[] CoolerNodePIDOperations()
+        {
+            return new BaseOperation[]
+            {
+                new BaseOperation("", "", EmptyProperties()),
+                new BaseOperation("Охлаждение", "COOLING", EmptyProperties()),
+            };
+        }
+
+        /// <summary>
         /// Получить операции базового объекта "Бачок ледяной воды"
         /// </summary>
         /// <returns></returns>

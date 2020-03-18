@@ -65,6 +65,19 @@ namespace DataBase
         }
 
         /// <summary>
+        /// Получить список оборудования базового узла охлаждения ПИД
+        /// </summary>
+        /// <returns></returns>
+        static public BaseProperty[] CoolerNodePIDEquipment()
+        {
+            return new BaseProperty[]
+            {
+                new ShowedBaseProperty("TE", "Датчик температуры", "TE1"),
+                new ShowedBaseProperty("VC", "Регулирующий клапан", "VC1")
+            };
+        }
+
+        /// <summary>
         /// Получить Список оборудования для бачка откачки ледяной воды.
         /// </summary>
         /// <returns></returns>
@@ -77,5 +90,6 @@ namespace DataBase
                 new ShowedBaseProperty("LS_down", "Датчик нижнего уровня", "LS1"),
             };
         }
+
     }
 }

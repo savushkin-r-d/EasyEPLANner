@@ -79,6 +79,7 @@ namespace DataBase
                 new BaseTank(),
                 new BaseHeater(),
                 new BaseCooler(),
+                new BaseCoolerPID(),
                 new BaseMixer()
             };
         }
