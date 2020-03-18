@@ -669,6 +669,7 @@ namespace TechObject
             baseTechObject = techObjFromDB;
             S88Level = baseTechObject.S88Level;
             equipment.AddItems(baseTechObject.Equipment);
+            equipment.Check();
 
             // Т.к установили новое значение, произошла смена базового объекта
             // Надо сравнить ОУ и изменить его, если требуется
