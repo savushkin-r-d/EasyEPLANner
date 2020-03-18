@@ -101,6 +101,38 @@ namespace TechObject
             return res;
         }
 
+        /// <summary>
+        /// Проверить параметры объекта
+        /// </summary>
+        /// <param name="objName">Имя объекта</param>
+        /// <returns></returns>
+        public string Check(string objName)
+        {
+            var errors = new List<string>();
+            var emptyParamName = "";
+            var newParamName = "P";
+            foreach(var param in parameters)
+            {
+                int[] equalParameters = parameters
+                    .Where(x => x.GetNameLua() == param.GetNameLua() &&
+                    x.GetNameLua() != newParamName &&
+                    x.GetNameLua() != emptyParamName)
+                    .Select(y => y.GetParameterNumber)
+                    .ToArray();
+
+                if (equalParameters.Length > 1)
+                {
+                    string errorMessage = $"У объекта \"{objName}\" совпадают" +
+                        $" имена параметров с номерами " +
+                        $"{string.Join(",", equalParameters)}\n";
+                    errors.Add(errorMessage);
+                }
+            }
+
+            errors = errors.Distinct().ToList();
+            return string.Concat(errors);
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {

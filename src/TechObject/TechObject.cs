@@ -599,12 +599,12 @@ namespace TechObject
         public string Check()
         {
             var errors = string.Empty;
+            var objName = this.DisplayText[0];
             bool setBaseTechObj = this.DisplayText[1].Length > 0 ? true : false;
 
 
             if (setBaseTechObj == false)
             {
-                string objName = this.EditText[0] + " " + this.TechNumber;
                 string msg = string.Format("Не выбран базовый объект - " +
                     "\"{0}\"\n", objName);
                 errors += msg;
@@ -620,6 +620,8 @@ namespace TechObject
             {
                 errors += mode.Check();
             }
+
+            errors += Params.Check(objName);
 
             return errors;
         }

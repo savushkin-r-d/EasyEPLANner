@@ -126,6 +126,18 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Проверить менеджер параметров объекта.
+        /// </summary>
+        /// <param name="objName">Имя объекта</param>
+        /// <returns>Ошибки</returns>
+        public string Check(string objName)
+        {
+            var errors = "";
+            errors += Float.Check(objName);
+            return errors;
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {
