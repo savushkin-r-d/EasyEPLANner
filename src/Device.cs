@@ -3020,7 +3020,7 @@ namespace Device
                     parameters.Add("P_H_CONE", 0);
                     parameters.Add("P_ERR", null);
 
-                    IOLinkSizeIn = 1;
+                    IOLinkSizeIn = 2;
                     break;
 
                 case "LT_VIRT":
