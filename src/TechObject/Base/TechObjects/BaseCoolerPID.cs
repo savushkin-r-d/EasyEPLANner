@@ -98,7 +98,7 @@ namespace TechObject
             string prefix)
         {
             var res = "";
-            res += objName + $".PID_n = {Owner.GlobalNumber}";
+            res += objName + $".PID_n = {Owner.GlobalNumber}\n";
             return res;
         }
         #endregion
