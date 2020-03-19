@@ -3675,12 +3675,13 @@ namespace Device
         /// <returns>Ошибки</returns>
         private string CheckDevicesIP(long startingIP, long endingIP)
         {
-            string errors = "";
+            var errors = new List<string>();
             string ipProperty = "IP";
 
-            var devicesWithIP = Devices
-                .Where(x => x.Properties.ContainsKey(ipProperty)).ToArray();
-            foreach (var device in devicesWithIP)
+            var devicesWithIPProperty = Devices
+                .Where(x => x.Properties.ContainsKey(ipProperty) &&
+                x.Properties[ipProperty] != null).ToArray();
+            foreach (var device in devicesWithIPProperty)
             {
                 string IPstr = Regex.Match(device.Properties[ipProperty]
                     .ToString(), StaticHelper.CommonConst.IPAddressPattern)
@@ -3690,15 +3691,29 @@ namespace Device
                     continue;
                 }
 
+                var devicesWithEqualsIP = devicesWithIPProperty
+                    .Where(x => x.Properties[ipProperty].ToString() == 
+                    device.Properties[ipProperty].ToString()).ToArray();
+                if (devicesWithEqualsIP.Length > 1)
+                {
+                    var equalsDevicesNames = devicesWithEqualsIP
+                        .Select(x => x.EPlanName).ToArray();
+                    string error = $"IP-адреса устройств " +
+                        $"{string.Join(",", equalsDevicesNames)} совпадают.\n";
+                    errors.Add(error);
+                }
+
                 long devIP = StaticHelper.IPConverter.ConvertIPStrToLong(IPstr);
                 if (devIP - startingIP < 0 || endingIP - devIP < 0)
                 {
-                    errors += $"IP-адрес устройства {device.EPlanName} " +
+                    string error = $"IP-адрес устройства {device.EPlanName} " +
                     $"вышел за диапазон.\n";
+                    errors.Add(error);
                 }
             }
 
-            return errors;
+            errors = errors.Distinct().ToList();
+            return string.Concat(errors);
         }
 
         /// <summary>
