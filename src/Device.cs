@@ -3073,6 +3073,9 @@ namespace Device
             dType = DeviceType.TE;
             ArticleName = articleName;
 
+            parameters.Add("P_C0", null);
+            parameters.Add("P_ERR", null);
+
             AI.Add(new IOChannel("AI", -1, -1, -1, ""));
         }
 
@@ -3084,8 +3087,6 @@ namespace Device
             switch (subType)
             {
                 case "TE":
-                    parameters.Add("P_C0", null);
-                    parameters.Add("P_ERR", null);
                     break;
 
                 case "TE_IOLINK":
