@@ -959,11 +959,25 @@ namespace Device
                     break;
 
                 case DeviceType.AO:
-                    return new List<string>(new string[] 
-                    { 
-                        "M", 
-                        "V" 
-                    });
+                    switch(dst)
+                    {
+                        case DeviceSubType.AO:
+                            return new List<string>(new string[]
+                            {
+                                "M",
+                                "V",
+                                "P_MIN_V",
+                                "P_MAX_V"
+                            });
+
+                        case DeviceSubType.AO_VIRT:
+                            return new List<string>(new string[]
+                            {
+                                "M",
+                                "V",
+                            });
+                    }
+                    break;
 
                 case DeviceType.PT:
                     switch (dst)
