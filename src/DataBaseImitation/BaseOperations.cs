@@ -29,6 +29,42 @@ namespace DataBase
                 BaseOperation.EmptyOperation(),
                 new BaseOperation("Мойка", "WASHING_CIP", WashParams(), 
                 EmptyProperties()),
+                new BaseOperation("Наполнение", "FILL", EmptyProperties(), 
+                LineFillOutSteps()),
+                new BaseOperation("Выдача", "OUT", EmptyProperties(), 
+                LineFillOutSteps())
+            };
+        }
+
+        /// <summary>
+        /// Получить операции базового объекта "Линия приемки".
+        /// </summary>
+        /// <returns></returns>
+        public static BaseOperation[] LineInOperations()
+        {
+            return new BaseOperation[]
+           {
+                BaseOperation.EmptyOperation(),
+                new BaseOperation("Мойка", "WASHING_CIP", WashParams(),
+                EmptyProperties()),
+                new BaseOperation("Наполнение", "FILL", EmptyProperties(),
+                LineFillOutSteps())
+           };
+        }
+
+        /// <summary>
+        /// Получить операции базового объекта "Линия выдачи".
+        /// </summary>
+        /// <returns></returns>
+        public static BaseOperation[] LineOutOperations()
+        {
+            return new BaseOperation[]
+            {
+                BaseOperation.EmptyOperation(),
+                new BaseOperation("Мойка", "WASHING_CIP", WashParams(),
+                EmptyProperties()),
+                new BaseOperation("Выдача", "OUT", EmptyProperties(),
+                LineFillOutSteps())
             };
         }
 
