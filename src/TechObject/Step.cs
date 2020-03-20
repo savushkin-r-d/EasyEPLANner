@@ -314,9 +314,18 @@ namespace TechObject
 
         public override bool SetNewValue(string newVal, bool isExtraValue)
         {
-            //TODO: Поиск шага в базовой операции по базовому объекту 
-            // и применение нужных параметров.
-            return base.SetNewValue(newVal, isExtraValue);
+            State state = this.Owner;
+            Mode mode = state.Owner;
+            BaseProperty baseStep = mode.GetBaseOperation().Steps
+                .Where(x => x.Name == newVal).FirstOrDefault();
+            if (baseStep != null)
+            {
+                this.baseStep = new NonShowedBaseProperty(baseStep.LuaName, 
+                    baseStep.Name, baseStep.CanSave());
+                return true;
+            }
+            
+            return false;
         }
 
         override public bool IsEditable
