@@ -337,7 +337,7 @@ namespace TechObject
             get
             {
                 //Можем редактировать содержимое обоих колонок.
-                return new int[] { 0, 0 };
+                return new int[] { 0, 1 };
             }
         }
 

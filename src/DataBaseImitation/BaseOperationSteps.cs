@@ -19,8 +19,8 @@ namespace DataBase
             return new BaseProperty[]
             {
                 new NonShowedBaseProperty("", "", false),
-                new NonShowedBaseProperty("Выдача", "OUT", false),
-                new NonShowedBaseProperty("Наполнение", "FILL", false)
+                new NonShowedBaseProperty("OUT", "Выдача", false),
+                new NonShowedBaseProperty("FILL", "Наполнение", false)
             };
         }
     }
