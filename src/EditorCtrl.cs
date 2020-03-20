@@ -1210,7 +1210,8 @@ namespace Editor
             // Проверяем тип редактируемого объекта, редактируемую ячейку и выбранную колонку для редактирования
             if (e.Column.Index == 1 &&
                 (item.GetType().Name == "Mode" ||
-                item.GetType().Name == "TechObject"))
+                item.GetType().Name == "TechObject" ||
+                item.GetType().Name == "Step"))
             {
                 switch (item.GetType().Name)
                 {
@@ -1238,6 +1239,11 @@ namespace Editor
                         e.Control = comboBoxCellEditor;
                         comboBoxCellEditor.Focus();
                         editorTView.Freeze();
+                        break;
+
+                    case "Step":
+                        //TODO: Инициализация списка базовых шагов
+                        // базовой операции.
                         break;
                 }
             }

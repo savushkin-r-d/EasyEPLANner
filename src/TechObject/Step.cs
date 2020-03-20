@@ -27,6 +27,7 @@ namespace TechObject
             this.getN = getN;
             this.IsMode = isMode;
             this.owner = owner;
+            this.baseStep = new NonShowedBaseProperty("", "", false);
 
             items = new List<Editor.ITreeViewItem>();
 
@@ -85,6 +86,7 @@ namespace TechObject
                 items.Add(timeParam);
                 items.Add(nextStepN);
             }
+
         }
 
         public Step Clone(GetN getN, string name = "")
@@ -114,6 +116,8 @@ namespace TechObject
                 clone.items.Add(clone.timeParam);
                 clone.items.Add(clone.nextStepN);
             }
+
+            clone.baseStep = baseStep.Clone();
 
             return clone;
         }
@@ -171,6 +175,11 @@ namespace TechObject
                 {
                     res += prefix + "next_step_n = " + next_step_n + ",\n";
                 }
+                string baseStepName = baseStep.Name;
+                if (baseStepName != "")
+                {
+                    res += prefix + $"baseStep = \'{baseStepName}\',\n";
+                }
 
                 foreach (Action action in actions)
                 {
@@ -216,12 +225,6 @@ namespace TechObject
                 }
             }
 
-
-#if DEBUG
-            MessageBox.Show(
-        "Не найдено действие \'" + actionLuaName + "\'");
-#endif
-
             return false;
         }
 
@@ -244,10 +247,6 @@ namespace TechObject
                 }
             }
 
-#if DEBUG
-            System.Windows.Forms.MessageBox.Show(
-        "Не найдено действие \'" + actionLuaName + "\'");
-#endif
             return false;
         }
 
@@ -295,7 +294,7 @@ namespace TechObject
                     return new string[] { name, "" };
                 }
 
-                return new string[] { getN(this) + ". " + name, "" };
+                return new string[] { getN(this) + ". " + name, baseStep.Name };
             }
         }
 
@@ -310,8 +309,14 @@ namespace TechObject
         override public bool SetNewValue(string newName)
         {
             name = newName;
-
             return true;
+        }
+
+        public override bool SetNewValue(string newVal, bool isExtraValue)
+        {
+            //TODO: Поиск шага в базовой операции по базовому объекту 
+            // и применение нужных параметров.
+            return base.SetNewValue(newVal, isExtraValue);
         }
 
         override public bool IsEditable
@@ -331,8 +336,8 @@ namespace TechObject
         {
             get
             {
-                //Можем редактировать содержимое первой колонки.
-                return new int[] { 0, -1 };
+                //Можем редактировать содержимое обоих колонок.
+                return new int[] { 0, 0 };
             }
         }
 
@@ -356,7 +361,7 @@ namespace TechObject
         {
             get
             {
-                return new string[] { name, "" };
+                return new string[] { name, baseStep.Name };
             }
         }
 
@@ -449,11 +454,10 @@ namespace TechObject
             return errors;
         }
 
-        private bool IsMode ///< Признак шага операции.
-        {
-            get;
-            set;
-        }
+        /// <summary>
+        /// Признак шага операции.
+        /// </summary>
+        private bool IsMode { get; set; }
 
         private GetN getN;
 
@@ -464,5 +468,7 @@ namespace TechObject
         private string name;           ///< Имя шага.
         internal List<Action> actions; ///< Список действий шага.
         private State owner;           ///< Владелей элемента
+
+        private BaseProperty baseStep;
     }
 }

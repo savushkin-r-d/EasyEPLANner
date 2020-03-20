@@ -26,8 +26,9 @@ namespace DataBase
         {
             return new BaseOperation[]
             {
-                new BaseOperation("","", EmptyProperties()),
-                new BaseOperation("Мойка", "WASHING_CIP", WashParams()),
+                new BaseOperation("","", EmptyProperties(), EmptyProperties()),
+                new BaseOperation("Мойка", "WASHING_CIP", WashParams(), 
+                EmptyProperties()),
             };
         }
 
@@ -39,11 +40,15 @@ namespace DataBase
         {
             return new BaseOperation[]
             {
-                new BaseOperation("", "", EmptyProperties()),
-                new BaseOperation("Мойка", "WASHING_CIP", WashParams()),
-                new BaseOperation("Наполнение", "FILL", FillParams()),
-                new BaseOperation("Хранение", "STORING", EmptyProperties()),
-                new BaseOperation("Выдача", "OUT", EmptyProperties()),
+                new BaseOperation("", "", EmptyProperties(), EmptyProperties()),
+                new BaseOperation("Мойка", "WASHING_CIP", WashParams(), 
+                EmptyProperties()),
+                new BaseOperation("Наполнение", "FILL", FillParams(), 
+                EmptyProperties()),
+                new BaseOperation("Хранение", "STORING", EmptyProperties(), 
+                EmptyProperties()),
+                new BaseOperation("Выдача", "OUT", EmptyProperties(), 
+                EmptyProperties()),
             };
         }
 
@@ -55,8 +60,9 @@ namespace DataBase
         {
             return new BaseOperation[]
             {
-                new BaseOperation("", "", EmptyProperties()),
-                new BaseOperation("Охлаждение", "COOLING", EmptyProperties()),
+                new BaseOperation("", "", EmptyProperties(), EmptyProperties()),
+                new BaseOperation("Охлаждение", "COOLING", EmptyProperties(), 
+                EmptyProperties()),
             };
         }
 
@@ -68,8 +74,10 @@ namespace DataBase
         {
             return new BaseOperation[]
             {
-                new BaseOperation("", "", EmptyProperties()),
-                new BaseOperation("Охлаждение", "COOLING", EmptyProperties()),
+                new BaseOperation("", "", EmptyProperties(), 
+                EmptyProperties()),
+                new BaseOperation("Охлаждение", "COOLING", EmptyProperties(), 
+                EmptyProperties()),
             };
         }
 
@@ -81,8 +89,9 @@ namespace DataBase
         {
             return new BaseOperation[]
             {
-                new BaseOperation("", "", EmptyProperties()),
-                new BaseOperation("Охлаждение", "COOLING", EmptyProperties()),
+                new BaseOperation("", "", EmptyProperties(), EmptyProperties()),
+                new BaseOperation("Охлаждение", "COOLING", EmptyProperties(), 
+                EmptyProperties()),
             };
         }
     }

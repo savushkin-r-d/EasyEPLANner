@@ -16,6 +16,7 @@ namespace TechObject
             this.operationName = "";
             this.luaOperationName = "";
             this.baseOperationProperties = new BaseProperty[0];
+            this.baseSteps = new BaseProperty[0];
             this.owner = owner;
         }
 
@@ -24,6 +25,7 @@ namespace TechObject
             this.operationName = name;
             this.luaOperationName = luaName;
             this.baseOperationProperties = new BaseProperty[0];
+            this.baseSteps = new BaseProperty[0];
             this.owner = owner;
         }
 
@@ -33,12 +35,14 @@ namespace TechObject
         /// <param name="name">Имя операции</param>
         /// <param name="luaName">Lua имя операции</param>
         /// <param name="baseOperationProperties">Свойства операции</param>
+        /// <param name="baseSteps">Базовые шаги операции</param>
         public BaseOperation(string name, string luaName, 
-            BaseProperty[] baseOperationProperties)
+            BaseProperty[] baseOperationProperties, BaseProperty[] baseSteps)
         {
             this.operationName = name;
             this.luaOperationName = luaName;
             this.baseOperationProperties = baseOperationProperties;
+            this.baseSteps = baseSteps;
         }
 
         /// <summary>
@@ -74,6 +78,17 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Шаги операции.
+        /// </summary>
+        public BaseProperty[] Steps
+        {
+            get
+            {
+                return baseSteps;
+            }
+        }
+
+        /// <summary>
         /// Инициализация базовой операции по имени
         /// </summary>
         /// <param name="baseOperName">Имя операции</param>
@@ -91,6 +106,7 @@ namespace TechObject
                     LuaName = operation.LuaName;
                     baseOperationProperties =
                         FindBaseOperationProperties(operation);
+                    baseSteps = operation.Steps;
                 }
             }
             else
@@ -98,6 +114,7 @@ namespace TechObject
                 Name = "";
                 LuaName = "";
                 baseOperationProperties = new BaseProperty[0];
+                baseSteps = new BaseProperty[0];
             }
 
             SetItems();
@@ -228,8 +245,15 @@ namespace TechObject
             {
                 properties[i] = baseOperationProperties[i].Clone();
             }
+
+            var steps = new BaseProperty[Steps.Length];
+            for (int i = 0; i < steps.Length; i++)
+            {
+                steps[i] = Steps[i].Clone();
+            }
+
             var operation = new BaseOperation(this.operationName, 
-                this.luaOperationName, properties);
+                this.luaOperationName, properties, steps);
             operation.owner = this.owner;
             
             operation.SetItems();
@@ -269,6 +293,7 @@ namespace TechObject
         private BaseProperty[] baseOperationProperties;
         private string operationName;
         private string luaOperationName;
+        private BaseProperty[] baseSteps;
 
         private Mode owner;
     }
