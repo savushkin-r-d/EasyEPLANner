@@ -10,6 +10,15 @@ namespace DataBase
     public partial class Imitation
     {
         /// <summary>
+        /// Получить пустой массив свойств.
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] EmptyProperties()
+        {
+            return new BaseProperty[0];
+        }
+
+        /// <summary>
         /// Получить свойства базового объекта "Танк"
         /// </summary>
         /// <returns></returns>
