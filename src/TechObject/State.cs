@@ -162,9 +162,11 @@ namespace TechObject
         /// Добавление нового шага.
         /// </summary>
         /// <param name="stepName">Имя шага.</param>
-        public void AddStep(string stepName)
+        /// <param name="baseStepName">Имя базового шага</param>
+        public void AddStep(string stepName, string baseStepName)
         {
             Step newStep = new Step(stepName, GetStepN, this);
+            newStep.SetNewValue(baseStepName, true);
 
             if (modeStep == null)
             {

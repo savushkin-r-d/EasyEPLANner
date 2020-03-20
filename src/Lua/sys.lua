@@ -91,7 +91,7 @@ proc_operation = function( value, mode, state_n )
 
     if value.steps ~= nil then
         for fields, value in ipairs( value.steps ) do
-            mode:AddStep( state_n, value.name or "Шаг ??" )
+            mode:AddStep( state_n, value.name or "Шаг ??", value.baseStep or "" )
             local step_n = fields - 1
 
             proc( mode, state_n, value.opened_devices, step_n, 
