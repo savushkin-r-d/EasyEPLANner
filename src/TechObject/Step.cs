@@ -170,16 +170,15 @@ namespace TechObject
                 {
                     res += prefix + "time_param_n = " + time_param_n + ",\n";
                 }
+                
                 string next_step_n = nextStepN.EditText[1].Trim();
                 if (next_step_n != "")
                 {
                     res += prefix + "next_step_n = " + next_step_n + ",\n";
                 }
+
                 string baseStepName = baseStep.Name;
-                if (baseStepName != "")
-                {
-                    res += prefix + $"baseStep = \'{baseStepName}\',\n";
-                }
+                res += prefix + $"baseStep = \'{baseStepName}\',\n";
 
                 foreach (Action action in actions)
                 {
