@@ -30,6 +30,16 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Возвращает пустой объект - базовая операция.
+        /// </summary>
+        /// <returns></returns>
+        public static BaseOperation EmptyOperation()
+        {
+            return new BaseOperation("", "", new BaseProperty[0], 
+                new BaseProperty[0]);
+        }
+
+        /// <summary>
         /// Конструктор для инициализации базовой операции и параметров
         /// </summary>
         /// <param name="name">Имя операции</param>

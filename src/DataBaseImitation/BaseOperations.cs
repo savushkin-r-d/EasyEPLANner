@@ -26,7 +26,7 @@ namespace DataBase
         {
             return new BaseOperation[]
             {
-                new BaseOperation("","", EmptyProperties(), EmptyProperties()),
+                BaseOperation.EmptyOperation(),
                 new BaseOperation("Мойка", "WASHING_CIP", WashParams(), 
                 EmptyProperties()),
             };
@@ -40,7 +40,7 @@ namespace DataBase
         {
             return new BaseOperation[]
             {
-                new BaseOperation("", "", EmptyProperties(), EmptyProperties()),
+                BaseOperation.EmptyOperation(),
                 new BaseOperation("Мойка", "WASHING_CIP", WashParams(), 
                 EmptyProperties()),
                 new BaseOperation("Наполнение", "FILL", FillParams(), 
@@ -60,7 +60,7 @@ namespace DataBase
         {
             return new BaseOperation[]
             {
-                new BaseOperation("", "", EmptyProperties(), EmptyProperties()),
+                BaseOperation.EmptyOperation(),
                 new BaseOperation("Охлаждение", "COOLING", EmptyProperties(), 
                 EmptyProperties()),
             };
@@ -74,8 +74,7 @@ namespace DataBase
         {
             return new BaseOperation[]
             {
-                new BaseOperation("", "", EmptyProperties(), 
-                EmptyProperties()),
+                BaseOperation.EmptyOperation(),
                 new BaseOperation("Охлаждение", "COOLING", EmptyProperties(), 
                 EmptyProperties()),
             };
@@ -89,7 +88,7 @@ namespace DataBase
         {
             return new BaseOperation[]
             {
-                new BaseOperation("", "", EmptyProperties(), EmptyProperties()),
+                BaseOperation.EmptyOperation(),
                 new BaseOperation("Охлаждение", "COOLING", EmptyProperties(), 
                 EmptyProperties()),
             };
