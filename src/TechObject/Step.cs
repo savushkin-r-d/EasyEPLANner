@@ -332,6 +332,15 @@ namespace TechObject
         public override bool SetNewValue(string newVal, bool isExtraValue)
         {
             State state = this.Owner;
+
+            Step equalStep = state.Steps
+                .Where(x => x.GetBaseStepName() == newVal)
+                .FirstOrDefault();
+            if (equalStep != null && newVal != "")
+            {
+                return false;
+            }
+
             Mode mode = state.Owner;
             BaseProperty baseStep = mode.GetBaseOperation().Steps
                 .Where(x => x.Name == newVal).FirstOrDefault();
