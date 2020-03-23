@@ -155,7 +155,7 @@ namespace TechObject
             }
 
             res += temp;
-            res += prefix + prefix + "}\n";
+            res += prefix + prefix + "},\n";
             return res;
         }
 
