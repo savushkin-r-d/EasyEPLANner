@@ -67,7 +67,7 @@ namespace TechObject
 
             var modesManager = this.Owner.ModesManager;
             var modes = modesManager.Modes;
-            if (modes.Count <= 0)
+            if (modes.Where(x => x.DisplayText[1] != "").Count() == 0)
             {
                 return res;
             }
@@ -98,16 +98,15 @@ namespace TechObject
         {
             var res = "";
 
-            res += objName + ".steps = \t\t--Шаги операций.\n";
-            res += prefix + "{\n";
-
             var modesManager = this.Owner.ModesManager;
             var modes = modesManager.Modes;
-            if (modes.Count <= 0)
+            if (modes.Where(x => x.DisplayText[1] != "").Count() == 0)
             {
                 return res;
             }
 
+            res += objName + ".steps = \t\t--Шаги операций.\n";
+            res += prefix + "{\n";
             foreach (Mode mode in modes)
             {
                 var baseOperation = mode.GetBaseOperation();
@@ -116,7 +115,6 @@ namespace TechObject
                     res += SaveSteps(prefix, objName, mode, baseOperation);
                 }                    
             }
-
             res += prefix + "}\n";
 
             return res;
@@ -156,8 +154,8 @@ namespace TechObject
                 return emptyTable;
             }
 
+            res += temp;
             res += prefix + prefix + "}\n";
-
             return res;
         }
 
@@ -172,6 +170,11 @@ namespace TechObject
 
             var modesManager = this.Owner.ModesManager;
             var modes = modesManager.Modes;
+            if (modes.Where(x => x.DisplayText[1] != "").Count() == 0)
+            {
+                return res;
+            }
+
             foreach (Mode mode in modes)
             {
                 var baseOperation = mode.GetBaseOperation();

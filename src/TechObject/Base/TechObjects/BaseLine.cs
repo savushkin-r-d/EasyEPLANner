@@ -48,19 +48,9 @@ namespace TechObject
         {
             var res = "";
 
-            var modesManager = this.Owner.ModesManager;
-            var modes = modesManager.Modes;
-            if (modes.Count <= 0)
-            {
-                return res;
-            }
-
-            foreach(var mode in modes)
-            {
-                res += SaveOperations(objName, prefix, mode);
-                res += SaveOperationsSteps(objName, prefix, mode);
-                res += SaveOperationsParameters(objName, mode);
-            }
+            res += SaveOperations(objName, prefix);
+            res += SaveOperationsSteps(objName, prefix);
+            res += SaveOperationsParameters(objName);
 
             return res;
         }
@@ -70,23 +60,31 @@ namespace TechObject
         /// </summary>
         /// <param name="objName">Имя объекта для записи</param>
         /// <param name="prefix">Отступ</param>
-        /// <param name="mode">Операция</param>
         /// <returns></returns>
-        private string SaveOperations(string objName, string prefix, Mode mode)
+        private string SaveOperations(string objName, string prefix)
         {
             var res = "";
 
-            res += objName + ".operations = \t\t--Операции.\n";
-            res += prefix + "{\n";
-
-            var baseOperation = mode.GetBaseOperation();
-            if (baseOperation.Name != "")
+            var modesManager = this.Owner.ModesManager;
+            var modes = modesManager.Modes;
+            if (modes.Where(x => x.DisplayText[1] != "").Count() == 0)
             {
-                res += prefix + baseOperation.LuaName.ToUpper() + " = " +
-                    mode.GetModeNumber() + ",\n";
+                return res;
             }
 
+            res += objName + ".operations = \t\t--Операции.\n";
+            res += prefix + "{\n";
+            foreach (Mode mode in modes)
+            {
+                var baseOperation = mode.GetBaseOperation();
+                if (baseOperation.Name != "")
+                {
+                    res += prefix + baseOperation.LuaName.ToUpper() + " = " +
+                        mode.GetModeNumber() + ",\n";
+                }
+            }
             res += prefix + "}\n";
+
             return res;
         }
 
@@ -95,23 +93,30 @@ namespace TechObject
         /// </summary>
         /// <param name="objName">Имя объекта для записи</param>
         /// <param name="prefix">Отступ</param>
-        /// <param name="mode">Операция</param>
         /// <returns></returns>
-		private string SaveOperationsSteps(string objName, string prefix,
-            Mode mode)
+        private string SaveOperationsSteps(string objName, string prefix)
         {
             var res = "";
 
-            res += objName + ".steps = \t\t--Шаги операций.\n";
-            res += prefix + "{\n";
-
-            var baseOperation = mode.GetBaseOperation();
-            if (baseOperation.Name != "")
+            var modesManager = this.Owner.ModesManager;
+            var modes = modesManager.Modes;
+            if (modes.Where(x => x.DisplayText[1] != "").Count() == 0)
             {
-                res += SaveSteps(prefix, mode, baseOperation);
+                return res;
             }
 
+            res += objName + ".steps = \t\t--Шаги операций.\n";
+            res += prefix + "{\n";
+            foreach (Mode mode in modes)
+            {
+                var baseOperation = mode.GetBaseOperation();
+                if (baseOperation.Name != "")
+                {
+                    res += SaveSteps(prefix, objName, mode, baseOperation);
+                }                      
+            }
             res += prefix + "}\n";
+
             return res;
         }
 
@@ -119,10 +124,11 @@ namespace TechObject
         /// Сохранить шаги операций
         /// </summary>
         /// <param name="prefix">Отступ</param>
+        /// <param name="objName">Имя объекта</param>
         /// <param name="mode">Операция</param>
         /// <param name="baseOperation">Базовая операция</param>
-        private string SaveSteps(string prefix, Mode mode, 
-            BaseOperation baseOperation)
+        private string SaveSteps(string prefix, string objName,
+            Mode mode, BaseOperation baseOperation)
         {
             var res = "";
 
@@ -150,7 +156,6 @@ namespace TechObject
 
             res += temp;
             res += prefix + prefix + "}\n";
-
             return res;
         }
 
@@ -158,19 +163,28 @@ namespace TechObject
         /// Сохранить параметры операций
         /// </summary>
         /// <param name="objName">Имя объекта для записи</param>
-        /// <param name="mode">Операция</param>
         /// <returns></returns>
-        public string SaveOperationsParameters(string objName, Mode mode)
+        public string SaveOperationsParameters(string objName)
         {
             var res = "";
 
-            var baseOperation = mode.GetBaseOperation();
-            switch (baseOperation.Name)
+            var modesManager = this.Owner.ModesManager;
+            var modes = modesManager.Modes;
+            if (modes.Where(x => x.DisplayText[1] != "").Count() == 0)
             {
-                case "Мойка":
-                    res += SaveWashOperationParameters(objName,
-                        baseOperation);
-                    break;
+                return res;
+            }
+
+            foreach (Mode mode in modes)
+            {
+                var baseOperation = mode.GetBaseOperation();
+                switch (baseOperation.Name)
+                {
+                    case "Мойка":
+                        res += SaveWashOperationParameters(objName, 
+                            baseOperation);
+                        break;
+                }
             }
 
             return res;
