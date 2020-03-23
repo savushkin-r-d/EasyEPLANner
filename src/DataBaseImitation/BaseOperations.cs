@@ -27,12 +27,12 @@ namespace DataBase
             return new BaseOperation[]
             {
                 BaseOperation.EmptyOperation(),
-                new BaseOperation("Мойка", "WASHING_CIP", WashParams(), 
-                EmptyProperties()),
+                new BaseOperation("Мойка", "WASHING_CIP", WashParams(),
+                WashSteps()),
                 new BaseOperation("Наполнение", "FILL", EmptyProperties(), 
-                LineFillOutSteps()),
+                LineFillSteps()),
                 new BaseOperation("Выдача", "OUT", EmptyProperties(), 
-                LineFillOutSteps())
+                LineOutSteps())
             };
         }
 
@@ -46,9 +46,9 @@ namespace DataBase
            {
                 BaseOperation.EmptyOperation(),
                 new BaseOperation("Мойка", "WASHING_CIP", WashParams(),
-                EmptyProperties()),
+                WashSteps()),
                 new BaseOperation("Наполнение", "FILL", EmptyProperties(),
-                LineFillOutSteps())
+                LineFillSteps())
            };
         }
 
@@ -62,9 +62,9 @@ namespace DataBase
             {
                 BaseOperation.EmptyOperation(),
                 new BaseOperation("Мойка", "WASHING_CIP", WashParams(),
-                EmptyProperties()),
+                WashSteps()),
                 new BaseOperation("Выдача", "OUT", EmptyProperties(),
-                LineFillOutSteps())
+                LineOutSteps())
             };
         }
 
@@ -77,8 +77,8 @@ namespace DataBase
             return new BaseOperation[]
             {
                 BaseOperation.EmptyOperation(),
-                new BaseOperation("Мойка", "WASHING_CIP", WashParams(), 
-                EmptyProperties()),
+                new BaseOperation("Мойка", "WASHING_CIP", WashParams(),
+                WashSteps()),
                 new BaseOperation("Наполнение", "FILL", FillParams(), 
                 EmptyProperties()),
                 new BaseOperation("Хранение", "STORING", EmptyProperties(), 

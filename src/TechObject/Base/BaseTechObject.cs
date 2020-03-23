@@ -219,20 +219,7 @@ namespace TechObject
         /// <param name="objName">Имя объекта для записи</param>
         /// <param name="prefix">Отступ</param>
         /// <returns></returns>
-        public virtual string SaveOperationsToPrgLua(string objName, 
-            string prefix)
-        {
-            var res = "";
-            return res;
-        }
-
-        /// <summary>
-        /// Сохранить информацию об объекте в prg.lua
-        /// </summary>
-        /// <param name="objName">Имя объекта</param>
-        /// <param name="prefix">Отступ</param>
-        /// <returns></returns>
-        public virtual string SaveObjectInfoToPrgLua(string objName, 
+        public virtual string SaveToPrgLua(string objName, 
             string prefix)
         {
             var res = "";

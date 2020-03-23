@@ -283,6 +283,24 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Lua-имя базового шага
+        /// </summary>
+        /// <returns></returns>
+        public string GetBaseStepLuaName()
+        {
+            return baseStep.LuaName;
+        }
+
+        /// <summary>
+        /// Имя базового шага
+        /// </summary>
+        /// <returns></returns>
+        public string GetBaseStepName()
+        {
+            return baseStep.Name;
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {

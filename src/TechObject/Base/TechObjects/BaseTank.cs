@@ -38,48 +38,16 @@ namespace TechObject
 
         #region Сохранение в prg.lua
         /// <summary>
-        /// Сохранить информацию об объекте в prg.lua
-        /// </summary>
-        /// <param name="objName">Имя объекта</param>
-        /// <param name="prefix">Отступ</param>
-        /// <returns></returns>
-        public override string SaveObjectInfoToPrgLua(string objName,
-            string prefix)
-        {
-            var res = "";
-
-            var objects = TechObjectManager.GetInstance();
-            var masterObj = objects.Objects
-                .Where(x => x.Name.Contains("Мастер")).FirstOrDefault();
-            if (masterObj != null)
-            {
-                res += objName + ".master = prg." + masterObj.NameEplan
-                    .ToLower() + masterObj.TechNumber + "\n";
-            }
-
-            // Параметры сбрасываемые до мойки.
-            res += objName + ".reset_before_wash =\n" +
-                prefix + "{\n" +
-                prefix + objName + ".PAR_FLOAT.V_ACCEPTING_CURRENT,\n" +
-                prefix + objName + ".PAR_FLOAT.PRODUCT_TYPE,\n" +
-                prefix + objName + ".PAR_FLOAT.V_ACCEPTING_SET\n" +
-                prefix + "}\n";
-
-            res += "\n";
-
-            return res;
-        }
-
-        /// <summary>
         /// Сохранить информацию об операциях объекта в prg.lua
         /// </summary>
         /// <param name="objName">Имя объекта для записи</param>
         /// <param name="prefix">Отступ</param>
         /// <returns></returns>
-        public override string SaveOperationsToPrgLua(string objName,
+        public override string SaveToPrgLua(string objName,
             string prefix)
         {
             var res = "";
+            res += SaveObjectInfoToPrgLua(objName, prefix);
 
             var modesManager = this.Owner.ModesManager;
             var modes = modesManager.Modes;
@@ -106,7 +74,6 @@ namespace TechObject
                         break;
                 }
             }
-
             res += SaveOperationsParameters(objName);
 
             res += "\n";
@@ -144,6 +111,39 @@ namespace TechObject
                         break;
                 }
             }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить информацию об объекте в prg.lua
+        /// </summary>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        public string SaveObjectInfoToPrgLua(string objName,
+            string prefix)
+        {
+            var res = "";
+
+            var objects = TechObjectManager.GetInstance();
+            var masterObj = objects.Objects
+                .Where(x => x.Name.Contains("Мастер")).FirstOrDefault();
+            if (masterObj != null)
+            {
+                res += objName + ".master = prg." + masterObj.NameEplan
+                    .ToLower() + masterObj.TechNumber + "\n";
+            }
+
+            // Параметры сбрасываемые до мойки.
+            res += objName + ".reset_before_wash =\n" +
+                prefix + "{\n" +
+                prefix + objName + ".PAR_FLOAT.V_ACCEPTING_CURRENT,\n" +
+                prefix + objName + ".PAR_FLOAT.PRODUCT_TYPE,\n" +
+                prefix + objName + ".PAR_FLOAT.V_ACCEPTING_SET\n" +
+                prefix + "}\n";
+
+            res += "\n";
 
             return res;
         }

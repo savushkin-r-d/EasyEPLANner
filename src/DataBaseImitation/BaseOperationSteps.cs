@@ -10,18 +10,46 @@ namespace DataBase
     public partial class Imitation
     {
         /// <summary>
-        /// Шаги объектов "Линия", "Линия приемки", "Линия выдачи" для
-        /// операций "Наполнение" и "Выдача";
+        /// Шаги объектов "Линия", "Линия приемки" для операции "Наполнение"
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] LineFillOutSteps()
+        public static BaseProperty[] LineFillSteps()
         {
             return new BaseProperty[]
             {
                 new NonShowedBaseProperty("", "", false),
-                new NonShowedBaseProperty("OUT", "В дренаж", false),
-                new NonShowedBaseProperty("FILL", "В танк", false),
+                new NonShowedBaseProperty("IN_DRAINAGE", "В дренаж", false),
+                new NonShowedBaseProperty("IN_TANK", "В танк", false),
                 new NonShowedBaseProperty("WAITING_KEY", "Ожидание ключа", false)
+            };
+        }
+
+        /// <summary>
+        /// Шаги объектов "Линия", "Линия выдачи" для операции "Выдача";
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] LineOutSteps()
+        {
+            return new BaseProperty[]
+            {
+                new NonShowedBaseProperty("", "", false),
+                new NonShowedBaseProperty("OUT_WATER", "Проталкивание", false),
+                new NonShowedBaseProperty("OUT_TANK", "Из танка", false),
+                new NonShowedBaseProperty("WAITING_KEY", "Ожидание ключа", false)
+            };
+        }
+
+        /// <summary>
+        /// Шаги объектов "Танк", "Линия приемки", "Линия", "Линия выдачи" для
+        /// операции мойка.
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] WashSteps()
+        {
+            return new BaseProperty[]
+            {
+                new NonShowedBaseProperty("", "", false),
+                new NonShowedBaseProperty("DRAINAGE", "Дренаж", false)
             };
         }
     }

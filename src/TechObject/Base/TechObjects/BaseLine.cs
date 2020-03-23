@@ -43,74 +43,135 @@ namespace TechObject
         /// <param name="objName">Имя объекта для записи</param>
         /// <param name="prefix">Отступ</param>
         /// <returns></returns>
-        public override string SaveOperationsToPrgLua(string objName,
+        public override string SaveToPrgLua(string objName,
             string prefix)
         {
             var res = "";
 
             var modesManager = this.Owner.ModesManager;
             var modes = modesManager.Modes;
-            foreach (Mode mode in modes)
+            if (modes.Count <= 0)
             {
-                var baseOperation = mode.GetBaseOperation();
-                switch (baseOperation.Name)
-                {
-                    case "Мойка":
-                        res += SaveWashOperation(prefix, objName, mode,
-                            baseOperation);
-                        break;
-                }
+                return res;
             }
+
+            foreach(var mode in modes)
+            {
+                res += SaveOperations(objName, prefix, mode);
+                res += SaveOperationsSteps(objName, prefix, mode);
+                res += SaveOperationsParameters(objName, mode);
+            }
+
             return res;
         }
 
         /// <summary>
-        /// Сохранить операцию мойки в prg.lua
+        /// Сохранить операции объекта
         /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
         /// <param name="prefix">Отступ</param>
-        /// <param name="objName">Имя объекта</param>
         /// <param name="mode">Операция</param>
-        /// <param name="baseOperation">Базовая операция</param>
         /// <returns></returns>
-        private string SaveWashOperation(string prefix, string objName,
-            Mode mode, BaseOperation baseOperation)
+        private string SaveOperations(string objName, string prefix, Mode mode)
         {
             var res = "";
 
             res += objName + ".operations = \t\t--Операции.\n";
             res += prefix + "{\n";
-            res += prefix + baseOperation.LuaName
-                .ToUpper() + " = " + mode.GetModeNumber() +
-                ",\t\t--Мойка CIP.\n";
+
+            var baseOperation = mode.GetBaseOperation();
+            if (baseOperation.Name != "")
+            {
+                res += prefix + baseOperation.LuaName.ToUpper() + " = " +
+                    mode.GetModeNumber() + ",\n";
+            }
+
             res += prefix + "}\n";
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить шаги операций объекта.
+        /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
+        /// <param name="prefix">Отступ</param>
+        /// <param name="mode">Операция</param>
+        /// <returns></returns>
+		private string SaveOperationsSteps(string objName, string prefix,
+            Mode mode)
+        {
+            var res = "";
 
             res += objName + ".steps = \t\t--Шаги операций.\n";
             res += prefix + "{\n";
-            var containsDrainage = mode.stepsMngr[0].steps
-                .Where(x => x.GetStepName()
-                .Contains("Дренаж")).FirstOrDefault();
 
-            if (containsDrainage != null)
+            var baseOperation = mode.GetBaseOperation();
+            if (baseOperation.Name != "")
             {
-                res += prefix + baseOperation.LuaName
-                .ToUpper() + " =\n";
-                res += prefix + prefix + "{\n";
-                res += prefix + prefix + "DRAINAGE = " +
-                    mode.stepsMngr[0].steps.Where(x => x
-                    .GetStepName().Contains("Дренаж"))
-                    .FirstOrDefault()
-                    .GetStepNumber() + ",\n";
-                res += prefix + prefix + "}\n";
-            }
-            else
-            {
-                res += prefix + baseOperation.LuaName
-                    .ToUpper() + " = { },\n";
+                res += SaveSteps(prefix, mode, baseOperation);
             }
 
             res += prefix + "}\n";
-            res += SaveWashOperationParameters(objName, baseOperation);
-            res += "\n";
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить шаги операций
+        /// </summary>
+        /// <param name="prefix">Отступ</param>
+        /// <param name="mode">Операция</param>
+        /// <param name="baseOperation">Базовая операция</param>
+        private string SaveSteps(string prefix, Mode mode, 
+            BaseOperation baseOperation)
+        {
+            var res = "";
+
+            res += prefix + baseOperation.LuaName.ToUpper() + " =\n";
+            res += prefix + prefix + "{\n";
+
+            string temp = "";
+            foreach (var step in mode.MainSteps)
+            {
+                if (step.GetBaseStepName() == "")
+                {
+                    continue;
+                }
+
+                temp += prefix + prefix + step.GetBaseStepLuaName() +
+                    " = " + step.GetStepNumber() + ",\n";
+            }
+
+            if (temp.Length == 0)
+            {
+                string emptyTable = prefix + baseOperation.LuaName.ToUpper() +
+                    " = { },\n";
+                return emptyTable;
+            }
+
+            res += temp;
+            res += prefix + prefix + "}\n";
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить параметры операций
+        /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
+        /// <param name="mode">Операция</param>
+        /// <returns></returns>
+        public string SaveOperationsParameters(string objName, Mode mode)
+        {
+            var res = "";
+
+            var baseOperation = mode.GetBaseOperation();
+            switch (baseOperation.Name)
+            {
+                case "Мойка":
+                    res += SaveWashOperationParameters(objName,
+                        baseOperation);
+                    break;
+            }
 
             return res;
         }
@@ -144,6 +205,7 @@ namespace TechObject
                 }
             }
 
+            res += "\n";
             return res;
         }
         #endregion
