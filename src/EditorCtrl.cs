@@ -1285,18 +1285,26 @@ namespace Editor
 
         private List<string> GetBaseOperationStepsList(ITreeViewItem item)
         {
+            var emptyList = new List<string>();
             if (item is TechObject.Step == true)
             {
                 var step = item as TechObject.Step;
                 TechObject.State state = step.Owner;
-                TechObject.Mode mode = state.Owner;
-                var stepsNames = mode.GetBaseOperation().Steps
-                    .Select(x => x.Name).ToList();
-                return stepsNames;
+                if (state.IsMain == true)
+                {
+                    TechObject.Mode mode = state.Owner;
+                    var stepsNames = mode.GetBaseOperation().Steps
+                        .Select(x => x.Name).ToList();
+                    return stepsNames;
+                }
+                else
+                {
+                    return emptyList;
+                }            
             }
             else
             {
-                return new List<string>();
+                return emptyList;
             }
         }
 

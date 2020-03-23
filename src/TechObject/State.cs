@@ -234,6 +234,17 @@ namespace TechObject
             return errors;
         }
 
+        /// <summary>
+        /// Является ли состояние главным (Выполнение).
+        /// </summary>
+        public bool IsMain
+        {
+            get
+            {
+                return isMain;
+            }
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {
