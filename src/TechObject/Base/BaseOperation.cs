@@ -106,6 +106,9 @@ namespace TechObject
         {
             TechObject techObject = owner.Owner.Owner;
             string baseTechObjectName = techObject.BaseTechObject.Name;
+
+            ResetOperationSteps();
+
             if (baseTechObjectName != "")
             {
                 BaseOperation operation = techObject.BaseTechObject
@@ -128,6 +131,17 @@ namespace TechObject
             }
 
             SetItems();
+        }
+
+        /// <summary>
+        /// Сбросить базовые шаги базовой операции
+        /// </summary>
+        private void ResetOperationSteps()
+        {
+            foreach (var step in owner.MainSteps)
+            {
+                step.SetNewValue("", true);
+            }
         }
 
         /// <summary>
