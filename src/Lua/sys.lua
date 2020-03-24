@@ -59,9 +59,6 @@ init = function()
                     proc_operation( value, mode, state_n )
 
                 end
-            else
-                --Совместимость со старой версией.
-                proc_operation( value, mode, 0 )
             end
         end
     end
