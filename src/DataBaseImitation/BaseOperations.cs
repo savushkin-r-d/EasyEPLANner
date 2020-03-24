@@ -139,7 +139,7 @@ namespace DataBase
             return new BaseOperation[]
             {
                 BaseOperation.EmptyOperation(),
-                new BaseOperation("Охлаждение", "WORKING", EmptyProperties(),
+                new BaseOperation("Работа", "WORKING", EmptyProperties(),
                 EmptyProperties()),
             };
         }
