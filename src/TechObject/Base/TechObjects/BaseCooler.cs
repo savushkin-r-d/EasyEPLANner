@@ -43,7 +43,7 @@ namespace TechObject
         /// <param name="objName">Имя объекта для записи</param>
         /// <param name="prefix">Отступ</param>
         /// <returns></returns>
-        public override string SaveOperationsToPrgLua(string objName,
+        public override string SaveToPrgLua(string objName,
             string prefix)
         {
             var res = "";

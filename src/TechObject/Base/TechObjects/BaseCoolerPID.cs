@@ -43,10 +43,11 @@ namespace TechObject
         /// <param name="objName">Имя объекта для записи</param>
         /// <param name="prefix">Отступ</param>
         /// <returns></returns>
-        public override string SaveOperationsToPrgLua(string objName,
+        public override string SaveToPrgLua(string objName,
             string prefix)
         {
             var res = "";
+            res += SaveObjectInfoToPrgLua(objName, prefix);
 
             var modesManager = this.Owner.ModesManager;
             var modes = modesManager.Modes;
@@ -94,7 +95,7 @@ namespace TechObject
         /// <param name="objName">Имя объекта</param>
         /// <param name="prefix">Отступ</param>
         /// <returns></returns>
-        public override string SaveObjectInfoToPrgLua(string objName, 
+        public string SaveObjectInfoToPrgLua(string objName, 
             string prefix)
         {
             var res = "";

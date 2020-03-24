@@ -13,15 +13,6 @@ namespace DataBase
     public partial class Imitation
     {
         /// <summary>
-        /// Получить пустой список оборудования объекта.
-        /// </summary>
-        /// <returns></returns>
-        static public BaseProperty[] EmptyEquipment()
-        {
-            return new BaseProperty[0];
-        }
-
-        /// <summary>
         /// Получить список оборудования базового узла перемешивания.
         /// </summary>
         /// <returns></returns>

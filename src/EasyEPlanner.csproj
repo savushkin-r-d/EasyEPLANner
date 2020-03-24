@@ -132,11 +132,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigurationChecker.cs" />
-    <Compile Include="DBImitation\Imitation.cs" />
-    <Compile Include="DBImitation\BaseOperationsDB.cs" />
-    <Compile Include="DBImitation\ObjectProperties.cs" />
-    <Compile Include="DBImitation\OperationsParams.cs" />
-    <Compile Include="DBImitation\TechObjectsEquipmentDB.cs" />
+    <Compile Include="DataBaseImitation\BaseObjects.cs" />
+    <Compile Include="DataBaseImitation\BaseOperations.cs" />
+    <Compile Include="DataBaseImitation\BaseObjectProperties.cs" />
+    <Compile Include="DataBaseImitation\BaseOperationsParams.cs" />
+    <Compile Include="DataBaseImitation\BaseObjectsEquipment.cs" />
+    <Compile Include="DataBaseImitation\BaseOperationSteps.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="DeviceBindingReader.cs" />
     <Compile Include="DeviceReader.cs" />

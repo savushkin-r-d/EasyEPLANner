@@ -27,6 +27,7 @@ namespace TechObject
             this.getN = getN;
             this.IsMode = isMode;
             this.owner = owner;
+            this.baseStep = new NonShowedBaseProperty("", "", false);
 
             items = new List<Editor.ITreeViewItem>();
 
@@ -85,6 +86,7 @@ namespace TechObject
                 items.Add(timeParam);
                 items.Add(nextStepN);
             }
+
         }
 
         public Step Clone(GetN getN, string name = "")
@@ -114,6 +116,8 @@ namespace TechObject
                 clone.items.Add(clone.timeParam);
                 clone.items.Add(clone.nextStepN);
             }
+
+            clone.baseStep = baseStep.Clone();
 
             return clone;
         }
@@ -166,11 +170,15 @@ namespace TechObject
                 {
                     res += prefix + "time_param_n = " + time_param_n + ",\n";
                 }
+                
                 string next_step_n = nextStepN.EditText[1].Trim();
                 if (next_step_n != "")
                 {
                     res += prefix + "next_step_n = " + next_step_n + ",\n";
                 }
+
+                string baseStepName = baseStep.Name;
+                res += prefix + $"baseStep = \'{baseStepName}\',\n";
 
                 foreach (Action action in actions)
                 {
@@ -216,12 +224,6 @@ namespace TechObject
                 }
             }
 
-
-#if DEBUG
-            MessageBox.Show(
-        "Не найдено действие \'" + actionLuaName + "\'");
-#endif
-
             return false;
         }
 
@@ -244,10 +246,6 @@ namespace TechObject
                 }
             }
 
-#if DEBUG
-            System.Windows.Forms.MessageBox.Show(
-        "Не найдено действие \'" + actionLuaName + "\'");
-#endif
             return false;
         }
 
@@ -285,6 +283,24 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Lua-имя базового шага
+        /// </summary>
+        /// <returns></returns>
+        public string GetBaseStepLuaName()
+        {
+            return baseStep.LuaName;
+        }
+
+        /// <summary>
+        /// Имя базового шага
+        /// </summary>
+        /// <returns></returns>
+        public string GetBaseStepName()
+        {
+            return baseStep.Name;
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {
@@ -295,7 +311,7 @@ namespace TechObject
                     return new string[] { name, "" };
                 }
 
-                return new string[] { getN(this) + ". " + name, "" };
+                return new string[] { getN(this) + ". " + name, baseStep.Name };
             }
         }
 
@@ -310,8 +326,32 @@ namespace TechObject
         override public bool SetNewValue(string newName)
         {
             name = newName;
-
             return true;
+        }
+
+        public override bool SetNewValue(string newVal, bool isExtraValue)
+        {
+            State state = this.Owner;
+
+            Step equalStep = state.Steps
+                .Where(x => x.GetBaseStepName() == newVal)
+                .FirstOrDefault();
+            if (equalStep != null && newVal != "")
+            {
+                return false;
+            }
+
+            Mode mode = state.Owner;
+            BaseProperty baseStep = mode.GetBaseOperation().Steps
+                .Where(x => x.Name == newVal).FirstOrDefault();
+            if (baseStep != null)
+            {
+                this.baseStep = new NonShowedBaseProperty(baseStep.LuaName, 
+                    baseStep.Name, baseStep.CanSave());
+                return true;
+            }
+            
+            return false;
         }
 
         override public bool IsEditable
@@ -331,8 +371,8 @@ namespace TechObject
         {
             get
             {
-                //Можем редактировать содержимое первой колонки.
-                return new int[] { 0, -1 };
+                //Можем редактировать содержимое обоих колонок.
+                return new int[] { 0, 1 };
             }
         }
 
@@ -356,7 +396,7 @@ namespace TechObject
         {
             get
             {
-                return new string[] { name, "" };
+                return new string[] { name, baseStep.Name };
             }
         }
 
@@ -449,11 +489,10 @@ namespace TechObject
             return errors;
         }
 
-        private bool IsMode ///< Признак шага операции.
-        {
-            get;
-            set;
-        }
+        /// <summary>
+        /// Признак шага операции.
+        /// </summary>
+        private bool IsMode { get; set; }
 
         private GetN getN;
 
@@ -464,5 +503,7 @@ namespace TechObject
         private string name;           ///< Имя шага.
         internal List<Action> actions; ///< Список действий шага.
         private State owner;           ///< Владелей элемента
+
+        private BaseProperty baseStep;
     }
 }

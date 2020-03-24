@@ -1210,7 +1210,8 @@ namespace Editor
             // Проверяем тип редактируемого объекта, редактируемую ячейку и выбранную колонку для редактирования
             if (e.Column.Index == 1 &&
                 (item.GetType().Name == "Mode" ||
-                item.GetType().Name == "TechObject"))
+                item.GetType().Name == "TechObject" ||
+                item.GetType().Name == "Step"))
             {
                 switch (item.GetType().Name)
                 {
@@ -1224,22 +1225,31 @@ namespace Editor
                         }
 
                         InitComboBoxCellEditor(baseOperations);
-                        comboBoxCellEditor.Text = e.Value.ToString();
-                        comboBoxCellEditor.Bounds = e.CellBounds;
-                        e.Control = comboBoxCellEditor;
-                        comboBoxCellEditor.Focus();
-                        editorTView.Freeze();
                         break;
 
                     case "TechObject":
                         InitComboBoxCellEditor(baseTechObjectList);
-                        comboBoxCellEditor.Text = e.Value.ToString();
-                        comboBoxCellEditor.Bounds = e.CellBounds;
-                        e.Control = comboBoxCellEditor;
-                        comboBoxCellEditor.Focus();
-                        editorTView.Freeze();
+
+                        break;
+
+                    case "Step":
+                        var steps = GetBaseOperationStepsList(item);
+                        if (steps.Count == 0)
+                        {
+                            e.Cancel = true;
+                            IsCellEditing = false;
+                            return;
+                        }
+
+                        InitComboBoxCellEditor(steps);
                         break;
                 }
+
+                comboBoxCellEditor.Text = e.Value.ToString();
+                comboBoxCellEditor.Bounds = e.CellBounds;
+                e.Control = comboBoxCellEditor;
+                comboBoxCellEditor.Focus();
+                editorTView.Freeze();
             }
             else
             {
@@ -1259,7 +1269,7 @@ namespace Editor
         /// </summary>
         /// <param name="item">ITreeViewItem</param>
         /// <returns></returns>
-        public List<string> GetBaseOperationsList(ITreeViewItem item)
+        private List<string> GetBaseOperationsList(ITreeViewItem item)
         {
             if (item is TechObject.Mode == true)
             {
@@ -1270,6 +1280,31 @@ namespace Editor
             else
             {
                 return new List<string>();
+            }
+        }
+
+        private List<string> GetBaseOperationStepsList(ITreeViewItem item)
+        {
+            var emptyList = new List<string>();
+            if (item is TechObject.Step == true)
+            {
+                var step = item as TechObject.Step;
+                TechObject.State state = step.Owner;
+                if (state.IsMain == true)
+                {
+                    TechObject.Mode mode = state.Owner;
+                    var stepsNames = mode.GetBaseOperation().Steps
+                        .Select(x => x.Name).ToList();
+                    return stepsNames;
+                }
+                else
+                {
+                    return emptyList;
+                }            
+            }
+            else
+            {
+                return emptyList;
             }
         }
 
@@ -1298,7 +1333,7 @@ namespace Editor
                 return;
             }
 
-            // Если редактируются базовые операции/объекты
+            // Если редактируются базовые операции/объекты/шаги
             if (e.Column.Index == 1 &&
                 (selectedItem.EditablePart[0] == 0 &&
                 selectedItem.EditablePart[1] == 1))

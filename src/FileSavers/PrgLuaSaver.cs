@@ -209,13 +209,7 @@ namespace EasyEPlanner
             {
                 var objName = "prg." + obj.NameEplanForFile.ToLower() +
                     obj.TechNumber.ToString();
-
-                res += obj.BaseTechObject
-                    .SaveObjectInfoToPrgLua(objName, prefix);
-
-                res += obj.BaseTechObject
-                    .SaveOperationsToPrgLua(objName, prefix);
-
+                res += obj.BaseTechObject.SaveToPrgLua(objName, prefix);
                 res += SaveObjectEquipmentToPrgLua(obj, objName);
             }
             return res;

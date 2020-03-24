@@ -50,15 +50,6 @@ namespace DataBase
         }
 
         /// <summary>
-        /// Получить пустой массив свойств.
-        /// </summary>
-        /// <returns></returns>
-        public static BaseProperty[] EmptyProperties()
-        {
-            return new BaseProperty[0];
-        }
-
-        /// <summary>
         /// Получить массив всех базовых объектов.
         /// </summary>
         /// <returns></returns>
