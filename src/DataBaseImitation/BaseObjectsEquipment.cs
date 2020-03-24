@@ -82,5 +82,18 @@ namespace DataBase
             };
         }
 
+        /// <summary>
+        /// Получить список оборудования для ПИД узла давления.
+        /// </summary>
+        /// <returns></returns>
+        static public BaseProperty[] PressureNodePIDEquipment()
+        {
+            return new BaseProperty[]
+            {
+                new ShowedBaseProperty("M1", "Мотор", "M1"),
+                new ShowedBaseProperty("PT", "Датчик давления", "PT1"),
+            };
+        }
+
     }
 }

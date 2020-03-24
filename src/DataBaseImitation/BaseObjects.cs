@@ -68,6 +68,7 @@ namespace DataBase
                 new BasePOU(),
                 new BasePost(),
                 new BaseTank(),
+                new BasePressurePID(),
                 new BaseHeater(),
                 new BaseCooler(),
                 new BaseCoolerPID(),

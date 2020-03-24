@@ -251,6 +251,7 @@ require( "cooler" )
 require( "boiler" )
 require( "pasteurizator" )
 require( "water_tank" )
+require( "pressure" )
 </value>
     <comment>Шаблон, содержащий список модулей для подключения в prg.lua (require)</comment>
   </data>
