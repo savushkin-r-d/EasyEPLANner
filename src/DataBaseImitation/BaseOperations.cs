@@ -129,5 +129,19 @@ namespace DataBase
                 EmptyProperties()),
             };
         }
+
+        /// <summary>
+        /// Получить операции базового объекта "Узел давления ПИД"
+        /// </summary>
+        /// <returns></returns>
+        public static BaseOperation[] PressureNodePIDOperations()
+        {
+            return new BaseOperation[]
+            {
+                BaseOperation.EmptyOperation(),
+                new BaseOperation("Охлаждение", "WORKING", EmptyProperties(),
+                EmptyProperties()),
+            };
+        }
     }
 }
