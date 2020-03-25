@@ -47,11 +47,15 @@ namespace DataBase
             };
         }
 
+        /// <summary>
+        /// Получить свойства базового объекта "Узел охлаждения ПИД".
+        /// </summary>
+        /// <returns></returns>
         public static BaseProperty[] CoolerPIDProperties()
         {
             return new BaseProperty[]
             {
-                new NonShowedBaseProperty("PID_n", "номер ПИД-регулятора"),
+                new ShowedBaseProperty("COOLING_ALWAYS", "Охлаждать всегда"),
             };
         }
     }
