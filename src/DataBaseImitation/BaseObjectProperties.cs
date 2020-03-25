@@ -55,7 +55,8 @@ namespace DataBase
         {
             return new BaseProperty[]
             {
-                new ShowedBaseProperty("COOLING_ALWAYS", "Охлаждать всегда"),
+                new BoolShowedproperty("COOLING_ALWAYS", "Охлаждать всегда", 
+                "false"),
             };
         }
     }
