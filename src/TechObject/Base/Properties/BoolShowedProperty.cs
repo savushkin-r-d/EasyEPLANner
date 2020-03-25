@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace TechObject
 {
-    public class BoolShowedproperty : BaseProperty
+    public class BoolShowedProperty : BaseProperty
     {
-        private BoolShowedproperty(string luaName, string name, bool canSave)
+        private BoolShowedProperty(string luaName, string name, bool canSave)
             : base(luaName, name, canSave) { }
 
-        public BoolShowedproperty(string luaName, string name,
+        public BoolShowedProperty(string luaName, string name,
             string defaultValue) : base(luaName, name, true, defaultValue) { }
 
         public override BaseProperty Clone()
         {
-            var newProperty = new BoolShowedproperty(this.LuaName, this.Name,
+            var newProperty = new BoolShowedProperty(this.LuaName, this.Name,
                 this.CanSave());
             newProperty.SetValue(this.Value);
             return newProperty;
@@ -25,7 +25,7 @@ namespace TechObject
         #region реализация ItreeViewItem
         public override bool SetNewValue(string newValue)
         {
-            var value = newValue == "true" ? "false" : "true";
+            var value = newValue == "Да" ? "false" : "true";
             base.SetValue(value);
             return true;
         }

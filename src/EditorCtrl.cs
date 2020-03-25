@@ -1257,10 +1257,10 @@ namespace Editor
             else if(e.Column.Index == 1 && 
                 item.GetType().Name == "BoolShowedProperty")
             {
-                // Bool свойство
                 item.SetNewValue(e.Value.ToString());
                 IsCellEditing = false;
                 e.Cancel = true;
+                editorTView.RefreshObject(item);
                 return;
             }
             else

@@ -51,11 +51,11 @@ namespace DataBase
         /// Получить свойства базового объекта "Узел охлаждения ПИД".
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] CoolerPIDProperties()
+        public static BaseProperty[] CoolernodePIDProperties()
         {
             return new BaseProperty[]
             {
-                new BoolShowedproperty("COOLING_ALWAYS", "Охлаждать всегда", 
+                new BoolShowedProperty("ALWAYS_COOLING", "Охлаждать всегда", 
                 "false"),
             };
         }

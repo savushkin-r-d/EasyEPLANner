@@ -49,7 +49,7 @@ namespace DataBase
         {
             var parameters = new BaseProperty[]
             {
-                new BoolShowedproperty("ALWAYS_COOLING", "Охлаждать всегда",
+                new BoolShowedProperty("ALWAYS_COOLING", "Охлаждать всегда",
                 "false")
             };
             return parameters;
