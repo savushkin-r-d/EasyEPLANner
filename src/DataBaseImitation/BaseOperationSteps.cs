@@ -19,8 +19,8 @@ namespace DataBase
             {
                 new NonShowedBaseProperty("", "", false),
                 new NonShowedBaseProperty("IN_DRAINAGE", "В дренаж", false),
-                new NonShowedBaseProperty("IN_TANK", "Первый танк в очереди", false),
-                new NonShowedBaseProperty("WAITING_KEY", "Ожидание ключа", false)
+                new NonShowedBaseProperty("IN_TANK", "В приемник", false),
+                new NonShowedBaseProperty("WAITING_KEY", "Ожидание", false)
             };
         }
 
@@ -34,8 +34,8 @@ namespace DataBase
             {
                 new NonShowedBaseProperty("", "", false),
                 new NonShowedBaseProperty("OUT_WATER", "Проталкивание", false),
-                new NonShowedBaseProperty("OUT_TANK", "Первый танк в очереди", false),
-                new NonShowedBaseProperty("WAITING_KEY", "Ожидание ключа", false)
+                new NonShowedBaseProperty("OUT_TANK", "Из источника", false),
+                new NonShowedBaseProperty("WAITING_KEY", "Ожидание", false)
             };
         }
 
