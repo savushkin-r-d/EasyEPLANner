@@ -249,6 +249,7 @@ namespace EasyEPlanner.Properties {
         ///require( &quot;boiler&quot; )
         ///require( &quot;pasteurizator&quot; )
         ///require( &quot;water_tank&quot; )
+        ///require( &quot;pressure&quot; )
         ///.
         /// </summary>
         public static string prgLuaRequireModules {
