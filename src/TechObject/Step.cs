@@ -177,7 +177,7 @@ namespace TechObject
                     res += prefix + "next_step_n = " + next_step_n + ",\n";
                 }
 
-                string baseStepName = baseStep.Name;
+                string baseStepName = baseStep.LuaName;
                 res += prefix + $"baseStep = \'{baseStepName}\',\n";
 
                 foreach (Action action in actions)
@@ -334,7 +334,7 @@ namespace TechObject
             State state = this.Owner;
 
             Step equalStep = state.Steps
-                .Where(x => x.GetBaseStepName() == newVal)
+                .Where(x => x.GetBaseStepLuaName() == newVal)
                 .FirstOrDefault();
             if (equalStep != null && newVal != "")
             {
@@ -343,7 +343,13 @@ namespace TechObject
 
             Mode mode = state.Owner;
             BaseProperty baseStep = mode.GetBaseOperation().Steps
-                .Where(x => x.Name == newVal).FirstOrDefault();
+                .Where(x => x.LuaName == newVal).FirstOrDefault();
+            if (baseStep == null)
+            {
+                baseStep = mode.GetBaseOperation().Steps
+                    .Where(x => x.Name == newVal).FirstOrDefault();
+            }
+
             if (baseStep != null)
             {
                 this.baseStep = new NonShowedBaseProperty(baseStep.LuaName, 
