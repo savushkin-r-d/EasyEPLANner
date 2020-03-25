@@ -186,14 +186,14 @@ namespace TechObject
         /// Добавление нового шага.
         /// </summary>
         /// <param name="stepName">Имя шага.</param>
-        /// <param name="baseStepName">Имя базового шага</param>
+        /// <param name="baseStepLuaName">Имя базового шага</param>
         /// <param name="stateN">Номер состояния</param>
         public void AddStep(int stateN, string stepName, 
-            string baseStepName = "")
+            string baseStepLuaName = "")
         {
             if (stateN >= 0 && stateN < (int)StateName.STATES_CNT)
             {
-                stepsMngr[stateN].AddStep(stepName, baseStepName);
+                stepsMngr[stateN].AddStep(stepName, baseStepLuaName);
             }
         }
 
