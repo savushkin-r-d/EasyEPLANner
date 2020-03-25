@@ -178,6 +178,12 @@ namespace EasyEPlanner
                             res += techObjNameForFile + ".heater_node = " +
                                     "prg." + attachedTechObjNameForFile + "\n";
                         }
+                        else if (attachedTechObjectType.Contains(
+                            "pressure_node"))
+                        {
+                            res += techObjNameForFile + ".pressure_node = " +
+                                "prg." + attachedTechObjNameForFile + "\n";
+                        }
 
                         previouslyObjectName = techObj.NameEplanForFile
                             .ToLower();
