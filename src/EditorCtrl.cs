@@ -1200,14 +1200,17 @@ namespace Editor
             IsCellEditing = true;
             ITreeViewItem item = editorTView.SelectedObject as ITreeViewItem;
 
-            if (item == null || !item.IsEditable || item.EditablePart[e.Column.Index] != e.Column.Index)
+            if (item == null || 
+                !item.IsEditable || 
+                item.EditablePart[e.Column.Index] != e.Column.Index)
             {
                 IsCellEditing = false;
                 e.Cancel = true;
                 return;
             }
 
-            // Проверяем тип редактируемого объекта, редактируемую ячейку и выбранную колонку для редактирования
+            // Проверяем тип редактируемого объекта, редактируемую ячейку и 
+            //выбранную колонку для редактирования
             if (e.Column.Index == 1 &&
                 (item.GetType().Name == "Mode" ||
                 item.GetType().Name == "TechObject" ||
@@ -1250,6 +1253,15 @@ namespace Editor
                 e.Control = comboBoxCellEditor;
                 comboBoxCellEditor.Focus();
                 editorTView.Freeze();
+            }
+            else if(e.Column.Index == 1 && 
+                item.GetType().Name == "BoolShowedProperty")
+            {
+                item.SetNewValue(e.Value.ToString());
+                IsCellEditing = false;
+                e.Cancel = true;
+                editorTView.RefreshObject(item);
+                return;
             }
             else
             {

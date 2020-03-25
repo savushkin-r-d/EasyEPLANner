@@ -291,13 +291,13 @@ namespace TechObject
             {
                 if (items.Count() > 0)
                 {
-                    string res = string.Format("Дополнительные сигналы ({0})", 
+                    string res = string.Format("Доп. свойства ({0})", 
                         items.Count());
                     return new string[] { res, "" };
                 }
                 else
                 {
-                    string res = string.Format("Дополнительные сигналы");
+                    string res = string.Format("Доп. свойства");
                     return new string[] { res, "" };
                 }
             }

@@ -17,7 +17,7 @@ namespace TechObject
             Name = "Узел охлаждения ПИД";
             EplanName = "cooler_node_PID";
             BaseOperations = DataBase.Imitation.CoolerNodePIDOperations();
-            BaseProperties = DataBase.Imitation.CoolerPIDProperties();
+            BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "cooler_node_PID";
             Equipment = DataBase.Imitation.CoolerNodePIDEquipment();
         }
@@ -47,23 +47,9 @@ namespace TechObject
             string prefix)
         {
             var res = "";
-            res += SaveObjectInfoToPrgLua(objName, prefix);
 
-            var modesManager = this.Owner.ModesManager;
-            var modes = modesManager.Modes;
-            foreach (Mode mode in modes)
-            {
-                var baseOperation = mode.GetBaseOperation();
-                switch (baseOperation.Name)
-                {
-                    case "Охлаждение":
-                        res += SaveCoolingOperation(prefix, objName, mode,
-                            baseOperation);
-                        break;
-                }
-            }
+            res += SaveOperations(objName, prefix);
 
-            res += "\n";
             return res;
         }
 
@@ -72,34 +58,31 @@ namespace TechObject
         /// </summary>
         /// <param name="prefix">Отступ</param>
         /// <param name="objName">Имя объекта</param>
-        /// <param name="mode">Операция</param>
-        /// <param name="baseOperation">Базовая операция</param>
         /// <returns></returns>
-        private string SaveCoolingOperation(string prefix, string objName,
-            Mode mode, BaseOperation baseOperation)
+        private string SaveOperations(string objName, string prefix)
         {
             var res = "";
+
+            var modesManager = this.Owner.ModesManager;
+            var modes = modesManager.Modes;
+            if (modes.Where(x => x.DisplayText[1] != "").Count() == 0)
+            {
+                return res;
+            }
 
             res += objName + ".operations = \t\t--Операции.\n";
             res += prefix + "{\n";
-            res += prefix + baseOperation.LuaName.ToUpper() + " = " +
-                mode.GetModeNumber() + ",\t\t--Охлаждение.\n";
+            foreach (Mode mode in modes)
+            {
+                var baseOperation = mode.GetBaseOperation();
+                if (baseOperation.Name != "")
+                {
+                    res += prefix + baseOperation.LuaName.ToUpper() + " = " +
+                        mode.GetModeNumber() + ",\n";
+                }
+            }
             res += prefix + "}\n";
 
-            return res;
-        }
-
-        /// <summary>
-        /// Сохранить информацию об объекте в prg.lua
-        /// </summary>
-        /// <param name="objName">Имя объекта</param>
-        /// <param name="prefix">Отступ</param>
-        /// <returns></returns>
-        public string SaveObjectInfoToPrgLua(string objName, 
-            string prefix)
-        {
-            var res = "";
-            res += objName + $".PID_n = {Owner.GlobalNumber}\n";
             return res;
         }
         #endregion
