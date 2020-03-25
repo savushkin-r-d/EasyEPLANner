@@ -46,18 +46,5 @@ namespace DataBase
                 new ShowedBaseProperty("CIP_WASH_END", "Мойка завершена")
             };
         }
-
-        /// <summary>
-        /// Получить свойства базового объекта "Узел охлаждения ПИД".
-        /// </summary>
-        /// <returns></returns>
-        public static BaseProperty[] CoolernodePIDProperties()
-        {
-            return new BaseProperty[]
-            {
-                new BoolShowedProperty("ALWAYS_COOLING", "Охлаждать всегда", 
-                "false"),
-            };
-        }
     }
 }

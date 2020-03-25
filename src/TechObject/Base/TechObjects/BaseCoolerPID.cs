@@ -17,7 +17,7 @@ namespace TechObject
             Name = "Узел охлаждения ПИД";
             EplanName = "cooler_node_PID";
             BaseOperations = DataBase.Imitation.CoolerNodePIDOperations();
-            BaseProperties = DataBase.Imitation.CoolernodePIDProperties();
+            BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "cooler_node_PID";
             Equipment = DataBase.Imitation.CoolerNodePIDEquipment();
         }
@@ -49,7 +49,6 @@ namespace TechObject
             var res = "";
 
             res += SaveOperations(objName, prefix);
-            res += SaveOperationsParameters(objName);
 
             return res;
         }
@@ -86,61 +85,6 @@ namespace TechObject
 
             return res;
         }
-
-        /// <summary>
-        /// Сохранить параметры операций.
-        /// </summary>
-        /// <param name="objName"></param>
-        /// <returns></returns>
-        private string SaveOperationsParameters(string objName)
-        {
-            var res = "";
-
-            var modesManager = this.Owner.ModesManager;
-            var modes = modesManager.Modes;
-            if (modes.Where(x => x.DisplayText[1] != "").Count() == 0)
-            {
-                return res;
-            }
-
-            foreach (Mode mode in modes)
-            {
-                var baseOperation = mode.GetBaseOperation();
-                switch (baseOperation.Name)
-                {
-                    case "Охлаждение":
-                        res += SaveCoolingParameters(objName,
-                            baseOperation);
-                        break;
-                }
-            }
-
-            return res;
-        }
-
-        /// <summary>
-        /// Сохранение параметров охлаждения
-        /// </summary>
-        /// <param name="objName">Имя объекта для записи</param>
-        /// <param name="baseOperation">Базовая операция</param>
-        /// <returns></returns>
-        private string SaveCoolingParameters(string objName, 
-            BaseOperation baseOperation)
-        {
-            var res = "";
-            
-            foreach (BaseProperty param in baseOperation.Properties)
-            {
-                if (param.CanSave())
-                {
-                    res += objName + "." + param.LuaName + " = " + param.Value;
-                }
-            }
-
-            res += "\n";
-            return res;
-        }
-
         #endregion
     }
 }

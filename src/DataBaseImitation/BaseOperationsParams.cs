@@ -40,19 +40,5 @@ namespace DataBase
 
             return parameters;
         }
-
-        /// <summary>
-        /// Получить параметры операции "Охлаждение" узла охлаждения ПИД.
-        /// </summary>
-        /// <returns></returns>
-        private static BaseProperty[] CoolingParams()
-        {
-            var parameters = new BaseProperty[]
-            {
-                new BoolShowedProperty("ALWAYS_COOLING", "Охлаждать всегда",
-                "false")
-            };
-            return parameters;
-        }
     }
 }
