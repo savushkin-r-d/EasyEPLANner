@@ -216,6 +216,7 @@
     <Compile Include="TechObject\Base\TechObjects\BaseCooler.cs" />
     <Compile Include="TechObject\Base\TechObjects\BaseHeaterPID.cs" />
     <Compile Include="TechObject\Base\TechObjects\BaseHeater.cs" />
+    <Compile Include="TechObject\Base\TechObjects\BaseFlowNodePID.cs" />
     <Compile Include="TechObject\Base\TechObjects\BasePressurePID.cs" />
     <Compile Include="TechObject\Base\TechObjects\BaseLine.cs" />
     <Compile Include="TechObject\Base\TechObjects\BaseLineIn.cs" />

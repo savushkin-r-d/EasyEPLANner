@@ -153,7 +153,20 @@ namespace DataBase
             {
                 BaseOperation.EmptyOperation(),
                 new BaseOperation("Нагрев", "HEATING", EmptyProperties(),
-                EmptyProperties())
+                EmptyProperties()),
+            };
+        }
+              
+        /// Получить операции базового объекта "Узел давления ПИД"
+        /// </summary>
+        /// <returns></returns>
+        public static BaseOperation[] FlowNodePIDOperations()
+        {
+            return new BaseOperation[]
+            {
+                BaseOperation.EmptyOperation(),
+                new BaseOperation("Работа", "WORKING", EmptyProperties(),
+                EmptyProperties()),
             };
         }
     }

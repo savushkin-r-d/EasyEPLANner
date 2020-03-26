@@ -104,7 +104,19 @@ namespace DataBase
             return new BaseProperty[]
             {
                 new ShowedBaseProperty("TE", "Датчик температуры", "TE1"),
-                new ShowedBaseProperty("VC", "Регулирующий клапан", "VC1")
+                new ShowedBaseProperty("VC", "Регулирующий клапан", "VC1"),
+            };
+        }
+      
+        /// Получить список оборудования для ПИД узла расхода.
+        /// </summary>
+        /// <returns></returns>
+        static public BaseProperty[] FlowNodePIDEquipment()
+        {
+            return new BaseProperty[]
+            {
+                new ShowedBaseProperty("FQT1", "Счетчик", "FQT1"),
+                new ShowedBaseProperty("M1", "Насос", "M1"),
             };
         }
     }
