@@ -17,7 +17,7 @@ namespace TechObject
             Name = "Бачок";
             EplanName = "_tank";
             BaseOperations = DataBase.Imitation.WaterTankOperations();
-            BaseProperties = DataBase.Imitation.EmptyProperties();
+            BaseProperties = DataBase.Imitation.WaterTankProperties();
             BasicName = "cooler";
             Equipment = DataBase.Imitation.WaterTankEquipment();
         }
@@ -48,45 +48,99 @@ namespace TechObject
         {
             var res = "";
 
+            res += SaveOperations(objName, prefix);
+            res += SaveOperationsParameters(objName);
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить операции объекта
+        /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        private string SaveOperations(string objName, string prefix)
+        {
+            var res = "";
+
             var modesManager = this.Owner.ModesManager;
             var modes = modesManager.Modes;
+            if (modes.Where(x => x.DisplayText[1] != "").Count() == 0)
+            {
+                return res;
+            }
+
+            res += objName + ".operations = \t\t--Операции.\n";
+            res += prefix + "{\n";
+            foreach (Mode mode in modes)
+            {
+                var baseOperation = mode.GetBaseOperation();
+                if (baseOperation.Name != "")
+                {
+                    res += prefix + baseOperation.LuaName.ToUpper() + " = " +
+                        mode.GetModeNumber() + ",\n";
+                }
+            }
+            res += prefix + "}\n";
+
+            return res;
+            #endregion
+        }
+
+        /// <summary>
+        /// Сохранить параметры операций
+        /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
+        /// <returns></returns>
+        public string SaveOperationsParameters(string objName)
+        {
+            var res = "";
+
+            var modesManager = this.Owner.ModesManager;
+            var modes = modesManager.Modes;
+            if (modes.Where(x => x.DisplayText[1] != "").Count() == 0)
+            {
+                return res;
+            }
+
             foreach (Mode mode in modes)
             {
                 var baseOperation = mode.GetBaseOperation();
                 switch (baseOperation.Name)
                 {
                     case "Охлаждение":
-                        res += SaveCoolingOperation(prefix, objName, mode,
+                        res += SaveCoolingOperationParameters(objName,
                             baseOperation);
                         break;
+                }
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить параметры операции мойки
+        /// </summary>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="baseOperation">Базовая операция</param>
+        /// <returns></returns>
+        private string SaveCoolingOperationParameters(string objName,
+            BaseOperation baseOperation)
+        {
+            var res = "";
+
+            foreach (BaseProperty param in baseOperation.Properties)
+            {
+                if (param.CanSave())
+                {
+                    string val = param.Value == "" ? "nil" : param.Value;
+                    res += $"{objName}.{param.LuaName} = {val}\n";
                 }
             }
 
             res += "\n";
             return res;
         }
-
-        /// <summary>
-        /// Сохранить операцию охлаждения.
-        /// </summary>
-        /// <param name="prefix">Отступ</param>
-        /// <param name="objName">Имя объекта</param>
-        /// <param name="mode">Операция</param>
-        /// <param name="baseOperation">Базовая операция</param>
-        /// <returns></returns>
-        private string SaveCoolingOperation(string prefix, string objName,
-            Mode mode, BaseOperation baseOperation)
-        {
-            var res = "";
-
-            res += objName + ".operations = \t\t--Операции.\n";
-            res += prefix + "{\n";
-            res += prefix + baseOperation.LuaName.ToUpper() + " = " +
-                mode.GetModeNumber() + ",\t\t--Охлаждение.\n";
-            res += prefix + "}\n";
-
-            return res;
-        }
-        #endregion
     }
 }

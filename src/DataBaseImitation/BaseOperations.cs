@@ -125,7 +125,7 @@ namespace DataBase
             return new BaseOperation[]
             {
                 BaseOperation.EmptyOperation(),
-                new BaseOperation("Охлаждение", "COOLING", EmptyProperties(), 
+                new BaseOperation("Охлаждение", "COOLING", CoolingParams(), 
                 EmptyProperties()),
             };
         }

@@ -40,5 +40,19 @@ namespace DataBase
 
             return parameters;
         }
+
+        /// <summary>
+        /// Получить параметры операции "Охлаждение"
+        /// </summary>
+        /// <returns></returns>
+        private static BaseProperty[] CoolingParams()
+        {
+            var parameters = new BaseProperty[]
+            {
+                new BoolShowedProperty("ACTIVE_WORKING", "Активная работа", "false")
+            };
+
+            return parameters;
+        }
     }
 }

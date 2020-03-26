@@ -1184,9 +1184,11 @@ namespace Editor
             {
                 foreach (ITreeViewItem tObject in tObjectMan.Items)
                 {
-                    if (e.Item.RowObject == tObject || e.Item.RowObject == tObjectMan)
+                    if (e.Item.RowObject == tObject || 
+                        e.Item.RowObject == tObjectMan)
                     {
-                        e.Item.Font = new Font("Microsoft Sans Serif", 8, FontStyle.Bold);
+                        e.Item.Font = new Font("Microsoft Sans Serif", 8, 
+                            FontStyle.Bold);
                     }
                 }
             }
