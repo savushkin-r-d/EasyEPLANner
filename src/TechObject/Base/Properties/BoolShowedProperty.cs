@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace TechObject
 {
+    /// <summary>
+    /// Булевское свойство для базовой операции.
+    /// </summary>
     public class BoolShowedProperty : BaseProperty
     {
         private BoolShowedProperty(string luaName, string name, bool canSave)
@@ -65,6 +68,14 @@ namespace TechObject
             get
             {
                 return true;
+            }
+        }
+
+        override public bool IsUseDevList
+        {
+            get
+            {
+                return false;
             }
         }
         #endregion

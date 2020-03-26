@@ -70,6 +70,7 @@ namespace DataBase
                 new BaseTank(),
                 new BasePressurePID(),
                 new BaseHeater(),
+                new BaseHeaterPID(),
                 new BaseCooler(),
                 new BaseCoolerPID(),
                 new BaseMixer()
