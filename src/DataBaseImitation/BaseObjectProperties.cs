@@ -46,5 +46,17 @@ namespace DataBase
                 new ShowedBaseProperty("CIP_WASH_END", "Мойка завершена")
             };
         }
+
+        /// <summary>
+        /// Получить свойства базового объекта "Бачок"
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] WaterTankProperties()
+        {
+            return new BaseProperty[]
+            {
+                new BoolShowedProperty("ACTIVE_WORKING", "Активная работа", "false"),
+            };
+        }
     }
 }
