@@ -120,7 +120,7 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Сохранить параметры операции мойки
+        /// Сохранить параметры операции охлаждение
         /// </summary>
         /// <param name="objName">Имя объекта</param>
         /// <param name="baseOperation">Базовая операция</param>
