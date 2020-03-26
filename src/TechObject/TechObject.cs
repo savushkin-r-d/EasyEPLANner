@@ -162,7 +162,7 @@ namespace TechObject
                 prefix + "name_eplan = \'" + NameEplan + "\',\n" +
                 prefix + "name_BC    = \'" + NameBC + "\',\n" +
                 prefix + "cooper_param_number = " + CooperParamNumber + ",\n" +
-                prefix + "base_tech_object = \'" + baseTechObject.Name + 
+                prefix + "base_tech_object = \'" + baseTechObject.EplanName + 
                 "\',\n" +
                 prefix + "attached_objects = \'" + AttachedObjects + "\',\n";
 
@@ -654,12 +654,15 @@ namespace TechObject
 
         override public bool SetNewValue(string newValue, bool isExtraValue)
         {
-            if (baseTechObject.Name == newValue)
+            if (baseTechObject.Name == newValue ||
+                baseTechObject.EplanName == newValue)
             {
                 return false;
             }
 
-            if (baseTechObject.Name != "" && newValue != baseTechObject.Name)
+            if (baseTechObject.Name != "" && 
+                (newValue != baseTechObject.Name ||
+                newValue != baseTechObject.EplanName))
             {
                 baseTechObject.ResetBaseOperations();
                 equipment.Clear();

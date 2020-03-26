@@ -41,7 +41,8 @@ namespace DataBase
         {
             foreach (BaseTechObject baseTechObject in BaseTechObjects())
             {
-                if (name == baseTechObject.Name)
+                if (name == baseTechObject.Name || 
+                    name == baseTechObject.EplanName)
                 {
                     return baseTechObject;
                 }
