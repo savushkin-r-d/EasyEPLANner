@@ -1198,7 +1198,8 @@ namespace Editor
                 e.ColumnIndex == 1 &&
                 boolProperty.DefaultValue != boolProperty.Value)
             {
-                e.SubItem.Font = new Font("Microsoft Sans Serif", 8, FontStyle.Bold);
+                e.SubItem.Font = new Font("Microsoft Sans Serif", 8, 
+                    FontStyle.Bold);
             }
         }
 
