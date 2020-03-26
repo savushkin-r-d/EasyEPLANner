@@ -95,5 +95,17 @@ namespace DataBase
             };
         }
 
+        /// <summary>
+        /// Получить список оборудования для ПИД узла расхода.
+        /// </summary>
+        /// <returns></returns>
+        static public BaseProperty[] FlowNodePIDEquipment()
+        {
+            return new BaseProperty[]
+            {
+                new ShowedBaseProperty("FQT1", "Счетчик", "FQT1"),
+                new ShowedBaseProperty("M1", "Насос", "M1"),
+            };
+        }
     }
 }
