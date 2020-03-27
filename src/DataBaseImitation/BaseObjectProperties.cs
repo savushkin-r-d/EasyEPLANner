@@ -58,5 +58,14 @@ namespace DataBase
                 new BoolShowedProperty("ACTIVE_WORKING", "Активная работа", "false"),
             };
         }
+
+        public static BaseProperty[] POUProperties()
+        {
+            return new BaseProperty[]
+            {
+                new NonShowedBaseProperty("DRAINAGE", "Номер шага дренаж",
+                false)
+            };
+        }
     }
 }
