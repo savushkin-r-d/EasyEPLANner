@@ -119,7 +119,26 @@ namespace TechObject
 
             public override bool SetNewValue(string newValue)
             {
-                base.SetNewValue(newValue);
+                var numbers = new List<int>();
+                string[] numbersAsStringArray = newValue.Split(' ').ToArray();
+                foreach(var numberAsString in numbersAsStringArray)
+                {
+                    int number;
+                    int.TryParse(numberAsString, out number);
+                    if (number == 0)
+                    {
+                        continue;
+                    }
+
+                    var obj = TechObjectManager.GetInstance()
+                        .GetTObject(number);
+                    if (obj != null && numbers.Contains(number) == false)
+                    {
+                        numbers.Add(number);
+                    }
+                }
+
+                base.SetNewValue(string.Join(" ",numbers));
                 return true;
             }
 
