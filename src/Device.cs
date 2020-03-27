@@ -1100,7 +1100,8 @@ namespace Device
                                 "ST", 
                                 "M", 
                                 "V", 
-                                "P_CZ" 
+                                "P_CZ",
+                                "T",
                             });
                     }
                     break;
