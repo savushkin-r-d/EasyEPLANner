@@ -131,12 +131,14 @@ namespace TechObject
         }
 
         public void ModifyDevNames(string newTechObjectName,
-            int newTechObjectNumber, string oldTechObjectName)
+            int newTechObjectNumber, string oldTechObjectName, 
+            int oldTechObjectNumber)
         {
             foreach (State stpsMngr in stepsMngr)
             {
                 stpsMngr.ModifyDevNames(newTechObjectName,
-                    newTechObjectNumber, oldTechObjectName);
+                    newTechObjectNumber, oldTechObjectName, 
+                    oldTechObjectNumber);
             }
         }
 

@@ -52,6 +52,18 @@ namespace TechObject
             }
         }
 
+        override public void ModifyDevNames(string newTechObjectName,
+            int newTechObjectNumber, string oldTechObjectName,
+            int oldTechObjectNumber)
+        {
+            foreach (Action subAction in subAction_AI_AO_Group)
+            {
+                subAction.ModifyDevNames(newTechObjectName,
+                    newTechObjectNumber, oldTechObjectName,
+                    oldTechObjectNumber);
+            }
+        }
+
         /// <summary>
         /// Сохранение в виде таблицы Lua.
         /// </summary>

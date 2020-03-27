@@ -46,7 +46,7 @@ namespace TechObject
             foreach (Mode mode in modes)
             {
                 mode.ModifyDevNames(newTechObjectName, newTechObjectNumber,
-                    owner.NameEplan);
+                    owner.NameEplan, owner.TechNumber);
             }
         }
 
@@ -419,16 +419,28 @@ namespace TechObject
             Mode mode = child as Mode;
             if (copyObject is Mode && mode != null)
             {
-
-                Mode newMode = (copyObject as Mode).Clone(GetModeN, this, 
-                    mode.EditText[0]);
+                Mode copyMode = copyObject as Mode;
+                Mode newMode = copyMode.Clone(GetModeN, this, copyMode.Name);
                 int index = modes.IndexOf(mode);
 
                 modes.Remove(mode);
-
                 modes.Insert(index, newMode);
 
-                newMode.ModifyDevNames(owner.TechNumber, -1, owner.NameEplan);
+                string modeTechObjName = Owner.NameEplan;
+                int modeTechObjNumber = Owner.TechNumber;
+                string copyObjTechObjName = copyMode.Owner.Owner.NameEplan;
+                int copyObjTechObjNumber = copyMode.Owner.Owner.TechNumber;
+                if (modeTechObjName == copyObjTechObjName)
+                {
+                    newMode.ModifyDevNames(owner.TechNumber, -1, 
+                        owner.NameEplan);
+                }
+                else
+                {
+                    newMode.ModifyDevNames(modeTechObjName, modeTechObjNumber, 
+                        copyObjTechObjName, copyObjTechObjNumber);
+                }
+
 
                 ChangeRestrictionModeOwner(newMode);
                 newMode.ChangeCrossRestriction(mode);
@@ -453,10 +465,22 @@ namespace TechObject
         {
             if (obj is Mode)
             {
+                Mode objMode = obj as Mode;
                 Mode newMode = (obj as Mode).Clone(GetModeN, this);
                 modes.Add(newMode);
 
-                newMode.ModifyDevNames(owner.TechNumber, -1, owner.NameEplan);
+                string objModeTechObjectName = objMode.Owner.Owner.NameEplan;
+                int objMobeTechObjectNumber = objMode.Owner.Owner.TechNumber;
+                if (owner.NameEplan == objModeTechObjectName)
+                {
+                    newMode.ModifyDevNames(owner.TechNumber, -1, 
+                        owner.NameEplan);
+                }
+                else
+                {
+                    newMode.ModifyDevNames(owner.NameEplan, owner.TechNumber,
+                        objModeTechObjectName, objMobeTechObjectNumber);
+                }
 
                 ChangeRestrictionModeOwner(newMode);
                 newMode.ChangeCrossRestriction();

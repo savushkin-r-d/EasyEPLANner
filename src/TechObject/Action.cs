@@ -108,7 +108,8 @@ namespace TechObject
         }
 
         virtual public void ModifyDevNames(string newTechObjectName,
-            int newTechObjectNumber, string oldTechObjectName)
+            int newTechObjectNumber, string oldTechObjectName, 
+            int oldTechObjNumber)
         {
             List<int> tmpIndex = new List<int>();
             foreach (int index in deviceIndex)
@@ -126,7 +127,7 @@ namespace TechObject
                 string objName = device.ObjectName;
 
                 if (objName == oldTechObjectName &&
-                    device.ObjectNumber == newTechObjectNumber)
+                    device.ObjectNumber == oldTechObjNumber)
                 {
                     newDevName = newTechObjectName + objNum +
                         device.DeviceType.ToString() + device.DeviceNumber;

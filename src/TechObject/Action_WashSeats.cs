@@ -53,12 +53,14 @@ namespace TechObject
         }
 
         override public void ModifyDevNames(string newTechObjectName,
-            int newTechObjectNumber, string oldTechObjectName)
+            int newTechObjectNumber, string oldTechObjectName,
+            int oldTechObjectNumber)
         {
             foreach (Action subAction in subAction_WashGroupSeats)
             {
                 subAction.ModifyDevNames(newTechObjectName, 
-                    newTechObjectNumber, oldTechObjectName);
+                    newTechObjectNumber, oldTechObjectName, 
+                    oldTechObjectNumber);
             }
         }
 
