@@ -169,5 +169,15 @@ namespace DataBase
                 EmptyProperties()),
             };
         }
+
+        public static BaseOperation[] POUOperations()
+        {
+            return new BaseOperation[]
+            {
+                BaseOperation.EmptyOperation(),
+                new BaseOperation("Мойка", "WASHING_CIP", EmptyProperties(),
+                WashSteps())
+            };
+        }
     }
 }
