@@ -165,7 +165,7 @@ namespace TechObject
             foreach (var equip in equipment)
             {
                 string currentValue = equip.Value;
-                if (currentValue == "")
+                if (currentValue == equip.DefaultValue)
                 {
                     string deviceName = owner.NameEplan + owner.TechNumber + 
                         equip.DefaultValue;
