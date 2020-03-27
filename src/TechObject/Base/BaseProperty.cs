@@ -18,7 +18,7 @@ namespace TechObject
         public abstract new BaseProperty Clone();
 
         public BaseProperty(string luaName, string name, bool canSave, 
-            string defaultValue = "") : base(name, "")
+            string defaultValue = "") : base(name, defaultValue)
         {
             this.luaName = luaName;
             this.canSave = canSave;

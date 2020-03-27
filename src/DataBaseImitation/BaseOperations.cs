@@ -145,6 +145,18 @@ namespace DataBase
         }
 
         /// <summary>
+        /// Получить операции базового объекта "Узел нагрева ПИД"
+        /// </summary>
+        public static BaseOperation[] HeaterNodePIDOperations()
+        {
+            return new BaseOperation[]
+            {
+                BaseOperation.EmptyOperation(),
+                new BaseOperation("Нагрев", "HEATING", EmptyProperties(),
+                EmptyProperties()),
+            };
+        }
+              
         /// Получить операции базового объекта "Узел давления ПИД"
         /// </summary>
         /// <returns></returns>

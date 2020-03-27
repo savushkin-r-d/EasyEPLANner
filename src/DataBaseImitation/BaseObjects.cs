@@ -41,7 +41,8 @@ namespace DataBase
         {
             foreach (BaseTechObject baseTechObject in BaseTechObjects())
             {
-                if (name == baseTechObject.Name)
+                if (name == baseTechObject.Name || 
+                    name == baseTechObject.EplanName)
                 {
                     return baseTechObject;
                 }
@@ -70,6 +71,7 @@ namespace DataBase
                 new BaseTank(),
                 new BasePressurePID(),
                 new BaseHeater(),
+                new BaseHeaterPID(),
                 new BaseFlowNodePID(),
                 new BaseCooler(),
                 new BaseCoolerPID(),

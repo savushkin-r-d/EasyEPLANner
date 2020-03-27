@@ -96,6 +96,18 @@ namespace DataBase
         }
 
         /// <summary>
+        /// Получить список оборудования для ПИД узла нагрева.
+        /// </summary>
+        /// <returns></returns>
+        static public BaseProperty[] HeaterNodePIDEquipment()
+        {
+            return new BaseProperty[]
+            {
+                new ShowedBaseProperty("TE", "Датчик температуры", "TE1"),
+                new ShowedBaseProperty("VC", "Регулирующий клапан", "VC1"),
+            };
+        }
+      
         /// Получить список оборудования для ПИД узла расхода.
         /// </summary>
         /// <returns></returns>

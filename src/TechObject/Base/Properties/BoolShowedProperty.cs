@@ -6,18 +6,23 @@ using System.Threading.Tasks;
 
 namespace TechObject
 {
+    /// <summary>
+    /// Булевское свойство для базовой операции.
+    /// </summary>
     public class BoolShowedProperty : BaseProperty
     {
-        private BoolShowedProperty(string luaName, string name, bool canSave)
-            : base(luaName, name, canSave) { }
+        private BoolShowedProperty(string luaName, string name, bool canSave,
+            string defaultValue) : base(luaName, name, canSave, defaultValue)
+        { }
 
         public BoolShowedProperty(string luaName, string name,
-            string defaultValue) : base(luaName, name, true, defaultValue) { }
+            string defaultValue) : base(luaName, name, true, defaultValue) 
+        { }
 
         public override BaseProperty Clone()
         {
             var newProperty = new BoolShowedProperty(this.LuaName, this.Name,
-                this.CanSave());
+                this.CanSave(), this.DefaultValue);
             newProperty.SetValue(this.Value);
             return newProperty;
         }
@@ -65,6 +70,14 @@ namespace TechObject
             get
             {
                 return true;
+            }
+        }
+
+        override public bool IsUseDevList
+        {
+            get
+            {
+                return false;
             }
         }
         #endregion
