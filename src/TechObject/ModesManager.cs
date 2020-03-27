@@ -419,9 +419,8 @@ namespace TechObject
             Mode mode = child as Mode;
             if (copyObject is Mode && mode != null)
             {
-
                 Mode newMode = (copyObject as Mode).Clone(GetModeN, this, 
-                    mode.EditText[0]);
+                    (copyObject as Mode).Name);
                 int index = modes.IndexOf(mode);
 
                 modes.Remove(mode);
