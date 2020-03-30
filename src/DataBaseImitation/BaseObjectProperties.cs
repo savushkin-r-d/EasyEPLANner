@@ -13,18 +13,18 @@ namespace DataBase
         /// Получить пустой массив свойств.
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] EmptyProperties()
+        public static List<BaseProperty> EmptyProperties()
         {
-            return new BaseProperty[0];
+            return new List<BaseProperty>();
         }
 
         /// <summary>
         /// Получить свойства базового объекта "Танк"
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] TankProperties()
+        public static List<BaseProperty> TankProperties()
         {
-            return new BaseProperty[]
+            return new List<BaseProperty>
             {
                 new ShowedBaseProperty("CIP_WASH_END", "Мойка завершена"),
                 new ShowedBaseProperty("DI_CIP_FREE", "МСА свободна"),
@@ -39,9 +39,9 @@ namespace DataBase
         /// Получить свойства базового объекта "Линия"
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] LineProperties()
+        public static List<BaseProperty> LineProperties()
         {
-            return new BaseProperty[]
+            return new List<BaseProperty>
             {
                 new ShowedBaseProperty("CIP_WASH_END", "Мойка завершена")
             };
@@ -51,17 +51,17 @@ namespace DataBase
         /// Получить свойства базового объекта "Бачок"
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] WaterTankProperties()
+        public static List<BaseProperty> WaterTankProperties()
         {
-            return new BaseProperty[]
+            return new List<BaseProperty>
             {
                 new BoolShowedProperty("ACTIVE_WORKING", "Активная работа", "false"),
             };
         }
 
-        public static BaseProperty[] POUProperties()
+        public static List<BaseProperty> POUProperties()
         {
-            return new BaseProperty[]
+            return new List<BaseProperty>
             {
                 new NonShowedBaseProperty("DRAINAGE", "Номер шага дренаж",
                 false)

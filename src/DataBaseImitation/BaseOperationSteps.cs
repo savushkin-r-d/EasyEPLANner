@@ -10,6 +10,15 @@ namespace DataBase
     public partial class Imitation
     {
         /// <summary>
+        /// Пустые шаги операции.
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] EmptySteps()
+        {
+            return new BaseProperty[0];
+        }
+
+        /// <summary>
         /// Шаги объектов "Линия", "Линия приемки" для операции "Наполнение"
         /// </summary>
         /// <returns></returns>

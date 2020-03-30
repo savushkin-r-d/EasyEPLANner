@@ -19,7 +19,7 @@ namespace TechObject
             BaseOperations = DataBase.Imitation.POUOperations();
             BaseProperties = DataBase.Imitation.POUProperties();
             BasicName = "pasteurizator";
-            Equipment = DataBase.Imitation.EmptyProperties();
+            Equipment = DataBase.Imitation.EmptyEquipment();
         }
 
         /// <summary>

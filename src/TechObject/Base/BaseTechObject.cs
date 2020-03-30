@@ -17,7 +17,7 @@ namespace TechObject
             EplanName = "";
             S88Level = 0;
             BaseOperations = new BaseOperation[0];
-            BaseProperties = new BaseProperty[0];
+            BaseProperties = new List<BaseProperty>();
             BasicName = "";
             Owner = null;
             Equipment = new BaseProperty[0];
@@ -29,7 +29,7 @@ namespace TechObject
             EplanName = "";
             S88Level = 0;
             BaseOperations = new BaseOperation[0];
-            BaseProperties = new BaseProperty[0];
+            BaseProperties = new List<BaseProperty>();
             BasicName = "";
             Owner = owner;
             Equipment = new BaseProperty[0];
@@ -118,7 +118,7 @@ namespace TechObject
         /// <summary>
         /// Свойства базового объекта
         /// </summary>
-        public BaseProperty[] BaseProperties
+        public List<BaseProperty> BaseProperties
         {
             get
             {
@@ -215,7 +215,9 @@ namespace TechObject
         /// <summary>
         /// Инициализировать базовый объект как агрегат в аппарате.
         /// </summary>
-        public virtual void InitAsAttachedAgregate() { }
+        /// <param name="unit">Базовый объект, к которому привязаны агрегаты
+        /// </param>
+        public virtual void InitAsAttachedAgregate(BaseTechObject unit) { }
 
         #region Сохранение в prg.lua
         /// <summary>
@@ -239,7 +241,7 @@ namespace TechObject
         private TechObject owner;
 
         private BaseOperation[] objectOperations;
-        private BaseProperty[] objectProperties;
+        private List<BaseProperty> objectProperties;
         private BaseProperty[] equipment;
     }
 }
