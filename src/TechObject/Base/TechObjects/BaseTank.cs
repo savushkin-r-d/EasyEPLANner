@@ -36,6 +36,14 @@ namespace TechObject
             return cloned;
         }
 
+        /// <summary>
+        /// Инициализировать базовый объект как привязанный к аппарату агрегат.
+        /// </summary>
+        public override void InitAsAttachedAgregate()
+        {
+            base.InitAsAttachedAgregate();
+        }
+
         #region Сохранение в prg.lua
         /// <summary>
         /// Сохранить информацию об операциях объекта в prg.lua

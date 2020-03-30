@@ -160,16 +160,16 @@ namespace TechObject
             /// <summary>
             /// Инициализация данных 
             /// </summary>
-            /// <param name="objects"></param>
-            private void InitAttachedObjectsData(List<int> objects)
+            /// <param name="objectsNumbrers">Список корректных номеров
+            /// привязанных агрегатов</param>
+            private void InitAttachedObjectsData(List<int> objectsNumbrers)
             {
-                if (objects.Count == 0 || 
-                    owner.BaseTechObject.Name == "")
+                foreach(var number in objectsNumbrers)
                 {
-                    return;
+                    TechObject attachedObject = TechObjectManager.GetInstance()
+                        .GetTObject(number);
+                    attachedObject.BaseTechObject.InitAsAttachedAgregate();
                 }
-
-
             }
 
             /// <summary>

@@ -212,6 +212,11 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Инициализировать базовый объект как агрегат в аппарате.
+        /// </summary>
+        public virtual void InitAsAttachedAgregate() { }
+
         #region Сохранение в prg.lua
         /// <summary>
         /// Сохранить информацию об операциях объекта в prg.lua
