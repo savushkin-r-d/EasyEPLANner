@@ -130,6 +130,7 @@ namespace TechObject
                 baseSteps = new BaseProperty[0];
             }
 
+            techObject.AttachedObjects.Check();
             SetItems();
         }
 
@@ -268,6 +269,7 @@ namespace TechObject
             {
                 baseOperationProperties.Add(property);
             }
+            SetItems();
         }
 
         /// <summary>

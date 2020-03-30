@@ -111,10 +111,10 @@ namespace EasyEPlanner
                     res += prefix + varForSave;
                 }
 
-                if (objects[i].AttachedObjects != string.Empty)
+                if (objects[i].AttachedObjects.Value != string.Empty)
                 {
                     // Т.к объекты начинаются с 1
-                    attachedObjects[i + 1] = objects[i].AttachedObjects;
+                    attachedObjects[i + 1] = objects[i].AttachedObjects.Value;
                 }
 
                 previouslyObjectName = objects[i].NameEplan.ToLower();

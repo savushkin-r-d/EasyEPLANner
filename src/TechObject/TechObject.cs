@@ -120,8 +120,8 @@ namespace TechObject
             public override bool SetNewValue(string newValue)
             {
                 List<int> numbers = GetValidTechObjNums(newValue);
-                InitAttachedObjectsData(numbers);
                 base.SetNewValue(string.Join(" ",numbers));
+                InitAttachedObjectsData(numbers);
                 return true;
             }
 
@@ -174,7 +174,8 @@ namespace TechObject
             }
 
             /// <summary>
-            /// Проверить привязанные объекты на инициализацию.
+            /// Проверить привязанные объекты на инициализацию и 
+            /// инициализировать, если не инициализировано.
             /// </summary>
             public void Check()
             {
@@ -315,7 +316,7 @@ namespace TechObject
                 NameBC);
             clone.nameEplan = new NameInEplan(NameEplan, clone);
             clone.s88Level = new ObjS88Level(S88Level, clone);
-            clone.attachedObjects = new AttachedToObjects(AttachedObjects, 
+            clone.attachedObjects = new AttachedToObjects(AttachedObjects.Value, 
                 clone);
 
             clone.getN = getN;
@@ -485,12 +486,14 @@ namespace TechObject
             }
         }
 
-        // Привязанные агрегаты
-        public string AttachedObjects
+        /// <summary>
+        /// Привязанные к аппарату агрегаты.
+        /// </summary>
+        public AttachedToObjects AttachedObjects
         {
             get
             {
-                return attachedObjects.EditText[1];
+                return attachedObjects;
             }
         }
 

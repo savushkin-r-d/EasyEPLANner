@@ -773,7 +773,7 @@ namespace TechObject
                         objects[objects.Count - 1].NameEplan,
                         objects[objects.Count - 1].CooperParamNumber,
                         objects[objects.Count - 1].NameBC,
-                        objects[objects.Count - 1].AttachedObjects);
+                        objects[objects.Count - 1].AttachedObjects.Value);
                 }
             }
             else
