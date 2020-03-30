@@ -36,6 +36,53 @@ namespace TechObject
             return cloned;
         }
 
+        /// <summary>
+        /// Инициализировать базовый объект как привязанный к аппарату агрегат.
+        /// </summary>
+        /// <param name="unit">Базовый объект к которому привязаны агрегаты
+        /// </param>
+        public override void InitAsAttachedAgregate(BaseTechObject unit)
+        {
+            switch(unit)
+            {
+                case BaseTank obj:
+                    foreach(var operation in obj.Owner.ModesManager.Modes)
+                    {
+                        BaseProperty prop;
+                        switch(operation.GetBaseOperation().Name)
+                        {
+                            case "Наполнение":
+                                prop = new BoolShowedProperty(
+                                    "NEED_COOLING_DURING_FILL", 
+                                    "Использовать узел охлаждения", "false");
+                                operation.GetBaseOperation().AddProperty(prop);
+                                break;
+
+                            case "Хранение":
+                                prop = new BoolShowedProperty(
+                                    "NEED_COOLING_DURING_STORING", 
+                                    "Использовать узел охлаждения", "false");
+                                operation.GetBaseOperation().AddProperty(prop);
+                                break;
+
+                            case "Выдача":
+                                prop = new BoolShowedProperty(
+                                    "NEED_COOLING_DURING_OUT", 
+                                    "Использовать узел охлаждения", "false");
+                                operation.GetBaseOperation().AddProperty(prop);
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
         #region сохранение prg.lua
         /// <summary>
         /// Сохранить информацию об операциях объекта в prg.lua

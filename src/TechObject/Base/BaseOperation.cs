@@ -256,9 +256,18 @@ namespace TechObject
             }
         }
        
+        /// <summary>
+        /// Добавить свойство базовой операции.
+        /// </summary>
+        /// <param name="property">Свойство</param>
         public void AddProperty(BaseProperty property)
         {
-            //if (baseOperationProperties)
+            var equalPropertiesCount = baseOperationProperties
+                .Where(x => x.LuaName == property.LuaName).Count();
+            if (equalPropertiesCount == 0)
+            {
+                baseOperationProperties.Add(property);
+            }
         }
 
         /// <summary>

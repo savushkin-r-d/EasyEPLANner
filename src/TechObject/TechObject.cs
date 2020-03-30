@@ -168,7 +168,8 @@ namespace TechObject
                 {
                     TechObject attachedObject = TechObjectManager.GetInstance()
                         .GetTObject(number);
-                    attachedObject.BaseTechObject.InitAsAttachedAgregate();
+                    attachedObject.BaseTechObject.InitAsAttachedAgregate(
+                        owner.BaseTechObject);
                 }
             }
 
