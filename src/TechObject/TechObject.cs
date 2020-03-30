@@ -119,9 +119,25 @@ namespace TechObject
 
             public override bool SetNewValue(string newValue)
             {
+                List<int> numbers = GetValidTechObjNums(newValue);
+                InitAttachedObjectsData(numbers);
+                base.SetNewValue(string.Join(" ",numbers));
+                return true;
+            }
+
+            /// <summary>
+            /// Получить корректные номера технологических объектов из
+            /// входной строки
+            /// </summary>
+            /// <param name="inputString">Входная строка</param>
+            /// <returns></returns>
+            private List<int> GetValidTechObjNums(string inputString)
+            {
                 var numbers = new List<int>();
-                string[] numbersAsStringArray = newValue.Split(' ').ToArray();
-                foreach(var numberAsString in numbersAsStringArray)
+                string[] numbersAsStringArray = inputString.Split(' ')
+                    .ToArray();
+
+                foreach (var numberAsString in numbersAsStringArray)
                 {
                     int number;
                     int.TryParse(numberAsString, out number);
@@ -138,11 +154,40 @@ namespace TechObject
                     }
                 }
 
-                base.SetNewValue(string.Join(" ",numbers));
-                return true;
+                return numbers;
             }
 
-            public override bool NeedRebuildParent { get { return true; } }
+            /// <summary>
+            /// Инициализация данных 
+            /// </summary>
+            /// <param name="objects"></param>
+            private void InitAttachedObjectsData(List<int> objects)
+            {
+                if (objects.Count == 0 || 
+                    owner.BaseTechObject.Name == "")
+                {
+                    return;
+                }
+
+
+            }
+
+            /// <summary>
+            /// Проверить привязанные объекты на инициализацию.
+            /// </summary>
+            public void Check()
+            {
+                List<int> numbers = GetValidTechObjNums(this.Value);
+                InitAttachedObjectsData(numbers);
+            }
+
+            public override bool NeedRebuildParent 
+            { 
+                get 
+                { 
+                    return true; 
+                } 
+            }
 
             private TechObject owner;
 
@@ -163,7 +208,6 @@ namespace TechObject
                     }
                 }
             }
-
         }
 
         /// <summary>
@@ -631,6 +675,7 @@ namespace TechObject
             else
             {
                 Equipment.Check();
+                attachedObjects.Check();
             }
 
             ModesManager modesManager = ModesManager;
