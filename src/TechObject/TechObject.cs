@@ -136,6 +136,7 @@ namespace TechObject
                 var numbers = new List<int>();
                 string[] numbersAsStringArray = inputString.Split(' ')
                     .ToArray();
+                var objects = new List<TechObject>();
 
                 foreach (var numberAsString in numbersAsStringArray)
                 {
@@ -148,12 +149,17 @@ namespace TechObject
 
                     var obj = TechObjectManager.GetInstance()
                         .GetTObject(number);
-                    if (obj != null && numbers.Contains(number) == false)
+                    if (obj != null)
                     {
-                        numbers.Add(number);
+                        objects.Add(obj);
                     }
                 }
 
+                numbers = objects
+                    .GroupBy(x => x.BaseTechObject.Name)
+                    .Select(x => x.First())
+                    .Select(x => x.GlobalNumber)
+                    .ToList();
                 return numbers;
             }
 
