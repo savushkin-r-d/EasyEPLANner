@@ -84,6 +84,50 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Удалить базовый объект как привязанный к аппарату агрегат.
+        /// </summary>
+        /// <param name="unit">Базовый объект к которому привязаны агрегаты
+        /// </param>
+        public override void RemoveAsAttachedAgregate(BaseTechObject unit)
+        {
+            switch (unit)
+            {
+                case BaseTank obj:
+                    foreach (var operation in obj.Owner.ModesManager.Modes)
+                    {
+                        string luaName;
+                        switch (operation.GetBaseOperation().Name)
+                        {
+                            case "Наполнение":
+                                luaName = "NEED_COOLING_DURING_FILL";
+                                operation.GetBaseOperation()
+                                    .RemoveProperty(luaName);
+                                break;
+
+                            case "Хранение":
+                                luaName = "NEED_COOLING_DURING_STORING";
+                                operation.GetBaseOperation()
+                                    .RemoveProperty(luaName);
+                                break;
+
+                            case "Выдача":    
+                                luaName = "NEED_COOLING_DURING_OUT";
+                                operation.GetBaseOperation()
+                                    .RemoveProperty(luaName);
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
         /// Можно ли привязывать данный объект к другим объектам.
         /// </summary>
         public override bool IsAttachable

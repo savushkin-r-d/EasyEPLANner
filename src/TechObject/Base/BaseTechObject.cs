@@ -220,6 +220,13 @@ namespace TechObject
         public virtual void InitAsAttachedAgregate(BaseTechObject unit) { }
 
         /// <summary>
+        /// Удалить базовый объект как агрегат в аппарате.
+        /// </summary>
+        /// <param name="unit">Базовый объект, к которому привязаны агрегаты
+        /// </param>
+        public virtual void RemoveAsAttachedAgregate(BaseTechObject unit) { }
+
+        /// <summary>
         /// Является ли базовый объект привязываемым к другому объекту.
         /// </summary>
         public virtual bool IsAttachable

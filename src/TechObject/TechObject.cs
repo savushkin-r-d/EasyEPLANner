@@ -119,8 +119,17 @@ namespace TechObject
 
             public override bool SetNewValue(string newValue)
             {
+                string oldValue = this.Value;
+
                 List<int> numbers = GetValidTechObjNums(newValue);
-                base.SetNewValue(string.Join(" ",numbers));
+                newValue = string.Join(" ", numbers);
+
+                base.SetNewValue(newValue);
+
+                List<int> deletedAgregatesNumbers = FindDeletedAgregates(
+                    oldValue, newValue);
+                RemoveDeletedAgregates(deletedAgregatesNumbers);
+
                 InitAttachedObjectsData(numbers);
                 return true;
             }
@@ -160,6 +169,53 @@ namespace TechObject
                     .Select(x => x.GlobalNumber)
                     .ToList();
                 return numbers;
+            }
+
+            /// <summary>
+            /// Найти удаленные агрегаты
+            /// </summary>
+            /// <param name="oldValue">Старое значение поля</param>
+            /// <param name="newValue">Новое значение поля</param>
+            /// <returns></returns>
+            private List<int> FindDeletedAgregates(string oldValue, 
+                string newValue)
+            {
+                var oldNumbers = oldValue.Split(' ').Select(int.Parse).ToList();
+                var newNumbers = newValue.Split(' ').Select(int.Parse).ToList();
+                foreach(var newNum in newNumbers)
+                {
+                    if (oldNumbers.Contains(newNum))
+                    {
+                        oldNumbers.Remove(newNum);
+                    }
+                }
+
+                return oldNumbers;
+            }
+
+            /// <summary>
+            /// Удалить привязку агрегатов из аппарата.
+            /// </summary>
+            /// <param name="agregatesNumbers"></param>
+            private void RemoveDeletedAgregates(List<int> agregatesNumbers)
+            {
+                if (agregatesNumbers.Count == 0)
+                {
+                    return;
+                }
+
+                foreach(var num in agregatesNumbers)
+                {
+                    TechObject removedAgregate = TechObjectManager
+                        .GetInstance().GetTObject(num);
+                    if (removedAgregate == null)
+                    {
+                        continue;
+                    }
+
+                    removedAgregate.BaseTechObject.RemoveAsAttachedAgregate(
+                        owner.BaseTechObject);
+                }
             }
 
             /// <summary>

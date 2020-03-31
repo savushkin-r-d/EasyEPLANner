@@ -278,6 +278,22 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Удалить свойство базовой операции.
+        /// </summary>
+        /// <param name="luaName">Lua-имя свойства</param>
+        public void RemoveProperty(string luaName)
+        {
+            var removingProperty = baseOperationProperties
+                .Where(x => x.LuaName == luaName)
+                .FirstOrDefault();
+            if (removingProperty != null)
+            {
+                baseOperationProperties.Remove(removingProperty);
+            }
+            SetItems();
+        }
+
+        /// <summary>
         /// Копирование объекта
         /// </summary>
         /// <param name="owner">Новая операция-владелец объекта</param>
