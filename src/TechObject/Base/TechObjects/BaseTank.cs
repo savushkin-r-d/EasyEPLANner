@@ -225,9 +225,9 @@ namespace TechObject
                             if (param.CanSave())
                             {
                                 string val = param
-                                    .Value == "" ? "nil" : param.Value;   
-                                res += objName + "." + param.LuaName +
-                                    " = " + val + "\n";
+                                    .Value == "" ? "nil" : param.Value;
+                                res += $"{objName}.{baseOperation.LuaName}." +
+                                    $"{param.LuaName} = {val}\n";
                             }
                         }
                         break;
@@ -312,8 +312,8 @@ namespace TechObject
                             break;
 
                         default:
-                                res += objName + "." + param.LuaName +
-                                " = " + val + "\n";
+                            res += $"{objName}.{baseOperation.LuaName}." +
+                                    $"{param.LuaName} = {val}\n";
                             break;
                     }
                 }

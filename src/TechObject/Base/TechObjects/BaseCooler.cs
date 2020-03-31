@@ -53,21 +53,21 @@ namespace TechObject
                         {
                             case "Наполнение":
                                 prop = new BoolShowedProperty(
-                                    "NEED_COOLING_DURING_FILL", 
+                                    "NEED_COOLING", 
                                     "Использовать узел охлаждения", "false");
                                 operation.GetBaseOperation().AddProperty(prop);
                                 break;
 
                             case "Хранение":
                                 prop = new BoolShowedProperty(
-                                    "NEED_COOLING_DURING_STORING", 
+                                    "NEED_COOLING", 
                                     "Использовать узел охлаждения", "false");
                                 operation.GetBaseOperation().AddProperty(prop);
                                 break;
 
                             case "Выдача":
                                 prop = new BoolShowedProperty(
-                                    "NEED_COOLING_DURING_OUT", 
+                                    "NEED_COOLING", 
                                     "Использовать узел охлаждения", "false");
                                 operation.GetBaseOperation().AddProperty(prop);
                                 break;
@@ -99,19 +99,19 @@ namespace TechObject
                         switch (operation.GetBaseOperation().Name)
                         {
                             case "Наполнение":
-                                luaName = "NEED_COOLING_DURING_FILL";
+                                luaName = "NEED_COOLING";
                                 operation.GetBaseOperation()
                                     .RemoveProperty(luaName);
                                 break;
 
                             case "Хранение":
-                                luaName = "NEED_COOLING_DURING_STORING";
+                                luaName = "NEED_COOLING";
                                 operation.GetBaseOperation()
                                     .RemoveProperty(luaName);
                                 break;
 
                             case "Выдача":    
-                                luaName = "NEED_COOLING_DURING_OUT";
+                                luaName = "NEED_COOLING";
                                 operation.GetBaseOperation()
                                     .RemoveProperty(luaName);
                                 break;
