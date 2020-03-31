@@ -148,6 +148,16 @@ namespace EasyEPlanner
                     {
                         var attachedTechObject = techObjectManager.GetTObject(
                             Convert.ToInt32(value));
+                        if(attachedTechObject == null)
+                        {
+                            string objName = techObj.Name + techObj.TechNumber
+                                .ToString();
+                            string msg = $"Для объекта {objName} не найден " +
+                                $"привязанный агрегат под номером {value}.\n";
+                            Logs.AddMessage(msg);
+                            continue;
+                        }
+
                         var attachedTechObjectType = attachedTechObject
                             .NameEplanForFile.ToLower();
                         var attachedTechObjNameForFile =

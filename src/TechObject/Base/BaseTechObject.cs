@@ -219,6 +219,17 @@ namespace TechObject
         /// </param>
         public virtual void InitAsAttachedAgregate(BaseTechObject unit) { }
 
+        /// <summary>
+        /// Является ли базовый объект привязываемым к другому объекту.
+        /// </summary>
+        public virtual bool IsAttachable
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         #region Сохранение в prg.lua
         /// <summary>
         /// Сохранить информацию об операциях объекта в prg.lua

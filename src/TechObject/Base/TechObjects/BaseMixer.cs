@@ -35,5 +35,16 @@ namespace TechObject
             cloned.Owner = techObject;
             return cloned;
         }
+
+        /// <summary>
+        /// Можно ли привязывать данный объект к другим объектам.
+        /// </summary>
+        public override bool IsAttachable
+        {
+            get
+            {
+                return true;
+            }
+        }
     }
 }

@@ -149,7 +149,7 @@ namespace TechObject
 
                     var obj = TechObjectManager.GetInstance()
                         .GetTObject(number);
-                    if (obj != null)
+                    if (obj != null && obj.BaseTechObject.IsAttachable)
                     {
                         objects.Add(obj);
                     }
@@ -182,10 +182,22 @@ namespace TechObject
             /// Проверить привязанные объекты на инициализацию и 
             /// инициализировать, если не инициализировано.
             /// </summary>
-            public void Check()
+            public string Check()
             {
+                var res = "";
                 List<int> numbers = GetValidTechObjNums(this.Value);
+                string checkedValue = string.Join(" ", numbers);
+                if (checkedValue != this.Value)
+                {
+                    res += $"Проверьте привязанные агрегаты в объекте: " +
+                        $"{owner.GlobalNumber}." +
+                        $"{owner.Name + owner.TechNumber}. " +
+                        $"В поле присутствуют агрегаты, которые нельзя " +
+                        $"привязывать.\n";
+                }
+
                 InitAttachedObjectsData(numbers);
+                return res;
             }
 
             public override bool NeedRebuildParent 
@@ -684,7 +696,7 @@ namespace TechObject
             else
             {
                 Equipment.Check();
-                attachedObjects.Check();
+                errors += attachedObjects.Check();
             }
 
             ModesManager modesManager = ModesManager;
