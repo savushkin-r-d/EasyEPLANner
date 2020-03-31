@@ -118,8 +118,7 @@ namespace TechObject
                 {
                     Name = operation.Name;
                     LuaName = operation.LuaName;
-                    baseOperationProperties =
-                        FindBaseOperationProperties(operation);
+                    Properties = FindBaseOperationProperties(operation);
                     baseSteps = operation.Steps;
                 }
             }
@@ -131,11 +130,7 @@ namespace TechObject
                 baseSteps = new BaseProperty[0];
             }
 
-            if(isInit == false)
-            {
-                techObject.AttachedObjects.Check();
-
-            }
+            techObject.AttachedObjects.Check();
             SetItems();
         }
 
@@ -268,11 +263,11 @@ namespace TechObject
         /// <param name="property">Свойство</param>
         public void AddProperty(BaseProperty property)
         {
-            var equalPropertiesCount = baseOperationProperties
+            var equalPropertiesCount = Properties
                 .Where(x => x.LuaName == property.LuaName).Count();
             if (equalPropertiesCount == 0)
             {
-                baseOperationProperties.Add(property);
+                Properties.Add(property);
             }
             SetItems();
         }

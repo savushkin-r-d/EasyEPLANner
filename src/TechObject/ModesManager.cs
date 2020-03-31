@@ -145,17 +145,14 @@ namespace TechObject
             Editor.ObjectProperty[] extraParams)
         {
             Mode newMode = new Mode(modeName, GetModeN, this);
+            modes.Add(newMode);
 
             // Установка имени базовой операции в Mode
             newMode.SetNewValue(baseOperationName, true, true);
-
             // Установка параметров базовой операции
             newMode.SetBaseOperExtraParams(extraParams);
 
-            modes.Add(newMode);
-
             ChangeRestrictionModeOwner(newMode);
-
             return newMode;
         }
 
