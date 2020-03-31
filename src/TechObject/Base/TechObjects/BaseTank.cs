@@ -220,6 +220,16 @@ namespace TechObject
                         break;
 
                     default:
+                        foreach (BaseProperty param in baseOperation.Properties)
+                        {
+                            if (param.CanSave())
+                            {
+                                string val = param
+                                    .Value == "" ? "nil" : param.Value;   
+                                res += objName + "." + param.LuaName +
+                                    " = " + val + "\n";
+                            }
+                        }
                         break;
                 }
             }
@@ -299,6 +309,11 @@ namespace TechObject
                                 res += objName + "." + param.LuaName +
                                     $" = {val}\n";
                             }
+                            break;
+
+                        default:
+                                res += objName + "." + param.LuaName +
+                                " = " + val + "\n";
                             break;
                     }
                 }
