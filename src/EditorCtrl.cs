@@ -373,6 +373,20 @@ namespace Editor
                         }
                         break;
 
+                    case (uint)Keys.X:                                  //X
+                        ctrlState = PI.GetKeyState((int)
+                            PI.VIRTUAL_KEY.VK_CONTROL);
+                        if ((ctrlState & SHIFTED) > 0)
+                        {
+                            if (IsCellEditing)
+                            {
+                                PI.SendMessage(PI.GetFocus(),
+                                    (int)PI.WM.CUT, 0, 0);
+                                return (IntPtr)1;
+                            }
+                        }
+                        break;
+
                     case (uint)Keys.V:                                   //V
                         ctrlState = PI.GetKeyState(
                             (int)PI.VIRTUAL_KEY.VK_CONTROL);
