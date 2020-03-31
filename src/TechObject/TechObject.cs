@@ -155,8 +155,7 @@ namespace TechObject
                     }
                 }
 
-                numbers = objects
-                    .GroupBy(x => x.BaseTechObject.Name)
+                numbers = objects.GroupBy(x => x.BaseTechObject.Name)
                     .Select(x => x.First())
                     .Select(x => x.GlobalNumber)
                     .ToList();
