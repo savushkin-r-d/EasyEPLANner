@@ -1349,7 +1349,7 @@ namespace Editor
             bool isModified;
             bool needUpdateParent = false;
             editorTView.LabelEdit = false;
-            ITreeViewItem selectedItem = editorTView.SelectedObject as ITreeViewItem;
+            var selectedItem = editorTView.SelectedObject as ITreeViewItem;
 
             if (selectedItem == null)
             {
@@ -1364,19 +1364,23 @@ namespace Editor
                 e.NewValue = comboBoxCellEditor.Text;
                 editorTView.Controls.Remove(comboBoxCellEditor);
                 // true (IsExtraBool) - флаг работы с "экстра" полями
-                isModified = selectedItem.SetNewValue(e.NewValue.ToString(), true);
+                isModified = selectedItem.SetNewValue(e.NewValue.ToString(), 
+                    true, false);
 
-                // Обновляем визулизацию т.к изменились родительские или дочерние элементы
+                // Обновляем визулизацию т.к изменились родительские 
+                // или дочерние элементы
                 switch (selectedItem.GetType().FullName)
                 {
                     case "TechObject.Mode":
-                        // Изменилась базовая операция, обновим дополнительные элементы дерева
+                        // Изменилась базовая операция, обновим 
+                        // дополнительные элементы дерева
                         editorTView.RefreshObject(selectedItem);
                         editorTView.RefreshObject(selectedItem.Parent);
                         break;
 
                     case "TechObject.TechObject":
-                        // Изменился базовый объект, обновим дополнительные элементы дерева
+                        // Изменился базовый объект, обновим дополнительные 
+                        // элементы дерева
                         editorTView.RefreshObject(selectedItem);
                         break;
                 }

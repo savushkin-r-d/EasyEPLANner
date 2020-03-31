@@ -411,7 +411,7 @@ namespace TechObject
         /// </summary>
         public void ClearBaseOperation()
         {
-            this.SetNewValue("", true);
+            this.SetNewValue("", true, false);
         }
 
         #region Реализация ITreeViewItem
@@ -441,7 +441,7 @@ namespace TechObject
         }
 
         public override bool SetNewValue(string newBaseOperationName, 
-            bool isBaseOper)
+            bool isBaseOper, bool isInit)
         {
             bool similarBaseOperation = CheckTheSameBaseOperations(
                 newBaseOperationName);
@@ -449,7 +449,7 @@ namespace TechObject
             if (baseOperation.Name != newBaseOperationName &&
                 similarBaseOperation == false)
             {
-                baseOperation.Init(newBaseOperationName);
+                baseOperation.Init(newBaseOperationName, isInit);
                 return true;
             }
 

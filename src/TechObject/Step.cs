@@ -330,7 +330,8 @@ namespace TechObject
             return true;
         }
 
-        public override bool SetNewValue(string newVal, bool isExtraValue)
+        public override bool SetNewValue(string newVal, bool isExtraValue,
+            bool isInit)
         {
             State state = this.Owner;
 

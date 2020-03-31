@@ -208,7 +208,7 @@ namespace TechObject
         {
             foreach (Mode operation in Owner.ModesManager.Modes)
             {
-                operation.GetBaseOperation().Init("");
+                operation.GetBaseOperation().Init("", false);
             }
         }
 

@@ -228,7 +228,15 @@ namespace Editor
 
         bool SetNewValue(SortedDictionary<int, List<int>> newDict);
 
-        bool SetNewValue(string newValue, bool isExtraValue);
+        /// <summary>
+        /// Установка нового значения после редактирования
+        /// </summary>
+        /// <param name="newValue">Новое значение</param>
+        /// <param name="isExtraValue">Является ли свойство расширенным</param>
+        /// <param name="isInit">Устанавливается значение во время инициализации
+        /// при чтении данных или нет</param>
+        /// <returns></returns>
+        bool SetNewValue(string newValue, bool isExtraValue, bool isInit);
 
         /// <summary>    
         /// Признак возможности добавления.
@@ -634,7 +642,8 @@ namespace Editor
             return res;
         }
 
-        public virtual bool SetNewValue(string newValue, bool isExtraValue)
+        public virtual bool SetNewValue(string newValue, bool isExtraValue,
+            bool isInit)
         {
             bool res = false;
             return res;
@@ -762,7 +771,8 @@ namespace Editor
             return false;
         }
 
-        virtual public bool SetNewValue(string newVal, bool isExtraValue)
+        virtual public bool SetNewValue(string newVal, bool isExtraValue,
+            bool isInit)
         {
             return false;
         }

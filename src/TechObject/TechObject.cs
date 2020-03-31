@@ -234,7 +234,7 @@ namespace TechObject
                 prefix + "cooper_param_number = " + CooperParamNumber + ",\n" +
                 prefix + "base_tech_object = \'" + baseTechObject.EplanName + 
                 "\',\n" +
-                prefix + "attached_objects = \'" + AttachedObjects + "\',\n";
+                prefix + "attached_objects = \'" + AttachedObjects.Value + "\',\n";
 
             res += timers.SaveAsLuaTable(prefix);
             res += parameters.SaveAsLuaTable(prefix);
@@ -725,7 +725,8 @@ namespace TechObject
             return true;
         }
 
-        override public bool SetNewValue(string newValue, bool isExtraValue)
+        override public bool SetNewValue(string newValue, bool isExtraValue,
+            bool isInit)
         {
             if (baseTechObject.Name == newValue ||
                 baseTechObject.EplanName == newValue)
