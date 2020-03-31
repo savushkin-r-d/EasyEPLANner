@@ -3,7 +3,9 @@ init = function()
         return
     end
 
-    for fields, value in ipairs( init_tech_objects_modes() ) do
+    local objects = init_tech_objects_modes()
+    local initialized_objects = { }
+    for fields, value in ipairs( objects ) do
         local object_n            = value.n or 1
         local object_name         = value.name or "Object"
         local object_tech_type    = value.tech_type or 1
@@ -16,7 +18,11 @@ init = function()
         local obj = ADD_TECH_OBJECT( object_n, object_name, object_tech_type,
             object_name_eplan, cooper_param_number, object_name_BC, 
             base_tech_object, attached_objects)
+        initialized_objects[fields] = obj
+    end
 
+    for fields, value in ipairs( objects ) do
+        local obj = initialized_objects[fields]
         local timers_count = value.timers or 1
         obj:SetTimersCount( timers_count )
 
