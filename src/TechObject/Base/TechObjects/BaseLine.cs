@@ -185,6 +185,19 @@ namespace TechObject
                         res += SaveWashOperationParameters(objName, 
                             baseOperation);
                         break;
+
+                    default:
+                        foreach (BaseProperty param in baseOperation.Properties)
+                        {
+                            if (param.CanSave())
+                            {
+                                string val = param
+                                    .Value == "" ? "nil" : param.Value;
+                                res += $"{objName}.{baseOperation.LuaName}." +
+                                    $"{param.LuaName} = {val}\n";
+                            }
+                        }
+                        break;
                 }
             }
 

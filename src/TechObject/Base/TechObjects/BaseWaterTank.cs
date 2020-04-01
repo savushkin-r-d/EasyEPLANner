@@ -108,39 +108,17 @@ namespace TechObject
             foreach (Mode mode in modes)
             {
                 var baseOperation = mode.BaseOperation;
-                switch (baseOperation.Name)
+                foreach (BaseProperty param in baseOperation.Properties)
                 {
-                    case "Охлаждение":
-                        res += SaveCoolingOperationParameters(objName,
-                            baseOperation);
-                        break;
+                    if (param.CanSave())
+                    {
+                        string val = param.Value == "" ? "nil" : param.Value;
+                        res += $"{objName}.{baseOperation.LuaName}" +
+                            $".{param.LuaName} = {val}\n";
+                    }
                 }
             }
 
-            return res;
-        }
-
-        /// <summary>
-        /// Сохранить параметры операции охлаждение
-        /// </summary>
-        /// <param name="objName">Имя объекта</param>
-        /// <param name="baseOperation">Базовая операция</param>
-        /// <returns></returns>
-        private string SaveCoolingOperationParameters(string objName,
-            BaseOperation baseOperation)
-        {
-            var res = "";
-
-            foreach (BaseProperty param in baseOperation.Properties)
-            {
-                if (param.CanSave())
-                {
-                    string val = param.Value == "" ? "nil" : param.Value;
-                    res += $"{objName}.{param.LuaName} = {val}\n";
-                }
-            }
-
-            res += "\n";
             return res;
         }
     }

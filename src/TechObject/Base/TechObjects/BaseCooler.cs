@@ -61,21 +61,8 @@ namespace TechObject
         {
             var res = "";
 
-            var modesManager = this.Owner.ModesManager;
-            var modes = modesManager.Modes;
-            foreach (Mode mode in modes)
-            {
-                var baseOperation = mode.BaseOperation;
-                switch (baseOperation.Name)
-                {
-                    case "Охлаждение":
-                        res += SaveCoolingOperation(prefix, objName, mode,
-                            baseOperation);
-                        break;
-                }
-            }
+            res += SaveOperations(objName, prefix);
 
-            res += "\n";
             return res;
         }
 
@@ -84,18 +71,29 @@ namespace TechObject
         /// </summary>
         /// <param name="prefix">Отступ</param>
         /// <param name="objName">Имя объекта</param>
-        /// <param name="mode">Операция</param>
-        /// <param name="baseOperation">Базовая операция</param>
         /// <returns></returns>
-        private string SaveCoolingOperation(string prefix, string objName,
-            Mode mode, BaseOperation baseOperation)
+        private string SaveOperations(string objName, string prefix)
         {
             var res = "";
 
+            var modesManager = this.Owner.ModesManager;
+            var modes = modesManager.Modes;
+            if (modes.Where(x => x.DisplayText[1] != "").Count() == 0)
+            {
+                return res;
+            }
+
             res += objName + ".operations = \t\t--Операции.\n";
             res += prefix + "{\n";
-            res += prefix + baseOperation.LuaName.ToUpper() + " = " + 
-                mode.GetModeNumber() + ",\t\t--Охлаждение.\n";
+            foreach (Mode mode in modes)
+            {
+                var baseOperation = mode.BaseOperation;
+                if (baseOperation.Name != "")
+                {
+                    res += prefix + baseOperation.LuaName.ToUpper() + " = " +
+                        mode.GetModeNumber() + ",\n";
+                }
+            }
             res += prefix + "}\n";
 
             return res;
