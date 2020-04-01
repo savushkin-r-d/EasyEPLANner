@@ -333,6 +333,64 @@ namespace TechObject
 
             return res;
         }
+
+        /// <summary>
+        /// Сохранить номера шагов операций объекта.
+        /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        public string SaveOperationsSteps(string objName, string prefix)
+        {
+            var res = "";
+
+            var modesManager = this.Owner.ModesManager;
+            var modes = modesManager.Modes;
+            if (modes.Where(x => x.BaseOperation.Name != "").Count() == 0)
+            {
+                return res;
+            }
+
+            res += objName + ".steps = \t\t--Шаги операций.\n";
+            res += prefix + "{\n";
+            foreach (Mode mode in modes)
+            {
+                var baseOperation = mode.BaseOperation;
+                if (baseOperation.Name == "")
+                {
+                    continue;
+                }
+
+                string temp = "";
+                foreach (var step in mode.MainSteps)
+                {
+                    if (step.GetBaseStepName() == "")
+                    {
+                        continue;
+                    }
+
+                    temp += prefix + prefix + step.GetBaseStepLuaName() +
+                        " = " + step.GetStepNumber() + ",\n";
+                }
+
+                if (temp.Length == 0)
+                {
+                    string emptyTable = prefix + baseOperation.LuaName
+                        .ToUpper() + " = { },\n";
+                    res += emptyTable;
+                }
+                else
+                {
+                    res += prefix + baseOperation.LuaName.ToUpper() + " =\n";
+                    res += prefix + prefix + "{\n";
+                    res += temp;
+                    res += prefix + prefix + "},\n";
+                }               
+            }
+
+            res += prefix + "}\n";
+            return res;
+        }
         #endregion
 
         private string name;

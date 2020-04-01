@@ -50,6 +50,7 @@ namespace TechObject
             var res = "";
 
             res += SaveOperations(objName, prefix);
+            res += SaveOperationsSteps(objName, prefix);
             res += SaveOperationsParameters(objName);
             res += SaveEquipment(objName);
 
