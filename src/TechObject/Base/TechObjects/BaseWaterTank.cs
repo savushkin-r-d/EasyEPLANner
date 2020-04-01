@@ -14,11 +14,11 @@ namespace TechObject
         public BaseWaterTank() : base()
         {
             S88Level = 2;
-            Name = "Бачок";
+            Name = "Бачок откачки лёдводы";
             EplanName = "_tank";
             BaseOperations = DataBase.Imitation.WaterTankOperations();
             BaseProperties = DataBase.Imitation.WaterTankProperties();
-            BasicName = "cooler";
+            BasicName = "cooler_tank";
             Equipment = DataBase.Imitation.WaterTankEquipment();
         }
 
