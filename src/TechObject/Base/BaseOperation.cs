@@ -268,7 +268,7 @@ namespace TechObject
                     .Where(x => x.LuaName == property.LuaName).Count();
                 if (equalPropertiesCount == 0)
                 {
-                    Properties.Add(property);
+                    Properties.Add(property.Clone());
                 }
             }
 
@@ -305,7 +305,7 @@ namespace TechObject
                 .Count);
             for (int i = 0; i < baseOperationProperties.Count; i++)
             {
-                properties[i] = baseOperationProperties[i].Clone();
+                properties.Add(baseOperationProperties[i].Clone());
             }
 
             var steps = new BaseProperty[Steps.Length];
