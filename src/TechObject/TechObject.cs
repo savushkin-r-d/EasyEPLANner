@@ -145,29 +145,25 @@ namespace TechObject
                 var numbers = new List<int>();
                 string[] numbersAsStringArray = inputString.Split(' ')
                     .ToArray();
-                var objects = new List<TechObject>();
 
-                foreach (var numberAsString in numbersAsStringArray)
+                foreach (var numAsString in numbersAsStringArray)
                 {
                     int number;
-                    int.TryParse(numberAsString, out number);
+                    int.TryParse(numAsString, out number);
                     if (number == 0)
                     {
                         continue;
                     }
 
-                    var obj = TechObjectManager.GetInstance()
+                    TechObject obj = TechObjectManager.GetInstance()
                         .GetTObject(number);
                     if (obj != null && obj.BaseTechObject.IsAttachable)
                     {
-                        objects.Add(obj);
+                        numbers.Add(number);
                     }
                 }
 
-                numbers = objects.GroupBy(x => x.BaseTechObject.Name)
-                    .Select(x => x.First())
-                    .Select(x => x.GlobalNumber)
-                    .ToList();
+                numbers = numbers.Distinct().ToList();
                 return numbers;
             }
 
