@@ -167,7 +167,7 @@ namespace TechObject
         public void AddStep(string stepName, string baseStepLuaName)
         {
             Step newStep = new Step(stepName, GetStepN, this);
-            newStep.SetNewValue(baseStepLuaName, true, true);
+            newStep.SetNewValue(baseStepLuaName, true);
 
             if (modeStep == null)
             {

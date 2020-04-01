@@ -793,8 +793,7 @@ namespace TechObject
             return true;
         }
 
-        override public bool SetNewValue(string newValue, bool isExtraValue,
-            bool isInit)
+        override public bool SetNewValue(string newValue, bool isExtraValue)
         {
             if (baseTechObject.Name == newValue ||
                 baseTechObject.EplanName == newValue)

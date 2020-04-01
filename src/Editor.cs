@@ -233,10 +233,8 @@ namespace Editor
         /// </summary>
         /// <param name="newValue">Новое значение</param>
         /// <param name="isExtraValue">Является ли свойство расширенным</param>
-        /// <param name="isInit">Устанавливается значение во время инициализации
-        /// при чтении данных или нет</param>
         /// <returns></returns>
-        bool SetNewValue(string newValue, bool isExtraValue, bool isInit);
+        bool SetNewValue(string newValue, bool isExtraValue);
 
         /// <summary>    
         /// Признак возможности добавления.
@@ -642,8 +640,7 @@ namespace Editor
             return res;
         }
 
-        public virtual bool SetNewValue(string newValue, bool isExtraValue,
-            bool isInit)
+        public virtual bool SetNewValue(string newValue, bool isExtraValue)
         {
             bool res = false;
             return res;
@@ -771,8 +768,7 @@ namespace Editor
             return false;
         }
 
-        virtual public bool SetNewValue(string newVal, bool isExtraValue,
-            bool isInit)
+        virtual public bool SetNewValue(string newVal, bool isExtraValue)
         {
             return false;
         }

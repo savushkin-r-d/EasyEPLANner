@@ -231,7 +231,7 @@ namespace TechObject
                 attachedObjects);
 
             // Установка значения базового аппарата
-            obj.SetNewValue(baseTechObjectName, true, true);
+            obj.SetNewValue(baseTechObjectName, true);
 
             objects.Add(obj);
 

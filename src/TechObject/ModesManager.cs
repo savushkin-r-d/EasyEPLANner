@@ -124,7 +124,7 @@ namespace TechObject
             Mode newMode = new Mode(modeName, GetModeN, this);
 
             // Установка имени базовой операции в Mode
-            newMode.SetNewValue(baseOperationName, true, true);
+            newMode.SetNewValue(baseOperationName, true);
 
             modes.Add(newMode);
 
@@ -148,7 +148,7 @@ namespace TechObject
             modes.Add(newMode);
 
             // Установка имени базовой операции в Mode
-            newMode.SetNewValue(baseOperationName, true, true);
+            newMode.SetNewValue(baseOperationName, true);
             // Установка параметров базовой операции
             newMode.SetBaseOperExtraParams(extraParams);
 

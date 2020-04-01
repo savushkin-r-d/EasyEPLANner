@@ -102,8 +102,7 @@ namespace TechObject
         /// Инициализация базовой операции по имени
         /// </summary>
         /// <param name="baseOperName">Имя операции</param>
-        /// <param name="isInit">Первичная инициализация или нет</param>
-        public void Init(string baseOperName, bool isInit)
+        public void Init(string baseOperName)
         {
             TechObject techObject = owner.Owner.Owner;
             string baseTechObjectName = techObject.BaseTechObject.Name;
@@ -141,7 +140,7 @@ namespace TechObject
         {
             foreach (var step in owner.MainSteps)
             {
-                step.SetNewValue("", true, false);
+                step.SetNewValue("", true);
             }
         }
 

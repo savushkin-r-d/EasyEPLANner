@@ -1365,7 +1365,7 @@ namespace Editor
                 editorTView.Controls.Remove(comboBoxCellEditor);
                 // true (IsExtraBool) - флаг работы с "экстра" полями
                 isModified = selectedItem.SetNewValue(e.NewValue.ToString(), 
-                    true, false);
+                    true);
 
                 // Обновляем визулизацию т.к изменились родительские 
                 // или дочерние элементы
