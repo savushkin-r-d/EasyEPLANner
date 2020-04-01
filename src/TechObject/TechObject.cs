@@ -130,7 +130,7 @@ namespace TechObject
                     oldValue, newValue);
                 RemoveDeletedAgregates(deletedAgregatesNumbers);
 
-                InitAttachedObjectsData(numbers);
+                InitAttachedAgregates(numbers);
                 return true;
             }
 
@@ -192,25 +192,33 @@ namespace TechObject
             /// <summary>
             /// Удалить привязку агрегатов из аппарата.
             /// </summary>
-            /// <param name="agregatesNumbers"></param>
-            private void RemoveDeletedAgregates(List<int> agregatesNumbers)
+            /// <param name="aggregatesNumbers">Список агрегатов</param>
+            private void RemoveDeletedAgregates(List<int> aggregatesNumbers)
             {
-                if (agregatesNumbers.Count == 0)
+                if (aggregatesNumbers.Count == 0)
                 {
                     return;
                 }
 
-                foreach(var num in agregatesNumbers)
+                foreach(var number in aggregatesNumbers)
                 {
-                    TechObject removedAgregate = TechObjectManager
-                        .GetInstance().GetTObject(num);
-                    if (removedAgregate == null)
+                    TechObject removingAgregate = TechObjectManager
+                        .GetInstance().GetTObject(number);
+                    BaseTechObject removingBaseTechObject = removingAgregate
+                        .BaseTechObject;
+                    BaseProperty[] properties = removingBaseTechObject
+                        .AggregateProperties;
+                    if (properties.Length == 0)
                     {
                         continue;
                     }
 
-                    removedAgregate.BaseTechObject.RemoveAsAttachedAgregate(
-                        owner.BaseTechObject);
+                    TechObject thisTechObject = owner;
+                    List<Mode> modes = thisTechObject.ModesManager.Modes;
+                    foreach (var mode in modes)
+                    {
+                        mode.BaseOperation.RemoveProperties(properties);
+                    }
                 }
             }
 
@@ -219,14 +227,27 @@ namespace TechObject
             /// </summary>
             /// <param name="objectsNumbrers">Список корректных номеров
             /// привязанных агрегатов</param>
-            private void InitAttachedObjectsData(List<int> objectsNumbrers)
+            private void InitAttachedAgregates(List<int> objectsNumbrers)
             {
                 foreach(var number in objectsNumbrers)
                 {
-                    TechObject attachedObject = TechObjectManager.GetInstance()
-                        .GetTObject(number);
-                    attachedObject.BaseTechObject.InitAsAttachedAgregate(
-                        owner.BaseTechObject);
+                    TechObject attachedAggregate = TechObjectManager
+                        .GetInstance().GetTObject(number);
+                    BaseTechObject attachedBaseTechObject = attachedAggregate
+                        .BaseTechObject;
+                    BaseProperty[] properties = attachedBaseTechObject
+                        .AggregateProperties;
+                    if (properties.Length == 0)
+                    {
+                        continue;
+                    }
+
+                    TechObject thisThechObject = owner;
+                    List<Mode> modes = thisThechObject.ModesManager.Modes;
+                    foreach(var mode in modes)
+                    {
+                        mode.BaseOperation.AddProperties(properties);
+                    }
                 }
             }
 
@@ -248,7 +269,7 @@ namespace TechObject
                         $"привязывать.\n";
                 }
 
-                InitAttachedObjectsData(numbers);
+                InitAttachedAgregates(numbers);
                 return res;
             }
 

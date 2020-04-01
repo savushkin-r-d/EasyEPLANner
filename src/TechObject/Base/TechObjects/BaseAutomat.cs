@@ -20,6 +20,7 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "automat";
             Equipment = DataBase.Imitation.EmptyEquipment();
+            AggregateProperties = DataBase.Imitation.EmptyAggregateProperties();
         }
 
         /// <summary>

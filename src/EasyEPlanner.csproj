@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigurationChecker.cs" />
+    <Compile Include="DataBaseImitation\BaseAggregatesProperties.cs" />
     <Compile Include="DataBaseImitation\BaseObjects.cs" />
     <Compile Include="DataBaseImitation\BaseOperations.cs" />
     <Compile Include="DataBaseImitation\BaseObjectProperties.cs" />

@@ -349,7 +349,7 @@ namespace TechObject
 
             foreach(var mode in modes.Modes)
             {
-                if (mode.GetBaseOperation().Name == baseOperationName &&
+                if (mode.BaseOperation.Name == baseOperationName &&
                     baseOperationName != "")
                 {
                     objectAlreadyContainsThisOperation = true;
@@ -365,9 +365,15 @@ namespace TechObject
             baseOperation.SetExtraProperties(extraParams);
         }
 
-        public BaseOperation GetBaseOperation()
+        /// <summary>
+        /// Получить базовую операцию для этой операции
+        /// </summary>
+        public BaseOperation BaseOperation
         {
-            return baseOperation;
+            get
+            {
+                return baseOperation;
+            }
         }
 
         // Получение номера операции

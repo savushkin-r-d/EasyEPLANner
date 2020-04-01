@@ -20,6 +20,7 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.POUProperties();
             BasicName = "pasteurizator";
             Equipment = DataBase.Imitation.EmptyEquipment();
+            AggregateProperties = DataBase.Imitation.EmptyAggregateProperties();
         }
 
         /// <summary>
@@ -74,7 +75,7 @@ namespace TechObject
             res += prefix + "{\n";
             foreach (Mode mode in modes)
             {
-                var baseOperation = mode.GetBaseOperation();
+                var baseOperation = mode.BaseOperation;
                 if (baseOperation.Name != "")
                 {
                     res += prefix + baseOperation.LuaName.ToUpper() + " = " +
@@ -107,7 +108,7 @@ namespace TechObject
             res += prefix + "{\n";
             foreach (Mode mode in modes)
             {
-                var baseOperation = mode.GetBaseOperation();
+                var baseOperation = mode.BaseOperation;
                 if (baseOperation.Name != "")
                 {
                     res += SaveSteps(prefix, objName, mode, baseOperation);

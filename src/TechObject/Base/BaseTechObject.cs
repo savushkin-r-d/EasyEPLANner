@@ -21,6 +21,8 @@ namespace TechObject
             BasicName = "";
             Owner = null;
             Equipment = new BaseProperty[0];
+            AggregateProperties = new BaseProperty[0];
+
         }
 
         public BaseTechObject(TechObject owner)
@@ -33,6 +35,7 @@ namespace TechObject
             BasicName = "";
             Owner = owner;
             Equipment = new BaseProperty[0];
+            AggregateProperties = new BaseProperty[0];
         }
 
         /// <summary>
@@ -208,23 +211,9 @@ namespace TechObject
         {
             foreach (Mode operation in Owner.ModesManager.Modes)
             {
-                operation.GetBaseOperation().Init("");
+                operation.BaseOperation.Init("");
             }
         }
-
-        /// <summary>
-        /// Инициализировать базовый объект как агрегат в аппарате.
-        /// </summary>
-        /// <param name="unit">Базовый объект, к которому привязаны агрегаты
-        /// </param>
-        public virtual void InitAsAttachedAgregate(BaseTechObject unit) { }
-
-        /// <summary>
-        /// Удалить базовый объект как агрегат в аппарате.
-        /// </summary>
-        /// <param name="unit">Базовый объект, к которому привязаны агрегаты
-        /// </param>
-        public virtual void RemoveAsAttachedAgregate(BaseTechObject unit) { }
 
         /// <summary>
         /// Является ли базовый объект привязываемым к другому объекту.
@@ -234,6 +223,29 @@ namespace TechObject
             get
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Свойства объекта, как агрегата.
+        /// </summary>
+        public BaseProperty[] AggregateProperties
+        {
+            get
+            {
+                if (aggregateProperties == null)
+                {
+                    return new BaseProperty[0];
+                }
+                else
+                {
+                    return aggregateProperties;
+                }
+            }
+
+            set
+            {
+                aggregateProperties = value;
             }
         }
 
@@ -261,5 +273,6 @@ namespace TechObject
         private BaseOperation[] objectOperations;
         private List<BaseProperty> objectProperties;
         private BaseProperty[] equipment;
+        private BaseProperty[] aggregateProperties;
     }
 }

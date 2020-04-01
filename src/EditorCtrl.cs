@@ -1316,7 +1316,7 @@ namespace Editor
                 if (state.IsMain == true)
                 {
                     TechObject.Mode mode = state.Owner;
-                    var stepsNames = mode.GetBaseOperation().Steps
+                    var stepsNames = mode.BaseOperation.Steps
                         .Select(x => x.Name).ToList();
                     return stepsNames;
                 }

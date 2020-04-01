@@ -20,6 +20,8 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "cooler_node";
             Equipment = DataBase.Imitation.CoolerNodeEquipment();
+            AggregateProperties = DataBase.Imitation
+                .CoolerNodeAggregateProperties();
         }
 
         /// <summary>
@@ -34,97 +36,6 @@ namespace TechObject
                 .FirstOrDefault();
             cloned.Owner = techObject;
             return cloned;
-        }
-
-        /// <summary>
-        /// Инициализировать базовый объект как привязанный к аппарату агрегат.
-        /// </summary>
-        /// <param name="unit">Базовый объект к которому привязаны агрегаты
-        /// </param>
-        public override void InitAsAttachedAgregate(BaseTechObject unit)
-        {
-            switch(unit)
-            {
-                case BaseTank obj:
-                    foreach(var operation in obj.Owner.ModesManager.Modes)
-                    {
-                        BaseProperty prop;
-                        switch(operation.GetBaseOperation().Name)
-                        {
-                            case "Наполнение":
-                                prop = new BoolShowedProperty(
-                                    "NEED_COOLING", 
-                                    "Использовать узел охлаждения", "false");
-                                operation.GetBaseOperation().AddProperty(prop);
-                                break;
-
-                            case "Хранение":
-                                prop = new BoolShowedProperty(
-                                    "NEED_COOLING", 
-                                    "Использовать узел охлаждения", "false");
-                                operation.GetBaseOperation().AddProperty(prop);
-                                break;
-
-                            case "Выдача":
-                                prop = new BoolShowedProperty(
-                                    "NEED_COOLING", 
-                                    "Использовать узел охлаждения", "false");
-                                operation.GetBaseOperation().AddProperty(prop);
-                                break;
-
-                            default:
-                                break;
-                        }
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Удалить базовый объект как привязанный к аппарату агрегат.
-        /// </summary>
-        /// <param name="unit">Базовый объект к которому привязаны агрегаты
-        /// </param>
-        public override void RemoveAsAttachedAgregate(BaseTechObject unit)
-        {
-            switch (unit)
-            {
-                case BaseTank obj:
-                    foreach (var operation in obj.Owner.ModesManager.Modes)
-                    {
-                        string luaName;
-                        switch (operation.GetBaseOperation().Name)
-                        {
-                            case "Наполнение":
-                                luaName = "NEED_COOLING";
-                                operation.GetBaseOperation()
-                                    .RemoveProperty(luaName);
-                                break;
-
-                            case "Хранение":
-                                luaName = "NEED_COOLING";
-                                operation.GetBaseOperation()
-                                    .RemoveProperty(luaName);
-                                break;
-
-                            case "Выдача":    
-                                luaName = "NEED_COOLING";
-                                operation.GetBaseOperation()
-                                    .RemoveProperty(luaName);
-                                break;
-
-                            default:
-                                break;
-                        }
-                    }
-                    break;
-
-                default:
-                    break;
-            }
         }
 
         /// <summary>
@@ -154,7 +65,7 @@ namespace TechObject
             var modes = modesManager.Modes;
             foreach (Mode mode in modes)
             {
-                var baseOperation = mode.GetBaseOperation();
+                var baseOperation = mode.BaseOperation;
                 switch (baseOperation.Name)
                 {
                     case "Охлаждение":

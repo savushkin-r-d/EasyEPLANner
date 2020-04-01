@@ -257,32 +257,39 @@ namespace TechObject
         }
        
         /// <summary>
-        /// Добавить свойство базовой операции.
+        /// Добавить свойства базовой операции.
         /// </summary>
-        /// <param name="property">Свойство</param>
-        public void AddProperty(BaseProperty property)
+        /// <param name="properties">Массив свойств</param>
+        public void AddProperties(BaseProperty[] properties)
         {
-            var equalPropertiesCount = Properties
-                .Where(x => x.LuaName == property.LuaName).Count();
-            if (equalPropertiesCount == 0)
+            foreach(var property in properties)
             {
-                Properties.Add(property);
+                var equalPropertiesCount = Properties
+                    .Where(x => x.LuaName == property.LuaName).Count();
+                if (equalPropertiesCount == 0)
+                {
+                    Properties.Add(property);
+                }
             }
+
             SetItems();
         }
 
         /// <summary>
-        /// Удалить свойство базовой операции.
+        /// Удалить свойства базовой операции.
         /// </summary>
-        /// <param name="luaName">Lua-имя свойства</param>
-        public void RemoveProperty(string luaName)
+        /// <param name="properties">Массив свойств</param>
+        public void RemoveProperties(BaseProperty[] properties)
         {
-            var removingProperty = baseOperationProperties
-                .Where(x => x.LuaName == luaName)
-                .FirstOrDefault();
-            if (removingProperty != null)
+            foreach (var property in properties)
             {
-                baseOperationProperties.Remove(removingProperty);
+                var deletingProperty = Properties
+                    .Where(x => x.LuaName == property.LuaName)
+                    .FirstOrDefault();
+                if (deletingProperty != null)
+                {
+                    Properties.Remove(deletingProperty);
+                }
             }
             SetItems();
         }

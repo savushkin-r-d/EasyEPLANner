@@ -343,11 +343,11 @@ namespace TechObject
             }
 
             Mode mode = state.Owner;
-            BaseProperty baseStep = mode.GetBaseOperation().Steps
+            BaseProperty baseStep = mode.BaseOperation.Steps
                 .Where(x => x.LuaName == newVal).FirstOrDefault();
             if (baseStep == null)
             {
-                baseStep = mode.GetBaseOperation().Steps
+                baseStep = mode.BaseOperation.Steps
                     .Where(x => x.Name == newVal).FirstOrDefault();
             }
 

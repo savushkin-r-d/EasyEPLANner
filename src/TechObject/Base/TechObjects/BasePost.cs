@@ -20,6 +20,7 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "post";
             Equipment = DataBase.Imitation.EmptyEquipment();
+            AggregateProperties = DataBase.Imitation.EmptyAggregateProperties();
         }
 
         /// <summary>
