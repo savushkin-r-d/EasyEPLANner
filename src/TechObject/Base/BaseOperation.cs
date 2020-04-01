@@ -262,6 +262,13 @@ namespace TechObject
         /// <param name="properties">Массив свойств</param>
         public void AddProperties(BaseProperty[] properties)
         {
+            // Пока не решен вопрос с параметрами, отключаем для операции
+            // мойка добавление доп. свойств узлов.
+            if (this.LuaName == "WASHING_CIP")
+            {
+                return;
+            }
+
             foreach(var property in properties)
             {
                 var equalPropertiesCount = Properties
