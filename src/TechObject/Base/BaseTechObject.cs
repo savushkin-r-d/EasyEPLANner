@@ -262,6 +262,77 @@ namespace TechObject
             var res = "";
             return res;
         }
+
+        /// <summary>
+        /// Сохранить оборудование технологического объекта
+        /// </summary>
+        /// <param name="objName">Имя для сохранения</param>
+        /// <returns></returns>
+        public string SaveEquipment(string objName)
+        {
+            var res = "";
+            var equipment = this.owner.Equipment;
+            bool needWhiteSpace = false;
+
+            foreach (var item in equipment.Items)
+            {
+                var property = item as BaseProperty;
+                var value = property.Value;
+                var luaName = property.LuaName;
+
+                if (value != "")
+                {
+                    res += objName + $".{luaName} = " +
+                        $"prg.control_modules.{value}\n";
+                }
+                else
+                {
+                    res += objName + $".{luaName} = nil\n";
+                }
+
+                needWhiteSpace = true;
+            }
+
+            if (needWhiteSpace)
+            {
+                res += "\n";
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить операции объекта
+        /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        public string SaveOperations(string objName, string prefix)
+        {
+            var res = "";
+
+            var modesManager = this.Owner.ModesManager;
+            var modes = modesManager.Modes;
+            if (modes.Where(x => x.DisplayText[1] != "").Count() == 0)
+            {
+                return res;
+            }
+
+            res += objName + ".operations = \t\t--Операции.\n";
+            res += prefix + "{\n";
+            foreach (Mode mode in modes)
+            {
+                var baseOperation = mode.BaseOperation;
+                if (baseOperation.Name != "")
+                {
+                    res += prefix + baseOperation.LuaName.ToUpper() + " = " +
+                        mode.GetModeNumber() + ",\n";
+                }
+            }
+            res += prefix + "}\n";
+
+            return res;
+        }
         #endregion
 
         private string name;

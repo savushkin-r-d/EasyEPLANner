@@ -217,7 +217,7 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Сохранить информацию об операциях объекта в prg.lua
+        /// Сохранить описание объектов для prg.lua
         /// </summary>
         /// <param name="prefix">Отступ</param>
         /// <returns></returns>
@@ -231,48 +231,7 @@ namespace EasyEPlanner
                 var objName = "prg." + obj.NameEplanForFile.ToLower() +
                     obj.TechNumber.ToString();
                 res += obj.BaseTechObject.SaveToPrgLua(objName, prefix);
-                res += SaveObjectEquipmentToPrgLua(obj, objName);
             }
-            return res;
-        }
-
-        /// <summary>
-        /// Сохранить оборудование технологического объекта
-        /// </summary>
-        /// <param name="obj">Объект</param>
-        /// <param name="objName">Имя для сохранения</param>
-        /// <returns></returns>
-        private static string SaveObjectEquipmentToPrgLua(
-            TechObject.TechObject obj, string objName)
-        {
-            var res = "";
-            var equipment = obj.Equipment;
-            bool needWhiteSpace = false;
-
-            foreach (Editor.ITreeViewItem item in equipment.Items)
-            {
-                var property = item as BaseProperty;
-                var value = property.Value;
-                var luaName = property.LuaName;
-
-                if (value != "")
-                {
-                    res += objName + $".{luaName} = " +
-                        $"prg.control_modules.{value}\n";
-                }
-                else
-                {
-                    res += objName + $".{luaName} = nil\n";
-                }
-
-                needWhiteSpace = true;
-            }
-
-            if (needWhiteSpace)
-            {
-                res += "\n";
-            }
-
             return res;
         }
 

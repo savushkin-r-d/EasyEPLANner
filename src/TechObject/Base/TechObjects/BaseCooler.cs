@@ -61,40 +61,8 @@ namespace TechObject
         {
             var res = "";
 
-            res += SaveOperations(objName, prefix);
-
-            return res;
-        }
-
-        /// <summary>
-        /// Сохранить операцию охлаждения.
-        /// </summary>
-        /// <param name="prefix">Отступ</param>
-        /// <param name="objName">Имя объекта</param>
-        /// <returns></returns>
-        private string SaveOperations(string objName, string prefix)
-        {
-            var res = "";
-
-            var modesManager = this.Owner.ModesManager;
-            var modes = modesManager.Modes;
-            if (modes.Where(x => x.DisplayText[1] != "").Count() == 0)
-            {
-                return res;
-            }
-
-            res += objName + ".operations = \t\t--Операции.\n";
-            res += prefix + "{\n";
-            foreach (Mode mode in modes)
-            {
-                var baseOperation = mode.BaseOperation;
-                if (baseOperation.Name != "")
-                {
-                    res += prefix + baseOperation.LuaName.ToUpper() + " = " +
-                        mode.GetModeNumber() + ",\n";
-                }
-            }
-            res += prefix + "}\n";
+            res += base.SaveOperations(objName, prefix);
+            res += base.SaveEquipment(objName);
 
             return res;
         }

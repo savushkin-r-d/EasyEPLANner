@@ -47,5 +47,24 @@ namespace TechObject
                 return true;
             }
         }
+
+        #region сохранение prg.lua
+        /// <summary>
+        /// Сохранить информацию об операциях объекта в prg.lua
+        /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        public override string SaveToPrgLua(string objName,
+            string prefix)
+        {
+            var res = "";
+
+            res += base.SaveOperations(objName, prefix);
+            res += base.SaveEquipment(objName);
+
+            return res;
+        }
+        #endregion
     }
 }
