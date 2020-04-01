@@ -60,8 +60,8 @@ namespace TechObject
         {
             var res = "";
 
-            res += base.SaveOperations(objName, prefix);
-            res += base.SaveEquipment(objName);
+            res += SaveOperations(objName, prefix);
+            res += SaveEquipment(objName);
 
             return res;
         }

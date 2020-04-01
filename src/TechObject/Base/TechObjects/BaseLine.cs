@@ -49,10 +49,10 @@ namespace TechObject
         {
             var res = "";
 
-            res += base.SaveOperations(objName, prefix);
+            res += SaveOperations(objName, prefix);
             res += SaveOperationsSteps(objName, prefix);
             res += SaveOperationsParameters(objName);
-            res += base.SaveEquipment(objName);
+            res += SaveEquipment(objName);
 
             return res;
         }
