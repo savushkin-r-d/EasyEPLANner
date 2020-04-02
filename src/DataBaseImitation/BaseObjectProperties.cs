@@ -63,7 +63,7 @@ namespace DataBase
         /// Получить свойства базового объекта "Пастеризатор"
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] POUProperties()
+        public static List<BaseProperty> POUProperties()
         {
             return new List<BaseProperty>
             {

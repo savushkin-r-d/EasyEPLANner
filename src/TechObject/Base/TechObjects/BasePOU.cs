@@ -75,7 +75,7 @@ namespace TechObject
 
             foreach (Mode mode in modes)
             {
-                var baseOperation = mode.GetBaseOperation();
+                var baseOperation = mode.BaseOperation;
                 switch (baseOperation.Name)
                 {
                     case "Мойка":
