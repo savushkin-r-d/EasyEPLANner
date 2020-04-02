@@ -229,6 +229,7 @@
     <Compile Include="TechObject\Base\TechObjects\BasePOU.cs" />
     <Compile Include="TechObject\Base\TechObjects\BaseTank.cs" />
     <Compile Include="TechObject\Base\TechObjects\BaseCoolerPID.cs" />
+    <Compile Include="TechObject\Base\TechObjects\BaseWaterTankPID.cs" />
     <Compile Include="TechObject\Base\TechObjects\BaseWaterTank.cs" />
     <Compile Include="TechObject\Equipment.cs" />
     <Compile Include="TechObject\LocalRestriction.cs" />

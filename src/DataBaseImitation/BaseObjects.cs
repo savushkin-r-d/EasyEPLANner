@@ -61,6 +61,7 @@ namespace DataBase
                 new BaseTechObject(), // Пустой объект.
                 new BaseAutomat(),
                 new BaseWaterTank(),
+                new BaseWaterTankPID(),
                 new BaseBoiler(),
                 new BaseMaster(),
                 new BaseLine(),

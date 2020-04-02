@@ -92,6 +92,21 @@ namespace DataBase
         }
 
         /// <summary>
+        /// Получить Список оборудования для бачка откачки ледяной воды.
+        /// </summary>
+        /// <returns></returns>
+        static public BaseProperty[] WaterTankPIDEquipment()
+        {
+            return new BaseProperty[]
+            {
+                new ShowedBaseProperty("M1", "Насос", "M1"),
+                new ShowedBaseProperty("LS_up", "Датчик верхнего уровня", "LS2"),
+                new ShowedBaseProperty("LS_down", "Датчик нижнего уровня", "LS1"),
+                new ShowedBaseProperty("LT", "Датчик текущего уровня", "LT1"),
+            };
+        }
+
+        /// <summary>
         /// Получить список оборудования для ПИД узла давления.
         /// </summary>
         /// <returns></returns>
