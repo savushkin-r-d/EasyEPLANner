@@ -246,6 +246,11 @@ namespace TechObject
                     List<Mode> modes = thisThechObject.ModesManager.Modes;
                     foreach(var mode in modes)
                     {
+                        if (mode.BaseOperation.Name == "")
+                        {
+                            continue;
+                        }
+
                         mode.BaseOperation.AddProperties(properties);
                     }
                 }
