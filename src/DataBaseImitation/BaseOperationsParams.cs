@@ -13,9 +13,9 @@ namespace DataBase
         /// Получить параметры операции "Мойка".
         /// </summary>
         /// <returns></returns>
-        private static BaseProperty[] WashParams()
+        private static List<BaseProperty> WashParams()
         {
-            var parameters = new BaseProperty[]
+            var parameters = new List<BaseProperty>
             {
                 new ShowedBaseProperty("CIP_WASH_END", "Мойка завершена"),
                 new ShowedBaseProperty("DI_CIP_FREE", "МСА свободна"),
@@ -30,9 +30,9 @@ namespace DataBase
         /// Получить параметры операции "Наполнение".
         /// </summary>
         /// <returns></returns>
-        private static BaseProperty[] FillParams()
+        private static List<BaseProperty> FillParams()
         {
-            var parameters = new BaseProperty[]
+            var parameters = new List<BaseProperty>
             {
                 new ShowedBaseProperty("OPERATION_AFTER_FILL",
                 "Номер операции после наполнения")
@@ -45,9 +45,9 @@ namespace DataBase
         /// Получить параметры операции "Охлаждение"
         /// </summary>
         /// <returns></returns>
-        private static BaseProperty[] CoolingParams()
+        private static List<BaseProperty> CoolingParams()
         {
-            var parameters = new BaseProperty[]
+            var parameters = new List<BaseProperty>
             {
                 new BoolShowedProperty("ACTIVE_WORKING", "Активная работа", "false")
             };

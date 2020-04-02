@@ -19,7 +19,8 @@ namespace TechObject
             BaseOperations = DataBase.Imitation.BaseEmptyOperations();
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "heater_node";
-            Equipment = DataBase.Imitation.EmptyProperties();
+            Equipment = DataBase.Imitation.EmptyEquipment();
+            AggregateProperties = DataBase.Imitation.EmptyAggregateProperties();
         }
 
         /// <summary>
@@ -34,6 +35,17 @@ namespace TechObject
                 .FirstOrDefault();
             cloned.Owner = techObject;
             return cloned;
+        }
+
+        /// <summary>
+        /// Можно ли привязывать данный объект к другим объектам.
+        /// </summary>
+        public override bool IsAttachable
+        {
+            get
+            {
+                return true;
+            }
         }
     }
 }

@@ -17,10 +17,12 @@ namespace TechObject
             EplanName = "";
             S88Level = 0;
             BaseOperations = new BaseOperation[0];
-            BaseProperties = new BaseProperty[0];
+            BaseProperties = new List<BaseProperty>();
             BasicName = "";
             Owner = null;
             Equipment = new BaseProperty[0];
+            AggregateProperties = new BaseProperty[0];
+
         }
 
         public BaseTechObject(TechObject owner)
@@ -29,10 +31,11 @@ namespace TechObject
             EplanName = "";
             S88Level = 0;
             BaseOperations = new BaseOperation[0];
-            BaseProperties = new BaseProperty[0];
+            BaseProperties = new List<BaseProperty>();
             BasicName = "";
             Owner = owner;
             Equipment = new BaseProperty[0];
+            AggregateProperties = new BaseProperty[0];
         }
 
         /// <summary>
@@ -118,7 +121,7 @@ namespace TechObject
         /// <summary>
         /// Свойства базового объекта
         /// </summary>
-        public BaseProperty[] BaseProperties
+        public List<BaseProperty> BaseProperties
         {
             get
             {
@@ -208,7 +211,41 @@ namespace TechObject
         {
             foreach (Mode operation in Owner.ModesManager.Modes)
             {
-                operation.GetBaseOperation().Init("");
+                operation.BaseOperation.Init("");
+            }
+        }
+
+        /// <summary>
+        /// Является ли базовый объект привязываемым к другому объекту.
+        /// </summary>
+        public virtual bool IsAttachable
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Свойства объекта, как агрегата.
+        /// </summary>
+        public BaseProperty[] AggregateProperties
+        {
+            get
+            {
+                if (aggregateProperties == null)
+                {
+                    return new BaseProperty[0];
+                }
+                else
+                {
+                    return aggregateProperties;
+                }
+            }
+
+            set
+            {
+                aggregateProperties = value;
             }
         }
 
@@ -225,6 +262,135 @@ namespace TechObject
             var res = "";
             return res;
         }
+
+        /// <summary>
+        /// Сохранить оборудование технологического объекта
+        /// </summary>
+        /// <param name="objName">Имя для сохранения</param>
+        /// <returns></returns>
+        public string SaveEquipment(string objName)
+        {
+            var res = "";
+            var equipment = this.owner.Equipment;
+            bool needWhiteSpace = false;
+
+            foreach (var item in equipment.Items)
+            {
+                var property = item as BaseProperty;
+                var value = property.Value;
+                var luaName = property.LuaName;
+
+                if (value != "")
+                {
+                    res += objName + $".{luaName} = " +
+                        $"prg.control_modules.{value}\n";
+                }
+                else
+                {
+                    res += objName + $".{luaName} = nil\n";
+                }
+
+                needWhiteSpace = true;
+            }
+
+            if (needWhiteSpace)
+            {
+                res += "\n";
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить операции объекта
+        /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        public string SaveOperations(string objName, string prefix)
+        {
+            var res = "";
+
+            var modesManager = this.Owner.ModesManager;
+            var modes = modesManager.Modes;
+            if (modes.Where(x => x.DisplayText[1] != "").Count() == 0)
+            {
+                return res;
+            }
+
+            res += objName + ".operations = \t\t--Операции.\n";
+            res += prefix + "{\n";
+            foreach (Mode mode in modes)
+            {
+                var baseOperation = mode.BaseOperation;
+                if (baseOperation.Name != "")
+                {
+                    res += prefix + baseOperation.LuaName.ToUpper() + " = " +
+                        mode.GetModeNumber() + ",\n";
+                }
+            }
+            res += prefix + "}\n";
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить номера шагов операций объекта.
+        /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        public string SaveOperationsSteps(string objName, string prefix)
+        {
+            var res = "";
+
+            var modesManager = this.Owner.ModesManager;
+            var modes = modesManager.Modes;
+            if (modes.Where(x => x.BaseOperation.Name != "").Count() == 0)
+            {
+                return res;
+            }
+
+            res += objName + ".steps = \t\t--Шаги операций.\n";
+            res += prefix + "{\n";
+            foreach (Mode mode in modes)
+            {
+                var baseOperation = mode.BaseOperation;
+                if (baseOperation.Name == "")
+                {
+                    continue;
+                }
+
+                string temp = "";
+                foreach (var step in mode.MainSteps)
+                {
+                    if (step.GetBaseStepName() == "")
+                    {
+                        continue;
+                    }
+
+                    temp += prefix + prefix + step.GetBaseStepLuaName() +
+                        " = " + step.GetStepNumber() + ",\n";
+                }
+
+                if (temp.Length == 0)
+                {
+                    string emptyTable = prefix + baseOperation.LuaName
+                        .ToUpper() + " = { },\n";
+                    res += emptyTable;
+                }
+                else
+                {
+                    res += prefix + baseOperation.LuaName.ToUpper() + " =\n";
+                    res += prefix + prefix + "{\n";
+                    res += temp;
+                    res += prefix + prefix + "},\n";
+                }               
+            }
+
+            res += prefix + "}\n";
+            return res;
+        }
         #endregion
 
         private string name;
@@ -234,7 +400,8 @@ namespace TechObject
         private TechObject owner;
 
         private BaseOperation[] objectOperations;
-        private BaseProperty[] objectProperties;
+        private List<BaseProperty> objectProperties;
         private BaseProperty[] equipment;
+        private BaseProperty[] aggregateProperties;
     }
 }

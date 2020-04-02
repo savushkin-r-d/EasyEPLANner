@@ -228,6 +228,12 @@ namespace Editor
 
         bool SetNewValue(SortedDictionary<int, List<int>> newDict);
 
+        /// <summary>
+        /// Установка нового значения после редактирования
+        /// </summary>
+        /// <param name="newValue">Новое значение</param>
+        /// <param name="isExtraValue">Является ли свойство расширенным</param>
+        /// <returns></returns>
         bool SetNewValue(string newValue, bool isExtraValue);
 
         /// <summary>    

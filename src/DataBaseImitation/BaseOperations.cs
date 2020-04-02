@@ -79,12 +79,12 @@ namespace DataBase
                 BaseOperation.EmptyOperation(),
                 new BaseOperation("Мойка", "WASHING_CIP", WashParams(),
                 WashSteps()),
-                new BaseOperation("Наполнение", "FILL", FillParams(), 
-                EmptyProperties()),
-                new BaseOperation("Хранение", "STORING", EmptyProperties(), 
-                EmptyProperties()),
-                new BaseOperation("Выдача", "OUT", EmptyProperties(), 
-                EmptyProperties()),
+                new BaseOperation("Наполнение", "FILL", FillParams(),
+                EmptySteps()),
+                new BaseOperation("Хранение", "STORING", EmptyProperties(),
+                EmptySteps()),
+                new BaseOperation("Выдача", "OUT", EmptyProperties(),
+                EmptySteps()),
             };
         }
 
@@ -97,8 +97,8 @@ namespace DataBase
             return new BaseOperation[]
             {
                 BaseOperation.EmptyOperation(),
-                new BaseOperation("Охлаждение", "COOLING", EmptyProperties(), 
-                EmptyProperties()),
+                new BaseOperation("Охлаждение", "COOLING", EmptyProperties(),
+                EmptySteps()),
             };
         }
 
@@ -111,8 +111,8 @@ namespace DataBase
             return new BaseOperation[]
             {
                 BaseOperation.EmptyOperation(),
-                new BaseOperation("Охлаждение", "COOLING", EmptyProperties(), 
-                EmptyProperties()),
+                new BaseOperation("Охлаждение", "COOLING", EmptyProperties(),
+                EmptySteps()),
             };
         }
 
@@ -125,8 +125,8 @@ namespace DataBase
             return new BaseOperation[]
             {
                 BaseOperation.EmptyOperation(),
-                new BaseOperation("Охлаждение", "COOLING", CoolingParams(), 
-                EmptyProperties()),
+                new BaseOperation("Охлаждение", "COOLING", CoolingParams(),
+                EmptySteps()),
             };
         }
 
@@ -140,7 +140,7 @@ namespace DataBase
             {
                 BaseOperation.EmptyOperation(),
                 new BaseOperation("Работа", "WORKING", EmptyProperties(),
-                EmptyProperties()),
+                EmptySteps()),
             };
         }
 
@@ -153,7 +153,7 @@ namespace DataBase
             {
                 BaseOperation.EmptyOperation(),
                 new BaseOperation("Нагрев", "HEATING", EmptyProperties(),
-                EmptyProperties()),
+                EmptySteps()),
             };
         }
               
@@ -166,7 +166,7 @@ namespace DataBase
             {
                 BaseOperation.EmptyOperation(),
                 new BaseOperation("Работа", "WORKING", EmptyProperties(),
-                EmptyProperties()),
+                EmptySteps()),
             };
         }
 

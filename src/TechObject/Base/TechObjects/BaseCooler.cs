@@ -20,6 +20,8 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "cooler_node";
             Equipment = DataBase.Imitation.CoolerNodeEquipment();
+            AggregateProperties = DataBase.Imitation
+                .CoolerNodeAggregateProperties();
         }
 
         /// <summary>
@@ -36,6 +38,17 @@ namespace TechObject
             return cloned;
         }
 
+        /// <summary>
+        /// Можно ли привязывать данный объект к другим объектам.
+        /// </summary>
+        public override bool IsAttachable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         #region сохранение prg.lua
         /// <summary>
         /// Сохранить информацию об операциях объекта в prg.lua
@@ -48,42 +61,9 @@ namespace TechObject
         {
             var res = "";
 
-            var modesManager = this.Owner.ModesManager;
-            var modes = modesManager.Modes;
-            foreach (Mode mode in modes)
-            {
-                var baseOperation = mode.GetBaseOperation();
-                switch (baseOperation.Name)
-                {
-                    case "Охлаждение":
-                        res += SaveCoolingOperation(prefix, objName, mode,
-                            baseOperation);
-                        break;
-                }
-            }
-
-            res += "\n";
-            return res;
-        }
-
-        /// <summary>
-        /// Сохранить операцию охлаждения.
-        /// </summary>
-        /// <param name="prefix">Отступ</param>
-        /// <param name="objName">Имя объекта</param>
-        /// <param name="mode">Операция</param>
-        /// <param name="baseOperation">Базовая операция</param>
-        /// <returns></returns>
-        private string SaveCoolingOperation(string prefix, string objName,
-            Mode mode, BaseOperation baseOperation)
-        {
-            var res = "";
-
-            res += objName + ".operations = \t\t--Операции.\n";
-            res += prefix + "{\n";
-            res += prefix + baseOperation.LuaName.ToUpper() + " = " + 
-                mode.GetModeNumber() + ",\t\t--Охлаждение.\n";
-            res += prefix + "}\n";
+            res += SaveOperations(objName, prefix);
+            res += SaveOperationsSteps(objName, prefix);
+            res += SaveEquipment(objName);
 
             return res;
         }

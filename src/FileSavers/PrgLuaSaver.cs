@@ -111,10 +111,10 @@ namespace EasyEPlanner
                     res += prefix + varForSave;
                 }
 
-                if (objects[i].AttachedObjects != string.Empty)
+                if (objects[i].AttachedObjects.Value != string.Empty)
                 {
                     // Т.к объекты начинаются с 1
-                    attachedObjects[i + 1] = objects[i].AttachedObjects;
+                    attachedObjects[i + 1] = objects[i].AttachedObjects.Value;
                 }
 
                 previouslyObjectName = objects[i].NameEplan.ToLower();
@@ -148,6 +148,16 @@ namespace EasyEPlanner
                     {
                         var attachedTechObject = techObjectManager.GetTObject(
                             Convert.ToInt32(value));
+                        if(attachedTechObject == null)
+                        {
+                            string objName = techObj.Name + techObj.TechNumber
+                                .ToString();
+                            string msg = $"Для объекта {objName} не найден " +
+                                $"привязанный агрегат под номером {value}.\n";
+                            Logs.AddMessage(msg);
+                            continue;
+                        }
+
                         var attachedTechObjectType = attachedTechObject
                             .NameEplanForFile.ToLower();
                         var attachedTechObjNameForFile =
@@ -207,7 +217,7 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Сохранить информацию об операциях объекта в prg.lua
+        /// Сохранить описание объектов для prg.lua
         /// </summary>
         /// <param name="prefix">Отступ</param>
         /// <returns></returns>
@@ -221,48 +231,7 @@ namespace EasyEPlanner
                 var objName = "prg." + obj.NameEplanForFile.ToLower() +
                     obj.TechNumber.ToString();
                 res += obj.BaseTechObject.SaveToPrgLua(objName, prefix);
-                res += SaveObjectEquipmentToPrgLua(obj, objName);
             }
-            return res;
-        }
-
-        /// <summary>
-        /// Сохранить оборудование технологического объекта
-        /// </summary>
-        /// <param name="obj">Объект</param>
-        /// <param name="objName">Имя для сохранения</param>
-        /// <returns></returns>
-        private static string SaveObjectEquipmentToPrgLua(
-            TechObject.TechObject obj, string objName)
-        {
-            var res = "";
-            var equipment = obj.Equipment;
-            bool needWhiteSpace = false;
-
-            foreach (Editor.ITreeViewItem item in equipment.Items)
-            {
-                var property = item as BaseProperty;
-                var value = property.Value;
-                var luaName = property.LuaName;
-
-                if (value != "")
-                {
-                    res += objName + $".{luaName} = " +
-                        $"prg.control_modules.{value}\n";
-                }
-                else
-                {
-                    res += objName + $".{luaName} = nil\n";
-                }
-
-                needWhiteSpace = true;
-            }
-
-            if (needWhiteSpace)
-            {
-                res += "\n";
-            }
-
             return res;
         }
 

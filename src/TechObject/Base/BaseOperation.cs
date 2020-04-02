@@ -15,7 +15,7 @@ namespace TechObject
         {
             this.operationName = "";
             this.luaOperationName = "";
-            this.baseOperationProperties = new BaseProperty[0];
+            this.baseOperationProperties = new List<BaseProperty>();
             this.baseSteps = new BaseProperty[0];
             this.owner = owner;
         }
@@ -24,7 +24,7 @@ namespace TechObject
         {
             this.operationName = name;
             this.luaOperationName = luaName;
-            this.baseOperationProperties = new BaseProperty[0];
+            this.baseOperationProperties = new List<BaseProperty>();
             this.baseSteps = new BaseProperty[0];
             this.owner = owner;
         }
@@ -35,7 +35,7 @@ namespace TechObject
         /// <returns></returns>
         public static BaseOperation EmptyOperation()
         {
-            return new BaseOperation("", "", new BaseProperty[0], 
+            return new BaseOperation("", "", new List<BaseProperty>(), 
                 new BaseProperty[0]);
         }
 
@@ -47,7 +47,7 @@ namespace TechObject
         /// <param name="baseOperationProperties">Свойства операции</param>
         /// <param name="baseSteps">Базовые шаги операции</param>
         public BaseOperation(string name, string luaName, 
-            BaseProperty[] baseOperationProperties, BaseProperty[] baseSteps)
+            List<BaseProperty> baseOperationProperties, BaseProperty[] baseSteps)
         {
             this.operationName = name;
             this.luaOperationName = luaName;
@@ -117,8 +117,7 @@ namespace TechObject
                 {
                     Name = operation.Name;
                     LuaName = operation.LuaName;
-                    baseOperationProperties =
-                        FindBaseOperationProperties(operation);
+                    Properties = FindBaseOperationProperties(operation);
                     baseSteps = operation.Steps;
                 }
             }
@@ -126,10 +125,11 @@ namespace TechObject
             {
                 Name = "";
                 LuaName = "";
-                baseOperationProperties = new BaseProperty[0];
+                baseOperationProperties = new List<BaseProperty>();
                 baseSteps = new BaseProperty[0];
             }
 
+            techObject.AttachedObjects.Check();
             SetItems();
         }
 
@@ -149,7 +149,7 @@ namespace TechObject
         /// </summary>
         /// <param name="operation">Базовая операция</param>
         /// <returns></returns>
-        private BaseProperty[] FindBaseOperationProperties(BaseOperation 
+        private List<BaseProperty> FindBaseOperationProperties(BaseOperation 
             operation)
         {
             var baseTechObject = owner.Owner.Owner.BaseTechObject;
@@ -168,7 +168,7 @@ namespace TechObject
                 }
             }
 
-            return properties.ToArray();
+            return properties;
         }
 
         /// <summary>
@@ -244,7 +244,7 @@ namespace TechObject
         /// <summary>
         /// Получить свойства базовой операции
         /// </summary>
-        public BaseProperty[] Properties
+        public List<BaseProperty> Properties
         {
             get
             {
@@ -255,6 +255,51 @@ namespace TechObject
                 baseOperationProperties = value;
             }
         }
+       
+        /// <summary>
+        /// Добавить свойства базовой операции.
+        /// </summary>
+        /// <param name="properties">Массив свойств</param>
+        public void AddProperties(BaseProperty[] properties)
+        {
+            // Пока не решен вопрос с параметрами, отключаем для операции
+            // мойка добавление доп. свойств узлов.
+            if (this.LuaName == "WASHING_CIP")
+            {
+                return;
+            }
+
+            foreach(var property in properties)
+            {
+                var equalPropertiesCount = Properties
+                    .Where(x => x.LuaName == property.LuaName).Count();
+                if (equalPropertiesCount == 0)
+                {
+                    Properties.Add(property.Clone());
+                }
+            }
+
+            SetItems();
+        }
+
+        /// <summary>
+        /// Удалить свойства базовой операции.
+        /// </summary>
+        /// <param name="properties">Массив свойств</param>
+        public void RemoveProperties(BaseProperty[] properties)
+        {
+            foreach (var property in properties)
+            {
+                var deletingProperty = Properties
+                    .Where(x => x.LuaName == property.LuaName)
+                    .FirstOrDefault();
+                if (deletingProperty != null)
+                {
+                    Properties.Remove(deletingProperty);
+                }
+            }
+            SetItems();
+        }
 
         /// <summary>
         /// Копирование объекта
@@ -263,10 +308,11 @@ namespace TechObject
         /// <returns></returns>
         public BaseOperation Clone(Mode owner)
         {
-            var properties = new BaseProperty[baseOperationProperties.Length];
-            for (int i = 0; i < baseOperationProperties.Length; i++)
+            var properties = new List<BaseProperty>(baseOperationProperties
+                .Count);
+            for (int i = 0; i < baseOperationProperties.Count; i++)
             {
-                properties[i] = baseOperationProperties[i].Clone();
+                properties.Add(baseOperationProperties[i].Clone());
             }
 
             var steps = new BaseProperty[Steps.Length];
@@ -313,7 +359,7 @@ namespace TechObject
 
         private Editor.ITreeViewItem[] items = new Editor.ITreeViewItem[0];
         
-        private BaseProperty[] baseOperationProperties;
+        private List<BaseProperty> baseOperationProperties;
         private string operationName;
         private string luaOperationName;
         private BaseProperty[] baseSteps;
