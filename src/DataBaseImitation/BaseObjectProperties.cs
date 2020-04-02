@@ -59,12 +59,17 @@ namespace DataBase
             };
         }
 
-        public static List<BaseProperty> POUProperties()
+        /// <summary>
+        /// Получить свойства базового объекта "Пастеризатор"
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] POUProperties()
         {
             return new List<BaseProperty>
             {
                 new NonShowedBaseProperty("DRAINAGE", "Номер шага дренаж",
-                false)
+                false),
+                new ShowedBaseProperty("CIP_WASH_END", "Мойка завершена")
             };
         }
     }

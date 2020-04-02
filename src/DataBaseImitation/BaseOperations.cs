@@ -175,7 +175,7 @@ namespace DataBase
             return new BaseOperation[]
             {
                 BaseOperation.EmptyOperation(),
-                new BaseOperation("Мойка", "WASHING_CIP", EmptyProperties(),
+                new BaseOperation("Мойка", "WASHING_CIP", WashParams(),
                 WashSteps())
             };
         }
