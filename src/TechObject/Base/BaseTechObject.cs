@@ -195,7 +195,7 @@ namespace TechObject
         /// </summary>
         /// <param name="techObject">Копируемый объект</param>
         /// <returns></returns>
-        public virtual BaseTechObject Clone(TechObject techObject)
+        public BaseTechObject Clone(TechObject techObject)
         {
             var cloned = DataBase.Imitation.BaseTechObjects()
                 .Where(x => x.Name == this.Name)

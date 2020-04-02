@@ -9,17 +9,17 @@ namespace TechObject
     /// <summary>
     /// Базовый бачок
     /// </summary>
-    public class BaseWaterTank : BaseTechObject
+    public class BaseWaterTankPID : BaseTechObject
     {
-        public BaseWaterTank() : base()
+        public BaseWaterTankPID() : base()
         {
             S88Level = 2;
-            Name = "Бачок откачки лёдводы";
-            EplanName = "_tank";
+            Name = "Бачок откачки лёдводы ПИД";
+            EplanName = "_tank_PID";
             BaseOperations = DataBase.Imitation.WaterTankOperations();
             BaseProperties = DataBase.Imitation.WaterTankProperties();
-            BasicName = "cooler_tank";
-            Equipment = DataBase.Imitation.WaterTankEquipment();
+            BasicName = "cooler_tank_PID";
+            Equipment = DataBase.Imitation.WaterTankPIDEquipment();
             AggregateProperties = DataBase.Imitation.EmptyAggregateProperties();
         }
 
