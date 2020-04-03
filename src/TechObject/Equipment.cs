@@ -180,7 +180,7 @@ namespace TechObject
                 }
 
                 // Обработка ПИДа
-                if (equip.LuaName == "SET_VALUE_PAR_NUMBER_OR_AI1")
+                if (equip.LuaName == "SET_VALUE")
                 {
                     bool isValid = false;
                     var device = Device.DeviceManager.GetInstance()
