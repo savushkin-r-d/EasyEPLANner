@@ -773,7 +773,7 @@ namespace TechObject
             }
             else
             {
-                Equipment.Check();
+                errors += Equipment.Check();
                 errors += attachedObjects.Check();
             }
 
