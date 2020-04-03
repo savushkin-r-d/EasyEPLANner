@@ -282,8 +282,17 @@ namespace TechObject
 
                 if (value != "")
                 {
-                    res += objName + $".{luaName} = " +
-                        $"prg.control_modules.{value}\n";
+                    if (owner.Params.GetFParam(value) == null)
+                    {
+                        res += objName + $".{luaName} = " +
+                            $"prg.control_modules.{value}\n";
+                    }
+                    else
+                    {
+                        res += objName + $".{luaName} = " +
+                            $"{objName}.PAR_FLOAT.{value}\n";
+                    }
+                    
                 }
                 else
                 {

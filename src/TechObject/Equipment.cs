@@ -159,8 +159,10 @@ namespace TechObject
             }
         }
 
-        public void Check()
+        public string Check()
         {
+            var errors = "";
+
             var equipment = Items.Select(x => x as BaseProperty).ToArray();
             foreach (var equip in equipment)
             {
@@ -176,7 +178,32 @@ namespace TechObject
                         equip.SetNewValue(deviceName);
                     }
                 }
+
+                // Обработка ПИДа
+                if (equip.LuaName == "SET_VALUE")
+                {
+                    bool isValid = false;
+                    var device = Device.DeviceManager.GetInstance()
+                        .GetDevice(currentValue);
+                    if (device.Description != "заглушка")
+                    {
+                        isValid = true;
+                    }
+
+                    if (owner.Params.GetFParam(currentValue) != null)
+                    {
+                        isValid = true;
+                    }
+
+                    if (isValid == false)
+                    {
+                        errors += $"Отсутствует задание для ПИД регулятора" +
+                            $" №{owner.GlobalNumber}\n";
+                    }
+                }
             }
+
+            return errors;
         }
 
         #region Реализация ITreeViewItem

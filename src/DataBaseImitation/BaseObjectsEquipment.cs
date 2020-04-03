@@ -73,7 +73,8 @@ namespace DataBase
             return new BaseProperty[]
             {
                 new ShowedBaseProperty("TE", "Датчик температуры", "TE1"),
-                new ShowedBaseProperty("VC", "Регулирующий клапан", "VC1")
+                new ShowedBaseProperty("VC", "Регулирующий клапан", "VC1"),
+                new ShowedBaseProperty("SET_VALUE", "Задание", ""),
             };
         }
 
@@ -103,6 +104,7 @@ namespace DataBase
                 new ShowedBaseProperty("LS_up", "Датчик верхнего уровня", "LS2"),
                 new ShowedBaseProperty("LS_down", "Датчик нижнего уровня", "LS1"),
                 new ShowedBaseProperty("LT", "Датчик текущего уровня", "LT1"),
+                new ShowedBaseProperty("SET_VALUE", "Задание", ""),
             };
         }
 
@@ -116,6 +118,7 @@ namespace DataBase
             {
                 new ShowedBaseProperty("M1", "Мотор", "M1"),
                 new ShowedBaseProperty("PT", "Датчик давления", "PT1"),
+                new ShowedBaseProperty("SET_VALUE", "Задание", ""),
             };
         }
 
@@ -129,6 +132,7 @@ namespace DataBase
             {
                 new ShowedBaseProperty("TE", "Датчик температуры", "TE1"),
                 new ShowedBaseProperty("VC", "Регулирующий клапан", "VC1"),
+                new ShowedBaseProperty("SET_VALUE", "Задание", ""),
             };
         }
       
@@ -141,6 +145,7 @@ namespace DataBase
             {
                 new ShowedBaseProperty("FQT1", "Счетчик", "FQT1"),
                 new ShowedBaseProperty("M1", "Насос", "M1"),
+                new ShowedBaseProperty("SET_VALUE", "Задание", ""),
             };
         }
     }
