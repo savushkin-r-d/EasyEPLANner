@@ -111,8 +111,15 @@ namespace TechObject
 
             if (baseTechObjectName != "")
             {
-                BaseOperation operation = techObject.BaseTechObject
+                BaseOperation operation;
+                operation = techObject.BaseTechObject
                     .GetBaseOperationByName(baseOperName);
+                if (operation == null)
+                {
+                    operation = techObject.BaseTechObject
+                        .GetBaseOperationByLuaName(baseOperName);
+                }
+
                 if (operation != null)
                 {
                     Name = operation.Name;
