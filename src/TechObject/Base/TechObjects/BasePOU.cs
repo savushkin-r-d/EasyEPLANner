@@ -37,7 +37,7 @@ namespace TechObject
 
             res += SaveOperations(objName, prefix);
             res += SaveOperationsSteps(objName, prefix);
-            res += SaveOperationsParameters(objName);
+            res += SaveOperationsParameters(objName, prefix);
             res += SaveEquipment(objName);
 
             return res;
@@ -47,8 +47,9 @@ namespace TechObject
         /// Сохранить параметры операций
         /// </summary>
         /// <param name="objName">Имя объекта для записи</param>
+        /// <param name="prefix">Отступ</param>
         /// <returns></returns>
-        public string SaveOperationsParameters(string objName)
+        public string SaveOperationsParameters(string objName, string prefix)
         {
             var res = "";
 
@@ -67,6 +68,26 @@ namespace TechObject
                     case "Мойка":
                         res += SaveWashOperationParameters(objName,
                             baseOperation);
+                        break;
+
+                    default:
+                        if (baseOperation.Properties.Count < 1)
+                        {
+                            continue;
+                        }
+
+                        res += $"{objName}.{baseOperation.LuaName} =\n";
+                        res += prefix + "{\n";
+                        foreach (BaseProperty param in baseOperation.Properties)
+                        {
+                            if (param.CanSave())
+                            {
+                                string val = param
+                                    .Value == "" ? "nil" : param.Value;
+                                res += $"{prefix}{param.LuaName} = {val},\n";
+                            }
+                        }
+                        res += prefix + "}\n";
                         break;
                 }
             }
