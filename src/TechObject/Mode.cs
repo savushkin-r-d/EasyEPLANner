@@ -151,7 +151,7 @@ namespace TechObject
         {
             string res = prefix + "{\n" +
                 prefix + "name = \'" + name + "\',\n" +
-                prefix + "base_operation = \'" + baseOperation.Name + 
+                prefix + "base_operation = \'" + baseOperation.LuaName + 
                 "\',\n";
 
             res += baseOperation.SaveAsLuaTable(prefix);
@@ -349,7 +349,8 @@ namespace TechObject
 
             foreach(var mode in modes.Modes)
             {
-                if (mode.BaseOperation.Name == baseOperationName &&
+                if ((mode.BaseOperation.Name == baseOperationName ||
+                    mode.BaseOperation.LuaName == baseOperationName) &&
                     baseOperationName != "")
                 {
                     objectAlreadyContainsThisOperation = true;

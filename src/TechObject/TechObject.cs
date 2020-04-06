@@ -467,7 +467,6 @@ namespace TechObject
             {
                 return modes.AddMode(modeName, baseOperationName);
             }
-
         }
 
         /// <summary>

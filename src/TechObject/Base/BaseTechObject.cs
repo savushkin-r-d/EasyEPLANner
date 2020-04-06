@@ -179,6 +179,18 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Получить базовую операцию по Lua-имени
+        /// </summary>
+        /// <param name="luaName">Lua-имя</param>
+        /// <returns></returns>
+        public BaseOperation GetBaseOperationByLuaName(string luaName)
+        {
+            var operation = BaseOperations.Where(x => x.LuaName == luaName)
+                .FirstOrDefault();
+            return operation;
+        }
+
+        /// <summary>
         /// Список операций базового объекта
         /// </summary>
         /// <returns></returns>
