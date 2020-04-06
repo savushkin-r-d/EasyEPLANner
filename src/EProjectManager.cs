@@ -4,6 +4,7 @@ using Eplan.EplApi.ApplicationFramework;
 using System.Text.RegularExpressions;
 using Eplan.EplApi.EServices.Ged;
 using Eplan.EplApi.DataModel.Graphics;
+using System.Threading;
 
 namespace EasyEPlanner
 {
@@ -300,11 +301,9 @@ namespace EasyEPlanner
 
             if (!isFinish) //Перезапуск взаимодействия при необходимости.
             {
-                DelegateWithParameters dlgtStart = //Создаем делегат.
-                    new DelegateWithParameters(
-                    EProjectManager.GetInstance().StartEditModesWithDelay);
-
-                dlgtStart.BeginInvoke(300, null, null);
+                var t = new Thread(Editor.Editor.GetInstance()
+                    .EForm.EditButtonActivate);
+                t.Start();
             }
         }
 
