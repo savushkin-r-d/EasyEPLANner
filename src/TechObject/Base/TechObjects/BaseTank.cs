@@ -38,7 +38,7 @@ namespace TechObject
             
             res += SaveOperations(objName, prefix);
             res += SaveOperationsSteps(objName, prefix);
-            res += SaveOperationsParameters(objName);
+            res += SaveOperationsParameters(objName, prefix);
             res += SaveEquipment(objName);
 
             return res;
@@ -81,8 +81,9 @@ namespace TechObject
         /// Сохранить параметры операций базового объекта танк.
         /// </summary>
         /// <param name="objName">Имя объекта для записи</param>
+        /// <param name="prefix">Отступ</param>
         /// <returns></returns>
-        private string SaveOperationsParameters(string objName)
+        private string SaveOperationsParameters(string objName, string prefix)
         {
             var res = "";
 
@@ -101,20 +102,27 @@ namespace TechObject
 
                     case "Наполнение":
                         res += SaveFillOperationParameters(objName,
-                            baseOperation);
+                            baseOperation, prefix);
                         break;
 
                     default:
+                        if (baseOperation.Properties.Count < 1)
+                        {
+                            continue;
+                        }
+
+                        res += $"{objName}.{baseOperation.LuaName} =\n";
+                        res += prefix + "{\n";
                         foreach (BaseProperty param in baseOperation.Properties)
                         {
                             if (param.CanSave())
                             {
                                 string val = param
                                     .Value == "" ? "nil" : param.Value;
-                                res += $"{objName}.{baseOperation.LuaName}." +
-                                    $"{param.LuaName} = {val}\n";
+                                res += $"{prefix}{param.LuaName} = {val},\n";
                             }
                         }
+                        res += prefix + "}\n";
                         break;
                 }
             }
@@ -159,12 +167,15 @@ namespace TechObject
         /// </summary>
         /// <param name="objName">Имя объекта</param>
         /// <param name="baseOperation">Базовая операция</param>
+        /// <param name="prefix">Отступ</param>
         /// <returns></returns>
         private string SaveFillOperationParameters(string objName,
-            BaseOperation baseOperation)
+            BaseOperation baseOperation, string prefix)
         {
             var res = "";
 
+            res += $"{objName}.{baseOperation.LuaName} =\n";
+            res += prefix + "{\n";
             foreach (BaseProperty param in baseOperation.Properties)
             {
                 if (param.CanSave())
@@ -186,23 +197,22 @@ namespace TechObject
 
                             if (val != "nil")
                             {
-                                res += objName + "." + param.LuaName +
-                                $" = {objName}.operations." + val + "\n";
+                                res += $"{prefix}{param.LuaName} = " +
+                                    $"{objName}.operations." + val + ",\n";
                             }
                             else
                             {
-                                res += objName + "." + param.LuaName +
-                                    $" = {val}\n";
+                                res += $"{prefix}{param.LuaName} = {val},\n";
                             }
                             break;
 
                         default:
-                            res += $"{objName}.{baseOperation.LuaName}." +
-                                    $"{param.LuaName} = {val}\n";
+                            res += $"{prefix}{param.LuaName} = {val},\n";
                             break;
                     }
                 }
             }
+            res += prefix + "}\n";
 
             return res;
         }
