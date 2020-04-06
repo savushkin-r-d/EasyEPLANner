@@ -335,8 +335,15 @@ namespace TechObject
             State state = this.Owner;
 
             Step equalStep = state.Steps
-                .Where(x => x.GetBaseStepLuaName() == newVal)
+                .Where(x => x.GetBaseStepName() == newVal)
                 .FirstOrDefault();
+            if (equalStep == null)
+            {
+                equalStep = state.Steps
+                    .Where(x => x.GetBaseStepLuaName() == newVal)
+                    .FirstOrDefault();
+            }
+
             if (equalStep != null && newVal != "")
             {
                 return false;
