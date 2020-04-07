@@ -21,7 +21,6 @@ namespace EasyEPlanner
         public static int ExportTechDevs(string fileName, bool autoSave = false)
         {
             Workbook workBook = new Workbook();
-
             try
             {
                 string prjName = fileName.Remove(fileName.IndexOf(".xlsx"));
