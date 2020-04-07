@@ -290,7 +290,6 @@
     <None Include="Lua\sys_restriction.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
     <None Include="Resources\main.ico" />
   </ItemGroup>
   <ItemGroup>
