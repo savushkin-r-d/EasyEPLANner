@@ -1,4 +1,4 @@
-﻿using Excel = Spire.Xls;
+﻿using Spire.Xls;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,7 +20,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         public static int ExportTechDevs(string fileName, bool autoSave = false)
         {
-            Excel.Workbook workBook = new Excel.Workbook();
+            Workbook workBook = new Workbook();
 
             try
             {
@@ -53,7 +53,7 @@ namespace EasyEPlanner
         /// Генерировать полный Excel файл
         /// </summary>
         private static void GenerateFullExcelFile(string prjName, 
-            ref Excel.Workbook workBook)
+            ref Workbook workBook)
         {
             CreateModulesPage(prjName, ref workBook);
             Logs.SetProgress(5);
@@ -78,7 +78,7 @@ namespace EasyEPlanner
         /// Генерировать отчет по технологическим объектом (для SCADA).
         /// </summary>
         private static void GenerateExcelAutoReport(
-            ref Excel.Workbook workBook)
+            ref Workbook workBook)
         {
             CreateObjectsPageWithoutActions(ref workBook);
         }
@@ -90,7 +90,7 @@ namespace EasyEPlanner
         /// <param name="workBook">Книга</param>
         /// <param name="fileName">Имя файла</param>
         private static void SaveExcelFile(bool autoSave, 
-            Excel.Workbook workBook, string fileName)
+            Workbook workBook, string fileName)
         {
             if (autoSave)
             {
@@ -112,12 +112,12 @@ namespace EasyEPlanner
         /// Создание страницы с модулями IO
         /// </summary>
         private static void CreateModulesPage(string prjName,
-            ref Excel.Workbook workBook)
-        {          
-            Excel.Worksheet workSheet = workBook.Worksheets
-                .Add("Модули ввода-вывода");
+            ref Workbook workBook)
+        {
+            string sheetName = "Модули ввода-вывода";
+            Worksheet workSheet = workBook.Worksheets.Add(sheetName);
 
-            workSheet.Range.Style.VerticalAlignment = Excel.VerticalAlignType
+            workSheet.Range.Style.VerticalAlignment = VerticalAlignType
                 .Center;
 
             var modulesCount = new Dictionary<string, int>();
@@ -132,12 +132,12 @@ namespace EasyEPlanner
             int finalRows = res.GetLength(0) + 2;
 
             //Форматирование страницы
-            workSheet.Range.BorderInside(Excel.LineStyleType.Thin);
-            workSheet.Range.BorderAround(Excel.LineStyleType.Medium);
+            workSheet.Range.BorderInside(LineStyleType.Thin);
+            workSheet.Range.BorderAround(LineStyleType.Medium);
             workSheet.Range.IsWrapText = false;
 
-            Excel.CellRange rangeCurrent = workSheet.Range["A1:A1"];
-            Excel.CellRange rangeStart = rangeCurrent;
+            CellRange rangeCurrent = workSheet.Range["A1:A1"];
+            CellRange rangeStart = rangeCurrent;
             int totalCountRows = workSheet.Range.Rows.Length;
             int i = 1;
             string arr2 = rangeCurrent.Text as string;
@@ -152,7 +152,7 @@ namespace EasyEPlanner
                 if (arr1 != arr2)
                 {
                     workSheet.Range[rangeStart.Row, rangeStart.Column, rangeCurrent.Row, rangeCurrent.Column].Merge(); //Offset[-1, 0]
-                    Excel.CellRange moduleNameRange = rangeStart;
+                    CellRange moduleNameRange = rangeStart;
                     moduleNameRange.UpdateRange(rangeStart.Row, rangeStart.Column + 1, rangeStart.Row, rangeStart.Column + 1);//Offset[0, 1];
                     string moduleName = moduleNameRange.Text as string;
 
@@ -161,17 +161,16 @@ namespace EasyEPlanner
                         moduleNameRange.Style.Color = modulesColor[moduleName];
                     }
 
-                    int moduleIdx;
-                    if (Int32.TryParse(arr1, out moduleIdx))
+                    if (Int32.TryParse(arr1, out _))
                     {
                         workSheet.Range[rangeStart.Row, rangeStart.Column - 1, rangeCurrent.Row - 1, rangeCurrent.Column + 1].Merge(); //Offset[0, 1], Offset[-1, 1]
                         workSheet.Range[rangeStart.Row, rangeStart.Column, rangeCurrent.Row - 1, rangeCurrent.Column + 3]                //Offset[-1, 3]
-                            .BorderAround(Excel.LineStyleType.Thick);
+                            .BorderAround(LineStyleType.Thick);
                     }
                     else
                     {
                         workSheet.Range[rangeStart.Row, rangeStart.Column, rangeCurrent.Row - 1, rangeCurrent.Column + 3] //Offset[-1, 3]
-                            .Borders.LineStyle = Excel.LineStyleType.None;
+                            .Borders.LineStyle = LineStyleType.None;
                     }
                     rangeStart = rangeCurrent;
                 }
@@ -184,22 +183,22 @@ namespace EasyEPlanner
             workSheet.Range.EntireColumn.AutoFitRows();
             workSheet.Range.EntireColumn.IsWrapText = true;
 
-            Excel.CellRange column = workSheet.Range[$"B2:B{finalRows}"];
+            CellRange column = workSheet.Range[$"B2:B{finalRows}"];
             column.Style.Rotation = 90;
 
             // 6.43 - 50 пикселей
             column.ColumnWidth = 6.43;
-            column.HorizontalAlignment = Excel.HorizontalAlignType.Center;
+            column.HorizontalAlignment = HorizontalAlignType.Center;
             column = workSheet.Range[$"A2:A{finalRows}"];
 
             //26.43 - 190 пикселей
             column.ColumnWidth = 26.43;
-            column.HorizontalAlignment = Excel.HorizontalAlignType.Center;
+            column.HorizontalAlignment = HorizontalAlignType.Center;
             column = workSheet.Range[$"C2:C{finalRows}"];
 
             // 2.14 - 20 пикселей
             column.ColumnWidth = 6.43;
-            column.HorizontalAlignment = Excel.HorizontalAlignType.Center;
+            column.HorizontalAlignment = HorizontalAlignType.Center;
 
             int totalStart = totalCountRows + 3;
             int totalEnd = totalStart;
@@ -273,10 +272,10 @@ namespace EasyEPlanner
             rangeCurrent = workSheet.Range[$"A{totalStart}:B{totalEnd}"];
             rangeCurrent.Value2 = modulesTotal;
             rangeCurrent.Style.Rotation = 0;
-            rangeCurrent.VerticalAlignment = Excel.VerticalAlignType.Center;
-            rangeCurrent.HorizontalAlignment = Excel.HorizontalAlignType.Right;
-            rangeCurrent.BorderInside(Excel.LineStyleType.Thin);
-            rangeCurrent.BorderAround(Excel.LineStyleType.Medium);
+            rangeCurrent.VerticalAlignment = VerticalAlignType.Center;
+            rangeCurrent.HorizontalAlignment = HorizontalAlignType.Right;
+            rangeCurrent.BorderInside(LineStyleType.Thin);
+            rangeCurrent.BorderAround(LineStyleType.Medium);
 
 
             rangeCurrent = workSheet.Range[$"A{totalStart}:A{totalStart}"];
@@ -295,7 +294,7 @@ namespace EasyEPlanner
                 arr2 = rangeCurrent.Text as string;
                 if (arr1 != arr2)
                 {
-                    Excel.CellRange moduleNameRange = rangeStart;
+                    CellRange moduleNameRange = rangeStart;
                     string moduleName = moduleNameRange.Text as string;
 
                     if (modulesColor.ContainsKey(moduleName))
@@ -315,12 +314,11 @@ namespace EasyEPlanner
         /// <summary>
         /// Создание страницы с устройствами для операций и шагов техобъектов
         /// </summary>
-        private static void CreateObjectDevicesPage(
-            ref Excel.Workbook workBook)
+        private static void CreateObjectDevicesPage(ref Workbook workBook)
         {
             string sheetName = "Операции и устройства";
-            Excel.Worksheet workSheet = workBook.Worksheets.Add(sheetName);
-            Excel.CellRange excelCells = workSheet.Range["A1:C1"];
+            Worksheet workSheet = workBook.Worksheets.Add(sheetName);
+            CellRange excelCells = workSheet.Range["A1:C1"];
             
             // Производим объединение
             excelCells.Merge();
@@ -360,18 +358,17 @@ namespace EasyEPlanner
         /// <summary>
         /// Создание страницы с параметрами техобъектов проекта
         /// </summary>
-        private static void CreateObjectParamsPage(
-            ref Excel.Workbook workBook)
+        private static void CreateObjectParamsPage(ref Workbook workBook)
         {
             string sheetName = "Параметры объектов";
-            Excel.Worksheet workSheet = workBook.Worksheets.Add(sheetName);
+            Worksheet workSheet = workBook.Worksheets.Add(sheetName);
 
             // Настройка имен столбцов.
             workSheet.Range["A1:A1"].Value2 = new string[]
             {
                 "Технологический объект"
             };
-            Excel.CellRange excelCells = workSheet.Range["B1:C1"];
+            CellRange excelCells = workSheet.Range["B1:C1"];
             excelCells.Merge();
             excelCells.Value = "Параметры";
             workSheet.Range["D1:G1"].Value2 = new string[] 
@@ -398,11 +395,10 @@ namespace EasyEPlanner
         /// <summary>
         /// Создание страницы с описанием устройств
         /// </summary>
-        private static void CreateInformDevicePage(
-            ref Excel.Workbook workBook)
+        private static void CreateInformDevicePage(ref Workbook workBook)
         {
             string sheetName = "Техустройства";
-            Excel.Worksheet workSheet = workBook.Worksheets.Add(sheetName);
+            Worksheet workSheet = workBook.Worksheets.Add(sheetName);
             workSheet.Range["A1:D1"].Value2 = new string[] 
             { 
                 "Название", 
@@ -422,10 +418,10 @@ namespace EasyEPlanner
         /// <summary>
         /// Создание страницы с итоговыми данными по устройствам
         /// </summary>
-        private static void CreateTotalDevicePage(ref Excel.Workbook workBook)
+        private static void CreateTotalDevicePage(ref Workbook workBook)
         {
             string sheetName = "Сводная таблица устройств";
-            Excel.Worksheet workSheet = workBook.Worksheets.Add(sheetName);
+            Worksheet workSheet = workBook.Worksheets.Add(sheetName);
             object[,] res = ExcelDataCollector.SaveDevicesSummaryAsArray();
             string endPos = "Q" + res.GetLength(0);
             workSheet.Range[$"A1:{endPos}"].Value2 = res;
@@ -436,11 +432,10 @@ namespace EasyEPlanner
         /// <summary>
         /// Создание страницы с итоговыми данными по устройствам
         /// </summary>
-        private static void CreateDeviceConnectionPage(
-            ref Excel.Workbook workBook)
+        private static void CreateDeviceConnectionPage(ref Workbook workBook)
         {
             string sheetName = "Подключение устройств";
-            Excel.Worksheet workSheet = workBook.Worksheets.Add(sheetName);
+            Worksheet workSheet = workBook.Worksheets.Add(sheetName);
             TreeView tree = ExcelDataCollector.SaveDeviceConnectionAsTree();
             int row = 1;
             WriteTreeNode(ref workSheet, tree.Nodes, ref row);
@@ -455,9 +450,9 @@ namespace EasyEPlanner
         /// <param name="workSheet"></param>
         /// <param name="app"></param>
         private static void CreateObjectsPageWithoutActions(
-            ref Excel.Workbook workbook)
+            ref Workbook workbook)
         {
-            Excel.Worksheet workSheet = workbook.Worksheets.Add("");
+            Worksheet workSheet = workbook.Worksheets.Add("");
 
             const int widthColumnA = 40;
             const int widthColumnC = 55;
@@ -475,13 +470,13 @@ namespace EasyEPlanner
             workSheet.Range[$"C1:C{row}"].ColumnWidth = widthColumnC;
             workSheet.Range[$"E1:E{row}"].ColumnWidth = widthColumnE;
 
-            workSheet.Range.CollapseGroup(Excel.GroupByType.ByRows);
+            workSheet.Range.CollapseGroup(GroupByType.ByRows);
         }
 
         /// <summary>
         /// Запись узла дерева в Excel таблицу
         /// </summary>
-        private static void WriteTreeNode(ref Excel.Worksheet workSheet,
+        private static void WriteTreeNode(ref Worksheet workSheet,
             TreeNodeCollection Nodes, ref int row)
         {
             bool isCollapsed = true;
