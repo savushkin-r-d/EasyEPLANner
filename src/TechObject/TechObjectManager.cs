@@ -38,7 +38,6 @@ namespace TechObject
         private TechObjectManager()
         {
             lua = new Lua();
-
             lua.RegisterFunction("ADD_TECH_OBJECT", this,
                 GetType().GetMethod("AddObject"));
 
@@ -46,9 +45,25 @@ namespace TechObject
             LuaFunction resF = lua.RegisterFunction("PRINT", this,
                 GetType().GetMethod("ShowMessage"));
 
-            string systemFilesPath = Path.GetDirectoryName(
-                System.Reflection.Assembly.GetExecutingAssembly().Location) +
-                "\\Lua";
+            const string spireLicense = "Spire.License.dll";
+            const string spireXLS = "Spire.XLS.dll";
+            const string spirePDF = "Spire.Pdf.dll";
+            
+            string assemblyPath = Path.GetDirectoryName(
+                System.Reflection.Assembly.GetExecutingAssembly().Location);
+            string systemFilesPath = assemblyPath + "\\Lua";
+            
+            string SpireLicensePath = Path.Combine(assemblyPath, spireLicense);
+            string SpireXLSPath = Path.Combine(assemblyPath, spireXLS);
+            string SpirePDFPath = Path.Combine(assemblyPath, spirePDF);
+
+
+            if (File.Exists(SpireLicensePath) == false ||
+                File.Exists(SpireXLSPath) == false ||
+                File.Exists(SpirePDFPath) == false)
+            {
+
+            }
 
             string sysLuaPath = Path.Combine(systemFilesPath, "sys.lua");
             if (Directory.Exists(systemFilesPath) == true)
@@ -87,6 +102,11 @@ namespace TechObject
                     systemFile.Name);
                 systemFile.CopyTo(pathToFile, true);
             }
+        }
+
+        private void CopySpireXLSFiles(string shadowAssemblySpireFilesDir)
+        {
+
         }
 
         public void ShowMessage(string msg)
