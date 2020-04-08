@@ -55,7 +55,8 @@ namespace DataBase
         {
             return new List<BaseProperty>
             {
-                new BoolShowedProperty("ACTIVE_WORKING", "Активная работа", "false"),
+                new BoolShowedProperty("ACTIVE_WORKING", "Активная работа", 
+                "false"),
             };
         }
 

@@ -173,32 +173,9 @@ namespace EasyEPlanner
                             res += "\n";
                         }
 
-                        if (attachedTechObjectType.Contains("mix_node"))
-                        {
-                            res += techObjNameForFile + ".mix_node = " +
-                                    "prg." + attachedTechObjNameForFile + "\n";
-                        }
-                        else if (attachedTechObjectType.Contains("cooler_node"))
-                        {
-                            res += techObjNameForFile + ".cooler_node = " +
-                                    "prg." + attachedTechObjNameForFile + "\n";
-                        }
-                        else if (attachedTechObjectType.Contains("heater_node"))
-                        {
-                            res += techObjNameForFile + ".heater_node = " +
-                                    "prg." + attachedTechObjNameForFile + "\n";
-                        }
-                        else if (attachedTechObjectType.Contains(
-                            "pressure_node"))
-                        {
-                            res += techObjNameForFile + ".pressure_node = " +
-                                "prg." + attachedTechObjNameForFile + "\n";
-                        }
-                        else if (attachedTechObjectType.Contains("flow_node"))
-                        {
-                            res += techObjNameForFile + ".flow_node = " +
-                                "prg." + attachedTechObjNameForFile + "\n";
-                        }
+                        res += GenerateStringForAttachingObject(
+                            attachedTechObject, techObjNameForFile,
+                            attachedTechObjNameForFile);
 
                         previouslyObjectName = techObj.NameEplanForFile
                             .ToLower();
@@ -213,6 +190,64 @@ namespace EasyEPlanner
                 }
             }
             res += "\n";
+            return res;
+        }
+
+        /// <summary>
+        /// Генерировать строку для записи привязки агрегатов к аппаратам в
+        /// prg.lua
+        /// </summary>
+        /// <param name="attachedTechObject">Привязанный тех. объект</param>
+        /// <param name="attachedTechObjNameForFile">Имя привязанного
+        /// тех. объекта для файла</param>
+        /// <param name="techObjNameForFile">Имя тех. объекта к которому
+        /// привязывается объект</param>
+        /// <returns></returns>
+        private static string GenerateStringForAttachingObject(
+            TechObject.TechObject attachedTechObject, 
+            string techObjNameForFile, string attachedTechObjNameForFile)
+        {
+            var res = "";
+
+            if (attachedTechObject.BaseTechObject is BaseMixer)
+            {
+                res += techObjNameForFile + ".mix_node = " +
+                        "prg." + attachedTechObjNameForFile + "\n";
+            }
+
+            if (attachedTechObject.BaseTechObject is BaseCooler ||
+                attachedTechObject.BaseTechObject is BaseCoolerPID)
+            {
+                res += techObjNameForFile + ".cooler_node = " +
+                        "prg." + attachedTechObjNameForFile + "\n";
+            }
+            
+            if (attachedTechObject.BaseTechObject is BaseHeater ||
+                attachedTechObject.BaseTechObject is BaseHeaterPID)
+            {
+                res += techObjNameForFile + ".heater_node = " +
+                        "prg." + attachedTechObjNameForFile + "\n";
+            }
+            
+            if (attachedTechObject.BaseTechObject is BasePressurePID)
+            {
+                res += techObjNameForFile + ".pressure_node = " +
+                    "prg." + attachedTechObjNameForFile + "\n";
+            }
+            
+            if (attachedTechObject.BaseTechObject is BaseFlowNodePID)
+            {
+                res += techObjNameForFile + ".flow_node = " +
+                    "prg." + attachedTechObjNameForFile + "\n";
+            }
+            
+            if (attachedTechObject.BaseTechObject is BaseWaterTank ||
+                attachedTechObject.BaseTechObject is BaseWaterTankPID)
+            {
+                res += techObjNameForFile + ".ice_water_pump_tank = " +
+                    "prg." + attachedTechObjNameForFile + "\n";
+            }
+
             return res;
         }
 
