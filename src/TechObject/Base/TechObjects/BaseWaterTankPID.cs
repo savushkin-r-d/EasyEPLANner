@@ -23,6 +23,17 @@ namespace TechObject
             AggregateProperties = DataBase.Imitation.EmptyAggregateProperties();
         }
 
+        /// <summary>
+        /// Можно ли привязывать данный объект к другим объектам.
+        /// </summary>
+        public override bool IsAttachable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         #region сохранение prg.lua
         /// <summary>
         /// Сохранить информацию об операциях объекта в prg.lua

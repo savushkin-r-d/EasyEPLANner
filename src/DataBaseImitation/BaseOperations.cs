@@ -126,7 +126,7 @@ namespace DataBase
             {
                 BaseOperation.EmptyOperation(),
                 new BaseOperation("Охлаждение", "COOLING", CoolingParams(),
-                EmptySteps()),
+                WaterTankSteps()),
             };
         }
 
