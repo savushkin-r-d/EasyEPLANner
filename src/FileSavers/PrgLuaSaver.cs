@@ -244,7 +244,7 @@ namespace EasyEPlanner
             if (attachedTechObject.BaseTechObject is BaseWaterTank ||
                 attachedTechObject.BaseTechObject is BaseWaterTankPID)
             {
-                res += techObjNameForFile + ".cooler_tank = " +
+                res += techObjNameForFile + ".ice_water_pump_tank = " +
                     "prg." + attachedTechObjNameForFile + "\n";
             }
 

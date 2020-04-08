@@ -78,5 +78,33 @@ namespace DataBase
                 "Ожидание пропадания НУ", false),
             };
         }
+
+        /// <summary>
+        /// Шаги для операции Подогрев.
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] HeatingSteps()
+        {
+            return new BaseProperty[]
+            {
+                new NonShowedBaseProperty("", "", false),
+                new NonShowedBaseProperty("WORKING", "Работа", false),
+                new NonShowedBaseProperty("WAITING ", "Ожидание", false),
+            };
+        }
+
+        /// <summary>
+        /// Шаги для операции Охлаждение.
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] CoolingSteps()
+        {
+            return new BaseProperty[]
+            {
+                new NonShowedBaseProperty("", "", false),
+                new NonShowedBaseProperty("WORKING", "Работа", false),
+                new NonShowedBaseProperty("WAITING ", "Ожидание", false),
+            };
+        }
     }
 }

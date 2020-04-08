@@ -18,7 +18,7 @@ namespace TechObject
             EplanName = "_tank_PID";
             BaseOperations = DataBase.Imitation.WaterTankOperations();
             BaseProperties = DataBase.Imitation.WaterTankProperties();
-            BasicName = "cooler_tank_PID";
+            BasicName = "ice_water_pump_tank_PID";
             Equipment = DataBase.Imitation.WaterTankPIDEquipment();
             AggregateProperties = DataBase.Imitation.EmptyAggregateProperties();
         }

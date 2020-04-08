@@ -89,7 +89,8 @@ namespace DataBase
         }
 
         /// <summary>
-        /// Получить операции базового объекта "Узел охлаждения"
+        /// Получить операции базового объекта "Узел охлаждения" и
+        /// "Узел охлаждения ПИД"
         /// </summary>
         /// <returns></returns>
         public static BaseOperation[] CoolerNodeOperations()
@@ -98,21 +99,7 @@ namespace DataBase
             {
                 BaseOperation.EmptyOperation(),
                 new BaseOperation("Охлаждение", "COOLING", EmptyProperties(),
-                EmptySteps()),
-            };
-        }
-
-        /// <summary>
-        /// Получить операции базового объекта "Узел охлаждения ПИД"
-        /// </summary>
-        /// <returns></returns>
-        public static BaseOperation[] CoolerNodePIDOperations()
-        {
-            return new BaseOperation[]
-            {
-                BaseOperation.EmptyOperation(),
-                new BaseOperation("Охлаждение", "COOLING", EmptyProperties(),
-                EmptySteps()),
+                CoolingSteps()),
             };
         }
 
@@ -145,15 +132,16 @@ namespace DataBase
         }
 
         /// <summary>
-        /// Получить операции базового объекта "Узел нагрева ПИД"
+        /// Получить операции базового объекта "Узел нагрева ПИД" и
+        /// "Узел нагрева"
         /// </summary>
-        public static BaseOperation[] HeaterNodePIDOperations()
+        public static BaseOperation[] HeaterNodeOperations()
         {
             return new BaseOperation[]
             {
                 BaseOperation.EmptyOperation(),
                 new BaseOperation("Нагрев", "HEATING", EmptyProperties(),
-                EmptySteps()),
+                HeatingSteps()),
             };
         }
               
@@ -170,6 +158,10 @@ namespace DataBase
             };
         }
 
+        /// <summary>
+        /// Операции базового объекта "Пастеризатор"
+        /// </summary>
+        /// <returns></returns>
         public static BaseOperation[] POUOperations()
         {
             return new BaseOperation[]
