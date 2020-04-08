@@ -329,8 +329,13 @@ namespace EasyEPlanner
         Eplan.EplApi.ApplicationFramework.EventHandler onMainStart = new
             Eplan.EplApi.ApplicationFramework.EventHandler();
 
+        Eplan.EplApi.ApplicationFramework.EventHandler test = new
+            Eplan.EplApi.ApplicationFramework.EventHandler();
+
         public EplanEventListener()
         {
+            test.SetEvent("NotifyPageOpened");
+            test.EplanEvent += new EventHandlerFunction(TestEvent);
             onUserPreCloseProject.SetEvent("Eplan.EplApi.OnUserPreCloseProject");
             onUserPreCloseProject.EplanEvent +=
                 new EventHandlerFunction(OnUserPreCloseProject);
@@ -344,6 +349,11 @@ namespace EasyEPlanner
             onMainStart.SetEvent("Eplan.EplApi.OnMainStart");
             onMainStart.EplanEvent +=
                 new EventHandlerFunction(OnMainStart);
+        }
+
+        private void TestEvent(IEventParameter eventParameter)
+        {
+            System.Windows.Forms.MessageBox.Show("ONE");
         }
 
         private void OnUserPreCloseProject(IEventParameter iEventParameter)
