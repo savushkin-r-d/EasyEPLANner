@@ -31,7 +31,9 @@ namespace DataBase
                 new NonShowedBaseProperty("DRAINAGE", "Номер шага дренаж", 
                 false),
                 new ShowedBaseProperty("OPERATION_AFTER_FILL", 
-                "Операция после наполнения")
+                "Операция после наполнения"),
+                new ShowedBaseProperty("CIP_WASH_REQUEST",
+                "Автоматическое включение мойки"),
             };
         }
 
@@ -43,7 +45,9 @@ namespace DataBase
         {
             return new List<BaseProperty>
             {
-                new ShowedBaseProperty("CIP_WASH_END", "Мойка завершена")
+                new ShowedBaseProperty("CIP_WASH_END", "Мойка завершена"),
+                new ShowedBaseProperty("CIP_WASH_REQUEST",
+                "Автоматическое включение мойки"),
             };
         }
 
@@ -70,7 +74,9 @@ namespace DataBase
             {
                 new NonShowedBaseProperty("DRAINAGE", "Номер шага дренаж",
                 false),
-                new ShowedBaseProperty("CIP_WASH_END", "Мойка завершена")
+                new ShowedBaseProperty("CIP_WASH_END", "Мойка завершена"),
+                new ShowedBaseProperty("CIP_WASH_REQUEST",
+                "Автоматическое включение мойки")
             };
         }
     }
