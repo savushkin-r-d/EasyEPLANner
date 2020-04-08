@@ -39,7 +39,6 @@ namespace EasyEPlanner
             }
             finally
             {         
-                GC.Collect();
                 if (autoSave == false)
                 {
                     Process.Start(fileName);
@@ -451,19 +450,18 @@ namespace EasyEPlanner
         private static void CreateObjectsPageWithoutActions(
             ref Workbook workbook)
         {
-            Worksheet workSheet = workbook.Worksheets.Add("");
+            string sheetName = "Технологические объекты";
+            Worksheet workSheet = workbook.Worksheets.Add(sheetName);
 
             const int widthColumnA = 40;
             const int widthColumnC = 55;
             const int widthColumnE = 45;
 
-            workSheet.Name = "Технологические объекты";
             TreeView tree = ExcelDataCollector
                 .SaveObjectsWithoutActionsAsTree();
             int row = 1;
             WriteTreeNode(ref workSheet, tree.Nodes, ref row);
             workSheet.Range.EntireColumn.AutoFitColumns();
-            workSheet.Range.EntireColumn.AutoFitRows();
             workSheet.PageSetup.IsSummaryColumnRight = true;
             workSheet.Range[$"A1:A{row}"].ColumnWidth = widthColumnA;
             workSheet.Range[$"C1:C{row}"].ColumnWidth = widthColumnC;
@@ -506,7 +504,7 @@ namespace EasyEPlanner
                 if (firstGroupRow != row)
                 {
                     workSheet.Range[firstGroupRow, row - 1]
-                        .GroupByRows(isCollapsed);
+                       .GroupByRows(isCollapsed);
                 }
             }
         }

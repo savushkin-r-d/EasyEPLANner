@@ -57,12 +57,11 @@ namespace TechObject
             string SpireXLSPath = Path.Combine(assemblyPath, spireXLS);
             string SpirePDFPath = Path.Combine(assemblyPath, spirePDF);
 
-
             if (File.Exists(SpireLicensePath) == false ||
                 File.Exists(SpireXLSPath) == false ||
                 File.Exists(SpirePDFPath) == false)
             {
-
+                CopySpireXLSFiles(assemblyPath);
             }
 
             string sysLuaPath = Path.Combine(systemFilesPath, "sys.lua");
@@ -84,6 +83,8 @@ namespace TechObject
         /// <summary>
         /// Копирует системные .lua файлы если они не загрузились
         /// в теневое хранилище (Win 7 fix).
+        /// <param name="shadowAssemblySystemFilesDir">Путь к Lua файлам
+        /// в теневом хранилище Eplan</param>
         /// </summary>
         private void CopySystemFiles(string shadowAssemblySystemFilesDir)
         {
@@ -93,7 +94,7 @@ namespace TechObject
             string systemFilesPath = Path.GetDirectoryName(EasyEPlanner.
                 AddInModule.OriginalAssemblyPath) + luaDirectory;
 
-            DirectoryInfo systemFilesDirectory = new DirectoryInfo(
+            var systemFilesDirectory = new DirectoryInfo(
                 systemFilesPath);
             FileInfo[] systemFiles = systemFilesDirectory.GetFiles();
             foreach (FileInfo systemFile in systemFiles)
@@ -104,9 +105,31 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Копировать файлы библиотек Spire XLS
+        /// </summary>
+        /// <param name="shadowAssemblySpireFilesDir">Путь к библиотекам
+        /// в теневом хранилище Eplan</param>
         private void CopySpireXLSFiles(string shadowAssemblySpireFilesDir)
         {
+            const string spireLicense = "Spire.License.dll";
+            const string spireXLS = "Spire.XLS.dll";
+            const string spirePDF = "Spire.Pdf.dll";
 
+            string originalPath = Path.GetDirectoryName(EasyEPlanner
+                .AddInModule.OriginalAssemblyPath);
+            var libsDir = new DirectoryInfo(originalPath);
+            foreach(FileInfo file in libsDir.GetFiles())
+            {
+                if (file.Name.Contains(spireLicense) ||
+                    file.Name.Contains(spireXLS) ||
+                    file.Name.Contains(spirePDF))
+                {
+                    string path = Path.Combine(shadowAssemblySpireFilesDir, 
+                        file.Name);
+                    file.CopyTo(path, true);
+                }
+            }
         }
 
         public void ShowMessage(string msg)
