@@ -363,8 +363,7 @@ namespace EasyEPlanner
         private IO.IOModuleInfo GetIOModuleInfo(Function function, string type)
         {
             bool isStub;
-            var moduleInfo = new IO.IOModuleInfo();
-            moduleInfo = moduleInfo.GetIOModuleInfo(type, out isStub);
+            var moduleInfo = IO.IOModuleInfo.GetModuleInfo(type, out isStub);
             if (isStub && type != "")
             {
                 Logs.AddMessage($"Неизвестный " +

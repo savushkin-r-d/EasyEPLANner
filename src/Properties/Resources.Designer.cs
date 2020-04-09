@@ -338,6 +338,26 @@ namespace EasyEPlanner.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на -- В Phoenix Contact особенность, адресное пространство
+        ///-- кратно 32, в связи с этим, увеличивается цифра DO/DI count
+        ///-- в два раза в отличие от WAGO.
+        ///-- При добавлении модуля учитывать, что первый [0] индекс
+        ///-- массива только для Phoenix, а в WAGO его необходимо
+        ///-- ставить -1.
+        ///
+        ///-- constructor description:
+        ///-- n - номер модуля ввода-вывода IO (например: 860).
+        ///-- name - имя модуля ввода-вывода IO (серия-номер, например: 750-860).
+        ///-- description - описание модуля ввода-вывода IO.
+        ///-- adressSpacetype  [остаток строки не уместился]&quot;;.
+        /// </summary>
+        public static string sysIOLuaFilePattern {
+            get {
+                return ResourceManager.GetString("sysIOLuaFilePattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap tank {

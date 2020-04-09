@@ -256,4 +256,66 @@ require( "flow" )
 </value>
     <comment>Шаблон, содержащий список модулей для подключения в prg.lua (require)</comment>
   </data>
+  <data name="sysIOLuaFilePattern" xml:space="preserve">
+    <value>-- В Phoenix Contact особенность, адресное пространство
+-- кратно 32, в связи с этим, увеличивается цифра DO/DI count
+-- в два раза в отличие от WAGO.
+-- При добавлении модуля учитывать, что первый [0] индекс
+-- массива только для Phoenix, а в WAGO его необходимо
+-- ставить -1.
+
+-- constructor description:
+-- n - номер модуля ввода-вывода IO (например: 860).
+-- name - имя модуля ввода-вывода IO (серия-номер, например: 750-860).
+-- description - описание модуля ввода-вывода IO.
+-- adressSpacetype - тип адресного пространства модуля ввода-вывода IO.
+-- typeName - имя типа (дискретный выход, аналоговый выход, ...).
+-- groupName - имя серии модуля ввода-вывода IO (например 750-800).
+-- channelClamps - клеммы каналов ввода-вывода.
+-- channelAddressesIn - адреса каналов ввода.
+-- channelAddressesOut - адреса каналов вывода.
+-- DO_count - количество дискретных выходов.
+-- DI_count - количество дискретных входов.
+-- AO_count - количество аналоговых выходов.
+-- AI_count - количество аналоговых входов.
+-- Color - физический цвет модуля.
+
+-- adressSpacetype enumeration:
+-- NONE - 0
+-- DO - 1
+-- DI - 2
+-- AO - 3
+-- AI - 4
+-- AOAI - 5
+-- DODI - 6
+-- AOAIDODI - 7
+
+local io_modules =
+{
+    [ 1 ] = {
+            n = 1,
+            name = '',
+            description = '',
+            addressSpaceType = 0,
+            typeName = '',
+            groupName = '',
+            channelClamps = {0, 1, 2, 3},
+            channelAddressesIn = { -1, 0, 1, -1 },
+            channelAddressesOut = { 0, -1, -1, 1 },
+            DO_count = 1,
+            DI_count = 1,
+            AO_count = 1,
+            AI_count = 1,
+            Color = '',
+            },
+}
+
+init_io_devices = function()
+    return
+    {
+        io_modules
+    }
+end</value>
+    <comment>Шаблон для файла sys_io.lua, в котором находится информация по модулям ввода-вывода.</comment>
+  </data>
 </root>
