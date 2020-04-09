@@ -310,12 +310,7 @@ local io_modules =
             },
 }
 
-init_io_devices = function()
-    return
-    {
-        io_modules
-    }
-end</value>
+return io_modules</value>
     <comment>Шаблон для файла sys_io.lua, в котором находится информация по модулям ввода-вывода.</comment>
   </data>
 </root>

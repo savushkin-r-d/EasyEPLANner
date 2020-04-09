@@ -1281,8 +1281,9 @@ namespace IO
             var lua = new LuaInterface.Lua();
             const string fileName = "sys_io.lua";
             const string templateName = "sysIOLuaFilePattern";
-            string pathToDir = EasyEPlanner.AddInModule.OriginalAssemblyPath;
-            string pathToFile = Path.Combine(pathToDir, "\\Lua", fileName);
+            string pathToDir = Path.GetDirectoryName(EasyEPlanner.AddInModule
+                .OriginalAssemblyPath) + "\\Lua";
+            string pathToFile = Path.Combine(pathToDir, fileName);
 
             if(File.Exists(pathToFile))
             {
