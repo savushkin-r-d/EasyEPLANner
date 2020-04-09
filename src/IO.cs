@@ -1305,9 +1305,25 @@ namespace IO
                     string typeName = (string)tableData["typeName"];
                     string groupName = (string)tableData["groupName"];
 
-                    int[] channelClamps = new int[0];
-                    int[] channelAddressesIn = new int[0];
-                    int[] channelAddressesOut = new int[0];
+                    var channelClamps = new List<int>();
+                    var channelAddressesIn = new List<int>();
+                    var channelAddressesOut = new List<int>();
+
+                    var channelClampsTable = tableData["channelClamps"] as LuaInterface.LuaTable;
+                    var channelAddressesInTable = tableData["channelAddressesIn"] as LuaInterface.LuaTable;
+                    var channelAddressesOutTable = tableData["channelAddressesOut"] as LuaInterface.LuaTable;
+                    foreach(var num in channelClampsTable.Values)
+                    {
+                        channelClamps.Add(Convert.ToInt32((double)num));
+                    }
+                    foreach (var num in channelAddressesInTable.Values)
+                    {
+                        channelAddressesIn.Add(Convert.ToInt32((double)num));
+                    }
+                    foreach (var num in channelAddressesOutTable.Values)
+                    {
+                        channelAddressesOut.Add(Convert.ToInt32((double)num));
+                    }
 
                     int DOcnt = Convert.ToInt32((double)tableData["DO_count"]);
                     int DIcnt = Convert.ToInt32((double)tableData["DI_count"]);
@@ -1317,8 +1333,9 @@ namespace IO
 
                     IOModuleInfo.AddModuleInfo(number, name, description,
                         addressSpaceTypeNumber, typeName, groupName,
-                        channelClamps, channelAddressesIn, channelAddressesOut,
-                        DOcnt, DIcnt, AOcnt, AIcnt, color);
+                        channelClamps.ToArray(), channelAddressesIn.ToArray(), 
+                        channelAddressesOut.ToArray(), DOcnt, DIcnt, AOcnt, 
+                        AIcnt, color);
                 }
             }
             else
