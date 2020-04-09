@@ -1309,9 +1309,12 @@ namespace IO
                     var channelAddressesIn = new List<int>();
                     var channelAddressesOut = new List<int>();
 
-                    var channelClampsTable = tableData["channelClamps"] as LuaInterface.LuaTable;
-                    var channelAddressesInTable = tableData["channelAddressesIn"] as LuaInterface.LuaTable;
-                    var channelAddressesOutTable = tableData["channelAddressesOut"] as LuaInterface.LuaTable;
+                    var channelClampsTable = tableData[
+                        "channelClamps"] as LuaInterface.LuaTable;
+                    var channelAddressesInTable = tableData[
+                        "channelAddressesIn"] as LuaInterface.LuaTable;
+                    var channelAddressesOutTable = tableData[
+                        "channelAddressesOut"] as LuaInterface.LuaTable;
                     foreach(var num in channelClampsTable.Values)
                     {
                         channelClamps.Add(Convert.ToInt32((double)num));
