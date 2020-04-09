@@ -1376,7 +1376,7 @@ namespace IO
                     break;
 
                 case (int) IOManager.IOLinkModules.PhoenixContactSmart:
-                    // TODO: Будет добавлено после появления SMART модуля
+                    CalculateForPhoenixContact();
                     break;
             }
         }
