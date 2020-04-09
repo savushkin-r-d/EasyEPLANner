@@ -34,7 +34,7 @@ namespace IO
         /// <param name="AO_count">Количество аналоговых выходов</param>
         /// <param name="AI_count">Количество аналоговых входов</param>
         /// <param name="colorAsStr">Физический цвет модуля</param>
-        private static void AddModuleInfo(int number, string name, 
+        public static void AddModuleInfo(int number, string name, 
             string description, int addressSpaceTypeNum, string typeName, 
             string groupName, int[] channelClamps, int[] channelAddressesIn,
             int[] channelAddressesOut, int DO_count, int DI_count, 
@@ -42,6 +42,7 @@ namespace IO
         {
             var addressSpaceType = (ADDRESS_SPACE_TYPE)addressSpaceTypeNum;
             Color color = Color.FromName(colorAsStr);
+
             var moduleInfo = new IOModuleInfo(number, name, description,
                 addressSpaceType, typeName, groupName, channelClamps,
                 channelAddressesIn, channelAddressesOut, DO_count, DI_count,
@@ -57,7 +58,7 @@ namespace IO
         /// Получение описания модуля ввода-вывода IO на основе его имени.
         /// </summary>
         /// <param name="name">Имя модуля (750-860).</param>
-        /// <param name="isStub">Признак неидентифицированного модуля.</param>
+        /// <param name="isStub">Признак не идентифицированного модуля.</param>
         public static IOModuleInfo GetModuleInfo(string name, out bool isStub)
         {
             isStub = false;
@@ -1296,7 +1297,28 @@ namespace IO
                 {
                     var tableData = table as LuaInterface.LuaTable;
 
-                    //TODO: processing data.
+                    int number = Convert.ToInt32((double)tableData["n"]);
+                    string name = (string)tableData["name"];
+                    string description = (string)tableData["description"];
+                    int addressSpaceTypeNumber = Convert.ToInt32(
+                        (double)tableData["addressSpaceType"]);
+                    string typeName = (string)tableData["typeName"];
+                    string groupName = (string)tableData["groupName"];
+
+                    int[] channelClamps = new int[0];
+                    int[] channelAddressesIn = new int[0];
+                    int[] channelAddressesOut = new int[0];
+
+                    int DOcnt = Convert.ToInt32((double)tableData["DO_count"]);
+                    int DIcnt = Convert.ToInt32((double)tableData["DI_count"]);
+                    int AOcnt = Convert.ToInt32((double)tableData["AO_count"]);
+                    int AIcnt = Convert.ToInt32((double)tableData["AI_count"]);
+                    string color = (string)tableData["Color"];
+
+                    IOModuleInfo.AddModuleInfo(number, name, description,
+                        addressSpaceTypeNumber, typeName, groupName,
+                        channelClamps, channelAddressesIn, channelAddressesOut,
+                        DOcnt, DIcnt, AOcnt, AIcnt, color);
                 }
             }
             else
