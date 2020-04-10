@@ -1315,9 +1315,9 @@ namespace IO
                     string typeName = (string)tableData["typeName"];
                     string groupName = (string)tableData["groupName"];
 
-                    var channelClampsList = new List<int>();
-                    var channelAddressesInList = new List<int>();
-                    var channelAddressesOutList = new List<int>();
+                    var channelClamps = new List<int>();
+                    var channelAddressesIn = new List<int>();
+                    var channelAddrOut = new List<int>();
 
                     var channelClampsTable = tableData[
                         "channelClamps"] as LuaInterface.LuaTable;
@@ -1327,20 +1327,16 @@ namespace IO
                         "channelAddressesOut"] as LuaInterface.LuaTable;
                     foreach(var num in channelClampsTable.Values)
                     {
-                        channelClampsList.Add(Convert.ToInt32((double)num));
+                        channelClamps.Add(Convert.ToInt32((double)num));
                     }
                     foreach (var num in channelAddressesInTable.Values)
                     {
-                        channelAddressesInList.Add(Convert.ToInt32((double)num));
+                        channelAddressesIn.Add(Convert.ToInt32((double)num));
                     }
                     foreach (var num in channelAddressesOutTable.Values)
                     {
-                        channelAddressesOutList.Add(Convert.ToInt32((double)num));
+                        channelAddrOut.Add(Convert.ToInt32((double)num));
                     }
-
-                    var channelClamps = channelClampsList.ToArray().Clone() as int[];
-                    var channelAddressesIn = channelAddressesInList.ToArray().Clone() as int[];
-                    var channelAddressesOut = channelAddressesOutList.ToArray().Clone() as int[];
 
                     int DOcnt = Convert.ToInt32((double)tableData["DO_count"]);
                     int DIcnt = Convert.ToInt32((double)tableData["DI_count"]);
@@ -1350,9 +1346,9 @@ namespace IO
 
                     IOModuleInfo.AddModuleInfo(number, name, description,
                         addressSpaceTypeNumber, typeName, groupName,
-                        channelClamps, channelAddressesIn, 
-                        channelAddressesOut, DOcnt, DIcnt, AOcnt, 
-                        AIcnt, color);
+                        channelClamps.ToArray(), channelAddressesIn.ToArray(),
+                        channelAddrOut.ToArray(), DOcnt, DIcnt, AOcnt, AIcnt, 
+                        color);
                 }
             }
             else
