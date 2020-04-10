@@ -194,8 +194,7 @@ namespace EasyEPlanner
             int propertyNumber = (int) Eplan.EplApi.DataModel.Properties
                 .Article.ARTICLE_TYPENR;
             string name = GetSelectedIOModuleArticleProperty(propertyNumber);
-            var moduleInfo = new IOModuleInfo();
-            moduleInfo = moduleInfo.GetIOModuleInfo(name, out _);
+            var moduleInfo = IOModuleInfo.GetModuleInfo(name, out _);
 
             Dictionary<string, string> devicesComments = ProjectConfiguration
                 .GetInstance().GetBindingForResettingChannel(
@@ -264,8 +263,7 @@ namespace EasyEPlanner
                 nodeNumber = deviceNumber / 100 - 1;
             }
 
-            var moduleInfo = new IOModuleInfo();
-            moduleInfo = moduleInfo.GetIOModuleInfo(name, out _);
+            var moduleInfo = IOModuleInfo.GetModuleInfo(name, out _);
             var logicalPort = Array.IndexOf(moduleInfo.ChannelClamps,
                 clampNumber) + 1;
             var moduleOffset = IOManager.GetInstance()

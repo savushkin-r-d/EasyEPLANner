@@ -3,8 +3,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Drawing;
+using System.Linq;
+using System.IO;
 
 /// <summary>
 /// Пространство имен классов IO.
@@ -14,394 +15,58 @@ namespace IO
     /// <summary>
     /// Описание модуля ввода-вывода IO.
     /// </summary>
-    public class IOModuleInfo
+    public class IOModuleInfo : ICloneable
     {
+        /// <summary>
+        /// Добавить информацию о модуле ввода вывода
+        /// </summary>
+        /// <param name="number">Номер модуля ввода-вывода IO </param>
+        /// <param name="name">Имя модуля ввода-вывода IO</param>
+        /// <param name="description">Описание модуля ввода-вывода IO</param>
+        /// <param name="addressSpaceTypeNum">Тип адресного пространства</param>
+        /// <param name="typeName">Имя типа (дискретный выход и др.)</param>
+        /// <param name="groupName">Имя серии (прим., 750-800)</param>
+        /// <param name="channelClamps">Клеммы каналов ввода-вывода</param>
+        /// <param name="channelAddressesIn">Адреса каналов ввода</param>
+        /// <param name="channelAddressesOut">Адреса каналов вывода</param>
+        /// <param name="DO_count">Количество дискретных выходов</param>
+        /// <param name="DI_count">Количество дискретных входов</param>
+        /// <param name="AO_count">Количество аналоговых выходов</param>
+        /// <param name="AI_count">Количество аналоговых входов</param>
+        /// <param name="colorAsStr">Физический цвет модуля</param>
+        public static void AddModuleInfo(int number, string name, 
+            string description, int addressSpaceTypeNum, string typeName, 
+            string groupName, int[] channelClamps, int[] channelAddressesIn,
+            int[] channelAddressesOut, int DO_count, int DI_count, 
+            int AO_count, int AI_count, string colorAsStr)
+        {
+            var addressSpaceType = (ADDRESS_SPACE_TYPE)addressSpaceTypeNum;
+            Color color = Color.FromName(colorAsStr);
+
+           var moduleInfo = new IOModuleInfo(number, name, description,
+                addressSpaceType, typeName, groupName, channelClamps,
+                channelAddressesIn, channelAddressesOut, DO_count, DI_count,
+                AO_count, AI_count, color);
+
+            if (modules.Where(x => x.Name == moduleInfo.Name).Count() == 0)
+            {
+                modules.Add(moduleInfo);
+            }
+        }
 
         /// <summary>
         /// Получение описания модуля ввода-вывода IO на основе его имени.
         /// </summary>
         /// <param name="name">Имя модуля (750-860).</param>
-        /// <param name="isStub">Признак неидентифицированного модуля.</param>
-        public IOModuleInfo GetIOModuleInfo(string name, out bool isStub)
+        /// <param name="isStub">Признак не идентифицированного модуля.</param>
+        public static IOModuleInfo GetModuleInfo(string name, out bool isStub)
         {
             isStub = false;
 
-            if (modules == null)
-            {
-                modules = new List<IOModuleInfo>();
-                // В Phoenix Contact особенность, адресное пространство 
-                // кратно 32, в связи с этим, увеличивается цифра DO/DI count 
-                // в два раза в отличие от WAGO.
-                // При добавлении модуля учитывать, что первый [0] индекс 
-                // массива только для Phoenix, а в WAGO его необходимо 
-                // ставить -1.
-
-                modules.Add(new IOModuleInfo(1504, "750-1504",
-                    "16-Channel Digital Output Module 24 V DC",
-                    ADDRESS_SPACE_TYPE.DO,
-                    "Дискретный выход", "750-1500",
-                    new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 
-                        14, 15, 16 },
-                    new int[0],
-                    new int[] { -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 
-                        12, 13, 14, 15 },
-                    16, 0, 0, 0, Color.Red));
-
-                modules.Add(new IOModuleInfo(1515, "750-1515",
-                    "8-Channel Digital Output Module 24 V DC",
-                    ADDRESS_SPACE_TYPE.DO,
-                    "Дискретный выход", "750-1500",
-                    new int[] { 1, 2, 3, 4, 5, 6, 7, 8 },
-                    new int[0],
-                    new int[] { -1, 0, 1, 2, 3, 4, 5, 6, 7 },
-                    8, 0, 0, 0, Color.Red));
-
-                modules.Add(new IOModuleInfo(504, "750-504",
-                    "4-Channel Digital Output Module DC 24 V",
-                    ADDRESS_SPACE_TYPE.DO,
-                    "Дискретный выход", "750-500",
-                    new int[] { 1, 5, 4, 8 },
-                    new int[0],
-                    new int[] { -1, 0, -1, -1, 1, 2, -1, -1, 3 },
-                    4, 0, 0, 0, Color.Red));
-
-                modules.Add(new IOModuleInfo(512, "750-512",
-                    "2-Channel Relay Output Module 230 V AC, 30 V DC",
-                    ADDRESS_SPACE_TYPE.DO,
-                    "Дискретный выход", "750-500",
-                    new int[] { 1, 5 },
-                    new int[0],
-                    new int[] { -1, 0, -1, -1, -1, 1, -1, -1, -1 },
-                    4, 0, 0, 0, Color.Red));
-
-                modules.Add(new IOModuleInfo(530, "750-530",
-                    "8-Channel Digital Output Module DC 24 V",
-                    ADDRESS_SPACE_TYPE.DO,
-                    "Дискретный выход", "750-500",
-                    new int[] { 1, 5, 2, 6, 3, 7, 4, 8 },
-                    new int[0],
-                    new int[] { -1, 0, 4, 1, 5, 2, 6, 3, 7 },
-                    8, 0, 0, 0, Color.Red));
-
-                modules.Add(new IOModuleInfo(402, "750-402",
-                    "4-Channel Digital Input Module 24 V DC",
-                    ADDRESS_SPACE_TYPE.DI,
-                    "Дискретный вход", "750-400",
-                    new int[] { 1, 5, 4, 8 },
-                    new int[] { -1, 0, -1, -1, 2, 3, -1, -1, 3 },
-                    new int[0],
-                    0, 4, 0, 0, Color.Yellow));
-
-                modules.Add(new IOModuleInfo(430, "750-430",
-                    "8-Channel Digital Input Module 24 V DC",
-                    ADDRESS_SPACE_TYPE.DI,
-                    "Дискретный вход", "750-400",
-                    new int[] { 1, 5, 2, 6, 3, 7, 4, 8 },
-                    new int[] { -1, 0, 2, 5, 6, 1, 3, 5, 7 },
-                    new int[0],
-                    0, 8, 0, 0, Color.Yellow));
-
-                modules.Add(new IOModuleInfo(1405, "750-1405",
-                    "16-Channel Digital Input Module 24 V DC",
-                    ADDRESS_SPACE_TYPE.DI,
-                    "Дискретный вход", "750-1400",
-                    new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 
-                        14, 15, 16 },
-                    new int[] { -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 
-                        13, 14, 15 },
-                    new int[0],
-                    0, 16, 0, 0, Color.Yellow));
-
-                modules.Add(new IOModuleInfo(1415, "750-1415",
-                    "8-Channel Digital Input Module 24 V DC",
-                    ADDRESS_SPACE_TYPE.DI,
-                    "Дискретный вход", "750-1400",
-                    new int[] { 1, 2, 3, 4, 5, 6, 7, 8 },
-                    new int[] { -1, 0, 1, 2, 3, 4, 5, 6, 7 },
-                    new int[0],
-                    0, 8, 0, 0, Color.Yellow));
-
-                modules.Add(new IOModuleInfo(1420, "750-1420",
-                    "4-Channel Digital Input Module 24 V DC",
-                    ADDRESS_SPACE_TYPE.DI,
-                    "Дискретный вход", "750-1400",
-                    new int[] { 1, 6, 9, 14 },
-                    new int[] { -1, 0, -1, -1, -1, -1, 1, -1, -1, 2, -1, 
-                        -1, -1, -1, 3, -1, -1 },
-                    new int[0],
-                    0, 4, 0, 0, Color.Yellow));
-
-                modules.Add(new IOModuleInfo(554, "750-554",
-                    "2-Channel Analog Output Module 4-20mA",
-                    ADDRESS_SPACE_TYPE.AO,
-                    "Аналоговый выход", "750-500",
-                    new int[] { 1, 5 },
-                    new int[0],
-                    new int[] { -1, 0, -1, -1, -1, 1, -1, -1, -1 },
-                    0, 0, 2, 0, Color.Blue));
-
-                modules.Add(new IOModuleInfo(555, "750-555",
-                    "4-Channel Analog Output Module 4-20mA",
-                    ADDRESS_SPACE_TYPE.AO,
-                    "Аналоговый выход", "750-500",
-                    new int[] { 1, 5, 3, 7 },
-                    new int[0],
-                    new int[] { -1, 0, -1, 2, -1, 1, -1, 3, -1 },
-                    0, 0, 4, 0, Color.Blue));
-
-                modules.Add(new IOModuleInfo(638, "750-638",
-                    "2-Channel Up/Down Counter 24 V DC, 500 Hz",
-                    ADDRESS_SPACE_TYPE.AI,
-                    "Счетчик", "750-600",
-                    new int[] { 1, 5 },
-                    new int[] { -1, 0, -1, -1, -1, 1, -1, -1, -1 },
-                    new int[0],
-                    0, 0, 2, 2, Color.Gray));
-
-                modules.Add(new IOModuleInfo(450, "750-450",
-                    "4-Channel Analog Input Module for RTDs",
-                    ADDRESS_SPACE_TYPE.AI,
-                    "Аналоговый вход", "750-400",
-                    new int[] { 1, 3, 5, 7 },
-                    new int[] { -1, 0, -1, 1, -1, 2, -1, 3, -1 },
-                    new int[0],
-                    0, 0, 0, 4, Color.Lime));
-
-                modules.Add(new IOModuleInfo(461, "750-461",
-                    "2-Channel Analog Input Module for RTDs",
-                    ADDRESS_SPACE_TYPE.AI,
-                    "Аналоговый вход", "750-400",
-                    new int[] { 1, 5 },
-                    new int[] { -1, 0, -1, -1, -1, 1, -1, -1, -1 },
-                    new int[0],
-                    0, 0, 0, 2, Color.Lime));
-
-                modules.Add(new IOModuleInfo(466, "750-466",
-                    "2-Channel Analog Input Module 4-20 mA",
-                    ADDRESS_SPACE_TYPE.AI,
-                    "Аналоговый вход", "750-400",
-                    new int[] { 1, 5 },
-                    new int[] { -1, 0, -1, -1, -1, 1, -1, -1, -1 },
-                    new int[0],
-                    0, 0, 0, 2, Color.Lime));
-
-                modules.Add(new IOModuleInfo(496, "750-496",
-                    "8-Channel Analog Input Module 4-20 mA",
-                    ADDRESS_SPACE_TYPE.AI,
-                    "Аналоговый вход", "750-400",
-                    new int[] { 1, 2, 3, 4, 5, 6, 7, 8 },
-                    new int[] { -1, 0, 1, 2, 3, 4, 5, 6, 7, -1, -1, -1, 
-                        -1, -1, -1, -1, -1 },
-                    new int[0],
-                    0, 0, 0, 8, Color.Lime));
-
-                modules.Add(new IOModuleInfo(655, "750-655",
-                    "AS-Interface Master",
-                    ADDRESS_SPACE_TYPE.AOAI,
-                    "AS-интерфейс мастер", "750-600",
-                    new int[] { 3 },
-                    new int[] { -1, -1, -1, 0, -1, -1, -1, -1, -1 },
-                    new int[] { -1, -1, -1, 0, -1, -1, -1, -1, -1 },
-                    0, 0, 20, 20, Color.Gray));
-
-                modules.Add(new IOModuleInfo(657, "750-657",
-                    "IO-Link Master",
-                    ADDRESS_SPACE_TYPE.AOAI,
-                    "AS-интерфейс мастер", "750-600",
-                    new int[] { 1, 6, 9, 14 },
-                    new int[] { -1, 0, -1, -1, -1, -1, 1, -1, -1, 2, -1, 
-                        -1, -1, -1, 3, -1, -1 },
-                    new int[] { -1, 0, -1, -1, -1, -1, 1, -1, -1, 2, -1, 
-                        -1, -1, -1, 3, -1, -1 },
-                    0, 0, 12, 12, Color.Gray));
-
-                modules.Add(new IOModuleInfo(600, "750-600",
-                    "End Module",
-                    ADDRESS_SPACE_TYPE.NONE,
-                    "Терминатор", "750-600",
-                    new int[] { },
-                    new int[] { },
-                    new int[] { },
-                    0, 0, 0, 0, Color.Gray));
-
-                modules.Add(new IOModuleInfo(602, "750-602",
-                    "Supply Module DC 24 V / AC/DC 230 V",
-                    ADDRESS_SPACE_TYPE.NONE,
-                    "Питание", "750-600",
-                    new int[] { },
-                    new int[] { },
-                    new int[] { },
-                    0, 0, 0, 0, Color.Gray));
-
-                modules.Add(new IOModuleInfo(612, "750-612",
-                    "Supply Module 24 V DC / 230 V AC/DC",
-                    ADDRESS_SPACE_TYPE.NONE,
-                    "Питание", "750-600",
-                    new int[] { },
-                    new int[] { },
-                    new int[] { },
-                    0, 0, 0, 0, Color.Gray));
-
-                modules.Add(new IOModuleInfo(627, "750-627",
-                    "Internal Data Bus Extension End Module",
-                    ADDRESS_SPACE_TYPE.NONE,
-                    "Расширение шины", "750-600",
-                    new int[] { },
-                    new int[] { },
-                    new int[] { },
-                    0, 0, 0, 0, Color.Gray));
-
-                modules.Add(new IOModuleInfo(628, "750-628",
-                    "Internal Data Bus Extension Coupler Module",
-                    ADDRESS_SPACE_TYPE.NONE,
-                    "Расширение шины", "750-600",
-                    new int[] { },
-                    new int[] { },
-                    new int[] { },
-                    0, 0, 0, 0, Color.Gray));
-
-                modules.Add(new IOModuleInfo(491, "750-491",
-                    "1-channel Resistance measuring bridge",
-                    ADDRESS_SPACE_TYPE.AI,
-                    "Аналоговый вход", "750-400",
-                    new int[] { 1, 5 },
-                    new int[] { -1, 0, -1, -1, -1, 1, -1, -1, -1 },
-                    new int[] { },
-                    0, 0, 0, 2, Color.Gray));
-
-                modules.Add(new IOModuleInfo(1027843, "AXL F IOL8 2H",
-                    "IO-Link Master",
-                    ADDRESS_SPACE_TYPE.AOAIDODI,
-                    "IO-Link Master", "AXL F",
-                    new int[] { 30, 31, 32, 33, 70, 71, 72, 73 },
-                    new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, 0, 1, 2, 3, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, 4, 5, 6, 7},
-                    new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, 0, 1, 2, 3, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, 4, 5, 6, 7},
-                    512, 512, 32, 32, Color.Orange));
-
-                modules.Add(new IOModuleInfo(2701916, "AXL F DI8/1 DO8/1 1H",
-                    "8-channel Digital I/O module 24V DC, 500 mA, 1-wire connection",
-                    ADDRESS_SPACE_TYPE.DODI,
-                    "Цифровой вход/выход", "AXL F",
-                    new int[] { 00, 01, 02, 03, 10, 11, 12, 13, 20, 21, 22, 
-                        23, 30, 31, 32, 33 },
-                    new int[] { 0, 1, -1, -1, -1, -1, -1, -1, -1, 2, 3, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, 4, 5, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, 6, 7, -1, -1, -1 },
-                    new int[] {  -1, -1, 0, 1, -1, -1, -1, -1, -1, -1, 2, 3, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, 4, 5, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, 6, 7, -1, -1},
-                    16, 16, 1, 1, Color.Violet));
-
-                modules.Add(new IOModuleInfo(2702071, "AXL F DI8/3 DO8/3 2H",
-                    "8-channel Digital I/O Module 24V DC, 500 mA, 3-wire connection",
-                    ADDRESS_SPACE_TYPE.DODI,
-                    "Цифровой вход/выход", "AXL F",
-                    new int[] { 00, 01, 02, 03, 20, 21, 22, 23, 40, 41, 42, 
-                        43, 60, 61, 62, 63 },
-                    new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, 8, 9, 10, 11, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, 12, 13, 14, 15, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-                    new int[] { 8, 9, 10, 11, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, 12, 13, 14, 15, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-                    16, 16, 1, 1, Color.Violet));
-
-                modules.Add(new IOModuleInfo(2688491, "AXL F AI4 I 1H",
-                    "4-channel Analog Input Module 4..20mA, 2,3,4-wire connection",
-                    ADDRESS_SPACE_TYPE.AI,
-                    "Аналоговый вход", "AXL F",
-                    new int[] { 00, 01, 02, 03 },
-                    new int[] { 0, 1, 2, 3, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-                    new int[0],
-                    64, 64, 4, 4, Color.Green));
-
-                modules.Add(new IOModuleInfo(2688527, "AXL F AO4 1H",
-                    "4-channel Analog Output Module 4..20mA, 2,3,4-wire connection",
-                    ADDRESS_SPACE_TYPE.AO,
-                    "Аналоговый выход", "AXL F",
-                    new int[] { 10, 11, 12, 13 },
-                    new int[0],
-                    new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 
-                        1, 2, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-                    64, 64, 4, 4, Color.Yellow));
-
-                modules.Add(new IOModuleInfo(2688048, "AXL F DO16/3 2F",
-                    "16-channel Digital Output Module 24V DC, 500 mA, 3-wire connection",
-                    ADDRESS_SPACE_TYPE.DO,
-                    "Цифровой выход", "AXL F",
-                    new int[] { 00, 01, 02, 03, 04, 05, 06, 07, 40, 41, 42, 
-                        43, 44, 45, 46, 47 },
-                    new int[0],
-                    new int[] { 0, 1, 2, 3, 4, 5, 6, 7, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, 8, 9, 10, 11, 12, 13, 14, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-                    16, 16, 1, 1, Color.Red));
-
-                modules.Add(new IOModuleInfo(2688556, "AXL F RTD4 1H",
-                    "4-channel Analog Input Module for RTDs, 2,3,4-wire connection",
-                    ADDRESS_SPACE_TYPE.AI,
-                    "Аналоговый вход", "AXL F",
-                    new int[] { 00, 01, 02, 03 },
-                    new int[] { 0, 1, 2, 3, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-                    new int[0],
-                    64, 64, 4, 4, Color.Green));
-
-                modules.Add(new IOModuleInfo(2688022, "AXL F DI16/4 2F",
-                    "16-channel Digital Input Module 24V DC, 4-wire connection",
-                    ADDRESS_SPACE_TYPE.DI,
-                    "Цифровой вход", "AXL F",
-                    new int[] { 00, 01, 02, 03, 04, 05, 06, 07, 40, 41, 42, 
-                        43, 44, 45, 46, 47 },
-                    new int[] { 0, 1, 2, 3, 4, 5, 6, 7, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-                        -1, 8, 9, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
-                    new int[0],
-                    16, 16, 1, 1, Color.Red));
-
-                modules.Add(new IOModuleInfo(2688093, "AXL F CNT2 INC2 1F",
-                    "2-Channel Up/Down Counter, 24V DC",
-                    ADDRESS_SPACE_TYPE.AI,
-                    "Счетчик", "AXL F",
-                    new int[] { 00, 04 },
-                    new int[] { 3, -1, -1, -1, 5, -1, -1, -1, -1, -1, -1, 
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-                        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
-                    new int[0],
-                    224, 224, 14, 14, Color.Orange));
-            }
-
             IOModuleInfo res = modules.Find( x => x.Name == name);
-
             if (res != null)
             {
-                return res;
+                return res.Clone() as IOModuleInfo;
             }
                 
             isStub = true;
@@ -438,10 +103,18 @@ namespace IO
             this.moduleColor = color;
         }
 
-        /// <summary>
-        /// Пустой конструктор класса
-        /// </summary>
-        public IOModuleInfo() { }
+        public object Clone()
+        {
+            var channelClamps = this.ChannelClamps.Clone() as int[];
+            var channelAddressesIn = this.ChannelAddressesIn.Clone() as int[];
+            var channelAddressesOut = this.ChannelAddressesOut.Clone() as int[];
+
+            return new IOModuleInfo(this.Number, this.Name, this.Description,
+                this.AddressSpaceType, this.TypeName, this.GroupName,
+                channelClamps, channelAddressesIn, channelAddressesOut, 
+                this.DO_count, this.DI_count, this.AO_count, this.AI_count, 
+                this.ModuleColor);
+        }
 
         /// <summary>
         /// Имя модуля ввода-вывода IO (серия-номер, например: 750-860).
@@ -521,7 +194,7 @@ namespace IO
         }
 
         /// <summary>
-        ///Количество дискретных выходов. 
+        /// Количество дискретных выходов. 
         /// </summary>
         public int DO_count
         {
@@ -532,7 +205,7 @@ namespace IO
         }
 
         /// <summary>
-        ///Количество дискретных входов. 
+        /// Количество дискретных входов. 
         /// </summary>
         public int DI_count
         {
@@ -543,7 +216,7 @@ namespace IO
         }
 
         /// <summary>
-        ///Количество аналоговых выходов. 
+        /// Количество аналоговых выходов. 
         /// </summary>
         public int AO_count
         {
@@ -554,7 +227,7 @@ namespace IO
         }
 
         /// <summary>
-        ///Количество аналоговых входов. 
+        /// Количество аналоговых входов. 
         /// </summary>
         public int AI_count
         {
@@ -565,7 +238,7 @@ namespace IO
         }
 
         /// <summary>
-        ///Имя типа (дискретный выход, аналоговый выход, ...).
+        /// Имя типа (дискретный выход, аналоговый выход, ...).
         /// </summary>
         public string TypeName
         {
@@ -576,7 +249,7 @@ namespace IO
         }
 
         /// <summary>
-        ///Физический цвет модуля
+        /// Физический цвет модуля
         /// </summary>
         public Color ModuleColor
         {
@@ -597,6 +270,9 @@ namespace IO
             }
         }
 
+        /// <summary>
+        /// Тип адресного пространства модуля
+        /// </summary>
         public enum ADDRESS_SPACE_TYPE
         {
             NONE,
@@ -609,37 +285,89 @@ namespace IO
             AOAIDODI,
         };
 
-
         #region Закрытые поля.
-        private int n;                   ///Номер.
-        private string name;             ///Имя.
-        private string typeName;         ///Имя типа (дискретный выход, аналоговый выход, ...).
-        private string groupName;        ///Серия модуля (750-800, 750-1500, ...).
-        private string description;      ///Описание.
+        /// <summary>
+        /// Номер.
+        /// </summary>
+        private int n;
 
-        ///Тип адресного пространства ( DO, DI, AO, AI ).
+        /// <summary>
+        /// Имя.
+        /// </summary>
+        private string name;
+
+        /// <summary>
+        /// Имя типа (дискретный выход, аналоговый выход, ...).
+        /// </summary>
+        private string typeName;
+
+        /// <summary>
+        /// Серия модуля (750-800, 750-1500, ...).
+        /// </summary>
+        private string groupName;
+
+        /// <summary>
+        /// Описание.
+        /// </summary>
+        private string description;
+
+        /// <summary>
+        /// Тип адресного пространства ( DO, DI, AO, AI ).
+        /// </summary>
         private ADDRESS_SPACE_TYPE addressSpaceType;
 
-        private int[] channelClamps;         ///Клеммы каналов ввода/вывода.
-        private int[] channelAddressesOut;   ///Адреса каналов вывода.
-        private int[] channelAddressesIn;    ///Адреса каналов ввода.
+        /// <summary>
+        /// Клеммы каналов ввода/вывода.
+        /// </summary>
+        private int[] channelClamps;
 
-        private int DO_cnt;     ///Количество дискретных выходов. 
-        private int DI_cnt;     ///Количество дискретных входов. 
-        private int AO_cnt;     ///Количество аналоговых выходов. 
-        private int AI_cnt;     ///Количество аналоговых входов. 
+        /// <summary>
+        /// Адреса каналов вывода.
+        /// </summary>
+        private int[] channelAddressesOut;
 
+        /// <summary>
+        /// Адреса каналов ввода.
+        /// </summary>
+        private int[] channelAddressesIn;
+
+        /// <summary>
+        /// Количество дискретных выходов. 
+        /// </summary>
+        private int DO_cnt;
+
+        /// <summary>
+        /// Количество дискретных входов.
+        /// </summary>
+        private int DI_cnt;
+
+        /// <summary>
+        /// Количество аналоговых выходов. 
+        /// </summary>
+        private int AO_cnt;
+
+        /// <summary>
+        /// Количество аналоговых входов. 
+        /// </summary>
+        private int AI_cnt;
+
+        /// <summary>
+        /// Цвет.
+        /// </summary>
         private Color moduleColor;
+        #endregion
 
-        ///Список используемых модулей. 
-        private List<IOModuleInfo> modules = null;
+        /// <summary>
+        /// Список модулей ввода-вывода.
+        /// </summary>
+        private static List<IOModuleInfo> modules = new List<IOModuleInfo>();
 
-        ///Заглушка, для возврата в случае поиска неописанных модулей. 
+        /// <summary>
+        /// Заглушка, для возврата в случае поиска неописанных модулей. 
+        /// </summary>
         private static IOModuleInfo stub = new IOModuleInfo(0,
             "не определен", "", ADDRESS_SPACE_TYPE.NONE, "", "", new int[0], 
             new int[0], new int[0], 0, 0, 0, 0, Color.LightGray);
-        #endregion
-
     }
 
     //-------------------------------------------------------------------------
@@ -1303,6 +1031,7 @@ namespace IO
         private IOManager()
         {
             iONodes = new List<IONode>();
+            InitIOModulesInfo();
         }
 
         /// <summary>
@@ -1553,6 +1282,83 @@ namespace IO
             }
         }
 
+        /// <summary>
+        /// Инициализировать модули информацию о модулях ввода-вывода.
+        /// </summary>
+        private void InitIOModulesInfo()
+        {
+            var lua = new LuaInterface.Lua();
+            const string fileName = "sys_io.lua";
+            const string templateName = "sysIOLuaFilePattern";
+            string pathToDir = Path.GetDirectoryName(EasyEPlanner.AddInModule
+                .OriginalAssemblyPath) + "\\Lua";
+            string pathToFile = Path.Combine(pathToDir, fileName);
+
+            if(File.Exists(pathToFile))
+            {
+                object[] result = lua.DoFile(pathToFile);
+                if (result == null)
+                {
+                    return;
+                }
+
+                var dataTables = result[0] as LuaInterface.LuaTable;
+                foreach(var table in dataTables.Values)
+                {
+                    var tableData = table as LuaInterface.LuaTable;
+
+                    int number = Convert.ToInt32((double)tableData["n"]);
+                    string name = (string)tableData["name"];
+                    string description = (string)tableData["description"];
+                    int addressSpaceTypeNumber = Convert.ToInt32(
+                        (double)tableData["addressSpaceType"]);
+                    string typeName = (string)tableData["typeName"];
+                    string groupName = (string)tableData["groupName"];
+
+                    var channelClamps = new List<int>();
+                    var channelAddressesIn = new List<int>();
+                    var channelAddrOut = new List<int>();
+
+                    var channelClampsTable = tableData[
+                        "channelClamps"] as LuaInterface.LuaTable;
+                    var channelAddressesInTable = tableData[
+                        "channelAddressesIn"] as LuaInterface.LuaTable;
+                    var channelAddressesOutTable = tableData[
+                        "channelAddressesOut"] as LuaInterface.LuaTable;
+                    foreach(var num in channelClampsTable.Values)
+                    {
+                        channelClamps.Add(Convert.ToInt32((double)num));
+                    }
+                    foreach (var num in channelAddressesInTable.Values)
+                    {
+                        channelAddressesIn.Add(Convert.ToInt32((double)num));
+                    }
+                    foreach (var num in channelAddressesOutTable.Values)
+                    {
+                        channelAddrOut.Add(Convert.ToInt32((double)num));
+                    }
+
+                    int DOcnt = Convert.ToInt32((double)tableData["DO_count"]);
+                    int DIcnt = Convert.ToInt32((double)tableData["DI_count"]);
+                    int AOcnt = Convert.ToInt32((double)tableData["AO_count"]);
+                    int AIcnt = Convert.ToInt32((double)tableData["AI_count"]);
+                    string color = (string)tableData["Color"];
+
+                    IOModuleInfo.AddModuleInfo(number, name, description,
+                        addressSpaceTypeNumber, typeName, groupName,
+                        channelClamps.ToArray(), channelAddressesIn.ToArray(),
+                        channelAddrOut.ToArray(), DOcnt, DIcnt, AOcnt, AIcnt, 
+                        color);
+                }
+            }
+            else
+            {
+                string template = EasyEPlanner.Properties.Resources
+                    .ResourceManager.GetString(templateName);
+                File.WriteAllText(pathToFile,template);
+            }
+        }
+
         public List<IONode> IONodes
         {
             get
@@ -1622,7 +1428,7 @@ namespace IO
                     break;
 
                 case (int) IOManager.IOLinkModules.PhoenixContactSmart:
-                    // TODO: Будет добавлено после появления SMART модуля
+                    CalculateForPhoenixContact();
                     break;
             }
         }
