@@ -87,7 +87,7 @@ local io_modules =
             },
 
     [ 4 ] = {
-            n = 504,
+            n = 512,
             name = '750-512',
             description = '2-Channel Relay Output Module 230 V AC, 30 V DC',
             addressSpaceType = 1,
