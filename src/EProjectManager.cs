@@ -4,7 +4,6 @@ using Eplan.EplApi.ApplicationFramework;
 using System.Text.RegularExpressions;
 using Eplan.EplApi.EServices.Ged;
 using Eplan.EplApi.DataModel.Graphics;
-using System.Threading;
 
 namespace EasyEPlanner
 {
@@ -298,22 +297,14 @@ namespace EasyEPlanner
         public override void OnStop()
         {
             base.OnStop();
-
-            if (!isFinish) //Перезапуск взаимодействия при необходимости.
-            {
-                var t = new Thread(Editor.Editor.GetInstance()
-                    .EForm.EditButtonActivate);
-                t.Start();
-            }
         }
 
         public void Stop()
         {
-            isFinish = true;
+            IsFinish = true;
         }
 
-        private bool isFinish = false;
-
+        public bool IsFinish { get; set; } = false;
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -329,13 +320,11 @@ namespace EasyEPlanner
         Eplan.EplApi.ApplicationFramework.EventHandler onMainStart = new
             Eplan.EplApi.ApplicationFramework.EventHandler();
 
-        Eplan.EplApi.ApplicationFramework.EventHandler test = new
+        Eplan.EplApi.ApplicationFramework.EventHandler onNotifyPageChanged = new
             Eplan.EplApi.ApplicationFramework.EventHandler();
 
         public EplanEventListener()
         {
-            test.SetEvent("NotifyPageOpened");
-            test.EplanEvent += new EventHandlerFunction(TestEvent);
             onUserPreCloseProject.SetEvent("Eplan.EplApi.OnUserPreCloseProject");
             onUserPreCloseProject.EplanEvent +=
                 new EventHandlerFunction(OnUserPreCloseProject);
@@ -349,11 +338,20 @@ namespace EasyEPlanner
             onMainStart.SetEvent("Eplan.EplApi.OnMainStart");
             onMainStart.EplanEvent +=
                 new EventHandlerFunction(OnMainStart);
+
+            onNotifyPageChanged.SetEvent("NotifyPageOpened");
+            onNotifyPageChanged.EplanEvent += 
+                new EventHandlerFunction(OnNotifyPageChanged);
         }
 
-        private void TestEvent(IEventParameter eventParameter)
+        private void OnNotifyPageChanged(IEventParameter eventParameter)
         {
-            System.Windows.Forms.MessageBox.Show("ONE");
+            var interaction = EProjectManager.GetInstance()
+                .GetEditInteraction();
+            if (interaction != null && interaction.IsFinish == false)
+            {
+                EProjectManager.GetInstance().StartEditModesWithDelay();
+            }
         }
 
         private void OnUserPreCloseProject(IEventParameter iEventParameter)
