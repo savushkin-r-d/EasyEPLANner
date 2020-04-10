@@ -15,7 +15,7 @@ namespace IO
     /// <summary>
     /// Описание модуля ввода-вывода IO.
     /// </summary>
-    public class IOModuleInfo
+    public class IOModuleInfo : ICloneable
     {
         /// <summary>
         /// Добавить информацию о модуле ввода вывода
@@ -43,7 +43,7 @@ namespace IO
             var addressSpaceType = (ADDRESS_SPACE_TYPE)addressSpaceTypeNum;
             Color color = Color.FromName(colorAsStr);
 
-            var moduleInfo = new IOModuleInfo(number, name, description,
+           var moduleInfo = new IOModuleInfo(number, name, description,
                 addressSpaceType, typeName, groupName, channelClamps,
                 channelAddressesIn, channelAddressesOut, DO_count, DI_count,
                 AO_count, AI_count, color);
@@ -66,11 +66,7 @@ namespace IO
             IOModuleInfo res = modules.Find( x => x.Name == name);
             if (res != null)
             {
-                return new IOModuleInfo(res.n, res.name, res.description, 
-                    res.addressSpaceType, res.typeName, res.groupName, 
-                    res.channelClamps, res.channelAddressesIn, 
-                    res.channelAddressesOut, res.DO_cnt, res.DI_cnt, 
-                    res.AO_cnt, res.AI_cnt, res.moduleColor);
+                return res.Clone() as IOModuleInfo;
             }
                 
             isStub = true;
@@ -105,6 +101,19 @@ namespace IO
             this.AI_cnt = AI_count;
 
             this.moduleColor = color;
+        }
+
+        public object Clone()
+        {
+            var channelClamps = this.ChannelClamps.Clone() as int[];
+            var channelAddressesIn = this.ChannelAddressesIn.Clone() as int[];
+            var channelAddressesOut = this.ChannelAddressesOut.Clone() as int[];
+
+            return new IOModuleInfo(this.Number, this.Name, this.Description,
+                this.AddressSpaceType, this.TypeName, this.GroupName,
+                channelClamps, channelAddressesIn, channelAddressesOut, 
+                this.DO_count, this.DI_count, this.AO_count, this.AI_count, 
+                this.ModuleColor);
         }
 
         /// <summary>
@@ -1306,9 +1315,9 @@ namespace IO
                     string typeName = (string)tableData["typeName"];
                     string groupName = (string)tableData["groupName"];
 
-                    var channelClamps = new List<int>();
-                    var channelAddressesIn = new List<int>();
-                    var channelAddressesOut = new List<int>();
+                    var channelClampsList = new List<int>();
+                    var channelAddressesInList = new List<int>();
+                    var channelAddressesOutList = new List<int>();
 
                     var channelClampsTable = tableData[
                         "channelClamps"] as LuaInterface.LuaTable;
@@ -1318,16 +1327,20 @@ namespace IO
                         "channelAddressesOut"] as LuaInterface.LuaTable;
                     foreach(var num in channelClampsTable.Values)
                     {
-                        channelClamps.Add(Convert.ToInt32((double)num));
+                        channelClampsList.Add(Convert.ToInt32((double)num));
                     }
                     foreach (var num in channelAddressesInTable.Values)
                     {
-                        channelAddressesIn.Add(Convert.ToInt32((double)num));
+                        channelAddressesInList.Add(Convert.ToInt32((double)num));
                     }
                     foreach (var num in channelAddressesOutTable.Values)
                     {
-                        channelAddressesOut.Add(Convert.ToInt32((double)num));
+                        channelAddressesOutList.Add(Convert.ToInt32((double)num));
                     }
+
+                    var channelClamps = channelClampsList.ToArray().Clone() as int[];
+                    var channelAddressesIn = channelAddressesInList.ToArray().Clone() as int[];
+                    var channelAddressesOut = channelAddressesOutList.ToArray().Clone() as int[];
 
                     int DOcnt = Convert.ToInt32((double)tableData["DO_count"]);
                     int DIcnt = Convert.ToInt32((double)tableData["DI_count"]);
@@ -1337,8 +1350,8 @@ namespace IO
 
                     IOModuleInfo.AddModuleInfo(number, name, description,
                         addressSpaceTypeNumber, typeName, groupName,
-                        channelClamps.ToArray(), channelAddressesIn.ToArray(), 
-                        channelAddressesOut.ToArray(), DOcnt, DIcnt, AOcnt, 
+                        channelClamps, channelAddressesIn, 
+                        channelAddressesOut, DOcnt, DIcnt, AOcnt, 
                         AIcnt, color);
                 }
             }
