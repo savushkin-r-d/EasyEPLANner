@@ -338,7 +338,7 @@ namespace EasyEPlanner
         /// Экспорт из проекта базы каналов.
         /// </summary>
         public void SaveAsCDBX(string projectName, bool combineTag = false,
-            bool useNewNames = false)
+            bool useNewNames = false, bool rewrite = false)
         {
             techObjectManager.SetCDBXTagView(combineTag);
             techObjectManager.SetCDBXNewNames(useNewNames);
@@ -347,16 +347,15 @@ namespace EasyEPlanner
                     new System.Threading.ParameterizedThreadStart(
                         SaveAsXMLThread));
 
-            t.Start(projectName);
+            t.Start(new DataForSaveAsXML(projectName, rewrite));
 
         }
 
         private void SaveAsXMLThread(object param)
         {
-            string par = param as string;
+            var data = param as DataForSaveAsXML;
 
             Logs.Show();
-
             Logs.DisableButtons();
             Logs.Clear();
             Logs.SetProgress(0);
@@ -364,7 +363,7 @@ namespace EasyEPlanner
             try
             {
                 Logs.SetProgress(1);
-                XMLReporter.SaveAsXML(par);
+                XMLReporter.SaveAsXML(data.pathToFile, data.rewrite);
                 Logs.SetProgress(50);
                 Logs.AddMessage("Done.");
             }
@@ -380,6 +379,21 @@ namespace EasyEPlanner
                     Logs.SetProgress(100);
                 }
             }
+        }
+
+        /// <summary>
+        /// Класс для передачи данных при сохранении XML базы каналов
+        /// </summary>
+        private class DataForSaveAsXML
+        {
+            public DataForSaveAsXML(string path, bool rewrite)
+            {
+                this.pathToFile = path;
+                this.rewrite = rewrite;
+            }
+
+            public string pathToFile;
+            public bool rewrite;
         }
 
         /// <summary>

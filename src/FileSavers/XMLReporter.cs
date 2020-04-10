@@ -33,8 +33,9 @@ namespace EasyEPlanner
         /// <summary>
         /// Экспорт проекта в базу каналов.
         /// </summary>
-        /// <param name="prjName">Имя проекта</param>
-        public static void SaveAsXML(string path)
+        /// <param name="path">Путь к файлу</param>
+        /// <param name="rewrite">Перезаписывать или нет</param>
+        public static void SaveAsXML(string path, bool rewrite = false)
         {
             projectConfig.SynchronizeDevices();
 
@@ -43,8 +44,13 @@ namespace EasyEPlanner
             deviceManager.GetObjectForXML(rootNode);
 
             XmlDocument xmlDoc = new XmlDocument();
-            if (!File.Exists(path))
+            if (!File.Exists(path) || rewrite == true)
             {
+                if (rewrite == true && File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+
                 XmlTextWriter textWritter = new XmlTextWriter(path,
                     System.Text.Encoding.UTF8);
                 textWritter.WriteStartDocument();
