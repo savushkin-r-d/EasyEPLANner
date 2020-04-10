@@ -144,8 +144,9 @@ namespace EasyEPlanner
                 if (newChBaseBut.Checked == true)
                 {
                     string filePath = path + "\\" + projectName + chBaseFormat;
+                    bool rewrite = true;
                     ProjectManager.GetInstance().SaveAsCDBX(filePath, 
-                        combineTag, useNewNames);
+                        combineTag, useNewNames, rewrite);
                 }
                 else
                 {
