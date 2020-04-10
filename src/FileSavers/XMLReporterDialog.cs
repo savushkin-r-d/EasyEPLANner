@@ -141,8 +141,18 @@ namespace EasyEPlanner
 
             if (pathIsValid)
             {
-                ProjectManager.GetInstance().SaveAsCDBX(path, combineTag,
+                if (newChBaseBut.Checked == true)
+                {
+                    string filePath = path + "\\" + projectName + chBaseFormat;
+                    ProjectManager.GetInstance().SaveAsCDBX(filePath, 
+                        combineTag, useNewNames);
+                }
+                else
+                {
+                    ProjectManager.GetInstance().SaveAsCDBX(path, combineTag,
                     useNewNames);
+                }
+
                 this.Close();
             }
         }
