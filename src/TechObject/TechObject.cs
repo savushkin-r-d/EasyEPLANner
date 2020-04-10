@@ -178,11 +178,11 @@ namespace TechObject
             {
                 var oldNumbers = new List<int>();
                 var newNumbers = new List<int>();
-                if (oldValue != "" && oldValue != null)
+                if (oldValue != null && oldValue != "")
                 {
                     oldNumbers = oldValue.Split(' ').Select(int.Parse).ToList();
                 }
-                if (newValue != "" && oldValue != null)
+                if (newValue != null && oldValue != "")
                 {
                     newNumbers = newValue.Split(' ').Select(int.Parse).ToList();
                 }
