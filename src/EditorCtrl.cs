@@ -998,24 +998,6 @@ namespace Editor
         bool Editable = false;
 
         /// <summary>
-        /// Метод, имитирующий включение (если выключено) и повторное включение
-        /// (если включено) режима редактирования
-        /// </summary>
-        public void EditButtonActivate()
-        {
-            Thread.Sleep(1000);
-            if (edit_toolStripButton.Checked == false)
-            {
-                edit_toolStripButton_Click(this, new EventArgs());
-            }
-            else
-            {
-                edit_toolStripButton_Click(this, new EventArgs());
-                edit_toolStripButton_Click(this, new EventArgs());
-            }
-        }
-
-        /// <summary>
         /// Переход в режим редактирования.
         /// </summary>
         private void edit_toolStripButton_Click(object sender, EventArgs e)
