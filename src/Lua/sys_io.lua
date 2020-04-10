@@ -1,25 +1,25 @@
--- В Phoenix Contact особенность, адресное пространство
--- кратно 32, в связи с этим, увеличивается цифра DO/DI count
--- в два раза в отличие от WAGO.
--- При добавлении модуля учитывать, что первый [0] индекс
--- массива только для Phoenix, а в WAGO его необходимо
--- ставить -1.
+-- Г‚ Phoenix Contact Г®Г±Г®ГЎГҐГ­Г­Г®Г±ГІГј, Г Г¤Г°ГҐГ±Г­Г®ГҐ ГЇГ°Г®Г±ГІГ°Г Г­Г±ГІГўГ®
+-- ГЄГ°Г ГІГ­Г® 32, Гў Г±ГўГїГ§ГЁ Г± ГЅГІГЁГ¬, ГіГўГҐГ«ГЁГ·ГЁГўГ ГҐГІГ±Гї Г¶ГЁГґГ°Г  DO/DI count
+-- Гў Г¤ГўГ  Г°Г Г§Г  Гў Г®ГІГ«ГЁГ·ГЁГҐ Г®ГІ WAGO.
+-- ГЏГ°ГЁ Г¤Г®ГЎГ ГўГ«ГҐГ­ГЁГЁ Г¬Г®Г¤ГіГ«Гї ГіГ·ГЁГІГ»ГўГ ГІГј, Г·ГІГ® ГЇГҐГ°ГўГ»Г© [0] ГЁГ­Г¤ГҐГЄГ±
+-- Г¬Г Г±Г±ГЁГўГ  ГІГ®Г«ГјГЄГ® Г¤Г«Гї Phoenix, Г  Гў WAGO ГҐГЈГ® Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г®
+-- Г±ГІГ ГўГЁГІГј -1.
 
 -- constructor description:
--- n - номер модуля ввода-вывода IO (например: 860).
--- name - имя модуля ввода-вывода IO (серия-номер, например: 750-860).
--- description - описание модуля ввода-вывода IO.
--- adressSpacetype - тип адресного пространства модуля ввода-вывода IO.
--- typeName - имя типа (дискретный выход, аналоговый выход, ...).
--- groupName - имя серии модуля ввода-вывода IO (например 750-800).
--- channelClamps - клеммы каналов ввода-вывода.
--- channelAddressesIn - адреса каналов ввода.
--- channelAddressesOut - адреса каналов вывода.
--- DO_count - количество дискретных выходов.
--- DI_count - количество дискретных входов.
--- AO_count - количество аналоговых выходов.
--- AI_count - количество аналоговых входов.
--- Color - физический цвет модуля.
+-- n - Г­Г®Г¬ГҐГ° Г¬Г®Г¤ГіГ«Гї ГўГўГ®Г¤Г -ГўГ»ГўГ®Г¤Г  IO (Г­Г ГЇГ°ГЁГ¬ГҐГ°: 860).
+-- name - ГЁГ¬Гї Г¬Г®Г¤ГіГ«Гї ГўГўГ®Г¤Г -ГўГ»ГўГ®Г¤Г  IO (Г±ГҐГ°ГЁГї-Г­Г®Г¬ГҐГ°, Г­Г ГЇГ°ГЁГ¬ГҐГ°: 750-860).
+-- description - Г®ГЇГЁГ±Г Г­ГЁГҐ Г¬Г®Г¤ГіГ«Гї ГўГўГ®Г¤Г -ГўГ»ГўГ®Г¤Г  IO.
+-- adressSpacetype - ГІГЁГЇ Г Г¤Г°ГҐГ±Г­Г®ГЈГ® ГЇГ°Г®Г±ГІГ°Г Г­Г±ГІГўГ  Г¬Г®Г¤ГіГ«Гї ГўГўГ®Г¤Г -ГўГ»ГўГ®Г¤Г  IO.
+-- typeName - ГЁГ¬Гї ГІГЁГЇГ  (Г¤ГЁГ±ГЄГ°ГҐГІГ­Г»Г© ГўГ»ГµГ®Г¤, Г Г­Г Г«Г®ГЈГ®ГўГ»Г© ГўГ»ГµГ®Г¤, ...).
+-- groupName - ГЁГ¬Гї Г±ГҐГ°ГЁГЁ Г¬Г®Г¤ГіГ«Гї ГўГўГ®Г¤Г -ГўГ»ГўГ®Г¤Г  IO (Г­Г ГЇГ°ГЁГ¬ГҐГ° 750-800).
+-- channelClamps - ГЄГ«ГҐГ¬Г¬Г» ГЄГ Г­Г Г«Г®Гў ГўГўГ®Г¤Г -ГўГ»ГўГ®Г¤Г .
+-- channelAddressesIn - Г Г¤Г°ГҐГ±Г  ГЄГ Г­Г Г«Г®Гў ГўГўГ®Г¤Г .
+-- channelAddressesOut - Г Г¤Г°ГҐГ±Г  ГЄГ Г­Г Г«Г®Гў ГўГ»ГўГ®Г¤Г .
+-- DO_count - ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г¤ГЁГ±ГЄГ°ГҐГІГ­Г»Гµ ГўГ»ГµГ®Г¤Г®Гў.
+-- DI_count - ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г¤ГЁГ±ГЄГ°ГҐГІГ­Г»Гµ ГўГµГ®Г¤Г®Гў.
+-- AO_count - ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г Г­Г Г«Г®ГЈГ®ГўГ»Гµ ГўГ»ГµГ®Г¤Г®Гў.
+-- AI_count - ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г Г­Г Г«Г®ГЈГ®ГўГ»Гµ ГўГµГ®Г¤Г®Гў.
+-- Color - ГґГЁГ§ГЁГ·ГҐГ±ГЄГЁГ© Г¶ГўГҐГІ Г¬Г®Г¤ГіГ«Гї.
 
 -- adressSpacetype enumeration:
 -- NONE - 0
@@ -32,13 +32,13 @@
 -- AOAIDODI - 7
 
 local io_modules =
-{
+    {
     [ 1 ] = {
             n = 1504,
             name = '750-1504',
             description = '16-Channel Digital Output Module 24 V DC',
             addressSpaceType = 1,
-            typeName = 'Дискретный выход',
+            typeName = 'Г„ГЁГ±ГЄГ°ГҐГІГ­Г»Г© ГўГ»ГµГ®Г¤',
             groupName = '750-1500',
             channelClamps = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
                             16},
@@ -57,7 +57,7 @@ local io_modules =
             name = '750-1515',
             description = '8-Channel Digital Output Module 24 V DC',
             addressSpaceType = 1,
-            typeName = 'Дискретный выход',
+            typeName = 'Г„ГЁГ±ГЄГ°ГҐГІГ­Г»Г© ГўГ»ГµГ®Г¤',
             groupName = '750-1500',
             channelClamps = {1, 2, 3, 4, 5, 6, 7, 8},
             channelAddressesIn = { },
@@ -74,7 +74,7 @@ local io_modules =
             name = '750-504',
             description = '4-Channel Digital Output Module DC 24 V',
             addressSpaceType = 1,
-            typeName = 'Дискретный выход',
+            typeName = 'Г„ГЁГ±ГЄГ°ГҐГІГ­Г»Г© ГўГ»ГµГ®Г¤',
             groupName = '750-500',
             channelClamps = {1, 5, 4, 8},
             channelAddressesIn = { },
@@ -91,7 +91,7 @@ local io_modules =
             name = '750-512',
             description = '2-Channel Relay Output Module 230 V AC, 30 V DC',
             addressSpaceType = 1,
-            typeName = 'Дискретный выход',
+            typeName = 'Г„ГЁГ±ГЄГ°ГҐГІГ­Г»Г© ГўГ»ГµГ®Г¤',
             groupName = '750-500',
             channelClamps = {1, 5},
             channelAddressesIn = { },
@@ -108,7 +108,7 @@ local io_modules =
             name = '750-530',
             description = '8-Channel Digital Output Module DC 24 V',
             addressSpaceType = 1,
-            typeName = 'Дискретный выход',
+            typeName = 'Г„ГЁГ±ГЄГ°ГҐГІГ­Г»Г© ГўГ»ГµГ®Г¤',
             groupName = '750-500',
             channelClamps = {1, 5, 2, 6, 3, 7, 4, 8},
             channelAddressesIn = { },
@@ -125,7 +125,7 @@ local io_modules =
             name = '402',
             description = '4-Channel Digital Input Module 24 V DC',
             addressSpaceType = 2,
-            typeName = 'Дискретный вход',
+            typeName = 'Г„ГЁГ±ГЄГ°ГҐГІГ­Г»Г© ГўГµГ®Г¤',
             groupName = '750-400',
             channelClamps = {1, 5, 4, 8},
             channelAddressesIn = {-1, 0, -1, -1, 2, 3, -1, -1, 3},
@@ -142,7 +142,7 @@ local io_modules =
             name = '430',
             description = '8-Channel Digital Input Module 24 V DC',
             addressSpaceType = 2,
-            typeName = 'Дискретный вход',
+            typeName = 'Г„ГЁГ±ГЄГ°ГҐГІГ­Г»Г© ГўГµГ®Г¤',
             groupName = '750-400',
             channelClamps = {1, 5, 2, 6, 3, 7, 4, 8},
             channelAddressesIn = {-1, 0, 2, 5, 6, 1, 3, 5, 7},
@@ -159,7 +159,7 @@ local io_modules =
             name = '1405',
             description = '16-Channel Digital Input Module 24 V DC',
             addressSpaceType = 2,
-            typeName = 'Дискретный вход',
+            typeName = 'Г„ГЁГ±ГЄГ°ГҐГІГ­Г»Г© ГўГµГ®Г¤',
             groupName = '750-1400',
             channelClamps = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
                             16},
@@ -178,7 +178,7 @@ local io_modules =
             name = '1415',
             description = '8-Channel Digital Input Module 24 V DC',
             addressSpaceType = 2,
-            typeName = 'Дискретный вход',
+            typeName = 'Г„ГЁГ±ГЄГ°ГҐГІГ­Г»Г© ГўГµГ®Г¤',
             groupName = '750-1400',
             channelClamps = {1, 2, 3, 4, 5, 6, 7, 8},
             channelAddressesIn = {-1, 0, 1, 2, 3, 4, 5, 6, 7},
@@ -195,7 +195,7 @@ local io_modules =
             name = '1420',
             description = '4-Channel Digital Input Module 24 V DC',
             addressSpaceType = 2,
-            typeName = 'Дискретный вход',
+            typeName = 'Г„ГЁГ±ГЄГ°ГҐГІГ­Г»Г© ГўГµГ®Г¤',
             groupName = '750-1400',
             channelClamps = {1, 6, 9, 14},
             channelAddressesIn = {-1, 0, -1, -1, -1, -1, 1, -1, -1, 2, -1, -1,
@@ -213,7 +213,7 @@ local io_modules =
             name = '750-554',
             description = '2-Channel Analog Output Module 4-20mA',
             addressSpaceType = 3,
-            typeName = 'Аналоговый выход',
+            typeName = 'ГЂГ­Г Г«Г®ГЈГ®ГўГ»Г© ГўГ»ГµГ®Г¤',
             groupName = '750-500',
             channelClamps = {1, 5},
             channelAddressesIn = { },
@@ -230,7 +230,7 @@ local io_modules =
             name = '750-555',
             description = '4-Channel Analog Output Module 4-20mA',
             addressSpaceType = 3,
-            typeName = 'Аналоговый выход',
+            typeName = 'ГЂГ­Г Г«Г®ГЈГ®ГўГ»Г© ГўГ»ГµГ®Г¤',
             groupName = '750-500',
             channelClamps = {1, 5, 3, 7},
             channelAddressesIn = { },
@@ -247,7 +247,7 @@ local io_modules =
             name = '750-638',
             description = '2-Channel Up/Down Counter 24 V DC, 500 Hz',
             addressSpaceType = 4,
-            typeName = 'Аналоговый вход',
+            typeName = 'ГЂГ­Г Г«Г®ГЈГ®ГўГ»Г© ГўГµГ®Г¤',
             groupName = '750-600',
             channelClamps = {1, 5},
             channelAddressesIn = {-1, 0, -1, -1, -1, 1, -1, -1, -1},
@@ -264,7 +264,7 @@ local io_modules =
             name = '750-450',
             description = '4-Channel Analog Input Module for RTDs',
             addressSpaceType = 4,
-            typeName = 'Аналоговый вход',
+            typeName = 'ГЂГ­Г Г«Г®ГЈГ®ГўГ»Г© ГўГµГ®Г¤',
             groupName = '750-400',
             channelClamps = {1, 3, 5, 7},
             channelAddressesIn = {-1, 0, -1, 1, -1, 2, -1, 3, -1},
@@ -281,7 +281,7 @@ local io_modules =
             name = '750-461',
             description = '2-Channel Analog Input Module for RTDs',
             addressSpaceType = 4,
-            typeName = 'Аналоговый вход',
+            typeName = 'ГЂГ­Г Г«Г®ГЈГ®ГўГ»Г© ГўГµГ®Г¤',
             groupName = '750-400',
             channelClamps = {1, 5},
             channelAddressesIn = {-1, 0, -1, -1, -1, 1, -1, -1, -1},
@@ -298,7 +298,7 @@ local io_modules =
             name = '750-466',
             description = '2-Channel Analog Input Module for RTDs',
             addressSpaceType = 4,
-            typeName = 'Аналоговый вход',
+            typeName = 'ГЂГ­Г Г«Г®ГЈГ®ГўГ»Г© ГўГµГ®Г¤',
             groupName = '750-400',
             channelClamps = {1, 5},
             channelAddressesIn = {-1, 0, -1, -1, -1, 1, -1, -1, -1},
@@ -315,7 +315,7 @@ local io_modules =
             name = '750-496',
             description = '8-Channel Analog Input Module 4-20 mA',
             addressSpaceType = 4,
-            typeName = 'Аналоговый вход',
+            typeName = 'ГЂГ­Г Г«Г®ГЈГ®ГўГ»Г© ГўГµГ®Г¤',
             groupName = '750-400',
             channelClamps = {1, 2, 3, 4, 5, 6, 7, 8},
             channelAddressesIn = {-1, 0, 1, 2, 3, 4, 5, 6, 7, -1, -1, -1, -1,
@@ -333,7 +333,7 @@ local io_modules =
             name = '750-655',
             description = 'AS-Interface Master',
             addressSpaceType = 5,
-            typeName = 'AS-интерфейс мастер',
+            typeName = 'AS-ГЁГ­ГІГҐГ°ГґГҐГ©Г± Г¬Г Г±ГІГҐГ°',
             groupName = '750-600',
             channelClamps = {3},
             channelAddressesIn = {-1, -1, -1, 0, -1, -1, -1, -1, -1},
@@ -350,7 +350,7 @@ local io_modules =
             name = '750-657',
             description = 'IO-Link Master',
             addressSpaceType = 5,
-            typeName = 'AS-интерфейс мастер',
+            typeName = 'AS-ГЁГ­ГІГҐГ°ГґГҐГ©Г± Г¬Г Г±ГІГҐГ°',
             groupName = '750-600',
             channelClamps = {1, 6, 9, 14},
             channelAddressesIn = {-1, 0, -1, -1, -1, -1, 1, -1, -1, 2, -1,
@@ -369,7 +369,7 @@ local io_modules =
             name = '750-600',
             description = 'End Module',
             addressSpaceType = 0,
-            typeName = 'Терминатор',
+            typeName = 'Г’ГҐГ°Г¬ГЁГ­Г ГІГ®Г°',
             groupName = '750-600',
             channelClamps = { },
             channelAddressesIn = { },
@@ -386,7 +386,7 @@ local io_modules =
             name = '750-602',
             description = 'Supply Module DC 24 V / AC/DC 230 V',
             addressSpaceType = 0,
-            typeName = 'Питание',
+            typeName = 'ГЏГЁГІГ Г­ГЁГҐ',
             groupName = '750-600',
             channelClamps = { },
             channelAddressesIn = { },
@@ -403,7 +403,7 @@ local io_modules =
             name = '750-612',
             description = 'Supply Module 24 V DC / 230 V AC/DC',
             addressSpaceType = 0,
-            typeName = 'Питание',
+            typeName = 'ГЏГЁГІГ Г­ГЁГҐ',
             groupName = '750-600',
             channelClamps = { },
             channelAddressesIn = { },
@@ -420,7 +420,7 @@ local io_modules =
             name = '750-627',
             description = 'Internal Data Bus Extension End Module',
             addressSpaceType = 0,
-            typeName = 'Расширение шины',
+            typeName = 'ГђГ Г±ГёГЁГ°ГҐГ­ГЁГҐ ГёГЁГ­Г»',
             groupName = '750-600',
             channelClamps = { },
             channelAddressesIn = { },
@@ -437,7 +437,7 @@ local io_modules =
             name = '750-628',
             description = 'Internal Data Bus Extension Coupler Module',
             addressSpaceType = 0,
-            typeName = 'Расширение шины',
+            typeName = 'ГђГ Г±ГёГЁГ°ГҐГ­ГЁГҐ ГёГЁГ­Г»',
             groupName = '750-600',
             channelClamps = { },
             channelAddressesIn = { },
@@ -454,7 +454,7 @@ local io_modules =
             name = '750-491',
             description = '1-channel Resistance measuring bridge',
             addressSpaceType = 4,
-            typeName = 'Аналоговый вход',
+            typeName = 'ГЂГ­Г Г«Г®ГЈГ®ГўГ»Г© ГўГµГ®Г¤',
             groupName = '750-400',
             channelClamps = {1, 5},
             channelAddressesIn = {-1, 0, -1, -1, -1, 1, -1, -1, -1},
@@ -498,7 +498,7 @@ local io_modules =
             name = 'AXL F DI8/1 DO8/1 1H',
             description = '8-channel Digital I/O module 24V DC, 1-wire',
             addressSpaceType = 6,
-            typeName = 'Цифровой вход/выход',
+            typeName = 'Г–ГЁГґГ°Г®ГўГ®Г© ГўГµГ®Г¤/ГўГ»ГµГ®Г¤',
             groupName = 'AXL F',
             channelClamps = {00, 01, 02, 03, 10, 11, 12, 13, 20, 21, 22, 23,
                             30, 31, 32, 33},
@@ -520,7 +520,7 @@ local io_modules =
             name = 'AXL F DI8/3 DO8/3 2H',
             description = '8-channel Digital I/O Module 24V DC, 3-wire',
             addressSpaceType = 6,
-            typeName = 'Цифровой вход/выход',
+            typeName = 'Г–ГЁГґГ°Г®ГўГ®Г© ГўГµГ®Г¤/ГўГ»ГµГ®Г¤',
             groupName = 'AXL F',
             channelClamps = {00, 01, 02, 03, 20, 21, 22, 23, 40, 41, 42,
                             43, 60, 61, 62, 63},
@@ -548,7 +548,7 @@ local io_modules =
             name = 'AXL F AI4 I 1H',
             description = '4-channel Analog Input Module',
             addressSpaceType = 4,
-            typeName = 'Аналоговый вход',
+            typeName = 'ГЂГ­Г Г«Г®ГЈГ®ГўГ»Г© ГўГµГ®Г¤',
             groupName = 'AXL F',
             channelClamps = {00, 01, 02, 03},
             channelAddressesIn = {0, 1, 2, 3, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -567,7 +567,7 @@ local io_modules =
             name = 'AXL F AO4 1H',
             description = '4-channel Analog Output Module',
             addressSpaceType = 3,
-            typeName = 'Аналоговый выход',
+            typeName = 'ГЂГ­Г Г«Г®ГЈГ®ГўГ»Г© ГўГ»ГµГ®Г¤',
             groupName = 'AXL F',
             channelClamps = {10, 11, 12, 13},
             channelAddressesIn = { },
@@ -586,7 +586,7 @@ local io_modules =
             name = 'AXL F DO16/3 2F',
             description = '16-channel Digital Output Module',
             addressSpaceType = 1,
-            typeName = 'Цифровой выход',
+            typeName = 'Г–ГЁГґГ°Г®ГўГ®Г© ГўГ»ГµГ®Г¤',
             groupName = 'AXL F',
             channelClamps = { 00, 01, 02, 03, 04, 05, 06, 07, 40, 41, 42,
                             43, 44, 45, 46, 47},
@@ -609,7 +609,7 @@ local io_modules =
             name = 'AXL F RTD4 1H',
             description = '4-channel Analog Input Module for RTDs',
             addressSpaceType = 4,
-            typeName = 'Аналоговый вход',
+            typeName = 'ГЂГ­Г Г«Г®ГЈГ®ГўГ»Г© ГўГµГ®Г¤',
             groupName = 'AXL F',
             channelClamps = { 00, 01, 02, 03},
             channelAddressesIn = {0, 1, 2, 3, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -628,7 +628,7 @@ local io_modules =
             name = 'AXL F DI16/4 2F',
             description = '16-channel Digital Input Module 24V DC',
             addressSpaceType = 2,
-            typeName = 'Цифровой вход',
+            typeName = 'Г–ГЁГґГ°Г®ГўГ®Г© ГўГµГ®Г¤',
             groupName = 'AXL F',
             channelClamps = {00, 01, 02, 03, 04, 05, 06, 07, 40, 41, 42, 43, 
                             44, 45, 46, 47},
@@ -651,7 +651,7 @@ local io_modules =
             name = 'AXL F CNT2 INC2 1F',
             description = '2-Channel Up/Down Counter, 24V DC',
             addressSpaceType = 4,
-            typeName = 'Счетчик',
+            typeName = 'Г‘Г·ГҐГІГ·ГЁГЄ',
             groupName = 'AXL F',
             channelClamps = {00, 04},
             channelAddressesIn = {3, -1, -1, -1, 5, -1, -1, -1, -1, -1, -1,
@@ -670,7 +670,7 @@ local io_modules =
             name = 'AXL SE DI16/1',
             description = '16-Channel digital input',
             addressSpaceType = 2,
-            typeName = 'Дискретный вход',
+            typeName = 'Г„ГЁГ±ГЄГ°ГҐГІГ­Г»Г© ГўГµГ®Г¤',
             groupName = 'AXL SE',
             channelClamps = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
                             15},
@@ -689,7 +689,7 @@ local io_modules =
             name = 'AXL SE DO16/1',
             description = '16-Channel digital input',
             addressSpaceType = 1,
-            typeName = 'Дискретный выход',
+            typeName = 'Г„ГЁГ±ГЄГ°ГҐГІГ­Г»Г© ГўГ»ГµГ®Г¤',
             groupName = 'AXL SE',
             channelClamps = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
                             15},
@@ -708,7 +708,7 @@ local io_modules =
             name = 'AXL SE AI4 4-20',
             description = '4-Channel analog input',
             addressSpaceType = 4,
-            typeName = 'Аналоговый вход',
+            typeName = 'ГЂГ­Г Г«Г®ГЈГ®ГўГ»Г© ГўГµГ®Г¤',
             groupName = 'AXL SE',
             channelClamps = {0, 2, 4, 6},
             channelAddressesIn = {0, -1, 1, -1, 2, -1, 3, -1},
@@ -725,7 +725,7 @@ local io_modules =
             name = 'AXL SE AO4 4-20',
             description = '4-Channel analog output',
             addressSpaceType = 3,
-            typeName = 'Аналоговый выход',
+            typeName = 'ГЂГ­Г Г«Г®ГЈГ®ГўГ»Г© ГўГ»ГµГ®Г¤',
             groupName = 'AXL SE',
             channelClamps = {0, 2, 4, 6},
             channelAddressesIn = { },
@@ -742,7 +742,7 @@ local io_modules =
             name = 'AXL SE RTD4 PT100',
             description = '4-channel Analog Input Module for RTDs',
             addressSpaceType = 4,
-            typeName = 'Аналоговый вход',
+            typeName = 'ГЂГ­Г Г«Г®ГЈГ®ГўГ»Г© ГўГµГ®Г¤',
             groupName = 'AXL SE',
             channelClamps = {0, 4, 8, 12},
             channelAddressesIn = {0, -1, -1, -1, 1, -1, -1, -1, 2, -1, -1, -1,
@@ -758,9 +758,9 @@ local io_modules =
     [ 40 ] = {
             n = 1088132,
             name = 'AXL SE IOL4',
-            description = 'IO-Link мастер',
+            description = 'IO-Link Г¬Г Г±ГІГҐГ°',
             addressSpaceType = 7,
-            typeName = 'IO-Link мастер',
+            typeName = 'IO-Link Г¬Г Г±ГІГҐГ°',
             groupName = 'AXL SE',
             channelClamps = {0, 4, 8, 12},
             channelAddressesIn = {0, -1, -1, -1, 1, -1, -1, -1, 2, -1, -1, -1,
@@ -779,7 +779,7 @@ local io_modules =
             name = 'AXL SE CNT1',
             description = '1-Channel Up/Down Counter',
             addressSpaceType = 4,
-            typeName = 'Счетчик',
+            typeName = 'Г‘Г·ГҐГІГ·ГЁГЄ',
             groupName = 'AXL SE',
             channelClamps = {0},
             channelAddressesIn = {0, -1, -1, -1, -1, -1, -1, -1},
@@ -796,7 +796,7 @@ local io_modules =
             name = 'AXL SE SC-A',
             description = 'Stub Module',
             addressSpaceType = 0,
-            typeName = 'Заглушка',
+            typeName = 'Г‡Г ГЈГ«ГіГёГЄГ ',
             groupName = 'AXL SE',
             channelClamps = { },
             channelAddressesIn = { },
