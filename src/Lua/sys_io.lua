@@ -807,6 +807,6 @@ local io_modules =
             AI_count = 0,
             Color = 'Gray',
             },
-}
+    }
 
 return io_modules
