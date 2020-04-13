@@ -20,7 +20,8 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "pressure_node_PID";
             Equipment = DataBase.Imitation.PressureNodePIDEquipment();
-            AggregateProperties = DataBase.Imitation.EmptyAggregateProperties();
+            AggregateProperties = DataBase.Imitation
+                .PressureNodeAggregateProperties();
         }
 
         /// <summary>

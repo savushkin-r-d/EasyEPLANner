@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TechObject
 {
     /// <summary>
-    /// Базовая линия
+    /// Базовый узел расхода
     /// </summary>
     public class BaseFlowNodePID : BaseTechObject
     {
@@ -20,7 +20,8 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "flow_node_PID";
             Equipment = DataBase.Imitation.FlowNodePIDEquipment();
-            AggregateProperties = DataBase.Imitation.EmptyAggregateProperties();
+            AggregateProperties = DataBase.Imitation
+                .FlowNodeAggregateProperties();
         }
 
         /// <summary>
