@@ -151,8 +151,8 @@ namespace EasyEPlanner
                 arr2 = rangeCurrent.Value as string;
                 if (arr1 != arr2)
                 {
-                    //workSheet.Range[rangeStart.Row, rangeStart.Column, 
-                    //    rangeCurrent.Row, rangeCurrent.Column].Merge();
+                    workSheet.Range[rangeStart.Row, rangeStart.Column, 
+                        rangeCurrent.Row - 1, rangeCurrent.Column].Merge();
                     CellRange moduleNameRange = workSheet.Range[rangeStart.Row, 
                         rangeStart.Column + 1, rangeStart.Row, 
                         rangeStart.Column + 1];
@@ -166,9 +166,9 @@ namespace EasyEPlanner
 
                     if (Int32.TryParse(arr1, out _))
                     {
-                        //workSheet.Range[rangeStart.Row, rangeStart.Column - 1, 
-                        //    rangeCurrent.Row - 1, rangeCurrent.Column + 1]
-                        //    .Merge();
+                        workSheet.Range[rangeStart.Row, rangeStart.Column + 1, 
+                            rangeCurrent.Row - 1, rangeCurrent.Column + 1]
+                            .Merge();
                         workSheet.Range[rangeStart.Row, rangeStart.Column, 
                             rangeCurrent.Row - 1, rangeCurrent.Column + 3]
                             .BorderAround(LineStyleType.Thick);
