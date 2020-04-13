@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace EasyEPlanner
 {
@@ -416,9 +417,18 @@ namespace EasyEPlanner
             workSheet.InsertArray(res, 2, 1);
 
             // Форматирование по ширине содержимого.
-            workSheet.Range.EntireColumn.AutoFitColumns();
-            workSheet.Range.EntireColumn.IsWrapText = true;
+            foreach (var row in workSheet.Range.Rows)
+            {
+                var notNullCells = row.CellList.Where(x => x.Text != null);
+                var multilineCells = notNullCells.Where(x => x.Text.Contains("\n"));
+                if (multilineCells.Count() > 0)
+                {
+                    row.IsWrapText = true;
+                }
+            }
+            workSheet.Range.AutoFitColumns();
             workSheet.Range.AutoFitRows();
+
         }
 
         /// <summary>
