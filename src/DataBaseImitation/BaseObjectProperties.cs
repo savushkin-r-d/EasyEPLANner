@@ -34,6 +34,8 @@ namespace DataBase
                 "Операция после наполнения"),
                 new ShowedBaseProperty("CIP_WASH_REQUEST",
                 "Автоматическое включение мойки"),
+                new BoolShowedProperty("NEED_STORING_AFTER",
+                "Включить хранение после выдачи", "true"),
             };
         }
 
