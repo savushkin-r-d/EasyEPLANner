@@ -21,6 +21,8 @@ namespace EasyEPlanner
         public static int ExportTechDevs(string fileName, bool autoSave = false)
         {
             Workbook workBook = new Workbook();
+            workBook.Worksheets.Clear();
+
             try
             {
                 string prjName = fileName.Remove(fileName.IndexOf(".xlsx"));
@@ -97,7 +99,7 @@ namespace EasyEPlanner
                     File.Delete(fileName);
                 }
 
-                workBook.Protect("77777777");
+                //TODO: File readonly
                 workBook.SaveToFile(fileName);
             }
             else
@@ -125,8 +127,7 @@ namespace EasyEPlanner
             object[,] res = ExcelDataCollector.SaveIOAsConnectionArray(prjName,
                 modulesCount, modulesColor, asInterfaceConnection);
 
-            string endPos = "D" + (res.GetLength(0) + 0);
-            workSheet.Range[$"A1:{endPos}"].Value2 = res;
+            workSheet.InsertArray(res, 1, 1);
             int finalRows = res.GetLength(0) + 2;
 
             //Форматирование страницы
@@ -141,17 +142,20 @@ namespace EasyEPlanner
             string arr2 = rangeCurrent.Text as string;
             do
             {
-                int startColumn = rangeCurrent.MergeArea.Column;
-                int startRow = rangeCurrent.MergeArea.Row;
-                rangeCurrent.MergeArea.UpdateRange(startRow + 1, startColumn, 
+                int startColumn = rangeCurrent.Column;
+                int startRow = rangeCurrent.Row;
+                rangeCurrent.UpdateRange(startRow + 1, startColumn, 
                     startRow + 1, startColumn);
                 string arr1 = rangeStart.Text as string;
                 arr2 = rangeCurrent.Text as string;
                 if (arr1 != arr2)
                 {
-                    workSheet.Range[rangeStart.Row, rangeStart.Column, rangeCurrent.Row, rangeCurrent.Column].Merge(); //Offset[-1, 0]
+                    workSheet.Range[rangeStart.Row, rangeStart.Column, 
+                        rangeCurrent.Row, rangeCurrent.Column].Merge();
                     CellRange moduleNameRange = rangeStart;
-                    moduleNameRange.UpdateRange(rangeStart.Row, rangeStart.Column + 1, rangeStart.Row, rangeStart.Column + 1);//Offset[0, 1];
+                    moduleNameRange.UpdateRange(rangeStart.Row, 
+                        rangeStart.Column + 1, rangeStart.Row, 
+                        rangeStart.Column + 1);
                     string moduleName = moduleNameRange.Text as string;
 
                     if (modulesColor.ContainsKey(moduleName))
@@ -161,13 +165,17 @@ namespace EasyEPlanner
 
                     if (Int32.TryParse(arr1, out _))
                     {
-                        workSheet.Range[rangeStart.Row, rangeStart.Column - 1, rangeCurrent.Row - 1, rangeCurrent.Column + 1].Merge(); //Offset[0, 1], Offset[-1, 1]
-                        workSheet.Range[rangeStart.Row, rangeStart.Column, rangeCurrent.Row - 1, rangeCurrent.Column + 3]                //Offset[-1, 3]
+                        workSheet.Range[rangeStart.Row, rangeStart.Column - 1, 
+                            rangeCurrent.Row - 1, rangeCurrent.Column + 1]
+                            .Merge();
+                        workSheet.Range[rangeStart.Row, rangeStart.Column, 
+                            rangeCurrent.Row - 1, rangeCurrent.Column + 3]
                             .BorderAround(LineStyleType.Thick);
                     }
                     else
                     {
-                        workSheet.Range[rangeStart.Row, rangeStart.Column, rangeCurrent.Row - 1, rangeCurrent.Column + 3] //Offset[-1, 3]
+                        workSheet.Range[rangeStart.Row, rangeStart.Column, 
+                            rangeCurrent.Row - 1, rangeCurrent.Column + 3]
                             .Borders.LineStyle = LineStyleType.None;
                     }
                     rangeStart = rangeCurrent;
@@ -178,7 +186,6 @@ namespace EasyEPlanner
 
             // Форматирование по ширине содержимого.
             workSheet.Range.EntireColumn.AutoFitColumns();
-            workSheet.Range.EntireColumn.AutoFitRows();
             workSheet.Range.EntireColumn.IsWrapText = true;
 
             CellRange column = workSheet.Range[$"B2:B{finalRows}"];
@@ -243,8 +250,7 @@ namespace EasyEPlanner
 
                 }
                 totalEnd = totalStart + idx;
-                workSheet.Range[$"A{totalStart}:D{totalEnd}"].Value2 =
-                    ASInterface;
+                workSheet.InsertArray(ASInterface, totalStart, 1);
                 totalStart = totalEnd + 2;
             }
 
@@ -268,7 +274,7 @@ namespace EasyEPlanner
             totalEnd = totalStart + modulesCount.Count;
 
             rangeCurrent = workSheet.Range[$"A{totalStart}:B{totalEnd}"];
-            rangeCurrent.Value2 = modulesTotal;
+            workSheet.InsertArray(modulesTotal, totalStart, 1);
             rangeCurrent.Style.Rotation = 0;
             rangeCurrent.VerticalAlignment = VerticalAlignType.Center;
             rangeCurrent.HorizontalAlignment = HorizontalAlignType.Right;
@@ -279,14 +285,16 @@ namespace EasyEPlanner
             rangeCurrent = workSheet.Range[$"A{totalStart}:A{totalStart}"];
             rangeStart = rangeCurrent;
 
+            workSheet.Range.AutoFitRows();
+
             // Окрас ячеек
             i = totalStart;
             arr2 = rangeCurrent.Text as string;
             do
             {
-                int startColumn = rangeCurrent.MergeArea.Column;
-                int startRow = rangeCurrent.MergeArea.Row;
-                rangeCurrent.MergeArea.UpdateRange(startRow, startColumn, 
+                int startColumn = rangeCurrent.Column;
+                int startRow = rangeCurrent.Row;
+                rangeCurrent.UpdateRange(startRow, startColumn, 
                     startRow + 1, startColumn);
                 string arr1 = rangeStart.Text as string;
                 arr2 = rangeCurrent.Text as string;
@@ -321,7 +329,7 @@ namespace EasyEPlanner
             // Производим объединение
             excelCells.Merge();
             excelCells.Value = "Технологические объекты";
-            workSheet.Range["D1:L1"].Value2 = new string[] 
+            var header = new string[] 
             { 
                 "Вкл.устройства", 
                 "Выкл. устройства",
@@ -333,8 +341,8 @@ namespace EasyEPlanner
                 "Мойка (Устройства)", 
                 "Группы DI-->DO"
             };
+            workSheet.InsertArray(header, 1, 4, false);
             workSheet.Range["A1:L1"].EntireColumn.AutoFitColumns();
-            workSheet.Range["A1:L1"].EntireColumn.AutoFitRows();
 
             //Заполнение страницы данными
             TreeView tree = ExcelDataCollector
@@ -346,11 +354,11 @@ namespace EasyEPlanner
             workSheet.FreezePanes(2, 1);
             row = workSheet.Range.Rows.Length;
             workSheet.Range[$"A1:C{row}"].EntireColumn.AutoFitColumns();
-            workSheet.Range[$"A1:C{row}"].EntireColumn.AutoFitRows();
 
             // установка переноса текста в ячейке.
             workSheet.Range.IsWrapText = true;
             workSheet.PageSetup.IsSummaryColumnRight = true;
+            workSheet.PageSetup.IsSummaryRowBelow = false;
         }
 
         /// <summary>
@@ -362,20 +370,18 @@ namespace EasyEPlanner
             Worksheet workSheet = workBook.Worksheets.Add(sheetName);
 
             // Настройка имен столбцов.
-            workSheet.Range["A1:A1"].Value2 = new string[]
-            {
-                "Технологический объект"
-            };
+            workSheet.Range["A1:A1"].Text = "Технологический объект";
             CellRange excelCells = workSheet.Range["B1:C1"];
             excelCells.Merge();
             excelCells.Value = "Параметры";
-            workSheet.Range["D1:G1"].Value2 = new string[] 
+            var paramsHeader = new string[] 
             { 
                 "Значение", 
                 "Размерность", 
                 "Операция", 
                 "Lua имя"
             };
+            workSheet.InsertArray(paramsHeader, 1, 4, false);
             
             // Получить и записать данные
             TreeView tree = ExcelDataCollector.SaveParamsAsTree();
@@ -386,8 +392,8 @@ namespace EasyEPlanner
             workSheet.FreezePanes(2, 1);
             row = workSheet.Range.Rows.Length;
             workSheet.Range[$"A1:G{row}"].EntireColumn.AutoFitColumns();
-            workSheet.Range[$"A1:G{row}"].EntireColumn.AutoFitRows();
             workSheet.PageSetup.IsSummaryColumnRight = true;
+            workSheet.PageSetup.IsSummaryRowBelow = false;
         }
 
         /// <summary>
@@ -397,20 +403,22 @@ namespace EasyEPlanner
         {
             string sheetName = "Техустройства";
             Worksheet workSheet = workBook.Worksheets.Add(sheetName);
-            workSheet.Range["A1:D1"].Value2 = new string[] 
+            var deviceHeader = new string[] 
             { 
                 "Название", 
                 "Описание", 
                 "Тип", 
                 "Подтип" 
             };
+            workSheet.InsertArray(deviceHeader, 1, 1, false);
             object[,] res = ExcelDataCollector.SaveDevicesInformationAsArray();
             string endPos = "Q" + (res.GetLength(0) + 1);
-            workSheet.Range[$"A2:{endPos}"].Value2 = res;
+            workSheet.InsertArray(res, 2, 1);
 
             // Форматирование по ширине содержимого.
             workSheet.Range.EntireColumn.AutoFitColumns();
-            workSheet.Range.EntireColumn.AutoFitRows();
+            workSheet.Range.EntireColumn.IsWrapText = true;
+            workSheet.Range.AutoFitRows();
         }
 
         /// <summary>
@@ -422,8 +430,7 @@ namespace EasyEPlanner
             Worksheet workSheet = workBook.Worksheets.Add(sheetName);
             object[,] res = ExcelDataCollector.SaveDevicesSummaryAsArray();
             string endPos = "Q" + res.GetLength(0);
-            workSheet.Range[$"A1:{endPos}"].Value2 = res;
-            workSheet.Range.EntireColumn.AutoFitRows();
+            workSheet.InsertArray(res, 1, 1);
             workSheet.Range.EntireColumn.AutoFitColumns();
         }
 
@@ -438,7 +445,8 @@ namespace EasyEPlanner
             int row = 1;
             WriteTreeNode(ref workSheet, tree.Nodes, ref row);
             workSheet.Range.EntireColumn.AutoFitColumns();
-            workSheet.Range.EntireColumn.AutoFitRows();
+            workSheet.Range.EntireColumn.IsWrapText = true;
+            workSheet.PageSetup.IsSummaryRowBelow = false;
             workSheet.PageSetup.IsSummaryColumnRight = true;
         }
 
@@ -462,12 +470,11 @@ namespace EasyEPlanner
             int row = 1;
             WriteTreeNode(ref workSheet, tree.Nodes, ref row);
             workSheet.Range.EntireColumn.AutoFitColumns();
+            workSheet.PageSetup.IsSummaryRowBelow = false;
             workSheet.PageSetup.IsSummaryColumnRight = true;
             workSheet.Range[$"A1:A{row}"].ColumnWidth = widthColumnA;
             workSheet.Range[$"C1:C{row}"].ColumnWidth = widthColumnC;
             workSheet.Range[$"E1:E{row}"].ColumnWidth = widthColumnE;
-
-            workSheet.Range.CollapseGroup(GroupByType.ByRows);
         }
 
         /// <summary>
@@ -483,28 +490,22 @@ namespace EasyEPlanner
                 if (node.Tag is string[])
                 {
                     string[] values = node.Tag as string[];
-                    string firstCellAddress = ParseColNum(node.Level) + 
-                        row.ToString();
-                    string secondCellAddress = ParseColNum(
-                        node.Level + values.Length - 1) + row.ToString();
-                    workSheet.Range[$"{firstCellAddress}:{secondCellAddress}"]
-                        .Value2 = values;
+                    int firstColumn = node.Level + 1;
+                    workSheet.InsertArray(values, row, firstColumn, false);
                 }
                 else
                 {
-                    string[] srt = new string[] { node.Text };
-                    string cellAddress = ParseColNum(node.Level) + 
+                    var srt = node.Text.ToString();
+                    string cellAddr = ParseColNum(node.Level) + 
                         row.ToString();
-                    workSheet.Range[$"{cellAddress}:{cellAddress}"].Value2 = srt;
-
+                    workSheet.Range[$"{cellAddr}:{cellAddr}"].Value2 = srt;
                 }
                 row++;
-                
+
                 WriteTreeNode(ref workSheet, node.Nodes, ref row);
                 if (firstGroupRow != row)
                 {
-                    workSheet.Range[firstGroupRow, row - 1]
-                       .GroupByRows(isCollapsed);
+                    workSheet.GroupByRows(firstGroupRow, row - 1, isCollapsed);
                 }
             }
         }
