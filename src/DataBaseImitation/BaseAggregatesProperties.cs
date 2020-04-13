@@ -31,5 +31,31 @@ namespace DataBase
                 "Использовать узел охлаждения", "false")
             };
         }
+
+        /// <summary>
+        /// Свойства агрегата - узел расхода.
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] FlowNodeAggregateProperties()
+        {
+            return new BaseProperty[]
+            {
+                new BoolShowedProperty("NEED_FLOW_CONTROL",
+                "Использовать узел расхода", "false")
+            };
+        }
+
+        /// <summary>
+        /// Свойства агрегата - узел давления.
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] PressureNodeAggregateProperties()
+        {
+            return new BaseProperty[]
+            {
+                new BoolShowedProperty("NEED_PRESSURE_CONTROL",
+                "Использовать узел давления", "false")
+            };
+        }
     }
 }

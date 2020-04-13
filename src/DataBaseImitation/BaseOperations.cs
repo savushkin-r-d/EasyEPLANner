@@ -145,7 +145,7 @@ namespace DataBase
             };
         }
               
-        /// Получить операции базового объекта "Узел давления ПИД"
+        /// Получить операции базового объекта "Узел расхода ПИД"
         /// </summary>
         /// <returns></returns>
         public static BaseOperation[] FlowNodePIDOperations()
