@@ -182,7 +182,7 @@ namespace TechObject
                 {
                     oldNumbers = oldValue.Split(' ').Select(int.Parse).ToList();
                 }
-                if (newValue != null && oldValue != "")
+                if (newValue != null && newValue != "")
                 {
                     newNumbers = newValue.Split(' ').Select(int.Parse).ToList();
                 }
