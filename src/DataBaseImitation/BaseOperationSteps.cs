@@ -61,5 +61,50 @@ namespace DataBase
                 new NonShowedBaseProperty("DRAINAGE", "Дренаж", false)
             };
         }
+
+        /// <summary>
+        /// Шаги объектов "Бачок лёдводы", "Бачок лёдводы ПИД" для операции
+        /// охлаждения.
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] WaterTankSteps()
+        {
+            return new BaseProperty[]
+            {
+                new NonShowedBaseProperty("", "", false),
+                new NonShowedBaseProperty("WAITING_HI_LS", 
+                "Ожидание появления ВУ", false),
+                new NonShowedBaseProperty("WAITING_LOW_LS", 
+                "Ожидание пропадания НУ", false),
+            };
+        }
+
+        /// <summary>
+        /// Шаги для операции Подогрев.
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] HeatingSteps()
+        {
+            return new BaseProperty[]
+            {
+                new NonShowedBaseProperty("", "", false),
+                new NonShowedBaseProperty("WORKING", "Работа", false),
+                new NonShowedBaseProperty("WAITING ", "Ожидание", false),
+            };
+        }
+
+        /// <summary>
+        /// Шаги для операции Охлаждение.
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] CoolingSteps()
+        {
+            return new BaseProperty[]
+            {
+                new NonShowedBaseProperty("", "", false),
+                new NonShowedBaseProperty("WORKING", "Работа", false),
+                new NonShowedBaseProperty("WAITING ", "Ожидание", false),
+            };
+        }
     }
 }

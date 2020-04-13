@@ -297,24 +297,14 @@ namespace EasyEPlanner
         public override void OnStop()
         {
             base.OnStop();
-
-            if (!isFinish) //Перезапуск взаимодействия при необходимости.
-            {
-                DelegateWithParameters dlgtStart = //Создаем делегат.
-                    new DelegateWithParameters(
-                    EProjectManager.GetInstance().StartEditModesWithDelay);
-
-                dlgtStart.BeginInvoke(300, null, null);
-            }
         }
 
         public void Stop()
         {
-            isFinish = true;
+            IsFinish = true;
         }
 
-        private bool isFinish = false;
-
+        public bool IsFinish { get; set; } = false;
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -328,6 +318,9 @@ namespace EasyEPlanner
         Eplan.EplApi.ApplicationFramework.EventHandler onMainEnd = new
             Eplan.EplApi.ApplicationFramework.EventHandler();
         Eplan.EplApi.ApplicationFramework.EventHandler onMainStart = new
+            Eplan.EplApi.ApplicationFramework.EventHandler();
+
+        Eplan.EplApi.ApplicationFramework.EventHandler onNotifyPageChanged = new
             Eplan.EplApi.ApplicationFramework.EventHandler();
 
         public EplanEventListener()
@@ -345,6 +338,20 @@ namespace EasyEPlanner
             onMainStart.SetEvent("Eplan.EplApi.OnMainStart");
             onMainStart.EplanEvent +=
                 new EventHandlerFunction(OnMainStart);
+
+            onNotifyPageChanged.SetEvent("NotifyPageOpened");
+            onNotifyPageChanged.EplanEvent += 
+                new EventHandlerFunction(OnNotifyPageChanged);
+        }
+
+        private void OnNotifyPageChanged(IEventParameter eventParameter)
+        {
+            var interaction = EProjectManager.GetInstance()
+                .GetEditInteraction();
+            if (interaction != null && interaction.IsFinish == false)
+            {
+                EProjectManager.GetInstance().StartEditModesWithDelay();
+            }
         }
 
         private void OnUserPreCloseProject(IEventParameter iEventParameter)

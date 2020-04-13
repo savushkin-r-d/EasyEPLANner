@@ -18,9 +18,20 @@ namespace TechObject
             EplanName = "_tank";
             BaseOperations = DataBase.Imitation.WaterTankOperations();
             BaseProperties = DataBase.Imitation.WaterTankProperties();
-            BasicName = "cooler_tank";
+            BasicName = "ice_water_pump_tank";
             Equipment = DataBase.Imitation.WaterTankEquipment();
             AggregateProperties = DataBase.Imitation.EmptyAggregateProperties();
+        }
+
+        /// <summary>
+        /// Можно ли привязывать данный объект к другим объектам.
+        /// </summary>
+        public override bool IsAttachable
+        {
+            get
+            {
+                return true;
+            }
         }
 
         #region сохранение prg.lua

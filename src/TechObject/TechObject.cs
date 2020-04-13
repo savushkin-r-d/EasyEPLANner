@@ -176,8 +176,17 @@ namespace TechObject
             private List<int> FindDeletedAgregates(string oldValue, 
                 string newValue)
             {
-                var oldNumbers = oldValue.Split(' ').Select(int.Parse).ToList();
-                var newNumbers = newValue.Split(' ').Select(int.Parse).ToList();
+                var oldNumbers = new List<int>();
+                var newNumbers = new List<int>();
+                if (oldValue != null && oldValue != "")
+                {
+                    oldNumbers = oldValue.Split(' ').Select(int.Parse).ToList();
+                }
+                if (newValue != null && newValue != "")
+                {
+                    newNumbers = newValue.Split(' ').Select(int.Parse).ToList();
+                }
+
                 foreach(var newNum in newNumbers)
                 {
                     if (oldNumbers.Contains(newNum))

@@ -16,7 +16,7 @@ namespace TechObject
             S88Level = 2;
             Name = "Узел подогрева";
             EplanName = "heater_node";
-            BaseOperations = DataBase.Imitation.BaseEmptyOperations();
+            BaseOperations = DataBase.Imitation.HeaterNodeOperations();
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "heater_node";
             Equipment = DataBase.Imitation.EmptyEquipment();

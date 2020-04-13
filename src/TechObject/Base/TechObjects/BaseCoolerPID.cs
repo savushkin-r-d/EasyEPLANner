@@ -16,7 +16,7 @@ namespace TechObject
             S88Level = 2;
             Name = "Узел охлаждения ПИД";
             EplanName = "cooler_node_PID";
-            BaseOperations = DataBase.Imitation.CoolerNodePIDOperations();
+            BaseOperations = DataBase.Imitation.CoolerNodeOperations();
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "cooler_node_PID";
             Equipment = DataBase.Imitation.CoolerNodePIDEquipment();
