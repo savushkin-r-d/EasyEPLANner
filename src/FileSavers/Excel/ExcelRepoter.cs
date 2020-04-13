@@ -145,19 +145,19 @@ namespace EasyEPlanner
             {
                 int startColumn = rangeCurrent.Column;
                 int startRow = rangeCurrent.Row;
-                rangeCurrent.UpdateRange(startRow + 1, startColumn, 
-                    startRow + 1, startColumn);
-                string arr1 = rangeStart.Text as string;
-                arr2 = rangeCurrent.Text as string;
+                rangeCurrent = workSheet.Range[startRow + 1, startColumn, 
+                    startRow + 1, startColumn];
+                string arr1 = rangeStart.Value as string;
+                arr2 = rangeCurrent.Value as string;
                 if (arr1 != arr2)
                 {
-                    workSheet.Range[rangeStart.Row, rangeStart.Column, 
-                        rangeCurrent.Row, rangeCurrent.Column].Merge();
-                    CellRange moduleNameRange = rangeStart;
-                    moduleNameRange.UpdateRange(rangeStart.Row, 
+                    //workSheet.Range[rangeStart.Row, rangeStart.Column, 
+                    //    rangeCurrent.Row, rangeCurrent.Column].Merge();
+                    CellRange moduleNameRange = workSheet.Range[rangeStart.Row, 
                         rangeStart.Column + 1, rangeStart.Row, 
-                        rangeStart.Column + 1);
-                    string moduleName = moduleNameRange.Text as string;
+                        rangeStart.Column + 1];
+
+                    string moduleName = moduleNameRange.Value as string;
 
                     if (modulesColor.ContainsKey(moduleName))
                     {
@@ -166,9 +166,9 @@ namespace EasyEPlanner
 
                     if (Int32.TryParse(arr1, out _))
                     {
-                        workSheet.Range[rangeStart.Row, rangeStart.Column - 1, 
-                            rangeCurrent.Row - 1, rangeCurrent.Column + 1]
-                            .Merge();
+                        //workSheet.Range[rangeStart.Row, rangeStart.Column - 1, 
+                        //    rangeCurrent.Row - 1, rangeCurrent.Column + 1]
+                        //    .Merge();
                         workSheet.Range[rangeStart.Row, rangeStart.Column, 
                             rangeCurrent.Row - 1, rangeCurrent.Column + 3]
                             .BorderAround(LineStyleType.Thick);
@@ -295,14 +295,14 @@ namespace EasyEPlanner
             {
                 int startColumn = rangeCurrent.Column;
                 int startRow = rangeCurrent.Row;
-                rangeCurrent.UpdateRange(startRow, startColumn, 
-                    startRow + 1, startColumn);
-                string arr1 = rangeStart.Text as string;
-                arr2 = rangeCurrent.Text as string;
+                rangeCurrent = workSheet.Range[startRow + 1, startColumn, 
+                    startRow + 1, startColumn];
+                string arr1 = rangeStart.Value as string;
+                arr2 = rangeCurrent.Value as string;
                 if (arr1 != arr2)
                 {
                     CellRange moduleNameRange = rangeStart;
-                    string moduleName = moduleNameRange.Text as string;
+                    string moduleName = moduleNameRange.Value as string;
 
                     if (modulesColor.ContainsKey(moduleName))
                     {
