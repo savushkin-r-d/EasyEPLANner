@@ -122,7 +122,7 @@ local io_modules =
 
     [ 6 ] = {
             n = 402,
-            name = '402',
+            name = '750-402',
             description = '4-Channel Digital Input Module 24 V DC',
             addressSpaceType = 2,
             typeName = 'Äèñêðåòíûé âõîä',
@@ -139,7 +139,7 @@ local io_modules =
 
     [ 7 ] = {
             n = 430,
-            name = '430',
+            name = '750-430',
             description = '8-Channel Digital Input Module 24 V DC',
             addressSpaceType = 2,
             typeName = 'Äèñêðåòíûé âõîä',
@@ -156,7 +156,7 @@ local io_modules =
 
     [ 8 ] = {
             n = 1405,
-            name = '1405',
+            name = '750-1405',
             description = '16-Channel Digital Input Module 24 V DC',
             addressSpaceType = 2,
             typeName = 'Äèñêðåòíûé âõîä',
@@ -175,7 +175,7 @@ local io_modules =
 
     [ 9 ] = {
             n = 1415,
-            name = '1415',
+            name = '750-1415',
             description = '8-Channel Digital Input Module 24 V DC',
             addressSpaceType = 2,
             typeName = 'Äèñêðåòíûé âõîä',
@@ -192,7 +192,7 @@ local io_modules =
 
     [ 10 ] = {
             n = 1420,
-            name = '1420',
+            name = '750-1420',
             description = '4-Channel Digital Input Module 24 V DC',
             addressSpaceType = 2,
             typeName = 'Äèñêðåòíûé âõîä',
