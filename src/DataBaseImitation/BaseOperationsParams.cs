@@ -44,6 +44,21 @@ namespace DataBase
         }
 
         /// <summary>
+        /// Параметры операции "Выдача"
+        /// </summary>
+        /// <returns></returns>
+        private static List<BaseProperty> OutParams()
+        {
+            var parameters = new List<BaseProperty>
+            {
+                new BoolShowedProperty("NEED_STORING_AFTER", 
+                "Включить хранение после выдачи", "true"),
+            };
+
+            return parameters;
+        }
+
+        /// <summary>
         /// Получить параметры операции "Охлаждение"
         /// </summary>
         /// <returns></returns>

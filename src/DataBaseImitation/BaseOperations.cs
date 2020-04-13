@@ -83,7 +83,7 @@ namespace DataBase
                 EmptySteps()),
                 new BaseOperation("Хранение", "STORING", EmptyProperties(),
                 EmptySteps()),
-                new BaseOperation("Выдача", "OUT", EmptyProperties(),
+                new BaseOperation("Выдача", "OUT", OutParams(),
                 EmptySteps()),
             };
         }
