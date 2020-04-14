@@ -61,7 +61,8 @@ namespace TechObject
                 File.Exists(SpireXLSPath) == false ||
                 File.Exists(SpirePDFPath) == false)
             {
-                CopySpireXLSFiles(assemblyPath);
+                var files = new string[] { spireLicense, spireXLS, spirePDF };
+                CopySpireXLSFiles(assemblyPath, files);
             }
 
             string sysLuaPath = Path.Combine(systemFilesPath, "sys.lua");
@@ -110,20 +111,16 @@ namespace TechObject
         /// </summary>
         /// <param name="shadowAssemblySpireFilesDir">Путь к библиотекам
         /// в теневом хранилище Eplan</param>
-        private void CopySpireXLSFiles(string shadowAssemblySpireFilesDir)
+        /// <param name="files">Имена файлов</param>
+        private void CopySpireXLSFiles(string shadowAssemblySpireFilesDir,
+            string[] files)
         {
-            const string spireLicense = "Spire.License.dll";
-            const string spireXLS = "Spire.XLS.dll";
-            const string spirePDF = "Spire.Pdf.dll";
-
             string originalPath = Path.GetDirectoryName(EasyEPlanner
                 .AddInModule.OriginalAssemblyPath);
             var libsDir = new DirectoryInfo(originalPath);
             foreach(FileInfo file in libsDir.GetFiles())
             {
-                if (file.Name.Contains(spireLicense) ||
-                    file.Name.Contains(spireXLS) ||
-                    file.Name.Contains(spirePDF))
+                if (files.Contains(file.Name))
                 {
                     string path = Path.Combine(shadowAssemblySpireFilesDir, 
                         file.Name);
