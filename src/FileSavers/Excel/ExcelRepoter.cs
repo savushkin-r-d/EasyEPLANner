@@ -100,7 +100,7 @@ namespace EasyEPlanner
                     File.Delete(fileName);
                 }
 
-                //TODO: File readonly
+                workBook.SetWriteProtectionPassword("1");
                 workBook.SaveToFile(fileName);
             }
             else
@@ -495,7 +495,7 @@ namespace EasyEPlanner
             TreeView tree = ExcelDataCollector
                 .SaveObjectsWithoutActionsAsTree();
             int row = 1;
-            WriteTreeNode(ref workSheet, tree.Nodes, ref row);
+            WriteTreeNode(ref workSheet, tree.Nodes, ref row, true);
             workSheet.Range.EntireColumn.AutoFitColumns();
             workSheet.PageSetup.IsSummaryRowBelow = false;
             workSheet.PageSetup.IsSummaryColumnRight = true;
@@ -510,9 +510,8 @@ namespace EasyEPlanner
         /// Запись узла дерева в Excel таблицу
         /// </summary>
         private static void WriteTreeNode(ref Worksheet workSheet,
-            TreeNodeCollection Nodes, ref int row)
+            TreeNodeCollection Nodes, ref int row, bool collapse = false)
         {
-            bool isCollapsed = true;
             foreach (TreeNode node in Nodes)
             {
                 int firstGroupRow = row + 1;
@@ -531,10 +530,10 @@ namespace EasyEPlanner
                 }
                 row++;
 
-                WriteTreeNode(ref workSheet, node.Nodes, ref row);
+                WriteTreeNode(ref workSheet, node.Nodes, ref row, collapse);
                 if (firstGroupRow != row)
                 {
-                    workSheet.GroupByRows(firstGroupRow, row - 1, isCollapsed);
+                    workSheet.GroupByRows(firstGroupRow, row - 1, collapse);
                 }
             }
         }
