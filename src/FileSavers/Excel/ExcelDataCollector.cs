@@ -533,8 +533,8 @@ namespace EasyEPlanner
             {
                 res[idx, 3] = prjName;
                 idx++;
-                DateTime localDate = DateTime.Now;
-                res[idx, 3] = localDate.ToString(new CultureInfo("ru-RU"));
+                res[idx, 3] = 
+                    $"'{DateTime.Now.ToString(new CultureInfo("RU-ru"))}";
                 string nodeName = "Узел №" + (i + 1).ToString() + " Адрес: " + 
                     ioManager.IONodes[i].IP;
                 res[idx, 0] = nodeName;
@@ -552,6 +552,9 @@ namespace EasyEPlanner
                 ioManager.IONodes[i].SaveAsConnectionArray(ref res, ref idx, 
                     modulesCount, modulesColor, i + 1, asInterfaceConnection);
             }
+
+            //TODO: creating true array
+
             return res;
         }
 

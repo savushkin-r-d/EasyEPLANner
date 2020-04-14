@@ -251,6 +251,12 @@ namespace EasyEPlanner
                 }
                 totalEnd = totalStart + idx;
                 workSheet.InsertArray(ASInterface, totalStart, 1);
+
+                column = workSheet.Range[$"A{totalStart}:A{totalEnd}"];
+                column.HorizontalAlignment = HorizontalAlignType.Center;
+                column = workSheet.Range[$"C{totalStart}:C{totalEnd}"];
+                column.HorizontalAlignment = HorizontalAlignType.Center;
+
                 totalStart = totalEnd + 2;
             }
 
