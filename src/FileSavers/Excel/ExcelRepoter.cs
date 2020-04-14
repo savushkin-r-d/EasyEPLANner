@@ -118,9 +118,6 @@ namespace EasyEPlanner
             string sheetName = "Модули ввода-вывода";
             Worksheet workSheet = workBook.Worksheets.Add(sheetName);
 
-            workSheet.Range.Style.VerticalAlignment = VerticalAlignType
-                .Center;
-
             var modulesCount = new Dictionary<string, int>();
             var modulesColor = new Dictionary<string, System.Drawing.Color>();
             var asInterfaceConnection = new Dictionary<string, object[,]>();
@@ -134,6 +131,8 @@ namespace EasyEPlanner
             //Форматирование страницы
             workSheet.Range.BorderInside(LineStyleType.Thin);
             workSheet.Range.BorderAround(LineStyleType.Medium);
+            workSheet.Range.Style.VerticalAlignment = VerticalAlignType
+                .Center;
             workSheet.Range.IsWrapText = false;
 
             CellRange rangeCurrent = workSheet.Range["A1:A1"];
