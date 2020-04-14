@@ -49,6 +49,24 @@ namespace DataBase
         }
 
         /// <summary>
+        /// Шаги объектов "Линия", "Линия выдачи", "Линия приемки" для операции
+        /// "Работа"
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] LineWorkSteps()
+        {
+            return new BaseProperty[]
+            {
+                new NonShowedBaseProperty("", "", false),
+                new NonShowedBaseProperty("WAITING", "Ожидание", false),
+                new NonShowedBaseProperty("OUT_WATER", "Проталкивание", false),
+                new NonShowedBaseProperty("OUT_TANK", "Из источника", false),
+                new NonShowedBaseProperty("IN_TANK", "В приемник", false),
+                new NonShowedBaseProperty("IN_DRAINAGE", "В дренаж", false),
+            };
+        }
+
+        /// <summary>
         /// Шаги объектов "Танк", "Линия приемки", "Линия", "Линия выдачи" для
         /// операции мойка.
         /// </summary>

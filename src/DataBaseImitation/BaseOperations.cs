@@ -32,7 +32,9 @@ namespace DataBase
                 new BaseOperation("Наполнение", "FILL", EmptyProperties(), 
                 LineFillSteps()),
                 new BaseOperation("Выдача", "OUT", EmptyProperties(), 
-                LineOutSteps())
+                LineOutSteps()),
+                new BaseOperation("Работа", "WORK", EmptyProperties(),
+                LineWorkSteps()),
             };
         }
 
@@ -48,7 +50,9 @@ namespace DataBase
                 new BaseOperation("Мойка", "WASHING_CIP", WashParams(),
                 WashSteps()),
                 new BaseOperation("Наполнение", "FILL", EmptyProperties(),
-                LineFillSteps())
+                LineFillSteps()),
+                new BaseOperation("Работа", "WORK", EmptyProperties(),
+                LineWorkSteps()),
            };
         }
 
@@ -64,7 +68,9 @@ namespace DataBase
                 new BaseOperation("Мойка", "WASHING_CIP", WashParams(),
                 WashSteps()),
                 new BaseOperation("Выдача", "OUT", EmptyProperties(),
-                LineOutSteps())
+                LineOutSteps()),
+                new BaseOperation("Работа", "WORK", EmptyProperties(),
+                LineWorkSteps()),
             };
         }
 
