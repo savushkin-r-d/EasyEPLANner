@@ -553,9 +553,45 @@ namespace EasyEPlanner
                     modulesCount, modulesColor, i + 1, asInterfaceConnection);
             }
 
-            //TODO: creating true array
+            res = DeleteNullableObjects(res); 
 
             return res;
+        }
+
+        /// <summary>
+        /// Удалить пустые объекты в конце массива
+        /// </summary>
+        /// <param name="res">Массив</param>
+        /// <returns></returns>
+        private static object[,] DeleteNullableObjects(object[,] res)
+        {
+            int firstDimensionLength = res.GetLength(0);
+            int secondDimensionLength = res.GetLength(1);
+            int countOfFilledElements = 0;
+            for(int i = firstDimensionLength - 1; i >= 0; i--)
+            {
+                for(int j = 0; j < secondDimensionLength; j++)
+                {
+                    if (res[i,j] != null)
+                    {
+                        countOfFilledElements++;
+                        break;
+                    }
+                }
+            }
+
+            var newResult = new object[countOfFilledElements, 
+                secondDimensionLength];
+            for(int i = 0; i < newResult.GetLength(0); i++)
+            {
+                for(int j = 0; j < newResult.GetLength(1); j++)
+                {
+                    newResult[i, j] = res[i, j];
+                }
+            }
+
+            return newResult;
+
         }
 
         /// <summary>

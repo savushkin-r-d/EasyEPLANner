@@ -133,6 +133,8 @@ namespace EasyEPlanner
             workSheet.Range.BorderAround(LineStyleType.Medium);
             workSheet.Range.Style.VerticalAlignment = VerticalAlignType
                 .Center;
+            workSheet.Range.Style.Font.FontName = "Calibri";
+            workSheet.Range.Style.Font.Size = 11;
             workSheet.Range.IsWrapText = false;
 
             CellRange rangeCurrent = workSheet.Range["A1:A1"];
@@ -330,8 +332,10 @@ namespace EasyEPlanner
         {
             string sheetName = "Операции и устройства";
             Worksheet workSheet = workBook.Worksheets.Add(sheetName);
-            CellRange excelCells = workSheet.Range["A1:C1"];
+            workSheet.Range.Style.Font.FontName = "Calibri";
+            workSheet.Range.Style.Font.Size = 11;
             
+            CellRange excelCells = workSheet.Range["A1:C1"];            
             // Производим объединение
             excelCells.Merge();
             excelCells.Value = "Технологические объекты";
@@ -374,6 +378,8 @@ namespace EasyEPlanner
         {
             string sheetName = "Параметры объектов";
             Worksheet workSheet = workBook.Worksheets.Add(sheetName);
+            workSheet.Range.Style.Font.FontName = "Calibri";
+            workSheet.Range.Style.Font.Size = 11;
 
             // Настройка имен столбцов.
             workSheet.Range["A1:A1"].Text = "Технологический объект";
@@ -409,6 +415,8 @@ namespace EasyEPlanner
         {
             string sheetName = "Техустройства";
             Worksheet workSheet = workBook.Worksheets.Add(sheetName);
+            workSheet.Range.Style.Font.FontName = "Calibri";
+            workSheet.Range.Style.Font.Size = 11;
             var deviceHeader = new string[] 
             { 
                 "Название", 
@@ -447,6 +455,8 @@ namespace EasyEPlanner
             string endPos = "Q" + res.GetLength(0);
             workSheet.InsertArray(res, 1, 1);
             workSheet.Range.EntireColumn.AutoFitColumns();
+            workSheet.Range.Style.Font.FontName = "Calibri";
+            workSheet.Range.Style.Font.Size = 11;
         }
 
         /// <summary>
@@ -463,6 +473,8 @@ namespace EasyEPlanner
             workSheet.Range.EntireColumn.IsWrapText = true;
             workSheet.PageSetup.IsSummaryRowBelow = false;
             workSheet.PageSetup.IsSummaryColumnRight = true;
+            workSheet.Range.Style.Font.FontName = "Calibri";
+            workSheet.Range.Style.Font.Size = 11;
         }
 
         /// <summary>
@@ -490,6 +502,8 @@ namespace EasyEPlanner
             workSheet.Range[$"A1:A{row}"].ColumnWidth = widthColumnA;
             workSheet.Range[$"C1:C{row}"].ColumnWidth = widthColumnC;
             workSheet.Range[$"E1:E{row}"].ColumnWidth = widthColumnE;
+            workSheet.Range.Style.Font.FontName = "Calibri";
+            workSheet.Range.Style.Font.Size = 11;
         }
 
         /// <summary>
