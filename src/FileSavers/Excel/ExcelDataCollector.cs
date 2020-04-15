@@ -533,8 +533,8 @@ namespace EasyEPlanner
             {
                 res[idx, 3] = prjName;
                 idx++;
-                DateTime localDate = DateTime.Now;
-                res[idx, 3] = localDate.ToString(new CultureInfo("ru-RU"));
+                res[idx, 3] = 
+                    $"'{DateTime.Now.ToString(new CultureInfo("RU-ru"))}";
                 string nodeName = "Узел №" + (i + 1).ToString() + " Адрес: " + 
                     ioManager.IONodes[i].IP;
                 res[idx, 0] = nodeName;
@@ -552,7 +552,46 @@ namespace EasyEPlanner
                 ioManager.IONodes[i].SaveAsConnectionArray(ref res, ref idx, 
                     modulesCount, modulesColor, i + 1, asInterfaceConnection);
             }
+
+            res = DeleteNullObjects(res); 
+
             return res;
+        }
+
+        /// <summary>
+        /// Удалить пустые объекты в конце массива
+        /// </summary>
+        /// <param name="res">Массив</param>
+        /// <returns></returns>
+        private static object[,] DeleteNullObjects(object[,] res)
+        {
+            int firstDimensionLength = res.GetLength(0);
+            int secondDimensionLength = res.GetLength(1);
+            int countOfFilledElements = 0;
+            for(int i = firstDimensionLength - 1; i >= 0; i--)
+            {
+                for(int j = 0; j < secondDimensionLength; j++)
+                {
+                    if (res[i,j] != null)
+                    {
+                        countOfFilledElements++;
+                        break;
+                    }
+                }
+            }
+
+            var newResult = new object[countOfFilledElements, 
+                secondDimensionLength];
+            for(int i = 0; i < newResult.GetLength(0); i++)
+            {
+                for(int j = 0; j < newResult.GetLength(1); j++)
+                {
+                    newResult[i, j] = res[i, j];
+                }
+            }
+
+            return newResult;
+
         }
 
         /// <summary>
