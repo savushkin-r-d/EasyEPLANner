@@ -20,8 +20,8 @@ namespace Device
             {
                 if (dev != null)
                 {
-                    List<string> propertiesList =
-                        IODevice.GetDeviceProperties(dev.DeviceType, dev.DeviceSubType);
+                    List<string> propertiesList = dev
+                        .GetDeviceProperties(dev.DeviceType, dev.DeviceSubType);
                     if (propertiesList != null)
                     {
                         foreach (string strProp in propertiesList)
