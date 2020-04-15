@@ -70,8 +70,7 @@ namespace EasyEPlanner
 
                 if (browseDialog == DialogResult.OK)
                 {
-                    path = browseFolderDialog.SelectedPath + "\\" +
-                        projectName + chBaseFormat;
+                    path = browseFolderDialog.SelectedPath;
                 }
             }
 
@@ -143,7 +142,7 @@ namespace EasyEPlanner
             {
                 if (newChBaseBut.Checked == true)
                 {
-                    string filePath = path;
+                    string filePath = path + "\\" + projectName + chBaseFormat;
                     bool rewrite = true;
                     ProjectManager.GetInstance().SaveAsCDBX(filePath, 
                         combineTag, useNewNames, rewrite);
