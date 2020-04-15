@@ -70,8 +70,7 @@ namespace EasyEPlanner
 
                 if (browseDialog == DialogResult.OK)
                 {
-                    path = browseFolderDialog.SelectedPath + "\\" +
-                        projectName + chBaseFormat;
+                    path = browseFolderDialog.SelectedPath;
                 }
             }
 
