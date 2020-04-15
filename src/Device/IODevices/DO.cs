@@ -1,4 +1,6 @@
-﻿namespace Device
+﻿using System.Collections.Generic;
+
+namespace Device
 {
     /// <summary>
     /// Технологическое устройство - дискретный выход.
@@ -56,6 +58,21 @@
                     break;
             }
             return "";
+        }
+
+        public override List<string> GetDeviceProperties(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.DO:
+                    return new List<string>(new string[]
+                    {
+                        "ST",
+                        "M"
+                    });
+            }
+            return null;
         }
     }
 }

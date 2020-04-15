@@ -1,4 +1,6 @@
-﻿namespace Device
+﻿using System.Collections.Generic;
+
+namespace Device
 {
     /// <summary>
     /// Технологическое устройство - датчик текущего уровня.
@@ -127,6 +129,86 @@
                     break;
             }
             return "";
+        }
+
+        public override List<string> GetDeviceProperties(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.LT:
+                    switch (dst)
+                    {
+                        case DeviceSubType.LT:
+                            return new List<string>(new string[]
+                            {
+                                "M",
+                                "P_CZ",
+                                "V",
+                                "P_ERR"
+                            });
+
+                        case DeviceSubType.LT_IOLINK:
+                            return new List<string>(new string[]
+                            {
+                                "M",
+                                "P_CZ",
+                                "V",
+                                "P_H_CONE",
+                                "P_MAX_P",
+                                "P_R",
+                                "CLEVEL",
+                                "P_ERR"
+                            });
+
+                        case DeviceSubType.LT_CYL:
+                            return new List<string>(new string[]
+                            {
+                                "M",
+                                "P_CZ",
+                                "V",
+                                "P_MAX_P",
+                                "P_R",
+                                "CLEVEL",
+                                "P_ERR"
+                            });
+
+                        case DeviceSubType.LT_CONE:
+                            return new List<string>(new string[]
+                            {
+                                "M",
+                                "P_CZ",
+                                "V",
+                                "P_MAX_P",
+                                "P_R",
+                                "P_H_CONE",
+                                "CLEVEL",
+                                "P_ERR"
+                            });
+
+                        case DeviceSubType.LT_TRUNC:
+                            return new List<string>(new string[]
+                            {
+                                "M",
+                                "P_CZ",
+                                "V",
+                                "P_MAX_P",
+                                "P_R",
+                                "P_H_TRUNC",
+                                "CLEVEL",
+                                "P_ERR"
+                            });
+
+                        case DeviceSubType.LT_VIRT:
+                            return new List<string>(new string[]
+                            {
+                                "M",
+                                "V",
+                            });
+                    }
+                    break;
+            }
+            return null;
         }
     }
 }

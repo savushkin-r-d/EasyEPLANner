@@ -1,4 +1,6 @@
-﻿namespace Device
+﻿using System.Collections.Generic;
+
+namespace Device
 {
     /// <summary>
     /// Технологическое устройство - предельный уровень.
@@ -126,6 +128,39 @@
                     break;
             }
             return "";
+        }
+
+        public override List<string> GetDeviceProperties(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.LS:
+                    switch (dst)
+                    {
+                        case DeviceSubType.LS_MIN:
+                        case DeviceSubType.LS_MAX:
+                        case DeviceSubType.LS_VIRT:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "P_DT"
+                            });
+
+                        case DeviceSubType.LS_IOLINK_MIN:
+                        case DeviceSubType.LS_IOLINK_MAX:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "P_DT",
+                                "V"
+                            });
+                    }
+                    break;
+            }
+            return null;
         }
     }
 }

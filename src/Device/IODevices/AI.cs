@@ -1,4 +1,6 @@
-﻿namespace Device
+﻿using System.Collections.Generic;
+
+namespace Device
 {
     /// <summary>
     /// Технологическое устройство - аналоговый вход.
@@ -77,6 +79,30 @@
                     break;
             }
             return "";
+        }
+
+        public override List<string> GetDeviceProperties(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.AI:
+                    switch (dst)
+                    {
+                        case DeviceSubType.AI:
+                        case DeviceSubType.AI_VIRT:
+                            return new List<string>(new string[]
+                            {
+                                "M",
+                                "ST",
+                                "P_MIN_V",
+                                "P_MAX_V",
+                                "V"
+                            });
+                    }
+                    break;
+            }
+            return null;
         }
     }
 }

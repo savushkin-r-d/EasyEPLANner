@@ -1,4 +1,6 @@
-﻿namespace Device
+﻿using System.Collections.Generic;
+
+namespace Device
 {
     /// <summary>
     /// Технологическое устройство - мотор.
@@ -132,6 +134,56 @@
                     break;
             }
             return "";
+        }
+
+        public override List<string> GetDeviceProperties(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.M:
+                    switch (dst)
+                    {
+                        case DeviceSubType.M:
+                        case DeviceSubType.M_FREQ:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "P_ON_TIME",
+                                "V"
+                            });
+
+                        case DeviceSubType.M_REV:
+                        case DeviceSubType.M_REV_FREQ:
+                        case DeviceSubType.M_REV_2:
+                        case DeviceSubType.M_REV_FREQ_2:
+                        case DeviceSubType.M_REV_2_ERROR:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "P_ON_TIME",
+                                "V",
+                                "R"
+                            });
+
+                        case DeviceSubType.M_ATV:
+                            return new List<string>(new string[]
+                            {
+                                "M",
+                                "ST",
+                                "R",
+                                "FRQ",
+                                "RPM",
+                                "EST",
+                                "V",
+                                "P_ON_TIME"
+                            });
+                    }
+                    break;
+            }
+            return null;
         }
     }
 }

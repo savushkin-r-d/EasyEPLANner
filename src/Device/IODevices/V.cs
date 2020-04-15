@@ -1,4 +1,5 @@
 ﻿using IO;
+using System.Collections.Generic;
 
 namespace Device
 {
@@ -281,6 +282,74 @@ namespace Device
                     break;
             }
             return "";
+        }
+
+        public override List<string> GetDeviceProperties(DeviceType dt, 
+            DeviceSubType dst)
+        {
+            switch(dt)
+            {
+                case DeviceType.V:
+                    switch (dst)
+                    {
+                        case DeviceSubType.V_DO1:
+                        case DeviceSubType.V_DO2:
+                        case DeviceSubType.V_IOLINK_VTUG_DO1:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M"
+                            });
+
+                        case DeviceSubType.V_DO1_DI1_FB_ON:
+                        case DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON:
+                        case DeviceSubType.V_DO1_DI1_FB_OFF:
+                        case DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "P_ON_TIME",
+                                "P_FB",
+                                "FB_OFF_ST"
+                            });
+
+                        case DeviceSubType.V_DO1_DI2:
+                        case DeviceSubType.V_DO2_DI2:
+                        case DeviceSubType.V_DO2_DI2_BISTABLE:
+                        case DeviceSubType.V_MIXPROOF:
+                        case DeviceSubType.V_AS_MIXPROOF:
+                        case DeviceSubType.V_AS_DO1_DI2:
+                        case DeviceSubType.V_BOTTOM_MIXPROOF:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "P_ON_TIME",
+                                "P_FB",
+                                "FB_OFF_ST",
+                                "FB_ON_ST"
+                            });
+
+                        case DeviceSubType.V_IOLINK_MIXPROOF:
+                        case DeviceSubType.V_IOLINK_DO1_DI2:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "P_ON_TIME",
+                                "P_FB",
+                                "V",
+                                "BLINK",
+                                "CS",
+                                "ERR",
+                                "FB_OFF_ST",
+                                "FB_ON_ST"
+                            });
+                    }
+                    break;
+            }
+            return null;
         }
     }
 }

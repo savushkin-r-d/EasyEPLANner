@@ -1,4 +1,6 @@
-﻿namespace Device
+﻿using System.Collections.Generic;
+
+namespace Device
 {
     /// <summary>
     /// Технологическое устройство - датчик проводимости.
@@ -116,6 +118,52 @@
                     break;
             }
             return "";
+        }
+
+        public override List<string> GetDeviceProperties(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.QT:
+                    switch (dst)
+                    {
+                        case DeviceSubType.QT:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "V",
+                                "P_MIN_V",
+                                "P_MAX_V",
+                                "P_CZ"
+                            });
+
+                        case DeviceSubType.QT_OK:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "V",
+                                "OK",
+                                "P_MIN_V",
+                                "P_MAX_V",
+                                "P_CZ"
+                            });
+
+                        case DeviceSubType.QT_IOLINK:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "V",
+                                "P_CZ",
+                                "T",
+                            });
+                    }
+                    break;
+            }
+            return null;
         }
     }
 }

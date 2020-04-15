@@ -1,4 +1,6 @@
-﻿namespace Device
+﻿using System.Collections.Generic;
+
+namespace Device
 {
     /// <summary>
     /// Технологическое устройство - датчик температуры.
@@ -77,6 +79,29 @@
                     break;
             }
             return "";
+        }
+
+        public override List<string> GetDeviceProperties(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.TE:
+                    switch (dst)
+                    {
+                        case DeviceSubType.TE:
+                        case DeviceSubType.TE_IOLINK:
+                            return new List<string>(new string[]
+                            {
+                                "M",
+                                "P_CZ",
+                                "V",
+                                "ST"
+                            });
+                    }
+                    break;
+            }
+            return null;
         }
     }
 }

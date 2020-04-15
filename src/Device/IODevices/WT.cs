@@ -1,4 +1,6 @@
-﻿namespace Device
+﻿using System.Collections.Generic;
+
+namespace Device
 {
     /// <summary>
     /// Технологическое устройство - тензодатчик(датчик веса).
@@ -48,6 +50,26 @@
                     return dt.ToString();
             }
             return "";
+        }
+
+        public override List<string> GetDeviceProperties(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.WT:
+                    return new List<string>(new string[]
+                    {
+                        "ST",
+                        "M",
+                        "V",
+                        "P_NOMINAL_W",
+                        "P_DT",
+                        "P_RKP",
+                        "P_CZ"
+                    });
+            }
+            return null;
         }
     }
 }

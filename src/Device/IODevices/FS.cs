@@ -1,4 +1,6 @@
-﻿namespace Device
+﻿using System.Collections.Generic;
+
+namespace Device
 {
     /// <summary>
     /// Технологическое устройство - датчик наличия потока.
@@ -41,6 +43,22 @@
                     return dt.ToString();
             }
             return "";
+        }
+
+        public override List<string> GetDeviceProperties(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.FS:
+                    return new List<string>(new string[]
+                    {
+                        "ST",
+                        "M",
+                        "P_DT"
+                    });
+            }
+            return null;
         }
     }
 }

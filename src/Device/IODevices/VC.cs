@@ -1,4 +1,6 @@
-﻿namespace Device
+﻿using System.Collections.Generic;
+
+namespace Device
 {
     /// <summary>
     /// Технологическое устройство - управляемый клапан.
@@ -25,6 +27,22 @@
                     return dt.ToString();
             }
             return "";
+        }
+
+        public override List<string> GetDeviceProperties(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.VC:
+                    return new List<string>(new string[]
+                    {
+                        "ST",
+                        "M",
+                        "V"
+                    });
+            }
+            return null;
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Device
+﻿using System.Collections.Generic;
+
+namespace Device
 {
     /// <summary>
     /// Технологическое устройство - счетчик.
@@ -121,6 +123,71 @@
                     break;
             }
             return "";
+        }
+
+        public override List<string> GetDeviceProperties(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.FQT:
+                    switch (dst)
+                    {
+                        case DeviceSubType.FQT:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "V",
+                                "ABS_V"
+                            });
+
+                        case DeviceSubType.FQT_F:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "V",
+                                "P_MIN_FLOW",
+                                "P_MAX_FLOW",
+                                "P_CZ",
+                                "F",
+                                "P_DT",
+                                "ABS_V"
+                            });
+
+                        case DeviceSubType.FQT_F_OK:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "V",
+                                "P_MIN_FLOW",
+                                "P_MAX_FLOW",
+                                "P_CZ",
+                                "F",
+                                "P_DT",
+                                "ABS_V",
+                                "OK"
+                            });
+
+                        case DeviceSubType.FQT_VIRT:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "V",
+                                "P_MIN_FLOW",
+                                "P_MAX_FLOW",
+                                "P_CZ",
+                                "F",
+                                "P_DT",
+                                "ABS_V",
+                            });
+                    }
+                    break;
+            }
+            return null;
         }
     }
 }

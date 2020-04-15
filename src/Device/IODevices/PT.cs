@@ -1,4 +1,6 @@
-﻿namespace Device
+﻿using System.Collections.Generic;
+
+namespace Device
 {
     /// <summary>
     /// Технологическое устройство - датчик давления.
@@ -98,6 +100,46 @@
                     break;
             }
             return "";
+        }
+
+        public override List<string> GetDeviceProperties(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.PT:
+                    switch (dst)
+                    {
+                        case DeviceSubType.PT:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "V",
+                                "P_MIN_V",
+                                "P_MAX_V",
+                                "P_CZ"
+                            });
+
+                        case DeviceSubType.PT_IOLINK:
+                            return new List<string>(new string[]
+                            {
+                                "M",
+                                "V",
+                                "P_MIN_V",
+                                "P_MAX_V",
+                            });
+
+                        case DeviceSubType.DEV_SPAE:
+                            return new List<string>(new string[]
+                            {
+                                "M",
+                                "V"
+                            });
+                    }
+                    break;
+            }
+            return null;
         }
     }
 }
