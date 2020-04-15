@@ -71,9 +71,17 @@ namespace EasyEPlanner
         /// </summary>
         private static void CheckIdle()
         {
-            if (GetLastInputTime() > MaxIdleTime)
+            if (GetLastInputTime() > idleInterval)
             {
-                ShowCountdownWindow();
+                checksCounter++;
+                if(checksCounter == maxChecksCount)
+                {
+                    ShowCountdownWindow();
+                }
+            }
+            else
+            {
+                checksCounter = 0;
             }
         }
 
@@ -110,14 +118,19 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Максимальное время простоя в миллисекундах
-        /// </summary>
-        private const uint MaxIdleTime = 60 * 60 * 1000;
-
-        /// <summary>
         /// Интервал проверки простоя в миллисекундах
         /// </summary>
         private const int idleInterval = 60 * 1000;
+
+        /// <summary>
+        /// Счетчик проверок
+        /// </summary>
+        private static int checksCounter = 0;
+
+        /// <summary>
+        /// Максимальное число проверок до вывода окна
+        /// </summary>
+        private const int maxChecksCount = 60; 
 
         /// <summary>
         /// Флаг запуска потока.
