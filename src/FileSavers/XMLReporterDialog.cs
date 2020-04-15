@@ -143,7 +143,7 @@ namespace EasyEPlanner
             {
                 if (newChBaseBut.Checked == true)
                 {
-                    string filePath = path + "\\" + projectName + chBaseFormat;
+                    string filePath = path;
                     bool rewrite = true;
                     ProjectManager.GetInstance().SaveAsCDBX(filePath, 
                         combineTag, useNewNames, rewrite);
