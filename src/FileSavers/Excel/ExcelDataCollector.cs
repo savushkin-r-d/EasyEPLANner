@@ -481,8 +481,7 @@ namespace EasyEPlanner
                     {
                         if (countSubDev[(int)devType + 1, i] > 0)
                         {
-                            res[idx, 0] = IODevice.GetDeviceSubTypeStr(devType, 
-                                (DeviceSubType)i - 1);
+                            res[idx, 0] = (DeviceSubType)(i - 1);
                             res[idx, 1] = countSubDev[(int)devType + 1, i];
                             idx++;
                         }

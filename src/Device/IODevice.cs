@@ -1090,8 +1090,7 @@ namespace Device
             arr[row, column++] = dType.ToString();
             if (dType != DeviceType.NONE && dSubType != DeviceSubType.NONE)
             {
-                arr[row, column++] =
-                    IODevice.GetDeviceSubTypeStr(dType, dSubType);
+                arr[row, column++] = GetDeviceSubTypeStr(dType, dSubType);
             }
             else
             {
