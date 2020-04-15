@@ -553,7 +553,7 @@ namespace EasyEPlanner
                     modulesCount, modulesColor, i + 1, asInterfaceConnection);
             }
 
-            res = DeleteNullableObjects(res); 
+            res = DeleteNullObjects(res); 
 
             return res;
         }
@@ -563,7 +563,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="res">Массив</param>
         /// <returns></returns>
-        private static object[,] DeleteNullableObjects(object[,] res)
+        private static object[,] DeleteNullObjects(object[,] res)
         {
             int firstDimensionLength = res.GetLength(0);
             int secondDimensionLength = res.GetLength(1);
