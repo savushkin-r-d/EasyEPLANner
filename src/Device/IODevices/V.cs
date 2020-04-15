@@ -236,5 +236,51 @@ namespace Device
 
             return errStr;
         }
+
+        public override string GetDeviceSubTypeStr(DeviceType dt, 
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.V:
+                    switch (dst)
+                    {
+                        case DeviceSubType.V_DO1:
+                            return "V_DO1";
+                        case DeviceSubType.V_DO2:
+                            return "V_DO2";
+                        case DeviceSubType.V_DO1_DI1_FB_OFF:
+                            return "V_DO1_DI1_FB_OFF";
+                        case DeviceSubType.V_DO1_DI1_FB_ON:
+                            return "V_DO1_DI1_FB_ON";
+                        case DeviceSubType.V_DO1_DI2:
+                            return "V_DO1_DI2";
+                        case DeviceSubType.V_DO2_DI2:
+                            return "V_DO2_DI2";
+                        case DeviceSubType.V_MIXPROOF:
+                            return "V_MIXPROOF";
+                        case DeviceSubType.V_IOLINK_MIXPROOF:
+                            return "V_IOLINK_MIXPROOF";
+                        case DeviceSubType.V_AS_MIXPROOF:
+                            return "V_AS_MIXPROOF";
+                        case DeviceSubType.V_BOTTOM_MIXPROOF:
+                            return "V_BOTTOM_MIXPROOF";
+                        case DeviceSubType.V_AS_DO1_DI2:
+                            return "V_AS_DO1_DI2";
+                        case DeviceSubType.V_IOLINK_DO1_DI2:
+                            return "V_IOLINK_DO1_DI2";
+                        case DeviceSubType.V_DO2_DI2_BISTABLE:
+                            return "V_DO2_DI2_BISTABLE";
+                        case DeviceSubType.V_IOLINK_VTUG_DO1:
+                            return "V_IOLINK_VTUG_DO1";
+                        case DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF:
+                            return "V_IOLINK_VTUG_DO1_FB_OFF";
+                        case DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON:
+                            return "V_IOLINK_VTUG_DO1_FB_ON";
+                    }
+                    break;
+            }
+            return "";
+        }
     }
 }

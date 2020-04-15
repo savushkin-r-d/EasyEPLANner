@@ -101,5 +101,37 @@
 
             return errStr;
         }
+
+        public override string GetDeviceSubTypeStr(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.M:
+                    switch (dst)
+                    {
+                        case DeviceSubType.M:
+                            return "M";
+                        case DeviceSubType.M_FREQ:
+                            return "M_FREQ";
+                        case DeviceSubType.M_REV:
+                            return "M_REV";
+                        case DeviceSubType.M_REV_FREQ:
+                            return "M_REV_FREQ";
+                        case DeviceSubType.M_REV_2:
+                            return "M_REV_2";
+                        case DeviceSubType.M_REV_FREQ_2:
+                            return "M_REV_FREQ_2";
+                        case DeviceSubType.M_REV_2_ERROR:
+                            return "M_REV_2_ERROR";
+                        case DeviceSubType.M_REV_FREQ_2_ERROR:
+                            return "M_REV_FREQ_2_ERROR";
+                        case DeviceSubType.M_ATV:
+                            return "M_ATV";
+                    }
+                    break;
+            }
+            return "";
+        }
     }
 }

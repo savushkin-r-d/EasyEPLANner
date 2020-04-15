@@ -40,5 +40,23 @@
 
             return errStr;
         }
+
+        public override string GetDeviceSubTypeStr(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.DI:
+                    switch (dst)
+                    {
+                        case DeviceSubType.DI:
+                            return "DI";
+                        case DeviceSubType.DI_VIRT:
+                            return "DI_VIRT";
+                    }
+                    break;
+            }
+            return "";
+        }
     }
 }

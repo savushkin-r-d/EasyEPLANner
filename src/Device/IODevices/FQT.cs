@@ -100,5 +100,27 @@
 
             return res;
         }
+
+        public override string GetDeviceSubTypeStr(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.FQT:
+                    switch (dst)
+                    {
+                        case DeviceSubType.FQT:
+                            return "FQT";
+                        case DeviceSubType.FQT_F:
+                            return "FQT_F";
+                        case DeviceSubType.FQT_F_OK:
+                            return "FQT_F_OK";
+                        case DeviceSubType.FQT_VIRT:
+                            return "FQT_VIRT";
+                    }
+                    break;
+            }
+            return "";
+        }
     }
 }

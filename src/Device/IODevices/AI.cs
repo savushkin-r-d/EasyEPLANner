@@ -60,5 +60,23 @@
             }
             return range;
         }
+
+        public override string GetDeviceSubTypeStr(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.AI:
+                    switch (dst)
+                    {
+                        case DeviceSubType.AI:
+                            return "AI";
+                        case DeviceSubType.AI_VIRT:
+                            return "AI_VIRT";
+                    }
+                    break;
+            }
+            return "";
+        }
     }
 }

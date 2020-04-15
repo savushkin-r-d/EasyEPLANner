@@ -60,5 +60,23 @@
 
             return res;
         }
+
+        public override string GetDeviceSubTypeStr(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.TE:
+                    switch (dst)
+                    {
+                        case DeviceSubType.TE:
+                            return "TE";
+                        case DeviceSubType.TE_IOLINK:
+                            return "TE_IOLINK";
+                    }
+                    break;
+            }
+            return "";
+        }
     }
 }

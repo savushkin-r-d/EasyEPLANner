@@ -27,5 +27,16 @@
 
             return res;
         }
+
+        public override string GetDeviceSubTypeStr(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.HL:
+                    return dt.ToString();
+            }
+            return "";
+        }
     }
 }

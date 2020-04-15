@@ -97,5 +97,25 @@
 
             return res;
         }
+
+        public override string GetDeviceSubTypeStr(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.QT:
+                    switch (dst)
+                    {
+                        case DeviceSubType.QT:
+                            return "QT";
+                        case DeviceSubType.QT_OK:
+                            return "QT_OK";
+                        case DeviceSubType.QT_IOLINK:
+                            return "QT_IOLINK";
+                    }
+                    break;
+            }
+            return "";
+        }
     }
 }

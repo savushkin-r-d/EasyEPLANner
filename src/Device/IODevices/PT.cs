@@ -77,5 +77,27 @@
 
             return res;
         }
+
+        public override string GetDeviceSubTypeStr(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.PT:
+                    switch (dst)
+                    {
+                        case DeviceSubType.PT:
+                            return "PT";
+
+                        case DeviceSubType.PT_IOLINK:
+                            return "PT_IOLINK";
+
+                        case DeviceSubType.DEV_SPAE:
+                            return "DEV_SPAE";
+                    }
+                    break;
+            }
+            return "";
+        }
     }
 }

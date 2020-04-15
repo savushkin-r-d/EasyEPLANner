@@ -103,5 +103,29 @@
 
             return res;
         }
+
+        public override string GetDeviceSubTypeStr(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.LS:
+                    switch (dst)
+                    {
+                        case DeviceSubType.LS_MIN:
+                            return "LS_MIN";
+                        case DeviceSubType.LS_MAX:
+                            return "LS_MAX";
+                        case DeviceSubType.LS_IOLINK_MIN:
+                            return "LS_IOLINK_MIN";
+                        case DeviceSubType.LS_IOLINK_MAX:
+                            return "LS_IOLINK_MAX";
+                        case DeviceSubType.LS_VIRT:
+                            return "LS_VIRT";
+                    }
+                    break;
+            }
+            return "";
+        }
     }
 }

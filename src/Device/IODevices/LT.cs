@@ -102,5 +102,31 @@
 
             return res;
         }
+
+        public override string GetDeviceSubTypeStr(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.LT:
+                    switch (dst)
+                    {
+                        case DeviceSubType.LT:
+                            return "LT";
+                        case DeviceSubType.LT_IOLINK:
+                            return "LT_IOLINK";
+                        case DeviceSubType.LT_CONE:
+                            return "LT_CONE";
+                        case DeviceSubType.LT_CYL:
+                            return "LT_CYL";
+                        case DeviceSubType.LT_TRUNC:
+                            return "LT_TRUNC";
+                        case DeviceSubType.LT_VIRT:
+                            return "LT_VIRT";
+                    }
+                    break;
+            }
+            return "";
+        }
     }
 }

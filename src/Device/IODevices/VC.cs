@@ -15,5 +15,16 @@
 
             AO.Add(new IOChannel("AO", -1, -1, -1, ""));
         }
+
+        public override string GetDeviceSubTypeStr(DeviceType dt,
+            DeviceSubType dst)
+        {
+            switch (dt)
+            {
+                case DeviceType.VC:
+                    return dt.ToString();
+            }
+            return "";
+        }
     }
 }
