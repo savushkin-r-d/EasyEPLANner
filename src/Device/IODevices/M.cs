@@ -1,0 +1,105 @@
+﻿namespace Device
+{
+    /// <summary>
+    /// Технологическое устройство - мотор.
+    /// Параметры:
+    /// 1. P_ON_TIME - время включения, мсек.
+    /// </summary>
+    public class M : IODevice
+    {
+        public M(string fullName, string description, int deviceNumber,
+            string objectName, int objectNumber, string articleName) : base(
+                fullName, description, deviceNumber, objectName, objectNumber)
+        {
+            dSubType = DeviceSubType.NONE;
+            dType = DeviceType.M;
+            ArticleName = articleName;
+
+            DO.Add(new IOChannel("DO", -1, -1, -1, "Пуск"));
+
+            parameters.Add("P_ON_TIME", null);
+        }
+
+        public override string SetSubType(string subtype)
+        {
+            base.SetSubType(subtype);
+
+            string errStr = "";
+            switch (subtype)
+            {
+                case "M":
+                    DI.Add(new IOChannel("DI", -1, -1, -1, "Обратная связь"));
+
+                    break;
+
+                case "M_FREQ":
+                    DI.Add(new IOChannel("DI", -1, -1, -1, "Обратная связь"));
+                    AO.Add(new IOChannel("AO", -1, -1, -1, "Частота вращения"));
+
+                    break;
+
+                case "M_REV":
+                    DI.Add(new IOChannel("DI", -1, -1, -1, "Обратная связь"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));
+
+                    break;
+
+                case "M_REV_FREQ":
+                    DI.Add(new IOChannel("DI", -1, -1, -1, "Обратная связь"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));
+                    AO.Add(new IOChannel("AO", -1, -1, -1, "Частота вращения"));
+
+                    break;
+
+                case "M_REV_2":
+                    DI.Add(new IOChannel("DI", -1, -1, -1, "Обратная связь"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));
+
+                    break;
+
+                case "M_REV_FREQ_2":
+                    DI.Add(new IOChannel("DI", -1, -1, -1, "Обратная связь"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));
+                    AO.Add(new IOChannel("AO", -1, -1, -1, "Частота вращения"));
+
+                    break;
+
+
+                case "M_REV_2_ERROR":
+                    DI.Add(new IOChannel("DI", -1, -1, -1, "Авария"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));
+
+                    break;
+
+                case "M_REV_FREQ_2_ERROR":
+                    DI.Add(new IOChannel("DI", -1, -1, -1, "Обратная связь"));
+                    DI.Add(new IOChannel("DI", -1, -1, -1, "Авария"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));
+                    AO.Add(new IOChannel("AO", -1, -1, -1, "Частота вращения"));
+
+                    break;
+
+                case "M_ATV":
+                    DO.Clear();
+                    properties.Add("IP", null);
+                    break;
+
+                case "":
+                    errStr = string.Format("\"{0}\" - не задан тип" +
+                        " (M, M_FREQ, M_REV, M_REV_FREQ, M_REV_2," +
+                        " M_REV_FREQ_2, M_REV_2_ERROR, M_REV_FREQ_2_ERROR, " +
+                        "M_ATV).\n", Name);
+                    break;
+
+                default:
+                    errStr = string.Format("\"{0}\" - неверный тип" +
+                        " (M, M_FREQ, M_REV, M_REV_FREQ, M_REV_2," +
+                        " M_REV_FREQ_2, M_REV_2_ERROR, M_REV_FREQ_2_ERROR, " +
+                        "M_ATV).\n", Name);
+                    break;
+            }
+
+            return errStr;
+        }
+    }
+}
