@@ -142,10 +142,34 @@
     <Compile Include="DataBaseImitation\BaseOperationsParams.cs" />
     <Compile Include="DataBaseImitation\BaseObjectsEquipment.cs" />
     <Compile Include="DataBaseImitation\BaseOperationSteps.cs" />
-    <Compile Include="Device.cs" />
+    <Compile Include="Device\DeviceManager.cs" />
     <Compile Include="DeviceBindingReader.cs" />
     <Compile Include="DeviceReader.cs" />
     <Compile Include="DeviceSynchronizer.cs" />
+    <Compile Include="Device\Device.cs" />
+    <Compile Include="Device\DeviceSubTypeEnum.cs" />
+    <Compile Include="Device\IODevice.cs" />
+    <Compile Include="Device\IODevices\AI.cs" />
+    <Compile Include="Device\IODevices\AO.cs" />
+    <Compile Include="Device\IODevices\DO.cs" />
+    <Compile Include="Device\IODevices\DI.cs" />
+    <Compile Include="Device\IODevices\FQT.cs" />
+    <Compile Include="Device\IODevices\FS.cs" />
+    <Compile Include="Device\IODevices\GS.cs" />
+    <Compile Include="Device\IODevices\HA.cs" />
+    <Compile Include="Device\IODevices\HL.cs" />
+    <Compile Include="Device\IODevices\LS.cs" />
+    <Compile Include="Device\IODevices\LT.cs" />
+    <Compile Include="Device\IODevices\M.cs" />
+    <Compile Include="Device\IODevices\PT.cs" />
+    <Compile Include="Device\IODevices\QT.cs" />
+    <Compile Include="Device\IODevices\SB.cs" />
+    <Compile Include="Device\IODevices\TE.cs" />
+    <Compile Include="Device\IODevices\V.cs" />
+    <Compile Include="Device\IODevices\VC.cs" />
+    <Compile Include="Device\DeviceTypeEnum.cs" />
+    <Compile Include="Device\IODevices\WT.cs" />
+    <Compile Include="Device\IODevices\Y%28DEV_VTUG%29.cs" />
     <Compile Include="DFrm.cs">
       <SubType>Form</SubType>
     </Compile>
