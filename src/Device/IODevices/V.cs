@@ -149,8 +149,7 @@ namespace Device
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
-                    IOLinkSizeIn = 2;
-                    IOLinkSizeOut = 1; // На деле 0.5
+                    SetIOLinkSizes(ArticleName);
                     break;
 
                 case "V_AS_MIXPROOF":
@@ -191,8 +190,7 @@ namespace Device
                     parameters.Add("P_ON_TIME", null);
                     parameters.Add("P_FB", 1);
 
-                    IOLinkSizeIn = 2;
-                    IOLinkSizeOut = 1; //На деле 0.5
+                    SetIOLinkSizes(ArticleName);
                     break;
 
                 case "V_IOLINK_VTUG_DO1":

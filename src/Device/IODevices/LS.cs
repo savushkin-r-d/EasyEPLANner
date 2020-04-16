@@ -41,14 +41,14 @@ namespace Device
                     parameters.Add("P_DT", null);
 
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
-                    IOLinkSizeIn = 1;
+                    SetIOLinkSizes(ArticleName);
                     break;
 
                 case "LS_IOLINK_MAX":
                     parameters.Add("P_DT", null);
 
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
-                    IOLinkSizeIn = 1;
+                    SetIOLinkSizes(ArticleName);
                     break;
 
                 case "LS_VIRT":

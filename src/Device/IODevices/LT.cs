@@ -70,7 +70,7 @@ namespace Device
                     parameters.Add("P_H_CONE", 0);
                     parameters.Add("P_ERR", null);
 
-                    IOLinkSizeIn = 2;
+                    SetIOLinkSizes(ArticleName);
                     break;
 
                 case "LT_VIRT":

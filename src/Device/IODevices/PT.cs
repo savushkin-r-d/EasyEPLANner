@@ -36,11 +36,11 @@ namespace Device
                     break;
 
                 case "PT_IOLINK":
-                    IOLinkSizeIn = 1;
+                    SetIOLinkSizes(ArticleName);
                     break;
 
                 case "DEV_SPAE":
-                    IOLinkSizeIn = 1;
+                    SetIOLinkSizes(ArticleName);
                     break;
 
                 case "":

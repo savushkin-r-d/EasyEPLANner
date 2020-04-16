@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using System.IO;
 
 /// <summary>
 /// Пространство имен технологических устройств проекта (клапана, насосы...).
@@ -695,7 +696,52 @@ namespace Device
         private DeviceManager()
         {
             devices = new List<IODevice>();
+            InitIOLinkSizesForDevices();
+        }
 
+        /// <summary>
+        /// Инициализировать информацию об IO-Link устройствах.
+        /// </summary>
+        public void InitIOLinkSizesForDevices()
+        {
+            LuaInterface.Lua lua = new LuaInterface.Lua();
+            const string devicesFile = "sys_iolink_devices.lua";
+            const string luaDirectory = "\\Lua";
+            var pathToLua = Path.GetDirectoryName(EasyEPlanner
+                .AddInModule.OriginalAssemblyPath) + luaDirectory;
+            var fullPath = Path.Combine(pathToLua, devicesFile);
+
+            if (File.Exists(fullPath))
+            {
+                object[] result = lua.DoFile(fullPath);
+                if (result == null)
+                {
+                    return;
+                }
+
+                var dataTables = result[0] as LuaInterface.LuaTable;
+                foreach (var table in dataTables.Values)
+                {
+                    var tableData = table as LuaInterface.LuaTable;
+                    string articleName = (string)tableData["articleName"];
+                    int sizeIn = Convert.ToInt32((double)tableData["sizeIn"]);
+                    int sizeOut = Convert.ToInt32((double)tableData["sizeOut"]);
+
+
+                    if (IOLinkSizes.ContainsKey(articleName) == false)
+                    {
+                        var properties = new IODevice.IOLinkSize(sizeIn,
+                            sizeOut);
+                        IOLinkSizes.Add(articleName, properties);
+                    }
+                }
+            }
+            else
+            {
+                string template = EasyEPlanner.Properties.Resources
+                    .ResourceManager.GetString("IOLinkDevicesFilePattern");
+                File.WriteAllText(fullPath, template);
+            }
         }
 
         /// <summary>
@@ -888,5 +934,10 @@ namespace Device
         private static IODevice cap = new IODevice("Заглушка", "", 0, "", 0);
         private List<IODevice> devices;       ///Устройства проекта.     
         private static DeviceManager instance;  ///Экземпляр класса.
+
+        /// <summary>
+        /// Размеры областей IO-Link для устройств по изделиям
+        /// </summary>
+        public Dictionary<string, IODevice.IOLinkSize> IOLinkSizes;
     }
 }

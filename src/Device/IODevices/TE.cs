@@ -35,7 +35,7 @@ namespace Device
                     break;
 
                 case "TE_IOLINK":
-                    IOLinkSizeIn = 1;
+                    SetIOLinkSizes(ArticleName);
                     break;
 
                 case "":
