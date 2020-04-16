@@ -313,4 +313,13 @@ local io_modules =
 return io_modules</value>
     <comment>Шаблон для файла sys_io.lua, в котором находится информация по модулям ввода-вывода.</comment>
   </data>
+  <data name="IOLinkDevicesFilePattern" xml:space="preserve">
+    <value>local iolink_devices =
+{
+    { articleName = "", sizeIn = 0, sizeOut = 0 },
+}
+
+return iolink_devices</value>
+    <comment>Шаблон файла, в котором находится информация об изделиях (название устройства, тип, подтип) и его IO-Link настройках (размеры областей ввода-вывода)</comment>
+  </data>
 </root>

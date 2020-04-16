@@ -101,6 +101,20 @@ namespace EasyEPlanner.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на local iolink_devices =
+        ///{
+        ///    { articleName = &quot;&quot;, sizeIn = 0, sizeOut = 0 },
+        ///}
+        ///
+        ///return iolink_devices.
+        /// </summary>
+        public static string IOLinkDevicesFilePattern {
+            get {
+                return ResourceManager.GetString("IOLinkDevicesFilePattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap lowerSeats {
