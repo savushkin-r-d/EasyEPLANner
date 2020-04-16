@@ -469,9 +469,12 @@ namespace Device
         {
             string res = prefix + "{\n";
             res += prefix + "name    = \'" + Name + "\',\n";
-            res += prefix + "descr   = \'" + Description.Replace("\n", ". ") + "\',\n";
+            res += prefix + "descr   = \'" + Description.Replace("\n", ". ") + 
+                "\',\n";
             res += prefix + "dtype   = " + (int)dType + ",\n";
-            res += prefix + "subtype = " + (int)dSubType + ", -- " + GetDeviceSubTypeStr(dType, dSubType) + ", " + ArticleName + "\n";
+            res += prefix + "subtype = " + (int)dSubType + ", -- " + 
+                GetDeviceSubTypeStr(dType, dSubType) + "\n";
+            res += prefix + $"article = \'{ArticleName}\',\n";
 
             if (properties.Count > 0)
             {
@@ -482,7 +485,7 @@ namespace Device
                 {
                     if (prop.Value != null)
                     {
-                        res += prefix + string.Format("\t{0} = {1},\n", prop.Key, prop.Value);
+                        res += prefix + $"\t{prop.Key} = {prop.Value},\n";
                     }
                 }
                 res += prefix + "\t},\n";
@@ -546,7 +549,8 @@ namespace Device
                     {
                         string tmpForSpacebars = $"\t\t\t\t{par.Value},";
                         int tmpForSpacebarsLength = tmpForSpacebars.Length % 4;
-                        string spacebars = new string(' ', 4 + (4 - tmpForSpacebarsLength));
+                        var spacebars = 
+                            new string(' ', 4 + (4 - tmpForSpacebarsLength));
 
                         tmp += $"\t\t\t\t{par.Value},{spacebars}--{par.Key}\n";
                     }
