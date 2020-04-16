@@ -704,6 +704,7 @@ namespace Device
         /// </summary>
         public void InitIOLinkSizesForDevices()
         {
+            IOLinkSizes = new Dictionary<string, IODevice.IOLinkSize>();
             LuaInterface.Lua lua = new LuaInterface.Lua();
             const string devicesFile = "sys_iolink_devices.lua";
             const string luaDirectory = "\\Lua";
@@ -726,7 +727,6 @@ namespace Device
                     string articleName = (string)tableData["articleName"];
                     int sizeIn = Convert.ToInt32((double)tableData["sizeIn"]);
                     int sizeOut = Convert.ToInt32((double)tableData["sizeOut"]);
-
 
                     if (IOLinkSizes.ContainsKey(articleName) == false)
                     {
