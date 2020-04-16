@@ -456,7 +456,7 @@ namespace Device
             res += prefix + "dtype   = " + (int)dType + ",\n";
             res += prefix + "subtype = " + (int)dSubType + ", -- " + 
                 GetDeviceSubTypeStr(dType, dSubType) + "\n";
-            res += prefix + $"article = \'{ArticleName}\'\n";
+            res += prefix + $"article = \'{ArticleName}\',\n";
 
             if (properties.Count > 0)
             {
