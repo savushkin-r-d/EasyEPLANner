@@ -73,6 +73,9 @@ namespace EasyEPlanner
 
             CreateObjectDevicesPage(ref workBook);
             Logs.SetProgress(80);
+
+            CreateDeviceArticlesPage(ref workBook);
+            Logs.SetProgress(100);
         }
 
         /// <summary>
@@ -474,6 +477,22 @@ namespace EasyEPlanner
             workSheet.Range.EntireColumn.IsWrapText = true;
             workSheet.PageSetup.IsSummaryRowBelow = false;
             workSheet.PageSetup.IsSummaryColumnRight = true;
+        }
+
+        /// <summary>
+        /// Создание страницы с изделиями устройств
+        /// </summary>
+        /// <param name="workBook"></param>
+        private static void CreateDeviceArticlesPage(ref Workbook workBook)
+        {
+            string sheetName = "Изделия устройств";
+            Worksheet workSheet = workBook.Worksheets.Add(sheetName);
+            object[,] devicesWithArticles = ExcelDataCollector
+                .SaveDevicesArticlesInfoAsArray();
+            workSheet.InsertArray(devicesWithArticles, 1, 1);
+            workSheet.Range.Style.Font.FontName = "Calibri";
+            workSheet.Range.Style.Font.Size = 11;
+            workSheet.Range.EntireColumn.AutoFitColumns();
         }
 
         /// <summary>

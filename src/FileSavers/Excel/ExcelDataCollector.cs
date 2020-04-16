@@ -559,6 +559,50 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Сохранение устройств, в которых контролируются изделия
+        /// </summary>
+        /// <returns></returns>
+        public static object[,] SaveDevicesArticlesInfoAsArray()
+        {
+            const int MaxLength = 1000;
+            const int MaxWidth = 3;
+            object[,] devicesWithArticles = new object[MaxLength, MaxWidth];
+
+            var devices = deviceManager.Devices
+                .Where(x => x.DeviceType != DeviceType.AI &&
+                x.DeviceType != DeviceType.AO &&
+                x.DeviceType != DeviceType.DI &&
+                x.DeviceType != DeviceType.DO &&
+                x.DeviceType != DeviceType.M &&
+                x.DeviceType != DeviceType.VC)
+                .ToList();
+
+                devices.Sort((x, y) =>
+                {
+                    int res = 0;
+                    res = Device.Device.Compare(x, y);
+                    return res;
+                });
+
+            devicesWithArticles[0, 0] = "ОУ устройства";
+            devicesWithArticles[0, 1] = "Подтип устройства";
+            devicesWithArticles[0, 2] = "Изделие";
+
+            int counter = 1;
+            foreach(var device in devices)
+            {         
+                devicesWithArticles[counter, 0] = device.EPlanName;
+                devicesWithArticles[counter, 1] = device.GetDeviceSubTypeStr(
+                    device.DeviceType, device.DeviceSubType);
+                devicesWithArticles[counter, 2] = device.ArticleName;
+                counter++;
+            }
+
+            devicesWithArticles = DeleteNullObjects(devicesWithArticles);
+            return devicesWithArticles;
+        }
+
+        /// <summary>
         /// Удалить пустые объекты в конце массива
         /// </summary>
         /// <param name="res">Массив</param>
