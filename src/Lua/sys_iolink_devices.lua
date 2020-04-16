@@ -1,4 +1,3 @@
-
 local iolink_devices =
 {
     -- V
@@ -36,9 +35,4 @@ local iolink_devices =
     { articleName = "FES.VTUG-10-VRLK-B1Y-G18FDL-DTFDL-M7SFD-4K+SCVA", sizeIn = 0, sizeOut = 1 },
 }
 
-init_iolink_deivces = function()
-    return
-    {
-        iolink_devices
-    }
-end
+return iolink_devices
