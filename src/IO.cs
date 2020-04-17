@@ -1444,8 +1444,8 @@ namespace IO
                 {
                     moduleInfo.ChannelAddressesIn[clamp] = offsetIn;
                     moduleInfo.ChannelAddressesOut[clamp] = offsetOut;
-                    offsetIn += devices[clamp][0].IOLinkSizeIn;
-                    offsetOut += devices[clamp][0].IOLinkSizeOut;
+                    offsetIn += devices[clamp][0].IOLinkProperties.SizeIn;
+                    offsetOut += devices[clamp][0].IOLinkProperties.SizeOut;
                 }
             }
         }
@@ -1476,7 +1476,7 @@ namespace IO
                     {
                         moduleInfo.ChannelAddressesIn[clamp] = offsetIn;
                         moduleInfo.ChannelAddressesOut[clamp] = offsetOut;
-                        deviceOffset = device.GetMaxIOLinkSize();
+                        deviceOffset = device.IOLinkProperties.GetMaxIOLinkSize();
                         offsetIn += deviceOffset;
                         offsetOut += deviceOffset;
                     }

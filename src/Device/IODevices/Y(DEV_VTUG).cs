@@ -25,15 +25,15 @@
             switch (subtype)
             {
                 case "DEV_VTUG_8":
-                    IOLinkSizeOut = 1;
+                    IOLinkProperties.SizeOut = 1;
                     break;
 
                 case "DEV_VTUG_16":
-                    IOLinkSizeOut = 2;
+                    IOLinkProperties.SizeOut = 2;
                     break;
 
                 case "DEV_VTUG_24":
-                    IOLinkSizeOut = 3;
+                    IOLinkProperties.SizeOut = 3;
                     break;
 
                 case "":
@@ -88,15 +88,15 @@
             switch (subtype)
             {
                 case "DEV_VTUG_8":
-                    IOLinkSizeOut = 1;
+                    IOLinkProperties.SizeOut = 1;
                     break;
 
                 case "DEV_VTUG_16":
-                    IOLinkSizeOut = 2;
+                    IOLinkProperties.SizeOut = 2;
                     break;
 
                 case "DEV_VTUG_24":
-                    IOLinkSizeOut = 3;
+                    IOLinkProperties.SizeOut = 3;
                     break;
 
                 case "":

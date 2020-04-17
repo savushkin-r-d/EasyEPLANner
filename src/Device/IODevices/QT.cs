@@ -44,7 +44,7 @@ namespace Device
                     break;
 
                 case "QT_IOLINK":
-                    IOLinkSizeIn = 6;
+                    SetIOLinkSizes(ArticleName);
                     break;
 
                 case "":

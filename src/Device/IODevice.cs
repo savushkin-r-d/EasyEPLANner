@@ -83,8 +83,26 @@ namespace Device
             parameters = new Dictionary<string, object>();
             rtParameters = new Dictionary<string, object>();
             properties = new Dictionary<string, object>();
+
+            IOLinkProperties = new IOLinkSize();
         }
 
+        /// <summary>
+        /// Установить размеры IO-Link областей устройства.
+        /// </summary>
+        /// <param name="articleName">Изделие устройства</param>
+        public void SetIOLinkSizes(string articleName)
+        {
+            var articles = DeviceManager.GetInstance().IOLinkSizes;
+            if (articles.ContainsKey(articleName) == false)
+            {
+                return;
+            }
+
+            var sizes = articles[articleName];
+            this.IOLinkProperties.SizeIn = sizes.SizeIn;
+            this.IOLinkProperties.SizeOut = sizes.SizeOut;
+        }
 
         /// <summary>
         /// Установка номера узла, в котором подключается устройство.
@@ -652,17 +670,6 @@ namespace Device
         }
 
         /// <summary>
-        /// Возвращает максимальны размер байтовой области для модулей ввода
-        /// вывода при расчете IO-Link адресов если используется
-        /// Phoenix Contact
-        /// </summary>
-        /// <returns></returns>
-        public int GetMaxIOLinkSize()
-        {
-            return IOLinkSizeOut > IOLinkSizeIn ? IOLinkSizeOut : IOLinkSizeIn;
-        }
-
-        /// <summary>
         /// Возвращает количество каналов, которые привязаны к модулю
         /// ввода-вывода
         /// </summary>
@@ -708,10 +715,9 @@ namespace Device
 
         protected Dictionary<string, object> parameters;   ///Параметры.
         protected Dictionary<string, object> rtParameters; ///Рабочие параметры.
-        protected Dictionary<string, object> properties;
+        protected Dictionary<string, object> properties; ///Свойства.
 
-        internal int IOLinkSizeIn = 0;
-        internal int IOLinkSizeOut = 0;
+        internal IOLinkSize IOLinkProperties; ///IO-Link свойства устройства.
         #endregion
 
         /// <summary>
@@ -1083,6 +1089,38 @@ namespace Device
             private int logicalClamp;    ///Логический номер клеммы.
             private int moduleOffset;    ///Сдвиг начала модуля.
             #endregion
+        }
+
+        /// <summary>
+        /// Размер IO-Link областей устройства ввода-вывода.
+        /// </summary>
+        public class IOLinkSize
+        {
+            public IOLinkSize()
+            {
+                SizeIn = 0;
+                SizeOut = 0;
+            }
+
+            public IOLinkSize(int sizeIn, int sizeOut)
+            {
+                SizeIn = sizeIn;
+                SizeOut = sizeOut;
+            }
+
+            /// <summary>
+            /// Возвращает максимальны размер байтовой области для модулей ввода
+            /// вывода при расчете IO-Link адресов если используется
+            /// Phoenix Contact
+            /// </summary>
+            /// <returns></returns>
+            public int GetMaxIOLinkSize()
+            {
+                return SizeOut > SizeIn ? SizeOut : SizeIn;
+            }
+
+            public int SizeIn { get; set; }
+            public int SizeOut { get; set; }
         }
 
     }
