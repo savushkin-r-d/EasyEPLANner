@@ -38,7 +38,6 @@ namespace TechObject
         private TechObjectManager()
         {
             lua = new Lua();
-
             lua.RegisterFunction("ADD_TECH_OBJECT", this,
                 GetType().GetMethod("AddObject"));
 
@@ -46,9 +45,25 @@ namespace TechObject
             LuaFunction resF = lua.RegisterFunction("PRINT", this,
                 GetType().GetMethod("ShowMessage"));
 
-            string systemFilesPath = Path.GetDirectoryName(
-                System.Reflection.Assembly.GetExecutingAssembly().Location) +
-                "\\Lua";
+            const string spireLicense = "Spire.License.dll";
+            const string spireXLS = "Spire.XLS.dll";
+            const string spirePDF = "Spire.Pdf.dll";
+            
+            string assemblyPath = Path.GetDirectoryName(
+                System.Reflection.Assembly.GetExecutingAssembly().Location);
+            string systemFilesPath = assemblyPath + "\\Lua";
+            
+            string SpireLicensePath = Path.Combine(assemblyPath, spireLicense);
+            string SpireXLSPath = Path.Combine(assemblyPath, spireXLS);
+            string SpirePDFPath = Path.Combine(assemblyPath, spirePDF);
+
+            if (File.Exists(SpireLicensePath) == false ||
+                File.Exists(SpireXLSPath) == false ||
+                File.Exists(SpirePDFPath) == false)
+            {
+                var files = new string[] { spireLicense, spireXLS, spirePDF };
+                CopySpireXLSFiles(assemblyPath, files);
+            }
 
             string sysLuaPath = Path.Combine(systemFilesPath, "sys.lua");
             if (Directory.Exists(systemFilesPath) == true)
@@ -69,6 +84,8 @@ namespace TechObject
         /// <summary>
         /// Копирует системные .lua файлы если они не загрузились
         /// в теневое хранилище (Win 7 fix).
+        /// <param name="shadowAssemblySystemFilesDir">Путь к Lua файлам
+        /// в теневом хранилище Eplan</param>
         /// </summary>
         private void CopySystemFiles(string shadowAssemblySystemFilesDir)
         {
@@ -78,7 +95,7 @@ namespace TechObject
             string systemFilesPath = Path.GetDirectoryName(EasyEPlanner.
                 AddInModule.OriginalAssemblyPath) + luaDirectory;
 
-            DirectoryInfo systemFilesDirectory = new DirectoryInfo(
+            var systemFilesDirectory = new DirectoryInfo(
                 systemFilesPath);
             FileInfo[] systemFiles = systemFilesDirectory.GetFiles();
             foreach (FileInfo systemFile in systemFiles)
@@ -86,6 +103,29 @@ namespace TechObject
                 string pathToFile = Path.Combine(shadowAssemblySystemFilesDir,
                     systemFile.Name);
                 systemFile.CopyTo(pathToFile, true);
+            }
+        }
+
+        /// <summary>
+        /// Копировать файлы библиотек Spire XLS
+        /// </summary>
+        /// <param name="shadowAssemblySpireFilesDir">Путь к библиотекам
+        /// в теневом хранилище Eplan</param>
+        /// <param name="files">Имена файлов</param>
+        private void CopySpireXLSFiles(string shadowAssemblySpireFilesDir,
+            string[] files)
+        {
+            string originalPath = Path.GetDirectoryName(EasyEPlanner
+                .AddInModule.OriginalAssemblyPath);
+            var libsDir = new DirectoryInfo(originalPath);
+            foreach(FileInfo file in libsDir.GetFiles())
+            {
+                if (files.Contains(file.Name))
+                {
+                    string path = Path.Combine(shadowAssemblySpireFilesDir, 
+                        file.Name);
+                    file.CopyTo(path, true);
+                }
             }
         }
 

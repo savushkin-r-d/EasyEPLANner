@@ -106,18 +106,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>LuaInterface\LuaInterface.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Office.Core">
-      <HintPath>libs\Microsoft.Office.Core.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>libs\Microsoft.Office.Interop.Excel.dll</HintPath>
-    </Reference>
     <Reference Include="ObjectListView, Version=2.9.1.23884, Culture=neutral, PublicKeyToken=8176a5df63fd6f38, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\ObjectListView.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.License, Version=1.3.8.40, Culture=neutral, PublicKeyToken=b1144360237c8b3f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\Spire.License.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.Pdf, Version=6.1.4.2040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\Spire.Pdf.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.XLS, Version=10.1.4.61040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\Spire.XLS.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -139,10 +142,34 @@
     <Compile Include="DataBaseImitation\BaseOperationsParams.cs" />
     <Compile Include="DataBaseImitation\BaseObjectsEquipment.cs" />
     <Compile Include="DataBaseImitation\BaseOperationSteps.cs" />
-    <Compile Include="Device.cs" />
+    <Compile Include="Device\DeviceManager.cs" />
     <Compile Include="DeviceBindingReader.cs" />
     <Compile Include="DeviceReader.cs" />
     <Compile Include="DeviceSynchronizer.cs" />
+    <Compile Include="Device\Device.cs" />
+    <Compile Include="Device\DeviceSubTypeEnum.cs" />
+    <Compile Include="Device\IODevice.cs" />
+    <Compile Include="Device\IODevices\AI.cs" />
+    <Compile Include="Device\IODevices\AO.cs" />
+    <Compile Include="Device\IODevices\DO.cs" />
+    <Compile Include="Device\IODevices\DI.cs" />
+    <Compile Include="Device\IODevices\FQT.cs" />
+    <Compile Include="Device\IODevices\FS.cs" />
+    <Compile Include="Device\IODevices\GS.cs" />
+    <Compile Include="Device\IODevices\HA.cs" />
+    <Compile Include="Device\IODevices\HL.cs" />
+    <Compile Include="Device\IODevices\LS.cs" />
+    <Compile Include="Device\IODevices\LT.cs" />
+    <Compile Include="Device\IODevices\M.cs" />
+    <Compile Include="Device\IODevices\PT.cs" />
+    <Compile Include="Device\IODevices\QT.cs" />
+    <Compile Include="Device\IODevices\SB.cs" />
+    <Compile Include="Device\IODevices\TE.cs" />
+    <Compile Include="Device\IODevices\V.cs" />
+    <Compile Include="Device\IODevices\VC.cs" />
+    <Compile Include="Device\DeviceTypeEnum.cs" />
+    <Compile Include="Device\IODevices\WT.cs" />
+    <Compile Include="Device\IODevices\Y%28DEV_VTUG%29.cs" />
     <Compile Include="DFrm.cs">
       <SubType>Form</SubType>
     </Compile>

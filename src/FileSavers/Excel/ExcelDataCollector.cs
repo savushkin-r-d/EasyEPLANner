@@ -455,48 +455,48 @@ namespace EasyEPlanner
         {
             const int MAX_ROW = 200;
             const int MAX_COL = 20;
-            const int MAX_SUBTYPE_CNT = 20;
-
-            int MAX_TYPE_CNT = Enum.GetValues(typeof(DeviceType)).Length;
-            var countDev = new int[MAX_TYPE_CNT];
-            var countSubDev = new int[MAX_TYPE_CNT, MAX_SUBTYPE_CNT];
             var res = new object[MAX_ROW, MAX_COL];
 
+            var devices = new Dictionary<string, int>();
             foreach (IODevice dev in deviceManager.Devices)
             {
-                countDev[(int)dev.DeviceType + 1]++;
-                countSubDev[(int)dev.DeviceType + 1, 
-                    (int)dev.DeviceSubType + 1]++;
-            }
-
-            //Сводная таблица.
-            int idx = 0;
-            foreach (DeviceType devType in Enum.GetValues(typeof(DeviceType)))
-            {
-                if (devType == DeviceType.V || 
-                    devType == DeviceType.M ||
-                    devType == DeviceType.LS)
+                
+                if (dev.DeviceType == DeviceType.V ||
+                    dev.DeviceType == DeviceType.M ||
+                    dev.DeviceType == DeviceType.LS)
                 {
-                    for (int i = 0; i < MAX_SUBTYPE_CNT; i++)
+                    string deviceSubType = dev.GetDeviceSubTypeStr(
+                        dev.DeviceType, dev.DeviceSubType);
+                    if (devices.ContainsKey(deviceSubType) == false)
                     {
-                        if (countSubDev[(int)devType + 1, i] > 0)
-                        {
-                            res[idx, 0] = IODevice.GetDeviceSubTypeStr(devType, 
-                                (DeviceSubType)i - 1);
-                            res[idx, 1] = countSubDev[(int)devType + 1, i];
-                            idx++;
-                        }
+                        devices.Add(deviceSubType, 1);
+                    }
+                    else
+                    {
+                        devices[deviceSubType]++;
                     }
                 }
                 else
                 {
-                    if (countDev[(int)devType + 1] > 0)
+                    string deviceType = dev.DeviceType.ToString();
+                    if (devices.ContainsKey(dev.DeviceType.ToString()) == false)
                     {
-                        res[idx, 0] = devType.ToString();
-                        res[idx, 1] = countDev[(int)devType + 1];
-                        idx++;
+                        devices.Add(deviceType, 1);
+                    }
+                    else
+                    {
+                        devices[deviceType]++;
                     }
                 }
+            }
+
+            // Сводная таблица
+            int idx = 0;
+            foreach(var devType in devices)
+            {
+                res[idx, 0] = devType.Key;
+                res[idx, 1] = devType.Value;
+                idx++;
             }
             res[idx, 0] = "Всего";
             res[idx, 1] = deviceManager.Devices.Count;
@@ -533,8 +533,8 @@ namespace EasyEPlanner
             {
                 res[idx, 3] = prjName;
                 idx++;
-                DateTime localDate = DateTime.Now;
-                res[idx, 3] = localDate.ToString(new CultureInfo("ru-RU"));
+                res[idx, 3] = 
+                    $"'{DateTime.Now.ToString(new CultureInfo("RU-ru"))}";
                 string nodeName = "Узел №" + (i + 1).ToString() + " Адрес: " + 
                     ioManager.IONodes[i].IP;
                 res[idx, 0] = nodeName;
@@ -552,7 +552,46 @@ namespace EasyEPlanner
                 ioManager.IONodes[i].SaveAsConnectionArray(ref res, ref idx, 
                     modulesCount, modulesColor, i + 1, asInterfaceConnection);
             }
+
+            res = DeleteNullObjects(res); 
+
             return res;
+        }
+
+        /// <summary>
+        /// Удалить пустые объекты в конце массива
+        /// </summary>
+        /// <param name="res">Массив</param>
+        /// <returns></returns>
+        private static object[,] DeleteNullObjects(object[,] res)
+        {
+            int firstDimensionLength = res.GetLength(0);
+            int secondDimensionLength = res.GetLength(1);
+            int countOfFilledElements = 0;
+            for(int i = firstDimensionLength - 1; i >= 0; i--)
+            {
+                for(int j = 0; j < secondDimensionLength; j++)
+                {
+                    if (res[i,j] != null)
+                    {
+                        countOfFilledElements++;
+                        break;
+                    }
+                }
+            }
+
+            var newResult = new object[countOfFilledElements, 
+                secondDimensionLength];
+            for(int i = 0; i < newResult.GetLength(0); i++)
+            {
+                for(int j = 0; j < newResult.GetLength(1); j++)
+                {
+                    newResult[i, j] = res[i, j];
+                }
+            }
+
+            return newResult;
+
         }
 
         /// <summary>
