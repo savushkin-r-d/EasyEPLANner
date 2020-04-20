@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectListView2012", "..\su
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aga.Controls", "..\submodule\TreeViewAdv\Aga.Controls\Aga.Controls.csproj", "{E73BB233-D88B-44A7-A98F-D71EE158381D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "..\Tests\Tests.csproj", "{6BC7C948-3266-480B-94C5-A2DA8D303134}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,12 @@ Global
 		{E73BB233-D88B-44A7-A98F-D71EE158381D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E73BB233-D88B-44A7-A98F-D71EE158381D}.ReleaseSigned|Any CPU.ActiveCfg = Release|Any CPU
 		{E73BB233-D88B-44A7-A98F-D71EE158381D}.ReleaseSigned|Any CPU.Build.0 = Release|Any CPU
+		{6BC7C948-3266-480B-94C5-A2DA8D303134}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BC7C948-3266-480B-94C5-A2DA8D303134}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BC7C948-3266-480B-94C5-A2DA8D303134}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BC7C948-3266-480B-94C5-A2DA8D303134}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BC7C948-3266-480B-94C5-A2DA8D303134}.ReleaseSigned|Any CPU.ActiveCfg = Release|Any CPU
+		{6BC7C948-3266-480B-94C5-A2DA8D303134}.ReleaseSigned|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
