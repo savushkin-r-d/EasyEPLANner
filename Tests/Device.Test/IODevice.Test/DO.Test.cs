@@ -79,7 +79,7 @@ namespace Tests
         /// <returns></returns>
         public static object[] GetDevicePropertiesTestDevices()
         {
-            var exportForDI = new List<string>
+            var exportForDO = new List<string>
             {
                 "ST", 
                 "M"
@@ -87,10 +87,10 @@ namespace Tests
 
             return new object[]
             {
-                new object[] {exportForDI, "", GetRandomDODevice()},
-                new object[] {exportForDI, "DI", GetRandomDODevice()},
-                new object[] {exportForDI, "DI_VIRT", GetRandomDODevice()},
-                new object[] {exportForDI, "Incorrect", GetRandomDODevice()},
+                new object[] {exportForDO, "", GetRandomDODevice()},
+                new object[] {exportForDO, "DO", GetRandomDODevice()},
+                new object[] {exportForDO, "DO_VIRT", GetRandomDODevice()},
+                new object[] {exportForDO, "Incorrect", GetRandomDODevice()},
             };
         }
 
@@ -105,16 +105,16 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.DO("KOAG4DI1", "Test device", 1,
+                    return new Device.DO("KOAG4DO1", "Test device", 1,
                         "KOAG", 4);
                 case 2:
-                    return new Device.DO("LINE1DI2", "Test device", 2,
+                    return new Device.DO("LINE1DO2", "Test device", 2,
                         "LINE", 1);
                 case 3:
-                    return new Device.DO("TANK2DI1", "Test device", 1,
+                    return new Device.DO("TANK2DO1", "Test device", 1,
                         "TANK", 2);
                 default:
-                    return new Device.DO("CW_TANK3DI3", "Test device", 3,
+                    return new Device.DO("CW_TANK3DO3", "Test device", 3,
                         "CW_TANK", 3);
             }
         }

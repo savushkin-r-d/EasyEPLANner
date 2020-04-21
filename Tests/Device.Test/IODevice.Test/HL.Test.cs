@@ -49,7 +49,7 @@ namespace Tests
         /// <returns></returns>
         public static object[] GetDevicePropertiesTestData()
         {
-            var exportForFS = new List<string>
+            var exportForHL = new List<string>
                 {
                     "ST",
                     "M",
@@ -58,8 +58,8 @@ namespace Tests
 
             return new object[]
             {
-                new object[] {exportForFS, "", GetRandomHLDevice()},
-                new object[] {exportForFS, "HL", GetRandomHLDevice()},
+                new object[] {exportForHL, "", GetRandomHLDevice()},
+                new object[] {exportForHL, "HL", GetRandomHLDevice()},
             };
         }
 
@@ -74,16 +74,16 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.HL("KOAG4GS1", "Test device", 1,
+                    return new Device.HL("KOAG4HL1", "Test device", 1,
                         "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.HL("LINE1GS2", "Test device", 2,
+                    return new Device.HL("LINE1HL2", "Test device", 2,
                         "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.HL("TANK2GS1", "Test device", 1,
+                    return new Device.HL("TANK2HL1", "Test device", 1,
                         "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.HL("CW_TANK3GS3", "Test device", 3,
+                    return new Device.HL("CW_TANK3HL3", "Test device", 3,
                         "CW_TANK", 3, "DeviceArticle");
             }
         }

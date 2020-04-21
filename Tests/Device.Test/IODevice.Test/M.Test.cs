@@ -44,27 +44,27 @@ namespace Tests
             return new object[]
             {
                 new object[] { Device.DeviceSubType.M, "M",
-                    GetRandomLTDevice() },
+                    GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.M_FREQ, "M_FREQ",
-                    GetRandomLTDevice() },
+                    GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.M_REV, "M_REV",
-                    GetRandomLTDevice() },
+                    GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.M_REV_FREQ, "M_REV_FREQ",
-                    GetRandomLTDevice() },
+                    GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.M_REV_2, "M_REV_2",
-                    GetRandomLTDevice() },
+                    GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.M_REV_FREQ_2, 
-                    "M_REV_FREQ_2", GetRandomLTDevice() },
+                    "M_REV_FREQ_2", GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.M_REV_2_ERROR, 
-                    "M_REV_2_ERROR", GetRandomLTDevice() },
+                    "M_REV_2_ERROR", GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.M_REV_FREQ_2_ERROR, 
-                    "M_REV_FREQ_2_ERROR", GetRandomLTDevice() },
+                    "M_REV_FREQ_2_ERROR", GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.M_ATV, "M_ATV",
-                    GetRandomLTDevice() },
+                    GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.NONE, "",
-                    GetRandomLTDevice() },
+                    GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.NONE, "Incorrect",
-                    GetRandomLTDevice() },
+                    GetRandomMDevice() },
             };
         }
 
@@ -78,21 +78,21 @@ namespace Tests
         {
             return new object[]
             {
-                new object[] { "M", "M", GetRandomLTDevice() },
-                new object[] { "M_FREQ", "M_FREQ", GetRandomLTDevice() },
-                new object[] { "M_REV", "M_REV", GetRandomLTDevice() },
+                new object[] { "M", "M", GetRandomMDevice() },
+                new object[] { "M_FREQ", "M_FREQ", GetRandomMDevice() },
+                new object[] { "M_REV", "M_REV", GetRandomMDevice() },
                 new object[] { "M_REV_FREQ", "M_REV_FREQ", 
-                    GetRandomLTDevice() },
-                new object[] { "M_REV_2", "M_REV_2", GetRandomLTDevice() },
+                    GetRandomMDevice() },
+                new object[] { "M_REV_2", "M_REV_2", GetRandomMDevice() },
                 new object[] { "M_REV_FREQ_2", "M_REV_FREQ_2", 
-                    GetRandomLTDevice() },
+                    GetRandomMDevice() },
                 new object[] { "M_REV_2_ERROR", "M_REV_2_ERROR", 
-                    GetRandomLTDevice() },
+                    GetRandomMDevice() },
                 new object[] { "M_REV_FREQ_2_ERROR", "M_REV_FREQ_2_ERROR", 
-                    GetRandomLTDevice() },
-                new object[] { "M_ATV", "M_ATV", GetRandomLTDevice() },
-                new object[] { "", "", GetRandomLTDevice() },
-                new object[] { "", "Incorrect", GetRandomLTDevice() },
+                    GetRandomMDevice() },
+                new object[] { "M_ATV", "M_ATV", GetRandomMDevice() },
+                new object[] { "", "", GetRandomMDevice() },
+                new object[] { "", "Incorrect", GetRandomMDevice() },
             };
         }
 
@@ -135,19 +135,19 @@ namespace Tests
 
             return new object[]
             {
-                new object[] {exportForM, "M", GetRandomLTDevice()},
-                new object[] {exportForM, "M_FREQ", GetRandomLTDevice()},
-                new object[] {exportForMRev, "M_REV", GetRandomLTDevice()},
+                new object[] {exportForM, "M", GetRandomMDevice()},
+                new object[] {exportForM, "M_FREQ", GetRandomMDevice()},
+                new object[] {exportForMRev, "M_REV", GetRandomMDevice()},
                 new object[] {exportForMRev, "M_REV_FREQ", 
-                    GetRandomLTDevice()},
-                new object[] {exportForMRev, "M_REV_2", GetRandomLTDevice()},
+                    GetRandomMDevice()},
+                new object[] {exportForMRev, "M_REV_2", GetRandomMDevice()},
                 new object[] {exportForMRev, "M_REV_FREQ_2", 
-                    GetRandomLTDevice()},
+                    GetRandomMDevice()},
                 new object[] {exportForMRev, "M_REV_2_ERROR", 
-                    GetRandomLTDevice()},
-                new object[] {exportForMATV, "M_ATV", GetRandomLTDevice()},
-                new object[] {null, "Incorrect", GetRandomLTDevice()},
-                new object[] {null, "", GetRandomLTDevice()},
+                    GetRandomMDevice()},
+                new object[] {exportForMATV, "M_ATV", GetRandomMDevice()},
+                new object[] {null, "Incorrect", GetRandomMDevice()},
+                new object[] {null, "", GetRandomMDevice()},
             };
         }
 
@@ -155,7 +155,7 @@ namespace Tests
         /// Генератор M устройств
         /// </summary>
         /// <returns></returns>
-        public static Device.IODevice GetRandomLTDevice()
+        public static Device.IODevice GetRandomMDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);

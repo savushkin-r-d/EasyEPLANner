@@ -9,7 +9,7 @@ namespace Tests
     {
         [TestCaseSource(nameof(GetSubTypeTestData))]
         public void GetDeviceSubTypeStrTest(string expectedType,
-    string subType, Device.IODevice device)
+            string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
