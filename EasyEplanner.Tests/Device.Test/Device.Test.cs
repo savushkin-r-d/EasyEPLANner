@@ -14,6 +14,13 @@ namespace Tests
             Assert.AreEqual(expected, Device.Device.Compare(x, y));
         }
 
+        [TestCaseSource(nameof(CompareToTestData))]
+        public void CompareToTest(int expected, Device.IODevice dev, 
+            object otherDevice)
+        {
+            Assert.AreEqual(expected, dev.CompareTo(otherDevice));
+        }
+
         /// <summary>
         /// 1 - ожидаемое значение,
         /// 2 - первое устройство
@@ -88,6 +95,42 @@ namespace Tests
                     new Device.HA("CW_TANK3HA3", "Test device", 3, "CW_TANK", 
                     3, "DeviceArticle")
                 },
+            };
+        }
+
+        /// <summary>
+        /// 1 - ожидаемое значение,
+        /// 2 - устройство на котором будет вызываться CompareTO
+        /// 3 - устройство которое будет проверяться
+        /// </summary>
+        /// <returns></returns>
+        public static object[] CompareToTestData()
+        {
+            return new object[] 
+            {
+                new object[] 
+                {
+                    1,
+                    new Device.HA("CW_TANK3HA3", "Test device", 3, "CW_TANK",
+                    3, "DeviceArticle"), 
+                    null
+                },
+                new object[]
+                {
+                    -1,
+                    new Device.VC("TANK2VC1", "Test device", 1, "TANK", 2, 
+                    "DeviceArticle"),
+                    new Device.HA("CW_TANK3HA3", "Test device", 3, "CW_TANK",
+                    3, "DeviceArticle"),
+                },
+                new object[]
+                {
+                    1,
+                    new Device.VC("TANK2VC2", "Test device", 2, "TANK", 2, 
+                    "DeviceArticle"),
+                    new Device.VC("TANK2VC1", "Test device", 1, "TANK", 2, 
+                    "DeviceArticle"),
+                }
             };
         }
     }
