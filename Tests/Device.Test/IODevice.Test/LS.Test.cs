@@ -34,7 +34,7 @@ namespace Tests
         }
 
         [TestCaseSource(nameof(GetConnectionTestData))]
-        public void GetRangeTest(string expected, string subType,
+        public void GetConnectionTest(string expected, string subType,
             Device.IODevice device)
         {
             device.SetSubType(subType);
