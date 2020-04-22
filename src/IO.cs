@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.IO;
+using System.Reflection;
 
 /// <summary>
 /// Пространство имен классов IO.
@@ -1290,8 +1291,8 @@ namespace IO
             var lua = new LuaInterface.Lua();
             const string fileName = "sys_io.lua";
             const string templateName = "sysIOLuaFilePattern";
-            string pathToDir = Path.GetDirectoryName(EasyEPlanner.AddInModule
-                .OriginalAssemblyPath) + "\\Lua";
+            string pathToDir = Path.GetDirectoryName(Assembly
+                .GetExecutingAssembly().Location) + "\\Lua";
             string pathToFile = Path.Combine(pathToDir, fileName);
 
             if(File.Exists(pathToFile))
