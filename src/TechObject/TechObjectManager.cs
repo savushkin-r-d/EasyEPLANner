@@ -748,6 +748,7 @@ namespace TechObject
                 objects.Add(newObject);
 
                 newObject.ChangeCrossRestriction();
+                newObject.Equipment.ModifyDevNames();
 
                 return newObject;
             }
@@ -819,7 +820,7 @@ namespace TechObject
             else
             {
                 newTechObject =
-                    new TechObject("Мастер", GetTechObjectN, 1, 1, "Master", 
+                    new TechObject("Мастер", GetTechObjectN, 1, 1, "MASTER", 
                     -1, "MasterObj", "");
             }
 
