@@ -267,7 +267,7 @@ namespace TechObject
             string baseTechObjectName, string attachedObjects)
         {
             TechObject obj = new TechObject(name, GetTechObjectN, techN,
-                techType, nameEplan, cooperParamNumber, NameBC, 
+                techType, nameEplan.ToUpper(), cooperParamNumber, NameBC, 
                 attachedObjects);
 
             // Установка значения базового аппарата
