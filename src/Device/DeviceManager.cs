@@ -703,7 +703,7 @@ namespace Device
         /// <summary>
         /// Инициализировать информацию об IO-Link устройствах.
         /// </summary>
-        public void InitIOLinkSizesForDevices()
+        private void InitIOLinkSizesForDevices()
         {
             IOLinkSizes = new Dictionary<string, IODevice.IOLinkSize>();
             LuaInterface.Lua lua = new LuaInterface.Lua();
