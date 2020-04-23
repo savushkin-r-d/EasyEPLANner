@@ -311,7 +311,7 @@ namespace EasyEPlanner
                 Logs.Clear();
                 Logs.Show();
                 Logs.AddMessage("Выполняется синхронизация..");
-                errors = ModulesBindingUpdate.GetInstance().Execute();
+                errors = ModulesBindingUpdater.GetInstance().Execute();
                 Logs.Clear();
             }
             catch (System.Exception ex)

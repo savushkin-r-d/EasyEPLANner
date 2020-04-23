@@ -1,687 +1,24 @@
-﻿///@file main.cs
-///@brief Классы, реализующие дополнение.
-///
-/// @author  Иванюк Дмитрий Сергеевич.
-///
-/// @par Текущая версия:
-/// @$Rev ---$.\n
-/// @$Author sedr$.\n
-/// @$Date: 2019-10-21#$.
-/// 
-
+﻿using Eplan.EplApi.Base;
+using Eplan.EplApi.DataModel;
+using Eplan.EplApi.HEServices;
+using StaticHelper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using System.Text.RegularExpressions;
-
-using Eplan.EplApi.DataModel;
-using Eplan.EplApi.ApplicationFramework;
-using Eplan.EplApi.Base;
-using Eplan.EplApi.HEServices;
-
-#region Signing
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using Eplan.EplApi.Starter;
-using Eplan.EplApi.DataModel.EObjects;
-using StaticHelper;
-
-[assembly: EplanSignedAssemblyAttribute(true)]
-#endregion
 
 namespace EasyEPlanner
 {
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    public class AddInModule : IEplAddIn, IEplAddInShadowCopy
-    {
-        /// <summary>
-        /// This function is called by the framework of EPLAN, when the framework already has initialized its
-        /// graphical user interface (GUI) and the add-in can start to modify the GUI.
-        /// The function only is called, if the add-in is loaded on system-startup.
-        /// </summary>
-        /// <returns>true, if function succeeds</returns>
-        public bool OnInitGui()
-        {
-            Eplan.EplApi.Gui.Menu oMenu = new Eplan.EplApi.Gui.Menu();
-
-            uint menuID = oMenu.AddMainMenu(
-                "EPlaner", Eplan.EplApi.Gui.Menu.MainMenuName.eMainMenuHelp,
-                "Экспорт XML для EasyServer", "SaveAsXMLAction",
-                "Экспорт XML для EasyServer", 0);
-
-            menuID = oMenu.AddMenuItem(
-                "Экспорт технологических устройств в Excel",
-                "ExportTechDevsToExcel",
-                "Экспорт технологических устройств в Excel", menuID, 1, false, true);
-
-            menuID = oMenu.AddMenuItem("Редактировать технологические объекты",
-                "ShowTechObjectsAction",
-                "Редактирование технологических объектов", menuID, 1, false, true);
-
-            menuID = oMenu.AddMenuItem("Устройства", "ShowDevicesAction",
-                "Отображение устройств", menuID, int.MaxValue, false, false);
-
-            menuID = oMenu.AddMenuItem("Операции", "ShowOperationsAction",
-                "Отображение операций", menuID, 1, false, false);
-
-            menuID = oMenu.AddMenuItem("Синхронизация названий устройств и модулей", "BindingSynchronization",
-                "Синхронизация названий устройств и модулей", menuID, 1, false, false);
-
-            menuID = oMenu.AddMenuItem("О дополнении", "AboutProgramm", "", menuID, 1, true, false);
-
-            ProjectManager.GetInstance().Init();
-            
-            return true;
-        }
-
-        public bool OnRegister(ref bool bLoadOnStart)
-        {
-            bLoadOnStart = true;
-            return true;
-        }
-
-        public bool OnUnregister()
-        {
-            return true;
-        }
-
-        public bool OnInit()
-        {
-            return true;
-        }
-
-        public bool OnExit()
-        {
-            return true;
-        }
-
-        public void OnBeforeInit(string strOriginalAssemblyPath)
-        {
-            OriginalAssemblyPath = strOriginalAssemblyPath;
-        }
-
-        // Путь к надстройке
-        public static string OriginalAssemblyPath;
-    }
-
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    public class AboutProgramm : IEplAction
-    {
-        ~AboutProgramm() { }
-
-        public bool Execute(ActionCallingContext ctx)
-        {
-            string message = $"Версия надстройки - {GetVersion()}\n" +
-               "Проект распространяется под лицензией MIT.";
-            MessageBox.Show(message, "Версия надстройки", MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
-            return true;
-        }
-
-        public bool OnRegister(ref string Name, ref int Ordinal)
-        {
-            Name = "AboutProgramm";
-            Ordinal = 30;
-
-            return true;
-        }
-
-        public void GetActionProperties(ref ActionProperties actionProperties)
-        {
-        }
-
-        /// <summary>
-        /// Получить версию надстройки
-        /// </summary>
-        /// <returns></returns>
-        private string GetVersion()
-        {
-            Version version = Assembly.GetExecutingAssembly().GetName().
-                Version;
-            return version.ToString();
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    public class LoadDescriptionAction : IEplAction
-    {
-        ~LoadDescriptionAction()
-        {
-        }
-
-        /// <summary>
-        ///This function is called when executing the action.
-        /// </summary>
-        ///<returns>true, if the action performed successfully</returns>
-        public bool Execute(ActionCallingContext ctx)
-        {
-            string pVal = "no";
-            ctx.GetParameter("loadFromLua", ref pVal);
-            bool loadFromLua = true;
-            if (pVal == "no")
-            {
-                loadFromLua = false;
-            }
-
-            string errStr;
-
-            string projectName = EProjectManager.GetInstance().GetCurrentProjectName();
-            EProjectManager.GetInstance().CheckProjectName(ref projectName);
-
-            int res = ProjectManager.GetInstance().LoadDescription(out errStr,
-                projectName, loadFromLua);
-            if (res > 0)
-            {
-                MessageBox.Show(errStr, "EPlaner", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                return false;
-            }
-
-
-            return true;
-        }
-
-        /// <summary>
-        ///This function is called by the application framework, when registering the add-in.
-        /// </summary>
-        /// <param name="Name">The action is registered in EPLAN under this name.</param>
-        /// <param name="Ordinal">The action is registered with this overload priority.</param>
-        ///<returns>true, if OnRegister succeeds</returns>
-        public bool OnRegister(ref string Name, ref int Ordinal)
-        {
-            Name = "LoadDescriptionAction";
-            Ordinal = 30;
-
-            return true;
-        }
-
-        /// <summary>
-        /// Documentation function for the action.
-        /// </summary>
-        /// <param name="actionProperties"> This object needs to be filled with information about the action.</param>
-        public void GetActionProperties(ref ActionProperties actionProperties)
-        {
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    public class BindingSynchronization : IEplAction
-    {
-        ~BindingSynchronization()
-        {
-
-        }
-        /// <summary>
-        ///This function is called when executing the action.
-        /// </summary>
-        ///<returns>true, if the action performed successfully</returns>
-        public bool Execute(ActionCallingContext ctx)
-        {
-            try
-            {
-                Project currentProject = EProjectManager.GetInstance().
-                    GetCurrentPrj();
-                if (currentProject == null)
-                {
-                    MessageBox.Show("Нет открытого проекта!", "EPlaner",
-                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                }
-                else
-                {
-                    // Синхронизация названий модулей и устройств в текущем
-                    // проекте.
-                    ProjectManager.GetInstance().UpdateModulesBinding();
-                }
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            return true;
-        }
-
-        /// <summary>
-        ///This function is called by the application framework, when registering the add-in.
-        /// </summary>
-        /// <param name="Name">The action is registered in EPLAN under this name.</param>
-        /// <param name="Ordinal">The action is registered with this overload priority.</param>
-        ///<returns>true, if OnRegister succeeds</returns>
-        public bool OnRegister(ref string Name, ref int Ordinal)
-        {
-            Name = "BindingSynchronization";
-            Ordinal = 17;
-
-            return true;
-        }
-
-        /// <summary>
-        /// Documentation function for the action.
-        /// </summary>
-        /// <param name="actionProperties"> This object needs to be filled with information about the action.</param>
-        public void GetActionProperties(ref ActionProperties actionProperties)
-        {
-        }
-
-    }
-
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    public class ExportTechDevsToExcel : IEplAction
-    {
-        ~ExportTechDevsToExcel()
-        {
-        }
-
-        /// <summary>
-        ///This function is called when executing the action.
-        /// </summary>
-        ///<returns>true, if the action performed successfully</returns>
-        public bool Execute(ActionCallingContext ctx)
-        {
-            try
-            {
-                Project currentProject = EProjectManager.GetInstance().GetCurrentPrj();
-                if (currentProject == null)
-                {
-                    MessageBox.Show("Нет открытого проекта!", "EPlaner",
-                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                }
-                else
-                {
-                    ProjectManager.GetInstance().SaveAsExcelDescription(
-                        currentProject.ProjectDirectoryPath + @"\DOC\" +
-                        currentProject.ProjectName + ".xlsx");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            return true;
-        }
-
-        /// <summary>
-        ///This function is called by the application framework, when registering the add-in.
-        /// </summary>
-        /// <param name="Name">The action is registered in EPLAN under this name.</param>
-        /// <param name="Ordinal">The action is registered with this overload priority.</param>
-        ///<returns>true, if OnRegister succeeds</returns>
-        public bool OnRegister(ref string Name, ref int Ordinal)
-        {
-            Name = "ExportTechDevsToExcel";
-            Ordinal = 31;
-
-            return true;
-        }
-
-        /// <summary>
-        /// Documentation function for the action.
-        /// </summary>
-        /// <param name="actionProperties"> This object needs to be filled with 
-        /// information about the action.</param>
-        public void GetActionProperties(ref ActionProperties actionProperties)
-        {
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    public class SaveAsXMLAction : IEplAction
-    {
-        ~SaveAsXMLAction() { }
-
-        /// <summary>
-        ///This function is called when executing the action.
-        /// </summary>
-        ///<returns>true, if the action performed successfully</returns>
-        public bool Execute(ActionCallingContext ctx)
-        {
-            try
-            {
-                Project currentProject = EProjectManager.GetInstance()
-                    .GetCurrentPrj();
-                if (currentProject == null)
-                {
-                    MessageBox.Show("Нет открытого проекта!", "EPlaner",
-                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    return true;
-                }
-
-                var exportForm = new XMLReporterDialog();
-                exportForm.SetProjectName(currentProject.ProjectName);
-                exportForm.ShowDialog();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        ///This function is called by the application framework,
-        ///when registering the add-in.
-        /// </summary>
-        /// <param name="Name">The action is registered in EPLAN 
-        /// under this name.</param>
-        /// <param name="Ordinal">The action is registered with 
-        /// this overload priority.</param>
-        ///<returns>true, if OnRegister succeeds</returns>
-        public bool OnRegister(ref string Name, ref int Ordinal)
-        {
-            Name = "SaveAsXMLAction";
-            Ordinal = 30;
-
-            return true;
-        }
-
-        /// <summary>
-        /// Documentation function for the action.
-        /// </summary>
-        /// <param name="actionProperties"> This object needs to be filled 
-        /// with information about the action.</param>
-        public void GetActionProperties(ref ActionProperties actionProperties)
-        {
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    public class ShowDevicesAction : IEplAction
-    {
-        ~ShowDevicesAction()
-        {
-        }
-
-        /// <summary>
-        ///This function is called when executing the action.
-        /// </summary>
-        ///<returns>true, if the action performed successfully</returns>
-        public bool Execute(ActionCallingContext ctx)
-        {
-            try
-            {
-                if (EProjectManager.GetInstance().GetCurrentPrj() == null)
-                {
-                    MessageBox.Show("Нет открытого проекта!", "EPlaner",
-                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                }
-                else
-                {
-                    Device.DeviceType[] devTypes = null;            // All.
-                    Device.DeviceSubType[] devSubTypes = null;      // All.
-
-                    bool showChannels = true;
-                    bool showCheckboxes = false;
-                    string checkedDev = "";
-                    DFrm.OnSetNewValue OnSetNewValueFunction = null;
-                    bool isRebuiltTree = true;
-
-                    DFrm.GetInstance().ShowDevices(
-                        Device.DeviceManager.GetInstance(), devTypes, devSubTypes,
-                        showChannels, showCheckboxes, checkedDev,
-                        OnSetNewValueFunction, isRebuiltTree);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        ///This function is called by the application framework, when registering the add-in.
-        /// </summary>
-        /// <param name="Name">The action is registered in EPLAN under this name.</param>
-        /// <param name="Ordinal">The action is registered with this overload priority.</param>
-        ///<returns>true, if OnRegister succeeds</returns>
-        public bool OnRegister(ref string Name, ref int Ordinal)
-        {
-            Name = "ShowDevicesAction";
-            Ordinal = 21;
-
-            return true;
-        }
-
-        /// <summary>
-        /// Documentation function for the action.
-        /// </summary>
-        /// <param name="actionProperties"> This object needs to be filled with information about the action.</param>
-        public void GetActionProperties(ref ActionProperties actionProperties)
-        {
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    public class ShowOperationsAction : IEplAction
-    {
-
-        ~ShowOperationsAction()
-        {
-        }
-
-        /// <summary>
-        ///This function is called when executing the action.
-        /// </summary>
-        ///<returns>true, if the action performed successfully</returns>
-        public bool Execute(ActionCallingContext ctx)
-        {
-            try
-            {
-                if (EProjectManager.GetInstance().GetCurrentPrj() == null)
-                {
-                    MessageBox.Show("Нет открытого проекта!", "EPlaner",
-                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                }
-                else
-                {
-
-                    ModeFrm.OnSetNewValue OnSetNewValueFunction = null;
-                    bool isRebuiltTree = true;
-
-                    ModeFrm.GetInstance().ShowModes(
-                        TechObject.TechObjectManager.GetInstance(),
-                        false, false, null, null, OnSetNewValueFunction, isRebuiltTree);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        ///This function is called by the application framework, when registering the add-in.
-        /// </summary>
-        /// <param name="Name">The action is registered in EPLAN under this name.</param>
-        /// <param name="Ordinal">The action is registered with this overload priority.</param>
-        ///<returns>true, if OnRegister succeeds</returns>
-        public bool OnRegister(ref string Name, ref int Ordinal)
-        {
-            Name = "ShowOperationsAction";
-            Ordinal = 36;
-
-            return true;
-        }
-
-        /// <summary>
-        /// Documentation function for the action.
-        /// </summary>
-        /// <param name="actionProperties"> This object needs to be filled with information about the action.</param>
-        public void GetActionProperties(ref ActionProperties actionProperties)
-        {
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    public class SaveDescriptionAction : IEplAction
-    {
-
-        /// <summary>
-        ///This function is called when executing the action.
-        /// </summary>
-        ///<returns>true, if the action performed successfully</returns>
-        public bool Execute(ActionCallingContext ctx)
-        {
-            try
-            {
-                string pVal = "no";
-                ctx.GetParameter("silentMode", ref pVal);
-                bool silentMode = false;
-                if (pVal == "yes")
-                {
-                    silentMode = true;
-                }
-
-                if (EProjectManager.GetInstance().GetCurrentPrj() == null)
-                {
-                    if (!silentMode)
-                    {
-                        MessageBox.Show("Нет открытого проекта!", "EPlaner",
-                            MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    }
-                }
-                else
-                {
-                    string projectName = EProjectManager.GetInstance()
-                        .GetCurrentProjectName();
-                    EProjectManager.GetInstance()
-                        .CheckProjectName(ref projectName);
-                    string path = ProjectManager.GetInstance()
-                        .GetPtusaProjectsPath(projectName) + projectName;
-                    ProjectManager.GetInstance().SaveAsLua(projectName, path, 
-                        silentMode);
-
-                    SVGStatisticsSaver.Save(path);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        ///This function is called by the application framework, when 
-        ///registering the add-in.
-        /// </summary>
-        /// <param name="Name">The action is registered in EPLAN under 
-        /// this name.</param>
-        /// <param name="Ordinal">The action is registered with this overload 
-        /// priority.</param>
-        ///<returns>true, if OnRegister succeeds</returns>
-        public bool OnRegister(ref string Name, ref int Ordinal)
-        {
-            Name = "SaveDescriptionAction";
-            Ordinal = 20;
-            return true;
-        }
-
-        /// <summary>
-        /// Documentation function for the action.
-        /// </summary>
-        /// <param name="actionProperties"> This object needs to be filled 
-        /// with information about the action.</param>
-        public void GetActionProperties(ref ActionProperties actionProperties)
-        {
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    /// <summary>    
-    /// Вспомогательные функции.
-    /// </summary>
-    public class WindowWrapper : IWin32Window
-    {
-        public WindowWrapper(IntPtr handle)
-        {
-            _hwnd = handle;
-        }
-
-        public IntPtr Handle
-        {
-            get
-            {
-                return _hwnd;
-            }
-        }
-
-        private IntPtr _hwnd;
-    }
-
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
-    public class ShowTechObjectsAction : IEplAction
-    {
-        /// <summary>
-        ///This function is called when executing the action.
-        /// </summary>
-        ///<returns>true, if the action performed successfully</returns>
-        public bool Execute(ActionCallingContext ctx)
-        {
-            if (EProjectManager.GetInstance().GetCurrentPrj() == null)
-            {
-                MessageBox.Show("Нет открытого проекта!", "EPlaner",
-                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-            else
-            {
-                //Редактирование объектов.
-                ProjectManager.GetInstance().Edit();
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        ///This function is called by the application framework, when registering the add-in.
-        /// </summary>
-        /// <param name="Name">The action is registered in EPLAN under this name.</param>
-        /// <param name="Ordinal">The action is registered with this overload priority.</param>
-        ///<returns>true, if OnRegister succeeds</returns>
-        public bool OnRegister(ref string Name, ref int Ordinal)
-        {
-            Name = "ShowTechObjectsAction";
-            Ordinal = 21;
-            return true;
-        }
-
-        /// <summary>
-        /// Documentation function for the action.
-        /// </summary>
-        /// <param name="actionProperties"> This object needs to be filled with information about the action.</param>
-        public void GetActionProperties(ref ActionProperties actionProperties)
-        {
-        }
-    }
-
     /// <summary>
     /// Класс, реализующий синхронизацию модулей и названий устройств.
     /// </summary>
-    class ModulesBindingUpdate
+    class ModulesBindingUpdater
     {
         /// <summary>
         /// Экземпляр класса синхронизации названий и модулей
         /// </summary>
         /// <returns></returns>
-        public static ModulesBindingUpdate GetInstance()
+        public static ModulesBindingUpdater GetInstance()
         {
             return modulesBindingUpdate;
         }
@@ -793,7 +130,7 @@ namespace EasyEPlanner
             {
                 return;
             }
-            
+
             deviceVisibleName += ChannelPostfix + channel.PhysicalClamp.
                 ToString();
             string functionalText = device.EPlanName;
@@ -812,23 +149,23 @@ namespace EasyEPlanner
                     string replacedDeviceDescription = device.Description.
                         Replace(PlusSymbol.ToString(),
                         SymbolForPlusReplacing);
-                    functionalText += CommonConst.NewLineWithCarriageReturn + 
+                    functionalText += CommonConst.NewLineWithCarriageReturn +
                         replacedDeviceDescription;
-                    
+
                     if (!string.IsNullOrEmpty(channel.Comment))
                     {
-                        functionalText += CommonConst.NewLineWithCarriageReturn + 
+                        functionalText += CommonConst.NewLineWithCarriageReturn +
                             channel.Comment;
                     }
                 }
                 else
                 {
-                    functionalText += CommonConst.NewLineWithCarriageReturn + 
+                    functionalText += CommonConst.NewLineWithCarriageReturn +
                         device.Description;
 
-                    if(!string.IsNullOrEmpty(channel.Comment))
+                    if (!string.IsNullOrEmpty(channel.Comment))
                     {
-                        functionalText += CommonConst.NewLineWithCarriageReturn + 
+                        functionalText += CommonConst.NewLineWithCarriageReturn +
                             channel.Comment;
                     }
                 }
@@ -836,7 +173,7 @@ namespace EasyEPlanner
                 if (IsPhoenixContactIOLinkModule(devicePartNumber) &&
                     device.Channels.Count > 1)
                 {
-                    functionalText += CommonConst.NewLineWithCarriageReturn + 
+                    functionalText += CommonConst.NewLineWithCarriageReturn +
                         ApiHelper.GetChannelNameForIOLinkModuleFromString(
                             channel.Name);
                 }
@@ -1152,7 +489,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         private bool NeedDeletingComments(string devices)
         {
-            var deviceMatches = Regex.Matches(devices, 
+            var deviceMatches = Regex.Matches(devices,
                 Device.DeviceManager.DeviceNamePattern);
 
             if (deviceMatches.Count > MinimalDevicesCountForCheck)
@@ -1187,7 +524,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string DeleteDevicesComments(string devices)
         {
-            var devicesMatches = Regex.Matches(devices, 
+            var devicesMatches = Regex.Matches(devices,
                 Device.DeviceManager.DeviceNamePattern);
 
             if (devicesMatches.Count <= MinimalDevicesCountForCheck)
@@ -1239,7 +576,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string SortDevices(string devices)
         {
-            var devicesMatches = Regex.Matches(devices, 
+            var devicesMatches = Regex.Matches(devices,
                 Device.DeviceManager.DeviceNamePattern);
 
             if (devicesMatches.Count <= MinimalDevicesCountForCheck)
@@ -1280,14 +617,14 @@ namespace EasyEPlanner
                     // конфликтов. Потом вернем обратно.
                     string replacedDeviceDescription = device.Description.
                         Replace(PlusSymbol.ToString(), SymbolForPlusReplacing);
-                    sortedDevices += device.EPlanName + 
+                    sortedDevices += device.EPlanName +
                         CommonConst.NewLineWithCarriageReturn +
                         replacedDeviceDescription +
                         CommonConst.NewLineWithCarriageReturn;
                 }
                 else
                 {
-                    sortedDevices += device.EPlanName + 
+                    sortedDevices += device.EPlanName +
                         CommonConst.NewLineWithCarriageReturn +
                         device.Description +
                         CommonConst.NewLineWithCarriageReturn;
@@ -1304,7 +641,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string SortASInterfaceDevices(string devices)
         {
-            var devicesMatches = Regex.Matches(devices, 
+            var devicesMatches = Regex.Matches(devices,
                 Device.DeviceManager.DeviceNamePattern);
 
             if (devicesMatches.Count <= MinimalDevicesCountForCheck)
@@ -1578,8 +915,8 @@ namespace EasyEPlanner
             "44\r\n45\r\n46\r\n47\r\n48\r\n49\r\n50\r\n51\r\n52\r\n53\r\n" +
             "54\r\n55\r\n56\r\n57\r\n58\r\n59\r\n60\r\n61\r\n62\r\n";
 
-        static ModulesBindingUpdate modulesBindingUpdate =
-            new ModulesBindingUpdate(); // Static экземпляр класса для доступа.
+        static ModulesBindingUpdater modulesBindingUpdate =
+            new ModulesBindingUpdater(); // Static экземпляр класса для доступа.
         string errorMessage; // Сообщение об ошибках во время работы.
 
         // Синхронизированные устройства, Функция - список клемм.
