@@ -76,6 +76,53 @@ namespace Tests
             Assert.AreEqual(expectedNum, actualNum);
         }
 
+        [TestCase("+LINE1-V2", "LINE1V2")]
+        [TestCase("+TANK2-V1", "TANK2V1")]
+        [TestCase("+KOAG3-PT1", "KOAG3PT1")]
+        [TestCase("+BATH4-TE2", "BATH4TE2")]
+        [TestCase("LINE1V2", "LINE1V2")]
+        [TestCase("TANK2V1", "TANK2V1")]
+        [TestCase("KOAG3PT1", "KOAG3PT1")]
+        [TestCase("BATH4TE2", "BATH4TE2")]
+        [TestCase("BATH4TE99", "заглушка")]
+        [TestCase("", "")]
+        public void GetDeviceTest(string devName, string expectedDevName)
+        {
+            var dev = Device.DeviceManager.GetInstance().GetDevice(devName);
+            string actualDevName = dev.Name;
+            if (expectedDevName == "заглушка")
+            {
+                Assert.AreEqual(expectedDevName, dev.Description);
+            }
+            else
+            {
+                Assert.AreEqual(expectedDevName, actualDevName);
+            }
+        }
 
+        [TestCase("+LINE1-V2", "LINE1V2")]
+        [TestCase("+TANK2-V1", "TANK2V1")]
+        [TestCase("+KOAG3-PT1", "KOAG3PT1")]
+        [TestCase("+BATH4-TE2", "BATH4TE2")]
+        [TestCase("LINE1V2", "LINE1V2")]
+        [TestCase("TANK2V1", "TANK2V1")]
+        [TestCase("KOAG3PT1", "KOAG3PT1")]
+        [TestCase("BATH4TE2", "BATH4TE2")]
+        [TestCase("BATH4TE99", "заглушка")]
+        [TestCase("", "")]
+        public void GetDeviceByEplanNameTest(string devName, string expectedDevName)
+        {
+            var dev = Device.DeviceManager.GetInstance().GetDeviceByEplanName(
+                devName);
+            string actualDevName = dev.Name;
+            if (expectedDevName == "заглушка")
+            {
+                Assert.AreEqual(expectedDevName, dev.Description);
+            }
+            else
+            {
+                Assert.AreEqual(expectedDevName, actualDevName);
+            }
+        }
     }
 }
