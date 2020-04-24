@@ -36,39 +36,39 @@ namespace Device
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
                     parameters.Add("P_C0", null);
+                    parameters.Add("P_ERR", null);
                     parameters.Add("P_MAX_P", null);
                     parameters.Add("P_R", null);
-                    parameters.Add("P_ERR", null);
                     break;
 
                 case "LT_CONE":
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
                     parameters.Add("P_C0", null);
+                    parameters.Add("P_ERR", null);
                     parameters.Add("P_MAX_P", null);
                     parameters.Add("P_R", null);
                     parameters.Add("P_H_CONE", null);
-                    parameters.Add("P_ERR", null);
                     break;
 
                 case "LT_TRUNC":
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
                     parameters.Add("P_C0", null);
+                    parameters.Add("P_ERR", null);
                     parameters.Add("P_MAX_P", null);
                     parameters.Add("P_R", null);
                     parameters.Add("P_H_TRUNC", null);
-                    parameters.Add("P_ERR", null);
                     break;
 
                 case "LT_IOLINK":
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
                     parameters.Add("P_C0", null);
+                    parameters.Add("P_ERR", null);
                     parameters.Add("P_MAX_P", null);
                     parameters.Add("P_R", null);
                     parameters.Add("P_H_CONE", 0);
-                    parameters.Add("P_ERR", null);
 
                     SetIOLinkSizes(ArticleName);
                     break;
