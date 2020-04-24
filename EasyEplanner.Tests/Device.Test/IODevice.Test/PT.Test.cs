@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Tests
@@ -41,6 +42,17 @@ namespace Tests
             device.SetParameter("P_MIN_V", value1);
             device.SetParameter("P_MAX_V", value2);
             Assert.AreEqual(expected, device.GetRange());
+        }
+
+        [TestCaseSource(nameof(ParametersTestData))]
+        public void ParametersTest(string[] parametersSequence, string subType,
+            Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            string[] actualParametersSequence = device.Parameters
+                .Select(x => x.Key)
+                .ToArray();
+            Assert.AreEqual(parametersSequence, actualParametersSequence);
         }
 
         /// <summary>
@@ -148,6 +160,37 @@ namespace Tests
                     GetRandomPTDevice()},
                 new object[] {$"", "", 4.0, 8.0, GetRandomPTDevice()},
                 new object[] {$"", "Incorrect", 7.0, 9.0, GetRandomPTDevice()},
+            };
+        }
+
+        /// <summary>
+        /// 1 - Параметры в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        public static object[] ParametersTestData()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new string[] { "P_C0", "P_MIN_V", "P_MAX_V" },
+                    "PT",
+                    GetRandomPTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "PT_IOLINK",
+                    GetRandomPTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "DEV_SPAE",
+                    GetRandomPTDevice()
+                },
             };
         }
 
