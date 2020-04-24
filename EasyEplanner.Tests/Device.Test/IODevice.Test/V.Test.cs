@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Tests
@@ -31,6 +32,17 @@ namespace Tests
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
                 device.DeviceType, device.DeviceSubType));
+        }
+
+        [TestCaseSource(nameof(ParametersTestData))]
+        public void ParametersTest(string[] parametersSequence, string subType,
+            Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            string[] actualParametersSequence = device.Parameters
+                .Select(x => x.Key)
+                .ToArray();
+            Assert.AreEqual(parametersSequence, actualParametersSequence);
         }
 
         /// <summary>
@@ -203,6 +215,109 @@ namespace Tests
                     GetRandomVDevice()},
                 new object[] {null, "Incorrect", GetRandomVDevice()},
                 new object[] {null, "", GetRandomVDevice()},
+            };
+        }
+
+        /// <summary>
+        /// 1 - Параметры в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        public static object[] ParametersTestData()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new string[0],
+                    "V_DO1",
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "V_DO2",
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME", "P_FB" },
+                    "V_DO1_DI1_FB_OFF",
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME", "P_FB" },
+                    "V_DO1_DI2",
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME", "P_FB" },
+                    "V_DO2_DI2",
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME", "P_FB" },
+                    "V_DO2_DI2_BISTABLE",
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME", "P_FB" },
+                    "V_MIXPROOF",
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME", "P_FB" },
+                    "V_IOLINK_MIXPROOF",
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME", "P_FB" },
+                    "V_AS_MIXPROOF",
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME", "P_FB" },
+                    "V_BOTTOM_MIXPROOF",
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME", "P_FB" },
+                    "V_AS_DO1_DI2",
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME", "P_FB" },
+                    "V_IOLINK_DO1_DI2",
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "V_IOLINK_VTUG_DO1",
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME", "P_FB" },
+                    "V_IOLINK_VTUG_DO1_FB_OFF",
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME", "P_FB" },
+                    "V_IOLINK_VTUG_DO1_FB_ON",
+                    GetRandomVDevice()
+                },
             };
         }
 

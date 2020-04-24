@@ -67,6 +67,31 @@ namespace Tests
         }
 
         /// <summary>
+        /// 1 - Параметры в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        public static object[] ParametersTestData()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new string[] { "P_NOMINAL_W", "P_RKP", "P_C0", "P_DT" },
+                    "WT",
+                    GetRandomWTDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_NOMINAL_W", "P_RKP", "P_C0", "P_DT" },
+                    "",
+                    GetRandomWTDevice()
+                },
+            };
+        }
+
+        /// <summary>
         /// Генератор WT устройств
         /// </summary>
         /// <returns></returns>

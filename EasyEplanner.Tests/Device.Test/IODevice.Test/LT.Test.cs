@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Tests
@@ -31,6 +32,17 @@ namespace Tests
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
                 device.DeviceType, device.DeviceSubType));
+        }
+
+        [TestCaseSource(nameof(ParametersTestData))]
+        public void ParametersTest(string[] parametersSequence, string subType,
+            Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            string[] actualParametersSequence = device.Parameters
+                .Select(x => x.Key)
+                .ToArray();
+            Assert.AreEqual(parametersSequence, actualParametersSequence);
         }
 
         /// <summary>
@@ -165,6 +177,58 @@ namespace Tests
                 new object[] {exportForLTVirt, "LT_VIRT", GetRandomLTDevice()},
                 new object[] {null, "Incorrect", GetRandomLTDevice()},
                 new object[] {null, "", GetRandomLTDevice()},
+            };
+        }
+
+        /// <summary>
+        /// 1 - Параметры в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        public static object[] ParametersTestData()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new string[] { "P_C0", "P_ERR" },
+                    "LT",
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_C0", "P_ERR", "P_MAX_P", "P_R" },
+                    "LT_CYL",
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_C0", "P_ERR", "P_MAX_P", "P_R", 
+                        "P_H_CONE" },
+                    "LT_CONE",
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_C0", "P_ERR", "P_MAX_P", "P_R", 
+                        "P_H_TRUNC" },
+                    "LT_TRUNC",
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_C0", "P_ERR", "P_MAX_P", "P_R",
+                        "P_H_CONE" },
+                    "LT_IOLINK",
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "LT_VIRT",
+                    GetRandomLTDevice()
+                },
             };
         }
 

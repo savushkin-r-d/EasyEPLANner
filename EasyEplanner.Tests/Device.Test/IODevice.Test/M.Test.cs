@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Tests
@@ -31,6 +32,17 @@ namespace Tests
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
                 device.DeviceType, device.DeviceSubType));
+        }
+
+        [TestCaseSource(nameof(ParametersTestData))]
+        public void ParametersTest(string[] parametersSequence, string subType,
+            Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            string[] actualParametersSequence = device.Parameters
+                .Select(x => x.Key)
+                .ToArray();
+            Assert.AreEqual(parametersSequence, actualParametersSequence);
         }
 
         /// <summary>
@@ -148,6 +160,73 @@ namespace Tests
                 new object[] {exportForMATV, "M_ATV", GetRandomMDevice()},
                 new object[] {null, "Incorrect", GetRandomMDevice()},
                 new object[] {null, "", GetRandomMDevice()},
+            };
+        }
+
+        /// <summary>
+        /// 1 - Параметры в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        public static object[] ParametersTestData()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new string[] { "P_ON_TIME" },
+                    "M",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME" },
+                    "M_FREQ",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME" },
+                    "M_REV",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME" },
+                    "M_REV_FREQ",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME" },
+                    "M_REV_2",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME" },
+                    "M_REV_FREQ_2",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME" },
+                    "M_REV_2_ERROR",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME" },
+                    "M_REV_FREQ_2_ERROR",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME" },
+                    "M_ATV",
+                    GetRandomMDevice()
+                },
             };
         }
 

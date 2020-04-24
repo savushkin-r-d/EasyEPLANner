@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Tests
@@ -31,6 +32,17 @@ namespace Tests
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
                 device.DeviceType, device.DeviceSubType));
+        }
+
+        [TestCaseSource(nameof(ParametersTestData))]
+        public void ParametersTest(string[] parametersSequence, string subType,
+            Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            string[] actualParametersSequence = device.Parameters
+                .Select(x => x.Key)
+                .ToArray();
+            Assert.AreEqual(parametersSequence, actualParametersSequence);
         }
 
         /// <summary>
@@ -91,6 +103,37 @@ namespace Tests
                 new object[] {exportForDO, "DO", GetRandomDODevice()},
                 new object[] {exportForDO, "DO_VIRT", GetRandomDODevice()},
                 new object[] {exportForDO, "Incorrect", GetRandomDODevice()},
+            };
+        }
+
+        /// <summary>
+        /// 1 - Параметры в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        public static object[] ParametersTestData()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new string[0],
+                    "DO",
+                    GetRandomDODevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "",
+                    GetRandomDODevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "DO_VIRT",
+                    GetRandomDODevice()
+                },
             };
         }
 
