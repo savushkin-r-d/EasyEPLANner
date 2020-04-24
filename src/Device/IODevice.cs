@@ -703,6 +703,17 @@ namespace Device
         }
 
         /// <summary>
+        /// Получить параметры устройства.
+        /// </summary>
+        public Dictionary<string, object> Parameters
+        {
+            get
+            {
+                return parameters;
+            }
+        }
+
+        /// <summary>
         /// Свойство содержащее изделие, которое используется для устройства
         /// </summary>
         public string ArticleName { get; set; } = "";
