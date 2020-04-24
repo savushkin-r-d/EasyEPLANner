@@ -32,6 +32,7 @@ namespace TechObject
             /// </summary>
             public override bool SetNewValue(string newValue)
             {
+                newValue = newValue.ToUpper();
                 owner.ModifyDevNames(newValue);
                 base.SetNewValue(newValue);
                 owner.CompareEplanNames();
