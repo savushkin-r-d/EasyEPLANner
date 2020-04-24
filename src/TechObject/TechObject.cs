@@ -436,6 +436,7 @@ namespace TechObject
             clone.modes.ModifyRestrictObj(oldObjN, newObjN);
 
             clone.equipment = equipment.Clone(clone);
+            clone.equipment.ModifyDevNames();
 
             clone.SetItems();
             return clone;
