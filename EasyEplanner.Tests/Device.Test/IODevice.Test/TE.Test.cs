@@ -35,7 +35,6 @@ namespace Tests
         }
 
         [TestCaseSource(nameof(ParametersTestData))]
-
         public void ParametersTest(string[] parametersSequence, string subType, 
             Device.IODevice device)
         {
