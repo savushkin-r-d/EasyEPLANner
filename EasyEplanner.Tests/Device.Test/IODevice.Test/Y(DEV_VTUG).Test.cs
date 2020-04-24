@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Tests
@@ -15,6 +16,17 @@ namespace Tests
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
         }
 
+        [TestCaseSource(nameof(ParametersTestData))]
+        public void ParametersTest(string[] parametersSequence, string subType,
+            Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            string[] actualParametersSequence = device.Parameters
+                .Select(x => x.Key)
+                .ToArray();
+            Assert.AreEqual(parametersSequence, actualParametersSequence);
+        }
+
         /// <summary>
         /// 1 - Ожидаемое значение подтипа,
         /// 2 - Задаваемое значение подтипа,
@@ -26,15 +38,46 @@ namespace Tests
             return new object[]
             {
                 new object[] { Device.DeviceSubType.DEV_VTUG_8, "DEV_VTUG_8",
-                    GetRandomYDevice() },
+                    GetRandomDEV_VTUGDevice() },
                 new object[] { Device.DeviceSubType.DEV_VTUG_16, "DEV_VTUG_16",
-                    GetRandomYDevice() },
+                    GetRandomDEV_VTUGDevice() },
                 new object[] { Device.DeviceSubType.DEV_VTUG_24, "DEV_VTUG_24",
-                    GetRandomYDevice() },
+                    GetRandomDEV_VTUGDevice() },
                 new object[] { Device.DeviceSubType.NONE, "",
-                    GetRandomYDevice() },
+                    GetRandomDEV_VTUGDevice() },
                 new object[] { Device.DeviceSubType.NONE, "Incorrect",
-                    GetRandomYDevice() },
+                    GetRandomDEV_VTUGDevice() },
+            };
+        }
+
+        /// <summary>
+        /// 1 - Параметры в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        public static object[] ParametersTestData()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new string[0],
+                    "DEV_VTUG_8",
+                    GetRandomDEV_VTUGDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "DEV_VTUG_16",
+                    GetRandomDEV_VTUGDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "DEV_VTUG_24",
+                    GetRandomDEV_VTUGDevice()
+                },
             };
         }
 
@@ -42,7 +85,7 @@ namespace Tests
         /// Генератор DEV_VTUG устройств
         /// </summary>
         /// <returns></returns>
-        public static Device.IODevice GetRandomYDevice()
+        public static Device.IODevice GetRandomDEV_VTUGDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
@@ -74,6 +117,17 @@ namespace Tests
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
         }
 
+        [TestCaseSource(nameof(ParametersTestData))]
+        public void ParametersTest(string[] parametersSequence, string subType,
+            Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            string[] actualParametersSequence = device.Parameters
+                .Select(x => x.Key)
+                .ToArray();
+            Assert.AreEqual(parametersSequence, actualParametersSequence);
+        }
+
         /// <summary>
         /// 1 - Ожидаемое значение подтипа,
         /// 2 - Задаваемое значение подтипа,
@@ -94,6 +148,37 @@ namespace Tests
                     GetRandomYDevice() },
                 new object[] { Device.DeviceSubType.NONE, "Incorrect",
                     GetRandomYDevice() },
+            };
+        }
+
+        /// <summary>
+        /// 1 - Параметры в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        public static object[] ParametersTestData()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new string[0],
+                    "DEV_VTUG_8",
+                    GetRandomYDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "DEV_VTUG_16",
+                    GetRandomYDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "DEV_VTUG_24",
+                    GetRandomYDevice()
+                },
             };
         }
 
