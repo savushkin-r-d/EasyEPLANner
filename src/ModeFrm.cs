@@ -132,7 +132,8 @@ namespace EasyEPlanner
                 {
                     case (int)PI.WM.MOVE:
                     case (int)PI.WM.SIZE:
-                        IntPtr dialogPtr = PI.GetParent(modesTreeViewAdv.Handle);
+                        IntPtr dialogPtr = PI.
+                            GetParent(modesTreeViewAdv.Handle);
 
                         PI.RECT rctDialog;
                         PI.RECT rctPanel;
@@ -142,9 +143,8 @@ namespace EasyEPlanner
                         int w = rctDialog.Right - rctDialog.Left;
                         int h = rctDialog.Bottom - rctDialog.Top;
 
-                        toolStrip.Location =
-                            new Point(0, 0);
-                        modesTreeViewAdv.Location =
+                        toolStrip.Location = new Point(0, 0);
+                        modesTreeViewAdv.Location = 
                             new Point(0, 0 + toolStrip.Height);
 
                         toolStrip.Width = w;
@@ -251,8 +251,6 @@ namespace EasyEPlanner
 
             string windowName = "Штекеры";
 
-            bool isDocked = false;
-
             IntPtr res = PI.FindWindowByCaption(
                 IntPtr.Zero, windowName);                  //1.1
 
@@ -312,7 +310,6 @@ namespace EasyEPlanner
                             if (resList.Count > 0)
                             {
                                 dialogHandle = resList[0];
-                                isDocked = true;
                                 res = dialogHandle;
                                 wndModeVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
                                 break;
@@ -378,7 +375,6 @@ namespace EasyEPlanner
                                 if (resList.Count > 0)
                                 {
                                     dialogHandle = resList[0];
-                                    isDocked = true;
                                     wndModeVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
                                     break;
                                 }
@@ -413,25 +409,22 @@ namespace EasyEPlanner
             PI.SetParent(modesTreeViewAdv.Handle, dialogHandle);         //5 
             PI.SetParent(toolStrip.Handle, dialogHandle);
 
-            int dy = 0;
-            if (isDocked)
-            {
-                dy = 2;
-                //TODO: Доработать открытие формы в окне.
-            }
+            IntPtr dialogPtr = PI.GetParent(modesTreeViewAdv.Handle);
 
-            PI.RECT dialogRect;
-            PI.GetWindowRect(dialogHandle, out dialogRect);
+            PI.RECT rctDialog;
+            PI.RECT rctPanel;
+            PI.GetWindowRect(dialogPtr, out rctDialog);
+            PI.GetWindowRect(panelPtr, out rctPanel);
 
-            toolStrip.Location = new Point(0, dy);
-            modesTreeViewAdv.Location = new Point(0, dy + toolStrip.Height);
+            int w = rctDialog.Right - rctDialog.Left;
+            int h = rctDialog.Bottom - rctDialog.Top;
 
-            int w = dialogRect.Right - dialogRect.Left;
-            int h = dialogRect.Bottom - dialogRect.Top - toolStrip.Height - dy;
+            toolStrip.Location = new Point(0, 0);
+            modesTreeViewAdv.Location = new Point(0, 0 + toolStrip.Height);
 
-            modesTreeViewAdv.Width = w;
-            modesTreeViewAdv.Height = h;
             toolStrip.Width = w;
+            modesTreeViewAdv.Width = w;
+            modesTreeViewAdv.Height = h - toolStrip.Height;
 
             uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);        //6
             dialogHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_CALLWNDPROC,
@@ -607,6 +600,7 @@ namespace EasyEPlanner
             int toNum = 0;
             int modeNum = 0;
             TechObject.TechObject mainTO = item as TechObject.TechObject;
+            var restriction = checkedMode as TechObject.Restriction;
             //Заполняем узлы дерева устройствами.
             foreach (TechObject.TechObject to in techManager.Objects)
             {
@@ -616,7 +610,7 @@ namespace EasyEPlanner
                 parentNode.Tag = to.GetType().FullName;
                 root.Nodes.Add(parentNode);
 
-                List<TechObject.Mode> modes = to.GetModesManager.GetModes;
+                List<TechObject.Mode> modes = to.ModesManager.Modes;
 
                 foreach (TechObject.Mode mode in modes)
                 {
@@ -626,40 +620,53 @@ namespace EasyEPlanner
                     childNode.Tag = mode.GetType().FullName;
                     parentNode.Nodes.Add(childNode);
 
+                    if (restriction != null)
+                    {
+                        var restrictionManager = restriction.Parent;
+                        var selectedMode = restrictionManager.Parent as
+                            TechObject.Mode;
+                        var modeManager = selectedMode.Parent;
+                        var selectedTO = modeManager.Parent as
+                            TechObject.TechObject;
+                        if (to.DisplayText[0] == selectedTO.DisplayText[0] && 
+                            mode.Name == selectedMode.Name)
+                        {
+                            childNode.IsHidden = true;
+                        }
+                    }
+
                     string checkedStr;
                     if (checkedMode != null)
                     {
                         checkedStr = checkedMode.EditText[1];
-                        TechObject.Restriction restrict = checkedMode as TechObject.Restriction;
-
-                        if (restrict != null)
+                        if (restriction != null)
                         {
-                            if (restrict.RestrictDictionary != null)
+                            if (restriction.RestrictDictionary != null)
                             {
-                                if (restrict.RestrictDictionary.ContainsKey(toNum))
+                                if (restriction.RestrictDictionary
+                                    .ContainsKey(toNum))
                                 {
-                                    if (restrict.RestrictDictionary[toNum].Contains(modeNum))
+                                    if (restriction.RestrictDictionary[toNum]
+                                        .Contains(modeNum))
                                     {
-                                        childNode.CheckState = CheckState.Checked;
+                                        childNode.CheckState = CheckState
+                                            .Checked;
                                     }
                                     else
                                     {
-                                        childNode.CheckState = CheckState.Unchecked;
+                                        childNode.CheckState = CheckState
+                                            .Unchecked;
                                     }
                                 }
 
                             }
                         }
-
-
-
                     }
                     else
                     {
                         checkedStr = "";
                         childNode.CheckState = CheckState.Unchecked;
                     }
-
                 }
 
                 if (showOneNode == true)

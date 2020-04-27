@@ -7,6 +7,7 @@ using EasyEPlanner;
 using PInvoke;
 using BrightIdeasSoftware;
 using System.Collections;
+using System.Linq;
 
 namespace Editor
 {
@@ -127,8 +128,8 @@ namespace Editor
         public List<ITreeViewItem> treeViewItemsList;
 
         // Списки для editorTView.
-        List<string> baseModeList;
         List<string> baseTechObjectList;
+
         // Редакторы для editorTView
         ComboBox comboBoxCellEditor;
         TextBox textBoxCellEditor;
@@ -138,21 +139,8 @@ namespace Editor
         /// </summary>
         private void InitTreeListEditors()
         {
-            // Получение списка базовых аппаратов
-            baseTechObjectList = new List<string>();
-            TechObject.BaseTechObject[] baseTechObjects = TechObject.DBImitation.GetBaseTechObjects();
-            foreach (TechObject.BaseTechObject baseTechObject in baseTechObjects)
-            {
-                baseTechObjectList.Add(baseTechObject.GetName());
-            }
-
-            // Получение списка базовых операций
-            baseModeList = new List<string>();
-            TechObject.BaseOperation[] baseOperations = TechObject.DBImitation.GetBaseOperations();
-            foreach (TechObject.BaseOperation baseOperation in baseOperations)
-            {
-                baseModeList.Add(baseOperation.GetName());
-            }
+            baseTechObjectList = DataBase.Imitation.BaseTechObjects()
+                .Select(x => x.Name).ToList();
         }
 
         /// <summary>
@@ -295,17 +283,17 @@ namespace Editor
         //Ширина, которую нужно учитывать при форматировании колонок.
         private const int deltaWidth = 5;
 
-        private int GlobalHookKeyboardCallbackFunction(int code,
+        private IntPtr GlobalHookKeyboardCallbackFunction(int code,
             PI.WM wParam, PI.KBDLLHOOKSTRUCT lParam)
         {
             if (code < 0 || editorTView == null)
             {
-                return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam).ToInt32();
+                return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
             }
 
             if (!(IsCellEditing || editorTView.Focused))
             {
-                return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam).ToInt32();
+                return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
             }
 
             uint c = (uint)lParam.vkCode;
@@ -322,7 +310,7 @@ namespace Editor
                 {
                     if (IsCellEditing || editorTView.Focused)
                     {
-                        return 1;
+                        return (IntPtr) 1;
                     }
                 }
             }
@@ -340,7 +328,7 @@ namespace Editor
                         {
                             cancelChanges = true;
                             editorTView.FinishCellEdit();
-                            return 1;
+                            return (IntPtr) 1;
                         }
                         break;
 
@@ -348,7 +336,7 @@ namespace Editor
                         if (IsCellEditing)
                         {
                             editorTView.FinishCellEdit();
-                            return 1;
+                            return (IntPtr) 1;
                         }
                         break;
 
@@ -362,7 +350,7 @@ namespace Editor
                                 PI.SendMessage(PI.GetFocus(),
                                     (int)PI.WM.COPY, 0, 0);
 
-                                return 1;
+                                return (IntPtr) 1;
                             }
 
                             if (editorTView.Focused)
@@ -371,7 +359,7 @@ namespace Editor
                                     (int)PI.WM.KEYDOWN,
                                     (int)Keys.C, 0);
 
-                                return 1;
+                                return (IntPtr) 1;
                             }
 
                             if (editorTView.Focused)
@@ -380,7 +368,7 @@ namespace Editor
                                     (int)PI.WM.KEYDOWN,
                                     (int)Keys.C, 0);
 
-                                return 1;
+                                return (IntPtr) 1;
                             }
                         }
                         break;
@@ -394,7 +382,7 @@ namespace Editor
                             {
                                 PI.SendMessage(PI.GetFocus(),
                                     (int)PI.WM.CUT, 0, 0);
-                                return 1;
+                                return (IntPtr)1;
                             }
                         }
                         break;
@@ -408,7 +396,7 @@ namespace Editor
                             {
                                 PI.SendMessage(PI.GetFocus(),
                                     (int)PI.WM.PASTE, 0, 0);
-                                return 1;
+                                return (IntPtr) 1;
                             }
 
                             if (editorTView.Focused)
@@ -416,31 +404,7 @@ namespace Editor
                                 PI.SendMessage(PI.GetFocus(),
                                     (int)PI.WM.KEYDOWN,
                                     (int)Keys.V, 0);
-                                return 1;
-                            }
-                        }
-                        break;
-
-                    case (uint)Keys.A:                                   //A
-                        ctrlState = PI.GetKeyState(
-                            (int)PI.VIRTUAL_KEY.VK_CONTROL);
-
-                        if ((ctrlState & SHIFTED) > 0)
-                        {
-                            if (IsCellEditing)
-                            {
-                                PI.SendMessage(PI.GetFocus(),
-                                    0x00B1, //EM_SETSEL
-                                    0, -1);
-                                return 1;
-                            }
-
-                            if (editorTView.Focused)
-                            {
-                                PI.SendMessage(PI.GetFocus(),
-                                    (int)PI.WM.KEYDOWN,
-                                    (int)Keys.A, 0);
-                                return 1;
+                                return (IntPtr) 1;
                             }
                         }
                         break;
@@ -450,7 +414,7 @@ namespace Editor
                         {
                             PI.SendMessage(PI.GetFocus(), (int)PI.WM.KEYDOWN,
                                 (int)PI.VIRTUAL_KEY.VK_DELETE, 0);
-                            return 1;
+                            return (IntPtr) 1;
                         }
 
                         break;
@@ -461,11 +425,11 @@ namespace Editor
                     case PI.VIRTUAL_KEY.VK_RIGHT:                       //Right
                         PI.SendMessage(PI.GetFocus(),
                             (int)PI.WM.KEYDOWN, (int)c, 0);
-                        return 1;
+                        return (IntPtr) 1;
                 }
             }
 
-            return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam).ToInt32();
+            return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }
 
         /// <summary>
@@ -487,7 +451,9 @@ namespace Editor
 
             drawDev_toolStripButton.Checked = false;
 
-            ProjectManager.GetInstance().RemoveHighLighting();
+            bool isClosingProject = true;
+            ProjectManager.GetInstance().RemoveHighLighting(isClosingProject);
+
             System.Threading.Thread.Sleep(1);
 
             IsShown = false;
@@ -583,8 +549,6 @@ namespace Editor
 
             wasShown = true;
 
-            bool isDocked = false;
-
             string windowName = "Комментарий";
             IntPtr res = PI.FindWindowByCaption(
                 IntPtr.Zero, windowName);            //1.1;
@@ -644,7 +608,7 @@ namespace Editor
                             if (resList.Count > 0)
                             {
                                 dialogHandle = resList[0];
-                                isDocked = true;
+
                                 res = dialogHandle;
                                 wndEditVisiblePtr = dialogHandle; // Сохраняем дескриптор окна.
                                 break;
@@ -710,7 +674,7 @@ namespace Editor
                                 if (resList.Count > 0)
                                 {
                                     dialogHandle = resList[0];
-                                    isDocked = true;
+
                                     wndEditVisiblePtr = dialogHandle; // Сохраняем дескриптор окна.
                                     break;
                                 }
@@ -750,21 +714,22 @@ namespace Editor
             PI.SetParent(editorTView.Handle, dialogHandle);         //5
             PI.SetParent(toolStrip.Handle, dialogHandle);
 
-            int dy = 1;
-            if (isDocked)
-            {
-                dy = 3;
-                // TODO: доработать открытие формы в окне.
-            }
+            IntPtr dialogPtr = PI.GetParent(editorTView.Handle);
 
-            PI.RECT dialogRect;
-            PI.GetWindowRect(dialogHandle, out dialogRect);
+            PI.RECT rctDialog;
+            PI.RECT rctPanel;
+            PI.GetWindowRect(dialogPtr, out rctDialog);
+            PI.GetWindowRect(panelPtr, out rctPanel);
 
-            toolStrip.Location = new Point(0, dy);
-            editorTView.Location = new Point(0, dy + toolStrip.Height + dy);
+            int w = rctDialog.Right - rctDialog.Left;
+            int h = rctDialog.Bottom - rctDialog.Top;
 
-            editorTView.Width = dialogRect.Right - dialogRect.Left - 2;
-            editorTView.Height = dialogRect.Bottom - dialogRect.Top - toolStrip.Height - dy;
+            toolStrip.Location = new Point(0, 0);
+            editorTView.Location = new Point(0, toolStrip.Height);
+
+            toolStrip.Width = w;
+            editorTView.Width = w;
+            editorTView.Height = h - toolStrip.Height;
 
             uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);        //6
             dialogHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_CALLWNDPROC,
@@ -976,7 +941,7 @@ namespace Editor
             {
                 ITreeViewItem item = editorTView.SelectedObject as ITreeViewItem;
                 noOnChange = true;
-                editorTView.RefreshObject(item.Parent);
+                editorTView.RefreshObject(item);
                 noOnChange = false;
                 OnModify();
             }
@@ -1233,11 +1198,22 @@ namespace Editor
             {
                 foreach (ITreeViewItem tObject in tObjectMan.Items)
                 {
-                    if (e.Item.RowObject == tObject || e.Item.RowObject == tObjectMan)
+                    if (e.Item.RowObject == tObject || 
+                        e.Item.RowObject == tObjectMan)
                     {
-                        e.Item.Font = new Font("Microsoft Sans Serif", 8, FontStyle.Bold);
+                        e.Item.Font = new Font("Microsoft Sans Serif", 8, 
+                            FontStyle.Bold);
                     }
                 }
+            }
+
+            var boolProperty = e.Model as TechObject.BoolShowedProperty;
+            if (boolProperty != null && 
+                e.ColumnIndex == 1 &&
+                boolProperty.DefaultValue != boolProperty.Value)
+            {
+                e.SubItem.Font = new Font("Microsoft Sans Serif", 8, 
+                    FontStyle.Bold);
             }
         }
 
@@ -1249,38 +1225,68 @@ namespace Editor
             IsCellEditing = true;
             ITreeViewItem item = editorTView.SelectedObject as ITreeViewItem;
 
-            if (item == null || !item.IsEditable || item.EditablePart[e.Column.Index] != e.Column.Index)
+            if (item == null || 
+                !item.IsEditable || 
+                item.EditablePart[e.Column.Index] != e.Column.Index)
             {
                 IsCellEditing = false;
                 e.Cancel = true;
                 return;
             }
 
-            // Проверяем тип редактируемого объекта, редактируемую ячейку и выбранную колонку для редактирования
+            // Проверяем тип редактируемого объекта, редактируемую ячейку и 
+            //выбранную колонку для редактирования
             if (e.Column.Index == 1 &&
                 (item.GetType().Name == "Mode" ||
-                item.GetType().Name == "TechObject"))
+                item.GetType().Name == "TechObject" ||
+                item.GetType().Name == "Step"))
             {
                 switch (item.GetType().Name)
                 {
                     case "Mode":
-                        InitComboBoxCellEditor(baseModeList);
-                        comboBoxCellEditor.Text = e.Value.ToString();
-                        comboBoxCellEditor.Bounds = e.CellBounds;
-                        e.Control = comboBoxCellEditor;
-                        comboBoxCellEditor.Focus();
-                        editorTView.Freeze();
+                        var baseOperations = GetBaseOperationsList(item);
+                        if (baseOperations.Count == 0)
+                        {
+                            e.Cancel = true;
+                            IsCellEditing = false;
+                            return;
+                        }
+
+                        InitComboBoxCellEditor(baseOperations);
                         break;
 
                     case "TechObject":
                         InitComboBoxCellEditor(baseTechObjectList);
-                        comboBoxCellEditor.Text = e.Value.ToString();
-                        comboBoxCellEditor.Bounds = e.CellBounds;
-                        e.Control = comboBoxCellEditor;
-                        comboBoxCellEditor.Focus();
-                        editorTView.Freeze();
+
+                        break;
+
+                    case "Step":
+                        var steps = GetBaseOperationStepsList(item);
+                        if (steps.Count == 0)
+                        {
+                            e.Cancel = true;
+                            IsCellEditing = false;
+                            return;
+                        }
+
+                        InitComboBoxCellEditor(steps);
                         break;
                 }
+
+                comboBoxCellEditor.Text = e.Value.ToString();
+                comboBoxCellEditor.Bounds = e.CellBounds;
+                e.Control = comboBoxCellEditor;
+                comboBoxCellEditor.Focus();
+                editorTView.Freeze();
+            }
+            else if(e.Column.Index == 1 && 
+                item.GetType().Name == "BoolShowedProperty")
+            {
+                item.SetNewValue(e.Value.ToString());
+                IsCellEditing = false;
+                e.Cancel = true;
+                editorTView.RefreshObject(item);
+                return;
             }
             else
             {
@@ -1291,6 +1297,51 @@ namespace Editor
                 e.Control = textBoxCellEditor;
                 textBoxCellEditor.Focus();
                 editorTView.Freeze();
+            }
+        }
+
+        /// <summary>
+        /// Получить список базовых операций ITreeViewItem.
+        /// Если его нету - вернуть пустой список.
+        /// </summary>
+        /// <param name="item">ITreeViewItem</param>
+        /// <returns></returns>
+        private List<string> GetBaseOperationsList(ITreeViewItem item)
+        {
+            if (item is TechObject.Mode == true)
+            {
+                var mode = (TechObject.Mode)item;
+                var baseObject = mode.Owner.Owner.BaseTechObject;
+                return baseObject.BaseOperationsList;
+            }
+            else
+            {
+                return new List<string>();
+            }
+        }
+
+        private List<string> GetBaseOperationStepsList(ITreeViewItem item)
+        {
+            var emptyList = new List<string>();
+            if (item is TechObject.Step == true)
+            {
+                var step = item as TechObject.Step;
+                TechObject.State state = step.Owner;
+                if (state.IsMain == true)
+                {
+                    TechObject.Mode mode = state.Owner;
+                    var stepsNames = mode.BaseOperation.Steps
+                        .Select(x => x.Name).ToList();
+                    return stepsNames;
+                }
+                else
+                {
+                    return emptyList;
+                }            
+            }
+            else
+            {
+                return emptyList;
             }
         }
 
@@ -1312,14 +1363,14 @@ namespace Editor
             bool isModified;
             bool needUpdateParent = false;
             editorTView.LabelEdit = false;
-            ITreeViewItem selectedItem = editorTView.SelectedObject as ITreeViewItem;
+            var selectedItem = editorTView.SelectedObject as ITreeViewItem;
 
             if (selectedItem == null)
             {
                 return;
             }
 
-            // Если редактируются базовые операции/объекты
+            // Если редактируются базовые операции/объекты/шаги
             if (e.Column.Index == 1 &&
                 (selectedItem.EditablePart[0] == 0 &&
                 selectedItem.EditablePart[1] == 1))
@@ -1327,19 +1378,23 @@ namespace Editor
                 e.NewValue = comboBoxCellEditor.Text;
                 editorTView.Controls.Remove(comboBoxCellEditor);
                 // true (IsExtraBool) - флаг работы с "экстра" полями
-                isModified = selectedItem.SetNewValue(e.NewValue.ToString(), true);
+                isModified = selectedItem.SetNewValue(e.NewValue.ToString(), 
+                    true);
 
-                // Обновляем визулизацию т.к изменились родительские или дочерние элементы
+                // Обновляем визулизацию т.к изменились родительские 
+                // или дочерние элементы
                 switch (selectedItem.GetType().FullName)
                 {
                     case "TechObject.Mode":
-                        // Изменилась базовая операция, обновим дополнительные элементы дерева
+                        // Изменилась базовая операция, обновим 
+                        // дополнительные элементы дерева
                         editorTView.RefreshObject(selectedItem);
                         editorTView.RefreshObject(selectedItem.Parent);
                         break;
 
                     case "TechObject.TechObject":
-                        // Изменился базовый объект, обновим дополнительные элементы дерева
+                        // Изменился базовый объект, обновим дополнительные 
+                        // элементы дерева
                         editorTView.RefreshObject(selectedItem);
                         break;
                 }
@@ -1364,6 +1419,12 @@ namespace Editor
                 if (needUpdateParent)
                 {
                     editorTView.RefreshObjects(selectedItem.Parent.Items);
+                }
+                else if (selectedItem.GetType().Name == "ParamProperty")
+                {
+                    var parent = selectedItem.Parent.Parent.Parent.Parent.Items;
+                    editorTView.RefreshObjects(parent);
+                    editorTView.RefreshObject(selectedItem);
                 }
                 else
                 {

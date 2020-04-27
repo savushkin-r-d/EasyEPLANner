@@ -1906,8 +1906,8 @@ namespace PInvoke
             LLKHF_UP = 0x80,
         }
 
-        public delegate int LowLevelKeyboardProc(int nCode,
-            WM wParam, [In] KBDLLHOOKSTRUCT lParam);
+        public delegate IntPtr LowLevelKeyboardProc([In] int nCode,
+            [In] WM wParam, [In] KBDLLHOOKSTRUCT lParam);
 
         public delegate IntPtr HookProc(int code, IntPtr wParam, IntPtr lParam);
 
@@ -1942,6 +1942,21 @@ namespace PInvoke
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct LASTINPUTINFO
+        {
+            public static readonly int SizeOf = Marshal.SizeOf(typeof(
+                LASTINPUTINFO));
+
+            [MarshalAs(UnmanagedType.U4)]
+            public UInt32 cbSize;
+            [MarshalAs(UnmanagedType.U4)]
+            public UInt32 dwTime;
+        }
+
+        [DllImport("user32.dll")]
+        public static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
 
         [StructLayout(LayoutKind.Sequential)]
         public struct CWPSTRUCT

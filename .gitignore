@@ -329,7 +329,7 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
 /src/Properties/licenses.licx
-/doc/user_manual/.vscode
+/docs/user_manual/.vscode
 /.github
 /.github/workflow
 /.github/workflow/CI-main.yaml

@@ -68,6 +68,9 @@
             // 
             // toolStrip
             // 
+            this.toolStrip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.toolStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton_1,
@@ -82,7 +85,7 @@
             this.refresh_toolStripButton});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(506, 27);
+            this.toolStrip.Size = new System.Drawing.Size(216, 27);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -214,7 +217,7 @@
             this.editorTView.GridLines = true;
             this.editorTView.HideSelection = false;
             this.editorTView.LabelWrap = false;
-            this.editorTView.Location = new System.Drawing.Point(3, 30);
+            this.editorTView.Location = new System.Drawing.Point(3, 28);
             this.editorTView.MinimumSize = new System.Drawing.Size(200, 250);
             this.editorTView.MultiSelect = false;
             this.editorTView.Name = "editorTView";
@@ -229,7 +232,7 @@
             this.editorTView.ShowGroups = false;
             this.editorTView.ShowImagesOnSubItems = true;
             this.editorTView.ShowSortIndicators = false;
-            this.editorTView.Size = new System.Drawing.Size(500, 445);
+            this.editorTView.Size = new System.Drawing.Size(500, 447);
             this.editorTView.SmallImageList = this.imageList1;
             this.editorTView.TabIndex = 4;
             this.editorTView.TriggerCellOverEventsWhenOverHeader = false;

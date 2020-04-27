@@ -202,4 +202,124 @@
   <data name="toCheck" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\To Do's1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="svgPattern" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;svg width="100" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
+
+        &lt;rect rx="4" x="0" width="{0}" height="20" fill="dimgrey"/&gt;
+        &lt;rect rx="4" x="0" width="{1}" height="20" fill="green"/&gt;
+
+            &lt;g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11"&gt;
+                &lt;text x="50.0" y="14"&gt;{2}&lt;/text&gt;
+            &lt;/g&gt;
+   &lt;/svg&gt;</value>
+    <comment>Шаблон для генерации SVG файла картинки (progress bar) модулем генерации SVG картинок. Генерация статистики по проекту. {0} - Максимальное значение параметра, {1} - заданное значение параметра, {2} - текст внутри картинки.</comment>
+  </data>
+  <data name="mainPluaFilePattern" xml:space="preserve">
+    <value>--Проект 'ProjectName'
+
+prg = require("prg")                        --Технологические объекты.
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+--Пользовательская функция инициализации, выполняемая однократно в PAC.
+
+function user_init()
+end
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+--Пользовательская функция, выполняемая каждый цикл в PAC.
+
+function user_eval()
+end
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+--Функция инициализации параметров, выполняемая однократно в PAC.
+
+function init_params()
+end
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------</value>
+    <comment>Шаблон пустого файла main.plua</comment>
+  </data>
+  <data name="prgLuaRequireModules" xml:space="preserve">
+    <value>--Базовая функциональность
+require( "tank" )
+require( "mixer" )
+require( "line" )
+require( "master" )
+require( "cooler" )
+require( "boiler" )
+require( "pasteurizator" )
+require( "water_tank" )
+require( "pressure" )
+require( "flow" )
+</value>
+    <comment>Шаблон, содержащий список модулей для подключения в prg.lua (require)</comment>
+  </data>
+  <data name="sysIOLuaFilePattern" xml:space="preserve">
+    <value>-- В Phoenix Contact особенность, адресное пространство
+-- кратно 32, в связи с этим, увеличивается цифра DO/DI count
+-- в два раза в отличие от WAGO.
+-- При добавлении модуля учитывать, что первый [0] индекс
+-- массива только для Phoenix, а в WAGO его необходимо
+-- ставить -1.
+
+-- constructor description:
+-- n - номер модуля ввода-вывода IO (например: 860).
+-- name - имя модуля ввода-вывода IO (серия-номер, например: 750-860).
+-- description - описание модуля ввода-вывода IO.
+-- adressSpacetype - тип адресного пространства модуля ввода-вывода IO.
+-- typeName - имя типа (дискретный выход, аналоговый выход, ...).
+-- groupName - имя серии модуля ввода-вывода IO (например 750-800).
+-- channelClamps - клеммы каналов ввода-вывода.
+-- channelAddressesIn - адреса каналов ввода.
+-- channelAddressesOut - адреса каналов вывода.
+-- DO_count - количество дискретных выходов.
+-- DI_count - количество дискретных входов.
+-- AO_count - количество аналоговых выходов.
+-- AI_count - количество аналоговых входов.
+-- Color - физический цвет модуля.
+
+-- adressSpacetype enumeration:
+-- NONE - 0
+-- DO - 1
+-- DI - 2
+-- AO - 3
+-- AI - 4
+-- AOAI - 5
+-- DODI - 6
+-- AOAIDODI - 7
+
+local io_modules =
+{
+    [ 1 ] = {
+            n = 1,
+            name = '',
+            description = '',
+            addressSpaceType = 0,
+            typeName = '',
+            groupName = '',
+            channelClamps = {0, 1, 2, 3},
+            channelAddressesIn = { -1, 0, 1, -1 },
+            channelAddressesOut = { 0, -1, -1, 1 },
+            DO_count = 1,
+            DI_count = 1,
+            AO_count = 1,
+            AI_count = 1,
+            Color = '',
+            },
+}
+
+return io_modules</value>
+    <comment>Шаблон для файла sys_io.lua, в котором находится информация по модулям ввода-вывода.</comment>
+  </data>
+  <data name="IOLinkDevicesFilePattern" xml:space="preserve">
+    <value>local iolink_devices =
+{
+    { articleName = "", sizeIn = 0, sizeOut = 0 },
+}
+
+return iolink_devices</value>
+    <comment>Шаблон файла, в котором находится информация об изделиях (название устройства, тип, подтип) и его IO-Link настройках (размеры областей ввода-вывода)</comment>
+  </data>
 </root>

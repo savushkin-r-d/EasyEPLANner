@@ -1,21 +1,9 @@
-///@file EProjectManager.cs
-///@brief Класс для работы с проектом Eplan'а.
-///
-/// @author  Иванюк Дмитрий Сергеевич.
-///
-/// @par Текущая версия:
-/// @$Rev: --- $.\n
-/// @$Author: sedr $.\n
-/// @$Date:: 2019-10-21#$.
-///
 using System;
-
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.ApplicationFramework;
 using System.Text.RegularExpressions;
 using Eplan.EplApi.EServices.Ged;
 using Eplan.EplApi.DataModel.Graphics;
-
 
 namespace EasyEPlanner
 {
@@ -82,12 +70,12 @@ namespace EasyEPlanner
             if (name.Length > MaxProjectNameLength)
             {
                 string errorMessage = $"Некорректно задано имя проекта - " +
-                    $"длина не должна превышать {MaxProjectNameLength} символов. ";               
-                ProjectManager.GetInstance().AddLogMessage(errorMessage);
+                    $"длина не должна превышать {MaxProjectNameLength} символов. ";
+                Logs.AddMessage(errorMessage);
                 name = name.Substring(0, MaxProjectNameLength);
             }
 
-            const string RegexPattern = 
+            const string RegexPattern =
                 "(?<plant>[A-Z]+[1-9]{1})\\-(?<project>[а-яА-Я1-9\\-]+$)";
             Match match = Regex.Match(name, RegexPattern);
             if (!match.Success)
@@ -96,7 +84,7 @@ namespace EasyEPlanner
                     "рекомендуется для имени площадки использовать " +
                     "английский, а для проекта - русский, вместо пробелов - " +
                     "знак минус (прим., LOC1-Название-проекта). ";
-                ProjectManager.GetInstance().AddLogMessage(errorMessage);
+                Logs.AddMessage(errorMessage);
                 name = GetModifyingCurrentProjectName();
             }
         }
@@ -163,10 +151,16 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Сохранить данные и закончить работу с дополнением (при закрытии
+        /// проекта или Eplan).
+        /// </summary>
         public void SaveAndClose()
         {
             EProjectManager.GetInstance().SyncAndSave();
             EProjectManager.GetInstance().StopEditModes();
+
+            ExcelRepoter.AutomaticExportExcelForSCADA(currentProject);
 
             // Проверка и сохранение состояний окон.
             ModeFrm.CheckShown();
@@ -180,6 +174,8 @@ namespace EasyEPlanner
             {
                 Editor.Editor.GetInstance().CloseEditor();
             }
+
+            DFrm.GetInstance().CloseEditor();
         }
 
         private Project currentProject = null;
@@ -189,7 +185,7 @@ namespace EasyEPlanner
 
         public static bool isPreCloseProjectComplete = false;
 
-        //Обработчик событий Eplan'а.
+        //Обработчик событий Eplan.
         private EplanEventListener eplanEventListener = new EplanEventListener();
 
         private ActionManager ActMnr = new ActionManager();
@@ -301,24 +297,14 @@ namespace EasyEPlanner
         public override void OnStop()
         {
             base.OnStop();
-
-            if (!isFinish) //Перезапуск взаимодействия при необходимости.
-            {
-                DelegateWithParameters dlgtStart = //Создаем делегат.
-                    new DelegateWithParameters(
-                    EProjectManager.GetInstance().StartEditModesWithDelay);
-
-                dlgtStart.BeginInvoke(300, null, null);
-            }
         }
 
         public void Stop()
         {
-            isFinish = true;
+            IsFinish = true;
         }
 
-        private bool isFinish = false;
-
+        public bool IsFinish { get; set; } = false;
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -332,6 +318,9 @@ namespace EasyEPlanner
         Eplan.EplApi.ApplicationFramework.EventHandler onMainEnd = new
             Eplan.EplApi.ApplicationFramework.EventHandler();
         Eplan.EplApi.ApplicationFramework.EventHandler onMainStart = new
+            Eplan.EplApi.ApplicationFramework.EventHandler();
+
+        Eplan.EplApi.ApplicationFramework.EventHandler onNotifyPageChanged = new
             Eplan.EplApi.ApplicationFramework.EventHandler();
 
         public EplanEventListener()
@@ -349,6 +338,20 @@ namespace EasyEPlanner
             onMainStart.SetEvent("Eplan.EplApi.OnMainStart");
             onMainStart.EplanEvent +=
                 new EventHandlerFunction(OnMainStart);
+
+            onNotifyPageChanged.SetEvent("NotifyPageOpened");
+            onNotifyPageChanged.EplanEvent += 
+                new EventHandlerFunction(OnNotifyPageChanged);
+        }
+
+        private void OnNotifyPageChanged(IEventParameter eventParameter)
+        {
+            var interaction = EProjectManager.GetInstance()
+                .GetEditInteraction();
+            if (interaction != null && interaction.IsFinish == false)
+            {
+                EProjectManager.GetInstance().StartEditModesWithDelay();
+            }
         }
 
         private void OnUserPreCloseProject(IEventParameter iEventParameter)
@@ -366,7 +369,6 @@ namespace EasyEPlanner
             {
                 EProjectManager.GetInstance().SaveAndClose();
 
-                EplanDeviceManager.GetInstance().ClearDevices();
                 DFrm.GetInstance().ShowNoDevices();
 
                 EProjectManager.GetInstance().ResetCurrentPrj();
@@ -477,11 +479,13 @@ namespace EasyEPlanner
                     Editor.EditorCtrl.SaveCfg(false);
                 }
             }
+
+            IdleModule.Stop();
         }
 
         private void OnMainStart(IEventParameter iEventParameter)
         {
-
+            IdleModule.Start();
         }
     }
 }

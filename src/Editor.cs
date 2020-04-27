@@ -228,6 +228,12 @@ namespace Editor
 
         bool SetNewValue(SortedDictionary<int, List<int>> newDict);
 
+        /// <summary>
+        /// Установка нового значения после редактирования
+        /// </summary>
+        /// <param name="newValue">Новое значение</param>
+        /// <param name="isExtraValue">Является ли свойство расширенным</param>
+        /// <returns></returns>
         bool SetNewValue(string newValue, bool isExtraValue);
 
         /// <summary>    
@@ -430,6 +436,22 @@ namespace Editor
             value = val;
         }
 
+        public string Value
+        {
+            get
+            {
+                return value.ToString();
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+        }
+
         #region Реализация ITreeViewItem
 
         public ITreeViewItem Parent
@@ -479,7 +501,7 @@ namespace Editor
             }
         }
 
-        public bool IsDeletable
+        public virtual bool IsDeletable
         {
             get
             {
@@ -487,12 +509,12 @@ namespace Editor
             }
         }
 
-        public bool Delete(object child)
+        public virtual bool Delete(object child)
         {
             return false;
         }
 
-        public bool IsCopyable
+        public virtual bool IsCopyable
         {
             get
             {
@@ -500,7 +522,7 @@ namespace Editor
             }
         }
 
-        public object Copy()
+        public virtual object Copy()
         {
             return null;
         }
@@ -536,7 +558,7 @@ namespace Editor
             return null;
         }
 
-        public bool IsReplaceable
+        public virtual bool IsReplaceable
         {
             get
             {
@@ -544,7 +566,7 @@ namespace Editor
             }
         }
 
-        public ITreeViewItem Replace(object child, object copyObject)
+        public virtual ITreeViewItem Replace(object child, object copyObject)
         {
             return null;
         }
@@ -637,7 +659,7 @@ namespace Editor
             return null;
         }
 
-        public bool IsUseDevList
+        public virtual bool IsUseDevList
         {
             get
             {
