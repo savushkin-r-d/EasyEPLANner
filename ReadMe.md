@@ -1,34 +1,42 @@
+
 # EasyEplanner - Open Source
 
-### Репозиторий
-Данный репозиторий (хранилище) представляет собой проект с открытым исходным кодом - EasyEplanner. Мы не только работаем над проектом, но и решаем различные задачи связанные с жизнью и развитием проекта. 
+### Repository
+
+This repository is an open source project - EasyEplanner.
+We are working on the project and solving various issues related to the development and project life.
 
 ### EasyEplanner
 
-<img src="doc/user_manual/images/EasyEplannerPreview.png">
+<img src="docs/user_manual/images/EasyEplannerPreview.png">
 
-Надстройка EasyEPlanner разработана как Add-In к EPLAN, на данный момент используется версия EPLAN 2.8. Надстройка используется при разработке проектов в EPLAN и позволяет автоматизировать работу инженера по автоматизации, а так же инженера-программиста, который описывает проект на языке программирования LUA. С помощью EasyEPlanner описываются технологические объекты (Танк, Бойлер и др.), операции этих объектов, шаги операций, устанавливаются ограничения для операций, а так же множество других свойств технологического объекта. В конечном итоге, EasyEPlanner генерирует LUA файлы, которые загружаются в контроллер. В данный момент поддерживаются контроллеры следующих производителей:
+The EasyEplanner developed as an Add-In to EPLAN 2.8 version. The add-in is using for EPLAN projects and helps you to reduce the work of an Automation engineer and a Software engineer as well. Software engineer makes code in Lua programming language for the project. EasyEPlanner helps to describe technological objects(Tank, Boiler, etc.), operations of these objects, steps of operations, restrictions for operations, and many other properties. Eventually, EasyEplanner generates LUA files that are going to be uploaded to a controller. We support controllers from the following manufacturers:
 
 1. [Phoenix Contact - PLCNext](https://github.com/plcnext);
 2. [WAGO - PFC200](https://github.com/WAGO).
 
-### Пользовательская документация
-По [этой](https://github.com/savushkin-r-d/EasyEPLANner/tree/master/doc/user_manual) ссылке вы можете найти последнюю версию пользовательской документации к проекту.
+### User documentation
+You can find the latest version of user documentation for the project [here](docs/user_manual/ReadMe.md).
 
-### Содействие (Contributing)
-Если вы хотите посодействовать в разработке нашего проекта, то перед началом ознакомьтесь с тем, [как лучше всего это сделать](https://github.com/savushkin-r-d/EasyEPLANner/blob/master/doc/contributing.md).
 
-### Обратная связь (Feedback)
-Если вы хотите связаться с нами, можно использовать несколько способов:
+### Contribution
+If you want to contribute to the development of our project then  check out [how to do it better](docs/contributing.md) before you start.
 
-* [Google группа](https://groups.google.com/forum/#!forum/easyeplanner)
-* Канал в [Slack](https://slack.com/) - easyeplaner.slack.com
 
-### Нормы поведения(Code of conduct)
-Мы [используем](https://github.com/savushkin-r-d/EasyEPLANner/blob/master/doc/CODE_OF_CONDUCT.md) стандартные нормы поведения (общения), которые предоставляет сервис GitHub
+### Feedback
+Feel free to contact us via Slack or Google group.
+* [Google group](https://groups.google.com/forum/#!forum/easyeplanner);
+* Channel in [Slack](https://slack.com) - easyeplanner.slack.com.
 
-### Правила кодирования (Code style)
-Для разработки используется язык программирования - C#, а так же Lua. У нас есть [собственный набор соглашений](https://github.com/savushkin-r-d/EasyEPLANner/blob/master/doc/codestyle.md), которых нужно придерживаться что бы код был удобным и читабельным.
 
-### Лицензия
-Проект лицензирован под [MIT](LICENSE.txt) лицензией.
+### Code of conduct
+We are [using](docs/CODE_OF_CONDUCT.md)
+standart behavior rules (communication), provided by the GitHub service.
+
+
+### Code style
+We use C# and LUA programming languages for development. We have [own set of agreements](docs/codestyle.md), which you must follow to keep the code clean and clear.
+
+
+### License
+The project is licensed under [MIT](LICENSE.txt) license.
