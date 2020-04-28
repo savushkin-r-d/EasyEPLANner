@@ -636,6 +636,24 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Удалить этот агрегат из привязки к аппарату
+        /// </summary>
+        /// <param name="techObject"></param>
+        private void RemoveAttachingToUnit(TechObject techObject)
+        {
+            string objNum = techObject.GlobalNumber.ToString();
+            foreach(var obj in objects) 
+            {
+                if (obj.AttachedObjects.Value.Contains(objNum))
+                {
+                    string currentValue = obj.AttachedObjects.Value;
+                    obj.AttachedObjects
+                        .SetNewValue(currentValue.Replace(objNum, ""));
+                }
+            }
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {
@@ -665,6 +683,11 @@ namespace TechObject
 
             if (techObject != null)
             {
+                if (techObject.BaseTechObject.IsAttachable)
+                {
+                    RemoveAttachingToUnit(techObject);
+                }
+
                 int idx = objects.IndexOf(techObject) + 1;
                 CheckRestriction(idx, -1);
 
