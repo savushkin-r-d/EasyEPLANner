@@ -571,15 +571,15 @@ namespace Device
                 {
                     if (par.Value != null)
                     {
-                        tmp += par.Value + " --[[" + par.Key + "]], ";
+                        tmp += $"{prefix}{prefix}{par.Key} = {par.Value},\n";
                     }
                 }
 
                 if (tmp != "")
                 {
-                    res += prefix + "par = {";
+                    res += prefix + "par = {\n";
                     res += tmp.Remove(tmp.Length - 1 - 1);
-                    res += " }\n";
+                    res += "\n\t\t\t\t}\n";
                 }
             }
 

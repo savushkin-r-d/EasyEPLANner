@@ -39,6 +39,7 @@ namespace Device
 
                 case "LS_IOLINK_MIN":
                     parameters.Add("P_DT", null);
+                    parameters.Add("P_ERR", null);
 
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     SetIOLinkSizes(ArticleName);
@@ -46,6 +47,7 @@ namespace Device
 
                 case "LS_IOLINK_MAX":
                     parameters.Add("P_DT", null);
+                    parameters.Add("P_ERR", null);
 
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     SetIOLinkSizes(ArticleName);

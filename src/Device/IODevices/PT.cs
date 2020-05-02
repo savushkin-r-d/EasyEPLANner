@@ -36,10 +36,14 @@ namespace Device
                     break;
 
                 case "PT_IOLINK":
+                    parameters.Add("P_ERR", null);
+
                     SetIOLinkSizes(ArticleName);
                     break;
 
                 case "DEV_SPAE":
+                    parameters.Add("P_ERR", null);
+
                     SetIOLinkSizes(ArticleName);
                     break;
 
