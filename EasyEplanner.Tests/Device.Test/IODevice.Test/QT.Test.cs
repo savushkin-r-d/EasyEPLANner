@@ -193,7 +193,7 @@ namespace Tests
                 },
                 new object[]
                 {
-                    new string[0],
+                    new string[] { "P_ERR" },
                     "QT_IOLINK",
                     GetRandomQTDevice()
                 },

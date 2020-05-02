@@ -181,13 +181,13 @@ namespace Tests
                 },
                 new object[]
                 {
-                    new string[0],
+                    new string[] { "P_ERR" },
                     "PT_IOLINK",
                     GetRandomPTDevice()
                 },
                 new object[]
                 {
-                    new string[0],
+                    new string[] { "P_ERR" },
                     "DEV_SPAE",
                     GetRandomPTDevice()
                 },

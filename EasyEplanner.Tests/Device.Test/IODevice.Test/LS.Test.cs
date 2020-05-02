@@ -189,13 +189,13 @@ namespace Tests
                 },
                 new object[]
                 {
-                    new string[] { "P_DT" },
+                    new string[] { "P_DT", "P_ERR" },
                     "LS_IOLINK_MIN",
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_DT" },
+                    new string[] { "P_DT", "P_ERR" },
                     "LS_IOLINK_MAX",
                     GetRandomLSDevice()
                 },
