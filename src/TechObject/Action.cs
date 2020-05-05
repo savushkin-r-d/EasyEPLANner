@@ -241,7 +241,7 @@ namespace TechObject
                             del.Add(j);
                             break;
                         }
-                        if (array[i] > 0)
+                        if (array[i] >= 0)
                         {
                             deviceIndex[j] = array[i];
                             break;
