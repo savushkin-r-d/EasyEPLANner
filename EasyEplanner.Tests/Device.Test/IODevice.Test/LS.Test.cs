@@ -67,10 +67,8 @@ namespace Tests
                     GetRandomLSDevice() },
                 new object[] { Device.DeviceSubType.LS_MAX, "LS_MAX",
                     GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.LS_IOLINK_MIN, 
-                    "LS_IOLINK_MIN", GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.LS_IOLINK_MAX, 
-                    "LS_IOLINK_MAX", GetRandomLSDevice() },
+                new object[] { Device.DeviceSubType.LS_IOLINK, "LS_IOLINK", 
+                    GetRandomLSDevice() },
                 new object[] { Device.DeviceSubType.LS_VIRT, "LS_VIRT",
                     GetRandomLSDevice() },
                 new object[] { Device.DeviceSubType.NONE, "",
@@ -92,10 +90,7 @@ namespace Tests
             {
                 new object[] { "LS_MIN", "LS_MIN", GetRandomLSDevice() },
                 new object[] { "LS_MAX", "LS_MAX", GetRandomLSDevice() },
-                new object[] { "LS_IOLINK_MIN", "LS_IOLINK_MIN", 
-                    GetRandomLSDevice() },
-                new object[] { "LS_IOLINK_MAX", "LS_IOLINK_MAX", 
-                    GetRandomLSDevice() },
+                new object[] { "LS_IOLINK", "LS_IOLINK", GetRandomLSDevice() },
                 new object[] { "LS_VIRT", "LS_VIRT", GetRandomLSDevice() },
                 new object[] { "", "", GetRandomLSDevice() },
                 new object[] { "", "Incorrect", GetRandomLSDevice() },
@@ -130,9 +125,7 @@ namespace Tests
                 new object[] {exportForLS, "LS_MIN", GetRandomLSDevice()},
                 new object[] {exportForLS, "LS_MAX", GetRandomLSDevice()},
                 new object[] {exportForLS, "LS_VIRT", GetRandomLSDevice()},
-                new object[] {exportForIOLinkLS, "LS_IOLINK_MIN", 
-                    GetRandomLSDevice()},
-                new object[] {exportForIOLinkLS, "LS_IOLINK_MAX", 
+                new object[] {exportForIOLinkLS, "LS_IOLINK", 
                     GetRandomLSDevice()},
                 new object[] {null, "Incorrect", GetRandomLSDevice()},
                 new object[] {null, "", GetRandomLSDevice()},
@@ -150,9 +143,7 @@ namespace Tests
             return new object[]
             {
                 new object[] {$"_Min", "LS_MIN", GetRandomLSDevice()},
-                new object[] {$"_Min", "LS_IOLINK_MIN", GetRandomLSDevice()},
                 new object[] {$"_Max", "LS_MAX", GetRandomLSDevice()},
-                new object[] {$"_Max", "LS_IOLINK_MAX", GetRandomLSDevice()},
                 new object[] {$"", "", GetRandomLSDevice()},
                 new object[] {$"", "Incorrect", GetRandomLSDevice()},
                 new object[] {$"", "LS_VIRT", GetRandomLSDevice()},
@@ -190,13 +181,7 @@ namespace Tests
                 new object[]
                 {
                     new string[] { "P_DT", "P_ERR" },
-                    "LS_IOLINK_MIN",
-                    GetRandomLSDevice()
-                },
-                new object[]
-                {
-                    new string[] { "P_DT", "P_ERR" },
-                    "LS_IOLINK_MAX",
+                    "LS_IOLINK",
                     GetRandomLSDevice()
                 },
             };
