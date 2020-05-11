@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using PInvoke;
 using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
+using Device;
 
 namespace EasyEPlanner
 {
@@ -855,7 +856,7 @@ namespace EasyEPlanner
             // [0] - узловой с названием проекта
             List<Node> nodeNodes = rootNodes[0].Nodes.ToList();
             // Сортируем узлы внутри каждого устройства Device
-            foreach (Node node in nodeNodes)
+            foreach (Node node in rootNodes)
             {
                 TreeSort(node.Nodes.ToList(), node);
             }
@@ -899,8 +900,11 @@ namespace EasyEPlanner
 
                    if (x.Tag is Device.DeviceType && y.Tag is Device.DeviceType)
                    {
-                       res = ((Device.DeviceType)x.Tag).CompareTo(
-                           (Device.DeviceType)y.Tag);
+                       //res = ((Device.DeviceType)x.Tag).ToString().CompareTo(
+                       //    (Device.DeviceType)y.Tag);
+
+                       res = ((Device.DeviceType)x.Tag).ToString().CompareTo(
+                           ((DeviceType)y.Tag).ToString());
                        return res;
                    }
 
