@@ -120,8 +120,9 @@ namespace EasyEPlanner
             else
             {
                 //Замена на "Резерв".
-                if (SelectedClampFunction.Properties.FUNC_TEXT ==
-                    NewFunctionalText)
+                if (SelectedClampFunction.Properties.FUNC_TEXT
+                    .ToString(Eplan.EplApi.Base.ISOCode.Language.L___) ==
+                    NewFunctionalText.Replace("\r", ""))
                 {
                     ResetDevicesChannel = NewFunctionalText;
                     NewFunctionalText = CommonConst.Reserve;
@@ -170,9 +171,19 @@ namespace EasyEPlanner
                         }
                         else
                         {
-                            SetDevicesChannel = NewFunctionalText;
-                            string text = CommonConst.NewLineWithCarriageReturn +
+                            string text = "";
+                            if (oldFunctionalText == CommonConst.Reserve)
+                            {
+                                oldFunctionalText = "";
+                                text = SelectedDevice.EPlanName;
+                            }
+                            else
+                            {
+                                text = CommonConst.NewLineWithCarriageReturn +
                                 SelectedDevice.EPlanName;
+                            }
+
+                            SetDevicesChannel = NewFunctionalText;
                             NewFunctionalText = oldFunctionalText + text;
                         }
                     }
