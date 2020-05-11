@@ -853,8 +853,6 @@ namespace EasyEPlanner
 
             // Сортировка узлов
             List<Node> rootNodes = treeModel.Nodes.ToList();
-            // [0] - узловой с названием проекта
-            List<Node> nodeNodes = rootNodes[0].Nodes.ToList();
             // Сортируем узлы внутри каждого устройства Device
             foreach (Node node in rootNodes)
             {
