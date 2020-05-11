@@ -146,7 +146,7 @@ namespace EasyEPlanner
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Exclamation);
 
-                            return;
+                            throw new Exception();
                         }
 
                         var functionalTextContainsDevice = 
