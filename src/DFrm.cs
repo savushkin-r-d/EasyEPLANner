@@ -884,25 +884,22 @@ namespace EasyEPlanner
                 nodes.Sort((x, y) =>
                {
                    int res = 0;
-                   if (x.Tag is Device.IODevice.IOChannel &&
-                       y.Tag is Device.IODevice.IOChannel)
+                   if (x.Tag is IODevice.IOChannel &&
+                       y.Tag is IODevice.IOChannel)
                    {
-                       Device.IODevice.IOChannel wx =
-                           x.Tag as Device.IODevice.IOChannel;
-                       Device.IODevice.IOChannel wy =
-                           y.Tag as Device.IODevice.IOChannel;
+                       var wx = x.Tag as IODevice.IOChannel;
+                       var wy = y.Tag as IODevice.IOChannel;
 
-                       res = Device.IODevice.IOChannel.Compare(wx, wy);
+                       res = IODevice.IOChannel.Compare(wx, wy);
                        return res;
                    }
 
-                   if (x.Tag is Device.DeviceType && y.Tag is Device.DeviceType)
+                   if (x.Tag is DeviceType && y.Tag is DeviceType)
                    {
-                       //res = ((Device.DeviceType)x.Tag).ToString().CompareTo(
-                       //    (Device.DeviceType)y.Tag);
+                       string xDevTypeName = ((DeviceType)x.Tag).ToString();
+                       string yDevTypeName = ((DeviceType)y.Tag).ToString();
 
-                       res = ((Device.DeviceType)x.Tag).ToString().CompareTo(
-                           ((DeviceType)y.Tag).ToString());
+                       res = xDevTypeName.CompareTo(yDevTypeName);
                        return res;
                    }
 
@@ -917,13 +914,14 @@ namespace EasyEPlanner
 
                    if (x.Tag is Device.Device && y.Tag is Device.Device)
                    {
-                       res = Device.Device.Compare(x.Tag as Device.Device,
-                           y.Tag as Device.Device);
+                       var xDev = x.Tag as Device.Device;
+                       var yDev = y.Tag as Device.Device;
+
+                       res = Device.Device.Compare(xDev, yDev);
                        return res;
                    }
 
-                   res = string.Compare(
-                       x.Text, y.Text);
+                   res = string.Compare(x.Text, y.Text);
                    return res;
                });
 
