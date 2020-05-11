@@ -7,7 +7,6 @@ using System.Windows.Forms;
 using PInvoke;
 using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
-using Device;
 
 namespace EasyEPlanner
 {
@@ -884,20 +883,22 @@ namespace EasyEPlanner
                 nodes.Sort((x, y) =>
                {
                    int res = 0;
-                   if (x.Tag is IODevice.IOChannel &&
-                       y.Tag is IODevice.IOChannel)
+                   if (x.Tag is Device.IODevice.IOChannel &&
+                       y.Tag is Device.IODevice.IOChannel)
                    {
-                       var wx = x.Tag as IODevice.IOChannel;
-                       var wy = y.Tag as IODevice.IOChannel;
+                       var wx = x.Tag as Device.IODevice.IOChannel;
+                       var wy = y.Tag as Device.IODevice.IOChannel;
 
-                       res = IODevice.IOChannel.Compare(wx, wy);
+                       res = Device.IODevice.IOChannel.Compare(wx, wy);
                        return res;
                    }
 
-                   if (x.Tag is DeviceType && y.Tag is DeviceType)
+                   if (x.Tag is Device.DeviceType && y.Tag is Device.DeviceType)
                    {
-                       string xDevTypeName = ((DeviceType)x.Tag).ToString();
-                       string yDevTypeName = ((DeviceType)y.Tag).ToString();
+                       string xDevTypeName = ((Device.DeviceType)x.Tag)
+                           .ToString();
+                       string yDevTypeName = ((Device.DeviceType)y.Tag)
+                           .ToString();
 
                        res = xDevTypeName.CompareTo(yDevTypeName);
                        return res;
