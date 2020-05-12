@@ -28,7 +28,7 @@ namespace Tests
         /// <param name="expectedType">Ожидаемый подтип</param>
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(GetSubTypeTestData))]
+        [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStrTest(string expectedType,
             string subType, Device.IODevice device)
         {
@@ -136,7 +136,7 @@ namespace Tests
         /// 3 - Устройство для тестов
         /// </summary>
         /// <returns></returns>
-        private static object[] GetSubTypeTestData()
+        private static object[] GetDeviceSubTypeStrTestData()
         {
             return new object[]
             {
