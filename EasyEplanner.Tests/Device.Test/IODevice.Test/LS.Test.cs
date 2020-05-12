@@ -8,6 +8,12 @@ namespace Tests
 {
     public class LSTest
     {
+        /// <summary>
+        /// Тест установки подтипа устройства
+        /// </summary>
+        /// <param name="expectedSubType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubTypeTest(Device.DeviceSubType expectedSubType,
             string subType, Device.IODevice device)
@@ -16,7 +22,13 @@ namespace Tests
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
         }
 
-        [TestCaseSource(nameof(GetSubTypeTestData))]
+        /// <summary>
+        /// Тест получения подтипа устройства
+        /// </summary>
+        /// <param name="expectedType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStrTest(string expectedType,
             string subType, Device.IODevice device)
         {
@@ -25,6 +37,12 @@ namespace Tests
                 device.DeviceType, device.DeviceSubType));
         }
 
+        /// <summary>
+        /// Тест свойств устройств в зависимости от подтипа
+        /// </summary>
+        /// <param name="expectedProperties">Ожидаемый список свойств</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDevicePropertiesTest(List<string> expectedProperties,
             string subType, Device.IODevice device)
@@ -34,6 +52,12 @@ namespace Tests
                 device.DeviceType, device.DeviceSubType));
         }
 
+        /// <summary>
+        /// Тестирование получения типа подключения датчика
+        /// </summary>
+        /// <param name="expected">Ожидаемый тип подключения</param>
+        /// <param name="subType">Подтип устройства</param>
+        /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetConnectionTestData))]
         public void GetConnectionTest(string expected, string subType,
             Device.IODevice device)
@@ -42,6 +66,12 @@ namespace Tests
             Assert.AreEqual(expected, device.GetConnectionType());
         }
 
+        /// <summary>
+        /// Тестирование параметров устройства
+        /// </summary>
+        /// <param name="parametersSequence">Ожидаемые параметры</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(ParametersTestData))]
         public void ParametersTest(string[] parametersSequence, string subType,
             Device.IODevice device)
@@ -54,12 +84,38 @@ namespace Tests
         }
 
         /// <summary>
+        /// Тестирование каналов устройства
+        /// </summary>
+        /// <param name="expectedChannelsCount">Ожидаемое количество каналов
+        /// в словаре с названием каналов</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(ChannelsTestData))]
+        public void ChannelsTest(Dictionary<string, int> expectedChannelsCount,
+            string subType, Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
+            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
+            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
+            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
+                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
+                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
+                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+            });
+        }
+
+        /// <summary>
         /// 1 - Ожидаемое значение подтипа,
         /// 2 - Задаваемое значение подтипа,
         /// 3 - Устройство для тестов
         /// </summary>
         /// <returns></returns>
-        public static object[] SetSubTypeTestData()
+        private static object[] SetSubTypeTestData()
         {
             return new object[]
             {
@@ -84,7 +140,7 @@ namespace Tests
         /// 3 - Устройство для тестов
         /// </summary>
         /// <returns></returns>
-        public static object[] GetSubTypeTestData()
+        private static object[] GetDeviceSubTypeStrTestData()
         {
             return new object[]
             {
@@ -103,7 +159,7 @@ namespace Tests
         /// 3 - Устройство для тестов
         /// </summary>
         /// <returns></returns>
-        public static object[] GetDevicePropertiesTestData()
+        private static object[] GetDevicePropertiesTestData()
         {
             var exportForIOLinkLS = new List<string>
             {
@@ -138,7 +194,7 @@ namespace Tests
         /// 3 - Устройство для теста
         /// </summary>
         /// <returns></returns>
-        public static object[] GetConnectionTestData()
+        private static object[] GetConnectionTestData()
         {
             return new object[]
             {
@@ -156,7 +212,7 @@ namespace Tests
         /// 3 - Устройство
         /// </summary>
         /// <returns></returns>
-        public static object[] ParametersTestData()
+        private static object[] ParametersTestData()
         {
             return new object[]
             {
@@ -188,10 +244,108 @@ namespace Tests
         }
 
         /// <summary>
+        /// Данные для тестирования каналов устройств по подтипам.
+        /// 1. Словарь с количеством каналов и их типами
+        /// 2. Подтип устройства
+        /// 3. Устройство
+        /// </summary>
+        /// <returns></returns>
+        private static object[] ChannelsTestData()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 1 },
+                        { "DO", 0 },
+                    },
+                    "LS_MIN",
+                    GetRandomLSDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 1 },
+                        { "DO", 0 },
+                    },
+                    "LS_MAX",
+                    GetRandomLSDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 1 },
+                        { "AO", 0 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "LS_IOLINK_MIN",
+                    GetRandomLSDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 1 },
+                        { "AO", 0 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "LS_IOLINK_MAX",
+                    GetRandomLSDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "LS_VIRT",
+                    GetRandomLSDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "",
+                    GetRandomLSDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "Incorrect",
+                    GetRandomLSDevice()
+                },
+            };
+        }
+
+        /// <summary>
         /// Генератор LS устройств
         /// </summary>
         /// <returns></returns>
-        public static Device.IODevice GetRandomLSDevice()
+        private static Device.IODevice GetRandomLSDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);

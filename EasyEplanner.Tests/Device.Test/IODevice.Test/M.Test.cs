@@ -8,6 +8,12 @@ namespace Tests
 {
     public class MTest
     {
+        /// <summary>
+        /// Тест установки подтипа устройства
+        /// </summary>
+        /// <param name="expectedSubType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubTypeTest(Device.DeviceSubType expectedSubType,
             string subType, Device.IODevice device)
@@ -16,7 +22,13 @@ namespace Tests
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
         }
 
-        [TestCaseSource(nameof(GetSubTypeTestData))]
+        /// <summary>
+        /// Тест получения подтипа устройства
+        /// </summary>
+        /// <param name="expectedType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStrTest(string expectedType,
             string subType, Device.IODevice device)
         {
@@ -25,6 +37,12 @@ namespace Tests
                 device.DeviceType, device.DeviceSubType));
         }
 
+        /// <summary>
+        /// Тест свойств устройств в зависимости от подтипа
+        /// </summary>
+        /// <param name="expectedProperties">Ожидаемый список свойств</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDevicePropertiesTest(List<string> expectedProperties,
             string subType, Device.IODevice device)
@@ -34,6 +52,12 @@ namespace Tests
                 device.DeviceType, device.DeviceSubType));
         }
 
+        /// <summary>
+        /// Тестирование параметров устройства
+        /// </summary>
+        /// <param name="parametersSequence">Ожидаемые параметры</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(ParametersTestData))]
         public void ParametersTest(string[] parametersSequence, string subType,
             Device.IODevice device)
@@ -46,12 +70,38 @@ namespace Tests
         }
 
         /// <summary>
+        /// Тестирование каналов устройства
+        /// </summary>
+        /// <param name="expectedChannelsCount">Ожидаемое количество каналов
+        /// в словаре с названием каналов</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(ChannelsTestData))]
+        public void ChannelsTest(Dictionary<string, int> expectedChannelsCount,
+            string subType, Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
+            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
+            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
+            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
+                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
+                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
+                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+            });
+        }
+
+        /// <summary>
         /// 1 - Ожидаемое значение подтипа,
         /// 2 - Задаваемое значение подтипа,
         /// 3 - Устройство для тестов
         /// </summary>
         /// <returns></returns>
-        public static object[] SetSubTypeTestData()
+        private static object[] SetSubTypeTestData()
         {
             return new object[]
             {
@@ -86,7 +136,7 @@ namespace Tests
         /// 3 - Устройство для тестов
         /// </summary>
         /// <returns></returns>
-        public static object[] GetSubTypeTestData()
+        private static object[] GetDeviceSubTypeStrTestData()
         {
             return new object[]
             {
@@ -114,7 +164,7 @@ namespace Tests
         /// 3 - Устройство для тестов
         /// </summary>
         /// <returns></returns>
-        public static object[] GetDevicePropertiesTestData()
+        private static object[] GetDevicePropertiesTestData()
         {
             var exportForM = new List<string>
             {
@@ -169,7 +219,7 @@ namespace Tests
         /// 3 - Устройство
         /// </summary>
         /// <returns></returns>
-        public static object[] ParametersTestData()
+        private static object[] ParametersTestData()
         {
             return new object[]
             {
@@ -231,10 +281,144 @@ namespace Tests
         }
 
         /// <summary>
+        /// Данные для тестирования каналов устройств по подтипам.
+        /// 1. Словарь с количеством каналов и их типами
+        /// 2. Подтип устройства
+        /// 3. Устройство
+        /// </summary>
+        /// <returns></returns>
+        private static object[] ChannelsTestData()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 1 },
+                        { "DO", 1 },
+                    },
+                    "M",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 1 },
+                        { "DO", 1 },
+                    },
+                    "M_FREQ",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 1 },
+                        { "DO", 2 },
+                    },
+                    "M_REV",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 1 },
+                        { "DO", 2 },
+                    },
+                    "M_REV_FREQ",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 1 },
+                        { "DO", 2 },
+                    },
+                    "M_REV_2",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 1 },
+                        { "DO", 2 },
+                    },
+                    "M_REV_FREQ_2",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 1 },
+                        { "DO", 2 },
+                    },
+                    "M_REV_2_ERROR",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 2 },
+                        { "DO", 2 },
+                    },
+                    "M_REV_FREQ_2_ERROR",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 0 },
+                        { "DO", 1 },
+                    },
+                    "",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 0 },
+                        { "DO", 1 },
+                    },
+                    "Incorrect",
+                    GetRandomMDevice()
+                },
+            };
+        }
+
+        /// <summary>
         /// Генератор M устройств
         /// </summary>
         /// <returns></returns>
-        public static Device.IODevice GetRandomMDevice()
+        private static Device.IODevice GetRandomMDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
