@@ -124,5 +124,20 @@ namespace DataBase
                 new NonShowedBaseProperty("WAITING ", "Ожидание", false),
             };
         }
+
+        /// <summary>
+        /// Шаги для операции Томление.
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] SlowHeatSteps()
+        {
+            return new BaseProperty[]
+            {
+                new NonShowedBaseProperty("","", false),
+                new NonShowedBaseProperty("TO_START_TEMPERATURE",
+                "Нагрев до заданной температуры"),
+                new NonShowedBaseProperty("SLOW_HEAT", "Нагрев заданное время")
+            };
+        }
     }
 }

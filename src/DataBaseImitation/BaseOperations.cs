@@ -91,6 +91,8 @@ namespace DataBase
                 EmptySteps()),
                 new BaseOperation("Выдача", "OUT", OutParams(),
                 EmptySteps()),
+                new BaseOperation("Томление", "SLOW_HEAT", EmptyProperties(),
+                SlowHeatSteps()),
             };
         }
 
