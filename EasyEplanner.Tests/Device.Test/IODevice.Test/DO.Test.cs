@@ -77,7 +77,7 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(ChannelsTestData))]
-        private void ChannelsTest(Dictionary<string, int> expectedChannelsCount,
+        public void ChannelsTest(Dictionary<string, int> expectedChannelsCount,
             string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
