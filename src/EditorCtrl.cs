@@ -778,7 +778,7 @@ namespace Editor
                 ITreeViewItem item = GetActiveItem();
 
                 ProjectManager.GetInstance().RemoveHighLighting();
-                if (item.IsDrawOnEplanPage)
+                if (item != null && item.IsDrawOnEplanPage)
                 {
                     ProjectManager.GetInstance().SetHighLighting(
                         item.GetObjectToDrawOnEplanPage());
