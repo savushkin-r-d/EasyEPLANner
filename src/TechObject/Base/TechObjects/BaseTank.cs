@@ -195,14 +195,14 @@ namespace TechObject
                                 val = mode.BaseOperation.LuaName.ToUpper();
                             }
 
-                            if (val != "nil")
+                            if (val != "")
                             {
                                 res += $"{prefix}{param.LuaName} = " +
                                     $"{objName}.operations." + val + ",\n";
                             }
                             else
                             {
-                                res += $"{prefix}{param.LuaName} = {val},\n";
+                                res += $"{prefix}{param.LuaName} = nil,\n";
                             }
                             break;
 
