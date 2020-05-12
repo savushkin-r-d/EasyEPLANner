@@ -37,7 +37,7 @@ namespace Tests
         }
 
         /// <summary>
-        /// Тест свойство устройств в зависимости от подтипа
+        /// Тест свойств устройств в зависимости от подтипа
         /// </summary>
         /// <param name="expectedProperties">Ожидаемый список свойств</param>
         /// <param name="subType">Актуальный подтип</param>
@@ -118,7 +118,7 @@ namespace Tests
         /// 3 - Устройство для тестов
         /// </summary>
         /// <returns></returns>
-        public static object[] SetSubTypeTestData()
+        private static object[] SetSubTypeTestData()
         {
             return new object[]
             {
@@ -139,7 +139,7 @@ namespace Tests
         /// 3 - Устройство для тестов
         /// </summary>
         /// <returns></returns>
-        public static object[] GetSubTypeTestData()
+        private static object[] GetSubTypeTestData()
         {
             return new object[]
             {
@@ -156,7 +156,7 @@ namespace Tests
         /// 3 - Устройство для тестов
         /// </summary>
         /// <returns></returns>
-        public static object[] GetDevicePropertiesTestData()
+        private static object[] GetDevicePropertiesTestData()
         {
             var exportForAI = new List<string>
             {
@@ -184,7 +184,7 @@ namespace Tests
         /// 5 - Устройство для теста
         /// </summary>
         /// <returns></returns>
-        public static object[] GetRangeTestData()
+        private static object[] GetRangeTestData()
         {
 			return new object[]
 			{
@@ -203,7 +203,7 @@ namespace Tests
         /// 3 - Устройство
         /// </summary>
         /// <returns></returns>
-        public static object[] ParametersTestData()
+        private static object[] ParametersTestData()
         {
             return new object[]
             {
@@ -235,7 +235,7 @@ namespace Tests
         /// 3. Устройство
         /// </summary>
         /// <returns></returns>
-        public static object[] ChannelsTestData()
+        private static object[] ChannelsTestData()
         {
             return new object[]
             {
