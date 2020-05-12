@@ -287,19 +287,7 @@ namespace Tests
                         { "DI", 0 },
                         { "DO", 0 },
                     },
-                    "LS_IOLINK_MIN",
-                    GetRandomLSDevice()
-                },
-                new object[]
-                {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "LS_IOLINK_MAX",
+                    "LS_IOLINK",
                     GetRandomLSDevice()
                 },
                 new object[]
