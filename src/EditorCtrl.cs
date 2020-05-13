@@ -1229,7 +1229,7 @@ namespace Editor
                 item.EditablePart[e.Column.Index] != e.Column.Index ||
                 (e.Column.Index == 1 && 
                 item.ContainsBaseObject && 
-                item.GetBaseObjectsList.Count == 0))
+                item.BaseObjectsList.Count == 0))
             {
                 IsCellEditing = false;
                 e.Cancel = true;
@@ -1240,15 +1240,14 @@ namespace Editor
             // соответствующий редактор для ячейки.
             if (e.Column.Index == 1 && item.ContainsBaseObject)
             {
-                InitComboBoxCellEditor(item.GetBaseObjectsList);
+                InitComboBoxCellEditor(item.BaseObjectsList);
                 comboBoxCellEditor.Text = e.Value.ToString();
                 comboBoxCellEditor.Bounds = e.CellBounds;
                 e.Control = comboBoxCellEditor;
                 comboBoxCellEditor.Focus();
                 editorTView.Freeze();
             }
-            else if(e.Column.Index == 1 && 
-                item.GetType().Name == "BoolShowedProperty")
+            else if(e.Column.Index == 1 && item.IsBoolProperty)
             {
                 item.SetNewValue(e.Value.ToString());
                 IsCellEditing = false;

@@ -974,7 +974,7 @@ namespace TechObject
             return null;
         }
 
-        override public List<string> GetBaseObjectsList
+        override public List<string> BaseObjectsList
         {
             get
             {

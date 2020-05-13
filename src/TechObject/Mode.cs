@@ -622,7 +622,7 @@ namespace TechObject
             return devToDraw;
         }
 
-        public override List<string> GetBaseObjectsList
+        public override List<string> BaseObjectsList
         {
             get
             {

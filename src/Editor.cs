@@ -318,7 +318,7 @@ namespace Editor
         /// Получение списка базовых объектов для тех объектов, 
         /// которые имеют такой функционал внутри себя.
         /// </summary>
-        List<string> GetBaseObjectsList
+        List<string> BaseObjectsList
         {
             get;
         }
@@ -327,6 +327,14 @@ namespace Editor
         /// Имеет ли объект базовые объект.
         /// </summary>
         bool ContainsBaseObject
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Является ли элемент булевым свойством.
+        /// </summary>
+        bool IsBoolProperty
         {
             get;
         }
@@ -722,7 +730,7 @@ namespace Editor
             get { return false; }
         }
 
-        public List<string> GetBaseObjectsList
+        public List<string> BaseObjectsList
         {
             get 
             { 
@@ -731,6 +739,14 @@ namespace Editor
         }
 
         public bool ContainsBaseObject
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public virtual bool IsBoolProperty
         {
             get
             {
@@ -958,7 +974,7 @@ namespace Editor
             get { return false; }
         }
 
-        public virtual List<string> GetBaseObjectsList
+        public virtual List<string> BaseObjectsList
         {
             get
             {
@@ -967,6 +983,14 @@ namespace Editor
         }
 
         public virtual bool ContainsBaseObject
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public virtual bool IsBoolProperty
         {
             get
             {
