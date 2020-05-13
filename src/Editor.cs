@@ -315,14 +315,21 @@ namespace Editor
         }
 
         /// <summary>
-        /// Получение базовых объектов для тех объектов, которые имеют такой
-        /// функционал внутри себя.
+        /// Получение списка базовых объектов для тех объектов, 
+        /// которые имеют такой функционал внутри себя.
         /// </summary>
-        List<string> GetBaseObjects
+        List<string> GetBaseObjectsList
         {
             get;
         }
 
+        /// <summary>
+        /// Имеет ли объект базовые объект.
+        /// </summary>
+        bool ContainsBaseObject
+        {
+            get;
+        }
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -715,11 +722,19 @@ namespace Editor
             get { return false; }
         }
 
-        public List<string> GetBaseObjects
+        public List<string> GetBaseObjectsList
         {
             get 
             { 
                 return new List<string>(); 
+            }
+        }
+
+        public bool ContainsBaseObject
+        {
+            get
+            {
+                return false;
             }
         }
         #endregion
@@ -943,11 +958,19 @@ namespace Editor
             get { return false; }
         }
 
-        public virtual List<string> GetBaseObjects
+        public virtual List<string> GetBaseObjectsList
         {
             get
             {
                 return new List<string>();
+            }
+        }
+
+        public virtual bool ContainsBaseObject
+        {
+            get
+            {
+                return false;
             }
         }
         #endregion

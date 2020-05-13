@@ -1226,29 +1226,21 @@ namespace Editor
 
             if (item == null || 
                 !item.IsEditable || 
-                item.EditablePart[e.Column.Index] != e.Column.Index)
+                item.EditablePart[e.Column.Index] != e.Column.Index ||
+                (e.Column.Index == 1 && 
+                item.ContainsBaseObject && 
+                item.GetBaseObjectsList.Count == 0))
             {
                 IsCellEditing = false;
                 e.Cancel = true;
                 return;
             }
 
-            // Проверяем тип редактируемого объекта, редактируемую ячейку и 
-            //выбранную колонку для редактирования
-            if (e.Column.Index == 1 &&
-                (item.GetType().Name == "Mode" ||
-                item.GetType().Name == "TechObject" ||
-                item.GetType().Name == "Step"))
+            // Проверяем колонку, и какой объект редактируется и вызываем
+            // соответствующий редактор для ячейки.
+            if (e.Column.Index == 1 && item.ContainsBaseObject)
             {
-                var baseObjects = item.GetBaseObjects;
-                if (baseObjects.Count == 0)
-                {
-                    e.Cancel = true;
-                    IsCellEditing = false;
-                    return;
-                }
-
-                InitComboBoxCellEditor(item.GetBaseObjects);
+                InitComboBoxCellEditor(item.GetBaseObjectsList);
                 comboBoxCellEditor.Text = e.Value.ToString();
                 comboBoxCellEditor.Bounds = e.CellBounds;
                 e.Control = comboBoxCellEditor;
@@ -1266,8 +1258,6 @@ namespace Editor
             }
             else
             {
-                // В зависимости от нажатой колонки вернуть нужное значение 
-                // для редактирования
                 InitTextBoxCellEditor();
                 textBoxCellEditor.Text = item.EditText[e.Column.Index];
                 textBoxCellEditor.Bounds = e.CellBounds;

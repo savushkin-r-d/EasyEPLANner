@@ -974,12 +974,20 @@ namespace TechObject
             return null;
         }
 
-        override public List<string> GetBaseObjects
+        override public List<string> GetBaseObjectsList
         {
             get
             {
                 return DataBase.Imitation.BaseTechObjects()
                 .Select(x => x.Name).ToList();
+            }
+        }
+
+        public override bool ContainsBaseObject
+        {
+            get
+            {
+                return true;
             }
         }
         #endregion

@@ -622,7 +622,7 @@ namespace TechObject
             return devToDraw;
         }
 
-        public override List<string> GetBaseObjects
+        public override List<string> GetBaseObjectsList
         {
             get
             {
@@ -631,6 +631,14 @@ namespace TechObject
                 BaseTechObject baseTechObject = techObject.BaseTechObject;
                 List<string> baseModesList = baseTechObject.BaseOperationsList;
                 return baseModesList;
+            }
+        }
+
+        public override bool ContainsBaseObject
+        {
+            get
+            {
+                return true;
             }
         }
         #endregion
