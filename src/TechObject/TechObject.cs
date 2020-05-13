@@ -973,6 +973,15 @@ namespace TechObject
             }
             return null;
         }
+
+        override public List<string> GetBaseObjects
+        {
+            get
+            {
+                return DataBase.Imitation.BaseTechObjects()
+                .Select(x => x.Name).ToList();
+            }
+        }
         #endregion
 
         private TechObjectN techNumber; /// Номер объекта технологический.

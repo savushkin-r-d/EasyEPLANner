@@ -7,7 +7,6 @@ using EasyEPlanner;
 using PInvoke;
 using BrightIdeasSoftware;
 using System.Collections;
-using System.Linq;
 
 namespace Editor
 {
@@ -127,21 +126,9 @@ namespace Editor
         private bool IsCellEditing;
         public List<ITreeViewItem> treeViewItemsList;
 
-        // Списки для editorTView.
-        List<string> baseTechObjectList;
-
         // Редакторы для editorTView
         ComboBox comboBoxCellEditor;
         TextBox textBoxCellEditor;
-
-        /// <summary>
-        /// Инициализация данных для редактора
-        /// </summary>
-        private void InitTreeListEditors()
-        {
-            baseTechObjectList = DataBase.Imitation.BaseTechObjects()
-                .Select(x => x.Name).ToList();
-        }
 
         /// <summary>
         /// Инициализация ComboBox редактора
@@ -195,15 +182,13 @@ namespace Editor
         /// <param name="data"> Данные для отображения.</param>
         public void Init(ITreeViewItem data)
         {
-            // Инициализация редакторов для editorTView
-            InitTreeListEditors();
-
             editorTView.BeginUpdate();
             treeViewItemsList = new List<ITreeViewItem>();
             treeViewItemsList.Add(data);
             AddParent(data, null);
             editorTView.Roots = treeViewItemsList;
-            editorTView.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            editorTView.Columns[0]
+                .AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
             editorTView.Columns[0].Width = 200;
             editorTView.Columns[1].Width = editorTView.Width -
                 editorTView.Columns[0].Width - deltaWidth;
@@ -872,6 +857,12 @@ namespace Editor
                     {
                         AddParent(newItem, itemParent);
                         editorTView.RefreshObjects(itemParent.Items);
+                        if (item is TechObject.Params ||
+                        item is TechObject.Param)
+                        {
+                            var parent = item.Parent.Parent.Parent.Items;
+                            editorTView.RefreshObjects(parent);
+                        }
                     }
                     OnModify();
                 }
@@ -896,6 +887,12 @@ namespace Editor
                 bool isDelete = itemParent.Delete(item);
                 if (isDelete) //Надо удалить этот узел дерева.
                 {
+                    if (item is TechObject.Params ||
+                        item is TechObject.Param)
+                    {
+                        var parent = item.Parent.Parent.Parent.Items;
+                        editorTView.RefreshObjects(parent);
+                    }
                     editorTView.RefreshObjects(itemParent.Items);
                     editorTView.RefreshObject(itemParent);
                     //Обновляем также и узел родителя при его наличии.
@@ -1218,9 +1215,11 @@ namespace Editor
         }
 
         /// <summary>
-        /// Обработка начала редактирования ячеек. Установка текста редактирования.
+        /// Обработка начала редактирования ячеек. Установка текста 
+        /// редактирования.
         /// </summary>
-        private void editorTView_CellEditStarting(object sender, CellEditEventArgs e)
+        private void editorTView_CellEditStarting(object sender, 
+            CellEditEventArgs e)
         {
             IsCellEditing = true;
             ITreeViewItem item = editorTView.SelectedObject as ITreeViewItem;
@@ -1241,38 +1240,15 @@ namespace Editor
                 item.GetType().Name == "TechObject" ||
                 item.GetType().Name == "Step"))
             {
-                switch (item.GetType().Name)
+                var baseObjects = item.GetBaseObjects;
+                if (baseObjects.Count == 0)
                 {
-                    case "Mode":
-                        var baseOperations = GetBaseOperationsList(item);
-                        if (baseOperations.Count == 0)
-                        {
-                            e.Cancel = true;
-                            IsCellEditing = false;
-                            return;
-                        }
-
-                        InitComboBoxCellEditor(baseOperations);
-                        break;
-
-                    case "TechObject":
-                        InitComboBoxCellEditor(baseTechObjectList);
-
-                        break;
-
-                    case "Step":
-                        var steps = GetBaseOperationStepsList(item);
-                        if (steps.Count == 0)
-                        {
-                            e.Cancel = true;
-                            IsCellEditing = false;
-                            return;
-                        }
-
-                        InitComboBoxCellEditor(steps);
-                        break;
+                    e.Cancel = true;
+                    IsCellEditing = false;
+                    return;
                 }
 
+                InitComboBoxCellEditor(item.GetBaseObjects);
                 comboBoxCellEditor.Text = e.Value.ToString();
                 comboBoxCellEditor.Bounds = e.CellBounds;
                 e.Control = comboBoxCellEditor;
@@ -1290,58 +1266,14 @@ namespace Editor
             }
             else
             {
-                // В зависимости от нажатой колонки вернуть нужное значение для редактирования
+                // В зависимости от нажатой колонки вернуть нужное значение 
+                // для редактирования
                 InitTextBoxCellEditor();
                 textBoxCellEditor.Text = item.EditText[e.Column.Index];
                 textBoxCellEditor.Bounds = e.CellBounds;
                 e.Control = textBoxCellEditor;
                 textBoxCellEditor.Focus();
                 editorTView.Freeze();
-            }
-        }
-
-        /// <summary>
-        /// Получить список базовых операций ITreeViewItem.
-        /// Если его нету - вернуть пустой список.
-        /// </summary>
-        /// <param name="item">ITreeViewItem</param>
-        /// <returns></returns>
-        private List<string> GetBaseOperationsList(ITreeViewItem item)
-        {
-            if (item is TechObject.Mode == true)
-            {
-                var mode = (TechObject.Mode)item;
-                var baseObject = mode.Owner.Owner.BaseTechObject;
-                return baseObject.BaseOperationsList;
-            }
-            else
-            {
-                return new List<string>();
-            }
-        }
-
-        private List<string> GetBaseOperationStepsList(ITreeViewItem item)
-        {
-            var emptyList = new List<string>();
-            if (item is TechObject.Step == true)
-            {
-                var step = item as TechObject.Step;
-                TechObject.State state = step.Owner;
-                if (state.IsMain == true)
-                {
-                    TechObject.Mode mode = state.Owner;
-                    var stepsNames = mode.BaseOperation.Steps
-                        .Select(x => x.Name).ToList();
-                    return stepsNames;
-                }
-                else
-                {
-                    return emptyList;
-                }            
-            }
-            else
-            {
-                return emptyList;
             }
         }
 
@@ -1401,13 +1333,7 @@ namespace Editor
             }
             else
             {
-                // Меняется номер, изменится расположение, надо обновить родителя
-                // Больше нигде и никогда родителя не обновляют в этом else
-                if (selectedItem.GetType().Name == "TechNumberN")
-                {
-                    needUpdateParent = true;
-                }
-                                                          
+                needUpdateParent = selectedItem.NeedRebuildParent;                                                        
                 editorTView.Controls.Remove(textBoxCellEditor);
                 isModified = selectedItem.SetNewValue(e.NewValue.ToString());
             }

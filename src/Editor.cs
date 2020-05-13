@@ -314,6 +314,15 @@ namespace Editor
             set;
         }
 
+        /// <summary>
+        /// Получение базовых объектов для тех объектов, которые имеют такой
+        /// функционал внутри себя.
+        /// </summary>
+        List<string> GetBaseObjects
+        {
+            get;
+        }
+
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -705,6 +714,14 @@ namespace Editor
         {
             get { return false; }
         }
+
+        public List<string> GetBaseObjects
+        {
+            get 
+            { 
+                return new List<string>(); 
+            }
+        }
         #endregion
 
         ITreeViewItem parent;
@@ -924,6 +941,14 @@ namespace Editor
         public bool NeedRebuildParent
         {
             get { return false; }
+        }
+
+        public virtual List<string> GetBaseObjects
+        {
+            get
+            {
+                return new List<string>();
+            }
         }
         #endregion
     }
