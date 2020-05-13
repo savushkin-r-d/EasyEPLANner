@@ -182,7 +182,7 @@ namespace TechObject
             if (params_ != null)
             {
                 params_.Clear();
-                return false;
+                return true;
             }
 
             return false;

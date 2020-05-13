@@ -103,6 +103,11 @@ namespace TechObject
             return "-1";
         }
 
+        public void ClearOperationsBinding()
+        {
+            this.oper.SetNewValue("-1");
+        }
+
         /// <summary>
         /// Получить глобальный номер параметра.
         /// </summary>

@@ -173,7 +173,7 @@ namespace TechObject
             Param removedParam = child as Param;
             if (removedParam != null)
             {
-                removedParam.SetOperationN("-1");
+                removedParam.ClearOperationsBinding();
                 parameters.Remove(removedParam);
                 return true;
             }
@@ -230,6 +230,10 @@ namespace TechObject
 
         public void Clear()
         {
+            foreach (var parameter in parameters)
+            {
+                parameter.ClearOperationsBinding();
+            }
             parameters.Clear();
         }
 
