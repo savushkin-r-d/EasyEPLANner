@@ -404,6 +404,7 @@ namespace TechObject
             modes = new ModesManager(this);
             timers = new TimersManager();
             parameters = new ParamsManager();
+            parameters.Parent = this;
 
             equipment = new Equipment(this);
 

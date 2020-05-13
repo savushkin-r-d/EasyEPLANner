@@ -173,6 +173,7 @@ namespace TechObject
             Param removedParam = child as Param;
             if (removedParam != null)
             {
+                removedParam.SetOperationN("-1");
                 parameters.Remove(removedParam);
                 return true;
             }
@@ -212,6 +213,7 @@ namespace TechObject
                     newValue, newMeter, newNameLua, useOperation);
                 if (useOperation)
                 {
+                    newParam.Parent = this;
                     newParam.SetOperationN(parameters[parameters.Count - 1]
                         .GetOperationN());
                 }
@@ -269,6 +271,7 @@ namespace TechObject
                     newValue, newMeter, newNameLua, useOperation);
                 if (useOperation)
                 {
+                    newPar.Parent = this;
                     newPar.SetOperationN(newParam.GetOperationN());
                 }
 
@@ -336,6 +339,7 @@ namespace TechObject
                     newValue, newMeter, newNameLua, useOperation);
                 if (useOperation)
                 {
+                    newPar.Parent = this;
                     newPar.SetOperationN((copyObject as Param).GetOperationN());
                 }
 

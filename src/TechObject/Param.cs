@@ -25,6 +25,7 @@ namespace TechObject
             if (isUseOperation)
             {
                 this.oper = new ParamProperty("Операция", -1);
+                this.oper.Parent = this;
             }
 
             this.meter = new Editor.ObjectProperty("Размерность", meter);
@@ -80,7 +81,7 @@ namespace TechObject
                 }
                 else
                 {
-                    oper.SetValue(operN);
+                    oper.SetNewValue(operN.ToString());
                 }
             }
         }

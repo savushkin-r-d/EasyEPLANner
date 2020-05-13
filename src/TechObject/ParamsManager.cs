@@ -22,6 +22,11 @@ namespace TechObject
             parUIntRunTime = new Params("Рабочие параметры uint", 
                 "rt_par_uint", "init_rt_params_uint", true);
 
+            parFLoat.Parent = this;
+            parUInt.Parent = this;
+            parFLoatRunTime.Parent = this;
+            parUIntRunTime.Parent = this;
+
             items = new List<Editor.ITreeViewItem>();
             items.Add(parFLoat);
             items.Add(parUInt);
