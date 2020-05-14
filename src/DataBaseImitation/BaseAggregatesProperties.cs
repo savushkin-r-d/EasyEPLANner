@@ -70,5 +70,16 @@ namespace DataBase
                 "Использовать узел подогрева", "false")
             };
         }
+      
+        /// Свойства агрегата - бойлер.
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] BoilerAggregateProperties()
+        {
+            return new BaseProperty[]
+            {
+                new BoolShowedProperty("BOILER", "Использовать бойлер", "false")
+            };
+        }
     }
 }

@@ -98,10 +98,10 @@ namespace DataBase
         }
 
         /// <summary>
-        /// Шаги для операции Подогрев.
+        /// Шаги для операции Подогрев объекта "Узел нагрева"
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] HeatingSteps()
+        public static BaseProperty[] HeaterNodeHeatingSteps()
         {
             return new BaseProperty[]
             {
@@ -141,6 +141,23 @@ namespace DataBase
         }
 
         /// <summary>
+        /// Шаги для операции "Нагрев" объекта "Бойлер".
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] BoilerHeatingSteps()
+        {
+            return new BaseProperty[] 
+            {
+                 new NonShowedBaseProperty("", "", false),
+                 new NonShowedBaseProperty("WAITING_LOW_LS", 
+                 "Ожидание пропадания нижнего уровня"),
+                 new NonShowedBaseProperty("WATER_2_LOW_LS", 
+                 "Наполнение до нижнего уровня"),
+                 new NonShowedBaseProperty("WATER_2_HI_LS", 
+                 "Наполнение до верхнего уровня"),
+            };          
+        }
+      
         /// Шаги для базовой операции "Работа" базового объекта "Танк".
         /// </summary>
         /// <returns></returns>

@@ -151,7 +151,7 @@ namespace DataBase
             {
                 BaseOperation.EmptyOperation(),
                 new BaseOperation("Нагрев", "HEATING", EmptyProperties(),
-                HeatingSteps()),
+                HeaterNodeHeatingSteps()),
             };
         }
               
@@ -179,6 +179,20 @@ namespace DataBase
                 BaseOperation.EmptyOperation(),
                 new BaseOperation("Мойка", "WASHING_CIP", WashParams(),
                 WashSteps())
+            };
+        }
+
+        /// <summary>
+        /// Операции базового объекта "Бойлер"
+        /// </summary>
+        /// <returns></returns>
+        public static BaseOperation[] BoilerOperations()
+        {
+            return new BaseOperation[]
+            {
+                BaseOperation.EmptyOperation(),
+                new BaseOperation("Нагрев", "HEATING", EmptyProperties(),
+                BoilerHeatingSteps())
             };
         }
     }
