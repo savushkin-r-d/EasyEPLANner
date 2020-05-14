@@ -621,6 +621,26 @@ namespace TechObject
 
             return devToDraw;
         }
+
+        public override List<string> BaseObjectsList
+        {
+            get
+            {
+                ModesManager modesManager = this.Owner;
+                TechObject techObject = modesManager.Owner;
+                BaseTechObject baseTechObject = techObject.BaseTechObject;
+                List<string> baseModesList = baseTechObject.BaseOperationsList;
+                return baseModesList;
+            }
+        }
+
+        public override bool ContainsBaseObject
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         public enum StateName

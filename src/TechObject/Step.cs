@@ -462,6 +462,33 @@ namespace TechObject
 
             return devToDraw;
         }
+
+        public override List<string> BaseObjectsList
+        {
+            get
+            {
+                State state = this.Owner;
+                if (state.IsMain)
+                {
+                    Mode mode = state.Owner;
+                    var stepsNames = mode.BaseOperation.Steps
+                        .Select(x => x.Name).ToList();
+                    return stepsNames;
+                }
+                else
+                {
+                    return new List<string>();
+                }
+            }
+        }
+
+        public override bool ContainsBaseObject
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         /// <summary>

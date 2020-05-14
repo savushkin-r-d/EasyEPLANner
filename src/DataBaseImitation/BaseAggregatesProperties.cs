@@ -59,7 +59,19 @@ namespace DataBase
         }
 
         /// <summary>
-        /// Свосйтва агрегата - бойлер.
+        /// Свойства агрегата - узел подогрева, узел подогрева ПИД
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] HeaterNodeAggregateProperties()
+        {
+            return new BaseProperty[]
+            {
+                new BoolShowedProperty("HEATER_NODE",
+                "Использовать узел подогрева", "false")
+            };
+        }
+      
+        /// Свойства агрегата - бойлер.
         /// </summary>
         /// <returns></returns>
         public static BaseProperty[] BoilerAggregateProperties()

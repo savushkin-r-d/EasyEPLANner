@@ -80,6 +80,14 @@ namespace TechObject
                 return false;
             }
         }
+
+        public override bool IsBoolProperty
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
     }
 }

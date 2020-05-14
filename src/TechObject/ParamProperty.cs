@@ -84,5 +84,13 @@ namespace TechObject
                 }
             }
         }
+
+        public override bool NeedRebuildMainObject
+        {
+            get
+            {
+                return true;
+            }
+        }
     }
 }

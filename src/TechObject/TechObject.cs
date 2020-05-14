@@ -404,6 +404,7 @@ namespace TechObject
             modes = new ModesManager(this);
             timers = new TimersManager();
             parameters = new ParamsManager();
+            parameters.Parent = this;
 
             equipment = new Equipment(this);
 
@@ -971,6 +972,31 @@ namespace TechObject
                 return child as Editor.ITreeViewItem;
             }
             return null;
+        }
+
+        override public List<string> BaseObjectsList
+        {
+            get
+            {
+                return DataBase.Imitation.BaseTechObjects()
+                .Select(x => x.Name).ToList();
+            }
+        }
+
+        public override bool ContainsBaseObject
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool IsMainObject
+        {
+            get
+            {
+                return true;
+            }
         }
         #endregion
 
