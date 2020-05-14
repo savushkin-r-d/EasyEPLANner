@@ -59,14 +59,14 @@ namespace DataBase
         }
 
         /// <summary>
-        /// Свойства агрегата - узел подогрева
+        /// Свойства агрегата - узел подогрева, узел подогрева ПИД
         /// </summary>
         /// <returns></returns>
         public static BaseProperty[] HeaterNodeAggregateProperties()
         {
             return new BaseProperty[]
             {
-                new BoolShowedProperty("NEED_HEATING_CONTROL",
+                new BoolShowedProperty("HEATER_NODE",
                 "Использовать узел подогрева", "false")
             };
         }
