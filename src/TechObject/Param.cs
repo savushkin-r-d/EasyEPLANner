@@ -216,6 +216,14 @@ namespace TechObject
         {
             return this;
         }
+
+        public override bool NeedRebuildMainObject
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         public string GetName()

@@ -357,6 +357,14 @@ namespace TechObject
 
             return null;
         }
+
+        public override bool NeedRebuildMainObject
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         private string nameLua;

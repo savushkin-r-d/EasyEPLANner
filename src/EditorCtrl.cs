@@ -857,11 +857,9 @@ namespace Editor
                     {
                         AddParent(newItem, itemParent);
                         editorTView.RefreshObjects(itemParent.Items);
-                        if (item is TechObject.Params ||
-                        item is TechObject.Param)
+                        if (item.NeedRebuildMainObject)
                         {
-                            var parent = item.Parent.Parent.Parent.Items;
-                            editorTView.RefreshObjects(parent);
+                            editorTView.RefreshObjects(item.MainObject.Items);
                         }
                     }
                     OnModify();
@@ -887,11 +885,9 @@ namespace Editor
                 bool isDelete = itemParent.Delete(item);
                 if (isDelete) //Надо удалить этот узел дерева.
                 {
-                    if (item is TechObject.Params ||
-                        item is TechObject.Param)
+                    if (item.NeedRebuildMainObject)
                     {
-                        var parent = item.Parent.Parent.Parent.Items;
-                        editorTView.RefreshObjects(parent);
+                        editorTView.RefreshObjects(item.MainObject.Items);
                     }
                     editorTView.RefreshObjects(itemParent.Items);
                     editorTView.RefreshObject(itemParent);
@@ -1106,7 +1102,7 @@ namespace Editor
         public ITreeViewItem GetParentBranch(ITreeViewItem item)
         {
             ITreeViewItem needItem = null;
-            if (item.GetType().Name == "TechObject")
+            if (item.IsMainObject)
             {
                 return item;
             }
@@ -1269,11 +1265,16 @@ namespace Editor
         /// <summary>
         /// Обработка полученных данных после редактирования.
         /// </summary>
-        private void editorTView_CellEditFinishing(object sender, CellEditEventArgs e)
+        private void editorTView_CellEditFinishing(object sender, 
+            CellEditEventArgs e)
         {
             IsCellEditing = false;
+            bool isModified = false;
+            editorTView.LabelEdit = false;
+            var selectedItem = editorTView.SelectedObject as ITreeViewItem;
+
             //При нажатии Esc отменяются все изменения.
-            if (cancelChanges)
+            if (cancelChanges || selectedItem == null)
             {
                 e.Cancel = true;
                 cancelChanges = false;
@@ -1281,79 +1282,39 @@ namespace Editor
                 return;
             }
 
-            bool isModified;
-            bool needUpdateParent = false;
-            editorTView.LabelEdit = false;
-            var selectedItem = editorTView.SelectedObject as ITreeViewItem;
-
-            if (selectedItem == null)
-            {
-                return;
-            }
-
             // Если редактируются базовые операции/объекты/шаги
-            if (e.Column.Index == 1 &&
-                (selectedItem.EditablePart[0] == 0 &&
-                selectedItem.EditablePart[1] == 1))
+            if (e.Column.Index == 1 && selectedItem.ContainsBaseObject)
             {       
                 e.NewValue = comboBoxCellEditor.Text;
                 editorTView.Controls.Remove(comboBoxCellEditor);
                 // true (IsExtraBool) - флаг работы с "экстра" полями
                 isModified = selectedItem.SetNewValue(e.NewValue.ToString(), 
                     true);
-
-                // Обновляем визулизацию т.к изменились родительские 
-                // или дочерние элементы
-                switch (selectedItem.GetType().FullName)
-                {
-                    case "TechObject.Mode":
-                        // Изменилась базовая операция, обновим 
-                        // дополнительные элементы дерева
-                        editorTView.RefreshObject(selectedItem);
-                        editorTView.RefreshObject(selectedItem.Parent);
-                        break;
-
-                    case "TechObject.TechObject":
-                        // Изменился базовый объект, обновим дополнительные 
-                        // элементы дерева
-                        editorTView.RefreshObject(selectedItem);
-                        break;
-                }
             }
             else
             {
-                needUpdateParent = selectedItem.NeedRebuildParent;                                                        
                 editorTView.Controls.Remove(textBoxCellEditor);
                 isModified = selectedItem.SetNewValue(e.NewValue.ToString());
             }
 
             if (isModified)
             {
-                e.Cancel = true;
                 //Обновляем также и узел родителя при его наличии.
-                if (needUpdateParent)
+                if (selectedItem.NeedRebuildParent)
                 {
                     editorTView.RefreshObjects(selectedItem.Parent.Items);
                 }
-                else if (selectedItem.GetType().Name == "ParamProperty")
-                {
-                    var parent = selectedItem.Parent.Parent.Parent.Parent.Items;
-                    editorTView.RefreshObjects(parent);
-                    editorTView.RefreshObject(selectedItem);
-                }
-                else
-                {
-                    editorTView.RefreshObject(selectedItem);
+                else if (selectedItem.NeedRebuildMainObject)
+                {               
+                    editorTView.RefreshObjects(selectedItem.MainObject.Items);
                 }
 
-                editorTView.Unfreeze();
+                editorTView.RefreshObject(selectedItem);
                 OnModify();
             }
-            else
-            {
-                e.Cancel = true;
-                editorTView.Unfreeze();
-            }
+
+            e.Cancel = true;
+            editorTView.Unfreeze();
         }
 
         /// <summary>

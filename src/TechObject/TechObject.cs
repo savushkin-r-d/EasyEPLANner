@@ -990,6 +990,14 @@ namespace TechObject
                 return true;
             }
         }
+
+        public override bool IsMainObject
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         private TechObjectN techNumber; /// Номер объекта технологический.
