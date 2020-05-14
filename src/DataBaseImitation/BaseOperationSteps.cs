@@ -146,7 +146,7 @@ namespace DataBase
         /// <returns></returns>
         public static BaseProperty[] BoilerHeatingSteps()
         {
-            return new BasseProperty[] 
+            return new BaseProperty[] 
             {
                  new NonShowedBaseProperty("", "", false),
                  new NonShowedBaseProperty("WAITING_LOW_LS", 
