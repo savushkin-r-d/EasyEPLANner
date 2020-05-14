@@ -98,10 +98,10 @@ namespace DataBase
         }
 
         /// <summary>
-        /// Шаги для операции Подогрев.
+        /// Шаги для операции Подогрев объекта "Узел нагрева"
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] HeatingSteps()
+        public static BaseProperty[] HeaterNodeHeatingSteps()
         {
             return new BaseProperty[]
             {
@@ -137,6 +137,22 @@ namespace DataBase
                 new NonShowedBaseProperty("TO_START_TEMPERATURE",
                 "Нагрев до заданной температуры"),
                 new NonShowedBaseProperty("SLOW_HEAT", "Нагрев заданное время")
+            };
+        }
+
+        /// <summary>
+        /// Шаги для операции "Нагрев" объекта "Бойлер"
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] BoilerHeatingSteps()
+        {
+            return new BaseProperty[]
+            {
+                new NonShowedBaseProperty("", "", false),
+                new NonShowedBaseProperty("WAITING_LOW_LS", 
+                "Ожидание нижнего уровня"),
+                new NonShowedBaseProperty("WATER_2_LOW_LS", ""),
+                new NonShowedBaseProperty("WATER_2_HI_LS", ""),
             };
         }
     }
