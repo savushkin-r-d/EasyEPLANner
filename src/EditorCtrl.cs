@@ -859,7 +859,8 @@ namespace Editor
                         editorTView.RefreshObjects(itemParent.Items);
                         if (item.NeedRebuildMainObject)
                         {
-                            editorTView.RefreshObjects(item.MainObject.Items);
+                            var mainObject = GetParentBranch(item);
+                            editorTView.RefreshObjects(mainObject.Items);
                         }
                     }
                     OnModify();
@@ -887,7 +888,8 @@ namespace Editor
                 {
                     if (item.NeedRebuildMainObject)
                     {
-                        editorTView.RefreshObjects(item.MainObject.Items);
+                        var mainObject = GetParentBranch(item);
+                        editorTView.RefreshObjects(mainObject.Items);
                     }
                     editorTView.RefreshObjects(itemParent.Items);
                     editorTView.RefreshObject(itemParent);
@@ -1305,8 +1307,9 @@ namespace Editor
                     editorTView.RefreshObjects(selectedItem.Parent.Items);
                 }
                 else if (selectedItem.NeedRebuildMainObject)
-                {               
-                    editorTView.RefreshObjects(selectedItem.MainObject.Items);
+                {
+                    var mainObject = GetParentBranch(selectedItem);
+                    editorTView.RefreshObjects(mainObject.Items);
                 }
 
                 editorTView.RefreshObject(selectedItem);

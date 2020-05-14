@@ -348,14 +348,6 @@ namespace Editor
         }
 
         /// <summary>
-        /// Главный объект иерархии дерева.
-        /// </summary>
-        ITreeViewItem MainObject
-        {
-            get;
-        }
-
-        /// <summary>
         /// Необходимость обновить главный объект дерева.
         /// </summary>
         bool NeedRebuildMainObject
@@ -786,29 +778,6 @@ namespace Editor
             }
         }
 
-        public ITreeViewItem MainObject
-        {
-            get
-            {
-                if (IsMainObject)
-                {
-                    return this;
-                }
-                else
-                {
-                    var parent = this.Parent;
-                    if (parent != null)
-                    {
-                        return parent.MainObject;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-            }
-        }
-
         public virtual bool NeedRebuildMainObject
         {
             get
@@ -1066,29 +1035,6 @@ namespace Editor
             get
             {
                 return false;
-            }
-        }
-
-        public virtual ITreeViewItem MainObject
-        {
-            get
-            {
-                if(IsMainObject)
-                {
-                    return this;
-                }
-                else
-                {
-                    var parent = this.Parent;
-                    if (parent != null)
-                    {
-                        return parent.MainObject;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
             }
         }
 
