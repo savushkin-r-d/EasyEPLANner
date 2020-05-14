@@ -25,6 +25,7 @@ namespace TechObject
             if (isUseOperation)
             {
                 this.oper = new ParamProperty("Операция", -1);
+                this.oper.Parent = this;
             }
 
             this.meter = new Editor.ObjectProperty("Размерность", meter);
@@ -80,7 +81,7 @@ namespace TechObject
                 }
                 else
                 {
-                    oper.SetValue(operN);
+                    oper.SetNewValue(operN.ToString());
                 }
             }
         }
@@ -100,6 +101,11 @@ namespace TechObject
             }
 
             return "-1";
+        }
+
+        public void ClearOperationsBinding()
+        {
+            this.oper.SetNewValue("-1");
         }
 
         /// <summary>
@@ -209,6 +215,14 @@ namespace TechObject
         override public object Copy()
         {
             return this;
+        }
+
+        public override bool NeedRebuildMainObject
+        {
+            get
+            {
+                return true;
+            }
         }
         #endregion
 

@@ -314,6 +314,46 @@ namespace Editor
             set;
         }
 
+        /// <summary>
+        /// Получение списка базовых объектов для тех объектов, 
+        /// которые имеют такой функционал внутри себя.
+        /// </summary>
+        List<string> BaseObjectsList
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Имеет ли объект базовые объект.
+        /// </summary>
+        bool ContainsBaseObject
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Является ли элемент булевым свойством.
+        /// </summary>
+        bool IsBoolProperty
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Является ли этот объект главным (начальным).
+        /// </summary>
+        bool IsMainObject
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Необходимость обновить главный объект дерева.
+        /// </summary>
+        bool NeedRebuildMainObject
+        {
+            get;
+        }
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -705,6 +745,46 @@ namespace Editor
         {
             get { return false; }
         }
+
+        public List<string> BaseObjectsList
+        {
+            get 
+            { 
+                return new List<string>(); 
+            }
+        }
+
+        public bool ContainsBaseObject
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public virtual bool IsBoolProperty
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public bool IsMainObject
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public virtual bool NeedRebuildMainObject
+        {
+            get
+            {
+                return false;
+            }
+        }
         #endregion
 
         ITreeViewItem parent;
@@ -924,6 +1004,46 @@ namespace Editor
         public bool NeedRebuildParent
         {
             get { return false; }
+        }
+
+        public virtual List<string> BaseObjectsList
+        {
+            get
+            {
+                return new List<string>();
+            }
+        }
+
+        public virtual bool ContainsBaseObject
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public virtual bool IsBoolProperty
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public virtual bool IsMainObject
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public virtual bool NeedRebuildMainObject
+        {
+            get
+            {
+                return false;
+            }
         }
         #endregion
     }
