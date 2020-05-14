@@ -150,9 +150,11 @@ namespace DataBase
             {
                 new NonShowedBaseProperty("", "", false),
                 new NonShowedBaseProperty("WAITING_LOW_LS", 
-                "Ожидание нижнего уровня"),
-                new NonShowedBaseProperty("WATER_2_LOW_LS", ""),
-                new NonShowedBaseProperty("WATER_2_HI_LS", ""),
+                "Ожидание пропадания нижнего уровня"),
+                new NonShowedBaseProperty("WATER_2_LOW_LS", 
+                "Наполнение до нижнего уровня"),
+                new NonShowedBaseProperty("WATER_2_HI_LS", 
+                "Наполнение до верхнего уровня"),
             };
         }
     }

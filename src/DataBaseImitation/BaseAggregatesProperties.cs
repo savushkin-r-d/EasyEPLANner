@@ -57,5 +57,17 @@ namespace DataBase
                 "Использовать узел давления", "false")
             };
         }
+
+        /// <summary>
+        /// Свосйтва агрегата - бойлер.
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] BoilerAggregateProperties()
+        {
+            return new BaseProperty[]
+            {
+                new BoolShowedProperty("BOILER", "Использовать бойлер", "false")
+            };
+        }
     }
 }
