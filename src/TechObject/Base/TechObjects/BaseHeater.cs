@@ -20,7 +20,8 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "heater_node";
             Equipment = DataBase.Imitation.EmptyEquipment();
-            AggregateProperties = DataBase.Imitation.EmptyAggregateProperties();
+            AggregateProperties = DataBase.Imitation
+                .HeaterNodeAggregateProperties();
         }
 
         /// <summary>
@@ -33,5 +34,25 @@ namespace TechObject
                 return true;
             }
         }
+
+        #region Сохранение в prg.lua
+        /// <summary>
+        /// Сохранить информацию об операциях объекта в prg.lua
+        /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        public override string SaveToPrgLua(string objName,
+            string prefix)
+        {
+            var res = "";
+
+            res += SaveOperations(objName, prefix);
+            res += SaveOperationsSteps(objName, prefix);
+            res += SaveEquipment(objName);
+
+            return res;
+        }
+        #endregion
     }
 }

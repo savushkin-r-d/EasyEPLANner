@@ -20,7 +20,8 @@ namespace TechObject
             BaseProperties = DataBase.Imitation.EmptyProperties();
             BasicName = "heater_node_PID";
             Equipment = DataBase.Imitation.HeaterNodePIDEquipment();
-            AggregateProperties = DataBase.Imitation.EmptyAggregateProperties();
+            AggregateProperties = DataBase.Imitation
+                .HeaterNodeAggregateProperties();
         }
 
         /// <summary>

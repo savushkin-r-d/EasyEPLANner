@@ -57,5 +57,18 @@ namespace DataBase
                 "Использовать узел давления", "false")
             };
         }
+
+        /// <summary>
+        /// Свойства агрегата - узел подогрева, узел подогрева ПИД
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] HeaterNodeAggregateProperties()
+        {
+            return new BaseProperty[]
+            {
+                new BoolShowedProperty("HEATER_NODE",
+                "Использовать узел подогрева", "false")
+            };
+        }
     }
 }

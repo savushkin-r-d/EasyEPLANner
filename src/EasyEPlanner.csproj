@@ -68,39 +68,39 @@
     </Reference>
     <Reference Include="Eplan.EplApi.AFu, Version=1.0.0.0, Culture=neutral, PublicKeyToken=57aaa27e22f7b107, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\Eplan.EplApi.AFu.dll</HintPath>
+      <HintPath>C:\Program Files\EPLAN\Platform\2.8.3\Bin\Eplan.EplApi.AFu.dll</HintPath>
     </Reference>
     <Reference Include="Eplan.EplApi.Baseu, Version=1.0.0.0, Culture=neutral, PublicKeyToken=57aaa27e22f7b107, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\Eplan.EplApi.Baseu.dll</HintPath>
+      <HintPath>C:\Program Files\EPLAN\Platform\2.8.3\Bin\Eplan.EplApi.Baseu.dll</HintPath>
     </Reference>
     <Reference Include="Eplan.EplApi.DataModelu, Version=1.0.0.0, Culture=neutral, PublicKeyToken=57aaa27e22f7b107, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\Eplan.EplApi.DataModelu.dll</HintPath>
+      <HintPath>C:\Program Files\EPLAN\Platform\2.8.3\Bin\Eplan.EplApi.DataModelu.dll</HintPath>
     </Reference>
     <Reference Include="Eplan.EplApi.EServicesu, Version=1.0.0.0, Culture=neutral, PublicKeyToken=57aaa27e22f7b107, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\Eplan.EplApi.EServicesu.dll</HintPath>
+      <HintPath>C:\Program Files\EPLAN\Platform\2.8.3\Bin\Eplan.EplApi.EServicesu.dll</HintPath>
     </Reference>
     <Reference Include="Eplan.EplApi.Guiu, Version=1.0.0.0, Culture=neutral, PublicKeyToken=57aaa27e22f7b107, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\Eplan.EplApi.Guiu.dll</HintPath>
+      <HintPath>C:\Program Files\EPLAN\Platform\2.8.3\Bin\Eplan.EplApi.Guiu.dll</HintPath>
     </Reference>
     <Reference Include="Eplan.EplApi.HEServicesu, Version=1.0.0.0, Culture=neutral, PublicKeyToken=57aaa27e22f7b107, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\Eplan.EplApi.HEServicesu.dll</HintPath>
+      <HintPath>C:\Program Files\EPLAN\Platform\2.8.3\Bin\Eplan.EplApi.HEServicesu.dll</HintPath>
     </Reference>
     <Reference Include="Eplan.EplApi.MasterDatau, Version=1.0.0.0, Culture=neutral, PublicKeyToken=57aaa27e22f7b107, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\Eplan.EplApi.MasterDatau.dll</HintPath>
+      <HintPath>C:\Program Files\EPLAN\Platform\2.8.3\Bin\Eplan.EplApi.MasterDatau.dll</HintPath>
     </Reference>
     <Reference Include="Eplan.EplApi.Starteru, Version=1.0.0.0, Culture=neutral, PublicKeyToken=57aaa27e22f7b107, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\Eplan.EplApi.Starteru.dll</HintPath>
+      <HintPath>C:\Program Files\EPLAN\Platform\2.8.3\Bin\Eplan.EplApi.Starteru.dll</HintPath>
     </Reference>
     <Reference Include="EplanBaseNetu, Version=1.0.0.0, Culture=neutral, PublicKeyToken=57aaa27e22f7b107, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\EplanBaseNetu.dll</HintPath>
+      <HintPath>C:\Program Files\EPLAN\Platform\2.8.3\Bin\EplanBaseNetu.dll</HintPath>
     </Reference>
     <Reference Include="LuaInterface, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
