@@ -93,6 +93,8 @@ namespace DataBase
                 EmptySteps()),
                 new BaseOperation("Томление", "SLOW_HEAT", EmptyProperties(),
                 SlowHeatSteps()),
+                new BaseOperation("Работа", "WORK", EmptyProperties(), 
+                TankWorkSteps()),
             };
         }
 

@@ -141,20 +141,34 @@ namespace DataBase
         }
 
         /// <summary>
-        /// Шаги для операции "Нагрев" объекта "Бойлер"
+        /// Шаги для операции "Нагрев" объекта "Бойлер".
         /// </summary>
         /// <returns></returns>
         public static BaseProperty[] BoilerHeatingSteps()
         {
+            return new BasseProperty[] 
+            {
+                 new NonShowedBaseProperty("", "", false),
+                 new NonShowedBaseProperty("WAITING_LOW_LS", 
+                 "Ожидание пропадания нижнего уровня"),
+                 new NonShowedBaseProperty("WATER_2_LOW_LS", 
+                 "Наполнение до нижнего уровня"),
+                 new NonShowedBaseProperty("WATER_2_HI_LS", 
+                 "Наполнение до верхнего уровня"),
+            };          
+        }
+      
+        /// Шаги для базовой операции "Работа" базового объекта "Танк".
+        /// </summary>
+        /// <returns></returns>
+        public static BaseProperty[] TankWorkSteps()
+        {
             return new BaseProperty[]
             {
                 new NonShowedBaseProperty("", "", false),
-                new NonShowedBaseProperty("WAITING_LOW_LS", 
-                "Ожидание пропадания нижнего уровня"),
-                new NonShowedBaseProperty("WATER_2_LOW_LS", 
-                "Наполнение до нижнего уровня"),
-                new NonShowedBaseProperty("WATER_2_HI_LS", 
-                "Наполнение до верхнего уровня"),
+                new NonShowedBaseProperty("WAIT", "Ожидание"),
+                new NonShowedBaseProperty("IN_TANK", "В танк"),
+                new NonShowedBaseProperty("OUT_TANK", "Из танка"),
             };
         }
     }
