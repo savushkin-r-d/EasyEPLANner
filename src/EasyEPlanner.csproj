@@ -355,6 +355,9 @@
     <None Include="Resources\plus4.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\refresh1.png" />
+    <None Include="Resources\replace.png" />
+    <None Include="Resources\paste.png" />
     <None Include="Resources\To Do%27s1.png" />
     <None Include="Resources\step1.png" />
     <None Include="Resources\reqiredFB.ico" />
@@ -375,7 +378,11 @@
     <Content Include="LuaInterface\LuaInterface.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\copy.png" />
+    <None Include="Resources\create.png" />
+    <None Include="Resources\delete.png" />
     <Content Include="Resources\edit.ico" />
+    <None Include="Resources\edit1.png" />
     <Content Include="Resources\highlight.ico" />
     <None Include="Resources\refresh.png" />
     <None Include="Resources\save.png" />
