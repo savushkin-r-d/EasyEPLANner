@@ -1,4 +1,5 @@
 ﻿using LuaInterface;
+using PInvoke;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -861,6 +862,13 @@ namespace TechObject
             cdbxNewNames = useNewNames;
         }
 
+        public override bool ShowWarningBeforeDelete
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         private bool cdbxTagView;

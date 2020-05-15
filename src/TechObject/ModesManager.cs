@@ -507,6 +507,14 @@ namespace TechObject
 
             return newMode;
         }
+
+        public override bool ShowWarningBeforeDelete
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         private List<Mode> modes; /// Список операций.
