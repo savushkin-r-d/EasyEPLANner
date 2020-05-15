@@ -786,7 +786,6 @@ namespace Editor
             {
                 return;
             }
-
             ITreeViewItem itemParent = item.Parent;
 
             // Перемещение элемента вверх.
@@ -822,54 +821,62 @@ namespace Editor
             }
 
             // Копирование элемента.
-            if (e.KeyCode == Keys.C)
+            if (e.KeyCode == Keys.C && e.Control == true)
             {
-                if (e.Control == true && item.IsCopyable)
-                {
-                    copyItem = item;
-                }
+                CopyItem(item);
                 return;
             }
 
             // Вставка скопированного ранее элемента.
             if (e.KeyCode == Keys.V && e.Control == true)
             {
-                if (item.IsInsertableCopy && copyItem != null)
-                {
-                    ITreeViewItem newItem = item.InsertCopy(copyItem);
-                    if (newItem != null)
-                    {
-                        AddParent(newItem, item);
-                        OnModify();
-                        editorTView.RefreshObjects(item.Items);
-                    }
-                }
+                PasteItem(item);
                 return;
             }
 
             // Замена элемента.
             if (e.KeyCode == Keys.B && e.Control == true)
             {
-                if (copyItem != null && item.IsReplaceable)
-                {
-                    ITreeViewItem newItem = itemParent.Replace(item, copyItem);
-                    if (newItem != null)
-                    {
-                        AddParent(newItem, itemParent);
-                        editorTView.RefreshObjects(itemParent.Items);
-                        if (item.NeedRebuildMainObject)
-                        {
-                            var mainObject = GetParentBranch(item);
-                            editorTView.RefreshObjects(mainObject.Items);
-                        }
-                    }
-                    OnModify();
-                }
+                ReplaceItem(item);
                 return;
             }
 
             // Вставка нового элемента.
-            if (e.KeyCode == Keys.Insert && item.IsInsertable == true)
+            if (e.KeyCode == Keys.Insert)
+            {
+                CreateItem(item);
+                return;
+            }
+
+            // Удаление существующего элемента.
+            if (e.KeyCode == Keys.Delete)
+            {
+                DeleteItem(item);
+                return;
+            }
+
+            return;
+        }
+
+        /// <summary>
+        /// Скопировать элемент
+        /// </summary>
+        /// <param name="item">Копируемый элемент</param>
+        private void CopyItem(ITreeViewItem item)
+        {
+            if (item.IsCopyable)
+            {
+                copyItem = item;
+            }
+        }
+
+        /// <summary>
+        /// Создать элемент (в выделенной точке)
+        /// </summary>
+        /// <param name="item">Элемент в котором создается новый элемент</param>
+        private void CreateItem(ITreeViewItem item)
+        {
+            if (item.IsInsertable == true)
             {
                 ITreeViewItem newItem = item.Insert();
                 AddParent(newItem, item);
@@ -877,29 +884,32 @@ namespace Editor
                 editorTView.RefreshObject(item);
 
                 OnModify();
-                return;
             }
+        }
 
-            // Удаление существующего элемента.
-            if (e.KeyCode == Keys.Delete && item.IsDeletable == true)
+        /// <summary>
+        /// Удалить элемент
+        /// </summary>
+        /// <param name="item">Удаляемый элемент</param>
+        private void DeleteItem(ITreeViewItem item)
+        {
+            if (item.IsDeletable == true)
             {
-                bool isDelete = itemParent.Delete(item);
-                if (isDelete) //Надо удалить этот узел дерева.
+                ITreeViewItem parent = item.Parent;
+                bool isDelete = parent.Delete(item);
+                if (isDelete)
                 {
                     if (item.NeedRebuildMainObject)
                     {
                         var mainObject = GetParentBranch(item);
                         editorTView.RefreshObjects(mainObject.Items);
                     }
-                    editorTView.RefreshObjects(itemParent.Items);
-                    editorTView.RefreshObject(itemParent);
-                    //Обновляем также и узел родителя при его наличии.
+                    editorTView.RefreshObjects(parent.Items);
+                    editorTView.RefreshObject(parent);
                 }
                 else
                 {
                     editorTView.RefreshObject(item);
-
-                    //Обновляем также и узлы детей.                        
                     if (item.Items != null)
                     {
                         editorTView.RefreshObjects(item.Items);
@@ -907,7 +917,48 @@ namespace Editor
                 }
                 OnModify();
             }
-            return;
+        }
+
+        /// <summary>
+        /// Вставить элемент (Ctrl + V)
+        /// </summary>
+        /// <param name="item">Вставляемый элемент</param>
+        private void PasteItem(ITreeViewItem item)
+        {
+            if (item.IsInsertableCopy && copyItem != null)
+            {
+                ITreeViewItem newItem = item.InsertCopy(copyItem);
+                if (newItem != null)
+                {
+                    AddParent(newItem, item);
+                    OnModify();
+                    editorTView.RefreshObjects(item.Items);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Заменить элемент (Ctrl + B)
+        /// </summary>
+        /// <param name="item">Заменяемый элемент</param>
+        private void ReplaceItem(ITreeViewItem item)
+        {
+            if (copyItem != null && item.IsReplaceable)
+            {
+                ITreeViewItem parent = item.Parent;
+                ITreeViewItem newItem = parent.Replace(item, copyItem);
+                if (newItem != null)
+                {
+                    AddParent(newItem, parent);
+                    editorTView.RefreshObjects(parent.Items);
+                    if (item.NeedRebuildMainObject)
+                    {
+                        var mainObject = GetParentBranch(item);
+                        editorTView.RefreshObjects(mainObject.Items);
+                    }
+                }
+                OnModify();
+            }
         }
 
         /// <summary>
@@ -1430,6 +1481,51 @@ namespace Editor
             {
                 cancelChanges = true;
                 editorTView.FinishCellEdit();
+            }
+        }
+
+        private void insertButton_Click(object sender, EventArgs e)
+        {
+            ITreeViewItem item = GetActiveItem();
+            if (item != null && Editable == true)
+            {
+                CreateItem(item);
+            }
+        }
+
+        private void deleteButton_Click(object sender, EventArgs e)
+        {
+            ITreeViewItem item = GetActiveItem();
+            if (item != null && Editable == true)
+            {
+                DeleteItem(item);
+            }
+        }
+
+        private void copyButton_Click(object sender, EventArgs e)
+        {
+            ITreeViewItem item = GetActiveItem();
+            if (item != null && Editable == true)
+            {
+                CopyItem(item);
+            }
+        }
+
+        private void pasteButton_Click(object sender, EventArgs e)
+        {
+            ITreeViewItem item = GetActiveItem();
+            if (item != null && Editable == true)
+            {
+                PasteItem(item);
+            }
+        }
+
+        private void replaceButton_Click(object sender, EventArgs e)
+        {
+            ITreeViewItem item = GetActiveItem();
+            if (item != null && Editable == true)
+            {
+                ReplaceItem(item);
             }
         }
     }
