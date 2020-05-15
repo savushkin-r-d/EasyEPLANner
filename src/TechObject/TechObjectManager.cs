@@ -1,5 +1,4 @@
 ﻿using LuaInterface;
-using PInvoke;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -861,6 +860,7 @@ namespace TechObject
         {
             cdbxNewNames = useNewNames;
         }
+
         #endregion
 
         private bool cdbxTagView;
