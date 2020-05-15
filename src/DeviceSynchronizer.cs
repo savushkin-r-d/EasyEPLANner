@@ -68,6 +68,9 @@ namespace EasyEPlanner
                     (k < deviceReader.DevicesCount &&
                     prevDevice.Name == deviceReader.Devices[k].Name))
                 {
+                    // Т.к если мы не заполним, то будет "0", а это съест другой
+                    // алгоритм приняв за устройство.
+                    indexArray[k] = -2;
                     continue;
                 }
 
