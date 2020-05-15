@@ -105,7 +105,10 @@ namespace TechObject
 
         public void ClearOperationsBinding()
         {
-            this.oper.SetNewValue("-1");
+            if (oper != null)
+            {
+                this.oper.SetNewValue("-1");
+            }
         }
 
         /// <summary>
