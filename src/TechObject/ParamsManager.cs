@@ -207,14 +207,6 @@ namespace TechObject
 
             return null;
         }
-
-        public override bool ShowWarningBeforeDelete
-        {
-            get
-            {
-                return true;
-            }
-        }
         #endregion
 
         private Params parFLoat;

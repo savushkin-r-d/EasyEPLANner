@@ -641,6 +641,14 @@ namespace TechObject
                 return true;
             }
         }
+
+        public override bool ShowWarningBeforeDelete
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         public enum StateName

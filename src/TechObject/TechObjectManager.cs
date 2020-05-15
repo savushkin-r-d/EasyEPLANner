@@ -861,14 +861,6 @@ namespace TechObject
         {
             cdbxNewNames = useNewNames;
         }
-
-        public override bool ShowWarningBeforeDelete
-        {
-            get
-            {
-                return true;
-            }
-        }
         #endregion
 
         private bool cdbxTagView;

@@ -365,6 +365,14 @@ namespace TechObject
                 return true;
             }
         }
+
+        public override bool ShowWarningBeforeDelete
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         private string nameLua;

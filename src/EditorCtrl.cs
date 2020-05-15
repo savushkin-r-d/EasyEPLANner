@@ -895,6 +895,19 @@ namespace Editor
         {
             if (item.IsDeletable == true)
             {
+                DialogResult showWarningResult;
+                if (item.ShowWarningBeforeDelete)
+                {
+                    string message = "Вы действительно хотите удалить " +
+                        "выделенный элемент?";
+                    showWarningResult = MessageBox.Show(message, "Внимание", 
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (showWarningResult == DialogResult.No)
+                    {
+                        return;
+                    }
+                }
+
                 ITreeViewItem parent = item.Parent;
                 bool isDelete = parent.Delete(item);
                 if (isDelete)
