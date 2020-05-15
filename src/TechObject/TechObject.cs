@@ -998,6 +998,14 @@ namespace TechObject
                 return true;
             }
         }
+
+        public override bool ShowWarningBeforeDelete
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         private TechObjectN techNumber; /// Номер объекта технологический.

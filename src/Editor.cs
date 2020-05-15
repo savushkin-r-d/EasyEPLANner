@@ -354,6 +354,14 @@ namespace Editor
         {
             get;
         }
+
+        /// <summary>
+        /// Отображать предупреждение перед удалением
+        /// </summary>
+        bool ShowWarningBeforeDelete
+        {
+            get;
+        }
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -785,6 +793,14 @@ namespace Editor
                 return false;
             }
         }
+
+        public bool ShowWarningBeforeDelete
+        {
+            get
+            {
+                return false;
+            }
+        }
         #endregion
 
         ITreeViewItem parent;
@@ -1039,6 +1055,14 @@ namespace Editor
         }
 
         public virtual bool NeedRebuildMainObject
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public virtual bool ShowWarningBeforeDelete
         {
             get
             {
