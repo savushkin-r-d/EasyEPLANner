@@ -215,6 +215,7 @@
             this.insertButton.Size = new System.Drawing.Size(24, 24);
             this.insertButton.Text = "insertButton";
             this.insertButton.ToolTipText = "Создать";
+            this.insertButton.Click += new System.EventHandler(this.insertButton_Click);
             // 
             // deleteButton
             // 
@@ -225,6 +226,7 @@
             this.deleteButton.Size = new System.Drawing.Size(24, 24);
             this.deleteButton.Text = "deleteButton";
             this.deleteButton.ToolTipText = "Удалить";
+            this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
             // 
             // copyButton
             // 
@@ -235,6 +237,7 @@
             this.copyButton.Size = new System.Drawing.Size(24, 24);
             this.copyButton.Text = "copyButton";
             this.copyButton.ToolTipText = "Копировать";
+            this.copyButton.Click += new System.EventHandler(this.copyButton_Click);
             // 
             // pasteButton
             // 
@@ -245,6 +248,7 @@
             this.pasteButton.Size = new System.Drawing.Size(24, 24);
             this.pasteButton.Text = "pasteButton";
             this.pasteButton.ToolTipText = "Вставить (Ctrl + V)";
+            this.pasteButton.Click += new System.EventHandler(this.pasteButton_Click);
             // 
             // replaceButton
             // 
@@ -255,6 +259,7 @@
             this.replaceButton.Size = new System.Drawing.Size(24, 24);
             this.replaceButton.Text = "replaceButton";
             this.replaceButton.ToolTipText = "Заменить (Ctrl + B)";
+            this.replaceButton.Click += new System.EventHandler(this.replaceButton_Click);
             // 
             // imageList1
             // 
