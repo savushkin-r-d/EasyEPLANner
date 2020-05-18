@@ -209,40 +209,40 @@ namespace EasyEPlanner
         {
             var res = "";
 
-            if (attachedTechObject.BaseTechObject is BaseMixer)
+            if (attachedTechObject.BaseTechObject.BasicName == "mix_node")
             {
                 res += techObjNameForFile + ".mix_node = " +
                         "prg." + attachedTechObjNameForFile + "\n";
             }
 
-            if (attachedTechObject.BaseTechObject is BaseCooler ||
-                attachedTechObject.BaseTechObject is BaseCoolerPID)
+            if (attachedTechObject.BaseTechObject.BasicName == "cooler_node" ||
+                attachedTechObject.BaseTechObject.BasicName == "cooler_node_PID")
             {
                 res += techObjNameForFile + ".cooler_node = " +
                         "prg." + attachedTechObjNameForFile + "\n";
             }
             
-            if (attachedTechObject.BaseTechObject is BaseHeater ||
-                attachedTechObject.BaseTechObject is BaseHeaterPID)
+            if (attachedTechObject.BaseTechObject.BasicName == "heater_node" ||
+                attachedTechObject.BaseTechObject.BasicName == "heater_node_PID")
             {
                 res += techObjNameForFile + ".heater_node = " +
                         "prg." + attachedTechObjNameForFile + "\n";
             }
             
-            if (attachedTechObject.BaseTechObject is BasePressurePID)
+            if (attachedTechObject.BaseTechObject.BasicName == "pressure_node_PID")
             {
                 res += techObjNameForFile + ".pressure_node = " +
                     "prg." + attachedTechObjNameForFile + "\n";
             }
             
-            if (attachedTechObject.BaseTechObject is BaseFlowNodePID)
+            if (attachedTechObject.BaseTechObject.BasicName == "flow_node_PID")
             {
                 res += techObjNameForFile + ".flow_node = " +
                     "prg." + attachedTechObjNameForFile + "\n";
             }
             
-            if (attachedTechObject.BaseTechObject is BaseWaterTank ||
-                attachedTechObject.BaseTechObject is BaseWaterTankPID)
+            if (attachedTechObject.BaseTechObject.BasicName == "ice_water_pump_tank" ||
+                attachedTechObject.BaseTechObject.BasicName == "ice_water_pump_tank_PID")
             {
                 res += techObjNameForFile + ".ice_water_pump_tank = " +
                     "prg." + attachedTechObjNameForFile + "\n";

@@ -38,6 +38,22 @@ namespace TechObject
             AggregateProperties = new BaseProperty[0];
         }
 
+        public BaseTechObject(string name, string eplanName, int s88Level,
+            BaseOperation[] operations, List<BaseProperty> properties,
+            string basicName, BaseProperty[] equipment, 
+            BaseProperty[] aggregateProperties)
+        {
+            Name = name;
+            EplanName = eplanName;
+            S88Level = s88Level;
+            BaseOperations = operations;
+            BaseProperties = properties;
+            BasicName = basicName;
+            Owner = null;
+            Equipment = equipment;
+            AggregateProperties = aggregateProperties;
+        }
+
         /// <summary>
         /// Имя базового объекта.
         /// </summary>
@@ -234,7 +250,14 @@ namespace TechObject
         {
             get
             {
-                return false;
+                if (S88Level == 2)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
@@ -272,6 +295,196 @@ namespace TechObject
             string prefix)
         {
             var res = "";
+            res += SaveObjectInfoToPrgLua(objName, prefix);
+
+            res += SaveOperations(objName, prefix);
+            res += SaveOperationsSteps(objName, prefix);
+            res += SaveOperationsParameters(objName, prefix);
+            res += SaveEquipment(objName);
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить информацию об объекте в prg.lua
+        /// </summary>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        private string SaveObjectInfoToPrgLua(string objName,
+            string prefix)
+        {
+            if (this.EplanName.ToLower() != "tank")
+            {
+                return "";
+            }
+
+            var res = "";
+
+            var objects = TechObjectManager.GetInstance();
+            var masterObj = objects.Objects
+                .Where(x => x.Name.Contains("Мастер")).FirstOrDefault();
+            if (masterObj != null)
+            {
+                res += objName + ".master = prg." + masterObj.NameEplan
+                    .ToLower() + masterObj.TechNumber + "\n";
+            }
+
+            // Параметры сбрасываемые до мойки.
+            res += objName + ".reset_before_wash =\n" +
+                prefix + "{\n" +
+                prefix + objName + ".PAR_FLOAT.V_ACCEPTING_CURRENT,\n" +
+                prefix + objName + ".PAR_FLOAT.PRODUCT_TYPE,\n" +
+                prefix + objName + ".PAR_FLOAT.V_ACCEPTING_SET\n" +
+                prefix + "}\n";
+
+            res += "\n";
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить параметры операций базового объекта танк.
+        /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        private string SaveOperationsParameters(string objName, string prefix)
+        {
+            var res = "";
+
+            var modesManager = this.Owner.ModesManager;
+            var modes = modesManager.Modes;
+
+            if (modes.Where(x => x.DisplayText[1] != "").Count() == 0)
+            {
+                return res;
+            }
+
+            foreach (Mode mode in modes)
+            {
+                var baseOperation = mode.BaseOperation;
+                switch (baseOperation.Name)
+                {
+                    case "Мойка":
+                        res += SaveWashOperationParameters(objName,
+                            baseOperation);
+                        break;
+
+                    case "Наполнение":
+                        res += SaveFillOperationParameters(objName,
+                            baseOperation, prefix);
+                        break;
+
+                    default:
+                        if (baseOperation.Properties.Count < 1)
+                        {
+                            continue;
+                        }
+
+                        res += $"{objName}.{baseOperation.LuaName} =\n";
+                        res += prefix + "{\n";
+                        foreach (BaseProperty param in baseOperation.Properties)
+                        {
+                            if (param.CanSave())
+                            {
+                                string val = param
+                                    .Value == "" ? "nil" : param.Value;
+                                res += $"{prefix}{param.LuaName} = {val},\n";
+                            }
+                        }
+                        res += prefix + "}\n";
+                        break;
+                }
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить параметры операции мойки
+        /// </summary>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="baseOperation">Базовая операция</param>
+        /// <returns></returns>
+        private string SaveWashOperationParameters(string objName,
+            BaseOperation baseOperation)
+        {
+            var res = "";
+
+            foreach (BaseProperty param in baseOperation.Properties)
+            {
+                if (param.CanSave())
+                {
+                    string val = param.Value == "" ? "nil" : param.Value;
+                    if (val != "nil")
+                    {
+                        res += objName + "." + param.LuaName +
+                            " = prg.control_modules." + val + "\n";
+                    }
+                    else
+                    {
+                        res += objName + "." + param.LuaName +
+                            " = " + val + "\n";
+                    }
+                }
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить параметры операции наполнения.
+        /// </summary>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="baseOperation">Базовая операция</param>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        private string SaveFillOperationParameters(string objName,
+            BaseOperation baseOperation, string prefix)
+        {
+            var res = "";
+
+            res += $"{objName}.{baseOperation.LuaName} =\n";
+            res += prefix + "{\n";
+            foreach (BaseProperty param in baseOperation.Properties)
+            {
+                if (param.CanSave())
+                {
+                    string val = param.Value == "" ? "nil" : param.Value;
+
+                    switch (param.LuaName)
+                    {
+                        case "OPERATION_AFTER_FILL":
+                            var modes = this.Owner.ModesManager.Modes;
+                            var mode = modes
+                                .Where(x => x.GetModeNumber().ToString() == val)
+                                .FirstOrDefault();
+
+                            if (mode != null)
+                            {
+                                val = mode.BaseOperation.LuaName.ToUpper();
+                            }
+
+                            if (val != "nil" && val != "")
+                            {
+                                res += $"{prefix}{param.LuaName} = " +
+                                    $"{objName}.operations." + val + ",\n";
+                            }
+                            else
+                            {
+                                res += $"{prefix}{param.LuaName} = nil,\n";
+                            }
+                            break;
+
+                        default:
+                            res += $"{prefix}{param.LuaName} = {val},\n";
+                            break;
+                    }
+                }
+            }
+            res += prefix + "}\n";
+
             return res;
         }
 
