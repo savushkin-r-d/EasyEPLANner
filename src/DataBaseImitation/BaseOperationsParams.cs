@@ -10,18 +10,61 @@ namespace DataBase
     public partial class Imitation
     {
         /// <summary>
-        /// Получить параметры операции "Мойка".
+        /// Получить пустой массив параметров.
         /// </summary>
         /// <returns></returns>
-        private static List<BaseProperty> WashParams()
+        public static List<BaseParameter> EmptyParams()
         {
-            var parameters = new List<BaseProperty>
+            return new List<BaseParameter>();
+        }
+
+        /// <summary>
+        /// Получить параметры операции "Мойка" для танков.
+        /// </summary>
+        /// <returns></returns>
+        private static List<BaseParameter> TankWashParams()
+        {
+            var parameters = new List<BaseParameter>
             {
-                new ShowedBaseProperty("CIP_WASH_END", "Мойка завершена"),
-                new ShowedBaseProperty("DI_CIP_FREE", "МСА свободна"),
-                new NonShowedBaseProperty("DRAINAGE", "Номер шага дренаж", 
+                new ShowedBaseParameter("CIP_WASH_END", "Мойка завершена"),
+                new ShowedBaseParameter("DI_CIP_FREE", "МСА свободна"),
+                new NonShowedBaseParameter("DRAINAGE", "Номер шага дренаж", 
                 false),
-                new ShowedBaseProperty("CIP_WASH_REQUEST", 
+                new ShowedBaseParameter("CIP_WASH_REQUEST", 
+                "Автоматическое включение мойки"),
+            };
+
+            return parameters;
+        }
+
+        /// <summary>
+        /// Получить параметры операции "Мойка" для линий.
+        /// </summary>
+        /// <returns></returns>
+        private static List<BaseParameter> LineWashParams()
+        {
+            var parameters = new List<BaseParameter>
+            {
+                new ShowedBaseParameter("CIP_WASH_END", "Мойка завершена"),
+                new ShowedBaseParameter("CIP_WASH_REQUEST",
+                "Автоматическое включение мойки"),
+            };
+
+            return parameters;
+        }
+
+        /// <summary>
+        /// Получить параметры операции "Мойка" для пастеризатора.
+        /// </summary>
+        /// <returns></returns>
+        private static List<BaseParameter> POUWashParams()
+        {
+            var parameters = new List<BaseParameter>
+            {
+                new ShowedBaseParameter("CIP_WASH_END", "Мойка завершена"),
+                new NonShowedBaseParameter("DRAINAGE", "Номер шага дренаж",
+                false),
+                new ShowedBaseParameter("CIP_WASH_REQUEST",
                 "Автоматическое включение мойки"),
             };
 
@@ -32,11 +75,11 @@ namespace DataBase
         /// Получить параметры операции "Наполнение".
         /// </summary>
         /// <returns></returns>
-        private static List<BaseProperty> FillParams()
+        private static List<BaseParameter> FillParams()
         {
-            var parameters = new List<BaseProperty>
+            var parameters = new List<BaseParameter>
             {
-                new ShowedBaseProperty("OPERATION_AFTER_FILL",
+                new ShowedBaseParameter("OPERATION_AFTER_FILL",
                 "Номер операции после наполнения")
             };
 
@@ -47,11 +90,11 @@ namespace DataBase
         /// Параметры операции "Выдача"
         /// </summary>
         /// <returns></returns>
-        private static List<BaseProperty> OutParams()
+        private static List<BaseParameter> OutParams()
         {
-            var parameters = new List<BaseProperty>
+            var parameters = new List<BaseParameter>
             {
-                new BoolShowedProperty("NEED_STORING_AFTER", 
+                new BoolShowedParameter("NEED_STORING_AFTER", 
                 "Включить хранение после выдачи", "true"),
             };
 
@@ -62,11 +105,11 @@ namespace DataBase
         /// Получить параметры операции "Охлаждение"
         /// </summary>
         /// <returns></returns>
-        private static List<BaseProperty> CoolingParams()
+        private static List<BaseParameter> CoolingParams()
         {
-            var parameters = new List<BaseProperty>
+            var parameters = new List<BaseParameter>
             {
-                new BoolShowedProperty("ACTIVE_WORKING", "Активная работа", "false")
+                new BoolShowedParameter("ACTIVE_WORKING", "Активная работа", "false")
             };
 
             return parameters;

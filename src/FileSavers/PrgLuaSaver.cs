@@ -133,7 +133,7 @@ namespace EasyEPlanner
             Dictionary<int, string> attachedObjects)
         {
             var res = "";
-            res += "\n";
+            var temp = "";
 
             string previouslyObjectName = "";
             bool isDigit = false;
@@ -170,10 +170,10 @@ namespace EasyEPlanner
                         if (previouslyObjectName != techObj.NameEplanForFile
                             .ToLower() && previouslyObjectName != "")
                         {
-                            res += "\n";
+                            temp += "\n";
                         }
 
-                        res += GenerateStringForAttachingObject(
+                        temp += GenerateStringForAttachingObject(
                             attachedTechObject, techObjNameForFile,
                             attachedTechObjNameForFile);
 
@@ -189,7 +189,11 @@ namespace EasyEPlanner
                     }
                 }
             }
-            res += "\n";
+
+            if (temp != "")
+            {
+                res += "\n" + temp + "\n";
+            }
             return res;
         }
 
@@ -266,7 +270,10 @@ namespace EasyEPlanner
                 var objName = "prg." + obj.NameEplanForFile.ToLower() +
                     obj.TechNumber.ToString();
                 res += obj.BaseTechObject.SaveToPrgLua(objName, prefix);
-                res += "\n";
+                if (res != "")
+                {
+                    res += "\n";
+                }
             }
             return res;
         }

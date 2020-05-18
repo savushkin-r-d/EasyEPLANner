@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace TechObject
 {
-    public class ShowedBaseProperty : BaseProperty
+    public class ShowedBaseParameter : BaseParameter
     {
-        public ShowedBaseProperty(string luaName, string name, bool canSave)
+        public ShowedBaseParameter(string luaName, string name, bool canSave)
             : base(luaName, name, canSave) { }
 
-        public ShowedBaseProperty(string luaName, string name) : base(luaName,
+        public ShowedBaseParameter(string luaName, string name) : base(luaName,
             name, true) { }
 
-        public ShowedBaseProperty(string luaName, string name, 
+        public ShowedBaseParameter(string luaName, string name, 
             string defaultValue) : base(luaName, name, true, defaultValue) { }
 
-        public override BaseProperty Clone()
+        public override BaseParameter Clone()
         {
-            var newProperty = new ShowedBaseProperty(this.LuaName, this.Name,
+            var newProperty = new ShowedBaseParameter(this.LuaName, this.Name,
                 this.CanSave());
             newProperty.SetNewValue(this.Value);
             return newProperty;

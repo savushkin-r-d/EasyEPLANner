@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace TechObject
 {
-    public class NonShowedBaseProperty : BaseProperty
+    public class NonShowedBaseParameter : BaseParameter
     {
-        public NonShowedBaseProperty(string luaName, string name, bool canSave)
+        public NonShowedBaseParameter(string luaName, string name, bool canSave)
             : base(luaName, name, canSave) { }
 
-        public NonShowedBaseProperty(string luaName, string name)
+        public NonShowedBaseParameter(string luaName, string name)
             : base(luaName, name, true) { }
 
-        public override BaseProperty Clone()
+        public override BaseParameter Clone()
         {
-            var newProperty = new NonShowedBaseProperty(this.LuaName,
+            var newProperty = new NonShowedBaseParameter(this.LuaName,
                 this.Name, this.CanSave());
             newProperty.SetNewValue(this.Value);
             return newProperty;

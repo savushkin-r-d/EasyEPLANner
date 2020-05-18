@@ -13,23 +13,23 @@ namespace DataBase
         /// Пустые шаги операции.
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] EmptySteps()
+        public static BaseParameter[] EmptySteps()
         {
-            return new BaseProperty[0];
+            return new BaseParameter[0];
         }
 
         /// <summary>
         /// Шаги объектов "Линия", "Линия приемки" для операции "Наполнение"
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] LineFillSteps()
+        public static BaseParameter[] LineFillSteps()
         {
-            return new BaseProperty[]
+            return new BaseParameter[]
             {
-                new NonShowedBaseProperty("", "", false),
-                new NonShowedBaseProperty("IN_DRAINAGE", "В дренаж", false),
-                new NonShowedBaseProperty("IN_TANK", "В приемник", false),
-                new NonShowedBaseProperty("WAITING_KEY", "Ожидание", false)
+                new NonShowedBaseParameter("", "", false),
+                new NonShowedBaseParameter("IN_DRAINAGE", "В дренаж", false),
+                new NonShowedBaseParameter("IN_TANK", "В приемник", false),
+                new NonShowedBaseParameter("WAITING_KEY", "Ожидание", false)
             };
         }
 
@@ -37,14 +37,14 @@ namespace DataBase
         /// Шаги объектов "Линия", "Линия выдачи" для операции "Выдача";
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] LineOutSteps()
+        public static BaseParameter[] LineOutSteps()
         {
-            return new BaseProperty[]
+            return new BaseParameter[]
             {
-                new NonShowedBaseProperty("", "", false),
-                new NonShowedBaseProperty("OUT_WATER", "Проталкивание", false),
-                new NonShowedBaseProperty("OUT_TANK", "Из источника", false),
-                new NonShowedBaseProperty("WAITING_KEY", "Ожидание", false)
+                new NonShowedBaseParameter("", "", false),
+                new NonShowedBaseParameter("OUT_WATER", "Проталкивание", false),
+                new NonShowedBaseParameter("OUT_TANK", "Из источника", false),
+                new NonShowedBaseParameter("WAITING_KEY", "Ожидание", false)
             };
         }
 
@@ -53,16 +53,16 @@ namespace DataBase
         /// "Работа"
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] LineWorkSteps()
+        public static BaseParameter[] LineWorkSteps()
         {
-            return new BaseProperty[]
+            return new BaseParameter[]
             {
-                new NonShowedBaseProperty("", "", false),
-                new NonShowedBaseProperty("WAITING", "Ожидание", false),
-                new NonShowedBaseProperty("OUT_WATER", "Проталкивание", false),
-                new NonShowedBaseProperty("OUT_TANK", "Из источника", false),
-                new NonShowedBaseProperty("IN_TANK", "В приемник", false),
-                new NonShowedBaseProperty("IN_DRAINAGE", "В дренаж", false),
+                new NonShowedBaseParameter("", "", false),
+                new NonShowedBaseParameter("WAITING", "Ожидание", false),
+                new NonShowedBaseParameter("OUT_WATER", "Проталкивание", false),
+                new NonShowedBaseParameter("OUT_TANK", "Из источника", false),
+                new NonShowedBaseParameter("IN_TANK", "В приемник", false),
+                new NonShowedBaseParameter("IN_DRAINAGE", "В дренаж", false),
             };
         }
 
@@ -71,12 +71,12 @@ namespace DataBase
         /// операции мойка.
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] WashSteps()
+        public static BaseParameter[] WashSteps()
         {
-            return new BaseProperty[]
+            return new BaseParameter[]
             {
-                new NonShowedBaseProperty("", "", false),
-                new NonShowedBaseProperty("DRAINAGE", "Дренаж", false)
+                new NonShowedBaseParameter("", "", false),
+                new NonShowedBaseParameter("DRAINAGE", "Дренаж", false)
             };
         }
 
@@ -85,14 +85,14 @@ namespace DataBase
         /// охлаждения.
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] WaterTankSteps()
+        public static BaseParameter[] WaterTankSteps()
         {
-            return new BaseProperty[]
+            return new BaseParameter[]
             {
-                new NonShowedBaseProperty("", "", false),
-                new NonShowedBaseProperty("WAITING_HI_LS", 
+                new NonShowedBaseParameter("", "", false),
+                new NonShowedBaseParameter("WAITING_HI_LS", 
                 "Ожидание появления ВУ", false),
-                new NonShowedBaseProperty("WAITING_LOW_LS", 
+                new NonShowedBaseParameter("WAITING_LOW_LS", 
                 "Ожидание пропадания НУ", false),
             };
         }
@@ -101,13 +101,13 @@ namespace DataBase
         /// Шаги для операции Подогрев объекта "Узел нагрева"
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] HeaterNodeHeatingSteps()
+        public static BaseParameter[] HeaterNodeHeatingSteps()
         {
-            return new BaseProperty[]
+            return new BaseParameter[]
             {
-                new NonShowedBaseProperty("", "", false),
-                new NonShowedBaseProperty("WORKING", "Работа", false),
-                new NonShowedBaseProperty("WAITING ", "Ожидание", false),
+                new NonShowedBaseParameter("", "", false),
+                new NonShowedBaseParameter("WORKING", "Работа", false),
+                new NonShowedBaseParameter("WAITING ", "Ожидание", false),
             };
         }
 
@@ -115,13 +115,13 @@ namespace DataBase
         /// Шаги для операции Охлаждение.
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] CoolingSteps()
+        public static BaseParameter[] CoolingSteps()
         {
-            return new BaseProperty[]
+            return new BaseParameter[]
             {
-                new NonShowedBaseProperty("", "", false),
-                new NonShowedBaseProperty("WORKING", "Работа", false),
-                new NonShowedBaseProperty("WAITING ", "Ожидание", false),
+                new NonShowedBaseParameter("", "", false),
+                new NonShowedBaseParameter("WORKING", "Работа", false),
+                new NonShowedBaseParameter("WAITING ", "Ожидание", false),
             };
         }
 
@@ -129,14 +129,14 @@ namespace DataBase
         /// Шаги для операции Томление.
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] SlowHeatSteps()
+        public static BaseParameter[] SlowHeatSteps()
         {
-            return new BaseProperty[]
+            return new BaseParameter[]
             {
-                new NonShowedBaseProperty("","", false),
-                new NonShowedBaseProperty("TO_START_TEMPERATURE",
+                new NonShowedBaseParameter("","", false),
+                new NonShowedBaseParameter("TO_START_TEMPERATURE",
                 "Нагрев до заданной температуры"),
-                new NonShowedBaseProperty("SLOW_HEAT", "Нагрев заданное время")
+                new NonShowedBaseParameter("SLOW_HEAT", "Нагрев заданное время")
             };
         }
 
@@ -144,16 +144,16 @@ namespace DataBase
         /// Шаги для операции "Нагрев" объекта "Бойлер".
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] BoilerHeatingSteps()
+        public static BaseParameter[] BoilerHeatingSteps()
         {
-            return new BaseProperty[] 
+            return new BaseParameter[] 
             {
-                 new NonShowedBaseProperty("", "", false),
-                 new NonShowedBaseProperty("WAITING_LOW_LS", 
+                 new NonShowedBaseParameter("", "", false),
+                 new NonShowedBaseParameter("WAITING_LOW_LS", 
                  "Ожидание пропадания нижнего уровня"),
-                 new NonShowedBaseProperty("WATER_2_LOW_LS", 
+                 new NonShowedBaseParameter("WATER_2_LOW_LS", 
                  "Наполнение до нижнего уровня"),
-                 new NonShowedBaseProperty("WATER_2_HI_LS", 
+                 new NonShowedBaseParameter("WATER_2_HI_LS", 
                  "Наполнение до верхнего уровня"),
             };          
         }
@@ -161,14 +161,14 @@ namespace DataBase
         /// Шаги для базовой операции "Работа" базового объекта "Танк".
         /// </summary>
         /// <returns></returns>
-        public static BaseProperty[] TankWorkSteps()
+        public static BaseParameter[] TankWorkSteps()
         {
-            return new BaseProperty[]
+            return new BaseParameter[]
             {
-                new NonShowedBaseProperty("", "", false),
-                new NonShowedBaseProperty("WAIT", "Ожидание"),
-                new NonShowedBaseProperty("IN_TANK", "В танк"),
-                new NonShowedBaseProperty("OUT_TANK", "Из танка"),
+                new NonShowedBaseParameter("", "", false),
+                new NonShowedBaseParameter("WAIT", "Ожидание"),
+                new NonShowedBaseParameter("IN_TANK", "В танк"),
+                new NonShowedBaseParameter("OUT_TANK", "Из танка"),
             };
         }
     }

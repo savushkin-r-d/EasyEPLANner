@@ -15,8 +15,8 @@ namespace TechObject
         {
             this.operationName = "";
             this.luaOperationName = "";
-            this.baseOperationProperties = new List<BaseProperty>();
-            this.baseSteps = new BaseProperty[0];
+            this.baseOperationProperties = new List<BaseParameter>();
+            this.baseSteps = new BaseParameter[0];
             this.owner = owner;
         }
 
@@ -24,8 +24,8 @@ namespace TechObject
         {
             this.operationName = name;
             this.luaOperationName = luaName;
-            this.baseOperationProperties = new List<BaseProperty>();
-            this.baseSteps = new BaseProperty[0];
+            this.baseOperationProperties = new List<BaseParameter>();
+            this.baseSteps = new BaseParameter[0];
             this.owner = owner;
         }
 
@@ -35,8 +35,8 @@ namespace TechObject
         /// <returns></returns>
         public static BaseOperation EmptyOperation()
         {
-            return new BaseOperation("", "", new List<BaseProperty>(), 
-                new BaseProperty[0]);
+            return new BaseOperation("", "", new List<BaseParameter>(), 
+                new BaseParameter[0]);
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace TechObject
         /// <param name="baseOperationProperties">Свойства операции</param>
         /// <param name="baseSteps">Базовые шаги операции</param>
         public BaseOperation(string name, string luaName, 
-            List<BaseProperty> baseOperationProperties, BaseProperty[] baseSteps)
+            List<BaseParameter> baseOperationProperties, BaseParameter[] baseSteps)
         {
             this.operationName = name;
             this.luaOperationName = luaName;
@@ -90,7 +90,7 @@ namespace TechObject
         /// <summary>
         /// Шаги операции.
         /// </summary>
-        public BaseProperty[] Steps
+        public BaseParameter[] Steps
         {
             get
             {
@@ -124,7 +124,9 @@ namespace TechObject
                 {
                     Name = operation.Name;
                     LuaName = operation.LuaName;
-                    Properties = FindBaseOperationProperties(operation);
+                    Properties = operation.Properties
+                        .Select(x => x.Clone())
+                        .ToList();
                     baseSteps = operation.Steps;
                 }
             }
@@ -132,8 +134,8 @@ namespace TechObject
             {
                 Name = "";
                 LuaName = "";
-                baseOperationProperties = new List<BaseProperty>();
-                baseSteps = new BaseProperty[0];
+                baseOperationProperties = new List<BaseParameter>();
+                baseSteps = new BaseParameter[0];
             }
 
             techObject.AttachedObjects.Check();
@@ -152,38 +154,11 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Поиск свойств операции объекта
-        /// </summary>
-        /// <param name="operation">Базовая операция</param>
-        /// <returns></returns>
-        private List<BaseProperty> FindBaseOperationProperties(BaseOperation 
-            operation)
-        {
-            var baseTechObject = owner.Owner.Owner.BaseTechObject;
-            var baseTechObjectProperties = baseTechObject.BaseProperties;
-            var baseOperationProperties = operation.Properties;
-            var properties = new List<BaseProperty>();
-
-            foreach(var property in baseOperationProperties)
-            {
-                var samePropertyAtTechObject = baseTechObjectProperties
-                    .Where(x => x.LuaName == property.LuaName)
-                    .FirstOrDefault();
-                if (samePropertyAtTechObject != null)
-                {
-                    properties.Add(property.Clone());
-                }
-            }
-
-            return properties;
-        }
-
-        /// <summary>
         /// Добавление полей в массив для отображения на дереве
         /// </summary>
         private void SetItems()
         {
-            var showedParameters = new List<BaseProperty>();
+            var showedParameters = new List<BaseParameter>();
             foreach(var parameter in Properties)
             {
                 if (parameter.isShowed())
@@ -251,7 +226,7 @@ namespace TechObject
         /// <summary>
         /// Получить свойства базовой операции
         /// </summary>
-        public List<BaseProperty> Properties
+        public List<BaseParameter> Properties
         {
             get
             {
@@ -267,7 +242,7 @@ namespace TechObject
         /// Добавить свойства базовой операции.
         /// </summary>
         /// <param name="properties">Массив свойств</param>
-        public void AddProperties(BaseProperty[] properties)
+        public void AddProperties(BaseParameter[] properties)
         {
             // Пока не решен вопрос с параметрами, отключаем для операции
             // мойка добавление доп. свойств узлов.
@@ -293,7 +268,7 @@ namespace TechObject
         /// Удалить свойства базовой операции.
         /// </summary>
         /// <param name="properties">Массив свойств</param>
-        public void RemoveProperties(BaseProperty[] properties)
+        public void RemoveProperties(BaseParameter[] properties)
         {
             foreach (var property in properties)
             {
@@ -315,14 +290,14 @@ namespace TechObject
         /// <returns></returns>
         public BaseOperation Clone(Mode owner)
         {
-            var properties = new List<BaseProperty>(baseOperationProperties
+            var properties = new List<BaseParameter>(baseOperationProperties
                 .Count);
             for (int i = 0; i < baseOperationProperties.Count; i++)
             {
                 properties.Add(baseOperationProperties[i].Clone());
             }
 
-            var steps = new BaseProperty[Steps.Length];
+            var steps = new BaseParameter[Steps.Length];
             for (int i = 0; i < steps.Length; i++)
             {
                 steps[i] = Steps[i].Clone();
@@ -366,10 +341,10 @@ namespace TechObject
 
         private Editor.ITreeViewItem[] items = new Editor.ITreeViewItem[0];
         
-        private List<BaseProperty> baseOperationProperties;
+        private List<BaseParameter> baseOperationProperties;
         private string operationName;
         private string luaOperationName;
-        private BaseProperty[] baseSteps;
+        private BaseParameter[] baseSteps;
 
         private Mode owner;
     }

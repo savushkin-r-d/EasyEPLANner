@@ -1266,7 +1266,7 @@ namespace Editor
                 }
             }
 
-            var boolProperty = e.Model as TechObject.BoolShowedProperty;
+            var boolProperty = e.Model as TechObject.BoolShowedParameter;
             if (boolProperty != null && 
                 e.ColumnIndex == 1 &&
                 boolProperty.DefaultValue != boolProperty.Value)
@@ -1309,7 +1309,7 @@ namespace Editor
                 comboBoxCellEditor.Focus();
                 editorTView.Freeze();
             }
-            else if(e.Column.Index == 1 && item.IsBoolProperty)
+            else if(e.Column.Index == 1 && item.IsBoolParameter)
             {
                 item.SetNewValue(e.Value.ToString());
                 IsCellEditing = false;

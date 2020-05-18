@@ -9,15 +9,15 @@ namespace TechObject
     /// <summary>    
     /// Свойство для базовой операции.
     /// </summary>
-    public abstract class BaseProperty : Editor.ObjectProperty
+    public abstract class BaseParameter : Editor.ObjectProperty
     {
         /// <summary>
         /// Абстрактный метод копирования объекта.
         /// </summary>
         /// <returns></returns>
-        public abstract new BaseProperty Clone();
+        public abstract new BaseParameter Clone();
 
-        public BaseProperty(string luaName, string name, bool canSave, 
+        public BaseParameter(string luaName, string name, bool canSave, 
             string defaultValue = "") : base(name, defaultValue)
         {
             this.luaName = luaName;

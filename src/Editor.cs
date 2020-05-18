@@ -334,7 +334,7 @@ namespace Editor
         /// <summary>
         /// Является ли элемент булевым свойством.
         /// </summary>
-        bool IsBoolProperty
+        bool IsBoolParameter
         {
             get;
         }
@@ -770,7 +770,7 @@ namespace Editor
             }
         }
 
-        public virtual bool IsBoolProperty
+        public virtual bool IsBoolParameter
         {
             get
             {
@@ -1038,7 +1038,7 @@ namespace Editor
             }
         }
 
-        public virtual bool IsBoolProperty
+        public virtual bool IsBoolParameter
         {
             get
             {

@@ -216,7 +216,7 @@ namespace TechObject
                         .GetInstance().GetTObject(number);
                     BaseTechObject removingBaseTechObject = removingAgregate
                         .BaseTechObject;
-                    BaseProperty[] properties = removingBaseTechObject
+                    BaseParameter[] properties = removingBaseTechObject
                         .AggregateProperties;
                     if (properties.Length == 0)
                     {
@@ -245,7 +245,7 @@ namespace TechObject
                         .GetInstance().GetTObject(number);
                     BaseTechObject attachedBaseTechObject = attachedAggregate
                         .BaseTechObject;
-                    BaseProperty[] properties = attachedBaseTechObject
+                    BaseParameter[] properties = attachedBaseTechObject
                         .AggregateProperties;
                     if (properties.Length == 0)
                     {
@@ -895,7 +895,7 @@ namespace TechObject
             {
                 var equipment = child as Equipment;
                 var objEquips = equipment.Items
-                    .Select(x => x as BaseProperty).ToArray();
+                    .Select(x => x as BaseParameter).ToArray();
                 foreach(var equip in objEquips)
                 {
                     equip.SetNewValue("");
@@ -954,10 +954,10 @@ namespace TechObject
             if (child is Equipment && copyObject is Equipment)
             {
                 var equipment = child as Equipment;
-                BaseProperty[] objEquips = equipment.Items
-                    .Select(x => x as BaseProperty).ToArray();
-                BaseProperty[] copyEquips = (copyObject as Equipment)
-                    .Items.Select(x => x as BaseProperty).ToArray();
+                BaseParameter[] objEquips = equipment.Items
+                    .Select(x => x as BaseParameter).ToArray();
+                BaseParameter[] copyEquips = (copyObject as Equipment)
+                    .Items.Select(x => x as BaseParameter).ToArray();
                 foreach (var objEquip in objEquips)
                 {
                     foreach(var copyEquip in copyEquips)

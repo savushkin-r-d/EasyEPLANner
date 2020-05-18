@@ -17,11 +17,10 @@ namespace TechObject
             EplanName = "";
             S88Level = 0;
             BaseOperations = new BaseOperation[0];
-            BaseProperties = new List<BaseProperty>();
             BasicName = "";
             Owner = null;
-            Equipment = new BaseProperty[0];
-            AggregateProperties = new BaseProperty[0];
+            Equipment = new BaseParameter[0];
+            AggregateProperties = new BaseParameter[0];
 
         }
 
@@ -31,23 +30,20 @@ namespace TechObject
             EplanName = "";
             S88Level = 0;
             BaseOperations = new BaseOperation[0];
-            BaseProperties = new List<BaseProperty>();
             BasicName = "";
             Owner = owner;
-            Equipment = new BaseProperty[0];
-            AggregateProperties = new BaseProperty[0];
+            Equipment = new BaseParameter[0];
+            AggregateProperties = new BaseParameter[0];
         }
 
         public BaseTechObject(string name, string eplanName, int s88Level,
-            BaseOperation[] operations, List<BaseProperty> properties,
-            string basicName, BaseProperty[] equipment, 
-            BaseProperty[] aggregateProperties)
+            BaseOperation[] operations, string basicName, 
+            BaseParameter[] equipment, BaseParameter[] aggregateProperties)
         {
             Name = name;
             EplanName = eplanName;
             S88Level = s88Level;
             BaseOperations = operations;
-            BaseProperties = properties;
             BasicName = basicName;
             Owner = null;
             Equipment = equipment;
@@ -135,22 +131,6 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Свойства базового объекта
-        /// </summary>
-        public List<BaseProperty> BaseProperties
-        {
-            get
-            {
-                return objectProperties;
-            }
-
-            set
-            {
-                objectProperties = value;
-            }
-        }
-
-        /// <summary>
         /// Владелец объекта.
         /// </summary>
         public TechObject Owner
@@ -169,7 +149,7 @@ namespace TechObject
         /// <summary>
         /// Оборудование базового объекта
         /// </summary>
-        public BaseProperty[] Equipment
+        public BaseParameter[] Equipment
         {
             get
             {
@@ -264,13 +244,13 @@ namespace TechObject
         /// <summary>
         /// Свойства объекта, как агрегата.
         /// </summary>
-        public BaseProperty[] AggregateProperties
+        public BaseParameter[] AggregateProperties
         {
             get
             {
                 if (aggregateProperties == null)
                 {
-                    return new BaseProperty[0];
+                    return new BaseParameter[0];
                 }
                 else
                 {
@@ -382,7 +362,7 @@ namespace TechObject
 
                         res += $"{objName}.{baseOperation.LuaName} =\n";
                         res += prefix + "{\n";
-                        foreach (BaseProperty param in baseOperation.Properties)
+                        foreach (BaseParameter param in baseOperation.Properties)
                         {
                             if (param.CanSave())
                             {
@@ -410,7 +390,7 @@ namespace TechObject
         {
             var res = "";
 
-            foreach (BaseProperty param in baseOperation.Properties)
+            foreach (BaseParameter param in baseOperation.Properties)
             {
                 if (param.CanSave())
                 {
@@ -445,7 +425,7 @@ namespace TechObject
 
             res += $"{objName}.{baseOperation.LuaName} =\n";
             res += prefix + "{\n";
-            foreach (BaseProperty param in baseOperation.Properties)
+            foreach (BaseParameter param in baseOperation.Properties)
             {
                 if (param.CanSave())
                 {
@@ -498,7 +478,7 @@ namespace TechObject
 
             foreach (var item in equipment.Items)
             {
-                var property = item as BaseProperty;
+                var property = item as BaseParameter;
                 var value = property.Value;
                 var luaName = property.LuaName;
 
@@ -624,8 +604,7 @@ namespace TechObject
         private TechObject owner;
 
         private BaseOperation[] objectOperations;
-        private List<BaseProperty> objectProperties;
-        private BaseProperty[] equipment;
-        private BaseProperty[] aggregateProperties;
+        private BaseParameter[] equipment;
+        private BaseParameter[] aggregateProperties;
     }
 }
