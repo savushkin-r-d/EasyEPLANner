@@ -338,8 +338,6 @@ namespace TechObject
                 prefix + objName + ".PAR_FLOAT.V_ACCEPTING_SET\n" +
                 prefix + "}\n";
 
-            res += "\n";
-
             return res;
         }
 
@@ -497,7 +495,6 @@ namespace TechObject
         {
             var res = "";
             var equipment = this.owner.Equipment;
-            bool needWhiteSpace = false;
 
             foreach (var item in equipment.Items)
             {
@@ -523,13 +520,6 @@ namespace TechObject
                 {
                     res += objName + $".{luaName} = nil\n";
                 }
-
-                needWhiteSpace = true;
-            }
-
-            if (needWhiteSpace)
-            {
-                res += "\n";
             }
 
             return res;
