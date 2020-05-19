@@ -387,13 +387,13 @@ end
 
 local base_tech_objects =
 {
-    {
-        s88Level = 0,
+    { -- Имя объекта
         name = "",
         eplanName = "",
+        s88Level = 0,
         baseOperations =
         {
-            {
+            { -- Имя операции
                 name = "",
                 luaName = "",
                 params =
