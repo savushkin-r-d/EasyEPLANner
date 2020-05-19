@@ -342,6 +342,11 @@ namespace TechObject
             foreach (Mode mode in modes)
             {
                 var baseOperation = mode.BaseOperation;
+                if (baseOperation.Properties.Count == 0)
+                {
+                    return res;
+                }
+
                 switch (baseOperation.Name)
                 {
                     case "Мойка":

@@ -267,12 +267,13 @@ namespace EasyEPlanner
 
             foreach (TechObject.TechObject obj in objects)
             {
+                string temp = "";
                 var objName = "prg." + obj.NameEplanForFile.ToLower() +
                     obj.TechNumber.ToString();
-                res += obj.BaseTechObject.SaveToPrgLua(objName, prefix);
-                if (res != "")
+                temp = obj.BaseTechObject.SaveToPrgLua(objName, prefix);
+                if (temp != "")
                 {
-                    res += "\n";
+                    res += temp + "\n";
                 }
             }
             return res;
