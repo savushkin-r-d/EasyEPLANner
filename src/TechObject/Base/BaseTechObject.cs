@@ -369,7 +369,7 @@ namespace TechObject
                         res += prefix + "{\n";
                         foreach (BaseParameter param in baseOperation.Properties)
                         {
-                            if (param.CanSave())
+                            if (param.needToSave)
                             {
                                 string val = param
                                     .Value == "" ? "nil" : param.Value;
@@ -397,7 +397,7 @@ namespace TechObject
 
             foreach (BaseParameter param in baseOperation.Properties)
             {
-                if (param.CanSave())
+                if (param.needToSave)
                 {
                     string val = param.Value == "" ? "nil" : param.Value;
                     if (val != "nil")
@@ -432,7 +432,7 @@ namespace TechObject
             res += prefix + "{\n";
             foreach (BaseParameter param in baseOperation.Properties)
             {
-                if (param.CanSave())
+                if (param.needToSave)
                 {
                     string val = param.Value == "" ? "nil" : param.Value;
 

@@ -184,7 +184,7 @@ namespace TechObject
             }
 
             var propertiesCountForSave = Properties
-                .Where(x => x.CanSave() == true).Count();
+                .Where(x => x.needToSave == true).Count();
             if (propertiesCountForSave <= 0)
             {
                 return res;
@@ -193,7 +193,7 @@ namespace TechObject
             res += prefix + "props =\n" + prefix + "\t{\n";
             foreach (var operParam in Properties)
             {
-                if (operParam.CanSave())
+                if (operParam.needToSave)
                 {
                     res += "\t" + prefix + operParam.LuaName + " = \'" + 
                         operParam.Value + "\',\n";

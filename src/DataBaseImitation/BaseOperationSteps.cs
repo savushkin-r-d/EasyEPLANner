@@ -26,10 +26,10 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ActiveParameter("", "", false),
-                new ActiveParameter("IN_DRAINAGE", "В дренаж", false),
-                new ActiveParameter("IN_TANK", "В приемник", false),
-                new ActiveParameter("WAITING_KEY", "Ожидание", false)
+                new ActiveParameter("", ""),
+                new ActiveParameter("IN_DRAINAGE", "В дренаж"),
+                new ActiveParameter("IN_TANK", "В приемник"),
+                new ActiveParameter("WAITING_KEY", "Ожидание")
             };
         }
 
@@ -41,10 +41,10 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ActiveParameter("", "", false),
-                new ActiveParameter("OUT_WATER", "Проталкивание", false),
-                new ActiveParameter("OUT_TANK", "Из источника", false),
-                new ActiveParameter("WAITING_KEY", "Ожидание", false)
+                new ActiveParameter("", ""),
+                new ActiveParameter("OUT_WATER", "Проталкивание"),
+                new ActiveParameter("OUT_TANK", "Из источника"),
+                new ActiveParameter("WAITING_KEY", "Ожидание")
             };
         }
 
@@ -57,12 +57,12 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ActiveParameter("", "", false),
-                new ActiveParameter("WAITING", "Ожидание", false),
-                new ActiveParameter("OUT_WATER", "Проталкивание", false),
-                new ActiveParameter("OUT_TANK", "Из источника", false),
-                new ActiveParameter("IN_TANK", "В приемник", false),
-                new ActiveParameter("IN_DRAINAGE", "В дренаж", false),
+                new ActiveParameter("", ""),
+                new ActiveParameter("WAITING", "Ожидание"),
+                new ActiveParameter("OUT_WATER", "Проталкивание"),
+                new ActiveParameter("OUT_TANK", "Из источника"),
+                new ActiveParameter("IN_TANK", "В приемник"),
+                new ActiveParameter("IN_DRAINAGE", "В дренаж"),
             };
         }
 
@@ -75,8 +75,8 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ActiveParameter("", "", false),
-                new ActiveParameter("DRAINAGE", "Дренаж", false)
+                new ActiveParameter("", ""),
+                new ActiveParameter("DRAINAGE", "Дренаж")
             };
         }
 
@@ -89,11 +89,11 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ActiveParameter("", "", false),
+                new ActiveParameter("", ""),
                 new ActiveParameter("WAITING_HI_LS", 
-                "Ожидание появления ВУ", false),
+                "Ожидание появления ВУ"),
                 new ActiveParameter("WAITING_LOW_LS", 
-                "Ожидание пропадания НУ", false),
+                "Ожидание пропадания НУ"),
             };
         }
 
@@ -105,9 +105,9 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ActiveParameter("", "", false),
-                new ActiveParameter("WORKING", "Работа", false),
-                new ActiveParameter("WAITING ", "Ожидание", false),
+                new ActiveParameter("", ""),
+                new ActiveParameter("WORKING", "Работа"),
+                new ActiveParameter("WAITING ", "Ожидание"),
             };
         }
 
@@ -119,9 +119,9 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ActiveParameter("", "", false),
-                new ActiveParameter("WORKING", "Работа", false),
-                new ActiveParameter("WAITING ", "Ожидание", false),
+                new ActiveParameter("", ""),
+                new ActiveParameter("WORKING", "Работа"),
+                new ActiveParameter("WAITING ", "Ожидание"),
             };
         }
 
@@ -133,7 +133,7 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ActiveParameter("","", false),
+                new ActiveParameter("",""),
                 new ActiveParameter("TO_START_TEMPERATURE",
                 "Нагрев до заданной температуры"),
                 new ActiveParameter("SLOW_HEAT", "Нагрев заданное время")
@@ -148,7 +148,7 @@ namespace DataBase
         {
             return new BaseParameter[] 
             {
-                 new ActiveParameter("", "", false),
+                 new ActiveParameter("", ""),
                  new ActiveParameter("WAITING_LOW_LS", 
                  "Ожидание пропадания нижнего уровня"),
                  new ActiveParameter("WATER_2_LOW_LS", 
@@ -165,7 +165,7 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ActiveParameter("", "", false),
+                new ActiveParameter("", ""),
                 new ActiveParameter("WAIT", "Ожидание"),
                 new ActiveParameter("IN_TANK", "В танк"),
                 new ActiveParameter("OUT_TANK", "Из танка"),

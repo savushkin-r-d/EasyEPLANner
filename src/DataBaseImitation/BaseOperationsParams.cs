@@ -28,8 +28,7 @@ namespace DataBase
             {
                 new ActiveParameter("CIP_WASH_END", "Мойка завершена"),
                 new ActiveParameter("DI_CIP_FREE", "МСА свободна"),
-                new PassiveParameter("DRAINAGE", "Номер шага дренаж", 
-                false),
+                new PassiveParameter("DRAINAGE", "Номер шага дренаж"),
                 new ActiveParameter("CIP_WASH_REQUEST", 
                 "Автоматическое включение мойки"),
             };
@@ -62,8 +61,7 @@ namespace DataBase
             var parameters = new List<BaseParameter>
             {
                 new ActiveParameter("CIP_WASH_END", "Мойка завершена"),
-                new PassiveParameter("DRAINAGE", "Номер шага дренаж",
-                false),
+                new PassiveParameter("DRAINAGE", "Номер шага дренаж"),
                 new ActiveParameter("CIP_WASH_REQUEST",
                 "Автоматическое включение мойки"),
             };

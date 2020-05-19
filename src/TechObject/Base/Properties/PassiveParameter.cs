@@ -11,16 +11,12 @@ namespace TechObject
     /// </summary>
     public class PassiveParameter : BaseParameter
     {
-        public PassiveParameter(string luaName, string name, bool canSave)
-            : base(luaName, name, canSave) { }
-
         public PassiveParameter(string luaName, string name)
-            : base(luaName, name, true) { }
+            : base(luaName, name) { }
 
         public override BaseParameter Clone()
         {
-            var newProperty = new PassiveParameter(this.LuaName,
-                this.Name, this.CanSave());
+            var newProperty = new PassiveParameter(this.LuaName, this.Name);
             newProperty.SetNewValue(this.Value);
             return newProperty;
         }
@@ -28,6 +24,14 @@ namespace TechObject
         public override bool isShowed()
         {
             return false;
+        }
+
+        public override bool needToSave
+        {
+            get
+            {
+                return false;
+            }
         }
 
         override public bool IsUseDevList

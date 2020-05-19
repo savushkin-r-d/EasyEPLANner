@@ -11,19 +11,15 @@ namespace TechObject
     /// </summary>
     public class ActiveParameter : BaseParameter
     {
-        public ActiveParameter(string luaName, string name, bool canSave)
-            : base(luaName, name, canSave) { }
-
-        public ActiveParameter(string luaName, string name) : base(luaName,
-            name, true) { }
+        public ActiveParameter(string luaName, string name)
+            : base(luaName, name) { }
 
         public ActiveParameter(string luaName, string name, 
-            string defaultValue) : base(luaName, name, true, defaultValue) { }
+            string defaultValue) : base(luaName, name, defaultValue) { }
 
         public override BaseParameter Clone()
         {
-            var newProperty = new ActiveParameter(this.LuaName, this.Name,
-                this.CanSave());
+            var newProperty = new ActiveParameter(this.LuaName, this.Name);
             newProperty.SetNewValue(this.Value);
             return newProperty;
         }

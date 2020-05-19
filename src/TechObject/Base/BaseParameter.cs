@@ -17,11 +17,10 @@ namespace TechObject
         /// <returns></returns>
         public abstract new BaseParameter Clone();
 
-        public BaseParameter(string luaName, string name, bool canSave, 
+        public BaseParameter(string luaName, string name, 
             string defaultValue = "") : base(name, defaultValue)
         {
             this.luaName = luaName;
-            this.canSave = canSave;
             this.defaultValue = defaultValue;
         }
 
@@ -45,12 +44,23 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Нужно ли отображать свойство в дереве объектов.
+        /// Нужно ли отображать параметр.
         /// </summary>
         /// <returns></returns>
         public virtual bool isShowed()
         {
             return true;
+        }
+
+        /// <summary>
+        /// Нужно ли сохранять параметр в файле описания.
+        /// </summary>
+        public virtual bool needToSave
+        {
+            get
+            {
+                return true;
+            }
         }
 
         override public bool IsUseDevList
@@ -59,20 +69,6 @@ namespace TechObject
             {
                 return true;
             }
-        }
-
-        /// <summary>
-        /// Нужно ли сохранять это свойство в файле описания.
-        /// </summary>
-        /// <returns></returns>
-        public virtual bool CanSave()
-        {
-            return canSave;
-        }
-
-        public virtual void Clear()
-        {
-            this.SetValue("");
         }
 
         #region реализация ITreeView
@@ -101,7 +97,6 @@ namespace TechObject
         #endregion
 
         private string luaName;
-        private bool canSave;
         private string defaultValue;
     }
 }
