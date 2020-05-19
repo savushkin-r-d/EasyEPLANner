@@ -244,10 +244,10 @@ namespace TechObject
         public override Editor.ITreeViewItem Replace(object child, 
             object copyObject)
         {
-            var property = child as ShowedBaseParameter;
-            if (property != null && copyObject is ShowedBaseParameter)
+            var property = child as ActiveParameter;
+            if (property != null && copyObject is ActiveParameter)
             {
-                property.SetNewValue((copyObject as ShowedBaseParameter).Value);
+                property.SetNewValue((copyObject as ActiveParameter).Value);
                 ModifyDevNames(owner.NameEplan, owner.TechNumber);
                 return property as Editor.ITreeViewItem;
             }

@@ -1266,7 +1266,7 @@ namespace Editor
                 }
             }
 
-            var boolProperty = e.Model as TechObject.BoolShowedParameter;
+            var boolProperty = e.Model as TechObject.ActiveBoolParameter;
             if (boolProperty != null && 
                 e.ColumnIndex == 1 &&
                 boolProperty.DefaultValue != boolProperty.Value)

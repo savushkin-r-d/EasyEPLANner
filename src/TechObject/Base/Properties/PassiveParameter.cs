@@ -6,17 +6,20 @@ using System.Threading.Tasks;
 
 namespace TechObject
 {
-    public class NonShowedBaseParameter : BaseParameter
+    /// <summary>
+    /// Пассивный (не отображаемый) параметр.
+    /// </summary>
+    public class PassiveParameter : BaseParameter
     {
-        public NonShowedBaseParameter(string luaName, string name, bool canSave)
+        public PassiveParameter(string luaName, string name, bool canSave)
             : base(luaName, name, canSave) { }
 
-        public NonShowedBaseParameter(string luaName, string name)
+        public PassiveParameter(string luaName, string name)
             : base(luaName, name, true) { }
 
         public override BaseParameter Clone()
         {
-            var newProperty = new NonShowedBaseParameter(this.LuaName,
+            var newProperty = new PassiveParameter(this.LuaName,
                 this.Name, this.CanSave());
             newProperty.SetNewValue(this.Value);
             return newProperty;

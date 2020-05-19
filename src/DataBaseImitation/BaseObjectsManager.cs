@@ -13,26 +13,6 @@ namespace DataBase
     public partial class Imitation
     {
         /// <summary>
-        /// Получить базовое название объекта по его обычному названию.
-        /// </summary>
-        /// <param name="baseTechObjectName">Название объекта</param>
-        /// <returns></returns>
-        public static string GetBasicName(string baseTechObjectName)
-        {
-            string basicName = "";
-
-            foreach (BaseTechObject baseTechObject in BaseTechObjects())
-            {
-                if (baseTechObject.Name == baseTechObjectName)
-                {
-                    basicName = baseTechObject.BasicName;
-                }
-            }
-
-            return basicName;
-        }
-
-        /// <summary>
         /// Получить базовый технологический объект по обычному названию.
         /// </summary>
         /// <param name="name">Название объекта</param>

@@ -27,7 +27,7 @@ namespace TechObject
             this.getN = getN;
             this.IsMode = isMode;
             this.owner = owner;
-            this.baseStep = new NonShowedBaseParameter("", "", false);
+            this.baseStep = new ActiveParameter("", "", false);
 
             items = new List<Editor.ITreeViewItem>();
 
@@ -360,7 +360,7 @@ namespace TechObject
 
             if (baseStep != null)
             {
-                this.baseStep = new NonShowedBaseParameter(baseStep.LuaName, 
+                this.baseStep = new ActiveParameter(baseStep.LuaName, 
                     baseStep.Name, baseStep.CanSave());
                 return true;
             }

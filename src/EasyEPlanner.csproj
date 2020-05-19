@@ -136,7 +136,7 @@
   <ItemGroup>
     <Compile Include="ConfigurationChecker.cs" />
     <Compile Include="DataBaseImitation\BaseAggregatesParameters.cs" />
-    <Compile Include="DataBaseImitation\BaseObjects.cs" />
+    <Compile Include="DataBaseImitation\BaseObjectsManager.cs" />
     <Compile Include="DataBaseImitation\BaseOperations.cs" />
     <Compile Include="DataBaseImitation\BaseOperationsParams.cs" />
     <Compile Include="DataBaseImitation\BaseObjectsEquipment.cs" />
@@ -250,9 +250,9 @@
     <Compile Include="TechObject\Base\BaseOperation.cs" />
     <Compile Include="TechObject\Base\BaseParameter.cs" />
     <Compile Include="TechObject\Base\BaseTechObject.cs" />
-    <Compile Include="TechObject\Base\Properties\BoolShowedParameter.cs" />
-    <Compile Include="TechObject\Base\Properties\NonShowedParameter.cs" />
-    <Compile Include="TechObject\Base\Properties\ShowedParameter.cs" />
+    <Compile Include="TechObject\Base\Properties\ActiveBoolParameter.cs" />
+    <Compile Include="TechObject\Base\Properties\PassiveParameter.cs" />
+    <Compile Include="TechObject\Base\Properties\ActiveParameter.cs" />
     <Compile Include="TechObject\Equipment.cs" />
     <Compile Include="TechObject\LocalRestriction.cs" />
     <Compile Include="TechObject\Mode.cs" />

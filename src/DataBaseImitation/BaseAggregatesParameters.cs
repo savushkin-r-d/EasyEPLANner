@@ -27,7 +27,7 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new BoolShowedParameter("NEED_COOLING", 
+                new ActiveBoolParameter("NEED_COOLING", 
                 "Использовать узел охлаждения", "false")
             };
         }
@@ -40,7 +40,7 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new BoolShowedParameter("NEED_FLOW_CONTROL",
+                new ActiveBoolParameter("NEED_FLOW_CONTROL",
                 "Использовать узел расхода", "false")
             };
         }
@@ -53,7 +53,7 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new BoolShowedParameter("NEED_PRESSURE_CONTROL",
+                new ActiveBoolParameter("NEED_PRESSURE_CONTROL",
                 "Использовать узел давления", "false")
             };
         }
@@ -66,7 +66,7 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new BoolShowedParameter("HEATER_NODE",
+                new ActiveBoolParameter("HEATER_NODE",
                 "Использовать узел подогрева", "false")
             };
         }
@@ -78,7 +78,7 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new BoolShowedParameter("BOILER", "Использовать бойлер", "false")
+                new ActiveBoolParameter("BOILER", "Использовать бойлер", "false")
             };
         }
     }

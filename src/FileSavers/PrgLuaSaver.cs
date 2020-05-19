@@ -291,8 +291,7 @@ namespace EasyEPlanner
 
             foreach (TechObject.TechObject obj in objects)
             {
-                var basicObj = DataBase.Imitation
-                    .GetBasicName(obj.DisplayText[1]);
+                var basicObj = obj.BaseTechObject.BasicName;
 
                 if (previouslyObjectName != obj.NameEplanForFile.ToLower() &&
                     previouslyObjectName != "")

@@ -26,11 +26,11 @@ namespace DataBase
         {
             var parameters = new List<BaseParameter>
             {
-                new ShowedBaseParameter("CIP_WASH_END", "Мойка завершена"),
-                new ShowedBaseParameter("DI_CIP_FREE", "МСА свободна"),
-                new NonShowedBaseParameter("DRAINAGE", "Номер шага дренаж", 
+                new ActiveParameter("CIP_WASH_END", "Мойка завершена"),
+                new ActiveParameter("DI_CIP_FREE", "МСА свободна"),
+                new PassiveParameter("DRAINAGE", "Номер шага дренаж", 
                 false),
-                new ShowedBaseParameter("CIP_WASH_REQUEST", 
+                new ActiveParameter("CIP_WASH_REQUEST", 
                 "Автоматическое включение мойки"),
             };
 
@@ -45,8 +45,8 @@ namespace DataBase
         {
             var parameters = new List<BaseParameter>
             {
-                new ShowedBaseParameter("CIP_WASH_END", "Мойка завершена"),
-                new ShowedBaseParameter("CIP_WASH_REQUEST",
+                new ActiveParameter("CIP_WASH_END", "Мойка завершена"),
+                new ActiveParameter("CIP_WASH_REQUEST",
                 "Автоматическое включение мойки"),
             };
 
@@ -61,10 +61,10 @@ namespace DataBase
         {
             var parameters = new List<BaseParameter>
             {
-                new ShowedBaseParameter("CIP_WASH_END", "Мойка завершена"),
-                new NonShowedBaseParameter("DRAINAGE", "Номер шага дренаж",
+                new ActiveParameter("CIP_WASH_END", "Мойка завершена"),
+                new PassiveParameter("DRAINAGE", "Номер шага дренаж",
                 false),
-                new ShowedBaseParameter("CIP_WASH_REQUEST",
+                new ActiveParameter("CIP_WASH_REQUEST",
                 "Автоматическое включение мойки"),
             };
 
@@ -79,7 +79,7 @@ namespace DataBase
         {
             var parameters = new List<BaseParameter>
             {
-                new ShowedBaseParameter("OPERATION_AFTER_FILL",
+                new ActiveParameter("OPERATION_AFTER_FILL",
                 "Номер операции после наполнения")
             };
 
@@ -94,7 +94,7 @@ namespace DataBase
         {
             var parameters = new List<BaseParameter>
             {
-                new BoolShowedParameter("NEED_STORING_AFTER", 
+                new ActiveBoolParameter("NEED_STORING_AFTER", 
                 "Включить хранение после выдачи", "true"),
             };
 
@@ -109,7 +109,7 @@ namespace DataBase
         {
             var parameters = new List<BaseParameter>
             {
-                new BoolShowedParameter("ACTIVE_WORKING", "Активная работа", "false")
+                new ActiveBoolParameter("ACTIVE_WORKING", "Активная работа", "false")
             };
 
             return parameters;

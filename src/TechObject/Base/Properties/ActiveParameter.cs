@@ -6,20 +6,23 @@ using System.Threading.Tasks;
 
 namespace TechObject
 {
-    public class ShowedBaseParameter : BaseParameter
+    /// <summary>
+    /// Активный (отображаемый) параметр
+    /// </summary>
+    public class ActiveParameter : BaseParameter
     {
-        public ShowedBaseParameter(string luaName, string name, bool canSave)
+        public ActiveParameter(string luaName, string name, bool canSave)
             : base(luaName, name, canSave) { }
 
-        public ShowedBaseParameter(string luaName, string name) : base(luaName,
+        public ActiveParameter(string luaName, string name) : base(luaName,
             name, true) { }
 
-        public ShowedBaseParameter(string luaName, string name, 
+        public ActiveParameter(string luaName, string name, 
             string defaultValue) : base(luaName, name, true, defaultValue) { }
 
         public override BaseParameter Clone()
         {
-            var newProperty = new ShowedBaseParameter(this.LuaName, this.Name,
+            var newProperty = new ActiveParameter(this.LuaName, this.Name,
                 this.CanSave());
             newProperty.SetNewValue(this.Value);
             return newProperty;

@@ -26,10 +26,10 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new NonShowedBaseParameter("", "", false),
-                new NonShowedBaseParameter("IN_DRAINAGE", "В дренаж", false),
-                new NonShowedBaseParameter("IN_TANK", "В приемник", false),
-                new NonShowedBaseParameter("WAITING_KEY", "Ожидание", false)
+                new ActiveParameter("", "", false),
+                new ActiveParameter("IN_DRAINAGE", "В дренаж", false),
+                new ActiveParameter("IN_TANK", "В приемник", false),
+                new ActiveParameter("WAITING_KEY", "Ожидание", false)
             };
         }
 
@@ -41,10 +41,10 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new NonShowedBaseParameter("", "", false),
-                new NonShowedBaseParameter("OUT_WATER", "Проталкивание", false),
-                new NonShowedBaseParameter("OUT_TANK", "Из источника", false),
-                new NonShowedBaseParameter("WAITING_KEY", "Ожидание", false)
+                new ActiveParameter("", "", false),
+                new ActiveParameter("OUT_WATER", "Проталкивание", false),
+                new ActiveParameter("OUT_TANK", "Из источника", false),
+                new ActiveParameter("WAITING_KEY", "Ожидание", false)
             };
         }
 
@@ -57,12 +57,12 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new NonShowedBaseParameter("", "", false),
-                new NonShowedBaseParameter("WAITING", "Ожидание", false),
-                new NonShowedBaseParameter("OUT_WATER", "Проталкивание", false),
-                new NonShowedBaseParameter("OUT_TANK", "Из источника", false),
-                new NonShowedBaseParameter("IN_TANK", "В приемник", false),
-                new NonShowedBaseParameter("IN_DRAINAGE", "В дренаж", false),
+                new ActiveParameter("", "", false),
+                new ActiveParameter("WAITING", "Ожидание", false),
+                new ActiveParameter("OUT_WATER", "Проталкивание", false),
+                new ActiveParameter("OUT_TANK", "Из источника", false),
+                new ActiveParameter("IN_TANK", "В приемник", false),
+                new ActiveParameter("IN_DRAINAGE", "В дренаж", false),
             };
         }
 
@@ -75,8 +75,8 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new NonShowedBaseParameter("", "", false),
-                new NonShowedBaseParameter("DRAINAGE", "Дренаж", false)
+                new ActiveParameter("", "", false),
+                new ActiveParameter("DRAINAGE", "Дренаж", false)
             };
         }
 
@@ -89,10 +89,10 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new NonShowedBaseParameter("", "", false),
-                new NonShowedBaseParameter("WAITING_HI_LS", 
+                new ActiveParameter("", "", false),
+                new ActiveParameter("WAITING_HI_LS", 
                 "Ожидание появления ВУ", false),
-                new NonShowedBaseParameter("WAITING_LOW_LS", 
+                new ActiveParameter("WAITING_LOW_LS", 
                 "Ожидание пропадания НУ", false),
             };
         }
@@ -105,9 +105,9 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new NonShowedBaseParameter("", "", false),
-                new NonShowedBaseParameter("WORKING", "Работа", false),
-                new NonShowedBaseParameter("WAITING ", "Ожидание", false),
+                new ActiveParameter("", "", false),
+                new ActiveParameter("WORKING", "Работа", false),
+                new ActiveParameter("WAITING ", "Ожидание", false),
             };
         }
 
@@ -119,9 +119,9 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new NonShowedBaseParameter("", "", false),
-                new NonShowedBaseParameter("WORKING", "Работа", false),
-                new NonShowedBaseParameter("WAITING ", "Ожидание", false),
+                new ActiveParameter("", "", false),
+                new ActiveParameter("WORKING", "Работа", false),
+                new ActiveParameter("WAITING ", "Ожидание", false),
             };
         }
 
@@ -133,10 +133,10 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new NonShowedBaseParameter("","", false),
-                new NonShowedBaseParameter("TO_START_TEMPERATURE",
+                new ActiveParameter("","", false),
+                new ActiveParameter("TO_START_TEMPERATURE",
                 "Нагрев до заданной температуры"),
-                new NonShowedBaseParameter("SLOW_HEAT", "Нагрев заданное время")
+                new ActiveParameter("SLOW_HEAT", "Нагрев заданное время")
             };
         }
 
@@ -148,12 +148,12 @@ namespace DataBase
         {
             return new BaseParameter[] 
             {
-                 new NonShowedBaseParameter("", "", false),
-                 new NonShowedBaseParameter("WAITING_LOW_LS", 
+                 new ActiveParameter("", "", false),
+                 new ActiveParameter("WAITING_LOW_LS", 
                  "Ожидание пропадания нижнего уровня"),
-                 new NonShowedBaseParameter("WATER_2_LOW_LS", 
+                 new ActiveParameter("WATER_2_LOW_LS", 
                  "Наполнение до нижнего уровня"),
-                 new NonShowedBaseParameter("WATER_2_HI_LS", 
+                 new ActiveParameter("WATER_2_HI_LS", 
                  "Наполнение до верхнего уровня"),
             };          
         }
@@ -165,10 +165,10 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new NonShowedBaseParameter("", "", false),
-                new NonShowedBaseParameter("WAIT", "Ожидание"),
-                new NonShowedBaseParameter("IN_TANK", "В танк"),
-                new NonShowedBaseParameter("OUT_TANK", "Из танка"),
+                new ActiveParameter("", "", false),
+                new ActiveParameter("WAIT", "Ожидание"),
+                new ActiveParameter("IN_TANK", "В танк"),
+                new ActiveParameter("OUT_TANK", "Из танка"),
             };
         }
     }

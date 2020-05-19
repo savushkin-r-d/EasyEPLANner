@@ -29,10 +29,10 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ShowedBaseParameter("mix", "Мешалка", "M1"),
-                new ShowedBaseParameter("bar", "Датчик решетки люка", "GS2"),
-                new ShowedBaseParameter("hatch", "Датчик крышки люка", "GS1"),
-                new ShowedBaseParameter("LT", "Датчик текущего уровня", "LT1")
+                new ActiveParameter("mix", "Мешалка", "M1"),
+                new ActiveParameter("bar", "Датчик решетки люка", "GS2"),
+                new ActiveParameter("hatch", "Датчик крышки люка", "GS1"),
+                new ActiveParameter("LT", "Датчик текущего уровня", "LT1")
             };
         }
 
@@ -44,11 +44,11 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ShowedBaseParameter("hatch", "Датчик крышки люка", "GS1"),
-                new ShowedBaseParameter("LS_up", "Датчик верхнего уровня", "LS2"),
-                new ShowedBaseParameter("LS_down", "Датчик нижнего уровня", "LS1"),
-                new ShowedBaseParameter("LT", "Датчик текущего уровня", "LT1"),
-                new ShowedBaseParameter("TE","Датчик температуры", "TE1")
+                new ActiveParameter("hatch", "Датчик крышки люка", "GS1"),
+                new ActiveParameter("LS_up", "Датчик верхнего уровня", "LS2"),
+                new ActiveParameter("LS_down", "Датчик нижнего уровня", "LS1"),
+                new ActiveParameter("LT", "Датчик текущего уровня", "LT1"),
+                new ActiveParameter("TE","Датчик температуры", "TE1")
             };
         }
 
@@ -60,7 +60,7 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ShowedBaseParameter("TE", "Датчик температуры", "TE1")
+                new ActiveParameter("TE", "Датчик температуры", "TE1")
             };
         }
 
@@ -72,9 +72,9 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ShowedBaseParameter("TE", "Датчик температуры", "TE1"),
-                new ShowedBaseParameter("VC", "Регулирующий клапан", "VC1"),
-                new ShowedBaseParameter("SET_VALUE", "Задание", ""),
+                new ActiveParameter("TE", "Датчик температуры", "TE1"),
+                new ActiveParameter("VC", "Регулирующий клапан", "VC1"),
+                new ActiveParameter("SET_VALUE", "Задание", ""),
             };
         }
 
@@ -86,9 +86,9 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ShowedBaseParameter("M1", "Насос", "M1"),
-                new ShowedBaseParameter("LS_up", "Датчик верхнего уровня", "LS2"),
-                new ShowedBaseParameter("LS_down", "Датчик нижнего уровня", "LS1"),
+                new ActiveParameter("M1", "Насос", "M1"),
+                new ActiveParameter("LS_up", "Датчик верхнего уровня", "LS2"),
+                new ActiveParameter("LS_down", "Датчик нижнего уровня", "LS1"),
             };
         }
 
@@ -100,11 +100,11 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ShowedBaseParameter("M1", "Насос", "M1"),
-                new ShowedBaseParameter("LS_up", "Датчик верхнего уровня", "LS2"),
-                new ShowedBaseParameter("LS_down", "Датчик нижнего уровня", "LS1"),
-                new ShowedBaseParameter("LT", "Датчик текущего уровня", "LT1"),
-                new ShowedBaseParameter("SET_VALUE", "Задание", ""),
+                new ActiveParameter("M1", "Насос", "M1"),
+                new ActiveParameter("LS_up", "Датчик верхнего уровня", "LS2"),
+                new ActiveParameter("LS_down", "Датчик нижнего уровня", "LS1"),
+                new ActiveParameter("LT", "Датчик текущего уровня", "LT1"),
+                new ActiveParameter("SET_VALUE", "Задание", ""),
             };
         }
 
@@ -116,9 +116,9 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ShowedBaseParameter("M1", "Мотор", "M1"),
-                new ShowedBaseParameter("PT", "Датчик давления", "PT1"),
-                new ShowedBaseParameter("SET_VALUE", "Задание", ""),
+                new ActiveParameter("M1", "Мотор", "M1"),
+                new ActiveParameter("PT", "Датчик давления", "PT1"),
+                new ActiveParameter("SET_VALUE", "Задание", ""),
             };
         }
 
@@ -130,9 +130,9 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ShowedBaseParameter("TE", "Датчик температуры", "TE1"),
-                new ShowedBaseParameter("VC", "Регулирующий клапан", "VC1"),
-                new ShowedBaseParameter("SET_VALUE", "Задание", ""),
+                new ActiveParameter("TE", "Датчик температуры", "TE1"),
+                new ActiveParameter("VC", "Регулирующий клапан", "VC1"),
+                new ActiveParameter("SET_VALUE", "Задание", ""),
             };
         }
       
@@ -143,9 +143,9 @@ namespace DataBase
         {
             return new BaseParameter[]
             {
-                new ShowedBaseParameter("FQT1", "Счетчик", "FQT1"),
-                new ShowedBaseParameter("M1", "Насос", "M1"),
-                new ShowedBaseParameter("SET_VALUE", "Задание", ""),
+                new ActiveParameter("FQT1", "Счетчик", "FQT1"),
+                new ActiveParameter("M1", "Насос", "M1"),
+                new ActiveParameter("SET_VALUE", "Задание", ""),
             };
         }
     }
