@@ -20,7 +20,7 @@ namespace TechObject
             BasicName = "";
             Owner = null;
             Equipment = new BaseParameter[0];
-            AggregateProperties = new BaseParameter[0];
+            AggregateParameters = new BaseParameter[0];
 
         }
 
@@ -33,7 +33,7 @@ namespace TechObject
             BasicName = "";
             Owner = owner;
             Equipment = new BaseParameter[0];
-            AggregateProperties = new BaseParameter[0];
+            AggregateParameters = new BaseParameter[0];
         }
 
         public BaseTechObject(string name, string eplanName, int s88Level,
@@ -47,7 +47,7 @@ namespace TechObject
             BasicName = basicName;
             Owner = null;
             Equipment = equipment;
-            AggregateProperties = aggregateProperties;
+            AggregateParameters = aggregateProperties;
         }
 
         /// <summary>
@@ -242,9 +242,9 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Свойства объекта, как агрегата.
+        /// Параметры объекта, как агрегата (добавляемые в аппарат).
         /// </summary>
-        public BaseParameter[] AggregateProperties
+        public BaseParameter[] AggregateParameters
         {
             get
             {

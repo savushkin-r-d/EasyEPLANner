@@ -217,7 +217,7 @@ namespace TechObject
                     BaseTechObject removingBaseTechObject = removingAgregate
                         .BaseTechObject;
                     BaseParameter[] properties = removingBaseTechObject
-                        .AggregateProperties;
+                        .AggregateParameters;
                     if (properties.Length == 0)
                     {
                         continue;
@@ -246,7 +246,7 @@ namespace TechObject
                     BaseTechObject attachedBaseTechObject = attachedAggregate
                         .BaseTechObject;
                     BaseParameter[] properties = attachedBaseTechObject
-                        .AggregateProperties;
+                        .AggregateParameters;
                     if (properties.Length == 0)
                     {
                         continue;
