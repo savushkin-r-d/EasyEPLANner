@@ -49,7 +49,7 @@ local base_tech_objects =
         basicName = "automat",
         equipment = { },
         aggregateParameters = { },
-    }, 
+    },
     { -- Бачок откачки лёдводы
         name = "Бачок откачки лёдводы",
         eplanName = "_tank",
@@ -63,22 +63,22 @@ local base_tech_objects =
                 {
                     bool =
                     {
-                        { "ACTIVE_WORKING", "Активная работа", "false" },
+                        { luaName = "ACTIVE_WORKING", name = "Активная работа", defaultValue = "false" },
                     },
                 },
                 steps =
                 {
-                    { "WAITING_HI_LS", "Ожидание появления ВУ" },
-                    { "WAITING_LOW_LS", "Ожидание пропадания НУ" },
+                    { luaName = "WAITING_HI_LS", name = "Ожидание появления ВУ" },
+                    { luaName = "WAITING_LOW_LS", name = "Ожидание пропадания НУ" },
                 },
             },
         },
         basicName = "ice_water_pump_tank",
         equipment =
         {
-            { "M1", "Насос", "M1" },
-            { "LS_up", "Датчик верхнего уровня", "LS2" },
-            { "LS_down", "Датчик нижнего уровня", "LS1" },
+            { luaName = "M1", name = "Насос", defaultValue = "M1" },
+            { luaName = "LS_up", name = "Датчик верхнего уровня", defaultValue = "LS2" },
+            { luaName = "LS_down", name = "Датчик нижнего уровня", defaultValue = "LS1" },
         },
         aggregateParameters = { },
     },
@@ -95,24 +95,24 @@ local base_tech_objects =
                 {
                     bool =
                     {
-                        { "ACTIVE_WORKING", "Активная работа", "false" },
+                        { luaName = "ACTIVE_WORKING", name = "Активная работа", defaultValue = "false" },
                     },
                 },
                 steps =
                 {
-                    { "WAITING_HI_LS", "Ожидание появления ВУ" },
-                    { "WAITING_LOW_LS", "Ожидание пропадания НУ" },
+                    { luaName = "WAITING_HI_LS", name = "Ожидание появления ВУ" },
+                    { luaName = "WAITING_LOW_LS", name = "Ожидание пропадания НУ" },
                 },
             },
         },
         basicName = "ice_water_pump_tank_PID",
         equipment =
         {
-            { "M1", "Насос", "M1" },
-            { "LS_up", "Датчик верхнего уровня", "LS2" },
-            { "LS_down", "Датчик нижнего уровня", "LS1" },
-            { "LT", "Датчик текущего уровня", "LT1" },
-            { "SET_VALUE", "Задание", "" },
+            { luaName = "M1", name = "Насос", "M1" },
+            { luaName = "LS_up", name = "Датчик верхнего уровня", defaultValue = "LS2" },
+            { luaName = "LS_down", name = "Датчик нижнего уровня", defaultValue = "LS1" },
+            { luaName = "LT", name = "Датчик текущего уровня", defaultValue = "LT1" },
+            { luaName = "SET_VALUE", name = "Задание", defaultValue = "" },
         },
         aggregateParameters = { },
     },
@@ -128,9 +128,9 @@ local base_tech_objects =
                 params = { },
                 steps =
                 {
-                    { "WAITING_LOW_LS", "Ожидание пропадания нижнего уровня" },
-                    { "WATER_2_LOW_LS", "Наполнение до нижнего уровня" },
-                    { "WATER_2_HI_LS", "Наполнение до верхнего уровня" },
+                    { luaName = "WAITING_LOW_LS", name = "Ожидание пропадания нижнего уровня" },
+                    { luaName = "WATER_2_LOW_LS", name = "Наполнение до нижнего уровня" },
+                    { luaName = "WATER_2_HI_LS", name = "Наполнение до верхнего уровня" },
                 },
             },
         },
@@ -138,7 +138,7 @@ local base_tech_objects =
         equipment = { },
         aggregateParameters =
         {
-            { "BOILER", "Использовать бойлер", "false" },
+            { luaName = "BOILER", name = "Использовать бойлер", defaultValue = "false" },
         },
     },
     { -- Мастер
@@ -163,13 +163,13 @@ local base_tech_objects =
                 {
                     active =
                     {
-                        { "CIP_WASH_END", "Мойка завершена" },
-                        { "CIP_WAS_REQUEST", "Автоматическое включение мойки" },
+                        { luaName = "CIP_WASH_END", name = "Мойка завершена" },
+                        { luaName = "CIP_WAS_REQUEST", name = "Автоматическое включение мойки" },
                     },
                 },
                 steps =
                 {
-                    { "DRAINAGE", "Дренаж" },
+                    { luaName = "DRAINAGE", name = "Дренаж" },
                 },
             },
             { -- Наполнение
@@ -178,9 +178,9 @@ local base_tech_objects =
                 params = { },
                 steps =
                 {
-                    { "IN_DRAINAGE", "В дренаж" },
-                    { "IN_TANK", "В приемник" },
-                    { "WAITING_KEY", "Ожидание" },
+                    { luaName = "IN_DRAINAGE", name = "В дренаж" },
+                    { luaName = "IN_TANK", name = "В приемник" },
+                    { luaName = "WAITING_KEY", name = "Ожидание" },
                 },
             },
             { -- Выдача
@@ -189,9 +189,9 @@ local base_tech_objects =
                 params = { },
                 steps =
                 {
-                    { "OUT_WATER", "Проталкивание" },
-                    { "OUT_TANK", "Из источника" },
-                    { "WAITING_KEY", "Ожидание" },
+                    { luaName = "OUT_WATER", name = "Проталкивание" },
+                    { luaName = "OUT_TANK", name = "Из источника" },
+                    { luaName = "WAITING_KEY", name = "Ожидание" },
                 },
             },
             { -- Работа
@@ -200,11 +200,11 @@ local base_tech_objects =
                 params = { },
                 steps =
                 {
-                    { "WAITING", "Ожидание" },
-                    { "OUT_WATER", "Проталкивание" },
-                    { "OUT_TANK", "Из источника" },
-                    { "IN_TANK", "В приемник" },
-                    { "IN_DRAINAGE", "В дренаж" },
+                    { luaName = "WAITING", name = "Ожидание" },
+                    { luaName = "OUT_WATER", name = "Проталкивание" },
+                    { luaName = "OUT_TANK", name = "Из источника" },
+                    { luaName = "IN_TANK", name = "В приемник" },
+                    { luaName = "IN_DRAINAGE", name = "В дренаж" },
                 },
             },
         },
@@ -225,13 +225,13 @@ local base_tech_objects =
                 {
                     active =
                     {
-                        { "CIP_WASH_END", "Мойка завершена" },
-                        { "CIP_WAS_REQUEST", "Автоматическое включение мойки" },
+                        { luaName = "CIP_WASH_END", name = "Мойка завершена" },
+                        { luaName = "CIP_WAS_REQUEST", name = "Автоматическое включение мойки" },
                     },
                 },
                 steps =
                 {
-                    { "DRAINAGE", "Дренаж" },
+                    { luaName = "DRAINAGE", name = "Дренаж" },
                 },
             },
             { -- Наполнение
@@ -240,9 +240,9 @@ local base_tech_objects =
                 params = { },
                 steps =
                 {
-                    { "IN_DRAINAGE", "В дренаж" },
-                    { "IN_TANK", "В приемник" },
-                    { "WAITING_KEY", "Ожидание" },
+                    { luaName = "IN_DRAINAGE", name = "В дренаж" },
+                    { luaName = "IN_TANK", name = "В приемник" },
+                    { luaName = "WAITING_KEY", name = "Ожидание" },
                 },
             },
             { -- Работа
@@ -251,11 +251,11 @@ local base_tech_objects =
                 params = { },
                 steps =
                 {
-                    { "WAITING", "Ожидание" },
-                    { "OUT_WATER", "Проталкивание" },
-                    { "OUT_TANK", "Из источника" },
-                    { "IN_TANK", "В приемник" },
-                    { "IN_DRAINAGE", "В дренаж" },
+                    { luaName = "WAITING", name = "Ожидание" },
+                    { luaName = "OUT_WATER", name = "Проталкивание" },
+                    { luaName = "OUT_TANK", name = "Из источника" },
+                    { luaName = "IN_TANK", name = "В приемник" },
+                    { luaName = "IN_DRAINAGE", name = "В дренаж" },
                 },
             },
         },
@@ -276,13 +276,13 @@ local base_tech_objects =
                 {
                     active =
                     {
-                        { "CIP_WASH_END", "Мойка завершена" },
-                        { "CIP_WAS_REQUEST", "Автоматическое включение мойки" },
+                        { luaName = "CIP_WASH_END", name = "Мойка завершена" },
+                        { luaName = "CIP_WAS_REQUEST", name = "Автоматическое включение мойки" },
                     },
                 },
                 steps =
                 {
-                    { "DRAINAGE", "Дренаж" },
+                    { luaName = "DRAINAGE", name = "Дренаж" },
                 },
             },
             { -- Выдача
@@ -291,9 +291,9 @@ local base_tech_objects =
                 params = { },
                 steps =
                 {
-                    { "OUT_WATER", "Проталкивание" },
-                    { "OUT_TANK", "Из источника" },
-                    { "WAITING_KEY", "Ожидание" },
+                    { luaName = "OUT_WATER", name = "Проталкивание" },
+                    { luaName = "OUT_TANK", name = "Из источника" },
+                    { luaName = "WAITING_KEY", name = "Ожидание" },
                 },
             },
             { -- Работа
@@ -302,11 +302,11 @@ local base_tech_objects =
                 params = { },
                 steps =
                 {
-                    { "WAITING", "Ожидание" },
-                    { "OUT_WATER", "Проталкивание" },
-                    { "OUT_TANK", "Из источника" },
-                    { "IN_TANK", "В приемник" },
-                    { "IN_DRAINAGE", "В дренаж" },
+                    { luaName = "WAITING", name = "Ожидание" },
+                    { luaName = "OUT_WATER", name = "Проталкивание" },
+                    { luaName = "OUT_TANK", name = "Из источника" },
+                    { luaName = "IN_TANK", name = "В приемник" },
+                    { luaName = "IN_DRAINAGE", name = "В дренаж" },
                 },
             },
         },
@@ -327,17 +327,17 @@ local base_tech_objects =
                 {
                     active =
                     {
-                        { "CIP_WASH_END", "Мойка завершена" },
-                        { "CIP_WAS_REQUEST", "Автоматическое включение мойки" },
+                        { luaName = "CIP_WASH_END", name = "Мойка завершена" },
+                        { luaName = "CIP_WAS_REQUEST", name = "Автоматическое включение мойки" },
                     },
                     passive =
                     {
-                        { "DRAINAGE", "Номер шага дренаж" },
+                        { luaName = "DRAINAGE", name = "Номер шага дренаж" },
                     },
                 },
                 steps =
                 {
-                    { "DRAINAGE", "Дренаж" },
+                    { luaName = "DRAINAGE", name = "Дренаж" },
                 },
             },
         },
@@ -367,18 +367,18 @@ local base_tech_objects =
                 {
                     active =
                     {
-                        { "CIP_WASH_END", "Мойка завершена" },
-                        { "DI_CIP_FREE", "МСА свободна" },
-                        { "CIP_WAS_REQUEST", "Автоматическое включение мойки" },
+                        { luaName = "CIP_WASH_END", name = "Мойка завершена" },
+                        { luaName = "DI_CIP_FREE", name = "МСА свободна" },
+                        { luaName = "CIP_WAS_REQUEST", name = "Автоматическое включение мойки" },
                     },
                     passive =
                     {
-                        { "DRAINAGE", "Номер шага дренаж" },
+                        { luaName = "DRAINAGE", name = "Номер шага дренаж" },
                     },
                 },
                 steps =
                 {
-                    { "DRAINAGE", "Дренаж" },
+                    { luaName = "DRAINAGE", name = "Дренаж" },
                 },
             },
             { -- Наполнение
@@ -388,7 +388,7 @@ local base_tech_objects =
                 {
                     active =
                     {
-                        { "OPERATION_AFTER_FILL", "Номер операции после наполнения" },
+                        { luaName = "OPERATION_AFTER_FILL", name = "Номер операции после наполнения" },
                     },
                 },
                 steps = { },
@@ -406,7 +406,7 @@ local base_tech_objects =
                 {
                     bool =
                     {
-                        { "NEED_STORING_AFTER", "Включить хранение после выдачи", "true" },
+                        { luaName = "NEED_STORING_AFTER", name = "Включить хранение после выдачи", defaultValue = "true" },
                     },
                 },
                 steps = { },
@@ -417,8 +417,8 @@ local base_tech_objects =
                 params = { },
                 steps =
                 {
-                    { "TO_START_TEMPERATURE", "Нагрев до заданной температуры" },
-                    { "SLOW_HEAT", "Нагрев заданное время" },
+                    { luaName = "TO_START_TEMPERATURE", name = "Нагрев до заданной температуры" },
+                    { luaName = "SLOW_HEAT", name = "Нагрев заданное время" },
                 },
             },
             { -- работа
@@ -427,20 +427,20 @@ local base_tech_objects =
                 params = { },
                 steps =
                 {
-                    { "WAIT", "Ожидание" },
-                    { "IN_TANK", "В танк" },
-                    { "OUT_TANK", "Из танка" },
+                    { luaName = "WAIT", name = "Ожидание" },
+                    { luaName = "IN_TANK", name = "В танк" },
+                    { luaName = "OUT_TANK", name = "Из танка" },
                 },
             },
         },
         basicName = "tank",
         equipment =
         {
-            { "hatch", "Датчик крышки люка", "GS1" },
-            { "LS_up", "Датчик верхнего уровня", "LS2" },
-            { "LS_down", "Датчик нижнего уровня", "LS1" },
-            { "LT", "Датчик текущего уровня", "LT1" },
-            { "TE","Датчик температуры", "TE1" },
+            { luaName = "hatch", name = "Датчик крышки люка", "GS1" },
+            { luaName = "LS_up", name = "Датчик верхнего уровня", "LS2" },
+            { luaName = "LS_down", name = "Датчик нижнего уровня", "LS1" },
+            { luaName = "LT", name = "Датчик текущего уровня", "LT1" },
+            { luaName = "TE", name = "Датчик температуры", "TE1" },
         },
         aggregateParameters = { },
     },
@@ -460,13 +460,13 @@ local base_tech_objects =
         basicName = "pressure_node_PID",
         equipment =
         {
-            { "M1", "Мотор", "M1" },
-            { "PT", "Датчик давления", "PT1" },
-            { "SET_VALUE", "Задание", "" },
+            { luaName = "M1", name = "Мотор", defaultValue = "M1" },
+            { luaName = "PT", name = "Датчик давления", defaultValue = "PT1" },
+            { luaName = "SET_VALUE", name = "Задание", defaultValue = "" },
         },
         aggregateParameters =
         {
-            { "NEED_PRESSURE_CONTROL", "Использовать узел давления", "false" },
+            { luaName = "NEED_PRESSURE_CONTROL", name = "Использовать узел давления", defaultValue = "false" },
         },
     },
     { -- Узел подогрева
@@ -481,8 +481,8 @@ local base_tech_objects =
                 params = { },
                 steps =
                 {
-                    { "WORKING", "Работа" },
-                    { "WAITING ", "Ожидание" },
+                    { luaName = "WORKING", name = "Работа" },
+                    { luaName = "WAITING ", name = "Ожидание" },
                 },
             },
         },
@@ -490,7 +490,7 @@ local base_tech_objects =
         equipment = { },
         aggregateParameters =
         {
-            { "HEATER_NODE", "Использовать узел подогрева", "false" },
+            { luaName = "HEATER_NODE", name = "Использовать узел подогрева", defaultValue = "false" },
         },
     },
     { -- Узел подогрева ПИД
@@ -505,21 +505,21 @@ local base_tech_objects =
                 params = { },
                 steps =
                 {
-                    { "WORKING", "Работа" },
-                    { "WAITING ", "Ожидание" },
+                    { luaName = "WORKING", name = "Работа" },
+                    { luaName = "WAITING ", name = "Ожидание" },
                 },
             },
         },
         basicName = "heater_node_PID",
         equipment =
         {
-            { "TE", "Датчик температуры", "TE1" },
-            { "VC", "Регулирующий клапан", "VC1" },
-            { "SET_VALUE", "Задание", "" },
+            { luaName = "TE", name = "Датчик температуры", defaultValue = "TE1" },
+            { luaName = "VC", name = "Регулирующий клапан", defaultValue = "VC1" },
+            { luaName = "SET_VALUE", name = "Задание", defaultValue = "" },
         },
         aggregateParameters =
         {
-            { "HEATER_NODE", "Использовать узел подогрева", "false" },
+            { luaName = "HEATER_NODE", name = "Использовать узел подогрева", defaultValue = "false" },
         },
     },
     { -- Узел расхода ПИД
@@ -538,13 +538,13 @@ local base_tech_objects =
         basicName = "flow_node_PID",
         equipment =
         {
-            { "FQT1", "Счетчик", "FQT1" },
-            { "M1", "Насос", "M1" },
-            { "SET_VALUE", "Задание", "" },
+            { luaName = "FQT1", name = "Счетчик", defaultValue = "FQT1" },
+            { luaName = "M1", name = "Насос", defaultValue = "M1" },
+            { luaName = "SET_VALUE", name = "Задание", defaultValue = "" },
         },
         aggregateParameters =
         {
-            { "NEED_FLOW_CONTROL", "Использовать узел расхода", "false" },
+            { luaName = "NEED_FLOW_CONTROL", name = "Использовать узел расхода", defaultValue = "false" },
         },
     },
     { -- Узел охлаждения
@@ -559,19 +559,19 @@ local base_tech_objects =
                 params = { },
                 steps =
                 {
-                    { "WORKING", "Работа" },
-                    { "WAITING ", "Ожидание" },
+                    { luaName = "WORKING", name = "Работа" },
+                    { luaName = "WAITING ", name = "Ожидание" },
                 },
             },
         },
         basicName = "cooler_node",
         equipment =
         {
-            { "TE", "Датчик температуры", "TE1" },
+            { luaName = "TE", name = "Датчик температуры", defaultValue = "TE1" },
         },
         aggregateParameters =
         {
-            { "NEED_COOLING", "Использовать узел охлаждения", "false" },
+            { luaName = "NEED_COOLING", name = "Использовать узел охлаждения", defaultValue = "false" },
         },
     },
     { -- Узел охлаждения ПИД
@@ -586,17 +586,17 @@ local base_tech_objects =
                 params = { },
                 steps =
                 {
-                    { "WORKING", "Работа" },
-                    { "WAITING ", "Ожидание" },
+                    { luaName = "WORKING", name = "Работа" },
+                    { luaName = "WAITING ", name = "Ожидание" },
                 },
             },
         },
         basicName = "cooler_node_PID",
         equipment =
         {
-            { "TE", "Датчик температуры", "TE1" },
-            { "VC", "Регулирующий клапан", "VC1" },
-            { "SET_VALUE", "Задание", "" },
+            { luaName = "TE", name = "Датчик температуры", defaultValue = "TE1" },
+            { luaName = "VC", name = "Регулирующий клапан", defaultValue = "VC1" },
+            { luaName = "SET_VALUE", name = "Задание", defaultValue = "" },
         },
         aggregateParameters = { },
     },
@@ -608,10 +608,10 @@ local base_tech_objects =
         basicName = "mix_node",
         equipment =
         {
-            { "mix", "Мешалка", "M1" },
-            { "bar", "Датчик решетки люка", "GS2" },
-            { "hatch", "Датчик крышки люка", "GS1" },
-            { "LT", "Датчик текущего уровня", "LT1" },
+            { luaName = "mix", name = "Мешалка", defaultValue = "M1" },
+            { luaName = "bar", name = "Датчик решетки люка", defaultValue = "GS2" },
+            { luaName = "hatch", name = "Датчик крышки люка", defaultValue = "GS1" },
+            { luaName = "LT", name = "Датчик текущего уровня", defaultValue = "LT1" },
         },
         aggregateParameters = { },
     },
