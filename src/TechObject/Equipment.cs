@@ -33,7 +33,7 @@ namespace TechObject
         /// Добавить оборудование.
         /// </summary>
         /// <param name="properties">Список оборудования</param>
-        public void AddItems(BaseParameter[] properties)
+        public void AddItems(List<BaseParameter> properties)
         {
             foreach(BaseParameter property in properties)
             {

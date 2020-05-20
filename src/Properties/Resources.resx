@@ -385,51 +385,51 @@ end
 -- Оборудование - по аналогии с активными параметрами.
 -- Параметры объекта, как агрегата - по аналогии с булевыми параметрами.
 
-local base_tech_objects =
-{
-    { -- Имя объекта
-        name = "",
-        eplanName = "",
-        s88Level = 0,
-        baseOperations =
-        {
-            { -- Имя операции
-                name = "",
-                luaName = "",
-                params =
-                {
-                    active =
+base_tech_objects = function()
+return
+    {
+        { -- Имя объекта
+            name = "",
+            eplanName = "",
+            s88Level = 0,
+            baseOperations =
+            {
+                { -- Имя операции
+                    name = "",
+                    luaName = "",
+                    params =
                     {
-                        { "luaName", "name" },
+                        active =
+                        {
+                            { "luaName", "name" },
+                        },
+                        passive =
+                        {
+                            { "luaName", "name" },
+                        },
+                        bool =
+                        {
+                            { "luaName", "name", "defaultValue" },
+                        },
                     },
-                    passive =
+                    steps =
                     {
-                        { "luaName", "name" },
+                        { "luaName", "name" }
                     },
-                    bool =
-                    {
-                        { "luaName", "name", "defaultValue" },
-                    },
-                },
-                steps =
-                {
-                    { "luaName", "name" }
                 },
             },
+            basicName = "",
+            equipment =
+            {
+                { "luaName", "name", "defaultValue" },
+            },
+            aggregateParameters =
+            {
+                { "luaName", "name", "defaultValue" },
+            },
         },
-        basicName = "",
-        equipment =
-        {
-            { "luaName", "name", "defaultValue" },
-        },
-        aggregateParameters =
-        {
-            { "luaName", "name", "defaultValue" },
-        },
-    },
-}
-
-return base_tech_objects</value>
+    }
+end</value>
     <comment>Шаблон для файла sys_base_objects_description.lua. В нем описаны базовые объекты, с операциями, шагами, параметрами и др.</comment>
   </data>
 </root>

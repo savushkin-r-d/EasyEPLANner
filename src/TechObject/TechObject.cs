@@ -216,9 +216,9 @@ namespace TechObject
                         .GetInstance().GetTObject(number);
                     BaseTechObject removingBaseTechObject = removingAgregate
                         .BaseTechObject;
-                    BaseParameter[] properties = removingBaseTechObject
+                    List<BaseParameter> properties = removingBaseTechObject
                         .AggregateParameters;
-                    if (properties.Length == 0)
+                    if (properties.Count == 0)
                     {
                         continue;
                     }
@@ -245,9 +245,9 @@ namespace TechObject
                         .GetInstance().GetTObject(number);
                     BaseTechObject attachedBaseTechObject = attachedAggregate
                         .BaseTechObject;
-                    BaseParameter[] properties = attachedBaseTechObject
+                    List<BaseParameter> properties = attachedBaseTechObject
                         .AggregateParameters;
-                    if (properties.Length == 0)
+                    if (properties.Count == 0)
                     {
                         continue;
                     }
@@ -842,8 +842,8 @@ namespace TechObject
                 equipment.Clear();
             }
 
-            BaseTechObject techObjFromDB = DataBase.Imitation.GetTechObject(
-                newValue);
+            BaseTechObject techObjFromDB = BaseTechObjectManager.GetInstance()
+                .GetTechObject(newValue);
             techObjFromDB.Owner = baseTechObject.Owner;
             baseTechObject = techObjFromDB;
             S88Level = baseTechObject.S88Level;
@@ -978,7 +978,7 @@ namespace TechObject
         {
             get
             {
-                return DataBase.Imitation.BaseTechObjects()
+                return BaseTechObjectManager.GetInstance().BaseTechObjects
                 .Select(x => x.Name).ToList();
             }
         }

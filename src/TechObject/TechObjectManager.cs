@@ -41,10 +41,6 @@ namespace TechObject
             lua.RegisterFunction("ADD_TECH_OBJECT", this,
                 GetType().GetMethod("AddObject"));
 
-            //Для отладки Lua скриптов.
-            LuaFunction resF = lua.RegisterFunction("PRINT", this,
-                GetType().GetMethod("ShowMessage"));
-
             const string spireLicense = "Spire.License.dll";
             const string spireXLS = "Spire.XLS.dll";
             const string spirePDF = "Spire.Pdf.dll";
@@ -66,18 +62,13 @@ namespace TechObject
             }
 
             string sysLuaPath = Path.Combine(systemFilesPath, "sys.lua");
-            if (Directory.Exists(systemFilesPath) == true)
-            {
-                lua.DoFile(sysLuaPath);
-            }
-            else
+            if (Directory.Exists(systemFilesPath) == false)
             {
                 CopySystemFiles(systemFilesPath);
-                lua.DoFile(sysLuaPath);
             }
+            lua.DoFile(sysLuaPath);
 
             objects = new List<TechObject>();
-
             cdbxTagView = false;
         }
 

@@ -135,12 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigurationChecker.cs" />
-    <Compile Include="DataBaseImitation\BaseAggregatesParameters.cs" />
-    <Compile Include="DataBaseImitation\BaseObjectsManager.cs" />
-    <Compile Include="DataBaseImitation\BaseOperations.cs" />
-    <Compile Include="DataBaseImitation\BaseOperationsParams.cs" />
-    <Compile Include="DataBaseImitation\BaseObjectsEquipment.cs" />
-    <Compile Include="DataBaseImitation\BaseOperationSteps.cs" />
+    <Compile Include="TechObject\Base\BaseObjectsManager.cs" />
     <Compile Include="Device\DeviceManager.cs" />
     <Compile Include="DeviceBindingReader.cs" />
     <Compile Include="DeviceReader.cs" />
@@ -306,8 +301,12 @@
     <None Include="Lua\sys.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Lua\sys_base_objects_description.lua" />
-    <None Include="Lua\sys_base_objects_initializer.lua" />
+    <None Include="Lua\sys_base_objects_description.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Lua\sys_base_objects_initializer.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Lua\sys_io.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

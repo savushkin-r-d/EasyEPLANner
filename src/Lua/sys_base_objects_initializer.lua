@@ -4,7 +4,7 @@ init_base_objects = function()
         return
     end
 
-    local objects = base_tech_objects
+    local objects = base_tech_objects()
     for field, value in ipairs(objects) do
         -- Данные для минимальной инициализации
         local name = value.name or ""
@@ -59,7 +59,7 @@ end
 
 -- Инициализация базовых операций объекта
 init_base_operations = function(object, operations)
-    for field, value in ipairs(operations)
+    for field, value in ipairs(operations) do
         -- Данные для минимальной инициализации операции
         local luaName = value.luaName or ""
         local name = value.name or ""

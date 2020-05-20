@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LuaInterface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,16 +12,16 @@ namespace TechObject
     /// </summary>
     public class BaseTechObject
     {
-        public BaseTechObject()
+        private BaseTechObject()
         {
             Name = "";
             EplanName = "";
             S88Level = 0;
-            BaseOperations = new BaseOperation[0];
+            BaseOperations = new List<BaseOperation>();
             BasicName = "";
             Owner = null;
-            Equipment = new BaseParameter[0];
-            AggregateParameters = new BaseParameter[0];
+            Equipment = new List<BaseParameter>();
+            AggregateParameters = new List<BaseParameter>();
 
         }
 
@@ -29,25 +30,60 @@ namespace TechObject
             Name = "";
             EplanName = "";
             S88Level = 0;
-            BaseOperations = new BaseOperation[0];
+            BaseOperations = new List<BaseOperation>();
             BasicName = "";
             Owner = owner;
-            Equipment = new BaseParameter[0];
-            AggregateParameters = new BaseParameter[0];
+            Equipment = new List<BaseParameter>();
+            AggregateParameters = new List<BaseParameter>();
         }
 
-        public BaseTechObject(string name, string eplanName, int s88Level,
-            BaseOperation[] operations, string basicName, 
-            BaseParameter[] equipment, BaseParameter[] aggregateProperties)
+        public static BaseTechObject EmptyBaseTechObject()
         {
-            Name = name;
-            EplanName = eplanName;
-            S88Level = s88Level;
-            BaseOperations = operations;
-            BasicName = basicName;
-            Owner = null;
-            Equipment = equipment;
-            AggregateParameters = aggregateProperties;
+            return new BaseTechObject();
+        }
+
+        /// <summary>
+        /// Добавить оборудование в базовый объект
+        /// </summary>
+        /// <param name="luaName">Lua-имя</param>
+        /// <param name="name">Имя</param>
+        /// <param name="value">Значение</param>
+        public void AddEquipment(string luaName, string name, string value)
+        {
+            Equipment.Add(new ActiveParameter(luaName, name, value));
+        }
+
+        /// <summary>
+        /// Добавить параметр агрегата
+        /// </summary>
+        /// <param name="luaName">Lua-имя</param>
+        /// <param name="name">Имя</param>
+        /// <param name="defaultValue">Значение по-умолчанию</param>
+        public void AddAggregateParameter(string luaName, string name,
+            string defaultValue)
+        {
+            var par = new ActiveBoolParameter(luaName, name, defaultValue);
+            AggregateParameters.Add(par);
+        }
+
+        /// <summary>
+        /// Добавить базовую операцию
+        /// </summary>
+        /// <param name="luaName">Lua-имя</param>
+        /// <param name="name">Имя</param>
+        /// <returns></returns>
+        public BaseOperation AddBaseOperation(string luaName, string name)
+        {
+            if (BaseOperations.Count == 0)
+            {
+                BaseOperations.Add(BaseOperation.EmptyOperation());
+            }
+
+            var operation = BaseOperation.EmptyOperation();
+            operation.LuaName = luaName;
+            operation.Name = name;
+
+            return operation;
         }
 
         /// <summary>
@@ -101,7 +137,7 @@ namespace TechObject
         /// <summary>
         /// Базовые операции объекта
         /// </summary>
-        public BaseOperation[] BaseOperations
+        public List<BaseOperation> BaseOperations
         {
             get 
             { 
@@ -149,7 +185,7 @@ namespace TechObject
         /// <summary>
         /// Оборудование базового объекта
         /// </summary>
-        public BaseParameter[] Equipment
+        public List<BaseParameter> Equipment
         {
             get
             {
@@ -205,10 +241,46 @@ namespace TechObject
         /// <returns></returns>
         public BaseTechObject Clone(TechObject techObject)
         {
-            var cloned = DataBase.Imitation.BaseTechObjects()
-                .Where(x => x.Name == this.Name)
-                .FirstOrDefault();
+            var cloned = Clone();
             cloned.Owner = techObject;
+            return cloned;
+        }
+
+        /// <summary>
+        /// Копия объекта
+        /// </summary>
+        /// <returns></returns>
+        public BaseTechObject Clone()
+        {
+            var cloned = EmptyBaseTechObject();
+            cloned.Name = Name;
+            cloned.Owner = Owner;
+
+            var aggregateParameters = new List<BaseParameter>();
+            foreach(var aggrPar in AggregateParameters)
+            {
+                aggregateProperties.Add(aggrPar.Clone());
+            }
+            cloned.AggregateParameters = aggregateParameters;
+
+            var baseOperations = new List<BaseOperation>();
+            foreach(var baseOperation in BaseOperations)
+            {
+                baseOperations.Add(baseOperation.Clone());
+            }
+            cloned.BaseOperations = baseOperations;
+
+            cloned.BasicName = BasicName;
+            cloned.EplanName = EplanName;
+
+            var equipment = new List<BaseParameter>();
+            foreach(var equip in Equipment)
+            {
+                equipment.Add(equip.Clone());
+            }
+            cloned.Equipment = equipment;
+
+            cloned.S88Level = S88Level;
             return cloned;
         }
 
@@ -244,13 +316,13 @@ namespace TechObject
         /// <summary>
         /// Параметры объекта, как агрегата (добавляемые в аппарат).
         /// </summary>
-        public BaseParameter[] AggregateParameters
+        public List<BaseParameter> AggregateParameters
         {
             get
             {
                 if (aggregateProperties == null)
                 {
-                    return new BaseParameter[0];
+                    return new List<BaseParameter>();
                 }
                 else
                 {
@@ -608,8 +680,8 @@ namespace TechObject
         private string basicName;
         private TechObject owner;
 
-        private BaseOperation[] objectOperations;
-        private BaseParameter[] equipment;
-        private BaseParameter[] aggregateProperties;
+        private List<BaseOperation> objectOperations;
+        private List<BaseParameter> equipment;
+        private List<BaseParameter> aggregateProperties;
     }
 }
