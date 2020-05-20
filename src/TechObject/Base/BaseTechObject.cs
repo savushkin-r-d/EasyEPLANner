@@ -75,6 +75,7 @@ namespace TechObject
         {
             if (BaseOperations.Count == 0)
             {
+                // Пустой объект, если не должно быть выбрано никаких объектов
                 BaseOperations.Add(BaseOperation.EmptyOperation());
             }
 

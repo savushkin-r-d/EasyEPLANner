@@ -54,6 +54,12 @@ namespace TechObject
         /// <param name="name">Имя</param>
         public void AddStep(string luaName, string name)
         {
+            if (Steps.Count == 0)
+            {
+                // Пустой объект, если не должно быть выбрано никаких объектов
+                Steps.Add(new ActiveParameter("", ""));
+            }
+
             Steps.Add(new ActiveParameter(luaName, name));
         }
 
