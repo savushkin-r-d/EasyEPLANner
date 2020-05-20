@@ -165,7 +165,7 @@ return
                         active =
                         {
                             { luaName = "CIP_WASH_END", name = "Мойка завершена" },
-                            { luaName = "CIP_WAS_REQUEST", name = "Автоматическое включение мойки" },
+                            { luaName = "CIP_WASH_REQUEST", name = "Автоматическое включение мойки" },
                         },
                     },
                     steps =
@@ -227,7 +227,7 @@ return
                         active =
                         {
                             { luaName = "CIP_WASH_END", name = "Мойка завершена" },
-                            { luaName = "CIP_WAS_REQUEST", name = "Автоматическое включение мойки" },
+                            { luaName = "CIP_WASH_REQUEST", name = "Автоматическое включение мойки" },
                         },
                     },
                     steps =
@@ -278,7 +278,7 @@ return
                         active =
                         {
                             { luaName = "CIP_WASH_END", name = "Мойка завершена" },
-                            { luaName = "CIP_WAS_REQUEST", name = "Автоматическое включение мойки" },
+                            { luaName = "CIP_WASH_REQUEST", name = "Автоматическое включение мойки" },
                         },
                     },
                     steps =
@@ -329,7 +329,7 @@ return
                         active =
                         {
                             { luaName = "CIP_WASH_END", name = "Мойка завершена" },
-                            { luaName = "CIP_WAS_REQUEST", name = "Автоматическое включение мойки" },
+                            { luaName = "CIP_WASH_REQUEST", name = "Автоматическое включение мойки" },
                         },
                         passive =
                         {
@@ -370,7 +370,7 @@ return
                         {
                             { luaName = "CIP_WASH_END", name = "Мойка завершена" },
                             { luaName = "DI_CIP_FREE", name = "МСА свободна" },
-                            { luaName = "CIP_WAS_REQUEST", name = "Автоматическое включение мойки" },
+                            { luaName = "CIP_WASH_REQUEST", name = "Автоматическое включение мойки" },
                         },
                         passive =
                         {
