@@ -46,11 +46,16 @@ namespace TechObject
                 .Combine(systemFilesPath, "sys_base_objects_initializer.lua");
             lua.DoFile(baseObjectsInitializerLuaFile);
 
-            //TODO: проверять наличие файла описания и если его нет, создать
-            // пустой
-
             var luaDescriptionPath = Path.Combine(systemFilesPath, 
                 "sys_base_objects_description.lua");
+            if (!File.Exists(luaDescriptionPath))
+            {
+                string template = EasyEPlanner.Properties.Resources
+                    .ResourceManager
+                    .GetString("SysBaseObjectsDescriptionPattern");
+                File.WriteAllText(luaDescriptionPath, template);
+            }
+
             var reader = new StreamReader(luaDescriptionPath,
                 Encoding.GetEncoding("UTF-8"));
 
