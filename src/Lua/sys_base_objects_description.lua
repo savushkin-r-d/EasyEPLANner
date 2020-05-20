@@ -436,11 +436,11 @@ local base_tech_objects =
         basicName = "tank",
         equipment =
         {
-            { luaName = "hatch", name = "Датчик крышки люка", "GS1" },
-            { luaName = "LS_up", name = "Датчик верхнего уровня", "LS2" },
-            { luaName = "LS_down", name = "Датчик нижнего уровня", "LS1" },
-            { luaName = "LT", name = "Датчик текущего уровня", "LT1" },
-            { luaName = "TE", name = "Датчик температуры", "TE1" },
+            { luaName = "hatch", name = "Датчик крышки люка", defaultValue = "GS1" },
+            { luaName = "LS_up", name = "Датчик верхнего уровня", defaultValue = "LS2" },
+            { luaName = "LS_down", name = "Датчик нижнего уровня", defaultValue = "LS1" },
+            { luaName = "LT", name = "Датчик текущего уровня", defaultValue = "LT1" },
+            { luaName = "TE", name = "Датчик температуры", defaultValue = "TE1" },
         },
         aggregateParameters = { },
     },
