@@ -54,6 +54,9 @@ namespace TechObject
                     .ResourceManager
                     .GetString("SysBaseObjectsDescriptionPattern");
                 File.WriteAllText(luaDescriptionPath, template);
+                MessageBox.Show("Файл с описанием базовых объектов не найден." +
+                    " Будет создан пустой файл (без описания).", "Ошибка", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             var reader = new StreamReader(luaDescriptionPath,

@@ -251,6 +251,7 @@ namespace EasyEPlanner
             DeviceManager.GetInstance();
             this.projectConfiguration = ProjectConfiguration.GetInstance();
             EProjectManager.GetInstance();
+            BaseTechObjectManager.GetInstance();
         }
 
         /// <summary>
