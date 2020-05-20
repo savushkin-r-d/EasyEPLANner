@@ -16,8 +16,8 @@ init_base_objects = function()
         local baseObject = AddBaseObject(name, eplanName, s88Level, basicName)
         
         -- Добавить базовые операции (параметры, шаги)
-        local baseOperations = value.baseOperation or { }
-        init_base_operations(object, baseOperations)
+        local baseOperations = value.baseOperations or { }
+        init_base_operations(baseObject, baseOperations)
 
         -- Добавить оборудование
         local equipment = value.equipment or { }
@@ -138,6 +138,6 @@ init_operation_steps = function(operation, steps)
         local name = value.name or ""
 
         -- Добавить базовый шаг для операции
-        local step = operation:AddStep(luaName, name)
+        operation:AddStep(luaName, name)
     end
 end
