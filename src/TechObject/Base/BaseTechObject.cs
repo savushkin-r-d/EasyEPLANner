@@ -82,6 +82,7 @@ namespace TechObject
             var operation = BaseOperation.EmptyOperation();
             operation.LuaName = luaName;
             operation.Name = name;
+            BaseOperations.Add(operation);
 
             return operation;
         }
@@ -259,7 +260,7 @@ namespace TechObject
             var aggregateParameters = new List<BaseParameter>();
             foreach(var aggrPar in AggregateParameters)
             {
-                aggregateProperties.Add(aggrPar.Clone());
+                aggregateParameters.Add(aggrPar.Clone());
             }
             cloned.AggregateParameters = aggregateParameters;
 

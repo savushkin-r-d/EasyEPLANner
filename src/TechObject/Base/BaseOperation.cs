@@ -52,7 +52,7 @@ namespace TechObject
         /// </summary>
         /// <param name="luaName">Lua-имя</param>
         /// <param name="name">Имя</param>
-        public void AddSteps(string luaName, string name)
+        public void AddStep(string luaName, string name)
         {
             Steps.Add(new ActiveParameter(luaName, name));
         }
@@ -332,7 +332,7 @@ namespace TechObject
         public BaseOperation Clone(Mode owner)
         {
             var operation = Clone();
-            operation.owner = owner;
+            operation.owner = this.owner;
             return operation;
         }
 

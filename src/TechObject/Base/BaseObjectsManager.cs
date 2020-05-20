@@ -119,10 +119,10 @@ namespace TechObject
         public BaseTechObject AddBaseObject(string name, string eplanName,
             int s88Level, string basicName)
         {
-            if (BaseTechObjects.Count == 0)
+            if (baseTechObjects.Count == 0)
             {
                 // Пустой объект, если не должно быть выбрано никаких объектов
-                BaseTechObjects.Add(BaseTechObject.EmptyBaseTechObject());
+                baseTechObjects.Add(BaseTechObject.EmptyBaseTechObject());
             }
 
             var obj = BaseTechObject.EmptyBaseTechObject();
@@ -131,24 +131,21 @@ namespace TechObject
             obj.S88Level = s88Level;
             obj.BasicName = basicName;
 
-            BaseTechObjects.Add(obj);
+            baseTechObjects.Add(obj);
             return obj;
         }
 
         /// <summary>
         /// Базовые технологические объекты
         /// </summary>
-        public List<BaseTechObject> BaseTechObjects
+        public List<BaseTechObject> BaseTechObjects()
         {
-            get
+            var objects = new List<BaseTechObject>();
+            foreach (var obj in baseTechObjects)
             {
-                var objects = new List<BaseTechObject>();
-                foreach (var obj in baseTechObjects)
-                {
-                    objects.Add(obj.Clone());
-                }
-                return objects;
+                objects.Add(obj.Clone());
             }
+            return objects;
         }
 
         private List<BaseTechObject> baseTechObjects;
