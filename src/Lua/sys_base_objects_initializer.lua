@@ -40,7 +40,7 @@ init_equipment = function(object, equipment)
         local defaultValue = value.defaultValue or ""
 
         -- Добавить оборудование
-        object.AddEquipment(luaName, name, defaultValue)
+        object:AddEquipment(luaName, name, defaultValue)
     end
 end
 
@@ -53,7 +53,7 @@ init_aggregate_parameters = function(object, aggregateParameters)
         local defaultValue = value.defaultValue or ""
 
         -- Добавить параметр
-        object.AddAggregateParameter(luaName, name, defaultValue)
+        object:AddAggregateParameter(luaName, name, defaultValue)
     end
 end
 
@@ -65,7 +65,7 @@ init_base_operations = function(object, operations)
         local name = value.name or ""
 
         -- Добавить базовую операцию
-        local operation = object.AddBaseOperation(luaName, name)
+        local operation = object:AddBaseOperation(luaName, name)
 
         -- Добавить параметры базовой операции
         local params = value.params or { }
@@ -101,7 +101,7 @@ init_active_parameters = function(operation, activeParameters)
         local defaultValue = value.defaultValue or ""
 
         -- Добавить активный параметр
-        operation.AddActiveParameter(luaName, name, defaultValue)
+        operation:AddActiveParameter(luaName, name, defaultValue)
     end
 end
 
@@ -114,7 +114,7 @@ init_active_bool_parameters = function(operation, activeBoolParameters)
         local defaultValue = value.defaultValue or ""
 
         -- Добавить булевый параметр
-        operation.AddActiveBoolParameter(luaName, name, defaultValue)
+        operation:AddActiveBoolParameter(luaName, name, defaultValue)
     end
 end
 
@@ -126,7 +126,7 @@ init_passive_parameters = function(operation, passiveParameters)
         local name = value.name or ""
 
         -- Добавить пассивный параметр
-        operation.AddPassiveParameter(luaName, name)
+        operation:AddPassiveParameter(luaName, name)
     end
 end
 
@@ -138,6 +138,6 @@ init_operation_steps = function(operation, steps)
         local name = value.name or ""
 
         -- Добавить базовый шаг для операции
-        local step = operation.AddStep(luaName, name)
+        local step = operation:AddStep(luaName, name)
     end
 end
