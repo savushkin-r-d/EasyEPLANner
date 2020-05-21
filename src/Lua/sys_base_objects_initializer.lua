@@ -5,16 +5,15 @@ init_base_objects = function()
     end
 
     local objects = base_tech_objects()
-    for field, value in ipairs(objects) do
+    for eplanName, value in ipairs(objects) do
         -- Данные для минимальной инициализации
         local name = value.name or ""
-        local eplanName = value.eplanName or ""
         local s88Level = value.s88Level or 0
         local basicName = value.basicName or ""
 
         -- Добавить базовый объект
         local baseObject = AddBaseObject(name, eplanName, s88Level, basicName)
-        
+
         -- Добавить базовые операции (параметры, шаги)
         local baseOperations = value.baseOperations or { }
         init_base_operations(baseObject, baseOperations)
@@ -33,9 +32,8 @@ end
 
 -- Инициализация оборудования объекта
 init_equipment = function(object, equipment)
-    for field, value in ipairs(equipment) do
+    for luaName, value in ipairs(equipment) do
         -- Данные для добавления оборудования
-        local luaName = value.luaName or ""
         local name = value.name or ""
         local defaultValue = value.defaultValue or ""
 
@@ -46,9 +44,8 @@ end
 
 -- Инициализация параметров объекта как агрегата
 init_aggregate_parameters = function(object, aggregateParameters)
-    for field, value in ipairs(aggregateParameters) do
+    for luaName, value in ipairs(aggregateParameters) do
         -- Данные для добавления параметра
-        local luaName = value.luaName or ""
         local name = value.name or ""
         local defaultValue = value.defaultValue or ""
 
@@ -59,9 +56,8 @@ end
 
 -- Инициализация базовых операций объекта
 init_base_operations = function(object, operations)
-    for field, value in ipairs(operations) do
+    for luaName, value in ipairs(operations) do
         -- Данные для минимальной инициализации операции
-        local luaName = value.luaName or ""
         local name = value.name or ""
 
         -- Добавить базовую операцию
@@ -94,9 +90,8 @@ end
 
 -- Инициализация активных параметров базовой операции
 init_active_parameters = function(operation, activeParameters)
-	for field, value in ipairs(activeParameters) do
+	for luaName, value in ipairs(activeParameters) do
         -- Данные для добавления параметра
-        local luaName = value.luaName or ""
         local name = value.name or ""
         local defaultValue = value.defaultValue or ""
 
@@ -107,9 +102,8 @@ end
 
 -- Инициализация булевых параметров базовой операции
 init_active_bool_parameters = function(operation, activeBoolParameters)
-	for field, value in ipairs(activeBoolParameters) do
+	for luaName, value in ipairs(activeBoolParameters) do
         -- Данные для добавления параметра
-        local luaName = value.luaName or ""
         local name = value.name or ""
         local defaultValue = value.defaultValue or ""
 
@@ -120,9 +114,8 @@ end
 
 -- Инициализация пассивных параметров базовой операции
 init_passive_parameters = function(operation, passiveParameters)
-	for field, value in ipairs(passiveParameters) do
+	for luaName, value in ipairs(passiveParameters) do
         -- Данные для добавления параметра
-        local luaName = value.luaName or ""
         local name = value.name or ""
 
         -- Добавить пассивный параметр
@@ -132,9 +125,8 @@ end
 
 -- Инициализация шагов базовой операции
 init_operation_steps = function(operation, steps)
-    for field, value in ipairs(steps) do
+    for luaName, value in ipairs(steps) do
         -- Данные для добавления базового шага
-        local luaName = value.luaName or ""
         local name = value.name or ""
 
         -- Добавить базовый шаг для операции
