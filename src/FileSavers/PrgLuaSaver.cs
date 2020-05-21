@@ -173,9 +173,9 @@ namespace EasyEPlanner
                             temp += "\n";
                         }
 
-                        temp += techObjNameForFile + 
+                        temp += techObjNameForFile + "." +
                             attachedTechObject.BaseTechObject.BindingName +
-                            "prg." + attachedTechObjNameForFile + "\n";
+                            " = prg." + attachedTechObjNameForFile + "\n";
 
                         previouslyObjectName = techObj.NameEplanForFile
                             .ToLower();
