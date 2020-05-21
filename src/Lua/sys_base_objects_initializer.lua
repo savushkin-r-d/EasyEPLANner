@@ -10,9 +10,10 @@ init_base_objects = function()
         local name = value.name or ""
         local s88Level = value.s88Level or 0
         local basicName = value.basicName or ""
+        local bindingName = value.bindingName or ""
 
         -- Добавить базовый объект
-        local baseObject = AddBaseObject(name, eplanName, s88Level, basicName)
+        local baseObject = AddBaseObject(name, eplanName, s88Level, basicName, bindingName)
 
         -- Добавить базовые операции (параметры, шаги)
         local baseOperations = value.baseOperations or { }

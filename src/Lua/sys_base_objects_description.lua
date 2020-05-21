@@ -10,6 +10,7 @@
 -- 5. equipment - оборудование базового объекта.
 -- 6. aggregateParameters - параметры объекта, который является агрегатом (которые будут добавлены
 -- в аппарат, при привязке агрегата к аппарату).
+-- 7. bindingName - имя агрегата, используемое при привязке его к аппарату (для аппаратов не обязательно).
 
 -- Базовые операции (название таблицы - это Lua-имя операции, пишется в верхнем регистре):
 -- 1. name - русскоязычное название операции.
@@ -77,6 +78,7 @@ return
                 LS_down = { name = "Датчик нижнего уровня", defaultValue = "LS1" },
             },
             aggregateParameters = { },
+            bindingName = "ice_water_pump_tank"
         },
         _tank_PID = {
             name = "Бачок откачки лёдводы ПИД",
@@ -109,6 +111,7 @@ return
                 SET_VALUE = { name = "Задание"},
             },
             aggregateParameters = { },
+            bindingName = "ice_water_pump_tank"
         },
         boil = {
             name = "Бойлер",
@@ -245,7 +248,7 @@ return
             equipment = { },
             aggregateParameters = { },
         },
-        line_out = { -- Линия выдачи
+        line_out = {
             name = "Линия выдачи",
             s88Level = 2,
             baseOperations =
@@ -434,6 +437,7 @@ return
             {
                 NEED_PRESSURE_CONTROL = { name = "Использовать узел давления", defaultValue = "false" },
             },
+            bindingName = "pressure_node"
         },
         heater_node = {
             name = "Узел подогрева",
@@ -456,6 +460,7 @@ return
             {
                 HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
             },
+            bindingName = "heater_node"
         },
         heater_node_PID = {
             name = "Узел подогрева ПИД",
@@ -484,6 +489,7 @@ return
             {
                 HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
             },
+            bindingName = "heater_node"
         },
         flow_node_PID = {
             name = "Узел расхода ПИД",
@@ -507,6 +513,7 @@ return
             {
                 NEED_FLOW_CONTROL = { name = "Использовать узел расхода", defaultValue = "false" },
             },
+            bindingName = "flow_node"
         },
         cooler_node = {
             name = "Узел охлаждения",
@@ -532,6 +539,7 @@ return
             {
                 NEED_COOLING = { name = "Использовать узел охлаждения", defaultValue = "false" },
             },
+            bindingName = "cooler_node"
         },
         cooler_node_PID = {
             name = "Узел охлаждения ПИД",
@@ -556,6 +564,7 @@ return
                 SET_VALUE = { name = "Задание"},
             },
             aggregateParameters = { },
+            bindingName = "cooler_node"
         },
         mix_node = {
             name = "Узел перемешивания",
@@ -570,6 +579,7 @@ return
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
             },
             aggregateParameters = { },
+            bindingName = "mix_node"
         },
     }
 end

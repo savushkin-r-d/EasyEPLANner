@@ -21,7 +21,7 @@ namespace TechObject
             Owner = null;
             Equipment = new List<BaseParameter>();
             AggregateParameters = new List<BaseParameter>();
-
+            BindingName = "";
         }
 
         public BaseTechObject(TechObject owner)
@@ -34,6 +34,7 @@ namespace TechObject
             Owner = owner;
             Equipment = new List<BaseParameter>();
             AggregateParameters = new List<BaseParameter>();
+            BindingName = "";
         }
 
         public static BaseTechObject EmptyBaseTechObject()
@@ -334,6 +335,22 @@ namespace TechObject
             set
             {
                 aggregateProperties = value;
+            }
+        }
+
+        /// <summary>
+        /// Имя агрегата при его привязке к аппарату.
+        /// </summary>
+        public string BindingName
+        {
+            get
+            {
+                return bindingName;
+            }
+
+            set
+            {
+                bindingName = value;
             }
         }
 
@@ -680,6 +697,7 @@ namespace TechObject
         private int s88Level;
         private string basicName;
         private TechObject owner;
+        private string bindingName;
 
         private List<BaseOperation> objectOperations;
         private List<BaseParameter> equipment;

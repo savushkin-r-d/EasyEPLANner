@@ -173,9 +173,9 @@ namespace EasyEPlanner
                             temp += "\n";
                         }
 
-                        temp += GenerateStringForAttachingObject(
-                            attachedTechObject, techObjNameForFile,
-                            attachedTechObjNameForFile);
+                        temp += techObjNameForFile + 
+                            attachedTechObject.BaseTechObject.BindingName +
+                            "prg." + attachedTechObjNameForFile + "\n";
 
                         previouslyObjectName = techObj.NameEplanForFile
                             .ToLower();
@@ -194,64 +194,6 @@ namespace EasyEPlanner
             {
                 res += "\n" + temp + "\n";
             }
-            return res;
-        }
-
-        /// <summary>
-        /// Генерировать строку для записи привязки агрегатов к аппаратам в
-        /// prg.lua
-        /// </summary>
-        /// <param name="attachedTechObject">Привязанный тех. объект</param>
-        /// <param name="attachedTechObjNameForFile">Имя привязанного
-        /// тех. объекта для файла</param>
-        /// <param name="techObjNameForFile">Имя тех. объекта к которому
-        /// привязывается объект</param>
-        /// <returns></returns>
-        private static string GenerateStringForAttachingObject(
-            TechObject.TechObject attachedTechObject, 
-            string techObjNameForFile, string attachedTechObjNameForFile)
-        {
-            var res = "";
-
-            if (attachedTechObject.BaseTechObject.BasicName == "mix_node")
-            {
-                res += techObjNameForFile + ".mix_node = " +
-                        "prg." + attachedTechObjNameForFile + "\n";
-            }
-
-            if (attachedTechObject.BaseTechObject.BasicName == "cooler_node" ||
-                attachedTechObject.BaseTechObject.BasicName == "cooler_node_PID")
-            {
-                res += techObjNameForFile + ".cooler_node = " +
-                        "prg." + attachedTechObjNameForFile + "\n";
-            }
-            
-            if (attachedTechObject.BaseTechObject.BasicName == "heater_node" ||
-                attachedTechObject.BaseTechObject.BasicName == "heater_node_PID")
-            {
-                res += techObjNameForFile + ".heater_node = " +
-                        "prg." + attachedTechObjNameForFile + "\n";
-            }
-            
-            if (attachedTechObject.BaseTechObject.BasicName == "pressure_node_PID")
-            {
-                res += techObjNameForFile + ".pressure_node = " +
-                    "prg." + attachedTechObjNameForFile + "\n";
-            }
-            
-            if (attachedTechObject.BaseTechObject.BasicName == "flow_node_PID")
-            {
-                res += techObjNameForFile + ".flow_node = " +
-                    "prg." + attachedTechObjNameForFile + "\n";
-            }
-            
-            if (attachedTechObject.BaseTechObject.BasicName == "ice_water_pump_tank" ||
-                attachedTechObject.BaseTechObject.BasicName == "ice_water_pump_tank_PID")
-            {
-                res += techObjNameForFile + ".ice_water_pump_tank = " +
-                    "prg." + attachedTechObjNameForFile + "\n";
-            }
-
             return res;
         }
 
