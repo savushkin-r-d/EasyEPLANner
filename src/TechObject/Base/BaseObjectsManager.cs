@@ -42,40 +42,60 @@ namespace TechObject
             string assemblyPath = Path.GetDirectoryName(
                 System.Reflection.Assembly.GetExecutingAssembly().Location);
             string systemFilesPath = assemblyPath + "\\Lua";
-            string baseObjectsInitializerLuaFile = Path
-                .Combine(systemFilesPath, "sys_base_objects_initializer.lua");
-            lua.DoFile(baseObjectsInitializerLuaFile);
 
-            var luaDescriptionPath = Path.Combine(systemFilesPath, 
-                "sys_base_objects_description.lua");
-            if (!File.Exists(luaDescriptionPath))
+            InitBaseTechObjectsInitializer(systemFilesPath);
+            string description = LoadBaseTechObjectsDescription(
+                systemFilesPath);
+            InitBaseObjectsFromLua(description);
+        }
+
+        /// <summary>
+        /// Инициализация читателя базовых объектов.
+        /// </summary>
+        /// <param name="systemFilesPath">Путь к Lua файлам</param>
+        private void InitBaseTechObjectsInitializer(string systemFilesPath)
+        {
+            string fileName = "sys_base_objects_initializer.lua";
+            string pathToFile = Path.Combine(systemFilesPath, fileName);
+            lua.DoFile(pathToFile);
+        }
+
+        /// <summary>
+        /// Загрузка описание базовых объектов
+        /// </summary>
+        /// <param name="systemFilesPath">Путь к Lua файлам</param>
+        /// <returns>Описание</returns>
+        private string LoadBaseTechObjectsDescription(string systemFilesPath)
+        {
+            var fileName = "sys_base_objects_description.lua";
+            var pathToFile = Path.Combine(systemFilesPath, fileName);
+            if (!File.Exists(pathToFile))
             {
                 string template = EasyEPlanner.Properties.Resources
                     .ResourceManager
                     .GetString("SysBaseObjectsDescriptionPattern");
-                File.WriteAllText(luaDescriptionPath, template);
+                File.WriteAllText(pathToFile, template);
                 MessageBox.Show("Файл с описанием базовых объектов не найден." +
-                    " Будет создан пустой файл (без описания).", "Ошибка", 
+                    " Будет создан пустой файл (без описания).", "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            var reader = new StreamReader(luaDescriptionPath,
+            var reader = new StreamReader(pathToFile,
                 Encoding.GetEncoding("UTF-8"));
-
             string readedDescription = reader.ReadToEnd();
-            LoadBaseObjectsFromLua(readedDescription);
+            return readedDescription;
         }
 
         /// <summary>
-        /// Загрузка базовых объектов из LUA.
+        /// Загрузка базовых объектов из описания LUA.
         /// </summary>
-        /// <param name="LuaStr">Скрипт с данными</param>
-        public void LoadBaseObjectsFromLua(string LuaStr)
+        /// <param name="luaString">Скрипт с описанием</param>
+        private void InitBaseObjectsFromLua(string luaString)
         {
             lua.DoString("base_tech_objects = nil");
             try
             {
-                lua.DoString(LuaStr);
+                lua.DoString(luaString);
             }
             catch (Exception ex)
             {
