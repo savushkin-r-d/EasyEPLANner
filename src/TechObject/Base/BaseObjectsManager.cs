@@ -140,7 +140,7 @@ namespace TechObject
         /// <param name="basicName">Базовое имя для функциональности</param>
         /// <returns></returns>
         public BaseTechObject AddBaseObject(string name, string eplanName,
-            int s88Level, string basicName)
+            int s88Level, string basicName, string bindingName)
         {
             if (baseTechObjects.Count == 0)
             {
@@ -153,6 +153,7 @@ namespace TechObject
             obj.EplanName = eplanName;
             obj.S88Level = s88Level;
             obj.BasicName = basicName;
+            obj.BindingName = bindingName;
 
             baseTechObjects.Add(obj);
             return obj;

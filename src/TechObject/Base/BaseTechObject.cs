@@ -283,6 +283,7 @@ namespace TechObject
             cloned.Equipment = equipment;
 
             cloned.S88Level = S88Level;
+            cloned.BindingName = BindingName;
             return cloned;
         }
 
