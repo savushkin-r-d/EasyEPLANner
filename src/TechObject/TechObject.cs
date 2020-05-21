@@ -978,7 +978,7 @@ namespace TechObject
         {
             get
             {
-                return BaseTechObjectManager.GetInstance().BaseTechObjects()
+                return BaseTechObjectManager.GetInstance().GetBaseTechObjects()
                 .Select(x => x.Name).ToList();
             }
         }

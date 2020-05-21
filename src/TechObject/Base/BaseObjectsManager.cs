@@ -162,7 +162,7 @@ namespace TechObject
         /// <summary>
         /// Базовые технологические объекты
         /// </summary>
-        public List<BaseTechObject> BaseTechObjects()
+        public List<BaseTechObject> GetBaseTechObjects()
         {
             var objects = new List<BaseTechObject>();
             foreach (var obj in baseTechObjects)
