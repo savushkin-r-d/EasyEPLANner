@@ -367,9 +367,15 @@ namespace TechObject
             var res = "";
             res += SaveObjectInfoToPrgLua(objName, prefix);
 
-            res += SaveOperations(objName, prefix);
-            res += SaveOperationsSteps(objName, prefix);
-            res += SaveOperationsParameters(objName, prefix);
+            var modesManager = this.Owner.ModesManager;
+            var modes = modesManager.Modes;
+            if (modes.Where(x => x.DisplayText[1] != "").Count() != 0)
+            {
+                res += SaveOperations(objName, prefix, modes);
+                res += SaveOperationsSteps(objName, prefix, modes);
+                res += SaveOperationsParameters(objName, prefix, modes);
+            }
+
             res += SaveEquipment(objName);
 
             return res;
@@ -381,15 +387,13 @@ namespace TechObject
         /// <param name="objName">Имя объекта</param>
         /// <param name="prefix">Отступ</param>
         /// <returns></returns>
-        private string SaveObjectInfoToPrgLua(string objName,
-            string prefix)
+        private string SaveObjectInfoToPrgLua(string objName, string prefix)
         {
-            if (this.EplanName.ToLower() != "tank")
-            {
-                return "";
-            }
-
             var res = "";
+            if (EplanName.ToLower() != "tank")
+            {
+                return res;
+            }
 
             var objects = TechObjectManager.GetInstance();
             var masterObj = objects.Objects
@@ -412,22 +416,96 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Сохранить операции объекта
+        /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
+        /// <param name="prefix">Отступ</param>
+        /// <param name="modes">Операции объекта</param>
+        /// <returns></returns>
+        public string SaveOperations(string objName, string prefix, 
+            List<Mode> modes)
+        {
+            var res = "";
+
+            res += objName + ".operations = \t\t--Операции.\n";
+            res += prefix + "{\n";
+            foreach (Mode mode in modes)
+            {
+                var baseOperation = mode.BaseOperation;
+                if (baseOperation.Name != "")
+                {
+                    res += prefix + baseOperation.LuaName.ToUpper() + " = " +
+                        mode.GetModeNumber() + ",\n";
+                }
+            }
+            res += prefix + "}\n";
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить номера шагов операций объекта.
+        /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
+        /// <param name="prefix">Отступ</param>
+        /// <param name="modes">Операции объекта</param>
+        /// <returns></returns>
+        public string SaveOperationsSteps(string objName, string prefix,
+            List<Mode> modes)
+        {
+            var res = "";
+
+            res += objName + ".steps = \t\t--Шаги операций.\n";
+            res += prefix + "{\n";
+            foreach (Mode mode in modes)
+            {
+                var baseOperation = mode.BaseOperation;
+                if (baseOperation.Name == "")
+                {
+                    continue;
+                }
+
+                string temp = "";
+                foreach (var step in mode.MainSteps)
+                {
+                    if (step.GetBaseStepName() == "")
+                    {
+                        continue;
+                    }
+                    temp += prefix + prefix + step.GetBaseStepLuaName() +
+                        " = " + step.GetStepNumber() + ",\n";
+                }
+
+                if (temp.Length == 0)
+                {
+                    string emptyTable = prefix + baseOperation.LuaName
+                        .ToUpper() + " = { },\n";
+                    res += emptyTable;
+                }
+                else
+                {
+                    res += prefix + baseOperation.LuaName.ToUpper() + " =\n";
+                    res += prefix + prefix + "{\n";
+                    res += temp;
+                    res += prefix + prefix + "},\n";
+                }
+            }
+
+            res += prefix + "}\n";
+            return res;
+        }
+
+        /// <summary>
         /// Сохранить параметры операций базового объекта танк.
         /// </summary>
         /// <param name="objName">Имя объекта для записи</param>
         /// <param name="prefix">Отступ</param>
+        /// <param name="modes">Операции объекта</param>
         /// <returns></returns>
-        private string SaveOperationsParameters(string objName, string prefix)
+        private string SaveOperationsParameters(string objName, string prefix,
+            List<Mode> modes)
         {
             var res = "";
-
-            var modesManager = this.Owner.ModesManager;
-            var modes = modesManager.Modes;
-
-            if (modes.Where(x => x.DisplayText[1] != "").Count() == 0)
-            {
-                return res;
-            }
 
             foreach (Mode mode in modes)
             {
@@ -457,7 +535,7 @@ namespace TechObject
 
                         res += $"{objName}.{baseOperation.LuaName} =\n";
                         res += prefix + "{\n";
-                        foreach (BaseParameter param in baseOperation.Properties)
+                        foreach (var param in baseOperation.Properties)
                         {
                             if (param.needToSave)
                             {
@@ -525,7 +603,6 @@ namespace TechObject
                 if (param.needToSave)
                 {
                     string val = param.Value == "" ? "nil" : param.Value;
-
                     switch (param.LuaName)
                     {
                         case "OPERATION_AFTER_FILL":
@@ -570,7 +647,6 @@ namespace TechObject
         {
             var res = "";
             var equipment = this.owner.Equipment;
-
             foreach (var item in equipment.Items)
             {
                 var property = item as BaseParameter;
@@ -597,97 +673,6 @@ namespace TechObject
                 }
             }
 
-            return res;
-        }
-
-        /// <summary>
-        /// Сохранить операции объекта
-        /// </summary>
-        /// <param name="objName">Имя объекта для записи</param>
-        /// <param name="prefix">Отступ</param>
-        /// <returns></returns>
-        public string SaveOperations(string objName, string prefix)
-        {
-            var res = "";
-
-            var modesManager = this.Owner.ModesManager;
-            var modes = modesManager.Modes;
-            if (modes.Where(x => x.DisplayText[1] != "").Count() == 0)
-            {
-                return res;
-            }
-
-            res += objName + ".operations = \t\t--Операции.\n";
-            res += prefix + "{\n";
-            foreach (Mode mode in modes)
-            {
-                var baseOperation = mode.BaseOperation;
-                if (baseOperation.Name != "")
-                {
-                    res += prefix + baseOperation.LuaName.ToUpper() + " = " +
-                        mode.GetModeNumber() + ",\n";
-                }
-            }
-            res += prefix + "}\n";
-
-            return res;
-        }
-
-        /// <summary>
-        /// Сохранить номера шагов операций объекта.
-        /// </summary>
-        /// <param name="objName">Имя объекта для записи</param>
-        /// <param name="prefix">Отступ</param>
-        /// <returns></returns>
-        public string SaveOperationsSteps(string objName, string prefix)
-        {
-            var res = "";
-
-            var modesManager = this.Owner.ModesManager;
-            var modes = modesManager.Modes;
-            if (modes.Where(x => x.BaseOperation.Name != "").Count() == 0)
-            {
-                return res;
-            }
-
-            res += objName + ".steps = \t\t--Шаги операций.\n";
-            res += prefix + "{\n";
-            foreach (Mode mode in modes)
-            {
-                var baseOperation = mode.BaseOperation;
-                if (baseOperation.Name == "")
-                {
-                    continue;
-                }
-
-                string temp = "";
-                foreach (var step in mode.MainSteps)
-                {
-                    if (step.GetBaseStepName() == "")
-                    {
-                        continue;
-                    }
-
-                    temp += prefix + prefix + step.GetBaseStepLuaName() +
-                        " = " + step.GetStepNumber() + ",\n";
-                }
-
-                if (temp.Length == 0)
-                {
-                    string emptyTable = prefix + baseOperation.LuaName
-                        .ToUpper() + " = { },\n";
-                    res += emptyTable;
-                }
-                else
-                {
-                    res += prefix + baseOperation.LuaName.ToUpper() + " =\n";
-                    res += prefix + prefix + "{\n";
-                    res += temp;
-                    res += prefix + prefix + "},\n";
-                }               
-            }
-
-            res += prefix + "}\n";
             return res;
         }
         #endregion
