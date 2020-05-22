@@ -1,7 +1,6 @@
 ﻿using Device;
 using Editor;
 using IO;
-using StaticHelper;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

@@ -3,7 +3,6 @@ using Eplan.EplApi.DataModel;
 using Eplan.EplApi.HEServices;
 using LuaInterface;
 using System;
-using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -321,7 +320,7 @@ namespace StaticHelper
     }
 
     /// <summary>
-    /// Класс содержащий общие константы и переменные  для проекта.
+    /// Класс содержащий общие константы для проекта.
     /// </summary>
     public static class CommonConst
     {
