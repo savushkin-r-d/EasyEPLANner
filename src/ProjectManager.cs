@@ -1,6 +1,7 @@
 ﻿using Device;
 using Editor;
 using IO;
+using StaticHelper;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -101,7 +102,8 @@ namespace EasyEPlanner
             try
             {
                 // Поиск пути к каталогу с надстройкой
-                string[] originalAssemblypath = AddInModule.OriginalAssemblyPath.Split('\\');
+                string[] originalAssemblypath = CommonConst.originalAssemblyPath
+                    .Split('\\');
                 string configFileName = "configuration.ini";
 
                 int sourceEnd = originalAssemblypath.Length - 1;

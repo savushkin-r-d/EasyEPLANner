@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Reflection;
+using StaticHelper;
 
 namespace TechObject
 {
@@ -39,36 +41,31 @@ namespace TechObject
             lua.RegisterFunction("AddBaseObject", this, GetType()
                 .GetMethod("AddBaseObject"));
 
-            string assemblyPath = Path.GetDirectoryName(
-                System.Reflection.Assembly.GetExecutingAssembly().Location);
-            string systemFilesPath = assemblyPath + "\\Lua";
-
-            InitBaseTechObjectsInitializer(systemFilesPath);
-            string description = LoadBaseTechObjectsDescription(
-                systemFilesPath);
+            InitBaseTechObjectsInitializer();
+            string description = LoadBaseTechObjectsDescription();
             InitBaseObjectsFromLua(description);
         }
 
         /// <summary>
         /// Инициализация читателя базовых объектов.
         /// </summary>
-        /// <param name="systemFilesPath">Путь к Lua файлам</param>
-        private void InitBaseTechObjectsInitializer(string systemFilesPath)
+        private void InitBaseTechObjectsInitializer()
         {
             string fileName = "sys_base_objects_initializer.lua";
-            string pathToFile = Path.Combine(systemFilesPath, fileName);
+            string pathToFile = Path.Combine(CommonConst.systemFilesPath, 
+                fileName);
             lua.DoFile(pathToFile);
         }
 
         /// <summary>
         /// Загрузка описание базовых объектов
         /// </summary>
-        /// <param name="systemFilesPath">Путь к Lua файлам</param>
         /// <returns>Описание</returns>
-        private string LoadBaseTechObjectsDescription(string systemFilesPath)
+        private string LoadBaseTechObjectsDescription()
         {
             var fileName = "sys_base_objects_description.lua";
-            var pathToFile = Path.Combine(systemFilesPath, fileName);
+            var pathToFile = Path.Combine(CommonConst.systemFilesPath, 
+                fileName);
             if (!File.Exists(pathToFile))
             {
                 string template = EasyEPlanner.Properties.Resources

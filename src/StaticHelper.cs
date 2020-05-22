@@ -3,6 +3,8 @@ using Eplan.EplApi.DataModel;
 using Eplan.EplApi.HEServices;
 using LuaInterface;
 using System;
+using System.IO;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -320,7 +322,7 @@ namespace StaticHelper
     }
 
     /// <summary>
-    /// Класс содержащий общие константы  для проекта.
+    /// Класс содержащий общие константы и переменные  для проекта.
     /// </summary>
     public static class CommonConst
     {
@@ -357,6 +359,36 @@ namespace StaticHelper
             @"[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|" +
             @"[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|" +
             @"[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b";
+
+        /// <summary>
+        /// Путь к надстройке, к месту, из которого она подключалась к программе
+        /// инженером.
+        /// </summary>
+        public static string originalAssemblyPath = EasyEPlanner.AddInModule
+            .OriginalAssemblyPath;
+
+        /// <summary>
+        /// Название папки с системными скриптами
+        /// </summary>
+        private static string luaFolder = "\\Lua";
+
+        /// <summary>
+        /// Путь к надстройке в теневом хранилище Eplan
+        /// </summary>
+        public static string assemblyPath = Path.GetDirectoryName(Assembly
+                .GetExecutingAssembly().Location);
+
+        /// <summary>
+        /// Путь к системным файлам Lua в теневом хранилище Eplan
+        /// </summary>
+        public static string systemFilesPath = Path.Combine(assemblyPath, 
+            luaFolder);
+
+        /// <summary>
+        /// Путь к системным файлам Lua по месту подключения надстройки
+        /// </summary>
+        public static string originalSystemFilesPath = Path.Combine(
+            originalAssemblyPath, luaFolder);
     }
 
     /// <summary>
