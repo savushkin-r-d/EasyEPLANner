@@ -118,6 +118,14 @@ namespace TechObject
                 SetValue(attachedObjects);
             }
 
+            /// <summary>
+            /// Сбросить привязку
+            /// </summary>
+            public void Reset()
+            {
+                this.SetNewValue("");
+            }
+
             public override bool SetNewValue(string newValue)
             {
                 string oldValue = this.Value;
@@ -839,6 +847,7 @@ namespace TechObject
                 newValue != baseTechObject.EplanName))
             {
                 baseTechObject.ResetBaseOperations();
+                attachedObjects.Reset();
                 equipment.Clear();
             }
 
