@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
 using StaticHelper;
+using EasyEPlanner;
 
 namespace TechObject
 {
@@ -59,20 +60,20 @@ namespace TechObject
             const string spireXLS = "Spire.XLS.dll";
             const string spirePDF = "Spire.Pdf.dll";
 
-            string SpireLicensePath = Path.Combine(CommonConst.assemblyPath, 
-                spireLicense);
-            string SpireXLSPath = Path.Combine(CommonConst.assemblyPath, 
-                spireXLS);
-            string SpirePDFPath = Path.Combine(CommonConst.assemblyPath, 
-                spirePDF);
+            string SpireLicensePath = Path.Combine(
+                ProjectManager.GetInstance().AssemblyPath, spireLicense);
+            string SpireXLSPath = Path.Combine(
+                ProjectManager.GetInstance().AssemblyPath, spireXLS);
+            string SpirePDFPath = Path.Combine(
+                ProjectManager.GetInstance().AssemblyPath, spirePDF);
 
             if (File.Exists(SpireLicensePath) == false ||
                 File.Exists(SpireXLSPath) == false ||
                 File.Exists(SpirePDFPath) == false)
             {
                 var files = new string[] { spireLicense, spireXLS, spirePDF };
-                CopySpireXLSFiles(CommonConst.assemblyPath, files, 
-                    CommonConst.originalAssemblyPath);
+                CopySpireXLSFiles(ProjectManager.GetInstance().AssemblyPath, files,
+                    ProjectManager.GetInstance().OriginalAssemblyPath);
             }
         }
 
@@ -105,12 +106,13 @@ namespace TechObject
         private void InitTechObjectsLuaScript()
         {
             const string fileName = "sys.lua";
-            string sysLuaPath = Path.Combine(CommonConst.systemFilesPath, 
-                fileName);
-            if (Directory.Exists(CommonConst.systemFilesPath) == false)
+            string sysLuaPath = Path.Combine(
+                ProjectManager.GetInstance().SystemFilesPath, fileName);
+            if (Directory
+                .Exists(ProjectManager.GetInstance().SystemFilesPath) == false)
             {
-                CopySystemFiles(CommonConst.systemFilesPath, 
-                    CommonConst.originalSystemFilesPath);
+                CopySystemFiles(ProjectManager.GetInstance().SystemFilesPath,
+                    ProjectManager.GetInstance().OriginalSystemFilesPath);
             }
             lua.DoFile(sysLuaPath);
         }
@@ -566,8 +568,8 @@ namespace TechObject
                 GetType().GetMethod("GetTObject"));
 
             string fileName = "sys_restriction.lua";
-            string pathToRestrictionInitializer = Path
-                .Combine(CommonConst.systemFilesPath, fileName);
+            string pathToRestrictionInitializer = Path.Combine(
+                ProjectManager.GetInstance().SystemFilesPath, fileName);
             lua.DoFile(pathToRestrictionInitializer);
 
             //Выполнения Lua скрипта с описанием объектов.

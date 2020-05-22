@@ -5,6 +5,7 @@ using StaticHelper;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using TechObject;
 
@@ -102,15 +103,15 @@ namespace EasyEPlanner
             try
             {
                 // Поиск пути к каталогу с надстройкой
-                string[] originalAssemblypath = CommonConst.originalAssemblyPath
+                string[] originalAssemblyPath = OriginalAssemblyPath
                     .Split('\\');
                 string configFileName = "configuration.ini";
 
-                int sourceEnd = originalAssemblypath.Length - 1;
+                int sourceEnd = originalAssemblyPath.Length;
                 string path = @"";
                 for (int source = 0; source < sourceEnd; source++)
                 {
-                    path += originalAssemblypath[source].ToString() + "\\";
+                    path += originalAssemblyPath[source].ToString() + "\\";
                 }
                 path += configFileName;
 
@@ -552,6 +553,57 @@ namespace EasyEPlanner
 
                 rc.Properties.set_PROPUSER_TEST(1, oF.ToStringIdentifier());
                 highlightedObjects.Add(rc);
+            }
+        }
+
+        /// <summary>
+        /// Путь к надстройке, к месту, из которого она подключалась к программе
+        /// инженером.
+        /// </summary>
+        public string OriginalAssemblyPath
+        {
+            get
+            {
+                return Path.GetDirectoryName(AddInModule.OriginalAssemblyPath);
+            }
+        }
+
+        /// <summary>
+        /// Название папки с системными скриптами
+        /// </summary>
+        private const string luaFolder = "Lua";
+
+        /// <summary>
+        /// Путь к надстройке в теневом хранилище Eplan
+        /// </summary>
+        public string AssemblyPath 
+        {
+            get
+            {
+                return Path.GetDirectoryName(Assembly
+                    .GetExecutingAssembly().Location);
+            }
+        }
+
+        /// <summary>
+        /// Путь к системным файлам Lua в теневом хранилище Eplan
+        /// </summary>
+        public string SystemFilesPath 
+        {
+            get
+            {
+                return Path.Combine(AssemblyPath, luaFolder);
+            }
+        }
+
+        /// <summary>
+        /// Путь к системным файлам Lua по месту подключения надстройки
+        /// </summary>
+        public string OriginalSystemFilesPath 
+        {
+            get
+            {
+                return Path.Combine(OriginalAssemblyPath, luaFolder);
             }
         }
 

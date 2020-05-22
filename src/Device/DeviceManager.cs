@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
 using StaticHelper;
+using EasyEPlanner;
 
 /// <summary>
 /// Пространство имен технологических устройств проекта (клапана, насосы...).
@@ -709,8 +710,8 @@ namespace Device
             IOLinkSizes = new Dictionary<string, IODevice.IOLinkSize>();
             var lua = new LuaInterface.Lua();
             const string devicesFile = "sys_iolink_devices.lua";
-            var fullPath = Path.Combine(CommonConst.systemFilesPath, 
-                devicesFile);
+            var fullPath = Path.Combine(
+                ProjectManager.GetInstance().SystemFilesPath, devicesFile);
 
             if (File.Exists(fullPath))
             {

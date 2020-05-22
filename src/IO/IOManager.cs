@@ -1,4 +1,5 @@
-﻿using StaticHelper;
+﻿using EasyEPlanner;
+using StaticHelper;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -279,8 +280,8 @@ namespace IO
             var lua = new LuaInterface.Lua();
             const string fileName = "sys_io.lua";
             const string templateName = "sysIOLuaFilePattern";
-            string pathToFile = Path.Combine(CommonConst.systemFilesPath, 
-                fileName);
+            string pathToFile = Path.Combine(
+                ProjectManager.GetInstance().SystemFilesPath, fileName);
 
             if (File.Exists(pathToFile))
             {

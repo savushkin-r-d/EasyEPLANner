@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
 using StaticHelper;
+using EasyEPlanner;
 
 namespace TechObject
 {
@@ -52,8 +53,8 @@ namespace TechObject
         private void InitBaseTechObjectsInitializer()
         {
             string fileName = "sys_base_objects_initializer.lua";
-            string pathToFile = Path.Combine(CommonConst.systemFilesPath, 
-                fileName);
+            string pathToFile = Path.Combine(
+                ProjectManager.GetInstance().SystemFilesPath, fileName);
             lua.DoFile(pathToFile);
         }
 
@@ -64,8 +65,8 @@ namespace TechObject
         private string LoadBaseTechObjectsDescription()
         {
             var fileName = "sys_base_objects_description.lua";
-            var pathToFile = Path.Combine(CommonConst.systemFilesPath, 
-                fileName);
+            var pathToFile = Path.Combine(
+                ProjectManager.GetInstance().SystemFilesPath, fileName);
             if (!File.Exists(pathToFile))
             {
                 string template = EasyEPlanner.Properties.Resources
