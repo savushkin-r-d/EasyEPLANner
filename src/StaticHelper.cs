@@ -320,7 +320,7 @@ namespace StaticHelper
     }
 
     /// <summary>
-    /// Класс содержащий общие константы для проекта.
+    /// Класс содержащий общие константы  для проекта.
     /// </summary>
     public static class CommonConst
     {
