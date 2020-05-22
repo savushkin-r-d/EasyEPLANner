@@ -1541,5 +1541,11 @@ namespace Editor
                 ReplaceItem(item);
             }
         }
+
+        private void importButton_Click(object sender, EventArgs e)
+        {
+            var importForm = new ImportObjectsForm();
+            importForm.ShowDialog();
+        }
     }
 }

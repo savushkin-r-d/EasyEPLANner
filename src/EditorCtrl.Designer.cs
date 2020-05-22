@@ -281,6 +281,7 @@
             this.importButton.Size = new System.Drawing.Size(24, 24);
             this.importButton.Text = "importButton";
             this.importButton.ToolTipText = "Импорт объектов";
+            this.importButton.Click += new System.EventHandler(this.importButton_Click);
             // 
             // exportButton
             // 
