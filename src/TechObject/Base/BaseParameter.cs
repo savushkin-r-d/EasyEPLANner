@@ -9,19 +9,18 @@ namespace TechObject
     /// <summary>    
     /// Свойство для базовой операции.
     /// </summary>
-    public abstract class BaseProperty : Editor.ObjectProperty
+    public abstract class BaseParameter : Editor.ObjectProperty
     {
         /// <summary>
         /// Абстрактный метод копирования объекта.
         /// </summary>
         /// <returns></returns>
-        public abstract new BaseProperty Clone();
+        public abstract new BaseParameter Clone();
 
-        public BaseProperty(string luaName, string name, bool canSave, 
+        public BaseParameter(string luaName, string name, 
             string defaultValue = "") : base(name, defaultValue)
         {
             this.luaName = luaName;
-            this.canSave = canSave;
             this.defaultValue = defaultValue;
         }
 
@@ -44,35 +43,12 @@ namespace TechObject
             }
         }
 
-        /// <summary>
-        /// Нужно ли отображать свойство в дереве объектов.
-        /// </summary>
-        /// <returns></returns>
-        public virtual bool isShowed()
-        {
-            return true;
-        }
-
         override public bool IsUseDevList
         {
             get
             {
                 return true;
             }
-        }
-
-        /// <summary>
-        /// Нужно ли сохранять это свойство в файле описания.
-        /// </summary>
-        /// <returns></returns>
-        public virtual bool CanSave()
-        {
-            return canSave;
-        }
-
-        public virtual void Clear()
-        {
-            this.SetValue("");
         }
 
         #region реализация ITreeView
@@ -101,7 +77,6 @@ namespace TechObject
         #endregion
 
         private string luaName;
-        private bool canSave;
         private string defaultValue;
     }
 }

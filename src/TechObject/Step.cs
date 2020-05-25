@@ -27,7 +27,7 @@ namespace TechObject
             this.getN = getN;
             this.IsMode = isMode;
             this.owner = owner;
-            this.baseStep = new NonShowedBaseProperty("", "", false);
+            this.baseStep = new ActiveParameter("", "");
 
             items = new List<Editor.ITreeViewItem>();
 
@@ -350,7 +350,7 @@ namespace TechObject
             }
 
             Mode mode = state.Owner;
-            BaseProperty baseStep = mode.BaseOperation.Steps
+            BaseParameter baseStep = mode.BaseOperation.Steps
                 .Where(x => x.LuaName == newVal).FirstOrDefault();
             if (baseStep == null)
             {
@@ -360,8 +360,8 @@ namespace TechObject
 
             if (baseStep != null)
             {
-                this.baseStep = new NonShowedBaseProperty(baseStep.LuaName, 
-                    baseStep.Name, baseStep.CanSave());
+                this.baseStep = new ActiveParameter(baseStep.LuaName, 
+                    baseStep.Name);
                 return true;
             }
             
@@ -545,6 +545,6 @@ namespace TechObject
         internal List<Action> actions; ///< Список действий шага.
         private State owner;           ///< Владелей элемента
 
-        private BaseProperty baseStep;
+        private BaseParameter baseStep;
     }
 }

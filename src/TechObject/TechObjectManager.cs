@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using EasyEPlanner;
 
 namespace TechObject
 {
@@ -41,68 +42,36 @@ namespace TechObject
             lua.RegisterFunction("ADD_TECH_OBJECT", this,
                 GetType().GetMethod("AddObject"));
 
-            //Для отладки Lua скриптов.
-            LuaFunction resF = lua.RegisterFunction("PRINT", this,
-                GetType().GetMethod("ShowMessage"));
+            CheckExcelLibs();
+            InitTechObjectsLuaScript();
 
+            objects = new List<TechObject>();
+            cdbxTagView = false;
+        }
+
+        /// <summary>
+        /// Проверить Excel библиотеки надстройки.
+        /// </summary>
+        private void CheckExcelLibs()
+        {
             const string spireLicense = "Spire.License.dll";
             const string spireXLS = "Spire.XLS.dll";
             const string spirePDF = "Spire.Pdf.dll";
-            
-            string assemblyPath = Path.GetDirectoryName(
-                System.Reflection.Assembly.GetExecutingAssembly().Location);
-            string systemFilesPath = assemblyPath + "\\Lua";
-            
-            string SpireLicensePath = Path.Combine(assemblyPath, spireLicense);
-            string SpireXLSPath = Path.Combine(assemblyPath, spireXLS);
-            string SpirePDFPath = Path.Combine(assemblyPath, spirePDF);
+
+            string SpireLicensePath = Path.Combine(
+                ProjectManager.GetInstance().AssemblyPath, spireLicense);
+            string SpireXLSPath = Path.Combine(
+                ProjectManager.GetInstance().AssemblyPath, spireXLS);
+            string SpirePDFPath = Path.Combine(
+                ProjectManager.GetInstance().AssemblyPath, spirePDF);
 
             if (File.Exists(SpireLicensePath) == false ||
                 File.Exists(SpireXLSPath) == false ||
                 File.Exists(SpirePDFPath) == false)
             {
                 var files = new string[] { spireLicense, spireXLS, spirePDF };
-                CopySpireXLSFiles(assemblyPath, files);
-            }
-
-            string sysLuaPath = Path.Combine(systemFilesPath, "sys.lua");
-            if (Directory.Exists(systemFilesPath) == true)
-            {
-                lua.DoFile(sysLuaPath);
-            }
-            else
-            {
-                CopySystemFiles(systemFilesPath);
-                lua.DoFile(sysLuaPath);
-            }
-
-            objects = new List<TechObject>();
-
-            cdbxTagView = false;
-        }
-
-        /// <summary>
-        /// Копирует системные .lua файлы если они не загрузились
-        /// в теневое хранилище (Win 7 fix).
-        /// <param name="shadowAssemblySystemFilesDir">Путь к Lua файлам
-        /// в теневом хранилище Eplan</param>
-        /// </summary>
-        private void CopySystemFiles(string shadowAssemblySystemFilesDir)
-        {
-            const string luaDirectory = "\\Lua";
-            Directory.CreateDirectory(shadowAssemblySystemFilesDir);
-
-            string systemFilesPath = Path.GetDirectoryName(EasyEPlanner.
-                AddInModule.OriginalAssemblyPath) + luaDirectory;
-
-            var systemFilesDirectory = new DirectoryInfo(
-                systemFilesPath);
-            FileInfo[] systemFiles = systemFilesDirectory.GetFiles();
-            foreach (FileInfo systemFile in systemFiles)
-            {
-                string pathToFile = Path.Combine(shadowAssemblySystemFilesDir,
-                    systemFile.Name);
-                systemFile.CopyTo(pathToFile, true);
+                CopySpireXLSFiles(ProjectManager.GetInstance().AssemblyPath, files,
+                    ProjectManager.GetInstance().OriginalAssemblyPath);
             }
         }
 
@@ -111,21 +80,61 @@ namespace TechObject
         /// </summary>
         /// <param name="shadowAssemblySpireFilesDir">Путь к библиотекам
         /// в теневом хранилище Eplan</param>
-        /// <param name="files">Имена файлов</param>
+        /// <param name="files">Имена файлов для копирования</param>
+        /// <param name="originalPath">Путь к надстройке из каталога
+        /// подключения надстройки</param>
         private void CopySpireXLSFiles(string shadowAssemblySpireFilesDir,
-            string[] files)
+            string[] files, string originalPath)
         {
-            string originalPath = Path.GetDirectoryName(EasyEPlanner
-                .AddInModule.OriginalAssemblyPath);
             var libsDir = new DirectoryInfo(originalPath);
-            foreach(FileInfo file in libsDir.GetFiles())
+            foreach (FileInfo file in libsDir.GetFiles())
             {
                 if (files.Contains(file.Name))
                 {
-                    string path = Path.Combine(shadowAssemblySpireFilesDir, 
+                    string path = Path.Combine(shadowAssemblySpireFilesDir,
                         file.Name);
                     file.CopyTo(path, true);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Инициализировать Lua-скрипт для чтения описания объектов
+        /// </summary>
+        private void InitTechObjectsLuaScript()
+        {
+            const string fileName = "sys.lua";
+            string sysLuaPath = Path.Combine(
+                ProjectManager.GetInstance().SystemFilesPath, fileName);
+            if (Directory
+                .Exists(ProjectManager.GetInstance().SystemFilesPath) == false)
+            {
+                CopySystemFiles(ProjectManager.GetInstance().SystemFilesPath,
+                    ProjectManager.GetInstance().OriginalSystemFilesPath);
+            }
+            lua.DoFile(sysLuaPath);
+        }
+
+        /// <summary>
+        /// Копирует системные .lua файлы если они не загрузились
+        /// в теневое хранилище (Win 7 fix).
+        /// <param name="systemFilesPath">Путь к Lua файлам
+        /// в теневом хранилище Eplan</param>
+        /// <param name="originalSystemFilesPath">Путь к файлам Lua в месте 
+        /// подключения надстройки к программе</param>
+        /// </summary>
+        private void CopySystemFiles(string systemFilesPath,
+            string originalSystemFilesPath)
+        {
+            Directory.CreateDirectory(systemFilesPath);
+
+            var systemFilesDir = new DirectoryInfo(originalSystemFilesPath);
+            FileInfo[] systemFiles = systemFilesDir.GetFiles();
+            foreach (FileInfo systemFile in systemFiles)
+            {
+                string pathToFile = Path.Combine(systemFilesPath,
+                    systemFile.Name);
+                systemFile.CopyTo(pathToFile, true);
             }
         }
 
@@ -547,15 +556,19 @@ namespace TechObject
 
         }
 
+        /// <summary>
+        /// Загрузка ограничений объектов
+        /// </summary>
+        /// <param name="LuaStr">Описание ограничений объектов</param>
         public void LoadRestriction(string LuaStr)
         {
-
             lua.RegisterFunction("Get_TECH_OBJECT", this,
                 GetType().GetMethod("GetTObject"));
 
-            lua.DoFile(System.IO.Path.GetDirectoryName(
-                System.Reflection.Assembly.GetExecutingAssembly().Location) +
-                "\\Lua\\sys_restriction.lua");
+            string fileName = "sys_restriction.lua";
+            string pathToRestrictionInitializer = Path.Combine(
+                ProjectManager.GetInstance().SystemFilesPath, fileName);
+            lua.DoFile(pathToRestrictionInitializer);
 
             //Выполнения Lua скрипта с описанием объектов.
             lua.DoString(LuaStr);

@@ -135,13 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigurationChecker.cs" />
-    <Compile Include="DataBaseImitation\BaseAggregatesProperties.cs" />
-    <Compile Include="DataBaseImitation\BaseObjects.cs" />
-    <Compile Include="DataBaseImitation\BaseOperations.cs" />
-    <Compile Include="DataBaseImitation\BaseObjectProperties.cs" />
-    <Compile Include="DataBaseImitation\BaseOperationsParams.cs" />
-    <Compile Include="DataBaseImitation\BaseObjectsEquipment.cs" />
-    <Compile Include="DataBaseImitation\BaseOperationSteps.cs" />
+    <Compile Include="TechObject\Base\BaseObjectsManager.cs" />
     <Compile Include="Device\DeviceManager.cs" />
     <Compile Include="DeviceBindingReader.cs" />
     <Compile Include="DeviceReader.cs" />
@@ -262,29 +256,10 @@
     <Compile Include="TechObject\Action_Wash.cs" />
     <Compile Include="TechObject\Action_WashSeats.cs" />
     <Compile Include="TechObject\Base\BaseOperation.cs" />
-    <Compile Include="TechObject\Base\BaseProperty.cs" />
+    <Compile Include="TechObject\Base\BaseParameter.cs" />
     <Compile Include="TechObject\Base\BaseTechObject.cs" />
-    <Compile Include="TechObject\Base\Properties\BoolShowedProperty.cs" />
-    <Compile Include="TechObject\Base\Properties\NonShowedProperty.cs" />
-    <Compile Include="TechObject\Base\Properties\ShowedProperty.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BaseBoiler.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BaseCooler.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BaseHeaterPID.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BaseHeater.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BaseFlowNodePID.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BasePressurePID.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BaseLine.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BaseLineIn.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BaseLineOut.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BaseMaster.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BaseAutomat.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BaseMixer.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BasePost.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BasePOU.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BaseTank.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BaseCoolerPID.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BaseWaterTankPID.cs" />
-    <Compile Include="TechObject\Base\TechObjects\BaseWaterTank.cs" />
+    <Compile Include="TechObject\Base\Properties\ActiveBoolParameter.cs" />
+    <Compile Include="TechObject\Base\Properties\ActiveParameter.cs" />
     <Compile Include="TechObject\Equipment.cs" />
     <Compile Include="TechObject\LocalRestriction.cs" />
     <Compile Include="TechObject\Mode.cs" />
@@ -342,6 +317,12 @@
   <ItemGroup>
     <None Include="key\2112_Public.snk" />
     <None Include="Lua\sys.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Lua\sys_base_objects_description.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Lua\sys_base_objects_initializer.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Lua\sys_io.lua">
