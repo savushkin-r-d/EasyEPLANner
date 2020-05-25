@@ -7,22 +7,17 @@ using System.Threading.Tasks;
 namespace TechObject
 {
     /// <summary>
-    /// Булевское свойство для базовой операции.
+    /// Булевый активный (отображаемый) параметр.
     /// </summary>
-    public class BoolShowedProperty : BaseProperty
+    public class ActiveBoolParameter : BaseParameter
     {
-        private BoolShowedProperty(string luaName, string name, bool canSave,
-            string defaultValue) : base(luaName, name, canSave, defaultValue)
-        { }
+        public ActiveBoolParameter(string luaName, string name, 
+            string defaultValue) : base(luaName, name, defaultValue) { }
 
-        public BoolShowedProperty(string luaName, string name,
-            string defaultValue) : base(luaName, name, true, defaultValue) 
-        { }
-
-        public override BaseProperty Clone()
+        public override BaseParameter Clone()
         {
-            var newProperty = new BoolShowedProperty(this.LuaName, this.Name,
-                this.CanSave(), this.DefaultValue);
+            var newProperty = new ActiveBoolParameter(this.LuaName, this.Name,
+                this.DefaultValue);
             newProperty.SetValue(this.Value);
             return newProperty;
         }
@@ -81,7 +76,7 @@ namespace TechObject
             }
         }
 
-        public override bool IsBoolProperty
+        public override bool IsBoolParameter
         {
             get
             {
