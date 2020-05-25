@@ -255,6 +255,7 @@
     <Compile Include="EditorCtrl.Designer.cs">
       <DependentUpon>EditorCtrl.cs</DependentUpon>
     </Compile>
+    <Compile Include="TechObjectsExporter.cs" />
     <Compile Include="TechObject\Action.cs" />
     <Compile Include="TechObject\Action_AI_AO.cs" />
     <Compile Include="TechObject\Action_DI_DO.cs" />

@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace EasyEPlanner
@@ -38,17 +34,44 @@ namespace EasyEPlanner
             this.Dispose();
         }
 
+        /// <summary>
+        /// Кнопка "Экспортировать".
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void exportButton_Click(object sender, EventArgs e)
         {
-            //TODO: Export objects
+            var sfd = new SaveFileDialog();
+            sfd.Filter = $"Скрипт LUA (.lua)|*.lua";
+            sfd.DefaultExt = "lua";
+            DialogResult saveResult = sfd.ShowDialog();
+            if (saveResult == DialogResult.Cancel)
+            {
+                return;
+            }
 
-            // Save file dialog
+            var checkedItems = new List<int>();
+            for(int item = 0; item < checkedListBox.Items.Count; item++)
+            {
+                bool itemChecked = checkedListBox.GetItemChecked(item);
+                if (itemChecked)
+                {
+                    checkedItems.Add(item + 1);
+                }
+            }
 
-            // Get checked items
+            string fileName = sfd.FileName;
+            try
+            {
+                TechObjectsExporter.GetInstance()
+                    .Export(fileName, checkedItems);
+            }
+            catch (Exception except)
+            {
+                MessageBox.Show(except.Message);
+            }
 
-            // SaveToLua for items
-
-            // Save script to Lua File
+            this.Close();
         }
 
         /// <summary>
