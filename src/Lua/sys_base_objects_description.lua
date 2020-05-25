@@ -571,5 +571,14 @@ return
             aggregateParameters = { },
             bindingName = "mix_node"
         },
+        steam_blast_node = {
+            name = "Узел продувания",
+            s88Level = 2,
+            baseOperationg = { },
+            basicName = "steam_blast_node",
+            equipment = { },
+            aggregateParameters = { },
+            bindingName = "steam_blast_node"
+        },
     }
 end
