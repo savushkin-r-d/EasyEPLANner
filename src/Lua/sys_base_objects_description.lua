@@ -577,6 +577,15 @@ return
             aggregateParameters = { },
             bindingName = "mix_node"
         },
+        sterile_air_node = {
+            name = "Узел стерильного воздуха",
+            s88Level = 2,
+            baseOperationg = { },
+            basicName = "sterile_air_node",
+            equipment = { },
+            aggregateParameters = { },
+            bindingName = "sterile_air_node",
+        },
         steam_blast_node = {
             name = "Узел продувания",
             s88Level = 2,
@@ -584,7 +593,7 @@ return
             basicName = "steam_blast_node",
             equipment = { },
             aggregateParameters = { },
-            bindingName = "steam_blast_node"
+            bindingName = "steam_blast_node",
         },
     }
 end
