@@ -571,5 +571,14 @@ return
             aggregateParameters = { },
             bindingName = "mix_node"
         },
+        sterile_air_node = {
+            name = "Узел стерильного воздуха",
+            s88Level = 2,
+            baseOperationg = { },
+            basicName = "sterile_air_node",
+            equipment = { },
+            aggregateParameters = { },
+            bindingName = "sterile_air_node"
+        },
     }
 end
