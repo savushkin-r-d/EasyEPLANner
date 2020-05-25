@@ -54,8 +54,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.filePathTextBox.Location = new System.Drawing.Point(12, 25);
             this.filePathTextBox.Name = "filePathTextBox";
+            this.filePathTextBox.ReadOnly = true;
             this.filePathTextBox.Size = new System.Drawing.Size(287, 20);
-            this.filePathTextBox.TabIndex = 1;
+            this.filePathTextBox.TabIndex = 99;
+            this.filePathTextBox.TabStop = false;
             // 
             // overviewButton
             // 
@@ -70,11 +72,6 @@
             // checkedListBox
             // 
             this.checkedListBox.FormattingEnabled = true;
-            this.checkedListBox.Items.AddRange(new object[] {
-            "1. OBJECT 1",
-            "2. OBJECT 2",
-            "3. OBJECT 3",
-            "4. OBJECT 4"});
             this.checkedListBox.Location = new System.Drawing.Point(12, 66);
             this.checkedListBox.Name = "checkedListBox";
             this.checkedListBox.Size = new System.Drawing.Size(360, 334);

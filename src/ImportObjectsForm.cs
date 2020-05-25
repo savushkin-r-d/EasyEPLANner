@@ -16,6 +16,8 @@ namespace EasyEPlanner
         public ImportObjectsForm()
         {
             InitializeComponent();
+
+            importButton.Enabled = false;
         }
 
         /// <summary>
@@ -25,7 +27,21 @@ namespace EasyEPlanner
         /// <param name="e"></param>
         private void overviewButton_Click(object sender, EventArgs e)
         {
-            //TODO: Load objects from file and display in listBox
+            string fileExtension = ".lua";
+            var ofd = new OpenFileDialog();
+            ofd.DefaultExt = fileExtension;
+            
+            DialogResult dialog = ofd.ShowDialog();
+            if (dialog == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            // Load objects
+
+            // Display objects in ListBox
+
+            importButton.Enabled = true;
         }
 
         /// <summary>
@@ -48,6 +64,11 @@ namespace EasyEPlanner
             //TODO: Import selected objects to the end of tree
         }
 
+        /// <summary>
+        /// Событие после закрытия формы.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ImportObjectsForm_FormClosed(object sender, 
             FormClosedEventArgs e)
         {
@@ -62,7 +83,10 @@ namespace EasyEPlanner
         private void clearSelectedObjects_LinkClicked(object sender, 
             LinkLabelLinkClickedEventArgs e)
         {
-            checkedListBox.ClearSelected();
+            for (int item = 0; item < checkedListBox.Items.Count; item++)
+            {
+                checkedListBox.SetItemChecked(item, false);
+            }
         }
 
         /// <summary>

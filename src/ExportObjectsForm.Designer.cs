@@ -49,11 +49,6 @@
             // checkedListBox
             // 
             this.checkedListBox.FormattingEnabled = true;
-            this.checkedListBox.Items.AddRange(new object[] {
-            "1. OBJECT 1",
-            "2. OBJECT 2",
-            "3. OBJECT 3",
-            "4. OBJECT 4"});
             this.checkedListBox.Location = new System.Drawing.Point(12, 40);
             this.checkedListBox.Name = "checkedListBox";
             this.checkedListBox.Size = new System.Drawing.Size(360, 349);
@@ -141,6 +136,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Экспорт объектов";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ExportObjectsForm_FormClosed);
+            this.Load += new System.EventHandler(this.ExportObjectsForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
