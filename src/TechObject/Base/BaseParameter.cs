@@ -43,26 +43,6 @@ namespace TechObject
             }
         }
 
-        /// <summary>
-        /// Нужно ли отображать параметр.
-        /// </summary>
-        /// <returns></returns>
-        public virtual bool isShowed()
-        {
-            return true;
-        }
-
-        /// <summary>
-        /// Нужно ли сохранять параметр в файле описания.
-        /// </summary>
-        public virtual bool needToSave
-        {
-            get
-            {
-                return true;
-            }
-        }
-
         override public bool IsUseDevList
         {
             get

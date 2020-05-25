@@ -84,10 +84,6 @@ init_operation_parameters = function(operation, params)
     -- Добавить булевы параметра операции
     local activeBoolParameters = params.bool or { }
     init_active_bool_parameters(operation, activeBoolParameters)
-
-    -- Добавить пассивные параметры операции
-    local passiveParameters = params.passive or { }
-    init_passive_parameters(operation, passiveParameters)
 end
 
 -- Инициализация активных параметров базовой операции
@@ -111,17 +107,6 @@ init_active_bool_parameters = function(operation, activeBoolParameters)
 
         -- Добавить булевый параметр
         operation:AddActiveBoolParameter(luaName, name, defaultValue)
-    end
-end
-
--- Инициализация пассивных параметров базовой операции
-init_passive_parameters = function(operation, passiveParameters)
-	for luaName, value in pairs(passiveParameters) do
-        -- Данные для добавления параметра
-        local name = value.name or ""
-
-        -- Добавить пассивный параметр
-        operation:AddPassiveParameter(luaName, name)
     end
 end
 

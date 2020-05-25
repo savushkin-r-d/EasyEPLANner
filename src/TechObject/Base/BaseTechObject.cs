@@ -538,12 +538,9 @@ namespace TechObject
                         res += prefix + "{\n";
                         foreach (var param in baseOperation.Properties)
                         {
-                            if (param.needToSave)
-                            {
-                                string val = param
-                                    .Value == "" ? "nil" : param.Value;
-                                res += $"{prefix}{param.LuaName} = {val},\n";
-                            }
+                            string val = 
+                                param.Value == "" ? "nil" : param.Value;
+                            res += $"{prefix}{param.LuaName} = {val},\n";
                         }
                         res += prefix + "}\n";
                         break;
@@ -566,19 +563,16 @@ namespace TechObject
 
             foreach (BaseParameter param in baseOperation.Properties)
             {
-                if (param.needToSave)
+                string val = param.Value == "" ? "nil" : param.Value;
+                if (val != "nil")
                 {
-                    string val = param.Value == "" ? "nil" : param.Value;
-                    if (val != "nil")
-                    {
-                        res += objName + "." + param.LuaName +
-                            " = prg.control_modules." + val + "\n";
-                    }
-                    else
-                    {
-                        res += objName + "." + param.LuaName +
-                            " = " + val + "\n";
-                    }
+                    res += objName + "." + param.LuaName +
+                        " = prg.control_modules." + val + "\n";
+                }
+                else
+                {
+                    res += objName + "." + param.LuaName +
+                        " = " + val + "\n";
                 }
             }
 
@@ -601,37 +595,34 @@ namespace TechObject
             res += prefix + "{\n";
             foreach (BaseParameter param in baseOperation.Properties)
             {
-                if (param.needToSave)
+                string val = param.Value == "" ? "nil" : param.Value;
+                switch (param.LuaName)
                 {
-                    string val = param.Value == "" ? "nil" : param.Value;
-                    switch (param.LuaName)
-                    {
-                        case "OPERATION_AFTER_FILL":
-                            var modes = this.Owner.ModesManager.Modes;
-                            var mode = modes
-                                .Where(x => x.GetModeNumber().ToString() == val)
-                                .FirstOrDefault();
+                    case "OPERATION_AFTER_FILL":
+                        var modes = this.Owner.ModesManager.Modes;
+                        var mode = modes
+                            .Where(x => x.GetModeNumber().ToString() == val)
+                            .FirstOrDefault();
 
-                            if (mode != null)
-                            {
-                                val = mode.BaseOperation.LuaName.ToUpper();
-                            }
+                        if (mode != null)
+                        {
+                            val = mode.BaseOperation.LuaName.ToUpper();
+                        }
 
-                            if (val != "nil" && val != "")
-                            {
-                                res += $"{prefix}{param.LuaName} = " +
-                                    $"{objName}.operations." + val + ",\n";
-                            }
-                            else
-                            {
-                                res += $"{prefix}{param.LuaName} = nil,\n";
-                            }
-                            break;
+                        if (val != "nil" && val != "")
+                        {
+                            res += $"{prefix}{param.LuaName} = " +
+                                $"{objName}.operations." + val + ",\n";
+                        }
+                        else
+                        {
+                            res += $"{prefix}{param.LuaName} = nil,\n";
+                        }
+                        break;
 
-                        default:
-                            res += $"{prefix}{param.LuaName} = {val},\n";
-                            break;
-                    }
+                    default:
+                        res += $"{prefix}{param.LuaName} = {val},\n";
+                        break;
                 }
             }
             res += prefix + "}\n";

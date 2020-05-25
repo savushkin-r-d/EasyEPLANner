@@ -89,16 +89,6 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Добавить пассивный параметр
-        /// </summary>
-        /// <param name="luaName">Lua-имя</param>
-        /// <param name="name">Имя</param>
-        public void AddPassiveParameter(string luaName, string name)
-        {
-            Properties.Add(new PassiveParameter(luaName, name));
-        }
-
-        /// <summary>
         /// Получить имя операции
         /// </summary>
         public string Name
@@ -206,12 +196,9 @@ namespace TechObject
         private void SetItems()
         {
             var showedParameters = new List<BaseParameter>();
-            foreach(var parameter in Properties)
+            foreach (var parameter in Properties)
             {
-                if (parameter.isShowed())
-                {
-                    showedParameters.Add(parameter);
-                }
+                showedParameters.Add(parameter);
             }
             items = showedParameters.ToArray();
         }
@@ -230,21 +217,17 @@ namespace TechObject
                 return res;
             }
 
-            var propertiesCountForSave = Properties
-                .Where(x => x.needToSave == true).Count();
+            var propertiesCountForSave = Properties.Count();
             if (propertiesCountForSave <= 0)
             {
                 return res;
-            } 
+            }
 
             res += prefix + "props =\n" + prefix + "\t{\n";
             foreach (var operParam in Properties)
             {
-                if (operParam.needToSave)
-                {
-                    res += "\t" + prefix + operParam.LuaName + " = \'" + 
-                        operParam.Value + "\',\n";
-                }
+                res += "\t" + prefix + operParam.LuaName + " = \'" +
+                    operParam.Value + "\',\n";
             }
             res += prefix + "\t},\n";
             return res;
