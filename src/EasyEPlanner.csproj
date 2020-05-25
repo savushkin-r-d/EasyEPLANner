@@ -195,6 +195,12 @@
       <DependentUpon>IdleForm.cs</DependentUpon>
     </Compile>
     <Compile Include="IdleModule.cs" />
+    <Compile Include="ExportObjectsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExportObjectsForm.Designer.cs">
+      <DependentUpon>ExportObjectsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="ImportObjectsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -307,6 +313,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="IdleForm.resx">
       <DependentUpon>IdleForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExportObjectsForm.resx">
+      <DependentUpon>ExportObjectsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ImportObjectsForm.resx">
       <DependentUpon>ImportObjectsForm.cs</DependentUpon>

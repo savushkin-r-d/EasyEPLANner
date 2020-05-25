@@ -1,5 +1,4 @@
-﻿using Eplan.EplApi.HEServices;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,25 +10,15 @@ using System.Windows.Forms;
 
 namespace EasyEPlanner
 {
-    public partial class ImportObjectsForm : Form
+    public partial class ExportObjectsForm : Form
     {
-        public ImportObjectsForm()
+        public ExportObjectsForm()
         {
             InitializeComponent();
         }
 
         /// <summary>
-        /// Кнопка "Обзор".
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void overviewButton_Click(object sender, EventArgs e)
-        {
-            //TODO: Load objects from file and display in listBox
-        }
-
-        /// <summary>
-        /// Кнопка "Отмена".
+        /// Кнопка "Отмена"
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -38,24 +27,19 @@ namespace EasyEPlanner
             this.Close();
         }
 
-        /// <summary>
-        /// Кнопка "Импортировать"
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void importButton_Click(object sender, EventArgs e)
-        {
-            //TODO: Import selected objects to the end of tree
-        }
-
-        private void ImportObjectsForm_FormClosed(object sender, 
+        private void ExportObjectsForm_FormClosed(object sender, 
             FormClosedEventArgs e)
         {
             this.Dispose();
         }
 
+        private void exportButton_Click(object sender, EventArgs e)
+        {
+            //TODO: Export objects
+        }
+
         /// <summary>
-        /// Очистить выделение в списке.
+        /// Очистить выделение в списке
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -66,11 +50,11 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Выделить все объекты в списке.
+        /// Выбрать все объекты в списке
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void selectedAllObjects_LinkClicked(object sender, 
+        private void selectAllObjects_LinkClicked(object sender, 
             LinkLabelLinkClickedEventArgs e)
         {
             for(int item = 0; item < checkedListBox.Items.Count; item++)

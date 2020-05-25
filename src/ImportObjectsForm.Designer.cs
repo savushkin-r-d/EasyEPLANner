@@ -31,13 +31,12 @@
             this.label1 = new System.Windows.Forms.Label();
             this.filePathTextBox = new System.Windows.Forms.TextBox();
             this.overviewButton = new System.Windows.Forms.Button();
-            this.loadButton = new System.Windows.Forms.Button();
             this.checkedListBox = new System.Windows.Forms.CheckedListBox();
             this.importButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+            this.selectedAllObjects = new System.Windows.Forms.LinkLabel();
+            this.clearSelectedObjects = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // label1
@@ -55,26 +54,18 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.filePathTextBox.Location = new System.Drawing.Point(12, 25);
             this.filePathTextBox.Name = "filePathTextBox";
-            this.filePathTextBox.Size = new System.Drawing.Size(214, 20);
+            this.filePathTextBox.Size = new System.Drawing.Size(287, 20);
             this.filePathTextBox.TabIndex = 1;
             // 
             // overviewButton
             // 
-            this.overviewButton.Location = new System.Drawing.Point(232, 24);
+            this.overviewButton.Location = new System.Drawing.Point(305, 24);
             this.overviewButton.Name = "overviewButton";
             this.overviewButton.Size = new System.Drawing.Size(67, 21);
             this.overviewButton.TabIndex = 2;
             this.overviewButton.Text = "Обзор";
             this.overviewButton.UseVisualStyleBackColor = true;
-            // 
-            // loadButton
-            // 
-            this.loadButton.Location = new System.Drawing.Point(305, 24);
-            this.loadButton.Name = "loadButton";
-            this.loadButton.Size = new System.Drawing.Size(67, 21);
-            this.loadButton.TabIndex = 3;
-            this.loadButton.Text = "Загрузить";
-            this.loadButton.UseVisualStyleBackColor = true;
+            this.overviewButton.Click += new System.EventHandler(this.overviewButton_Click);
             // 
             // checkedListBox
             // 
@@ -98,6 +89,7 @@
             this.importButton.TabIndex = 6;
             this.importButton.Text = "Импортировать";
             this.importButton.UseVisualStyleBackColor = true;
+            this.importButton.Click += new System.EventHandler(this.importButton_Click);
             // 
             // cancelButton
             // 
@@ -108,6 +100,7 @@
             this.cancelButton.TabIndex = 5;
             this.cancelButton.Text = "Отмена";
             this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
             // label2
             // 
@@ -118,45 +111,46 @@
             this.label2.TabIndex = 7;
             this.label2.Text = "Выбрать:";
             // 
-            // linkLabel1
+            // selectedAllObjects
             // 
-            this.linkLabel1.ActiveLinkColor = System.Drawing.Color.Black;
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
-            this.linkLabel1.LinkColor = System.Drawing.Color.Black;
-            this.linkLabel1.Location = new System.Drawing.Point(71, 49);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(26, 13);
-            this.linkLabel1.TabIndex = 8;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "Всё";
-            this.linkLabel1.VisitedLinkColor = System.Drawing.Color.Black;
+            this.selectedAllObjects.ActiveLinkColor = System.Drawing.Color.Black;
+            this.selectedAllObjects.AutoSize = true;
+            this.selectedAllObjects.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
+            this.selectedAllObjects.LinkColor = System.Drawing.Color.Black;
+            this.selectedAllObjects.Location = new System.Drawing.Point(71, 49);
+            this.selectedAllObjects.Name = "selectedAllObjects";
+            this.selectedAllObjects.Size = new System.Drawing.Size(26, 13);
+            this.selectedAllObjects.TabIndex = 8;
+            this.selectedAllObjects.TabStop = true;
+            this.selectedAllObjects.Text = "Всё";
+            this.selectedAllObjects.VisitedLinkColor = System.Drawing.Color.Black;
+            this.selectedAllObjects.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.selectedAllObjects_LinkClicked);
             // 
-            // linkLabel2
+            // clearSelectedObjects
             // 
-            this.linkLabel2.ActiveLinkColor = System.Drawing.Color.Black;
-            this.linkLabel2.AutoSize = true;
-            this.linkLabel2.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
-            this.linkLabel2.LinkColor = System.Drawing.Color.Black;
-            this.linkLabel2.Location = new System.Drawing.Point(106, 49);
-            this.linkLabel2.Name = "linkLabel2";
-            this.linkLabel2.Size = new System.Drawing.Size(54, 13);
-            this.linkLabel2.TabIndex = 9;
-            this.linkLabel2.TabStop = true;
-            this.linkLabel2.Text = "Очистить";
-            this.linkLabel2.VisitedLinkColor = System.Drawing.Color.Black;
+            this.clearSelectedObjects.ActiveLinkColor = System.Drawing.Color.Black;
+            this.clearSelectedObjects.AutoSize = true;
+            this.clearSelectedObjects.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
+            this.clearSelectedObjects.LinkColor = System.Drawing.Color.Black;
+            this.clearSelectedObjects.Location = new System.Drawing.Point(106, 49);
+            this.clearSelectedObjects.Name = "clearSelectedObjects";
+            this.clearSelectedObjects.Size = new System.Drawing.Size(54, 13);
+            this.clearSelectedObjects.TabIndex = 9;
+            this.clearSelectedObjects.TabStop = true;
+            this.clearSelectedObjects.Text = "Очистить";
+            this.clearSelectedObjects.VisitedLinkColor = System.Drawing.Color.Black;
+            this.clearSelectedObjects.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.clearSelectedObjects_LinkClicked);
             // 
             // ImportObjectsForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(384, 441);
-            this.Controls.Add(this.linkLabel2);
-            this.Controls.Add(this.linkLabel1);
+            this.Controls.Add(this.clearSelectedObjects);
+            this.Controls.Add(this.selectedAllObjects);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.importButton);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.checkedListBox);
-            this.Controls.Add(this.loadButton);
             this.Controls.Add(this.overviewButton);
             this.Controls.Add(this.filePathTextBox);
             this.Controls.Add(this.label1);
@@ -169,6 +163,7 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Импорт объектов";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ImportObjectsForm_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -179,12 +174,11 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox filePathTextBox;
         private System.Windows.Forms.Button overviewButton;
-        private System.Windows.Forms.Button loadButton;
         private System.Windows.Forms.CheckedListBox checkedListBox;
         private System.Windows.Forms.Button importButton;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.LinkLabel linkLabel1;
-        private System.Windows.Forms.LinkLabel linkLabel2;
+        private System.Windows.Forms.LinkLabel selectedAllObjects;
+        private System.Windows.Forms.LinkLabel clearSelectedObjects;
     }
 }

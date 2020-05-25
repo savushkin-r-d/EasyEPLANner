@@ -292,6 +292,7 @@
             this.exportButton.Size = new System.Drawing.Size(24, 24);
             this.exportButton.Text = "exportButton";
             this.exportButton.ToolTipText = "Экспорт объектов";
+            this.exportButton.Click += new System.EventHandler(this.exportButton_Click);
             // 
             // imageList1
             // 
