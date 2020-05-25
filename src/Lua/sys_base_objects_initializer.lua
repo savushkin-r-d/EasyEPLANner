@@ -1,4 +1,4 @@
--- Инициализировать базовые объекты из файла
+-- РРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°С‚СЊ Р±Р°Р·РѕРІС‹Рµ РѕР±СЉРµРєС‚С‹ РёР· С„Р°Р№Р»Р°
 init_base_objects = function()
     if base_tech_objects == nil then
         return
@@ -6,25 +6,25 @@ init_base_objects = function()
 
     local objects = base_tech_objects()
     for eplanName, value in pairs(objects) do
-        -- Данные для минимальной инициализации
+        -- Р”Р°РЅРЅС‹Рµ РґР»СЏ РјРёРЅРёРјР°Р»СЊРЅРѕР№ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
         local name = value.name or ""
         local s88Level = value.s88Level or 0
         local basicName = value.basicName or ""
         local bindingName = value.bindingName or ""
 
-        -- Добавить базовый объект
+        -- Р”РѕР±Р°РІРёС‚СЊ Р±Р°Р·РѕРІС‹Р№ РѕР±СЉРµРєС‚
         local baseObject = AddBaseObject(name, eplanName, s88Level,
             basicName, bindingName)
 
-        -- Добавить базовые операции (параметры, шаги)
+        -- Р”РѕР±Р°РІРёС‚СЊ Р±Р°Р·РѕРІС‹Рµ РѕРїРµСЂР°С†РёРё (РїР°СЂР°РјРµС‚СЂС‹, С€Р°РіРё)
         local baseOperations = value.baseOperations or { }
         init_base_operations(baseObject, baseOperations)
 
-        -- Добавить оборудование
+        -- Р”РѕР±Р°РІРёС‚СЊ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ
         local equipment = value.equipment or { }
         init_equipment(baseObject, equipment)
 
-        -- Добавить параметры объекта как агрегата
+        -- Р”РѕР±Р°РІРёС‚СЊ РїР°СЂР°РјРµС‚СЂС‹ РѕР±СЉРµРєС‚Р° РєР°Рє Р°РіСЂРµРіР°С‚Р°
         local aggregateParameters = value.aggregateParameters or { }
         init_aggregate_parameters(baseObject, aggregateParameters)
     end
@@ -32,106 +32,106 @@ init_base_objects = function()
     return 0
 end
 
--- Инициализация оборудования объекта
+-- РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РѕР±РѕСЂСѓРґРѕРІР°РЅРёСЏ РѕР±СЉРµРєС‚Р°
 init_equipment = function(object, equipment)
     for luaName, value in pairs(equipment) do
-        -- Данные для добавления оборудования
+        -- Р”Р°РЅРЅС‹Рµ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РѕР±РѕСЂСѓРґРѕРІР°РЅРёСЏ
         local name = value.name or ""
         local defaultValue = value.defaultValue or ""
 
-        -- Добавить оборудование
+        -- Р”РѕР±Р°РІРёС‚СЊ РѕР±РѕСЂСѓРґРѕРІР°РЅРёРµ
         object:AddEquipment(luaName, name, defaultValue)
     end
 end
 
--- Инициализация параметров объекта как агрегата
+-- РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїР°СЂР°РјРµС‚СЂРѕРІ РѕР±СЉРµРєС‚Р° РєР°Рє Р°РіСЂРµРіР°С‚Р°
 init_aggregate_parameters = function(object, aggregateParameters)
     for luaName, value in pairs(aggregateParameters) do
-        -- Данные для добавления параметра
+        -- Р”Р°РЅРЅС‹Рµ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РїР°СЂР°РјРµС‚СЂР°
         local name = value.name or ""
         local defaultValue = value.defaultValue or ""
 
-        -- Добавить параметр
+        -- Р”РѕР±Р°РІРёС‚СЊ РїР°СЂР°РјРµС‚СЂ
         object:AddAggregateParameter(luaName, name, defaultValue)
     end
 end
 
--- Инициализация базовых операций объекта
+-- РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р±Р°Р·РѕРІС‹С… РѕРїРµСЂР°С†РёР№ РѕР±СЉРµРєС‚Р°
 init_base_operations = function(object, operations)
     for luaName, value in pairs(operations) do
-        -- Данные для минимальной инициализации операции
+        -- Р”Р°РЅРЅС‹Рµ РґР»СЏ РјРёРЅРёРјР°Р»СЊРЅРѕР№ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РѕРїРµСЂР°С†РёРё
         local name = value.name or ""
 
-        -- Добавить базовую операцию
+        -- Р”РѕР±Р°РІРёС‚СЊ Р±Р°Р·РѕРІСѓСЋ РѕРїРµСЂР°С†РёСЋ
         local operation = object:AddBaseOperation(luaName, name)
 
-        -- Добавить параметры базовой операции
+        -- Р”РѕР±Р°РІРёС‚СЊ РїР°СЂР°РјРµС‚СЂС‹ Р±Р°Р·РѕРІРѕР№ РѕРїРµСЂР°С†РёРё
         local params = value.params or { }
         init_operation_parameters(operation, params)
 
-        -- Добавить шаги базовой операции
+        -- Р”РѕР±Р°РІРёС‚СЊ С€Р°РіРё Р±Р°Р·РѕРІРѕР№ РѕРїРµСЂР°С†РёРё
         local steps = value.steps or { }
         init_operation_steps(operation, steps)
     end
 end
 
--- Инициализация параметров базовой операции
+-- РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїР°СЂР°РјРµС‚СЂРѕРІ Р±Р°Р·РѕРІРѕР№ РѕРїРµСЂР°С†РёРё
 init_operation_parameters = function(operation, params)
-    -- Добавить активные параметры операции
+    -- Р”РѕР±Р°РІРёС‚СЊ Р°РєС‚РёРІРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹ РѕРїРµСЂР°С†РёРё
     local activeParameters = params.active or { }
     init_active_parameters(operation, activeParameters)
 
-    -- Добавить булевы параметра операции
+    -- Р”РѕР±Р°РІРёС‚СЊ Р±СѓР»РµРІС‹ РїР°СЂР°РјРµС‚СЂР° РѕРїРµСЂР°С†РёРё
     local activeBoolParameters = params.bool or { }
     init_active_bool_parameters(operation, activeBoolParameters)
 
-    -- Добавить пассивные параметры операции
+    -- Р”РѕР±Р°РІРёС‚СЊ РїР°СЃСЃРёРІРЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹ РѕРїРµСЂР°С†РёРё
     local passiveParameters = params.passive or { }
     init_passive_parameters(operation, passiveParameters)
 end
 
--- Инициализация активных параметров базовой операции
+-- РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р°РєС‚РёРІРЅС‹С… РїР°СЂР°РјРµС‚СЂРѕРІ Р±Р°Р·РѕРІРѕР№ РѕРїРµСЂР°С†РёРё
 init_active_parameters = function(operation, activeParameters)
 	for luaName, value in pairs(activeParameters) do
-        -- Данные для добавления параметра
+        -- Р”Р°РЅРЅС‹Рµ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РїР°СЂР°РјРµС‚СЂР°
         local name = value.name or ""
         local defaultValue = value.defaultValue or ""
 
-        -- Добавить активный параметр
+        -- Р”РѕР±Р°РІРёС‚СЊ Р°РєС‚РёРІРЅС‹Р№ РїР°СЂР°РјРµС‚СЂ
         operation:AddActiveParameter(luaName, name, defaultValue)
     end
 end
 
--- Инициализация булевых параметров базовой операции
+-- РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р±СѓР»РµРІС‹С… РїР°СЂР°РјРµС‚СЂРѕРІ Р±Р°Р·РѕРІРѕР№ РѕРїРµСЂР°С†РёРё
 init_active_bool_parameters = function(operation, activeBoolParameters)
 	for luaName, value in pairs(activeBoolParameters) do
-        -- Данные для добавления параметра
+        -- Р”Р°РЅРЅС‹Рµ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РїР°СЂР°РјРµС‚СЂР°
         local name = value.name or ""
         local defaultValue = value.defaultValue or ""
 
-        -- Добавить булевый параметр
+        -- Р”РѕР±Р°РІРёС‚СЊ Р±СѓР»РµРІС‹Р№ РїР°СЂР°РјРµС‚СЂ
         operation:AddActiveBoolParameter(luaName, name, defaultValue)
     end
 end
 
--- Инициализация пассивных параметров базовой операции
+-- РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїР°СЃСЃРёРІРЅС‹С… РїР°СЂР°РјРµС‚СЂРѕРІ Р±Р°Р·РѕРІРѕР№ РѕРїРµСЂР°С†РёРё
 init_passive_parameters = function(operation, passiveParameters)
 	for luaName, value in pairs(passiveParameters) do
-        -- Данные для добавления параметра
+        -- Р”Р°РЅРЅС‹Рµ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РїР°СЂР°РјРµС‚СЂР°
         local name = value.name or ""
 
-        -- Добавить пассивный параметр
+        -- Р”РѕР±Р°РІРёС‚СЊ РїР°СЃСЃРёРІРЅС‹Р№ РїР°СЂР°РјРµС‚СЂ
         operation:AddPassiveParameter(luaName, name)
     end
 end
 
--- Инициализация шагов базовой операции
+-- РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ С€Р°РіРѕРІ Р±Р°Р·РѕРІРѕР№ РѕРїРµСЂР°С†РёРё
 init_operation_steps = function(operation, steps)
     for luaName, value in pairs(steps) do
-        -- Данные для добавления базового шага
+        -- Р”Р°РЅРЅС‹Рµ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ Р±Р°Р·РѕРІРѕРіРѕ С€Р°РіР°
         local name = value.name or ""
 
-        -- Добавить базовый шаг для операции
+        -- Р”РѕР±Р°РІРёС‚СЊ Р±Р°Р·РѕРІС‹Р№ С€Р°Рі РґР»СЏ РѕРїРµСЂР°С†РёРё
         operation:AddStep(luaName, name)
     end
 end
