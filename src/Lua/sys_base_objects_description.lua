@@ -412,7 +412,13 @@ return
             {
                 WORKING = {
                     name = "Работа",
-                    params = { },
+                    params =
+                    {
+                        active =
+                        {
+                            product_request = { name = "Запрос продукта" },
+                        }
+                    },
                     steps = { },
                 },
             },
