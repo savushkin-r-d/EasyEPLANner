@@ -412,7 +412,13 @@ return
             {
                 WORKING = {
                     name = "Работа",
-                    params = { },
+                    params =
+                    {
+                        active =
+                        {
+                            product_request = { name = "Запрос продукта" },
+                        }
+                    },
                     steps = { },
                 },
             },
@@ -578,7 +584,16 @@ return
             basicName = "sterile_air_node",
             equipment = { },
             aggregateParameters = { },
-            bindingName = "sterile_air_node"
+            bindingName = "sterile_air_node",
+        },
+        steam_blast_node = {
+            name = "Узел продувания",
+            s88Level = 2,
+            baseOperationg = { },
+            basicName = "steam_blast_node",
+            equipment = { },
+            aggregateParameters = { },
+            bindingName = "steam_blast_node",
         },
     }
 end
