@@ -27,19 +27,23 @@ namespace EasyEPlanner
         /// <param name="e"></param>
         private void overviewButton_Click(object sender, EventArgs e)
         {
-            string fileExtension = ".lua";
+            string fileExtension = "lua";
             var ofd = new OpenFileDialog();
             ofd.DefaultExt = fileExtension;
-            
+            ofd.Filter = $"Скрипт LUA (.lua)|*.lua";
+
             DialogResult dialog = ofd.ShowDialog();
             if (dialog == DialogResult.Cancel)
             {
                 return;
             }
 
-            // Load objects
+            TechObjectsImporter.GetInstance()
+                .LoadImportingObjects(ofd.FileName);
 
-            // Display objects in ListBox
+            checkedListBox.Items.Clear();
+            checkedListBox.Items.AddRange(TechObjectsImporter.GetInstance()
+                .ImportedObjectsListArray);
 
             importButton.Enabled = true;
         }
@@ -61,7 +65,22 @@ namespace EasyEPlanner
         /// <param name="e"></param>
         private void importButton_Click(object sender, EventArgs e)
         {
-            //TODO: Import selected objects to the end of tree
+            var checkedItems = new List<int>();
+            for (int item = 0; item < checkedListBox.Items.Count; item++)
+            {
+                bool itemChecked = checkedListBox.GetItemChecked(item);
+                if (itemChecked)
+                {
+                    var checkedItem = checkedListBox.Items[item] as string;
+                    string itemNumber = checkedItem.Split('.')[0];
+                    int itemNum = Convert.ToInt32(itemNumber);
+                    checkedItems.Add(itemNum);
+                }
+            }
+
+            TechObjectsImporter.GetInstance().Import(checkedItems);
+            Editor.Editor.GetInstance().EForm.RefreshTree();
+            this.Close();
         }
 
         /// <summary>

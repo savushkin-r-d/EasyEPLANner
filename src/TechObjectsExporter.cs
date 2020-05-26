@@ -32,17 +32,20 @@ namespace EasyEPlanner
         /// объектов</param>
         public void Export(string path, List<int> objectsNums)
         {
+            var objects = TechObjectManager.GetInstance().Objects;
             string objectsDescription = "";
             string objectsRestriction = "";
-            foreach(var num in objectsNums)
+            foreach(var obj in objects)
             {
-                var techObj = TechObjectManager.GetInstance().GetTObject(num);
-                if (techObj == null)
+                if (objectsNums.Contains(obj.GlobalNumber))
                 {
-                    continue;
+                    objectsDescription += obj.SaveAsLuaTable("\t\t");
+                    objectsRestriction += obj.SaveRestrictionAsLua("\t");
                 }
-                objectsDescription += techObj.SaveAsLuaTable("\t");
-                objectsRestriction += techObj.SaveRestrictionAsLua("\t");
+                else
+                {
+                    objectsDescription += $"\t[ {obj.GlobalNumber} ] = {{0}},\n";
+                }
             }
 
             try
@@ -67,8 +70,10 @@ namespace EasyEPlanner
         private void WriteObjectsDescription(StreamWriter fileWriter, 
             string description)
         {
-            string stringForSaving = "objects =\n";
-            stringForSaving += "{\n" + description + "}\n";
+            string stringForSaving = "init_tech_objects_modes = function()\n";
+            stringForSaving += "\treturn\n";
+            stringForSaving += "\t{\n" + description + "\t}\n";
+            stringForSaving += "end\n";
             fileWriter.Write(stringForSaving);
         }
 

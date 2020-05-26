@@ -5,66 +5,74 @@ init = function()
 
     local objects = init_tech_objects_modes()
     local initialized_objects = { }
-    for fields, value in ipairs( objects ) do
-        local object_n            = value.n or 1
-        local object_name         = value.name or "Object"
-        local object_tech_type    = value.tech_type or 1
-        local object_name_eplan   = value.name_eplan or "TANK"
-        local object_name_BC      = value.name_BC or "TankObj"
-        local cooper_param_number = value.cooper_param_number or -1
-		local base_tech_object	  = value.base_tech_object or "" 
-		local attached_objects	  = value.attached_objects or ""
+	for number, value in ipairs( objects ) do
+		-- Проверка пустоты
+        if(#value == 0) then
+            -- Глобальный номер объекта
+        	local global_number       = number -- Для импорта в редактор
+		    local object_n            = value.n or 1
+		    local object_name         = value.name or "Object"
+		    local object_tech_type    = value.tech_type or 1
+		    local object_name_eplan   = value.name_eplan or "TANK"
+		    local object_name_BC      = value.name_BC or "TankObj"
+		    local cooper_param_number = value.cooper_param_number or -1
+		    local base_tech_object	  = value.base_tech_object or "" 
+		    local attached_objects	  = value.attached_objects or ""
 
-        local obj = ADD_TECH_OBJECT( object_n, object_name, object_tech_type,
-            object_name_eplan, cooper_param_number, object_name_BC, 
-            base_tech_object, attached_objects)
-        initialized_objects[fields] = obj
-    end
-
-    for fields, value in ipairs( objects ) do
-        local obj = initialized_objects[fields]
-        local timers_count = value.timers or 1
-        obj:SetTimersCount( timers_count )
-
-        --Оборудование
-        if value.equipment ~= nil then
-            for field, value in pairs( value.equipment ) do
-                obj:AddEquipment(field, value)
-            end
+		    local obj = ADD_TECH_OBJECT(global_number, object_n, object_name,
+			    object_tech_type, object_name_eplan, cooper_param_number,
+			    object_name_BC, base_tech_object, attached_objects)
+		    initialized_objects[number] = obj
         end
+	end
 
-        --Параметры
-        proc_params( value.par_float, "par_float", obj )
-        proc_params( value.par_uint, "par_uint", obj )
-        proc_params( value.rt_par_float, "rt_par_float", obj )
-        proc_params( value.rt_par_uint, "rt_par_uint", obj )
+    for fields, value in ipairs( objects ) do
+        -- Проверка пустоты таблицы для импортируемых объектов
+        if (#value == 0) then
+            local obj = initialized_objects[fields]
+            local timers_count = value.timers or 1
+            obj:SetTimersCount( timers_count )
 
-        local params_float = value.par_float
+            --Оборудование
+            if value.equipment ~= nil then
+                for field, value in pairs( value.equipment ) do
+                    obj:AddEquipment(field, value)
+                end
+            end
 
-        for fields, value in ipairs( value.modes ) do
-            local mode_name = value.name or "Операция ??"
-			local mode_base_operation = value.base_operation or ""
+            --Параметры
+            proc_params( value.par_float, "par_float", obj )
+            proc_params( value.par_uint, "par_uint", obj )
+            proc_params( value.rt_par_float, "rt_par_float", obj )
+            proc_params( value.rt_par_uint, "rt_par_uint", obj )
 
-			-- Доп. свойства по операции
-			local mode_base_operation_props = {}
-			if value.props ~= nil then
-				for fields, value in pairs(value.props) do
-					mode_base_operation_props[fields] = value 
-				end
-			end
+            local params_float = value.par_float
 
-            local mode = obj:AddMode( mode_name, mode_base_operation, 
-            mode_base_operation_props)
+            for fields, value in ipairs( value.modes ) do
+                local mode_name = value.name or "Операция ??"
+			    local mode_base_operation = value.base_operation or ""
 
-            local idx = fields
-            proc_oper_params( params_float, mode, idx, obj )
+			    -- Доп. свойства по операции
+			    local mode_base_operation_props = {}
+			    if value.props ~= nil then
+				    for fields, value in pairs(value.props) do
+					    mode_base_operation_props[fields] = value 
+				    end
+			    end
 
-            if value.states ~= nil then
-                for fields, value in ipairs( value.states ) do
-                    local state_n = fields - 1
+                local mode = obj:AddMode( mode_name, mode_base_operation, 
+                mode_base_operation_props)
 
-                    proc_operation( value, mode, state_n )
+                local idx = fields
+                proc_oper_params( params_float, mode, idx, obj )
 
+                if value.states ~= nil then
+                    for fields, value in ipairs( value.states ) do
+                        local state_n = fields - 1
+
+                        proc_operation( value, mode, state_n )
+
+                    end
                 end
             end
         end

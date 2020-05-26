@@ -271,9 +271,11 @@ namespace TechObject
         /// Добавление технологического объекта. Вызывается из Lua.
         /// </summary>
         /// <returns>Добавленный технологический объект.</returns>
-        public TechObject AddObject(int techN, string name, int techType,
-            string nameEplan, int cooperParamNumber, string NameBC, 
-            string baseTechObjectName, string attachedObjects)
+        /// <param name="globalNumber">Глобальный номер объекта, используется
+        /// при импорте из файла</param>
+        public TechObject AddObject(int globalNumber, int techN, string name, 
+            int techType, string nameEplan, int cooperParamNumber, 
+            string NameBC, string baseTechObjectName, string attachedObjects)
         {
             TechObject obj = new TechObject(name, GetTechObjectN, techN,
                 techType, nameEplan.ToUpper(), cooperParamNumber, NameBC, 
@@ -781,6 +783,7 @@ namespace TechObject
 
                 TechObject newObject = (obj as TechObject).Clone(
                     GetTechObjectN, newN, oldObjN, newObjN);
+                newObject.Parent = this;
                 objects.Add(newObject);
 
                 newObject.ChangeCrossRestriction();
