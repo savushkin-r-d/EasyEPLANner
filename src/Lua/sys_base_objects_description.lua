@@ -358,6 +358,9 @@ return
                     },
                     steps = { },
                 },
+                ADDITION_OF_STARTER = {
+                    name = "Внесение закваски",
+                },
                 STORING = {
                     name = "Хранение",
                     params = { },
