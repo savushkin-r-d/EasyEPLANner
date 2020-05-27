@@ -195,6 +195,23 @@ namespace EasyEPlanner.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на --version  = {0}
+        ///--PAC_name = &apos;{1}&apos;
+        ///------------------------------------------------------------------------------
+        ///------------------------------------------------------------------------------
+        ///init_tech_objects_modes = function()
+        ///    return
+        ///    {{
+        ///{2}    }}
+        ///end.
+        /// </summary>
+        public static string mainObjectsPattern {
+            get {
+                return ResourceManager.GetString("mainObjectsPattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на --Проект &apos;ProjectName&apos;
         ///
         ///prg = require(&quot;prg&quot;)                        --Технологические объекты.

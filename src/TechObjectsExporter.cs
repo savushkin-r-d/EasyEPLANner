@@ -89,11 +89,11 @@ namespace EasyEPlanner
         private void WriteObjectsDescription(StreamWriter fileWriter, 
             string description)
         {
-            string stringForSaving = "init_tech_objects_modes = function()\n";
-            stringForSaving += "\treturn\n";
-            stringForSaving += "\t{\n" + description + "\t}\n";
-            stringForSaving += "end\n";
-            fileWriter.Write(stringForSaving);
+            string filePattern = Properties.Resources.ResourceManager
+                .GetString("mainObjectsPattern");
+            string descriptionFileData = string.Format(filePattern, "not used",
+                "not used", description);
+            fileWriter.Write(descriptionFileData);
         }
 
         /// <summary>

@@ -161,18 +161,11 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix)
         {
-            string res = prefix + "init_tech_objects_modes = function()\n" +
-                prefix + "\treturn\n" +
-                prefix + "\t{\n";
-
+            string res = "";
             foreach (TechObject obj in objects)
             {
                 res += obj.SaveAsLuaTable(prefix + "\t\t");
             }
-
-            res += prefix + "\t}\n" +
-                prefix + "end\n";
-
             res = res.Replace("\t", "    ");
             return res;
         }

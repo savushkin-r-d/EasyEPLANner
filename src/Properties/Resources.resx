@@ -445,4 +445,16 @@ restrictions =
 {1}    }}</value>
     <comment>Шаблон файла для сохранения ограничений проекта</comment>
   </data>
+  <data name="mainObjectsPattern" xml:space="preserve">
+    <value>--version  = {0}
+--PAC_name = '{1}'
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+init_tech_objects_modes = function()
+    return
+    {{
+{2}    }}
+end</value>
+    <comment>Шаблон файла сохранения объектов проекта</comment>
+  </data>
 </root>
