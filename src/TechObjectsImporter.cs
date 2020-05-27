@@ -1,9 +1,11 @@
 ﻿using Editor;
 using LuaInterface;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using TechObject;
 
 namespace EasyEPlanner
 {
@@ -32,6 +34,19 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Singleton
+        /// </summary>
+        /// <returns></returns>
+        public static TechObjectsImporter GetInstance()
+        {
+            if (techObjectsImporter == null)
+            {
+                techObjectsImporter = new TechObjectsImporter();
+            }
+            return techObjectsImporter;
+        }
+
+        /// <summary>
         /// Загрузить скрипты для импорта объектов.
         /// </summary>
         private void LoadScriptsForImport()
@@ -56,12 +71,23 @@ namespace EasyEPlanner
         public void LoadImportingObjects(string pathToFile)
         {
             importedObjects.Clear();
+
             var sr = new StreamReader(pathToFile);
             string dataFromFile = sr.ReadToEnd();
             sr.Close();
-            lua.DoString(dataFromFile);
-            lua.DoString("if init ~= nil then init() end");
-            lua.DoString("init_restriction()");
+
+            try
+            {
+                lua.DoString(dataFromFile);
+                lua.DoString("if init ~= nil then init() end");
+                lua.DoString("init_restriction()");
+            }
+            catch
+            {
+                string message = "Ошибка при загрузке объектов из " +
+                    "импортируемого файла.";
+                throw new Exception(message);
+            }
         }
 
         /// <summary>
@@ -118,8 +144,7 @@ namespace EasyEPlanner
         /// <param name="checkedItems">Выбранные на дереве объекты</param>
         public void Import(List<int> checkedItems)
         {
-            ITreeViewItem techObjectsManager = TechObject.TechObjectManager
-                .GetInstance();
+            ITreeViewItem techObjectsManager = TechObjectManager.GetInstance();
             foreach(var num in checkedItems)
             {
                 var obj = importedObjects[num];
@@ -130,7 +155,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Список импортированных объектов
         /// </summary>
-        public string[] ImportedObjectsListArray
+        public string[] ImportedObjectsNamesArray
         {
             get
             {
@@ -144,19 +169,6 @@ namespace EasyEPlanner
                     return new string[0];
                 }
             }
-        }
-
-        /// <summary>
-        /// Singleton
-        /// </summary>
-        /// <returns></returns>
-        public static TechObjectsImporter GetInstance()
-        {
-            if (techObjectsImporter == null)
-            {
-                techObjectsImporter = new TechObjectsImporter();
-            }
-            return techObjectsImporter;
         }
 
         private Dictionary<int, ITreeViewItem> importedObjects;

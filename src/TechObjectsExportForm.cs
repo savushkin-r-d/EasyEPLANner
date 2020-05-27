@@ -9,6 +9,7 @@ namespace EasyEPlanner
         public TechObjectsExportForm()
         {
             InitializeComponent();
+            exportButton.Enabled = false;
         }
 
         /// <summary>
@@ -43,23 +44,24 @@ namespace EasyEPlanner
             sfd.Filter = $"Скрипт LUA (.lua)|*.lua";
             sfd.DefaultExt = "lua";
 
-            DialogResult saveResult = sfd.ShowDialog();
-            if (saveResult == DialogResult.Cancel)
-            {
-                return;
-            }
-
-            var checkedItems = GetCheckedItemsNumbers();
-
-            string fileName = sfd.FileName;
             try
             {
+                var checkedItems = GetCheckedItemsNumbers();
+
+                DialogResult saveResult = sfd.ShowDialog();
+                if (saveResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+                string fileName = sfd.FileName;
+
                 TechObjectsExporter.GetInstance()
                     .Export(fileName, checkedItems);
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.Message);
+                MessageBox.Show(exception.Message, "Предупреждение",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -80,6 +82,12 @@ namespace EasyEPlanner
                 {
                     checkedItems.Add(item + 1);
                 }
+            }
+
+            bool isEmpty = checkedItems.Count == 0;
+            if (isEmpty)
+            {
+                throw new Exception("Выберите хотя бы 1 объект для экспорта");
             }
 
             return checkedItems;
@@ -121,7 +129,12 @@ namespace EasyEPlanner
         private void ExportObjectsForm_Load(object sender, EventArgs e)
         {
             var names = TechObjectsExporter.GetInstance().ExportingObjectsNames;
-            checkedListBox.Items.AddRange(names);
+            bool isEmpty = names.Length == 0;
+            if (!isEmpty)
+            {
+                checkedListBox.Items.AddRange(names);
+                exportButton.Enabled = true;
+            }
         }
     }
 }

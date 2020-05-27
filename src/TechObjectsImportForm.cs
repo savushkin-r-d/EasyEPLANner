@@ -9,7 +9,6 @@ namespace EasyEPlanner
         public TechObjectsImportForm()
         {
             InitializeComponent();
-
             importButton.Enabled = false;
         }
 
@@ -20,11 +19,12 @@ namespace EasyEPlanner
         /// <param name="e"></param>
         private void overviewButton_Click(object sender, EventArgs e)
         {
-            string fileExtension = "lua";
+            const string fileExtension = "lua";
+            const string fileFilter = "Скрипт LUA (.lua)|*.lua";
 
             var ofd = new OpenFileDialog();
             ofd.DefaultExt = fileExtension;
-            ofd.Filter = $"Скрипт LUA (.lua)|*.lua";
+            ofd.Filter = fileFilter;
 
             DialogResult dialog = ofd.ShowDialog();
             if (dialog == DialogResult.Cancel)
@@ -39,17 +39,38 @@ namespace EasyEPlanner
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.Message);
+                MessageBox.Show(exception.Message, "Предупреждение", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 importButton.Enabled = false;
                 checkedListBox.Items.Clear();
                 return;
             }
-            
-            checkedListBox.Items.Clear();
-            checkedListBox.Items.AddRange(TechObjectsImporter.GetInstance()
-                .ImportedObjectsListArray);
 
-            importButton.Enabled = true;
+            FillCheckedListBox();
+        }
+
+        /// <summary>
+        /// Заполнение списка именами объектов
+        /// </summary>
+        private void FillCheckedListBox()
+        {
+            checkedListBox.Items.Clear();
+            var importedObjectsNames = TechObjectsImporter.GetInstance().
+                ImportedObjectsNamesArray;
+            bool objectsIsEmpty = importedObjectsNames.Length == 0;
+            if (!objectsIsEmpty)
+            {
+                checkedListBox.Items.AddRange(TechObjectsImporter.GetInstance()
+                   .ImportedObjectsNamesArray);
+                importButton.Enabled = true;
+            }
+            else
+            {
+                MessageBox.Show("Объекты для импорта не найдены", 
+                    "Предупреждение", MessageBoxButtons.OK, 
+                    MessageBoxIcon.Warning);
+                importButton.Enabled = false;
+            }
         }
 
         /// <summary>
@@ -77,7 +98,8 @@ namespace EasyEPlanner
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.Message);
+                MessageBox.Show(exception.Message, "Предупреждение",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 Editor.Editor.GetInstance().EForm.RefreshTree();
                 return;
             }
