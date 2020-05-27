@@ -53,7 +53,8 @@ namespace EasyEPlanner
             var objects = TechObjectManager.GetInstance().Objects;
             foreach (var obj in objects)
             {
-                if (objectsNums.Contains(obj.GlobalNumber))
+                bool needExporting = objectsNums.Contains(obj.GlobalNumber);
+                if (needExporting)
                 {
                     objectsDescription += obj.SaveAsLuaTable("\t\t");
                     objectsRestriction += obj.SaveRestrictionAsLua("\t");
@@ -69,7 +70,7 @@ namespace EasyEPlanner
                 var fileWriter = new StreamWriter(path, false, Encoding.UTF8);
                 
                 WriteObjectsDescription(fileWriter, objectsDescription);
-                fileWriter.WriteLine();
+                fileWriter.WriteLine("\n");
                 WriteObjectsRestriction(fileWriter, objectsRestriction);
                 
                 fileWriter.Flush();
