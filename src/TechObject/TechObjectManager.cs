@@ -277,6 +277,8 @@ namespace TechObject
             int techType, string nameEplan, int cooperParamNumber, 
             string NameBC, string baseTechObjectName, string attachedObjects)
         {
+            // globalNumber игнорируется в этом методе, но используется при
+            // импорте описания из файла (аналогичная сигнатура, другое тело).
             TechObject obj = new TechObject(name, GetTechObjectN, techN,
                 techType, nameEplan.ToUpper(), cooperParamNumber, NameBC, 
                 attachedObjects);
