@@ -436,4 +436,13 @@ return
 end</value>
     <comment>Шаблон для файла sys_base_objects_description.lua. В нем описаны базовые объекты, с операциями, шагами, параметрами и др.</comment>
   </data>
+  <data name="mainRestrictionsPattern" xml:space="preserve">
+    <value>--version  = {0}
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+restrictions =
+    {{
+{1}    }}</value>
+    <comment>Шаблон файла для сохранения ограничений проекта</comment>
+  </data>
 </root>

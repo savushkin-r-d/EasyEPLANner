@@ -171,17 +171,18 @@ namespace EasyEPlanner
         /// <param name="par">Параметры</param>
         private static void SaveRestrictionsFile(ParametersForSave par)
         {
+            string filePattern = Properties.Resources.ResourceManager
+                .GetString("mainRestrictionsPattern");
+            string resctrictions = techObjectManager
+                .SaveRestrictionAsLua("");
+            var restrictionsFileData = string.Format(filePattern, 
+                mainRestrictionsFileVersion, resctrictions);
+
             string fileName = par.path + @"\" + mainRestrictionsFileName;
-            var fileWriter = new StreamWriter(fileName,
-                false, Encoding.GetEncoding(1251));
+            var fileWriter = new StreamWriter(fileName, false, 
+                Encoding.GetEncoding(1251));
 
-            fileWriter.WriteLine("--version  = {0}", 
-                mainRestrictionsFileVersion);
-            fileWriter.WriteLine(new string('-', numberOfDashes));
-            fileWriter.WriteLine(new string('-', numberOfDashes));
-            
-            fileWriter.Write(techObjectManager.SaveRestrictionAsLua(""));
-
+            fileWriter.Write(restrictionsFileData);
             fileWriter.Flush();
             fileWriter.Close();
         }

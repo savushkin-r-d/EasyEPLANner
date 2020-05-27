@@ -190,17 +190,17 @@
       <DependentUpon>IdleForm.cs</DependentUpon>
     </Compile>
     <Compile Include="IdleModule.cs" />
-    <Compile Include="ExportObjectsForm.cs">
+    <Compile Include="TechObjectsExportForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ExportObjectsForm.Designer.cs">
-      <DependentUpon>ExportObjectsForm.cs</DependentUpon>
+    <Compile Include="TechObjectsExportForm.Designer.cs">
+      <DependentUpon>TechObjectsExportForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="ImportObjectsForm.cs">
+    <Compile Include="TechObjectsImportForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ImportObjectsForm.Designer.cs">
-      <DependentUpon>ImportObjectsForm.cs</DependentUpon>
+    <Compile Include="TechObjectsImportForm.Designer.cs">
+      <DependentUpon>TechObjectsImportForm.cs</DependentUpon>
     </Compile>
     <Compile Include="IOReader.cs" />
     <Compile Include="IO\IOLinkCalculator.cs" />
@@ -291,11 +291,11 @@
     <EmbeddedResource Include="IdleForm.resx">
       <DependentUpon>IdleForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExportObjectsForm.resx">
-      <DependentUpon>ExportObjectsForm.cs</DependentUpon>
+    <EmbeddedResource Include="TechObjectsExportForm.resx">
+      <DependentUpon>TechObjectsExportForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ImportObjectsForm.resx">
-      <DependentUpon>ImportObjectsForm.cs</DependentUpon>
+    <EmbeddedResource Include="TechObjectsImportForm.resx">
+      <DependentUpon>TechObjectsImportForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Logs\LogFrm.resx">
       <DependentUpon>LogFrm.cs</DependentUpon>

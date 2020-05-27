@@ -184,16 +184,11 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveRestrictionAsLua(string prefix)
         {
-            string res = prefix + "restrictions =\n" + prefix + "\t{";
-
+            var res = "";
             foreach (TechObject obj in objects)
             {
                 res += obj.SaveRestrictionAsLua(prefix + "\t");
             }
-
-            res += "\n" + prefix + "\t}\n";
-
-
             res = res.Replace("\t", "    ");
             return res;
         }

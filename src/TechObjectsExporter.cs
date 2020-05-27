@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using TechObject;
 
 namespace EasyEPlanner
@@ -15,6 +14,10 @@ namespace EasyEPlanner
     {
         private TechObjectsExporter() { }
 
+        /// <summary>
+        /// Singleton
+        /// </summary>
+        /// <returns></returns>
         public static TechObjectsExporter GetInstance()
         {
             if (techObjectsExporter == null)
@@ -45,10 +48,10 @@ namespace EasyEPlanner
         /// объектов</param>
         public void Export(string path, List<int> objectsNums)
         {
-            var objects = TechObjectManager.GetInstance().Objects;
             string objectsDescription = "";
             string objectsRestriction = "";
-            foreach(var obj in objects)
+            var objects = TechObjectManager.GetInstance().Objects;
+            foreach (var obj in objects)
             {
                 if (objectsNums.Contains(obj.GlobalNumber))
                 {
@@ -64,9 +67,12 @@ namespace EasyEPlanner
             try
             {
                 var fileWriter = new StreamWriter(path, false, Encoding.UTF8);
+                
                 WriteObjectsDescription(fileWriter, objectsDescription);
-                fileWriter.WriteLine("--");
+                fileWriter.WriteLine();
                 WriteObjectsRestriction(fileWriter, objectsRestriction);
+                
+                fileWriter.Flush();
                 fileWriter.Close();
             }
             catch
@@ -93,14 +99,16 @@ namespace EasyEPlanner
         /// <summary>
         /// Записать ограничения.
         /// </summary>
-        /// <param name="streamWriter">Поток для записи</param>
+        /// <param name="fileWriter">Поток для записи</param>
         /// <param name="restrictions">Ограничения</param>
         private void WriteObjectsRestriction(StreamWriter fileWriter, 
             string restrictions)
         {
-            string stringForSaving = "restrictions =\n";
-            stringForSaving += "\t{" + restrictions + "\n\t}";
-            fileWriter.Write(stringForSaving);
+            string filePattern = Properties.Resources.ResourceManager
+                .GetString("mainRestrictionsPattern");
+            string restrictionsFileData = string.Format(filePattern, "not used", 
+                restrictions);
+            fileWriter.Write(restrictionsFileData);
         }
 
         private static TechObjectsExporter techObjectsExporter;

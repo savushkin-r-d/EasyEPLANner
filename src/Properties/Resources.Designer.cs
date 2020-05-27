@@ -214,6 +214,20 @@ namespace EasyEPlanner.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на --version  = {0}
+        ///------------------------------------------------------------------------------
+        ///------------------------------------------------------------------------------
+        ///restrictions =
+        ///    {{
+        ///{1}    }}.
+        /// </summary>
+        public static string mainRestrictionsPattern {
+            get {
+                return ResourceManager.GetString("mainRestrictionsPattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap mode {
