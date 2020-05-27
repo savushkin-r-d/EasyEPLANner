@@ -135,7 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigurationChecker.cs" />
-    <Compile Include="TechObjectsImporter.cs" />
+    <Compile Include="Editor\TechObjectsImporter.cs" />
     <Compile Include="TechObject\Base\BaseObjectsManager.cs" />
     <Compile Include="Device\DeviceManager.cs" />
     <Compile Include="DeviceBindingReader.cs" />
@@ -171,7 +171,7 @@
     <Compile Include="DFrm.Designer.cs">
       <DependentUpon>DFrm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Editor.cs" />
+    <Compile Include="Editor\Editor.cs" />
     <Compile Include="EProjectManager.cs" />
     <Compile Include="FileSavers\XMLReporterDialog.cs">
       <SubType>Form</SubType>
@@ -190,16 +190,16 @@
       <DependentUpon>IdleForm.cs</DependentUpon>
     </Compile>
     <Compile Include="IdleModule.cs" />
-    <Compile Include="TechObjectsExportForm.cs">
+    <Compile Include="Editor\TechObjectsExportForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TechObjectsExportForm.Designer.cs">
+    <Compile Include="Editor\TechObjectsExportForm.Designer.cs">
       <DependentUpon>TechObjectsExportForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="TechObjectsImportForm.cs">
+    <Compile Include="Editor\TechObjectsImportForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TechObjectsImportForm.Designer.cs">
+    <Compile Include="Editor\TechObjectsImportForm.Designer.cs">
       <DependentUpon>TechObjectsImportForm.cs</DependentUpon>
     </Compile>
     <Compile Include="IOReader.cs" />
@@ -244,13 +244,13 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="StaticHelper.cs" />
-    <Compile Include="EditorCtrl.cs">
+    <Compile Include="Editor\EditorCtrl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="EditorCtrl.Designer.cs">
+    <Compile Include="Editor\EditorCtrl.Designer.cs">
       <DependentUpon>EditorCtrl.cs</DependentUpon>
     </Compile>
-    <Compile Include="TechObjectsExporter.cs" />
+    <Compile Include="Editor\TechObjectsExporter.cs" />
     <Compile Include="TechObject\Action.cs" />
     <Compile Include="TechObject\Action_AI_AO.cs" />
     <Compile Include="TechObject\Action_DI_DO.cs" />
@@ -291,10 +291,10 @@
     <EmbeddedResource Include="IdleForm.resx">
       <DependentUpon>IdleForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TechObjectsExportForm.resx">
+    <EmbeddedResource Include="Editor\TechObjectsExportForm.resx">
       <DependentUpon>TechObjectsExportForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TechObjectsImportForm.resx">
+    <EmbeddedResource Include="Editor\TechObjectsImportForm.resx">
       <DependentUpon>TechObjectsImportForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Logs\LogFrm.resx">
@@ -310,7 +310,7 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="EditorCtrl.resx">
+    <EmbeddedResource Include="Editor\EditorCtrl.resx">
       <DependentUpon>EditorCtrl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
