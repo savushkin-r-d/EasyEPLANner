@@ -4,9 +4,9 @@ using System.Windows.Forms;
 
 namespace EasyEPlanner
 {
-    public partial class ImportObjectsForm : Form
+    public partial class TechObjectsImportForm : Form
     {
-        public ImportObjectsForm()
+        public TechObjectsImportForm()
         {
             InitializeComponent();
 

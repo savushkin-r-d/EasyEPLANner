@@ -1,6 +1,6 @@
 ﻿namespace EasyEPlanner
 {
-    partial class ExportObjectsForm
+    partial class TechObjectsExportForm
     {
         /// <summary>
         /// Required designer variable.

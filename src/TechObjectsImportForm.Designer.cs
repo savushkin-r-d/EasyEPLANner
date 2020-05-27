@@ -1,6 +1,6 @@
 ﻿namespace EasyEPlanner
 {
-    partial class ImportObjectsForm
+    partial class TechObjectsImportForm
     {
         /// <summary>
         /// Required designer variable.

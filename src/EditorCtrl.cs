@@ -1549,7 +1549,7 @@ namespace Editor
         /// <param name="e"></param>
         private void importButton_Click(object sender, EventArgs e)
         {
-            var importForm = new ImportObjectsForm();
+            var importForm = new TechObjectsImportForm();
             importForm.ShowDialog();
         }
 
@@ -1560,7 +1560,7 @@ namespace Editor
         /// <param name="e"></param>
         private void exportButton_Click(object sender, EventArgs e)
         {
-            var exportForm = new ExportObjectsForm();
+            var exportForm = new TechObjectsExportForm();
             exportForm.ShowDialog();
         }
     }
