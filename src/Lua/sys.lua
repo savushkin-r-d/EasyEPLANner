@@ -6,7 +6,10 @@ init = function()
     local objects = init_tech_objects_modes()
     local initialized_objects = { }
 	for number, value in ipairs( objects ) do
-		-- Проверка пустоты
+		-- Проверка пустоты таблицы для импортируемых объектов.
+        -- Экспорт выполняется так, что бы пустые элементы таблицы имели длину 
+        -- 1,а при импорте это игнорируется. Сохранение таблиц (файлов проекта)
+        -- задает длину всех таблиц равную 0.
         if(#value == 0) then
             -- Глобальный номер объекта
         	local global_number       = number -- Для импорта в редактор
@@ -27,7 +30,7 @@ init = function()
 	end
 
     for fields, value in ipairs( objects ) do
-        -- Проверка пустоты таблицы для импортируемых объектов
+        -- Аналогично с предыдущим циклом.
         if (#value == 0) then
             local obj = initialized_objects[fields]
             local timers_count = value.timers or 1
