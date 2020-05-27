@@ -64,7 +64,7 @@
             this.overviewButton.Location = new System.Drawing.Point(305, 24);
             this.overviewButton.Name = "overviewButton";
             this.overviewButton.Size = new System.Drawing.Size(67, 21);
-            this.overviewButton.TabIndex = 2;
+            this.overviewButton.TabIndex = 3;
             this.overviewButton.Text = "Обзор";
             this.overviewButton.UseVisualStyleBackColor = true;
             this.overviewButton.Click += new System.EventHandler(this.overviewButton_Click);
@@ -80,10 +80,10 @@
             // importButton
             // 
             this.importButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.importButton.Location = new System.Drawing.Point(262, 406);
+            this.importButton.Location = new System.Drawing.Point(146, 406);
             this.importButton.Name = "importButton";
             this.importButton.Size = new System.Drawing.Size(110, 28);
-            this.importButton.TabIndex = 6;
+            this.importButton.TabIndex = 2;
             this.importButton.Text = "Импортировать";
             this.importButton.UseVisualStyleBackColor = true;
             this.importButton.Click += new System.EventHandler(this.importButton_Click);
@@ -91,10 +91,10 @@
             // cancelButton
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancelButton.Location = new System.Drawing.Point(146, 406);
+            this.cancelButton.Location = new System.Drawing.Point(262, 406);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(110, 28);
-            this.cancelButton.TabIndex = 5;
+            this.cancelButton.TabIndex = 1;
             this.cancelButton.Text = "Отмена";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
@@ -117,7 +117,7 @@
             this.selectedAllObjects.Location = new System.Drawing.Point(71, 49);
             this.selectedAllObjects.Name = "selectedAllObjects";
             this.selectedAllObjects.Size = new System.Drawing.Size(26, 13);
-            this.selectedAllObjects.TabIndex = 8;
+            this.selectedAllObjects.TabIndex = 4;
             this.selectedAllObjects.TabStop = true;
             this.selectedAllObjects.Text = "Всё";
             this.selectedAllObjects.VisitedLinkColor = System.Drawing.Color.Black;
@@ -132,7 +132,7 @@
             this.clearSelectedObjects.Location = new System.Drawing.Point(106, 49);
             this.clearSelectedObjects.Name = "clearSelectedObjects";
             this.clearSelectedObjects.Size = new System.Drawing.Size(54, 13);
-            this.clearSelectedObjects.TabIndex = 9;
+            this.clearSelectedObjects.TabIndex = 5;
             this.clearSelectedObjects.TabStop = true;
             this.clearSelectedObjects.Text = "Очистить";
             this.clearSelectedObjects.VisitedLinkColor = System.Drawing.Color.Black;

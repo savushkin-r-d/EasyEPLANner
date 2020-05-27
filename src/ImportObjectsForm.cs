@@ -1,12 +1,5 @@
-﻿using Eplan.EplApi.HEServices;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace EasyEPlanner
@@ -28,6 +21,7 @@ namespace EasyEPlanner
         private void overviewButton_Click(object sender, EventArgs e)
         {
             string fileExtension = "lua";
+
             var ofd = new OpenFileDialog();
             ofd.DefaultExt = fileExtension;
             ofd.Filter = $"Скрипт LUA (.lua)|*.lua";
@@ -38,9 +32,19 @@ namespace EasyEPlanner
                 return;
             }
 
-            TechObjectsImporter.GetInstance()
-                .LoadImportingObjects(ofd.FileName);
-
+            try
+            {
+                TechObjectsImporter.GetInstance()
+                    .LoadImportingObjects(ofd.FileName);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message);
+                importButton.Enabled = false;
+                checkedListBox.Items.Clear();
+                return;
+            }
+            
             checkedListBox.Items.Clear();
             checkedListBox.Items.AddRange(TechObjectsImporter.GetInstance()
                 .ImportedObjectsListArray);
@@ -65,6 +69,29 @@ namespace EasyEPlanner
         /// <param name="e"></param>
         private void importButton_Click(object sender, EventArgs e)
         {
+            var checkedItems = GetCheckedForImportItems();
+
+            try
+            {
+                TechObjectsImporter.GetInstance().Import(checkedItems);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message);
+                Editor.Editor.GetInstance().EForm.RefreshTree();
+                return;
+            }
+
+            Editor.Editor.GetInstance().EForm.RefreshTree();
+            this.Close();
+        }
+
+        /// <summary>
+        /// Получить номера выбранных для импорта элементов.
+        /// </summary>
+        /// <returns></returns>
+        private List<int> GetCheckedForImportItems()
+        {
             var checkedItems = new List<int>();
             for (int item = 0; item < checkedListBox.Items.Count; item++)
             {
@@ -78,9 +105,7 @@ namespace EasyEPlanner
                 }
             }
 
-            TechObjectsImporter.GetInstance().Import(checkedItems);
-            Editor.Editor.GetInstance().EForm.RefreshTree();
-            this.Close();
+            return checkedItems;
         }
 
         /// <summary>

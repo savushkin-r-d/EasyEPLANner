@@ -52,15 +52,15 @@
             this.checkedListBox.Location = new System.Drawing.Point(12, 40);
             this.checkedListBox.Name = "checkedListBox";
             this.checkedListBox.Size = new System.Drawing.Size(360, 349);
-            this.checkedListBox.TabIndex = 4;
+            this.checkedListBox.TabIndex = 3;
             // 
             // exportButton
             // 
             this.exportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.exportButton.Location = new System.Drawing.Point(262, 401);
+            this.exportButton.Location = new System.Drawing.Point(146, 401);
             this.exportButton.Name = "exportButton";
             this.exportButton.Size = new System.Drawing.Size(110, 28);
-            this.exportButton.TabIndex = 6;
+            this.exportButton.TabIndex = 2;
             this.exportButton.Text = "Экспортировать";
             this.exportButton.UseVisualStyleBackColor = true;
             this.exportButton.Click += new System.EventHandler(this.exportButton_Click);
@@ -68,10 +68,10 @@
             // cancelButton
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancelButton.Location = new System.Drawing.Point(146, 401);
+            this.cancelButton.Location = new System.Drawing.Point(262, 401);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(110, 28);
-            this.cancelButton.TabIndex = 5;
+            this.cancelButton.TabIndex = 1;
             this.cancelButton.Text = "Отмена";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
@@ -94,7 +94,7 @@
             this.selectAllObjectsLink.Location = new System.Drawing.Point(71, 23);
             this.selectAllObjectsLink.Name = "selectAllObjectsLink";
             this.selectAllObjectsLink.Size = new System.Drawing.Size(26, 13);
-            this.selectAllObjectsLink.TabIndex = 8;
+            this.selectAllObjectsLink.TabIndex = 4;
             this.selectAllObjectsLink.TabStop = true;
             this.selectAllObjectsLink.Text = "Всё";
             this.selectAllObjectsLink.VisitedLinkColor = System.Drawing.Color.Black;
@@ -109,7 +109,7 @@
             this.clearSelectedObjectsLink.Location = new System.Drawing.Point(106, 23);
             this.clearSelectedObjectsLink.Name = "clearSelectedObjectsLink";
             this.clearSelectedObjectsLink.Size = new System.Drawing.Size(54, 13);
-            this.clearSelectedObjectsLink.TabIndex = 9;
+            this.clearSelectedObjectsLink.TabIndex = 5;
             this.clearSelectedObjectsLink.TabStop = true;
             this.clearSelectedObjectsLink.Text = "Очистить";
             this.clearSelectedObjectsLink.VisitedLinkColor = System.Drawing.Color.Black;

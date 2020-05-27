@@ -25,6 +25,19 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Имена доступных для экспорта объектов.
+        /// </summary>
+        public string[] ExportingObjectsNames
+        {
+            get
+            {
+                return TechObjectManager.GetInstance().Items
+                .Select(x => x.DisplayText[0])
+                .ToArray();
+            }
+        }
+
+        /// <summary>
         /// Экспорт описания проекта в файл.
         /// </summary>
         /// <param name="path">Место сохранения</param>

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace EasyEPlanner
@@ -44,14 +42,38 @@ namespace EasyEPlanner
             var sfd = new SaveFileDialog();
             sfd.Filter = $"Скрипт LUA (.lua)|*.lua";
             sfd.DefaultExt = "lua";
+
             DialogResult saveResult = sfd.ShowDialog();
             if (saveResult == DialogResult.Cancel)
             {
                 return;
             }
 
+            var checkedItems = GetCheckedItemsNumbers();
+
+            string fileName = sfd.FileName;
+            try
+            {
+                TechObjectsExporter.GetInstance()
+                    .Export(fileName, checkedItems);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message);
+                return;
+            }
+
+            this.Close();
+        }
+
+        /// <summary>
+        /// Получить список номеров выбранных элементов в списке на форме.
+        /// </summary>
+        /// <returns></returns>
+        private List<int> GetCheckedItemsNumbers()
+        {
             var checkedItems = new List<int>();
-            for(int item = 0; item < checkedListBox.Items.Count; item++)
+            for (int item = 0; item < checkedListBox.Items.Count; item++)
             {
                 bool itemChecked = checkedListBox.GetItemChecked(item);
                 if (itemChecked)
@@ -60,18 +82,7 @@ namespace EasyEPlanner
                 }
             }
 
-            string fileName = sfd.FileName;
-            try
-            {
-                TechObjectsExporter.GetInstance()
-                    .Export(fileName, checkedItems);
-            }
-            catch (Exception except)
-            {
-                MessageBox.Show(except.Message);
-            }
-
-            this.Close();
+            return checkedItems;
         }
 
         /// <summary>
@@ -109,10 +120,8 @@ namespace EasyEPlanner
         /// <param name="e"></param>
         private void ExportObjectsForm_Load(object sender, EventArgs e)
         {
-            var objectsNames = TechObject.TechObjectManager.GetInstance().Items
-                .Select(x => x.DisplayText[0])
-                .ToArray();
-            checkedListBox.Items.AddRange(objectsNames);
+            var names = TechObjectsExporter.GetInstance().ExportingObjectsNames;
+            checkedListBox.Items.AddRange(names);
         }
     }
 }
