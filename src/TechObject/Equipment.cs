@@ -102,7 +102,7 @@ namespace TechObject
             foreach (Editor.ITreeViewItem item in items)
             {
                 var property = item as BaseParameter;
-                bool isEmpty = property.IsEmpty &&
+                bool isEmpty = property.IsEmpty ||
                     property.Value == property.DefaultValue;
                 if (!isEmpty)
                 {

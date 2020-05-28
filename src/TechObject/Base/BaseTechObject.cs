@@ -428,18 +428,25 @@ namespace TechObject
         {
             var res = "";
 
-            res += objName + ".operations = \t\t--Операции.\n";
-            res += prefix + "{\n";
+            string saveOperations = "";
             foreach (Mode mode in modes)
             {
                 var baseOperation = mode.BaseOperation;
                 if (baseOperation.Name != "")
                 {
-                    res += prefix + baseOperation.LuaName.ToUpper() + " = " +
-                        mode.GetModeNumber() + ",\n";
+                    saveOperations += prefix + baseOperation.LuaName.ToUpper() +
+                        " = " + mode.GetModeNumber() + ",\n";
                 }
             }
-            res += prefix + "}\n";
+
+            bool isEmpty = saveOperations == "";
+            if (!isEmpty)
+            {
+                res += objName + ".operations = \t\t--Операции.\n";
+                res += prefix + "{\n";
+                res += saveOperations;
+                res += prefix + "}\n";
+            }
 
             return res;
         }
@@ -456,8 +463,7 @@ namespace TechObject
         {
             var res = "";
 
-            res += objName + ".steps = \t\t--Шаги операций.\n";
-            res += prefix + "{\n";
+            string steps = "";
             foreach (Mode mode in modes)
             {
                 var baseOperation = mode.BaseOperation;
@@ -466,33 +472,36 @@ namespace TechObject
                     continue;
                 }
 
-                string temp = "";
+                string stepString = "";
                 foreach (var step in mode.MainSteps)
                 {
                     if (step.GetBaseStepName() == "")
                     {
                         continue;
                     }
-                    temp += prefix + prefix + step.GetBaseStepLuaName() +
+                    stepString += prefix + prefix + step.GetBaseStepLuaName() +
                         " = " + step.GetStepNumber() + ",\n";
                 }
 
-                if (temp.Length == 0)
+                bool stepIsEmpty = stepString == "";
+                if (!stepIsEmpty)
                 {
-                    string emptyTable = prefix + baseOperation.LuaName
-                        .ToUpper() + " = { },\n";
-                    res += emptyTable;
-                }
-                else
-                {
-                    res += prefix + baseOperation.LuaName.ToUpper() + " =\n";
-                    res += prefix + prefix + "{\n";
-                    res += temp;
-                    res += prefix + prefix + "},\n";
+                    steps += prefix + baseOperation.LuaName.ToUpper() + " =\n";
+                    steps += prefix + prefix + "{\n";
+                    steps += stepString;
+                    steps += prefix + prefix + "},\n";
                 }
             }
 
-            res += prefix + "}\n";
+            bool stepsIsEmpty = steps == "";
+            if(!stepsIsEmpty)
+            {
+                res += objName + ".steps = \t\t--Шаги операций.\n";
+                res += prefix + "{\n";
+                res += steps;
+                res += prefix + "}\n";
+            }
+
             return res;
         }
 
@@ -656,7 +665,7 @@ namespace TechObject
                 var value = property.Value;
                 var luaName = property.LuaName;
 
-                bool isEmpty = property.IsEmpty &&
+                bool isEmpty = property.IsEmpty ||
                     property.Value == property.DefaultValue;
                 if (!isEmpty)
                 {
