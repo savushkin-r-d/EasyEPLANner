@@ -110,6 +110,7 @@ namespace IO
                 {
                     if (this.isIOLink() == true)
                     {
+                        const int WordToBitMultiplier = 8;
                         foreach (int clamp in Info.ChannelClamps)
                         {
                             res[idx, 0] = p;
@@ -122,14 +123,19 @@ namespace IO
                                 int devIdx = 0;
                                 foreach (Device.IODevice dev in devices[clamp])
                                 {
+                                    string sizeInBits = (dev.IOLinkProperties.SizeIn * WordToBitMultiplier)
+                                        .ToString();
+                                    string sizeOutBits = (dev.IOLinkProperties.SizeOut * WordToBitMultiplier)
+                                        .ToString();
+
                                     devName += dev.EPlanName +
                                         dev.GetConnectionType() +
                                         $"{dev.GetRange()}: " +
                                         $"{devicesChannels[clamp][devIdx].Name}: " +
                                         $"{dev.Description} " +
                                         $"{devicesChannels[clamp][devIdx].Comment}. " +
-                                        $"In: {dev.IOLinkProperties.SizeIn}, " +
-                                        $"Out: {dev.IOLinkProperties.SizeOut}";
+                                        $"Вход: {sizeInBits} бит, " +
+                                        $"Выход: {sizeOutBits} бит";
                                     devName = devName.Replace('\n', ' ');
                                     devIdx++;
                                 }
@@ -139,9 +145,15 @@ namespace IO
                             else if (devices[clamp] != null && 
                                 devices[clamp].Count > 1)
                             {
+                                var device = devices[clamp][0];
+                                string sizeInBits = (device.IOLinkProperties.SizeIn * WordToBitMultiplier)
+                                    .ToString();
+                                string sizeOutBits = (device.IOLinkProperties.SizeOut * WordToBitMultiplier)
+                                    .ToString();
+
                                 res[idx, 3] = "IO-Link, более 1 канала. " +
-                                    $"In: {devices[clamp][0].IOLinkProperties.SizeIn}, " +
-                                    $"Out: {devices[clamp][0].IOLinkProperties.SizeOut}";
+                                    $"Вход: {sizeInBits} бит, " +
+                                    $"Выход: {sizeOutBits} бит";
                             }
                             idx++;
                         }
