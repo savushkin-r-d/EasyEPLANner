@@ -227,8 +227,7 @@ namespace TechObject
                 }           
             }
 
-            bool needSavingParameters = paramsForSave != "";
-            if (needSavingParameters)
+            if (paramsForSave != String.Empty)
             {
                 res += prefix + "props =\n" + prefix + "\t{\n";
                 res += paramsForSave;
