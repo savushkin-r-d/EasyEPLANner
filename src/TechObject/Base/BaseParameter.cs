@@ -58,9 +58,9 @@ namespace TechObject
         {
             get
             {
-                bool IsEmpty = this.Value == "" || 
+                bool isEmpty = this.Value == "" || 
                     this.Value == "nil";
-                if (IsEmpty)
+                if (isEmpty)
                 {
                     return true;
                 }
