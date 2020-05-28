@@ -110,7 +110,7 @@ namespace IO
                 {
                     if (this.isIOLink() == true)
                     {
-                        const int WordToBitMultiplier = 8;
+                        const int WordToBitMultiplier = 16;
                         foreach (int clamp in Info.ChannelClamps)
                         {
                             res[idx, 0] = p;
