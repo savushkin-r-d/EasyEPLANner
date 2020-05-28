@@ -211,25 +211,30 @@ namespace TechObject
         public string SaveAsLuaTable(string prefix)
         {
             var res = "";
-            
-            if (Properties == null)
-            {
-                return res;
-            }
-
             var propertiesCountForSave = Properties.Count();
-            if (propertiesCountForSave <= 0)
+            if (Properties == null || propertiesCountForSave <= 0)
             {
                 return res;
             }
 
-            res += prefix + "props =\n" + prefix + "\t{\n";
+            string paramsForSave = "";
             foreach (var operParam in Properties)
             {
-                res += "\t" + prefix + operParam.LuaName + " = \'" +
-                    operParam.Value + "\',\n";
+                if(!operParam.IsEmpty)
+                {
+                    paramsForSave += "\t" + prefix + operParam.LuaName + 
+                        " = \'" + operParam.Value + "\',\n";
+                }           
             }
-            res += prefix + "\t},\n";
+
+            bool needSavingParameters = paramsForSave != "";
+            if (needSavingParameters)
+            {
+                res += prefix + "props =\n" + prefix + "\t{\n";
+                res += paramsForSave;
+                res += prefix + "\t},\n";
+            }
+
             return res;
         }
 

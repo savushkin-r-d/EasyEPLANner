@@ -51,6 +51,26 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Пустой ли параметр (nil or '')
+        /// </summary>
+        public bool IsEmpty
+        {
+            get
+            {
+                bool IsEmpty = this.Value == "" || 
+                    this.Value == "nil";
+                if (IsEmpty)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         #region реализация ITreeView
         public override bool SetNewValue(string newValue)
         {

@@ -93,21 +93,32 @@ namespace TechObject
         public string SaveAsLuaTable(string prefix)
         {
             var res = "";
-
             if (items.Count == 0)
             {
                 return res;
             }
 
-            res += prefix + "equipment = \n" +
-                prefix + "\t{\n";
-            foreach(Editor.ITreeViewItem item in items)
+            string equipmentForSave = "";
+            foreach (Editor.ITreeViewItem item in items)
             {
                 var property = item as BaseParameter;
-                res += prefix + $"\t{property.LuaName} = " +
-                    $"\'{property.Value}\',\n";
+                bool isEmpty = property.IsEmpty &&
+                    property.Value == property.DefaultValue;
+                if (!isEmpty)
+                {
+                    equipmentForSave += prefix + $"\t{property.LuaName} = " +
+                        $"\'{property.Value}\',\n";
+                }
             }
-            res += prefix + "\t},\n";
+
+            bool needSaveQuipment = equipmentForSave != "";
+            if (needSaveQuipment)
+            {
+                res += prefix + "equipment = \n" +
+                    prefix + "\t{\n";
+                res += equipmentForSave;
+                res += prefix + "\t},\n";
+            }
 
             return res;
         }

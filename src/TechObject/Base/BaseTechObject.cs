@@ -534,15 +534,25 @@ namespace TechObject
                             continue;
                         }
 
-                        res += $"{objName}.{baseOperation.LuaName} =\n";
-                        res += prefix + "{\n";
+                        string paramsForSave = "";
                         foreach (var param in baseOperation.Properties)
                         {
-                            string val = 
-                                param.Value == "" ? "nil" : param.Value;
-                            res += $"{prefix}{param.LuaName} = {val},\n";
+                            if (!param.IsEmpty) 
+                            {
+                                paramsForSave += $"{prefix}{param.LuaName} =" +
+                                    $" {param.Value},\n";
+                            }
+
                         }
-                        res += prefix + "}\n";
+
+                        bool needSaveParameters = paramsForSave != "";
+                        if(needSaveParameters)
+                        {
+                            res += $"{objName}.{baseOperation.LuaName} =\n";
+                            res += prefix + "{\n";
+                            res += paramsForSave;
+                            res += prefix + "}\n";
+                        }
                         break;
                 }
             }
@@ -563,16 +573,10 @@ namespace TechObject
 
             foreach (BaseParameter param in baseOperation.Properties)
             {
-                string val = param.Value == "" ? "nil" : param.Value;
-                if (val != "nil")
+                if (!param.IsEmpty)
                 {
                     res += objName + "." + param.LuaName +
-                        " = prg.control_modules." + val + "\n";
-                }
-                else
-                {
-                    res += objName + "." + param.LuaName +
-                        " = " + val + "\n";
+                        " = prg.control_modules." + param.Value + "\n";
                 }
             }
 
@@ -591,11 +595,10 @@ namespace TechObject
         {
             var res = "";
 
-            res += $"{objName}.{baseOperation.LuaName} =\n";
-            res += prefix + "{\n";
+            string fillParameters = "";
             foreach (BaseParameter param in baseOperation.Properties)
             {
-                string val = param.Value == "" ? "nil" : param.Value;
+                string val = param.Value;
                 switch (param.LuaName)
                 {
                     case "OPERATION_AFTER_FILL":
@@ -609,23 +612,31 @@ namespace TechObject
                             val = mode.BaseOperation.LuaName.ToUpper();
                         }
 
-                        if (val != "nil" && val != "")
+                        if (!param.IsEmpty)
                         {
-                            res += $"{prefix}{param.LuaName} = " +
+                            fillParameters += $"{prefix}{param.LuaName} = " +
                                 $"{objName}.operations." + val + ",\n";
-                        }
-                        else
-                        {
-                            res += $"{prefix}{param.LuaName} = nil,\n";
                         }
                         break;
 
                     default:
-                        res += $"{prefix}{param.LuaName} = {val},\n";
+                        if (!param.IsEmpty)
+                        {
+                            fillParameters += $"{prefix}{param.LuaName} = " +
+                                $"{val},\n";
+                        }
                         break;
                 }
             }
-            res += prefix + "}\n";
+
+            bool needSaveParameters = fillParameters != "";
+            if (needSaveParameters)
+            {
+                res += $"{objName}.{baseOperation.LuaName} =\n";
+                res += prefix + "{\n";
+                res += fillParameters;
+                res += prefix + "}\n";
+            }
 
             return res;
         }
@@ -645,7 +656,9 @@ namespace TechObject
                 var value = property.Value;
                 var luaName = property.LuaName;
 
-                if (value != "")
+                bool isEmpty = property.IsEmpty &&
+                    property.Value == property.DefaultValue;
+                if (!isEmpty)
                 {
                     if (owner.Params.GetFParam(value) == null)
                     {
@@ -657,11 +670,6 @@ namespace TechObject
                         res += objName + $".{luaName} = " +
                             $"{objName}.PAR_FLOAT.{value}\n";
                     }
-                    
-                }
-                else
-                {
-                    res += objName + $".{luaName} = nil\n";
                 }
             }
 
