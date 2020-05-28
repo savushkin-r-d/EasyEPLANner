@@ -294,7 +294,19 @@ namespace EasyEPlanner
                     node.DO_count += moduleInfo.DO_count;
                     node.AI_count += moduleInfo.AI_count;
                     node.AO_count += moduleInfo.AO_count;
-                    node.SetModule(nodeModule, shortModuleNumber);
+
+                    bool moduleNotExist = node[shortModuleNumber - 1] == null;
+                    if(moduleNotExist)
+                    {
+                        node.SetModule(nodeModule, shortModuleNumber);
+                    }
+                    else
+                    {
+                        Logs.AddMessage($"Главная функция модуля " +
+                            $"ввода-вывода \'{function.VisibleName}\' " +
+                            $"определяется дважды, проверьте расстановку " +
+                            $"главных функций на модулях. ");
+                    }
                 }
                 else
                 {
