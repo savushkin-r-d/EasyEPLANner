@@ -133,9 +133,29 @@ namespace EasyEPlanner.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap export {
+            get {
+                object obj = ResourceManager.GetObject("export", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap highlight {
             get {
                 object obj = ResourceManager.GetObject("highlight", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap import {
+            get {
+                object obj = ResourceManager.GetObject("import", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -175,6 +195,23 @@ namespace EasyEPlanner.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на --version  = {0}
+        ///--PAC_name = &apos;{1}&apos;
+        ///------------------------------------------------------------------------------
+        ///------------------------------------------------------------------------------
+        ///init_tech_objects_modes = function()
+        ///    return
+        ///    {{
+        ///{2}    }}
+        ///end.
+        /// </summary>
+        public static string mainObjectsPattern {
+            get {
+                return ResourceManager.GetString("mainObjectsPattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на --Проект &apos;ProjectName&apos;
         ///
         ///prg = require(&quot;prg&quot;)                        --Технологические объекты.
@@ -190,6 +227,20 @@ namespace EasyEPlanner.Properties {
         public static string mainPluaFilePattern {
             get {
                 return ResourceManager.GetString("mainPluaFilePattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на --version  = {0}
+        ///------------------------------------------------------------------------------
+        ///------------------------------------------------------------------------------
+        ///restrictions =
+        ///    {{
+        ///{1}    }}.
+        /// </summary>
+        public static string mainRestrictionsPattern {
+            get {
+                return ResourceManager.GetString("mainRestrictionsPattern", resourceCulture);
             }
         }
         

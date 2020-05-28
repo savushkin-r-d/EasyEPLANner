@@ -1541,5 +1541,27 @@ namespace Editor
                 ReplaceItem(item);
             }
         }
+
+        /// <summary>
+        /// Форма импорта технологических объектов.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void importButton_Click(object sender, EventArgs e)
+        {
+            var importForm = new TechObjectsImportForm();
+            importForm.ShowDialog();
+        }
+
+        /// <summary>
+        /// Форма экспорта технологических объектов.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void exportButton_Click(object sender, EventArgs e)
+        {
+            var exportForm = new TechObjectsExportForm();
+            exportForm.ShowDialog();
+        }
     }
 }

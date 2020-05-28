@@ -161,18 +161,11 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix)
         {
-            string res = prefix + "init_tech_objects_modes = function()\n" +
-                prefix + "\treturn\n" +
-                prefix + "\t{\n";
-
+            string res = "";
             foreach (TechObject obj in objects)
             {
                 res += obj.SaveAsLuaTable(prefix + "\t\t");
             }
-
-            res += prefix + "\t}\n" +
-                prefix + "end\n";
-
             res = res.Replace("\t", "    ");
             return res;
         }
@@ -184,16 +177,11 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveRestrictionAsLua(string prefix)
         {
-            string res = prefix + "restrictions =\n" + prefix + "\t{";
-
+            var res = "";
             foreach (TechObject obj in objects)
             {
                 res += obj.SaveRestrictionAsLua(prefix + "\t");
             }
-
-            res += "\n" + prefix + "\t}\n";
-
-
             res = res.Replace("\t", "    ");
             return res;
         }
@@ -271,10 +259,14 @@ namespace TechObject
         /// Добавление технологического объекта. Вызывается из Lua.
         /// </summary>
         /// <returns>Добавленный технологический объект.</returns>
-        public TechObject AddObject(int techN, string name, int techType,
-            string nameEplan, int cooperParamNumber, string NameBC, 
-            string baseTechObjectName, string attachedObjects)
+        /// <param name="globalNumber">Глобальный номер объекта, используется
+        /// при импорте из файла</param>
+        public TechObject AddObject(int globalNumber, int techN, string name, 
+            int techType, string nameEplan, int cooperParamNumber, 
+            string NameBC, string baseTechObjectName, string attachedObjects)
         {
+            // globalNumber игнорируется в этом методе, но используется при
+            // импорте описания из файла (аналогичная сигнатура, другое тело).
             TechObject obj = new TechObject(name, GetTechObjectN, techN,
                 techType, nameEplan.ToUpper(), cooperParamNumber, NameBC, 
                 attachedObjects);
@@ -781,6 +773,7 @@ namespace TechObject
 
                 TechObject newObject = (obj as TechObject).Clone(
                     GetTechObjectN, newN, oldObjN, newObjN);
+                newObject.Parent = this;
                 objects.Add(newObject);
 
                 newObject.ChangeCrossRestriction();

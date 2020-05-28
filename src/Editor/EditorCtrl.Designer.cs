@@ -49,6 +49,9 @@
             this.copyButton = new System.Windows.Forms.ToolStripButton();
             this.pasteButton = new System.Windows.Forms.ToolStripButton();
             this.replaceButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.importButton = new System.Windows.Forms.ToolStripButton();
+            this.exportButton = new System.Windows.Forms.ToolStripButton();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.editorTView = new BrightIdeasSoftware.TreeListView();
             this.statusStrip.SuspendLayout();
@@ -94,10 +97,13 @@
             this.deleteButton,
             this.copyButton,
             this.pasteButton,
-            this.replaceButton});
+            this.replaceButton,
+            this.toolStripSeparator3,
+            this.importButton,
+            this.exportButton});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(360, 27);
+            this.toolStrip.Size = new System.Drawing.Size(396, 27);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -261,6 +267,33 @@
             this.replaceButton.ToolTipText = "Заменить (Ctrl + B)";
             this.replaceButton.Click += new System.EventHandler(this.replaceButton_Click);
             // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 27);
+            // 
+            // importButton
+            // 
+            this.importButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.importButton.Image = ((System.Drawing.Image)(resources.GetObject("importButton.Image")));
+            this.importButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.importButton.Name = "importButton";
+            this.importButton.Size = new System.Drawing.Size(24, 24);
+            this.importButton.Text = "importButton";
+            this.importButton.ToolTipText = "Импорт объектов";
+            this.importButton.Click += new System.EventHandler(this.importButton_Click);
+            // 
+            // exportButton
+            // 
+            this.exportButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.exportButton.Image = global::EasyEPlanner.Properties.Resources.export;
+            this.exportButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.exportButton.Name = "exportButton";
+            this.exportButton.Size = new System.Drawing.Size(24, 24);
+            this.exportButton.Text = "exportButton";
+            this.exportButton.ToolTipText = "Экспорт объектов";
+            this.exportButton.Click += new System.EventHandler(this.exportButton_Click);
+            // 
             // imageList1
             // 
             this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
@@ -365,5 +398,8 @@
         private System.Windows.Forms.ToolStripButton copyButton;
         private System.Windows.Forms.ToolStripButton replaceButton;
         private System.Windows.Forms.ToolStripButton pasteButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripButton importButton;
+        private System.Windows.Forms.ToolStripButton exportButton;
     }
     }

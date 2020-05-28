@@ -371,8 +371,8 @@ namespace TechObject
             tmp += modes.SaveRestrictionAsLua(prefix);
             if (tmp != "")
             {
-                res += prefix + "\n" +
-                    prefix + "[ " + getN(this) + " ] =" + comment + "\n" + tmp;
+                res += prefix + "[ " + getN(this) + " ] =" + comment + "\n" + 
+                    tmp + "\n";
             }
 
             return res;

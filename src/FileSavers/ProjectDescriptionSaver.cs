@@ -127,18 +127,17 @@ namespace EasyEPlanner
         /// <param name="par">Параметры</param>
         private static void SaveTechObjectsFile(ParametersForSave par)
         {
+            string filePattern = Properties.Resources.ResourceManager
+                .GetString("mainObjectsPattern");
+            string desctiption = techObjectManager.SaveAsLuaTable("");
+            var descriptionFileData = string.Format(filePattern,
+                mainTechDevicesFileVersion, par.PAC_Name, desctiption);
+
             string fileName = par.path + @"\" + mainTechObjectsFileName;
-            var fileWriter = new StreamWriter(fileName,
-                false, Encoding.GetEncoding(1251));
+            var fileWriter = new StreamWriter(fileName, false,
+                Encoding.GetEncoding(1251));
 
-            fileWriter.WriteLine("--version  = {0}", 
-                mainTechObjectsFileVersion);
-            fileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);
-            fileWriter.WriteLine(new string('-', numberOfDashes));
-            fileWriter.WriteLine(new string('-', numberOfDashes));
-
-            fileWriter.WriteLine(techObjectManager.SaveAsLuaTable(""));
-
+            fileWriter.Write(descriptionFileData);
             fileWriter.Flush();
             fileWriter.Close();
         }
@@ -171,17 +170,18 @@ namespace EasyEPlanner
         /// <param name="par">Параметры</param>
         private static void SaveRestrictionsFile(ParametersForSave par)
         {
+            string filePattern = Properties.Resources.ResourceManager
+                .GetString("mainRestrictionsPattern");
+            string resctrictions = techObjectManager
+                .SaveRestrictionAsLua("");
+            var restrictionsFileData = string.Format(filePattern, 
+                mainRestrictionsFileVersion, resctrictions);
+
             string fileName = par.path + @"\" + mainRestrictionsFileName;
-            var fileWriter = new StreamWriter(fileName,
-                false, Encoding.GetEncoding(1251));
+            var fileWriter = new StreamWriter(fileName, false, 
+                Encoding.GetEncoding(1251));
 
-            fileWriter.WriteLine("--version  = {0}", 
-                mainRestrictionsFileVersion);
-            fileWriter.WriteLine(new string('-', numberOfDashes));
-            fileWriter.WriteLine(new string('-', numberOfDashes));
-            
-            fileWriter.Write(techObjectManager.SaveRestrictionAsLua(""));
-
+            fileWriter.Write(restrictionsFileData);
             fileWriter.Flush();
             fileWriter.Close();
         }
