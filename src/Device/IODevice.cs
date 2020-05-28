@@ -322,10 +322,15 @@ namespace Device
                     break;
             }
 
-            if (comment.Contains(CommonConst.NewLineWithCarriageReturn))
+            bool haveNewLineSymbol = comment
+                .Contains(CommonConst.NewLineWithCarriageReturn) ||
+                comment.Contains(CommonConst.NewLine);
+            if (haveNewLineSymbol)
             {
                 comment = comment
                     .Replace(CommonConst.NewLineWithCarriageReturn, "");
+                comment = comment
+                    .Replace(CommonConst.NewLine, "");
             }
 
             List<IOChannel> findedChannels = IO.FindAll(delegate (IOChannel channel)
