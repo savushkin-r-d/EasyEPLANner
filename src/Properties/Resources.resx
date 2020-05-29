@@ -118,143 +118,17 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="plus3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\plus3.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="step" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\step.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="To Do's" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\To Do's.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="main" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\main.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="save1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="timers" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\timers.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="plus1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\plus1.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="tank" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\tank.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="save" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="upperSeats" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\upperSeats.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="highlight" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\highlight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="deviceList" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\To Do's.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="reqiredFB" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\reqiredFB.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="edit" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\edit.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\refresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="lowerSeats" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\lowerSeats.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="plant" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\plant.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="off" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\off.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="plus5" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\plus5.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="pairDIDO" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\pairDIDO.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="mode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\mode.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="plus2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\plus2.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="on" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\on.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="refresh1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\refresh1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="wash" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\wash.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="plus4" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\plus4.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="params" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\params.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="step1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\step1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="toCheck" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\To Do's1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="svgPattern" xml:space="preserve">
-    <value>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-    &lt;svg width="100" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
-
-        &lt;rect rx="4" x="0" width="{0}" height="20" fill="dimgrey"/&gt;
-        &lt;rect rx="4" x="0" width="{1}" height="20" fill="green"/&gt;
-
-            &lt;g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11"&gt;
-                &lt;text x="50.0" y="14"&gt;{2}&lt;/text&gt;
-            &lt;/g&gt;
-   &lt;/svg&gt;</value>
-    <comment>Шаблон для генерации SVG файла картинки (progress bar) модулем генерации SVG картинок. Генерация статистики по проекту. {0} - Максимальное значение параметра, {1} - заданное значение параметра, {2} - текст внутри картинки.</comment>
-  </data>
-  <data name="mainPluaFilePattern" xml:space="preserve">
-    <value>--Проект 'ProjectName'
-
-prg = require("prg")                        --Технологические объекты.
-------------------------------------------------------------------------------
-------------------------------------------------------------------------------
---Пользовательская функция инициализации, выполняемая однократно в PAC.
-
-function user_init()
-end
-------------------------------------------------------------------------------
-------------------------------------------------------------------------------
---Пользовательская функция, выполняемая каждый цикл в PAC.
-
-function user_eval()
-end
-------------------------------------------------------------------------------
-------------------------------------------------------------------------------
---Функция инициализации параметров, выполняемая однократно в PAC.
-
-function init_params()
-end
-------------------------------------------------------------------------------
-------------------------------------------------------------------------------</value>
-    <comment>Шаблон пустого файла main.plua</comment>
-  </data>
-  <data name="prgLuaRequireModules" xml:space="preserve">
-    <value>--Базовая функциональность
-require( "tank" )
-require( "mixer" )
-require( "line" )
-require( "master" )
-require( "cooler" )
-require( "boiler" )
-require( "pasteurizator" )
-require( "water_tank" )
-require( "pressure" )
-require( "flow" )
-</value>
-    <comment>Шаблон, содержащий список модулей для подключения в prg.lua (require)</comment>
+  <data name="refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\refresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="sysIOLuaFilePattern" xml:space="preserve">
     <value>-- В Phoenix Contact особенность, адресное пространство
@@ -313,6 +187,15 @@ local io_modules =
 return io_modules</value>
     <comment>Шаблон для файла sys_io.lua, в котором находится информация по модулям ввода-вывода.</comment>
   </data>
+  <data name="toCheck" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\To Do's1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pairDIDO" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\pairDIDO.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\copy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="IOLinkDevicesFilePattern" xml:space="preserve">
     <value>local iolink_devices =
 {
@@ -321,5 +204,257 @@ return io_modules</value>
 
 return iolink_devices</value>
     <comment>Шаблон файла, в котором находится информация об изделиях (название устройства, тип, подтип) и его IO-Link настройках (размеры областей ввода-вывода)</comment>
+  </data>
+  <data name="reqiredFB" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\reqiredFB.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="main" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\main.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="step1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\step1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="plus4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\plus4.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="create" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\create.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="edit" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\edit.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="tank" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tank.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="plus5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\plus5.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="upperSeats" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\upperSeats.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="off" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\off.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="paste" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\paste.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="lowerSeats" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\lowerSeats.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="plus1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\plus1.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="To Do's" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\To Do's.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="replace" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\replace.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="wash" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\wash.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="plant" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\plant.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="save" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="plus3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\plus3.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="svgPattern" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+    &lt;svg width="100" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
+
+        &lt;rect rx="4" x="0" width="{0}" height="20" fill="dimgrey"/&gt;
+        &lt;rect rx="4" x="0" width="{1}" height="20" fill="green"/&gt;
+
+            &lt;g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11"&gt;
+                &lt;text x="50.0" y="14"&gt;{2}&lt;/text&gt;
+            &lt;/g&gt;
+   &lt;/svg&gt;</value>
+    <comment>Шаблон для генерации SVG файла картинки (progress bar) модулем генерации SVG картинок. Генерация статистики по проекту. {0} - Максимальное значение параметра, {1} - заданное значение параметра, {2} - текст внутри картинки.</comment>
+  </data>
+  <data name="highlight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\highlight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="mode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mode.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="prgLuaRequireModules" xml:space="preserve">
+    <value>--Базовая функциональность
+require( "tank" )
+require( "mixer" )
+require( "line" )
+require( "master" )
+require( "cooler" )
+require( "boiler" )
+require( "pasteurizator" )
+require( "water_tank" )
+require( "pressure" )
+require( "flow" )
+</value>
+    <comment>Шаблон, содержащий список модулей для подключения в prg.lua (require)</comment>
+  </data>
+  <data name="mainPluaFilePattern" xml:space="preserve">
+    <value>--Проект 'ProjectName'
+
+prg = require("prg")                        --Технологические объекты.
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+--Пользовательская функция инициализации, выполняемая однократно в PAC.
+
+function user_init()
+end
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+--Пользовательская функция, выполняемая каждый цикл в PAC.
+
+function user_eval()
+end
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+--Функция инициализации параметров, выполняемая однократно в PAC.
+
+function init_params()
+end
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------</value>
+    <comment>Шаблон пустого файла main.plua</comment>
+  </data>
+  <data name="step" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\step.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="save1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="params" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\params.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="on" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\on.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="timers" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\timers.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="edit1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\edit1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="export" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\export.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="import" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\import.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SysBaseObjectsDescriptionPattern" xml:space="preserve">
+    <value>-- Шаблон файла, описывающего базовую функциональность.
+-- В этом файле описан один пустой базовый объект, для примера.
+
+-- Базовый объект (название таблицы - eplanName т.е LUA-имя объекта, пишется в любых регистрах):
+-- 1. s88Level - уровень объекта по ISA-88 (1 - для юнитов, аппаратов. 2 - для агрегатов).
+-- 2. name - русскоязычное название объекта.
+-- 3. baseOperations - описание базовых операций объекта.
+-- 4. basicName - англоязычное имя объекта, которое фигурирует в функциональности (add_functionality).
+-- Это имя должно содержать имя без приписки "basic_"
+-- 5. equipment - оборудование базового объекта.
+-- 6. aggregateParameters - параметры объекта, который является агрегатом (которые будут добавлены
+-- в аппарат, при привязке агрегата к аппарату).
+-- 7. bindingName - имя агрегата, используемое при привязке его к аппарату (для аппаратов не обязательно).
+
+-- Базовые операции (название таблицы - это Lua-имя операции, пишется в верхнем регистре):
+-- 1. name - русскоязычное название операции.
+-- 2. params - параметры операции, могут быть активными, пассивными, булевыми.
+-- 3. steps - базовые шаги операции.
+
+-- Активные параметры (active) - параметры, которые отображаются и сохраняются, имеют общую обработку,
+-- которая характерна для всех таких параметров (название таблицы - это Lua-имя параметра,
+-- пишется в верхнем регистре):
+-- 1. name - русскоязычное имя параметра.
+-- 2. defaultValue - значение по-умолчанию (опционально).
+
+-- Пассивные параметры (passive) - параметры, которые не отображаются и не сохраняются, имеют уникальную
+-- обработку, вшитую внутри кода C#, из-за того, что эти параметры введены с целью автоматизации
+-- и они не обрабатываются пользователем, только системой в автоматическом режиме
+-- (название таблицы - это Lua-имя параметра, пишется в верхнем регистре):
+-- 1. name - русскоязычное имя параметра.
+
+-- Булевые параметры (bool) - аналог активных параметров, только имеют два значения - да или нет
+-- (название таблицы - это Lua-имя параметра, пишется в верхнем регистре):
+-- 1. name - русскоязычное имя параметра.
+-- 2. defaultValue - значение по-умолчанию.
+
+-- Базовые шаги - по аналогии с активными параметрами.
+-- Оборудование - по аналогии с активными параметрами.
+-- Параметры объекта, как агрегата - по аналогии с булевыми параметрами.
+
+base_tech_objects = function()
+return
+    {
+        uniqueEplanName = { -- Уникальное Lua-имя объекта
+            name = "",
+            s88Level = 0,
+            baseOperations =
+            {
+                uniqueOperationLuaName = { -- Уникальное Lua-имя операции
+                    name = "",
+                    params =
+                    {
+                        active = -- Активные параметры
+                        {
+                            uniqueLuaName = { name = "Имя", defaultValue = "Значение по-умолчанию" },
+                        },
+                        passive = -- Пассивные параметры
+                        {
+                            uniqueLuaName = { name = "Имя" },
+                        },
+                        bool = -- Булевые активные параметры
+                        {
+                            uniqueLuaName = { name = "Имя", defaultValue = "Значение по-умолчанию" },
+                        },
+                    },
+                    steps = -- Шаги
+                    {
+                        uniqueLuaName = { name = "Имя" }
+                    },
+                },
+            },
+            basicName = "",
+            equipment = -- Оборудование
+            {
+                uniqueLuaName = { name = "Имя", defaultValue = "Значение по-умолчанию" },
+            },
+            aggregateParameters = -- Параметры агрегата
+            {
+                uniqueLuaName = { name = "Имя", defaultValue = "Значение по-умолчанию" },
+            },
+            bindingName = "Lua-имя для привязки"
+        },
+    }
+end</value>
+    <comment>Шаблон для файла sys_base_objects_description.lua. В нем описаны базовые объекты, с операциями, шагами, параметрами и др.</comment>
+  </data>
+  <data name="mainRestrictionsPattern" xml:space="preserve">
+    <value>--version  = {0}
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+restrictions =
+    {{
+{1}    }}</value>
+    <comment>Шаблон файла для сохранения ограничений проекта</comment>
+  </data>
+  <data name="mainObjectsPattern" xml:space="preserve">
+    <value>--version  = {0}
+--PAC_name = '{1}'
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+init_tech_objects_modes = function()
+    return
+    {{
+{2}    }}
+end</value>
+    <comment>Шаблон файла сохранения объектов проекта</comment>
   </data>
 </root>

@@ -1,7 +1,9 @@
-﻿using System;
+﻿using EasyEPlanner;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Windows.Forms;
 
 namespace IO
 {
@@ -277,9 +279,8 @@ namespace IO
             var lua = new LuaInterface.Lua();
             const string fileName = "sys_io.lua";
             const string templateName = "sysIOLuaFilePattern";
-            string pathToDir = Path.GetDirectoryName(Assembly
-                .GetExecutingAssembly().Location) + "\\Lua";
-            string pathToFile = Path.Combine(pathToDir, fileName);
+            string pathToFile = Path.Combine(
+                ProjectManager.GetInstance().SystemFilesPath, fileName);
 
             if (File.Exists(pathToFile))
             {
@@ -343,6 +344,9 @@ namespace IO
                 string template = EasyEPlanner.Properties.Resources
                     .ResourceManager.GetString(templateName);
                 File.WriteAllText(pathToFile, template);
+                MessageBox.Show("Файл с описанием модулей ввода-вывода" +
+                    " не найден. Будет создан пустой файл (без описания).", 
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

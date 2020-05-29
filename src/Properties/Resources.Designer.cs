@@ -71,6 +71,36 @@ namespace EasyEPlanner.Properties {
         }
         
         /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap copy {
+            get {
+                object obj = ResourceManager.GetObject("copy", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap create {
+            get {
+                object obj = ResourceManager.GetObject("create", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap delete {
+            get {
+                object obj = ResourceManager.GetObject("delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Icon, аналогичного (Значок).
         /// </summary>
         public static System.Drawing.Icon deviceList {
@@ -93,9 +123,39 @@ namespace EasyEPlanner.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap edit1 {
+            get {
+                object obj = ResourceManager.GetObject("edit1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap export {
+            get {
+                object obj = ResourceManager.GetObject("export", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap highlight {
             get {
                 object obj = ResourceManager.GetObject("highlight", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap import {
+            get {
+                object obj = ResourceManager.GetObject("import", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -135,6 +195,23 @@ namespace EasyEPlanner.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на --version  = {0}
+        ///--PAC_name = &apos;{1}&apos;
+        ///------------------------------------------------------------------------------
+        ///------------------------------------------------------------------------------
+        ///init_tech_objects_modes = function()
+        ///    return
+        ///    {{
+        ///{2}    }}
+        ///end.
+        /// </summary>
+        public static string mainObjectsPattern {
+            get {
+                return ResourceManager.GetString("mainObjectsPattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на --Проект &apos;ProjectName&apos;
         ///
         ///prg = require(&quot;prg&quot;)                        --Технологические объекты.
@@ -150,6 +227,20 @@ namespace EasyEPlanner.Properties {
         public static string mainPluaFilePattern {
             get {
                 return ResourceManager.GetString("mainPluaFilePattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на --version  = {0}
+        ///------------------------------------------------------------------------------
+        ///------------------------------------------------------------------------------
+        ///restrictions =
+        ///    {{
+        ///{1}    }}.
+        /// </summary>
+        public static string mainRestrictionsPattern {
+            get {
+                return ResourceManager.GetString("mainRestrictionsPattern", resourceCulture);
             }
         }
         
@@ -189,6 +280,16 @@ namespace EasyEPlanner.Properties {
         public static System.Drawing.Bitmap pairDIDO {
             get {
                 object obj = ResourceManager.GetObject("pairDIDO", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap paste {
+            get {
+                object obj = ResourceManager.GetObject("paste", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -286,6 +387,26 @@ namespace EasyEPlanner.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap refresh1 {
+            get {
+                object obj = ResourceManager.GetObject("refresh1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap replace {
+            get {
+                object obj = ResourceManager.GetObject("replace", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap reqiredFB {
             get {
                 object obj = ResourceManager.GetObject("reqiredFB", resourceCulture);
@@ -348,6 +469,22 @@ namespace EasyEPlanner.Properties {
         public static string svgPattern {
             get {
                 return ResourceManager.GetString("svgPattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на -- Шаблон файла, описывающего базовую функциональность.
+        ///-- В этом файле описан один пустой базовый объект, для примера.
+        ///
+        ///-- Базовый объект (название таблицы - eplanName т.е LUA-имя объекта, пишется в любых регистрах):
+        ///-- 1. s88Level - уровень объекта по ISA-88 (1 - для юнитов, аппаратов. 2 - для агрегатов).
+        ///-- 2. name - русскоязычное название объекта.
+        ///-- 3. baseOperations - описание базовых операций объекта.
+        ///-- 4. basicName - англоязычное имя объекта, которое фигурирует в функциональности (add_functi [остаток строки не уместился]&quot;;.
+        /// </summary>
+        public static string SysBaseObjectsDescriptionPattern {
+            get {
+                return ResourceManager.GetString("SysBaseObjectsDescriptionPattern", resourceCulture);
             }
         }
         

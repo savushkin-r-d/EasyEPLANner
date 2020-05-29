@@ -115,7 +115,34 @@ namespace IO
                             res[idx, 0] = p;
                             res[idx, 1] = moduleName;
                             res[idx, 2] = clamp.ToString();
-                            res[idx, 3] = "IO-Link";
+                            if (devices[clamp] != null && 
+                                devices[clamp].Count == 1)
+                            {
+                                string devName = "";
+                                int devIdx = 0;
+                                foreach (Device.IODevice dev in devices[clamp])
+                                {
+                                    devName += dev.EPlanName +
+                                        dev.GetConnectionType() +
+                                        $"{dev.GetRange()}: " +
+                                        $"{devicesChannels[clamp][devIdx].Name}: " +
+                                        $"{dev.Description} " +
+                                        $"{devicesChannels[clamp][devIdx].Comment}. " +
+                                        $"In: {dev.IOLinkProperties.SizeIn}, " +
+                                        $"Out: {dev.IOLinkProperties.SizeOut}";
+                                    devName = devName.Replace('\n', ' ');
+                                    devIdx++;
+                                }
+                                res[idx, 3] = devName;
+
+                            }
+                            else if (devices[clamp] != null && 
+                                devices[clamp].Count > 1)
+                            {
+                                res[idx, 3] = "IO-Link, более 1 канала. " +
+                                    $"In: {devices[clamp][0].IOLinkProperties.SizeIn}, " +
+                                    $"Out: {devices[clamp][0].IOLinkProperties.SizeOut}";
+                            }
                             idx++;
                         }
                     }
@@ -178,12 +205,11 @@ namespace IO
                     int devIdx = 0;
                     foreach (int clamp in Info.ChannelClamps)
                     {
-                        if (devices[clamp] != null)
+                        if (devices[clamp] != null && devices[clamp].Count > 1)
                         {
                             int deviceCounter = 0;
                             foreach (Device.IODevice dev in devices[clamp])
                             {
-
                                 asConnection[devIdx, 0] = clamp.ToString() + "(" + (deviceCounter + 1).ToString() + ")";
                                 string devDescription = dev.EPlanName + dev.GetConnectionType() + dev.GetRange() + ": " +
                                     devicesChannels[clamp][deviceCounter].Name + ": " + dev.Description + " " +

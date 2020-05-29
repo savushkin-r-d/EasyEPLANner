@@ -8,7 +8,13 @@ namespace Tests
 {
     public class VCTest
     {
-        [TestCaseSource(nameof(GetSubTypeTestData))]
+        /// <summary>
+        /// Тест получения подтипа устройства
+        /// </summary>
+        /// <param name="expectedType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStrTest(string expectedType,
             string subType, Device.IODevice device)
         {
@@ -17,6 +23,12 @@ namespace Tests
                 device.DeviceType, device.DeviceSubType));
         }
 
+        /// <summary>
+        /// Тест свойств устройств в зависимости от подтипа
+        /// </summary>
+        /// <param name="expectedProperties">Ожидаемый список свойств</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDevicePropertiesTest(List<string> expectedProperties,
             string subType, Device.IODevice device)
@@ -26,6 +38,12 @@ namespace Tests
                 device.DeviceType, device.DeviceSubType));
         }
 
+        /// <summary>
+        /// Тестирование параметров устройства
+        /// </summary>
+        /// <param name="parametersSequence">Ожидаемые параметры</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(ParametersTestData))]
         public void ParametersTest(string[] parametersSequence, string subType,
             Device.IODevice device)
@@ -38,12 +56,38 @@ namespace Tests
         }
 
         /// <summary>
+        /// Тестирование каналов устройства
+        /// </summary>
+        /// <param name="expectedChannelsCount">Ожидаемое количество каналов
+        /// в словаре с названием каналов</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(ChannelsTestData))]
+        public void ChannelsTest(Dictionary<string, int> expectedChannelsCount,
+            string subType, Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
+            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
+            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
+            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
+                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
+                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
+                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+            });
+        }
+
+        /// <summary>
         /// 1 - Ожидаемое значение подтипа,
         /// 2 - Задаваемое значение подтипа,
         /// 3 - Устройство для тестов
         /// </summary>
         /// <returns></returns>
-        public static object[] GetSubTypeTestData()
+        private static object[] GetDeviceSubTypeStrTestData()
         {
             return new object[]
             {
@@ -58,7 +102,7 @@ namespace Tests
         /// 3 - Устройство для тестов
         /// </summary>
         /// <returns></returns>
-        public static object[] GetDevicePropertiesTestData()
+        private static object[] GetDevicePropertiesTestData()
         {
             var exportForVC = new List<string>
                 {
@@ -80,7 +124,7 @@ namespace Tests
         /// 3 - Устройство
         /// </summary>
         /// <returns></returns>
-        public static object[] ParametersTestData()
+        private static object[] ParametersTestData()
         {
             return new object[]
             {
@@ -100,10 +144,60 @@ namespace Tests
         }
 
         /// <summary>
+        /// Данные для тестирования каналов устройств по подтипам.
+        /// 1. Словарь с количеством каналов и их типами
+        /// 2. Подтип устройства
+        /// 3. Устройство
+        /// </summary>
+        /// <returns></returns>
+        private static object[] ChannelsTestData()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "VC",
+                    GetRandomVCDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "",
+                    GetRandomVCDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "Incorrect",
+                    GetRandomVCDevice()
+                }
+            };
+        }
+
+        /// <summary>
         /// Генератор VC устройств
         /// </summary>
         /// <returns></returns>
-        public static Device.IODevice GetRandomVCDevice()
+        private static Device.IODevice GetRandomVCDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);

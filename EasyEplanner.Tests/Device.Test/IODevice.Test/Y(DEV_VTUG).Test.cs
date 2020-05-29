@@ -8,6 +8,12 @@ namespace Tests
 {
     public class DEV_VTUG
     {
+        /// <summary>
+        /// Тест установки подтипа устройства
+        /// </summary>
+        /// <param name="expectedSubType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubTypeTest(Device.DeviceSubType expectedSubType,
             string subType, Device.IODevice device)
@@ -16,6 +22,12 @@ namespace Tests
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
         }
 
+        /// <summary>
+        /// Тестирование параметров устройства
+        /// </summary>
+        /// <param name="parametersSequence">Ожидаемые параметры</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(ParametersTestData))]
         public void ParametersTest(string[] parametersSequence, string subType,
             Device.IODevice device)
@@ -28,12 +40,38 @@ namespace Tests
         }
 
         /// <summary>
+        /// Тестирование каналов устройства
+        /// </summary>
+        /// <param name="expectedChannelsCount">Ожидаемое количество каналов
+        /// в словаре с названием каналов</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(ChannelsTestData))]
+        public void ChannelsTest(Dictionary<string, int> expectedChannelsCount,
+            string subType, Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
+            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
+            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
+            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
+                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
+                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
+                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+            });
+        }
+
+        /// <summary>
         /// 1 - Ожидаемое значение подтипа,
         /// 2 - Задаваемое значение подтипа,
         /// 3 - Устройство для тестов
         /// </summary>
         /// <returns></returns>
-        public static object[] SetSubTypeTestData()
+        private static object[] SetSubTypeTestData()
         {
             return new object[]
             {
@@ -56,7 +94,7 @@ namespace Tests
         /// 3 - Устройство
         /// </summary>
         /// <returns></returns>
-        public static object[] ParametersTestData()
+        private static object[] ParametersTestData()
         {
             return new object[]
             {
@@ -82,10 +120,84 @@ namespace Tests
         }
 
         /// <summary>
+        /// Данные для тестирования каналов устройств по подтипам.
+        /// 1. Словарь с количеством каналов и их типами
+        /// 2. Подтип устройства
+        /// 3. Устройство
+        /// </summary>
+        /// <returns></returns>
+        private static object[] ChannelsTestData()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "DEV_VTUG8",
+                    GetRandomDEV_VTUGDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "DEV_VTUG16",
+                    GetRandomDEV_VTUGDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "DEV_VTUG24",
+                    GetRandomDEV_VTUGDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "",
+                    GetRandomDEV_VTUGDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "Incorrect",
+                    GetRandomDEV_VTUGDevice()
+                },
+            };
+        }
+
+        /// <summary>
         /// Генератор DEV_VTUG устройств
         /// </summary>
         /// <returns></returns>
-        public static Device.IODevice GetRandomDEV_VTUGDevice()
+        private static Device.IODevice GetRandomDEV_VTUGDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
@@ -109,6 +221,12 @@ namespace Tests
 
     public class Y
     {
+        /// <summary>
+        /// Тест установки подтипа устройства
+        /// </summary>
+        /// <param name="expectedSubType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubTypeTest(Device.DeviceSubType expectedSubType,
             string subType, Device.IODevice device)
@@ -117,6 +235,12 @@ namespace Tests
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
         }
 
+        /// <summary>
+        /// Тестирование параметров устройства
+        /// </summary>
+        /// <param name="parametersSequence">Ожидаемые параметры</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(ParametersTestData))]
         public void ParametersTest(string[] parametersSequence, string subType,
             Device.IODevice device)
@@ -129,12 +253,38 @@ namespace Tests
         }
 
         /// <summary>
+        /// Тестирование каналов устройства
+        /// </summary>
+        /// <param name="expectedChannelsCount">Ожидаемое количество каналов
+        /// в словаре с названием каналов</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(ChannelsTestData))]
+        public void ChannelsTest(Dictionary<string, int> expectedChannelsCount,
+            string subType, Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
+            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
+            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
+            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
+                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
+                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
+                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+            });
+        }
+
+        /// <summary>
         /// 1 - Ожидаемое значение подтипа,
         /// 2 - Задаваемое значение подтипа,
         /// 3 - Устройство для тестов
         /// </summary>
         /// <returns></returns>
-        public static object[] SetSubTypeTestData()
+        private static object[] SetSubTypeTestData()
         {
             return new object[]
             {
@@ -157,7 +307,7 @@ namespace Tests
         /// 3 - Устройство
         /// </summary>
         /// <returns></returns>
-        public static object[] ParametersTestData()
+        private static object[] ParametersTestData()
         {
             return new object[]
             {
@@ -183,10 +333,84 @@ namespace Tests
         }
 
         /// <summary>
+        /// Данные для тестирования каналов устройств по подтипам.
+        /// 1. Словарь с количеством каналов и их типами
+        /// 2. Подтип устройства
+        /// 3. Устройство
+        /// </summary>
+        /// <returns></returns>
+        private static object[] ChannelsTestData()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "DEV_VTUG8",
+                    GetRandomYDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "DEV_VTUG16",
+                    GetRandomYDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "DEV_VTUG24",
+                    GetRandomYDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "",
+                    GetRandomYDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "Incorrect",
+                    GetRandomYDevice()
+                },
+            };
+        }
+
+        /// <summary>
         /// Генератор Y устройств
         /// </summary>
         /// <returns></returns>
-        public static Device.IODevice GetRandomYDevice()
+        private static Device.IODevice GetRandomYDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);

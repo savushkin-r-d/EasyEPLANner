@@ -33,9 +33,9 @@ namespace TechObject
         /// Добавить оборудование.
         /// </summary>
         /// <param name="properties">Список оборудования</param>
-        public void AddItems(BaseProperty[] properties)
+        public void AddItems(List<BaseParameter> properties)
         {
-            foreach(BaseProperty property in properties)
+            foreach(BaseParameter property in properties)
             {
                 items.Add(property);
             }
@@ -45,7 +45,7 @@ namespace TechObject
         /// Добавить оборудование.
         /// </summary>
         /// <param name="property">Оборудование</param>
-        private void AddItem(BaseProperty property)
+        private void AddItem(BaseParameter property)
         {
             items.Add(property);
         }
@@ -59,7 +59,7 @@ namespace TechObject
         {
             foreach (Editor.ITreeViewItem item in items)
             {
-                var property = item as BaseProperty;
+                var property = item as BaseParameter;
                 if (property.LuaName == name)
                 {
                     property.SetValue(value);
@@ -78,7 +78,7 @@ namespace TechObject
 
             foreach(Editor.ITreeViewItem item in items)
             {
-                var property = item as BaseProperty;
+                var property = item as BaseParameter;
                 equipment.AddItem(property.Clone());
             }
 
@@ -93,28 +93,39 @@ namespace TechObject
         public string SaveAsLuaTable(string prefix)
         {
             var res = "";
-
             if (items.Count == 0)
             {
                 return res;
             }
 
-            res += prefix + "equipment = \n" +
-                prefix + "\t{\n";
-            foreach(Editor.ITreeViewItem item in items)
+            string equipmentForSave = "";
+            foreach (Editor.ITreeViewItem item in items)
             {
-                var property = item as BaseProperty;
-                res += prefix + $"\t{property.LuaName} = " +
-                    $"\'{property.Value}\',\n";
+                var property = item as BaseParameter;
+                bool isEmpty = property.IsEmpty ||
+                    property.Value == property.DefaultValue;
+                if (!isEmpty)
+                {
+                    equipmentForSave += prefix + $"\t{property.LuaName} = " +
+                        $"\'{property.Value}\',\n";
+                }
             }
-            res += prefix + "\t},\n";
+
+            bool needSaveQuipment = equipmentForSave != "";
+            if (needSaveQuipment)
+            {
+                res += prefix + "equipment = \n" +
+                    prefix + "\t{\n";
+                res += equipmentForSave;
+                res += prefix + "\t},\n";
+            }
 
             return res;
         }
 
         public void ModifyDevNames(string newTechObjName, int techNumber)
         {
-            var properties = items.Select(x => x as BaseProperty).ToArray();
+            var properties = items.Select(x => x as BaseParameter).ToArray();
             foreach (var property in properties)
             {
                 string oldDevName = property.Value;
@@ -139,7 +150,7 @@ namespace TechObject
             int techNumber = owner.TechNumber;
             string eplanName = owner.NameEplan;
 
-            var properties = items.Select(x => x as BaseProperty).ToArray();
+            var properties = items.Select(x => x as BaseParameter).ToArray();
             foreach (var property in properties)
             {
                 string oldDevName = property.Value;
@@ -163,7 +174,7 @@ namespace TechObject
         {
             var errors = "";
 
-            var equipment = Items.Select(x => x as BaseProperty).ToArray();
+            var equipment = Items.Select(x => x as BaseParameter).ToArray();
             foreach (var equip in equipment)
             {
                 string currentValue = equip.Value;
@@ -244,10 +255,10 @@ namespace TechObject
         public override Editor.ITreeViewItem Replace(object child, 
             object copyObject)
         {
-            var property = child as ShowedBaseProperty;
-            if (property != null && copyObject is ShowedBaseProperty)
+            var property = child as ActiveParameter;
+            if (property != null && copyObject is ActiveParameter)
             {
-                property.SetNewValue((copyObject as ShowedBaseProperty).Value);
+                property.SetNewValue((copyObject as ActiveParameter).Value);
                 ModifyDevNames(owner.NameEplan, owner.TechNumber);
                 return property as Editor.ITreeViewItem;
             }
@@ -269,9 +280,9 @@ namespace TechObject
 
         public override bool Delete(object child)
         {
-            if (child is BaseProperty)
+            if (child is BaseParameter)
             {
-                var property = child as BaseProperty;
+                var property = child as BaseParameter;
                 property.SetNewValue("");
                 return true;
             }

@@ -236,12 +236,13 @@ namespace TechObject
                 {
                     if (deviceIndex[j] == i)
                     {
-                        if (array[i] < 0)
+                        // Что бы не учитывало "-2" из array
+                        if (array[i] == -1)
                         {
                             del.Add(j);
                             break;
                         }
-                        if (array[i] > 0)
+                        if (array[i] >= 0)
                         {
                             deviceIndex[j] = array[i];
                             break;

@@ -118,6 +118,14 @@ namespace TechObject
                 SetValue(attachedObjects);
             }
 
+            /// <summary>
+            /// Сбросить привязку
+            /// </summary>
+            public void Reset()
+            {
+                this.SetNewValue("");
+            }
+
             public override bool SetNewValue(string newValue)
             {
                 string oldValue = this.Value;
@@ -216,9 +224,9 @@ namespace TechObject
                         .GetInstance().GetTObject(number);
                     BaseTechObject removingBaseTechObject = removingAgregate
                         .BaseTechObject;
-                    BaseProperty[] properties = removingBaseTechObject
-                        .AggregateProperties;
-                    if (properties.Length == 0)
+                    List<BaseParameter> properties = removingBaseTechObject
+                        .AggregateParameters;
+                    if (properties.Count == 0)
                     {
                         continue;
                     }
@@ -245,9 +253,9 @@ namespace TechObject
                         .GetInstance().GetTObject(number);
                     BaseTechObject attachedBaseTechObject = attachedAggregate
                         .BaseTechObject;
-                    BaseProperty[] properties = attachedBaseTechObject
-                        .AggregateProperties;
-                    if (properties.Length == 0)
+                    List<BaseParameter> properties = attachedBaseTechObject
+                        .AggregateParameters;
+                    if (properties.Count == 0)
                     {
                         continue;
                     }
@@ -363,8 +371,8 @@ namespace TechObject
             tmp += modes.SaveRestrictionAsLua(prefix);
             if (tmp != "")
             {
-                res += prefix + "\n" +
-                    prefix + "[ " + getN(this) + " ] =" + comment + "\n" + tmp;
+                res += prefix + "[ " + getN(this) + " ] =" + comment + "\n" + 
+                    tmp + "\n";
             }
 
             return res;
@@ -404,6 +412,7 @@ namespace TechObject
             modes = new ModesManager(this);
             timers = new TimersManager();
             parameters = new ParamsManager();
+            parameters.Parent = this;
 
             equipment = new Equipment(this);
 
@@ -838,11 +847,12 @@ namespace TechObject
                 newValue != baseTechObject.EplanName))
             {
                 baseTechObject.ResetBaseOperations();
+                attachedObjects.Reset();
                 equipment.Clear();
             }
 
-            BaseTechObject techObjFromDB = DataBase.Imitation.GetTechObject(
-                newValue);
+            BaseTechObject techObjFromDB = BaseTechObjectManager.GetInstance()
+                .GetTechObject(newValue);
             techObjFromDB.Owner = baseTechObject.Owner;
             baseTechObject = techObjFromDB;
             S88Level = baseTechObject.S88Level;
@@ -894,7 +904,7 @@ namespace TechObject
             {
                 var equipment = child as Equipment;
                 var objEquips = equipment.Items
-                    .Select(x => x as BaseProperty).ToArray();
+                    .Select(x => x as BaseParameter).ToArray();
                 foreach(var equip in objEquips)
                 {
                     equip.SetNewValue("");
@@ -953,10 +963,10 @@ namespace TechObject
             if (child is Equipment && copyObject is Equipment)
             {
                 var equipment = child as Equipment;
-                BaseProperty[] objEquips = equipment.Items
-                    .Select(x => x as BaseProperty).ToArray();
-                BaseProperty[] copyEquips = (copyObject as Equipment)
-                    .Items.Select(x => x as BaseProperty).ToArray();
+                BaseParameter[] objEquips = equipment.Items
+                    .Select(x => x as BaseParameter).ToArray();
+                BaseParameter[] copyEquips = (copyObject as Equipment)
+                    .Items.Select(x => x as BaseParameter).ToArray();
                 foreach (var objEquip in objEquips)
                 {
                     foreach(var copyEquip in copyEquips)
@@ -971,6 +981,39 @@ namespace TechObject
                 return child as Editor.ITreeViewItem;
             }
             return null;
+        }
+
+        override public List<string> BaseObjectsList
+        {
+            get
+            {
+                return BaseTechObjectManager.GetInstance().GetBaseTechObjects()
+                .Select(x => x.Name).ToList();
+            }
+        }
+
+        public override bool ContainsBaseObject
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool IsMainObject
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool ShowWarningBeforeDelete
+        {
+            get
+            {
+                return true;
+            }
         }
         #endregion
 

@@ -1,4 +1,5 @@
 ﻿using IO;
+using StaticHelper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -319,6 +320,17 @@ namespace Device
                             break;
                     }
                     break;
+            }
+
+            bool haveNewLineSymbol = comment
+                .Contains(CommonConst.NewLineWithCarriageReturn) ||
+                comment.Contains(CommonConst.NewLine);
+            if (haveNewLineSymbol)
+            {
+                comment = comment
+                    .Replace(CommonConst.NewLineWithCarriageReturn, "");
+                comment = comment
+                    .Replace(CommonConst.NewLine, "");
             }
 
             List<IOChannel> findedChannels = IO.FindAll(delegate (IOChannel channel)

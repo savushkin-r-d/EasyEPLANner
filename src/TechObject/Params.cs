@@ -173,6 +173,7 @@ namespace TechObject
             Param removedParam = child as Param;
             if (removedParam != null)
             {
+                removedParam.ClearOperationsBinding();
                 parameters.Remove(removedParam);
                 return true;
             }
@@ -212,6 +213,7 @@ namespace TechObject
                     newValue, newMeter, newNameLua, useOperation);
                 if (useOperation)
                 {
+                    newParam.Parent = this;
                     newParam.SetOperationN(parameters[parameters.Count - 1]
                         .GetOperationN());
                 }
@@ -228,6 +230,10 @@ namespace TechObject
 
         public void Clear()
         {
+            foreach (var parameter in parameters)
+            {
+                parameter.ClearOperationsBinding();
+            }
             parameters.Clear();
         }
 
@@ -269,6 +275,7 @@ namespace TechObject
                     newValue, newMeter, newNameLua, useOperation);
                 if (useOperation)
                 {
+                    newPar.Parent = this;
                     newPar.SetOperationN(newParam.GetOperationN());
                 }
 
@@ -336,6 +343,7 @@ namespace TechObject
                     newValue, newMeter, newNameLua, useOperation);
                 if (useOperation)
                 {
+                    newPar.Parent = this;
                     newPar.SetOperationN((copyObject as Param).GetOperationN());
                 }
 
@@ -348,6 +356,22 @@ namespace TechObject
             }
 
             return null;
+        }
+
+        public override bool NeedRebuildMainObject
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool ShowWarningBeforeDelete
+        {
+            get
+            {
+                return true;
+            }
         }
         #endregion
 
