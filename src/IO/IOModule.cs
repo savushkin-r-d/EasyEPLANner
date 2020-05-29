@@ -105,12 +105,12 @@ namespace IO
                 modulesColor.Add(moduleName, Info.ModuleColor);
             }
 
-            res[idx, 0] = p;
-            res[idx, 1] = moduleName;
             if (Info.ChannelClamps.GetLength(0) != 0)
             {
                 foreach(int clamp in Info.ChannelClamps)
                 {
+                    res[idx, 0] = p;
+                    res[idx, 1] = moduleName;
                     res[idx, 2] = clamp.ToString();
                     res[idx, 3] = GenerateClampStringForExcel(clamp);
                     idx++;
