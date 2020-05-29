@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Device;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -96,7 +97,7 @@ namespace TechObject
                     int indexOfDeletingElement = tmpIndex.IndexOf(index);
                     tmpIndex.Remove(index);
                     int tmpDevInd = Device.DeviceManager.GetInstance()
-                        .GetDeviceListNumber(newDevName);
+                        .GetDeviceIndex(newDevName);
                     if (tmpDevInd >= 0)
                     {
                         tmpIndex.Insert(indexOfDeletingElement, tmpDevInd);
@@ -138,7 +139,7 @@ namespace TechObject
                     int indexOfDeletingElement = tmpIndex.IndexOf(index);
                     tmpIndex.Remove(index);
                     int tmpDevInd = Device.DeviceManager.GetInstance()
-                        .GetDeviceListNumber(newDevName);
+                        .GetDeviceIndex(newDevName);
                     if (tmpDevInd >= 0)
                     {
                         tmpIndex.Insert(indexOfDeletingElement, tmpDevInd);
@@ -202,7 +203,11 @@ namespace TechObject
         /// <param name="additionalParam">Дополнительный параметр.</param>
         public virtual void AddDev(int index, int additionalParam)
         {
-            deviceIndex.Add(index);
+            var device = DeviceManager.GetInstance().GetDeviceByIndex(index);
+            if (device.Description != "Заглушка")
+            {
+                deviceIndex.Add(index);
+            }
         }
 
         /// <summary>
@@ -355,11 +360,8 @@ namespace TechObject
 
                 foreach (int index in deviceIndex)
                 {
-                    if (index >= 0)
-                    {
-                        res += deviceManager.GetDeviceByIndex(index).Name + 
-                            " ";
-                    }
+                    res += deviceManager.GetDeviceByIndex(index).Name +
+                        " ";
                 }
                 if (res != "")
                 {
@@ -409,7 +411,7 @@ namespace TechObject
                 if (isValid != false)
                 {
                     int tmpDeviceIndex = Device.DeviceManager.GetInstance().
-                        GetDeviceListNumber(str);
+                        GetDeviceIndex(str);
                     if (tmpDeviceIndex >= 0)
                     {
                         deviceIndex.Add(tmpDeviceIndex);

@@ -193,7 +193,29 @@ namespace Device
             return devStub;
         }
 
-        public int GetDeviceListNumber(string devName)
+        /// <summary>
+        /// Получить устройство по индексу
+        /// </summary>
+        /// <param name="index">Индекс устройства</param>
+        /// <returns></returns>
+        public IODevice GetDeviceByIndex(int index)
+        {
+            if (index >= 0)
+            {
+                return devices[index];
+            }
+            else
+            {
+                return cap;
+            }
+        }
+
+        /// <summary>
+        /// Получить индекс устройства по его имени из общего пула устройств.
+        /// </summary>
+        /// <param name="devName">Имя устройства</param>
+        /// <returns></returns>
+        public int GetDeviceIndex(string devName)
         {
             string name;
             string objectName;
@@ -203,7 +225,6 @@ namespace Device
 
             CheckDeviceName(devName, out name, out objectName, out objectNumber,
                 out deviceType, out deviceNumber);
-
             IODevice devStub = new IODevice(name, "заглушка",
                 deviceType, deviceNumber, objectName, objectNumber);
 
@@ -773,18 +794,6 @@ namespace Device
             get
             {
                 return devices;
-            }
-        }
-
-        public IODevice GetDeviceByIndex(int index)
-        {
-            if (index >= 0)
-            {
-                return devices[index];
-            }
-            else
-            {
-                return cap;
             }
         }
 
