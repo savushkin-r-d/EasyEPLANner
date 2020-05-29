@@ -362,6 +362,12 @@ namespace Editor
         {
             get;
         }
+
+        /// <summary>
+        /// Установка родителя для элемента
+        /// </summary>
+        /// <param name="parent">Родительский элемент</param>
+        void AddParent(ITreeViewItem parent);
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -801,6 +807,22 @@ namespace Editor
                 return false;
             }
         }
+
+        /// <summary>
+        /// Установка родителя для элемента
+        /// </summary>
+        /// <param name="parent">Родительский элемент</param>
+        public void AddParent(ITreeViewItem parent)
+        {
+            this.Parent = parent;
+            if (this.Items != null)
+            {
+                foreach (ITreeViewItem item in this.Items)
+                {
+                    item.AddParent(this);
+                }
+            }
+        }
         #endregion
 
         ITreeViewItem parent;
@@ -1067,6 +1089,22 @@ namespace Editor
             get
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Установка родителя для элемента
+        /// </summary>
+        /// <param name="parent">Родительский элемент</param>
+        public void AddParent(ITreeViewItem parent)
+        {
+            this.Parent = parent;
+            if (this.Items != null)
+            {
+                foreach (ITreeViewItem item in this.Items)
+                {
+                    item.AddParent(this);
+                }
             }
         }
         #endregion

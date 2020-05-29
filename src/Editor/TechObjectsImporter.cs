@@ -147,10 +147,13 @@ namespace EasyEPlanner
             ITreeViewItem techObjectsManager = TechObjectManager.GetInstance();
             foreach(var num in checkedItems)
             {
-                var obj = importedObjects[num] as TechObject.TechObject;
+                var importingItem = importedObjects[num] as TechObject
+                    .TechObject;
                 // Убираем привязку при импорте.
-                obj.AttachedObjects.SetValue("");
-                techObjectsManager.InsertCopy(obj);
+                importingItem.AttachedObjects.SetValue("");
+
+                var importedItem = techObjectsManager.InsertCopy(importingItem);
+                importedItem.AddParent(techObjectsManager);
             }
         }
 
