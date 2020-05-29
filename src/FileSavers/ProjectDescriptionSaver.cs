@@ -32,6 +32,7 @@ namespace EasyEPlanner
                     Encoding.GetEncoding(1251));
                 mainProgramFilePattern = reader.ReadToEnd();
                 reader.Close();
+                mainProgramFilePatternIsLoaded = true;
             }
             catch
             {
@@ -225,7 +226,7 @@ namespace EasyEPlanner
         private static void SaveMainFile(ParametersForSave par)
         {
             string fileName = par.path + @"\" + mainProgramFileName;
-            if (!File.Exists(fileName))
+            if (!File.Exists(fileName) && mainProgramFilePatternIsLoaded)
             {
                 //Создаем пустое описание управляющей программы.
                 var fileWriter = new StreamWriter(fileName,
@@ -321,7 +322,8 @@ namespace EasyEPlanner
         private const string mainTechDevicesFileName = "main.devices.lua";
         private const string mainRestrictionsFileName = "main.restrictions.lua";
         private const string mainProgramFileName = "main.plua";
-        private static string mainProgramFilePattern;
+        private static string mainProgramFilePattern = "";
+        private static bool mainProgramFilePatternIsLoaded = false;
         private const string mainModbusSRVFileName = "main.modbus_srv.lua";
         private const string mainProfibusFileName = "main.profibus.lua";
         private const string mainPRGFileName = "prg.lua";
