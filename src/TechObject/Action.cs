@@ -1,6 +1,4 @@
-﻿using Device;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -203,7 +201,8 @@ namespace TechObject
         /// <param name="additionalParam">Дополнительный параметр.</param>
         public virtual void AddDev(int index, int additionalParam)
         {
-            var device = DeviceManager.GetInstance().GetDeviceByIndex(index);
+            var device = Device.DeviceManager.GetInstance()
+                .GetDeviceByIndex(index);
             if (device.Description != "Заглушка")
             {
                 deviceIndex.Add(index);
