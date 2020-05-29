@@ -773,7 +773,6 @@ namespace TechObject
 
                 TechObject newObject = (obj as TechObject).Clone(
                     GetTechObjectN, newN, oldObjN, newObjN);
-                newObject.Parent = this;
                 objects.Add(newObject);
 
                 newObject.ChangeCrossRestriction();
