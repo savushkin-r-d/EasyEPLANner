@@ -4,11 +4,43 @@ using System.Text;
 using TechObject;
 using Device;
 using IO;
+using System.Windows.Forms;
 
 namespace EasyEPlanner
 {
     public static class ProjectDescriptionSaver
     {
+        static ProjectDescriptionSaver()
+        {
+            LoadFilePatterns();
+        }
+
+        /// <summary>
+        /// Загрузка шаблонов для сохраняемых файлов
+        /// </summary>
+        private static void LoadFilePatterns()
+        {
+            const string mainProgramPatternFileName = "mainPattern.plua";
+            string pathToSystemFiles = ProjectManager.GetInstance()
+                .SystemFilesPath;
+            string pathToMainPluaFile = Path
+                .Combine(pathToSystemFiles, mainProgramPatternFileName);
+
+            try
+            {
+                var reader = new StreamReader(pathToMainPluaFile,
+                    Encoding.GetEncoding(1251));
+                mainProgramFilePattern = reader.ReadToEnd();
+                reader.Close();
+            }
+            catch
+            {
+                MessageBox.Show($"Не найден шаблон {mainProgramFileName}", 
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+        }
+
         /// <summary>
         /// Сохранить описание проекта
         /// </summary>
@@ -131,7 +163,7 @@ namespace EasyEPlanner
                 .GetString("mainObjectsPattern");
             string desctiption = techObjectManager.SaveAsLuaTable("");
             var descriptionFileData = string.Format(filePattern,
-                mainTechDevicesFileVersion, par.PAC_Name, desctiption);
+                mainTechObjectsFileVersion, par.PAC_Name, desctiption);
 
             string fileName = par.path + @"\" + mainTechObjectsFileName;
             var fileWriter = new StreamWriter(fileName, false,
@@ -198,8 +230,7 @@ namespace EasyEPlanner
                 //Создаем пустое описание управляющей программы.
                 var fileWriter = new StreamWriter(fileName,
                     false, Encoding.GetEncoding(1251));
-                string mainPluaFilePattern = Properties.Resources
-                    .ResourceManager.GetString("mainPluaFilePattern");
+                string mainPluaFilePattern = mainProgramFilePattern;
                 mainPluaFilePattern = mainPluaFilePattern
                     .Replace("ProjectName", par.PAC_Name);
                 fileWriter.WriteLine(mainPluaFilePattern);
@@ -290,6 +321,7 @@ namespace EasyEPlanner
         private const string mainTechDevicesFileName = "main.devices.lua";
         private const string mainRestrictionsFileName = "main.restrictions.lua";
         private const string mainProgramFileName = "main.plua";
+        private static string mainProgramFilePattern;
         private const string mainModbusSRVFileName = "main.modbus_srv.lua";
         private const string mainProfibusFileName = "main.profibus.lua";
         private const string mainPRGFileName = "prg.lua";

@@ -317,6 +317,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="key\2112_Public.snk" />
+    <None Include="Lua\mainPattern.plua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Lua\sys.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
