@@ -185,7 +185,7 @@ namespace Editor
             editorTView.BeginUpdate();
             treeViewItemsList = new List<ITreeViewItem>();
             treeViewItemsList.Add(data);
-            AddParent(data, null);
+            data.AddParent(null);
             editorTView.Roots = treeViewItemsList;
             editorTView.Columns[0]
                 .AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -735,23 +735,6 @@ namespace Editor
         public uint pidMain = 0;
 
         /// <summary>
-        /// Установка родительских элементов.
-        /// </summary>
-        /// <param name="childItem">Дочерний элемент.</param>
-        /// <param name="parentItem">Элемент, присваемый родителем.</param>
-        private void AddParent(ITreeViewItem childItem, ITreeViewItem parentItem)
-        {
-            childItem.Parent = parentItem;
-            if (childItem.Items != null)
-            {
-                foreach (ITreeViewItem item in childItem.Items)
-                {
-                    AddParent(item, childItem);
-                }
-            }
-        }
-
-        /// <summary>
         /// Обработка изменений при редактировании.
         /// </summary>
         private void OnModify()
@@ -796,7 +779,7 @@ namespace Editor
                     ITreeViewItem isMove = itemParent.MoveUp(item);
                     if (isMove != null) // Если перемещенный объект не null
                     {
-                        AddParent(item, itemParent);
+                        item.AddParent(itemParent);
                         editorTView.RefreshObjects(itemParent.Items);
                         editorTView.SelectedIndex--;
                     }
@@ -812,7 +795,7 @@ namespace Editor
                     ITreeViewItem isMove = itemParent.MoveDown(item);
                     if (isMove != null) // Если перемещенный объект не null
                     {
-                        AddParent(item, itemParent);
+                        item.AddParent(itemParent);
                         editorTView.RefreshObjects(itemParent.Items);
                         editorTView.SelectedIndex++;
                     }
@@ -879,7 +862,7 @@ namespace Editor
             if (item.IsInsertable == true)
             {
                 ITreeViewItem newItem = item.Insert();
-                AddParent(newItem, item);
+                newItem.AddParent(item);
                 editorTView.RefreshObjects(item.Items);
                 editorTView.RefreshObject(item);
 
@@ -943,7 +926,7 @@ namespace Editor
                 ITreeViewItem newItem = item.InsertCopy(copyItem);
                 if (newItem != null)
                 {
-                    AddParent(newItem, item);
+                    newItem.AddParent(item);
                     OnModify();
                     editorTView.RefreshObjects(item.Items);
                 }
@@ -962,7 +945,7 @@ namespace Editor
                 ITreeViewItem newItem = parent.Replace(item, copyItem);
                 if (newItem != null)
                 {
-                    AddParent(newItem, parent);
+                    newItem.AddParent(parent);
                     editorTView.RefreshObjects(parent.Items);
                     if (item.NeedRebuildMainObject)
                     {

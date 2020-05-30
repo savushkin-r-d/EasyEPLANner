@@ -105,92 +105,106 @@ namespace IO
 
             if (Info.ChannelClamps.GetLength(0) != 0)
             {
-                if (Info.AddressSpaceType == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI ||
-                    Info.AddressSpaceType == IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI)
+                foreach(int clamp in Info.ChannelClamps)
                 {
-                    if (this.isIOLink() == true)
-                    {
-                        foreach (int clamp in Info.ChannelClamps)
-                        {
-                            res[idx, 0] = p;
-                            res[idx, 1] = moduleName;
-                            res[idx, 2] = clamp.ToString();
-                            if (devices[clamp] != null && 
-                                devices[clamp].Count == 1)
-                            {
-                                string devName = "";
-                                int devIdx = 0;
-                                foreach (Device.IODevice dev in devices[clamp])
-                                {
-                                    devName += dev.EPlanName +
-                                        dev.GetConnectionType() +
-                                        $"{dev.GetRange()}: " +
-                                        $"{devicesChannels[clamp][devIdx].Name}: " +
-                                        $"{dev.Description} " +
-                                        $"{devicesChannels[clamp][devIdx].Comment}. " +
-                                        $"In: {dev.IOLinkProperties.SizeIn}, " +
-                                        $"Out: {dev.IOLinkProperties.SizeOut}";
-                                    devName = devName.Replace('\n', ' ');
-                                    devIdx++;
-                                }
-                                res[idx, 3] = devName;
+                    res[idx, 0] = p;
+                    res[idx, 1] = moduleName;
+                    res[idx, 2] = clamp.ToString();
+                    res[idx, 3] = GenerateClampStringForExcel(clamp);
+                    idx++;
+                }
+            }
+            else
+            {
+                idx++;
+            }
+        }
 
-                            }
-                            else if (devices[clamp] != null && 
-                                devices[clamp].Count > 1)
-                            {
-                                res[idx, 3] = "IO-Link, более 1 канала. " +
-                                    $"In: {devices[clamp][0].IOLinkProperties.SizeIn}, " +
-                                    $"Out: {devices[clamp][0].IOLinkProperties.SizeOut}";
-                            }
-                            idx++;
-                        }
+        /// <summary>
+        /// Генерация строки с описанием привязанного устройств(-а) к клемме
+        /// </summary>
+        /// <returns></returns>
+        private string GenerateClampStringForExcel(int clamp)
+        {
+            string devName = "";
+
+            bool devicesNotFound = (devices[clamp] == null || 
+                devices[clamp].Count == 0);
+            if (devicesNotFound)
+            {
+                return devName;
+            }
+
+            bool isASInterfaceOrIOLink = (Info.AddressSpaceType == 
+                IOModuleInfo.ADDRESS_SPACE_TYPE.AOAI ||
+                Info.AddressSpaceType == 
+                IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI);
+            if (isASInterfaceOrIOLink)
+            {
+                if (isIOLink())
+                {
+                    const int WordToBitMultiplier = 16;
+                    var dev = devices[clamp][0];
+                    var devChannel = devicesChannels[clamp][0];
+
+                    if (devChannel.Name == "DI" || devChannel.Name == "DO")
+                    {
+                        devName = dev.EPlanName +
+                            dev.GetConnectionType() +
+                            $"{dev.GetRange()}: " +
+                            $"{devChannel.Name}: " +
+                            $"{dev.Description} " +
+                            $"{devChannel.Comment}";
                     }
                     else
                     {
-                        foreach (int clamp in Info.ChannelClamps)
+                        int sizeIn = dev.IOLinkProperties.SizeIn;
+                        int sizeOut = dev.IOLinkProperties.SizeOut;
+
+                        int sizeInBits = (sizeIn * WordToBitMultiplier);
+                        int sizeOutBits = (sizeOut * WordToBitMultiplier);
+
+                        if (devices[clamp].Count == 1)
                         {
-                            res[idx, 0] = p;
-                            res[idx, 1] = moduleName;
-                            res[idx, 2] = clamp.ToString();
-                            res[idx, 3] = "AS interface";
-                            idx++;
+                            devName = dev.EPlanName +
+                                dev.GetConnectionType() +
+                                $"{dev.GetRange()}: " +
+                                $"{devChannel.Name}: " +
+                                $"{dev.Description} " +
+                                $"{devChannel.Comment}. " +
+                                $"Вход: {sizeInBits} бит, " +
+                                $"Выход: {sizeOutBits} бит";
+                        }
+                        else
+                        {
+                            devName = "IO-Link, более 1 канала. " +
+                                $"Вход: {sizeInBits} бит, " +
+                                $"Выход: {sizeOutBits} бит";
                         }
                     }
                 }
                 else
                 {
-                    foreach (int clamp in Info.ChannelClamps)
-                    {
-                        res[idx, 0] = p;
-                        res[idx, 1] = moduleName;
-                        res[idx, 2] = clamp;
-                        if (devices[clamp] != null)
-                        {
-                            string devName = "";
-                            int devIdx = 0;
-                            foreach (Device.IODevice dev in devices[clamp])
-                            {
-
-                                devName += dev.EPlanName + dev.GetConnectionType() + dev.GetRange() + ": " +
-                                        devicesChannels[clamp][devIdx].Name + ": " + dev.Description + " " +
-                                        devicesChannels[clamp][devIdx].Comment;
-                                devName = devName.Replace('\n', ' ');
-                                devIdx++;
-                            }
-                            res[idx, 3] = devName;
-
-                        }
-                        idx++;
-                    }
+                    devName = "AS interface";
                 }
             }
             else
             {
-                res[idx, 0] = p;
-                res[idx, 1] = moduleName;
-                idx++;
+                int devIdx = 0;
+                foreach (Device.IODevice dev in devices[clamp])
+                {
+                    devName += dev.EPlanName + 
+                        dev.GetConnectionType() + 
+                        dev.GetRange() + ": " +
+                        devicesChannels[clamp][devIdx].Name + ": " + 
+                        dev.Description + " " +
+                        devicesChannels[clamp][devIdx].Comment;
+                    devIdx++;
+                }
             }
+
+            devName = devName.Replace('\n', ' ');
+            return devName;
         }
 
         public void SaveASInterfaceConnection(int nodeIdx, int moduleIdx, 

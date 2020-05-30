@@ -215,7 +215,12 @@ namespace TechObject
             int additionalParam = 0)
         {
             int index = Device.DeviceManager.GetInstance()
-                .GetDeviceListNumber(devName);
+                .GetDeviceIndex(devName);
+            if (index == -1)
+            {
+                return false;
+            }
+
             foreach (Action act in actions)
             {
                 if (act.LuaName == actionLuaName)
