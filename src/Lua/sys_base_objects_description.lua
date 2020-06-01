@@ -340,11 +340,13 @@ return
                             CIP_WASH_END = { name = "Мойка завершена" },
                             DI_CIP_FREE = { name = "МСА свободна" },
                             CIP_WASH_REQUEST = { name = "Автоматическое включение мойки" },
+                            MEDIUM_CHANGE_REQUEST = { name = "Запрос смены среды" },
                         },
                     },
                     steps =
                     {
                         DRAINAGE = { name = "Дренаж" },
+                        MEDIUM_CHANGE = { name = "Смена среды" },
                     },
                 },
                 FILL = {
@@ -405,6 +407,7 @@ return
                 LS_down = { name = "Датчик нижнего уровня", defaultValue = "LS1" },
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
                 TE = { name = "Датчик температуры", defaultValue = "TE1" },
+                out_pump = { name = "Откачивающий насос", defaultValue = "M1" },
             },
             aggregateParameters = { },
         },
