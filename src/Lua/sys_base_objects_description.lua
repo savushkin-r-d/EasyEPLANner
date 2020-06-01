@@ -418,7 +418,7 @@ return
                 TE = { name = "Датчик температуры", defaultValue = "TE1" },
                 -- out_pump defaultValue пустое т.к по другому происходит
                 -- обработка ОУ. Обрабатывается не объект, а устройство.
-                out_pump = { name = "Откачивающий насос", defaultValue = "" },
+                out_pump = { name = "Откачивающий насос" },
             },
             aggregateParameters = { },
         },
