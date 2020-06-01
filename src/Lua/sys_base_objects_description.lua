@@ -363,6 +363,15 @@ return
                 ADDITION_OF_STARTER = {
                     name = "Внесение закваски",
                 },
+                LEAVENING = {
+                    name = "Заквашивание",
+                },
+                SOURING = {
+                    name = "Сквашивание",
+                },
+                WHEY_SEPARATION_PRE = {
+                    name = "Отделение сыворотки (нагрев)",
+                },
                 STORING = {
                     name = "Хранение",
                     params = { },
