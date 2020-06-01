@@ -19,7 +19,8 @@ namespace TechObject
 
         public override BaseParameter Clone()
         {
-            var newProperty = new ActiveParameter(this.LuaName, this.Name);
+            var newProperty = new ActiveParameter(this.LuaName, this.Name,
+                this.DefaultValue);
             newProperty.SetNewValue(this.Value);
             return newProperty;
         }
