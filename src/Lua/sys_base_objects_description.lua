@@ -419,6 +419,7 @@ return
                 -- out_pump defaultValue пустое т.к по другому происходит
                 -- обработка ОУ. Обрабатывается не объект, а устройство.
                 out_pump = { name = "Откачивающий насос" },
+                lamp = { name = "Лампа освещения", defaultValue = "HL1" },
             },
             aggregateParameters = { },
         },
