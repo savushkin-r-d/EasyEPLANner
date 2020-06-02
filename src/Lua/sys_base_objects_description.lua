@@ -341,6 +341,7 @@ return
                             DI_CIP_FREE = { name = "МСА свободна" },
                             CIP_WASH_REQUEST = { name = "Автоматическое включение мойки" },
                             MEDIUM_CHANGE_REQUEST = { name = "Запрос смены среды" },
+                            MIX_NODE_MIX_OPERATION = { name = "Используемая операция узла перемешивания", defaultValue = 1 },
                         },
                     },
                     steps =
@@ -356,37 +357,67 @@ return
                         active =
                         {
                             OPERATION_AFTER_FILL = { name = "Номер операции после наполнения" },
+                            MIX_NODE_MIX_OPERATION = { name = "Используемая операция узла перемешивания", defaultValue = 1 },
                         },
                     },
                     steps = { },
                 },
                 ADDITION_OF_STARTER = {
                     name = "Внесение закваски",
+                    params =
+                    {
+                        active =
+                        {
+                            MIX_NODE_MIX_OPERATION = { name = "Используемая операция узла перемешивания", defaultValue = 1 },
+                        },
+                    },
                 },
                 LEAVENING = {
                     name = "Заквашивание",
+                    params =
+                    {
+                        active =
+                        {
+                            MIX_NODE_MIX_OPERATION = { name = "Используемая операция узла перемешивания", defaultValue = 1 },
+                        },
+                    },
                 },
                 SOURING = {
                     name = "Сквашивание",
                 },
                 WHEY_SEPARATION_PRE = {
                     name = "Отделение сыворотки (нагрев)",
+                    params =
+                    {
+                        active =
+                        {
+                            MIX_NODE_MIX_OPERATION = { name = "Используемая операция узла перемешивания", defaultValue = 1 },
+                        },
+                    },
                 },
                 STORING = {
                     name = "Хранение",
-                    params = { },
-                    steps = { },
+                    params =
+                    {
+                        active =
+                        {
+                            MIX_NODE_MIX_OPERATION = { name = "Используемая операция узла перемешивания", defaultValue = 1 },
+                        },
+                    },
                 },
                 OUT = {
                     name = "Выдача",
                     params =
                     {
+                        active =
+                        {
+                            MIX_NODE_MIX_OPERATION = { name = "Используемая операция узла перемешивания", defaultValue = 1 },
+                        },
                         bool =
                         {
                             NEED_STORING_AFTER = { name = "Включить хранение после выдачи", defaultValue = "true" },
                         },
                     },
-                    steps = { },
                 },
                 SLOW_HEAT = {
                     name = "Томление",
@@ -583,7 +614,18 @@ return
         mix_node = {
             name = "Узел перемешивания",
             s88Level = 2,
-            baseOperations = { },
+            baseOperations =
+            {
+                MIXING = {
+                    name = "Перемешивание",
+                },
+                MIXING_LEFT = {
+                    name = "Перемешивание влево",
+                },
+                MIXING_RIGHT = {
+                    name = "Перемешивание вправо",
+                },
+            },
             basicName = "mix_node",
             equipment =
             {
