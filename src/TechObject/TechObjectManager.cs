@@ -104,10 +104,9 @@ namespace TechObject
         private void InitTechObjectsLuaScript()
         {
             const string fileName = "sys.lua";
-            string sysLuaPath = Path.Combine(
-                ProjectManager.GetInstance().SystemFilesPath, fileName);
-            if (Directory
-                .Exists(ProjectManager.GetInstance().SystemFilesPath) == false)
+            string sysLuaPath = Path.Combine(ProjectManager.GetInstance()
+                .SystemFilesPath, fileName);
+            if (File.Exists(sysLuaPath) == false)
             {
                 CopySystemFiles(ProjectManager.GetInstance().SystemFilesPath,
                     ProjectManager.GetInstance().OriginalSystemFilesPath);
