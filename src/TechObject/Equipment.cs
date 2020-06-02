@@ -177,43 +177,69 @@ namespace TechObject
             var equipment = Items.Select(x => x as BaseParameter).ToArray();
             foreach (var equip in equipment)
             {
-                string currentValue = equip.Value;
-                if (currentValue == equip.DefaultValue)
-                {
-                    string deviceName = owner.NameEplan + owner.TechNumber + 
-                        equip.DefaultValue;
-                    var device = Device.DeviceManager.GetInstance()
-                        .GetDevice(deviceName);
-                    if (device.Description != "заглушка")
-                    {
-                        equip.SetNewValue(deviceName);
-                    }
-                }
-
-                // Обработка ПИДа
-                if (equip.LuaName == "SET_VALUE")
-                {
-                    bool isValid = false;
-                    var device = Device.DeviceManager.GetInstance()
-                        .GetDevice(currentValue);
-                    if (device.Description != "заглушка")
-                    {
-                        isValid = true;
-                    }
-
-                    if (owner.Params.GetFParam(currentValue) != null)
-                    {
-                        isValid = true;
-                    }
-
-                    if (isValid == false)
-                    {
-                        errors += $"Отсутствует задание для ПИД регулятора" +
-                            $" №{owner.GlobalNumber}\n";
-                    }
-                }
+                SetDeviceAutomatically(equip);
+                errors += CheckEquipmentValues(equip);
             }
 
+            return errors;
+        }
+
+        /// <summary>
+        /// Установка устройств в оборудовании автоматически
+        /// </summary>
+        /// <param name="equipment">Оборудование</param>
+        private void SetDeviceAutomatically(BaseParameter equipment)
+        {
+            string currentValue = equipment.Value;
+            if (currentValue == equipment.DefaultValue)
+            {
+                string deviceName = owner.NameEplan + owner.TechNumber +
+                    equipment.DefaultValue;
+                var device = Device.DeviceManager.GetInstance()
+                    .GetDevice(deviceName);
+                if (device.Description != "заглушка")
+                {
+                    equipment.SetNewValue(deviceName);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Проверить параметры и устройства для ПИД
+        /// </summary>
+        /// <param name="equipment">Оборудование</param>
+        /// <returns></returns>
+        private string CheckEquipmentValues(BaseParameter equipment)
+        {
+            var errors = "";
+            string currentValue = equipment.Value;
+            var device = Device.DeviceManager.GetInstance()
+                    .GetDeviceByEplanName(currentValue);
+            if (equipment.LuaName == "SET_VALUE")
+            {
+               
+                bool isValid = (device.Description != "заглушка" ||
+                    owner.Params.GetFParam(currentValue) != null);
+                if (!isValid)
+                {
+                    errors += $"Отсутствует задание для ПИД регулятора" +
+                        $" №{owner.GlobalNumber}\n";
+                }
+            }
+            else
+            {
+                bool isValid = device.Description != "заглушка" ||
+                    currentValue == "" ||
+                    currentValue == equipment.DefaultValue;
+                if (!isValid)
+                {
+                    string techObjectName = owner.DisplayText[0];
+                    errors += $"Проверьте оборудование: \"{equipment.Name}\" " +
+                        $"в объекте \"{techObjectName}\". " +
+                        $"Не найдено устройство или " +
+                        $"задано более 1 устройства.\n";
+                }
+            }
             return errors;
         }
 
