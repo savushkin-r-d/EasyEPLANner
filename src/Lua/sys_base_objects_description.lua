@@ -622,8 +622,11 @@ return
                 active =
                 {
                     MIX_NODE_MIX_OPERATION = { name = "Используемая операция узла перемешивания", defaultValue = 1 },
+                },
+                bool =
+                {
                     NEED_MIXING = { name = "Использовать узел перемешивания", defaultValue = "true" },
-                }
+                },
             },
             bindingName = "mix_node"
         },
