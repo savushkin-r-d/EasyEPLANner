@@ -53,13 +53,27 @@ namespace TechObject
             Equipment.Add(new ActiveParameter(luaName, name, value));
         }
 
+
         /// <summary>
-        /// Добавить параметр агрегата
+        /// Добавить активный параметр агрегата
         /// </summary>
         /// <param name="luaName">Lua-имя</param>
         /// <param name="name">Имя</param>
         /// <param name="defaultValue">Значение по-умолчанию</param>
-        public void AddAggregateParameter(string luaName, string name,
+        public void AddActiveParameter(string luaName, string name,
+            string defaultValue)
+        {
+            var par = new ActiveParameter(luaName, name, defaultValue);
+            AggregateParameters.Add(par);
+        }
+
+        /// <summary>
+        /// Добавить активный булевый параметр агрегата
+        /// </summary>
+        /// <param name="luaName">Lua-имя</param>
+        /// <param name="name">Имя</param>
+        /// <param name="defaultValue">Значение по-умолчанию</param>
+        public void AddActiveBoolParameter(string luaName, string name,
             string defaultValue)
         {
             var par = new ActiveBoolParameter(luaName, name, defaultValue);
