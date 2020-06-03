@@ -71,6 +71,21 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Объект-владелец параметра.
+        /// </summary>
+        public object Owner
+        {
+            get
+            {
+                return owner;
+            }
+            set
+            {
+                owner = value;
+            }
+        }
+
         #region реализация ITreeView
         public override bool SetNewValue(string newValue)
         {
@@ -96,6 +111,7 @@ namespace TechObject
         }
         #endregion
 
+        private object owner;
         private string luaName;
         private string defaultValue;
     }
