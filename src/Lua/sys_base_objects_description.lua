@@ -30,7 +30,7 @@
 
 -- Базовые шаги - по аналогии с активными параметрами.
 -- Оборудование - по аналогии с активными параметрами.
--- Параметры объекта, как агрегата - по аналогии с булевыми параметрами.
+-- Параметры объекта, как агрегата - по аналогии с активными и булевскими параметрами.
 
 base_tech_objects = function()
 return
@@ -127,7 +127,10 @@ return
             equipment = { },
             aggregateParameters =
             {
-                BOILER = { name = "Использовать бойлер", defaultValue = "false" },
+                bool =
+                {
+                    BOILER = { name = "Использовать бойлер", defaultValue = "false" },
+                },
             },
         },
         master = {
@@ -303,10 +306,6 @@ return
                             CIP_WASH_END = { name = "Мойка завершена" },
                             CIP_WASH_REQUEST = { name = "Автоматическое включение мойки" },
                         },
-                        passive =
-                        {
-                            DRAINAGE = { name = "Номер шага дренаж" },
-                        },
                     },
                     steps =
                     {
@@ -449,7 +448,10 @@ return
             },
             aggregateParameters =
             {
-                NEED_PRESSURE_CONTROL = { name = "Использовать узел давления", defaultValue = "false" },
+                bool =
+                {
+                    NEED_PRESSURE_CONTROL = { name = "Использовать узел давления", defaultValue = "false" },
+                },
             },
             bindingName = "pressure_node"
         },
@@ -472,7 +474,10 @@ return
             equipment = { },
             aggregateParameters =
             {
-                HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
+                bool =
+                {
+                    HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
+                },
             },
             bindingName = "heater_node"
         },
@@ -501,7 +506,10 @@ return
             },
             aggregateParameters =
             {
-                HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
+                bool =
+                {
+                    HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
+                },
             },
             bindingName = "heater_node"
         },
@@ -525,7 +533,10 @@ return
             },
             aggregateParameters =
             {
-                NEED_FLOW_CONTROL = { name = "Использовать узел расхода", defaultValue = "false" },
+                bool =
+                {
+                    NEED_FLOW_CONTROL = { name = "Использовать узел расхода", defaultValue = "false" },
+                },
             },
             bindingName = "flow_node"
         },
@@ -551,7 +562,10 @@ return
             },
             aggregateParameters =
             {
-                NEED_COOLING = { name = "Использовать узел охлаждения", defaultValue = "false" },
+                bool =
+                {
+                    NEED_COOLING = { name = "Использовать узел охлаждения", defaultValue = "false" },
+                },
             },
             bindingName = "cooler_node"
         },
@@ -603,7 +617,13 @@ return
                 hatch = { name = "Датчик крышки люка", defaultValue = "GS1" },
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
             },
-            aggregateParameters = { },
+            aggregateParameters =
+            {
+                active =
+                {
+                    MIX_NODE_MIX_OPERATION = { name = "Используемая операция узла перемешивания", defaultValue = 1 },
+                }
+            },
             bindingName = "mix_node"
         },
         sterile_air_node = {
