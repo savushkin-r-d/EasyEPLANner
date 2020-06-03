@@ -147,7 +147,8 @@ namespace TechObject
         /// Инициализация базовой операции по имени
         /// </summary>
         /// <param name="baseOperName">Имя операции</param>
-        public void Init(string baseOperName)
+        /// <param name="mode">Операция владелец</param>
+        public void Init(string baseOperName, Mode mode = null)
         {
             TechObject techObject = owner.Owner.Owner;
             string baseTechObjectName = techObject.BaseTechObject.Name;
@@ -174,10 +175,11 @@ namespace TechObject
                         .ToList();
                     foreach(var property in Properties)
                     {
-                        property.Owner = techObject.BaseTechObject;
+                        property.Owner = operation;
                     }
 
                     baseSteps = operation.Steps;
+                    operation.owner = mode;
                 }
             }
             else
@@ -357,8 +359,20 @@ namespace TechObject
             var operation = EmptyOperation();
             for (int i = 0; i < baseOperationProperties.Count; i++)
             {
-                var newProperty = baseOperationProperties[i].Clone();
-                newProperty.Owner = operation;
+                BaseParameter oldProperty = baseOperationProperties[i];
+                BaseParameter newProperty = oldProperty.Clone();
+                if (oldProperty.Owner is BaseTechObject)
+                {
+                    var obj = oldProperty.Owner as BaseTechObject;
+                    if (obj.IsAttachable)
+                    {
+                        newProperty.Owner = oldProperty.Owner;
+                    }
+                }
+                else
+                {
+                    newProperty.Owner = operation;
+                }
                 properties.Add(newProperty);
             }
 
@@ -374,6 +388,7 @@ namespace TechObject
             operation.LuaName = luaOperationName;
             operation.Properties = properties;
             operation.Steps = steps;
+            operation.owner = this.Owner;
 
             operation.SetItems();
 

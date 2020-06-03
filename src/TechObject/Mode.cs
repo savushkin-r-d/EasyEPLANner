@@ -456,7 +456,7 @@ namespace TechObject
             if (baseOperation.Name != newBaseOperationName &&
                 similarBaseOperation == false)
             {
-                baseOperation.Init(newBaseOperationName);
+                baseOperation.Init(newBaseOperationName, this);
                 return true;
             }
 
