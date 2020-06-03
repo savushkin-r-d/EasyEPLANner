@@ -406,6 +406,17 @@ namespace TechObject
                 return items;
             }
         }
+
+        public override bool Delete(object child)
+        {
+            if (child is ActiveParameter)
+            {
+                var property = child as ActiveParameter;
+                property.SetNewValue("");
+                return true;
+            }
+            return false;
+        }
         #endregion
 
         private Editor.ITreeViewItem[] items = new Editor.ITreeViewItem[0];
