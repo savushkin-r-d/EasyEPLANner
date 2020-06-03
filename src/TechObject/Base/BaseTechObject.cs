@@ -561,7 +561,7 @@ namespace TechObject
                             break;
                         case ParameterValueType.Device:
                             paramsForSave += $"{prefix}{parameter.LuaName}" +
-                                $" = prg.control_modules.{parameter.Value}\n";
+                                $" = prg.control_modules.{parameter.Value},\n";
                             break;
                         case ParameterValueType.Number:
                             paramsForSave += GetNumberParameterStringForSave(
@@ -569,7 +569,7 @@ namespace TechObject
                             break;
                         case ParameterValueType.Parameter:
                             paramsForSave += $"{prefix}{parameter.LuaName} = " +
-                            $"{objName}.PAR_FLOAT.{parameter.Value}\n";
+                            $"{objName}.PAR_FLOAT.{parameter.Value},\n";
                             break;
                         case ParameterValueType.Any:
                             paramsForSave += $"{prefix}{parameter.LuaName} = " +
