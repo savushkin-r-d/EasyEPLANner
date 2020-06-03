@@ -583,7 +583,18 @@ return
         mix_node = {
             name = "Узел перемешивания",
             s88Level = 2,
-            baseOperations = { },
+            baseOperations =
+            {
+                MIXING = {
+                    name = "Перемешивание",
+                },
+                MIXING_LEFT = {
+                    name = "Перемешивание влево",
+                },
+                MIXING_RIGHT = {
+                    name = "Перемешивание вправо",
+                },
+            },
             basicName = "mix_node",
             equipment =
             {
