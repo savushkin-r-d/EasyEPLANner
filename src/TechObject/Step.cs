@@ -28,6 +28,7 @@ namespace TechObject
             this.IsMode = isMode;
             this.owner = owner;
             this.baseStep = new ActiveParameter("", "");
+            this.baseStep.Owner = this;
 
             items = new List<Editor.ITreeViewItem>();
 
@@ -118,6 +119,7 @@ namespace TechObject
             }
 
             clone.baseStep = baseStep.Clone();
+            clone.baseStep.Owner = this;
 
             return clone;
         }
@@ -367,6 +369,7 @@ namespace TechObject
             {
                 this.baseStep = new ActiveParameter(baseStep.LuaName, 
                     baseStep.Name);
+                this.baseStep.Owner = this;
                 return true;
             }
             

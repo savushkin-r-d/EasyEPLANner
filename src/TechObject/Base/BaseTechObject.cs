@@ -50,7 +50,9 @@ namespace TechObject
         /// <param name="value">Значение</param>
         public void AddEquipment(string luaName, string name, string value)
         {
-            Equipment.Add(new ActiveParameter(luaName, name, value));
+            var equipment = new ActiveParameter(luaName, name, value);
+            equipment.Owner = this;
+            Equipment.Add(equipment);
         }
 
 
@@ -64,6 +66,7 @@ namespace TechObject
             string defaultValue)
         {
             var par = new ActiveParameter(luaName, name, defaultValue);
+            par.Owner = this;
             AggregateParameters.Add(par);
         }
 
@@ -77,6 +80,7 @@ namespace TechObject
             string defaultValue)
         {
             var par = new ActiveBoolParameter(luaName, name, defaultValue);
+            par.Owner = this;
             AggregateParameters.Add(par);
         }
 
@@ -292,7 +296,9 @@ namespace TechObject
             var equipment = new List<BaseParameter>();
             foreach(var equip in Equipment)
             {
-                equipment.Add(equip.Clone());
+                var newEquip = equip.Clone();
+                newEquip.Owner = this;
+                equipment.Add(newEquip);
             }
             cloned.Equipment = equipment;
 
@@ -530,53 +536,55 @@ namespace TechObject
             List<Mode> modes)
         {
             var res = "";
-
             foreach (Mode mode in modes)
             {
                 var baseOperation = mode.BaseOperation;
                 if (baseOperation.Properties.Count == 0)
                 {
-                    return res;
+                    continue;
                 }
 
-                switch (baseOperation.Name)
+                string paramsForSave = "";
+                foreach(var parameter in baseOperation.Properties)
                 {
-                    case "Мойка":
-                        res += SaveWashOperationParameters(objName,
-                            baseOperation);
-                        break;
+                    if (parameter.IsEmpty)
+                    {
+                        continue;
+                    }
 
-                    case "Наполнение":
-                        res += SaveFillOperationParameters(objName,
-                            baseOperation, prefix);
-                        break;
+                    ParameterValueType type = GetParameterValueType(parameter);
+                    switch (type)
+                    {
+                        case ParameterValueType.Boolean:
+                            paramsForSave += $"{prefix}{parameter.LuaName} = " +
+                                    $"{parameter.Value},\n";
+                            break;
+                        case ParameterValueType.Device:
+                            paramsForSave += $"{prefix}{parameter.LuaName}" +
+                                $" = prg.control_modules.{parameter.Value}\n";
+                            break;
+                        case ParameterValueType.Number:
+                            paramsForSave += GetNumberParameterStringForSave(
+                                prefix, parameter);
+                            break;
+                        case ParameterValueType.Parameter:
+                            paramsForSave += $"{prefix}{parameter.LuaName} = " +
+                            $"{objName}.PAR_FLOAT.{parameter.Value}\n";
+                            break;
+                        case ParameterValueType.Any:
+                            paramsForSave += $"{prefix}{parameter.LuaName} = " +
+                                    $"{parameter.Value},\n";
+                            break;
+                    }
+                }
 
-                    default:
-                        if (baseOperation.Properties.Count < 1)
-                        {
-                            continue;
-                        }
-
-                        string paramsForSave = "";
-                        foreach (var param in baseOperation.Properties)
-                        {
-                            if (!param.IsEmpty) 
-                            {
-                                paramsForSave += $"{prefix}{param.LuaName} =" +
-                                    $" {param.Value},\n";
-                            }
-
-                        }
-
-                        bool needSaveParameters = paramsForSave != "";
-                        if(needSaveParameters)
-                        {
-                            res += $"{objName}.{baseOperation.LuaName} =\n";
-                            res += prefix + "{\n";
-                            res += paramsForSave;
-                            res += prefix + "}\n";
-                        }
-                        break;
+                bool needSaveParameters = paramsForSave != "";
+                if (needSaveParameters)
+                {
+                    res += $"{objName}.{baseOperation.LuaName} =\n";
+                    res += prefix + "{\n";
+                    res += paramsForSave;
+                    res += prefix + "}\n";
                 }
             }
 
@@ -584,85 +592,101 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Сохранить параметры операции мойки
+        /// Получение строки для сохранения в зависимости от того, кто
+        /// владеет параметром. Сам юнит или это параметр агрегата.
         /// </summary>
-        /// <param name="objName">Имя объекта</param>
-        /// <param name="baseOperation">Базовая операция</param>
-        /// <returns></returns>
-        private string SaveWashOperationParameters(string objName,
-            BaseOperation baseOperation)
-        {
-            var res = "";
-
-            foreach (BaseParameter param in baseOperation.Properties)
-            {
-                if (!param.IsEmpty)
-                {
-                    res += objName + "." + param.LuaName +
-                        " = prg.control_modules." + param.Value + "\n";
-                }
-            }
-
-            return res;
-        }
-
-        /// <summary>
-        /// Сохранить параметры операции наполнения.
-        /// </summary>
-        /// <param name="objName">Имя объекта</param>
-        /// <param name="baseOperation">Базовая операция</param>
+        /// <param name="parameter">Параметр для обработки</param>
         /// <param name="prefix">Отступ</param>
         /// <returns></returns>
-        private string SaveFillOperationParameters(string objName,
-            BaseOperation baseOperation, string prefix)
+        private string GetNumberParameterStringForSave(string prefix, 
+            BaseParameter parameter)
         {
             var res = "";
 
-            string fillParameters = "";
-            foreach (BaseParameter param in baseOperation.Properties)
+            BaseTechObject baseTechObject = null;
+            List<Mode> modes = new List<Mode>();
+
+            if (parameter.Owner is BaseTechObject)
             {
-                string val = param.Value;
-                switch (param.LuaName)
-                {
-                    case "OPERATION_AFTER_FILL":
-                        var modes = this.Owner.ModesManager.Modes;
-                        var mode = modes
-                            .Where(x => x.GetModeNumber().ToString() == val)
-                            .FirstOrDefault();
-
-                        if (mode != null)
-                        {
-                            val = mode.BaseOperation.LuaName.ToUpper();
-                        }
-
-                        if (!param.IsEmpty)
-                        {
-                            fillParameters += $"{prefix}{param.LuaName} = " +
-                                $"{objName}.operations." + val + ",\n";
-                        }
-                        break;
-
-                    default:
-                        if (!param.IsEmpty)
-                        {
-                            fillParameters += $"{prefix}{param.LuaName} = " +
-                                $"{val},\n";
-                        }
-                        break;
-                }
+                baseTechObject = parameter.Owner as BaseTechObject;
+                modes = baseTechObject.Owner.ModesManager.Modes;
             }
 
-            bool needSaveParameters = fillParameters != "";
-            if (needSaveParameters)
+            if (parameter.Owner is BaseOperation)
             {
-                res += $"{objName}.{baseOperation.LuaName} =\n";
-                res += prefix + "{\n";
-                res += fillParameters;
-                res += prefix + "}\n";
+                var operation = parameter.Owner as BaseOperation;
+                baseTechObject = operation.Owner.Owner.Owner.BaseTechObject;
+                modes = operation.Owner.Owner.Modes;
+            }
+
+            string parameterValue = parameter.Value;
+            var mode = modes
+                .Where(x => x.GetModeNumber().ToString() == parameterValue)
+                .FirstOrDefault();
+
+            if (mode != null)
+            {
+                parameterValue = mode.BaseOperation.LuaName.ToUpper();
+            }
+
+            if (parameterValue == "")
+            {
+                return res;
+            }
+            else
+            {
+                TechObject obj = baseTechObject.Owner;
+                string objName = "prg." + obj.NameEplanForFile.ToLower() +
+                    obj.TechNumber.ToString();
+                res = $"{prefix}{parameter.LuaName} = " +
+                    $"{objName}.operations." + parameterValue + ",\n";
             }
 
             return res;
         }
+
+        /// <summary>
+        /// Получить тип параметра в зависимости от введенного значения в поле
+        /// </summary>
+        /// <param name="parameter">Параметр для проверки</param>
+        /// <returns></returns>
+        private ParameterValueType GetParameterValueType(
+            BaseParameter parameter)
+        {
+            var result = ParameterValueType.Any;
+            var parameterValue = parameter.Value;
+
+            if (parameter.IsBoolParameter)
+            {
+                result = ParameterValueType.Boolean;
+                return result;
+            }
+
+            if (int.TryParse(parameterValue, out _))
+            {
+                result = ParameterValueType.Number;
+                return result;
+            }
+
+            bool isParameter = owner.Params.GetFParam(parameterValue) != null;
+            if (isParameter)
+            {
+                result = ParameterValueType.Parameter;
+                return result;
+            }
+
+            var deviceManager = Device.DeviceManager.GetInstance();
+            bool isDevice = deviceManager.GetDeviceByEplanName(parameterValue)
+                .Description != "заглушка";
+            if (isDevice)
+            {
+                result = ParameterValueType.Device;
+                return result;
+            }
+
+            return result;
+        }
+
 
         /// <summary>
         /// Сохранить оборудование технологического объекта
@@ -679,26 +703,35 @@ namespace TechObject
                 var value = property.Value;
                 var luaName = property.LuaName;
 
-                bool isEmpty = property.IsEmpty ||
-                    property.Value == property.DefaultValue;
-                if (!isEmpty)
+                var parameterType = GetParameterValueType(property);
+                switch (parameterType)
                 {
-                    if (owner.Params.GetFParam(value) == null)
-                    {
+                    case ParameterValueType.Device:
                         res += objName + $".{luaName} = " +
                             $"prg.control_modules.{value}\n";
-                    }
-                    else
-                    {
+                        break;
+                    case ParameterValueType.Parameter:
                         res += objName + $".{luaName} = " +
                             $"{objName}.PAR_FLOAT.{value}\n";
-                    }
+                        break;
                 }
             }
 
             return res;
         }
         #endregion
+
+        /// <summary>
+        /// Возможные типы значений полей параметров объекта
+        /// </summary>
+        enum ParameterValueType
+        {
+            Any,
+            Device,
+            Boolean,
+            Parameter,
+            Number,
+        }
 
         private string name;
         private string eplanName;

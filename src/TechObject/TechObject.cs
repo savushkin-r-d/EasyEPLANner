@@ -269,7 +269,8 @@ namespace TechObject
                             continue;
                         }
 
-                        mode.BaseOperation.AddProperties(properties);
+                        mode.BaseOperation.AddProperties(properties,
+                            attachedBaseTechObject);
                     }
                 }
             }
