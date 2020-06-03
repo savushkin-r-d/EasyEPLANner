@@ -146,7 +146,7 @@ return
             s88Level = 2,
             baseOperations =
             {
-                WASHING_CIP = {
+                WASH = {
                     name = "Мойка",
                     params =
                     {
@@ -203,7 +203,7 @@ return
             s88Level = 2,
             baseOperations =
             {
-                WASHING_CIP = {
+                WASH = {
                     name = "Мойка",
                     params =
                     {
@@ -250,7 +250,7 @@ return
             s88Level = 2,
             baseOperations =
             {
-                WASHING_CIP = {
+                WASH = {
                     name = "Мойка",
                     params =
                     {
@@ -297,7 +297,7 @@ return
             s88Level = 2,
             baseOperations =
             {
-                WASHING_CIP = {
+                WASH = {
                     name = "Мойка",
                     params =
                     {
@@ -330,7 +330,7 @@ return
             s88Level = 1,
             baseOperations =
             {
-                WASHING_CIP = {
+                WASH = {
                     name = "Мойка",
                     params =
                     {
