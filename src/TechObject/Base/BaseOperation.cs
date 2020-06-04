@@ -235,8 +235,11 @@ namespace TechObject
             string paramsForSave = "";
             foreach (var operParam in Properties)
             {
-                paramsForSave += "\t" + prefix + operParam.LuaName +
-                    " = \'" + operParam.Value + "\',\n";
+                if(!operParam.IsEmpty)
+                {
+                    paramsForSave += "\t" + prefix + operParam.LuaName +
+                        " = \'" + operParam.Value + "\',\n";
+                }
             }
 
             if (paramsForSave != "")
@@ -255,16 +258,19 @@ namespace TechObject
         /// <param name="extraParams">Свойства операции</param>
         public void SetExtraProperties(Editor.ObjectProperty[] extraParams)
         {
-            foreach (Editor.ObjectProperty extraParam in extraParams)
+            foreach(var property in Properties)
             {
-                var property = Properties
-                    .Where(x => x.LuaName
-                    .Equals(extraParam.DisplayText[0]))
+                var parameterFromList = extraParams
+                    .Where(x => x.Name == property.LuaName)
                     .FirstOrDefault();
 
-                if (property != null)
+                if (parameterFromList != null)
                 {
-                    property.SetValue(extraParam.DisplayText[1]);
+                    property.SetValue(parameterFromList.Value);
+                }
+                else if (property is ActiveParameter)
+                {
+                    property.SetValue("");
                 }
             }
         }
@@ -307,6 +313,7 @@ namespace TechObject
                 {
                     var newProperty = property.Clone();
                     newProperty.Owner = owner;
+                    newProperty.Parent = this;
                     Properties.Add(newProperty);
                 }
             }
