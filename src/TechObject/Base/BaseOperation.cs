@@ -235,14 +235,11 @@ namespace TechObject
             string paramsForSave = "";
             foreach (var operParam in Properties)
             {
-                if(!operParam.IsEmpty)
-                {
-                    paramsForSave += "\t" + prefix + operParam.LuaName + 
-                        " = \'" + operParam.Value + "\',\n";
-                }           
+                paramsForSave += "\t" + prefix + operParam.LuaName +
+                    " = \'" + operParam.Value + "\',\n";
             }
 
-            if (paramsForSave != String.Empty)
+            if (paramsForSave != "")
             {
                 res += prefix + "props =\n" + prefix + "\t{\n";
                 res += paramsForSave;
