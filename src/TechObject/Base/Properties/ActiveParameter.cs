@@ -25,6 +25,23 @@ namespace TechObject
             return newProperty;
         }
 
+        public override bool IsEmpty
+        {
+            get
+            {
+                bool isEmpty = Value == DefaultValue &&
+                    DefaultValue == "";
+                if (isEmpty)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         #region реализация ItreeViewItem
         public override bool IsReplaceable
         {
