@@ -377,38 +377,12 @@ namespace TechObject
 
         #region Сохранение в prg.lua
         /// <summary>
-        /// Сохранить информацию об операциях объекта в prg.lua
-        /// </summary>
-        /// <param name="objName">Имя объекта для записи</param>
-        /// <param name="prefix">Отступ</param>
-        /// <returns></returns>
-        public virtual string SaveToPrgLua(string objName, 
-            string prefix)
-        {
-            var res = "";
-            res += SaveObjectInfoToPrgLua(objName, prefix);
-
-            var modesManager = this.Owner.ModesManager;
-            var modes = modesManager.Modes;
-            if (modes.Where(x => x.DisplayText[1] != "").Count() != 0)
-            {
-                res += SaveOperations(objName, prefix, modes);
-                res += SaveOperationsSteps(objName, prefix, modes);
-                res += SaveOperationsParameters(objName, prefix, modes);
-            }
-
-            res += SaveEquipment(objName);
-
-            return res;
-        }
-
-        /// <summary>
         /// Сохранить информацию об объекте в prg.lua
         /// </summary>
         /// <param name="objName">Имя объекта</param>
         /// <param name="prefix">Отступ</param>
         /// <returns></returns>
-        private string SaveObjectInfoToPrgLua(string objName, string prefix)
+        public string SaveObjectInfoToPrgLua(string objName, string prefix)
         {
             var res = "";
             if (EplanName.ToLower() != "tank")
@@ -532,7 +506,7 @@ namespace TechObject
         /// <param name="prefix">Отступ</param>
         /// <param name="modes">Операции объекта</param>
         /// <returns></returns>
-        private string SaveOperationsParameters(string objName, string prefix,
+        public string SaveOperationsParameters(string objName, string prefix,
             List<Mode> modes)
         {
             var res = "";
@@ -598,7 +572,7 @@ namespace TechObject
         /// <param name="parameter">Параметр для обработки</param>
         /// <param name="prefix">Отступ</param>
         /// <returns></returns>
-        private string GetNumberParameterStringForSave(string prefix, 
+        public string GetNumberParameterStringForSave(string prefix, 
             BaseParameter parameter)
         {
             var res = "";
