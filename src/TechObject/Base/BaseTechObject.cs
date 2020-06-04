@@ -519,9 +519,10 @@ namespace TechObject
                 }
 
                 string paramsForSave = "";
-                foreach(var parameter in baseOperation.Properties)
+                foreach (var parameter in baseOperation.Properties)
                 {
-                    if (parameter.IsEmpty)
+                    bool isEmpty = parameter.IsEmpty || parameter.Value == "";
+                    if (isEmpty)
                     {
                         continue;
                     }
@@ -545,7 +546,7 @@ namespace TechObject
                             paramsForSave += $"{prefix}{parameter.LuaName} = " +
                             $"{objName}.PAR_FLOAT.{parameter.Value},\n";
                             break;
-                        case ParameterValueType.Any:
+                        case ParameterValueType.Other:
                             paramsForSave += $"{prefix}{parameter.LuaName} = " +
                                     $"{parameter.Value},\n";
                             break;
@@ -575,8 +576,6 @@ namespace TechObject
         public string GetNumberParameterStringForSave(string prefix, 
             BaseParameter parameter)
         {
-            var res = "";
-
             BaseTechObject baseTechObject = null;
             List<Mode> modes = new List<Mode>();
 
@@ -597,18 +596,10 @@ namespace TechObject
             var mode = modes
                 .Where(x => x.GetModeNumber().ToString() == parameterValue)
                 .FirstOrDefault();
-
+            var res = "";
             if (mode != null)
             {
                 parameterValue = mode.BaseOperation.LuaName.ToUpper();
-            }
-
-            if (parameterValue == "")
-            {
-                return res;
-            }
-            else
-            {
                 TechObject obj = baseTechObject.Owner;
                 string objName = "prg." + obj.NameEplanForFile.ToLower() +
                     obj.TechNumber.ToString();
@@ -627,7 +618,7 @@ namespace TechObject
         private ParameterValueType GetParameterValueType(
             BaseParameter parameter)
         {
-            var result = ParameterValueType.Any;
+            var result = ParameterValueType.Other;
             var parameterValue = parameter.Value;
 
             if (parameter.IsBoolParameter)
@@ -700,7 +691,7 @@ namespace TechObject
         /// </summary>
         enum ParameterValueType
         {
-            Any,
+            Other,
             Device,
             Boolean,
             Parameter,
