@@ -258,19 +258,15 @@ namespace TechObject
         /// <param name="extraParams">Свойства операции</param>
         public void SetExtraProperties(Editor.ObjectProperty[] extraParams)
         {
-            foreach(var property in Properties)
+            foreach (Editor.ObjectProperty extraParam in extraParams)
             {
-                var parameterFromList = extraParams
-                    .Where(x => x.Name == property.LuaName)
+                var property = Properties
+                    .Where(x => x.LuaName.Equals(extraParam.DisplayText[0]))
                     .FirstOrDefault();
 
-                if (parameterFromList != null)
+                if (property != null)
                 {
-                    property.SetValue(parameterFromList.Value);
-                }
-                else if (property is ActiveParameter)
-                {
-                    property.SetValue("");
+                    property.SetValue(extraParam.Value);
                 }
             }
         }

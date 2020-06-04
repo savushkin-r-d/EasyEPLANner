@@ -104,14 +104,12 @@ namespace TechObject
             foreach (Editor.ITreeViewItem item in items)
             {
                 var property = item as BaseParameter;
-                bool isEmpty = property.Value == "" || 
-                    property.Value == property.DefaultValue;
+                bool isEmpty = property.Value == property.DefaultValue;
                 if (!isEmpty)
                 {
                     equipmentForSave += prefix + $"\t{property.LuaName} = " +
                         $"\'{property.Value}\',\n";
                 }
-
             }
 
             bool needSaveQuipment = equipmentForSave != "";
