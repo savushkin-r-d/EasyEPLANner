@@ -337,6 +337,20 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Проверка базовой операции
+        /// </summary>
+        public void Check()
+        {
+            foreach(var property in Properties)
+            {
+                if (property is MainAggregateParameter)
+                {
+                    (property as MainAggregateParameter).Check();
+                }
+            }
+        }
+
+        /// <summary>
         /// Копирование объекта
         /// </summary>
         /// <param name="owner">Новая операция-владелец объекта</param>

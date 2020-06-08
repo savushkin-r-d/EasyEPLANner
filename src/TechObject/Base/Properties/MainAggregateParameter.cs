@@ -20,10 +20,29 @@ namespace TechObject
             return newProperty;
         }
 
+        /// <summary>
+        /// Проверка параметра
+        /// </summary>
+        public void Check()
+        {
+            if (Value == "false")
+            {
+                SetUpParametersVisibility();
+            }
+        }
+
         public override bool SetNewValue(string newValue)
         {
             var result = base.SetNewValue(newValue);
+            SetUpParametersVisibility();
+            return result;
+        }
 
+        /// <summary>
+        /// Установка видимости параметров агрегата-объекта-владельца в аппарате
+        /// </summary>
+        private void SetUpParametersVisibility()
+        {
             var parentBaseOperation = Parent as BaseOperation;
             var aggregateParameters = (Owner as BaseTechObject)
                 .AggregateParameters;
@@ -45,8 +64,6 @@ namespace TechObject
                     }
                 }
             }
-
-            return result;
         }
     }
 }

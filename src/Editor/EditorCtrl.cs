@@ -735,6 +735,8 @@ namespace Editor
 
             editIsShown = true;
             IsShown = true;
+
+            DisableNeededObjects(treeViewItemsList.ToArray());
         }
 
         public uint pidMain = 0;
@@ -1326,13 +1328,23 @@ namespace Editor
         {
             foreach(var item in items)
             {
-                if (item.NeedDisable)
+                if (item.Items != null)
                 {
-                    editorTView.DisableObject(item);
+                    if (item.Items.Length != 0)
+                    {
+                        DisableNeededObjects(item.Items);
+                    }
                 }
                 else
                 {
-                    editorTView.EnableObject(item);
+                    if (item.NeedDisable)
+                    {
+                        editorTView.DisableObject(item);
+                    }
+                    else
+                    {
+                        editorTView.EnableObject(item);
+                    }
                 }
             }
         }
