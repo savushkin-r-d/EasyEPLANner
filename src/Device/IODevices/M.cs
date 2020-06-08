@@ -185,5 +185,17 @@ namespace Device
             }
             return null;
         }
+
+        public override string Check()
+        {
+            string res = base.Check();
+
+            if (ArticleName == "" && DeviceSubType == DeviceSubType.M_ATV)
+            {
+                res += $"\"{name}\" - не задано изделие.\n";
+            }
+
+            return res;
+        }
     }
 }
