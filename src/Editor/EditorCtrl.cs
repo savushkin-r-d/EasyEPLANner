@@ -29,6 +29,11 @@ namespace Editor
         /// </summary>
         private void InitObjectListView()
         {
+            var disabletItemStyle = new SimpleItemStyle();
+            disabletItemStyle.ForeColor = Color.Gray;
+            disabletItemStyle.BackColor = Color.FromArgb(30, 30, 35);
+            editorTView.DisabledItemStyle = disabletItemStyle;
+
             // Текст подсветки чередующихся строк
             editorTView.AlternateRowBackColor = Color.FromArgb(250, 250, 250);
 
@@ -1297,7 +1302,7 @@ namespace Editor
                 item.SetNewValue(e.Value.ToString());
                 IsCellEditing = false;
                 e.Cancel = true;
-                editorTView.RefreshObject(item);
+                editorTView.RefreshObjects(item.Parent.Items);
                 return;
             }
             else
