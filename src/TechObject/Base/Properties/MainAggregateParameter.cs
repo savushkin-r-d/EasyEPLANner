@@ -23,28 +23,30 @@ namespace TechObject
         public override bool SetNewValue(string newValue)
         {
             var result = base.SetNewValue(newValue);
-            if (Value == "false")
+
+            var parentBaseOperation = Parent as BaseOperation;
+            var aggregateParameters = (Owner as BaseTechObject)
+                .AggregateParameters;
+
+            foreach (var parameter in aggregateParameters)
             {
-                DisableOwnerProperties();
+                var foundProperty = parentBaseOperation.Properties
+                    .Where(x => x.LuaName == parameter.LuaName)
+                    .FirstOrDefault();
+                if (foundProperty != null)
+                {
+                    if (Value == "false")
+                    {
+                        foundProperty.NeedDisable = true;
+                    }
+                    else
+                    {
+                        foundProperty.NeedDisable = false;
+                    }
+                }
             }
 
             return result;
-        }
-
-        private void DisableOwnerProperties()
-        {
-            var parentMode = Parent as Mode;
-            var ownerProperties = (Owner as BaseTechObject).BaseOperations
-                .Where(x => x.LuaName == parentMode.BaseOperation.LuaName)
-                .First().Properties;
-
-            foreach(var property in parentMode.BaseOperation.Properties)
-            {
-                var foundProperty = ownerProperties
-                    .Where(x => x.LuaName == property.LuaName)
-                    .FirstOrDefault();
-                property.NeedDisable = true;
-            }
         }
     }
 }
