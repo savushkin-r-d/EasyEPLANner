@@ -227,13 +227,12 @@ namespace TechObject
                     List<BaseParameter> properties = removingBaseTechObject
                         .AggregateParameters;
 
-                    if (properties.Count == 0)
+                    var deletingProperties = new List<BaseParameter>();
+                    if (properties.Count != 0)
                     {
-                        continue;
+                        deletingProperties.AddRange(properties);
                     }
 
-                    var deletingProperties = new List<BaseParameter>();
-                    deletingProperties.AddRange(properties);
                     if (removingBaseTechObject.MainAggregateParameter != null)
                     {
                         deletingProperties.Add(removingBaseTechObject
@@ -264,13 +263,12 @@ namespace TechObject
                     List<BaseParameter> properties = attachedBaseTechObject
                         .AggregateParameters;
 
-                    if (properties.Count == 0)
+                    var addingProperties = new List<BaseParameter>();
+                    if (properties.Count != 0 )
                     {
-                        continue;
+                        addingProperties.AddRange(properties);
                     }
 
-                    var addingProperties = new List<BaseParameter>();
-                    addingProperties.AddRange(properties);
                     if (attachedBaseTechObject.MainAggregateParameter != null)
                     {
                         addingProperties.Add(attachedBaseTechObject
