@@ -368,6 +368,12 @@ namespace Editor
         /// </summary>
         /// <param name="parent">Родительский элемент</param>
         void AddParent(ITreeViewItem parent);
+
+        /// <summary>
+        /// Нужно ли отключить элемент
+        /// </summary>
+        /// <returns></returns>
+        bool NeedDisable { get; }
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -823,6 +829,18 @@ namespace Editor
                 }
             }
         }
+
+        /// <summary>
+        /// Нужно ли отключить элемент
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool NeedDisable
+        {
+            get
+            {
+                return false;
+            }
+        }
         #endregion
 
         ITreeViewItem parent;
@@ -1105,6 +1123,18 @@ namespace Editor
                 {
                     item.AddParent(this);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Нужно ли отключить элемент
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool NeedDisable
+        {
+            get
+            {
+                return false;
             }
         }
         #endregion

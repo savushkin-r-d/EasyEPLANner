@@ -1302,7 +1302,9 @@ namespace Editor
                 item.SetNewValue(e.Value.ToString());
                 IsCellEditing = false;
                 e.Cancel = true;
-                editorTView.RefreshObjects(item.Parent.Items);
+                var parentItems = item.Parent.Items;
+                DisableNeededObjects(parentItems);
+                editorTView.RefreshObjects(parentItems);
                 return;
             }
             else
@@ -1313,6 +1315,25 @@ namespace Editor
                 e.Control = textBoxCellEditor;
                 textBoxCellEditor.Focus();
                 editorTView.Freeze();
+            }
+        }
+
+        /// <summary>
+        /// Отключить нужные объекты
+        /// </summary>
+        /// <param name="items">Объекты для проверки и отключения</param>
+        private void DisableNeededObjects(ITreeViewItem[] items)
+        {
+            foreach(var item in items)
+            {
+                if (item.NeedDisable)
+                {
+                    editorTView.DisableObject(item);
+                }
+                else
+                {
+                    editorTView.EnableObject(item);
+                }
             }
         }
 
