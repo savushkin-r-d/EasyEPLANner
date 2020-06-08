@@ -373,7 +373,7 @@ namespace Editor
         /// Нужно ли отключить элемент
         /// </summary>
         /// <returns></returns>
-        bool NeedDisable { get; }
+        bool NeedDisable { get; set; }
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -484,6 +484,8 @@ namespace Editor
         {
             this.name = name;
             this.value = value;
+
+            this.needDisable = false;
         }
 
         public ObjectProperty Clone()
@@ -838,7 +840,11 @@ namespace Editor
         {
             get
             {
-                return false;
+                return needDisable;
+            }
+            set
+            {
+                needDisable = value;
             }
         }
         #endregion
@@ -846,6 +852,8 @@ namespace Editor
         ITreeViewItem parent;
         private string name;  ///Имя свойства.
         private object value; ///Значение свойства.
+
+        private bool needDisable;
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -1134,9 +1142,15 @@ namespace Editor
         {
             get
             {
-                return false;
+                return needDisable;
+            }
+            set
+            {
+                needDisable = value;
             }
         }
+
+        private bool needDisable = false;
         #endregion
     }
     //-------------------------------------------------------------------------

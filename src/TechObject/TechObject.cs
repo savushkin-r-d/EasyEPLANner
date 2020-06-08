@@ -226,6 +226,11 @@ namespace TechObject
                         .BaseTechObject;
                     List<BaseParameter> properties = removingBaseTechObject
                         .AggregateParameters;
+                    if (removingBaseTechObject.MainAggregateParameter != null)
+                    {
+                        properties.Add(removingBaseTechObject
+                            .MainAggregateParameter);
+                    }
                     if (properties.Count == 0)
                     {
                         continue;
@@ -255,6 +260,12 @@ namespace TechObject
                         .BaseTechObject;
                     List<BaseParameter> properties = attachedBaseTechObject
                         .AggregateParameters;
+                    if (attachedBaseTechObject.MainAggregateParameter != null)
+                    {
+                        properties.Add(attachedBaseTechObject
+                            .MainAggregateParameter);
+                    }
+
                     if (properties.Count == 0)
                     {
                         continue;
