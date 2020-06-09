@@ -50,14 +50,30 @@ namespace EasyEPlanner
         {
             string objectsDescription = "";
             string objectsRestriction = "";
-            var objects = TechObjectManager.GetInstance().Objects;
+            var techObjManager = TechObjectManager.GetInstance();
+            var objects = techObjManager.Objects;
             foreach (var obj in objects)
             {
                 bool needExporting = objectsNums.Contains(obj.GlobalNumber);
                 if (needExporting)
                 {
-                    objectsDescription += obj.SaveAsLuaTable("\t\t");
-                    objectsRestriction += obj.SaveRestrictionAsLua("\t");
+                    var exportingObject = obj.Clone(
+                        techObjManager.GetTechObjectN, obj.TechNumber,
+                        obj.GlobalNumber, obj.GlobalNumber);
+
+                    // Убираем привязку при экспорте.
+                    exportingObject.AttachedObjects.SetValue("");
+                    
+                    string description = exportingObject.SaveAsLuaTable("\t\t");
+                    // Обходим нулевое значение т.к объект ни находится ни в
+                    // каком списке объектов.
+                    description = description.Replace("[ 0 ]", 
+                        $"[ {obj.GlobalNumber} ]");
+                    string restriction = exportingObject
+                        .SaveRestrictionAsLua("\t");
+
+                    objectsDescription += description;
+                    objectsRestriction += restriction;
                 }
                 else
                 {
