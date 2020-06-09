@@ -70,6 +70,8 @@ namespace Device
                     parameters.Add("P_R", null);
                     parameters.Add("P_H_CONE", 0);
 
+                    properties.Add("PT", "");
+
                     SetIOLinkSizes(ArticleName);
                     break;
 
