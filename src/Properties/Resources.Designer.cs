@@ -347,6 +347,7 @@ namespace EasyEPlanner.Properties {
         ///require( &quot;water_tank&quot; )
         ///require( &quot;pressure&quot; )
         ///require( &quot;flow&quot; )
+        ///require( &quot;steam_blast_node&quot; )
         ///.
         /// </summary>
         public static string prgLuaRequireModules {

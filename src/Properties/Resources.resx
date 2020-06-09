@@ -296,6 +296,7 @@ require( "pasteurizator" )
 require( "water_tank" )
 require( "pressure" )
 require( "flow" )
+require( "steam_blast_node" )
 </value>
     <comment>Шаблон, содержащий список модулей для подключения в prg.lua (require)</comment>
   </data>
