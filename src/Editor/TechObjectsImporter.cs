@@ -149,6 +149,9 @@ namespace EasyEPlanner
             {
                 var importingItem = importedObjects[num] as TechObject
                     .TechObject;
+                // Убираем привязку при экспорте.
+                importingItem.AttachedObjects.SetValue("");
+
                 var importedItem = techObjectsManager.InsertCopy(importingItem);
                 importedItem.AddParent(techObjectsManager);
             }
