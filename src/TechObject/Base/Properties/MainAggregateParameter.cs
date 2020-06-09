@@ -25,10 +25,7 @@ namespace TechObject
         /// </summary>
         public void Check()
         {
-            if (Value == "false")
-            {
-                SetUpParametersVisibility();
-            }
+            SetUpParametersVisibility();
         }
 
         public override bool SetNewValue(string newValue)
