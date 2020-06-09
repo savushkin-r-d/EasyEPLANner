@@ -54,20 +54,26 @@ namespace TechObject
         /// <summary>
         /// Пустой ли параметр (nil or '')
         /// </summary>
-        public bool IsEmpty
+        public virtual bool IsEmpty
         {
             get
             {
-                bool isEmpty = this.Value == "" || 
-                    this.Value == "nil";
-                if (isEmpty)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Объект-владелец параметра.
+        /// </summary>
+        public object Owner
+        {
+            get
+            {
+                return owner;
+            }
+            set
+            {
+                owner = value;
             }
         }
 
@@ -96,6 +102,7 @@ namespace TechObject
         }
         #endregion
 
+        private object owner;
         private string luaName;
         private string defaultValue;
     }

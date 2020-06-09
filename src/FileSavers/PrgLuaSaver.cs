@@ -204,21 +204,57 @@ namespace EasyEPlanner
         /// <returns></returns>
         private static string SaveObjectsInformationToPrgLua(string prefix)
         {
-            var res = "";
+            string objectsInfo = "";
+            string operations = "";
+            string operationsSteps = "";
+            string operationsParameters = "";
+            string equipments = "";
+            
             var objects = techObjectManager.Objects;
-
             foreach (TechObject.TechObject obj in objects)
             {
-                string temp = "";
+                BaseTechObject baseObj = obj.BaseTechObject;
                 var objName = "prg." + obj.NameEplanForFile.ToLower() +
                     obj.TechNumber.ToString();
-                temp = obj.BaseTechObject.SaveToPrgLua(objName, prefix);
-                if (temp != "")
+
+                objectsInfo += baseObj.SaveObjectInfoToPrgLua(objName, prefix);
+                
+                var modesManager = baseObj.Owner.ModesManager;
+                var modes = modesManager.Modes;
+                bool haveBaseOperations = modes
+                    .Where(x => x.DisplayText[1] != "").Count() != 0;
+                if (haveBaseOperations)
                 {
-                    res += temp + "\n";
+                    operations += baseObj.SaveOperations(
+                        objName, prefix, modes);
+                    operationsSteps += baseObj.SaveOperationsSteps(
+                        objName, prefix, modes);
+                    operationsParameters += baseObj.SaveOperationsParameters(
+                        objName, prefix, modes);
+                }
+
+                equipments += baseObj.SaveEquipment(objName);
+            }
+
+            var accumulatedData = new string[] 
+            {
+                objectsInfo, 
+                operations, 
+                operationsSteps,                
+                operationsParameters, 
+                equipments
+            };
+
+            var result = "";
+            foreach (var stringsForSave in accumulatedData)
+            {
+                if (stringsForSave != "")
+                {
+                    result += stringsForSave + "\n";
                 }
             }
-            return res;
+
+            return result;
         }
 
         /// <summary>

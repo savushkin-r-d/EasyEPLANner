@@ -79,7 +79,9 @@ namespace TechObject
             foreach(Editor.ITreeViewItem item in items)
             {
                 var property = item as BaseParameter;
-                equipment.AddItem(property.Clone());
+                var newProperty = property.Clone();
+                newProperty.Owner = this;
+                equipment.AddItem(newProperty);
             }
 
             return equipment;
@@ -102,9 +104,7 @@ namespace TechObject
             foreach (Editor.ITreeViewItem item in items)
             {
                 var property = item as BaseParameter;
-                bool isEmpty = property.IsEmpty ||
-                    property.Value == property.DefaultValue;
-                if (!isEmpty)
+                if (!property.IsEmpty)
                 {
                     equipmentForSave += prefix + $"\t{property.LuaName} = " +
                         $"\'{property.Value}\',\n";

@@ -56,11 +56,15 @@ namespace TechObject
         {
             if (Steps.Count == 0)
             {
+                var emptyPar = new ActiveParameter("", "");
+                emptyPar.Owner = this;
                 // Пустой объект, если не должно быть выбрано никаких объектов
-                Steps.Add(new ActiveParameter("", ""));
+                Steps.Add(emptyPar);
             }
 
-            Steps.Add(new ActiveParameter(luaName, name));
+            var par = new ActiveParameter(luaName, name);
+            par.Owner = this;
+            Steps.Add(par);
         }
 
         /// <summary>
@@ -72,7 +76,9 @@ namespace TechObject
         public void AddActiveParameter(string luaName, string name, 
             string defaultValue)
         {
-            Properties.Add(new ActiveParameter(luaName, name, defaultValue));
+            var par = new ActiveParameter(luaName, name, defaultValue);
+            par.Owner = this;
+            Properties.Add(par);
         }
         
         /// <summary>
@@ -84,8 +90,10 @@ namespace TechObject
         public void AddActiveBoolParameter(string luaName, string name,
             string defaultValue)
         {
-            Properties.Add(new ActiveBoolParameter(luaName, name, 
-                defaultValue));
+            var par = new ActiveBoolParameter(luaName, name,
+                defaultValue);
+            par.Owner = this;
+            Properties.Add(par);
         }
 
         /// <summary>
@@ -139,7 +147,8 @@ namespace TechObject
         /// Инициализация базовой операции по имени
         /// </summary>
         /// <param name="baseOperName">Имя операции</param>
-        public void Init(string baseOperName)
+        /// <param name="mode">Операция владелец</param>
+        public void Init(string baseOperName, Mode mode = null)
         {
             TechObject techObject = owner.Owner.Owner;
             string baseTechObjectName = techObject.BaseTechObject.Name;
@@ -164,7 +173,13 @@ namespace TechObject
                     Properties = operation.Properties
                         .Select(x => x.Clone())
                         .ToList();
+                    foreach(var property in Properties)
+                    {
+                        property.Owner = operation;
+                    }
+
                     baseSteps = operation.Steps;
+                    operation.owner = mode;
                 }
             }
             else
@@ -222,12 +237,12 @@ namespace TechObject
             {
                 if(!operParam.IsEmpty)
                 {
-                    paramsForSave += "\t" + prefix + operParam.LuaName + 
+                    paramsForSave += "\t" + prefix + operParam.LuaName +
                         " = \'" + operParam.Value + "\',\n";
-                }           
+                }
             }
 
-            if (paramsForSave != String.Empty)
+            if (paramsForSave != "")
             {
                 res += prefix + "props =\n" + prefix + "\t{\n";
                 res += paramsForSave;
@@ -246,13 +261,12 @@ namespace TechObject
             foreach (Editor.ObjectProperty extraParam in extraParams)
             {
                 var property = Properties
-                    .Where(x => x.LuaName
-                    .Equals(extraParam.DisplayText[0]))
+                    .Where(x => x.LuaName.Equals(extraParam.DisplayText[0]))
                     .FirstOrDefault();
 
                 if (property != null)
                 {
-                    property.SetValue(extraParam.DisplayText[1]);
+                    property.SetValue(extraParam.Value);
                 }
             }
         }
@@ -271,27 +285,32 @@ namespace TechObject
                 baseOperationProperties = value;
             }
         }
+
+        public Mode Owner
+        {
+            get
+            {
+                return owner;
+            }
+        }
        
         /// <summary>
         /// Добавить свойства базовой операции.
         /// </summary>
         /// <param name="properties">Массив свойств</param>
-        public void AddProperties(List<BaseParameter> properties)
+        /// <param name="owner">Объект первоначальный владелец свойств</param>
+        public void AddProperties(List<BaseParameter> properties, object owner)
         {
-            // Пока не решен вопрос с параметрами, отключаем для операции
-            // мойка добавление доп. свойств узлов.
-            if (this.LuaName == "WASHING_CIP")
-            {
-                return;
-            }
-
             foreach(var property in properties)
             {
                 var equalPropertiesCount = Properties
                     .Where(x => x.LuaName == property.LuaName).Count();
                 if (equalPropertiesCount == 0)
                 {
-                    Properties.Add(property.Clone());
+                    var newProperty = property.Clone();
+                    newProperty.Owner = owner;
+                    newProperty.Parent = this;
+                    Properties.Add(newProperty);
                 }
             }
 
@@ -337,19 +356,40 @@ namespace TechObject
         {
             var properties = new List<BaseParameter>(baseOperationProperties
                 .Count);
+            var operation = EmptyOperation();
             for (int i = 0; i < baseOperationProperties.Count; i++)
             {
-                properties.Add(baseOperationProperties[i].Clone());
+                BaseParameter oldProperty = baseOperationProperties[i];
+                BaseParameter newProperty = oldProperty.Clone();
+                if (oldProperty.Owner is BaseTechObject)
+                {
+                    var obj = oldProperty.Owner as BaseTechObject;
+                    if (obj.IsAttachable)
+                    {
+                        newProperty.Owner = oldProperty.Owner;
+                    }
+                }
+                else
+                {
+                    newProperty.Owner = operation;
+                }
+                properties.Add(newProperty);
             }
 
             var steps = new List<BaseParameter>();
             for (int i = 0; i < Steps.Count; i++)
             {
-                steps.Add(Steps[i].Clone());
+                var newStep = Steps[i].Clone();
+                newStep.Owner = operation;
+                steps.Add(newStep);
             }
 
-            var operation = new BaseOperation(operationName, luaOperationName,
-                properties, steps);
+            operation.Name = operationName;
+            operation.LuaName = luaOperationName;
+            operation.Properties = properties;
+            operation.Steps = steps;
+            operation.owner = this.Owner;
+
             operation.SetItems();
 
             return operation;
@@ -380,6 +420,17 @@ namespace TechObject
             {
                 return items;
             }
+        }
+
+        public override bool Delete(object child)
+        {
+            if (child is ActiveParameter)
+            {
+                var property = child as ActiveParameter;
+                property.SetNewValue("");
+                return true;
+            }
+            return false;
         }
         #endregion
 
