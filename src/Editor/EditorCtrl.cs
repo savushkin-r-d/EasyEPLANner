@@ -29,9 +29,9 @@ namespace Editor
         /// </summary>
         private void InitObjectListView()
         {
+            // Настройка цвета отключенного компонента в дереве
             var disabletItemStyle = new SimpleItemStyle();
             disabletItemStyle.ForeColor = Color.Gray;
-            disabletItemStyle.BackColor = Color.FromArgb(30, 30, 35);
             editorTView.DisabledItemStyle = disabletItemStyle;
 
             // Текст подсветки чередующихся строк
