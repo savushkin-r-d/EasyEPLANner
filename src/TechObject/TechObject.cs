@@ -285,6 +285,7 @@ namespace TechObject
 
                         mode.BaseOperation.AddProperties(addingProperties,
                             attachedBaseTechObject);
+                        mode.BaseOperation.Check();
                     }
                 }
             }

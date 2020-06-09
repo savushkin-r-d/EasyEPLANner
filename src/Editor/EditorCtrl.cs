@@ -1392,6 +1392,7 @@ namespace Editor
                 if (selectedItem.NeedRebuildParent)
                 {
                     editorTView.RefreshObjects(selectedItem.Parent.Items);
+                    DisableNeededObjects(selectedItem.Parent.Items);
                 }
                 else if (selectedItem.NeedRebuildMainObject)
                 {
