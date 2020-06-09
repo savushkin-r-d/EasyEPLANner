@@ -22,6 +22,7 @@ namespace TechObject
             var newProperty = new ActiveParameter(this.LuaName, this.Name,
                 this.DefaultValue);
             newProperty.SetNewValue(this.Value);
+            newProperty.NeedDisable = this.NeedDisable;
             return newProperty;
         }
 

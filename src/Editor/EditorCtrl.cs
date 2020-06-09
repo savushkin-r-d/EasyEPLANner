@@ -936,6 +936,7 @@ namespace Editor
                     newItem.AddParent(item);
                     OnModify();
                     editorTView.RefreshObjects(item.Items);
+                    DisableNeededObjects(new ITreeViewItem[] { newItem });
                 }
             }
         }
@@ -959,6 +960,7 @@ namespace Editor
                         var mainObject = GetParentBranch(item);
                         editorTView.RefreshObjects(mainObject.Items);
                     }
+                    DisableNeededObjects(new ITreeViewItem[] { newItem });
                 }
                 OnModify();
             }

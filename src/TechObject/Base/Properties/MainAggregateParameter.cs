@@ -38,6 +38,18 @@ namespace TechObject
             return result;
         }
 
+        public override bool NeedDisable
+        {
+            get
+            {
+                return false;
+            }
+            set 
+            {
+                // Для этого параметра не предусмотрена установка значения
+            }
+        }
+
         /// <summary>
         /// Установка видимости параметров агрегата-объекта-владельца в аппарате
         /// </summary>
