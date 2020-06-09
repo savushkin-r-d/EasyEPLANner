@@ -56,6 +56,8 @@ namespace EasyEPlanner
                 bool needExporting = objectsNums.Contains(obj.GlobalNumber);
                 if (needExporting)
                 {
+                    // Убираем привязку при экспорте.
+                    obj.AttachedObjects.SetValue("");
                     objectsDescription += obj.SaveAsLuaTable("\t\t");
                     objectsRestriction += obj.SaveRestrictionAsLua("\t");
                 }
