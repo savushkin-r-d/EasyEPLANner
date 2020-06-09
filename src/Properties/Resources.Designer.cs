@@ -212,25 +212,6 @@ namespace EasyEPlanner.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на --Проект &apos;ProjectName&apos;
-        ///
-        ///prg = require(&quot;prg&quot;)                        --Технологические объекты.
-        ///------------------------------------------------------------------------------
-        ///------------------------------------------------------------------------------
-        ///--Пользовательская функция инициализации, выполняемая однократно в PAC.
-        ///
-        ///function user_init()
-        ///end
-        ///------------------------------------------------------------------------------
-        ///------------------------------------------------------------------------ [остаток строки не уместился]&quot;;.
-        /// </summary>
-        public static string mainPluaFilePattern {
-            get {
-                return ResourceManager.GetString("mainPluaFilePattern", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Ищет локализованную строку, похожую на --version  = {0}
         ///------------------------------------------------------------------------------
         ///------------------------------------------------------------------------------
@@ -366,6 +347,7 @@ namespace EasyEPlanner.Properties {
         ///require( &quot;water_tank&quot; )
         ///require( &quot;pressure&quot; )
         ///require( &quot;flow&quot; )
+        ///require( &quot;steam_blast_node&quot; )
         ///.
         /// </summary>
         public static string prgLuaRequireModules {

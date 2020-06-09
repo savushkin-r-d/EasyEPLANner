@@ -261,6 +261,7 @@
     <Compile Include="TechObject\Base\BaseTechObject.cs" />
     <Compile Include="TechObject\Base\Properties\ActiveBoolParameter.cs" />
     <Compile Include="TechObject\Base\Properties\ActiveParameter.cs" />
+    <Compile Include="TechObject\Base\Properties\MainAggregateParameter.cs" />
     <Compile Include="TechObject\Equipment.cs" />
     <Compile Include="TechObject\LocalRestriction.cs" />
     <Compile Include="TechObject\Mode.cs" />
@@ -317,6 +318,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="key\2112_Public.snk" />
+    <None Include="Lua\mainPattern.plua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Lua\sys.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

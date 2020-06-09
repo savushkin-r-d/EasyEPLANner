@@ -46,14 +46,15 @@ end
 
 -- Инициализация параметров объекта как агрегата
 init_aggregate_parameters = function(object, aggregateParameters)
-    for luaName, value in pairs(aggregateParameters) do
-        -- Данные для добавления параметра
-        local name = value.name or ""
-        local defaultValue = value.defaultValue or ""
-
-        -- Добавить параметр
-        object:AddAggregateParameter(luaName, name, defaultValue)
-    end
+    -- Добавить активные параметры агрегата
+    local activeAggregateParameters = aggregateParameters.active or { }
+    init_active_parameters(object, activeAggregateParameters)
+    -- Добавить булевые параметры агрегата
+    local boolAggregateParameters = aggregateParameters.bool or { }
+    init_active_bool_parameters(object, boolAggregateParameters)
+    -- Добавить главный параметр агрегата
+    local mainAggregateParameter = aggregateParameters.main or { }
+    init_main_aggregate_parameter(object, mainAggregateParameter)
 end
 
 -- Инициализация базовых операций объекта
@@ -86,27 +87,38 @@ init_operation_parameters = function(operation, params)
     init_active_bool_parameters(operation, activeBoolParameters)
 end
 
--- Инициализация активных параметров базовой операции
-init_active_parameters = function(operation, activeParameters)
+-- Инициализация активных параметров
+-- object - базовая операция или базовый объект
+init_active_parameters = function(object, activeParameters)
 	for luaName, value in pairs(activeParameters) do
         -- Данные для добавления параметра
         local name = value.name or ""
         local defaultValue = value.defaultValue or ""
 
         -- Добавить активный параметр
-        operation:AddActiveParameter(luaName, name, defaultValue)
+        object:AddActiveParameter(luaName, name, defaultValue)
     end
 end
 
--- Инициализация булевых параметров базовой операции
-init_active_bool_parameters = function(operation, activeBoolParameters)
+-- Инициализация булевых параметров
+-- object - базовая операция или базовый объект
+init_active_bool_parameters = function(object, activeBoolParameters)
 	for luaName, value in pairs(activeBoolParameters) do
         -- Данные для добавления параметра
         local name = value.name or ""
         local defaultValue = value.defaultValue or ""
 
         -- Добавить булевый параметр
-        operation:AddActiveBoolParameter(luaName, name, defaultValue)
+        object:AddActiveBoolParameter(luaName, name, defaultValue)
+    end
+end
+
+-- Инициализация главного параметра агрегата
+init_main_aggregate_parameter = function(object, tableWithParameter)
+    for luaName, value in pairs(tableWithParameter) do
+        local name = value.name or ""
+        local defaultValue = value.defaultValue or ""
+        object:AddMainAggregateParameter(luaName, name, defaultValue)
     end
 end
 

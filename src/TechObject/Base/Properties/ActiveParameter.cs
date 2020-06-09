@@ -19,9 +19,28 @@ namespace TechObject
 
         public override BaseParameter Clone()
         {
-            var newProperty = new ActiveParameter(this.LuaName, this.Name);
+            var newProperty = new ActiveParameter(this.LuaName, this.Name,
+                this.DefaultValue);
             newProperty.SetNewValue(this.Value);
+            newProperty.NeedDisable = this.NeedDisable;
             return newProperty;
+        }
+
+        public override bool IsEmpty
+        {
+            get
+            {
+                bool isEmpty = Value == DefaultValue &&
+                    DefaultValue == "";
+                if (isEmpty)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
 
         #region реализация ItreeViewItem
@@ -50,7 +69,7 @@ namespace TechObject
         {
             get
             {
-                return false;
+                return true;
             }
         }
         #endregion

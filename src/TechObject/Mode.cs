@@ -410,6 +410,8 @@ namespace TechObject
                 errors += state.Check();
             }
 
+            this.BaseOperation.Check();
+
             return errors;
         }
 
@@ -456,7 +458,7 @@ namespace TechObject
             if (baseOperation.Name != newBaseOperationName &&
                 similarBaseOperation == false)
             {
-                baseOperation.Init(newBaseOperationName);
+                baseOperation.Init(newBaseOperationName, this);
                 return true;
             }
 

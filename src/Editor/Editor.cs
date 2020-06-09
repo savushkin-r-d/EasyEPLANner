@@ -368,6 +368,12 @@ namespace Editor
         /// </summary>
         /// <param name="parent">Родительский элемент</param>
         void AddParent(ITreeViewItem parent);
+
+        /// <summary>
+        /// Нужно ли отключить элемент
+        /// </summary>
+        /// <returns></returns>
+        bool NeedDisable { get; set; }
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -478,6 +484,8 @@ namespace Editor
         {
             this.name = name;
             this.value = value;
+
+            this.needDisable = false;
         }
 
         public ObjectProperty Clone()
@@ -823,11 +831,29 @@ namespace Editor
                 }
             }
         }
+
+        /// <summary>
+        /// Нужно ли отключить элемент
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool NeedDisable
+        {
+            get
+            {
+                return needDisable;
+            }
+            set
+            {
+                needDisable = value;
+            }
+        }
         #endregion
 
         ITreeViewItem parent;
         private string name;  ///Имя свойства.
         private object value; ///Значение свойства.
+
+        private bool needDisable;
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -1107,6 +1133,24 @@ namespace Editor
                 }
             }
         }
+
+        /// <summary>
+        /// Нужно ли отключить элемент
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool NeedDisable
+        {
+            get
+            {
+                return needDisable;
+            }
+            set
+            {
+                needDisable = value;
+            }
+        }
+
+        private bool needDisable = false;
         #endregion
     }
     //-------------------------------------------------------------------------
