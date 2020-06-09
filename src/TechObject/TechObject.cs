@@ -226,16 +226,23 @@ namespace TechObject
                         .BaseTechObject;
                     List<BaseParameter> properties = removingBaseTechObject
                         .AggregateParameters;
-                    if (properties.Count == 0)
+
+                    var deletingProperties = new List<BaseParameter>();
+                    if (properties.Count != 0)
                     {
-                        continue;
+                        deletingProperties.AddRange(properties);
                     }
 
+                    if (removingBaseTechObject.MainAggregateParameter != null)
+                    {
+                        deletingProperties.Add(removingBaseTechObject
+                            .MainAggregateParameter);
+                    }
                     TechObject thisTechObject = owner;
                     List<Mode> modes = thisTechObject.ModesManager.Modes;
                     foreach (var mode in modes)
                     {
-                        mode.BaseOperation.RemoveProperties(properties);
+                        mode.BaseOperation.RemoveProperties(deletingProperties);
                     }
                 }
             }
@@ -255,11 +262,18 @@ namespace TechObject
                         .BaseTechObject;
                     List<BaseParameter> properties = attachedBaseTechObject
                         .AggregateParameters;
-                    if (properties.Count == 0)
+
+                    var addingProperties = new List<BaseParameter>();
+                    if (properties.Count != 0 )
                     {
-                        continue;
+                        addingProperties.AddRange(properties);
                     }
 
+                    if (attachedBaseTechObject.MainAggregateParameter != null)
+                    {
+                        addingProperties.Add(attachedBaseTechObject
+                            .MainAggregateParameter);
+                    }
                     TechObject thisThechObject = owner;
                     List<Mode> modes = thisThechObject.ModesManager.Modes;
                     foreach(var mode in modes)
@@ -269,8 +283,9 @@ namespace TechObject
                             continue;
                         }
 
-                        mode.BaseOperation.AddProperties(properties,
+                        mode.BaseOperation.AddProperties(addingProperties,
                             attachedBaseTechObject);
+                        mode.BaseOperation.Check();
                     }
                 }
             }

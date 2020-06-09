@@ -52,6 +52,9 @@ init_aggregate_parameters = function(object, aggregateParameters)
     -- Добавить булевые параметры агрегата
     local boolAggregateParameters = aggregateParameters.bool or { }
     init_active_bool_parameters(object, boolAggregateParameters)
+    -- Добавить главный параметр агрегата
+    local mainAggregateParameter = aggregateParameters.main or { }
+    init_main_aggregate_parameter(object, mainAggregateParameter)
 end
 
 -- Инициализация базовых операций объекта
@@ -107,6 +110,15 @@ init_active_bool_parameters = function(object, activeBoolParameters)
 
         -- Добавить булевый параметр
         object:AddActiveBoolParameter(luaName, name, defaultValue)
+    end
+end
+
+-- Инициализация главного параметра агрегата
+init_main_aggregate_parameter = function(object, tableWithParameter)
+    for luaName, value in pairs(tableWithParameter) do
+        local name = value.name or ""
+        local defaultValue = value.defaultValue or ""
+        object:AddMainAggregateParameter(luaName, name, defaultValue)
     end
 end
 

@@ -28,9 +28,16 @@
 -- 1. name - русскоязычное имя параметра.
 -- 2. defaultValue - значение по-умолчанию.
 
+-- Главный параметр агрегата (main) - аналог булевого параметра. Является главным управляющим
+-- параметром агрегата (управляет доступностью параметров). Имеет только два значения - да или нет
+-- (название таблицы - это Lua-имя параметра, пишется в верхнем регистре):
+-- 1. name - русскоязычное имя параметра.
+-- 2. defaultValue - значение по-умолчанию.
+
 -- Базовые шаги - по аналогии с активными параметрами.
 -- Оборудование - по аналогии с активными параметрами.
--- Параметры объекта, как агрегата - по аналогии с активными и булевскими параметрами.
+-- Параметры объекта, как агрегата - по аналогии с активными и булевскими параметрами и
+-- главным параметром агрегата, он является обязательным для агрегата. main-параметр задается только один!
 
 base_tech_objects = function()
 return
@@ -127,7 +134,7 @@ return
             equipment = { },
             aggregateParameters =
             {
-                bool =
+                main =
                 {
                     BOILER = { name = "Использовать бойлер", defaultValue = "false" },
                 },
@@ -448,7 +455,7 @@ return
             },
             aggregateParameters =
             {
-                bool =
+                main =
                 {
                     NEED_PRESSURE_CONTROL = { name = "Использовать узел давления", defaultValue = "false" },
                 },
@@ -474,7 +481,7 @@ return
             equipment = { },
             aggregateParameters =
             {
-                bool =
+                main =
                 {
                     HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
                 },
@@ -506,7 +513,7 @@ return
             },
             aggregateParameters =
             {
-                bool =
+                main =
                 {
                     HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
                 },
@@ -533,7 +540,7 @@ return
             },
             aggregateParameters =
             {
-                bool =
+                main =
                 {
                     NEED_FLOW_CONTROL = { name = "Использовать узел расхода", defaultValue = "false" },
                 },
@@ -562,7 +569,7 @@ return
             },
             aggregateParameters =
             {
-                bool =
+                main =
                 {
                     NEED_COOLING = { name = "Использовать узел охлаждения", defaultValue = "false" },
                 },
@@ -623,7 +630,7 @@ return
                 {
                     MIX_NODE_MIX_OPERATION = { name = "Используемая операция узла перемешивания", defaultValue = 1 },
                 },
-                bool =
+                main =
                 {
                     NEED_MIXING = { name = "Использовать узел перемешивания", defaultValue = "true" },
                 },

@@ -410,6 +410,8 @@ namespace TechObject
                 errors += state.Check();
             }
 
+            this.BaseOperation.Check();
+
             return errors;
         }
 

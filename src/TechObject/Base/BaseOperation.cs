@@ -235,7 +235,7 @@ namespace TechObject
             string paramsForSave = "";
             foreach (var operParam in Properties)
             {
-                if(!operParam.IsEmpty)
+                if(!operParam.NeedDisable && !operParam.IsEmpty)
                 {
                     paramsForSave += "\t" + prefix + operParam.LuaName +
                         " = \'" + operParam.Value + "\',\n";
@@ -334,6 +334,20 @@ namespace TechObject
                 }
             }
             SetItems();
+        }
+
+        /// <summary>
+        /// Проверка базовой операции
+        /// </summary>
+        public void Check()
+        {
+            foreach(var property in Properties)
+            {
+                if (property is MainAggregateParameter)
+                {
+                    (property as MainAggregateParameter).Check();
+                }
+            }
         }
 
         /// <summary>

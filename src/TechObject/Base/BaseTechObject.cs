@@ -85,6 +85,20 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Добавить главный параметр агрегата
+        /// </summary>
+        /// <param name="luaName"></param>
+        /// <param name="name"></param>
+        /// <param name="defaultValue"></param>
+        public void AddMainAggregateParameter(string luaName, string name,
+            string defaultValue)
+        {
+            var par = new MainAggregateParameter(luaName, name, defaultValue);
+            par.Owner = this;
+            aggregateMainParameter = par;
+        }
+
+        /// <summary>
         /// Добавить базовую операцию
         /// </summary>
         /// <param name="luaName">Lua-имя</param>
@@ -282,6 +296,11 @@ namespace TechObject
                 aggregateParameters.Add(aggrPar.Clone());
             }
             cloned.AggregateParameters = aggregateParameters;
+            if (MainAggregateParameter != null)
+            {
+                cloned.MainAggregateParameter = MainAggregateParameter.Clone() 
+                    as MainAggregateParameter;
+            }
 
             var baseOperations = new List<BaseOperation>();
             foreach(var baseOperation in BaseOperations)
@@ -372,6 +391,21 @@ namespace TechObject
             set
             {
                 bindingName = value;
+            }
+        }
+
+        /// <summary>
+        /// Главный параметр агрегата
+        /// </summary>
+        public MainAggregateParameter MainAggregateParameter
+        {
+            get
+            {
+                return aggregateMainParameter;
+            }
+            set
+            {
+                aggregateMainParameter = value;
             }
         }
 
@@ -521,7 +555,9 @@ namespace TechObject
                 string paramsForSave = "";
                 foreach (var parameter in baseOperation.Properties)
                 {
-                    bool isEmpty = parameter.IsEmpty || parameter.Value == "";
+                    bool isEmpty = parameter.IsEmpty || 
+                        parameter.Value == "" ||
+                        parameter.NeedDisable;
                     if (isEmpty)
                     {
                         continue;
@@ -708,5 +744,6 @@ namespace TechObject
         private List<BaseOperation> objectOperations;
         private List<BaseParameter> equipment;
         private List<BaseParameter> aggregateProperties;
+        private MainAggregateParameter aggregateMainParameter;
     }
 }

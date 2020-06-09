@@ -29,6 +29,11 @@ namespace Editor
         /// </summary>
         private void InitObjectListView()
         {
+            // Настройка цвета отключенного компонента в дереве
+            var disabletItemStyle = new SimpleItemStyle();
+            disabletItemStyle.ForeColor = Color.Gray;
+            editorTView.DisabledItemStyle = disabletItemStyle;
+
             // Текст подсветки чередующихся строк
             editorTView.AlternateRowBackColor = Color.FromArgb(250, 250, 250);
 
@@ -730,6 +735,8 @@ namespace Editor
 
             editIsShown = true;
             IsShown = true;
+
+            DisableNeededObjects(treeViewItemsList.ToArray());
         }
 
         public uint pidMain = 0;
@@ -929,6 +936,7 @@ namespace Editor
                     newItem.AddParent(item);
                     OnModify();
                     editorTView.RefreshObjects(item.Items);
+                    DisableNeededObjects(new ITreeViewItem[] { newItem });
                 }
             }
         }
@@ -952,6 +960,7 @@ namespace Editor
                         var mainObject = GetParentBranch(item);
                         editorTView.RefreshObjects(mainObject.Items);
                     }
+                    DisableNeededObjects(new ITreeViewItem[] { newItem });
                 }
                 OnModify();
             }
@@ -1297,7 +1306,9 @@ namespace Editor
                 item.SetNewValue(e.Value.ToString());
                 IsCellEditing = false;
                 e.Cancel = true;
-                editorTView.RefreshObject(item);
+                var parentItems = item.Parent.Items;
+                DisableNeededObjects(parentItems);
+                editorTView.RefreshObjects(parentItems);
                 return;
             }
             else
@@ -1308,6 +1319,35 @@ namespace Editor
                 e.Control = textBoxCellEditor;
                 textBoxCellEditor.Focus();
                 editorTView.Freeze();
+            }
+        }
+
+        /// <summary>
+        /// Отключить нужные объекты
+        /// </summary>
+        /// <param name="items">Объекты для проверки и отключения</param>
+        private void DisableNeededObjects(ITreeViewItem[] items)
+        {
+            foreach(var item in items)
+            {
+                if (item.Items != null)
+                {
+                    if (item.Items.Length != 0)
+                    {
+                        DisableNeededObjects(item.Items);
+                    }
+                }
+                else
+                {
+                    if (item.NeedDisable)
+                    {
+                        editorTView.DisableObject(item);
+                    }
+                    else
+                    {
+                        editorTView.EnableObject(item);
+                    }
+                }
             }
         }
 
@@ -1352,6 +1392,7 @@ namespace Editor
                 if (selectedItem.NeedRebuildParent)
                 {
                     editorTView.RefreshObjects(selectedItem.Parent.Items);
+                    DisableNeededObjects(selectedItem.Parent.Items);
                 }
                 else if (selectedItem.NeedRebuildMainObject)
                 {
