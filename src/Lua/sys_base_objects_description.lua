@@ -478,7 +478,10 @@ return
                 },
             },
             basicName = "heater_node",
-            equipment = { },
+            equipment =
+            {
+                TE = { name = "Датчик температуры" },
+            },
             aggregateParameters =
             {
                 main =
