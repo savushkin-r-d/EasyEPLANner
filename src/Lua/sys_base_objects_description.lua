@@ -356,6 +356,9 @@ return
                         MEDIUM_CHANGE = { name = "Смена среды" },
                     },
                 },
+                EMPTY_TANK_HEATING = {
+                    name = "Нагрев пустого танка",
+                },
                 FILL = {
                     name = "Наполнение",
                     params =
