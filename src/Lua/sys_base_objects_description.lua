@@ -480,7 +480,7 @@ return
             basicName = "heater_node",
             equipment =
             {
-                TE = { name = "Датчик температуры" },
+                TE = { name = "Датчик температуры", defaultValue = "TE1" },
             },
             aggregateParameters =
             {
