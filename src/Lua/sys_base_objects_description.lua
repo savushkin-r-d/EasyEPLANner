@@ -139,6 +139,7 @@ return
                     BOILER = { name = "Использовать бойлер", defaultValue = "false" },
                 },
             },
+            bindingName = "boiler"
         },
         master = {
             name = "Мастер",
