@@ -666,15 +666,25 @@ namespace TechObject
         /// <param name="oldIndex">Старый индекс объекта</param>
         private void ChangeAttachingToObject(int oldIndex, int newIndex)
         {
-            foreach (var obj in Objects)
+            int oldObjNum = oldIndex + 1;
+            int newObjNum = newIndex + 1;
+            foreach (var techObj in Objects)
             {
-                string attachingObjects = obj.AttachedObjects.Value;
-                if (attachingObjects.Contains(newIndex.ToString()))
+                string attachingObjectsStr = techObj.AttachedObjects.Value;
+                string[] attachingObjectsArr = attachingObjectsStr.Split(' ');
+                for(int index = 0; index < attachingObjectsArr.Length; index++)
                 {
-                    string newValue = attachingObjects
-                    .Replace(newIndex.ToString(), oldIndex.ToString());
-                    obj.AttachedObjects.SetValue(newValue);
+                    if(attachingObjectsArr[index] == newObjNum.ToString())
+                    {
+                        attachingObjectsArr[index] = oldObjNum.ToString();
+                    }
+                    else if (attachingObjectsArr[index] == oldObjNum.ToString())
+                    {
+                        attachingObjectsArr[index] = newObjNum.ToString();
+                    }
                 }
+                techObj.AttachedObjects
+                    .SetValue(string.Join(" ", attachingObjectsArr));
             }
         }
 
