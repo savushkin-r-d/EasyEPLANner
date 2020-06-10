@@ -659,6 +659,35 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Изменение привязки объектов при перемещении объектов по дереву
+        /// </summary>
+        /// <param name="newIndex">Новый индекс объекта</param>
+        /// <param name="oldIndex">Старый индекс объекта</param>
+        private void ChangeAttachingToObject(int oldIndex, int newIndex)
+        {
+            int oldObjNum = oldIndex + 1;
+            int newObjNum = newIndex + 1;
+            foreach (var techObj in Objects)
+            {
+                string attachingObjectsStr = techObj.AttachedObjects.Value;
+                string[] attachingObjectsArr = attachingObjectsStr.Split(' ');
+                for(int index = 0; index < attachingObjectsArr.Length; index++)
+                {
+                    if(attachingObjectsArr[index] == newObjNum.ToString())
+                    {
+                        attachingObjectsArr[index] = oldObjNum.ToString();
+                    }
+                    else if (attachingObjectsArr[index] == oldObjNum.ToString())
+                    {
+                        attachingObjectsArr[index] = newObjNum.ToString();
+                    }
+                }
+                techObj.AttachedObjects
+                    .SetValue(string.Join(" ", attachingObjectsArr));
+            }
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {
@@ -720,6 +749,7 @@ namespace TechObject
                     objects.Insert(index + 1, techObject);
 
                     SetRestrictionOwner();
+                    ChangeAttachingToObject(index, index + 1);
                     return objects[index];
                 }
             }
@@ -742,6 +772,7 @@ namespace TechObject
                     objects.Insert(index - 1, techObject);
 
                     SetRestrictionOwner();
+                    ChangeAttachingToObject(index, index - 1);
                     return objects[index];
                 }
             }
