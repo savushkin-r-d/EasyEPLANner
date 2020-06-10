@@ -659,6 +659,25 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Изменение привязки объектов при перемещении объектов по дереву
+        /// </summary>
+        /// <param name="newIndex">Новый индекс объекта</param>
+        /// <param name="oldIndex">Старый индекс объекта</param>
+        private void ChangeAttachingToObject(int oldIndex, int newIndex)
+        {
+            foreach (var obj in Objects)
+            {
+                string attachingObjects = obj.AttachedObjects.Value;
+                if (attachingObjects.Contains(newIndex.ToString()))
+                {
+                    string newValue = attachingObjects
+                    .Replace(newIndex.ToString(), oldIndex.ToString());
+                    obj.AttachedObjects.SetValue(newValue);
+                }
+            }
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {
@@ -720,6 +739,7 @@ namespace TechObject
                     objects.Insert(index + 1, techObject);
 
                     SetRestrictionOwner();
+                    ChangeAttachingToObject(index, index + 1);
                     return objects[index];
                 }
             }
@@ -742,6 +762,7 @@ namespace TechObject
                     objects.Insert(index - 1, techObject);
 
                     SetRestrictionOwner();
+                    ChangeAttachingToObject(index, index - 1);
                     return objects[index];
                 }
             }
