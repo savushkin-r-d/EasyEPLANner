@@ -633,7 +633,7 @@ namespace TechObject
                 .Where(x => x.GetModeNumber().ToString() == parameterValue)
                 .FirstOrDefault();
             var res = "";
-            if (mode != null)
+            if (mode != null && mode.BaseOperation.Name != "")
             {
                 parameterValue = mode.BaseOperation.LuaName.ToUpper();
                 TechObject obj = baseTechObject.Owner;
