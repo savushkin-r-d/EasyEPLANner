@@ -136,7 +136,7 @@ return
             {
                 main =
                 {
-                    BOILER = { name = "Использовать бойлер", defaultValue = "false" },
+                    NEED_BOILER = { name = "Использовать бойлер", defaultValue = "false" },
                 },
             },
             bindingName = "boiler"
@@ -490,7 +490,7 @@ return
             {
                 main =
                 {
-                    HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
+                    NEED_HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
                 },
             },
             bindingName = "heater_node"
@@ -522,7 +522,7 @@ return
             {
                 main =
                 {
-                    HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
+                    NEED_HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
                 },
             },
             bindingName = "heater_node"
