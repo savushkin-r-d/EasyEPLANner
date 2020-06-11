@@ -582,21 +582,50 @@ namespace EasyEPlanner
             const int MaxWidth = 3;
             object[,] devicesWithArticles = new object[MaxLength, MaxWidth];
 
-            var devices = deviceManager.Devices
-                .Where(x => x.DeviceType != DeviceType.AI &&
-                x.DeviceType != DeviceType.AO &&
-                x.DeviceType != DeviceType.DI &&
-                x.DeviceType != DeviceType.DO &&
-                x.DeviceType != DeviceType.M &&
-                x.DeviceType != DeviceType.VC)
-                .ToList();
+            var ignoringDevicesTypes = new List<string>()
+            {
+                "AI",
+                "AO",
+                "DI",
+                "DO",
+                "VC",
+            };
 
-                devices.Sort((x, y) =>
+            var ignoringDevicesSubTypes = new List<string>()
+            {
+                "M",
+                "M_FREQ",
+                "M_REV",
+                "M_REV_FREQ",
+                "M_REV_2",
+                "M_REV_FREQ_2",
+                "M_REV_2_ERROR",
+                "M_REV_FREQ_2_ERROR",
+                "FQT_VIRT",
+                "LS_VIRT",
+                "LT_VIRT",
+            };
+
+            var devices = new List<IODevice>();
+            foreach (var device in deviceManager.Devices)
+            {
+                string devType = device.DeviceType.ToString();
+                string devSubType = device.GetDeviceSubTypeStr(
+                    device.DeviceType, device.DeviceSubType);
+                bool ignoreDevice = ignoringDevicesTypes.Contains(devType) ||
+                    ignoringDevicesSubTypes.Contains(devSubType);
+                if (!ignoreDevice)
                 {
-                    int res = 0;
-                    res = Device.Device.Compare(x, y);
-                    return res;
-                });
+                    devices.Add(device);
+                }
+            }
+
+            devices.Sort((x, y) =>
+            {
+                int res = 0;
+                res = Device.Device.Compare(x, y);
+                return res;
+            });
 
             devicesWithArticles[0, 0] = "ОУ устройства";
             devicesWithArticles[0, 1] = "Подтип устройства";
