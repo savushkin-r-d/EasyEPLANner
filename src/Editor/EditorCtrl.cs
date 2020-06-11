@@ -409,6 +409,7 @@ namespace Editor
 
                         break;
 
+                    case (uint)Keys.Insert:                             //Insert
                     case PI.VIRTUAL_KEY.VK_UP:                          //Up
                     case PI.VIRTUAL_KEY.VK_DOWN:                        //Down
                     case PI.VIRTUAL_KEY.VK_LEFT:                        //Left
