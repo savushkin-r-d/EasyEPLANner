@@ -28,9 +28,16 @@
 -- 1. name - русскоязычное имя параметра.
 -- 2. defaultValue - значение по-умолчанию.
 
+-- Главный параметр агрегата (main) - аналог булевого параметра. Является главным управляющим
+-- параметром агрегата (управляет доступностью параметров). Имеет только два значения - да или нет
+-- (название таблицы - это Lua-имя параметра, пишется в верхнем регистре):
+-- 1. name - русскоязычное имя параметра.
+-- 2. defaultValue - значение по-умолчанию.
+
 -- Базовые шаги - по аналогии с активными параметрами.
 -- Оборудование - по аналогии с активными параметрами.
--- Параметры объекта, как агрегата - по аналогии с булевыми параметрами.
+-- Параметры объекта, как агрегата - по аналогии с активными и булевскими параметрами и
+-- главным параметром агрегата, он является обязательным для агрегата. main-параметр задается только один!
 
 base_tech_objects = function()
 return
@@ -127,8 +134,12 @@ return
             equipment = { },
             aggregateParameters =
             {
-                BOILER = { name = "Использовать бойлер", defaultValue = "false" },
+                main =
+                {
+                    BOILER = { name = "Использовать бойлер", defaultValue = "false" },
+                },
             },
+            bindingName = "boiler"
         },
         master = {
             name = "Мастер",
@@ -303,10 +314,6 @@ return
                             CIP_WASH_END = { name = "Мойка завершена" },
                             CIP_WASH_REQUEST = { name = "Автоматическое включение мойки" },
                         },
-                        passive =
-                        {
-                            DRAINAGE = { name = "Номер шага дренаж" },
-                        },
                     },
                     steps =
                     {
@@ -348,6 +355,9 @@ return
                         DRAINAGE = { name = "Дренаж" },
                         MEDIUM_CHANGE = { name = "Смена среды" },
                     },
+                },
+                EMPTY_TANK_HEATING = {
+                    name = "Нагрев пустого танка",
                 },
                 FILL = {
                     name = "Наполнение",
@@ -419,6 +429,7 @@ return
                 -- out_pump defaultValue пустое т.к по другому происходит
                 -- обработка ОУ. Обрабатывается не объект, а устройство.
                 out_pump = { name = "Откачивающий насос" },
+                lamp = { name = "Лампа освещения", defaultValue = "HL1" },
             },
             aggregateParameters = { },
         },
@@ -448,7 +459,10 @@ return
             },
             aggregateParameters =
             {
-                NEED_PRESSURE_CONTROL = { name = "Использовать узел давления", defaultValue = "false" },
+                main =
+                {
+                    NEED_PRESSURE_CONTROL = { name = "Использовать узел давления", defaultValue = "false" },
+                },
             },
             bindingName = "pressure_node"
         },
@@ -468,10 +482,16 @@ return
                 },
             },
             basicName = "heater_node",
-            equipment = { },
+            equipment =
+            {
+                TE = { name = "Датчик температуры", defaultValue = "TE1" },
+            },
             aggregateParameters =
             {
-                HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
+                main =
+                {
+                    HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
+                },
             },
             bindingName = "heater_node"
         },
@@ -500,7 +520,10 @@ return
             },
             aggregateParameters =
             {
-                HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
+                main =
+                {
+                    HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
+                },
             },
             bindingName = "heater_node"
         },
@@ -524,7 +547,10 @@ return
             },
             aggregateParameters =
             {
-                NEED_FLOW_CONTROL = { name = "Использовать узел расхода", defaultValue = "false" },
+                main =
+                {
+                    NEED_FLOW_CONTROL = { name = "Использовать узел расхода", defaultValue = "false" },
+                },
             },
             bindingName = "flow_node"
         },
@@ -550,7 +576,10 @@ return
             },
             aggregateParameters =
             {
-                NEED_COOLING = { name = "Использовать узел охлаждения", defaultValue = "false" },
+                main =
+                {
+                    NEED_COOLING = { name = "Использовать узел охлаждения", defaultValue = "false" },
+                },
             },
             bindingName = "cooler_node"
         },
@@ -582,7 +611,18 @@ return
         mix_node = {
             name = "Узел перемешивания",
             s88Level = 2,
-            baseOperations = { },
+            baseOperations =
+            {
+                MIXING = {
+                    name = "Перемешивание",
+                },
+                MIXING_LEFT = {
+                    name = "Перемешивание влево",
+                },
+                MIXING_RIGHT = {
+                    name = "Перемешивание вправо",
+                },
+            },
             basicName = "mix_node",
             equipment =
             {
@@ -591,7 +631,17 @@ return
                 hatch = { name = "Датчик крышки люка", defaultValue = "GS1" },
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
             },
-            aggregateParameters = { },
+            aggregateParameters =
+            {
+                active =
+                {
+                    MIX_NODE_MIX_OPERATION = { name = "Используемая операция узла перемешивания", defaultValue = 1 },
+                },
+                main =
+                {
+                    NEED_MIXING = { name = "Использовать узел перемешивания", defaultValue = "true" },
+                },
+            },
             bindingName = "mix_node"
         },
         sterile_air_node = {

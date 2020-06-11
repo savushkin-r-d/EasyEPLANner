@@ -107,15 +107,34 @@ namespace IO
             {
                 foreach(int clamp in Info.ChannelClamps)
                 {
+                    bool isIOLinkDevice = false;
                     res[idx, 0] = p;
                     res[idx, 1] = moduleName;
                     res[idx, 2] = clamp.ToString();
-                    res[idx, 3] = GenerateClampStringForExcel(clamp);
+                    res[idx, 3] = GenerateClampStringForExcel(clamp, 
+                        ref isIOLinkDevice);
+
+                    if(isIOLinkDevice)
+                    {
+                        var dev = devices[clamp][0];
+                        int sizeIn = dev.IOLinkProperties.SizeIn;
+                        int sizeOut = dev.IOLinkProperties.SizeOut;
+                        
+                        const int WordToBitMultiplier = 16;
+                        int sizeInBits = (sizeIn * WordToBitMultiplier);
+                        int sizeOutBits = (sizeOut * WordToBitMultiplier);
+
+                        res[idx, 4] = sizeInBits;
+                        res[idx, 5] = sizeOutBits;
+                    }
+
                     idx++;
                 }
             }
             else
             {
+                res[idx, 0] = p;
+                res[idx, 1] = moduleName;
                 idx++;
             }
         }
@@ -124,7 +143,8 @@ namespace IO
         /// Генерация строки с описанием привязанного устройств(-а) к клемме
         /// </summary>
         /// <returns></returns>
-        private string GenerateClampStringForExcel(int clamp)
+        private string GenerateClampStringForExcel(int clamp, 
+            ref bool isIOLinkDevice)
         {
             string devName = "";
 
@@ -143,7 +163,6 @@ namespace IO
             {
                 if (isIOLink())
                 {
-                    const int WordToBitMultiplier = 16;
                     var dev = devices[clamp][0];
                     var devChannel = devicesChannels[clamp][0];
 
@@ -158,28 +177,22 @@ namespace IO
                     }
                     else
                     {
-                        int sizeIn = dev.IOLinkProperties.SizeIn;
-                        int sizeOut = dev.IOLinkProperties.SizeOut;
-
-                        int sizeInBits = (sizeIn * WordToBitMultiplier);
-                        int sizeOutBits = (sizeOut * WordToBitMultiplier);
-
-                        if (devices[clamp].Count == 1)
+                        bool isIOLinkVale = devices[clamp].Count == 2 &&
+                            devices[clamp][0].Name == devices[clamp][1].Name;
+                        if (devices[clamp].Count == 1 || isIOLinkVale)
                         {
                             devName = dev.EPlanName +
                                 dev.GetConnectionType() +
                                 $"{dev.GetRange()}: " +
                                 $"{devChannel.Name}: " +
                                 $"{dev.Description} " +
-                                $"{devChannel.Comment}. " +
-                                $"Вход: {sizeInBits} бит, " +
-                                $"Выход: {sizeOutBits} бит";
+                                $"{devChannel.Comment}";
+                            isIOLinkDevice = true;
                         }
                         else
                         {
-                            devName = "IO-Link, более 1 канала. " +
-                                $"Вход: {sizeInBits} бит, " +
-                                $"Выход: {sizeOutBits} бит";
+                            devName = "IO-Link, более 1 канала.";
+                            isIOLinkDevice = true;
                         }
                     }
                 }

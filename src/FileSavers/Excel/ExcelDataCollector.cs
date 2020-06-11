@@ -517,7 +517,7 @@ namespace EasyEPlanner
             Dictionary<string, Color> modulesColor, 
             Dictionary<string, object[,]> asInterfaceConnection)
         {
-            const int MAX_COL = 4;
+            const int MAX_COL = 6;
             int MAX_ROW = ioManager.IONodes.Count;
 
             foreach (var ioNode in ioManager.IONodes)
@@ -531,17 +531,31 @@ namespace EasyEPlanner
             int idx = 0;
             for (int i = 0; i < ioManager.IONodes.Count; i++)
             {
+                IONode currentNode = ioManager.IONodes[i];
                 res[idx, 3] = prjName;
                 idx++;
                 res[idx, 3] = 
                     $"'{DateTime.Now.ToString(new CultureInfo("RU-ru"))}";
-                string nodeName = "Узел №" + (i + 1).ToString() + " Адрес: " + 
-                    ioManager.IONodes[i].IP;
+
+                string nodeName = "";
+                if (currentNode.FullN != 1)
+                {
+                    nodeName = "Узел №" + (currentNode.N - 1) + " Адрес: " +
+                        ioManager.IONodes[i].IP;
+                }
+                else
+                {
+                    nodeName = "Контроллер. " + " Адрес: " +
+                        ioManager.IONodes[i].IP;
+                }
+
+                res[idx, 4] = "Вход, бит";
+                res[idx, 5] = "Выход, бит";
                 res[idx, 0] = nodeName;
                 idx++;
 
                 res[idx, 0] = 0;
-                nodeName = ioManager.IONodes[i].TypeStr.Replace("750-", "");
+                nodeName = currentNode.TypeStr.Replace("750-", "");
                 res[idx, 1] = nodeName;
 
                 if (!modulesColor.ContainsKey(nodeName))
@@ -549,8 +563,8 @@ namespace EasyEPlanner
                     modulesColor.Add(nodeName, Color.Gray);
                 }
                 idx++;
-                ioManager.IONodes[i].SaveAsConnectionArray(ref res, ref idx, 
-                    modulesCount, modulesColor, i + 1, asInterfaceConnection);
+                currentNode.SaveAsConnectionArray(ref res, ref idx, 
+                    modulesCount, modulesColor, currentNode.N - 1, asInterfaceConnection);
             }
 
             res = DeleteNullObjects(res); 
