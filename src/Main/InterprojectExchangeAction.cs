@@ -30,7 +30,7 @@ namespace EasyEPlanner
                 }
                 else
                 {
-                    //TODO: Open form, load files.
+                    //TODO: Запуск работы с формой, чтение данных проекта.
                 }
 
             }
@@ -52,8 +52,8 @@ namespace EasyEPlanner
         ///<returns>true, if OnRegister succeeds</returns>
         public bool OnRegister(ref string Name, ref int Ordinal)
         {
-            Name = "InterprojectExchange";
-            Ordinal = 18;
+            Name = "InterprojectExchangeAction";
+            Ordinal = 30;
 
             return true;
         }
