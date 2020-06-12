@@ -407,6 +407,16 @@ return
                         SLOW_HEATING = { name = "Нагрев заданное время" },
                     },
                 },
+                COOLING_BEFORE_LEAVENING = {
+                    name = "Охлаждение перед заквашиванием",
+                    params = { },
+                    steps =
+                    {
+                        HOT_WATER_PUSHING = { name = "Вытеснение горячей воды" },
+                        COOLING = { name = "Охлаждение" },
+                        CHECKING_TEMPERATURE = { name = "Проверка заданной температуры" },
+                    },
+                },
                 WORK = {
                     name = "Работа",
                     params = { },
