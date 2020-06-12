@@ -398,13 +398,13 @@ return
                     },
                     steps = { },
                 },
-                SLOW_HEAT = {
+                SLOW_HEATING = {
                     name = "Томление",
                     params = { },
                     steps =
                     {
                         TO_START_TEMPERATURE = { name = "Нагрев до заданной температуры" },
-                        SLOW_HEAT = { name = "Нагрев заданное время" },
+                        SLOW_HEATING = { name = "Нагрев заданное время" },
                     },
                 },
                 WORK = {
