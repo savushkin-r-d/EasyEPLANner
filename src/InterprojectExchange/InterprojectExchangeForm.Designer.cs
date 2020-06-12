@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.bindedSignalsGrid = new System.Windows.Forms.DataGridView();
+            this.CurrenctProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.AdvancedProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.closeButton = new System.Windows.Forms.Button();
@@ -39,17 +41,15 @@
             this.AdvSignal = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.AdvDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.currentProjSignalsList = new System.Windows.Forms.ListView();
-            this.CurrSignal = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.CurrDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.CurrSignal = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.filterButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.CurrenctProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.AdvancedProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.bindedSignalsGrid)).BeginInit();
             this.SuspendLayout();
             // 
@@ -72,6 +72,25 @@
             this.bindedSignalsGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.bindedSignalsGrid.Size = new System.Drawing.Size(354, 417);
             this.bindedSignalsGrid.TabIndex = 0;
+            // 
+            // CurrenctProject
+            // 
+            this.CurrenctProject.Frozen = true;
+            this.CurrenctProject.HeaderText = "Текущий проект";
+            this.CurrenctProject.MinimumWidth = 175;
+            this.CurrenctProject.Name = "CurrenctProject";
+            this.CurrenctProject.ReadOnly = true;
+            this.CurrenctProject.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.CurrenctProject.Width = 175;
+            // 
+            // AdvancedProject
+            // 
+            this.AdvancedProject.Frozen = true;
+            this.AdvancedProject.HeaderText = "Связуемый проект";
+            this.AdvancedProject.MinimumWidth = 175;
+            this.AdvancedProject.Name = "AdvancedProject";
+            this.AdvancedProject.ReadOnly = true;
+            this.AdvancedProject.Width = 175;
             // 
             // textBox1
             // 
@@ -175,15 +194,15 @@
             this.currentProjSignalsList.UseCompatibleStateImageBehavior = false;
             this.currentProjSignalsList.View = System.Windows.Forms.View.Details;
             // 
-            // CurrSignal
-            // 
-            this.CurrSignal.Text = "Сигнал";
-            this.CurrSignal.Width = 170;
-            // 
             // CurrDescription
             // 
             this.CurrDescription.Text = "Описание";
             this.CurrDescription.Width = 175;
+            // 
+            // CurrSignal
+            // 
+            this.CurrSignal.Text = "Сигнал";
+            this.CurrSignal.Width = 170;
             // 
             // label1
             // 
@@ -203,14 +222,15 @@
             this.label2.TabIndex = 14;
             this.label2.Text = "Текущий проект:";
             // 
-            // button1
+            // filterButton
             // 
-            this.button1.Location = new System.Drawing.Point(12, 435);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(85, 23);
-            this.button1.TabIndex = 15;
-            this.button1.Text = "Фильтр";
-            this.button1.UseVisualStyleBackColor = true;
+            this.filterButton.Location = new System.Drawing.Point(12, 435);
+            this.filterButton.Name = "filterButton";
+            this.filterButton.Size = new System.Drawing.Size(85, 23);
+            this.filterButton.TabIndex = 15;
+            this.filterButton.Text = "Фильтр";
+            this.filterButton.UseVisualStyleBackColor = true;
+            this.filterButton.Click += new System.EventHandler(this.filterButton_Click);
             // 
             // label3
             // 
@@ -248,25 +268,6 @@
             this.label4.TabIndex = 18;
             this.label4.Text = "Поиск:";
             // 
-            // CurrenctProject
-            // 
-            this.CurrenctProject.Frozen = true;
-            this.CurrenctProject.HeaderText = "Текущий проект";
-            this.CurrenctProject.MinimumWidth = 175;
-            this.CurrenctProject.Name = "CurrenctProject";
-            this.CurrenctProject.ReadOnly = true;
-            this.CurrenctProject.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.CurrenctProject.Width = 175;
-            // 
-            // AdvancedProject
-            // 
-            this.AdvancedProject.Frozen = true;
-            this.AdvancedProject.HeaderText = "Связуемый проект";
-            this.AdvancedProject.MinimumWidth = 175;
-            this.AdvancedProject.Name = "AdvancedProject";
-            this.AdvancedProject.ReadOnly = true;
-            this.AdvancedProject.Width = 175;
-            // 
             // InterprojectExchangeForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -276,7 +277,7 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.filterButton);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.currentProjSignalsList);
@@ -288,6 +289,10 @@
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.bindedSignalsGrid);
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(1107, 504);
+            this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(1107, 504);
             this.Name = "InterprojectExchangeForm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -317,7 +322,7 @@
         private System.Windows.Forms.ColumnHeader CurrDescription;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button filterButton;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.TextBox textBox3;

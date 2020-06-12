@@ -44,7 +44,10 @@ namespace EasyEPlanner
         private void ShowForm()
         {
             //TODO: Форма с загруженными данными
-            form = new InterprojectExchangeForm();
+            if (form == null || form.IsDisposed)
+            {
+                form = new InterprojectExchangeForm();
+            }
             form.ShowDialog();
         }
 

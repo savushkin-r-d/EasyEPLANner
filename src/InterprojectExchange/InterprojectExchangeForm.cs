@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Device;
 
 namespace EasyEPlanner
 {
@@ -19,6 +20,10 @@ namespace EasyEPlanner
 
         private void InterprojectExchangeForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            if (filterForm != null && filterForm.IsDisposed == false)
+            {
+                filterForm.Close();
+            }
             this.Dispose();
         }
 
@@ -29,14 +34,14 @@ namespace EasyEPlanner
 
         private void InterprojectExchangeForm_Load(object sender, EventArgs e)
         {
-            //init mock
-            currentProjSignalsList.Items.Add(new ListViewItem(new string[] { "Примечание 1", "Сигнал 1" }));
-            currentProjSignalsList.Items.Add(new ListViewItem(new string[] { "Примечание 2", "Сигнал 2" }));
-            currentProjSignalsList.Items.Add(new ListViewItem(new string[] { "Примечание 3", "Сигнал 3" }));
-            currentProjSignalsList.Items.Add(new ListViewItem(new string[] { "Примечание 4", "Сигнал 4" }));
-            currentProjSignalsList.Items.Add(new ListViewItem(new string[] { "Примечание 5", "Сигнал 5" }));
-            currentProjSignalsList.Items.Add(new ListViewItem(new string[] { "Примечание 6", "Сигнал 6" }));
-            currentProjSignalsList.Items.Add(new ListViewItem(new string[] { "Примечание 7", "Сигнал 7" }));
+            //TODO: Написать компараторы для сортировки корректной.
+
+            foreach(var dev in DeviceManager.GetInstance().Devices)
+            {
+                var devDescr = new string[] { dev.Description, dev.Name };
+                var item = new ListViewItem(devDescr);
+                currentProjSignalsList.Items.Add(item);
+            }
 
             advancedProjSignalsList.Items.Add(new ListViewItem(new string[] { "Сигнал 1", "Примечание 1" }));
             advancedProjSignalsList.Items.Add(new ListViewItem(new string[] { "Сигнал 2", "Примечание 2" }));
@@ -46,5 +51,17 @@ namespace EasyEPlanner
             advancedProjSignalsList.Items.Add(new ListViewItem(new string[] { "Сигнал 6", "Примечание 6" }));
             advancedProjSignalsList.Items.Add(new ListViewItem(new string[] { "Сигнал 7", "Примечание 7" }));
         }
+
+        private void filterButton_Click(object sender, EventArgs e)
+        {
+            if (filterForm == null || filterForm.IsDisposed)
+            {
+                filterForm = new FilterForm();
+            }
+
+            filterForm.ShowDialog();
+        }
+
+        private FilterForm filterForm;
     }
 }
