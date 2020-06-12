@@ -136,6 +136,7 @@
   <ItemGroup>
     <Compile Include="ConfigurationChecker.cs" />
     <Compile Include="Editor\TechObjectsImporter.cs" />
+    <Compile Include="Main\InterprojectExchangeAction.cs" />
     <Compile Include="TechObject\Base\BaseObjectsManager.cs" />
     <Compile Include="Device\DeviceManager.cs" />
     <Compile Include="DeviceBindingReader.cs" />
