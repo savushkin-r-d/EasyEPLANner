@@ -136,6 +136,13 @@
   <ItemGroup>
     <Compile Include="ConfigurationChecker.cs" />
     <Compile Include="Editor\TechObjectsImporter.cs" />
+    <Compile Include="InterprojectExchange.cs" />
+    <Compile Include="InterprojectExchangeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InterprojectExchangeForm.Designer.cs">
+      <DependentUpon>InterprojectExchangeForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Main\InterprojectExchangeAction.cs" />
     <Compile Include="TechObject\Base\BaseObjectsManager.cs" />
     <Compile Include="Device\DeviceManager.cs" />
@@ -298,6 +305,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Editor\TechObjectsImportForm.resx">
       <DependentUpon>TechObjectsImportForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InterprojectExchangeForm.resx">
+      <DependentUpon>InterprojectExchangeForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Logs\LogFrm.resx">
       <DependentUpon>LogFrm.cs</DependentUpon>

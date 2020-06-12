@@ -30,7 +30,7 @@ namespace EasyEPlanner
                 }
                 else
                 {
-                    //TODO: Запуск работы с формой, чтение данных проекта.
+                    InterprojectExchange.Start();
                 }
 
             }
