@@ -398,13 +398,23 @@ return
                     },
                     steps = { },
                 },
-                SLOW_HEAT = {
+                SLOW_HEATING = {
                     name = "Томление",
                     params = { },
                     steps =
                     {
                         TO_START_TEMPERATURE = { name = "Нагрев до заданной температуры" },
-                        SLOW_HEAT = { name = "Нагрев заданное время" },
+                        SLOW_HEATING = { name = "Нагрев заданное время" },
+                    },
+                },
+                COOLING_BEFORE_LEAVENING = {
+                    name = "Охлаждение перед заквашиванием",
+                    params = { },
+                    steps =
+                    {
+                        HOT_WATER_PUSHING = { name = "Вытеснение горячей воды" },
+                        COOLING = { name = "Охлаждение" },
+                        CHECKING_TEMPERATURE = { name = "Проверка заданной температуры" },
                     },
                 },
                 WORK = {
