@@ -28,31 +28,40 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.currProjGoupBox = new System.Windows.Forms.GroupBox();
+            this.currDevLabel = new System.Windows.Forms.Label();
             this.currProjDevList = new System.Windows.Forms.CheckedListBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.bindedGridGroupBox = new System.Windows.Forms.GroupBox();
+            this.groupAsPairsCheckBox = new System.Windows.Forms.CheckBox();
+            this.advProjGroupBox = new System.Windows.Forms.GroupBox();
+            this.advDevLabel = new System.Windows.Forms.Label();
             this.advProjDevList = new System.Windows.Forms.CheckedListBox();
             this.acceptButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.currDevLabel = new System.Windows.Forms.Label();
-            this.advDevLabel = new System.Windows.Forms.Label();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
+            this.currProjGoupBox.SuspendLayout();
+            this.bindedGridGroupBox.SuspendLayout();
+            this.advProjGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // currProjGoupBox
             // 
-            this.groupBox1.Controls.Add(this.currDevLabel);
-            this.groupBox1.Controls.Add(this.currProjDevList);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(223, 375);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Текущий проект";
+            this.currProjGoupBox.Controls.Add(this.currDevLabel);
+            this.currProjGoupBox.Controls.Add(this.currProjDevList);
+            this.currProjGoupBox.Location = new System.Drawing.Point(12, 12);
+            this.currProjGoupBox.Name = "currProjGoupBox";
+            this.currProjGoupBox.Size = new System.Drawing.Size(223, 375);
+            this.currProjGoupBox.TabIndex = 0;
+            this.currProjGoupBox.TabStop = false;
+            this.currProjGoupBox.Text = "Текущий проект";
+            // 
+            // currDevLabel
+            // 
+            this.currDevLabel.AutoSize = true;
+            this.currDevLabel.Location = new System.Drawing.Point(6, 16);
+            this.currDevLabel.Name = "currDevLabel";
+            this.currDevLabel.Size = new System.Drawing.Size(132, 13);
+            this.currDevLabel.TabIndex = 6;
+            this.currDevLabel.Text = "Отображать устройства:";
             // 
             // currProjDevList
             // 
@@ -62,36 +71,45 @@
             this.currProjDevList.Size = new System.Drawing.Size(211, 334);
             this.currProjDevList.TabIndex = 0;
             // 
-            // groupBox2
+            // bindedGridGroupBox
             // 
-            this.groupBox2.Controls.Add(this.checkBox1);
-            this.groupBox2.Location = new System.Drawing.Point(241, 12);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(223, 375);
-            this.groupBox2.TabIndex = 1;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Сводная таблица";
+            this.bindedGridGroupBox.Controls.Add(this.groupAsPairsCheckBox);
+            this.bindedGridGroupBox.Location = new System.Drawing.Point(241, 12);
+            this.bindedGridGroupBox.Name = "bindedGridGroupBox";
+            this.bindedGridGroupBox.Size = new System.Drawing.Size(223, 375);
+            this.bindedGridGroupBox.TabIndex = 1;
+            this.bindedGridGroupBox.TabStop = false;
+            this.bindedGridGroupBox.Text = "Сводная таблица";
             // 
-            // checkBox1
+            // groupAsPairsCheckBox
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(23, 36);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(141, 17);
-            this.checkBox1.TabIndex = 5;
-            this.checkBox1.Text = "Группировка по парам";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.groupAsPairsCheckBox.AutoSize = true;
+            this.groupAsPairsCheckBox.Location = new System.Drawing.Point(23, 36);
+            this.groupAsPairsCheckBox.Name = "groupAsPairsCheckBox";
+            this.groupAsPairsCheckBox.Size = new System.Drawing.Size(141, 17);
+            this.groupAsPairsCheckBox.TabIndex = 5;
+            this.groupAsPairsCheckBox.Text = "Группировка по парам";
+            this.groupAsPairsCheckBox.UseVisualStyleBackColor = true;
             // 
-            // groupBox3
+            // advProjGroupBox
             // 
-            this.groupBox3.Controls.Add(this.advDevLabel);
-            this.groupBox3.Controls.Add(this.advProjDevList);
-            this.groupBox3.Location = new System.Drawing.Point(470, 12);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(223, 375);
-            this.groupBox3.TabIndex = 2;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Связуемый проект";
+            this.advProjGroupBox.Controls.Add(this.advDevLabel);
+            this.advProjGroupBox.Controls.Add(this.advProjDevList);
+            this.advProjGroupBox.Location = new System.Drawing.Point(470, 12);
+            this.advProjGroupBox.Name = "advProjGroupBox";
+            this.advProjGroupBox.Size = new System.Drawing.Size(223, 375);
+            this.advProjGroupBox.TabIndex = 2;
+            this.advProjGroupBox.TabStop = false;
+            this.advProjGroupBox.Text = "Связуемый проект";
+            // 
+            // advDevLabel
+            // 
+            this.advDevLabel.AutoSize = true;
+            this.advDevLabel.Location = new System.Drawing.Point(10, 16);
+            this.advDevLabel.Name = "advDevLabel";
+            this.advDevLabel.Size = new System.Drawing.Size(132, 13);
+            this.advDevLabel.TabIndex = 7;
+            this.advDevLabel.Text = "Отображать устройства:";
             // 
             // advProjDevList
             // 
@@ -121,24 +139,6 @@
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
-            // currDevLabel
-            // 
-            this.currDevLabel.AutoSize = true;
-            this.currDevLabel.Location = new System.Drawing.Point(6, 16);
-            this.currDevLabel.Name = "currDevLabel";
-            this.currDevLabel.Size = new System.Drawing.Size(132, 13);
-            this.currDevLabel.TabIndex = 6;
-            this.currDevLabel.Text = "Отображать устройства:";
-            // 
-            // advDevLabel
-            // 
-            this.advDevLabel.AutoSize = true;
-            this.advDevLabel.Location = new System.Drawing.Point(10, 16);
-            this.advDevLabel.Name = "advDevLabel";
-            this.advDevLabel.Size = new System.Drawing.Size(132, 13);
-            this.advDevLabel.TabIndex = 7;
-            this.advDevLabel.Text = "Отображать устройства:";
-            // 
             // FilterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -147,9 +147,9 @@
             this.ControlBox = false;
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.acceptButton);
-            this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.advProjGroupBox);
+            this.Controls.Add(this.bindedGridGroupBox);
+            this.Controls.Add(this.currProjGoupBox);
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(721, 460);
             this.MinimizeBox = false;
@@ -160,25 +160,25 @@
             this.Text = "Настройка фильтрации сигналов";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FilterForm_FormClosing);
             this.Load += new System.EventHandler(this.FilterForm_Load);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
+            this.currProjGoupBox.ResumeLayout(false);
+            this.currProjGoupBox.PerformLayout();
+            this.bindedGridGroupBox.ResumeLayout(false);
+            this.bindedGridGroupBox.PerformLayout();
+            this.advProjGroupBox.ResumeLayout(false);
+            this.advProjGroupBox.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox currProjGoupBox;
+        private System.Windows.Forms.GroupBox bindedGridGroupBox;
+        private System.Windows.Forms.GroupBox advProjGroupBox;
         private System.Windows.Forms.Button acceptButton;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.CheckedListBox currProjDevList;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox groupAsPairsCheckBox;
         private System.Windows.Forms.CheckedListBox advProjDevList;
         private System.Windows.Forms.Label currDevLabel;
         private System.Windows.Forms.Label advDevLabel;

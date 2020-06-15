@@ -16,6 +16,12 @@ namespace EasyEPlanner
         public InterprojectExchangeForm()
         {
             InitializeComponent();
+
+            string projectName = EProjectManager.GetInstance()
+                .GetCurrentProjectName();
+            currProjNameTextBox.Text = projectName;
+
+            interprojectExchange = InterprojectExchange.GetInstance();
         }
 
         private void InterprojectExchangeForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -34,22 +40,22 @@ namespace EasyEPlanner
 
         private void InterprojectExchangeForm_Load(object sender, EventArgs e)
         {
-            //TODO: Написать компараторы для сортировки корректной.
-
-            foreach(var dev in DeviceManager.GetInstance().Devices)
+            var currentProjDevs = interprojectExchange
+                .GetProjectDevices(currProjNameTextBox.Text);
+            foreach (var devInfo in currentProjDevs)
             {
-                var devDescr = new string[] { dev.Description, dev.Name };
-                var item = new ListViewItem(devDescr);
+                var item = new ListViewItem(
+                    new string[] { devInfo.Description, devInfo.Name });
                 currentProjSignalsList.Items.Add(item);
             }
 
-            advancedProjSignalsList.Items.Add(new ListViewItem(new string[] { "Сигнал 1", "Примечание 1" }));
-            advancedProjSignalsList.Items.Add(new ListViewItem(new string[] { "Сигнал 2", "Примечание 2" }));
-            advancedProjSignalsList.Items.Add(new ListViewItem(new string[] { "Сигнал 3", "Примечание 3" }));
-            advancedProjSignalsList.Items.Add(new ListViewItem(new string[] { "Сигнал 4", "Примечание 4" }));
-            advancedProjSignalsList.Items.Add(new ListViewItem(new string[] { "Сигнал 5", "Примечание 5" }));
-            advancedProjSignalsList.Items.Add(new ListViewItem(new string[] { "Сигнал 6", "Примечание 6" }));
-            advancedProjSignalsList.Items.Add(new ListViewItem(new string[] { "Сигнал 7", "Примечание 7" }));
+            //Mock для заполнение якобы других проектов
+            foreach (var devInfo in currentProjDevs)
+            {
+                var item = new ListViewItem(
+                    new string[] { devInfo.Name, devInfo.Description });
+                advancedProjSignalsList.Items.Add(item);
+            }
         }
 
         private void filterButton_Click(object sender, EventArgs e)
@@ -63,5 +69,6 @@ namespace EasyEPlanner
         }
 
         private FilterForm filterForm;
+        private InterprojectExchange interprojectExchange;
     }
 }

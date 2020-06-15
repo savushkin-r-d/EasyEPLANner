@@ -29,14 +29,12 @@
         private void InitializeComponent()
         {
             this.bindedSignalsGrid = new System.Windows.Forms.DataGridView();
-            this.CurrenctProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.AdvancedProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.currProjNameTextBox = new System.Windows.Forms.TextBox();
+            this.advProjNameComboBox = new System.Windows.Forms.ComboBox();
             this.closeButton = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
+            this.saveButton = new System.Windows.Forms.Button();
+            this.addAdvProjButton = new System.Windows.Forms.Button();
+            this.delAdvProjButton = new System.Windows.Forms.Button();
             this.advancedProjSignalsList = new System.Windows.Forms.ListView();
             this.AdvSignal = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.AdvDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -47,9 +45,11 @@
             this.label2 = new System.Windows.Forms.Label();
             this.filterButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.currProjSearchBox = new System.Windows.Forms.TextBox();
+            this.advProjSearchBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.CurrenctProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.AdvancedProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.bindedSignalsGrid)).BeginInit();
             this.SuspendLayout();
             // 
@@ -73,41 +73,22 @@
             this.bindedSignalsGrid.Size = new System.Drawing.Size(354, 417);
             this.bindedSignalsGrid.TabIndex = 0;
             // 
-            // CurrenctProject
+            // currProjNameTextBox
             // 
-            this.CurrenctProject.Frozen = true;
-            this.CurrenctProject.HeaderText = "Текущий проект";
-            this.CurrenctProject.MinimumWidth = 175;
-            this.CurrenctProject.Name = "CurrenctProject";
-            this.CurrenctProject.ReadOnly = true;
-            this.CurrenctProject.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.CurrenctProject.Width = 175;
+            this.currProjNameTextBox.BackColor = System.Drawing.SystemColors.Window;
+            this.currProjNameTextBox.Location = new System.Drawing.Point(111, 12);
+            this.currProjNameTextBox.Name = "currProjNameTextBox";
+            this.currProjNameTextBox.ReadOnly = true;
+            this.currProjNameTextBox.Size = new System.Drawing.Size(251, 20);
+            this.currProjNameTextBox.TabIndex = 1;
             // 
-            // AdvancedProject
+            // advProjNameComboBox
             // 
-            this.AdvancedProject.Frozen = true;
-            this.AdvancedProject.HeaderText = "Связуемый проект";
-            this.AdvancedProject.MinimumWidth = 175;
-            this.AdvancedProject.Name = "AdvancedProject";
-            this.AdvancedProject.ReadOnly = true;
-            this.AdvancedProject.Width = 175;
-            // 
-            // textBox1
-            // 
-            this.textBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.textBox1.Location = new System.Drawing.Point(111, 12);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(251, 20);
-            this.textBox1.TabIndex = 1;
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(835, 11);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(194, 21);
-            this.comboBox1.TabIndex = 5;
+            this.advProjNameComboBox.FormattingEnabled = true;
+            this.advProjNameComboBox.Location = new System.Drawing.Point(835, 11);
+            this.advProjNameComboBox.Name = "advProjNameComboBox";
+            this.advProjNameComboBox.Size = new System.Drawing.Size(194, 21);
+            this.advProjNameComboBox.TabIndex = 5;
             // 
             // closeButton
             // 
@@ -119,32 +100,32 @@
             this.closeButton.UseVisualStyleBackColor = true;
             this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
             // 
-            // button2
+            // saveButton
             // 
-            this.button2.Location = new System.Drawing.Point(923, 435);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "Сохранить";
-            this.button2.UseVisualStyleBackColor = true;
+            this.saveButton.Location = new System.Drawing.Point(923, 435);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(75, 23);
+            this.saveButton.TabIndex = 7;
+            this.saveButton.Text = "Сохранить";
+            this.saveButton.UseVisualStyleBackColor = true;
             // 
-            // button3
+            // addAdvProjButton
             // 
-            this.button3.Location = new System.Drawing.Point(1035, 10);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(19, 23);
-            this.button3.TabIndex = 8;
-            this.button3.Text = "+";
-            this.button3.UseVisualStyleBackColor = true;
+            this.addAdvProjButton.Location = new System.Drawing.Point(1035, 10);
+            this.addAdvProjButton.Name = "addAdvProjButton";
+            this.addAdvProjButton.Size = new System.Drawing.Size(19, 23);
+            this.addAdvProjButton.TabIndex = 8;
+            this.addAdvProjButton.Text = "+";
+            this.addAdvProjButton.UseVisualStyleBackColor = true;
             // 
-            // button4
+            // delAdvProjButton
             // 
-            this.button4.Location = new System.Drawing.Point(1060, 10);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(19, 23);
-            this.button4.TabIndex = 9;
-            this.button4.Text = "-";
-            this.button4.UseVisualStyleBackColor = true;
+            this.delAdvProjButton.Location = new System.Drawing.Point(1060, 10);
+            this.delAdvProjButton.Name = "delAdvProjButton";
+            this.delAdvProjButton.Size = new System.Drawing.Size(19, 23);
+            this.delAdvProjButton.TabIndex = 9;
+            this.delAdvProjButton.Text = "-";
+            this.delAdvProjButton.UseVisualStyleBackColor = true;
             // 
             // advancedProjSignalsList
             // 
@@ -168,12 +149,12 @@
             // AdvSignal
             // 
             this.AdvSignal.Text = "Сигнал";
-            this.AdvSignal.Width = 170;
+            this.AdvSignal.Width = 155;
             // 
             // AdvDescription
             // 
             this.AdvDescription.Text = "Описание";
-            this.AdvDescription.Width = 175;
+            this.AdvDescription.Width = 165;
             // 
             // currentProjSignalsList
             // 
@@ -197,12 +178,12 @@
             // CurrDescription
             // 
             this.CurrDescription.Text = "Описание";
-            this.CurrDescription.Width = 175;
+            this.CurrDescription.Width = 155;
             // 
             // CurrSignal
             // 
             this.CurrSignal.Text = "Сигнал";
-            this.CurrSignal.Width = 170;
+            this.CurrSignal.Width = 165;
             // 
             // label1
             // 
@@ -241,23 +222,23 @@
             this.label3.TabIndex = 16;
             this.label3.Text = "Поиск:";
             // 
-            // textBox2
+            // currProjSearchBox
             // 
-            this.textBox2.BackColor = System.Drawing.SystemColors.Window;
-            this.textBox2.Location = new System.Drawing.Point(111, 37);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(251, 20);
-            this.textBox2.TabIndex = 17;
+            this.currProjSearchBox.BackColor = System.Drawing.SystemColors.Window;
+            this.currProjSearchBox.Location = new System.Drawing.Point(111, 37);
+            this.currProjSearchBox.Name = "currProjSearchBox";
+            this.currProjSearchBox.ReadOnly = true;
+            this.currProjSearchBox.Size = new System.Drawing.Size(251, 20);
+            this.currProjSearchBox.TabIndex = 17;
             // 
-            // textBox3
+            // advProjSearchBox
             // 
-            this.textBox3.BackColor = System.Drawing.SystemColors.Window;
-            this.textBox3.Location = new System.Drawing.Point(828, 37);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(251, 20);
-            this.textBox3.TabIndex = 19;
+            this.advProjSearchBox.BackColor = System.Drawing.SystemColors.Window;
+            this.advProjSearchBox.Location = new System.Drawing.Point(828, 37);
+            this.advProjSearchBox.Name = "advProjSearchBox";
+            this.advProjSearchBox.ReadOnly = true;
+            this.advProjSearchBox.Size = new System.Drawing.Size(251, 20);
+            this.advProjSearchBox.TabIndex = 19;
             // 
             // label4
             // 
@@ -268,26 +249,44 @@
             this.label4.TabIndex = 18;
             this.label4.Text = "Поиск:";
             // 
+            // CurrenctProject
+            // 
+            this.CurrenctProject.Frozen = true;
+            this.CurrenctProject.HeaderText = "Текущий проект";
+            this.CurrenctProject.MinimumWidth = 175;
+            this.CurrenctProject.Name = "CurrenctProject";
+            this.CurrenctProject.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.CurrenctProject.Width = 175;
+            // 
+            // AdvancedProject
+            // 
+            this.AdvancedProject.Frozen = true;
+            this.AdvancedProject.HeaderText = "Связуемый проект";
+            this.AdvancedProject.MinimumWidth = 175;
+            this.AdvancedProject.Name = "AdvancedProject";
+            this.AdvancedProject.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.AdvancedProject.Width = 175;
+            // 
             // InterprojectExchangeForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1091, 465);
-            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.advProjSearchBox);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.currProjSearchBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.filterButton);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.currentProjSignalsList);
             this.Controls.Add(this.advancedProjSignalsList);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.delAdvProjButton);
+            this.Controls.Add(this.addAdvProjButton);
+            this.Controls.Add(this.saveButton);
             this.Controls.Add(this.closeButton);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.advProjNameComboBox);
+            this.Controls.Add(this.currProjNameTextBox);
             this.Controls.Add(this.bindedSignalsGrid);
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(1107, 504);
@@ -308,12 +307,12 @@
         #endregion
 
         private System.Windows.Forms.DataGridView bindedSignalsGrid;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.TextBox currProjNameTextBox;
+        private System.Windows.Forms.ComboBox advProjNameComboBox;
         private System.Windows.Forms.Button closeButton;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button saveButton;
+        private System.Windows.Forms.Button addAdvProjButton;
+        private System.Windows.Forms.Button delAdvProjButton;
         private System.Windows.Forms.ListView advancedProjSignalsList;
         private System.Windows.Forms.ColumnHeader AdvSignal;
         private System.Windows.Forms.ColumnHeader AdvDescription;
@@ -324,8 +323,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button filterButton;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox currProjSearchBox;
+        private System.Windows.Forms.TextBox advProjSearchBox;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.DataGridViewTextBoxColumn CurrenctProject;
         private System.Windows.Forms.DataGridViewTextBoxColumn AdvancedProject;

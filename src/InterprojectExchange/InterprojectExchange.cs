@@ -7,48 +7,39 @@ using System.Threading.Tasks;
 namespace EasyEPlanner
 {
     /// <summary>
-    /// Межконтроллерный обмен сигналами. Главный класс
+    /// Межконтроллерный обмен сигналами. Обмен с формами
     /// </summary>
     public class InterprojectExchange
     {
-        /// <summary>
-        /// Начало настройки межконтроллерного обмена.
-        /// </summary>
-        public static void Start()
+        private InterprojectExchange()
         {
-            var instance = GetInstance();
-            instance.ReadSignals();
-            instance.LoadCurrentInterprojectExchange();
-            instance.ShowForm();
+            interprojectExchangeModels = new List<InterprojectExchangeModel>();
+        }
+
+        public void LoadModel(string projName, List<DeviceDTO> devices)
+        {
+            var model = new InterprojectExchangeModel();
+            model.Devices = devices;
+            model.ProjectName = projName;
+            interprojectExchangeModels.Add(model);
         }
 
         /// <summary>
-        /// Загрузка текущих сигналов.
+        /// Получить устройства проекта по имени
         /// </summary>
-        private void ReadSignals()
+        /// <param name="projectName">Имя проекта</param>
+        /// <returns></returns>
+        public List<DeviceDTO> GetProjectDevices(string projectName)
         {
-            //TODO: обновить список сигналов проекта, считать их для настройки.
-        }
+            var devices = new List<DeviceDTO>();
 
-        /// <summary>
-        /// Загрузить текущие данные по межпроектному обмену сигналами.
-        /// </summary>
-        private void LoadCurrentInterprojectExchange()
-        {
-            //TODO: чтение данных по проекту и перекрестных данных
-        }
+            var model = interprojectExchangeModels
+                .Where(x => x.ProjectName == projectName)
+                .FirstOrDefault();
 
-        /// <summary>
-        /// Показать форму для работы с межпроектным обменом.
-        /// </summary>
-        private void ShowForm()
-        {
-            //TODO: Форма с загруженными данными
-            if (form == null || form.IsDisposed)
-            {
-                form = new InterprojectExchangeForm();
-            }
-            form.ShowDialog();
+            devices = model.Devices;
+
+            return devices;
         }
 
         /// <summary>
@@ -65,7 +56,7 @@ namespace EasyEPlanner
             return interprojectExchange;
         }
 
-        private InterprojectExchangeForm form;
         private static InterprojectExchange interprojectExchange;
+        private List<InterprojectExchangeModel> interprojectExchangeModels;
     }
 }

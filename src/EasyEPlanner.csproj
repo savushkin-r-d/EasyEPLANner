@@ -136,12 +136,15 @@
   <ItemGroup>
     <Compile Include="ConfigurationChecker.cs" />
     <Compile Include="Editor\TechObjectsImporter.cs" />
+    <Compile Include="InterprojectExchange\DeviceDTO.cs" />
     <Compile Include="InterprojectExchange\FilterForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="InterprojectExchange\FilterForm.Designer.cs">
       <DependentUpon>FilterForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="InterprojectExchange\InterprojectExchangeModel.cs" />
+    <Compile Include="InterprojectExchange\InterprojectExchangeStarter.cs" />
     <Compile Include="InterprojectExchange\InterprojectExchange.cs" />
     <Compile Include="InterprojectExchange\InterprojectExchangeForm.cs">
       <SubType>Form</SubType>
