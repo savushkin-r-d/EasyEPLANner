@@ -672,5 +672,23 @@ return
             aggregateParameters = { },
             bindingName = "steam_blast_node",
         },
+        in_tank_level_node = {
+            name = "Узел текущего уровня (наполнение)",
+            s88Level = 2,
+            baseOperations =
+            {
+                WORKING = {
+                    name = "Работа",
+                },
+            },
+            basicName = "in_tank_level_node",
+            equipment =
+            {
+                LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
+                M1 = { name = "Насос (AO)", "M1" },
+                SET_VALUE = { name = "Задание"},
+            },
+            bindingName = "in_tank_level_node"
+        },
     }
 end
