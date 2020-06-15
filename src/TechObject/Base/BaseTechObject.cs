@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyEPlanner;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -641,6 +642,15 @@ namespace TechObject
                     obj.TechNumber.ToString();
                 res = $"{prefix}{parameter.LuaName} = " +
                     $"{objName}.operations." + parameterValue + ",\n";
+            }
+            else
+            {
+                string message = $"Ошибка обработки параметра " +
+                    $"\"{parameter.Name}\"." +
+                    $" Не задана базовая операция в операции" +
+                    $" \"{mode.DisplayText[0]}\", объекта " +
+                    $"{(parameter.Owner as BaseTechObject).Owner.DisplayText[0]}";
+                Logs.AddMessage(message);
             }
 
             return res;
