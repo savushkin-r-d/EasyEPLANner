@@ -82,6 +82,7 @@ namespace EasyEPlanner
             {
                 var oppositeItem = oppositeItems[0].SubItems[1].Text;
                 bindedSignalsGrid.Rows.Add(oppositeItem, selectedItem);
+                bindedSignalsGrid.ClearSelection();
                 currentProjSignalsList.SelectedIndices.Clear();
                 advancedProjSignalsList.SelectedIndices.Clear();
             }
@@ -98,8 +99,27 @@ namespace EasyEPlanner
             {
                 var oppositeItem = oppositeItems[0].Text;
                 bindedSignalsGrid.Rows.Add(selectedItem, oppositeItem);
+                bindedSignalsGrid.ClearSelection();
                 currentProjSignalsList.SelectedIndices.Clear();
                 advancedProjSignalsList.SelectedIndices.Clear();
+            }
+        }
+
+        private void bindedSignalsGrid_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                bindedSignalsGrid.ClearSelection();
+            }
+        }
+
+        private void bindedSignalsGrid_MouseClick(object sender, MouseEventArgs e)
+        {
+            var hitTestInfo = bindedSignalsGrid.HitTest(e.X, e.Y);
+
+            if (hitTestInfo.Type == DataGridViewHitTestType.None)
+            {
+                bindedSignalsGrid.ClearSelection();
             }
         }
     }
