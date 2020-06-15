@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyEPlanner;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -614,10 +615,12 @@ namespace TechObject
         {
             BaseTechObject baseTechObject = null;
             List<Mode> modes = new List<Mode>();
+            string mainObjName = "";
 
             if (parameter.Owner is BaseTechObject)
             {
                 baseTechObject = parameter.Owner as BaseTechObject;
+                mainObjName = $"{baseTechObject.Owner.DisplayText[0]}";
                 modes = baseTechObject.Owner.ModesManager.Modes;
             }
 
@@ -625,6 +628,7 @@ namespace TechObject
             {
                 var operation = parameter.Owner as BaseOperation;
                 baseTechObject = operation.Owner.Owner.Owner.BaseTechObject;
+                mainObjName = $"{baseTechObject.Owner.DisplayText[0]}";
                 modes = operation.Owner.Owner.Modes;
             }
 
@@ -641,6 +645,15 @@ namespace TechObject
                     obj.TechNumber.ToString();
                 res = $"{prefix}{parameter.LuaName} = " +
                     $"{objName}.operations." + parameterValue + ",\n";
+            }
+            else
+            {
+                string message = $"Ошибка обработки параметра " +
+                    $"\"{parameter.Name}\"." +
+                    $" Не задана базовая операция в операции" +
+                    $" \"{mode.DisplayText[0]}\", объекта " +
+                    $"\"{mainObjName}\".\n";
+                Logs.AddMessage(message);
             }
 
             return res;
