@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.bindedSignalsGrid = new System.Windows.Forms.DataGridView();
+            this.CurrenctProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.AdvancedProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.currProjNameTextBox = new System.Windows.Forms.TextBox();
             this.advProjNameComboBox = new System.Windows.Forms.ComboBox();
             this.closeButton = new System.Windows.Forms.Button();
@@ -48,13 +50,12 @@
             this.currProjSearchBox = new System.Windows.Forms.TextBox();
             this.advProjSearchBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.CurrenctProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.AdvancedProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.bindedSignalsGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // bindedSignalsGrid
             // 
+            this.bindedSignalsGrid.AllowUserToAddRows = false;
             this.bindedSignalsGrid.AllowUserToResizeColumns = false;
             this.bindedSignalsGrid.AllowUserToResizeRows = false;
             this.bindedSignalsGrid.BackgroundColor = System.Drawing.Color.White;
@@ -63,15 +64,37 @@
             this.bindedSignalsGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.CurrenctProject,
             this.AdvancedProject});
-            this.bindedSignalsGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnKeystroke;
+            this.bindedSignalsGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.bindedSignalsGrid.Location = new System.Drawing.Point(369, 12);
+            this.bindedSignalsGrid.MultiSelect = false;
             this.bindedSignalsGrid.Name = "bindedSignalsGrid";
+            this.bindedSignalsGrid.ReadOnly = true;
             this.bindedSignalsGrid.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             this.bindedSignalsGrid.RowHeadersVisible = false;
             this.bindedSignalsGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.bindedSignalsGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.bindedSignalsGrid.Size = new System.Drawing.Size(354, 417);
-            this.bindedSignalsGrid.TabIndex = 0;
+            this.bindedSignalsGrid.TabIndex = 99;
+            // 
+            // CurrenctProject
+            // 
+            this.CurrenctProject.Frozen = true;
+            this.CurrenctProject.HeaderText = "Текущий проект";
+            this.CurrenctProject.MinimumWidth = 175;
+            this.CurrenctProject.Name = "CurrenctProject";
+            this.CurrenctProject.ReadOnly = true;
+            this.CurrenctProject.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.CurrenctProject.Width = 175;
+            // 
+            // AdvancedProject
+            // 
+            this.AdvancedProject.Frozen = true;
+            this.AdvancedProject.HeaderText = "Связуемый проект";
+            this.AdvancedProject.MinimumWidth = 175;
+            this.AdvancedProject.Name = "AdvancedProject";
+            this.AdvancedProject.ReadOnly = true;
+            this.AdvancedProject.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.AdvancedProject.Width = 175;
             // 
             // currProjNameTextBox
             // 
@@ -95,7 +118,7 @@
             this.closeButton.Location = new System.Drawing.Point(1004, 435);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(75, 23);
-            this.closeButton.TabIndex = 6;
+            this.closeButton.TabIndex = 0;
             this.closeButton.Text = "Отмена";
             this.closeButton.UseVisualStyleBackColor = true;
             this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
@@ -145,6 +168,7 @@
             this.advancedProjSignalsList.TabIndex = 11;
             this.advancedProjSignalsList.UseCompatibleStateImageBehavior = false;
             this.advancedProjSignalsList.View = System.Windows.Forms.View.Details;
+            this.advancedProjSignalsList.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.advancedProjSignalsList_ItemSelectionChanged);
             // 
             // AdvSignal
             // 
@@ -174,6 +198,7 @@
             this.currentProjSignalsList.TabIndex = 12;
             this.currentProjSignalsList.UseCompatibleStateImageBehavior = false;
             this.currentProjSignalsList.View = System.Windows.Forms.View.Details;
+            this.currentProjSignalsList.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.currentProjSignalsList_ItemSelectionChanged);
             // 
             // CurrDescription
             // 
@@ -248,24 +273,6 @@
             this.label4.Size = new System.Drawing.Size(42, 13);
             this.label4.TabIndex = 18;
             this.label4.Text = "Поиск:";
-            // 
-            // CurrenctProject
-            // 
-            this.CurrenctProject.Frozen = true;
-            this.CurrenctProject.HeaderText = "Текущий проект";
-            this.CurrenctProject.MinimumWidth = 175;
-            this.CurrenctProject.Name = "CurrenctProject";
-            this.CurrenctProject.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.CurrenctProject.Width = 175;
-            // 
-            // AdvancedProject
-            // 
-            this.AdvancedProject.Frozen = true;
-            this.AdvancedProject.HeaderText = "Связуемый проект";
-            this.AdvancedProject.MinimumWidth = 175;
-            this.AdvancedProject.Name = "AdvancedProject";
-            this.AdvancedProject.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.AdvancedProject.Width = 175;
             // 
             // InterprojectExchangeForm
             // 

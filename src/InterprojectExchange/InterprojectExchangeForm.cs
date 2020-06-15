@@ -70,5 +70,37 @@ namespace EasyEPlanner
 
         private FilterForm filterForm;
         private InterprojectExchange interprojectExchange;
+
+        private void advancedProjSignalsList_ItemSelectionChanged(object sender, 
+            ListViewItemSelectionChangedEventArgs e)
+        {
+            var selectedItem = e.Item.Text;
+            var oppositeItems = currentProjSignalsList.SelectedItems;
+            if (selectedItem != null && 
+                oppositeItems.Count != 0 &&
+                e.IsSelected)
+            {
+                var oppositeItem = oppositeItems[0].SubItems[1].Text;
+                bindedSignalsGrid.Rows.Add(oppositeItem, selectedItem);
+                currentProjSignalsList.SelectedIndices.Clear();
+                advancedProjSignalsList.SelectedIndices.Clear();
+            }
+        }
+
+        private void currentProjSignalsList_ItemSelectionChanged(object sender, 
+            ListViewItemSelectionChangedEventArgs e)
+        {
+            var selectedItem = e.Item.SubItems[1].Text;
+            var oppositeItems = advancedProjSignalsList.SelectedItems;
+            if (selectedItem != null && 
+                oppositeItems.Count != 0 &&
+                e.IsSelected)
+            {
+                var oppositeItem = oppositeItems[0].Text;
+                bindedSignalsGrid.Rows.Add(selectedItem, oppositeItem);
+                currentProjSignalsList.SelectedIndices.Clear();
+                advancedProjSignalsList.SelectedIndices.Clear();
+            }
+        }
     }
 }
