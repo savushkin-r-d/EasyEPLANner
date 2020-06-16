@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Device;
+using static System.Windows.Forms.ListView;
 
 namespace EasyEPlanner
 {
@@ -74,35 +75,69 @@ namespace EasyEPlanner
         private void advancedProjSignalsList_ItemSelectionChanged(object sender, 
             ListViewItemSelectionChangedEventArgs e)
         {
-            var selectedItem = e.Item.Text;
-            var oppositeItems = currentProjSignalsList.SelectedItems;
-            if (selectedItem != null && 
+            string selectedItem = e.Item.Text;
+            SelectedListViewItemCollection oppositeItems = 
+                currentProjSignalsList.SelectedItems;
+
+            bool needChange = (selectedItem != null &&
                 oppositeItems.Count != 0 &&
-                e.IsSelected)
+                e.IsSelected);
+            bool needAddNewElement = bindedSignalsGrid.SelectedRows.Count == 0;
+            if(needChange)
             {
-                var oppositeItem = oppositeItems[0].SubItems[1].Text;
-                bindedSignalsGrid.Rows.Add(oppositeItem, selectedItem);
-                bindedSignalsGrid.ClearSelection();
-                currentProjSignalsList.SelectedIndices.Clear();
-                advancedProjSignalsList.SelectedIndices.Clear();
+                if(needAddNewElement)
+                {
+                    string oppositeItem = oppositeItems[0].SubItems[1].Text;
+                    bindedSignalsGrid.Rows.Add(oppositeItem, selectedItem);
+                    bindedSignalsGrid.ClearSelection();
+                    currentProjSignalsList.SelectedIndices.Clear();
+                    advancedProjSignalsList.SelectedIndices.Clear();
+                }
+                else
+                {
+                    var selectedRow = bindedSignalsGrid.SelectedRows[0];
+                    if (selectedRow != null)
+                    {
+                        var advProjDev = selectedRow.Cells[1];
+                        advProjDev.Value = selectedItem;
+                    }
+                }
             }
         }
 
         private void currentProjSignalsList_ItemSelectionChanged(object sender, 
             ListViewItemSelectionChangedEventArgs e)
         {
-            var selectedItem = e.Item.SubItems[1].Text;
-            var oppositeItems = advancedProjSignalsList.SelectedItems;
-            if (selectedItem != null && 
+            string selectedItem = e.Item.SubItems[1].Text;
+            SelectedListViewItemCollection oppositeItems = 
+                advancedProjSignalsList.SelectedItems;
+
+            bool needChange = (selectedItem != null &&
                 oppositeItems.Count != 0 &&
-                e.IsSelected)
+                e.IsSelected);
+            if(needChange)
             {
-                var oppositeItem = oppositeItems[0].Text;
-                bindedSignalsGrid.Rows.Add(selectedItem, oppositeItem);
-                bindedSignalsGrid.ClearSelection();
-                currentProjSignalsList.SelectedIndices.Clear();
-                advancedProjSignalsList.SelectedIndices.Clear();
+                bool needAddNewElement = bindedSignalsGrid.SelectedRows
+                    .Count == 0;
+                if (needAddNewElement)
+                {
+                    string oppositeItem = oppositeItems[0].Text;
+                    bindedSignalsGrid.Rows.Add(selectedItem, oppositeItem);
+                    bindedSignalsGrid.ClearSelection();
+                    currentProjSignalsList.SelectedIndices.Clear();
+                    advancedProjSignalsList.SelectedIndices.Clear();
+                }
+                else
+                {
+                    var selectedRow = bindedSignalsGrid.SelectedRows[0];
+                    if (selectedRow != null)
+                    {
+                        var currProjDev = selectedRow.Cells[0];
+                        currProjDev.Value = selectedItem;
+                    }
+                }
             }
+
         }
 
         private void bindedSignalsGrid_KeyDown(object sender, KeyEventArgs e)
@@ -120,6 +155,34 @@ namespace EasyEPlanner
             if (hitTestInfo.Type == DataGridViewHitTestType.None)
             {
                 bindedSignalsGrid.ClearSelection();
+                currentProjSignalsList.SelectedIndices.Clear();
+                advancedProjSignalsList.SelectedIndices.Clear();
+            }
+            else if (hitTestInfo.Type == DataGridViewHitTestType.Cell)
+            {
+                var selectedRow = bindedSignalsGrid.SelectedRows[0];
+                if (selectedRow != null)
+                {
+                    var currProjDev = selectedRow.Cells[0];
+                    var advProjDev = selectedRow.Cells[1];
+
+                    var currProjDevText = currProjDev.Value.ToString();
+                    var advProjDevText = advProjDev.Value.ToString();
+
+                    var currProjItem = currentProjSignalsList
+                        .FindItemWithText(currProjDevText);
+                    var advProjItem = advancedProjSignalsList
+                        .FindItemWithText(advProjDevText);
+                    if (currProjItem != null && advProjItem != null)
+                    {
+                        currProjItem.Selected = true;
+                        advProjItem.Selected = true;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Ошибка редактирования обмена сигналами");
+                }               
             }
         }
     }
