@@ -75,6 +75,7 @@
             this.bindedSignalsGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.bindedSignalsGrid.Size = new System.Drawing.Size(354, 417);
             this.bindedSignalsGrid.TabIndex = 99;
+            this.bindedSignalsGrid.RowStateChanged += new System.Windows.Forms.DataGridViewRowStateChangedEventHandler(this.bindedSignalsGrid_RowStateChanged);
             this.bindedSignalsGrid.KeyDown += new System.Windows.Forms.KeyEventHandler(this.bindedSignalsGrid_KeyDown);
             this.bindedSignalsGrid.MouseClick += new System.Windows.Forms.MouseEventHandler(this.bindedSignalsGrid_MouseClick);
             // 
