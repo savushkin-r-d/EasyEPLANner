@@ -257,7 +257,6 @@
             this.currProjSearchBox.BackColor = System.Drawing.SystemColors.Window;
             this.currProjSearchBox.Location = new System.Drawing.Point(111, 37);
             this.currProjSearchBox.Name = "currProjSearchBox";
-            this.currProjSearchBox.ReadOnly = true;
             this.currProjSearchBox.Size = new System.Drawing.Size(251, 20);
             this.currProjSearchBox.TabIndex = 17;
             this.currProjSearchBox.TextChanged += new System.EventHandler(this.currProjSearchBox_TextChanged);
@@ -267,7 +266,6 @@
             this.advProjSearchBox.BackColor = System.Drawing.SystemColors.Window;
             this.advProjSearchBox.Location = new System.Drawing.Point(828, 37);
             this.advProjSearchBox.Name = "advProjSearchBox";
-            this.advProjSearchBox.ReadOnly = true;
             this.advProjSearchBox.Size = new System.Drawing.Size(251, 20);
             this.advProjSearchBox.TabIndex = 19;
             this.advProjSearchBox.TextChanged += new System.EventHandler(this.advProjSearchBox_TextChanged);

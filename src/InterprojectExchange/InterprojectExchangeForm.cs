@@ -23,6 +23,9 @@ namespace EasyEPlanner
             currProjNameTextBox.Text = projectName;
 
             interprojectExchange = InterprojectExchange.GetInstance();
+
+            currProjItems = new List<ListViewItem>();
+            advProjItems = new List<ListViewItem>();
         }
 
         private void InterprojectExchangeForm_FormClosed(object sender, 
@@ -57,6 +60,7 @@ namespace EasyEPlanner
                 var dev = new string[] { devInfo.Description, devInfo.Name };
                 var item = new ListViewItem(dev);
                 currentProjSignalsList.Items.Add(item);
+                currProjItems.Add(item);
             }
 
             //Mock для заполнение якобы других проектов
@@ -65,8 +69,12 @@ namespace EasyEPlanner
                 var item = new ListViewItem(
                     new string[] { devInfo.Name, devInfo.Description });
                 advancedProjSignalsList.Items.Add(item);
+                advProjItems.Add(item);
             }
         }
+
+        private List<ListViewItem> currProjItems;
+        private List<ListViewItem> advProjItems;
 
         private void filterButton_Click(object sender, EventArgs e)
         {
@@ -275,13 +283,13 @@ namespace EasyEPlanner
         private void currProjSearchBox_TextChanged(object sender, EventArgs e)
         {
             SearchingSubStringInListView(currentProjSignalsList, 
-                currProjSearchBox.Text);
+                currProjSearchBox.Text, currProjItems);
         }
 
         private void advProjSearchBox_TextChanged(object sender, EventArgs e)
         {
             SearchingSubStringInListView(advancedProjSignalsList,
-                advProjSearchBox.Text);
+                advProjSearchBox.Text, advProjItems);
         }
 
         /// <summary>
@@ -289,10 +297,25 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="listView">ListView</param>
         /// <param name="subString">Подстрока</param>
+        /// <param name="projItems">Список элементов в проекте</param>
         private void SearchingSubStringInListView(ListView listView, 
-            string subString)
+            string subString, List<ListViewItem> projItems)
         {
-            //TODO: Searching
+            if (subString != "")
+            {
+                var lowerSubString = subString.ToLower();
+                var filteredItems = projItems
+                    .Where(x => x.SubItems[0].Text.ToLower().Contains(lowerSubString) ||
+                    x.SubItems[1].Text.ToLower().Contains(lowerSubString))
+                    .ToArray();
+                listView.Items.Clear();
+                listView.Items.AddRange(filteredItems);
+            }
+            else
+            {
+                listView.Items.Clear();
+                listView.Items.AddRange(projItems.ToArray());
+            }
         }
     }
 }
