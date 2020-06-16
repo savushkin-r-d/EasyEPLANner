@@ -165,7 +165,8 @@ namespace EasyEPlanner
             }
         }
 
-        private void bindedSignalsGrid_MouseClick(object sender, MouseEventArgs e)
+        private void bindedSignalsGrid_MouseClick(object sender, 
+            MouseEventArgs e)
         {
             var hitTestInfo = bindedSignalsGrid.HitTest(e.X, e.Y);
             if (hitTestInfo.Type == DataGridViewHitTestType.None)
@@ -187,6 +188,15 @@ namespace EasyEPlanner
             bindedSignalsGrid.ClearSelection();
             currentProjSignalsList.SelectedIndices.Clear();
             advancedProjSignalsList.SelectedIndices.Clear();
+        }
+
+        private void bindedSignalsGrid_RowStateChanged(object sender,
+            DataGridViewRowStateChangedEventArgs e)
+        {
+            if (e.Row.Selected)
+            {
+                HighlightObjectsInListViews(e.Row);
+            }
         }
 
         /// <summary>
@@ -222,13 +232,67 @@ namespace EasyEPlanner
             }
         }
 
-        private void bindedSignalsGrid_RowStateChanged(object sender, 
-            DataGridViewRowStateChangedEventArgs e)
+        private void currentProjSignalsList_KeyPress(object sender, 
+            KeyPressEventArgs e)
         {
-            if (e.Row.Selected)
+            ProcessingKeysFromListViewToTextBox(e, currProjSearchBox);
+        }
+
+        private void advancedProjSignalsList_KeyPress(object sender, 
+            KeyPressEventArgs e)
+        {
+            ProcessingKeysFromListViewToTextBox(e, advProjSearchBox);
+        }
+
+        /// <summary>
+        /// Обработка нажатий кнопок на ListView и внесение их в TextBox
+        /// </summary>
+        /// <param name="e">Событие обработки кнопок</param>
+        /// <param name="textBox">ТекстБокс для изменений</param>
+        private void ProcessingKeysFromListViewToTextBox(KeyPressEventArgs e, 
+            TextBox textBox)
+        {
+            bool deleteChar = e.KeyChar == (char)Keys.Delete ||
+                e.KeyChar == (char)Keys.Back;
+            bool addChar = char.IsLetterOrDigit(e.KeyChar) ||
+                char.IsWhiteSpace(e.KeyChar);
+            if (deleteChar)
             {
-                HighlightObjectsInListViews(e.Row);
+                if (textBox.Text.Length > 0)
+                {
+                    string currentText = textBox.Text;
+                    string newText = currentText
+                        .Remove(currentText.Length - 1);
+                    textBox.Text = newText;
+                }
             }
+            else if (addChar)
+            {
+                textBox.Text += e.KeyChar;
+            }
+        }
+
+        private void currProjSearchBox_TextChanged(object sender, EventArgs e)
+        {
+            SearchingSubStringInListView(currentProjSignalsList, 
+                currProjSearchBox.Text);
+        }
+
+        private void advProjSearchBox_TextChanged(object sender, EventArgs e)
+        {
+            SearchingSubStringInListView(advancedProjSignalsList,
+                advProjSearchBox.Text);
+        }
+
+        /// <summary>
+        /// Поиска подстроки в ListView
+        /// </summary>
+        /// <param name="listView">ListView</param>
+        /// <param name="subString">Подстрока</param>
+        private void SearchingSubStringInListView(ListView listView, 
+            string subString)
+        {
+            //TODO: Searching
         }
     }
 }
