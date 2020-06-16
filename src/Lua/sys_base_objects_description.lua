@@ -685,8 +685,8 @@ return
             equipment =
             {
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
-                M1 = { name = "Насос (AO)", "M1" },
-                SET_VALUE = { name = "Задание"},
+                M1 = { name = "Насос (AO)", defaultValue = "M1" },
+                SET_VALUE = { name = "Задание" },
             },
             bindingName = "in_tank_level_node"
         },
