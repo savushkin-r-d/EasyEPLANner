@@ -229,7 +229,9 @@ namespace EasyEPlanner
                 if (currProjItem != null && advProjItem != null)
                 {
                     currProjItem.Selected = true;
+                    currProjItem.EnsureVisible();
                     advProjItem.Selected = true;
+                    advProjItem.EnsureVisible();
                 }
             }
             catch
@@ -305,8 +307,9 @@ namespace EasyEPlanner
             {
                 var lowerSubString = subString.ToLower();
                 var filteredItems = projItems
-                    .Where(x => x.SubItems[0].Text.ToLower().Contains(lowerSubString) ||
-                    x.SubItems[1].Text.ToLower().Contains(lowerSubString))
+                    .Where(x => x.SubItems[0].Text.ToLower()
+                    .Contains(lowerSubString) || x.SubItems[1].Text.ToLower()
+                    .Contains(lowerSubString))
                     .ToArray();
                 listView.Items.Clear();
                 listView.Items.AddRange(filteredItems);
