@@ -577,7 +577,7 @@ namespace TechObject
                             break;
                         case ParameterValueType.Number:
                             paramsForSave += GetNumberParameterStringForSave(
-                                prefix, parameter);
+                                prefix, parameter, mode);
                             break;
                         case ParameterValueType.Parameter:
                             paramsForSave += $"{prefix}{parameter.LuaName} = " +
@@ -609,9 +609,11 @@ namespace TechObject
         /// </summary>
         /// <param name="parameter">Параметр для обработки</param>
         /// <param name="prefix">Отступ</param>
+        /// <param name="mainObjMode">Проверяемая операция главного объекта
+        /// </param>
         /// <returns></returns>
         public string GetNumberParameterStringForSave(string prefix, 
-            BaseParameter parameter)
+            BaseParameter parameter, Mode mainObjMode)
         {
             BaseTechObject baseTechObject = null;
             List<Mode> modes = new List<Mode>();
@@ -637,24 +639,37 @@ namespace TechObject
                 .Where(x => x.GetModeNumber().ToString() == parameterValue)
                 .FirstOrDefault();
             var res = "";
-            if (mode != null && mode.BaseOperation.Name != "")
+            if (mode != null)
             {
-                parameterValue = mode.BaseOperation.LuaName.ToUpper();
-                TechObject obj = baseTechObject.Owner;
-                string objName = "prg." + obj.NameEplanForFile.ToLower() +
-                    obj.TechNumber.ToString();
-                res = $"{prefix}{parameter.LuaName} = " +
-                    $"{objName}.operations." + parameterValue + ",\n";
+                if (mode.BaseOperation.Name != "")
+                {
+                    parameterValue = mode.BaseOperation.LuaName.ToUpper();
+                    TechObject obj = baseTechObject.Owner;
+                    string objName = "prg." + obj.NameEplanForFile.ToLower() +
+                        obj.TechNumber.ToString();
+                    res = $"{prefix}{parameter.LuaName} = " +
+                        $"{objName}.operations." + parameterValue + ",\n";
+                }
+                else
+                {
+                    string message = $"Ошибка обработки параметра " +
+                        $"\"{parameter.Name}\"." +
+                        $" Не задана базовая операция в операции" +
+                        $" \"{mode.DisplayText[0]}\", объекта " +
+                        $"\"{mainObjName}\".\n";
+                    Logs.AddMessage(message);
+                }
             }
             else
             {
                 string message = $"Ошибка обработки параметра " +
-                    $"\"{parameter.Name}\"." +
-                    $" Не задана базовая операция в операции" +
-                    $" \"{mode.DisplayText[0]}\", объекта " +
-                    $"\"{mainObjName}\".\n";
+                        $"\"{parameter.Name}\"." +
+                        $" Указан несуществующий номер операции в операции " +
+                        $"\"{mainObjMode.DisplayText[0]}\" объекта " +
+                        $"\"{mainObjName}\".\n";
                 Logs.AddMessage(message);
             }
+            
 
             return res;
         }
