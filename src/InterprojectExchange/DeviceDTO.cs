@@ -11,13 +11,18 @@ namespace EasyEPlanner
     /// </summary>
     public class DeviceDTO
     {
-        public DeviceDTO(string name, string eplanName, string description)
+        public DeviceDTO(string name, string eplanName, string description,
+            string type)
         {
             this.name = name;
             this.eplanName = eplanName;
             this.description = description;
+            this.type = type;
         }
 
+        /// <summary>
+        /// Имя устройства А1BBB2
+        /// </summary>
         public string Name
         {
             get
@@ -26,6 +31,9 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Имя устройства в Eplan +A1-BB2
+        /// </summary>
         public string EplanName
         {
             get
@@ -34,6 +42,9 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Описание устройства
+        /// </summary>
         public string Description
         {
             get 
@@ -42,8 +53,20 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Тип устройства (AI,TE..)
+        /// </summary>
+        public string Type
+        {
+            get
+            {
+                return type.ToUpper();
+            }
+        }
+
         private string name;
         private string eplanName;
         private string description;
+        private string type;
     }
 }

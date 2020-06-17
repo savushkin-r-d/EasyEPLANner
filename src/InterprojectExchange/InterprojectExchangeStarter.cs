@@ -58,7 +58,7 @@ namespace EasyEPlanner
             foreach(var dev in Device.DeviceManager.GetInstance().Devices)
             {
                 var devDTO = new DeviceDTO(dev.Name, dev.EPlanName, 
-                    dev.Description);
+                    dev.Description, dev.DeviceType.ToString());
                 devices.Add(devDTO);
             }
 

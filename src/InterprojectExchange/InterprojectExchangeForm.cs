@@ -18,30 +18,23 @@ namespace EasyEPlanner
             currProjNameTextBox.Text = projectName;
 
             interprojectExchange = InterprojectExchange.GetInstance();
+            filterConfiguration = FilterConfiguration.GetInstance();
+            filterConfiguration.FilterChanged += RefilterListViews;
 
             currProjItems = new List<ListViewItem>();
             advProjItems = new List<ListViewItem>();
-
-            if (filterForm == null || filterForm.IsDisposed)
-            {
-                filterForm = new FilterForm();
-            }
         }
 
         private void InterprojectExchangeForm_FormClosed(object sender, 
             FormClosedEventArgs e)
         {
-            if (filterForm != null && filterForm.IsDisposed == false)
-            {
-                filterForm.Close();
-                filterForm.Dispose();
-            }
-            this.Dispose();
+            filterConfiguration.Dispose();
+            Dispose();
         }
 
         private void closeButton_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void InterprojectExchangeForm_Load(object sender, EventArgs e)
@@ -60,7 +53,7 @@ namespace EasyEPlanner
             {
                 var dev = new string[] { devInfo.Description, devInfo.Name };
                 var item = new ListViewItem(dev);
-                currentProjSignalsList.Items.Add(item);
+                item.Tag = devInfo.Type;
                 currProjItems.Add(item);
             }
 
@@ -69,14 +62,32 @@ namespace EasyEPlanner
             {
                 var item = new ListViewItem(
                     new string[] { devInfo.Name, devInfo.Description });
-                advancedProjSignalsList.Items.Add(item);
+                item.Tag = devInfo.Type;
                 advProjItems.Add(item);
             }
+
+            RefilterListViews();
+        }
+
+        /// <summary>
+        /// Обновить списки под фильтр
+        /// </summary>
+        private void RefilterListViews()
+        {
+            currentProjSignalsList.Items.Clear();
+            advancedProjSignalsList.Items.Clear();
+
+            var filteredCurrProjItems = filterConfiguration.FilterOut(
+                currProjItems, FilterConfiguration.FilterList.Current);
+            var filteredAdvProjItems = filterConfiguration.FilterOut(
+                advProjItems, FilterConfiguration.FilterList.Advanced);
+            currentProjSignalsList.Items.AddRange(filteredCurrProjItems);
+            advancedProjSignalsList.Items.AddRange(filteredAdvProjItems);
         }
 
         private void filterButton_Click(object sender, EventArgs e)
         {
-            filterForm.Show();
+            filterConfiguration.ShowForm();
         }
 
         private void advancedProjSignalsList_ItemSelectionChanged(object sender, 
@@ -274,14 +285,18 @@ namespace EasyEPlanner
 
         private void currProjSearchBox_TextChanged(object sender, EventArgs e)
         {
+            var filteredThroughType = filterConfiguration.FilterOut(
+                currProjItems, FilterConfiguration.FilterList.Current);
             SearchingSubStringInListView(currentProjSignalsList, 
-                currProjSearchBox.Text, currProjItems);
+                currProjSearchBox.Text, filteredThroughType);
         }
 
         private void advProjSearchBox_TextChanged(object sender, EventArgs e)
         {
+            var filteredThroughType = filterConfiguration.FilterOut(
+                advProjItems, FilterConfiguration.FilterList.Advanced);
             SearchingSubStringInListView(advancedProjSignalsList,
-                advProjSearchBox.Text, advProjItems);
+                advProjSearchBox.Text, filteredThroughType);
         }
 
         /// <summary>
@@ -289,9 +304,9 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="listView">ListView</param>
         /// <param name="subString">Подстрока</param>
-        /// <param name="projItems">Список элементов в проекте</param>
+        /// <param name="projItems">Массив элементов в проекте</param>
         private void SearchingSubStringInListView(ListView listView, 
-            string subString, List<ListViewItem> projItems)
+            string subString, ListViewItem[] projItems)
         {
             if (subString != "")
             {
@@ -307,14 +322,14 @@ namespace EasyEPlanner
             else
             {
                 listView.Items.Clear();
-                listView.Items.AddRange(projItems.ToArray());
+                listView.Items.AddRange(projItems);
             }
         }
 
         private List<ListViewItem> currProjItems;
         private List<ListViewItem> advProjItems;
 
-        private FilterForm filterForm;
+        private FilterConfiguration filterConfiguration;
         private InterprojectExchange interprojectExchange;
     }
 }

@@ -2,8 +2,6 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PInvoke;
 using System.Windows.Forms;
 
@@ -12,10 +10,25 @@ namespace EasyEPlanner
     /// <summary>
     /// Конфигурация фильтра сигналов и устройств в межпроектном обмене
     /// </summary>
-    sealed public class FilterConfiguration
+    public class FilterConfiguration
     {
+        /// <summary>
+        /// Делегат для события изменения фильтра.
+        /// </summary>
+        public delegate void filterChangedHandler();
+
+        /// <summary>
+        /// Событие изменение фильтра.
+        /// </summary>
+        public event filterChangedHandler FilterChanged;
+
+        /// <summary>
+        /// Сохранить конфигурацию фильтрации в .ini
+        /// </summary>
         public void Save() 
         {
+            FilterChanged.Invoke();
+
             var iniFile = new IniFile(pathToConfig);
             foreach(var section in filterParameters.Keys)
             {
@@ -27,6 +40,9 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Прочитать конфигурацию фильтрации из .ini
+        /// </summary>
         public void Read() 
         {
             if (File.Exists(pathToConfig))
@@ -61,9 +77,42 @@ namespace EasyEPlanner
             }
         }
 
-        public void Accept() 
+        /// <summary>
+        /// Фильтровать
+        /// </summary>
+        /// <param name="items">Элементы для фильтра</param>
+        /// <param name="filterList">Какой список сортируется</param>
+        public ListViewItem[] FilterOut(List<ListViewItem> items, 
+            FilterList filterList)
         {
-            //TODO: Accept changes and invoke event
+            var filteredList = new List<ListViewItem>();
+            string[] allowedDevices = new string[0];
+            if (filterList == FilterList.Current)
+            {
+                allowedDevices = FilterParameters["currProjDevList"]
+                    .Where(x => x.Value == true)
+                    .Select(x => x.Key)
+                    .ToArray();
+            }
+            else
+            {
+                allowedDevices = FilterParameters["advProjDevList"]
+                    .Where(x => x.Value == true)
+                    .Select(x => x.Key)
+                    .ToArray();
+            }
+
+            if(allowedDevices.Length != 0)
+            {
+                filteredList = items
+                    .Where(x => allowedDevices.Contains(x.Tag.ToString()))
+                    .ToList();
+                return filteredList.ToArray();
+            }
+            else
+            {
+                return items.ToArray();
+            }
         }
 
         /// <summary>
@@ -123,6 +172,30 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Отобразить форму
+        /// </summary>
+        public void ShowForm()
+        {
+            if (filterForm == null || filterForm.IsDisposed)
+            {
+                filterForm = new FilterForm();
+            }
+            filterForm.Show();
+        }
+
+        /// <summary>
+        /// Закрыть форму и освободить ресурсы
+        /// </summary>
+        public void Dispose()
+        {
+            if(filterForm != null && !filterForm.IsDisposed)
+            {
+                filterForm.Close();
+                filterForm.Dispose();
+            }
+        }
+
+        /// <summary>
         /// Параметры фильтра
         /// </summary>
         public Dictionary<string, Dictionary<string, bool>> FilterParameters
@@ -133,6 +206,9 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Закрытый конструктор
+        /// </summary>
         private FilterConfiguration()
         {
             string pathToDir = ProjectManager.GetInstance()
@@ -140,10 +216,21 @@ namespace EasyEPlanner
             pathToConfig = Path.Combine(pathToDir, 
                 StaticHelper.CommonConst.ConfigFileName);
             SetUpFilterParameters();
+            Read();
+        }
+
+        /// <summary>
+        /// Какой список фильтровать
+        /// </summary>
+        public enum FilterList
+        {
+            Current,
+            Advanced,
         }
 
         private static FilterConfiguration filterConfiguration;
         private string pathToConfig;
+        private FilterForm filterForm;
         private Dictionary<string, Dictionary<string, bool>> filterParameters;
     }
 }

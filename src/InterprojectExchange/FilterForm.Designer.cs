@@ -174,7 +174,6 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Настройка фильтрации сигналов";
             this.TopMost = true;
-            this.Load += new System.EventHandler(this.FilterForm_Load);
             this.currProjGoupBox.ResumeLayout(false);
             this.currProjGoupBox.PerformLayout();
             this.bindedGridGroupBox.ResumeLayout(false);

@@ -16,6 +16,9 @@ namespace EasyEPlanner
 
         }
 
+        /// <summary>
+        /// Имя проекта
+        /// </summary>
         public string ProjectName
         {
             get
@@ -28,6 +31,9 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Устройства проекта
+        /// </summary>
         public List<DeviceDTO> Devices
         {
             get

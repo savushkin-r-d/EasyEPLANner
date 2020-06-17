@@ -16,6 +16,11 @@ namespace EasyEPlanner
             interprojectExchangeModels = new List<InterprojectExchangeModel>();
         }
 
+        /// <summary>
+        /// Загрузить модель
+        /// </summary>
+        /// <param name="projName">Имя проекта</param>
+        /// <param name="devices">Устройства</param>
         public void LoadModel(string projName, List<DeviceDTO> devices)
         {
             var model = new InterprojectExchangeModel();

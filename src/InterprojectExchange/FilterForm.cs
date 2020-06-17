@@ -9,21 +9,15 @@ namespace EasyEPlanner
         public FilterForm()
         {
             InitializeComponent();
-            filterConfiguration = FilterConfiguration.GetInstance();
+            var devices = FilterConfiguration.GetInstance().GetDevicesList();
+            LoadDeviceLists(devices);
+            SetUpFilterCheckBoxes(FilterConfiguration.GetInstance()
+                .FilterParameters);
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            this.Hide();
-        }
-
-        private void FilterForm_Load(object sender, EventArgs e)
-        {
-            var devices = filterConfiguration.GetDevicesList();
-            LoadDeviceLists(devices);
-            filterConfiguration.Read();
-            SetUpFilterCheckBoxes(filterConfiguration.FilterParameters);
-            filterConfiguration.Accept();
+            Hide();
         }
 
         /// <summary>
@@ -41,9 +35,8 @@ namespace EasyEPlanner
 
         private void acceptButton_Click(object sender, EventArgs e)
         {
-            filterConfiguration.Save();
-            filterConfiguration.Accept();
-            this.Hide();
+            FilterConfiguration.GetInstance().Save();
+            Hide();
         }
 
         private void clearButton_Click(object sender, EventArgs e)
@@ -102,12 +95,11 @@ namespace EasyEPlanner
                 groupAsPairsCheckBox_CheckStateChanged;
         }
 
-        private FilterConfiguration filterConfiguration;
-
         private void groupAsPairsCheckBox_CheckStateChanged(object sender, 
             EventArgs e)
         {
-            filterConfiguration.FilterParameters[bindedGridGroupBox.Name]
+            FilterConfiguration.GetInstance()
+                .FilterParameters[bindedGridGroupBox.Name]
                 [groupAsPairsCheckBox.Name] = groupAsPairsCheckBox.Checked;
         }
 
@@ -116,16 +108,17 @@ namespace EasyEPlanner
         {
             var itemName = currProjDevList.Items[e.Index].ToString();
             bool isChecked = e.NewValue == CheckState.Checked ? true : false;
-            filterConfiguration.FilterParameters[currProjDevList.Name]
-                [itemName] = isChecked;
+            FilterConfiguration.GetInstance()
+                .FilterParameters[currProjDevList.Name][itemName] = isChecked;
         }
 
-        private void advProjDevList_ItemCheck(object sender, ItemCheckEventArgs e)
+        private void advProjDevList_ItemCheck(object sender, 
+            ItemCheckEventArgs e)
         {
             var itemName = currProjDevList.Items[e.Index].ToString();
             bool isChecked = e.NewValue == CheckState.Checked ? true : false;
-            filterConfiguration.FilterParameters[advProjDevList.Name]
-                [itemName] = isChecked;
+            FilterConfiguration.GetInstance()
+                .FilterParameters[advProjDevList.Name][itemName] = isChecked;
         }
     }
 }
