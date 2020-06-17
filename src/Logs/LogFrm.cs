@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace EasyEPlanner
@@ -174,7 +175,10 @@ namespace EasyEPlanner
                         msg = msg.Remove(msg.Length - 1);
                     }
 
-                    richTextBox.AppendText(msg + "\n");
+                    if (!richTextBox.Lines.Contains(msg))
+                    {
+                        richTextBox.AppendText(msg + "\n");
+                    }
                 }
             ), null);
         }

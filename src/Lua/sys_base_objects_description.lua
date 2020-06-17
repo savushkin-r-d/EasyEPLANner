@@ -136,9 +136,10 @@ return
             {
                 main =
                 {
-                    BOILER = { name = "Использовать бойлер", defaultValue = "false" },
+                    NEED_BOILER = { name = "Использовать бойлер", defaultValue = "false" },
                 },
             },
+            bindingName = "boiler"
         },
         master = {
             name = "Мастер",
@@ -355,6 +356,9 @@ return
                         MEDIUM_CHANGE = { name = "Смена среды" },
                     },
                 },
+                EMPTY_TANK_HEATING = {
+                    name = "Нагрев пустого танка",
+                },
                 FILL = {
                     name = "Наполнение",
                     params =
@@ -394,13 +398,23 @@ return
                     },
                     steps = { },
                 },
-                SLOW_HEAT = {
+                SLOW_HEATING = {
                     name = "Томление",
                     params = { },
                     steps =
                     {
                         TO_START_TEMPERATURE = { name = "Нагрев до заданной температуры" },
-                        SLOW_HEAT = { name = "Нагрев заданное время" },
+                        SLOW_HEATING = { name = "Нагрев заданное время" },
+                    },
+                },
+                COOLING_BEFORE_LEAVENING = {
+                    name = "Охлаждение перед заквашиванием",
+                    params = { },
+                    steps =
+                    {
+                        HOT_WATER_PUSHING = { name = "Вытеснение горячей воды" },
+                        COOLING = { name = "Охлаждение" },
+                        CHECKING_TEMPERATURE = { name = "Проверка заданной температуры" },
                     },
                 },
                 WORK = {
@@ -478,12 +492,15 @@ return
                 },
             },
             basicName = "heater_node",
-            equipment = { },
+            equipment =
+            {
+                TE = { name = "Датчик температуры", defaultValue = "TE1" },
+            },
             aggregateParameters =
             {
                 main =
                 {
-                    HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
+                    NEED_HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
                 },
             },
             bindingName = "heater_node"
@@ -515,7 +532,7 @@ return
             {
                 main =
                 {
-                    HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
+                    NEED_HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
                 },
             },
             bindingName = "heater_node"
@@ -654,6 +671,24 @@ return
             equipment = { },
             aggregateParameters = { },
             bindingName = "steam_blast_node",
+        },
+        in_tank_level_node = {
+            name = "Узел текущего уровня (наполнение)",
+            s88Level = 2,
+            baseOperations =
+            {
+                WORKING = {
+                    name = "Работа",
+                },
+            },
+            basicName = "in_tank_level_node",
+            equipment =
+            {
+                LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
+                M1 = { name = "Насос (AO)", defaultValue = "M1" },
+                SET_VALUE = { name = "Задание" },
+            },
+            bindingName = "in_tank_level_node"
         },
     }
 end
