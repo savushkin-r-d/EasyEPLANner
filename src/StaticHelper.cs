@@ -325,6 +325,11 @@ namespace StaticHelper
     public static class CommonConst
     {
         /// <summary>
+        /// Имя конфигурационного файла приложения.
+        /// </summary>
+        public static string ConfigFileName = "configuration.ini";
+
+        /// <summary>
         /// Evaluator для замены заглавных русских букв на английские.
         /// </summary>
         public static MatchEvaluator RusAsEnsEvaluator = new MatchEvaluator(

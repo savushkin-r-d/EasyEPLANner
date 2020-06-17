@@ -39,7 +39,6 @@ namespace EasyEPlanner
             bool saveDescrSilentMode = true;
             EProjectManager.GetInstance().SyncAndSave(saveDescrSilentMode);
             return true;
-            //TODO: обновить список устройств проекта, считать их для настройки.
         }
 
         /// <summary>
@@ -69,7 +68,6 @@ namespace EasyEPlanner
 
             return true;
             //TODO: чтение данных по проекту и перекрестных данных
-
         }
 
         /// <summary>

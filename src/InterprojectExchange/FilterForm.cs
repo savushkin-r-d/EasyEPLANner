@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace EasyEPlanner
@@ -15,6 +9,7 @@ namespace EasyEPlanner
         public FilterForm()
         {
             InitializeComponent();
+            filterConfiguration = FilterConfiguration.GetInstance();
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
@@ -24,36 +19,113 @@ namespace EasyEPlanner
 
         private void FilterForm_Load(object sender, EventArgs e)
         {
-            LoadDeviceLists();
-            //TODO: загрузка из конфигурации параметров фильтров.
+            var devices = filterConfiguration.GetDevicesList();
+            LoadDeviceLists(devices);
+            filterConfiguration.Read();
+            SetUpFilterCheckBoxes(filterConfiguration.FilterParameters);
+            filterConfiguration.Accept();
         }
 
         /// <summary>
         /// Загрузка списка устройств
         /// </summary>
-        private void LoadDeviceLists()
+        /// <param name="devices">Устройства для отображения</param>
+        private void LoadDeviceLists(List<string> devices)
         {
-            var types = Enum.GetValues(typeof(Device.DeviceType));
-            foreach (var type in types)
+            foreach (var type in devices)
             {
-                if (type.ToString() != "NONE") 
-                {
-                    currProjDevList.Items.Add(type);
-                    advProjDevList.Items.Add(type);
-                }
+                currProjDevList.Items.Add(type);
+                advProjDevList.Items.Add(type);
             }
         }
 
         private void acceptButton_Click(object sender, EventArgs e)
         {
-            //TODO: Применение изменений, сохранение измененных состояний,
-            // фильтрация устройств
+            filterConfiguration.Save();
+            filterConfiguration.Accept();
+            this.Hide();
         }
 
-        private void FilterForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void clearButton_Click(object sender, EventArgs e)
         {
-            //TODO: Сохранение параметров фильтров в файл.
-            this.Dispose();
+            for(int i = 0; i < currProjDevList.Items.Count; i++)
+            {
+                currProjDevList.SetItemCheckState(i, CheckState.Unchecked);
+            }
+
+            for(int i = 0; i < advProjDevList.Items.Count; i++)
+            {
+                advProjDevList.SetItemCheckState(i, CheckState.Unchecked);
+            }
+
+            groupAsPairsCheckBox.Checked = false;
+        }
+
+        /// <summary>
+        /// Установка параметров значений CheckBox
+        /// </summary>
+        /// <param name="filterParameters">Параметры фильтра</param>
+        private void SetUpFilterCheckBoxes(
+            Dictionary<string, Dictionary<string,bool>> filterParameters)
+        {
+            if (filterParameters.Count == 0)
+            {
+                return;
+            }
+
+            // Отключили обработчики изменений состояний чекбоксов.
+            currProjDevList.ItemCheck -= currProjDevList_ItemCheck;
+            advProjDevList.ItemCheck -= advProjDevList_ItemCheck;
+            groupAsPairsCheckBox.CheckStateChanged -= 
+                groupAsPairsCheckBox_CheckStateChanged;
+
+            foreach (var devPair in filterParameters[currProjDevList.Name])
+            {
+                int itemNum = currProjDevList.FindStringExact(devPair.Key);
+                currProjDevList.SetItemChecked(itemNum, devPair.Value);
+            }
+
+            foreach (var devPair in filterParameters[advProjDevList.Name])
+            {
+                int itemNum = advProjDevList.FindStringExact(devPair.Key);
+                advProjDevList.SetItemChecked(itemNum, devPair.Value);
+            }
+
+            bool isChecked = filterParameters[bindedGridGroupBox.Name]
+                [groupAsPairsCheckBox.Name];
+            groupAsPairsCheckBox.Checked = isChecked;
+
+            // Включили обработчики изменений состояний чекбоксов
+            currProjDevList.ItemCheck += currProjDevList_ItemCheck;
+            advProjDevList.ItemCheck += advProjDevList_ItemCheck;
+            groupAsPairsCheckBox.CheckStateChanged +=
+                groupAsPairsCheckBox_CheckStateChanged;
+        }
+
+        private FilterConfiguration filterConfiguration;
+
+        private void groupAsPairsCheckBox_CheckStateChanged(object sender, 
+            EventArgs e)
+        {
+            filterConfiguration.FilterParameters[bindedGridGroupBox.Name]
+                [groupAsPairsCheckBox.Name] = groupAsPairsCheckBox.Checked;
+        }
+
+        private void currProjDevList_ItemCheck(object sender, 
+            ItemCheckEventArgs e)
+        {
+            var itemName = currProjDevList.Items[e.Index].ToString();
+            bool isChecked = e.NewValue == CheckState.Checked ? true : false;
+            filterConfiguration.FilterParameters[currProjDevList.Name]
+                [itemName] = isChecked;
+        }
+
+        private void advProjDevList_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            var itemName = currProjDevList.Items[e.Index].ToString();
+            bool isChecked = e.NewValue == CheckState.Checked ? true : false;
+            filterConfiguration.FilterParameters[advProjDevList.Name]
+                [itemName] = isChecked;
         }
     }
 }

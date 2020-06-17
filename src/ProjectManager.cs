@@ -104,7 +104,6 @@ namespace EasyEPlanner
                 // Поиск пути к каталогу с надстройкой
                 string[] originalAssemblyPath = OriginalAssemblyPath
                     .Split('\\');
-                string configFileName = "configuration.ini";
 
                 int sourceEnd = originalAssemblyPath.Length;
                 string path = @"";
@@ -112,7 +111,7 @@ namespace EasyEPlanner
                 {
                     path += originalAssemblyPath[source].ToString() + "\\";
                 }
-                path += configFileName;
+                path += StaticHelper.CommonConst.ConfigFileName;
 
                 // Поиск файла .ini
                 if (!File.Exists(path))

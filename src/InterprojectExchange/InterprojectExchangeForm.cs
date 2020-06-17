@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Device;
 using static System.Windows.Forms.ListView;
 
 namespace EasyEPlanner
@@ -26,6 +21,11 @@ namespace EasyEPlanner
 
             currProjItems = new List<ListViewItem>();
             advProjItems = new List<ListViewItem>();
+
+            if (filterForm == null || filterForm.IsDisposed)
+            {
+                filterForm = new FilterForm();
+            }
         }
 
         private void InterprojectExchangeForm_FormClosed(object sender, 
@@ -34,6 +34,7 @@ namespace EasyEPlanner
             if (filterForm != null && filterForm.IsDisposed == false)
             {
                 filterForm.Close();
+                filterForm.Dispose();
             }
             this.Dispose();
         }
@@ -73,21 +74,10 @@ namespace EasyEPlanner
             }
         }
 
-        private List<ListViewItem> currProjItems;
-        private List<ListViewItem> advProjItems;
-
         private void filterButton_Click(object sender, EventArgs e)
         {
-            if (filterForm == null || filterForm.IsDisposed)
-            {
-                filterForm = new FilterForm();
-            }
-
-            filterForm.ShowDialog();
+            filterForm.Show();
         }
-
-        private FilterForm filterForm;
-        private InterprojectExchange interprojectExchange;
 
         private void advancedProjSignalsList_ItemSelectionChanged(object sender, 
             ListViewItemSelectionChangedEventArgs e)
@@ -163,12 +153,12 @@ namespace EasyEPlanner
             }
             else if (e.KeyCode == Keys.Delete)
             {
-                var selectedRow = bindedSignalsGrid.SelectedRows[0];
-                bindedSignalsGrid.Rows.Remove(selectedRow);
                 if (bindedSignalsGrid.Rows.Count == 0)
                 {
                     ClealAllGridAndListViewsSelection();
                 }
+                var selectedRow = bindedSignalsGrid.SelectedRows[0];
+                bindedSignalsGrid.Rows.Remove(selectedRow);
                 e.Handled = true;
             }
         }
@@ -320,5 +310,11 @@ namespace EasyEPlanner
                 listView.Items.AddRange(projItems.ToArray());
             }
         }
+
+        private List<ListViewItem> currProjItems;
+        private List<ListViewItem> advProjItems;
+
+        private FilterForm filterForm;
+        private InterprojectExchange interprojectExchange;
     }
 }

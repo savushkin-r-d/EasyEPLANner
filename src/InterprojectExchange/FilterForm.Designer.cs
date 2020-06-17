@@ -38,6 +38,7 @@
             this.advProjDevList = new System.Windows.Forms.CheckedListBox();
             this.acceptButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
+            this.clearButton = new System.Windows.Forms.Button();
             this.currProjGoupBox.SuspendLayout();
             this.bindedGridGroupBox.SuspendLayout();
             this.advProjGroupBox.SuspendLayout();
@@ -70,6 +71,7 @@
             this.currProjDevList.Name = "currProjDevList";
             this.currProjDevList.Size = new System.Drawing.Size(211, 334);
             this.currProjDevList.TabIndex = 0;
+            this.currProjDevList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.currProjDevList_ItemCheck);
             // 
             // bindedGridGroupBox
             // 
@@ -90,6 +92,7 @@
             this.groupAsPairsCheckBox.TabIndex = 5;
             this.groupAsPairsCheckBox.Text = "Группировка по парам";
             this.groupAsPairsCheckBox.UseVisualStyleBackColor = true;
+            this.groupAsPairsCheckBox.CheckStateChanged += new System.EventHandler(this.groupAsPairsCheckBox_CheckStateChanged);
             // 
             // advProjGroupBox
             // 
@@ -118,6 +121,7 @@
             this.advProjDevList.Name = "advProjDevList";
             this.advProjDevList.Size = new System.Drawing.Size(211, 334);
             this.advProjDevList.TabIndex = 1;
+            this.advProjDevList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.advProjDevList_ItemCheck);
             // 
             // acceptButton
             // 
@@ -139,12 +143,23 @@
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
+            // clearButton
+            // 
+            this.clearButton.Location = new System.Drawing.Point(12, 391);
+            this.clearButton.Name = "clearButton";
+            this.clearButton.Size = new System.Drawing.Size(75, 23);
+            this.clearButton.TabIndex = 6;
+            this.clearButton.Text = "Очистить";
+            this.clearButton.UseVisualStyleBackColor = true;
+            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
+            // 
             // FilterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(705, 421);
             this.ControlBox = false;
+            this.Controls.Add(this.clearButton);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.acceptButton);
             this.Controls.Add(this.advProjGroupBox);
@@ -158,7 +173,7 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Настройка фильтрации сигналов";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FilterForm_FormClosing);
+            this.TopMost = true;
             this.Load += new System.EventHandler(this.FilterForm_Load);
             this.currProjGoupBox.ResumeLayout(false);
             this.currProjGoupBox.PerformLayout();
@@ -173,14 +188,15 @@
         #endregion
 
         private System.Windows.Forms.GroupBox currProjGoupBox;
-        private System.Windows.Forms.GroupBox bindedGridGroupBox;
         private System.Windows.Forms.GroupBox advProjGroupBox;
         private System.Windows.Forms.Button acceptButton;
         private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.Label currDevLabel;
+        private System.Windows.Forms.Label advDevLabel;
+        private System.Windows.Forms.Button clearButton;
+        public System.Windows.Forms.GroupBox bindedGridGroupBox;
         private System.Windows.Forms.CheckedListBox currProjDevList;
         private System.Windows.Forms.CheckBox groupAsPairsCheckBox;
         private System.Windows.Forms.CheckedListBox advProjDevList;
-        private System.Windows.Forms.Label currDevLabel;
-        private System.Windows.Forms.Label advDevLabel;
     }
 }

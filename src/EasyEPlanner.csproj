@@ -137,6 +137,7 @@
     <Compile Include="ConfigurationChecker.cs" />
     <Compile Include="Editor\TechObjectsImporter.cs" />
     <Compile Include="InterprojectExchange\DeviceDTO.cs" />
+    <Compile Include="InterprojectExchange\FilterConfiguration.cs" />
     <Compile Include="InterprojectExchange\FilterForm.cs">
       <SubType>Form</SubType>
     </Compile>
