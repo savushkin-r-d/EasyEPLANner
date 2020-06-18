@@ -499,7 +499,7 @@ namespace Device
                     res += prefix + "prop = --Дополнительные свойства\n";
                     res += prefix + "\t{\n";
 
-                    foreach (var prop in properties)
+                    foreach (var prop in validProperties)
                     {
                         res += prefix + $"\t{prop.Key} = {prop.Value},\n";
                     }
