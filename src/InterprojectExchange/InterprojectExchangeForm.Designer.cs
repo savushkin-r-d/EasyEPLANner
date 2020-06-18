@@ -96,6 +96,7 @@
             this.addAdvProjButton.TabIndex = 8;
             this.addAdvProjButton.Text = "+";
             this.addAdvProjButton.UseVisualStyleBackColor = true;
+            this.addAdvProjButton.Click += new System.EventHandler(this.addAdvProjButton_Click);
             // 
             // delAdvProjButton
             // 
@@ -105,6 +106,7 @@
             this.delAdvProjButton.TabIndex = 9;
             this.delAdvProjButton.Text = "-";
             this.delAdvProjButton.UseVisualStyleBackColor = true;
+            this.delAdvProjButton.Click += new System.EventHandler(this.delAdvProjButton_Click);
             // 
             // advancedProjSignalsList
             // 

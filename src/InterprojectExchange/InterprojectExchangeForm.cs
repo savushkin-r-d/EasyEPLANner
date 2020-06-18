@@ -25,6 +25,12 @@ namespace EasyEPlanner
             advProjItems = new List<ListViewItem>();
         }
 
+        private FilterConfiguration filterConfiguration;
+        private InterprojectExchange interprojectExchange;
+
+        private List<ListViewItem> currProjItems;
+        private List<ListViewItem> advProjItems;
+
         private void InterprojectExchangeForm_FormClosed(object sender,
             FormClosedEventArgs e)
         {
@@ -374,10 +380,34 @@ namespace EasyEPlanner
             }
         }
 
-        private List<ListViewItem> currProjItems;
-        private List<ListViewItem> advProjItems;
+        private void delAdvProjButton_Click(object sender, EventArgs e)
+        {
+            if (advProjNameComboBox.Items.Count > 0)
+            {
+                DialogResult delete = MessageBox.Show($"Удалить обмен с проектом " +
+                    $"\"{advProjNameComboBox.Text}\"", "Внимание",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (delete == DialogResult.No)
+                {
+                    return;
+                }
 
-        private FilterConfiguration filterConfiguration;
-        private InterprojectExchange interprojectExchange;
+                //TODO: Пометка связи на удаление
+                //TODO: Удаление из списка
+                //TODO: Без физического удаления
+            }
+        }
+
+        private void addAdvProjButton_Click(object sender, EventArgs e)
+        {
+            var folderBrowserDialog = new FolderBrowserDialog();
+            DialogResult result = folderBrowserDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                //TODO: Проверить, добавлен ли такой проект
+                //TODO: Если да - ошибка
+                //TODO: Если нет - записываем и читаем данные в модель
+            }
+        }
     }
 }
