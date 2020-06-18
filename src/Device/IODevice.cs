@@ -490,17 +490,21 @@ namespace Device
 
             if (properties.Count > 0)
             {
-                res += prefix + "prop = --Дополнительные свойства\n";
-                res += prefix + "\t{\n";
-
-                foreach (var prop in properties)
+                var validProperties = properties
+                    .Where(x => x.Value.ToString() != "\'\'" &&
+                    x.Value != null &&
+                    x.Value.ToString() != "");
+                if (validProperties.Count() > 0)
                 {
-                    if (prop.Value != null)
+                    res += prefix + "prop = --Дополнительные свойства\n";
+                    res += prefix + "\t{\n";
+
+                    foreach (var prop in validProperties)
                     {
                         res += prefix + $"\t{prop.Key} = {prop.Value},\n";
                     }
+                    res += prefix + "\t},\n";
                 }
-                res += prefix + "\t},\n";
             }
 
             int bindedDO = CountOfBindedChannels(DO);
