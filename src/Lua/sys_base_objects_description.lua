@@ -465,7 +465,9 @@ return
             {
                 M1 = { name = "Мотор", defaultValue = "M1" },
                 PT = { name = "Датчик давления", defaultValue = "PT1" },
+                PT2 = { name = "Датчик давления 2 (разностное задание)" },
                 SET_VALUE = { name = "Задание", defaultValue = "" },
+                IS_REVERSE = { name = "Обратного (реверсивного) действия", defaultValue = "false" },
             },
             aggregateParameters =
             {
