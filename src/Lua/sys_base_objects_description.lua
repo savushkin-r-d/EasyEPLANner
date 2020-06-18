@@ -454,8 +454,12 @@ return
                     {
                         active =
                         {
-                            product_request = { name = "Запрос продукта" },
-                        }
+                            product_request = { name = "Запрос продукта" }
+                        },
+                        bool =
+                        {
+                            is_reverse = { name = "Обратного (реверсивного) действия", defaultValue = "false" }
+                        },
                     },
                     steps = { },
                 },
@@ -465,6 +469,7 @@ return
             {
                 M1 = { name = "Мотор", defaultValue = "M1" },
                 PT = { name = "Датчик давления", defaultValue = "PT1" },
+                PT2 = { name = "Датчик давления 2 (разностное задание)" },
                 SET_VALUE = { name = "Задание", defaultValue = "" },
             },
             aggregateParameters =
