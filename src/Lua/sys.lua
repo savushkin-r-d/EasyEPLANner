@@ -70,7 +70,7 @@ init = function()
                 proc_oper_params( params_float, mode, idx, obj )
 
                 if value.states ~= nil then
-                    for fields, value in ipairs( value.states ) do
+                    for fields, value in pairs( value.states ) do
                         local state_n = fields - 1
 
                         proc_operation( value, mode, state_n )

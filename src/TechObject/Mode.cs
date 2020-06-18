@@ -156,7 +156,6 @@ namespace TechObject
 
             res += baseOperation.SaveAsLuaTable(prefix);
 
-            int i = 1;
             string tmp;
             string tmp_2 = "";
 
@@ -165,7 +164,7 @@ namespace TechObject
                 tmp = stepsMngr[j].SaveAsLuaTable(prefix + "\t\t");
                 if (tmp != "")
                 {
-                    tmp_2 += prefix + "\t[ " + i++ + " ] =\n";
+                    tmp_2 += prefix + "\t[ " + (j + 1) + " ] =\n";
                     tmp_2 += prefix + "\t\t{\n";
                     tmp_2 += tmp;
                     tmp_2 += prefix + "\t\t},\n";
