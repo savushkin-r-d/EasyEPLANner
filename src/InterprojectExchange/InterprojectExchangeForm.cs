@@ -25,7 +25,7 @@ namespace EasyEPlanner
             advProjItems = new List<ListViewItem>();
         }
 
-        private void InterprojectExchangeForm_FormClosed(object sender, 
+        private void InterprojectExchangeForm_FormClosed(object sender,
             FormClosedEventArgs e)
         {
             filterConfiguration.Dispose();
@@ -39,7 +39,7 @@ namespace EasyEPlanner
 
         private void InterprojectExchangeForm_Load(object sender, EventArgs e)
         {
-            LoadCurrentProjectDevices();                        
+            LoadCurrentProjectDevices();
         }
 
         /// <summary>
@@ -90,121 +90,160 @@ namespace EasyEPlanner
             filterConfiguration.ShowForm();
         }
 
-        private void advancedProjSignalsList_ItemSelectionChanged(object sender, 
+        private void advancedProjSignalsList_ItemSelectionChanged(object sender,
             ListViewItemSelectionChangedEventArgs e)
         {
             string selectedItem = e.Item.Text;
-            SelectedListViewItemCollection oppositeItems = 
+            SelectedListViewItemCollection oppositeItems =
                 currentProjSignalsList.SelectedItems;
 
             bool needChange = (selectedItem != null &&
                 oppositeItems.Count != 0 &&
                 e.IsSelected);
-            bool needAddNewElement = bindedSignalsGrid.SelectedRows.Count == 0;
-            if(needChange)
+            bool needAddNewElement = bindedSignalsList.SelectedItems.Count == 0;
+            if (needChange)
             {
-                if(needAddNewElement)
+                if (needAddNewElement)
                 {
                     string oppositeItem = oppositeItems[0].SubItems[1].Text;
-                    bindedSignalsGrid.Rows.Add(oppositeItem, selectedItem);
-                    ClealAllGridAndListViewsSelection();
+                    var item = new ListViewItem(
+                        new string[] { oppositeItem, selectedItem });
+                    bindedSignalsList.Items.Add(item);
+                    ClearAllGridAndListViewsSelection();
                 }
                 else
                 {
-                    var selectedRow = bindedSignalsGrid.SelectedRows[0];
+                    var selectedRow = bindedSignalsList.SelectedItems[0];
                     if (selectedRow != null)
                     {
-                        var advProjDev = selectedRow.Cells[1];
-                        advProjDev.Value = selectedItem;
+                        selectedRow.SubItems[1].Text = selectedItem;
                     }
                 }
             }
         }
 
-        private void currentProjSignalsList_ItemSelectionChanged(object sender, 
+        private void currentProjSignalsList_ItemSelectionChanged(object sender,
             ListViewItemSelectionChangedEventArgs e)
         {
             string selectedItem = e.Item.SubItems[1].Text;
-            SelectedListViewItemCollection oppositeItems = 
+            SelectedListViewItemCollection oppositeItems =
                 advancedProjSignalsList.SelectedItems;
 
             bool needChange = (selectedItem != null &&
                 oppositeItems.Count != 0 &&
                 e.IsSelected);
-            if(needChange)
+            if (needChange)
             {
-                bool needAddNewElement = bindedSignalsGrid.SelectedRows
+                bool needAddNewElement = bindedSignalsList.SelectedItems
                     .Count == 0;
                 if (needAddNewElement)
                 {
                     string oppositeItem = oppositeItems[0].Text;
-                    bindedSignalsGrid.Rows.Add(selectedItem, oppositeItem);
-                    ClealAllGridAndListViewsSelection();
+                    var item = new ListViewItem(
+                        new string[] { selectedItem, oppositeItem });
+                    bindedSignalsList.Items.Add(item);
+                    ClearAllGridAndListViewsSelection();
                 }
                 else
                 {
-                    var selectedRow = bindedSignalsGrid.SelectedRows[0];
+                    var selectedRow = bindedSignalsList.SelectedItems[0];
                     if (selectedRow != null)
                     {
-                        var currProjDev = selectedRow.Cells[0];
-                        currProjDev.Value = selectedItem;
+                        selectedRow.SubItems[0].Text = selectedItem;
                     }
                 }
             }
         }
 
-        private void bindedSignalsGrid_KeyDown(object sender, KeyEventArgs e)
+        private void bindedSignalsList_KeyDown(object sender, KeyEventArgs e)
         {
             bool endEdit = e.KeyCode == Keys.Escape ||
                 e.KeyCode == Keys.Enter;
             if (endEdit)
             {
-                ClealAllGridAndListViewsSelection();
+                ClearAllGridAndListViewsSelection();
                 e.Handled = true;
             }
             else if (e.KeyCode == Keys.Delete)
             {
-                if (bindedSignalsGrid.Rows.Count == 0)
+                var selectedItems = bindedSignalsList.SelectedItems;
+                if(selectedItems != null && selectedItems.Count > 0)
                 {
-                    ClealAllGridAndListViewsSelection();
+                    var selectedItem = selectedItems[0];
+                    DeleteItemFromBindedSignals(selectedItem);                                   
                 }
-                var selectedRow = bindedSignalsGrid.SelectedRows[0];
-                bindedSignalsGrid.Rows.Remove(selectedRow);
+
+                if (bindedSignalsList.Items.Count == 0)
+                {
+                    ClearAllGridAndListViewsSelection();
+                }
                 e.Handled = true;
             }
         }
 
-        private void bindedSignalsGrid_MouseClick(object sender, 
-            MouseEventArgs e)
+        /// <summary>
+        /// Удаление элемента из списка связанных сигналов
+        /// </summary>
+        /// <param name="selectedItem"></param>
+        private void DeleteItemFromBindedSignals(ListViewItem selectedItem)
         {
-            var hitTestInfo = bindedSignalsGrid.HitTest(e.X, e.Y);
-            if (hitTestInfo.Type == DataGridViewHitTestType.None)
+            var selectedItemIndex = selectedItem.Index;
+            bindedSignalsList.Items.Remove(selectedItem);
+
+            if (selectedItemIndex >= 0 && bindedSignalsList.Items.Count > 0)
             {
-                ClealAllGridAndListViewsSelection();
-            }
-            else if (hitTestInfo.Type == DataGridViewHitTestType.Cell)
-            {
-                var selectedRow = bindedSignalsGrid.SelectedRows[0];
-                HighlightObjectsInListViews(selectedRow);           
-            }
+                if (bindedSignalsList.Items.Count > selectedItemIndex)
+                {
+                    var newSelectedItem = bindedSignalsList.Items[
+                    selectedItemIndex];
+                    newSelectedItem.Selected = true;
+                }
+                else if(bindedSignalsList.Items.Count == selectedItemIndex)
+                {
+                    var newSelectedItem = bindedSignalsList.Items[
+                            selectedItemIndex - 1];
+                    newSelectedItem.Selected = true;
+                }
+            } 
         }
 
         /// <summary>
         /// Очищает выделение в списках и таблице.
         /// </summary>
-        private void ClealAllGridAndListViewsSelection()
+        private void ClearAllGridAndListViewsSelection()
         {
-            bindedSignalsGrid.ClearSelection();
+            bindedSignalsList.SelectedIndices.Clear();
             currentProjSignalsList.SelectedIndices.Clear();
             advancedProjSignalsList.SelectedIndices.Clear();
         }
 
-        private void bindedSignalsGrid_RowStateChanged(object sender,
-            DataGridViewRowStateChangedEventArgs e)
+        private void bindedSignalsList_MouseClick(object sender, 
+            MouseEventArgs e)
         {
-            if (e.Row.Selected)
+            ListViewItem item = bindedSignalsList.GetItemAt(e.X, e.Y);
+            if (item != null)
             {
-                HighlightObjectsInListViews(e.Row);
+                var selectedItem = bindedSignalsList.SelectedItems[0];
+                HighlightObjectsInListViews(selectedItem);
+            }
+        }
+
+        private void bindedSignalsList_MouseDown(object sender, 
+            MouseEventArgs e)
+        {
+            ListViewItem item = bindedSignalsList.GetItemAt(e.X, e.Y);
+            if (item == null)
+            {
+                ClearAllGridAndListViewsSelection();
+            }
+        }
+
+        private void bindedSignalsList_ItemSelectionChanged(object sender,
+            ListViewItemSelectionChangedEventArgs e)
+        {
+            if (e.IsSelected)
+            {
+                HighlightObjectsInListViews(e.Item);
             }
         }
 
@@ -212,16 +251,13 @@ namespace EasyEPlanner
         /// Подсветить объекты в списках, которые находятся в выделенной строке
         /// таблицы
         /// </summary>
-        /// <param name="selectedRow">Выделенная в таблице строка</param>
-        private void HighlightObjectsInListViews(DataGridViewRow selectedRow)
+        /// <param name="selectedItem">Выделенная в таблице строка</param>
+        private void HighlightObjectsInListViews(ListViewItem selectedItem)
         {
             try
             {
-                var currProjDev = selectedRow.Cells[0];
-                var advProjDev = selectedRow.Cells[1];
-
-                var currProjDevText = currProjDev.Value.ToString();
-                var advProjDevText = advProjDev.Value.ToString();
+                var currProjDevText = selectedItem.SubItems[0].Text;
+                var advProjDevText = selectedItem.SubItems[1].Text;
 
                 var currProjItem = currentProjSignalsList
                     .FindItemWithText(currProjDevText);
@@ -243,15 +279,27 @@ namespace EasyEPlanner
             }
         }
 
-        private void currentProjSignalsList_KeyPress(object sender, 
+        private void currentProjSignalsList_KeyPress(object sender,
             KeyPressEventArgs e)
         {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                e.Handled = true;
+                return;
+            }
+
             ProcessingKeysFromListViewToTextBox(e, currProjSearchBox);
         }
 
-        private void advancedProjSignalsList_KeyPress(object sender, 
+        private void advancedProjSignalsList_KeyPress(object sender,
             KeyPressEventArgs e)
         {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                e.Handled = true;
+                return;
+            }
+
             ProcessingKeysFromListViewToTextBox(e, advProjSearchBox);
         }
 
@@ -260,7 +308,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="e">Событие обработки кнопок</param>
         /// <param name="textBox">ТекстБокс для изменений</param>
-        private void ProcessingKeysFromListViewToTextBox(KeyPressEventArgs e, 
+        private void ProcessingKeysFromListViewToTextBox(KeyPressEventArgs e,
             TextBox textBox)
         {
             bool deleteChar = e.KeyChar == (char)Keys.Delete ||
@@ -287,7 +335,7 @@ namespace EasyEPlanner
         {
             var filteredThroughType = filterConfiguration.FilterOut(
                 currProjItems, FilterConfiguration.FilterList.Current);
-            SearchingSubStringInListView(currentProjSignalsList, 
+            SearchingSubStringInListView(currentProjSignalsList,
                 currProjSearchBox.Text, filteredThroughType);
         }
 
@@ -305,7 +353,7 @@ namespace EasyEPlanner
         /// <param name="listView">ListView</param>
         /// <param name="subString">Подстрока</param>
         /// <param name="projItems">Массив элементов в проекте</param>
-        private void SearchingSubStringInListView(ListView listView, 
+        private void SearchingSubStringInListView(ListView listView,
             string subString, ListViewItem[] projItems)
         {
             if (subString != "")
