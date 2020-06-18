@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,6 +49,25 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Проверка корректности пути к файлам проекта
+        /// </summary>
+        /// <param name="path">Путь к файлам проекта</param>
+        /// <returns></returns>
+        public bool CheckPathToProjectFiles(string path)
+        {
+            bool isOk = false;
+
+            string fileWithDevicesPath = Path.Combine(path, 
+                fileWithDevicesName);
+            if (File.Exists(fileWithDevicesPath))
+            {
+                isOk = true;
+            }
+
+            return isOk;
+        }
+
+        /// <summary>
         /// Получить экземпляр класса. Singleton
         /// </summary>
         /// <returns></returns>
@@ -60,6 +80,8 @@ namespace EasyEPlanner
 
             return interprojectExchange;
         }
+
+        private string fileWithDevicesName = "main.io.lua";
 
         private static InterprojectExchange interprojectExchange;
         private List<InterprojectExchangeModel> interprojectExchangeModels;

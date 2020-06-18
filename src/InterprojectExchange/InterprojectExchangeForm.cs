@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using static System.Windows.Forms.ListView;
@@ -312,7 +313,7 @@ namespace EasyEPlanner
             catch
             {
                 string message = "Ошибка подсветки выделенных " +
-                    "элементов в списках";
+                    "элементов в списках.";
                 MessageBox.Show(message);
             }
         }
@@ -414,31 +415,89 @@ namespace EasyEPlanner
 
         private void delAdvProjButton_Click(object sender, EventArgs e)
         {
-            if (advProjNameComboBox.Items.Count > 0)
+            bool canDelete = advProjNameComboBox.Items.Count > 0 &&
+                advProjNameComboBox.SelectedIndex > -1;
+            if (canDelete)
             {
+                string projName = advProjNameComboBox.Text;
                 DialogResult delete = MessageBox.Show($"Удалить обмен с проектом " +
-                    $"\"{advProjNameComboBox.Text}\"", "Внимание",
+                    $"\"{projName}\".", "Внимание",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (delete == DialogResult.No)
                 {
                     return;
                 }
 
+                //TODO: Удаление из списка, без физического удаления
                 //TODO: Пометка связи на удаление
-                //TODO: Удаление из списка
-                //TODO: Без физического удаления
+
+                int selectedIndex = advProjNameComboBox.SelectedIndex;
+                advProjNameComboBox.Items.Remove(projName);
+                if(advProjNameComboBox.Items.Count > 0)
+                {
+                    advProjNameComboBox.SelectedIndex = selectedIndex - 1;
+                }
+                else
+                {
+                    advProjNameComboBox.SelectedIndex = -1;
+                }
             }
         }
 
         private void addAdvProjButton_Click(object sender, EventArgs e)
         {
             var folderBrowserDialog = new FolderBrowserDialog();
+            folderBrowserDialog.SelectedPath = ProjectManager.GetInstance()
+                .GetPtusaProjectsPath("");
             DialogResult result = folderBrowserDialog.ShowDialog();
             if (result == DialogResult.OK)
             {
-                //TODO: Проверить, добавлен ли такой проект
-                //TODO: Если да - ошибка
-                //TODO: Если нет - записываем и читаем данные в модель
+                string selectedPath = folderBrowserDialog.SelectedPath;
+                bool correctedPath = interprojectExchange
+                    .CheckPathToProjectFiles(selectedPath);
+                if (correctedPath)
+                {
+                    var dirInfo = new DirectoryInfo(selectedPath);
+                    if (advProjNameComboBox.Items.Contains(dirInfo.Name))
+                    {
+                        MessageBox.Show($"Проект \"{dirInfo.Name}\" уже " +
+                            $"обменивается с этим проектом сигналами",
+                            "Информация.",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        advProjNameComboBox.Items.Add(dirInfo.Name);
+                        int selectItem = advProjNameComboBox.Items
+                            .IndexOf(dirInfo.Name);
+                        advProjNameComboBox.SelectedIndex = selectItem;
+
+                        //TODO: Записываем и читаем данные в модель
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"По указанному пути не найдены файлы " +
+                        $"проекта.", "Предупреждение", MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                }
+            }
+        }
+
+        private void advProjNameComboBox_SelectedIndexChanged(object sender, 
+            EventArgs e)
+        {
+            int selectedIndex = advProjNameComboBox.SelectedIndex;
+            if (selectedIndex == -1)
+            {
+                //TODO: Отобразить для невыбранного проекта данные.
+                // Пустой список сигналов
+                // Пустая таблица связей
+            }
+            else
+            {
+                //TODO: Загрузить данные по выбранному проекту.
             }
         }
     }
