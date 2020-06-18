@@ -458,7 +458,8 @@ return
                         },
                         bool =
                         {
-                            is_reverse = { name = "Обратного (реверсивного) действия", defaultValue = "false" }
+                            is_reverse = { name = "Обратного (реверсивного) действия", defaultValue = "false" },
+                            is_zero_start = { name = "Нулевое стартовое значение", defaultValue = "true" }
                         },
                     },
                     steps = { },
