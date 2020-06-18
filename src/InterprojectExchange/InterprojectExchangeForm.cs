@@ -19,7 +19,7 @@ namespace EasyEPlanner
 
             interprojectExchange = InterprojectExchange.GetInstance();
             filterConfiguration = FilterConfiguration.GetInstance();
-            filterConfiguration.FilterChanged += RefilterListViews;
+            filterConfiguration.SignalsFilterChanged += RefilterListViews;
 
             currProjItems = new List<ListViewItem>();
             advProjItems = new List<ListViewItem>();
@@ -89,6 +89,10 @@ namespace EasyEPlanner
                 advProjItems, FilterConfiguration.FilterList.Advanced);
             currentProjSignalsList.Items.AddRange(filteredCurrProjItems);
             advancedProjSignalsList.Items.AddRange(filteredAdvProjItems);
+
+            bool useGroupsFilter = filterConfiguration.FilterParameters[
+                "bindedSignalsList"]["groupAsPairsCheckBox"];
+            bindedSignalsList.ShowGroups = useGroupsFilter;
         }
 
         private void filterButton_Click(object sender, EventArgs e)
@@ -111,11 +115,10 @@ namespace EasyEPlanner
             {
                 if (needAddNewElement)
                 {
-                    string oppositeItem = oppositeItems[0].SubItems[1].Text;
-                    var item = new ListViewItem(
-                        new string[] { oppositeItem, selectedItem });
-                    bindedSignalsList.Items.Add(item);
-                    ClearAllGridAndListViewsSelection();
+                    var oppositeItem = oppositeItems[0].SubItems[1];
+                    object oppositeItemTag = oppositeItems[0].Tag;
+                    AddToBindedSignals(oppositeItemTag, oppositeItem.Text, 
+                        selectedItem);
                 }
                 else
                 {
@@ -145,10 +148,7 @@ namespace EasyEPlanner
                 if (needAddNewElement)
                 {
                     string oppositeItem = oppositeItems[0].Text;
-                    var item = new ListViewItem(
-                        new string[] { selectedItem, oppositeItem });
-                    bindedSignalsList.Items.Add(item);
-                    ClearAllGridAndListViewsSelection();
+                    AddToBindedSignals(e.Item.Tag, selectedItem, oppositeItem);
                 }
                 else
                 {
@@ -159,6 +159,38 @@ namespace EasyEPlanner
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Добавить связь между объектами
+        /// </summary>
+        private void AddToBindedSignals(object type, string selectedItem, 
+            string oppositeItem)
+        {
+            ListViewGroup itemGroup;
+            switch(type.ToString())
+            {
+                case "AO":
+                    itemGroup = bindedSignalsList.Groups["AO"];
+                    break;
+                case "AI":
+                    itemGroup = bindedSignalsList.Groups["AI"];
+                    break;
+                case "DO":
+                    itemGroup = bindedSignalsList.Groups["DO"];
+                    break;
+                case "DI":
+                    itemGroup = bindedSignalsList.Groups["DI"];
+                    break;
+                default:
+                    itemGroup = bindedSignalsList.Groups["Other"];
+                    break;
+            }
+
+            var item = new ListViewItem(
+                new string[] { selectedItem, oppositeItem }, itemGroup);
+            bindedSignalsList.Items.Add(item);
+            ClearAllGridAndListViewsSelection();
         }
 
         private void bindedSignalsList_KeyDown(object sender, KeyEventArgs e)

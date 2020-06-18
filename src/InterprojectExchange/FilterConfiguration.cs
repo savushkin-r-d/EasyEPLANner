@@ -15,19 +15,19 @@ namespace EasyEPlanner
         /// <summary>
         /// Делегат для события изменения фильтра.
         /// </summary>
-        public delegate void filterChangedHandler();
+        public delegate void SignalsListFilterChanged();
 
         /// <summary>
         /// Событие изменение фильтра.
         /// </summary>
-        public event filterChangedHandler FilterChanged;
+        public event SignalsListFilterChanged SignalsFilterChanged;
 
         /// <summary>
         /// Сохранить конфигурацию фильтрации в .ini
         /// </summary>
         public void Save() 
         {
-            FilterChanged.Invoke();
+            SignalsFilterChanged.Invoke();
 
             var iniFile = new IniFile(pathToConfig);
             foreach(var section in filterParameters.Keys)
@@ -156,7 +156,7 @@ namespace EasyEPlanner
 
             var currProjDevList = new Dictionary<string, bool>();
             var advProjDevList = new Dictionary<string, bool>();
-            var bindedGridGroupBox = new Dictionary<string, bool>();
+            var bindedSignalsList = new Dictionary<string, bool>();
 
             foreach(var dev in GetDevicesList())
             {
@@ -164,11 +164,11 @@ namespace EasyEPlanner
                 advProjDevList.Add(dev, false);
             }
 
-            bindedGridGroupBox.Add("groupAsPairsCheckBox", false);
+            bindedSignalsList.Add("groupAsPairsCheckBox", false);
 
             filterParameters.Add("currProjDevList", currProjDevList);
             filterParameters.Add("advProjDevList", advProjDevList);
-            filterParameters.Add("bindedGridGroupBox", bindedGridGroupBox);
+            filterParameters.Add("bindedSignalsList", bindedSignalsList);
         }
 
         /// <summary>

@@ -31,7 +31,7 @@
             this.currProjGoupBox = new System.Windows.Forms.GroupBox();
             this.currDevLabel = new System.Windows.Forms.Label();
             this.currProjDevList = new System.Windows.Forms.CheckedListBox();
-            this.bindedGridGroupBox = new System.Windows.Forms.GroupBox();
+            this.bindedSignalsList = new System.Windows.Forms.GroupBox();
             this.groupAsPairsCheckBox = new System.Windows.Forms.CheckBox();
             this.advProjGroupBox = new System.Windows.Forms.GroupBox();
             this.advDevLabel = new System.Windows.Forms.Label();
@@ -40,7 +40,7 @@
             this.cancelButton = new System.Windows.Forms.Button();
             this.clearButton = new System.Windows.Forms.Button();
             this.currProjGoupBox.SuspendLayout();
-            this.bindedGridGroupBox.SuspendLayout();
+            this.bindedSignalsList.SuspendLayout();
             this.advProjGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -66,6 +66,7 @@
             // 
             // currProjDevList
             // 
+            this.currProjDevList.CheckOnClick = true;
             this.currProjDevList.FormattingEnabled = true;
             this.currProjDevList.Location = new System.Drawing.Point(6, 34);
             this.currProjDevList.Name = "currProjDevList";
@@ -73,15 +74,15 @@
             this.currProjDevList.TabIndex = 0;
             this.currProjDevList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.currProjDevList_ItemCheck);
             // 
-            // bindedGridGroupBox
+            // bindedSignalsList
             // 
-            this.bindedGridGroupBox.Controls.Add(this.groupAsPairsCheckBox);
-            this.bindedGridGroupBox.Location = new System.Drawing.Point(241, 12);
-            this.bindedGridGroupBox.Name = "bindedGridGroupBox";
-            this.bindedGridGroupBox.Size = new System.Drawing.Size(223, 375);
-            this.bindedGridGroupBox.TabIndex = 1;
-            this.bindedGridGroupBox.TabStop = false;
-            this.bindedGridGroupBox.Text = "Сводная таблица";
+            this.bindedSignalsList.Controls.Add(this.groupAsPairsCheckBox);
+            this.bindedSignalsList.Location = new System.Drawing.Point(241, 12);
+            this.bindedSignalsList.Name = "bindedSignalsList";
+            this.bindedSignalsList.Size = new System.Drawing.Size(223, 375);
+            this.bindedSignalsList.TabIndex = 1;
+            this.bindedSignalsList.TabStop = false;
+            this.bindedSignalsList.Text = "Сводная таблица";
             // 
             // groupAsPairsCheckBox
             // 
@@ -116,6 +117,7 @@
             // 
             // advProjDevList
             // 
+            this.advProjDevList.CheckOnClick = true;
             this.advProjDevList.FormattingEnabled = true;
             this.advProjDevList.Location = new System.Drawing.Point(6, 34);
             this.advProjDevList.Name = "advProjDevList";
@@ -163,7 +165,7 @@
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.acceptButton);
             this.Controls.Add(this.advProjGroupBox);
-            this.Controls.Add(this.bindedGridGroupBox);
+            this.Controls.Add(this.bindedSignalsList);
             this.Controls.Add(this.currProjGoupBox);
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(721, 460);
@@ -176,8 +178,8 @@
             this.TopMost = true;
             this.currProjGoupBox.ResumeLayout(false);
             this.currProjGoupBox.PerformLayout();
-            this.bindedGridGroupBox.ResumeLayout(false);
-            this.bindedGridGroupBox.PerformLayout();
+            this.bindedSignalsList.ResumeLayout(false);
+            this.bindedSignalsList.PerformLayout();
             this.advProjGroupBox.ResumeLayout(false);
             this.advProjGroupBox.PerformLayout();
             this.ResumeLayout(false);
@@ -193,7 +195,7 @@
         private System.Windows.Forms.Label currDevLabel;
         private System.Windows.Forms.Label advDevLabel;
         private System.Windows.Forms.Button clearButton;
-        public System.Windows.Forms.GroupBox bindedGridGroupBox;
+        public System.Windows.Forms.GroupBox bindedSignalsList;
         private System.Windows.Forms.CheckedListBox currProjDevList;
         private System.Windows.Forms.CheckBox groupAsPairsCheckBox;
         private System.Windows.Forms.CheckedListBox advProjDevList;

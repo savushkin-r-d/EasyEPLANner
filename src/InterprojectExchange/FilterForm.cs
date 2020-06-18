@@ -84,7 +84,7 @@ namespace EasyEPlanner
                 advProjDevList.SetItemChecked(itemNum, devPair.Value);
             }
 
-            bool isChecked = filterParameters[bindedGridGroupBox.Name]
+            bool isChecked = filterParameters[bindedSignalsList.Name]
                 [groupAsPairsCheckBox.Name];
             groupAsPairsCheckBox.Checked = isChecked;
 
@@ -99,7 +99,7 @@ namespace EasyEPlanner
             EventArgs e)
         {
             FilterConfiguration.GetInstance()
-                .FilterParameters[bindedGridGroupBox.Name]
+                .FilterParameters[bindedSignalsList.Name]
                 [groupAsPairsCheckBox.Name] = groupAsPairsCheckBox.Checked;
         }
 
