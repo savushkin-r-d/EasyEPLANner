@@ -30,7 +30,9 @@ namespace EasyEPlanner
                 }
                 else
                 {
-                    InterprojectExchangeStarter.Start();
+                    var interProjectExchangeStarter = new InterprojectExchange
+                        .InterprojectExchangeStarter();
+                    interProjectExchangeStarter.Start();
                 }
 
             }

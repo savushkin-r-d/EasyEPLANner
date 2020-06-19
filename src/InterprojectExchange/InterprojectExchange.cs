@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using EasyEPlanner;
 
-namespace EasyEPlanner
+namespace InterprojectExchange
 {
     /// <summary>
     /// Межконтроллерный обмен сигналами. Обмен с формами
@@ -15,15 +16,20 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Загрузить модель
+        /// Очистка обмена между проектами
         /// </summary>
-        /// <param name="projName">Имя проекта</param>
-        /// <param name="devices">Устройства</param>
-        public void LoadModel(string projName, List<DeviceDTO> devices)
+        public void Clear()
         {
-            var model = new InterprojectExchangeModel();
-            model.Devices = devices;
-            model.ProjectName = projName;
+            interprojectExchangeStarter = null;
+            interprojectExchangeModels.Clear();
+        }
+
+        /// <summary>
+        /// Добавить модель
+        /// </summary>
+        /// <param name="model">Модель</param>
+        public void AddModel(InterprojectExchangeModel model)
+        {
             interprojectExchangeModels.Add(model);
         }
 
@@ -34,8 +40,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         public bool LoadProjectData(string pathToProjectDir)
         {
-            return InterprojectExchangeStarter
-                .LoadProjectData(pathToProjectDir);
+            return Owner.LoadProjectData(pathToProjectDir);
         }
 
         /// <summary>
@@ -69,7 +74,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         public bool CheckPathToProjectFiles(string path)
         {
-            return InterprojectExchangeStarter.CheckProjectData(path);
+            return Owner.CheckProjectData(path);
         }
 
         /// <summary>
@@ -90,6 +95,27 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Получить имя текущего проекта для формы
+        /// </summary>
+        /// <returns></returns>
+        public string GetCurrentProjectName()
+        {
+            return EProjectManager.GetInstance()
+                .GetModifyingCurrentProjectName();
+        }
+
+        /// <summary>
+        /// Получить путь к папке с проектами
+        /// </summary>
+        public string GetPathWithProjects
+        {
+            get
+            {
+                return ProjectManager.GetInstance().GetPtusaProjectsPath("");
+            }
+        }
+
+        /// <summary>
         /// Получить модель
         /// </summary>
         /// <param name="projName">Имя проекта</param>
@@ -102,7 +128,10 @@ namespace EasyEPlanner
             return model;
         }
 
-        public InterprojectExchangeStarter InterprojectExchangeStarter
+        /// <summary>
+        /// Класс-владелец
+        /// </summary>
+        public InterprojectExchangeStarter Owner
         {
             get
             {
@@ -111,6 +140,17 @@ namespace EasyEPlanner
             set
             {
                 interprojectExchangeStarter = value;
+            }
+        }
+
+        /// <summary>
+        /// Модели с данными по проектам
+        /// </summary>
+        public List<InterprojectExchangeModel> Models
+        {
+            get
+            {
+                return interprojectExchangeModels;
             }
         }
 

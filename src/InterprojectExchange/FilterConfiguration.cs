@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using PInvoke;
 using System.Windows.Forms;
+using EasyEPlanner;
 
-namespace EasyEPlanner
+namespace InterprojectExchange
 {
     /// <summary>
     /// Конфигурация фильтра сигналов и устройств в межпроектном обмене

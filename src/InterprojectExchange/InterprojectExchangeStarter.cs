@@ -5,34 +5,35 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using EasyEPlanner;
 
-namespace EasyEPlanner
+namespace InterprojectExchange
 {
     /// <summary>
     /// Межконтроллерный обмен сигналами. Стартовый класс
     /// </summary>
     public class InterprojectExchangeStarter
     {
-        private InterprojectExchangeStarter()
+        public InterprojectExchangeStarter()
         {
             interprojectExchange = InterprojectExchange.GetInstance();
-            deviceComparer = new DeviceComparer();
+            interprojectExchange.Clear();
+
+            lua = new Lua();
+            lua.RegisterFunction("CreateModel", this,
+                GetType().GetMethod("CreateModel"));
         }
 
         /// <summary>
         /// Начало настройки межконтроллерного обмена.
         /// </summary>
-        public static void Start()
+        public void Start()
         {
-            var instance = GetInstance();
-            instance.interprojectExchange.InterprojectExchangeStarter =
-                interprojectExchangeStarter;
-            bool isReadSignals = instance.UpdateDevices();
-            bool isLoadData = instance
-                .LoadCurrentInterprojectExchange(isReadSignals);
-            instance.ShowForm(isLoadData);
+            interprojectExchange.Owner = this;
+            bool isReadSignals = UpdateDevices();
+            bool isLoadData = LoadCurrentInterprojectExchange(isReadSignals);
+            ShowForm(isLoadData);
         }
 
         /// <summary>
@@ -56,34 +57,64 @@ namespace EasyEPlanner
                 return false;
             }
 
-            var projName = EProjectManager.GetInstance()
-                .GetCurrentProjectName();
-            var devices = new List<DeviceDTO>();
-            foreach(var dev in Device.DeviceManager.GetInstance().Devices)
-            {
-                var devDTO = new DeviceDTO(dev.Name, dev.EPlanName, 
-                    dev.Description, dev.DeviceType.ToString());
-                devices.Add(devDTO);
-            }
-
-            devices.Sort(deviceComparer);
-
-            interprojectExchange.LoadModel(projName, devices);
-
+            string projName = EProjectManager.GetInstance()
+                .GetModifyingCurrentProjectName();
+            string pathToProjectDir = ProjectManager.GetInstance()
+                .GetPtusaProjectsPath(projName);
+            LoadProjectData(pathToProjectDir, projName);
             return true;
-            //TODO: чтение данных по проекту и перекрестных данных
+        }
+
+        /// <summary>
+        /// Создать модель, вызывается из Lua
+        /// </summary>
+        /// <returns></returns>
+        public InterprojectExchangeModel CreateModel()
+        {
+            var model = new InterprojectExchangeModel();
+            interprojectExchange.AddModel(model);
+            return model;
         }
 
         /// <summary>
         /// Загрузить данные проекта
         /// </summary>
-        /// <param name="pathToFiles">Путь к проекту</param>
+        /// <param name="pathToProjectDir">Путь к папке с проектами</param>
+        /// <param name="projName">Имя проекта</param>
         /// <returns></returns>
-        public bool LoadProjectData(string pathToFiles)
+        public bool LoadProjectData(string pathToProjectDir, 
+            string projName = "")
         {
-            var res = false;
-            luaInstance = new Lua();
-            //TODO: Загрузка всех данных по проекту (shared, io)
+            bool res = false;
+            string pathToIOFile = Path.Combine(pathToProjectDir, projName, 
+                fileWithDeviceAndPLC);
+            if (File.Exists(pathToIOFile))
+            {
+                var reader = new StreamReader(pathToIOFile,
+                    Encoding.GetEncoding(1251));
+                string ioInfo = reader.ReadToEnd();
+                reader.Close();
+                lua.DoString(ioInfo);
+
+                string pathToScripts = Path.Combine(ProjectManager
+                    .GetInstance().SystemFilesPath, "sys_interproject_io.lua");
+                reader = new StreamReader(pathToScripts, 
+                    Encoding.GetEncoding(1251));
+                string mainIOData = reader.ReadToEnd();
+                reader.Close();
+                lua.DoString(mainIOData);
+                lua.DoString("init_io_file()");
+
+                res = true;
+            }
+            else
+            {
+                form.ShowErrorMessage($"Не найден файл main.io.lua проекта" +
+                    $" \"{projName}\"");
+                res = false;
+            }
+
+            //shared.lua read if exist (if model.SharedLuaReaded = false)
 
             return res;
         }
@@ -123,79 +154,22 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Получить экземпляр класса. Singleton
+        /// Экземпляр пространства Lua модели
         /// </summary>
-        /// <returns></returns>
-        public static InterprojectExchangeStarter GetInstance()
+        public Lua Lua
         {
-            if (interprojectExchangeStarter == null)
+            get
             {
-                interprojectExchangeStarter = new InterprojectExchangeStarter();
+                return lua;
             }
-
-            return interprojectExchangeStarter;
         }
 
         private string fileWithDeviceAndPLC = "main.io.lua";
         //private string fileWithSignals = "shared.lua";
 
-        private Lua luaInstance;
-
         private InterprojectExchangeForm form;
         private InterprojectExchange interprojectExchange;
-        private static InterprojectExchangeStarter interprojectExchangeStarter;
-        private DeviceComparer deviceComparer;
-    }
 
-    /// <summary>
-    /// Компаратор для устройств
-    /// </summary>
-    class DeviceComparer : IComparer<DeviceDTO>
-    {
-        public int Compare(DeviceDTO dev1, DeviceDTO dev2)
-        {
-            var device1 = Regex.Match(dev1.EplanName, regexPattern);
-            var device2 = Regex.Match(dev2.EplanName, regexPattern);
-            if (!(device1.Success || device2.Success))
-            {
-                return 0;
-            }
-
-            string dev1Obj = device1.Groups["object"].Value;
-            string dev2Obj = device2.Groups["object"].Value;
-            if (dev1Obj != dev2Obj)
-            {
-                return dev1Obj.CompareTo(dev2Obj);
-            }
-
-            string dev1ObjNumStr = device1.Groups["object_n"].Value;
-            string dev2ObjNumStr = device2.Groups["object_n"].Value;
-            if (dev1ObjNumStr != dev2ObjNumStr)
-            {
-                int dev1ObjNum = int.Parse(dev1ObjNumStr);
-                int dev2ObjNum = int.Parse(dev2ObjNumStr);
-                return dev1ObjNum.CompareTo(dev2ObjNum);
-            }
-
-            string dev1Type = device1.Groups["type"].Value;
-            string dev2Type = device2.Groups["type"].Value;
-            if (dev1Type != dev2Type)
-            {
-                return dev1Type.CompareTo(dev2Type);
-            }
-
-            string dev1NumStr = device1.Groups["n"].Value;
-            string dev2NumStr = device2.Groups["n"].Value;
-            if (dev1NumStr != dev2NumStr)
-            {
-                int dev1Num = int.Parse(dev1NumStr);
-                int dev2Num = int.Parse(dev2NumStr);
-                return dev1Num.CompareTo(dev2Num);
-            }
-
-            return 0;
-        }
-
-        public string regexPattern = Device.DeviceManager.DESCRIPTION_PATTERN;
+        Lua lua;
     }
 }

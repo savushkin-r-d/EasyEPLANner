@@ -136,6 +136,7 @@
   <ItemGroup>
     <Compile Include="ConfigurationChecker.cs" />
     <Compile Include="Editor\TechObjectsImporter.cs" />
+    <Compile Include="InterprojectExchange\DeviceComparer.cs" />
     <Compile Include="InterprojectExchange\DeviceDTO.cs" />
     <Compile Include="InterprojectExchange\FilterConfiguration.cs" />
     <Compile Include="InterprojectExchange\FilterForm.cs">
@@ -153,6 +154,7 @@
     <Compile Include="InterprojectExchange\InterprojectExchangeForm.Designer.cs">
       <DependentUpon>InterprojectExchangeForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="InterprojectExchange\PacDTO.cs" />
     <Compile Include="Main\InterprojectExchangeAction.cs" />
     <Compile Include="TechObject\Base\BaseObjectsManager.cs" />
     <Compile Include="Device\DeviceManager.cs" />
@@ -352,6 +354,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Lua\sys_base_objects_initializer.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Lua\sys_interproject_io.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Lua\sys_io.lua">

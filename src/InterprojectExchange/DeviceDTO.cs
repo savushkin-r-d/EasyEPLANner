@@ -3,70 +3,51 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
-namespace EasyEPlanner
+namespace InterprojectExchange
 {
     /// <summary>
     /// Объект для обмена информацией об устройствах
     /// </summary>
     public class DeviceDTO
     {
-        public DeviceDTO(string name, string eplanName, string description,
-            string type)
+        public DeviceDTO(string name, string description)
         {
-            this.name = name;
-            this.eplanName = eplanName;
-            this.description = description;
-            this.type = type;
+            Name = name;
+            Description = description;
+            Type = GetType(description);
+        }
+
+        /// <summary>
+        /// Получить тип на основе имени устройства;
+        /// </summary>
+        /// <param name="devName">Имя устройства</param>
+        /// <returns></returns>
+        private string GetType(string devName)
+        {
+            var result = "";
+            var match = Regex.Match(devName, DeviceComparer.RegExpPattern);
+            if (match.Success)
+            {
+                result = match.Groups["type"].Value.ToUpper();
+            }
+            return result;
         }
 
         /// <summary>
         /// Имя устройства А1BBB2
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
-
-        /// <summary>
-        /// Имя устройства в Eplan +A1-BB2
-        /// </summary>
-        public string EplanName
-        {
-            get
-            {
-                return eplanName;
-            }
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// Описание устройства
         /// </summary>
-        public string Description
-        {
-            get 
-            {
-                return description;
-            }
-        }
+        public string Description { get; set; }
 
         /// <summary>
         /// Тип устройства (AI,TE..)
         /// </summary>
-        public string Type
-        {
-            get
-            {
-                return type.ToUpper();
-            }
-        }
-
-        private string name;
-        private string eplanName;
-        private string description;
-        private string type;
+        public string Type { get; set; }
     }
 }

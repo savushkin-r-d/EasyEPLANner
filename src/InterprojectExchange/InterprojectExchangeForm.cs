@@ -6,18 +6,13 @@ using System.Linq;
 using System.Windows.Forms;
 using static System.Windows.Forms.ListView;
 
-namespace EasyEPlanner
+namespace InterprojectExchange
 {
     public partial class InterprojectExchangeForm : Form
     {
         public InterprojectExchangeForm()
         {
             InitializeComponent();
-
-            // Установка имени текущего проекта
-            string projectName = EProjectManager.GetInstance()
-                .GetCurrentProjectName();
-            currProjNameTextBox.Text = projectName;
 
             // Получение основных экземпляров классов, подписка на событие
             // обновления списков через фильтр
@@ -28,6 +23,10 @@ namespace EasyEPlanner
             // Инициализация начальных списков
             currProjItems = new List<ListViewItem>();
             advProjItems = new List<ListViewItem>();
+
+            // Установка имени текущего проекта
+            string projectName = interprojectExchange.GetCurrentProjectName();
+            currProjNameTextBox.Text = projectName;
         }
 
         private FilterConfiguration filterConfiguration;
@@ -507,8 +506,8 @@ namespace EasyEPlanner
         private void addAdvProjButton_Click(object sender, EventArgs e)
         {
             var folderBrowserDialog = new FolderBrowserDialog();
-            folderBrowserDialog.SelectedPath = ProjectManager.GetInstance()
-                .GetPtusaProjectsPath("");
+            folderBrowserDialog.SelectedPath = interprojectExchange
+                .GetPathWithProjects;
             DialogResult result = folderBrowserDialog.ShowDialog();
             if (result != DialogResult.OK)
             {
@@ -563,7 +562,7 @@ namespace EasyEPlanner
             int selectedIndex = advProjNameComboBox.SelectedIndex;
             if (selectedIndex >= 0)
             {
-                LoadAdvProjData(currProjNameTextBox.Text);
+                LoadAdvProjData(advProjNameComboBox.Text);
             }
         }
 
@@ -573,6 +572,7 @@ namespace EasyEPlanner
         /// <param name="projName">Имя проекта</param>
         private void LoadAdvProjData(string projName)
         {
+            advProjItems.Clear();
             var devices = interprojectExchange.GetProjectDevices(projName);
             foreach (var devInfo in devices)
             {

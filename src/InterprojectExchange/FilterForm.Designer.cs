@@ -1,4 +1,4 @@
-﻿namespace EasyEPlanner
+﻿namespace InterprojectExchange
 {
     partial class FilterForm
     {

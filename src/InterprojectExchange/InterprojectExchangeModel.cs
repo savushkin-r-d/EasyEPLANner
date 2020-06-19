@@ -1,10 +1,11 @@
-﻿using System;
+﻿using LuaInterface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EasyEPlanner
+namespace InterprojectExchange
 {
     /// <summary>
     /// Модель межпроектного обмена для каждого проекта.
@@ -13,7 +14,39 @@ namespace EasyEPlanner
     {
         public InterprojectExchangeModel()
         {
+            pacDTO = new PacDTO();
+            Devices = new List<DeviceDTO>();
+            deviceComparer = new DeviceComparer();
+        }
 
+        /// <summary>
+        /// Добавляем данные о ПЛК из Lua 
+        /// </summary>
+        /// <param name="IP">IP-Адрес</param>
+        /// <param name="pacName">Имя контроллера</param>
+        public void AddPLCData(string IP, string pacName)
+        {
+            PacInfo.IP = IP;
+            ProjectName = pacName;
+        }
+
+        /// <summary>
+        /// Добавляем данные об устройства из Lua
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="description"></param>
+        public void AddDeviceData(string name, string description)
+        {
+            var deviceDTO = new DeviceDTO(name, description);
+            Devices.Add(deviceDTO);
+        }
+
+        /// <summary>
+        /// Сортировка устройств из Lua
+        /// </summary>
+        public void SortDeviceData()
+        {
+            Devices.Sort(deviceComparer);
         }
 
         /// <summary>
@@ -35,5 +68,25 @@ namespace EasyEPlanner
         /// Путь к папке с проектом
         /// </summary>
         public string PathToProjectDir { get; set; }
+
+        /// <summary>
+        /// Прочитаны ли сигналы для обмена
+        /// </summary>
+        public bool SharedIsReaded { get; set; } = false;
+
+        /// <summary>
+        /// Информация о контроллере
+        /// </summary>
+        public PacDTO PacInfo
+        {
+            get
+            {
+                return pacDTO;
+            }
+        }
+
+        PacDTO pacDTO;
+
+        private DeviceComparer deviceComparer;
     }
 }
