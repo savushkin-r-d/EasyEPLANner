@@ -346,7 +346,7 @@ namespace EasyEPlanner
             {
                 string message = "Ошибка подсветки выделенных " +
                     "элементов в списках.";
-                MessageBox.Show(message);
+                ShowErrorMessage(message);
             }
         }
 
@@ -469,15 +469,22 @@ namespace EasyEPlanner
             if (canDelete)
             {
                 string projName = advProjNameComboBox.Text;
-                DialogResult delete = MessageBox.Show($"Удалить обмен с проектом " +
-                    $"\"{projName}\".", "Внимание",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                string message = $"Удалить обмен с проектом \"{projName}\".";
+                DialogResult delete = ShowWarningMessage(message, 
+                    MessageBoxButtons.YesNo);
                 if (delete == DialogResult.No)
                 {
                     return;
                 }
 
-                interprojectExchange.MarkToDelete(projName);
+                try
+                {
+                    interprojectExchange.MarkToDelete(projName);
+                }
+                catch(Exception except)
+                {
+                    ShowErrorMessage(except.Message);
+                }
 
                 int selectedIndex = advProjNameComboBox.SelectedIndex;
                 advProjNameComboBox.Items.Remove(projName);
@@ -516,16 +523,14 @@ namespace EasyEPlanner
                 var dirInfo = new DirectoryInfo(selectedPath);
                 if (advProjNameComboBox.Items.Contains(dirInfo.Name))
                 {
-                    MessageBox.Show($"Проект \"{dirInfo.Name}\" уже " +
-                        $"обменивается с этим проектом сигналами",
-                        "Информация.",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                    string message = $"Проект \"{dirInfo.Name}\" уже " +
+                        $"обменивается с этим проектом сигналами";
+                    ShowInfoMessage(message);
                 }
                 else
                 {
-                    bool loaded = interprojectExchange
-                        .LoadProjectData(selectedPath);
+                    bool loaded = interprojectExchange.LoadProjectData(
+                        selectedPath);
                     if (loaded)
                     {
                         advProjNameComboBox.Items.Add(dirInfo.Name);
@@ -535,17 +540,17 @@ namespace EasyEPlanner
                     }
                     else
                     {
-                        MessageBox.Show($"Данные по проекту " +
-                            $"\"{dirInfo.Name}\" не загружены.", "Ошибка",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        string message = $"Данные по проекту " +
+                            $"\"{dirInfo.Name}\" не загружены.";
+                        ShowErrorMessage(message);
                     }
                 }
             }
             else
             {
-                MessageBox.Show($"По указанному пути не найдены файлы " +
-                    $"проекта.", "Предупреждение", MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                string message = $"По указанному пути не найдены файлы " +
+                    $"проекта.";
+                ShowWarningMessage(message, MessageBoxButtons.OK);
             }
         }
 
@@ -580,6 +585,36 @@ namespace EasyEPlanner
             //TODO: Отобразить связи в списке как-то
 
             RefilterListViews();
+        }
+
+        /// <summary>
+        /// Показать окно с сообщением об ошибке
+        /// </summary>
+        /// <param name="message">Сообщение</param>
+        public DialogResult ShowErrorMessage(string message)
+        {
+            return MessageBox.Show(message, "Ошибка", MessageBoxButtons.OK, 
+                MessageBoxIcon.Error);
+        }
+
+        /// <summary>
+        /// Показать окно с предупреждением
+        /// </summary>
+        public DialogResult ShowWarningMessage(string message, 
+            MessageBoxButtons boxButtons)
+        {
+            return MessageBox.Show(message, "Внимание", boxButtons, 
+                MessageBoxIcon.Warning);
+        }
+
+        /// <summary>
+        /// Показать окно с информацией.
+        /// </summary>
+        /// <param name="message">Сообщение</param>
+        public DialogResult ShowInfoMessage(string message)
+        {
+            return MessageBox.Show(message, "Информация", MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
         }
     }
 }

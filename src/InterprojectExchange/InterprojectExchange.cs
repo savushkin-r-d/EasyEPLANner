@@ -1,10 +1,6 @@
-﻿using Microsoft.SqlServer.Server;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EasyEPlanner
 {
@@ -32,6 +28,17 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Загрузка данных проекта (вызывает событие)
+        /// </summary>
+        /// <param name="pathToProjectDir">Путь к папке с файлами проекта</param>
+        /// <returns></returns>
+        public bool LoadProjectData(string pathToProjectDir)
+        {
+            return InterprojectExchangeStarter
+                .LoadProjectData(pathToProjectDir);
+        }
+
+        /// <summary>
         /// Получить устройства проекта по имени
         /// </summary>
         /// <param name="projectName">Имя проекта</param>
@@ -56,36 +63,13 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Загрузить данные проекта
-        /// </summary>
-        /// <param name="pathToFiles">Путь к проекту</param>
-        /// <returns></returns>
-        public bool LoadProjectData(string pathToFiles)
-        {
-            var res = false;
-
-            //TODO: Загрузка всех данных по проекту (shared, io)
-
-            return res;
-        }
-
-        /// <summary>
         /// Проверка корректности пути к файлам проекта
         /// </summary>
         /// <param name="path">Путь к файлам проекта</param>
         /// <returns></returns>
         public bool CheckPathToProjectFiles(string path)
         {
-            bool isOk = false;
-
-            string fileWithDevicesPath = Path.Combine(path, 
-                fileWithDevicesName);
-            if (File.Exists(fileWithDevicesPath))
-            {
-                isOk = true;
-            }
-
-            return isOk;
+            return InterprojectExchangeStarter.CheckProjectData(path);
         }
 
         /// <summary>
@@ -118,6 +102,18 @@ namespace EasyEPlanner
             return model;
         }
 
+        public InterprojectExchangeStarter InterprojectExchangeStarter
+        {
+            get
+            {
+                return interprojectExchangeStarter;
+            }
+            set
+            {
+                interprojectExchangeStarter = value;
+            }
+        }
+
         /// <summary>
         /// Получить экземпляр класса. Singleton
         /// </summary>
@@ -132,9 +128,7 @@ namespace EasyEPlanner
             return interprojectExchange;
         }
 
-        private string fileWithDevicesName = "main.io.lua";
-        private string sharedFile = "shared.lua";
-
+        private InterprojectExchangeStarter interprojectExchangeStarter;
         private static InterprojectExchange interprojectExchange;
         private List<InterprojectExchangeModel> interprojectExchangeModels;
     }

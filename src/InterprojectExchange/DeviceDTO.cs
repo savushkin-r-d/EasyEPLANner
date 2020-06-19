@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace EasyEPlanner
 {
     /// <summary>
-    /// Объект для обмена информацией об устройства
+    /// Объект для обмена информацией об устройствах
     /// </summary>
     public class DeviceDTO
     {

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using LuaInterface;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -25,16 +27,18 @@ namespace EasyEPlanner
         public static void Start()
         {
             var instance = GetInstance();
-            bool isReadSignals = instance.ReadDevices();
+            instance.interprojectExchange.InterprojectExchangeStarter =
+                interprojectExchangeStarter;
+            bool isReadSignals = instance.UpdateDevices();
             bool isLoadData = instance
                 .LoadCurrentInterprojectExchange(isReadSignals);
             instance.ShowForm(isLoadData);
         }
 
         /// <summary>
-        /// Загрузка текущих устройств.
+        /// Обновление текущих устройств.
         /// </summary>
-        private bool ReadDevices()
+        private bool UpdateDevices()
         {
             bool saveDescrSilentMode = true;
             EProjectManager.GetInstance().SyncAndSave(saveDescrSilentMode);
@@ -71,6 +75,37 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Загрузить данные проекта
+        /// </summary>
+        /// <param name="pathToFiles">Путь к проекту</param>
+        /// <returns></returns>
+        public bool LoadProjectData(string pathToFiles)
+        {
+            var res = false;
+            luaInstance = new Lua();
+            //TODO: Загрузка всех данных по проекту (shared, io)
+
+            return res;
+        }
+
+        /// <summary>
+        /// Проверка корректности пути к проекту
+        /// </summary>
+        /// <param name="pathToDir">Путь к папке с файлами проекта</param>
+        /// <returns></returns>
+        public bool CheckProjectData(string pathToDir)
+        {
+            bool res = false;
+            string fileWithDevicesPath = Path.Combine(pathToDir,
+                fileWithDeviceAndPLC);
+            if (File.Exists(fileWithDevicesPath))
+            {
+                res = true;
+            }
+            return res;
+        }
+
+        /// <summary>
         /// Показать форму для работы с межпроектным обменом.
         /// </summary>
         private void ShowForm(bool isLoaded)
@@ -100,6 +135,11 @@ namespace EasyEPlanner
 
             return interprojectExchangeStarter;
         }
+
+        private string fileWithDeviceAndPLC = "main.io.lua";
+        //private string fileWithSignals = "shared.lua";
+
+        private Lua luaInstance;
 
         private InterprojectExchangeForm form;
         private InterprojectExchange interprojectExchange;
