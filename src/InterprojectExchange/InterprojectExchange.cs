@@ -44,30 +44,6 @@ namespace InterprojectExchange
         }
 
         /// <summary>
-        /// Получить устройства проекта по имени
-        /// </summary>
-        /// <param name="projectName">Имя проекта</param>
-        /// <returns></returns>
-        public List<DeviceDTO> GetProjectDevices(string projectName)
-        {
-            var devices = new List<DeviceDTO>();
-
-            var model = interprojectExchangeModels
-                .Where(x => x.ProjectName == projectName)
-                .FirstOrDefault();
-
-            if(model != null)
-            {
-                devices = model.Devices;
-                return devices;
-            }
-            else
-            {
-                return new List<DeviceDTO>();
-            }
-        }
-
-        /// <summary>
         /// Проверка корректности пути к файлам проекта
         /// </summary>
         /// <param name="path">Путь к файлам проекта</param>
@@ -120,12 +96,31 @@ namespace InterprojectExchange
         /// </summary>
         /// <param name="projName">Имя проекта</param>
         /// <returns></returns>
-        private InterprojectExchangeModel GetModel(string projName)
+        public InterprojectExchangeModel GetModel(string projName)
         {
             var model = interprojectExchangeModels
                 .Where(x => x.ProjectName == projName)
                 .FirstOrDefault();
             return model;
+        }
+
+        /// <summary>
+        /// Отметка выбранной модели в GUI. Другие модели снимают выбор.
+        /// </summary>
+        /// <param name="selectingModel">Выбранная модель</param>
+        public void SelectModel(InterprojectExchangeModel selectingModel)
+        {
+            foreach(var model in Models)
+            {
+                if (model.ProjectName == selectingModel.ProjectName)
+                {
+                    model.Selected = true;
+                }
+                else
+                {
+                    model.Selected = false;
+                }
+            }
         }
 
         /// <summary>

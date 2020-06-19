@@ -75,6 +75,11 @@ namespace InterprojectExchange
         public bool SharedIsReaded { get; set; } = false;
 
         /// <summary>
+        /// Выбрана ли модель сейчас в GUI
+        /// </summary>
+        public bool Selected { get; set; } = false;
+
+        /// <summary>
         /// Информация о контроллере
         /// </summary>
         public PacDTO PacInfo

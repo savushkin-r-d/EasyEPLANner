@@ -67,7 +67,7 @@ namespace InterprojectExchange
         private void LoadCurrentProjectDevices()
         {
             var currentProjDevs = interprojectExchange
-                .GetProjectDevices(currProjNameTextBox.Text);
+                .GetModel(currProjNameTextBox.Text).Devices;
             foreach (var devInfo in currentProjDevs)
             {
                 var dev = new string[] { devInfo.Description, devInfo.Name };
@@ -485,17 +485,23 @@ namespace InterprojectExchange
                     ShowErrorMessage(except.Message);
                 }
 
-                int selectedIndex = advProjNameComboBox.SelectedIndex;
+                int selectedIndex = advProjNameComboBox.Items.IndexOf(projName);
                 advProjNameComboBox.Items.Remove(projName);
                 if(advProjNameComboBox.Items.Count > 0)
                 {
-                    advProjNameComboBox.SelectedIndex = selectedIndex - 1;
+                    if(selectedIndex > 0) 
+                    {
+                        advProjNameComboBox.SelectedIndex = selectedIndex - 1;
+                    }
+                    else
+                    {
+                        advProjNameComboBox.SelectedIndex = selectedIndex;
+                    }
                 }
                 else
                 {
-                    advancedProjSignalsList.Clear();
+                    advancedProjSignalsList.Items.Clear();
                     bindedSignalsList.Items.Clear();
-                    advProjNameComboBox.SelectedIndex = -1;
                 }
             }
         }
@@ -557,7 +563,8 @@ namespace InterprojectExchange
         /// Событие изменение текста в списке с именами загруженных
         /// проектов
         /// </summary>
-        private void advProjNameComboBox_TextChanged(object sender, EventArgs e)
+        private void advProjNameComboBox_SelectedItemChanged(object sender, 
+            EventArgs e)
         {
             int selectedIndex = advProjNameComboBox.SelectedIndex;
             if (selectedIndex >= 0)
@@ -573,18 +580,23 @@ namespace InterprojectExchange
         private void LoadAdvProjData(string projName)
         {
             advProjItems.Clear();
-            var devices = interprojectExchange.GetProjectDevices(projName);
-            foreach (var devInfo in devices)
+            var model = interprojectExchange.GetModel(projName);
+            if (!model.Selected)
             {
-                var info = new string[] { devInfo.Name, devInfo.Description };
-                var item = new ListViewItem(info);
-                item.Tag = devInfo.Type;
-                advProjItems.Add(item);
-            }
+                var devices = model.Devices;
+                foreach (var devInfo in devices)
+                {
+                    var info = new string[] { devInfo.Name, devInfo.Description };
+                    var item = new ListViewItem(info);
+                    item.Tag = devInfo.Type;
+                    advProjItems.Add(item);
+                }
 
-            //TODO: Отобразить связи в списке как-то
+                //TODO: Отобразить связи в списке как-то
 
-            RefilterListViews();
+                RefilterListViews();
+                interprojectExchange.SelectModel(model);
+            }         
         }
 
         /// <summary>

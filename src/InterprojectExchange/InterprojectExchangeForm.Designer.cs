@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("AO", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("AI", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("DO", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup9 = new System.Windows.Forms.ListViewGroup("DI", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup10 = new System.Windows.Forms.ListViewGroup("Остальные", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup11 = new System.Windows.Forms.ListViewGroup("AO", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup12 = new System.Windows.Forms.ListViewGroup("AI", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup13 = new System.Windows.Forms.ListViewGroup("DO", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup14 = new System.Windows.Forms.ListViewGroup("DI", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup15 = new System.Windows.Forms.ListViewGroup("Остальные", System.Windows.Forms.HorizontalAlignment.Left);
             this.currProjNameTextBox = new System.Windows.Forms.TextBox();
             this.advProjNameComboBox = new System.Windows.Forms.ComboBox();
             this.closeButton = new System.Windows.Forms.Button();
@@ -75,7 +75,7 @@
             this.advProjNameComboBox.Name = "advProjNameComboBox";
             this.advProjNameComboBox.Size = new System.Drawing.Size(194, 21);
             this.advProjNameComboBox.TabIndex = 5;
-            this.advProjNameComboBox.TextChanged += new System.EventHandler(this.advProjNameComboBox_TextChanged);
+            this.advProjNameComboBox.SelectedValueChanged += new System.EventHandler(this.advProjNameComboBox_SelectedItemChanged);
             // 
             // closeButton
             // 
@@ -248,22 +248,22 @@
             this.currentProj,
             this.advProj});
             this.bindedSignalsList.FullRowSelect = true;
-            listViewGroup6.Header = "AO";
-            listViewGroup6.Name = "AO";
-            listViewGroup7.Header = "AI";
-            listViewGroup7.Name = "AI";
-            listViewGroup8.Header = "DO";
-            listViewGroup8.Name = "DO";
-            listViewGroup9.Header = "DI";
-            listViewGroup9.Name = "DI";
-            listViewGroup10.Header = "Остальные";
-            listViewGroup10.Name = "Other";
+            listViewGroup11.Header = "AO";
+            listViewGroup11.Name = "AO";
+            listViewGroup12.Header = "AI";
+            listViewGroup12.Name = "AI";
+            listViewGroup13.Header = "DO";
+            listViewGroup13.Name = "DO";
+            listViewGroup14.Header = "DI";
+            listViewGroup14.Name = "DI";
+            listViewGroup15.Header = "Остальные";
+            listViewGroup15.Name = "Other";
             this.bindedSignalsList.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup6,
-            listViewGroup7,
-            listViewGroup8,
-            listViewGroup9,
-            listViewGroup10});
+            listViewGroup11,
+            listViewGroup12,
+            listViewGroup13,
+            listViewGroup14,
+            listViewGroup15});
             this.bindedSignalsList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.bindedSignalsList.HideSelection = false;
             this.bindedSignalsList.Location = new System.Drawing.Point(369, 12);
