@@ -46,6 +46,22 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Пометка на удаление модели
+        /// </summary>
+        public bool MarkedToDelete
+        {
+            get
+            {
+                return markToDelete;
+            }
+            set
+            {
+                markToDelete = value;
+            }
+        }
+
+        private bool markToDelete;
         private List<DeviceDTO> devices;
         private string projectName;
     }

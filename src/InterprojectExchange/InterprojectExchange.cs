@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.SqlServer.Server;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -43,9 +44,29 @@ namespace EasyEPlanner
                 .Where(x => x.ProjectName == projectName)
                 .FirstOrDefault();
 
-            devices = model.Devices;
+            if(model != null)
+            {
+                devices = model.Devices;
+                return devices;
+            }
+            else
+            {
+                return new List<DeviceDTO>();
+            }
+        }
 
-            return devices;
+        /// <summary>
+        /// Загрузить данные проекта
+        /// </summary>
+        /// <param name="pathToFiles">Путь к проекту</param>
+        /// <returns></returns>
+        public bool LoadProjectData(string pathToFiles)
+        {
+            var res = false;
+
+            //TODO: Загрузка всех данных по проекту (shared, io)
+
+            return res;
         }
 
         /// <summary>
@@ -68,6 +89,36 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Пометить модель на удаление
+        /// </summary>
+        /// <param name="projName">Имя проекта</param>
+        public void MarkToDelete(string projName)
+        {
+            var model = GetModel(projName);
+            if (model != null)
+            {
+                model.MarkedToDelete = true;
+            }
+            else
+            {
+                throw new Exception("Модель имеет значение null");
+            }
+        }
+
+        /// <summary>
+        /// Получить модель
+        /// </summary>
+        /// <param name="projName">Имя проекта</param>
+        /// <returns></returns>
+        private InterprojectExchangeModel GetModel(string projName)
+        {
+            var model = interprojectExchangeModels
+                .Where(x => x.ProjectName == projName)
+                .FirstOrDefault();
+            return model;
+        }
+
+        /// <summary>
         /// Получить экземпляр класса. Singleton
         /// </summary>
         /// <returns></returns>
@@ -82,6 +133,7 @@ namespace EasyEPlanner
         }
 
         private string fileWithDevicesName = "main.io.lua";
+        private string sharedFile = "shared.lua";
 
         private static InterprojectExchange interprojectExchange;
         private List<InterprojectExchangeModel> interprojectExchangeModels;

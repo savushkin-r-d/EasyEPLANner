@@ -14,14 +14,18 @@ namespace EasyEPlanner
         {
             InitializeComponent();
 
+            // Установка имени текущего проекта
             string projectName = EProjectManager.GetInstance()
                 .GetCurrentProjectName();
             currProjNameTextBox.Text = projectName;
 
+            // Получение основных экземпляров классов, подписка на событие
+            // обновления списков через фильтр
             interprojectExchange = InterprojectExchange.GetInstance();
             filterConfiguration = FilterConfiguration.GetInstance();
             filterConfiguration.SignalsFilterChanged += RefilterListViews;
 
+            // Инициализация начальных списков
             currProjItems = new List<ListViewItem>();
             advProjItems = new List<ListViewItem>();
         }
@@ -32,6 +36,9 @@ namespace EasyEPlanner
         private List<ListViewItem> currProjItems;
         private List<ListViewItem> advProjItems;
 
+        /// <summary>
+        /// Событие после закрытия формы
+        /// </summary>
         private void InterprojectExchangeForm_FormClosed(object sender,
             FormClosedEventArgs e)
         {
@@ -39,11 +46,17 @@ namespace EasyEPlanner
             Dispose();
         }
 
+        /// <summary>
+        /// Кнопка "Закрыть"
+        /// </summary>
         private void closeButton_Click(object sender, EventArgs e)
         {
             Close();
         }
 
+        /// <summary>
+        /// Событие при загрузке формы
+        /// </summary>
         private void InterprojectExchangeForm_Load(object sender, EventArgs e)
         {
             LoadCurrentProjectDevices();
@@ -62,15 +75,6 @@ namespace EasyEPlanner
                 var item = new ListViewItem(dev);
                 item.Tag = devInfo.Type;
                 currProjItems.Add(item);
-            }
-
-            //Mock для заполнение якобы других проектов
-            foreach (var devInfo in currentProjDevs)
-            {
-                var item = new ListViewItem(
-                    new string[] { devInfo.Name, devInfo.Description });
-                item.Tag = devInfo.Type;
-                advProjItems.Add(item);
             }
 
             RefilterListViews();
@@ -96,11 +100,18 @@ namespace EasyEPlanner
             bindedSignalsList.ShowGroups = useGroupsFilter;
         }
 
+        /// <summary>
+        /// Кнопка "Фильтр"
+        /// </summary>
         private void filterButton_Click(object sender, EventArgs e)
         {
             filterConfiguration.ShowForm();
         }
 
+        /// <summary>
+        /// Событие изменение выбранного элемента в списке сигналов
+        /// альтернативного проекта
+        /// </summary>
         private void advancedProjSignalsList_ItemSelectionChanged(object sender,
             ListViewItemSelectionChangedEventArgs e)
         {
@@ -132,6 +143,10 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Событие изменения выбранного элемента в списке сигналов
+        /// текущего проекта
+        /// </summary>
         private void currentProjSignalsList_ItemSelectionChanged(object sender,
             ListViewItemSelectionChangedEventArgs e)
         {
@@ -188,19 +203,24 @@ namespace EasyEPlanner
                     break;
             }
 
-            var item = new ListViewItem(
-                new string[] { selectedItem, oppositeItem }, itemGroup);
+            var info = new string[] { selectedItem, oppositeItem };
+            var item = new ListViewItem(info, itemGroup);
             bindedSignalsList.Items.Add(item);
-            ClearAllGridAndListViewsSelection();
+            ClearAllListViewsSelection();
+
+            //TODO: Обновить модель
         }
 
+        /// <summary>
+        /// Нажатие кнопок при активном списке со связью сигналов
+        /// </summary>
         private void bindedSignalsList_KeyDown(object sender, KeyEventArgs e)
         {
             bool endEdit = e.KeyCode == Keys.Escape ||
                 e.KeyCode == Keys.Enter;
             if (endEdit)
             {
-                ClearAllGridAndListViewsSelection();
+                ClearAllListViewsSelection();
                 e.Handled = true;
             }
             else if (e.KeyCode == Keys.Delete)
@@ -214,7 +234,7 @@ namespace EasyEPlanner
 
                 if (bindedSignalsList.Items.Count == 0)
                 {
-                    ClearAllGridAndListViewsSelection();
+                    ClearAllListViewsSelection();
                 }
                 e.Handled = true;
             }
@@ -244,18 +264,23 @@ namespace EasyEPlanner
                     newSelectedItem.Selected = true;
                 }
             } 
+
+            //TODO: Обновить модель
         }
 
         /// <summary>
-        /// Очищает выделение в списках и таблице.
+        /// Очищение выделение в списках.
         /// </summary>
-        private void ClearAllGridAndListViewsSelection()
+        private void ClearAllListViewsSelection()
         {
             bindedSignalsList.SelectedIndices.Clear();
             currentProjSignalsList.SelectedIndices.Clear();
             advancedProjSignalsList.SelectedIndices.Clear();
         }
 
+        /// <summary>
+        /// Клик мышью на списке связанных сигналов
+        /// </summary>
         private void bindedSignalsList_MouseClick(object sender, 
             MouseEventArgs e)
         {
@@ -267,16 +292,23 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Нажатие (не клик т.к это 1 щелк короткий) мышью на списке
+        /// связанных сигналов
+        /// </summary>
         private void bindedSignalsList_MouseDown(object sender, 
             MouseEventArgs e)
         {
             ListViewItem item = bindedSignalsList.GetItemAt(e.X, e.Y);
             if (item == null)
             {
-                ClearAllGridAndListViewsSelection();
+                ClearAllListViewsSelection();
             }
         }
 
+        /// <summary>
+        /// Изменение выбранного элемента в списке связанных сигналов
+        /// </summary>
         private void bindedSignalsList_ItemSelectionChanged(object sender,
             ListViewItemSelectionChangedEventArgs e)
         {
@@ -318,6 +350,9 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Нажатие кнопок клавиатуры в списке сигналов текущего проекта
+        /// </summary>
         private void currentProjSignalsList_KeyPress(object sender,
             KeyPressEventArgs e)
         {
@@ -330,6 +365,9 @@ namespace EasyEPlanner
             ProcessingKeysFromListViewToTextBox(e, currProjSearchBox);
         }
 
+        /// <summary>
+        /// Нажатие кнопок клавиатуры в списке сигналов альтернативного проекта
+        /// </summary>
         private void advancedProjSignalsList_KeyPress(object sender,
             KeyPressEventArgs e)
         {
@@ -370,29 +408,37 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Событие изменения текста в поисковой строке по сигналам текущего
+        /// проекта
+        /// </summary>
         private void currProjSearchBox_TextChanged(object sender, EventArgs e)
         {
             var filteredThroughType = filterConfiguration.FilterOut(
                 currProjItems, FilterConfiguration.FilterList.Current);
-            SearchingSubStringInListView(currentProjSignalsList,
+            SearchSubstringInListView(currentProjSignalsList,
                 currProjSearchBox.Text, filteredThroughType);
         }
 
+        /// <summary>
+        /// Событие изменения текста в поисковой строке по сигналам
+        /// альтернативного проекта
+        /// </summary>
         private void advProjSearchBox_TextChanged(object sender, EventArgs e)
         {
             var filteredThroughType = filterConfiguration.FilterOut(
                 advProjItems, FilterConfiguration.FilterList.Advanced);
-            SearchingSubStringInListView(advancedProjSignalsList,
+            SearchSubstringInListView(advancedProjSignalsList,
                 advProjSearchBox.Text, filteredThroughType);
         }
 
         /// <summary>
-        /// Поиска подстроки в ListView
+        /// Поиск подстроки в ListView (поиск совпадений и их отображение)
         /// </summary>
         /// <param name="listView">ListView</param>
         /// <param name="subString">Подстрока</param>
         /// <param name="projItems">Массив элементов в проекте</param>
-        private void SearchingSubStringInListView(ListView listView,
+        private void SearchSubstringInListView(ListView listView,
             string subString, ListViewItem[] projItems)
         {
             if (subString != "")
@@ -413,6 +459,9 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Кнопка "Удалить" (-)
+        /// </summary>
         private void delAdvProjButton_Click(object sender, EventArgs e)
         {
             bool canDelete = advProjNameComboBox.Items.Count > 0 &&
@@ -428,8 +477,7 @@ namespace EasyEPlanner
                     return;
                 }
 
-                //TODO: Удаление из списка, без физического удаления
-                //TODO: Пометка связи на удаление
+                interprojectExchange.MarkToDelete(projName);
 
                 int selectedIndex = advProjNameComboBox.SelectedIndex;
                 advProjNameComboBox.Items.Remove(projName);
@@ -439,66 +487,99 @@ namespace EasyEPlanner
                 }
                 else
                 {
+                    advancedProjSignalsList.Clear();
+                    bindedSignalsList.Items.Clear();
                     advProjNameComboBox.SelectedIndex = -1;
                 }
             }
         }
 
+        /// <summary>
+        /// Кнопка "Добавить" (+)
+        /// </summary>
         private void addAdvProjButton_Click(object sender, EventArgs e)
         {
             var folderBrowserDialog = new FolderBrowserDialog();
             folderBrowserDialog.SelectedPath = ProjectManager.GetInstance()
                 .GetPtusaProjectsPath("");
             DialogResult result = folderBrowserDialog.ShowDialog();
-            if (result == DialogResult.OK)
+            if (result != DialogResult.OK)
             {
-                string selectedPath = folderBrowserDialog.SelectedPath;
-                bool correctedPath = interprojectExchange
-                    .CheckPathToProjectFiles(selectedPath);
-                if (correctedPath)
+                return;
+            }
+
+            string selectedPath = folderBrowserDialog.SelectedPath;
+            bool correctedPath = interprojectExchange
+                .CheckPathToProjectFiles(selectedPath);
+            if (correctedPath)
+            {
+                var dirInfo = new DirectoryInfo(selectedPath);
+                if (advProjNameComboBox.Items.Contains(dirInfo.Name))
                 {
-                    var dirInfo = new DirectoryInfo(selectedPath);
-                    if (advProjNameComboBox.Items.Contains(dirInfo.Name))
-                    {
-                        MessageBox.Show($"Проект \"{dirInfo.Name}\" уже " +
-                            $"обменивается с этим проектом сигналами",
-                            "Информация.",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
-                    }
-                    else
+                    MessageBox.Show($"Проект \"{dirInfo.Name}\" уже " +
+                        $"обменивается с этим проектом сигналами",
+                        "Информация.",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+                else
+                {
+                    bool loaded = interprojectExchange
+                        .LoadProjectData(selectedPath);
+                    if (loaded)
                     {
                         advProjNameComboBox.Items.Add(dirInfo.Name);
                         int selectItem = advProjNameComboBox.Items
                             .IndexOf(dirInfo.Name);
                         advProjNameComboBox.SelectedIndex = selectItem;
-
-                        //TODO: Записываем и читаем данные в модель
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Данные по проекту " +
+                            $"\"{dirInfo.Name}\" не загружены.", "Ошибка",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
-                else
-                {
-                    MessageBox.Show($"По указанному пути не найдены файлы " +
-                        $"проекта.", "Предупреждение", MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
-                }
-            }
-        }
-
-        private void advProjNameComboBox_SelectedIndexChanged(object sender, 
-            EventArgs e)
-        {
-            int selectedIndex = advProjNameComboBox.SelectedIndex;
-            if (selectedIndex == -1)
-            {
-                //TODO: Отобразить для невыбранного проекта данные.
-                // Пустой список сигналов
-                // Пустая таблица связей
             }
             else
             {
-                //TODO: Загрузить данные по выбранному проекту.
+                MessageBox.Show($"По указанному пути не найдены файлы " +
+                    $"проекта.", "Предупреждение", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
             }
+        }
+
+        /// <summary>
+        /// Событие изменение текста в списке с именами загруженных
+        /// проектов
+        /// </summary>
+        private void advProjNameComboBox_TextChanged(object sender, EventArgs e)
+        {
+            int selectedIndex = advProjNameComboBox.SelectedIndex;
+            if (selectedIndex >= 0)
+            {
+                LoadAdvProjData(currProjNameTextBox.Text);
+            }
+        }
+
+        /// <summary>
+        /// Загрузка данных по проекту в форму
+        /// </summary>
+        /// <param name="projName">Имя проекта</param>
+        private void LoadAdvProjData(string projName)
+        {
+            var devices = interprojectExchange.GetProjectDevices(projName);
+            foreach (var devInfo in devices)
+            {
+                var info = new string[] { devInfo.Name, devInfo.Description };
+                var item = new ListViewItem(info);
+                item.Tag = devInfo.Type;
+                advProjItems.Add(item);
+            }
+
+            //TODO: Отобразить связи в списке как-то
+
+            RefilterListViews();
         }
     }
 }
