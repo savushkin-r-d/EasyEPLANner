@@ -1,23 +1,24 @@
-MIT License
+PERMISSION TO USE THE LICENSE SOFTWARE
 
-Copyright (c) 2015 - present Microsoft Corporation
+Permission is hereby granted free of charge to any natural or legal person who has received a copy of this software and related documentation files (“software”), as well as the ability to carry out all functions and programs available in the software without restrictions, including the use of licensed software without limitation of the rights to use, copy, modify, merge, publish, distribute, sublicense and / or sell a copy of the software. This permission is granted subject to the following conditions:
+1. By installing, copying or otherwise using the program, you hereby accept the terms of this agreement. If you do not accept the terms of this agreement, then you do not have the right to use this program and you should immediately return it to the copyright holder.
+2. The above copyright notice and this permission notice must be included in all copies or essential parts of the software.
+SOFTWARE LICENSE
+The program is protected by laws and international copyright agreements, as well as other laws and treaties governing copyright relations. The program is licensed, not sold.
 
-All rights reserved.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+1. SCOPE OF LICENSE.
+This agreement gives you the following rights:
+1.1. Using the program. It is allowed to install the program or any previous version simultaneously on one computer. The main user of the computer on which this copy is installed is also allowed to create an unlimited number of copies on any device, regardless of the purpose of using this software, with the exception of using this software to commit illegal actions prohibited by law.
+1.2. Online storage and use. It is allowed to store, install and run a copy of the program from a public storage device (for example, a network server). At the same time, for each computer on which this program is installed or launched from the network server, you must purchase a separate license.
+2. DESCRIPTION OF OTHER RIGHTS AND LIMITATIONS.
+2.1. The software is provided in a ready-made form that does not allow adjustment, processing and other actions aimed at changing the structure of the initial base of the program, as well as without any warranties, expressed or implied.
+2.2. The user of the program bears personal responsibility for the use, maintenance and operation of the software from the moment of obtaining this permission until the termination of use of the provided software.
+2.3. The authors or rightholders do not bear any responsibility to the user of the software for any claims related to the use of this software, as well as for losses, whether by virtue of a contract, tort or otherwise, arising from outside or in connection with the software or its using
+2.4. Limitations on opening the technology, decompiling and disassembling. It is not allowed to perform a technology showdown, decompilation and disassembly of the program, with the exception and only to the extent that such actions are explicitly permitted by applicable law, despite the presence of this restriction in the agreement.
+2.2. Program separation. The program is licensed as a whole.
+2.3. Rental. It is allowed to provide the program for rental or temporary use.
+2.4. Technical support services. The author provides technical support services for software products (hereinafter referred to as "technical support services"). The author is contacted for technical support by e-mail: _____________, by phone: ____________ or ICQ __________. Any additional programs and source codes transferred as a result of the provision of technical support services should be considered as part of the program and, therefore, are subject to the limitations and conditions of this agreement. The technical data that is communicated to the technical support service during the course of treatment may be used by the Author for internal purposes, including technical support of software products and software development. The author will not use this information in a form that reveals your personal information.
+2.5. Program transfer. It is allowed to permanently assign all your rights stipulated by this agreement to another natural or legal person.
+2.6. Termination of the agreement. Without prejudice to any other rights, the Author may terminate this agreement if the conditions and restrictions of this agreement are not observed, which will oblige you to destroy all available copies and components of the program.
+3. COPYRIGHT.
+3.1. All property rights and copyrights to the program (including any controls included in it)
