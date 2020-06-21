@@ -678,8 +678,8 @@ return
             aggregateParameters = { },
             bindingName = "steam_blast_node",
         },
-        in_tank_level_node = {
-            name = "Узел текущего уровня (наполнение)",
+        tank_level_node_PID = {
+            name = "Узел текущего уровня ПИД",
             s88Level = 2,
             baseOperations =
             {
@@ -687,14 +687,37 @@ return
                     name = "Работа",
                 },
             },
-            basicName = "in_tank_level_node",
+            basicName = "tank_level_node_PID",
             equipment =
             {
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
                 M1 = { name = "Насос (AO)", defaultValue = "M1" },
                 SET_VALUE = { name = "Задание" },
             },
-            bindingName = "in_tank_level_node"
+            bindingName = "tank_level_node_PID"
+        },
+        tank_level_node = {
+            name = "Узел текущего уровня",
+            s88Level = 2,
+            baseOperations =
+            {
+                WORKING = {
+                    name = "Работа",
+                    steps =
+                    {
+                        WAITING_LOW_LS = { name = "Ожидание пропадания нижнего уровня" },
+                        FEEDING_HI_LS = { name = "Пополнение до появления верхнего уровня" },
+                    },
+                },
+            },
+            basicName = "tank_level_node",
+            equipment =
+            {
+                LS_up = { name = "Датчик верхнего уровня", defaultValue = "LS2" },
+                LS_down = { name = "Датчик нижнего уровня", defaultValue = "LS1" },
+                LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
+            },
+            bindingName = "tank_level_node"
         },
     }
 end
