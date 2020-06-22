@@ -212,8 +212,8 @@ namespace InterprojectExchange
             }
             else
             {
-                string itemGroupName = GetItemGroupName(currentProjectDeviceType,
-                    advancedProjectDeviceType);
+                string itemGroupName = GetItemGroupName(
+                    currentProjectDeviceType, advancedProjectDeviceType);
                 if (itemGroupName != null)
                 {
                     var info = new string[]
@@ -228,6 +228,8 @@ namespace InterprojectExchange
 
                     //TODO: Обновить модели
                     //Мы знаем сигналы для устройств
+
+                    ClearAllListViewsSelection();
                 }
                 else
                 {

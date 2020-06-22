@@ -16,7 +16,7 @@ namespace InterprojectExchange
         {
             Name = name;
             Description = description;
-            Type = GetType(description);
+            Type = GetType(name);
         }
 
         /// <summary>
