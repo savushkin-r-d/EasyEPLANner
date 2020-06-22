@@ -49,6 +49,7 @@ return
             basicName = "automat",
             equipment = { },
             aggregateParameters = { },
+            bindingName = "automat"
         },
         _tank = {
             name = "Бачок откачки лёдводы",
@@ -148,6 +149,7 @@ return
             basicName = "master",
             equipment = { },
             aggregateParameters = { },
+            bindingName = "master"
         },
         line = {
             name = "Линия",
@@ -205,6 +207,7 @@ return
             basicName = "line",
             equipment = { },
             aggregateParameters = { },
+            bindingName = "line"
         },
         line_in = {
             name = "Линия приемки",
@@ -252,6 +255,7 @@ return
             basicName = "line",
             equipment = { },
             aggregateParameters = { },
+            bindingName = "line_in"
         },
         line_out = {
             name = "Линия выдачи",
@@ -299,6 +303,7 @@ return
             basicName = "line",
             equipment = { },
             aggregateParameters = { },
+            bindingName = "line_out"
         },
         pasteurizator = {
             name = "Пастеризатор",
@@ -324,6 +329,7 @@ return
             basicName = "pasteurizator",
             equipment = { },
             aggregateParameters = { },
+            bindingName = "pasteurizator"
         },
         post = {
             name = "Пост",
@@ -332,6 +338,7 @@ return
             basicName = "post",
             equipment = { },
             aggregateParameters = { },
+            bindingName = "post"
         },
         tank = {
             name = "Танк",
@@ -454,8 +461,13 @@ return
                     {
                         active =
                         {
-                            product_request = { name = "Запрос продукта" },
-                        }
+                            product_request = { name = "Запрос продукта" }
+                        },
+                        bool =
+                        {
+                            is_reverse = { name = "Обратного (реверсивного) действия", defaultValue = "false" },
+                            is_zero_start = { name = "Нулевое стартовое значение", defaultValue = "true" }
+                        },
                     },
                     steps = { },
                 },
@@ -465,6 +477,7 @@ return
             {
                 M1 = { name = "Мотор", defaultValue = "M1" },
                 PT = { name = "Датчик давления", defaultValue = "PT1" },
+                PT2 = { name = "Датчик давления 2 (разностное задание)" },
                 SET_VALUE = { name = "Задание", defaultValue = "" },
             },
             aggregateParameters =
@@ -672,8 +685,8 @@ return
             aggregateParameters = { },
             bindingName = "steam_blast_node",
         },
-        in_tank_level_node = {
-            name = "Узел текущего уровня (наполнение)",
+        tank_level_node_PID = {
+            name = "Узел текущего уровня ПИД",
             s88Level = 2,
             baseOperations =
             {
@@ -681,14 +694,37 @@ return
                     name = "Работа",
                 },
             },
-            basicName = "in_tank_level_node",
+            basicName = "tank_level_node_PID",
             equipment =
             {
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
                 M1 = { name = "Насос (AO)", defaultValue = "M1" },
                 SET_VALUE = { name = "Задание" },
             },
-            bindingName = "in_tank_level_node"
+            bindingName = "tank_level_node_PID"
+        },
+        tank_level_node = {
+            name = "Узел текущего уровня",
+            s88Level = 2,
+            baseOperations =
+            {
+                WORKING = {
+                    name = "Работа",
+                    steps =
+                    {
+                        WAITING_LOW_LS = { name = "Ожидание пропадания нижнего уровня" },
+                        FEEDING_HI_LS = { name = "Пополнение до появления верхнего уровня" },
+                    },
+                },
+            },
+            basicName = "tank_level_node",
+            equipment =
+            {
+                LS_up = { name = "Датчик верхнего уровня", defaultValue = "LS2" },
+                LS_down = { name = "Датчик нижнего уровня", defaultValue = "LS1" },
+                LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
+            },
+            bindingName = "tank_level_node"
         },
     }
 end
