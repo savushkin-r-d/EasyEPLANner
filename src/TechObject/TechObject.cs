@@ -869,6 +869,11 @@ namespace TechObject
 
             BaseTechObject techObjFromDB = BaseTechObjectManager.GetInstance()
                 .GetTechObject(newValue);
+            if (techObjFromDB == null)
+            {
+                return false;
+            }
+
             techObjFromDB.Owner = baseTechObject.Owner;
             baseTechObject = techObjFromDB;
             S88Level = baseTechObject.S88Level;
