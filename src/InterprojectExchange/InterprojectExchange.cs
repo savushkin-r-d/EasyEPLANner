@@ -54,23 +54,6 @@ namespace InterprojectExchange
         }
 
         /// <summary>
-        /// Пометить модель на удаление
-        /// </summary>
-        /// <param name="projName">Имя проекта</param>
-        public void MarkToDelete(string projName)
-        {
-            var model = GetModel(projName);
-            if (model != null)
-            {
-                model.MarkedToDelete = true;
-            }
-            else
-            {
-                throw new Exception("Модель имеет значение null");
-            }
-        }
-
-        /// <summary>
         /// Получить имя текущего проекта для формы
         /// </summary>
         /// <returns></returns>

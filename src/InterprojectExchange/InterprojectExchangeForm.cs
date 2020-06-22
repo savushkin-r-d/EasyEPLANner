@@ -140,6 +140,7 @@ namespace InterprojectExchange
                     if (selectedRow != null)
                     {
                         selectedRow.SubItems[1].Text = advancedProjectDevice;
+                        // Обновить модель (изменился сигнал альт. проекта)
                     }
                 }
             }
@@ -178,6 +179,7 @@ namespace InterprojectExchange
                     if (selectedRow != null)
                     {
                         selectedRow.SubItems[0].Text = currentProjectDevice;
+                        // Обновить модель (изменился сигнал текущего проекта)
                     }
                 }
             }
@@ -226,8 +228,7 @@ namespace InterprojectExchange
                     var item = new ListViewItem(info, itemGroup);
                     bindedSignalsList.Items.Add(item);
 
-                    //TODO: Обновить модели
-                    //Мы знаем сигналы для устройств
+                    //TODO: Обновить модели (добавление связи)
 
                     ClearAllListViewsSelection();
                 }
@@ -367,7 +368,7 @@ namespace InterprojectExchange
                 }
             } 
 
-            //TODO: Обновить модели
+            //TODO: Обновить модели (удаление связи)
         }
 
         /// <summary>
@@ -579,14 +580,7 @@ namespace InterprojectExchange
                     return;
                 }
 
-                try
-                {
-                    interprojectExchange.MarkToDelete(projName);
-                }
-                catch(Exception except)
-                {
-                    ShowErrorMessage(except.Message);
-                }
+                // Удаление модели проекта
 
                 int selectedIndex = advProjNameComboBox.Items.IndexOf(projName);
                 advProjNameComboBox.Items.Remove(projName);

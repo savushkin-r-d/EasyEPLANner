@@ -17,6 +17,11 @@ namespace InterprojectExchange
             pacDTO = new PacDTO();
             Devices = new List<DeviceDTO>();
             deviceComparer = new DeviceComparer();
+
+            AISignals = new List<string>();
+            AOSignals = new List<string>();
+            DISignals = new List<string>();
+            DOSignals = new List<string>();
         }
 
         /// <summary>
@@ -60,11 +65,6 @@ namespace InterprojectExchange
         public List<DeviceDTO> Devices { get; set; }
 
         /// <summary>
-        /// Пометка на удаление модели
-        /// </summary>
-        public bool MarkedToDelete { get; set; }
-
-        /// <summary>
         /// Путь к папке с проектом
         /// </summary>
         public string PathToProjectDir { get; set; }
@@ -90,8 +90,56 @@ namespace InterprojectExchange
             }
         }
 
-        PacDTO pacDTO;
+        /// <summary>
+        /// AI сигналы модели
+        /// </summary>
+        public List<string> AI
+        {
+            get
+            {
+                return AISignals;
+            }
+        }
 
+        /// <summary>
+        /// AO сигналы модели
+        /// </summary>
+        public List<string> AO 
+        { 
+            get 
+            { 
+                return AOSignals; 
+            } 
+        }
+
+        /// <summary>
+        /// DI сигналы модели
+        /// </summary>
+        public List<string> DI
+        {
+            get
+            {
+                return DI;
+            }
+        }
+
+        /// <summary>
+        /// DO сигналы модели
+        /// </summary>
+        public List<string> DO
+        {
+            get
+            {
+                return DO;
+            }
+        }
+
+        private List<string> AISignals;
+        private List<string> AOSignals;
+        private List<string> DISignals;
+        private List<string> DOSignals;
+
+        private PacDTO pacDTO;
         private DeviceComparer deviceComparer;
     }
 }
