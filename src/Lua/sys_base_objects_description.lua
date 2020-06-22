@@ -49,6 +49,7 @@ return
             basicName = "automat",
             equipment = { },
             aggregateParameters = { },
+            bindingName = "automat"
         },
         _tank = {
             name = "Бачок откачки лёдводы",
@@ -148,6 +149,7 @@ return
             basicName = "master",
             equipment = { },
             aggregateParameters = { },
+            bindingName = "master"
         },
         line = {
             name = "Линия",
@@ -205,6 +207,7 @@ return
             basicName = "line",
             equipment = { },
             aggregateParameters = { },
+            bindingName = "line"
         },
         line_in = {
             name = "Линия приемки",
@@ -252,6 +255,7 @@ return
             basicName = "line",
             equipment = { },
             aggregateParameters = { },
+            bindingName = "line_in"
         },
         line_out = {
             name = "Линия выдачи",
@@ -299,6 +303,7 @@ return
             basicName = "line",
             equipment = { },
             aggregateParameters = { },
+            bindingName = "line_out"
         },
         pasteurizator = {
             name = "Пастеризатор",
@@ -324,6 +329,7 @@ return
             basicName = "pasteurizator",
             equipment = { },
             aggregateParameters = { },
+            bindingName = "pasteurizator"
         },
         post = {
             name = "Пост",
@@ -332,6 +338,7 @@ return
             basicName = "post",
             equipment = { },
             aggregateParameters = { },
+            bindingName = "post"
         },
         tank = {
             name = "Танк",
