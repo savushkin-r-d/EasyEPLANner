@@ -150,6 +150,17 @@ namespace InterprojectExchange
         }
 
         /// <summary>
+        /// Имена каналов для устройств
+        /// </summary>
+        public string[] DeviceChannelsNames
+        {
+            get
+            {
+                return new string[] { "AI", "AO", "DI", "DO" };
+            }
+        }
+
+        /// <summary>
         /// Получить экземпляр класса. Singleton
         /// </summary>
         /// <returns></returns>

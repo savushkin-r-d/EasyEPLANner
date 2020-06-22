@@ -114,29 +114,32 @@ namespace InterprojectExchange
         private void advancedProjSignalsList_ItemSelectionChanged(object sender,
             ListViewItemSelectionChangedEventArgs e)
         {
-            string selectedItem = e.Item.Text;
-            SelectedListViewItemCollection oppositeItems =
+            string advancedProjectDevice = e.Item.Text;
+            SelectedListViewItemCollection currentProjectDevices =
                 currentProjSignalsList.SelectedItems;
 
-            bool needChange = (selectedItem != null &&
-                oppositeItems.Count != 0 &&
+            bool needChange = (advancedProjectDevice != null &&
+                currentProjectDevices.Count != 0 &&
                 e.IsSelected);
             bool needAddNewElement = bindedSignalsList.SelectedItems.Count == 0;
             if (needChange)
             {
                 if (needAddNewElement)
                 {
-                    var oppositeItem = oppositeItems[0].SubItems[1];
-                    object oppositeItemTag = oppositeItems[0].Tag;
-                    AddToBindedSignals(oppositeItemTag, oppositeItem.Text, 
-                        selectedItem);
+                    var currentProjectDevice = currentProjectDevices[0]
+                        .SubItems[1];
+                    string currentProjectDeviceType = currentProjectDevices[0]
+                        .Tag.ToString();
+                    AddToBindedSignals(currentProjectDeviceType, 
+                        currentProjectDevice.Text, e.Item.Tag.ToString(), 
+                        advancedProjectDevice);
                 }
                 else
                 {
                     var selectedRow = bindedSignalsList.SelectedItems[0];
                     if (selectedRow != null)
                     {
-                        selectedRow.SubItems[1].Text = selectedItem;
+                        selectedRow.SubItems[1].Text = advancedProjectDevice;
                     }
                 }
             }
@@ -149,12 +152,12 @@ namespace InterprojectExchange
         private void currentProjSignalsList_ItemSelectionChanged(object sender,
             ListViewItemSelectionChangedEventArgs e)
         {
-            string selectedItem = e.Item.SubItems[1].Text;
-            SelectedListViewItemCollection oppositeItems =
+            string currentProjectDevice = e.Item.SubItems[1].Text;
+            SelectedListViewItemCollection advancedProjectDevices =
                 advancedProjSignalsList.SelectedItems;
 
-            bool needChange = (selectedItem != null &&
-                oppositeItems.Count != 0 &&
+            bool needChange = (currentProjectDevice != null &&
+                advancedProjectDevices.Count != 0 &&
                 e.IsSelected);
             if (needChange)
             {
@@ -162,52 +165,150 @@ namespace InterprojectExchange
                     .Count == 0;
                 if (needAddNewElement)
                 {
-                    string oppositeItem = oppositeItems[0].Text;
-                    AddToBindedSignals(e.Item.Tag, selectedItem, oppositeItem);
+                    ListViewItem advancedProjectDevice = 
+                        advancedProjectDevices[0];
+                    AddToBindedSignals(e.Item.Tag.ToString(), 
+                        currentProjectDevice, 
+                        advancedProjectDevice.Tag.ToString(), 
+                        advancedProjectDevice.Text);
                 }
                 else
                 {
                     var selectedRow = bindedSignalsList.SelectedItems[0];
                     if (selectedRow != null)
                     {
-                        selectedRow.SubItems[0].Text = selectedItem;
+                        selectedRow.SubItems[0].Text = currentProjectDevice;
                     }
                 }
             }
         }
 
         /// <summary>
-        /// Добавить связь между объектами
+        /// Добавить связь между устройствами
         /// </summary>
-        private void AddToBindedSignals(object type, string selectedItem, 
-            string oppositeItem)
+        /// <param name="currentProjectDeviceType">Тип устройства в текущем 
+        /// проекте</param>
+        /// <param name="currentProjectDevice">Устройство в текущем проекте
+        /// </param>
+        /// <param name="advancedProjectDeviceType">Тип устройства в 
+        /// альтернативном проекте</param>
+        /// <param name="advancedProjectDevice">Устройство в альтернативном 
+        /// проекте</param>
+        private void AddToBindedSignals(string currentProjectDeviceType, 
+            string currentProjectDevice, string advancedProjectDeviceType, 
+            string advancedProjectDevice)
         {
-            ListViewGroup itemGroup;
-            switch(type.ToString())
+            // Если сигналы равны и содержатся в списке сигналов (AI, AO, DI,DO)
+            bool devicesInvalid = 
+                (currentProjectDeviceType == advancedProjectDeviceType &&
+                interprojectExchange.DeviceChannelsNames
+                .Contains(currentProjectDeviceType));
+            if (devicesInvalid)
             {
-                case "AO":
-                    itemGroup = bindedSignalsList.Groups["AO"];
-                    break;
-                case "AI":
-                    itemGroup = bindedSignalsList.Groups["AI"];
-                    break;
-                case "DO":
-                    itemGroup = bindedSignalsList.Groups["DO"];
-                    break;
-                case "DI":
-                    itemGroup = bindedSignalsList.Groups["DI"];
-                    break;
-                default:
-                    itemGroup = bindedSignalsList.Groups["Other"];
-                    break;
+                ShowWarningMessage("Устройства имеют одинаковый тип сигнала", 
+                    MessageBoxButtons.OK);
+                ClearAllListViewsSelection();
+                return;
+            }
+            else
+            {
+                string itemGroupName = GetItemGroupName(currentProjectDeviceType,
+                    advancedProjectDeviceType);
+                if (itemGroupName != null)
+                {
+                    var info = new string[]
+                    {
+                        currentProjectDevice,
+                        advancedProjectDevice
+                    };
+                    ListViewGroup itemGroup = bindedSignalsList
+                        .Groups[itemGroupName];
+                    var item = new ListViewItem(info, itemGroup);
+                    bindedSignalsList.Items.Add(item);
+
+                    //TODO: Обновить модели
+                    //Мы знаем сигналы для устройств
+                }
+                else
+                {
+                    ClearAllListViewsSelection();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Получить имя группы для добавления устройств
+        /// </summary>
+        /// <param name="currProjDevType">Тип устройства в текущем
+        /// проекте</param>
+        /// <param name="advProjDevType">Тип устройства в 
+        /// альтернативном проекте</param>
+        /// <returns></returns>
+        private string GetItemGroupName(string currProjDevType,
+            string advProjDevType)
+        {
+            string itemGroup;
+
+            // Если разные сигналы (цифровой-аналоговый, наоборот)
+            char currDevSignalType = currProjDevType[0];
+            char advDevSignalType = advProjDevType[0];
+            bool differentSignalsTypes = currDevSignalType != advDevSignalType;
+            if (differentSignalsTypes)
+            {
+                itemGroup = null;
+                ShowWarningMessage("Разные типы сигналов (попытка связать " +
+                    "дискретные с аналоговыми или наоборот)", 
+                    MessageBoxButtons.OK);
+                return itemGroup;
             }
 
-            var info = new string[] { selectedItem, oppositeItem };
-            var item = new ListViewItem(info, itemGroup);
-            bindedSignalsList.Items.Add(item);
-            ClearAllListViewsSelection();
+            // Сигналы известны
+            bool allTypesCorrected =
+                (currProjDevType == "AI" && advProjDevType == "AO") ||
+                (currProjDevType == "AO" && advProjDevType == "AI") ||
+                (currProjDevType == "DI" && advProjDevType == "DO") ||
+                (currProjDevType == "DO" && advProjDevType == "DI");
+            if (allTypesCorrected)
+            {
+                itemGroup = currProjDevType;
+                return itemGroup;
+            }
 
-            //TODO: Обновить модель
+            // Один из сигналов неизвестен
+            if (interprojectExchange.DeviceChannelsNames
+                .Contains(currProjDevType) &&
+                !interprojectExchange.DeviceChannelsNames
+                .Contains(advProjDevType))
+            {
+                itemGroup = currProjDevType;
+                return itemGroup;
+            }
+            
+            if (!interprojectExchange.DeviceChannelsNames
+                .Contains(currProjDevType) &&
+                interprojectExchange.DeviceChannelsNames
+                .Contains(advProjDevType))
+            {
+                // Выбираем противоположную группу т.к известен сигнал с
+                // альтернативного проекта, а нам нужен с текущего
+                if (advProjDevType[1] == 'I')
+                {
+                    itemGroup = advProjDevType.Replace('I', 'O');
+                }
+                else
+                {
+                    itemGroup = advProjDevType.Replace('O', 'I');
+                }
+                return itemGroup;
+            }
+
+            // Оба сигнала неизвестны
+            var form = new UnknownDevTypeForm();
+            form.ShowDialog();
+            itemGroup = form.GroupForAddingDeviceName;
+            form.Close();
+
+            return itemGroup;
         }
 
         /// <summary>
@@ -264,7 +365,7 @@ namespace InterprojectExchange
                 }
             } 
 
-            //TODO: Обновить модель
+            //TODO: Обновить модели
         }
 
         /// <summary>
