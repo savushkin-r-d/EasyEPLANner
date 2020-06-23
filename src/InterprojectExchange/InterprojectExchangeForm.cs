@@ -8,6 +8,9 @@ using static System.Windows.Forms.ListView;
 
 namespace InterprojectExchange
 {
+    /// <summary>
+    /// Форма межпроектного обмена сигналами
+    /// </summary>
     public partial class InterprojectExchangeForm : Form
     {
         public InterprojectExchangeForm()

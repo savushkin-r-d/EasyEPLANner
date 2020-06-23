@@ -4,6 +4,9 @@ using System.Windows.Forms;
 
 namespace InterprojectExchange
 {
+    /// <summary>
+    /// Форма настройки фильтра
+    /// </summary>
     public partial class FilterForm : Form
     {
         public FilterForm()
