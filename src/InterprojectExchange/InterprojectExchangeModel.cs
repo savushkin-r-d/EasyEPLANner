@@ -17,11 +17,8 @@ namespace InterprojectExchange
             pacDTO = new PacDTO();
             Devices = new List<DeviceDTO>();
             deviceComparer = new DeviceComparer();
-
-            AISignals = new List<string>();
-            AOSignals = new List<string>();
-            DISignals = new List<string>();
-            DOSignals = new List<string>();
+            recieverSignals = new DeviceSignalsDTO();
+            sourceSignals = new DeviceSignalsDTO();
         }
 
         /// <summary>
@@ -88,56 +85,36 @@ namespace InterprojectExchange
             {
                 return pacDTO;
             }
-        }
-
-        /// <summary>
-        /// AI сигналы модели
-        /// </summary>
-        public List<string> AI
-        {
-            get
+            set
             {
-                return AISignals;
+                pacDTO = value;
             }
         }
 
         /// <summary>
-        /// AO сигналы модели
+        /// Сигналы-источники (отдаем)
         /// </summary>
-        public List<string> AO 
-        { 
-            get 
-            { 
-                return AOSignals; 
-            } 
-        }
-
-        /// <summary>
-        /// DI сигналы модели
-        /// </summary>
-        public List<string> DI
+        public DeviceSignalsDTO SourceSignals
         {
             get
             {
-                return DI;
+                return sourceSignals;
             }
         }
 
         /// <summary>
-        /// DO сигналы модели
+        /// Сигналы-приемники (принимаем)
         /// </summary>
-        public List<string> DO
+        public DeviceSignalsDTO RecieverSignals
         {
             get
             {
-                return DO;
+                return recieverSignals;
             }
         }
 
-        private List<string> AISignals;
-        private List<string> AOSignals;
-        private List<string> DISignals;
-        private List<string> DOSignals;
+        private DeviceSignalsDTO sourceSignals;
+        private DeviceSignalsDTO recieverSignals;
 
         private PacDTO pacDTO;
         private DeviceComparer deviceComparer;

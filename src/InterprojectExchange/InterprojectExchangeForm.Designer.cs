@@ -55,6 +55,9 @@
             this.bindedSignalsList = new System.Windows.Forms.ListView();
             this.currentProj = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.advProj = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.label5 = new System.Windows.Forms.Label();
+            this.modeComboBox = new System.Windows.Forms.ComboBox();
+            this.pacSetUpBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // currProjNameTextBox
@@ -266,12 +269,12 @@
             listViewGroup15});
             this.bindedSignalsList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.bindedSignalsList.HideSelection = false;
-            this.bindedSignalsList.Location = new System.Drawing.Point(369, 12);
+            this.bindedSignalsList.Location = new System.Drawing.Point(369, 38);
             this.bindedSignalsList.MultiSelect = false;
             this.bindedSignalsList.Name = "bindedSignalsList";
             this.bindedSignalsList.ShowGroups = false;
             this.bindedSignalsList.ShowItemToolTips = true;
-            this.bindedSignalsList.Size = new System.Drawing.Size(354, 417);
+            this.bindedSignalsList.Size = new System.Drawing.Size(354, 391);
             this.bindedSignalsList.TabIndex = 100;
             this.bindedSignalsList.UseCompatibleStateImageBehavior = false;
             this.bindedSignalsList.View = System.Windows.Forms.View.Details;
@@ -290,11 +293,46 @@
             this.advProj.Text = "Связуемый проект";
             this.advProj.Width = 160;
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(369, 16);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(45, 13);
+            this.label5.TabIndex = 101;
+            this.label5.Text = "Режим:";
+            // 
+            // modeComboBox
+            // 
+            this.modeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.modeComboBox.FormattingEnabled = true;
+            this.modeComboBox.Items.AddRange(new object[] {
+            "Источник >> Приемник",
+            "Приемник >> Источник"});
+            this.modeComboBox.Location = new System.Drawing.Point(419, 12);
+            this.modeComboBox.Name = "modeComboBox";
+            this.modeComboBox.Size = new System.Drawing.Size(148, 21);
+            this.modeComboBox.TabIndex = 103;
+            this.modeComboBox.SelectedValueChanged += new System.EventHandler(this.modeComboBox_SelectedValueChanged);
+            // 
+            // pacSetUpBtn
+            // 
+            this.pacSetUpBtn.Location = new System.Drawing.Point(615, 11);
+            this.pacSetUpBtn.Name = "pacSetUpBtn";
+            this.pacSetUpBtn.Size = new System.Drawing.Size(105, 22);
+            this.pacSetUpBtn.TabIndex = 104;
+            this.pacSetUpBtn.Text = "Настройка PAC";
+            this.pacSetUpBtn.UseVisualStyleBackColor = true;
+            this.pacSetUpBtn.Click += new System.EventHandler(this.pacSetUpBtn_Click);
+            // 
             // InterprojectExchangeForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1091, 465);
+            this.Controls.Add(this.pacSetUpBtn);
+            this.Controls.Add(this.modeComboBox);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.bindedSignalsList);
             this.Controls.Add(this.advProjSearchBox);
             this.Controls.Add(this.label4);
@@ -349,5 +387,8 @@
         private System.Windows.Forms.ListView bindedSignalsList;
         private System.Windows.Forms.ColumnHeader currentProj;
         private System.Windows.Forms.ColumnHeader advProj;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ComboBox modeComboBox;
+        private System.Windows.Forms.Button pacSetUpBtn;
     }
 }

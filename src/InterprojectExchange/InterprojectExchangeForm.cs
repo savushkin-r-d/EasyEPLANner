@@ -27,6 +27,9 @@ namespace InterprojectExchange
             // Установка имени текущего проекта
             string projectName = interprojectExchange.GetCurrentProjectName();
             currProjNameTextBox.Text = projectName;
+
+            // Установлен первый элемент в списке "Источник >> Приемник"
+            modeComboBox.SelectedIndex = 0;
         }
 
         private FilterConfiguration filterConfiguration;
@@ -140,7 +143,7 @@ namespace InterprojectExchange
                     if (selectedRow != null)
                     {
                         selectedRow.SubItems[1].Text = advancedProjectDevice;
-                        // Обновить модель (изменился сигнал альт. проекта)
+                        //TODO: Обновить модель (изменился сигнал альт. проекта)
                     }
                 }
             }
@@ -179,7 +182,7 @@ namespace InterprojectExchange
                     if (selectedRow != null)
                     {
                         selectedRow.SubItems[0].Text = currentProjectDevice;
-                        // Обновить модель (изменился сигнал текущего проекта)
+                        //TODO: Обновить модель (изменился сигнал тек. проекта)
                     }
                 }
             }
@@ -580,7 +583,7 @@ namespace InterprojectExchange
                     return;
                 }
 
-                // Удаление модели проекта
+                //TODO: Удаление модели проекта
 
                 int selectedIndex = advProjNameComboBox.Items.IndexOf(projName);
                 advProjNameComboBox.Items.Remove(projName);
@@ -724,6 +727,18 @@ namespace InterprojectExchange
         {
             return MessageBox.Show(message, "Информация", MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
+        }
+
+        private void modeComboBox_SelectedValueChanged(object sender, 
+            EventArgs e)
+        {
+            //TODO: Изменение режима настройки обмена
+        }
+
+        private void pacSetUpBtn_Click(object sender, EventArgs e)
+        {
+            var form = new PACSettingsForm();
+            form.ShowDialog();
         }
     }
 }

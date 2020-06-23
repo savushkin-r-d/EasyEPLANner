@@ -1,0 +1,71 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace InterprojectExchange
+{
+    /// <summary>
+    /// Класс содержащий сигналы для модели межконтроллерного обмена
+    /// </summary>
+    public class DeviceSignalsDTO
+    {
+        public DeviceSignalsDTO()
+        {
+            AISignals = new List<string>();
+            AOSignals = new List<string>();
+            DISignals = new List<string>();
+            DOSignals = new List<string>();
+        }
+
+        /// <summary>
+        /// Список AI сигналов
+        /// </summary>
+        public List<string> AI
+        {
+            get
+            {
+                return AISignals;
+            }
+        }
+
+        /// <summary>
+        /// Список AO сигналов
+        /// </summary>
+        public List<string> AO
+        {
+            get
+            {
+                return AOSignals;
+            }
+        }
+
+        /// <summary>
+        /// Список DI сигналов
+        /// </summary>
+        public List<string> DI
+        {
+            get
+            {
+                return DISignals;
+            }
+        }
+
+        /// <summary>
+        /// Список DO сигналов
+        /// </summary>
+        public List<string> DO
+        {
+            get
+            {
+                return DOSignals;
+            }
+        }
+
+        private List<string> AISignals;
+        private List<string> AOSignals;
+        private List<string> DISignals;
+        private List<string> DOSignals;
+    }
+}

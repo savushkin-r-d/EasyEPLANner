@@ -105,6 +105,10 @@ namespace InterprojectExchange
                 lua.DoString(mainIOData);
                 lua.DoString("init_io_file()");
 
+                InterprojectExchangeModel model = interprojectExchange
+                    .GetModel(projName);
+                //model.PathToProjectDir = pathToProjectDir;
+
                 res = true;
             }
             else

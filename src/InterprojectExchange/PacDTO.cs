@@ -18,9 +18,29 @@ namespace InterprojectExchange
             EmulationEnabled = false;
             CycleTime = 200;
             TimeOut = 300;
-            Port = 105022;
+            Port = 10502;
             GateEnabled = true;
             Station = 0;
+        }
+
+        /// <summary>
+        /// Клонирование объекта
+        /// </summary>
+        /// <returns></returns>
+        public PacDTO Clone()
+        {
+            var cloned = new PacDTO();
+
+            cloned.IP = IP;
+            cloned.IPEmulator = IPEmulator;
+            cloned.EmulationEnabled = EmulationEnabled;
+            cloned.CycleTime = CycleTime;
+            cloned.TimeOut = TimeOut;
+            cloned.Port = Port;
+            cloned.GateEnabled = GateEnabled;
+            cloned.Station = Station;
+
+            return cloned;
         }
 
         /// <summary>
