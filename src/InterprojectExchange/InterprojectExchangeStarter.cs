@@ -100,9 +100,7 @@ namespace InterprojectExchange
                 lua.DoString(mainIOData);
                 lua.DoString("init_io_file()");
 
-                InterprojectExchangeModel model = interprojectExchange
-                    .GetModel(projName);
-                //model.PathToProjectDir = pathToProjectDir;
+                //TODO: Записать каталог, откуда считали проект?
 
                 res = true;
             }

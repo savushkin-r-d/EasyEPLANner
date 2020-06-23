@@ -28,11 +28,15 @@ namespace InterprojectExchange
             advProjItems = new List<ListViewItem>();
 
             // Установка имени текущего проекта
-            string projectName = interprojectExchange.GetCurrentProjectName();
+            string projectName = interprojectExchange.CurrentProjectName;
             currProjNameTextBox.Text = projectName;
 
             // Установлен первый элемент в списке "Источник >> Приемник"
+            modeComboBox.SelectedValueChanged -= 
+                modeComboBox_SelectedValueChanged;
             modeComboBox.SelectedIndex = 0;
+            modeComboBox.SelectedValueChanged += 
+                modeComboBox_SelectedValueChanged;
         }
 
         private FilterConfiguration filterConfiguration;
@@ -232,9 +236,18 @@ namespace InterprojectExchange
                     ListViewGroup itemGroup = bindedSignalsList
                         .Groups[itemGroupName];
                     var item = new ListViewItem(info, itemGroup);
-                    bindedSignalsList.Items.Add(item);
 
-                    //TODO: Обновить модели (добавление связи)
+                    bool success = interprojectExchange.BindSignals(
+                        itemGroup.Name, currentProjectDevice, 
+                        advancedProjectDevice);
+                    if (success)
+                    {
+                        bindedSignalsList.Items.Add(item);
+                    }
+                    else
+                    {
+                        ShowErrorMessage("Не удалось связать сигналы");
+                    }
 
                     ClearAllListViewsSelection();
                 }
@@ -352,29 +365,36 @@ namespace InterprojectExchange
         /// <summary>
         /// Удаление элемента из списка связанных сигналов
         /// </summary>
-        /// <param name="selectedItem"></param>
+        /// <param name="selectedItem">Выбранный элемент в списке</param>
         private void DeleteItemFromBindedSignals(ListViewItem selectedItem)
         {
             var selectedItemIndex = selectedItem.Index;
-            bindedSignalsList.Items.Remove(selectedItem);
 
-            if (selectedItemIndex >= 0 && bindedSignalsList.Items.Count > 0)
+            string currentProjectDevice = selectedItem.SubItems[0].Text;
+            string advancedProjectdevice = selectedItem.SubItems[1].Text;
+            string signalType = selectedItem.Group.Name;
+            bool success = interprojectExchange.DeleteSignalsBind(signalType,
+                currentProjectDevice, advancedProjectdevice);
+            if (success)
             {
-                if (bindedSignalsList.Items.Count > selectedItemIndex)
-                {
-                    var newSelectedItem = bindedSignalsList.Items[
-                    selectedItemIndex];
-                    newSelectedItem.Selected = true;
-                }
-                else if(bindedSignalsList.Items.Count == selectedItemIndex)
-                {
-                    var newSelectedItem = bindedSignalsList.Items[
-                            selectedItemIndex - 1];
-                    newSelectedItem.Selected = true;
-                }
-            } 
+                bindedSignalsList.Items.Remove(selectedItem);
 
-            //TODO: Обновить модели (удаление связи)
+                if (selectedItemIndex >= 0 && bindedSignalsList.Items.Count > 0)
+                {
+                    if (bindedSignalsList.Items.Count > selectedItemIndex)
+                    {
+                        var newSelectedItem = bindedSignalsList.Items[
+                        selectedItemIndex];
+                        newSelectedItem.Selected = true;
+                    }
+                    else if (bindedSignalsList.Items.Count == selectedItemIndex)
+                    {
+                        var newSelectedItem = bindedSignalsList.Items[
+                                selectedItemIndex - 1];
+                        newSelectedItem.Selected = true;
+                    }
+                }
+            }       
         }
 
         /// <summary>
@@ -586,7 +606,15 @@ namespace InterprojectExchange
                     return;
                 }
 
-                //TODO: Удаление модели проекта
+                try
+                {
+                    interprojectExchange.DeleteExchangeWithProject(projName);
+                }
+                catch (Exception exception)
+                {
+                    ShowErrorMessage(exception.Message);
+                    return;
+                }
 
                 int selectedIndex = advProjNameComboBox.Items.IndexOf(projName);
                 advProjNameComboBox.Items.Remove(projName);
@@ -616,7 +644,7 @@ namespace InterprojectExchange
         {
             var folderBrowserDialog = new FolderBrowserDialog();
             folderBrowserDialog.SelectedPath = interprojectExchange
-                .GetPathWithProjects;
+                .PathWithProjects;
             DialogResult result = folderBrowserDialog.ShowDialog();
             if (result != DialogResult.OK)
             {
@@ -689,17 +717,41 @@ namespace InterprojectExchange
                 var devices = model.Devices;
                 foreach (var devInfo in devices)
                 {
-                    var info = new string[] { devInfo.Name, devInfo.Description };
+                    var info = new string[] 
+                    { 
+                        devInfo.Name, 
+                        devInfo.Description 
+                    };
                     var item = new ListViewItem(info);
                     item.Tag = devInfo.Type;
                     advProjItems.Add(item);
                 }
 
-                //TODO: Отобразить связи в списке как-то
-
-                RefilterListViews();
                 interprojectExchange.SelectModel(model);
+
+                ReloadListViewWithSignals();
+                RefilterListViews();
             }         
+        }
+
+        /// <summary>
+        /// Перезагрузка сигналов в ListView
+        /// </summary>
+        private void ReloadListViewWithSignals()
+        {
+            bindedSignalsList.Items.Clear();
+            Dictionary<string, List<string[]>> signals = interprojectExchange
+                .GetBindedSignals();
+            foreach(var signalType in signals.Keys)
+            {
+                ListViewGroup signalGroup = bindedSignalsList
+                    .Groups[signalType];
+                foreach(var signalPairs in signals[signalType])
+                {
+                    var item = new ListViewItem(signalPairs, signalGroup);
+                    bindedSignalsList.Items.Add(item);
+                }
+            }
         }
 
         /// <summary>
@@ -735,7 +787,9 @@ namespace InterprojectExchange
         private void modeComboBox_SelectedValueChanged(object sender, 
             EventArgs e)
         {
-            //TODO: Изменение режима настройки обмена
+            interprojectExchange.ChangeEditMode(modeComboBox.SelectedIndex);
+            ReloadListViewWithSignals();
+            ClearAllListViewsSelection();
         }
 
         private void pacSetUpBtn_Click(object sender, EventArgs e)

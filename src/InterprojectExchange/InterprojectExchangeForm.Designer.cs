@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewGroup listViewGroup11 = new System.Windows.Forms.ListViewGroup("AO", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup12 = new System.Windows.Forms.ListViewGroup("AI", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup13 = new System.Windows.Forms.ListViewGroup("DO", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup14 = new System.Windows.Forms.ListViewGroup("DI", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup15 = new System.Windows.Forms.ListViewGroup("Остальные", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup16 = new System.Windows.Forms.ListViewGroup("AO", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup17 = new System.Windows.Forms.ListViewGroup("AI", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup18 = new System.Windows.Forms.ListViewGroup("DO", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup19 = new System.Windows.Forms.ListViewGroup("DI", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup20 = new System.Windows.Forms.ListViewGroup("Остальные", System.Windows.Forms.HorizontalAlignment.Left);
             this.currProjNameTextBox = new System.Windows.Forms.TextBox();
             this.advProjNameComboBox = new System.Windows.Forms.ComboBox();
             this.closeButton = new System.Windows.Forms.Button();
@@ -251,22 +251,22 @@
             this.currentProj,
             this.advProj});
             this.bindedSignalsList.FullRowSelect = true;
-            listViewGroup11.Header = "AO";
-            listViewGroup11.Name = "AO";
-            listViewGroup12.Header = "AI";
-            listViewGroup12.Name = "AI";
-            listViewGroup13.Header = "DO";
-            listViewGroup13.Name = "DO";
-            listViewGroup14.Header = "DI";
-            listViewGroup14.Name = "DI";
-            listViewGroup15.Header = "Остальные";
-            listViewGroup15.Name = "Other";
+            listViewGroup16.Header = "AO";
+            listViewGroup16.Name = "AO";
+            listViewGroup17.Header = "AI";
+            listViewGroup17.Name = "AI";
+            listViewGroup18.Header = "DO";
+            listViewGroup18.Name = "DO";
+            listViewGroup19.Header = "DI";
+            listViewGroup19.Name = "DI";
+            listViewGroup20.Header = "Остальные";
+            listViewGroup20.Name = "Other";
             this.bindedSignalsList.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup11,
-            listViewGroup12,
-            listViewGroup13,
-            listViewGroup14,
-            listViewGroup15});
+            listViewGroup16,
+            listViewGroup17,
+            listViewGroup18,
+            listViewGroup19,
+            listViewGroup20});
             this.bindedSignalsList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.bindedSignalsList.HideSelection = false;
             this.bindedSignalsList.Location = new System.Drawing.Point(369, 38);
@@ -310,6 +310,7 @@
             "Источник >> Приемник",
             "Приемник >> Источник"});
             this.modeComboBox.Location = new System.Drawing.Point(419, 12);
+            this.modeComboBox.MaxDropDownItems = 2;
             this.modeComboBox.Name = "modeComboBox";
             this.modeComboBox.Size = new System.Drawing.Size(148, 21);
             this.modeComboBox.TabIndex = 103;
