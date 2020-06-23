@@ -292,6 +292,121 @@ namespace InterprojectExchange
         }
 
         /// <summary>
+        /// Изменение устройства в связи текущего проекта
+        /// </summary>
+        /// <param name="signalType">Тип сигнала</param>
+        /// <param name="oldValue">Старое значение</param>
+        /// <param name="newValue">Новое значение</param>
+        /// <returns></returns>
+        public bool UpdateCurrentProjectBinding(string signalType, 
+            string oldValue, string newValue)
+        {
+            InterprojectExchangeModel currentProjectModel = Models
+            .Where(x => x.ProjectName == CurrentProjectName)
+            .FirstOrDefault();
+            DeviceSignalsDTO currentProjectSignals;
+            if (editMode == EditModeEnum.SourceReciever)
+            {
+                currentProjectSignals = currentProjectModel.SourceSignals;
+            }
+            else
+            {
+                currentProjectSignals = currentProjectModel.RecieverSignals;
+            }
+
+            int oldValueIndex = 0;
+            switch (signalType)
+            {
+                case "AI":
+                    oldValueIndex = currentProjectSignals.AI
+                        .IndexOf(oldValue);
+                    currentProjectSignals.AI.RemoveAt(oldValueIndex);
+                    currentProjectSignals.AI.Insert(oldValueIndex, newValue);
+                    break;
+
+                case "AO":
+                    oldValueIndex = currentProjectSignals.AO
+                        .IndexOf(oldValue);
+                    currentProjectSignals.AO.RemoveAt(oldValueIndex);
+                    currentProjectSignals.AO.Insert(oldValueIndex, newValue);
+                    break;
+
+                case "DI":
+                    oldValueIndex = currentProjectSignals.DI
+                                            .IndexOf(oldValue);
+                    currentProjectSignals.DI.RemoveAt(oldValueIndex);
+                    currentProjectSignals.DI.Insert(oldValueIndex, newValue); 
+                    break;
+
+                case "DO":
+                    oldValueIndex = currentProjectSignals.DO
+                        .IndexOf(oldValue);
+                    currentProjectSignals.DO.RemoveAt(oldValueIndex);
+                    currentProjectSignals.DO.Insert(oldValueIndex, newValue);
+                    break;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Изменение устройства в связи альтернативного проекта
+        /// </summary>
+        /// <param name="signalType">Тип сигнала</param>
+        /// <param name="oldValue">Старое значение</param>
+        /// <param name="newValue">Новое значение</param>
+        /// <returns></returns>
+        public bool UpdateAdvancedProjectBinding(string signalType,
+            string oldValue, string newValue)
+        {
+            InterprojectExchangeModel advancedProjectModel = Models
+                .Where(x => x.Selected == true).FirstOrDefault();
+            DeviceSignalsDTO advancedProjectSignals;
+            if (editMode == EditModeEnum.SourceReciever)
+            {
+                advancedProjectSignals = advancedProjectModel.RecieverSignals;
+            }
+            else
+            {
+                advancedProjectSignals = advancedProjectModel.SourceSignals;
+            }
+
+            int oldValueIndex = 0;
+            switch (signalType)
+            {
+                case "AI":
+                    oldValueIndex = advancedProjectSignals.AI
+                        .IndexOf(oldValue);
+                    advancedProjectSignals.AI.RemoveAt(oldValueIndex);
+                    advancedProjectSignals.AI.Insert(oldValueIndex, newValue);
+                    break;
+
+                case "AO":
+                    oldValueIndex = advancedProjectSignals.AO
+                        .IndexOf(oldValue);
+                    advancedProjectSignals.AO.RemoveAt(oldValueIndex);
+                    advancedProjectSignals.AO.Insert(oldValueIndex, newValue);
+                    break;
+
+                case "DI":
+                    oldValueIndex = advancedProjectSignals.DI
+                                            .IndexOf(oldValue);
+                    advancedProjectSignals.DI.RemoveAt(oldValueIndex);
+                    advancedProjectSignals.DI.Insert(oldValueIndex, newValue);
+                    break;
+
+                case "DO":
+                    oldValueIndex = advancedProjectSignals.DO
+                        .IndexOf(oldValue);
+                    advancedProjectSignals.DO.RemoveAt(oldValueIndex);
+                    advancedProjectSignals.DO.Insert(oldValueIndex, newValue);
+                    break;
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Получить имя текущего проекта для формы
         /// </summary>
         /// <returns></returns>

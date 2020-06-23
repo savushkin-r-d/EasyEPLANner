@@ -132,25 +132,38 @@ namespace InterprojectExchange
                 currentProjectDevices.Count != 0 &&
                 e.IsSelected);
             bool needAddNewElement = bindedSignalsList.SelectedItems.Count == 0;
-            if (needChange)
+            if (!needChange)
             {
-                if (needAddNewElement)
+                return;
+            }
+
+            if (needAddNewElement)
+            {
+                var currentProjectDevice = currentProjectDevices[0]
+                    .SubItems[1];
+                string currentProjectDeviceType = currentProjectDevices[0]
+                    .Tag.ToString();
+                AddToBindedSignals(currentProjectDeviceType,
+                    currentProjectDevice.Text, e.Item.Tag.ToString(),
+                    advancedProjectDevice);
+            }
+            else
+            {
+                var selectedRow = bindedSignalsList.SelectedItems[0];
+                if (selectedRow != null)
                 {
-                    var currentProjectDevice = currentProjectDevices[0]
-                        .SubItems[1];
-                    string currentProjectDeviceType = currentProjectDevices[0]
-                        .Tag.ToString();
-                    AddToBindedSignals(currentProjectDeviceType, 
-                        currentProjectDevice.Text, e.Item.Tag.ToString(), 
+                    string groupName = selectedRow.Group.Name;
+                    bool success = interprojectExchange
+                        .UpdateAdvancedProjectBinding(groupName,
+                        selectedRow.SubItems[1].Text,
                         advancedProjectDevice);
-                }
-                else
-                {
-                    var selectedRow = bindedSignalsList.SelectedItems[0];
-                    if (selectedRow != null)
+                    if (success)
                     {
                         selectedRow.SubItems[1].Text = advancedProjectDevice;
-                        //TODO: Обновить модель (изменился сигнал альт. проекта)
+                    }
+                    else
+                    {
+                        ShowErrorMessage("Ошибка изменения связи");
                     }
                 }
             }
@@ -170,26 +183,38 @@ namespace InterprojectExchange
             bool needChange = (currentProjectDevice != null &&
                 advancedProjectDevices.Count != 0 &&
                 e.IsSelected);
-            if (needChange)
+            if (!needChange)
             {
-                bool needAddNewElement = bindedSignalsList.SelectedItems
-                    .Count == 0;
-                if (needAddNewElement)
+                return;
+            }
+
+            bool needAddNewElement = bindedSignalsList.SelectedItems
+                .Count == 0;
+            if (needAddNewElement)
+            {
+                ListViewItem advancedProjectDevice =
+                    advancedProjectDevices[0];
+                AddToBindedSignals(e.Item.Tag.ToString(),
+                    currentProjectDevice,
+                    advancedProjectDevice.Tag.ToString(),
+                    advancedProjectDevice.Text);
+            }
+            else
+            {
+                var selectedRow = bindedSignalsList.SelectedItems[0];
+                if (selectedRow != null)
                 {
-                    ListViewItem advancedProjectDevice = 
-                        advancedProjectDevices[0];
-                    AddToBindedSignals(e.Item.Tag.ToString(), 
-                        currentProjectDevice, 
-                        advancedProjectDevice.Tag.ToString(), 
-                        advancedProjectDevice.Text);
-                }
-                else
-                {
-                    var selectedRow = bindedSignalsList.SelectedItems[0];
-                    if (selectedRow != null)
+                    string groupName = selectedRow.Group.Name;
+                    bool success = interprojectExchange
+                        .UpdateCurrentProjectBinding(groupName, 
+                        selectedRow.SubItems[0].Text, currentProjectDevice);
+                    if(success)
                     {
                         selectedRow.SubItems[0].Text = currentProjectDevice;
-                        //TODO: Обновить модель (изменился сигнал тек. проекта)
+                    }
+                    else
+                    {
+                        ShowErrorMessage("Ошибка изменения связи");
                     }
                 }
             }
@@ -249,12 +274,9 @@ namespace InterprojectExchange
                         ShowErrorMessage("Не удалось связать сигналы");
                     }
 
-                    ClearAllListViewsSelection();
                 }
-                else
-                {
-                    ClearAllListViewsSelection();
-                }
+
+                ClearAllListViewsSelection();
             }
         }
 
@@ -394,7 +416,11 @@ namespace InterprojectExchange
                         newSelectedItem.Selected = true;
                     }
                 }
-            }       
+            } 
+            else
+            {
+                ShowErrorMessage("Ошибка удаления связи");
+            }
         }
 
         /// <summary>
