@@ -7,6 +7,7 @@ using EasyEPlanner;
 using PInvoke;
 using BrightIdeasSoftware;
 using System.Collections;
+using System.Diagnostics;
 
 namespace Editor
 {
@@ -414,6 +415,7 @@ namespace Editor
                     case PI.VIRTUAL_KEY.VK_DOWN:                        //Down
                     case PI.VIRTUAL_KEY.VK_LEFT:                        //Left
                     case PI.VIRTUAL_KEY.VK_RIGHT:                       //Right
+                    case PI.VIRTUAL_KEY.VK_F1:
                         PI.SendMessage(PI.GetFocus(),
                             (int)PI.WM.KEYDOWN, (int)c, 0);
                         return (IntPtr) 1;
@@ -773,76 +775,70 @@ namespace Editor
         private void editorTView_KeyDown(object sender, KeyEventArgs e)
         {
             ITreeViewItem item = GetActiveItem();
-            if (item == null || Editable == false)
+            if (item == null)
             {
+                MessageBox.Show("Действие недоступно. Элемент дерева не " +
+                    "определен.", "Внимание", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
                 return;
             }
-            ITreeViewItem itemParent = item.Parent;
 
-            // Перемещение элемента вверх.
-            if (e.KeyCode == Keys.Up && e.Shift == true)
+            if (Editable)
             {
-                if (item.IsMoveable)
+                // Перемещение элемента вверх.
+                if (e.KeyCode == Keys.Up && e.Shift == true)
                 {
-                    ITreeViewItem isMove = itemParent.MoveUp(item);
-                    if (isMove != null) // Если перемещенный объект не null
-                    {
-                        item.AddParent(itemParent);
-                        editorTView.RefreshObjects(itemParent.Items);
-                        editorTView.SelectedIndex--;
-                    }
-                    OnModify();
+                    MoveUpItem(item);
+                    return;
+                }
+
+                //Перемещение элемента вниз.
+                if (e.KeyCode == Keys.Down && e.Shift == true)
+                {
+                    MoveDownItem(item);
+                    return;
+                }
+
+                // Копирование элемента.
+                if (e.KeyCode == Keys.C && e.Control == true)
+                {
+                    CopyItem(item);
+                    return;
+                }
+
+                // Вставка скопированного ранее элемента.
+                if (e.KeyCode == Keys.V && e.Control == true)
+                {
+                    PasteItem(item);
+                    return;
+                }
+
+                // Замена элемента.
+                if (e.KeyCode == Keys.B && e.Control == true)
+                {
+                    ReplaceItem(item);
+                    return;
+                }
+
+                // Вставка нового элемента.
+                if (e.KeyCode == Keys.Insert)
+                {
+                    CreateItem(item);
+                    return;
+                }
+
+                // Удаление существующего элемента.
+                if (e.KeyCode == Keys.Delete)
+                {
+                    DeleteItem(item);
+                    return;
                 }
             }
-
-            //Перемещение элемента вниз.
-            if (e.KeyCode == Keys.Down && e.Shift == true)
+            
+            // Окно справки по элементам
+            if (e.KeyCode == Keys.F1)
             {
-                if (item.IsMoveable)
-                {
-                    ITreeViewItem isMove = itemParent.MoveDown(item);
-                    if (isMove != null) // Если перемещенный объект не null
-                    {
-                        item.AddParent(itemParent);
-                        editorTView.RefreshObjects(itemParent.Items);
-                        editorTView.SelectedIndex++;
-                    }
-                    OnModify();
-                }
-            }
-
-            // Копирование элемента.
-            if (e.KeyCode == Keys.C && e.Control == true)
-            {
-                CopyItem(item);
-                return;
-            }
-
-            // Вставка скопированного ранее элемента.
-            if (e.KeyCode == Keys.V && e.Control == true)
-            {
-                PasteItem(item);
-                return;
-            }
-
-            // Замена элемента.
-            if (e.KeyCode == Keys.B && e.Control == true)
-            {
-                ReplaceItem(item);
-                return;
-            }
-
-            // Вставка нового элемента.
-            if (e.KeyCode == Keys.Insert)
-            {
-                CreateItem(item);
-                return;
-            }
-
-            // Удаление существующего элемента.
-            if (e.KeyCode == Keys.Delete)
-            {
-                DeleteItem(item);
+                Process.Start("https://www.savvushkin.by");
                 return;
             }
 
@@ -962,6 +958,46 @@ namespace Editor
                         editorTView.RefreshObjects(mainObject.Items);
                     }
                     DisableNeededObjects(new ITreeViewItem[] { newItem });
+                }
+                OnModify();
+            }
+        }
+
+        /// <summary>
+        /// Передвинуть элемент вверх (Shift + KeyUp)
+        /// </summary>
+        /// <param name="item">Передвигаемый элемент</param>
+        private void MoveUpItem(ITreeViewItem item)
+        {
+            if (item.IsMoveable)
+            {
+                ITreeViewItem itemParent = item.Parent;
+                ITreeViewItem isMove = itemParent.MoveUp(item);
+                if (isMove != null) // Если перемещенный объект не null
+                {
+                    item.AddParent(itemParent);
+                    editorTView.RefreshObjects(itemParent.Items);
+                    editorTView.SelectedIndex--;
+                }
+                OnModify();
+            }
+        }
+
+        /// <summary>
+        /// Передвинуть элемент вниз (Shift + KeyDown)
+        /// </summary>
+        /// <param name="item">Передвигаемый элемент</param>
+        private void MoveDownItem(ITreeViewItem item)
+        {
+            if (item.IsMoveable)
+            {
+                ITreeViewItem itemParent = item.Parent;
+                ITreeViewItem isMove = itemParent.MoveDown(item);
+                if (isMove != null) // Если перемещенный объект не null
+                {
+                    item.AddParent(itemParent);
+                    editorTView.RefreshObjects(itemParent.Items);
+                    editorTView.SelectedIndex++;
                 }
                 OnModify();
             }
