@@ -375,12 +375,19 @@ namespace Editor
         /// <returns></returns>
         bool NeedDisable { get; set; }
     }
-    //-------------------------------------------------------------------------
-    //-------------------------------------------------------------------------
+    
+    /// <summary>
+    /// Интерфейс для получения ссылки на ресурс справки по элементу
+    /// </summary>
+    public interface IHelperItem
+    {
+        string GetLinkToHelpPage();
+    }
+    
     /// <summary>    
     /// Простейший редактируемый объект - свойство.
     /// </summary>
-    public class ObjectProperty : ITreeViewItem
+    public class ObjectProperty : ITreeViewItem, IHelperItem
     {
         /// <summary>    
         /// Получение индекса иконки объекта по названию. 
@@ -849,6 +856,15 @@ namespace Editor
         }
         #endregion
 
+        /// <summary>
+        /// Получить ссылку на страницу с справкой
+        /// </summary>
+        /// <returns></returns>
+        public virtual string GetLinkToHelpPage()
+        {
+            return null;
+        }
+
         ITreeViewItem parent;
         private string name;  ///Имя свойства.
         private object value; ///Значение свойства.
@@ -857,7 +873,7 @@ namespace Editor
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
-    public abstract class TreeViewItem : ITreeViewItem
+    public abstract class TreeViewItem : ITreeViewItem, IHelperItem
     {
         private ITreeViewItem parent;
 
@@ -1152,6 +1168,15 @@ namespace Editor
 
         private bool needDisable = false;
         #endregion
+
+        /// <summary>
+        /// Получить ссылку на страницу с справкой
+        /// </summary>
+        /// <returns></returns>
+        public virtual string GetLinkToHelpPage()
+        {
+            return null;
+        }
     }
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------

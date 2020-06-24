@@ -212,6 +212,15 @@ namespace EasyEPlanner.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на http://ostis.savushkin.by/?question=571801605.
+        /// </summary>
+        public static string mainOstisLink {
+            get {
+                return ResourceManager.GetString("mainOstisLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на --version  = {0}
         ///------------------------------------------------------------------------------
         ///------------------------------------------------------------------------------
@@ -252,6 +261,15 @@ namespace EasyEPlanner.Properties {
             get {
                 object obj = ResourceManager.GetObject("on", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на http://ostis.savushkin.by/.
+        /// </summary>
+        public static string ostisLink {
+            get {
+                return ResourceManager.GetString("ostisLink", resourceCulture);
             }
         }
         

@@ -509,6 +509,13 @@ namespace TechObject
         }
         #endregion
 
+        public override string GetLinkToHelpPage()
+        {
+            string ostisLink = EasyEPlanner.Properties.Resources.ResourceManager
+                .GetString("ostisLink");
+            return ostisLink + "?sys_id=operation";
+        }
+
         private List<Mode> modes; /// Список операций.
         private TechObject owner; /// Технологический объект.
     }

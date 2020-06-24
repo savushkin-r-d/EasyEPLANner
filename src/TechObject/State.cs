@@ -475,6 +475,13 @@ namespace TechObject
         }
         #endregion
 
+        public override string GetLinkToHelpPage()
+        {
+            string ostisLink = EasyEPlanner.Properties.Resources.ResourceManager
+                .GetString("ostisLink");
+            return ostisLink + "?sys_id=state";
+        }
+
         private string name;        ///< Имя.
         internal List<Step> steps;  ///< Список шагов.
         private Step modeStep;      ///< Шаг.

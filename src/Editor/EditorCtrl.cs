@@ -838,7 +838,15 @@ namespace Editor
             // Окно справки по элементам
             if (e.KeyCode == Keys.F1)
             {
-                Process.Start("https://www.savvushkin.by");
+                var itemHelper = item as IHelperItem;
+                string link = itemHelper.GetLinkToHelpPage();
+                if (link == null)
+                {
+                    link = EasyEPlanner.Properties.Resources
+                    .ResourceManager.GetString("mainOstisLink");
+                }
+                Process.Start(link);
+
                 return;
             }
 

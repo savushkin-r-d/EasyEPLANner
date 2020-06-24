@@ -434,4 +434,12 @@ init_tech_objects_modes = function()
 end</value>
     <comment>Шаблон файла сохранения объектов проекта</comment>
   </data>
+  <data name="mainOstisLink" xml:space="preserve">
+    <value>http://ostis.savushkin.by/?question=571801605</value>
+    <comment>Ссылка Ostis если не нашли ключевое слово</comment>
+  </data>
+  <data name="ostisLink" xml:space="preserve">
+    <value>http://ostis.savushkin.by/</value>
+    <comment>Ссылка для Ostis</comment>
+  </data>
 </root>

@@ -324,6 +324,13 @@ namespace TechObject
         }
         #endregion
 
+        public override string GetLinkToHelpPage()
+        {
+            string ostisLink = EasyEPlanner.Properties.Resources.ResourceManager
+                .GetString("ostisLink");
+            return ostisLink + "?sys_id=control_module";
+        }
+
         private TechObject owner;
         private List<Editor.ITreeViewItem> items;
     }
