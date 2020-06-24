@@ -1040,8 +1040,8 @@ namespace TechObject
 
         public override string GetLinkToHelpPage()
         {
-            string ostisLink = EasyEPlanner.Properties.Resources.ResourceManager
-                .GetString("ostisLink");
+            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
+                .GetOstisHelpSystemLink();
             if (S88Level == 1)
             {
                 return ostisLink + "?sys_id=unit";

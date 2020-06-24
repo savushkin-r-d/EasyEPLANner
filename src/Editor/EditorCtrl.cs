@@ -842,8 +842,13 @@ namespace Editor
                 string link = itemHelper.GetLinkToHelpPage();
                 if (link == null)
                 {
-                    link = EasyEPlanner.Properties.Resources
-                    .ResourceManager.GetString("mainOstisLink");
+                    link = ProjectManager.GetInstance()
+                        .GetOstisHelpSystemMainPageLink();
+                    if(link == null)
+                    {
+                        MessageBox.Show("Ошибка поиска адреса системы помощи");
+                        return;
+                    }
                 }
                 Process.Start(link);
 

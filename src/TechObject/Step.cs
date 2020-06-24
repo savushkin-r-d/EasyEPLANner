@@ -540,8 +540,8 @@ namespace TechObject
 
         public override string GetLinkToHelpPage()
         {
-            string ostisLink = EasyEPlanner.Properties.Resources.ResourceManager
-                .GetString("ostisLink");
+            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
+                .GetOstisHelpSystemLink();
             return ostisLink + "?sys_id=phase";
         }
 

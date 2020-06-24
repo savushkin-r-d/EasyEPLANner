@@ -104,7 +104,7 @@ namespace EasyEPlanner
                 // Поиск пути к каталогу с надстройкой
                 string[] originalAssemblyPath = OriginalAssemblyPath
                     .Split('\\');
-                string configFileName = "configuration.ini";
+                string configFileName = StaticHelper.CommonConst.ConfigFileName;
 
                 int sourceEnd = originalAssemblyPath.Length;
                 string path = @"";
@@ -553,6 +553,33 @@ namespace EasyEPlanner
                 rc.Properties.set_PROPUSER_TEST(1, oF.ToStringIdentifier());
                 highlightedObjects.Add(rc);
             }
+        }
+
+        /// <summary>
+        /// Получить ссылку на систему помощи Ostis
+        /// </summary>
+        /// <returns></returns>
+        public string GetOstisHelpSystemLink()
+        {
+            var configFile = new PInvoke.IniFile(Path.Combine(
+                OriginalAssemblyPath, 
+                StaticHelper.CommonConst.ConfigFileName));
+            string link = configFile.ReadString("helpSystem", "address", null);
+            return link;
+        }
+
+        /// <summary>
+        /// Получить ссылку на основную страницы системы помощи Ostis
+        /// </summary>
+        /// <returns></returns>
+        public string GetOstisHelpSystemMainPageLink()
+        {
+            var configFile = new PInvoke.IniFile(Path.Combine(
+                OriginalAssemblyPath,
+                StaticHelper.CommonConst.ConfigFileName));
+            string link = configFile.ReadString("helpSystem", "mainAddress ", 
+                null);
+            return link;
         }
 
         /// <summary>
