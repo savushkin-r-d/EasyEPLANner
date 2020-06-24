@@ -565,7 +565,7 @@ namespace EasyEPlanner
                 OriginalAssemblyPath, 
                 StaticHelper.CommonConst.ConfigFileName));
             string link = configFile.ReadString("helpSystem", "address", null);
-            configFile.WriteString("helpSystem", "adress", "");
+            configFile.WriteString("helpSystem", "address", "");
             return link;
         }
 
