@@ -538,6 +538,13 @@ namespace TechObject
             return errors;
         }
 
+        public override string GetLinkToHelpPage()
+        {
+            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
+                .GetOstisHelpSystemLink();
+            return ostisLink + "?sys_id=phase";
+        }
+
         /// <summary>
         /// Признак шага операции.
         /// </summary>

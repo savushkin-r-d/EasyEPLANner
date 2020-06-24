@@ -1038,6 +1038,21 @@ namespace TechObject
         }
         #endregion
 
+        public override string GetLinkToHelpPage()
+        {
+            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
+                .GetOstisHelpSystemLink();
+            if (S88Level == 1)
+            {
+                return ostisLink + "?sys_id=unit";
+
+            }
+            else
+            {
+                return ostisLink + "?sys_id=equipment_module";
+            }
+        }
+
         private TechObjectN techNumber; /// Номер объекта технологический.
         private Editor.ObjectProperty techType; /// Тип объекта технологический.
 
