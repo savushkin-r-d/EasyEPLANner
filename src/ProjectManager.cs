@@ -565,7 +565,10 @@ namespace EasyEPlanner
                 OriginalAssemblyPath, 
                 StaticHelper.CommonConst.ConfigFileName));
             string link = configFile.ReadString("helpSystem", "address", null);
-            configFile.WriteString("helpSystem", "address", "");
+            if (string.IsNullOrEmpty(link))
+            {
+                configFile.WriteString("helpSystem", "address", "");
+            }
             return link;
         }
 
@@ -580,7 +583,10 @@ namespace EasyEPlanner
                 StaticHelper.CommonConst.ConfigFileName));
             string link = configFile.ReadString("helpSystem", "mainAddress ", 
                 null);
-            configFile.WriteString("helpSystem", "mainAddress", "");
+            if (string.IsNullOrEmpty(link))
+            {
+                configFile.WriteString("helpSystem", "mainAddress", "");
+            }
             return link;
         }
 
