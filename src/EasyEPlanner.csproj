@@ -366,6 +366,7 @@
     <None Include="Lua\sys_restriction.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Lua\sys_shared_initializer.lua" />
     <None Include="Resources\main.ico" />
   </ItemGroup>
   <ItemGroup>
