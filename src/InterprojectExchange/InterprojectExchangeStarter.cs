@@ -21,6 +21,8 @@ namespace InterprojectExchange
                 GetType().GetMethod("CreateModel"));
             lua.RegisterFunction("GetModel", this, 
                 GetType().GetMethod("GetModel"));
+            lua.RegisterFunction("GetMainProjectName", this,
+                GetType().GetMethod("GetMainProjectName"));
         }
 
         /// <summary>
@@ -55,8 +57,7 @@ namespace InterprojectExchange
                 return false;
             }
 
-            string projName = EProjectManager.GetInstance()
-                .GetModifyingCurrentProjectName();
+            string projName = GetMainProjectName();
             string pathToProjectDir = ProjectManager.GetInstance()
                 .GetPtusaProjectsPath(projName);
             LoadProjectData(pathToProjectDir, projName);
@@ -86,6 +87,16 @@ namespace InterprojectExchange
         }
 
         /// <summary>
+        ///  Получить имя главного (открытого в Eplan) проекта.
+        /// </summary>
+        /// <returns></returns>
+        public string GetMainProjectName()
+        {
+            return EProjectManager.GetInstance()
+                .GetModifyingCurrentProjectName();
+        }
+
+        /// <summary>
         /// Загрузить данные проекта
         /// </summary>
         /// <param name="pathToProjectDir">Путь к папке с проектами</param>
@@ -94,10 +105,20 @@ namespace InterprojectExchange
         public bool LoadProjectData(string pathToProjectDir, 
             string projName = "")
         {
-            bool res = false;
-            res = LoadMainIOFileData(pathToProjectDir, projName);
-            res = LoadSharedLuaFileData(pathToProjectDir, projName);
-            return res;
+            LoadMainIOData(pathToProjectDir, projName);
+            LoadCurrentProjectSharedLuaData(pathToProjectDir, projName);
+
+            foreach(var model in interprojectExchange.Models)
+            {
+                if (model.ProjectName != projName)
+                {
+                    LoadMainIOData(pathToProjectDir, model.ProjectName);
+                    LoadAdvancedProjectSharedLuaData(pathToProjectDir, 
+                        model.ProjectName);
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -106,7 +127,7 @@ namespace InterprojectExchange
         /// <param name="pathToProjectsDir">Путь к папке с проектами</param>
         /// <param name="projName">Имя проекта</param>
         /// <returns></returns>
-        private bool LoadMainIOFileData(string pathToProjectsDir, 
+        private void LoadMainIOData(string pathToProjectsDir, 
             string projName)
         {
             string pathToIOFile = Path.Combine(pathToProjectsDir, projName,
@@ -127,15 +148,12 @@ namespace InterprojectExchange
                 reader.Close();
                 lua.DoString(mainIOData);
                 lua.DoString("init_io_file()");
-                return true;
             }
             else
             {
                 form.ShowErrorMessage($"Не найден файл main.io.lua проекта" +
                     $" \"{projName}\"");
-                return false;
             }
-            
         }
 
         /// <summary>
@@ -144,7 +162,7 @@ namespace InterprojectExchange
         /// <param name="pathToProjectsDir">Путь к каталогу с проектами</param>
         /// <param name="projName">Имя проекта</param>
         /// <returns></returns>
-        private bool LoadSharedLuaFileData(string pathToProjectsDir,
+        private void LoadCurrentProjectSharedLuaData(string pathToProjectsDir,
             string projName)
         {
             string pathToSharedfile = Path.Combine(pathToProjectsDir, projName,
@@ -165,11 +183,39 @@ namespace InterprojectExchange
                 string scriptForReadingSharedFile = reader.ReadToEnd();
                 reader.Close();
                 lua.DoString(scriptForReadingSharedFile);
-                lua.DoString("init_shared_lua_file()");
-                return true;
+                lua.DoString("init_current_project_shared_lua()");
             }
+        }
 
-            return true;
+        /// <summary>
+        /// Чтение Shared файла альтернативного проекта
+        /// </summary>
+        /// <param name="pathToProjectsDir">Путь к каталогу с проектами</param>
+        /// <param name="projName">Имя проекта</param>
+        /// <returns></returns>
+        public void LoadAdvancedProjectSharedLuaData(string pathToProjectsDir,
+            string projName)
+        {
+            string pathToSharedfile = Path.Combine(pathToProjectsDir, projName,
+                fileWithSignals);
+            if (File.Exists(pathToSharedfile))
+            {
+                var reader = new StreamReader(pathToSharedfile,
+                    Encoding.GetEncoding(1251));
+                string sharedInfo = reader.ReadToEnd();
+                reader.Close();
+                lua.DoString(sharedInfo);
+
+                string pathToScripts = Path.Combine(ProjectManager
+                   .GetInstance().SystemFilesPath,
+                   "sys_advancedProject_shared_initializer.lua");
+                reader = new StreamReader(pathToScripts,
+                    Encoding.GetEncoding(1251));
+                string scriptForReadingSharedFile = reader.ReadToEnd();
+                reader.Close();
+                lua.DoString(scriptForReadingSharedFile);
+                lua.DoString("init_advanced_project_shared_lua()");
+            }
         }
 
         /// <summary>

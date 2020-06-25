@@ -4,7 +4,11 @@ init_io_file = function()
         return
     end
 
-    local model = CreateModel()
+    local model = GetModel(PAC_name)
+    if (model == nil) then
+        model = CreateModel()
+    end
+
     add_nodes(model)
     add_devices(model)
 end
@@ -12,6 +16,7 @@ end
 -- Добавление информации об узле
 add_nodes = function(model)
     for key, value in pairs(nodes) do
+        -- Контроллер PXC и WAGO
         if (value.ntype == 201 or value.ntype == 2) then
             local IP = value.IP or ""
             model:AddPLCData(IP, PAC_name)
@@ -26,4 +31,4 @@ add_devices = function(model)
         local descr = value.descr or ""
         model:AddDeviceData(name, descr)
     end
-end
+end 

@@ -1,5 +1,5 @@
 -- Функция чтения shared.lua для текущего проекта
-init_shared_lua_file = function()
+init_current_project_shared_lua = function()
     if (remote_gateways) then
         init_remote_gateways()
     end
@@ -74,13 +74,13 @@ end
 
 -- Инициализация передаваемых проектом устройств
 init_shared_devices = function()
-    for stationNum, table in pairs(shared_devices) do
-        init_project_as_source(stationNum, table)
+    for _, table in pairs(shared_devices) do
+        init_project_as_source(table)
     end
 end
 
 -- Инициализация текущего проекта как источника сигналов
-init_project_as_source = function(stationNum, table)
+init_project_as_source = function(table)
     local projectName = table.projectName or nil
     if (projectName == nil or projectName == "") then
         return
