@@ -15,14 +15,14 @@ init_remote_gateways = function(mainProjectName)
     for projectName, table in pairs(remote_gateways) do
         if (projectName == mainProjectName) then
             local model = GetModel(projectName)
-            init_PLC_data(model, table)
+            init_PLC_data(model, table, projectName)
             init_devices(model, table, true)
         end
     end
 end
 
 -- Инициализация данных о ПЛК для альтернативного проекта
-init_PLC_data = function(model, table)
+init_PLC_data = function(model, table, projectName)
     local IP = table.IP or ""
     local emulationEnabled = table.emulation or false
     local cycleTime = table.cycletime or 200

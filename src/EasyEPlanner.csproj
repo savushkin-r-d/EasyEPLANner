@@ -348,7 +348,9 @@
     <None Include="Lua\sys.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Lua\sys_advancedProject_shared_initializer.lua" />
+    <None Include="Lua\sys_advancedProject_shared_initializer.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Lua\sys_base_objects_description.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -367,7 +369,9 @@
     <None Include="Lua\sys_restriction.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Lua\sys_currentProject_shared_initializer.lua" />
+    <None Include="Lua\sys_currentProject_shared_initializer.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\main.ico" />
   </ItemGroup>
   <ItemGroup>

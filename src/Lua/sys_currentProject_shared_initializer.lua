@@ -10,7 +10,7 @@ init_current_project_shared_lua = function()
 end
 
 -- Инициализация удаленных узлов текущего
-init_remote_gatewasys = function()
+init_remote_gateways = function()
     for projectName, table in pairs(remote_gateways) do
         init_project_as_receiver(projectName, table)
     end
@@ -23,7 +23,7 @@ init_project_as_receiver = function(projectName, table)
         model = CreateModel()
     end
 
-    init_PLC_Data(model, table)
+    init_PLC_Data(model, table, projectName)
     init_devices(model, table, false)
 end
 
@@ -60,14 +60,16 @@ init_devices = function(model, table, receiveMode)
 end
 
 -- Инициализация данных о ПЛК, IP и ProjectName берутся из main.io.lua
-init_PLC_Data = function(model, table)
+init_PLC_Data = function(model, table, projectName)
     -- Заполняем информацию о ПЛК (после or дефолтные данные)
+    local IP = table.IP or ""
     local emulationEnabled = table.emulation or false
     local cycleTime = table.cycletime or 200
     local timeout = table.timeout or 300
     local port = table.port or 10502
     local enabledGate = table.enabled or true
     local station = table.station or 0
+    model:AddPLCData(IP, projectName)
     model:AddPLCData(emulationEnabled, cycleTime, timeout,
                port, enabledGate, station)
 end

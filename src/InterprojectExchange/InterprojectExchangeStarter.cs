@@ -252,17 +252,6 @@ namespace InterprojectExchange
             form.ShowDialog();
         }
 
-        /// <summary>
-        /// Экземпляр пространства Lua модели
-        /// </summary>
-        public Lua Lua
-        {
-            get
-            {
-                return lua;
-            }
-        }
-
         private string fileWithDeviceAndPLC = "main.io.lua";
         private string fileWithSignals = "shared.lua";
 
