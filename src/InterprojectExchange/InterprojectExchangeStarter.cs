@@ -15,9 +15,12 @@ namespace InterprojectExchange
             interprojectExchange = InterprojectExchange.GetInstance();
             interprojectExchange.Clear();
 
+            // Настройка lua
             lua = new Lua();
             lua.RegisterFunction("CreateModel", this,
                 GetType().GetMethod("CreateModel"));
+            lua.RegisterFunction("GetModel", this, 
+                GetType().GetMethod("GetModel"));
         }
 
         /// <summary>
@@ -68,6 +71,17 @@ namespace InterprojectExchange
         {
             var model = new InterprojectExchangeModel();
             interprojectExchange.AddModel(model);
+            return model;
+        }
+
+        /// <summary>
+        /// Получить модель, вызывается из Lua
+        /// </summary>
+        /// <param name="projectName">Имя проекта</param>
+        /// <returns></returns>
+        public InterprojectExchangeModel GetModel(string projectName)
+        {
+            var model = interprojectExchange.GetModel(projectName);
             return model;
         }
 

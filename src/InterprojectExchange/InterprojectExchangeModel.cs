@@ -33,6 +33,26 @@ namespace InterprojectExchange
         }
 
         /// <summary>
+        /// Добавляем данные о ПЛК из Lua
+        /// </summary>
+        /// <param name="emulationEnabled">Включена эмуляция</param>
+        /// <param name="cycleTime">Время цикла, мс</param>
+        /// <param name="timeout">Таймаут, мс</param>
+        /// <param name="port">Порт</param>
+        /// <param name="gateEnabled">Включен шлюз</param>
+        /// <param name="station">Станция, номер</param>
+        public void AddPLCData(bool emulationEnabled, int cycleTime, 
+            int timeout, int port, bool gateEnabled, int station)
+        {
+            PacInfo.EmulationEnabled = emulationEnabled;
+            PacInfo.CycleTime = cycleTime;
+            PacInfo.TimeOut = timeout;
+            PacInfo.Port = port;
+            PacInfo.GateEnabled = gateEnabled;
+            PacInfo.Station = station;
+        }
+
+        /// <summary>
         /// Добавляем данные об устройства из Lua
         /// </summary>
         /// <param name="name"></param>
