@@ -17,8 +17,17 @@ namespace InterprojectExchange
             pacDTO = new PacDTO();
             Devices = new List<DeviceDTO>();
             deviceComparer = new DeviceComparer();
-            recieverSignals = new DeviceSignalsDTO();
+            receiverSignals = new DeviceSignalsDTO();
             sourceSignals = new DeviceSignalsDTO();
+        }
+
+        /// <summary>
+        /// Добавляем данные о ПЛК из Lua
+        /// </summary>
+        /// <param name="pacName">Имя проекта</param>
+        public void AddPLCData(string pacName)
+        {
+            ProjectName = pacName;
         }
 
         /// <summary>
@@ -64,6 +73,67 @@ namespace InterprojectExchange
         }
 
         /// <summary>
+        /// Добавление сигнала к модели, вызывается из LUA
+        /// </summary>
+        /// <param name="name">Имя сигнала</param>
+        /// <param name="signalType">Тип сигнала</param>
+        /// <param name="receiveMode">Режим получения сигналов</param>
+        public void AddSignal(string name, string signalType, bool receiveMode)
+        {
+            if (name.Contains("__"))
+            {
+                name = name.Replace("__", "");
+            }
+
+            switch(signalType)
+            {
+                case "AI":
+                    if (receiveMode)
+                    {
+                        ReceiverSignals.AI.Add(name);
+                    }
+                    else
+                    {
+                        SourceSignals.AI.Add(name);
+                    }
+                    break;
+
+                case "AO":
+                    if (receiveMode)
+                    {
+                        ReceiverSignals.AO.Add(name);
+                    }
+                    else
+                    {
+                        SourceSignals.AO.Add(name);
+                    }
+                    break;
+
+                case "DI":
+                    if (receiveMode)
+                    {
+                        ReceiverSignals.DI.Add(name);
+                    }
+                    else
+                    {
+                        SourceSignals.DI.Add(name);
+                    }
+                    break;
+
+                case "DO":
+                    if (receiveMode)
+                    {
+                        ReceiverSignals.DO.Add(name);
+                    }
+                    else
+                    {
+                        SourceSignals.DO.Add(name);
+                    }
+                    break;
+            }
+        }
+
+        /// <summary>
         /// Сортировка устройств из Lua
         /// </summary>
         public void SortDeviceData()
@@ -80,11 +150,6 @@ namespace InterprojectExchange
         /// Устройства проекта
         /// </summary>
         public List<DeviceDTO> Devices { get; set; }
-
-        /// <summary>
-        /// Путь к папке с проектом
-        /// </summary>
-        public string PathToProjectDir { get; set; }
 
         /// <summary>
         /// Прочитаны ли сигналы для обмена
@@ -125,16 +190,16 @@ namespace InterprojectExchange
         /// <summary>
         /// Сигналы-приемники (принимаем)
         /// </summary>
-        public DeviceSignalsDTO RecieverSignals
+        public DeviceSignalsDTO ReceiverSignals
         {
             get
             {
-                return recieverSignals;
+                return receiverSignals;
             }
         }
 
         private DeviceSignalsDTO sourceSignals;
-        private DeviceSignalsDTO recieverSignals;
+        private DeviceSignalsDTO receiverSignals;
 
         private PacDTO pacDTO;
         private DeviceComparer deviceComparer;

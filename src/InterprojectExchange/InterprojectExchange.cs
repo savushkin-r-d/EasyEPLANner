@@ -129,11 +129,11 @@ namespace InterprojectExchange
             if (editMode == EditModeEnum.SourceReciever)
             {
                 currentProjectSignals = currentProjectModel.SourceSignals;
-                advancedProjectSignals = advancedProjectModel.RecieverSignals;
+                advancedProjectSignals = advancedProjectModel.ReceiverSignals;
             }
             else
             {
-                currentProjectSignals = currentProjectModel.RecieverSignals;
+                currentProjectSignals = currentProjectModel.ReceiverSignals;
                 advancedProjectSignals = advancedProjectModel.SourceSignals;
             }
 
@@ -200,11 +200,11 @@ namespace InterprojectExchange
             if (editMode == EditModeEnum.SourceReciever)
             {
                 currentProjectSignals = currentProjectModel.SourceSignals;
-                advancedProjectSignals = advancedProjectModel.RecieverSignals;
+                advancedProjectSignals = advancedProjectModel.ReceiverSignals;
             }
             else
             {
-                currentProjectSignals = currentProjectModel.RecieverSignals;
+                currentProjectSignals = currentProjectModel.ReceiverSignals;
                 advancedProjectSignals = advancedProjectModel.SourceSignals;
             }
 
@@ -257,11 +257,11 @@ namespace InterprojectExchange
             if (editMode == EditModeEnum.SourceReciever)
             {
                 currentProjectSignals = currentProjectModel.SourceSignals;
-                advancedProjectSignals = advancedProjectModel.RecieverSignals;
+                advancedProjectSignals = advancedProjectModel.ReceiverSignals;
             }
             else
             {
-                currentProjectSignals = currentProjectModel.RecieverSignals;
+                currentProjectSignals = currentProjectModel.ReceiverSignals;
                 advancedProjectSignals = advancedProjectModel.SourceSignals;
             }
 
@@ -311,7 +311,7 @@ namespace InterprojectExchange
             }
             else
             {
-                currentProjectSignals = currentProjectModel.RecieverSignals;
+                currentProjectSignals = currentProjectModel.ReceiverSignals;
             }
 
             int oldValueIndex = 0;
@@ -364,7 +364,7 @@ namespace InterprojectExchange
             DeviceSignalsDTO advancedProjectSignals;
             if (editMode == EditModeEnum.SourceReciever)
             {
-                advancedProjectSignals = advancedProjectModel.RecieverSignals;
+                advancedProjectSignals = advancedProjectModel.ReceiverSignals;
             }
             else
             {

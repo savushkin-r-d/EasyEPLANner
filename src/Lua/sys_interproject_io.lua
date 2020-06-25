@@ -1,4 +1,4 @@
--- Чтение описания main.io.lua
+-- Чтение описания main.io.lua для межпроектного обмена
 init_io_file = function()
     if (devices == nil or nodes == nil or PAC_name == "") then
         return

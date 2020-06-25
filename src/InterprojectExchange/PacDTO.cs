@@ -20,7 +20,7 @@ namespace InterprojectExchange
             TimeOut = 300;
             Port = 10502;
             GateEnabled = true;
-            Station = 0;
+            Station = -1;
         }
 
         /// <summary>

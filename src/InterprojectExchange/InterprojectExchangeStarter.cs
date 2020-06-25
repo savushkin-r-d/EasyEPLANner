@@ -95,7 +95,21 @@ namespace InterprojectExchange
             string projName = "")
         {
             bool res = false;
-            string pathToIOFile = Path.Combine(pathToProjectDir, projName, 
+            res = LoadMainIOFileData(pathToProjectDir, projName);
+            res = LoadSharedLuaFileData(pathToProjectDir, projName);
+            return res;
+        }
+
+        /// <summary>
+        /// Чтение информации о ПЛК из main.io.lua
+        /// </summary>
+        /// <param name="pathToProjectsDir">Путь к папке с проектами</param>
+        /// <param name="projName">Имя проекта</param>
+        /// <returns></returns>
+        private bool LoadMainIOFileData(string pathToProjectsDir, 
+            string projName)
+        {
+            string pathToIOFile = Path.Combine(pathToProjectsDir, projName,
                 fileWithDeviceAndPLC);
             if (File.Exists(pathToIOFile))
             {
@@ -107,27 +121,55 @@ namespace InterprojectExchange
 
                 string pathToScripts = Path.Combine(ProjectManager
                     .GetInstance().SystemFilesPath, "sys_interproject_io.lua");
-                reader = new StreamReader(pathToScripts, 
+                reader = new StreamReader(pathToScripts,
                     Encoding.GetEncoding(1251));
                 string mainIOData = reader.ReadToEnd();
                 reader.Close();
                 lua.DoString(mainIOData);
                 lua.DoString("init_io_file()");
-
-                //TODO: Записать каталог, откуда считали проект?
-
-                res = true;
+                return true;
             }
             else
             {
                 form.ShowErrorMessage($"Не найден файл main.io.lua проекта" +
                     $" \"{projName}\"");
-                res = false;
+                return false;
+            }
+            
+        }
+
+        /// <summary>
+        /// Чтение Shared файла текущего проекта
+        /// </summary>
+        /// <param name="pathToProjectsDir">Путь к каталогу с проектами</param>
+        /// <param name="projName">Имя проекта</param>
+        /// <returns></returns>
+        private bool LoadSharedLuaFileData(string pathToProjectsDir,
+            string projName)
+        {
+            string pathToSharedfile = Path.Combine(pathToProjectsDir, projName,
+                fileWithSignals);
+            if (File.Exists(pathToSharedfile))
+            {
+                var reader = new StreamReader(pathToSharedfile,
+                    Encoding.GetEncoding(1251));
+                string sharedInfo = reader.ReadToEnd();
+                reader.Close();
+                lua.DoString(sharedInfo);
+
+                string pathToScripts = Path.Combine(ProjectManager
+                   .GetInstance().SystemFilesPath, 
+                   "sys_currentProject_shared_initializer.lua");
+                reader = new StreamReader(pathToScripts,
+                    Encoding.GetEncoding(1251));
+                string scriptForReadingSharedFile = reader.ReadToEnd();
+                reader.Close();
+                lua.DoString(scriptForReadingSharedFile);
+                lua.DoString("init_shared_lua_file()");
+                return true;
             }
 
-            //shared.lua read if exist (if model.SharedLuaReaded = false)
-
-            return res;
+            return true;
         }
 
         /// <summary>
@@ -176,7 +218,7 @@ namespace InterprojectExchange
         }
 
         private string fileWithDeviceAndPLC = "main.io.lua";
-        //private string fileWithSignals = "shared.lua";
+        private string fileWithSignals = "shared.lua";
 
         private InterprojectExchangeForm form;
         private InterprojectExchange interprojectExchange;
