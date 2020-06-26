@@ -24,12 +24,12 @@ init_project_as_receiver = function(projectName, table)
     end
 
     init_PLC_Data(model, table, projectName)
-    init_devices(model, table, false)
+    init_currProj_devices(model, table, false)
 end
 
--- Инициализация устройств модели
+-- Инициализация устройств модели для текущего проекта
 -- receiveMode - true or false
-init_devices = function(model, table, receiveMode)
+init_currProj_devices = function(model, table, receiveMode)
     if (table.AI) then
         local type = "AI"
         for _, signal in pairs(table.AI) do
@@ -94,5 +94,76 @@ init_project_as_source = function(table)
     end
 
     model:AddPLCData(projectName)
-    init_devices(model, table, true)
+    init_currProj_devices(model, table, true)
+end
+
+--------
+
+-- Функция чтения shared.lua для альтернативного проекта
+init_advanced_project_shared_lua = function()
+    local mainProjectName = GetMainProjectName()
+    if (remote_gateways) then
+        init_advProj_remote_gateways(mainProjectName)
+    end
+
+    if (shared_devices) then
+        init_advProj_shared_devices(mainProjectName)
+    end
+end
+
+-- Инициализация удаленного узла проекта для альтернативного проекта
+init_advProj_remote_gateways = function(mainProjectName)
+    for projectName, table in pairs(remote_gateways) do
+        if (projectName == mainProjectName) then
+            local model = GetModel(projectName)
+            init_PLC_Data(model, table, projectName)
+            init_advProj_devices(model, table, true)
+        end
+    end
+end
+
+-- Инициализация устройств для альтернативного проекта
+init_advProj_devices = function(model, table, receiveMode)
+    if (table.AI) then
+        local type = "AO"
+        for _, signal in pairs(table.AI) do
+            model:AddSignal(signal, type, receiveMode)
+        end
+    end
+
+    if (table.AO) then
+        local type = "AI"
+        for _, signal in pairs(table.AO) do
+            model:AddSignal(signal, type, receiveMode)
+        end
+    end
+
+    if (table.DI) then
+        local type = "DO"
+        for _, signal in pairs(table.DI) do
+            model:AddSignal(signal, type, receiveMode)
+        end
+    end
+
+    if (table.DO) then
+        local type = "DI"
+        for _, signal in pairs(table.DO) do
+            model:AddSignal(signal, type, receiveMode)
+        end
+    end
+end
+
+-- Инициализация передаваемых устройств для альтернативного проекта
+init_advProj_shared_devices = function(mainProjectName)
+    for _, table in pairs(shared_devices) do
+        local projectName = table.projectName or nil
+        if (projectName == nil) then
+            return
+        end
+
+        if (projectName == mainProjectName) then
+            local model = GetModel(projectName)
+            init_advProj_devices(model, table, false)
+        end
+    end
 end

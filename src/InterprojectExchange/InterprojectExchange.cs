@@ -166,16 +166,24 @@ namespace InterprojectExchange
             List<string> advancedProjectSignals)
         {
             var result = new List<string[]>();
-            for(int i = 0; i < currentProjectSignals.Count; i++)
+            if (currentProjectSignals.Count > 0 &&
+                advancedProjectSignals.Count > 0)
             {
-                var bindedSignals = new string[] 
+                for (int i = 0; i < currentProjectSignals.Count; i++)
                 {
-                    currentProjectSignals[i], 
-                    advancedProjectSignals[i] 
-                };
-                result.Add(bindedSignals);
+                    var bindedSignals = new string[]
+                    {
+                    currentProjectSignals[i],
+                    advancedProjectSignals[i]
+                    };
+                    result.Add(bindedSignals);
+                }
+                return result;
             }
-            return result;
+            else
+            {
+                return result;
+            }
         }
 
         /// <summary>

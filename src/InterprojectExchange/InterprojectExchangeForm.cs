@@ -27,10 +27,6 @@ namespace InterprojectExchange
             currProjItems = new List<ListViewItem>();
             advProjItems = new List<ListViewItem>();
 
-            // Установка имени текущего проекта
-            string projectName = interprojectExchange.CurrentProjectName;
-            currProjNameTextBox.Text = projectName;
-
             // Установлен первый элемент в списке "Источник >> Приемник"
             modeComboBox.SelectedValueChanged -= 
                 modeComboBox_SelectedValueChanged;
@@ -68,6 +64,20 @@ namespace InterprojectExchange
         /// </summary>
         private void InterprojectExchangeForm_Load(object sender, EventArgs e)
         {
+            // Установка имени текущего проекта
+            string currentProjectName = interprojectExchange.CurrentProjectName;
+            currProjNameTextBox.Text = currentProjectName;
+
+            // Заполнение названий моделей в списке
+            string[] projects = interprojectExchange.Models
+                .Where(x => x.ProjectName != currentProjectName)
+                .Select(x => x.ProjectName).ToArray();
+            advProjNameComboBox.Items.AddRange(projects);
+            if(advProjNameComboBox.Items.Count >= 0)
+            {
+                advProjNameComboBox.SelectedIndex = 0;
+            }
+
             LoadCurrentProjectDevices();
         }
 

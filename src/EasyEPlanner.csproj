@@ -342,13 +342,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="key\2112_Public.snk" />
+    <None Include="Lua\sys_devices_mock_generator.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Lua\mainPattern.plua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Lua\sys.lua">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Lua\sys_advancedProject_shared_initializer.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Lua\sys_base_objects_description.lua">
@@ -369,7 +369,7 @@
     <None Include="Lua\sys_restriction.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Lua\sys_currentProject_shared_initializer.lua">
+    <None Include="Lua\sys_shared_initializer.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\main.ico" />
