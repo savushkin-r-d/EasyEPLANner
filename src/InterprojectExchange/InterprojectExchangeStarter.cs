@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using EasyEPlanner;
+using System.Linq;
 
 namespace InterprojectExchange
 {
@@ -19,10 +20,14 @@ namespace InterprojectExchange
             lua = new Lua();
             lua.RegisterFunction("CreateModel", this,
                 GetType().GetMethod("CreateModel"));
+            lua.RegisterFunction("CreateMainModel", this,
+                GetType().GetMethod("CreateMainModel"));
             lua.RegisterFunction("GetModel", this, 
                 GetType().GetMethod("GetModel"));
             lua.RegisterFunction("GetMainProjectName", this,
                 GetType().GetMethod("GetMainProjectName"));
+            lua.RegisterFunction("GetSelectedModel", this, 
+                GetType().GetMethod("GetSelectedModel"));
         }
 
         /// <summary>
@@ -68,18 +73,20 @@ namespace InterprojectExchange
         /// Создать модель, вызывается из Lua
         /// </summary>
         /// <returns></returns>
-        public IProjectModel CreateModel(bool isMainModel)
+        public IProjectModel CreateModel()
         {
-            IProjectModel model;
-            if (isMainModel)
-            {
-                model = new CurrentProjectModel();
-            }
-            else
-            {
-                model = new AdvancedProjectModel();
-            }
+            IProjectModel model = new AdvancedProjectModel();
+            interprojectExchange.AddModel(model);
+            return model;
+        }
 
+        /// <summary>
+        /// Создать главную модель, вызывается из Lua
+        /// </summary>
+        /// <returns></returns>
+        public IProjectModel CreateMainModel()
+        {
+            IProjectModel model = new CurrentProjectModel();
             interprojectExchange.AddModel(model);
             return model;
         }
@@ -92,6 +99,17 @@ namespace InterprojectExchange
         public IProjectModel GetModel(string projectName)
         {
             var model = interprojectExchange.GetModel(projectName);
+            return model;
+        }
+
+        /// <summary>
+        /// Получить выбранную модель
+        /// </summary>
+        /// <returns></returns>
+        public IProjectModel GetSelectedModel()
+        {
+            var model = interprojectExchange.Models
+                .Where(x => x.Selected == true).FirstOrDefault();
             return model;
         }
 
@@ -138,10 +156,12 @@ namespace InterprojectExchange
             {
                 if (model.ProjectName != projName)
                 {
+                    model.Selected = true;
                     LoadMainIOData(pathToProjectDir, model.ProjectName);
                     LoadDevicesFile(pathToProjectDir, projName);
                     LoadAdvancedProjectSharedLuaData(pathToProjectDir,
                         model.ProjectName);
+                    model.Selected = false;
                 }
             }
         }

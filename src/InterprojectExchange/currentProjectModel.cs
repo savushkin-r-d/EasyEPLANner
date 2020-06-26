@@ -33,6 +33,15 @@ namespace InterprojectExchange
                 name = name.Replace("__", "");
             }
 
+            if(!receiverSignals.ContainsKey(projName))
+            {
+                receiverSignals.Add(projName, new DeviceSignalsDTO());
+            }
+            if(!sourceSignals.ContainsKey(projName))
+            {
+                sourceSignals.Add(projName, new DeviceSignalsDTO());
+            }
+
             switch(signalType)
             {
                 case "AI":

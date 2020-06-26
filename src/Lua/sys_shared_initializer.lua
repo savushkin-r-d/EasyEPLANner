@@ -1,60 +1,75 @@
 -- Функция чтения shared.lua для текущего проекта
 init_current_project_shared_lua = function()
+    local mainModel = GetModel(GetMainProjectName())
+
     if (remote_gateways) then
-        init_remote_gateways()
+        init_remote_gateways(mainModel)
     end
 
     if (shared_devices) then
-        init_shared_devices()
+        init_shared_devices(mainModel)
     end
 end
 
 -- Инициализация удаленных узлов текущего
-init_remote_gateways = function()
+init_remote_gateways = function(mainModel)
     for projectName, table in pairs(remote_gateways) do
-        init_project_as_receiver(projectName, table)
+        local advancedProjectModel = GetModel(projectName)
+        if (advancedProjectModel == nil) then
+            advancedProjectModel = CreateModel()
+        end
+
+        init_PLC_Data(advancedProjectModel, table, projectName)
+        init_currProj_devices(mainModel, table, true, projectName)
     end
 end
 
--- Инициализация текущего проекта как получателя сигналов
-init_project_as_receiver = function(projectName, table)
-    local model = GetModel(projectName)
-    if (model == nil) then
-        model = CreateModel()
-    end
+-- Инициализация передаваемых проектом устройств
+init_shared_devices = function(mainModel)
+    for _, table in pairs(shared_devices) do
+        local projectName = table.projectName or nil
+        if (projectName == nil or projectName == "") then
+            return
+        end
 
-    init_PLC_Data(model, table, projectName)
-    init_currProj_devices(model, table, false)
+        local model = GetModel(projectName)
+        if (model == nil) then
+            model = CreateModel()
+        end
+
+        model:AddPLCData(projectName)
+        init_currProj_devices(mainModel, table, false, projectName)
+    end
 end
 
 -- Инициализация устройств модели для текущего проекта
 -- receiveMode - true or false
-init_currProj_devices = function(model, table, receiveMode)
+init_currProj_devices = function(model, table, receiveMode, projectName)
     if (table.AI) then
         local type = "AI"
         for _, signal in pairs(table.AI) do
-            model:AddSignal(signal, type, receiveMode)
+            model:AddSignal(signal, type, receiveMode, projectName)
         end
     end
 
     if (table.AO) then
         local type = "AO"
         for _, signal in pairs(table.AO) do
-            model:AddSignal(signal, type, receiveMode)
+            model:AddSignal(signal, type, receiveMode, projectName)
         end
     end
 
     if (table.DI) then
         local type = "DI"
         for _, signal in pairs(table.DI) do
-            model:AddSignal(signal, type, receiveMode)
+            model:AddSignal(signal, type, receiveMode, projectName)
         end
     end
 
     if (table.DO) then
         local type = "DO"
         for _, signal in pairs(table.DO) do
-            model:AddSignal(signal, type, receiveMode)
+            model:AddSignal(signal, type, receiveMode, projectName)
         end
     end
 end
@@ -74,30 +89,7 @@ init_PLC_Data = function(model, table, projectName)
                port, enabledGate, station)
 end
 
--- Инициализация передаваемых проектом устройств
-init_shared_devices = function()
-    for _, table in pairs(shared_devices) do
-        init_project_as_source(table)
-    end
-end
-
--- Инициализация текущего проекта как источника сигналов
-init_project_as_source = function(table)
-    local projectName = table.projectName or nil
-    if (projectName == nil or projectName == "") then
-        return
-    end
-
-    local model = GetModel(projectName)
-    if (model == nil) then
-        model = CreateModel()
-    end
-
-    model:AddPLCData(projectName)
-    init_currProj_devices(model, table, true)
-end
-
---------
+-------- Init advanced project --------
 
 -- Функция чтения shared.lua для альтернативного проекта
 init_advanced_project_shared_lua = function()
@@ -114,10 +106,10 @@ end
 -- Инициализация удаленного узла проекта для альтернативного проекта
 init_advProj_remote_gateways = function(mainProjectName)
     for projectName, table in pairs(remote_gateways) do
-        if (projectName == mainProjectName) then
-            local model = GetModel(projectName)
-            init_PLC_Data(model, table, projectName)
-            init_advProj_devices(model, table, true)
+        if(projectName == mainProjectName) then
+            local selectedModel = GetSelectedModel()
+            init_PLC_Data(selectedModel, table, selectedModel.ProjectName)
+            init_advProj_devices(selectedModel, table, true)
         end
     end
 end
@@ -162,8 +154,8 @@ init_advProj_shared_devices = function(mainProjectName)
         end
 
         if (projectName == mainProjectName) then
-            local model = GetModel(projectName)
-            init_advProj_devices(model, table, false)
+            local selectedModel = GetSelectedModel()
+            init_advProj_devices(selectedModel, table, false)
         end
     end
 end

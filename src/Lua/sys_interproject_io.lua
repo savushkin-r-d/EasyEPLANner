@@ -6,7 +6,11 @@ init_io_file = function()
 
     local model = GetModel(PAC_name)
     if (model == nil) then
-        model = CreateModel()
+        if(GetMainProjectName() == PAC_name) then
+            model = CreateMainModel()
+        else
+            model = CreateModel()
+        end
     end
 
     add_nodes(model)

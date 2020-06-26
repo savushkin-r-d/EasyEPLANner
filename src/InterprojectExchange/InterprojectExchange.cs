@@ -72,11 +72,17 @@ namespace InterprojectExchange
         /// <param name="selectingModel">Выбранная модель</param>
         public void SelectModel(IProjectModel selectingModel)
         {
+            var currentProjectModel = Models
+                .Where(x => x.ProjectName == Owner.GetMainProjectName())
+                .FirstOrDefault() as CurrentProjectModel;
+
             foreach(var model in Models)
             {
                 if (model.ProjectName == selectingModel.ProjectName)
                 {
                     model.Selected = true;
+                    currentProjectModel.SelectedAdvancedProject = 
+                        model.ProjectName;
                 }
                 else
                 {
