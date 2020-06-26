@@ -430,6 +430,14 @@ return
                         CHECKING_TEMPERATURE = { name = "Проверка заданной температуры" },
                     },
                 },
+                COOLING_AFTER_SOURING = {
+                    name = "Охлаждение после сквашивания",
+                    steps =
+                    {
+                        COOLING = { name = "Охлаждение" },
+                        MIXING = { name = "Перемешивание" },
+                    },
+                },
                 WORK = {
                     name = "Работа",
                     params = { },
