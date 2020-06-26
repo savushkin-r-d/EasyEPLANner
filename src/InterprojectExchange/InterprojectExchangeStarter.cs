@@ -68,9 +68,18 @@ namespace InterprojectExchange
         /// Создать модель, вызывается из Lua
         /// </summary>
         /// <returns></returns>
-        public InterprojectExchangeModel CreateModel()
+        public IProjectModel CreateModel(bool isMainModel)
         {
-            var model = new InterprojectExchangeModel();
+            IProjectModel model;
+            if (isMainModel)
+            {
+                model = new CurrentProjectModel();
+            }
+            else
+            {
+                model = new AdvancedProjectModel();
+            }
+
             interprojectExchange.AddModel(model);
             return model;
         }
@@ -80,7 +89,7 @@ namespace InterprojectExchange
         /// </summary>
         /// <param name="projectName">Имя проекта</param>
         /// <returns></returns>
-        public InterprojectExchangeModel GetModel(string projectName)
+        public IProjectModel GetModel(string projectName)
         {
             var model = interprojectExchange.GetModel(projectName);
             return model;

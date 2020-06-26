@@ -12,7 +12,7 @@ namespace InterprojectExchange
     {
         private InterprojectExchange()
         {
-            interprojectExchangeModels = new List<InterprojectExchangeModel>();
+            interprojectExchangeModels = new List<IProjectModel>();
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace InterprojectExchange
         /// Добавить модель
         /// </summary>
         /// <param name="model">Модель</param>
-        public void AddModel(InterprojectExchangeModel model)
+        public void AddModel(IProjectModel model)
         {
             interprojectExchangeModels.Add(model);
         }
@@ -58,7 +58,7 @@ namespace InterprojectExchange
         /// </summary>
         /// <param name="projName">Имя проекта</param>
         /// <returns></returns>
-        public InterprojectExchangeModel GetModel(string projName)
+        public IProjectModel GetModel(string projName)
         {
             var model = interprojectExchangeModels
                 .Where(x => x.ProjectName == projName)
@@ -70,7 +70,7 @@ namespace InterprojectExchange
         /// Отметка выбранной модели в GUI. Другие модели снимают выбор.
         /// </summary>
         /// <param name="selectingModel">Выбранная модель</param>
-        public void SelectModel(InterprojectExchangeModel selectingModel)
+        public void SelectModel(IProjectModel selectingModel)
         {
             foreach(var model in Models)
             {
@@ -118,10 +118,10 @@ namespace InterprojectExchange
         {
             var signals = new Dictionary<string, List<string[]>>();
 
-            InterprojectExchangeModel currentProjectModel = Models
+            IProjectModel currentProjectModel = Models
                 .Where(x => x.ProjectName == CurrentProjectName)
                 .FirstOrDefault();
-            InterprojectExchangeModel advancedProjectModel = Models
+            IProjectModel advancedProjectModel = Models
                 .Where(x => x.Selected == true).FirstOrDefault();
 
             DeviceSignalsDTO currentProjectSignals;
@@ -197,10 +197,10 @@ namespace InterprojectExchange
         public bool BindSignals(string signalType, string currentProjectDevice,
             string advancedProjectDevice)
         {
-            InterprojectExchangeModel currentProjectModel = Models
+            IProjectModel currentProjectModel = Models
                 .Where(x => x.ProjectName == CurrentProjectName)
                 .FirstOrDefault();
-            InterprojectExchangeModel advancedProjectModel = Models
+            IProjectModel advancedProjectModel = Models
                 .Where(x => x.Selected == true).FirstOrDefault();
 
             DeviceSignalsDTO currentProjectSignals;
@@ -254,10 +254,10 @@ namespace InterprojectExchange
         public bool DeleteSignalsBind(string signalType,
             string currentProjectDevice, string advancedProjectDevice)
         {
-            InterprojectExchangeModel currentProjectModel = Models
+            IProjectModel currentProjectModel = Models
             .Where(x => x.ProjectName == CurrentProjectName)
             .FirstOrDefault();
-            InterprojectExchangeModel advancedProjectModel = Models
+            IProjectModel advancedProjectModel = Models
                 .Where(x => x.Selected == true).FirstOrDefault();
 
             DeviceSignalsDTO currentProjectSignals;
@@ -309,7 +309,7 @@ namespace InterprojectExchange
         public bool UpdateCurrentProjectBinding(string signalType, 
             string oldValue, string newValue)
         {
-            InterprojectExchangeModel currentProjectModel = Models
+            IProjectModel currentProjectModel = Models
             .Where(x => x.ProjectName == CurrentProjectName)
             .FirstOrDefault();
             DeviceSignalsDTO currentProjectSignals;
@@ -367,7 +367,7 @@ namespace InterprojectExchange
         public bool UpdateAdvancedProjectBinding(string signalType,
             string oldValue, string newValue)
         {
-            InterprojectExchangeModel advancedProjectModel = Models
+            IProjectModel advancedProjectModel = Models
                 .Where(x => x.Selected == true).FirstOrDefault();
             DeviceSignalsDTO advancedProjectSignals;
             if (editMode == EditModeEnum.SourceReciever)
@@ -456,7 +456,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Модели с данными по проектам
         /// </summary>
-        public List<InterprojectExchangeModel> Models
+        public List<IProjectModel> Models
         {
             get
             {
@@ -501,6 +501,6 @@ namespace InterprojectExchange
         private EditModeEnum editMode;
         private InterprojectExchangeStarter interprojectExchangeStarter;
         private static InterprojectExchange interprojectExchange;
-        private List<InterprojectExchangeModel> interprojectExchangeModels;
+        private List<IProjectModel> interprojectExchangeModels;
     }
 }

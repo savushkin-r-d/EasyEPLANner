@@ -125,6 +125,8 @@
     <Compile Include="InterprojectExchange\FilterForm.Designer.cs">
       <DependentUpon>FilterForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="InterprojectExchange\currentProjectModel.cs" />
+    <Compile Include="InterprojectExchange\advancedProjectModel.cs" />
     <Compile Include="InterprojectExchange\InterprojectExchangeModel.cs" />
     <Compile Include="InterprojectExchange\InterprojectExchangeStarter.cs" />
     <Compile Include="InterprojectExchange\InterprojectExchange.cs" />
@@ -134,6 +136,7 @@
     <Compile Include="InterprojectExchange\InterprojectExchangeForm.Designer.cs">
       <DependentUpon>InterprojectExchangeForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="InterprojectExchange\IProjectModel.cs" />
     <Compile Include="InterprojectExchange\PacDTO.cs" />
     <Compile Include="InterprojectExchange\PACSettingsForm.cs">
       <SubType>Form</SubType>
