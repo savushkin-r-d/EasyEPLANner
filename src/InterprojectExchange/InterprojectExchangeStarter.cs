@@ -216,6 +216,8 @@ namespace InterprojectExchange
                     Encoding.GetEncoding(1251));
                 string ioInfo = reader.ReadToEnd();
                 reader.Close();
+                lua.DoString("devices = nil");
+                lua.DoString("nodes = nil");
                 lua.DoString(ioInfo);
                 // Функция из Lua
                 lua.DoString("init_io_file()");
@@ -271,6 +273,8 @@ namespace InterprojectExchange
                     Encoding.GetEncoding(1251));
                 string sharedInfo = reader.ReadToEnd();
                 reader.Close();
+                lua.DoString("shared_devices = nil");
+                lua.DoString("remote_gateways = nil");
                 lua.DoString(sharedInfo);
                 // Функция из Lua
                 lua.DoString("init_current_project_shared_lua()");
@@ -294,6 +298,8 @@ namespace InterprojectExchange
                     Encoding.GetEncoding(1251));
                 string sharedInfo = reader.ReadToEnd();
                 reader.Close();
+                lua.DoString("shared_devices = nil");
+                lua.DoString("remote_gateways = nil");
                 lua.DoString(sharedInfo);
                 // Функция из Lua
                 lua.DoString("init_advanced_project_shared_lua()");

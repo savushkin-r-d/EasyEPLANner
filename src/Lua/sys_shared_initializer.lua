@@ -114,6 +114,21 @@ init_advProj_remote_gateways = function(mainProjectName)
     end
 end
 
+-- Инициализация передаваемых устройств для альтернативного проекта
+init_advProj_shared_devices = function(mainProjectName)
+    for _, table in pairs(shared_devices) do
+        local projectName = table.projectName or nil
+        if (projectName == nil) then
+            return
+        end
+
+        if (projectName == mainProjectName) then
+            local selectedModel = GetSelectedModel()
+            init_advProj_devices(selectedModel, table, false)
+        end
+    end
+end
+
 -- Инициализация устройств для альтернативного проекта
 init_advProj_devices = function(model, table, receiveMode)
     if (table.AI) then
@@ -141,21 +156,6 @@ init_advProj_devices = function(model, table, receiveMode)
         local type = "DI"
         for _, signal in pairs(table.DO) do
             model:AddSignal(signal, type, receiveMode)
-        end
-    end
-end
-
--- Инициализация передаваемых устройств для альтернативного проекта
-init_advProj_shared_devices = function(mainProjectName)
-    for _, table in pairs(shared_devices) do
-        local projectName = table.projectName or nil
-        if (projectName == nil) then
-            return
-        end
-
-        if (projectName == mainProjectName) then
-            local selectedModel = GetSelectedModel()
-            init_advProj_devices(selectedModel, table, false)
         end
     end
 end
