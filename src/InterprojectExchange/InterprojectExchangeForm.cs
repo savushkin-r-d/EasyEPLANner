@@ -306,14 +306,21 @@ namespace InterprojectExchange
             // Если разные сигналы (цифровой-аналоговый, наоборот)
             char currDevSignalType = currProjDevType[0];
             char advDevSignalType = advProjDevType[0];
-            bool differentSignalsTypes = currDevSignalType != advDevSignalType;
-            if (differentSignalsTypes)
+            bool needCheckSignalTypeDiff = 
+                (currDevSignalType == 'A' || currDevSignalType == 'D') &&
+                (advDevSignalType == 'A' || advDevSignalType == 'D');
+            if (needCheckSignalTypeDiff)
             {
-                itemGroup = null;
-                ShowWarningMessage("Разные типы сигналов (попытка связать " +
-                    "дискретные с аналоговыми или наоборот)", 
-                    MessageBoxButtons.OK);
-                return itemGroup;
+                bool differentSignalsTypes = 
+                    currDevSignalType != advDevSignalType;
+                if (differentSignalsTypes)
+                {
+                    itemGroup = null;
+                    ShowWarningMessage("Разные типы сигналов (попытка " +
+                        "связать дискретные с аналоговыми или наоборот)",
+                        MessageBoxButtons.OK);
+                    return itemGroup;
+                }
             }
 
             // Сигналы известны
