@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace InterprojectExchange
 {
     /// <summary>
-    /// Компаратор для устройств
+    /// Компаратор для устройств проектов
     /// </summary>
     class DeviceComparer : IComparer<DeviceDTO>
     {
