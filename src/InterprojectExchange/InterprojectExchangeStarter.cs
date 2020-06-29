@@ -16,17 +16,24 @@ namespace InterprojectExchange
             interprojectExchange = InterprojectExchange.GetInstance();
             interprojectExchange.Clear();
 
-            // Настройка lua
+            InitLuaInstance();
+        }
+
+        /// <summary>
+        /// Инициализация экземпляра Lua
+        /// </summary>
+        private void InitLuaInstance()
+        {
             lua = new Lua();
             lua.RegisterFunction("CreateModel", this,
                 GetType().GetMethod("CreateModel"));
             lua.RegisterFunction("CreateMainModel", this,
                 GetType().GetMethod("CreateMainModel"));
-            lua.RegisterFunction("GetModel", this, 
+            lua.RegisterFunction("GetModel", this,
                 GetType().GetMethod("GetModel"));
             lua.RegisterFunction("GetMainProjectName", this,
                 GetType().GetMethod("GetMainProjectName"));
-            lua.RegisterFunction("GetSelectedModel", this, 
+            lua.RegisterFunction("GetSelectedModel", this,
                 GetType().GetMethod("GetSelectedModel"));
         }
 
@@ -132,6 +139,8 @@ namespace InterprojectExchange
         public bool LoadProjectData(string pathToProjectDir, 
             string projName = "")
         {
+            InitLuaInstance();
+            LoadScripts();
             LoadMainIOData(pathToProjectDir, projName);
             LoadDevicesFile(pathToProjectDir, projName);
             LoadCurrentProjectSharedLuaData(pathToProjectDir, projName);
@@ -147,6 +156,7 @@ namespace InterprojectExchange
         public void LoadProjectsData(string pathToProjectDir, 
             string projName = "")
         {
+            InitLuaInstance();
             LoadScripts();
             LoadMainIOData(pathToProjectDir, projName);
             LoadDevicesFile(pathToProjectDir, projName);
@@ -156,6 +166,8 @@ namespace InterprojectExchange
             {
                 if (model.ProjectName != projName)
                 {
+                    InitLuaInstance();
+                    LoadScripts();
                     model.Selected = true;
                     LoadMainIOData(pathToProjectDir, model.ProjectName);
                     LoadDevicesFile(pathToProjectDir, projName);
@@ -216,8 +228,6 @@ namespace InterprojectExchange
                     Encoding.GetEncoding(1251));
                 string ioInfo = reader.ReadToEnd();
                 reader.Close();
-                lua.DoString("devices = nil");
-                lua.DoString("nodes = nil");
                 lua.DoString(ioInfo);
                 // Функция из Lua
                 lua.DoString("init_io_file()");
@@ -273,8 +283,6 @@ namespace InterprojectExchange
                     Encoding.GetEncoding(1251));
                 string sharedInfo = reader.ReadToEnd();
                 reader.Close();
-                lua.DoString("shared_devices = nil");
-                lua.DoString("remote_gateways = nil");
                 lua.DoString(sharedInfo);
                 // Функция из Lua
                 lua.DoString("init_current_project_shared_lua()");
@@ -298,8 +306,6 @@ namespace InterprojectExchange
                     Encoding.GetEncoding(1251));
                 string sharedInfo = reader.ReadToEnd();
                 reader.Close();
-                lua.DoString("shared_devices = nil");
-                lua.DoString("remote_gateways = nil");
                 lua.DoString(sharedInfo);
                 // Функция из Lua
                 lua.DoString("init_advanced_project_shared_lua()");
