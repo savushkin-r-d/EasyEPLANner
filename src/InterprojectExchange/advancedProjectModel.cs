@@ -27,11 +27,6 @@ namespace InterprojectExchange
         public void AddSignal(string name, string signalType, 
             bool receiveMode)
         {
-            if (name.Contains("__"))
-            {
-                name = name.Replace("__", "");
-            }
-
             switch(signalType)
             {
                 case "AI":

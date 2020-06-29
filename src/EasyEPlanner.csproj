@@ -125,8 +125,8 @@
     <Compile Include="InterprojectExchange\FilterForm.Designer.cs">
       <DependentUpon>FilterForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="InterprojectExchange\currentProjectModel.cs" />
-    <Compile Include="InterprojectExchange\advancedProjectModel.cs" />
+    <Compile Include="InterprojectExchange\CurrentProjectModel.cs" />
+    <Compile Include="InterprojectExchange\AdvancedProjectModel.cs" />
     <Compile Include="InterprojectExchange\InterprojectExchangeModel.cs" />
     <Compile Include="InterprojectExchange\InterprojectExchangeStarter.cs" />
     <Compile Include="InterprojectExchange\InterprojectExchange.cs" />

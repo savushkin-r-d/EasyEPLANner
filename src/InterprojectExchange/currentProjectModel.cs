@@ -28,11 +28,6 @@ namespace InterprojectExchange
         public void AddSignal(string name, string signalType, 
             bool receiveMode, string projName)
         {
-            if (name.Contains("__"))
-            {
-                name = name.Replace("__", "");
-            }
-
             if(!receiverSignals.ContainsKey(projName))
             {
                 receiverSignals.Add(projName, new DeviceSignalsDTO());

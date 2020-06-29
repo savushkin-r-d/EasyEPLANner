@@ -15,8 +15,6 @@ namespace InterprojectExchange
         {
             interprojectExchange = InterprojectExchange.GetInstance();
             interprojectExchange.Clear();
-
-            InitLuaInstance();
         }
 
         /// <summary>
@@ -170,7 +168,7 @@ namespace InterprojectExchange
                     LoadScripts();
                     model.Selected = true;
                     LoadMainIOData(pathToProjectDir, model.ProjectName);
-                    LoadDevicesFile(pathToProjectDir, projName);
+                    LoadDevicesFile(pathToProjectDir, model.ProjectName);
                     LoadAdvancedProjectSharedLuaData(pathToProjectDir,
                         model.ProjectName);
                     model.Selected = false;
