@@ -1,23 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
+﻿using System.Text;
 using System.IO;
-using System.Threading.Tasks;
 using EasyEPlanner;
 
 namespace InterprojectExchange
 {
+    /// <summary>
+    /// Класс сохраняющий в LUA обмен между контроллерами
+    /// </summary>
     public class InterprojectExchangeSaver
     {
         public InterprojectExchangeSaver(InterprojectExchange owner)
         {
             this.owner = owner;
         }
+
+        /// <summary>
+        /// Сохранить межконтроллерный обмен
+        /// </summary>
         public void Save()
         {
             WriteCurrentProject();
+            //TODO: Запись остальных проектов
         }
 
         /// <summary>
@@ -39,7 +42,7 @@ namespace InterprojectExchange
         }
 
         /// <summary>
-        /// Генерация файла для редактируемого проекта
+        /// Генерация файла для текущего проекта
         /// </summary>
         /// <returns></returns>
         private string SaveMainProject()
@@ -54,9 +57,11 @@ namespace InterprojectExchange
                 if (model.ProjectName != mainModel.ProjectName)
                 {
                     remoteGateWays += SaveMainProjectRemoteGateWays(mainModel,
-                        model.ProjectName, model.PacInfo);
+                        model.ProjectName, model.PacInfo, 
+                        model.ReceiverSignals);
                     sharedDevices += SaveMainProjectSharedDevices(mainModel,
-                        model.ProjectName, model.PacInfo.Station);
+                        model.ProjectName, model.PacInfo.Station, 
+                        model.SourceSignals);
                 }
             }
 
@@ -77,13 +82,13 @@ namespace InterprojectExchange
         /// <param name="projectName">Имя сохраняемого проекта</param>
         /// <returns></returns>
         private string SaveMainProjectRemoteGateWays(IProjectModel mainModel,
-            string projectName, PacDTO pacInfo)
+            string projectName, PacDTO pacInfo, DeviceSignalsDTO signals)
         {
             var res = "";
 
             var model = mainModel as CurrentProjectModel;
             model.SelectedAdvancedProject = projectName;
-            if (model.ReceiverSignals.Count <= 0)
+            if (signals.Count <= 0)
             {
                 return "";
             }
@@ -92,52 +97,16 @@ namespace InterprojectExchange
             res += $"\t[\'{projectName}\'] =\n\t{{\n";
             res += prefix + $"ip = \'{pacInfo.IP}\',\n";
             res += prefix + $"ipemulator = \'{pacInfo.IPEmulator}\',\n";
-            res += prefix + $"emulation = {pacInfo.EmulationEnabled.ToString().ToLower()},\n";
+            res += prefix + $"emulation = " +
+                $"{pacInfo.EmulationEnabled.ToString().ToLower()},\n";
             res += prefix + $"cycletime = {pacInfo.CycleTime},\n";
             res += prefix + $"timeout = {pacInfo.TimeOut},\n";
             res += prefix + $"port = {pacInfo.Port},\n";
-            res += prefix + $"enabled = {pacInfo.GateEnabled.ToString().ToLower()},\n";
+            res += prefix + $"enabled = " +
+                $"{pacInfo.GateEnabled.ToString().ToLower()},\n";
             res += prefix + $"station = {pacInfo.Station},\n";
-
-            string digIn = "";
-            foreach (var signalDI in model.ReceiverSignals.DI)
-            {
-                digIn += prefix + $"__{signalDI},\n";
-            }
-            if (digIn.Length > 0)
-            {
-                res += "\t" + $"DI =\n{prefix}{{\n{digIn}{prefix}}},\n";
-            }
-
-            string digOut = "";
-            foreach (var signalDO in model.ReceiverSignals.DO)
-            {
-                digOut += prefix + $"{signalDO},\n";
-            }
-            if (digOut.Length > 0)
-            {
-                res += "\t" + $"DO =\n{prefix}{{\n{digOut}{prefix}}},\n";
-            }
-
-            string analogIn = "";
-            foreach(var signalAI in model.ReceiverSignals.AI)
-            {
-                analogIn += prefix + $"__{signalAI},\n";
-            }
-            if (analogIn.Length > 0)
-            {
-                res += "\t" + $"AI =\n{prefix}{{\n{analogIn}{prefix}}},\n";
-            }
-
-            string analogOut = "";
-            foreach (var signalAO in model.ReceiverSignals.AO)
-            {
-                analogOut += prefix + $"{signalAO},\n";
-            }
-            if (analogOut.Length > 0)
-            {
-                res += "\t" + $"AO =\n{prefix}{{\n{analogOut}{prefix}}},\n";
-            }
+            
+            res += SaveSignals(signals, prefix);
 
             res += "\t},\n\n";
             return res;
@@ -151,13 +120,13 @@ namespace InterprojectExchange
         /// <param name="stationNum">Номер станции PAC</param>
         /// <returns></returns>
         private string SaveMainProjectSharedDevices(IProjectModel mainModel,
-            string projectName, int stationNum)
+            string projectName, int stationNum, DeviceSignalsDTO signals)
         {
             var res = "";
 
             var model = mainModel as CurrentProjectModel;
             model.SelectedAdvancedProject = projectName;
-            if (model.SourceSignals.Count <= 0)
+            if (signals.Count <= 0)
             {
                 return "";
             }
@@ -165,19 +134,25 @@ namespace InterprojectExchange
             const string prefix = "\t\t";
             res += $"\t[{stationNum}] =\n\t{{\n";
             res += prefix + $"projectName = \"{projectName}\",\n";
+            
+            res += SaveSignals(signals, prefix);
+            
+            res += "\t},\n\n";
+            return res;
+        }
 
-            string digOut = "";
-            foreach (var signalDO in model.SourceSignals.DO)
-            {
-                digOut += prefix + $"{signalDO},\n";
-            }
-            if (digOut.Length > 0)
-            {
-                res += "\t" + $"DO =\n{prefix}{{\n{digOut}{prefix}}},\n";
-            }
+        /// <summary>
+        /// Сохранение сигналов в нужном виде
+        /// </summary>
+        /// <param name="signals">Модель сигналов</param>
+        /// <param name="prefix">Префикс</param>
+        /// <returns></returns>
+        private string SaveSignals(DeviceSignalsDTO signals, string prefix)
+        {
+            var res = "";
 
             string digIn = "";
-            foreach (var signalDI in model.SourceSignals.DI)
+            foreach (var signalDI in signals.DI)
             {
                 digIn += prefix + $"__{signalDI},\n";
             }
@@ -186,8 +161,18 @@ namespace InterprojectExchange
                 res += "\t" + $"DI =\n{prefix}{{\n{digIn}{prefix}}},\n";
             }
 
+            string digOut = "";
+            foreach (var signalDO in signals.DO)
+            {
+                digOut += prefix + $"{signalDO},\n";
+            }
+            if (digOut.Length > 0)
+            {
+                res += "\t" + $"DO =\n{prefix}{{\n{digOut}{prefix}}},\n";
+            }
+
             string analogIn = "";
-            foreach (var signalAI in model.SourceSignals.AI)
+            foreach (var signalAI in signals.AI)
             {
                 analogIn += prefix + $"__{signalAI},\n";
             }
@@ -197,7 +182,7 @@ namespace InterprojectExchange
             }
 
             string analogOut = "";
-            foreach (var signalAO in model.SourceSignals.AO)
+            foreach (var signalAO in signals.AO)
             {
                 analogOut += prefix + $"{signalAO},\n";
             }
@@ -206,7 +191,6 @@ namespace InterprojectExchange
                 res += "\t" + $"AO =\n{prefix}{{\n{analogOut}{prefix}}},\n";
             }
 
-            res += "\t},\n\n";
             return res;
         }
 
