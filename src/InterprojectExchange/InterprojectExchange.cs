@@ -421,6 +421,15 @@ namespace InterprojectExchange
         }
 
         /// <summary>
+        /// Сохранение межконтроллерного обмена
+        /// </summary>
+        public void Save()
+        {
+            interprojectExchangeSaver = new InterprojectExchangeSaver(this);
+            interprojectExchangeSaver.Save();
+        }
+
+        /// <summary>
         /// Получить имя текущего проекта для формы
         /// </summary>
         /// <returns></returns>
@@ -508,5 +517,6 @@ namespace InterprojectExchange
         private InterprojectExchangeStarter interprojectExchangeStarter;
         private static InterprojectExchange interprojectExchange;
         private List<IProjectModel> interprojectExchangeModels;
+        private InterprojectExchangeSaver interprojectExchangeSaver;
     }
 }

@@ -59,6 +59,15 @@ namespace InterprojectExchange
             }
         }
 
+        public int Count
+        {
+            get
+            {
+                return AISignals.Count + AOSignals.Count +
+                    DISignals.Count + DOSignals.Count;
+            }
+        }
+
         private List<string> AISignals;
         private List<string> AOSignals;
         private List<string> DISignals;

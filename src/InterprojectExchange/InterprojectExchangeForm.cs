@@ -840,5 +840,11 @@ namespace InterprojectExchange
             var form = new PACSettingsForm();
             form.ShowDialog();
         }
+
+        private void saveButton_Click(object sender, EventArgs e)
+        {
+            interprojectExchange.Save();
+            Close();
+        }
     }
 }
