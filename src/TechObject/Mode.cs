@@ -652,6 +652,13 @@ namespace TechObject
         }
         #endregion
 
+        public override string GetLinkToHelpPage()
+        {
+            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
+                .GetOstisHelpSystemLink();
+            return ostisLink + "?sys_id=operation";
+        }
+
         public enum StateName
         {
             RUN = 0,// Выполнение
