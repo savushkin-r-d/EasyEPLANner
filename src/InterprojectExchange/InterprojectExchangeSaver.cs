@@ -9,9 +9,17 @@ namespace InterprojectExchange
     /// </summary>
     public class InterprojectExchangeSaver
     {
-        public InterprojectExchangeSaver(InterprojectExchange owner)
+        /// <summary>
+        /// Конструктор
+        /// </summary>
+        /// <param name="owner">Класс-владелец</param>
+        /// <param name="fileWithSignals">Имя файла, межконтроллерный обмен
+        /// </param>
+        public InterprojectExchangeSaver(InterprojectExchange owner, 
+            string fileWithSignals)
         {
             this.owner = owner;
+            SharedFile = fileWithSignals;
         }
 
         /// <summary>
@@ -33,7 +41,7 @@ namespace InterprojectExchange
 
             string path = Path.Combine(ProjectManager.GetInstance()
                 .GetPtusaProjectsPath(""), owner.CurrentProjectName,
-                "shared.lua");
+                SharedFile);
             var writer = new StreamWriter(path, false,
                 Encoding.GetEncoding(1251));
             writer.WriteLine(res);
@@ -94,21 +102,10 @@ namespace InterprojectExchange
             }
 
             const string prefix = "\t\t";
-            res += $"\t[\'{projectName}\'] =\n\t{{\n";
-            res += prefix + $"ip = \'{pacInfo.IP}\',\n";
-            res += prefix + $"ipemulator = \'{pacInfo.IPEmulator}\',\n";
-            res += prefix + $"emulation = " +
-                $"{pacInfo.EmulationEnabled.ToString().ToLower()},\n";
-            res += prefix + $"cycletime = {pacInfo.CycleTime},\n";
-            res += prefix + $"timeout = {pacInfo.TimeOut},\n";
-            res += prefix + $"port = {pacInfo.Port},\n";
-            res += prefix + $"enabled = " +
-                $"{pacInfo.GateEnabled.ToString().ToLower()},\n";
-            res += prefix + $"station = {pacInfo.Station},\n";
-            
+            res += SavePACInfo(pacInfo, projectName, prefix);
             res += SaveSignals(signals, prefix);
-
             res += "\t},\n\n";
+
             return res;
         }
 
@@ -138,6 +135,33 @@ namespace InterprojectExchange
             res += SaveSignals(signals, prefix);
             
             res += "\t},\n\n";
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранение информации о PAC для remote_gateways
+        /// </summary>
+        /// <param name="pacInfo"></param>
+        /// <param name="projectName"></param>
+        /// <param name="prefix"></param>
+        /// <returns></returns>
+        private string SavePACInfo(PacDTO pacInfo, string projectName, 
+            string prefix)
+        {
+            var res = "";
+
+            res += $"\t[\'{projectName}\'] =\n\t{{\n";
+            res += prefix + $"ip = \'{pacInfo.IP}\',\n";
+            res += prefix + $"ipemulator = \'{pacInfo.IPEmulator}\',\n";
+            res += prefix + $"emulation = " +
+                $"{pacInfo.EmulationEnabled.ToString().ToLower()},\n";
+            res += prefix + $"cycletime = {pacInfo.CycleTime},\n";
+            res += prefix + $"timeout = {pacInfo.TimeOut},\n";
+            res += prefix + $"port = {pacInfo.Port},\n";
+            res += prefix + $"enabled = " +
+                $"{pacInfo.GateEnabled.ToString().ToLower()},\n";
+            res += prefix + $"station = {pacInfo.Station},\n";
+
             return res;
         }
 
@@ -193,6 +217,12 @@ namespace InterprojectExchange
 
             return res;
         }
+
+        /// <summary>
+        /// Имя файла межконтроллерного обмена
+        /// </summary>
+        private string SharedFile { get; set; }
+
 
         private InterprojectExchange owner;
     }

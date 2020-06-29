@@ -344,6 +344,16 @@ namespace InterprojectExchange
             form.ShowDialog();
         }
 
+        /// <summary>
+        /// Сохранение межконтроллерного обмена
+        /// </summary>
+        public void Save()
+        {
+            interprojectExchangeSaver = new InterprojectExchangeSaver(
+                interprojectExchange, fileWithSignals);
+            interprojectExchangeSaver.Save();
+        }
+
         private string fileWithDevicesAndPLC = "main.io.lua";
         private string fileWithSignals = "shared.lua";
         private string scriptWithDevicesMock = "sys_devices_mock_generator.lua";
@@ -353,6 +363,7 @@ namespace InterprojectExchange
 
         private InterprojectExchangeForm form;
         private InterprojectExchange interprojectExchange;
+        private InterprojectExchangeSaver interprojectExchangeSaver;
 
         Lua lua;
     }

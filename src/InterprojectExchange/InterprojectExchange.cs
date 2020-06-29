@@ -425,8 +425,7 @@ namespace InterprojectExchange
         /// </summary>
         public void Save()
         {
-            interprojectExchangeSaver = new InterprojectExchangeSaver(this);
-            interprojectExchangeSaver.Save();
+            Owner.Save();
         }
 
         /// <summary>
@@ -517,6 +516,5 @@ namespace InterprojectExchange
         private InterprojectExchangeStarter interprojectExchangeStarter;
         private static InterprojectExchange interprojectExchange;
         private List<IProjectModel> interprojectExchangeModels;
-        private InterprojectExchangeSaver interprojectExchangeSaver;
     }
 }
