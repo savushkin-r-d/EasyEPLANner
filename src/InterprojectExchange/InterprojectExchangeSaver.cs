@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.IO;
 using EasyEPlanner;
+using System.Threading.Tasks;
 
 namespace InterprojectExchange
 {
@@ -25,16 +26,16 @@ namespace InterprojectExchange
         /// <summary>
         /// Сохранить межконтроллерный обмен
         /// </summary>
-        public void Save()
+        public async void Save()
         {
-            WriteCurrentProject();
-            //TODO: Запись остальных проектов
+            await Task.Run(() => WriteMainProject());
+            WriteAdvancedProjects();
         }
 
         /// <summary>
         /// Запись текущего проекта
         /// </summary>
-        private void WriteCurrentProject()
+        private void WriteMainProject()
         {
             string res = SaveMainProject();
             res = res.Replace("\t", "    ");
@@ -42,11 +43,11 @@ namespace InterprojectExchange
             string path = Path.Combine(ProjectManager.GetInstance()
                 .GetPtusaProjectsPath(""), owner.CurrentProjectName,
                 SharedFile);
-            var writer = new StreamWriter(path, false,
-                Encoding.GetEncoding(1251));
-            writer.WriteLine(res);
-            writer.Flush();
-            writer.Close();
+            using (var writer = new StreamWriter(path, false,
+                Encoding.GetEncoding(1251)))
+            {
+                writer.WriteLine(res);
+            }
         }
 
         /// <summary>
@@ -62,7 +63,9 @@ namespace InterprojectExchange
             string sharedDevices = "";
             foreach (var model in owner.Models)
             {
-                if (model.ProjectName != mainModel.ProjectName)
+                bool validModel = model.ProjectName != mainModel.ProjectName &&
+                    model.MarkedForDelete == false;
+                if (validModel)
                 {
                     remoteGateWays += SaveMainProjectRemoteGateWays(mainModel,
                         model.ProjectName, model.PacInfo, 
@@ -219,10 +222,18 @@ namespace InterprojectExchange
         }
 
         /// <summary>
+        /// Запись альтернативных проектов
+        /// </summary>
+        private void WriteAdvancedProjects()
+        {
+            //TODO: Запись альтернативных проектов
+            //TODO: Каждый проект, отдельный поток
+        }
+
+        /// <summary>
         /// Имя файла межконтроллерного обмена
         /// </summary>
         private string SharedFile { get; set; }
-
 
         private InterprojectExchange owner;
     }

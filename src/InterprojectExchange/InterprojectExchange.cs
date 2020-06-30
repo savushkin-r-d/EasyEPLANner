@@ -100,7 +100,7 @@ namespace InterprojectExchange
             var model = GetModel(projectName);
             if (model != null)
             {
-                Models.Remove(model);
+                model.MarkedForDelete = true;
             }
             else
             {
@@ -426,6 +426,29 @@ namespace InterprojectExchange
         public void Save()
         {
             Owner.Save();
+        }
+
+        /// <summary>
+        /// Восстановить модель
+        /// </summary>
+        /// <param name="projectName">Имя проекта для проверки</param>
+        /// <returns>Возможно или нет это действие</returns>
+        public bool RestoreModel(string projectName)
+        {
+            var canRestore = false;
+
+            foreach(var model in Models)
+            {
+                bool foundMarkedModel = projectName == model.ProjectName &&
+                    model.MarkedForDelete;
+                if (foundMarkedModel)
+                {
+                    canRestore = true;
+                    model.MarkedForDelete = false;
+                }
+            }
+
+            return canRestore;
         }
 
         /// <summary>

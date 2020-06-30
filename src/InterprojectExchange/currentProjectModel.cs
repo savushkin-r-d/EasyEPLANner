@@ -108,6 +108,11 @@ namespace InterprojectExchange
         public string SelectedAdvancedProject { get; set; }
 
         /// <summary>
+        /// Помечена на удаление
+        /// </summary>
+        public bool MarkedForDelete { get; set; } = false;
+
+        /// <summary>
         /// Сигналы-источники (отдаем)
         /// </summary>
         public DeviceSignalsDTO SourceSignals

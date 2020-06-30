@@ -95,6 +95,11 @@ namespace InterprojectExchange
         public bool Selected { get; set; } = false;
 
         /// <summary>
+        /// Помечена на удаление
+        /// </summary>
+        public bool MarkedForDelete { get; set; } = false;
+
+        /// <summary>
         /// Сигналы-источники (отдаем)
         /// </summary>
         virtual public DeviceSignalsDTO SourceSignals

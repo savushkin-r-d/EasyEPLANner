@@ -708,21 +708,28 @@ namespace InterprojectExchange
                 }
                 else
                 {
-                    bool loaded = interprojectExchange.LoadProjectData(
-                        selectedPath);
-                    if (loaded)
+                    bool canRestore = interprojectExchange
+                        .RestoreModel(dirInfo.Name);
+                    if (canRestore)
                     {
-                        advProjNameComboBox.Items.Add(dirInfo.Name);
-                        int selectItem = advProjNameComboBox.Items
-                            .IndexOf(dirInfo.Name);
-                        advProjNameComboBox.SelectedIndex = selectItem;
+                        AddAndSelectModelToList(dirInfo);
+                        return;
                     }
                     else
                     {
-                        string message = $"Данные по проекту " +
-                            $"\"{dirInfo.Name}\" не загружены.";
-                        ShowErrorMessage(message);
-                    }
+                        bool loaded = interprojectExchange.LoadProjectData(
+                        selectedPath);
+                        if (loaded)
+                        {
+                            AddAndSelectModelToList(dirInfo);
+                        }
+                        else
+                        {
+                            string message = $"Данные по проекту " +
+                                $"\"{dirInfo.Name}\" не загружены.";
+                            ShowErrorMessage(message);
+                        }
+                    }        
                 }
             }
             else
@@ -731,6 +738,18 @@ namespace InterprojectExchange
                     $"проекта.";
                 ShowWarningMessage(message, MessageBoxButtons.OK);
             }
+        }
+
+        /// <summary>
+        /// Добавить модель в список и выбрать её
+        /// </summary>
+        /// <param name="dirInfo">Информация о каталоге с проектом</param>
+        private void AddAndSelectModelToList(DirectoryInfo dirInfo)
+        {
+            advProjNameComboBox.Items.Add(dirInfo.Name);
+            int selectItem = advProjNameComboBox.Items
+                .IndexOf(dirInfo.Name);
+            advProjNameComboBox.SelectedIndex = selectItem;
         }
 
         /// <summary>

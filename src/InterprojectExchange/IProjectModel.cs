@@ -54,5 +54,10 @@ namespace InterprojectExchange
         /// <param name="signalType">Тип сигнала</param>
         /// <param name="receiveMode">Режим получения сигналов</param>
         void AddSignal(string name, string signalType, bool receiveMode);
+
+        /// <summary>
+        /// Помечена для удаления
+        /// </summary>
+        bool MarkedForDelete { get; set; }
     }
 }
