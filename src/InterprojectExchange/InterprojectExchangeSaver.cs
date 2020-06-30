@@ -67,12 +67,16 @@ namespace InterprojectExchange
                     model.MarkedForDelete == false;
                 if (validModel)
                 {
-                    remoteGateWays += SaveMainProjectRemoteGateWays(mainModel,
-                        model.ProjectName, model.PacInfo, 
-                        model.ReceiverSignals);
-                    sharedDevices += SaveMainProjectSharedDevices(mainModel,
-                        model.ProjectName, model.PacInfo.Station, 
-                        model.SourceSignals);
+                    var currentModel = mainModel as CurrentProjectModel;
+                    string projectName = model.ProjectName;
+                    // SelectedAdvancedProject - с каким проектом работаем,
+                    // влияет на список сигналов с currentModel
+                    currentModel.SelectedAdvancedProject = projectName;
+
+                    remoteGateWays += SaveMainProjectRemoteGateWays(projectName,
+                        model.PacInfo, currentModel.ReceiverSignals);
+                    sharedDevices += SaveMainProjectSharedDevices(projectName, 
+                        model.PacInfo.Station, currentModel.SourceSignals);
                 }
             }
 
@@ -88,17 +92,13 @@ namespace InterprojectExchange
         /// <summary>
         /// Генерация remote_gateways по текущему проекту
         /// </summary>
-        /// <param name="mainModel">Главная модель текущего проекта</param>
         /// <param name="pacInfo">Данные о ПЛК сохраняемого проекта</param>
         /// <param name="projectName">Имя сохраняемого проекта</param>
         /// <returns></returns>
-        private string SaveMainProjectRemoteGateWays(IProjectModel mainModel,
-            string projectName, PacDTO pacInfo, DeviceSignalsDTO signals)
+        private string SaveMainProjectRemoteGateWays(string projectName, 
+            PacDTO pacInfo, DeviceSignalsDTO signals)
         {
             var res = "";
-
-            var model = mainModel as CurrentProjectModel;
-            model.SelectedAdvancedProject = projectName;
             if (signals.Count <= 0)
             {
                 return "";
@@ -115,17 +115,13 @@ namespace InterprojectExchange
         /// <summary>
         /// Генерация shared_devices по текущему проекту
         /// </summary>
-        /// <param name="mainModel">Главная модель проекта</param>
         /// <param name="projectName">Имя сохраняемого проекта</param>
         /// <param name="stationNum">Номер станции PAC</param>
         /// <returns></returns>
-        private string SaveMainProjectSharedDevices(IProjectModel mainModel,
-            string projectName, int stationNum, DeviceSignalsDTO signals)
+        private string SaveMainProjectSharedDevices(string projectName, 
+            int stationNum, DeviceSignalsDTO signals)
         {
             var res = "";
-
-            var model = mainModel as CurrentProjectModel;
-            model.SelectedAdvancedProject = projectName;
             if (signals.Count <= 0)
             {
                 return "";
