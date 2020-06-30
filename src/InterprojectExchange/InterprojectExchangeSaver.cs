@@ -153,17 +153,34 @@ namespace InterprojectExchange
         {
             var res = "";
 
+            string ipComment = "-- адрес удаленного контроллера";
+            string ipEmulatorComment = "-- адрес удаленного контроллера при " +
+                "эмуляции на столе";
+            string emulationComment = "-- включение эмуляции";
+            string cycleTimeComment = "-- время ожидания между опросами " +
+                "контроллера";
+            string timeoutComment = "-- таймаут для modbus клиента";
+            string portComment = "-- modbus - порт удаленного контроллера";
+            string enabledComment = "-- включить/выключить шлюз";
+            string stationComment = "-- номер станции modbus удаленного " +
+                "клиента";
+
             res += $"\t[\'{projectName}\'] =\n\t{{\n";
-            res += prefix + $"ip = \'{pacInfo.IP}\',\n";
-            res += prefix + $"ipemulator = \'{pacInfo.IPEmulator}\',\n";
+            res += prefix + $"ip = \'{pacInfo.IP}\',\t{ipComment}\n";
+            res += prefix + $"ipemulator = \'{pacInfo.IPEmulator}\',\t" +
+                $"{ipEmulatorComment}\n";
             res += prefix + $"emulation = " +
-                $"{pacInfo.EmulationEnabled.ToString().ToLower()},\n";
-            res += prefix + $"cycletime = {pacInfo.CycleTime},\n";
-            res += prefix + $"timeout = {pacInfo.TimeOut},\n";
-            res += prefix + $"port = {pacInfo.Port},\n";
+                $"{pacInfo.EmulationEnabled.ToString().ToLower()},\t" +
+                $"{emulationComment}\n";
+            res += prefix + $"cycletime = {pacInfo.CycleTime},\t" +
+                $"{cycleTimeComment}\n";
+            res += prefix + $"timeout = {pacInfo.TimeOut},\t{timeoutComment}\n";
+            res += prefix + $"port = {pacInfo.Port},\t{portComment}\n";
             res += prefix + $"enabled = " +
-                $"{pacInfo.GateEnabled.ToString().ToLower()},\n";
-            res += prefix + $"station = {pacInfo.Station},\n";
+                $"{pacInfo.GateEnabled.ToString().ToLower()},\t" +
+                $"{enabledComment}\n";
+            res += prefix + $"station = {pacInfo.Station},\t" +
+                $"{stationComment}\n";
 
             return res;
         }
