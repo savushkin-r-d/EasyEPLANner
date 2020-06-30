@@ -403,6 +403,11 @@ namespace InterprojectExchange
         /// <param name="model">Модель с данными</param>
         private void WriteAdvancedModelRemoteGateWays(IProjectModel model)
         {
+            if (model.MarkedForDelete)
+            {
+                return;
+            }
+
             List<string> sharedFileData = model.SharedFileAsStringList;
             string searchPattern = $"['{owner.CurrentProjectName}'] =";
             int startIndex = FindModelDescriptionStartIndex(searchPattern, 
@@ -414,36 +419,27 @@ namespace InterprojectExchange
                     sharedFileData);
                 sharedFileData.RemoveRange(startIndex, 
                     (finishIndex - startIndex));
-
-                if(!model.MarkedForDelete)
-                {
-                    IProjectModel mainModel = owner.GetModel(
-                        owner.CurrentProjectName);
-
-                    mainModel.PacInfo.Station = model.PacInfo.Station;
-                    string remoteGateWay = SaveProjectRemoteGateWays(
-                        mainModel.ProjectName, mainModel.PacInfo, 
-                        model.ReceiverSignals, true);
-                    sharedFileData.Insert(startIndex, remoteGateWay);
-                    WriteSharedFile(model.ProjectName, sharedFileData);
-                }
             }
             else
             {
-                if(!model.MarkedForDelete)
-                {
-                    string valuePattern = $"remote_gateways =";
-                    startIndex = FindModelDescriptionStartIndex(valuePattern, 
-                        sharedFileData);
-                    int offset = 2;
-                    startIndex += offset;
+                string valuePattern = $"remote_gateways =";
+                startIndex = FindModelDescriptionStartIndex(valuePattern,
+                    sharedFileData);
+                int offset = 2;
+                startIndex += offset;
+            }
 
-                    IProjectModel mainModel = owner.GetModel(
-                        owner.CurrentProjectName);
-                    mainModel.PacInfo.Station = model.PacInfo.Station;
-                    string remoteGateWay = SaveProjectRemoteGateWays(
-                        mainModel.ProjectName, mainModel.PacInfo,
-                        model.ReceiverSignals, true);
+            if (!model.MarkedForDelete)
+            {
+                IProjectModel mainModel = owner.GetModel(
+                    owner.CurrentProjectName);
+
+                mainModel.PacInfo.Station = model.PacInfo.Station;
+                string remoteGateWay = SaveProjectRemoteGateWays(
+                    mainModel.ProjectName, mainModel.PacInfo,
+                    model.ReceiverSignals, true);
+                if(remoteGateWay.Length > 0)
+                {
                     sharedFileData.Insert(startIndex, remoteGateWay);
                     WriteSharedFile(model.ProjectName, sharedFileData);
                 }
@@ -456,58 +452,46 @@ namespace InterprojectExchange
         /// <param name="model">Модель с данными</param>
         private void WriteAdvancedModelSharedDevices(IProjectModel model)
         {
+            if(model.MarkedForDelete)
+            {
+                return;
+            }
+
             List<string> sharedFileData = model.SharedFileAsStringList;
             string searchPattern = $"projectName = " +
                 $"\"{owner.CurrentProjectName}\",";
             int startIndex = FindModelDescriptionStartIndex(searchPattern, 
                 sharedFileData);
 
+            int offset = 2;
             if (startIndex != 0)
             {
-                int offset = 2;
                 startIndex -= offset;
                 int finishIndex = FindModelDescriptionFinishIndex(startIndex, 
                     sharedFileData);
                 sharedFileData.RemoveRange(startIndex, 
                     (finishIndex - startIndex));
-
-                if(!model.MarkedForDelete)
-                {
-                    IProjectModel mainModel = owner.GetModel(
-                        owner.CurrentProjectName);
-
-                    mainModel.PacInfo.Station = model.PacInfo.Station;
-                    string sharedDevices = SaveProjectSharedDevices(
-                        mainModel.ProjectName, model.PacInfo.Station, 
-                        model.SourceSignals, true);
-
-                    sharedFileData.Insert(startIndex, sharedDevices);
-                    WriteSharedFile(model.ProjectName, sharedFileData);
-                }
             }
             else
             {
-                if(!model.MarkedForDelete)
-                {
-                    string valuePattern = $"shared_devices =";
-                    int offset = 2;
-                    startIndex = FindModelDescriptionStartIndex(valuePattern,
-                        sharedFileData);
-                    startIndex += offset;
+                string valuePattern = $"shared_devices =";
+                startIndex = FindModelDescriptionStartIndex(valuePattern,
+                    sharedFileData);
+                startIndex += offset;
+            }
 
-                    IProjectModel mainModel = owner.GetModel(
-                        owner.CurrentProjectName);
 
-                    mainModel.PacInfo.Station = model.PacInfo.Station;
-                    string sharedDevices = SaveProjectRemoteGateWays(
-                        mainModel.ProjectName, model.PacInfo,
-                        model.ReceiverSignals, true);
-                    if(sharedDevices.Length != 0)
-                    {
-                        sharedFileData.Insert(startIndex, sharedDevices);
-                        WriteSharedFile(model.ProjectName, sharedFileData);                 
-                    }
-                }
+            IProjectModel mainModel = owner.GetModel(
+                owner.CurrentProjectName);
+
+            mainModel.PacInfo.Station = model.PacInfo.Station;
+            string sharedDevices = SaveProjectRemoteGateWays(
+                mainModel.ProjectName, model.PacInfo,
+                model.ReceiverSignals, true);
+            if (sharedDevices.Length != 0)
+            {
+                sharedFileData.Insert(startIndex, sharedDevices);
+                WriteSharedFile(model.ProjectName, sharedFileData);
             }
         }
 
@@ -569,8 +553,9 @@ namespace InterprojectExchange
         /// <summary>
         /// Запись shared.lua
         /// </summary>
-        /// <param name="projectName"></param>
-        /// <param name="sharedFileData"></param>
+        /// <param name="projectName">Имя проекта</param>
+        /// <param name="sharedFileData">Данные файла для записи в виде списка
+        /// строк</param>
         private void WriteSharedFile(string projectName, 
             List<string> sharedFileData)
         {
