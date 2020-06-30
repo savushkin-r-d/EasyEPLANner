@@ -75,9 +75,11 @@ namespace InterprojectExchange
                     currentModel.SelectedAdvancedProject = projectName;
 
                     remoteGateWays += SaveProjectRemoteGateWays(projectName,
-                        model.PacInfo, currentModel.ReceiverSignals);
+                        model.PacInfo, currentModel.ReceiverSignals,
+                        false);
                     sharedDevices += SaveProjectSharedDevices(projectName, 
-                        model.PacInfo.Station, currentModel.SourceSignals);
+                        model.PacInfo.Station, currentModel.SourceSignals,
+                        false);
                 }
             }
 
@@ -95,9 +97,11 @@ namespace InterprojectExchange
         /// </summary>
         /// <param name="pacInfo">Данные о ПЛК сохраняемого проекта</param>
         /// <param name="projectName">Имя сохраняемого проекта</param>
+        /// <param name="invertSignals">Инвертировать сигналы</param>
+        /// <param name="signals">Сигналы модели</param>
         /// <returns></returns>
         private string SaveProjectRemoteGateWays(string projectName, 
-            PacDTO pacInfo, DeviceSignalsDTO signals)
+            PacDTO pacInfo, DeviceSignalsDTO signals, bool invertSignals)
         {
             var res = "";
             if (signals.Count <= 0)
@@ -107,7 +111,7 @@ namespace InterprojectExchange
 
             const string prefix = "\t\t";
             res += SavePACInfo(pacInfo, projectName, prefix);
-            res += SaveSignals(signals, prefix);
+            res += SaveSignals(signals, prefix, invertSignals);
             res += "\t},\n\n";
 
             return res;
@@ -116,11 +120,14 @@ namespace InterprojectExchange
         /// <summary>
         /// Генерация shared_devices по проекту
         /// </summary>
+        /// <param name="signals">Сигналы модели</param>
         /// <param name="projectName">Имя сохраняемого проекта</param>
         /// <param name="stationNum">Номер станции PAC</param>
+        /// <param name="invertSignals">Инвертировать сигналы (DI<>DO, AI<>AO)
+        /// </param>
         /// <returns></returns>
         private string SaveProjectSharedDevices(string projectName, 
-            int stationNum, DeviceSignalsDTO signals)
+            int stationNum, DeviceSignalsDTO signals, bool invertSignals)
         {
             var res = "";
             if (signals.Count <= 0)
@@ -132,7 +139,7 @@ namespace InterprojectExchange
             res += $"\t[{stationNum}] =\n\t{{\n";
             res += prefix + $"projectName = \"{projectName}\",\n";
             
-            res += SaveSignals(signals, prefix);
+            res += SaveSignals(signals, prefix, invertSignals);
             
             res += "\t},\n\n";
             return res;
@@ -187,49 +194,108 @@ namespace InterprojectExchange
         /// </summary>
         /// <param name="signals">Модель сигналов</param>
         /// <param name="prefix">Префикс</param>
+        /// <param name="invertSignals">Инвертировать сигналы</param>
         /// <returns></returns>
-        private string SaveSignals(DeviceSignalsDTO signals, string prefix)
+        private string SaveSignals(DeviceSignalsDTO signals, string prefix,
+            bool invertSignals)
         {
             var res = "";
 
             string digIn = "";
             foreach (var signalDI in signals.DI)
             {
-                digIn += prefix + $"__{signalDI},\n";
+                if(invertSignals)
+                {
+                    digIn += prefix + $"{signalDI},\n";
+                }
+                else
+                {
+                    digIn += prefix + $"__{signalDI},\n";
+                }
             }
             if (digIn.Length > 0)
             {
-                res += prefix + $"DI =\n{prefix}{{\n{digIn}{prefix}}},\n";
+                if(invertSignals)
+                {
+                    res += prefix + $"DO =\n{prefix}{{\n{digIn}{prefix}}},\n";
+                }
+                else
+                {
+                    res += prefix + $"DI =\n{prefix}{{\n{digIn}{prefix}}},\n";
+                }
             }
 
             string digOut = "";
             foreach (var signalDO in signals.DO)
             {
-                digOut += prefix + $"{signalDO},\n";
+                if (invertSignals)
+                {
+                    digOut += prefix + $"__{signalDO},\n";
+
+                }
+                else
+                {
+                    digOut += prefix + $"{signalDO},\n";
+                }
             }
             if (digOut.Length > 0)
             {
-                res += prefix + $"DO =\n{prefix}{{\n{digOut}{prefix}}},\n";
+                if(invertSignals)
+                {
+                    res += prefix + $"DI =\n{prefix}{{\n{digOut}{prefix}}},\n";
+                }
+                else
+                {
+                    res += prefix + $"DO =\n{prefix}{{\n{digOut}{prefix}}},\n";
+                }
             }
 
             string analogIn = "";
             foreach (var signalAI in signals.AI)
             {
-                analogIn += prefix + $"__{signalAI},\n";
+                if (invertSignals)
+                {
+                    analogIn += prefix + $"{signalAI},\n";
+                }
+                else
+                {
+                    analogIn += prefix + $"__{signalAI},\n";
+                }
             }
             if (analogIn.Length > 0)
             {
-                res += prefix + $"AI =\n{prefix}{{\n{analogIn}{prefix}}},\n";
+                if(invertSignals)
+                {
+                    res += prefix + $"AO =\n{prefix}{{\n{analogIn}{prefix}}},\n";
+                }
+                else
+                {
+                    res += prefix + $"AI =\n{prefix}{{\n{analogIn}{prefix}}},\n";
+                }
             }
 
             string analogOut = "";
             foreach (var signalAO in signals.AO)
             {
-                analogOut += prefix + $"{signalAO},\n";
+                if(invertSignals)
+                {
+                    analogOut += prefix + $"__{signalAO},\n";
+                }
+                else
+                {
+                    analogOut += prefix + $"{signalAO},\n";
+                }
             }
             if (analogOut.Length > 0)
             {
-                res += prefix + $"AO =\n{prefix}{{\n{analogOut}{prefix}}},\n";
+                if(invertSignals)
+                {
+                    res += prefix + $"AI =\n{prefix}{{\n{analogOut}{prefix}}},\n";
+                }
+                else
+                {
+                    res += prefix + $"AO =\n{prefix}{{\n{analogOut}{prefix}}},\n";
+                }
             }
 
             return res;
@@ -312,9 +378,11 @@ namespace InterprojectExchange
                 {
                     IProjectModel mainModel = owner.GetModel(
                         owner.CurrentProjectName);
+
+                    mainModel.PacInfo.Station = model.PacInfo.Station;
                     string remoteGateWay = SaveProjectRemoteGateWays(
                         mainModel.ProjectName, mainModel.PacInfo, 
-                        model.ReceiverSignals);
+                        model.ReceiverSignals, true);
                     sharedFileData.Insert(startIndex, remoteGateWay);
 
                     string path = Path.Combine(ProjectManager.GetInstance()
@@ -346,9 +414,10 @@ namespace InterprojectExchange
 
                     IProjectModel mainModel = owner.GetModel(
                         owner.CurrentProjectName);
+                    mainModel.PacInfo.Station = model.PacInfo.Station;
                     string remoteGateWay = SaveProjectRemoteGateWays(
                         mainModel.ProjectName, mainModel.PacInfo,
-                        model.ReceiverSignals);
+                        model.ReceiverSignals, true);
                     sharedFileData.Insert(startIndex, remoteGateWay);
 
                     string path = Path.Combine(ProjectManager.GetInstance()
@@ -421,9 +490,11 @@ namespace InterprojectExchange
                 {
                     IProjectModel mainModel = owner.GetModel(
                         owner.CurrentProjectName);
+
+                    mainModel.PacInfo.Station = model.PacInfo.Station;
                     string sharedDevices = SaveProjectSharedDevices(
                         mainModel.ProjectName, model.PacInfo.Station, 
-                        model.SourceSignals);
+                        model.SourceSignals, true);
 
                     sharedFileData.Insert(startIndex, sharedDevices);
 
@@ -456,9 +527,11 @@ namespace InterprojectExchange
 
                     IProjectModel mainModel = owner.GetModel(
                         owner.CurrentProjectName);
+
+                    mainModel.PacInfo.Station = model.PacInfo.Station;
                     string sharedDevices = SaveProjectRemoteGateWays(
                         mainModel.ProjectName, model.PacInfo,
-                        model.ReceiverSignals);
+                        model.ReceiverSignals, true);
                     if(sharedDevices.Length == 0)
                     {
                         sharedFileData.Insert(startIndex, sharedDevices);
