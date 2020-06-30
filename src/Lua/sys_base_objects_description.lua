@@ -425,7 +425,6 @@ return
                         },
                     steps =
                     {
-                        HOT_WATER_PUSHING = { name = "Вытеснение горячей воды" },
                         COOLING = { name = "Охлаждение" },
                         CHECKING_TEMPERATURE = { name = "Проверка заданной температуры" },
                     },
@@ -602,6 +601,7 @@ return
                     params = { },
                     steps =
                     {
+                        HOT_WATER_PUSHING = { name = "Вытеснение горячей воды" },
                         WORKING = { name = "Работа" },
                         WAITING = { name = "Ожидание" },
                     },
@@ -611,6 +611,7 @@ return
             equipment =
             {
                 TE = { name = "Датчик температуры", defaultValue = "TE1" },
+                TE2 = { name = "Датчик температуры рубашки", defaultValue = "TE2" },
             },
             aggregateParameters =
             {
