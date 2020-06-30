@@ -326,7 +326,7 @@ namespace InterprojectExchange
             if (model != null)
             {
                 model.SharedFileAsStringList = File
-                    .ReadAllLines(pathToSharedFile)
+                    .ReadAllLines(pathToSharedFile, Encoding.GetEncoding(1251))
                     .ToList();
             }
         }
