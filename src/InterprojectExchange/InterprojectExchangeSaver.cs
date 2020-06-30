@@ -17,7 +17,7 @@ namespace InterprojectExchange
         /// <param name="owner">Класс-владелец</param>
         /// <param name="fileWithSignals">Имя файла, межконтроллерный обмен
         /// </param>
-        public InterprojectExchangeSaver(InterprojectExchange owner, 
+        public InterprojectExchangeSaver(InterprojectExchange owner,
             string fileWithSignals)
         {
             this.owner = owner;
@@ -39,8 +39,12 @@ namespace InterprojectExchange
         private void WriteMainProject()
         {
             string res = SaveMainProject();
-            res = res.Replace("\t", "    ");
-            WriteSharedFile(owner.CurrentProjectName, new List<string> { res });
+            if (res.Length > 0)
+            {
+                res = res.Replace("\t", "    ");
+                WriteSharedFile(owner.CurrentProjectName,
+                    new List<string> { res });
+            }
         }
 
         /// <summary>
@@ -71,7 +75,8 @@ namespace InterprojectExchange
                         model.PacInfo, currentModel.ReceiverSignals,
                         false);
                     remoteGateWays += doubleNewLine;
-                    sharedDevices += SaveProjectSharedDevices(projectName, 
+
+                    sharedDevices += SaveProjectSharedDevices(projectName,
                         model.PacInfo.Station, currentModel.SourceSignals,
                         false);
                     sharedDevices += doubleNewLine;
@@ -81,12 +86,12 @@ namespace InterprojectExchange
             string remoteGatewaysTemplate = "remote_gateways =\n{\nVALUE}\n";
             string sharedDevicesTemplate = "shared_devices =\n{\nVALUE}";
 
-            if(remoteGateWays.Length > 0)
+            if (remoteGateWays.Length > 0)
             {
                 res += remoteGatewaysTemplate.Replace("VALUE", remoteGateWays);
             }
 
-            if(sharedDevices.Length > 0)
+            if (sharedDevices.Length > 0)
             {
                 res += sharedDevicesTemplate.Replace("VALUE", sharedDevices);
             }
@@ -102,7 +107,7 @@ namespace InterprojectExchange
         /// <param name="invertSignals">Инвертировать сигналы</param>
         /// <param name="signals">Сигналы модели</param>
         /// <returns></returns>
-        private string SaveProjectRemoteGateWays(string projectName, 
+        private string SaveProjectRemoteGateWays(string projectName,
             PacDTO pacInfo, DeviceSignalsDTO signals, bool invertSignals)
         {
             var res = "";
@@ -129,7 +134,7 @@ namespace InterprojectExchange
         /// <param name="invertSignals">Инвертировать сигналы (DI<>DO, AI<>AO)
         /// </param>
         /// <returns></returns>
-        private string SaveProjectSharedDevices(string projectName, 
+        private string SaveProjectSharedDevices(string projectName,
             int stationNum, DeviceSignalsDTO signals, bool invertSignals)
         {
             var res = "";
@@ -141,9 +146,9 @@ namespace InterprojectExchange
             const string prefix = "\t\t";
             res += $"\t[{stationNum}] =\n\t{{\n";
             res += prefix + $"projectName = \"{projectName}\",\n";
-            
+
             res += SaveSignals(signals, prefix, invertSignals);
-            
+
             res += "\t},";
 
             res = res.Replace("\t", "    ");
@@ -153,11 +158,11 @@ namespace InterprojectExchange
         /// <summary>
         /// Сохранение информации о PAC для remote_gateways
         /// </summary>
-        /// <param name="pacInfo"></param>
-        /// <param name="projectName"></param>
-        /// <param name="prefix"></param>
+        /// <param name="pacInfo">Информация о PAC из модели</param>
+        /// <param name="projectName">Имя проекта</param>
+        /// <param name="prefix">Префикс</param>
         /// <returns></returns>
-        private string SavePACInfo(PacDTO pacInfo, string projectName, 
+        private string SavePACInfo(PacDTO pacInfo, string projectName,
             string prefix)
         {
             var res = "";
@@ -378,7 +383,7 @@ namespace InterprojectExchange
         /// </summary>
         private async void WriteAdvancedProjectsAsync()
         {
-            foreach(var model in owner.Models)
+            foreach (var model in owner.Models)
             {
                 if (model.ProjectName != owner.CurrentProjectName)
                 {
@@ -410,14 +415,14 @@ namespace InterprojectExchange
 
             List<string> sharedFileData = model.SharedFileAsStringList;
             string searchPattern = $"['{owner.CurrentProjectName}'] =";
-            int startIndex = FindModelDescriptionStartIndex(searchPattern, 
+            int startIndex = FindModelDescriptionStartIndex(searchPattern,
                 sharedFileData);
 
             if (startIndex != 0)
             {
                 int finishIndex = FindModelDescriptionFinishIndex(startIndex,
                     sharedFileData);
-                sharedFileData.RemoveRange(startIndex, 
+                sharedFileData.RemoveRange(startIndex,
                     (finishIndex - startIndex));
             }
             else
@@ -438,7 +443,7 @@ namespace InterprojectExchange
                 string remoteGateWay = SaveProjectRemoteGateWays(
                     mainModel.ProjectName, mainModel.PacInfo,
                     model.ReceiverSignals, true);
-                if(remoteGateWay.Length > 0)
+                if (remoteGateWay.Length > 0)
                 {
                     sharedFileData.Insert(startIndex, remoteGateWay);
                     WriteSharedFile(model.ProjectName, sharedFileData);
@@ -452,7 +457,7 @@ namespace InterprojectExchange
         /// <param name="model">Модель с данными</param>
         private void WriteAdvancedModelSharedDevices(IProjectModel model)
         {
-            if(model.MarkedForDelete)
+            if (model.MarkedForDelete)
             {
                 return;
             }
@@ -460,16 +465,16 @@ namespace InterprojectExchange
             List<string> sharedFileData = model.SharedFileAsStringList;
             string searchPattern = $"projectName = " +
                 $"\"{owner.CurrentProjectName}\",";
-            int startIndex = FindModelDescriptionStartIndex(searchPattern, 
+            int startIndex = FindModelDescriptionStartIndex(searchPattern,
                 sharedFileData);
 
             int offset = 2;
             if (startIndex != 0)
             {
                 startIndex -= offset;
-                int finishIndex = FindModelDescriptionFinishIndex(startIndex, 
+                int finishIndex = FindModelDescriptionFinishIndex(startIndex,
                     sharedFileData);
-                sharedFileData.RemoveRange(startIndex, 
+                sharedFileData.RemoveRange(startIndex,
                     (finishIndex - startIndex));
             }
             else
@@ -521,7 +526,7 @@ namespace InterprojectExchange
         /// <param name="startIndex">Стартовый индекс для поиска</param>
         /// <param name="sharedFileData">Описание shared.lua по строкам</param>
         /// <returns></returns>
-        private int FindModelDescriptionFinishIndex(int startIndex, 
+        private int FindModelDescriptionFinishIndex(int startIndex,
             List<string> sharedFileData)
         {
             bool foundFinish = false;
@@ -556,7 +561,7 @@ namespace InterprojectExchange
         /// <param name="projectName">Имя проекта</param>
         /// <param name="sharedFileData">Данные файла для записи в виде списка
         /// строк</param>
-        private void WriteSharedFile(string projectName, 
+        private void WriteSharedFile(string projectName,
             List<string> sharedFileData)
         {
             string path = Path.Combine(ProjectManager.GetInstance()
