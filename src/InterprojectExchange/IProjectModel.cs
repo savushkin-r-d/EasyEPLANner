@@ -59,5 +59,10 @@ namespace InterprojectExchange
         /// Помечена для удаления
         /// </summary>
         bool MarkedForDelete { get; set; }
+
+        /// <summary>
+        /// Файл с межконтроллерным обменом в виде списка строк
+        /// </summary>
+        List<string> SharedFileAsStringList { get; set; }
     }
 }

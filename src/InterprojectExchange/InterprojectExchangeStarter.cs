@@ -273,17 +273,18 @@ namespace InterprojectExchange
         private void LoadCurrentProjectSharedLuaData(string pathToProjectsDir,
             string projName)
         {
-            string pathToSharedfile = Path.Combine(pathToProjectsDir, projName,
+            string pathToSharedFile = Path.Combine(pathToProjectsDir, projName,
                 fileWithSignals);
-            if (File.Exists(pathToSharedfile))
+            if (File.Exists(pathToSharedFile))
             {
-                var reader = new StreamReader(pathToSharedfile,
+                var reader = new StreamReader(pathToSharedFile,
                     Encoding.GetEncoding(1251));
                 string sharedInfo = reader.ReadToEnd();
                 reader.Close();
                 lua.DoString(sharedInfo);
                 // Функция из Lua
                 lua.DoString("init_current_project_shared_lua()");
+                ReadModelSharedFileToList(projName, pathToSharedFile);
             }
         }
 
@@ -296,17 +297,37 @@ namespace InterprojectExchange
         public void LoadAdvancedProjectSharedLuaData(string pathToProjectsDir,
             string projName)
         {
-            string pathToSharedfile = Path.Combine(pathToProjectsDir, projName,
+            string pathToSharedFile = Path.Combine(pathToProjectsDir, projName,
                 fileWithSignals);
-            if (File.Exists(pathToSharedfile))
+            if (File.Exists(pathToSharedFile))
             {
-                var reader = new StreamReader(pathToSharedfile,
+                var reader = new StreamReader(pathToSharedFile,
                     Encoding.GetEncoding(1251));
                 string sharedInfo = reader.ReadToEnd();
                 reader.Close();
                 lua.DoString(sharedInfo);
                 // Функция из Lua
                 lua.DoString("init_advanced_project_shared_lua()");
+                ReadModelSharedFileToList(projName, pathToSharedFile);
+            }
+        }
+
+        /// <summary>
+        /// Прочитать shared.lua в список для манипуляций
+        /// </summary>
+        /// <param name="projName">Имя проекта для поиска модели</param>
+        /// <param name="pathToSharedFile">Путь к файлу shared.lua</param>
+        private void ReadModelSharedFileToList(string projName, 
+            string pathToSharedFile)
+        {
+            IProjectModel model = interprojectExchange.Models
+                .Where(x => x.ProjectName == projName)
+                .FirstOrDefault();
+            if (model != null)
+            {
+                model.SharedFileAsStringList = File
+                    .ReadAllLines(pathToSharedFile)
+                    .ToList();
             }
         }
 

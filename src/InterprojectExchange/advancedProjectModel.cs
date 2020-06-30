@@ -16,6 +16,7 @@ namespace InterprojectExchange
         {
             receiverSignals = new DeviceSignalsDTO();
             sourceSignals = new DeviceSignalsDTO();
+            SharedFileAsStringList = new List<string>();
         }
 
         /// <summary>
@@ -98,6 +99,11 @@ namespace InterprojectExchange
         /// Помечена на удаление
         /// </summary>
         public bool MarkedForDelete { get; set; } = false;
+
+        /// <summary>
+        /// Файл с межконтроллерным обменом в виде списка строк
+        /// </summary>
+        public List<string> SharedFileAsStringList { get; set; }
 
         /// <summary>
         /// Сигналы-источники (отдаем)
