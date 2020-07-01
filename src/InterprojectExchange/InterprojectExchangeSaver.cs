@@ -45,6 +45,10 @@ namespace InterprojectExchange
                 WriteSharedFile(owner.CurrentProjectName,
                     new List<string> { res });
             }
+            else
+            {
+                DeleteSharedFile(owner.CurrentProjectName);
+            }
         }
 
         /// <summary>
@@ -398,13 +402,18 @@ namespace InterprojectExchange
         /// <param name="model">Модель</param>
         private void WriteAdvancedModel(IProjectModel model)
         {
-            bool invalidModel = model.MarkedForDelete || 
-                (model.ReceiverSignals.Count == 0
-                && model.SourceSignals.Count == 0);
-            if (!invalidModel)
+            bool deleteModel =
+                (model.ReceiverSignals.Count == 0 &&
+                model.SourceSignals.Count == 0) ||
+                model.MarkedForDelete;
+            if (deleteModel)
             {
-                WriteAdvancedModelRemoteGateWays(model);
-                WriteAdvancedModelSharedDevices(model);
+                DeleteSharedFile(model.ProjectName);
+            }
+            else
+            {
+                SaveAdvancedModelRemoteGateWays(model);
+                SaveAdvancedModelSharedDevices(model);
             }
         }
 
@@ -412,7 +421,7 @@ namespace InterprojectExchange
         /// Запись удаленных узлов альтернативной модели
         /// </summary>
         /// <param name="model">Модель с данными</param>
-        private void WriteAdvancedModelRemoteGateWays(IProjectModel model)
+        private void SaveAdvancedModelRemoteGateWays(IProjectModel model)
         {
             List<string> sharedFileData = model.SharedFileAsStringList;
             string searchPattern = $"['{owner.CurrentProjectName}'] =";
@@ -455,7 +464,7 @@ namespace InterprojectExchange
         /// Запись сигналов-источников альтернативной модели
         /// </summary>
         /// <param name="model">Модель с данными</param>
-        private void WriteAdvancedModelSharedDevices(IProjectModel model)
+        private void SaveAdvancedModelSharedDevices(IProjectModel model)
         {
             List<string> sharedFileData = model.SharedFileAsStringList;
             string searchPattern = $"projectName = " +
@@ -598,6 +607,17 @@ namespace InterprojectExchange
                     writer.WriteLine(line);
                 }
             }
+        }
+
+        /// <summary>
+        /// Удалить Shared файл
+        /// </summary>
+        /// <param name="projectName">Имя проекта</param>
+        public void DeleteSharedFile(string projectName)
+        {
+            string path = Path.Combine(ProjectManager.GetInstance()
+                .GetPtusaProjectsPath(""), projectName, SharedFile);
+            File.Delete(path);
         }
 
         /// <summary>
