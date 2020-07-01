@@ -73,12 +73,13 @@ namespace InterprojectExchange
                 .Where(x => x.ProjectName != currentProjectName)
                 .Select(x => x.ProjectName).ToArray();
             advProjNameComboBox.Items.AddRange(projects);
-            if(advProjNameComboBox.Items.Count >= 0)
+            if(advProjNameComboBox.Items.Count > 0)
             {
                 advProjNameComboBox.SelectedIndex = 0;
             }
 
             LoadCurrentProjectDevices();
+            ReloadListViewWithSignals();
         }
 
         /// <summary>
@@ -700,7 +701,10 @@ namespace InterprojectExchange
             if (correctedPath)
             {
                 var dirInfo = new DirectoryInfo(selectedPath);
-                if (advProjNameComboBox.Items.Contains(dirInfo.Name))
+                bool alreadyExchanging =
+                    advProjNameComboBox.Items.Contains(dirInfo.Name) ||
+                    currProjNameTextBox.Text.Contains(dirInfo.Name);
+                if (alreadyExchanging)
                 {
                     string message = $"Проект \"{dirInfo.Name}\" уже " +
                         $"обменивается с этим проектом сигналами";
@@ -801,6 +805,11 @@ namespace InterprojectExchange
         /// </summary>
         private void ReloadListViewWithSignals()
         {
+            if(advProjNameComboBox.SelectedItem == null)
+            {
+                return;
+            }
+
             bindedSignalsList.Items.Clear();
             Dictionary<string, List<string[]>> signals = interprojectExchange
                 .GetBindedSignals();
@@ -850,8 +859,13 @@ namespace InterprojectExchange
             EventArgs e)
         {
             interprojectExchange.ChangeEditMode(modeComboBox.SelectedIndex);
-            ReloadListViewWithSignals();
-            ClearAllListViewsSelection();
+            
+            bool haveProjects = advProjNameComboBox.Items.Count > 0;
+            if (haveProjects)
+            {
+                ReloadListViewWithSignals();
+                ClearAllListViewsSelection();
+            }
         }
 
         private void pacSetUpBtn_Click(object sender, EventArgs e)

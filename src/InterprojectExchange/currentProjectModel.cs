@@ -125,6 +125,11 @@ namespace InterprojectExchange
         {
             get
             {
+                if (!sourceSignals.ContainsKey(SelectedAdvancedProject))
+                {
+                    sourceSignals.Add(SelectedAdvancedProject,
+                        new DeviceSignalsDTO());
+                }
                 return sourceSignals[SelectedAdvancedProject];
             }
         }
@@ -136,6 +141,11 @@ namespace InterprojectExchange
         {
             get
             {
+                if(!receiverSignals.ContainsKey(SelectedAdvancedProject))
+                {
+                    receiverSignals.Add(SelectedAdvancedProject, 
+                        new DeviceSignalsDTO());
+                }
                 return receiverSignals[SelectedAdvancedProject];
             }
         }
