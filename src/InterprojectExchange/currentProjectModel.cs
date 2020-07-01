@@ -17,6 +17,7 @@ namespace InterprojectExchange
             receiverSignals = new Dictionary<string, DeviceSignalsDTO>();
             sourceSignals = new Dictionary<string, DeviceSignalsDTO>();
             SharedFileAsStringList = new List<string>();
+            pacDTOs = new Dictionary<string, PacDTO>();
         }
 
         /// <summary>
@@ -87,15 +88,61 @@ namespace InterprojectExchange
         }
 
         /// <summary>
-        /// Добавление сигнала к модели, вызывается из LUA
+        /// Добавляем данные о ПЛК из Lua
         /// </summary>
-        /// <param name="name">Имя сигнала</param>
-        /// <param name="signalType">Тип сигнала</param>
-        /// <param name="receiveMode">Режим получения сигналов</param>
-        public void AddSignal(string name, string signalType, bool receiveMode)
+        /// <param name="pacName">Имя проекта</param>
+        public void AddPLCData(string pacName)
         {
-            // Заглушка.
-            return;
+            ProjectName = pacName;
+        }
+
+        /// <summary>
+        /// Добавляем данные о ПЛК из Lua 
+        /// </summary>
+        /// <param name="IP">IP-Адрес</param>
+        /// <param name="pacName">Имя контроллера</param>
+        public void AddPLCData(string IP, string pacName)
+        {
+            if(ProjectName == null)
+            {
+                ProjectName = pacName;
+            }
+            else
+            {
+                if (!pacDTOs.ContainsKey(pacName))
+                {
+                    pacDTOs.Add(pacName, new PacDTO());
+                }
+
+                pacDTOs[pacName].IP = IP;
+            }
+        }
+
+        /// <summary>
+        /// Добавляем данные о ПЛК из Lua
+        /// </summary>
+        /// <param name="emulationEnabled">Включена эмуляция</param>
+        /// <param name="cycleTime">Время цикла, мс</param>
+        /// <param name="timeout">Таймаут, мс</param>
+        /// <param name="port">Порт</param>
+        /// <param name="gateEnabled">Включен шлюз</param>
+        /// <param name="station">Станция, номер</param>
+        /// <param name="pacName">Имя ПЛК</param>
+        public void AddPLCData(bool emulationEnabled, int cycleTime,
+            int timeout, int port, bool gateEnabled, int station, 
+            string pacName)
+        {
+            if (!pacDTOs.ContainsKey(pacName))
+            {
+                pacDTOs.Add(pacName, new PacDTO());
+            }
+
+            pacDTOs[pacName].EmulationEnabled = emulationEnabled;
+            pacDTOs[pacName].CycleTime = cycleTime;
+            pacDTOs[pacName].TimeOut = timeout;
+            pacDTOs[pacName].Port = port;
+            pacDTOs[pacName].GateEnabled = gateEnabled;
+            pacDTOs[pacName].Station = station;
         }
 
         /// <summary>
@@ -150,7 +197,28 @@ namespace InterprojectExchange
             }
         }
 
+        public PacDTO PacInfo
+        {
+            get
+            {
+                if(!pacDTOs.ContainsKey(SelectedAdvancedProject))
+                {
+                    pacDTOs.Add(SelectedAdvancedProject, new PacDTO());
+                }
+                return pacDTOs[SelectedAdvancedProject];
+            }
+            set
+            {
+                if (!pacDTOs.ContainsKey(SelectedAdvancedProject))
+                {
+                    pacDTOs.Add(SelectedAdvancedProject, new PacDTO());
+                }
+                pacDTOs[SelectedAdvancedProject] = value;
+            }
+        }
+
         private Dictionary<string, DeviceSignalsDTO> sourceSignals;
         private Dictionary<string, DeviceSignalsDTO> receiverSignals;
+        private Dictionary<string, PacDTO> pacDTOs;
     }
 }

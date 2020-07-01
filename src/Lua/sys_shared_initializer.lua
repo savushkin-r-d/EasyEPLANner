@@ -85,8 +85,8 @@ init_PLC_Data = function(model, table, projectName)
     local enabledGate = table.enabled or true
     local station = table.station or 0
     model:AddPLCData(IP, projectName)
-    model:AddPLCData(emulationEnabled, cycleTime, timeout,
-               port, enabledGate, station)
+    model:AddPLCData(emulationEnabled, cycleTime, timeout, port, enabledGate, 
+                station, projectName)
 end
 
 -------- Init advanced project --------
@@ -108,7 +108,8 @@ init_advProj_remote_gateways = function(mainProjectName)
     for projectName, table in pairs(remote_gateways) do
         if(projectName == mainProjectName) then
             local selectedModel = GetSelectedModel()
-            init_PLC_Data(selectedModel, table, selectedModel.ProjectName)
+            local mainModel = GetModel(GetMainProjectName())
+            init_PLC_Data(mainModel, table, selectedModel.ProjectName)
             init_advProj_devices(selectedModel, table, true)
         end
     end
@@ -134,28 +135,28 @@ init_advProj_devices = function(model, table, receiveMode)
     if (table.AI) then
         local type = "AO"
         for _, signal in pairs(table.AI) do
-            model:AddSignal(signal, type, receiveMode)
+            model:AddSignal(signal, type, receiveMode, "")
         end
     end
 
     if (table.AO) then
         local type = "AI"
         for _, signal in pairs(table.AO) do
-            model:AddSignal(signal, type, receiveMode)
+            model:AddSignal(signal, type, receiveMode, "")
         end
     end
 
     if (table.DI) then
         local type = "DO"
         for _, signal in pairs(table.DI) do
-            model:AddSignal(signal, type, receiveMode)
+            model:AddSignal(signal, type, receiveMode, "")
         end
     end
 
     if (table.DO) then
         local type = "DI"
         for _, signal in pairs(table.DO) do
-            model:AddSignal(signal, type, receiveMode)
+            model:AddSignal(signal, type, receiveMode, "")
         end
     end
 end

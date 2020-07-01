@@ -48,14 +48,6 @@ namespace InterprojectExchange
             string projName);
 
         /// <summary>
-        /// Добавление сигнала к модели, вызывается из LUA
-        /// </summary>
-        /// <param name="name">Имя сигнала</param>
-        /// <param name="signalType">Тип сигнала</param>
-        /// <param name="receiveMode">Режим получения сигналов</param>
-        void AddSignal(string name, string signalType, bool receiveMode);
-
-        /// <summary>
         /// Помечена для удаления
         /// </summary>
         bool MarkedForDelete { get; set; }
@@ -64,5 +56,32 @@ namespace InterprojectExchange
         /// Файл с межконтроллерным обменом в виде списка строк
         /// </summary>
         List<string> SharedFileAsStringList { get; set; }
+
+        /// <summary>
+        /// Добавляем данные о ПЛК из Lua
+        /// </summary>
+        /// <param name="pacName">Имя проекта</param>
+        void AddPLCData(string pacName);
+
+        /// <summary>
+        /// Добавляем данные о ПЛК из Lua 
+        /// </summary>
+        /// <param name="IP">IP-Адрес</param>
+        /// <param name="pacName">Имя контроллера</param>
+        void AddPLCData(string IP, string pacName);
+
+        /// <summary>
+        /// Добавляем данные о ПЛК из Lua
+        /// </summary>
+        /// <param name="emulationEnabled">Включена эмуляция</param>
+        /// <param name="cycleTime">Время цикла, мс</param>
+        /// <param name="timeout">Таймаут, мс</param>
+        /// <param name="port">Порт</param>
+        /// <param name="gateEnabled">Включен шлюз</param>
+        /// <param name="station">Станция, номер</param>
+        /// <param name="projectName">Имя контроллера</param>
+        void AddPLCData(bool emulationEnabled, int cycleTime,
+            int timeout, int port, bool gateEnabled, int station, 
+            string projectName);
     }
 }
