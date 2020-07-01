@@ -554,6 +554,7 @@ return
             {
                 TE = { name = "Датчик температуры", defaultValue = "TE1" },
                 VC = { name = "Регулирующий клапан", defaultValue = "VC1" },
+                FQT1 = { name = "Расходомер", defaultValue = "FQT1" },
                 SET_VALUE = { name = "Задание"},
             },
             aggregateParameters =
