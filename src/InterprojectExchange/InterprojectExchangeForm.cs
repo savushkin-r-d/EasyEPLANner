@@ -31,6 +31,7 @@ namespace InterprojectExchange
             modeComboBox.SelectedValueChanged -= 
                 modeComboBox_SelectedValueChanged;
             modeComboBox.SelectedIndex = 0;
+            interprojectExchange.ChangeEditMode(modeComboBox.SelectedIndex);
             modeComboBox.SelectedValueChanged += 
                 modeComboBox_SelectedValueChanged;
         }

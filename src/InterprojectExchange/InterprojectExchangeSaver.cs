@@ -73,9 +73,9 @@ namespace InterprojectExchange
                     currentModel.SelectedAdvancedProject = projectName;
 
                     string remoteGateWay = SaveProjectRemoteGateWays(
-                        projectName, model.PacInfo, 
+                        projectName, model.PacInfo,
                         currentModel.ReceiverSignals, false);
-                    if(!string.IsNullOrEmpty(remoteGateWay))
+                    if (!string.IsNullOrEmpty(remoteGateWay))
                     {
                         remoteGateWays.Add(remoteGateWay);
                     }
@@ -90,7 +90,7 @@ namespace InterprojectExchange
                 }
             }
 
-            string res = GenerateMainProjectTextForWriteInFile(remoteGateWays, 
+            string res = GenerateMainProjectTextForWriteInFile(remoteGateWays,
                 sharedDevices);
             return res;
         }
@@ -141,6 +141,23 @@ namespace InterprojectExchange
             int startIndex = FindModelDescriptionStartIndex(searchPattern,
                 sharedFileData);
 
+            if (startIndex != 0)
+            {
+                int finishIndex = FindModelDescriptionFinishIndex(
+                    startIndex, sharedFileData);
+                sharedFileData.RemoveRange(startIndex,
+                    (finishIndex - startIndex));
+            }
+            else
+            {
+                string valuePattern = $"remote_gateways =";
+                FillDefaultSharedData(valuePattern, model);
+                startIndex = FindModelDescriptionStartIndex(valuePattern,
+                    sharedFileData);
+                int offset = 2;
+                startIndex += offset;
+            }
+
             IProjectModel mainModel = owner.GetModel(owner.CurrentProjectName);
             mainModel.PacInfo.Station = model.PacInfo.Station;
             string remoteGateWay = SaveProjectRemoteGateWays(
@@ -148,27 +165,10 @@ namespace InterprojectExchange
                 model.ReceiverSignals, true);
             if (!string.IsNullOrEmpty(remoteGateWay))
             {
-                if (startIndex != 0)
-                {
-                    int finishIndex = FindModelDescriptionFinishIndex(
-                        startIndex, sharedFileData);
-                    sharedFileData.RemoveRange(startIndex,
-                        (finishIndex - startIndex));
-                }
-                else
-                {
-                    string valuePattern = $"remote_gateways =";
-                    FillDefaultSharedData(valuePattern, model);
-
-                    startIndex = FindModelDescriptionStartIndex(valuePattern,
-                        sharedFileData);
-                    int offset = 2;
-                    startIndex += offset;
-                }
-
                 sharedFileData.Insert(startIndex, remoteGateWay);
-                WriteSharedFile(model.ProjectName, sharedFileData);
             }
+
+            WriteSharedFile(model.ProjectName, sharedFileData);
         }
 
         /// <summary>
@@ -183,6 +183,24 @@ namespace InterprojectExchange
             int startIndex = FindModelDescriptionStartIndex(searchPattern,
                 sharedFileData);
 
+            int offset = 2;
+            if (startIndex != 0)
+            {
+                startIndex -= offset;
+                int finishIndex = FindModelDescriptionFinishIndex(
+                    startIndex, sharedFileData);
+                sharedFileData.RemoveRange(startIndex,
+                    (finishIndex - startIndex));
+            }
+            else
+            {
+                string valuePattern = $"shared_devices =";
+                FillDefaultSharedData(valuePattern, model);
+                startIndex = FindModelDescriptionStartIndex(valuePattern,
+                    sharedFileData);
+                startIndex += offset;
+            }
+
             IProjectModel mainModel = owner.GetModel(owner.CurrentProjectName);
             mainModel.PacInfo.Station = model.PacInfo.Station;
             string sharedDevices = SaveProjectSharedDevices(
@@ -190,28 +208,10 @@ namespace InterprojectExchange
                 model.SourceSignals, true);
             if (!string.IsNullOrEmpty(sharedDevices))
             {
-                int offset = 2;
-                if (startIndex != 0)
-                {
-                    startIndex -= offset;
-                    int finishIndex = FindModelDescriptionFinishIndex(
-                        startIndex, sharedFileData);
-                    sharedFileData.RemoveRange(startIndex,
-                        (finishIndex - startIndex));
-                }
-                else
-                {
-                    string valuePattern = $"shared_devices =";
-                    FillDefaultSharedData(valuePattern, model);
-
-                    startIndex = FindModelDescriptionStartIndex(valuePattern,
-                        sharedFileData);
-                    startIndex += offset;
-                }
-
                 sharedFileData.Insert(startIndex, sharedDevices);
-                WriteSharedFile(model.ProjectName, sharedFileData);
             }
+
+            WriteSharedFile(model.ProjectName, sharedFileData);
         }
 
         /// <summary>
@@ -529,7 +529,7 @@ namespace InterprojectExchange
         /// <param name="variableName">Имя переменной и знаком равно ("var1 =")
         /// </param>
         /// <param name="model">Модель, которая обрабатывается</param>
-        private void FillDefaultSharedData(string variableName, 
+        private void FillDefaultSharedData(string variableName,
             IProjectModel model)
         {
             bool emptyFile = model.SharedFileAsStringList.Count == 0;
