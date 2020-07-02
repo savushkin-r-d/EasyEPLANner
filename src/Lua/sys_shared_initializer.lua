@@ -19,7 +19,8 @@ init_remote_gateways = function(mainModel)
             advancedProjectModel = CreateModel()
         end
 
-        init_PLC_Data(advancedProjectModel, table, projectName)
+        init_PLC_Data(mainModel, table, projectName)
+        advancedProjectModel:AddPLCData(projectName)
         init_currProj_devices(mainModel, table, true, projectName)
     end
 end
@@ -106,8 +107,7 @@ init_advProj_remote_gateways = function(mainProjectName)
     for projectName, table in pairs(remote_gateways) do
         if(projectName == mainProjectName) then
             local selectedModel = GetSelectedModel()
-            local mainModel = GetModel(GetMainProjectName())
-            init_PLC_Data(mainModel, table, selectedModel.ProjectName)
+            init_PLC_Data(selectedModel, table, selectedModel.ProjectName)
             init_advProj_devices(selectedModel, table, true)
         end
     end

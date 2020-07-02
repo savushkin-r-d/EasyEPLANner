@@ -159,7 +159,6 @@ namespace InterprojectExchange
             }
 
             IProjectModel mainModel = owner.GetModel(owner.CurrentProjectName);
-            mainModel.PacInfo.Station = model.PacInfo.Station;
             string remoteGateWay = SaveProjectRemoteGateWays(
                 mainModel.ProjectName, mainModel.PacInfo,
                 model.ReceiverSignals, true);
@@ -202,7 +201,6 @@ namespace InterprojectExchange
             }
 
             IProjectModel mainModel = owner.GetModel(owner.CurrentProjectName);
-            mainModel.PacInfo.Station = model.PacInfo.Station;
             string sharedDevices = SaveProjectSharedDevices(
                 mainModel.ProjectName, model.PacInfo.Station,
                 model.SourceSignals, true);
