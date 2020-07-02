@@ -73,7 +73,7 @@ namespace InterprojectExchange
                     currentModel.SelectedAdvancedProject = projectName;
 
                     string remoteGateWay = SaveProjectRemoteGateWays(
-                        projectName, model.PacInfo,
+                        projectName, currentModel.PacInfo,
                         currentModel.ReceiverSignals, false);
                     if (!string.IsNullOrEmpty(remoteGateWay))
                     {
@@ -160,7 +160,7 @@ namespace InterprojectExchange
 
             IProjectModel mainModel = owner.GetModel(owner.CurrentProjectName);
             string remoteGateWay = SaveProjectRemoteGateWays(
-                mainModel.ProjectName, mainModel.PacInfo,
+                mainModel.ProjectName, model.PacInfo,
                 model.ReceiverSignals, true);
             if (!string.IsNullOrEmpty(remoteGateWay))
             {
@@ -201,8 +201,10 @@ namespace InterprojectExchange
             }
 
             IProjectModel mainModel = owner.GetModel(owner.CurrentProjectName);
+            (mainModel as CurrentProjectModel).SelectedAdvancedProject = model
+                .ProjectName;
             string sharedDevices = SaveProjectSharedDevices(
-                mainModel.ProjectName, model.PacInfo.Station,
+                mainModel.ProjectName, mainModel.PacInfo.Station,
                 model.SourceSignals, true);
             if (!string.IsNullOrEmpty(sharedDevices))
             {
