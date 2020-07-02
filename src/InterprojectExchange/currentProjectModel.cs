@@ -107,15 +107,12 @@ namespace InterprojectExchange
             {
                 ProjectName = pacName;
             }
-            else
-            {
-                if (!pacDTOs.ContainsKey(pacName))
-                {
-                    pacDTOs.Add(pacName, new PacDTO());
-                }
 
-                pacDTOs[pacName].IP = IP;
+            if (!pacDTOs.ContainsKey(pacName))
+            {
+                pacDTOs.Add(pacName, new PacDTO());
             }
+            pacDTOs[pacName].IP = IP;
         }
 
         /// <summary>
@@ -135,6 +132,11 @@ namespace InterprojectExchange
             if (!pacDTOs.ContainsKey(pacName))
             {
                 pacDTOs.Add(pacName, new PacDTO());
+            }
+
+            if (ProjectName == null)
+            {
+                ProjectName = pacName;
             }
 
             pacDTOs[pacName].EmulationEnabled = emulationEnabled;

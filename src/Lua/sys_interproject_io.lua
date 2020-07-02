@@ -4,26 +4,36 @@ init_io_file = function()
         return
     end
 
+    local isMainModel = false
     local model = GetModel(PAC_name)
     if (model == nil) then
         if(GetMainProjectName() == PAC_name) then
             model = CreateMainModel()
+            isMainModel = true
         else
             model = CreateModel()
+            isMainModel = false
         end
     end
 
-    add_nodes(model)
+    add_nodes(model, isMainModel)
     add_devices(model)
 end
 
 -- Добавление информации об узле
-add_nodes = function(model)
+add_nodes = function(model, isMainModel)
     for key, value in pairs(nodes) do
         -- Контроллер PXC и WAGO
         if (value.ntype == 201 or value.ntype == 2) then
             local IP = value.IP or ""
-            model:AddPLCData(IP, PAC_name)
+
+            if(isMainModel == true) then
+                model:AddPLCData(IP, PAC_name)
+            else
+                local mainModel = GetModel(GetMainProjectName())
+                mainModel:AddPLCData(IP,PAC_name)
+                model:AddPLCData(PAC_name)
+            end
         end
     end
 end

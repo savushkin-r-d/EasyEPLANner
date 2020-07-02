@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace InterprojectExchange
@@ -11,8 +12,10 @@ namespace InterprojectExchange
             InitializeComponent();
         }
 
-        InterprojectExchange interprojectExchange;
-        Dictionary<string, PacDTO> projectsSettings;
+        private InterprojectExchange interprojectExchange;
+        private Dictionary<string, PacDTO> projectsSendingFromMain;
+        private Dictionary<string, PacDTO> projectsSendingToMain;
+        private string selectedProjectBeforeOpeningThisForm = "";
 
         private void cancelBtn_Click(object sender, EventArgs e)
         {
@@ -33,6 +36,7 @@ namespace InterprojectExchange
                 SaveIntermediateData(projectName);
                 SaveDataToModels();
             }
+
             this.Close();
         }
 
@@ -43,17 +47,47 @@ namespace InterprojectExchange
         {
             foreach (var model in interprojectExchange.Models)
             {
-                string projectName = model.ProjectName;
-                PacDTO intermediateSettings = projectsSettings[projectName];
-                model.PacInfo = intermediateSettings.Clone();
+                if (model.ProjectName != interprojectExchange.CurrentProjectName)
+                {
+                    string projectName = model.ProjectName;
+                    PacDTO intermediateSettings = projectsSendingFromMain[projectName];
+                    model.PacInfo = intermediateSettings.Clone();
+                }
+            }
+
+            var loadedModels = interprojectExchange.Models
+                .Where(x => x.ProjectName !=
+                interprojectExchange.CurrentProjectName)
+                .Select(x => x.ProjectName).ToArray();
+
+            var mainModel = interprojectExchange.GetModel(
+                interprojectExchange.CurrentProjectName) as CurrentProjectModel;
+            foreach (string modelName in loadedModels)
+            {
+                mainModel.SelectedAdvancedProject = modelName;
+                PacDTO intermediateSettings = projectsSendingToMain[modelName];
+                mainModel.PacInfo = intermediateSettings.Clone();
+                mainModel.SelectedAdvancedProject =
+                    selectedProjectBeforeOpeningThisForm;
             }
         }
 
         private void PACSettingsForm_Load(object sender, EventArgs e)
         {
+            modeComboBox.SelectedValueChanged -= 
+                modeComboBox_SelectedValueChanged;
+            modeComboBox.SelectedIndex = 0;
+            modeComboBox.SelectedValueChanged += 
+                modeComboBox_SelectedValueChanged;
+
             interprojectExchange = InterprojectExchange.GetInstance();
-            projectsSettings = new Dictionary<string, PacDTO>();
+            projectsSendingFromMain = new Dictionary<string, PacDTO>();
+            projectsSendingToMain = new Dictionary<string, PacDTO>();
             LoadProjectsToListView();
+            selectedProjectBeforeOpeningThisForm = interprojectExchange.Models
+                .Where(x => x.Selected == true)
+                .Select(x => x.ProjectName)
+                .FirstOrDefault();
         }
 
         /// <summary>
@@ -61,12 +95,30 @@ namespace InterprojectExchange
         /// </summary>
         private void LoadProjectsToListView()
         {
+            var loadedModels = interprojectExchange.Models
+                .Where(x => x.ProjectName != 
+                interprojectExchange.CurrentProjectName)
+                .Select(x => x.ProjectName).ToArray();
+
             foreach (var model in interprojectExchange.Models)
             {
-                string projName = model.ProjectName;
-                projectsListView.Items.Add(projName);
+                if(model.ProjectName != interprojectExchange.CurrentProjectName)
+                {
+                    string projName = model.ProjectName;
+                    projectsListView.Items.Add(projName);
+                    projectsSendingFromMain.Add(projName, model.PacInfo
+                        .Clone());
+                }
+            }
 
-                projectsSettings.Add(projName, model.PacInfo.Clone());
+            var mainModel = interprojectExchange.GetModel(
+                interprojectExchange.CurrentProjectName) as CurrentProjectModel;
+            foreach(string modelName in loadedModels)
+            {
+                mainModel.SelectedAdvancedProject = modelName;
+                projectsSendingToMain.Add(modelName, mainModel.PacInfo);
+                mainModel.SelectedAdvancedProject = 
+                    selectedProjectBeforeOpeningThisForm;
             }
         }
 
@@ -89,7 +141,15 @@ namespace InterprojectExchange
         /// <param name="projectName">Имя проекта</param>
         private void LoadProjectDataToFields(string projectName)
         {
-            PacDTO pacInfo = projectsSettings[projectName];
+            PacDTO pacInfo;
+            if(EditMode == 0)
+            {
+                pacInfo = projectsSendingFromMain[projectName];
+            }
+            else
+            {
+                pacInfo = projectsSendingToMain[projectName];
+            }
 
             projNameTextBox.Text = projectName;
             ipAddressTextBox.Text = pacInfo.IP;
@@ -129,7 +189,16 @@ namespace InterprojectExchange
         {
             try
             {
-                PacDTO pacInfo = projectsSettings[projectName];
+                PacDTO pacInfo;
+                if (EditMode == 0)
+                {
+                    pacInfo = projectsSendingFromMain[projectName];
+                }
+                else
+                {
+                    pacInfo = projectsSendingToMain[projectName];
+                }
+
                 pacInfo.IPEmulator = emulatorIPTextBox.Text;
                 pacInfo.EmulationEnabled = 
                     enableEmulationBtn.Checked ? true : false;
@@ -220,5 +289,41 @@ namespace InterprojectExchange
         }
 
         char BackSpace = '\b';
+
+        /// <summary>
+        /// Режим редактирования (0 - источник, 1 - приемник)
+        /// </summary>
+        public int EditMode { get; set; }
+
+        /// <summary>
+        /// Изменить режим редактирования
+        /// </summary>
+        public void ChangedEditMode()
+        {
+            if(EditMode == 0)
+            {
+                EditMode = 1;
+            }
+            else
+            {
+                EditMode = 0;
+            }
+        }
+
+        private void modeComboBox_SelectedValueChanged(object sender, 
+            EventArgs e)
+        {
+            if(projectsListView.SelectedItems.Count > 0 )
+            {
+                string project = projectsListView.SelectedItems[0].Text;
+                SaveIntermediateData(project);
+                ChangedEditMode();
+                LoadProjectDataToFields(project);
+            }
+            else
+            {
+                ChangedEditMode();
+            }
+        }
     }
 }

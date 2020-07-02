@@ -135,13 +135,14 @@ namespace InterprojectExchange
         /// <param name="projName">Имя проекта</param>
         /// <returns></returns>
         public bool LoadProjectData(string pathToProjectDir, 
-            string projName = "")
+            string projName)
         {
             InitLuaInstance();
             LoadScripts();
             LoadMainIOData(pathToProjectDir, projName);
             LoadDevicesFile(pathToProjectDir, projName);
-            LoadCurrentProjectSharedLuaData(pathToProjectDir, projName);
+            LoadAdvancedProjectSharedLuaData(pathToProjectDir, projName);
+            SetIPFromMainModel(projName);
             return true;
         }
 
@@ -172,6 +173,7 @@ namespace InterprojectExchange
                     LoadAdvancedProjectSharedLuaData(pathToProjectDir,
                         model.ProjectName);
                     model.Selected = false;
+                    SetIPFromMainModel(model.ProjectName);
                 }
             }
         }
@@ -329,6 +331,20 @@ namespace InterprojectExchange
                     .ReadAllLines(pathToSharedFile, Encoding.GetEncoding(1251))
                     .ToList();
             }
+        }
+
+        /// <summary>
+        /// Установка IP-адреса для альтернативных моделей из главной модели
+        /// </summary>
+        private void SetIPFromMainModel(string projName)
+        {
+            var mainModel = GetModel(GetMainProjectName()) as 
+                CurrentProjectModel;
+            string alreadySelectedProject = mainModel.SelectedAdvancedProject;
+            mainModel.SelectedAdvancedProject = GetMainProjectName();
+            IProjectModel model = GetModel(projName);
+            model.PacInfo.IP = mainModel.PacInfo.IP;
+            mainModel.SelectedAdvancedProject = alreadySelectedProject;
         }
 
         /// <summary>

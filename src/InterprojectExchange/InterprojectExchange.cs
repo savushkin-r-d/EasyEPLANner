@@ -40,7 +40,12 @@ namespace InterprojectExchange
         /// <returns></returns>
         public bool LoadProjectData(string pathToProjectDir)
         {
-            return Owner.LoadProjectData(pathToProjectDir);
+            // Генерация пути к папке с проектами и его имени из полного пути
+            string[] splittedPath = pathToProjectDir.Split('\\');
+            int lastElem = splittedPath.Length - 1;
+            string projName = splittedPath[lastElem];
+            string pathToProjectsDir = pathToProjectDir.Replace(projName, "");
+            return Owner.LoadProjectData(pathToProjectsDir, projName);
         }
 
         /// <summary>

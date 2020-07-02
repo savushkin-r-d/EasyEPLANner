@@ -53,6 +53,9 @@
             this.projectLabel = new System.Windows.Forms.Label();
             this.cancelBtn = new System.Windows.Forms.Button();
             this.acceptBtn = new System.Windows.Forms.Button();
+            this.modeComboBox = new System.Windows.Forms.ComboBox();
+            this.modeLabel = new System.Windows.Forms.Label();
+            this.projLabel = new System.Windows.Forms.Label();
             this.dataGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -63,12 +66,12 @@
             this.projectsListView.FullRowSelect = true;
             this.projectsListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.projectsListView.HideSelection = false;
-            this.projectsListView.Location = new System.Drawing.Point(12, 12);
+            this.projectsListView.Location = new System.Drawing.Point(12, 73);
             this.projectsListView.MultiSelect = false;
             this.projectsListView.Name = "projectsListView";
             this.projectsListView.ShowGroups = false;
             this.projectsListView.ShowItemToolTips = true;
-            this.projectsListView.Size = new System.Drawing.Size(121, 259);
+            this.projectsListView.Size = new System.Drawing.Size(121, 198);
             this.projectsListView.TabIndex = 0;
             this.projectsListView.UseCompatibleStateImageBehavior = false;
             this.projectsListView.View = System.Windows.Forms.View.Details;
@@ -321,6 +324,36 @@
             this.acceptBtn.UseVisualStyleBackColor = true;
             this.acceptBtn.Click += new System.EventHandler(this.acceptBtn_Click);
             // 
+            // modeComboBox
+            // 
+            this.modeComboBox.FormattingEnabled = true;
+            this.modeComboBox.Items.AddRange(new object[] {
+            "Источник",
+            "Приемник"});
+            this.modeComboBox.Location = new System.Drawing.Point(12, 31);
+            this.modeComboBox.Name = "modeComboBox";
+            this.modeComboBox.Size = new System.Drawing.Size(121, 21);
+            this.modeComboBox.TabIndex = 4;
+            this.modeComboBox.SelectedValueChanged += new System.EventHandler(this.modeComboBox_SelectedValueChanged);
+            // 
+            // modeLabel
+            // 
+            this.modeLabel.AutoSize = true;
+            this.modeLabel.Location = new System.Drawing.Point(12, 12);
+            this.modeLabel.Name = "modeLabel";
+            this.modeLabel.Size = new System.Drawing.Size(92, 13);
+            this.modeLabel.TabIndex = 5;
+            this.modeLabel.Text = "Главный проект:";
+            // 
+            // projLabel
+            // 
+            this.projLabel.AutoSize = true;
+            this.projLabel.Location = new System.Drawing.Point(12, 56);
+            this.projLabel.Name = "projLabel";
+            this.projLabel.Size = new System.Drawing.Size(55, 13);
+            this.projLabel.TabIndex = 6;
+            this.projLabel.Text = "Проекты:";
+            // 
             // PACSettingsForm
             // 
             this.AcceptButton = this.acceptBtn;
@@ -329,6 +362,9 @@
             this.CancelButton = this.cancelBtn;
             this.ClientSize = new System.Drawing.Size(503, 305);
             this.ControlBox = false;
+            this.Controls.Add(this.projLabel);
+            this.Controls.Add(this.modeLabel);
+            this.Controls.Add(this.modeComboBox);
             this.Controls.Add(this.acceptBtn);
             this.Controls.Add(this.cancelBtn);
             this.Controls.Add(this.dataGroupBox);
@@ -347,6 +383,7 @@
             this.dataGroupBox.ResumeLayout(false);
             this.dataGroupBox.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -377,5 +414,8 @@
         private System.Windows.Forms.RadioButton disableEmulationBtn;
         private System.Windows.Forms.RadioButton enableEmulationBtn;
         private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ComboBox modeComboBox;
+        private System.Windows.Forms.Label modeLabel;
+        private System.Windows.Forms.Label projLabel;
     }
 }

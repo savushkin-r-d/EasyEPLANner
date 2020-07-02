@@ -114,6 +114,11 @@ namespace InterprojectExchange
             int timeout, int port, bool gateEnabled, int station, 
             string pacName = "")
         {
+            if(ProjectName == null && pacName != "")
+            {
+                ProjectName = pacName;
+            }
+
             PacInfo.EmulationEnabled = emulationEnabled;
             PacInfo.CycleTime = cycleTime;
             PacInfo.TimeOut = timeout;

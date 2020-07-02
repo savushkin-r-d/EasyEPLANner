@@ -77,14 +77,12 @@ end
 -- Инициализация данных о ПЛК, IP и ProjectName берутся из main.io.lua
 init_PLC_Data = function(model, table, projectName)
     -- Заполняем информацию о ПЛК (после or дефолтные данные)
-    local IP = table.IP or ""
     local emulationEnabled = table.emulation or false
     local cycleTime = table.cycletime or 200
     local timeout = table.timeout or 300
     local port = table.port or 10502
     local enabledGate = table.enabled or true
     local station = table.station or 0
-    model:AddPLCData(IP, projectName)
     model:AddPLCData(emulationEnabled, cycleTime, timeout, port, enabledGate, 
                 station, projectName)
 end
