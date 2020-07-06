@@ -5,9 +5,9 @@ namespace InterprojectExchange
     /// <summary>
     /// Объект для обмена информацией об устройствах
     /// </summary>
-    public class DeviceDTO
+    public class DeviceInfo
     {
-        public DeviceDTO(string name, string description)
+        public DeviceInfo(string name, string description)
         {
             Name = name;
             Description = description;

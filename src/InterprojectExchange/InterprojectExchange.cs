@@ -135,8 +135,8 @@ namespace InterprojectExchange
             IProjectModel advancedProjectModel = Models
                 .Where(x => x.Selected == true).FirstOrDefault();
 
-            DeviceSignalsDTO currentProjectSignals;
-            DeviceSignalsDTO advancedProjectSignals;
+            DeviceSignalsInfo currentProjectSignals;
+            DeviceSignalsInfo advancedProjectSignals;
             if (editMode == EditModeEnum.SourceReciever)
             {
                 currentProjectSignals = currentProjectModel.SourceSignals;
@@ -214,8 +214,8 @@ namespace InterprojectExchange
             IProjectModel advancedProjectModel = Models
                 .Where(x => x.Selected == true).FirstOrDefault();
 
-            DeviceSignalsDTO currentProjectSignals;
-            DeviceSignalsDTO advancedProjectSignals;
+            DeviceSignalsInfo currentProjectSignals;
+            DeviceSignalsInfo advancedProjectSignals;
             if (editMode == EditModeEnum.SourceReciever)
             {
                 currentProjectSignals = currentProjectModel.SourceSignals;
@@ -271,8 +271,8 @@ namespace InterprojectExchange
             IProjectModel advancedProjectModel = Models
                 .Where(x => x.Selected == true).FirstOrDefault();
 
-            DeviceSignalsDTO currentProjectSignals;
-            DeviceSignalsDTO advancedProjectSignals;
+            DeviceSignalsInfo currentProjectSignals;
+            DeviceSignalsInfo advancedProjectSignals;
             if (editMode == EditModeEnum.SourceReciever)
             {
                 currentProjectSignals = currentProjectModel.SourceSignals;
@@ -323,7 +323,7 @@ namespace InterprojectExchange
             IProjectModel currentProjectModel = Models
             .Where(x => x.ProjectName == CurrentProjectName)
             .FirstOrDefault();
-            DeviceSignalsDTO currentProjectSignals;
+            DeviceSignalsInfo currentProjectSignals;
             if (editMode == EditModeEnum.SourceReciever)
             {
                 currentProjectSignals = currentProjectModel.SourceSignals;
@@ -380,7 +380,7 @@ namespace InterprojectExchange
         {
             IProjectModel advancedProjectModel = Models
                 .Where(x => x.Selected == true).FirstOrDefault();
-            DeviceSignalsDTO advancedProjectSignals;
+            DeviceSignalsInfo advancedProjectSignals;
             if (editMode == EditModeEnum.SourceReciever)
             {
                 advancedProjectSignals = advancedProjectModel.ReceiverSignals;

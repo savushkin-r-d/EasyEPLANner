@@ -1,9 +1,4 @@
-﻿using LuaInterface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace InterprojectExchange
 {
@@ -14,7 +9,7 @@ namespace InterprojectExchange
     {
         public InterprojectExchangeModel()
         {
-            Devices = new List<DeviceDTO>();
+            Devices = new List<DeviceInfo>();
             deviceComparer = new DeviceComparer();
         }
 
@@ -25,7 +20,7 @@ namespace InterprojectExchange
         /// <param name="description"></param>
         public void AddDeviceData(string name, string description)
         {
-            var deviceDTO = new DeviceDTO(name, description);
+            var deviceDTO = new DeviceInfo(name, description);
             Devices.Add(deviceDTO);
         }
 
@@ -45,7 +40,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Устройства проекта
         /// </summary>
-        public List<DeviceDTO> Devices { get; set; }
+        public List<DeviceInfo> Devices { get; set; }
 
         private DeviceComparer deviceComparer;
     }

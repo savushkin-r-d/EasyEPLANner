@@ -6,9 +6,9 @@ namespace InterprojectExchange
     /// <summary>
     /// Компаратор для устройств проектов
     /// </summary>
-    class DeviceComparer : IComparer<DeviceDTO>
+    class DeviceComparer : IComparer<DeviceInfo>
     {
-        public int Compare(DeviceDTO dev1, DeviceDTO dev2)
+        public int Compare(DeviceInfo dev1, DeviceInfo dev2)
         {
             var device1 = Regex.Match(dev1.Name, pattern);
             var device2 = Regex.Match(dev2.Name, pattern);

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace InterprojectExchange
 {
@@ -13,10 +9,10 @@ namespace InterprojectExchange
     {
         public AdvancedProjectModel() : base()
         {
-            receiverSignals = new DeviceSignalsDTO();
-            sourceSignals = new DeviceSignalsDTO();
+            receiverSignals = new DeviceSignalsInfo();
+            sourceSignals = new DeviceSignalsInfo();
             SharedFileAsStringList = new List<string>();
-            pacDTO = new PacDTO();
+            pacDTO = new PacInfo();
         }
 
         /// <summary>
@@ -144,7 +140,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Сигналы-источники (отдаем)
         /// </summary>
-        virtual public DeviceSignalsDTO SourceSignals
+        virtual public DeviceSignalsInfo SourceSignals
         {
             get
             {
@@ -155,7 +151,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Сигналы-приемники (принимаем)
         /// </summary>
-        virtual public DeviceSignalsDTO ReceiverSignals
+        virtual public DeviceSignalsInfo ReceiverSignals
         {
             get
             {
@@ -166,7 +162,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Информация о контроллере
         /// </summary>
-        public PacDTO PacInfo
+        public PacInfo PacInfo
         {
             get
             {
@@ -178,8 +174,8 @@ namespace InterprojectExchange
             }
         }
 
-        private DeviceSignalsDTO sourceSignals;
-        private DeviceSignalsDTO receiverSignals;
-        private PacDTO pacDTO;
+        private DeviceSignalsInfo sourceSignals;
+        private DeviceSignalsInfo receiverSignals;
+        private PacInfo pacDTO;
     }
 }

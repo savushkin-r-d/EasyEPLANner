@@ -13,8 +13,8 @@ namespace InterprojectExchange
         }
 
         private InterprojectExchange interprojectExchange;
-        private Dictionary<string, PacDTO> projectsSendingFromMain;
-        private Dictionary<string, PacDTO> projectsSendingToMain;
+        private Dictionary<string, PacInfo> projectsSendingFromMain;
+        private Dictionary<string, PacInfo> projectsSendingToMain;
         private string selectedProjectBeforeOpeningThisForm = "";
 
         private void cancelBtn_Click(object sender, EventArgs e)
@@ -50,7 +50,7 @@ namespace InterprojectExchange
                 if (model.ProjectName != interprojectExchange.CurrentProjectName)
                 {
                     string projectName = model.ProjectName;
-                    PacDTO intermediateSettings = projectsSendingFromMain[projectName];
+                    PacInfo intermediateSettings = projectsSendingFromMain[projectName];
                     model.PacInfo = intermediateSettings.Clone();
                 }
             }
@@ -65,7 +65,7 @@ namespace InterprojectExchange
             foreach (string modelName in loadedModels)
             {
                 mainModel.SelectedAdvancedProject = modelName;
-                PacDTO intermediateSettings = projectsSendingToMain[modelName];
+                PacInfo intermediateSettings = projectsSendingToMain[modelName];
                 mainModel.PacInfo = intermediateSettings.Clone();
                 mainModel.SelectedAdvancedProject =
                     selectedProjectBeforeOpeningThisForm;
@@ -81,8 +81,8 @@ namespace InterprojectExchange
                 modeComboBox_SelectedValueChanged;
 
             interprojectExchange = InterprojectExchange.GetInstance();
-            projectsSendingFromMain = new Dictionary<string, PacDTO>();
-            projectsSendingToMain = new Dictionary<string, PacDTO>();
+            projectsSendingFromMain = new Dictionary<string, PacInfo>();
+            projectsSendingToMain = new Dictionary<string, PacInfo>();
             LoadProjectsToListView();
             selectedProjectBeforeOpeningThisForm = interprojectExchange.Models
                 .Where(x => x.Selected == true)
@@ -146,7 +146,7 @@ namespace InterprojectExchange
         /// <param name="projectName">Имя проекта</param>
         private void LoadProjectDataToFields(string projectName)
         {
-            PacDTO pacInfo;
+            PacInfo pacInfo;
             if(EditMode == 0)
             {
                 pacInfo = projectsSendingFromMain[projectName];
@@ -194,7 +194,7 @@ namespace InterprojectExchange
         {
             try
             {
-                PacDTO pacInfo;
+                PacInfo pacInfo;
                 if (EditMode == 0)
                 {
                     pacInfo = projectsSendingFromMain[projectName];

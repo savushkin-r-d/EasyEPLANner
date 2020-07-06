@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace InterprojectExchange
+﻿namespace InterprojectExchange
 {
     /// <summary>
     /// Объект с информацией об узле проекта
     /// </summary>
-    public class PacDTO
+    public class PacInfo
     {
-        public PacDTO()
+        public PacInfo()
         {
             IP = "";
             IPEmulator = "127.0.0.1";
@@ -27,9 +21,9 @@ namespace InterprojectExchange
         /// Клонирование объекта
         /// </summary>
         /// <returns></returns>
-        public PacDTO Clone()
+        public PacInfo Clone()
         {
-            var cloned = new PacDTO();
+            var cloned = new PacInfo();
 
             cloned.IP = IP;
             cloned.IPEmulator = IPEmulator;

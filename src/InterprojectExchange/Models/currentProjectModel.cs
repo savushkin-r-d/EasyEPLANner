@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace InterprojectExchange
 {
@@ -13,10 +9,10 @@ namespace InterprojectExchange
     {
         public CurrentProjectModel()
         {
-            receiverSignals = new Dictionary<string, DeviceSignalsDTO>();
-            sourceSignals = new Dictionary<string, DeviceSignalsDTO>();
+            receiverSignals = new Dictionary<string, DeviceSignalsInfo>();
+            sourceSignals = new Dictionary<string, DeviceSignalsInfo>();
             SharedFileAsStringList = new List<string>();
-            pacDTOs = new Dictionary<string, PacDTO>();
+            pacDTOs = new Dictionary<string, PacInfo>();
         }
 
         /// <summary>
@@ -31,11 +27,11 @@ namespace InterprojectExchange
         {
             if(!receiverSignals.ContainsKey(projName))
             {
-                receiverSignals.Add(projName, new DeviceSignalsDTO());
+                receiverSignals.Add(projName, new DeviceSignalsInfo());
             }
             if(!sourceSignals.ContainsKey(projName))
             {
-                sourceSignals.Add(projName, new DeviceSignalsDTO());
+                sourceSignals.Add(projName, new DeviceSignalsInfo());
             }
 
             switch(signalType)
@@ -109,7 +105,7 @@ namespace InterprojectExchange
 
             if (!pacDTOs.ContainsKey(pacName))
             {
-                pacDTOs.Add(pacName, new PacDTO());
+                pacDTOs.Add(pacName, new PacInfo());
             }
             pacDTOs[pacName].IP = IP;
         }
@@ -130,7 +126,7 @@ namespace InterprojectExchange
         {
             if (!pacDTOs.ContainsKey(pacName))
             {
-                pacDTOs.Add(pacName, new PacDTO());
+                pacDTOs.Add(pacName, new PacInfo());
             }
 
             if (ProjectName == null)
@@ -169,14 +165,14 @@ namespace InterprojectExchange
         /// <summary>
         /// Сигналы-источники (отдаем)
         /// </summary>
-        public DeviceSignalsDTO SourceSignals
+        public DeviceSignalsInfo SourceSignals
         {
             get
             {
                 if (!sourceSignals.ContainsKey(SelectedAdvancedProject))
                 {
                     sourceSignals.Add(SelectedAdvancedProject,
-                        new DeviceSignalsDTO());
+                        new DeviceSignalsInfo());
                 }
                 return sourceSignals[SelectedAdvancedProject];
             }
@@ -185,26 +181,26 @@ namespace InterprojectExchange
         /// <summary>
         /// Сигналы-приемники (принимаем)
         /// </summary>
-        public DeviceSignalsDTO ReceiverSignals
+        public DeviceSignalsInfo ReceiverSignals
         {
             get
             {
                 if(!receiverSignals.ContainsKey(SelectedAdvancedProject))
                 {
                     receiverSignals.Add(SelectedAdvancedProject, 
-                        new DeviceSignalsDTO());
+                        new DeviceSignalsInfo());
                 }
                 return receiverSignals[SelectedAdvancedProject];
             }
         }
 
-        public PacDTO PacInfo
+        public PacInfo PacInfo
         {
             get
             {
                 if(!pacDTOs.ContainsKey(SelectedAdvancedProject))
                 {
-                    pacDTOs.Add(SelectedAdvancedProject, new PacDTO());
+                    pacDTOs.Add(SelectedAdvancedProject, new PacInfo());
                 }
                 return pacDTOs[SelectedAdvancedProject];
             }
@@ -212,14 +208,14 @@ namespace InterprojectExchange
             {
                 if (!pacDTOs.ContainsKey(SelectedAdvancedProject))
                 {
-                    pacDTOs.Add(SelectedAdvancedProject, new PacDTO());
+                    pacDTOs.Add(SelectedAdvancedProject, new PacInfo());
                 }
                 pacDTOs[SelectedAdvancedProject] = value;
             }
         }
 
-        private Dictionary<string, DeviceSignalsDTO> sourceSignals;
-        private Dictionary<string, DeviceSignalsDTO> receiverSignals;
-        private Dictionary<string, PacDTO> pacDTOs;
+        private Dictionary<string, DeviceSignalsInfo> sourceSignals;
+        private Dictionary<string, DeviceSignalsInfo> receiverSignals;
+        private Dictionary<string, PacInfo> pacDTOs;
     }
 }

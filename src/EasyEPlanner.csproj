@@ -116,39 +116,39 @@
     <Compile Include="ConfigurationChecker.cs" />
     <Compile Include="Editor\TechObjectsImporter.cs" />
     <Compile Include="InterprojectExchange\DeviceComparer.cs" />
-    <Compile Include="InterprojectExchange\DeviceDTO.cs" />
-    <Compile Include="InterprojectExchange\DeviceSignalsDTO.cs" />
+    <Compile Include="InterprojectExchange\DeviceInfo.cs" />
+    <Compile Include="InterprojectExchange\DeviceSignalsInfo.cs" />
     <Compile Include="InterprojectExchange\FilterConfiguration.cs" />
-    <Compile Include="InterprojectExchange\FilterForm.cs">
+    <Compile Include="InterprojectExchange\Forms\FilterForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="InterprojectExchange\FilterForm.Designer.cs">
+    <Compile Include="InterprojectExchange\Forms\FilterForm.Designer.cs">
       <DependentUpon>FilterForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="InterprojectExchange\CurrentProjectModel.cs" />
-    <Compile Include="InterprojectExchange\AdvancedProjectModel.cs" />
-    <Compile Include="InterprojectExchange\InterprojectExchangeModel.cs" />
+    <Compile Include="InterprojectExchange\Models\CurrentProjectModel.cs" />
+    <Compile Include="InterprojectExchange\Models\AdvancedProjectModel.cs" />
+    <Compile Include="InterprojectExchange\Models\InterprojectExchangeModel.cs" />
     <Compile Include="InterprojectExchange\InterprojectExchangeSaver.cs" />
     <Compile Include="InterprojectExchange\InterprojectExchangeStarter.cs" />
     <Compile Include="InterprojectExchange\InterprojectExchange.cs" />
-    <Compile Include="InterprojectExchange\InterprojectExchangeForm.cs">
+    <Compile Include="InterprojectExchange\Forms\InterprojectExchangeForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="InterprojectExchange\InterprojectExchangeForm.Designer.cs">
+    <Compile Include="InterprojectExchange\Forms\InterprojectExchangeForm.Designer.cs">
       <DependentUpon>InterprojectExchangeForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="InterprojectExchange\IProjectModel.cs" />
-    <Compile Include="InterprojectExchange\PacDTO.cs" />
-    <Compile Include="InterprojectExchange\PACSettingsForm.cs">
+    <Compile Include="InterprojectExchange\Models\IProjectModel.cs" />
+    <Compile Include="InterprojectExchange\PacInfo.cs" />
+    <Compile Include="InterprojectExchange\Forms\PACSettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="InterprojectExchange\PACSettingsForm.Designer.cs">
+    <Compile Include="InterprojectExchange\Forms\PACSettingsForm.Designer.cs">
       <DependentUpon>PACSettingsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="InterprojectExchange\UnknownDevTypeForm.cs">
+    <Compile Include="InterprojectExchange\Forms\UnknownDevTypeForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="InterprojectExchange\UnknownDevTypeForm.Designer.cs">
+    <Compile Include="InterprojectExchange\Forms\UnknownDevTypeForm.Designer.cs">
       <DependentUpon>UnknownDevTypeForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Main\InterprojectExchangeAction.cs" />
@@ -314,16 +314,16 @@
     <EmbeddedResource Include="Editor\TechObjectsImportForm.resx">
       <DependentUpon>TechObjectsImportForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="InterprojectExchange\FilterForm.resx">
+    <EmbeddedResource Include="InterprojectExchange\Forms\FilterForm.resx">
       <DependentUpon>FilterForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="InterprojectExchange\InterprojectExchangeForm.resx">
+    <EmbeddedResource Include="InterprojectExchange\Forms\InterprojectExchangeForm.resx">
       <DependentUpon>InterprojectExchangeForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="InterprojectExchange\PACSettingsForm.resx">
+    <EmbeddedResource Include="InterprojectExchange\Forms\PACSettingsForm.resx">
       <DependentUpon>PACSettingsForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="InterprojectExchange\UnknownDevTypeForm.resx">
+    <EmbeddedResource Include="InterprojectExchange\Forms\UnknownDevTypeForm.resx">
       <DependentUpon>UnknownDevTypeForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Logs\LogFrm.resx">

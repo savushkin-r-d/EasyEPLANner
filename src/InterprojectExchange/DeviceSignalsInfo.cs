@@ -5,9 +5,9 @@ namespace InterprojectExchange
     /// <summary>
     /// Класс содержащий сигналы для модели межконтроллерного обмена
     /// </summary>
-    public class DeviceSignalsDTO
+    public class DeviceSignalsInfo
     {
-        public DeviceSignalsDTO()
+        public DeviceSignalsInfo()
         {
             AISignals = new List<string>();
             AOSignals = new List<string>();

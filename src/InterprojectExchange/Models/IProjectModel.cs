@@ -20,22 +20,22 @@ namespace InterprojectExchange
         /// <summary>
         /// Сигналы-источники (отдаем)
         /// </summary>
-        DeviceSignalsDTO SourceSignals { get; }
+        DeviceSignalsInfo SourceSignals { get; }
 
         /// <summary>
         /// Сигналы-приемники (принимаем)
         /// </summary>
-        DeviceSignalsDTO ReceiverSignals { get; }
+        DeviceSignalsInfo ReceiverSignals { get; }
 
         /// <summary>
         /// Устройства проекта
         /// </summary>
-        List<DeviceDTO> Devices { get; set; }
+        List<DeviceInfo> Devices { get; set; }
 
         /// <summary>
         /// Информация о контроллере
         /// </summary>
-        PacDTO PacInfo { get; set; }
+        PacInfo PacInfo { get; set; }
 
         /// <summary>
         /// Добавление сигнала к модели, вызывается из LUA

@@ -222,7 +222,7 @@ namespace InterprojectExchange
         /// <param name="signals">Сигналы модели</param>
         /// <returns></returns>
         private string SaveProjectRemoteGateWays(string projectName,
-            PacDTO pacInfo, DeviceSignalsDTO signals, bool invertSignals)
+            PacInfo pacInfo, DeviceSignalsInfo signals, bool invertSignals)
         {
             var res = "";
             if (signals.Count <= 0)
@@ -249,7 +249,7 @@ namespace InterprojectExchange
         /// </param>
         /// <returns></returns>
         private string SaveProjectSharedDevices(string projectName,
-            int stationNum, DeviceSignalsDTO signals, bool invertSignals)
+            int stationNum, DeviceSignalsInfo signals, bool invertSignals)
         {
             var res = "";
             if (signals.Count <= 0)
@@ -276,7 +276,7 @@ namespace InterprojectExchange
         /// <param name="projectName">Имя проекта</param>
         /// <param name="prefix">Префикс</param>
         /// <returns></returns>
-        private string SavePACInfo(PacDTO pacInfo, string projectName,
+        private string SavePACInfo(PacInfo pacInfo, string projectName,
             string prefix)
         {
             var res = "";
@@ -320,7 +320,7 @@ namespace InterprojectExchange
         /// <param name="prefix">Префикс</param>
         /// <param name="invertSignals">Инвертировать сигналы</param>
         /// <returns></returns>
-        private string SaveSignals(DeviceSignalsDTO signals, string prefix,
+        private string SaveSignals(DeviceSignalsInfo signals, string prefix,
             bool invertSignals)
         {
             var res = "";
