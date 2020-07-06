@@ -678,6 +678,9 @@ return
                 active =
                 {
                     MIX_NODE_MIX_OPERATION = { name = "Используемая операция узла перемешивания", defaultValue = 1 },
+                    MIX_NODE_MIX_ON_TIME = { name = "Время работы" },
+                    MIX_NODE_MIX_OFF_TIME = { name = "Время простоя" },
+                    MIX_NODE_MIX_SPEED = { name = "Скорость" },
                 },
                 main =
                 {
