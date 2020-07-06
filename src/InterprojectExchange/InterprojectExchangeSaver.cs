@@ -68,9 +68,9 @@ namespace InterprojectExchange
                 {
                     var currentModel = mainModel as CurrentProjectModel;
                     string projectName = model.ProjectName;
-                    // SelectedAdvancedProject - с каким проектом работаем,
+                    // SelectModel - с каким проектом работаем,
                     // влияет на список сигналов с currentModel
-                    currentModel.SelectedAdvancedProject = projectName;
+                    owner.SelectModel(model);               
 
                     string remoteGateWay = SaveProjectRemoteGateWays(
                         projectName, currentModel.PacInfo,
@@ -201,8 +201,7 @@ namespace InterprojectExchange
             }
 
             IProjectModel mainModel = owner.GetModel(owner.CurrentProjectName);
-            (mainModel as CurrentProjectModel).SelectedAdvancedProject = model
-                .ProjectName;
+            owner.SelectModel(model);
             string sharedDevices = SaveProjectSharedDevices(
                 mainModel.ProjectName, mainModel.PacInfo.Station,
                 model.SourceSignals, true);

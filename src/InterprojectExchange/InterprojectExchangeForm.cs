@@ -852,6 +852,11 @@ namespace InterprojectExchange
                 MessageBoxIcon.Information);
         }
 
+        /// <summary>
+        /// Изменение режима
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void modeComboBox_SelectedValueChanged(object sender, 
             EventArgs e)
         {
@@ -865,12 +870,31 @@ namespace InterprojectExchange
             }
         }
 
+        /// <summary>
+        /// Настройки PAC
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void pacSetUpBtn_Click(object sender, EventArgs e)
         {
             var form = new PACSettingsForm();
             form.ShowDialog();
+
+            string selectedModelname = advProjNameComboBox.Text;
+            if(selectedModelname != "")
+            {
+                IProjectModel selectedModel = interprojectExchange.GetModel(
+                    selectedModelname);
+                interprojectExchange.SelectModel(selectedModel);
+            }
+
         }
 
+        /// <summary>
+        /// Сохранить изменения
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void saveButton_Click(object sender, EventArgs e)
         {
             interprojectExchange.Save();

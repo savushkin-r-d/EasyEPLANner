@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using EasyEPlanner;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace InterprojectExchange
 {
@@ -234,8 +235,9 @@ namespace InterprojectExchange
             }
             else
             {
-                form.ShowErrorMessage($"Не найден файл main.io.lua проекта" +
-                    $" \"{projName}\"");
+                MessageBox.Show($"Не найден файл main.io.lua проекта" +
+                    $" \"{projName}\"", "Ошибка", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
