@@ -20,7 +20,7 @@ namespace InterprojectExchange
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            Hide();
+            Close();
         }
 
         /// <summary>

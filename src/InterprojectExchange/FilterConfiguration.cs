@@ -179,8 +179,10 @@ namespace InterprojectExchange
         {
             if (filterForm == null || filterForm.IsDisposed)
             {
+                Read();
                 filterForm = new FilterForm();
             }
+
             filterForm.Show();
         }
 
