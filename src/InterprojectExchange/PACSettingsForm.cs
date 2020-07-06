@@ -97,12 +97,17 @@ namespace InterprojectExchange
         {
             var loadedModels = interprojectExchange.Models
                 .Where(x => x.ProjectName != 
-                interprojectExchange.CurrentProjectName)
+                interprojectExchange.CurrentProjectName &&
+                x.MarkedForDelete == false)
                 .Select(x => x.ProjectName).ToArray();
 
             foreach (var model in interprojectExchange.Models)
             {
-                if(model.ProjectName != interprojectExchange.CurrentProjectName)
+                bool validModel =
+                    model.ProjectName != interprojectExchange
+                    .CurrentProjectName &&
+                    model.MarkedForDelete == false;
+                if (validModel)
                 {
                     string projName = model.ProjectName;
                     projectsListView.Items.Add(projName);

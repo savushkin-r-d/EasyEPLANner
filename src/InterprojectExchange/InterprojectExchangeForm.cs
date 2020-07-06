@@ -109,12 +109,8 @@ namespace InterprojectExchange
             currentProjSignalsList.Items.Clear();
             advancedProjSignalsList.Items.Clear();
 
-            var filteredCurrProjItems = filterConfiguration.FilterOut(
-                currProjItems, FilterConfiguration.FilterList.Current);
-            var filteredAdvProjItems = filterConfiguration.FilterOut(
-                advProjItems, FilterConfiguration.FilterList.Advanced);
-            currentProjSignalsList.Items.AddRange(filteredCurrProjItems);
-            advancedProjSignalsList.Items.AddRange(filteredAdvProjItems);
+            advProjSearchBox_TextChanged(this, new EventArgs());
+            currProjSearchBox_TextChanged(this, new EventArgs());
 
             bool useGroupsFilter = filterConfiguration.FilterParameters[
                 "bindedSignalsList"]["groupAsPairsCheckBox"];
