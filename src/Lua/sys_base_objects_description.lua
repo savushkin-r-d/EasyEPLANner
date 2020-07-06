@@ -425,7 +425,6 @@ return
                         },
                     steps =
                     {
-                        HOT_WATER_PUSHING = { name = "Вытеснение горячей воды" },
                         COOLING = { name = "Охлаждение" },
                         CHECKING_TEMPERATURE = { name = "Проверка заданной температуры" },
                     },
@@ -453,6 +452,7 @@ return
             equipment =
             {
                 hatch = { name = "Датчик крышки люка", defaultValue = "GS1" },
+                hatch2 = { name = "Датчик крышки люка 2", defaultValue = "GS3" },
                 LS_up = { name = "Датчик верхнего уровня", defaultValue = "LS2" },
                 LS_down = { name = "Датчик нижнего уровня", defaultValue = "LS1" },
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
@@ -554,6 +554,7 @@ return
             {
                 TE = { name = "Датчик температуры", defaultValue = "TE1" },
                 VC = { name = "Регулирующий клапан", defaultValue = "VC1" },
+                FQT1 = { name = "Расходомер", defaultValue = "FQT1" },
                 SET_VALUE = { name = "Задание"},
             },
             aggregateParameters =
@@ -602,6 +603,7 @@ return
                     params = { },
                     steps =
                     {
+                        HOT_WATER_PUSHING = { name = "Вытеснение горячей воды" },
                         WORKING = { name = "Работа" },
                         WAITING = { name = "Ожидание" },
                     },
@@ -611,6 +613,7 @@ return
             equipment =
             {
                 TE = { name = "Датчик температуры", defaultValue = "TE1" },
+                TE2 = { name = "Датчик температуры рубашки", defaultValue = "TE2" },
             },
             aggregateParameters =
             {
@@ -667,6 +670,7 @@ return
                 mix = { name = "Мешалка", defaultValue = "M1" },
                 bar = { name = "Датчик решетки люка", defaultValue = "GS2" },
                 hatch = { name = "Датчик крышки люка", defaultValue = "GS1" },
+                hatch2 = { name = "Датчик крышки люка 2", defaultValue = "GS3" },
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
             },
             aggregateParameters =
