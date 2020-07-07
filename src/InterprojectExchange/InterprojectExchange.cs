@@ -65,7 +65,7 @@ namespace InterprojectExchange
         /// <returns></returns>
         public IProjectModel GetModel(string projName)
         {
-            var model = interprojectExchangeModels
+            IProjectModel model = interprojectExchangeModels
                 .Where(x => x.ProjectName == projName)
                 .FirstOrDefault();
             return model;
@@ -77,15 +77,15 @@ namespace InterprojectExchange
         /// <param name="selectingModel">Выбранная модель</param>
         public void SelectModel(IProjectModel selectingModel)
         {
-            var currentProjectModel = MainModel;
+            CurrentProjectModel currentProjectModel = MainModel;
 
             foreach(var model in Models)
             {
                 if (model.ProjectName == selectingModel.ProjectName)
                 {
                     model.Selected = true;
-                    currentProjectModel.SelectedAdvancedProject = 
-                        model.ProjectName;
+                    currentProjectModel.SelectedAdvancedProject = model
+                        .ProjectName;
                 }
                 else
                 {
@@ -100,7 +100,7 @@ namespace InterprojectExchange
         /// <param name="projectName">Имя проекта</param>
         public void DeleteExchangeWithProject(string projectName)
         {
-            var model = GetModel(projectName);
+            IProjectModel model = GetModel(projectName);
             if (model != null)
             {
                 model.MarkedForDelete = true;
@@ -127,37 +127,13 @@ namespace InterprojectExchange
         {
             var signals = new Dictionary<string, List<string[]>>();
 
-            IProjectModel currentProjectModel = Models
-                .Where(x => x.ProjectName == MainProjectName)
-                .FirstOrDefault();
-            IProjectModel advancedProjectModel = Models
-                .Where(x => x.Selected == true).FirstOrDefault();
-
-            DeviceSignalsInfo currentProjectSignals;
-            DeviceSignalsInfo advancedProjectSignals;
-            if (editMode == EditModeEnum.SourceReciever)
+            foreach(var channelName in DeviceChannelsNames)
             {
-                currentProjectSignals = currentProjectModel.SourceSignals;
-                advancedProjectSignals = advancedProjectModel.ReceiverSignals;
+                List<string[]> channelSignals = GetSignalsPairs(
+                    GetCurrentProjectSignals(channelName), 
+                    GetAdvancedProjectSignals(channelName));
+                signals.Add(channelName, channelSignals);
             }
-            else
-            {
-                currentProjectSignals = currentProjectModel.ReceiverSignals;
-                advancedProjectSignals = advancedProjectModel.SourceSignals;
-            }
-
-            List<string[]> AISignals = GetSignalsPairs(
-                currentProjectSignals.AI, advancedProjectSignals.AI);
-            signals.Add("AI", AISignals);
-            List<string[]> AOSignals = GetSignalsPairs(
-                currentProjectSignals.AO, advancedProjectSignals.AO);
-            signals.Add("AO", AOSignals);
-            List<string[]> DISignals = GetSignalsPairs(
-                currentProjectSignals.DI, advancedProjectSignals.DI);
-            signals.Add("DI", DISignals);
-            List<string[]> DOSignals = GetSignalsPairs(
-                currentProjectSignals.DO, advancedProjectSignals.DO);
-            signals.Add("DO", DOSignals);
 
             return signals;
         }
@@ -182,8 +158,8 @@ namespace InterprojectExchange
                 {
                     var bindedSignals = new string[]
                     {
-                    currentProjectSignals[i],
-                    advancedProjectSignals[i]
+                        currentProjectSignals[i],
+                        advancedProjectSignals[i]
                     };
                     result.Add(bindedSignals);
                 }
@@ -206,47 +182,13 @@ namespace InterprojectExchange
         public bool BindSignals(string signalType, string currentProjectDevice,
             string advancedProjectDevice)
         {
-            IProjectModel currentProjectModel = Models
-                .Where(x => x.ProjectName == MainProjectName)
-                .FirstOrDefault();
-            IProjectModel advancedProjectModel = Models
-                .Where(x => x.Selected == true).FirstOrDefault();
+            List<string> currentProjSignals = GetCurrentProjectSignals(
+                signalType);
+            List<string> advancedProjSignals = GetAdvancedProjectSignals(
+                signalType);
 
-            DeviceSignalsInfo currentProjectSignals;
-            DeviceSignalsInfo advancedProjectSignals;
-            if (editMode == EditModeEnum.SourceReciever)
-            {
-                currentProjectSignals = currentProjectModel.SourceSignals;
-                advancedProjectSignals = advancedProjectModel.ReceiverSignals;
-            }
-            else
-            {
-                currentProjectSignals = currentProjectModel.ReceiverSignals;
-                advancedProjectSignals = advancedProjectModel.SourceSignals;
-            }
-
-            switch (signalType)
-            {
-                case "AI":
-                    currentProjectSignals.AI.Add(currentProjectDevice);
-                    advancedProjectSignals.AI.Add(advancedProjectDevice);
-                    break;
-
-                case "AO":
-                    currentProjectSignals.AO.Add(currentProjectDevice);
-                    advancedProjectSignals.AO.Add(advancedProjectDevice);
-                    break;
-
-                case "DI":
-                    currentProjectSignals.DI.Add(currentProjectDevice);
-                    advancedProjectSignals.DI.Add(advancedProjectDevice);
-                    break;
-
-                case "DO":
-                    currentProjectSignals.DO.Add(currentProjectDevice);
-                    advancedProjectSignals.DO.Add(advancedProjectDevice);
-                    break;
-            }
+            currentProjSignals.Add(currentProjectDevice);
+            advancedProjSignals.Add(advancedProjectDevice);
 
             return true;
         }
@@ -263,47 +205,13 @@ namespace InterprojectExchange
         public bool DeleteSignalsBind(string signalType,
             string currentProjectDevice, string advancedProjectDevice)
         {
-            IProjectModel currentProjectModel = Models
-            .Where(x => x.ProjectName == MainProjectName)
-            .FirstOrDefault();
-            IProjectModel advancedProjectModel = Models
-                .Where(x => x.Selected == true).FirstOrDefault();
+            List<string> currentProjSignals = GetCurrentProjectSignals(
+                signalType);
+            List<string> advancedProjSignals = GetAdvancedProjectSignals(
+                signalType);
 
-            DeviceSignalsInfo currentProjectSignals;
-            DeviceSignalsInfo advancedProjectSignals;
-            if (editMode == EditModeEnum.SourceReciever)
-            {
-                currentProjectSignals = currentProjectModel.SourceSignals;
-                advancedProjectSignals = advancedProjectModel.ReceiverSignals;
-            }
-            else
-            {
-                currentProjectSignals = currentProjectModel.ReceiverSignals;
-                advancedProjectSignals = advancedProjectModel.SourceSignals;
-            }
-
-            switch (signalType)
-            {
-                case "AI":
-                    currentProjectSignals.AI.Remove(currentProjectDevice);
-                    advancedProjectSignals.AI.Remove(advancedProjectDevice);
-                    break;
-
-                case "AO":
-                    currentProjectSignals.AO.Remove(currentProjectDevice);
-                    advancedProjectSignals.AO.Remove(advancedProjectDevice);
-                    break;
-
-                case "DI":
-                    currentProjectSignals.DI.Remove(currentProjectDevice);
-                    advancedProjectSignals.DI.Remove(advancedProjectDevice);
-                    break;
-
-                case "DO":
-                    currentProjectSignals.DO.Remove(currentProjectDevice);
-                    advancedProjectSignals.DO.Remove(advancedProjectDevice);
-                    break;
-            }
+            currentProjSignals.Remove(currentProjectDevice);
+            advancedProjSignals.Remove(advancedProjectDevice);
 
             return true;
         }
@@ -315,12 +223,34 @@ namespace InterprojectExchange
         /// <param name="oldValue">Старое значение</param>
         /// <param name="newValue">Новое значение</param>
         /// <returns></returns>
-        public bool UpdateCurrentProjectBinding(string signalType, 
-            string oldValue, string newValue)
+        public bool UpdateProjectBinding(string signalType, 
+            string oldValue, string newValue, bool mainProject)
         {
-            IProjectModel currentProjectModel = Models
-            .Where(x => x.ProjectName == MainProjectName)
-            .FirstOrDefault();
+            List<string> signals;
+            if (mainProject)
+            {
+                signals = GetCurrentProjectSignals(signalType);
+            }
+            else
+            {
+                signals = GetAdvancedProjectSignals(signalType);
+            }
+
+            int oldValueIndex = signals.IndexOf(oldValue);
+            signals.RemoveAt(oldValueIndex);
+            signals.Insert(oldValueIndex, newValue);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Получить сигналы текущего проекта
+        /// </summary>
+        /// <param name="signalType">Тип сигнала</param>
+        /// <returns></returns>
+        private List<string> GetCurrentProjectSignals(string signalType)
+        {
+            IProjectModel currentProjectModel = MainModel;
             DeviceSignalsInfo currentProjectSignals;
             if (editMode == EditModeEnum.SourceReciever)
             {
@@ -331,53 +261,32 @@ namespace InterprojectExchange
                 currentProjectSignals = currentProjectModel.ReceiverSignals;
             }
 
-            int oldValueIndex = 0;
             switch (signalType)
             {
                 case "AI":
-                    oldValueIndex = currentProjectSignals.AI
-                        .IndexOf(oldValue);
-                    currentProjectSignals.AI.RemoveAt(oldValueIndex);
-                    currentProjectSignals.AI.Insert(oldValueIndex, newValue);
-                    break;
+                    return currentProjectSignals.AI;
 
                 case "AO":
-                    oldValueIndex = currentProjectSignals.AO
-                        .IndexOf(oldValue);
-                    currentProjectSignals.AO.RemoveAt(oldValueIndex);
-                    currentProjectSignals.AO.Insert(oldValueIndex, newValue);
-                    break;
+                    return currentProjectSignals.AO;
 
                 case "DI":
-                    oldValueIndex = currentProjectSignals.DI
-                                            .IndexOf(oldValue);
-                    currentProjectSignals.DI.RemoveAt(oldValueIndex);
-                    currentProjectSignals.DI.Insert(oldValueIndex, newValue); 
-                    break;
+                    return currentProjectSignals.DI;
 
                 case "DO":
-                    oldValueIndex = currentProjectSignals.DO
-                        .IndexOf(oldValue);
-                    currentProjectSignals.DO.RemoveAt(oldValueIndex);
-                    currentProjectSignals.DO.Insert(oldValueIndex, newValue);
-                    break;
+                    return currentProjectSignals.DO;
             }
 
-            return true;
+            return new List<string>();
         }
 
         /// <summary>
-        /// Изменение устройства в связи альтернативного проекта
+        /// Получить сигналы альтернативного проекта
         /// </summary>
         /// <param name="signalType">Тип сигнала</param>
-        /// <param name="oldValue">Старое значение</param>
-        /// <param name="newValue">Новое значение</param>
         /// <returns></returns>
-        public bool UpdateAdvancedProjectBinding(string signalType,
-            string oldValue, string newValue)
+        private List<string> GetAdvancedProjectSignals(string signalType)
         {
-            IProjectModel advancedProjectModel = Models
-                .Where(x => x.Selected == true).FirstOrDefault();
+            IProjectModel advancedProjectModel = SelectedModel;
             DeviceSignalsInfo advancedProjectSignals;
             if (editMode == EditModeEnum.SourceReciever)
             {
@@ -388,39 +297,22 @@ namespace InterprojectExchange
                 advancedProjectSignals = advancedProjectModel.SourceSignals;
             }
 
-            int oldValueIndex = 0;
             switch (signalType)
             {
                 case "AI":
-                    oldValueIndex = advancedProjectSignals.AI
-                        .IndexOf(oldValue);
-                    advancedProjectSignals.AI.RemoveAt(oldValueIndex);
-                    advancedProjectSignals.AI.Insert(oldValueIndex, newValue);
-                    break;
+                    return advancedProjectSignals.AI;
 
                 case "AO":
-                    oldValueIndex = advancedProjectSignals.AO
-                        .IndexOf(oldValue);
-                    advancedProjectSignals.AO.RemoveAt(oldValueIndex);
-                    advancedProjectSignals.AO.Insert(oldValueIndex, newValue);
-                    break;
+                    return advancedProjectSignals.AO;
 
                 case "DI":
-                    oldValueIndex = advancedProjectSignals.DI
-                                            .IndexOf(oldValue);
-                    advancedProjectSignals.DI.RemoveAt(oldValueIndex);
-                    advancedProjectSignals.DI.Insert(oldValueIndex, newValue);
-                    break;
+                    return advancedProjectSignals.DI;
 
                 case "DO":
-                    oldValueIndex = advancedProjectSignals.DO
-                        .IndexOf(oldValue);
-                    advancedProjectSignals.DO.RemoveAt(oldValueIndex);
-                    advancedProjectSignals.DO.Insert(oldValueIndex, newValue);
-                    break;
+                    return advancedProjectSignals.DO;
             }
 
-            return true;
+            return new List<string>();
         }
 
         /// <summary>
@@ -442,8 +334,8 @@ namespace InterprojectExchange
 
             foreach(var model in Models)
             {
-                bool foundMarkedModel = projectName == model.ProjectName &&
-                    model.MarkedForDelete;
+                bool foundMarkedModel = 
+                    projectName == model.ProjectName && model.MarkedForDelete;
                 if (foundMarkedModel)
                 {
                     canRestore = true;
@@ -528,6 +420,17 @@ namespace InterprojectExchange
             get
             {
                 return interprojectExchangeModels;
+            }
+        }
+
+        /// <summary>
+        /// Выбранная в GUI модель альтернативного проекта
+        /// </summary>
+        public IProjectModel SelectedModel
+        {
+            get
+            {
+                return Models.Where(x => x.Selected == true).FirstOrDefault();
             }
         }
 

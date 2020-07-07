@@ -113,8 +113,7 @@ namespace InterprojectExchange
         /// <returns></returns>
         public IProjectModel GetSelectedModel()
         {
-            var model = interprojectExchange.Models
-                .Where(x => x.Selected == true).FirstOrDefault();
+            var model = interprojectExchange.SelectedModel;
             return model;
         }
 

@@ -159,11 +159,11 @@ namespace InterprojectExchange
                 var selectedRow = bindedSignalsList.SelectedItems[0];
                 if (selectedRow != null)
                 {
+                    bool mainProject = false;
                     string groupName = selectedRow.Group.Name;
-                    bool success = interprojectExchange
-                        .UpdateAdvancedProjectBinding(groupName,
-                        selectedRow.SubItems[1].Text,
-                        advancedProjectDevice);
+                    bool success = interprojectExchange.UpdateProjectBinding(
+                        groupName, selectedRow.SubItems[1].Text,
+                        advancedProjectDevice, mainProject);
                     if (success)
                     {
                         selectedRow.SubItems[1].Text = advancedProjectDevice;
@@ -211,10 +211,11 @@ namespace InterprojectExchange
                 var selectedRow = bindedSignalsList.SelectedItems[0];
                 if (selectedRow != null)
                 {
+                    bool mainProject = true;
                     string groupName = selectedRow.Group.Name;
-                    bool success = interprojectExchange
-                        .UpdateCurrentProjectBinding(groupName, 
-                        selectedRow.SubItems[0].Text, currentProjectDevice);
+                    bool success = interprojectExchange.UpdateProjectBinding(
+                        groupName, selectedRow.SubItems[0].Text, 
+                        currentProjectDevice, mainProject);
                     if(success)
                     {
                         selectedRow.SubItems[0].Text = currentProjectDevice;
