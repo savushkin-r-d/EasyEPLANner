@@ -70,10 +70,8 @@ namespace InterprojectExchange
             currProjNameTextBox.Text = currentProjectName;
 
             // Заполнение названий моделей в списке
-            string[] projects = interprojectExchange.Models
-                .Where(x => x.ProjectName != currentProjectName)
-                .Select(x => x.ProjectName).ToArray();
-            advProjNameComboBox.Items.AddRange(projects);
+            advProjNameComboBox.Items.AddRange(interprojectExchange
+                .LoadedAdvancedModelNames);
             if(advProjNameComboBox.Items.Count > 0)
             {
                 advProjNameComboBox.SelectedIndex = 0;
@@ -88,9 +86,9 @@ namespace InterprojectExchange
         /// </summary>
         private void LoadCurrentProjectDevices()
         {
-            var currentProjDevs = interprojectExchange
+            List<DeviceInfo> currentProjectDevices = interprojectExchange
                 .GetModel(currProjNameTextBox.Text).Devices;
-            foreach (var devInfo in currentProjDevs)
+            foreach (var devInfo in currentProjectDevices)
             {
                 var dev = new string[] { devInfo.Description, devInfo.Name };
                 var item = new ListViewItem(dev);
@@ -138,16 +136,15 @@ namespace InterprojectExchange
             bool needChange = (advancedProjectDevice != null &&
                 currentProjectDevices.Count != 0 &&
                 e.IsSelected);
-            bool needAddNewElement = bindedSignalsList.SelectedItems.Count == 0;
             if (!needChange)
             {
                 return;
             }
 
+            bool needAddNewElement = bindedSignalsList.SelectedItems.Count == 0;
             if (needAddNewElement)
             {
-                var currentProjectDevice = currentProjectDevices[0]
-                    .SubItems[1];
+                var currentProjectDevice = currentProjectDevices[0].SubItems[1];
                 string currentProjectDeviceType = currentProjectDevices[0]
                     .Tag.ToString();
                 AddToBindedSignals(currentProjectDeviceType,
@@ -156,7 +153,7 @@ namespace InterprojectExchange
             }
             else
             {
-                var selectedRow = bindedSignalsList.SelectedItems[0];
+                ListViewItem selectedRow = bindedSignalsList.SelectedItems[0];
                 if (selectedRow != null)
                 {
                     bool mainProject = false;
@@ -384,10 +381,11 @@ namespace InterprojectExchange
             }
             else if (e.KeyCode == Keys.Delete)
             {
-                var selectedItems = bindedSignalsList.SelectedItems;
+                SelectedListViewItemCollection selectedItems = 
+                    bindedSignalsList.SelectedItems;
                 if(selectedItems != null && selectedItems.Count > 0)
                 {
-                    var selectedItem = selectedItems[0];
+                    ListViewItem selectedItem = selectedItems[0];
                     DeleteItemFromBindedSignals(selectedItem);                                   
                 }
 
@@ -405,11 +403,11 @@ namespace InterprojectExchange
         /// <param name="selectedItem">Выбранный элемент в списке</param>
         private void DeleteItemFromBindedSignals(ListViewItem selectedItem)
         {
-            var selectedItemIndex = selectedItem.Index;
-
+            int selectedItemIndex = selectedItem.Index;
             string currentProjectDevice = selectedItem.SubItems[0].Text;
             string advancedProjectdevice = selectedItem.SubItems[1].Text;
             string signalType = selectedItem.Group.Name;
+
             bool success = interprojectExchange.DeleteSignalsBind(signalType,
                 currentProjectDevice, advancedProjectdevice);
             if (success)
@@ -420,14 +418,15 @@ namespace InterprojectExchange
                 {
                     if (bindedSignalsList.Items.Count > selectedItemIndex)
                     {
-                        var newSelectedItem = bindedSignalsList.Items[
-                        selectedItemIndex];
+                        var newSelectedItem = bindedSignalsList
+                            .Items[selectedItemIndex];
                         newSelectedItem.Selected = true;
                     }
                     else if (bindedSignalsList.Items.Count == selectedItemIndex)
                     {
-                        var newSelectedItem = bindedSignalsList.Items[
-                                selectedItemIndex - 1];
+                        // Выбираем индекс, который выше в списке
+                        var newSelectedItem = bindedSignalsList
+                            .Items[selectedItemIndex - 1];
                         newSelectedItem.Selected = true;
                     }
                 }
@@ -457,7 +456,7 @@ namespace InterprojectExchange
             ListViewItem item = bindedSignalsList.GetItemAt(e.X, e.Y);
             if (item != null)
             {
-                var selectedItem = bindedSignalsList.SelectedItems[0];
+                ListViewItem selectedItem = bindedSignalsList.SelectedItems[0];
                 HighlightObjectsInListViews(selectedItem);
             }
         }
@@ -497,12 +496,12 @@ namespace InterprojectExchange
         {
             try
             {
-                var currProjDevText = selectedItem.SubItems[0].Text;
-                var advProjDevText = selectedItem.SubItems[1].Text;
+                string currProjDevText = selectedItem.SubItems[0].Text;
+                string advProjDevText = selectedItem.SubItems[1].Text;
 
-                var currProjItem = currentProjSignalsList
+                ListViewItem currProjItem = currentProjSignalsList
                     .FindItemWithText(currProjDevText);
-                var advProjItem = advancedProjSignalsList
+                ListViewItem advProjItem = advancedProjSignalsList
                     .FindItemWithText(advProjDevText);
                 if (currProjItem != null && advProjItem != null)
                 {
@@ -584,7 +583,7 @@ namespace InterprojectExchange
         /// </summary>
         private void currProjSearchBox_TextChanged(object sender, EventArgs e)
         {
-            var filteredThroughType = filterConfiguration.FilterOut(
+            ListViewItem[] filteredThroughType = filterConfiguration.FilterOut(
                 currProjItems, FilterConfiguration.FilterList.CurrentProject);
             SearchSubstringInListView(currentProjSignalsList,
                 currProjSearchBox.Text, filteredThroughType);
@@ -596,7 +595,7 @@ namespace InterprojectExchange
         /// </summary>
         private void advProjSearchBox_TextChanged(object sender, EventArgs e)
         {
-            var filteredThroughType = filterConfiguration.FilterOut(
+            ListViewItem[] filteredThroughType = filterConfiguration.FilterOut(
                 advProjItems, FilterConfiguration.FilterList.AdvancedProject);
             SearchSubstringInListView(advancedProjSignalsList,
                 advProjSearchBox.Text, filteredThroughType);
@@ -613,8 +612,8 @@ namespace InterprojectExchange
         {
             if (subString != "")
             {
-                var lowerSubString = subString.ToLower();
-                var filteredItems = projItems
+                string lowerSubString = subString.ToLower();
+                ListViewItem[] filteredItems = projItems
                     .Where(x => x.SubItems[0].Text.ToLower()
                     .Contains(lowerSubString) || x.SubItems[1].Text.ToLower()
                     .Contains(lowerSubString))
@@ -663,6 +662,7 @@ namespace InterprojectExchange
                 {
                     if(selectedIndex > 0) 
                     {
+                        // Выбрать элемент из списка повыше
                         advProjNameComboBox.SelectedIndex = selectedIndex - 1;
                     }
                     else
@@ -748,14 +748,12 @@ namespace InterprojectExchange
         private void AddAndSelectModelToList(DirectoryInfo dirInfo)
         {
             advProjNameComboBox.Items.Add(dirInfo.Name);
-            int selectItem = advProjNameComboBox.Items
-                .IndexOf(dirInfo.Name);
+            int selectItem = advProjNameComboBox.Items.IndexOf(dirInfo.Name);
             advProjNameComboBox.SelectedIndex = selectItem;
         }
 
         /// <summary>
-        /// Событие изменение текста в списке с именами загруженных
-        /// проектов
+        /// Событие изменение текста в списке с именами загруженных проектов
         /// </summary>
         private void advProjNameComboBox_SelectedItemChanged(object sender, 
             EventArgs e)
@@ -774,10 +772,10 @@ namespace InterprojectExchange
         private void LoadAdvProjData(string projName)
         {
             advProjItems.Clear();
-            var model = interprojectExchange.GetModel(projName);
+            IProjectModel model = interprojectExchange.GetModel(projName);
             if (!model.Selected)
             {
-                var devices = model.Devices;
+                List<DeviceInfo> devices = model.Devices;
                 foreach (var devInfo in devices)
                 {
                     var info = new string[] 
@@ -789,7 +787,6 @@ namespace InterprojectExchange
                     item.Tag = devInfo.Type;
                     advProjItems.Add(item);
                 }
-
                 interprojectExchange.SelectModel(model);
 
                 ReloadListViewWithSignals();
@@ -881,13 +878,12 @@ namespace InterprojectExchange
             form.ShowDialog();
 
             string selectedModelname = advProjNameComboBox.Text;
-            if(selectedModelname != "")
+            if(string.IsNullOrEmpty(selectedModelname))
             {
                 IProjectModel selectedModel = interprojectExchange.GetModel(
                     selectedModelname);
                 interprojectExchange.SelectModel(selectedModel);
             }
-
         }
 
         /// <summary>
