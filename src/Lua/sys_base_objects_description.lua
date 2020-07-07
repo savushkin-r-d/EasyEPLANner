@@ -407,7 +407,13 @@ return
                 },
                 SLOW_HEATING = {
                     name = "Томление",
-                    params = { },
+                    params = 
+                    {
+                        active =
+                        {
+                            BAKE_TIME = { name = "Время нагрева (2-го шага)" },
+                        },
+                    },
                     steps =
                     {
                         TO_START_TEMPERATURE = { name = "Нагрев до заданной температуры" },
