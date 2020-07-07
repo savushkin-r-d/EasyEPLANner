@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using System.IO;
-using EasyEPlanner;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -15,19 +14,19 @@ namespace InterprojectExchange
         /// Конструктор
         /// </summary>
         /// <param name="owner">Класс-владелец</param>
-        /// <param name="fileWithSignals">Имя файла, межконтроллерный обмен
+        /// <param name="signalsFile">Имя файла, межконтроллерного обмена
         /// </param>
         public InterprojectExchangeSaver(InterprojectExchange owner,
-            string fileWithSignals)
+            string signalsFile)
         {
-            this.owner = owner;
-            SharedFile = fileWithSignals;
+            interprojectExchange = owner;
+            SharedFile = signalsFile;
         }
 
         /// <summary>
         /// Сохранить межконтроллерный обмен
         /// </summary>
-        public async void Save()
+        public async void SaveAsync()
         {
             await Task.Run(() => WriteMainProject());
             WriteAdvancedProjectsAsync();
@@ -42,51 +41,51 @@ namespace InterprojectExchange
             if (!string.IsNullOrEmpty(res))
             {
                 res = res.Replace("\t", "    ");
-                WriteSharedFile(owner.CurrentProjectName,
+                WriteSharedFile(interprojectExchange.MainProjectName,
                     new List<string> { res });
             }
             else
             {
-                DeleteSharedFile(owner.CurrentProjectName);
+                DeleteSharedFile(interprojectExchange.MainProjectName);
             }
         }
 
         /// <summary>
         /// Генерация файла для текущего проекта
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Содержимое файла для сохранения</returns>
         private string SaveMainProject()
         {
-            IProjectModel mainModel = owner.GetModel(owner.CurrentProjectName);
             var remoteGateWays = new List<string>();
             var sharedDevices = new List<string>();
-            foreach (var model in owner.Models)
+
+            string[] loadedAdvancedModelsNames = interprojectExchange
+                .LoadedAdvancedModelNames;
+            CurrentProjectModel mainModel = interprojectExchange.MainModel;
+            bool invertSignals = false;
+
+            foreach (var modelName in loadedAdvancedModelsNames)
             {
-                bool validModel = model.ProjectName != mainModel.ProjectName &&
-                    model.MarkedForDelete == false;
-                if (validModel)
+                IProjectModel model = interprojectExchange.GetModel(modelName);
+                string projectName = model.ProjectName;
+                // SelectModel - с каким проектом работаем,
+                // влияет на список сигналов с mainModel
+                interprojectExchange.SelectModel(model);
+
+                string remoteGateWay = SaveProjectRemoteGateWays(projectName, 
+                    mainModel.PacInfo, mainModel.ReceiverSignals, 
+                    invertSignals);
+                if (!string.IsNullOrEmpty(remoteGateWay))
                 {
-                    var currentModel = mainModel as CurrentProjectModel;
-                    string projectName = model.ProjectName;
-                    // SelectModel - с каким проектом работаем,
-                    // влияет на список сигналов с currentModel
-                    owner.SelectModel(model);               
+                    remoteGateWays.Add(remoteGateWay);
+                }
 
-                    string remoteGateWay = SaveProjectRemoteGateWays(
-                        projectName, currentModel.PacInfo,
-                        currentModel.ReceiverSignals, false);
-                    if (!string.IsNullOrEmpty(remoteGateWay))
-                    {
-                        remoteGateWays.Add(remoteGateWay);
-                    }
-
-                    string sharedDevice = SaveProjectSharedDevices(projectName,
-                        model.PacInfo.Station, currentModel.SourceSignals,
-                        false);
-                    if (!string.IsNullOrEmpty(sharedDevice))
-                    {
-                        sharedDevices.Add(sharedDevice);
-                    }
+                string sharedDevice = SaveProjectSharedDevices(projectName,
+                    model.PacInfo.Station, mainModel.SourceSignals, 
+                    invertSignals);
+                if (!string.IsNullOrEmpty(sharedDevice))
+                {
+                    sharedDevices.Add(sharedDevice);
                 }
             }
 
@@ -100,9 +99,10 @@ namespace InterprojectExchange
         /// </summary>
         private async void WriteAdvancedProjectsAsync()
         {
-            foreach (var model in owner.Models)
+            string mainProjectName = interprojectExchange.MainProjectName;
+            foreach (var model in interprojectExchange.Models)
             {
-                if (model.ProjectName != owner.CurrentProjectName)
+                if (model.ProjectName != mainProjectName)
                 {
                     await Task.Run(() => WriteAdvancedModel(model));
                 }
@@ -115,8 +115,7 @@ namespace InterprojectExchange
         /// <param name="model">Модель</param>
         private void WriteAdvancedModel(IProjectModel model)
         {
-            bool deleteModel =
-                (model.ReceiverSignals.Count == 0 &&
+            bool deleteModel = (model.ReceiverSignals.Count == 0 &&
                 model.SourceSignals.Count == 0) ||
                 model.MarkedForDelete;
             if (deleteModel)
@@ -137,7 +136,7 @@ namespace InterprojectExchange
         private void SaveAdvancedModelRemoteGateWays(IProjectModel model)
         {
             List<string> sharedFileData = model.SharedFileAsStringList;
-            string searchPattern = $"['{owner.CurrentProjectName}'] =";
+            string searchPattern = $"['{interprojectExchange.MainProjectName}'] =";
             int startIndex = FindModelDescriptionStartIndex(searchPattern,
                 sharedFileData);
 
@@ -158,10 +157,11 @@ namespace InterprojectExchange
                 startIndex += offset;
             }
 
-            IProjectModel mainModel = owner.GetModel(owner.CurrentProjectName);
+            bool invertSignals = true;
+            IProjectModel mainModel = interprojectExchange.MainModel;
             string remoteGateWay = SaveProjectRemoteGateWays(
                 mainModel.ProjectName, model.PacInfo,
-                model.ReceiverSignals, true);
+                model.ReceiverSignals, invertSignals);
             if (!string.IsNullOrEmpty(remoteGateWay))
             {
                 sharedFileData.Insert(startIndex, remoteGateWay);
@@ -178,7 +178,7 @@ namespace InterprojectExchange
         {
             List<string> sharedFileData = model.SharedFileAsStringList;
             string searchPattern = $"projectName = " +
-                $"\"{owner.CurrentProjectName}\",";
+                $"\"{interprojectExchange.MainProjectName}\",";
             int startIndex = FindModelDescriptionStartIndex(searchPattern,
                 sharedFileData);
 
@@ -200,11 +200,12 @@ namespace InterprojectExchange
                 startIndex += offset;
             }
 
-            IProjectModel mainModel = owner.GetModel(owner.CurrentProjectName);
-            owner.SelectModel(model);
+            IProjectModel mainModel = interprojectExchange.MainModel;
+            interprojectExchange.SelectModel(model);
+            bool invertSignals = true;
             string sharedDevices = SaveProjectSharedDevices(
                 mainModel.ProjectName, mainModel.PacInfo.Station,
-                model.SourceSignals, true);
+                model.SourceSignals, invertSignals);
             if (!string.IsNullOrEmpty(sharedDevices))
             {
                 sharedFileData.Insert(startIndex, sharedDevices);
@@ -224,13 +225,14 @@ namespace InterprojectExchange
         private string SaveProjectRemoteGateWays(string projectName,
             PacInfo pacInfo, DeviceSignalsInfo signals, bool invertSignals)
         {
-            var res = "";
             if (signals.Count <= 0)
             {
                 return "";
             }
 
             const string prefix = "\t\t";
+            var res = "";
+
             res += SavePACInfo(pacInfo, projectName, prefix);
             res += SaveSignals(signals, prefix, invertSignals);
             res += "\t},";
@@ -251,18 +253,17 @@ namespace InterprojectExchange
         private string SaveProjectSharedDevices(string projectName,
             int stationNum, DeviceSignalsInfo signals, bool invertSignals)
         {
-            var res = "";
             if (signals.Count <= 0)
             {
                 return "";
             }
 
             const string prefix = "\t\t";
+            var res = "";
+
             res += $"\t[{stationNum}] =\n\t{{\n";
             res += prefix + $"projectName = \"{projectName}\",\n";
-
             res += SaveSignals(signals, prefix, invertSignals);
-
             res += "\t},";
 
             res = res.Replace("\t", "    ");
@@ -344,8 +345,8 @@ namespace InterprojectExchange
             bool invertSignals)
         {
             var res = "";
+            var digIn = "";
 
-            string digIn = "";
             foreach (var signal in signals)
             {
                 if (invertSignals)
@@ -357,6 +358,7 @@ namespace InterprojectExchange
                     digIn += prefix + $"__{signal},\n";
                 }
             }
+
             if (!string.IsNullOrEmpty(digIn))
             {
                 if (invertSignals)
@@ -383,8 +385,8 @@ namespace InterprojectExchange
             bool invertSignals)
         {
             var res = "";
+            var digOut = "";
 
-            string digOut = "";
             foreach (var signal in signals)
             {
                 if (invertSignals)
@@ -397,6 +399,7 @@ namespace InterprojectExchange
                     digOut += prefix + $"{signal},\n";
                 }
             }
+
             if (!string.IsNullOrEmpty(digOut))
             {
                 if (invertSignals)
@@ -423,8 +426,8 @@ namespace InterprojectExchange
             bool invertSignals)
         {
             var res = "";
+            var analogIn = "";
 
-            string analogIn = "";
             foreach (var signal in signals)
             {
                 if (invertSignals)
@@ -436,6 +439,7 @@ namespace InterprojectExchange
                     analogIn += prefix + $"__{signal},\n";
                 }
             }
+
             if (!string.IsNullOrEmpty(analogIn))
             {
                 if (invertSignals)
@@ -462,8 +466,8 @@ namespace InterprojectExchange
             bool invertSignals)
         {
             var res = "";
+            var analogOut = "";
 
-            string analogOut = "";
             foreach (var signal in signals)
             {
                 if (invertSignals)
@@ -475,6 +479,7 @@ namespace InterprojectExchange
                     analogOut += prefix + $"{signal},\n";
                 }
             }
+
             if (!string.IsNullOrEmpty(analogOut))
             {
                 if (invertSignals)
@@ -531,8 +536,6 @@ namespace InterprojectExchange
         private void FillDefaultSharedData(string variableName,
             IProjectModel model)
         {
-            bool emptyFile = model.SharedFileAsStringList.Count == 0;
-
             bool containVarInList = false;
             foreach (var lines in model.SharedFileAsStringList)
             {
@@ -542,6 +545,7 @@ namespace InterprojectExchange
                 }
             }
 
+            bool emptyFile = model.SharedFileAsStringList.Count == 0;
             if (emptyFile || !containVarInList)
             {
                 model.SharedFileAsStringList.Add(variableName);
@@ -614,9 +618,9 @@ namespace InterprojectExchange
         private void WriteSharedFile(string projectName,
             List<string> sharedFileData)
         {
-            string path = Path.Combine(ProjectManager.GetInstance()
-                .GetPtusaProjectsPath(""), projectName, SharedFile);
-            using (var writer = new StreamWriter(path, false,
+            string path = Path.Combine(interprojectExchange.PathWithProjects, 
+                projectName, SharedFile);
+            using (var writer = new StreamWriter(path, false, 
                 Encoding.GetEncoding(1251)))
             {
                 foreach (string line in sharedFileData)
@@ -632,8 +636,8 @@ namespace InterprojectExchange
         /// <param name="projectName">Имя проекта</param>
         public void DeleteSharedFile(string projectName)
         {
-            string path = Path.Combine(ProjectManager.GetInstance()
-                .GetPtusaProjectsPath(""), projectName, SharedFile);
+            string path = Path.Combine(interprojectExchange.PathWithProjects, 
+                projectName, SharedFile);
             File.Delete(path);
         }
 
@@ -642,6 +646,6 @@ namespace InterprojectExchange
         /// </summary>
         private string SharedFile { get; set; }
 
-        private InterprojectExchange owner;
+        private InterprojectExchange interprojectExchange;
     }
 }

@@ -67,7 +67,7 @@ namespace InterprojectExchange
                 return false;
             }
 
-            string projName = interprojectExchange.CurrentProjectName;
+            string projName = interprojectExchange.MainProjectName;
             string pathToProjectDir = ProjectManager.GetInstance()
                 .GetPtusaProjectsPath(projName);
             LoadProjectsData(pathToProjectDir, projName);
@@ -345,7 +345,7 @@ namespace InterprojectExchange
             CurrentProjectModel mainModel = interprojectExchange.MainModel;
             string alreadySelectedProject = mainModel.SelectedAdvancedProject;
             mainModel.SelectedAdvancedProject = interprojectExchange
-                .CurrentProjectName;
+                .MainProjectName;
             IProjectModel model = interprojectExchange.GetModel(projName);
             model.PacInfo.IP = mainModel.PacInfo.IP;
             mainModel.SelectedAdvancedProject = alreadySelectedProject;
@@ -392,7 +392,7 @@ namespace InterprojectExchange
         {
             interprojectExchangeSaver = new InterprojectExchangeSaver(
                 interprojectExchange, signalsFile);
-            interprojectExchangeSaver.Save();
+            interprojectExchangeSaver.SaveAsync();
         }
 
         const string devicesAndPLCFile = "main.io.lua";

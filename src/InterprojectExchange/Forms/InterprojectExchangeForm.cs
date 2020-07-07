@@ -66,7 +66,7 @@ namespace InterprojectExchange
         private void InterprojectExchangeForm_Load(object sender, EventArgs e)
         {
             // Установка имени текущего проекта
-            string currentProjectName = interprojectExchange.CurrentProjectName;
+            string currentProjectName = interprojectExchange.MainProjectName;
             currProjNameTextBox.Text = currentProjectName;
 
             // Заполнение названий моделей в списке

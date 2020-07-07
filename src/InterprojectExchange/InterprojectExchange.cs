@@ -128,7 +128,7 @@ namespace InterprojectExchange
             var signals = new Dictionary<string, List<string[]>>();
 
             IProjectModel currentProjectModel = Models
-                .Where(x => x.ProjectName == CurrentProjectName)
+                .Where(x => x.ProjectName == MainProjectName)
                 .FirstOrDefault();
             IProjectModel advancedProjectModel = Models
                 .Where(x => x.Selected == true).FirstOrDefault();
@@ -207,7 +207,7 @@ namespace InterprojectExchange
             string advancedProjectDevice)
         {
             IProjectModel currentProjectModel = Models
-                .Where(x => x.ProjectName == CurrentProjectName)
+                .Where(x => x.ProjectName == MainProjectName)
                 .FirstOrDefault();
             IProjectModel advancedProjectModel = Models
                 .Where(x => x.Selected == true).FirstOrDefault();
@@ -264,7 +264,7 @@ namespace InterprojectExchange
             string currentProjectDevice, string advancedProjectDevice)
         {
             IProjectModel currentProjectModel = Models
-            .Where(x => x.ProjectName == CurrentProjectName)
+            .Where(x => x.ProjectName == MainProjectName)
             .FirstOrDefault();
             IProjectModel advancedProjectModel = Models
                 .Where(x => x.Selected == true).FirstOrDefault();
@@ -319,7 +319,7 @@ namespace InterprojectExchange
             string oldValue, string newValue)
         {
             IProjectModel currentProjectModel = Models
-            .Where(x => x.ProjectName == CurrentProjectName)
+            .Where(x => x.ProjectName == MainProjectName)
             .FirstOrDefault();
             DeviceSignalsInfo currentProjectSignals;
             if (editMode == EditModeEnum.SourceReciever)
@@ -463,7 +463,7 @@ namespace InterprojectExchange
             {
                 return interprojectExchange.Models
                     .Where(x => x.ProjectName != interprojectExchange
-                    .CurrentProjectName &&
+                    .MainProjectName &&
                     x.MarkedForDelete == false)
                     .Select(x => x.ProjectName)
                     .ToArray();
@@ -477,7 +477,7 @@ namespace InterprojectExchange
         { 
             get
             {
-                return GetModel(CurrentProjectName) as CurrentProjectModel;
+                return GetModel(MainProjectName) as CurrentProjectModel;
             } 
         }
 
@@ -485,7 +485,7 @@ namespace InterprojectExchange
         /// Получить имя текущего проекта для формы
         /// </summary>
         /// <returns></returns>
-        public string CurrentProjectName
+        public string MainProjectName
         {
             get
             {
