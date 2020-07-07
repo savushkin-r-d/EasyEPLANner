@@ -23,19 +23,19 @@ namespace InterprojectExchange
 
         private void cancelBtn_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            Hide();
         }
 
         private void UnknownDevTypeForm_FormClosed(object sender, 
             FormClosedEventArgs e)
         {
-            this.Dispose();
+            Dispose();
         }
 
         private void okBtn_Click(object sender, EventArgs e)
         {
             GroupForAddingDeviceName = checkedButton.Text;
-            this.Hide();
+            Hide();
         }
 
         private void AIBtn_CheckedChanged(object sender, EventArgs e)

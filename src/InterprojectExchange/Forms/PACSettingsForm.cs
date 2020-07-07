@@ -15,116 +15,107 @@ namespace InterprojectExchange
         private InterprojectExchange interprojectExchange;
         private Dictionary<string, PacInfo> projectsSendingFromMain;
         private Dictionary<string, PacInfo> projectsSendingToMain;
-        private string selectedProjectBeforeOpeningThisForm = "";
+        private string projectBeforeOpenForm = "";
+        private EditMode editMode;
 
         private void cancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void PACSettingsForm_FormClosed(object sender, 
             FormClosedEventArgs e)
         {
-            this.Dispose();
+            Dispose();
         }
 
         private void acceptBtn_Click(object sender, EventArgs e)
         {
-            if (projectsListView.SelectedItems.Count > 0)
+            if (projectsListView.SelectedItems.Count != 0)
             {
                 string projectName = projectsListView.SelectedItems[0].Text;
                 SaveIntermediateData(projectName);
-                SaveDataToModels();
+                WorkWithProjectsData(false);
             }
 
-            this.Close();
-        }
-
-        /// <summary>
-        /// Сохранение измененных данных
-        /// </summary>
-        private void SaveDataToModels()
-        {
-            foreach (var model in interprojectExchange.Models)
-            {
-                if (model.ProjectName != interprojectExchange.CurrentProjectName)
-                {
-                    string projectName = model.ProjectName;
-                    PacInfo intermediateSettings = projectsSendingFromMain[projectName];
-                    model.PacInfo = intermediateSettings.Clone();
-                }
-            }
-
-            var loadedModels = interprojectExchange.Models
-                .Where(x => x.ProjectName !=
-                interprojectExchange.CurrentProjectName)
-                .Select(x => x.ProjectName).ToArray();
-
-            var mainModel = interprojectExchange.GetModel(
-                interprojectExchange.CurrentProjectName) as CurrentProjectModel;
-            foreach (string modelName in loadedModels)
-            {
-                mainModel.SelectedAdvancedProject = modelName;
-                PacInfo intermediateSettings = projectsSendingToMain[modelName];
-                mainModel.PacInfo = intermediateSettings.Clone();
-                mainModel.SelectedAdvancedProject =
-                    selectedProjectBeforeOpeningThisForm;
-            }
+            Close();
         }
 
         private void PACSettingsForm_Load(object sender, EventArgs e)
         {
+            // Установка стандартного значения режима
             modeComboBox.SelectedValueChanged -= 
                 modeComboBox_SelectedValueChanged;
             modeComboBox.SelectedIndex = 0;
+            editMode = EditMode.MainSource;
             modeComboBox.SelectedValueChanged += 
                 modeComboBox_SelectedValueChanged;
 
             interprojectExchange = InterprojectExchange.GetInstance();
             projectsSendingFromMain = new Dictionary<string, PacInfo>();
             projectsSendingToMain = new Dictionary<string, PacInfo>();
-            LoadProjectsToListView();
-            selectedProjectBeforeOpeningThisForm = interprojectExchange.Models
+            WorkWithProjectsData(true);
+
+            projectBeforeOpenForm = interprojectExchange.Models
                 .Where(x => x.Selected == true)
                 .Select(x => x.ProjectName)
                 .FirstOrDefault();
         }
 
         /// <summary>
-        /// Загрузить проекты в ListView
+        /// Работа над данными проекта. True - загрузка, False - сохранение.
         /// </summary>
-        private void LoadProjectsToListView()
+        /// <param name="loadProjectsData">Загрузка данных, или сохранение
+        /// </param>
+        private void WorkWithProjectsData(bool loadProjectsData)
         {
-            var loadedModels = interprojectExchange.Models
-                .Where(x => x.ProjectName != 
-                interprojectExchange.CurrentProjectName &&
-                x.MarkedForDelete == false)
-                .Select(x => x.ProjectName).ToArray();
-
-            foreach (var model in interprojectExchange.Models)
+            var loadedModels = interprojectExchange.LoadedAdvancedModelNames;
+            CurrentProjectModel mainModel = interprojectExchange.MainModel;
+            foreach (var modelName in loadedModels)
             {
-                bool validModel =
-                    model.ProjectName != interprojectExchange
-                    .CurrentProjectName &&
-                    model.MarkedForDelete == false;
-                if (validModel)
-                {
-                    string projName = model.ProjectName;
-                    projectsListView.Items.Add(projName);
-                    projectsSendingFromMain.Add(projName, model.PacInfo
-                        .Clone());
-                }
-            }
-
-            var mainModel = interprojectExchange.GetModel(
-                interprojectExchange.CurrentProjectName) as CurrentProjectModel;
-            foreach(string modelName in loadedModels)
-            {
+                IProjectModel model = interprojectExchange.GetModel(modelName);
+                string projName = model.ProjectName;
                 mainModel.SelectedAdvancedProject = modelName;
-                projectsSendingToMain.Add(modelName, mainModel.PacInfo);
-                mainModel.SelectedAdvancedProject = 
-                    selectedProjectBeforeOpeningThisForm;
+                if(loadProjectsData)
+                {
+                    LoadModelData(projName, model, mainModel);
+                }
+                else
+                {
+                    SaveModelData(projName, model, mainModel);
+                }
+                mainModel.SelectedAdvancedProject = projectBeforeOpenForm;
             }
+        }
+
+        /// <summary>
+        /// Сохранить данные модели
+        /// </summary>
+        /// <param name="projectName">Имя проекта/модели</param>
+        /// <param name="model">Модель</param>
+        /// <param name="mainModel">Главная модель</param>
+        private void SaveModelData(string projectName, IProjectModel model,
+            IProjectModel mainModel)
+        {
+            PacInfo intermediateSettings = projectsSendingFromMain[projectName];
+            model.PacInfo = intermediateSettings.Clone();
+
+            intermediateSettings = projectsSendingToMain[projectName];
+            mainModel.PacInfo = intermediateSettings.Clone();
+        }
+
+        /// <summary>
+        /// Загрузить данные модели
+        /// </summary>
+        /// <param name="projectName">Имя проекта/модели</param>
+        /// <param name="model">Модель</param>
+        /// <param name="mainModel">Главная модель</param>
+        private void LoadModelData(string projectName, IProjectModel model,
+            IProjectModel mainModel)
+        {
+            projectsListView.Items.Add(projectName);
+            projectsSendingFromMain.Add(projectName, model.PacInfo.Clone());
+            projectsSendingToMain.Add(projectName, mainModel.PacInfo.Clone());
         }
 
         private void projectsListView_ItemSelectionChanged(object sender, 
@@ -147,7 +138,7 @@ namespace InterprojectExchange
         private void LoadProjectDataToFields(string projectName)
         {
             PacInfo pacInfo;
-            if(EditMode == 0)
+            if(editMode == EditMode.MainSource)
             {
                 pacInfo = projectsSendingFromMain[projectName];
             }
@@ -167,7 +158,6 @@ namespace InterprojectExchange
             else
             {
                 disableEmulationBtn_Click(this, new EventArgs());
-
             }
 
             cycletimeTextBox.Text = pacInfo.CycleTime.ToString();
@@ -195,7 +185,7 @@ namespace InterprojectExchange
             try
             {
                 PacInfo pacInfo;
-                if (EditMode == 0)
+                if (editMode == EditMode.MainSource)
                 {
                     pacInfo = projectsSendingFromMain[projectName];
                 }
@@ -205,12 +195,11 @@ namespace InterprojectExchange
                 }
 
                 pacInfo.IPEmulator = emulatorIPTextBox.Text;
-                pacInfo.EmulationEnabled = 
-                    enableEmulationBtn.Checked ? true : false;
+                pacInfo.EmulationEnabled = enableEmulationBtn.Checked;
                 pacInfo.CycleTime = int.Parse(cycletimeTextBox.Text);
                 pacInfo.TimeOut = int.Parse(timeoutTextBox.Text);
                 pacInfo.Port = int.Parse(portTextBox.Text);
-                pacInfo.GateEnabled = enableGateBtn.Checked ? true : false;
+                pacInfo.GateEnabled = enableGateBtn.Checked;
                 pacInfo.Station = int.Parse(stationNumberTextBox.Text);
             }
             catch
@@ -249,85 +238,95 @@ namespace InterprojectExchange
         private void stationNumberTextBox_KeyPress(object sender, 
             KeyPressEventArgs e)
         {
-            if (!(char.IsDigit(e.KeyChar) || e.KeyChar == BackSpace))
-            {
-                e.Handled = true;
-            }
+            CheckKeyPress(e);
         }
 
         private void portTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!(char.IsDigit(e.KeyChar) || e.KeyChar == BackSpace))
-            {
-                e.Handled = true;
-            }
+            CheckKeyPress(e);
         }
 
         private void timeoutTextBox_KeyPress(object sender, 
             KeyPressEventArgs e)
         {
-            if (!(char.IsDigit(e.KeyChar) || e.KeyChar == BackSpace))
-            {
-                e.Handled = true;
-            }
+            CheckKeyPress(e);
         }
 
         private void cycletimeTextBox_KeyPress(object sender, 
             KeyPressEventArgs e)
         {
-            if (!(char.IsDigit(e.KeyChar) || e.KeyChar == BackSpace))
-            {
-                e.Handled = true;
-            }
+            CheckKeyPress(e);
         }
+
+        const char backSpace = '\b';
 
         private void emulatorIPTextBox_KeyPress(object sender, 
             KeyPressEventArgs e)
         {
             bool allowedKeys = (e.KeyChar == '.' ||
                 char.IsDigit(e.KeyChar) ||
-                e.KeyChar == BackSpace);
+                e.KeyChar == backSpace);
             if (!allowedKeys)
             {
                 e.Handled = true;
             }
         }
 
-        char BackSpace = '\b';
+        /// <summary>
+        /// Проверка вводимых символов в поля для настройки PAC
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        private bool CheckKeyPress(KeyPressEventArgs e)
+        {
+            if (!(char.IsDigit(e.KeyChar) || e.KeyChar == backSpace))
+            {
+                e.Handled = true;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         /// <summary>
-        /// Режим редактирования (0 - источник, 1 - приемник)
+        /// Режим редактирования главного проекта
         /// </summary>
-        public int EditMode { get; set; }
+        public enum EditMode
+        {
+            MainSource,
+            MainReceiver,
+        }
 
         /// <summary>
         /// Изменить режим редактирования
         /// </summary>
-        public void ChangedEditMode()
+        public void ChangeEditMode()
         {
-            if(EditMode == 0)
+            if(editMode == EditMode.MainSource)
             {
-                EditMode = 1;
+                editMode = EditMode.MainReceiver;
             }
             else
             {
-                EditMode = 0;
+                editMode = EditMode.MainSource;
             }
         }
 
         private void modeComboBox_SelectedValueChanged(object sender, 
             EventArgs e)
         {
-            if(projectsListView.SelectedItems.Count > 0 )
+            if(projectsListView.SelectedItems.Count != 0 )
             {
                 string project = projectsListView.SelectedItems[0].Text;
                 SaveIntermediateData(project);
-                ChangedEditMode();
+                ChangeEditMode();
                 LoadProjectDataToFields(project);
             }
             else
             {
-                ChangedEditMode();
+                ChangeEditMode();
             }
         }
     }

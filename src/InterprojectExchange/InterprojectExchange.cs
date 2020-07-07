@@ -77,9 +77,7 @@ namespace InterprojectExchange
         /// <param name="selectingModel">Выбранная модель</param>
         public void SelectModel(IProjectModel selectingModel)
         {
-            var currentProjectModel = Models
-                .Where(x => x.ProjectName == Owner.GetMainProjectName())
-                .FirstOrDefault() as CurrentProjectModel;
+            var currentProjectModel = MainModel;
 
             foreach(var model in Models)
             {
@@ -454,6 +452,33 @@ namespace InterprojectExchange
             }
 
             return canRestore;
+        }
+
+        /// <summary>
+        /// Имена загруженных альтернативных моделей
+        /// </summary>
+        public string[] LoadedAdvancedModelNames
+        {
+            get
+            {
+                return interprojectExchange.Models
+                    .Where(x => x.ProjectName != interprojectExchange
+                    .CurrentProjectName &&
+                    x.MarkedForDelete == false)
+                    .Select(x => x.ProjectName)
+                    .ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Главная модель
+        /// </summary>
+        public CurrentProjectModel MainModel 
+        { 
+            get
+            {
+                return GetModel(CurrentProjectName) as CurrentProjectModel;
+            } 
         }
 
         /// <summary>
