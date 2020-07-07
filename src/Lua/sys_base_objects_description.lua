@@ -135,6 +135,10 @@ return
             equipment = { },
             aggregateParameters =
             {
+                active =
+                {
+                    HEATING_WATER_TEMPERATURE = { name = "Температура подогрева воды" },
+                },
                 main =
                 {
                     NEED_BOILER = { name = "Использовать бойлер", defaultValue = "false" },
