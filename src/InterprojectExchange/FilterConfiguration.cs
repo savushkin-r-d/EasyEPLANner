@@ -31,11 +31,11 @@ namespace InterprojectExchange
             SignalsFilterChanged.Invoke();
 
             var iniFile = new IniFile(pathToConfig);
-            foreach(var section in filterParameters.Keys)
+            foreach(var section in FilterParameters.Keys)
             {
-                foreach(var key in filterParameters[section].Keys)
+                foreach(var key in FilterParameters[section].Keys)
                 {
-                    bool value = filterParameters[section][key];
+                    bool value = FilterParameters[section][key];
                     iniFile.WriteString(section, key, value.ToString());
                 }
             }
@@ -46,61 +46,56 @@ namespace InterprojectExchange
         /// </summary>
         public void Read() 
         {
-            if (File.Exists(pathToConfig))
-            {
-                var newFilterParameters = 
-                    new Dictionary<string, Dictionary<string, bool>>();
-
-                var iniFile = new IniFile(pathToConfig);
-                foreach(var section in filterParameters.Keys)
-                {
-                    var itemParameters = new Dictionary<string, bool>();
-
-                    var parameters = filterParameters[section];
-                    foreach (var keyValuePair in parameters)
-                    {
-                        string readValue = iniFile
-                            .ReadString(section, keyValuePair.Key, "false");
-                        bool.TryParse(readValue, out bool isEnabled);
-
-                        itemParameters.Add(keyValuePair.Key, isEnabled);
-                    }
-
-                    newFilterParameters.Add(section, itemParameters);
-                }
-
-                filterParameters = newFilterParameters;
-            }
-            else
+            if (!File.Exists(pathToConfig))
             {
                 MessageBox.Show("Не найден файл конфигурации для фильтра",
                     "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
+
+            var newFilterParameters = 
+                new Dictionary<string, Dictionary<string, bool>>();
+            var iniFile = new IniFile(pathToConfig);
+            // Стандартное значение ключа параметра в .ini
+            string defaultValue = "false";
+
+            foreach (var section in FilterParameters.Keys)
+            {
+                var itemParameters = new Dictionary<string, bool>();
+                Dictionary<string, bool> parameters = FilterParameters[section];
+
+                foreach (var keyValuePair in parameters)
+                {
+                    string readValue = iniFile.ReadString(section, 
+                        keyValuePair.Key, defaultValue);
+                    bool.TryParse(readValue, out bool isEnabled);
+                    itemParameters.Add(keyValuePair.Key, isEnabled);
+                }
+
+                newFilterParameters.Add(section, itemParameters);
+            }
+
+            FilterParameters = newFilterParameters;
         }
 
         /// <summary>
         /// Фильтровать
         /// </summary>
-        /// <param name="items">Элементы для фильтра</param>
-        /// <param name="filterList">Какой список сортируется</param>
+        /// <param name="items">Элементы для фильтрации</param>
+        /// <param name="filterList">Какой список фильтруется</param>
         public ListViewItem[] FilterOut(List<ListViewItem> items, 
             FilterList filterList)
         {
             var filteredList = new List<ListViewItem>();
-            string[] allowedDevices = new string[0];
-            if (filterList == FilterList.Current)
+            var allowedDevices = new string[0];
+
+            if (filterList == FilterList.CurrentProject)
             {
-                allowedDevices = FilterParameters["currProjDevList"]
-                    .Where(x => x.Value == true)
-                    .Select(x => x.Key)
-                    .ToArray();
+                allowedDevices = CurrentProjectSelectedDevices;
             }
             else
             {
-                allowedDevices = FilterParameters["advProjDevList"]
-                    .Where(x => x.Value == true)
-                    .Select(x => x.Key)
-                    .ToArray();
+                allowedDevices = AdvancedProjectSelectedDevices;
             }
 
             if(allowedDevices.Length != 0)
@@ -124,13 +119,16 @@ namespace InterprojectExchange
         {
             var devices = new List<string>();
             var types = Enum.GetValues(typeof(Device.DeviceType));
+            const string noneType = "NONE";
+
             foreach (var type in types)
             {
-                if (type.ToString() != "NONE")
+                if (type.ToString() != noneType)
                 {
                     devices.Add(type.ToString());
                 }
             }
+
             return devices;
         }
 
@@ -153,23 +151,27 @@ namespace InterprojectExchange
         /// </summary>
         private void SetUpFilterParameters()
         {
-            filterParameters = new Dictionary<string, Dictionary<string, bool>>();
+            FilterParameters = 
+                new Dictionary<string, Dictionary<string, bool>>();
 
-            var currProjDevList = new Dictionary<string, bool>();
-            var advProjDevList = new Dictionary<string, bool>();
-            var bindedSignalsList = new Dictionary<string, bool>();
+            var currProjParameters = new Dictionary<string, bool>();
+            var advProjParameters = new Dictionary<string, bool>();
+            var bindedSignalsParameters = new Dictionary<string, bool>();
 
-            foreach(var dev in GetDevicesList())
+            List<string> devices = GetDevicesList();
+            bool defaultValue = false;
+            foreach(var dev in devices)
             {
-                currProjDevList.Add(dev, false);
-                advProjDevList.Add(dev, false);
+                currProjParameters.Add(dev, defaultValue);
+                advProjParameters.Add(dev, defaultValue);
             }
-
-            bindedSignalsList.Add("groupAsPairsCheckBox", false);
-
-            filterParameters.Add("currProjDevList", currProjDevList);
-            filterParameters.Add("advProjDevList", advProjDevList);
-            filterParameters.Add("bindedSignalsList", bindedSignalsList);
+            
+            // Строковые названия - названия UI-элементов на форме
+            bindedSignalsParameters.Add("groupAsPairsCheckBox", defaultValue);
+            
+            FilterParameters.Add("currProjDevList", currProjParameters);
+            FilterParameters.Add("advProjDevList", advProjParameters);
+            FilterParameters.Add("bindedSignalsList", bindedSignalsParameters);
         }
 
         /// <summary>
@@ -201,11 +203,49 @@ namespace InterprojectExchange
         /// <summary>
         /// Параметры фильтра
         /// </summary>
-        public Dictionary<string, Dictionary<string, bool>> FilterParameters
+        public Dictionary<string, Dictionary<string, bool>> FilterParameters 
+        { 
+            get; 
+            private set; 
+        }
+
+        /// <summary>
+        /// Выбранные устройства для отображения в текущем проекте
+        /// </summary>
+        private string[] CurrentProjectSelectedDevices
         {
             get
             {
-                return filterParameters;
+                return FilterParameters["currProjDevList"]
+                    .Where(x => x.Value == true)
+                    .Select(x => x.Key)
+                    .ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Выбранные устройства для отображения в альтернативном проекте
+        /// </summary>
+        private string[] AdvancedProjectSelectedDevices
+        {
+            get
+            {
+                return FilterParameters["advProjDevList"]
+                    .Where(x => x.Value == true)
+                    .Select(x => x.Key)
+                    .ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Использовать группировку устройств или нет
+        /// </summary>
+        public bool UseDeviceGroups
+        {
+            get
+            {
+                return FilterParameters["bindedSignalsList"]
+                    ["groupAsPairsCheckBox"];
             }
         }
 
@@ -227,13 +267,12 @@ namespace InterprojectExchange
         /// </summary>
         public enum FilterList
         {
-            Current,
-            Advanced,
+            CurrentProject,
+            AdvancedProject,
         }
 
         private static FilterConfiguration filterConfiguration;
         private string pathToConfig;
         private FilterForm filterForm;
-        private Dictionary<string, Dictionary<string, bool>> filterParameters;
     }
 }

@@ -112,8 +112,7 @@ namespace InterprojectExchange
             advProjSearchBox_TextChanged(this, new EventArgs());
             currProjSearchBox_TextChanged(this, new EventArgs());
 
-            bool useGroupsFilter = filterConfiguration.FilterParameters[
-                "bindedSignalsList"]["groupAsPairsCheckBox"];
+            bool useGroupsFilter = filterConfiguration.UseDeviceGroups;
             bindedSignalsList.ShowGroups = useGroupsFilter;
         }
 
@@ -585,7 +584,7 @@ namespace InterprojectExchange
         private void currProjSearchBox_TextChanged(object sender, EventArgs e)
         {
             var filteredThroughType = filterConfiguration.FilterOut(
-                currProjItems, FilterConfiguration.FilterList.Current);
+                currProjItems, FilterConfiguration.FilterList.CurrentProject);
             SearchSubstringInListView(currentProjSignalsList,
                 currProjSearchBox.Text, filteredThroughType);
         }
@@ -597,7 +596,7 @@ namespace InterprojectExchange
         private void advProjSearchBox_TextChanged(object sender, EventArgs e)
         {
             var filteredThroughType = filterConfiguration.FilterOut(
-                advProjItems, FilterConfiguration.FilterList.Advanced);
+                advProjItems, FilterConfiguration.FilterList.AdvancedProject);
             SearchSubstringInListView(advancedProjSignalsList,
                 advProjSearchBox.Text, filteredThroughType);
         }
