@@ -526,6 +526,11 @@ return
             },
             aggregateParameters =
             {
+                active =
+                {
+                    HEATING_TEMPERATURE = { name = "Температура подогрева" },
+                    HEATING_TEMPERATURE_DELTA = { name = "Дельта температуры подогрева" },
+                },
                 main =
                 {
                     NEED_HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
