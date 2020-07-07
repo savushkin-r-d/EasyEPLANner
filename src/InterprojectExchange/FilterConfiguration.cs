@@ -201,6 +201,18 @@ namespace InterprojectExchange
         }
 
         /// <summary>
+        /// Установить параметр фильтра
+        /// </summary>
+        /// <param name="controlName">Имя элемента управления</param>
+        /// <param name="parameterName">Имя параметра</param>
+        /// <param name="value">Значение</param>
+        public void SetFilterParameter(string controlName, 
+            string parameterName, bool value)
+        {
+            FilterParameters[controlName][parameterName] = value;
+        }
+
+        /// <summary>
         /// Параметры фильтра
         /// </summary>
         public Dictionary<string, Dictionary<string, bool>> FilterParameters 
@@ -212,7 +224,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Выбранные устройства для отображения в текущем проекте
         /// </summary>
-        private string[] CurrentProjectSelectedDevices
+        public string[] CurrentProjectSelectedDevices
         {
             get
             {
@@ -226,7 +238,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Выбранные устройства для отображения в альтернативном проекте
         /// </summary>
-        private string[] AdvancedProjectSelectedDevices
+        public string[] AdvancedProjectSelectedDevices
         {
             get
             {

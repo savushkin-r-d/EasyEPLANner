@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace InterprojectExchange
@@ -12,12 +13,19 @@ namespace InterprojectExchange
         public FilterForm()
         {
             InitializeComponent();
-            var devices = FilterConfiguration.GetInstance().GetDevicesList();
+            filterConfiguration = FilterConfiguration.GetInstance();
+            var devices = filterConfiguration.GetDevicesList();
             LoadDeviceLists(devices);
-            SetUpFilterCheckBoxes(FilterConfiguration.GetInstance()
-                .FilterParameters);
+            SetUpFilterCheckBoxes(filterConfiguration);
         }
 
+        private FilterConfiguration filterConfiguration;
+
+        /// <summary>
+        /// Кнопка "Отмена"
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void cancelButton_Click(object sender, EventArgs e)
         {
             Close();
@@ -36,12 +44,22 @@ namespace InterprojectExchange
             }
         }
 
+        /// <summary>
+        /// Кнопка "Применить"
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void acceptButton_Click(object sender, EventArgs e)
         {
             FilterConfiguration.GetInstance().Save();
             Hide();
         }
 
+        /// <summary>
+        /// Кнопка "Очистить"
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void clearButton_Click(object sender, EventArgs e)
         {
             for(int i = 0; i < currProjDevList.Items.Count; i++)
@@ -61,10 +79,10 @@ namespace InterprojectExchange
         /// Установка параметров значений CheckBox
         /// </summary>
         /// <param name="filterParameters">Параметры фильтра</param>
-        private void SetUpFilterCheckBoxes(
-            Dictionary<string, Dictionary<string,bool>> filterParameters)
+        private void SetUpFilterCheckBoxes(FilterConfiguration 
+            filterConfiguration)
         {
-            if (filterParameters.Count == 0)
+            if (filterConfiguration.FilterParameters.Count == 0)
             {
                 return;
             }
@@ -75,20 +93,17 @@ namespace InterprojectExchange
             groupAsPairsCheckBox.CheckStateChanged -= 
                 groupAsPairsCheckBox_CheckStateChanged;
 
-            foreach (var devPair in filterParameters[currProjDevList.Name])
-            {
-                int itemNum = currProjDevList.FindStringExact(devPair.Key);
-                currProjDevList.SetItemChecked(itemNum, devPair.Value);
-            }
+            string[] currentProjectSelectedDevices = filterConfiguration
+                .CurrentProjectSelectedDevices;
+            string[] advancedProjectSelectedDevices = filterConfiguration
+                .AdvancedProjectSelectedDevices;
+            List<string> allDevices = filterConfiguration.GetDevicesList();
+            SetUpCheckedListBox(currProjDevList, currentProjectSelectedDevices, 
+                allDevices);
+            SetUpCheckedListBox(advProjDevList, advancedProjectSelectedDevices, 
+                allDevices);
 
-            foreach (var devPair in filterParameters[advProjDevList.Name])
-            {
-                int itemNum = advProjDevList.FindStringExact(devPair.Key);
-                advProjDevList.SetItemChecked(itemNum, devPair.Value);
-            }
-
-            bool isChecked = filterParameters[bindedSignalsList.Name]
-                [groupAsPairsCheckBox.Name];
+            bool isChecked = filterConfiguration.UseDeviceGroups;
             groupAsPairsCheckBox.Checked = isChecked;
 
             // Включили обработчики изменений состояний чекбоксов
@@ -98,12 +113,33 @@ namespace InterprojectExchange
                 groupAsPairsCheckBox_CheckStateChanged;
         }
 
+        /// <summary>
+        /// Настройка списка с CheckBox
+        /// </summary>
+        /// <param name="checkedListBox">Ссылка на элемент управления</param>
+        /// <param name="selectedDevices">Массив выбранных устройств</param>
+        private void SetUpCheckedListBox(CheckedListBox checkedListBox, 
+            string[] selectedDevices, List<string> allDevices)
+        {
+            foreach (var item in allDevices)
+            {
+                int itemNum = checkedListBox.FindStringExact(item.ToString());
+                if (selectedDevices.Contains(item.ToString()))
+                {
+                    checkedListBox.SetItemChecked(itemNum, true);
+                }
+                else
+                {
+                    checkedListBox.SetItemChecked(itemNum, false);
+                }
+            }
+        }
+
         private void groupAsPairsCheckBox_CheckStateChanged(object sender, 
             EventArgs e)
         {
-            FilterConfiguration.GetInstance()
-                .FilterParameters[bindedSignalsList.Name]
-                [groupAsPairsCheckBox.Name] = groupAsPairsCheckBox.Checked;
+            filterConfiguration.SetFilterParameter(bindedSignalsList.Name,
+                groupAsPairsCheckBox.Name, groupAsPairsCheckBox.Checked); 
         }
 
         private void currProjDevList_ItemCheck(object sender, 
@@ -111,8 +147,8 @@ namespace InterprojectExchange
         {
             var itemName = currProjDevList.Items[e.Index].ToString();
             bool isChecked = e.NewValue == CheckState.Checked ? true : false;
-            FilterConfiguration.GetInstance()
-                .FilterParameters[currProjDevList.Name][itemName] = isChecked;
+            filterConfiguration.SetFilterParameter(currProjDevList.Name,
+                itemName, isChecked);
         }
 
         private void advProjDevList_ItemCheck(object sender, 
@@ -120,8 +156,8 @@ namespace InterprojectExchange
         {
             var itemName = currProjDevList.Items[e.Index].ToString();
             bool isChecked = e.NewValue == CheckState.Checked ? true : false;
-            FilterConfiguration.GetInstance()
-                .FilterParameters[advProjDevList.Name][itemName] = isChecked;
+            filterConfiguration.SetFilterParameter(advProjDevList.Name, 
+                itemName, isChecked);
         }
     }
 }
