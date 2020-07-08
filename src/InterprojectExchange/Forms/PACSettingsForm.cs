@@ -20,6 +20,8 @@ namespace InterprojectExchange
 
         private void cancelBtn_Click(object sender, EventArgs e)
         {
+            CurrentProjectModel mainModel = interprojectExchange.MainModel;
+            mainModel.SelectedAdvancedProject = projectBeforeOpenForm;
             Close();
         }
 
@@ -35,9 +37,9 @@ namespace InterprojectExchange
             {
                 string projectName = projectsListView.SelectedItems[0].Text;
                 SaveIntermediateData(projectName);
-                WorkWithProjectsData(false);
             }
 
+            WorkWithProjectsData(false);
             Close();
         }
 
