@@ -135,6 +135,10 @@ return
             equipment = { },
             aggregateParameters =
             {
+                active =
+                {
+                    HEATING_WATER_TEMPERATURE = { name = "Температура подогрева воды" },
+                },
                 main =
                 {
                     NEED_BOILER = { name = "Использовать бойлер", defaultValue = "false" },
@@ -407,7 +411,13 @@ return
                 },
                 SLOW_HEATING = {
                     name = "Томление",
-                    params = { },
+                    params = 
+                    {
+                        active =
+                        {
+                            BAKE_TIME = { name = "Время нагрева (2-го шага)" },
+                        },
+                    },
                     steps =
                     {
                         TO_START_TEMPERATURE = { name = "Нагрев до заданной температуры" },
@@ -526,6 +536,11 @@ return
             },
             aggregateParameters =
             {
+                active =
+                {
+                    HEATING_TEMPERATURE = { name = "Температура подогрева" },
+                    HEATING_TEMPERATURE_DELTA = { name = "Дельта температуры подогрева" },
+                },
                 main =
                 {
                     NEED_HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
@@ -678,6 +693,9 @@ return
                 active =
                 {
                     MIX_NODE_MIX_OPERATION = { name = "Используемая операция узла перемешивания", defaultValue = 1 },
+                    MIX_NODE_MIX_ON_TIME = { name = "Время работы" },
+                    MIX_NODE_MIX_OFF_TIME = { name = "Время простоя" },
+                    MIX_NODE_MIX_SPEED = { name = "Скорость" },
                 },
                 main =
                 {
