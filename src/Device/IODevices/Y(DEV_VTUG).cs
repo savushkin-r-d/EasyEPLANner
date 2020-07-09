@@ -20,20 +20,27 @@
         public override string SetSubType(string subtype)
         {
             base.SetSubType(subtype);
-
             string errStr = "";
+            int sizeOut;
             switch (subtype)
             {
                 case "DEV_VTUG_8":
-                    IOLinkProperties.SizeOut = 1;
+                    sizeOut = 1;
+                    IOLinkProperties.SizeOut = sizeOut;
+                    IOLinkProperties.SizeOutFromFile = sizeOut;
                     break;
 
                 case "DEV_VTUG_16":
-                    IOLinkProperties.SizeOut = 2;
+                    sizeOut = 2;
+                    IOLinkProperties.SizeOut = sizeOut;
+                    IOLinkProperties.SizeOutFromFile = sizeOut;
                     break;
 
                 case "DEV_VTUG_24":
-                    IOLinkProperties.SizeOut = 3;
+                    sizeOut = 3;
+                    IOLinkProperties.SizeOut = sizeOut;
+                    IOLinkProperties.SizeOutFromFile = sizeOut;
+
                     break;
 
                 case "":

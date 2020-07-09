@@ -746,13 +746,25 @@ namespace Device
                 {
                     var tableData = table as LuaInterface.LuaTable;
                     string articleName = (string)tableData["articleName"];
-                    int sizeIn = Convert.ToInt32((double)tableData["sizeIn"]);
-                    int sizeOut = Convert.ToInt32((double)tableData["sizeOut"]);
+                    // Читаем float т.к могут быть 0.5 размер (в словах)
+                    float sizeIn = (float)((double)tableData["sizeIn"]);
+                    float sizeOut = (float)((double)tableData["sizeOut"]);
 
                     if (IOLinkSizes.ContainsKey(articleName) == false)
                     {
-                        var properties = new IODevice.IOLinkSize(sizeIn,
-                            sizeOut);
+                        // Для расчета IO-Link округляем до целого, кроме 0
+                        // Для настройки - оставляем как есть
+                        int intSizeIn = Convert.ToInt32(
+                            Math.Round(sizeIn, MidpointRounding.AwayFromZero));
+                        int intSizeOut = Convert.ToInt32(
+                            Math.Round(sizeOut, MidpointRounding.AwayFromZero));
+                        var properties = new IODevice.IOLinkSize
+                        {
+                            SizeIn = intSizeIn,
+                            SizeOut = intSizeOut,
+                            SizeInFromFile = sizeIn,
+                            SizeOutFromFile = sizeOut
+                        };
                         IOLinkSizes.Add(articleName, properties);
                     }
                 }
