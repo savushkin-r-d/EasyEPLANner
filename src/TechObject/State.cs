@@ -482,6 +482,21 @@ namespace TechObject
             return ostisLink + "?sys_id=state";
         }
 
+        public bool Empty
+        {
+            get
+            {
+                if(steps.Where(x => x.Empty == true).Count() == steps.Count)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         private string name;        ///< Имя.
         internal List<Step> steps;  ///< Список шагов.
         private Step modeStep;      ///< Шаг.
