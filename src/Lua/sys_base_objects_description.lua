@@ -615,7 +615,13 @@ return
             {
                 COOLING = {
                     name = "Охлаждение",
-                    params = { },
+                    params =
+                    {
+                        active =
+                        {
+                            FINISH_COLD_WATER_PUSHING_TEMPERATURE = { name = "Температура завершения вытеснения горячей воды" },
+                        },
+                    },
                     steps =
                     {
                         HOT_WATER_PUSHING = { name = "Вытеснение горячей воды" },
@@ -632,6 +638,11 @@ return
             },
             aggregateParameters =
             {
+                active =
+                {
+                    COOLING_TEMPERATURE = { name = "Температура охлаждения" },
+                    COOLING_TEMPERATURE_DELTA = { name = "Дельта температуры охлаждения" },
+                },
                 main =
                 {
                     NEED_COOLING = { name = "Использовать узел охлаждения", defaultValue = "false" },
