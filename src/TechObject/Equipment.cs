@@ -191,7 +191,8 @@ namespace TechObject
         private void SetDeviceAutomatically(BaseParameter equipment)
         {
             string currentValue = equipment.Value;
-            if (currentValue == equipment.DefaultValue)
+            if (equipment.DefaultValue != "" && 
+                currentValue == equipment.DefaultValue)
             {
                 string deviceName = owner.NameEplan + owner.TechNumber +
                     equipment.DefaultValue;
@@ -200,6 +201,10 @@ namespace TechObject
                 if (device.Description != "заглушка")
                 {
                     equipment.SetNewValue(deviceName);
+                }
+                else
+                {
+                    equipment.SetNewValue("");
                 }
             }
         }
