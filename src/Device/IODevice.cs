@@ -491,9 +491,9 @@ namespace Device
             if (properties.Count > 0)
             {
                 var validProperties = properties
-                    .Where(x => x.Value.ToString() != "\'\'" &&
-                    x.Value != null &&
-                    x.Value.ToString() != "");
+                    .Where(x => x.Value != null &&
+                    (x.Value.ToString() != "\'\'" &&
+                    x.Value.ToString() != ""));
                 if (validProperties.Count() > 0)
                 {
                     res += prefix + "prop = --Дополнительные свойства\n";
