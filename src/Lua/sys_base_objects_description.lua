@@ -462,7 +462,7 @@ return
             equipment =
             {
                 hatch = { name = "Датчик крышки люка", defaultValue = "GS1" },
-                hatch2 = { name = "Датчик крышки люка 2", defaultValue = "GS3" },
+                hatch2 = { name = "Датчик крышки люка 2" },
                 LS_up = { name = "Датчик верхнего уровня", defaultValue = "LS2" },
                 LS_down = { name = "Датчик нижнего уровня", defaultValue = "LS1" },
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
@@ -685,7 +685,7 @@ return
                 mix = { name = "Мешалка", defaultValue = "M1" },
                 bar = { name = "Датчик решетки люка", defaultValue = "GS2" },
                 hatch = { name = "Датчик крышки люка", defaultValue = "GS1" },
-                hatch2 = { name = "Датчик крышки люка 2", defaultValue = "GS3" },
+                hatch2 = { name = "Датчик крышки люка 2" },
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
             },
             aggregateParameters =
