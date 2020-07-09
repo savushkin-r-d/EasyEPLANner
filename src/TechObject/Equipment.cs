@@ -39,6 +39,7 @@ namespace TechObject
             {
                 items.Add(property);
             }
+            Sort();
         }
 
         /// <summary>
@@ -48,6 +49,7 @@ namespace TechObject
         private void AddItem(BaseParameter property)
         {
             items.Add(property);
+            Sort();
         }
 
         /// <summary>
@@ -329,6 +331,17 @@ namespace TechObject
             string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
                 .GetOstisHelpSystemLink();
             return ostisLink + "?sys_id=control_module";
+        }
+
+        /// <summary>
+        /// Сортировка оборудования в списке по-алфавиту
+        /// </summary>
+        private void Sort()
+        {
+            items.Sort(delegate (Editor.ITreeViewItem x, Editor.ITreeViewItem y)
+            {
+                return x.DisplayText[0].CompareTo(y.DisplayText[0]);
+            });
         }
 
         private TechObject owner;
