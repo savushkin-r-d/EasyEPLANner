@@ -201,6 +201,10 @@ namespace TechObject
                 {
                     equipment.SetNewValue(deviceName);
                 }
+                else
+                {
+                    equipment.SetNewValue("");
+                }
             }
         }
 
