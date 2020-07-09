@@ -430,6 +430,7 @@ return
                         {
                             active =
                             {
+                                MIXING_CHECK_TIME = { name = "Время проверки температуры" },
                                 OPERATION_AFTER = { name = "Номер следующей операции" },
                             },
                         },
