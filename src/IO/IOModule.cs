@@ -116,13 +116,17 @@ namespace IO
 
                     if(isIOLinkDevice)
                     {
+                        // Для расчета IO-Link округляем до целого, кроме 0
+                        // Для настройки - оставляем как есть
                         var dev = devices[clamp][0];
-                        int sizeIn = dev.IOLinkProperties.SizeIn;
-                        int sizeOut = dev.IOLinkProperties.SizeOut;
+                        float sizeIn = dev.IOLinkProperties.SizeInFromFile;
+                        float sizeOut = dev.IOLinkProperties.SizeOutFromFile;
                         
                         const int WordToBitMultiplier = 16;
-                        int sizeInBits = (sizeIn * WordToBitMultiplier);
-                        int sizeOutBits = (sizeOut * WordToBitMultiplier);
+                        int sizeInBits = Convert.ToInt32(
+                            (sizeIn * WordToBitMultiplier));
+                        int sizeOutBits = Convert.ToInt32(
+                            (sizeOut * WordToBitMultiplier));
 
                         res[idx, 4] = sizeInBits;
                         res[idx, 5] = sizeOutBits;

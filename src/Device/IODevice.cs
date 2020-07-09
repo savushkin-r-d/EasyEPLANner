@@ -101,8 +101,10 @@ namespace Device
             }
 
             var sizes = articles[articleName];
-            this.IOLinkProperties.SizeIn = sizes.SizeIn;
-            this.IOLinkProperties.SizeOut = sizes.SizeOut;
+            IOLinkProperties.SizeIn = sizes.SizeIn;
+            IOLinkProperties.SizeOut = sizes.SizeOut;
+            IOLinkProperties.SizeInFromFile = sizes.SizeInFromFile;
+            IOLinkProperties.SizeOutFromFile = sizes.SizeOutFromFile;
         }
 
         /// <summary>
@@ -1129,12 +1131,6 @@ namespace Device
                 SizeOut = 0;
             }
 
-            public IOLinkSize(int sizeIn, int sizeOut)
-            {
-                SizeIn = sizeIn;
-                SizeOut = sizeOut;
-            }
-
             /// <summary>
             /// Возвращает максимальны размер байтовой области для модулей ввода
             /// вывода при расчете IO-Link адресов если используется
@@ -1146,8 +1142,25 @@ namespace Device
                 return SizeOut > SizeIn ? SizeOut : SizeIn;
             }
 
+            /// <summary>
+            /// Размер области входа приведенный к слову (целому)
+            /// </summary>
             public int SizeIn { get; set; }
+
+            /// <summary>
+            /// Размер области выхода приведенный к слову (целому)
+            /// </summary>
             public int SizeOut { get; set; }
+
+            /// <summary>
+            /// Размер области входа из файла
+            /// </summary>
+            public float SizeInFromFile { get; set; }
+
+            /// <summary>
+            /// Размер области выхода из файла
+            /// </summary>
+            public float SizeOutFromFile { get; set; }
         }
 
     }
