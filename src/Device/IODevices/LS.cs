@@ -154,7 +154,6 @@ namespace Device
                             {
                                 "ST",
                                 "M",
-                                "P_DT",
                                 "V"
                             });
                     }

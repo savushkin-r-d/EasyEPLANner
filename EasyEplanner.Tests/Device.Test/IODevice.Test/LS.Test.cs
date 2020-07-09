@@ -170,7 +170,6 @@ namespace Tests
             {
                 "ST",
                 "M",
-                "P_DT",
                 "V"
             };
 

@@ -341,8 +341,6 @@ namespace Device
                                 "BLINK",
                                 "CS",
                                 "ERR",
-                                "FB_OFF_ST",
-                                "FB_ON_ST"
                             });
                     }
                     break;
