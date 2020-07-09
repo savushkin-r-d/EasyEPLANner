@@ -545,6 +545,21 @@ namespace TechObject
             return ostisLink + "?sys_id=phase";
         }
 
+        public bool Empty
+        {
+            get
+            {
+                if(actions.Where(x => x.Empty == true).Count() == actions.Count)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         /// <summary>
         /// Признак шага операции.
         /// </summary>

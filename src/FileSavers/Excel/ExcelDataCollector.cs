@@ -36,11 +36,41 @@ namespace EasyEPlanner
                     string modeName = techObj.ModesManager.GetModeN(mode)
                         .ToString() + ". " + mode.EditText[0];
                     var modeNode = new TreeNode();
-                    Step commonStep = mode.MainSteps[0];
-                    string[] res = new string[] 
+                    SaveModesToTreeNodeForExcelExport(mode, modeName, modeNode);
+                    objectNode.Nodes.Add(modeNode);
+                }
+                tree.Nodes.Add(objectNode);
+            }
+            return tree;
+        }
+
+        /// <summary>
+        /// Сохранить операции для страницы 
+        /// "Технологические операции и устройства"
+        /// </summary>
+        /// <param name="mode">Операция</param>
+        /// <param name="modeName">Имя операции</param>
+        /// <param name="modeNode">Узел дерева для сохранения</param>
+        private static void SaveModesToTreeNodeForExcelExport(Mode mode,
+            string modeName, TreeNode modeNode)
+        {
+            var res = new string[]
+            {
+                modeName,
+                "", "", "", "", "", "", "", "", "", ""
+            };
+            modeNode.Tag = res;
+
+            foreach (var state in mode.stepsMngr)
+            {
+                Step commonStep;
+                if (state.Empty == false)
+                {
+                    commonStep = state.Steps[0];
+                    var stateNode = new TreeNode();
+                    var rowWithState = new string[]
                     {
-                        modeName,
-                        "",
+                        state.DisplayText[0],
                         commonStep.GetActions[ 0 ].EditText[ 1 ],
                         commonStep.GetActions[ 2 ].EditText[ 1 ],
                         commonStep.GetActions[ 3 ].EditText[ 1 ],
@@ -51,36 +81,30 @@ namespace EasyEPlanner
                         commonStep.GetActions[ 6 ].Items[ 2 ].EditText[ 1 ],
                         commonStep.GetActions[ 7 ].EditText[ 1 ]
                     };
-                    modeNode.Tag = res;
-
-                    for (int i = 1; i < mode.MainSteps.Count; i++)
-                    {
-                        commonStep = mode.MainSteps[i];
-                        string stepName;
-                        var stepNode = new TreeNode();
-
-                        stepName = i.ToString() + ". " + commonStep.EditText[0];
-                        string[] resStep = new string[] 
-                        {
-                            stepName,
-                            commonStep.GetActions[ 0 ].EditText[ 1 ],
-                            commonStep.GetActions[ 2 ].EditText[ 1 ],
-                            commonStep.GetActions[ 3 ].EditText[ 1 ],
-                            commonStep.GetActions[ 4 ].EditText[ 1 ],
-                            "",
-                            "",
-                            "",
-                            "",
-                            ""
-                        };
-                        stepNode.Tag = resStep;
-                        modeNode.Nodes.Add(stepNode);
-                    }
-                    objectNode.Nodes.Add(modeNode);
+                    stateNode.Tag = rowWithState;
+                    modeNode.Nodes.Add(stateNode);
                 }
-                tree.Nodes.Add(objectNode);
+
+                for (int i = 1; i < state.Steps.Count; i++)
+                {
+                    var stepNode = new TreeNode();
+                    commonStep = state.Steps[i];
+                    string stepName;
+
+                    stepName = i.ToString() + ". " + commonStep.EditText[0];
+                    var resStep = new string[]
+                    {
+                        stepName,
+                        commonStep.GetActions[ 0 ].EditText[ 1 ],
+                        commonStep.GetActions[ 2 ].EditText[ 1 ],
+                        commonStep.GetActions[ 3 ].EditText[ 1 ],
+                        commonStep.GetActions[ 4 ].EditText[ 1 ],
+                        "", "", "", "", ""
+                    };
+                    stepNode.Tag = resStep;
+                    modeNode.Nodes.Add(stepNode);
+                }
             }
-            return tree;
         }
 
         /// <summary>
