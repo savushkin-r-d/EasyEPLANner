@@ -167,11 +167,18 @@ namespace Tests
                 "V"
             };
 
+            var exportForAIVirt = new List<string>
+            {
+                "M",
+                "ST",
+                "V"
+            };
+
             return new object[]
             {
                 new object[] {exportForAI, "", GetRandomAIDevice()},
                 new object[] {exportForAI, "AI", GetRandomAIDevice()},
-                new object[] {exportForAI, "AI_VIRT", GetRandomAIDevice()},
+                new object[] {exportForAIVirt, "AI_VIRT", GetRandomAIDevice()},
                 new object[] {null, "Incorrect", GetRandomAIDevice()},
             };
         }
