@@ -357,9 +357,10 @@ namespace TechObject
                 count = item.GetParamsManager().Items[3].Items.Length;
                 GenerateParametersTags(count, objNode, objParamsNode, rtUi);
 
-                GenerateRootNode(rootNode, objNode, objModesNode, 
+                var singleNodes = new TreeNode[] { objModesNode, 
                     objOperStateNode, objAvOperNode, objStepsNode, 
-                    objParamsNode);
+                    objSingleStepsNode, objParamsNode};
+                GenerateRootNode(rootNode, objNode, singleNodes);
             }
         }
 
@@ -482,7 +483,7 @@ namespace TechObject
         }
 
         /// <summary>
-        /// 
+        /// Генерация тэгов по операциям, шагам, доступности, состояниям
         /// </summary>
         /// <param name="item">Объект</param>
         /// <param name="itemNumber">Глобальный номер</param>
@@ -585,9 +586,7 @@ namespace TechObject
         /// <param name="objStepsNode"></param>
         /// <param name="objParamsNode"></param>
         private void GenerateRootNode(TreeNode rootNode, TreeNode objNode,
-            TreeNode objModesNode, TreeNode objOperStateNode,
-            TreeNode objAvOperNode, TreeNode objStepsNode, 
-            TreeNode objParamsNode)
+            TreeNode[] singleNodes)
         {
             if (cdbxTagView == true)
             {
@@ -595,14 +594,7 @@ namespace TechObject
             }
             else
             {
-                rootNode.Nodes.AddRange(new TreeNode[]
-                {
-                        objModesNode,
-                        objOperStateNode,
-                        objAvOperNode,
-                        objStepsNode,
-                        objParamsNode
-                });
+                rootNode.Nodes.AddRange(singleNodes);
             }
         }
         #endregion
