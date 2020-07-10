@@ -326,28 +326,34 @@ namespace TechObject
                     item.TechNumber.ToString() + "_Доступность");
                 var objStepsNode = new TreeNode(item.NameBC + 
                     item.TechNumber.ToString() + "_Шаги");
+                var objSingleStepsNode = new TreeNode(item.NameBC +
+                    item.TechNumber.ToString() + "_Одиночные_Шаги");
                 var objParamsNode = new TreeNode(item.NameBC + 
                     item.TechNumber.ToString() + "_Параметры");
 
-                string obj = GenerateObjectName(item, num);
-                GenerateCMDTags(obj, objNode, objModesNode);
-                GenerateSTTags(item, obj, objNode, objModesNode);
-                GenerateModesOpersAvsStepsTags(item, obj, objNode, objModesNode,
-                    objOperStateNode, objAvOperNode, objStepsNode);
-              
-                string sFl = obj + ".S_PAR_F";
+                string objName = GenerateObjectName(item, num);
+                GenerateCMDTags(objName, objNode, objModesNode);
+                GenerateSTTags(item, objName, objNode, objModesNode);
+                GenerateModesOpersAvsStepsTags(item, objName, objNode, 
+                    objModesNode, objOperStateNode, objAvOperNode, 
+                    objStepsNode);
+
+                GenerateSingleStepsTags(item, objName, objNode, 
+                    objSingleStepsNode);
+
+                string sFl = objName + ".S_PAR_F";
                 int count = item.GetParamsManager().Float.Items.Length;
                 GenerateParametersTags(count, objNode, objParamsNode, sFl);
 
-                string sUi = obj + ".S_PAR_UI";
+                string sUi = objName + ".S_PAR_UI";
                 count = item.GetParamsManager().Items[1].Items.Length;
                 GenerateParametersTags(count, objNode, objParamsNode, sUi);
 
-                string rtFl = obj + ".RT_PAR_F";
+                string rtFl = objName + ".RT_PAR_F";
                 count = item.GetParamsManager().Items[2].Items.Length;
                 GenerateParametersTags(count, objNode, objParamsNode, rtFl);
 
-                string rtUi = obj + ".RT_PAR_UI";
+                string rtUi = objName + ".RT_PAR_UI";
                 count = item.GetParamsManager().Items[3].Items.Length;
                 GenerateParametersTags(count, objNode, objParamsNode, rtUi);
 
@@ -437,13 +443,14 @@ namespace TechObject
         private void GenerateCMDTags(string obj, TreeNode objNode, 
             TreeNode objModesNode)
         {
+            string tagName = obj + ".CMD";
             if (cdbxTagView == true)
             {
-                objNode.Nodes.Add(obj + ".CMD", obj + ".CMD");
+                objNode.Nodes.Add(tagName, tagName);
             }
             else
             {
-                objModesNode.Nodes.Add(obj + ".CMD", obj + ".CMD");
+                objModesNode.Nodes.Add(tagName, tagName);
             }
         }
 
@@ -451,10 +458,10 @@ namespace TechObject
         /// Генерация ST-тегов для проекта
         /// </summary>
         /// <param name="item">Объект</param>
-        /// <param name="obj">Имя объекта</param>
+        /// <param name="objName">Имя объекта</param>
         /// <param name="objNode"></param>
         /// <param name="objModesNode"></param>
-        private void GenerateSTTags(TechObject item, string obj, 
+        private void GenerateSTTags(TechObject item, string objName, 
             TreeNode objNode, TreeNode objModesNode)
         {
             // 33 - Magic number
@@ -462,16 +469,14 @@ namespace TechObject
             for (int i = 0; i <= stCount; i++)
             {
                 string number = "[ " + (i + 1).ToString() + " ]";
-
+                string fullTagName = objName + ".ST" + number;
                 if (cdbxTagView == true)
                 {
-                    objNode.Nodes.Add(obj + ".ST" + number, 
-                        obj + ".ST" + number);
+                    objNode.Nodes.Add(fullTagName, fullTagName);
                 }
                 else
                 {
-                    objModesNode.Nodes.Add(obj + ".ST" + number, 
-                        obj + ".ST" + number);
+                    objModesNode.Nodes.Add(fullTagName, fullTagName);
                 }
             }
         }
@@ -507,10 +512,39 @@ namespace TechObject
                 else
                 {
                     objModesNode.Nodes.Add(mode + number, mode + number);
-                    objOperStateNode.Nodes.Add(oper + number, oper +
-                        number);
+                    objOperStateNode.Nodes.Add(oper + number, oper + number);
                     objAvOperNode.Nodes.Add(av + number, av + number);
                     objStepsNode.Nodes.Add(step + number, step + number);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Генерация одиночных шагов для объекта
+        /// </summary>
+        /// <param name="item">Объект</param>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="objNode"></param>
+        /// <param name="objSingleStepsNode"></param>
+        private void GenerateSingleStepsTags(TechObject item, string objName, 
+            TreeNode objNode, TreeNode objSingleStepsNode)
+        {
+            List<Mode> modes = item.ModesManager.Modes;
+            for(int modeNum = 1; modeNum <= modes.Count; modeNum++)
+            {
+                // Шаги "Пауза" и "Остановка" игнорируются
+                int stepsCount = modes[modeNum - 1].MainSteps.Count;
+                for (int stepNum = 1; stepNum <= stepsCount; stepNum++)
+                {
+                    string stepTag = $"{objName}.STEPS{modeNum}[ {stepNum} ]";
+                    if(cdbxTagView == true)
+                    {
+                        objNode.Nodes.Add(stepTag, stepTag);
+                    }
+                    else
+                    {
+                        objSingleStepsNode.Nodes.Add(stepTag, stepTag);
+                    }
                 }
             }
         }
@@ -528,14 +562,14 @@ namespace TechObject
             for (int i = 1; i <= paramsCount; i++)
             {
                 string number = "[ " + i.ToString() + " ]";
-
+                string fullTagName = tagName + number;
                 if (cdbxTagView == true)
                 {
-                    objNode.Nodes.Add(tagName + number, tagName + number);
+                    objNode.Nodes.Add(fullTagName, fullTagName);
                 }
                 else
                 {
-                    objParamsNode.Nodes.Add(tagName + number, tagName + number);
+                    objParamsNode.Nodes.Add(fullTagName, fullTagName);
                 }
             }
         }
