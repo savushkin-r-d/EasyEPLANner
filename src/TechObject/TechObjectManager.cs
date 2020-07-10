@@ -304,193 +304,274 @@ namespace TechObject
             return Objects;
         }
 
+        #region XML Report
         /// <summary>
         /// Формирование узлов для операций, шагов и параметров объектов.
         /// </summary>
         /// <param name="rootNode">корневой узел</param>
         public void GetObjectForXML(TreeNode rootNode)
         {
-            TreeNode systemNode = new TreeNode("SYSTEM");
-            systemNode.Nodes.Add("SYSTEM.UP_TIME", "SYSTEM.UP_TIME");
-            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_SEAT_PERIOD", 
-                "SYSTEM.WASH_VALVE_SEAT_PERIOD");
-            systemNode.Nodes.Add("SYSTEM.P_V_OFF_DELAY_TIME", 
-                "SYSTEM.P_V_OFF_DELAY_TIME");
-            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_UPPER_SEAT_TIME", 
-                "SYSTEM.WASH_VALVE_UPPER_SEAT_TIME");
-            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_LOWER_SEAT_TIME", 
-                "SYSTEM.WASH_VALVE_LOWER_SEAT_TIME");
-            systemNode.Nodes.Add("SYSTEM.CMD", "SYSTEM.CMD");
-            systemNode.Nodes.Add("SYSTEM.CMD_ANSWER", "SYSTEM.CMD_ANSWER");
-            systemNode.Nodes.Add("SYSTEM.P_RESTRICTIONS_MODE", 
-                "SYSTEM.P_RESTRICTIONS_MODE");
-            systemNode.Nodes.Add("SYSTEM.P_RESTRICTIONS_MANUAL_TIME", 
-                "SYSTEM.P_RESTRICTIONS_MANUAL_TIME");
-            systemNode.Nodes.Add("SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR", 
-                "SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR");
-
-            rootNode.Nodes.AddRange(new TreeNode[] { systemNode });
-
+            GenerateSystemNode(rootNode);      
             for (int num = 1; num <= Objects.Count; num++)
             {
                 TechObject item = Objects[num - 1];
 
+                var objNode = new TreeNode($"{item.NameBC}{item.TechNumber}");
 
-                TreeNode objNode = new TreeNode(item.NameBC + 
-                    item.TechNumber.ToString());
-
-                TreeNode objModesNode = new TreeNode(item.NameBC + 
+                var objModesNode = new TreeNode(item.NameBC + 
                     item.TechNumber.ToString() + "_Операции");
-                TreeNode objOperStateNode = new TreeNode(item.NameBC + 
+                var objOperStateNode = new TreeNode(item.NameBC + 
                     item.TechNumber.ToString() + "_Состояния_Операций");
-                TreeNode objAvOperNode = new TreeNode(item.NameBC + 
+                var objAvOperNode = new TreeNode(item.NameBC + 
                     item.TechNumber.ToString() + "_Доступность");
-                TreeNode objStepsNode = new TreeNode(item.NameBC + 
+                var objStepsNode = new TreeNode(item.NameBC + 
                     item.TechNumber.ToString() + "_Шаги");
-                TreeNode objParamsNode = new TreeNode(item.NameBC + 
+                var objParamsNode = new TreeNode(item.NameBC + 
                     item.TechNumber.ToString() + "_Параметры");
 
-                string obj = "";
-                if (cdbxNewNames == true)
-                {
-                    obj = item.NameBC.ToUpper() + item.TechNumber.ToString();
-                }
-                else
-                {
-                    obj = "OBJECT" + num.ToString();
-                }
-
-                string mode = obj + ".MODES";
-                string oper = obj + ".OPERATIONS";
-                string av = obj + ".AVAILABILITY";
-                string step = mode + "_STEPS";
-                if (cdbxTagView == true)
-                {
-                    objNode.Nodes.Add(obj + ".CMD", obj + ".CMD");
-                }
-                else
-                {
-                    objModesNode.Nodes.Add(obj + ".CMD", obj + ".CMD");
-                }
-
-                int stCount = item.ModesManager.Modes.Count / 33;
-                for (int i = 0; i <= stCount; i++)
-                {
-                    string number = "[ " + (i + 1).ToString() + " ]";
-
-                    if (cdbxTagView == true)
-                    {
-                        objNode.Nodes.Add(obj + ".ST" + number, 
-                            obj + ".ST" + number);
-                    }
-                    else
-                    {
-                        objModesNode.Nodes.Add(obj + ".ST" + number,
-                            obj + ".ST" + number);
-                    }
-                }
-
-                for (int i = 1; i <= item.ModesManager.Modes.Count; i++)
-                {
-                    string number = "[ " + i.ToString() + " ]";
-                    if (cdbxTagView == true)
-                    {
-                        objNode.Nodes.Add(mode + number, mode + number);
-                        objNode.Nodes.Add(oper + number, oper + number);
-                        objNode.Nodes.Add(av + number, av + number);
-                        objNode.Nodes.Add(step + number, step + number);
-                    }
-                    else
-                    {
-                        objModesNode.Nodes.Add(mode + number, mode + number);
-                        objOperStateNode.Nodes.Add(oper + number, oper + 
-                            number);
-                        objAvOperNode.Nodes.Add(av + number, av + number);
-                        objStepsNode.Nodes.Add(step + number, step + number);
-                    }
-                }
-
+                string obj = GenerateObjectName(item, num);
+                GenerateCMDTags(obj, objNode, objModesNode);
+                GenerateSTTags(item, obj, objNode, objModesNode);
+                GenerateModesOpersAvsStepsTags(item, obj, objNode, objModesNode,
+                    objOperStateNode, objAvOperNode, objStepsNode);
+              
                 string sFl = obj + ".S_PAR_F";
-                string sUi = obj + ".S_PAR_UI";
-                string rtFl = obj + ".RT_PAR_F";
-                string rtUi = obj + ".RT_PAR_UI";
                 int count = item.GetParamsManager().Float.Items.Length;
+                GenerateParametersTags(count, objNode, objParamsNode, sFl);
 
-                for (int i = 1; i <= count; i++)
-                {
-                    string number = "[ " + i.ToString() + " ]";
-
-                    if (cdbxTagView == true)
-                    {
-                        objNode.Nodes.Add(sFl + number, sFl + number);
-                    }
-                    else
-                    {
-                        objParamsNode.Nodes.Add(sFl + number, sFl + number);
-                    }
-                }
-
+                string sUi = obj + ".S_PAR_UI";
                 count = item.GetParamsManager().Items[1].Items.Length;
-                for (int i = 1; i <= count; i++)
-                {
-                    string number = "[ " + i.ToString() + " ]";
+                GenerateParametersTags(count, objNode, objParamsNode, sUi);
 
-                    if (cdbxTagView == true)
-                    {
-                        objNode.Nodes.Add(sUi + number, sUi + number);
-                    }
-                    else
-                    {
-                        objParamsNode.Nodes.Add(sUi + number, sUi + number);
-                    }
-                }
-
+                string rtFl = obj + ".RT_PAR_F";
                 count = item.GetParamsManager().Items[2].Items.Length;
-                for (int i = 1; i <= count; i++)
-                {
-                    string number = "[ " + i.ToString() + " ]";
+                GenerateParametersTags(count, objNode, objParamsNode, rtFl);
 
-                    if (cdbxTagView == true)
-                    {
-                        objNode.Nodes.Add(rtFl + number, rtFl + number);
-                    }
-                    else
-                    {
-                        objParamsNode.Nodes.Add(rtFl + number, rtFl + number);
-                    }
-                }
-
+                string rtUi = obj + ".RT_PAR_UI";
                 count = item.GetParamsManager().Items[3].Items.Length;
-                for (int i = 1; i <= count; i++)
-                {
-                    string number = "[ " + i.ToString() + " ]";
+                GenerateParametersTags(count, objNode, objParamsNode, rtUi);
 
-                    if (cdbxTagView == true)
-                    {
-                        objNode.Nodes.Add(rtUi + number, rtUi + number);
-                    }
-                    else
-                    {
-                        objParamsNode.Nodes.Add(rtUi + number, rtUi + number);
-                    }
-                }
+                GenerateRootNode(rootNode, objNode, objModesNode, 
+                    objOperStateNode, objAvOperNode, objStepsNode, 
+                    objParamsNode);
+            }
+        }
+
+        /// <summary>
+        /// Генерация системных тегов
+        /// </summary>
+        /// <param name="rootNode">Узловой узел</param>
+        private void GenerateSystemNode(TreeNode rootNode)
+        {
+            var systemNode = new TreeNode("SYSTEM");
+            systemNode.Nodes.Add("SYSTEM.UP_TIME", "SYSTEM.UP_TIME");
+            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_SEAT_PERIOD",
+                "SYSTEM.WASH_VALVE_SEAT_PERIOD");
+            systemNode.Nodes.Add("SYSTEM.P_V_OFF_DELAY_TIME",
+                "SYSTEM.P_V_OFF_DELAY_TIME");
+            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_UPPER_SEAT_TIME",
+                "SYSTEM.WASH_VALVE_UPPER_SEAT_TIME");
+            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_LOWER_SEAT_TIME",
+                "SYSTEM.WASH_VALVE_LOWER_SEAT_TIME");
+            systemNode.Nodes.Add("SYSTEM.CMD", "SYSTEM.CMD");
+            systemNode.Nodes.Add("SYSTEM.CMD_ANSWER", "SYSTEM.CMD_ANSWER");
+            systemNode.Nodes.Add("SYSTEM.P_RESTRICTIONS_MODE",
+                "SYSTEM.P_RESTRICTIONS_MODE");
+            systemNode.Nodes.Add("SYSTEM.P_RESTRICTIONS_MANUAL_TIME",
+                "SYSTEM.P_RESTRICTIONS_MANUAL_TIME");
+            systemNode.Nodes.Add("SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR",
+                "SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR");
+            rootNode.Nodes.Add(systemNode);
+        }
+
+        /// <summary>
+        /// Генерация объекта-ПИДа
+        /// </summary>
+        /// <param name="rootNode">Главный узел</param>
+        private void GeneratePIDNode(TreeNode rootNode, int num)
+        {
+            const string pid = "PID";
+            var pidNode = new TreeNode($"{pid}{num}");
+
+            const int rtParCount = 2;
+            for (int i = 1; i <= rtParCount; i++)
+            {
+                string nodeDescription = $"{pidNode}.RT_PAR_F[ {i} ]";
+                pidNode.Nodes.Add(nodeDescription, nodeDescription);
+            }
+
+            const int sParCount = 14;
+            for(int i = 1; i <= sParCount; i++)
+            {
+                string nodeDescription = $"{pidNode}.S_PAR_F[ {i} ]";
+                pidNode.Nodes.Add(nodeDescription, nodeDescription);
+            }
+
+            rootNode.Nodes.Add(pidNode);
+        }
+
+        /// <summary>
+        /// Генерация имени объекта
+        /// </summary>
+        /// <param name="item">Объект</param>
+        /// <param name="itemNumber">Глобальный номер</param>
+        /// <returns></returns>
+        private string GenerateObjectName(TechObject item, int itemNumber)
+        {
+            if (cdbxNewNames == true)
+            {
+                return item.NameBC.ToUpper() + item.TechNumber.ToString();
+            }
+            else
+            {
+                return "OBJECT" + itemNumber.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Генерация CMD-тэгов для объекта
+        /// </summary>
+        /// <param name="obj">Имя объекта</param>
+        /// <param name="objNode"></param>
+        /// <param name="objModesNode"></param>
+        private void GenerateCMDTags(string obj, TreeNode objNode, 
+            TreeNode objModesNode)
+        {
+            if (cdbxTagView == true)
+            {
+                objNode.Nodes.Add(obj + ".CMD", obj + ".CMD");
+            }
+            else
+            {
+                objModesNode.Nodes.Add(obj + ".CMD", obj + ".CMD");
+            }
+        }
+
+        /// <summary>
+        /// Генерация ST-тегов для проекта
+        /// </summary>
+        /// <param name="item">Объект</param>
+        /// <param name="obj">Имя объекта</param>
+        /// <param name="objNode"></param>
+        /// <param name="objModesNode"></param>
+        private void GenerateSTTags(TechObject item, string obj, 
+            TreeNode objNode, TreeNode objModesNode)
+        {
+            // 33 - Magic number
+            int stCount = item.ModesManager.Modes.Count / 33;
+            for (int i = 0; i <= stCount; i++)
+            {
+                string number = "[ " + (i + 1).ToString() + " ]";
+
                 if (cdbxTagView == true)
                 {
-                    rootNode.Nodes.AddRange(new TreeNode[] { objNode });
+                    objNode.Nodes.Add(obj + ".ST" + number, 
+                        obj + ".ST" + number);
                 }
                 else
                 {
-                    rootNode.Nodes.AddRange(new TreeNode[] 
-                    { 
-                        objModesNode, 
-                        objOperStateNode, 
-                        objAvOperNode, 
-                        objStepsNode, 
-                        objParamsNode 
-                    });
+                    objModesNode.Nodes.Add(obj + ".ST" + number, 
+                        obj + ".ST" + number);
                 }
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="item">Объект</param>
+        /// <param name="itemNumber">Глобальный номер</param>
+        /// <param name="objNode"></param>
+        /// <param name="objModesNode"></param>
+        /// <param name="objOperStateNode"></param>
+        /// <param name="objAvOperNode"></param>
+        /// <param name="objStepsNode"></param>
+        private void GenerateModesOpersAvsStepsTags(TechObject item, string obj,
+            TreeNode objNode, TreeNode objModesNode, TreeNode objOperStateNode,
+            TreeNode objAvOperNode, TreeNode objStepsNode)
+        {
+            string mode = obj + ".MODES";
+            string step = mode + "_STEPS";
+            string oper = obj + ".OPERATIONS";
+            string av = obj + ".AVAILABILITY";
+            for (int i = 1; i <= item.ModesManager.Modes.Count; i++)
+            {
+                string number = "[ " + i.ToString() + " ]";
+                if (cdbxTagView == true)
+                {
+                    objNode.Nodes.Add(mode + number, mode + number);
+                    objNode.Nodes.Add(oper + number, oper + number);
+                    objNode.Nodes.Add(av + number, av + number);
+                    objNode.Nodes.Add(step + number, step + number);
+                }
+                else
+                {
+                    objModesNode.Nodes.Add(mode + number, mode + number);
+                    objOperStateNode.Nodes.Add(oper + number, oper +
+                        number);
+                    objAvOperNode.Nodes.Add(av + number, av + number);
+                    objStepsNode.Nodes.Add(step + number, step + number);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Генерация тэгов параметров объекта
+        /// </summary>
+        /// <param name="paramsCount">Количество параметров</param>
+        /// <param name="objNode"></param>
+        /// <param name="objParamsNode"></param>
+        /// <param name="tagName">Имя тэга</param>
+        private void GenerateParametersTags(int paramsCount, TreeNode objNode,
+            TreeNode objParamsNode, string tagName)
+        {
+            for (int i = 1; i <= paramsCount; i++)
+            {
+                string number = "[ " + i.ToString() + " ]";
+
+                if (cdbxTagView == true)
+                {
+                    objNode.Nodes.Add(tagName + number, tagName + number);
+                }
+                else
+                {
+                    objParamsNode.Nodes.Add(tagName + number, tagName + number);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Генерация главного узла для экспорта в XML
+        /// </summary>
+        /// <param name="rootNode"></param>
+        /// <param name="objNode"></param>
+        /// <param name="objModesNode"></param>
+        /// <param name="objOperStateNode"></param>
+        /// <param name="objAvOperNode"></param>
+        /// <param name="objStepsNode"></param>
+        /// <param name="objParamsNode"></param>
+        private void GenerateRootNode(TreeNode rootNode, TreeNode objNode,
+            TreeNode objModesNode, TreeNode objOperStateNode,
+            TreeNode objAvOperNode, TreeNode objStepsNode, 
+            TreeNode objParamsNode)
+        {
+            if (cdbxTagView == true)
+            {
+                rootNode.Nodes.Add(objNode);
+            }
+            else
+            {
+                rootNode.Nodes.AddRange(new TreeNode[]
+                {
+                        objModesNode,
+                        objOperStateNode,
+                        objAvOperNode,
+                        objStepsNode,
+                        objParamsNode
+                });
+            }
+        }
+        #endregion
 
         /// <summary>
         /// Получение экземпляра класса.
