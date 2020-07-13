@@ -322,12 +322,12 @@ namespace EasyEPlanner
             }
 
             string objectName = item.ChildNodes[6].InnerText;
-            if (!objectName.Contains("PID"))
-            {
+            //if (!objectName.Contains("PID"))
+            //{
                 TreeNode[] nodes = rootNode.Nodes.Cast<TreeNode>()
                     .Where(r => r.Text == objectName).ToArray();
                 SetUpChannelBaseObject(nodes, item, subTypeChannels);
-            }
+            //}
         }
 
         /// <summary>
