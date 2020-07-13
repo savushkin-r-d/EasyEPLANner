@@ -204,10 +204,19 @@ namespace TechObject
             modeStep = null;
         }
 
-        //Возврат имени шага
-        public string GetStepName()
+        /// <summary>
+        /// Имя состояния
+        /// </summary>
+        public string Name
         {
-            return name;
+            get
+            {
+                return name;
+            }
+            set
+            {
+                name = value;
+            }
         }
 
         public Mode Owner

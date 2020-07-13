@@ -517,25 +517,31 @@ namespace TechObject
             object copyObject)
         {
 
-            if (child is State)
+            if (child is State && copyObject is State)
             {
-                State stpMngr = child as State;
-                if (copyObject is State && stpMngr != null)
-                {
-                    State newStpMngr = (copyObject as State).Clone();
-                    int index = stepsMngr.IndexOf(stpMngr);
-                    stepsMngr.Remove(stpMngr);
-                    stepsMngr.Insert(index, newStpMngr);
+                var selectedState = child as State;
+                var copyingObject = copyObject as State;
 
-                    return newStpMngr;
+                if (selectedState != null)
+                {
+                    State newState = copyingObject.Clone();
+                    if(newState.Name != selectedState.Name)
+                    {
+                        newState.Name = selectedState.Name;
+                    }
+                    int index = stepsMngr.IndexOf(selectedState);
+                    stepsMngr.Remove(selectedState);
+                    stepsMngr.Insert(index, newState);
+                    SetItems();
+
+                    return newState;
                 }
             }
 
-            if (child is RestrictionManager)
+            if (child is RestrictionManager && copyObject is RestrictionManager)
             {
-                RestrictionManager restrictMan = child as RestrictionManager;
-
-                if (copyObject is RestrictionManager && restrictMan != null)
+                var restrictMan = child as RestrictionManager;
+                if (restrictMan != null)
                 {
                     var copyMan = copyObject as RestrictionManager;
                     for (int i = 0; i < restrictMan.Restrictions.Count; i++)
@@ -548,7 +554,7 @@ namespace TechObject
                         .GetTechObjectN(owner.Owner);
                     int modeNum = getN(this);
 
-                    foreach (Restriction restrict in restrictMan.Restrictions)
+                    foreach (var restrict in restrictMan.Restrictions)
                     {
                         restrict.SetRestrictionOwner(objNum, modeNum);
                     }
