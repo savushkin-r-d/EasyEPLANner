@@ -410,6 +410,11 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Является ли объект ПИД-регулятором
+        /// </summary>
+        public bool IsPID { get; set; }
+
         #region Сохранение в prg.lua
         /// <summary>
         /// Сохранить информацию об объекте в prg.lua

@@ -11,6 +11,7 @@
 -- 6. aggregateParameters - параметры объекта, который является агрегатом (которые будут добавлены
 -- в аппарат, при привязке агрегата к аппарату).
 -- 7. bindingName - имя агрегата, используемое при привязке его к аппарату (для аппаратов не обязательно).
+-- 8. isPID - является ли объект ПИД-регулятором.
 
 -- Базовые операции (название таблицы - это Lua-имя операции, пишется в верхнем регистре):
 -- 1. name - русскоязычное название операции.
@@ -114,6 +115,7 @@ return
             },
             aggregateParameters = { },
             bindingName = "ice_water_pump_tank"
+            isPID = true
         },
         boil = {
             name = "Бойлер",
@@ -513,6 +515,7 @@ return
                 },
             },
             bindingName = "pressure_node"
+            isPID = true
         },
         heater_node = {
             name = "Узел подогрева",
@@ -580,6 +583,7 @@ return
                 },
             },
             bindingName = "heater_node"
+            isPID = true
         },
         flow_node_PID = {
             name = "Узел расхода ПИД",
@@ -607,6 +611,7 @@ return
                 },
             },
             bindingName = "flow_node"
+            isPID = true
         },
         cooler_node = {
             name = "Узел охлаждения",
@@ -674,6 +679,7 @@ return
             },
             aggregateParameters = { },
             bindingName = "cooler_node"
+            isPID = true
         },
         mix_node = {
             name = "Узел перемешивания",
@@ -750,6 +756,7 @@ return
                 SET_VALUE = { name = "Задание" },
             },
             bindingName = "tank_level_node_PID"
+            isPID = true
         },
         tank_level_node = {
             name = "Узел текущего уровня",
