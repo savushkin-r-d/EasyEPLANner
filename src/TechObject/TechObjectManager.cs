@@ -361,6 +361,11 @@ namespace TechObject
                     objOperStateNode, objAvOperNode, objStepsNode, 
                     objSingleStepsNode, objParamsNode};
                 GenerateRootNode(rootNode, objNode, singleNodes);
+
+                if(item.BaseTechObject.IsPID)
+                {
+                    GeneratePIDNode(rootNode, item.GlobalNumber);
+                }
             }
         }
 
@@ -392,32 +397,6 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Генерация объекта-ПИДа
-        /// </summary>
-        /// <param name="rootNode">Главный узел</param>
-        private void GeneratePIDNode(TreeNode rootNode, int num)
-        {
-            const string pid = "PID";
-            var pidNode = new TreeNode($"{pid}{num}");
-
-            const int rtParCount = 2;
-            for (int i = 1; i <= rtParCount; i++)
-            {
-                string nodeDescription = $"{pidNode}.RT_PAR_F[ {i} ]";
-                pidNode.Nodes.Add(nodeDescription, nodeDescription);
-            }
-
-            const int sParCount = 14;
-            for(int i = 1; i <= sParCount; i++)
-            {
-                string nodeDescription = $"{pidNode}.S_PAR_F[ {i} ]";
-                pidNode.Nodes.Add(nodeDescription, nodeDescription);
-            }
-
-            rootNode.Nodes.Add(pidNode);
-        }
-
-        /// <summary>
         /// Генерация имени объекта
         /// </summary>
         /// <param name="item">Объект</param>
@@ -439,8 +418,6 @@ namespace TechObject
         /// Генерация CMD-тэгов для объекта
         /// </summary>
         /// <param name="obj">Имя объекта</param>
-        /// <param name="objNode"></param>
-        /// <param name="objModesNode"></param>
         private void GenerateCMDTags(string obj, TreeNode objNode, 
             TreeNode objModesNode)
         {
@@ -460,8 +437,6 @@ namespace TechObject
         /// </summary>
         /// <param name="item">Объект</param>
         /// <param name="objName">Имя объекта</param>
-        /// <param name="objNode"></param>
-        /// <param name="objModesNode"></param>
         private void GenerateSTTags(TechObject item, string objName, 
             TreeNode objNode, TreeNode objModesNode)
         {
@@ -487,11 +462,6 @@ namespace TechObject
         /// </summary>
         /// <param name="item">Объект</param>
         /// <param name="itemNumber">Глобальный номер</param>
-        /// <param name="objNode"></param>
-        /// <param name="objModesNode"></param>
-        /// <param name="objOperStateNode"></param>
-        /// <param name="objAvOperNode"></param>
-        /// <param name="objStepsNode"></param>
         private void GenerateModesOpersAvsStepsTags(TechObject item, string obj,
             TreeNode objNode, TreeNode objModesNode, TreeNode objOperStateNode,
             TreeNode objAvOperNode, TreeNode objStepsNode)
@@ -525,7 +495,6 @@ namespace TechObject
         /// </summary>
         /// <param name="item">Объект</param>
         /// <param name="objName">Имя объекта</param>
-        /// <param name="objNode"></param>
         /// <param name="objSingleStepsNode"></param>
         private void GenerateSingleStepsTags(TechObject item, string objName, 
             TreeNode objNode, TreeNode objSingleStepsNode)
@@ -555,7 +524,6 @@ namespace TechObject
         /// </summary>
         /// <param name="paramsCount">Количество параметров</param>
         /// <param name="objNode"></param>
-        /// <param name="objParamsNode"></param>
         /// <param name="tagName">Имя тэга</param>
         private void GenerateParametersTags(int paramsCount, TreeNode objNode,
             TreeNode objParamsNode, string tagName)
@@ -578,13 +546,6 @@ namespace TechObject
         /// <summary>
         /// Генерация главного узла для экспорта в XML
         /// </summary>
-        /// <param name="rootNode"></param>
-        /// <param name="objNode"></param>
-        /// <param name="objModesNode"></param>
-        /// <param name="objOperStateNode"></param>
-        /// <param name="objAvOperNode"></param>
-        /// <param name="objStepsNode"></param>
-        /// <param name="objParamsNode"></param>
         private void GenerateRootNode(TreeNode rootNode, TreeNode objNode,
             TreeNode[] singleNodes)
         {
@@ -596,6 +557,40 @@ namespace TechObject
             {
                 rootNode.Nodes.AddRange(singleNodes);
             }
+        }
+
+        /// <summary>
+        /// Генерация объекта-ПИДа
+        /// </summary>
+        /// <param name="rootNode">Главный узел</param>
+        private void GeneratePIDNode(TreeNode rootNode, int num)
+        {
+            string tagName = $"PID{num}";
+            TreeNode pidNode;
+            if (cdbxTagView == true)
+            {
+                pidNode = new TreeNode($"{tagName}");
+            }
+            else
+            {
+                pidNode = new TreeNode($"{tagName}_Параметры");
+            }
+
+            const int rtParCount = 2;
+            for (int i = 1; i <= rtParCount; i++)
+            {
+                string nodeDescription = $"{tagName}.RT_PAR_F[ {i} ]";
+                pidNode.Nodes.Add(nodeDescription, nodeDescription);
+            }
+
+            const int sParCount = 14;
+            for (int i = 1; i <= sParCount; i++)
+            {
+                string nodeDescription = $"{tagName}.S_PAR_F[ {i} ]";
+                pidNode.Nodes.Add(nodeDescription, nodeDescription);
+            }
+
+            rootNode.Nodes.Add(pidNode);
         }
         #endregion
 
