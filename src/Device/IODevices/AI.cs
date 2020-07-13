@@ -90,13 +90,20 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.AI:
-                        case DeviceSubType.AI_VIRT:
                             return new List<string>(new string[]
                             {
                                 "M",
                                 "ST",
                                 "P_MIN_V",
                                 "P_MAX_V",
+                                "V"
+                            });
+
+                        case DeviceSubType.AI_VIRT:
+                            return new List<string>(new string[]
+                            {
+                                "M",
+                                "ST",
                                 "V"
                             });
                     }

@@ -171,6 +171,13 @@ namespace Tests
                 "ST",
                 "M",
                 "P_ON_TIME",
+            };
+
+            var exportForMFreq = new List<string>
+            {
+                "ST",
+                "M",
+                "P_ON_TIME",
                 "V"
             };
 
@@ -198,7 +205,7 @@ namespace Tests
             return new object[]
             {
                 new object[] {exportForM, "M", GetRandomMDevice()},
-                new object[] {exportForM, "M_FREQ", GetRandomMDevice()},
+                new object[] {exportForMFreq, "M_FREQ", GetRandomMDevice()},
                 new object[] {exportForMRev, "M_REV", GetRandomMDevice()},
                 new object[] {exportForMRev, "M_REV_FREQ", 
                     GetRandomMDevice()},

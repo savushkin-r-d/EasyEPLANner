@@ -145,6 +145,13 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.M:
+                            return new List<string>(new string[]
+                            {
+                                "ST",
+                                "M",
+                                "P_ON_TIME",
+                            });
+
                         case DeviceSubType.M_FREQ:
                             return new List<string>(new string[]
                             {

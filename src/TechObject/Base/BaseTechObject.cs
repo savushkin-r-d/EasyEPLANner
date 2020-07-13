@@ -324,6 +324,7 @@ namespace TechObject
 
             cloned.S88Level = S88Level;
             cloned.BindingName = BindingName;
+            cloned.IsPID = IsPID;
             return cloned;
         }
 
@@ -409,6 +410,11 @@ namespace TechObject
                 aggregateMainParameter = value;
             }
         }
+
+        /// <summary>
+        /// Является ли объект ПИД-регулятором
+        /// </summary>
+        public bool IsPID { get; set; }
 
         #region Сохранение в prg.lua
         /// <summary>
