@@ -62,12 +62,14 @@ namespace EasyEPlanner
                 var nsmgr = new XmlNamespaceManager(xmlDoc.NameTable);
                 nsmgr.AddNamespace("driver", "http://brestmilk.by/driver/");
                 XmlElement root = xmlDoc.DocumentElement;
-                var elm = root.SelectSingleNode("//driver:id", nsmgr) as XmlElement;
+                var elm = root.SelectSingleNode("//driver:id", nsmgr) as 
+                    XmlElement;
                 string baseId = elm.InnerText;
                                
                 var subTypesId = GenerateSubTypesIdsList();
 
-                elm = root.SelectSingleNode("//driver:subtypes", nsmgr) as XmlElement;
+                elm = root.SelectSingleNode("//driver:subtypes", nsmgr) as 
+                    XmlElement;
                 nsmgr.AddNamespace("subtypes", "http://brestmilk.by/subtypes/");
                 // Настройка элементов базы каналов
                 foreach (XmlElement item in elm.ChildNodes)
@@ -293,6 +295,28 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Создание узлов и каналов в новой пустой базе каналов
+        /// </summary>
+        private static void CreateNewChannels(XmlDocument xmlDoc,
+            XmlElement subtypesNode, TreeNodeCollection Nodes)
+        {
+            for (int i = 0; i < Nodes.Count; i++)
+            {
+                XmlElement subtypeElm = AddSubType(xmlDoc, subtypesNode,
+                    Nodes[i], i);
+
+                for (int j = 0; j < Nodes[i].Nodes.Count; j++)
+                {
+                    long channelId = long.Parse(("01" + i.ToString("X2") +
+                        j.ToString("X4")),
+                        System.Globalization.NumberStyles.HexNumber);
+                    AddChannel(xmlDoc, Nodes[i].Nodes[j], subtypeElm,
+                        channelId);
+                }
+            }
+        }
+
+        /// <summary>
         /// Генерация заполненного списка с номерами узлов
         /// </summary>
         /// <returns></returns>
@@ -322,12 +346,9 @@ namespace EasyEPlanner
             }
 
             string objectName = item.ChildNodes[6].InnerText;
-            //if (!objectName.Contains("PID"))
-            //{
-                TreeNode[] nodes = rootNode.Nodes.Cast<TreeNode>()
-                    .Where(r => r.Text == objectName).ToArray();
-                SetUpChannelBaseObject(nodes, item, subTypeChannels);
-            //}
+            TreeNode[] nodes = rootNode.Nodes.Cast<TreeNode>()
+                .Where(r => r.Text == objectName).ToArray();
+            SetUpChannelBaseObject(nodes, item, subTypeChannels);
         }
 
         /// <summary>
@@ -377,6 +398,38 @@ namespace EasyEPlanner
                             chan.ChildNodes[channelEnabledId].InnerText = "-1";
                         }
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Перезаписать номера каналов подтипа (в OBJECT).
+        /// </summary>
+        /// <param name="channels">Список каналов</param>
+        /// <param name="node">Подтип для перезаписи</param>
+        private static void RewriteSubType(XmlNodeList channels,
+            TreeNode node)
+        {
+            string searchPattern = @"(?<name>OBJECT)(?<n>[0-9]+)+";
+            const int channelDescrNum = 4;
+
+            string newNodeName = node.FirstNode.Text;
+            string newNum = Regex.Match(newNodeName, searchPattern).Groups["n"]
+                .Value;
+
+            XmlNode firstChannel = channels[0];
+            string oldNodeName = firstChannel.ChildNodes[channelDescrNum]
+                .InnerText;
+            string oldNum = Regex.Match(oldNodeName, searchPattern).Groups["n"]
+                .Value;
+
+            if (newNum != oldNum)
+            {
+                foreach (XmlElement channel in channels)
+                {
+                    channel.ChildNodes[channelDescrNum].InnerText =
+                        Regex.Replace(channel.ChildNodes[channelDescrNum]
+                        .InnerText, searchPattern, "OBJECT" + newNum);
                 }
             }
         }
@@ -459,60 +512,6 @@ namespace EasyEPlanner
                     Logs.AddMessage("Превышено количество подтипов " +
                         "в базе каналов.");
                     return;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Перезаписать номера каналов подтипа (в OBJECT).
-        /// </summary>
-        /// <param name="channels">Список каналов</param>
-        /// <param name="node">Подтип для перезаписи</param>
-        private static void RewriteSubType(XmlNodeList channels,
-            TreeNode node)
-        {
-            string searchPattern = @"(?<name>OBJECT)(?<n>[0-9]+)+";
-            const int channelDescrNum = 4;
-
-            string newNodeName = node.FirstNode.Text;
-            string newNum = Regex.Match(newNodeName, searchPattern).Groups["n"]
-                .Value;
-
-            XmlNode firstChannel = channels[0];
-            string oldNodeName = firstChannel.ChildNodes[channelDescrNum]
-                .InnerText;
-            string oldNum = Regex.Match(oldNodeName, searchPattern).Groups["n"]
-                .Value;
-
-            if (newNum != oldNum)
-            {
-                foreach (XmlElement channel in channels)
-                {
-                    channel.ChildNodes[channelDescrNum].InnerText = 
-                        Regex.Replace(channel.ChildNodes[channelDescrNum]
-                        .InnerText, searchPattern, "OBJECT" + newNum);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Создание узлов и каналов в новой пустой базе каналов
-        /// </summary>
-        private static void CreateNewChannels(XmlDocument xmlDoc,
-            XmlElement subtypesNode, TreeNodeCollection Nodes)
-        {
-            for (int i = 0; i < Nodes.Count; i++)
-            {
-                XmlElement subtypeElm = AddSubType(xmlDoc, subtypesNode,
-                    Nodes[i], i);
-
-                for (int j = 0; j < Nodes[i].Nodes.Count; j++)
-                {
-                    long channelId = long.Parse(("01" + i.ToString("X2") + 
-                        j.ToString("X4")), 
-                        System.Globalization.NumberStyles.HexNumber);
-                    AddChannel(xmlDoc, Nodes[i].Nodes[j], subtypeElm, 
-                        channelId);
                 }
             }
         }
