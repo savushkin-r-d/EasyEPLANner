@@ -347,6 +347,8 @@
             this.editorTView.UseHotControls = false;
             this.editorTView.View = System.Windows.Forms.View.Details;
             this.editorTView.VirtualMode = true;
+            this.editorTView.Expanded += new System.EventHandler<BrightIdeasSoftware.TreeBranchExpandedEventArgs>(this.editorTView_Expanded);
+            this.editorTView.Collapsed += new System.EventHandler<BrightIdeasSoftware.TreeBranchCollapsedEventArgs>(this.editorTView_Collapsed);
             this.editorTView.CellEditFinishing += new BrightIdeasSoftware.CellEditEventHandler(this.editorTView_CellEditFinishing);
             this.editorTView.CellEditStarting += new BrightIdeasSoftware.CellEditEventHandler(this.editorTView_CellEditStarting);
             this.editorTView.FormatCell += new System.EventHandler<BrightIdeasSoftware.FormatCellEventArgs>(this.editorTView_FormatCell);
