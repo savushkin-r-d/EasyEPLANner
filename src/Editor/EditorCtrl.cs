@@ -79,11 +79,11 @@ namespace Editor
                     }
                 };
 
-            // Делегает получения дочерних элементов
+            // Делегат получения дочерних элементов
             editorTView.ChildrenGetter = obj => (obj as ITreeViewItem).Items;
 
             // Настройка и добавление колонок
-            OLVColumn firstColumn = new OLVColumn("Название", "DisplayText[0]");
+            var firstColumn = new OLVColumn("Название", "DisplayText[0]");
             firstColumn.IsEditable = false;
             firstColumn.AspectGetter = obj => (obj as ITreeViewItem).DisplayText[0];
             firstColumn.Sortable = false;
@@ -102,7 +102,7 @@ namespace Editor
                     }
                 };
 
-            OLVColumn secondColumn = new OLVColumn("Описание", "DisplayText[1]");
+            var secondColumn = new OLVColumn("Описание", "DisplayText[1]");
             secondColumn.IsEditable = false;
             secondColumn.AspectGetter = obj => (obj as ITreeViewItem).DisplayText[1];
             secondColumn.Sortable = false;
@@ -1636,6 +1636,20 @@ namespace Editor
         {
             var exportForm = new TechObjectsExportForm();
             exportForm.ShowDialog();
+        }
+
+        private void editorTView_Expanded(object sender, 
+            TreeBranchExpandedEventArgs e)
+        {
+            editorTView.Columns[0].AutoResize(
+                ColumnHeaderAutoResizeStyle.ColumnContent);
+        }
+
+        private void editorTView_Collapsed(object sender, 
+            TreeBranchCollapsedEventArgs e)
+        {
+            editorTView.Columns[0].AutoResize(
+                ColumnHeaderAutoResizeStyle.ColumnContent);
         }
     }
 }
