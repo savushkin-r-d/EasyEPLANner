@@ -313,53 +313,68 @@ namespace EasyEPlanner
         private static void SetUpExistingChannelBase(List<string> subtupesId,
             XmlElement item, TreeNode rootNode)
         {
-            const int channelsLocation = 9;
-            XmlNodeList subTypeChannels = item
-                .ChildNodes[channelsLocation].ChildNodes;
+            const int channelLocationId = 9;
+            XmlNodeList subTypeChannels = item.ChildNodes[channelLocationId]
+                .ChildNodes;
             if (subtupesId.Contains(item.ChildNodes[0].InnerText))
             {
                 subtupesId.Remove(item.ChildNodes[0].InnerText);
             }
 
-            if (!item.ChildNodes[6].InnerText.Contains("PID"))
+            string objectName = item.ChildNodes[6].InnerText;
+            if (!objectName.Contains("PID"))
             {
                 TreeNode[] nodes = rootNode.Nodes.Cast<TreeNode>()
-                        .Where(r => r.Text == item.ChildNodes[6]
-                        .InnerText).ToArray();
+                    .Where(r => r.Text == objectName).ToArray();
+                SetUpChannelBaseObject(nodes, item, subTypeChannels);
+            }
+        }
 
-                const int channelDescrNum = 4;
-                XmlNode firstChannelDescr = subTypeChannels[0]
-                    .ChildNodes[channelDescrNum];
-                if (firstChannelDescr != null &&
-                    firstChannelDescr.InnerText.Contains("OBJECT") &&
-                    nodes.Length == 1)
-                {
-                    RewriteSubType(subTypeChannels, nodes.First());
-                }
+        /// <summary>
+        /// Настройка узла базы каналов
+        /// </summary>
+        /// <param name="nodes">Узел базы каналов</param>
+        /// <param name="item">Узел в XML</param>
+        /// <param name="subTypeChannels">Тэги узла в XML</param>
+        private static void SetUpChannelBaseObject(TreeNode[] nodes, 
+            XmlElement item, XmlNodeList subTypeChannels)
+        {
+            const int channelDescrNum = 4;
+            const int channelEnabledId = 3;
 
-                if (nodes.Length == 0)
+            XmlNode firstChannelDescr = subTypeChannels[0]
+                .ChildNodes[channelDescrNum];
+            if (firstChannelDescr != null &&
+                firstChannelDescr.InnerText.Contains("OBJECT") &&
+                nodes.Length == 1)
+            {
+                RewriteSubType(subTypeChannels, nodes.First());
+            }
+
+            if (nodes.Length == 0)
+            {
+                // Комментирование удаленных узлов.
+                item.ChildNodes[channelEnabledId].InnerText = "0";
+            }
+            else
+            {
+                item.ChildNodes[channelEnabledId].InnerText = "-1";
+
+                foreach (XmlElement chan in subTypeChannels)
                 {
-                    // Комментирование удаленных узлов.
-                    item.ChildNodes[3].InnerText = "0";
-                }
-                else
-                {
-                    item.ChildNodes[3].InnerText = "-1";
-                    foreach (XmlElement chan in subTypeChannels)
+                    foreach (TreeNode node in nodes)
                     {
-                        foreach (TreeNode node in nodes)
+                        TreeNode[] chanNodes = node.Nodes
+                            .Find(chan.ChildNodes[channelDescrNum].InnerText, 
+                            true);
+                        if (chanNodes.Length == 0)
                         {
-                            TreeNode[] chanNodes = node.Nodes
-                                .Find(chan.ChildNodes[4].InnerText, true);
-                            if (chanNodes.Length == 0)
-                            {
-                                chan.ChildNodes[3].InnerText = "0";
-                                break;
-                            }
-                            else
-                            {
-                                chan.ChildNodes[3].InnerText = "-1";
-                            }
+                            chan.ChildNodes[channelEnabledId].InnerText = "0";
+                            break;
+                        }
+                        else
+                        {
+                            chan.ChildNodes[channelEnabledId].InnerText = "-1";
                         }
                     }
                 }

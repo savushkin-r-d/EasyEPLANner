@@ -114,7 +114,7 @@ return
                 SET_VALUE = { name = "Задание"},
             },
             aggregateParameters = { },
-            bindingName = "ice_water_pump_tank"
+            bindingName = "ice_water_pump_tank",
             isPID = true
         },
         boil = {
@@ -514,7 +514,7 @@ return
                     NEED_PRESSURE_CONTROL = { name = "Использовать узел давления", defaultValue = "false" },
                 },
             },
-            bindingName = "pressure_node"
+            bindingName = "pressure_node",
             isPID = true
         },
         heater_node = {
@@ -582,7 +582,7 @@ return
                     NEED_HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
                 },
             },
-            bindingName = "heater_node"
+            bindingName = "heater_node",
             isPID = true
         },
         flow_node_PID = {
@@ -610,7 +610,7 @@ return
                     NEED_FLOW_CONTROL = { name = "Использовать узел расхода", defaultValue = "false" },
                 },
             },
-            bindingName = "flow_node"
+            bindingName = "flow_node",
             isPID = true
         },
         cooler_node = {
@@ -678,7 +678,7 @@ return
                 SET_VALUE = { name = "Задание"},
             },
             aggregateParameters = { },
-            bindingName = "cooler_node"
+            bindingName = "cooler_node",
             isPID = true
         },
         mix_node = {
@@ -755,7 +755,7 @@ return
                 M1 = { name = "Насос (AO)", defaultValue = "M1" },
                 SET_VALUE = { name = "Задание" },
             },
-            bindingName = "tank_level_node_PID"
+            bindingName = "tank_level_node_PID",
             isPID = true
         },
         tank_level_node = {
