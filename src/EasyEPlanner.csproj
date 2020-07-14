@@ -115,6 +115,43 @@
   <ItemGroup>
     <Compile Include="ConfigurationChecker.cs" />
     <Compile Include="Editor\TechObjectsImporter.cs" />
+    <Compile Include="InterprojectExchange\DeviceComparer.cs" />
+    <Compile Include="InterprojectExchange\DeviceInfo.cs" />
+    <Compile Include="InterprojectExchange\DeviceSignalsInfo.cs" />
+    <Compile Include="InterprojectExchange\FilterConfiguration.cs" />
+    <Compile Include="InterprojectExchange\Forms\FilterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InterprojectExchange\Forms\FilterForm.Designer.cs">
+      <DependentUpon>FilterForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InterprojectExchange\Models\CurrentProjectModel.cs" />
+    <Compile Include="InterprojectExchange\Models\AdvancedProjectModel.cs" />
+    <Compile Include="InterprojectExchange\Models\InterprojectExchangeModel.cs" />
+    <Compile Include="InterprojectExchange\InterprojectExchangeSaver.cs" />
+    <Compile Include="InterprojectExchange\InterprojectExchangeStarter.cs" />
+    <Compile Include="InterprojectExchange\InterprojectExchange.cs" />
+    <Compile Include="InterprojectExchange\Forms\InterprojectExchangeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InterprojectExchange\Forms\InterprojectExchangeForm.Designer.cs">
+      <DependentUpon>InterprojectExchangeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InterprojectExchange\Models\IProjectModel.cs" />
+    <Compile Include="InterprojectExchange\PacInfo.cs" />
+    <Compile Include="InterprojectExchange\Forms\PACSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InterprojectExchange\Forms\PACSettingsForm.Designer.cs">
+      <DependentUpon>PACSettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InterprojectExchange\Forms\UnknownDevTypeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InterprojectExchange\Forms\UnknownDevTypeForm.Designer.cs">
+      <DependentUpon>UnknownDevTypeForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Main\InterprojectExchangeAction.cs" />
     <Compile Include="TechObject\Base\BaseObjectsManager.cs" />
     <Compile Include="Device\DeviceManager.cs" />
     <Compile Include="DeviceBindingReader.cs" />
@@ -277,6 +314,18 @@
     <EmbeddedResource Include="Editor\TechObjectsImportForm.resx">
       <DependentUpon>TechObjectsImportForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="InterprojectExchange\Forms\FilterForm.resx">
+      <DependentUpon>FilterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InterprojectExchange\Forms\InterprojectExchangeForm.resx">
+      <DependentUpon>InterprojectExchangeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InterprojectExchange\Forms\PACSettingsForm.resx">
+      <DependentUpon>PACSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InterprojectExchange\Forms\UnknownDevTypeForm.resx">
+      <DependentUpon>UnknownDevTypeForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Logs\LogFrm.resx">
       <DependentUpon>LogFrm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -297,6 +346,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="key\2112_Public.snk" />
+    <None Include="Lua\sys_devices_mock_generator.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Lua\mainPattern.plua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -309,6 +361,9 @@
     <None Include="Lua\sys_base_objects_initializer.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Lua\sys_interproject_io.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Lua\sys_io.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -316,6 +371,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Lua\sys_restriction.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Lua\sys_shared_initializer.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\main.ico" />

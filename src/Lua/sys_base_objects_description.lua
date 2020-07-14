@@ -11,6 +11,7 @@
 -- 6. aggregateParameters - параметры объекта, который является агрегатом (которые будут добавлены
 -- в аппарат, при привязке агрегата к аппарату).
 -- 7. bindingName - имя агрегата, используемое при привязке его к аппарату (для аппаратов не обязательно).
+-- 8. isPID - является ли объект ПИД-регулятором.
 
 -- Базовые операции (название таблицы - это Lua-имя операции, пишется в верхнем регистре):
 -- 1. name - русскоязычное название операции.
@@ -113,7 +114,8 @@ return
                 SET_VALUE = { name = "Задание"},
             },
             aggregateParameters = { },
-            bindingName = "ice_water_pump_tank"
+            bindingName = "ice_water_pump_tank",
+            isPID = true
         },
         boil = {
             name = "Бойлер",
@@ -135,6 +137,10 @@ return
             equipment = { },
             aggregateParameters =
             {
+                active =
+                {
+                    HEATING_WATER_TEMPERATURE = { name = "Температура подогрева воды" },
+                },
                 main =
                 {
                     NEED_BOILER = { name = "Использовать бойлер", defaultValue = "false" },
@@ -407,7 +413,13 @@ return
                 },
                 SLOW_HEATING = {
                     name = "Томление",
-                    params = { },
+                    params = 
+                    {
+                        active =
+                        {
+                            BAKE_TIME = { name = "Время нагрева (2-го шага)" },
+                        },
+                    },
                     steps =
                     {
                         TO_START_TEMPERATURE = { name = "Нагрев до заданной температуры" },
@@ -420,6 +432,7 @@ return
                         {
                             active =
                             {
+                                MIXING_CHECK_TIME = { name = "Время проверки температуры" },
                                 OPERATION_AFTER = { name = "Номер следующей операции" },
                             },
                         },
@@ -452,7 +465,7 @@ return
             equipment =
             {
                 hatch = { name = "Датчик крышки люка", defaultValue = "GS1" },
-                hatch2 = { name = "Датчик крышки люка 2", defaultValue = "GS3" },
+                hatch2 = { name = "Датчик крышки люка 2" },
                 LS_up = { name = "Датчик верхнего уровня", defaultValue = "LS2" },
                 LS_down = { name = "Датчик нижнего уровня", defaultValue = "LS1" },
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
@@ -502,7 +515,8 @@ return
                     NEED_PRESSURE_CONTROL = { name = "Использовать узел давления", defaultValue = "false" },
                 },
             },
-            bindingName = "pressure_node"
+            bindingName = "pressure_node",
+            isPID = true
         },
         heater_node = {
             name = "Узел подогрева",
@@ -526,6 +540,11 @@ return
             },
             aggregateParameters =
             {
+                active =
+                {
+                    HEATING_TEMPERATURE = { name = "Температура подогрева" },
+                    HEATING_TEMPERATURE_DELTA = { name = "Дельта температуры подогрева" },
+                },
                 main =
                 {
                     NEED_HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
@@ -564,7 +583,8 @@ return
                     NEED_HEATER_NODE = { name = "Использовать узел подогрева", defaultValue = "false" },
                 },
             },
-            bindingName = "heater_node"
+            bindingName = "heater_node",
+            isPID = true
         },
         flow_node_PID = {
             name = "Узел расхода ПИД",
@@ -591,7 +611,8 @@ return
                     NEED_FLOW_CONTROL = { name = "Использовать узел расхода", defaultValue = "false" },
                 },
             },
-            bindingName = "flow_node"
+            bindingName = "flow_node",
+            isPID = true
         },
         cooler_node = {
             name = "Узел охлаждения",
@@ -600,7 +621,13 @@ return
             {
                 COOLING = {
                     name = "Охлаждение",
-                    params = { },
+                    params =
+                    {
+                        active =
+                        {
+                            FINISH_COLD_WATER_PUSHING_TEMPERATURE = { name = "Температура завершения вытеснения горячей воды" },
+                        },
+                    },
                     steps =
                     {
                         HOT_WATER_PUSHING = { name = "Вытеснение горячей воды" },
@@ -617,6 +644,11 @@ return
             },
             aggregateParameters =
             {
+                active =
+                {
+                    COOLING_TEMPERATURE = { name = "Температура охлаждения" },
+                    COOLING_TEMPERATURE_DELTA = { name = "Дельта температуры охлаждения" },
+                },
                 main =
                 {
                     NEED_COOLING = { name = "Использовать узел охлаждения", defaultValue = "false" },
@@ -647,7 +679,8 @@ return
                 SET_VALUE = { name = "Задание"},
             },
             aggregateParameters = { },
-            bindingName = "cooler_node"
+            bindingName = "cooler_node",
+            isPID = true
         },
         mix_node = {
             name = "Узел перемешивания",
@@ -670,7 +703,7 @@ return
                 mix = { name = "Мешалка", defaultValue = "M1" },
                 bar = { name = "Датчик решетки люка", defaultValue = "GS2" },
                 hatch = { name = "Датчик крышки люка", defaultValue = "GS1" },
-                hatch2 = { name = "Датчик крышки люка 2", defaultValue = "GS3" },
+                hatch2 = { name = "Датчик крышки люка 2" },
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
             },
             aggregateParameters =
@@ -678,6 +711,9 @@ return
                 active =
                 {
                     MIX_NODE_MIX_OPERATION = { name = "Используемая операция узла перемешивания", defaultValue = 1 },
+                    MIX_NODE_MIX_ON_TIME = { name = "Время работы" },
+                    MIX_NODE_MIX_OFF_TIME = { name = "Время простоя" },
+                    MIX_NODE_MIX_SPEED = { name = "Скорость" },
                 },
                 main =
                 {
@@ -720,7 +756,8 @@ return
                 M1 = { name = "Насос (AO)", defaultValue = "M1" },
                 SET_VALUE = { name = "Задание" },
             },
-            bindingName = "tank_level_node_PID"
+            bindingName = "tank_level_node_PID",
+            isPID = true
         },
         tank_level_node = {
             name = "Узел текущего уровня",

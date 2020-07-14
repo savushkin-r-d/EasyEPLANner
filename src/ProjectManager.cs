@@ -112,7 +112,7 @@ namespace EasyEPlanner
                 {
                     path += originalAssemblyPath[source].ToString() + "\\";
                 }
-                path += configFileName;
+                path += StaticHelper.CommonConst.ConfigFileName;
 
                 // Поиск файла .ini
                 if (!File.Exists(path))

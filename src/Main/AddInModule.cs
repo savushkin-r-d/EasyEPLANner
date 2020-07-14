@@ -37,13 +37,18 @@ namespace EasyEPlanner
             menuID = oMenu.AddMenuItem("Редактировать технологические объекты",
                 "ShowTechObjectsAction",
                 "Редактирование технологических объектов", menuID, 1, 
-                false, true);
+                false, false);
 
             menuID = oMenu.AddMenuItem("Устройства", "ShowDevicesAction",
                 "Отображение устройств", menuID, int.MaxValue, false, false);
 
             menuID = oMenu.AddMenuItem("Операции", "ShowOperationsAction",
-                "Отображение операций", menuID, 1, false, false);
+                "Отображение операций", menuID, 1, false, true);
+
+            menuID = oMenu.AddMenuItem("Обмен сигналами между проектами",
+                "InterprojectExchangeAction",
+                "Настройка межпроектного обмена сигналами", menuID, 1, false, 
+                false);
 
             menuID = oMenu.AddMenuItem(
                 "Синхронизация названий устройств и модулей", 

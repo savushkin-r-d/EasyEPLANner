@@ -527,6 +527,21 @@ namespace TechObject
             }
         }
 
+        public bool Empty
+        {
+            get
+            {
+                if(deviceIndex.Count == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         protected string luaName;               /// Имя действия в таблице Lua.
         protected string name;                  /// Имя действия.
         protected List<int> deviceIndex;  /// Список устройств.

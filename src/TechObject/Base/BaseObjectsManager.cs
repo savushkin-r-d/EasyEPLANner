@@ -136,9 +136,11 @@ namespace TechObject
         /// <param name="eplanName">Имя в eplan</param>
         /// <param name="s88Level">Уровень по ISA88</param>
         /// <param name="basicName">Базовое имя для функциональности</param>
+        /// <param name="bindingName">Имя для привязки к объекту</param>
+        /// <param name="isPID">Является ли объект ПИД-регулятором</param>
         /// <returns></returns>
         public BaseTechObject AddBaseObject(string name, string eplanName,
-            int s88Level, string basicName, string bindingName)
+            int s88Level, string basicName, string bindingName, bool isPID)
         {
             if (baseTechObjects.Count == 0)
             {
@@ -152,6 +154,7 @@ namespace TechObject
             obj.S88Level = s88Level;
             obj.BasicName = basicName;
             obj.BindingName = bindingName;
+            obj.IsPID = isPID;
 
             baseTechObjects.Add(obj);
             return obj;

@@ -358,7 +358,7 @@ namespace TechObject
         public BaseOperation Clone(Mode owner)
         {
             var operation = Clone();
-            operation.owner = this.owner;
+            operation.owner = owner;
             return operation;
         }
 
