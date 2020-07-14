@@ -24,7 +24,7 @@ namespace EasyEPlanner
             return frm;
         }
 
-        public bool isVisible()
+        public bool IsVisible()
         {
             return deviceIsShown;
         }
@@ -45,8 +45,7 @@ namespace EasyEPlanner
         {
             string path = Environment.GetFolderPath(
                         Environment.SpecialFolder.ApplicationData);
-            IniFile ini = new IniFile(
-                path + @"\Eplan\eplan.cfg");
+            var ini = new IniFile(path + @"\Eplan\eplan.cfg");
             if (wndState == true)
             {
                 ini.WriteString("main", "show_dev_window", "true");
@@ -81,10 +80,11 @@ namespace EasyEPlanner
             deviceIsShown = false;
         }
 
-        private IntPtr DlgWndHookCallbackFunction(int code, IntPtr wParam, IntPtr lParam)
+        private IntPtr DlgWndHookCallbackFunction(int code, IntPtr wParam, 
+            IntPtr lParam)
         {
-            PI.CWPSTRUCT msg =
-                (PI.CWPSTRUCT)System.Runtime.InteropServices.Marshal.PtrToStructure(lParam, typeof(PI.CWPSTRUCT));
+            PI.CWPSTRUCT msg = (PI.CWPSTRUCT)System.Runtime.InteropServices
+                .Marshal.PtrToStructure(lParam, typeof(PI.CWPSTRUCT));
 
             if (msg.hwnd == panelPtr)
             {
@@ -130,8 +130,8 @@ namespace EasyEPlanner
                     case (int)PI.WM.WINDOWPOSCHANGED:
                         PI.WINDOWPOS p = new PI.WINDOWPOS();
                         p = (PI.WINDOWPOS)
-                            System.Runtime.InteropServices.Marshal.PtrToStructure(
-                            lParam, typeof(PI.WINDOWPOS));
+                            System.Runtime.InteropServices.Marshal
+                            .PtrToStructure(lParam, typeof(PI.WINDOWPOS));
 
                         break;
 
@@ -408,9 +408,11 @@ namespace EasyEPlanner
             devicesTreeViewAdv.NodeControls.Add(nodeTextBox);
 
             // Событие рисования узлов дерева
-            nodeTextBox.DrawText += new EventHandler<DrawTextEventArgs>(TreeViewAdv1_DrawNode);
+            nodeTextBox.DrawText += new EventHandler<DrawTextEventArgs>(
+                TreeViewAdv1_DrawNode);
 
-            dialogCallbackDelegate = new PI.HookProc(DlgWndHookCallbackFunction);
+            dialogCallbackDelegate = new PI.HookProc(
+                DlgWndHookCallbackFunction);
         }
 
         ///<summary>
@@ -419,8 +421,10 @@ namespace EasyEPlanner
         private void InitTreeViewComponents()
         {
             devicesTreeViewAdv.FullRowSelect = true;
-            devicesTreeViewAdv.FullRowSelectActiveColor = Color.FromArgb(192, 192, 255);
-            devicesTreeViewAdv.FullRowSelectInactiveColor = Color.FromArgb(192, 255, 192);
+            devicesTreeViewAdv.FullRowSelectActiveColor = Color
+                .FromArgb(192, 192, 255);
+            devicesTreeViewAdv.FullRowSelectInactiveColor = Color
+                .FromArgb(192, 255, 192);
             devicesTreeViewAdv.GridLineStyle = GridLineStyle.Horizontal;
             devicesTreeViewAdv.UseColumns = true;
             devicesTreeViewAdv.ShowLines = true;
@@ -448,7 +452,8 @@ namespace EasyEPlanner
         TreeColumn treeColumn1 = new TreeColumn();
         NodeCheckBox nodeCheckBox = new NodeCheckBox();
         NodeTextBox nodeTextBox = new NodeTextBox();
-        int levelCorrectionForNewControl = 1; // Коррекция уровней дерева для нового элемента управления
+        // Коррекция уровней дерева для нового элемента управления
+        private static int correctionValue = 1;
 
         public delegate void OnSetNewValue(string str);
         public OnSetNewValue functionAfterCheck = null;
@@ -456,8 +461,10 @@ namespace EasyEPlanner
         /// <summary>
         /// Выбор устройства на дереве, которые входят в шаг.
         /// </summary> 
-        /// <param name="checkedDev">Строка с устройствами шага, которых надо отметить.</param>
-        /// <param name="fn">Делегат, который вызывается при последующих изменениях устройств шага.</param>
+        /// <param name="checkedDev">Строка с устройствами шага, 
+        /// которых надо отметить.</param>
+        /// <param name="fn">Делегат, который вызывается при 
+        /// последующих изменениях устройств шага.</param>
         public void SelectDevices(string checkedDev, OnSetNewValue fn)
         {
             devicesTreeViewAdv.BeginUpdate();
@@ -470,18 +477,20 @@ namespace EasyEPlanner
 
             checkedDev = ' ' + checkedDev + ' ';
 
-            nodeCheckBox.CheckStateChanged -= new EventHandler<TreePathEventArgs>(treeItem_AfterCheck);
+            nodeCheckBox.CheckStateChanged -= 
+                new EventHandler<TreePathEventArgs>(treeItem_AfterCheck);
 
             if (fn != null)
             {
                 functionAfterCheck = fn;
             }
 
-            TreeModel treeModel = devicesTreeViewAdv.Model as TreeModel;
+            var treeModel = devicesTreeViewAdv.Model as TreeModel;
             List<Node> nodes = treeModel.Nodes.ToList();
             selectedDevices(nodes, checkedDev);
 
-            nodeCheckBox.CheckStateChanged += new EventHandler<TreePathEventArgs>(treeItem_AfterCheck);
+            nodeCheckBox.CheckStateChanged += 
+                new EventHandler<TreePathEventArgs>(treeItem_AfterCheck);
 
             devicesTreeViewAdv.EndUpdate();
         }
@@ -492,7 +501,8 @@ namespace EasyEPlanner
             {
                 if (subNode.Tag is Device.Device)
                 {
-                    if (checkedDev.Contains(' ' + (subNode.Tag as Device.Device).Name + ' '))
+                    string devName = $" {(subNode.Tag as Device.Device).Name} ";
+                    if (checkedDev.Contains(devName))
                     {
                         subNode.CheckState = CheckState.Checked;
 
@@ -511,10 +521,10 @@ namespace EasyEPlanner
         {
             devicesTreeViewAdv.BeginUpdate();
 
-            TreeModel model = new TreeModel();
+            var model = new TreeModel();
             model.Nodes.Clear();
 
-            Node root = new Node("Устройства проекта");
+            var root = new Node("Устройства проекта");
             model.Nodes.Add(root);
             devicesTreeViewAdv.Model = model;
 
@@ -534,9 +544,9 @@ namespace EasyEPlanner
         {
             public static void Execute(TreeNodeAdv treeNode)
             {
-                Node node = treeNode.Tag as Node;
+                var node = treeNode.Tag as Node;
 
-                Device.IODevice dev = node.Tag as Device.IODevice;
+                var dev = node.Tag as Device.IODevice;
                 if (dev != null)
                 {
                     bool isDevHidden = true;
@@ -568,8 +578,7 @@ namespace EasyEPlanner
                     }
                 }
 
-                Device.IODevice.IOChannel chn =
-                    node.Tag as Device.IODevice.IOChannel;
+                var chn = node.Tag as Device.IODevice.IOChannel;
                 if (chn != null)
                 {
                     if (chn.IsEmpty())
@@ -616,17 +625,18 @@ namespace EasyEPlanner
 
         static class OnHideOperationTree
         {
-            public static void Execute(TreeNodeAdv treeNode, bool isHiddenNodeFull = false)
+            public static void Execute(TreeNodeAdv treeNode, bool 
+                isHiddenNodeFull = false)
             {
-                int correctionForTreeLevelWithNewControl = 1;
-
-                Node node = treeNode.Tag as Node;
-                if (treeNode.Level == 1 + correctionForTreeLevelWithNewControl && treeNode.Children.Count < 1)
+                var node = treeNode.Tag as Node;
+                if (treeNode.Level == 1 + correctionValue &&
+                    treeNode.Children.Count < 1)
                 {
                     treeNode.IsHidden = true;
                     return;
                 }
-                else if (treeNode.Level == 1 + correctionForTreeLevelWithNewControl && treeNode.Children.Count >= 1)
+                else if (treeNode.Level == 1 + correctionValue &&
+                    treeNode.Children.Count >= 1)
                 {
                     // Проверка, есть ли устройства, которые не отображаются
                     if (node.Text.Contains("(0)"))
@@ -666,7 +676,6 @@ namespace EasyEPlanner
         /// <summary>
         /// Обновление дерева на основе текущих устройств проекта.
         /// </summary>
-        /// 
         /// <param name="deviceManager">Менеджер устройств проекта.</param>
         /// <param name="checkedDev">Выбранные устройства.</param>
         private void Refresh(Device.DeviceManager deviceManager,
@@ -676,19 +685,22 @@ namespace EasyEPlanner
 
             devicesTreeViewAdv.Model = null;
             devicesTreeViewAdv.Refresh();
-            TreeModel treeModel = new TreeModel();
+            var treeModel = new TreeModel();
 
-            Node root = new Node("Устройства проекта");
+            var root = new Node("Устройства проекта");
             treeModel.Nodes.Add(root);
 
-            foreach (Device.DeviceType devType in Enum.GetValues(typeof(Device.DeviceType)))
+            Array deviceEnum = Enum.GetValues(typeof(Device.DeviceType));
+            foreach (Device.DeviceType devType in deviceEnum)
             {
-                Node r = new Node(devType.ToString());
+                var r = new Node(devType.ToString());
                 r.Tag = devType;
                 root.Nodes.Add(r);
             }
 
-            int[] countDev = new int[Enum.GetValues(typeof(Device.DeviceType)).Length];
+            int deviceEnumCount = Enum.GetValues(typeof(Device.DeviceType))
+                .Length;
+            var countDev = new int[deviceEnumCount];
 
 
             //Заполняем узлы дерева устройствами.
@@ -748,7 +760,9 @@ namespace EasyEPlanner
                         parent.Nodes.Add(devParent);
                     }
 
-                    devNode = new Node(dev.DeviceType + dev.DeviceNumber.ToString() + "\t  " + result);
+                    string devName = dev.DeviceType + 
+                        dev.DeviceNumber.ToString() + "\t  " + result;
+                    devNode = new Node(devName);
                     devNode.Tag = dev;
                     devParent.Nodes.Add(devNode);
                 }
@@ -761,7 +775,8 @@ namespace EasyEPlanner
 
                 //Check.     
                 checkedDev = ' ' + checkedDev + ' ';
-                if (checkedDev != "  " && checkedDev.Contains(' ' + dev.Name + ' '))
+                if (checkedDev != "  " && 
+                    checkedDev.Contains(' ' + dev.Name + ' '))
                 {
                     devNode.CheckState = CheckState.Checked;
                 }
@@ -835,14 +850,15 @@ namespace EasyEPlanner
             //Обновляем названия строк (добавляем количество устройств).
             int idx = 0;
             int total = 0;
-            foreach (Device.DeviceType devType in Enum.GetValues(typeof(Device.DeviceType)))
+            foreach (Device.DeviceType devType in deviceEnum)
             {
                 foreach (Node node in root.Nodes)
                 {
                     if ((Device.DeviceType)node.Tag == devType)
                     {
                         total += countDev[idx];
-                        node.Text = devType.ToString() + " (" + countDev[idx++] + ")  ";
+                        node.Text = devType.ToString() + " (" + 
+                            countDev[idx++] + ")  ";
                         break;
                     }
                 }
@@ -943,7 +959,8 @@ namespace EasyEPlanner
         /// 
         /// <param name="deviceManager">Менеджер устройств проекта.</param>
         /// <param name="devTypes">Показывать данные типы устройств.</param>
-        /// /// <param name="devSubTypes">Показывать данные подтипы устройств.</param>
+        /// /// <param name="devSubTypes">Показывать данные подтипы устройств.
+        /// </param>
         public bool ShowDevices(Device.DeviceManager deviceManager,
             Device.DeviceType[] devTypes, Device.DeviceSubType[] devSubTypes,
             bool showChannels, bool showCheckboxes, string checkedDev,
@@ -990,9 +1007,10 @@ namespace EasyEPlanner
         /// о канале устройства.
         /// </summary>
         /// 
-        private void treeView_DoubleClick(object sender, TreeNodeAdvMouseEventArgs e)
+        private void treeView_DoubleClick(object sender, 
+            TreeNodeAdvMouseEventArgs e)
         {
-            DeviceBinder deviceBinder = new DeviceBinder(this);
+            var deviceBinder = new DeviceBinder(this);
             deviceBinder.Bind();
         }
 
@@ -1019,7 +1037,8 @@ namespace EasyEPlanner
 
                 if (treeNode.IsHidden == false)
                 {
-                    if (node.CheckState == CheckState.Checked && node.Tag is Device.Device)
+                    if (node.CheckState == CheckState.Checked && 
+                        node.Tag is Device.Device)
                     {
                         res += (node.Tag as Device.Device).Name + " ";
                     }
@@ -1050,7 +1069,8 @@ namespace EasyEPlanner
 
                 treeItem_ChangeCheckBoxState(sender, e);
 
-                List<TreeNodeAdv> treeNodes = devicesTreeViewAdv.AllNodes.ToList();
+                List<TreeNodeAdv> treeNodes = devicesTreeViewAdv.AllNodes
+                    .ToList();
                 TreeNodeAdv treeNode = treeNodes[0];
                 OnCheckOperationTree.Execute(treeNode);
 
@@ -1067,7 +1087,8 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="sender">Объект, который вызвал функцию</param>
         /// <param name="e">Контекст переданный вызывающим кодом</param>
-        private void treeItem_ChangeCheckBoxState(object sender, TreePathEventArgs e)
+        private void treeItem_ChangeCheckBoxState(object sender, 
+            TreePathEventArgs e)
         {
             // Нажатый узел дерева
             object nodeObject = e.Path.LastNode;
@@ -1166,7 +1187,8 @@ namespace EasyEPlanner
         {
             devicesTreeViewAdv.BeginUpdate();
 
-            int level = Convert.ToInt32((sender as ToolStripButton).Tag) + levelCorrectionForNewControl;
+            int level = Convert.ToInt32((sender as ToolStripButton).Tag) + 
+                correctionValue;
             devicesTreeViewAdv.CollapseAll();
             ExpandToLevel(level);
 
@@ -1193,7 +1215,8 @@ namespace EasyEPlanner
         /// </summary>
         private const string fName = "Microsoft Sans Serif";
         private readonly Font itemFontNoDevice = new Font(fName, 8);
-        private readonly Font itemFontIsDevice = new Font(fName, 8, FontStyle.Strikeout);
+        private readonly Font itemFontIsDevice = new Font(fName, 8, 
+            FontStyle.Strikeout);
         private readonly Font itemFontType = new Font(fName, 8, FontStyle.Bold);
 
         private void TreeViewAdv1_DrawNode(object sender, DrawTextEventArgs e)
@@ -1238,8 +1261,8 @@ namespace EasyEPlanner
                 }
 
                 ShowDevices(Device.DeviceManager.GetInstance(),
-                    devTypesLastSelected, devSubTypesLastSelected, prevShowChannels,
-                    prevShowCheckboxes, "", null, true);
+                    devTypesLastSelected, devSubTypesLastSelected, 
+                    prevShowChannels, prevShowCheckboxes, "", null, true);
             }
         }
 

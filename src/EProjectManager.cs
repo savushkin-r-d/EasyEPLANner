@@ -274,7 +274,7 @@ namespace EasyEPlanner
                         Editor.Editor.GetInstance().EForm.SetNewVal(newDevices);
 
                         //Обновление списка устройств при его наличии.
-                        if (DFrm.GetInstance().isVisible() == true)
+                        if (DFrm.GetInstance().IsVisible() == true)
                         {
                             Device.DeviceType[] devTypes;
                             Device.DeviceSubType[] devSubTypes;
