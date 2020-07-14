@@ -235,7 +235,7 @@ namespace Tests
                 },
                 new object[]
                 {
-                    new string[] { "P_DT", "P_ERR" },
+                    new string[] { "P_ERR" },
                     "LS_IOLINK",
                     GetRandomLSDevice()
                 },

@@ -38,7 +38,6 @@ namespace Device
                     break;
 
                 case "LS_IOLINK":
-                    parameters.Add("P_DT", null);
                     parameters.Add("P_ERR", null);
 
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
