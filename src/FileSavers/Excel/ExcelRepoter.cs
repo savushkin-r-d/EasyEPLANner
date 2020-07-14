@@ -296,7 +296,7 @@ namespace EasyEPlanner
             rangeCurrent = workSheet.Range[$"A{totalStart}:A{totalStart}"];
             rangeStart = rangeCurrent;
 
-            workSheet.AllocatedRange.AutoFitRows();
+            workSheet.Range.EntireRow.AutoFitRows();
 
             // Окрас ячеек
             i = totalStart;
@@ -373,7 +373,7 @@ namespace EasyEPlanner
             workSheet.PageSetup.IsSummaryColumnRight = true;
             workSheet.PageSetup.IsSummaryRowBelow = false;
 
-            workSheet.AllocatedRange.AutoFitRows();
+            workSheet.Range.EntireRow.AutoFitRows();
         }
 
         /// <summary>
@@ -412,7 +412,7 @@ namespace EasyEPlanner
             workSheet.PageSetup.IsSummaryColumnRight = true;
             workSheet.PageSetup.IsSummaryRowBelow = false;
 
-            workSheet.AllocatedRange.AutoFitRows();
+            workSheet.Range.EntireRow.AutoFitRows();
         }
 
         /// <summary>
@@ -448,7 +448,7 @@ namespace EasyEPlanner
             workSheet.Range.Style.Font.Size = 11;
             workSheet.Range.AutoFitColumns();
 
-            workSheet.AllocatedRange.AutoFitRows();
+            workSheet.Range.EntireRow.AutoFitRows();
         }
 
         /// <summary>
@@ -465,7 +465,7 @@ namespace EasyEPlanner
             workSheet.Range.Style.Font.Size = 11;
             workSheet.Range.EntireColumn.AutoFitColumns();
 
-            workSheet.AllocatedRange.AutoFitRows();
+            workSheet.Range.EntireRow.AutoFitRows();
         }
 
         /// <summary>
@@ -485,7 +485,7 @@ namespace EasyEPlanner
             workSheet.PageSetup.IsSummaryRowBelow = false;
             workSheet.PageSetup.IsSummaryColumnRight = true;
 
-            workSheet.AllocatedRange.AutoFitRows();
+            workSheet.Range.EntireRow.AutoFitRows();
         }
 
         /// <summary>
@@ -503,7 +503,7 @@ namespace EasyEPlanner
             workSheet.Range.Style.Font.Size = 11;
             workSheet.Range.EntireColumn.AutoFitColumns();
 
-            workSheet.AllocatedRange.AutoFitRows();
+            workSheet.Range.EntireRow.AutoFitRows();
         }
 
         /// <summary>
@@ -534,7 +534,7 @@ namespace EasyEPlanner
             workSheet.Range[$"C1:C{row}"].ColumnWidth = widthColumnC;
             workSheet.Range[$"E1:E{row}"].ColumnWidth = widthColumnE;
 
-            workSheet.AllocatedRange.AutoFitRows();
+            workSheet.Range.EntireRow.AutoFitRows();
         }
 
         /// <summary>
