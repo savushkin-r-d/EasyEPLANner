@@ -444,6 +444,13 @@ return
                 },
                 COOLING_AFTER_SOURING = {
                     name = "Охлаждение после сквашивания",
+                    params =
+                        {
+                            active =
+                            {
+                                MIXING_TIME = { name = "Время перемешивания (2-го шага)" },
+                            },
+                        },
                     steps =
                     {
                         COOLING = { name = "Охлаждение" },
