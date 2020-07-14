@@ -1081,7 +1081,7 @@ namespace Editor
             devSubTypes = null;
         }
 
-        public bool NeedRebuildParent
+        public virtual bool NeedRebuildParent
         {
             get { return false; }
         }
