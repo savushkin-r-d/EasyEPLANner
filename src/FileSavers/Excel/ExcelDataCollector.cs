@@ -36,11 +36,41 @@ namespace EasyEPlanner
                     string modeName = techObj.ModesManager.GetModeN(mode)
                         .ToString() + ". " + mode.EditText[0];
                     var modeNode = new TreeNode();
-                    Step commonStep = mode.MainSteps[0];
-                    string[] res = new string[] 
+                    SaveModesToTreeNodeForExcelExport(mode, modeName, modeNode);
+                    objectNode.Nodes.Add(modeNode);
+                }
+                tree.Nodes.Add(objectNode);
+            }
+            return tree;
+        }
+
+        /// <summary>
+        /// Сохранить операции для страницы 
+        /// "Технологические операции и устройства"
+        /// </summary>
+        /// <param name="mode">Операция</param>
+        /// <param name="modeName">Имя операции</param>
+        /// <param name="modeNode">Узел дерева для сохранения</param>
+        private static void SaveModesToTreeNodeForExcelExport(Mode mode,
+            string modeName, TreeNode modeNode)
+        {
+            var res = new string[]
+            {
+                modeName,
+                "", "", "", "", "", "", "", "", "", ""
+            };
+            modeNode.Tag = res;
+
+            foreach (var state in mode.stepsMngr)
+            {
+                Step commonStep;
+                if (state.Empty == false)
+                {
+                    commonStep = state.Steps[0];
+                    var stateNode = new TreeNode();
+                    var rowWithState = new string[]
                     {
-                        modeName,
-                        "",
+                        state.DisplayText[0],
                         commonStep.GetActions[ 0 ].EditText[ 1 ],
                         commonStep.GetActions[ 2 ].EditText[ 1 ],
                         commonStep.GetActions[ 3 ].EditText[ 1 ],
@@ -51,36 +81,30 @@ namespace EasyEPlanner
                         commonStep.GetActions[ 6 ].Items[ 2 ].EditText[ 1 ],
                         commonStep.GetActions[ 7 ].EditText[ 1 ]
                     };
-                    modeNode.Tag = res;
-
-                    for (int i = 1; i < mode.MainSteps.Count; i++)
-                    {
-                        commonStep = mode.MainSteps[i];
-                        string stepName;
-                        var stepNode = new TreeNode();
-
-                        stepName = i.ToString() + ". " + commonStep.EditText[0];
-                        string[] resStep = new string[] 
-                        {
-                            stepName,
-                            commonStep.GetActions[ 0 ].EditText[ 1 ],
-                            commonStep.GetActions[ 2 ].EditText[ 1 ],
-                            commonStep.GetActions[ 3 ].EditText[ 1 ],
-                            commonStep.GetActions[ 4 ].EditText[ 1 ],
-                            "",
-                            "",
-                            "",
-                            "",
-                            ""
-                        };
-                        stepNode.Tag = resStep;
-                        modeNode.Nodes.Add(stepNode);
-                    }
-                    objectNode.Nodes.Add(modeNode);
+                    stateNode.Tag = rowWithState;
+                    modeNode.Nodes.Add(stateNode);
                 }
-                tree.Nodes.Add(objectNode);
+
+                for (int i = 1; i < state.Steps.Count; i++)
+                {
+                    var stepNode = new TreeNode();
+                    commonStep = state.Steps[i];
+                    string stepName;
+
+                    stepName = i.ToString() + ". " + commonStep.EditText[0];
+                    var resStep = new string[]
+                    {
+                        stepName,
+                        commonStep.GetActions[ 0 ].EditText[ 1 ],
+                        commonStep.GetActions[ 2 ].EditText[ 1 ],
+                        commonStep.GetActions[ 3 ].EditText[ 1 ],
+                        commonStep.GetActions[ 4 ].EditText[ 1 ],
+                        "", "", "", "", ""
+                    };
+                    stepNode.Tag = resStep;
+                    modeNode.Nodes.Add(stepNode);
+                }
             }
-            return tree;
         }
 
         /// <summary>
@@ -517,7 +541,7 @@ namespace EasyEPlanner
             Dictionary<string, Color> modulesColor, 
             Dictionary<string, object[,]> asInterfaceConnection)
         {
-            const int MAX_COL = 4;
+            const int MAX_COL = 6;
             int MAX_ROW = ioManager.IONodes.Count;
 
             foreach (var ioNode in ioManager.IONodes)
@@ -531,17 +555,31 @@ namespace EasyEPlanner
             int idx = 0;
             for (int i = 0; i < ioManager.IONodes.Count; i++)
             {
+                IONode currentNode = ioManager.IONodes[i];
                 res[idx, 3] = prjName;
                 idx++;
                 res[idx, 3] = 
                     $"'{DateTime.Now.ToString(new CultureInfo("RU-ru"))}";
-                string nodeName = "Узел №" + (i + 1).ToString() + " Адрес: " + 
-                    ioManager.IONodes[i].IP;
+
+                string nodeName = "";
+                if (currentNode.FullN != 1)
+                {
+                    nodeName = "Узел №" + (currentNode.N - 1) + " Адрес: " +
+                        ioManager.IONodes[i].IP;
+                }
+                else
+                {
+                    nodeName = "Контроллер. " + " Адрес: " +
+                        ioManager.IONodes[i].IP;
+                }
+
+                res[idx, 4] = "Вход, бит";
+                res[idx, 5] = "Выход, бит";
                 res[idx, 0] = nodeName;
                 idx++;
 
                 res[idx, 0] = 0;
-                nodeName = ioManager.IONodes[i].TypeStr.Replace("750-", "");
+                nodeName = currentNode.TypeStr.Replace("750-", "");
                 res[idx, 1] = nodeName;
 
                 if (!modulesColor.ContainsKey(nodeName))
@@ -549,8 +587,8 @@ namespace EasyEPlanner
                     modulesColor.Add(nodeName, Color.Gray);
                 }
                 idx++;
-                ioManager.IONodes[i].SaveAsConnectionArray(ref res, ref idx, 
-                    modulesCount, modulesColor, i + 1, asInterfaceConnection);
+                currentNode.SaveAsConnectionArray(ref res, ref idx, 
+                    modulesCount, modulesColor, currentNode.N - 1, asInterfaceConnection);
             }
 
             res = DeleteNullObjects(res); 
@@ -568,21 +606,50 @@ namespace EasyEPlanner
             const int MaxWidth = 3;
             object[,] devicesWithArticles = new object[MaxLength, MaxWidth];
 
-            var devices = deviceManager.Devices
-                .Where(x => x.DeviceType != DeviceType.AI &&
-                x.DeviceType != DeviceType.AO &&
-                x.DeviceType != DeviceType.DI &&
-                x.DeviceType != DeviceType.DO &&
-                x.DeviceType != DeviceType.M &&
-                x.DeviceType != DeviceType.VC)
-                .ToList();
+            var ignoringDevicesTypes = new List<string>()
+            {
+                "AI",
+                "AO",
+                "DI",
+                "DO",
+                "VC",
+            };
 
-                devices.Sort((x, y) =>
+            var ignoringDevicesSubTypes = new List<string>()
+            {
+                "M",
+                "M_FREQ",
+                "M_REV",
+                "M_REV_FREQ",
+                "M_REV_2",
+                "M_REV_FREQ_2",
+                "M_REV_2_ERROR",
+                "M_REV_FREQ_2_ERROR",
+                "FQT_VIRT",
+                "LS_VIRT",
+                "LT_VIRT",
+            };
+
+            var devices = new List<IODevice>();
+            foreach (var device in deviceManager.Devices)
+            {
+                string devType = device.DeviceType.ToString();
+                string devSubType = device.GetDeviceSubTypeStr(
+                    device.DeviceType, device.DeviceSubType);
+                bool ignoreDevice = ignoringDevicesTypes.Contains(devType) ||
+                    ignoringDevicesSubTypes.Contains(devSubType);
+                if (!ignoreDevice)
                 {
-                    int res = 0;
-                    res = Device.Device.Compare(x, y);
-                    return res;
-                });
+                    devices.Add(device);
+                }
+            }
+
+            devices.Sort((x, y) =>
+            {
+                int res = 0;
+                res = Device.Device.Compare(x, y);
+                return res;
+            });
 
             devicesWithArticles[0, 0] = "ОУ устройства";
             devicesWithArticles[0, 1] = "Подтип устройства";

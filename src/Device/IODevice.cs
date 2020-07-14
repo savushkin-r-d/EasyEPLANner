@@ -101,8 +101,10 @@ namespace Device
             }
 
             var sizes = articles[articleName];
-            this.IOLinkProperties.SizeIn = sizes.SizeIn;
-            this.IOLinkProperties.SizeOut = sizes.SizeOut;
+            IOLinkProperties.SizeIn = sizes.SizeIn;
+            IOLinkProperties.SizeOut = sizes.SizeOut;
+            IOLinkProperties.SizeInFromFile = sizes.SizeInFromFile;
+            IOLinkProperties.SizeOutFromFile = sizes.SizeOutFromFile;
         }
 
         /// <summary>
@@ -322,10 +324,15 @@ namespace Device
                     break;
             }
 
-            if (comment.Contains(CommonConst.NewLineWithCarriageReturn))
+            bool haveNewLineSymbol = comment
+                .Contains(CommonConst.NewLineWithCarriageReturn) ||
+                comment.Contains(CommonConst.NewLine);
+            if (haveNewLineSymbol)
             {
                 comment = comment
                     .Replace(CommonConst.NewLineWithCarriageReturn, "");
+                comment = comment
+                    .Replace(CommonConst.NewLine, "");
             }
 
             List<IOChannel> findedChannels = IO.FindAll(delegate (IOChannel channel)
@@ -485,17 +492,21 @@ namespace Device
 
             if (properties.Count > 0)
             {
-                res += prefix + "prop = --Дополнительные свойства\n";
-                res += prefix + "\t{\n";
-
-                foreach (var prop in properties)
+                var validProperties = properties
+                    .Where(x => x.Value != null &&
+                    (x.Value.ToString() != "\'\'" &&
+                    x.Value.ToString() != ""));
+                if (validProperties.Count() > 0)
                 {
-                    if (prop.Value != null)
+                    res += prefix + "prop = --Дополнительные свойства\n";
+                    res += prefix + "\t{\n";
+
+                    foreach (var prop in validProperties)
                     {
                         res += prefix + $"\t{prop.Key} = {prop.Value},\n";
                     }
+                    res += prefix + "\t},\n";
                 }
-                res += prefix + "\t},\n";
             }
 
             int bindedDO = CountOfBindedChannels(DO);
@@ -1120,12 +1131,6 @@ namespace Device
                 SizeOut = 0;
             }
 
-            public IOLinkSize(int sizeIn, int sizeOut)
-            {
-                SizeIn = sizeIn;
-                SizeOut = sizeOut;
-            }
-
             /// <summary>
             /// Возвращает максимальны размер байтовой области для модулей ввода
             /// вывода при расчете IO-Link адресов если используется
@@ -1137,8 +1142,25 @@ namespace Device
                 return SizeOut > SizeIn ? SizeOut : SizeIn;
             }
 
+            /// <summary>
+            /// Размер области входа приведенный к слову (целому)
+            /// </summary>
             public int SizeIn { get; set; }
+
+            /// <summary>
+            /// Размер области выхода приведенный к слову (целому)
+            /// </summary>
             public int SizeOut { get; set; }
+
+            /// <summary>
+            /// Размер области входа из файла
+            /// </summary>
+            public float SizeInFromFile { get; set; }
+
+            /// <summary>
+            /// Размер области выхода из файла
+            /// </summary>
+            public float SizeOutFromFile { get; set; }
         }
 
     }

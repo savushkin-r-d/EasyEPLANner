@@ -69,10 +69,10 @@ namespace Tests
         [TestCase("BATH4TE2", 3)]
         [TestCase("BATH4TE99", -1)]
         [TestCase("", -1)]
-        public void GetDeviceListNumberTest(string device, int expectedNum)
+        public void GetDeviceIndex(string device, int expectedNum)
         {
             int actualNum = Device.DeviceManager.GetInstance()
-                .GetDeviceListNumber(device);
+                .GetDeviceIndex(device);
             Assert.AreEqual(expectedNum, actualNum);
         }
 

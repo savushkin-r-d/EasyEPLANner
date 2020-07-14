@@ -204,10 +204,19 @@ namespace TechObject
             modeStep = null;
         }
 
-        //Возврат имени шага
-        public string GetStepName()
+        /// <summary>
+        /// Имя состояния
+        /// </summary>
+        public string Name
         {
-            return name;
+            get
+            {
+                return name;
+            }
+            set
+            {
+                name = value;
+            }
         }
 
         public Mode Owner
@@ -474,6 +483,28 @@ namespace TechObject
             return devToDraw;
         }
         #endregion
+
+        public override string GetLinkToHelpPage()
+        {
+            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
+                .GetOstisHelpSystemLink();
+            return ostisLink + "?sys_id=state";
+        }
+
+        public bool Empty
+        {
+            get
+            {
+                if(steps.Where(x => x.Empty == true).Count() == steps.Count)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
 
         private string name;        ///< Имя.
         internal List<Step> steps;  ///< Список шагов.

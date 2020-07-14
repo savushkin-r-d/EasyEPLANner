@@ -156,7 +156,6 @@ namespace TechObject
 
             res += baseOperation.SaveAsLuaTable(prefix);
 
-            int i = 1;
             string tmp;
             string tmp_2 = "";
 
@@ -165,7 +164,7 @@ namespace TechObject
                 tmp = stepsMngr[j].SaveAsLuaTable(prefix + "\t\t");
                 if (tmp != "")
                 {
-                    tmp_2 += prefix + "\t[ " + i++ + " ] =\n";
+                    tmp_2 += prefix + "\t[ " + (j + 1) + " ] =\n";
                     tmp_2 += prefix + "\t\t{\n";
                     tmp_2 += tmp;
                     tmp_2 += prefix + "\t\t},\n";
@@ -410,6 +409,8 @@ namespace TechObject
                 errors += state.Check();
             }
 
+            this.BaseOperation.Check();
+
             return errors;
         }
 
@@ -456,7 +457,7 @@ namespace TechObject
             if (baseOperation.Name != newBaseOperationName &&
                 similarBaseOperation == false)
             {
-                baseOperation.Init(newBaseOperationName);
+                baseOperation.Init(newBaseOperationName, this);
                 return true;
             }
 
@@ -516,25 +517,31 @@ namespace TechObject
             object copyObject)
         {
 
-            if (child is State)
+            if (child is State && copyObject is State)
             {
-                State stpMngr = child as State;
-                if (copyObject is State && stpMngr != null)
-                {
-                    State newStpMngr = (copyObject as State).Clone();
-                    int index = stepsMngr.IndexOf(stpMngr);
-                    stepsMngr.Remove(stpMngr);
-                    stepsMngr.Insert(index, newStpMngr);
+                var selectedState = child as State;
+                var copyingObject = copyObject as State;
 
-                    return newStpMngr;
+                if (selectedState != null)
+                {
+                    State newState = copyingObject.Clone();
+                    if(newState.Name != selectedState.Name)
+                    {
+                        newState.Name = selectedState.Name;
+                    }
+                    int index = stepsMngr.IndexOf(selectedState);
+                    stepsMngr.Remove(selectedState);
+                    stepsMngr.Insert(index, newState);
+                    SetItems();
+
+                    return newState;
                 }
             }
 
-            if (child is RestrictionManager)
+            if (child is RestrictionManager && copyObject is RestrictionManager)
             {
-                RestrictionManager restrictMan = child as RestrictionManager;
-
-                if (copyObject is RestrictionManager && restrictMan != null)
+                var restrictMan = child as RestrictionManager;
+                if (restrictMan != null)
                 {
                     var copyMan = copyObject as RestrictionManager;
                     for (int i = 0; i < restrictMan.Restrictions.Count; i++)
@@ -547,7 +554,7 @@ namespace TechObject
                         .GetTechObjectN(owner.Owner);
                     int modeNum = getN(this);
 
-                    foreach (Restriction restrict in restrictMan.Restrictions)
+                    foreach (var restrict in restrictMan.Restrictions)
                     {
                         restrict.SetRestrictionOwner(objNum, modeNum);
                     }
@@ -621,7 +628,42 @@ namespace TechObject
 
             return devToDraw;
         }
+
+        public override List<string> BaseObjectsList
+        {
+            get
+            {
+                ModesManager modesManager = this.Owner;
+                TechObject techObject = modesManager.Owner;
+                BaseTechObject baseTechObject = techObject.BaseTechObject;
+                List<string> baseModesList = baseTechObject.BaseOperationsList;
+                return baseModesList;
+            }
+        }
+
+        public override bool ContainsBaseObject
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool ShowWarningBeforeDelete
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
+
+        public override string GetLinkToHelpPage()
+        {
+            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
+                .GetOstisHelpSystemLink();
+            return ostisLink + "?sys_id=operation";
+        }
 
         public enum StateName
         {

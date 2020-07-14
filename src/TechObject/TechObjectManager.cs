@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using EasyEPlanner;
 
 namespace TechObject
 {
@@ -41,68 +42,36 @@ namespace TechObject
             lua.RegisterFunction("ADD_TECH_OBJECT", this,
                 GetType().GetMethod("AddObject"));
 
-            //Для отладки Lua скриптов.
-            LuaFunction resF = lua.RegisterFunction("PRINT", this,
-                GetType().GetMethod("ShowMessage"));
+            CheckExcelLibs();
+            InitTechObjectsLuaScript();
 
+            objects = new List<TechObject>();
+            cdbxTagView = false;
+        }
+
+        /// <summary>
+        /// Проверить Excel библиотеки надстройки.
+        /// </summary>
+        private void CheckExcelLibs()
+        {
             const string spireLicense = "Spire.License.dll";
             const string spireXLS = "Spire.XLS.dll";
             const string spirePDF = "Spire.Pdf.dll";
-            
-            string assemblyPath = Path.GetDirectoryName(
-                System.Reflection.Assembly.GetExecutingAssembly().Location);
-            string systemFilesPath = assemblyPath + "\\Lua";
-            
-            string SpireLicensePath = Path.Combine(assemblyPath, spireLicense);
-            string SpireXLSPath = Path.Combine(assemblyPath, spireXLS);
-            string SpirePDFPath = Path.Combine(assemblyPath, spirePDF);
+
+            string SpireLicensePath = Path.Combine(
+                ProjectManager.GetInstance().AssemblyPath, spireLicense);
+            string SpireXLSPath = Path.Combine(
+                ProjectManager.GetInstance().AssemblyPath, spireXLS);
+            string SpirePDFPath = Path.Combine(
+                ProjectManager.GetInstance().AssemblyPath, spirePDF);
 
             if (File.Exists(SpireLicensePath) == false ||
                 File.Exists(SpireXLSPath) == false ||
                 File.Exists(SpirePDFPath) == false)
             {
                 var files = new string[] { spireLicense, spireXLS, spirePDF };
-                CopySpireXLSFiles(assemblyPath, files);
-            }
-
-            string sysLuaPath = Path.Combine(systemFilesPath, "sys.lua");
-            if (Directory.Exists(systemFilesPath) == true)
-            {
-                lua.DoFile(sysLuaPath);
-            }
-            else
-            {
-                CopySystemFiles(systemFilesPath);
-                lua.DoFile(sysLuaPath);
-            }
-
-            objects = new List<TechObject>();
-
-            cdbxTagView = false;
-        }
-
-        /// <summary>
-        /// Копирует системные .lua файлы если они не загрузились
-        /// в теневое хранилище (Win 7 fix).
-        /// <param name="shadowAssemblySystemFilesDir">Путь к Lua файлам
-        /// в теневом хранилище Eplan</param>
-        /// </summary>
-        private void CopySystemFiles(string shadowAssemblySystemFilesDir)
-        {
-            const string luaDirectory = "\\Lua";
-            Directory.CreateDirectory(shadowAssemblySystemFilesDir);
-
-            string systemFilesPath = Path.GetDirectoryName(EasyEPlanner.
-                AddInModule.OriginalAssemblyPath) + luaDirectory;
-
-            var systemFilesDirectory = new DirectoryInfo(
-                systemFilesPath);
-            FileInfo[] systemFiles = systemFilesDirectory.GetFiles();
-            foreach (FileInfo systemFile in systemFiles)
-            {
-                string pathToFile = Path.Combine(shadowAssemblySystemFilesDir,
-                    systemFile.Name);
-                systemFile.CopyTo(pathToFile, true);
+                CopySpireXLSFiles(ProjectManager.GetInstance().AssemblyPath, files,
+                    ProjectManager.GetInstance().OriginalAssemblyPath);
             }
         }
 
@@ -111,21 +80,60 @@ namespace TechObject
         /// </summary>
         /// <param name="shadowAssemblySpireFilesDir">Путь к библиотекам
         /// в теневом хранилище Eplan</param>
-        /// <param name="files">Имена файлов</param>
+        /// <param name="files">Имена файлов для копирования</param>
+        /// <param name="originalPath">Путь к надстройке из каталога
+        /// подключения надстройки</param>
         private void CopySpireXLSFiles(string shadowAssemblySpireFilesDir,
-            string[] files)
+            string[] files, string originalPath)
         {
-            string originalPath = Path.GetDirectoryName(EasyEPlanner
-                .AddInModule.OriginalAssemblyPath);
             var libsDir = new DirectoryInfo(originalPath);
-            foreach(FileInfo file in libsDir.GetFiles())
+            foreach (FileInfo file in libsDir.GetFiles())
             {
                 if (files.Contains(file.Name))
                 {
-                    string path = Path.Combine(shadowAssemblySpireFilesDir, 
+                    string path = Path.Combine(shadowAssemblySpireFilesDir,
                         file.Name);
                     file.CopyTo(path, true);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Инициализировать Lua-скрипт для чтения описания объектов
+        /// </summary>
+        private void InitTechObjectsLuaScript()
+        {
+            const string fileName = "sys.lua";
+            string sysLuaPath = Path.Combine(ProjectManager.GetInstance()
+                .SystemFilesPath, fileName);
+            if (File.Exists(sysLuaPath) == false)
+            {
+                CopySystemFiles(ProjectManager.GetInstance().SystemFilesPath,
+                    ProjectManager.GetInstance().OriginalSystemFilesPath);
+            }
+            lua.DoFile(sysLuaPath);
+        }
+
+        /// <summary>
+        /// Копирует системные .lua файлы если они не загрузились
+        /// в теневое хранилище (Win 7 fix).
+        /// <param name="systemFilesPath">Путь к Lua файлам
+        /// в теневом хранилище Eplan</param>
+        /// <param name="originalSystemFilesPath">Путь к файлам Lua в месте 
+        /// подключения надстройки к программе</param>
+        /// </summary>
+        private void CopySystemFiles(string systemFilesPath,
+            string originalSystemFilesPath)
+        {
+            Directory.CreateDirectory(systemFilesPath);
+
+            var systemFilesDir = new DirectoryInfo(originalSystemFilesPath);
+            FileInfo[] systemFiles = systemFilesDir.GetFiles();
+            foreach (FileInfo systemFile in systemFiles)
+            {
+                string pathToFile = Path.Combine(systemFilesPath,
+                    systemFile.Name);
+                systemFile.CopyTo(pathToFile, true);
             }
         }
 
@@ -152,18 +160,11 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix)
         {
-            string res = prefix + "init_tech_objects_modes = function()\n" +
-                prefix + "\treturn\n" +
-                prefix + "\t{\n";
-
+            string res = "";
             foreach (TechObject obj in objects)
             {
                 res += obj.SaveAsLuaTable(prefix + "\t\t");
             }
-
-            res += prefix + "\t}\n" +
-                prefix + "end\n";
-
             res = res.Replace("\t", "    ");
             return res;
         }
@@ -175,16 +176,11 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveRestrictionAsLua(string prefix)
         {
-            string res = prefix + "restrictions =\n" + prefix + "\t{";
-
+            var res = "";
             foreach (TechObject obj in objects)
             {
                 res += obj.SaveRestrictionAsLua(prefix + "\t");
             }
-
-            res += "\n" + prefix + "\t}\n";
-
-
             res = res.Replace("\t", "    ");
             return res;
         }
@@ -262,10 +258,14 @@ namespace TechObject
         /// Добавление технологического объекта. Вызывается из Lua.
         /// </summary>
         /// <returns>Добавленный технологический объект.</returns>
-        public TechObject AddObject(int techN, string name, int techType,
-            string nameEplan, int cooperParamNumber, string NameBC, 
-            string baseTechObjectName, string attachedObjects)
+        /// <param name="globalNumber">Глобальный номер объекта, используется
+        /// при импорте из файла</param>
+        public TechObject AddObject(int globalNumber, int techN, string name, 
+            int techType, string nameEplan, int cooperParamNumber, 
+            string NameBC, string baseTechObjectName, string attachedObjects)
         {
+            // globalNumber игнорируется в этом методе, но используется при
+            // импорте описания из файла (аналогичная сигнатура, другое тело).
             TechObject obj = new TechObject(name, GetTechObjectN, techN,
                 techType, nameEplan.ToUpper(), cooperParamNumber, NameBC, 
                 attachedObjects);
@@ -304,193 +304,295 @@ namespace TechObject
             return Objects;
         }
 
+        #region XML Report
         /// <summary>
         /// Формирование узлов для операций, шагов и параметров объектов.
         /// </summary>
         /// <param name="rootNode">корневой узел</param>
         public void GetObjectForXML(TreeNode rootNode)
         {
-            TreeNode systemNode = new TreeNode("SYSTEM");
-            systemNode.Nodes.Add("SYSTEM.UP_TIME", "SYSTEM.UP_TIME");
-            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_SEAT_PERIOD", 
-                "SYSTEM.WASH_VALVE_SEAT_PERIOD");
-            systemNode.Nodes.Add("SYSTEM.P_V_OFF_DELAY_TIME", 
-                "SYSTEM.P_V_OFF_DELAY_TIME");
-            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_UPPER_SEAT_TIME", 
-                "SYSTEM.WASH_VALVE_UPPER_SEAT_TIME");
-            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_LOWER_SEAT_TIME", 
-                "SYSTEM.WASH_VALVE_LOWER_SEAT_TIME");
-            systemNode.Nodes.Add("SYSTEM.CMD", "SYSTEM.CMD");
-            systemNode.Nodes.Add("SYSTEM.CMD_ANSWER", "SYSTEM.CMD_ANSWER");
-            systemNode.Nodes.Add("SYSTEM.P_RESTRICTIONS_MODE", 
-                "SYSTEM.P_RESTRICTIONS_MODE");
-            systemNode.Nodes.Add("SYSTEM.P_RESTRICTIONS_MANUAL_TIME", 
-                "SYSTEM.P_RESTRICTIONS_MANUAL_TIME");
-            systemNode.Nodes.Add("SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR", 
-                "SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR");
-
-            rootNode.Nodes.AddRange(new TreeNode[] { systemNode });
-
+            GenerateSystemNode(rootNode);      
             for (int num = 1; num <= Objects.Count; num++)
             {
                 TechObject item = Objects[num - 1];
 
+                var objNode = new TreeNode($"{item.NameBC}{item.TechNumber}");
 
-                TreeNode objNode = new TreeNode(item.NameBC + 
-                    item.TechNumber.ToString());
-
-                TreeNode objModesNode = new TreeNode(item.NameBC + 
+                var objModesNode = new TreeNode(item.NameBC + 
                     item.TechNumber.ToString() + "_Операции");
-                TreeNode objOperStateNode = new TreeNode(item.NameBC + 
+                var objOperStateNode = new TreeNode(item.NameBC + 
                     item.TechNumber.ToString() + "_Состояния_Операций");
-                TreeNode objAvOperNode = new TreeNode(item.NameBC + 
+                var objAvOperNode = new TreeNode(item.NameBC + 
                     item.TechNumber.ToString() + "_Доступность");
-                TreeNode objStepsNode = new TreeNode(item.NameBC + 
+                var objStepsNode = new TreeNode(item.NameBC + 
                     item.TechNumber.ToString() + "_Шаги");
-                TreeNode objParamsNode = new TreeNode(item.NameBC + 
+                var objSingleStepsNode = new TreeNode(item.NameBC +
+                    item.TechNumber.ToString() + "_Одиночные_Шаги");
+                var objParamsNode = new TreeNode(item.NameBC + 
                     item.TechNumber.ToString() + "_Параметры");
 
-                string obj = "";
-                if (cdbxNewNames == true)
-                {
-                    obj = item.NameBC.ToUpper() + item.TechNumber.ToString();
-                }
-                else
-                {
-                    obj = "OBJECT" + num.ToString();
-                }
+                string objName = GenerateObjectName(item, num);
+                GenerateCMDTags(objName, objNode, objModesNode);
+                GenerateSTTags(item, objName, objNode, objModesNode);
+                GenerateModesOpersAvsStepsTags(item, objName, objNode, 
+                    objModesNode, objOperStateNode, objAvOperNode, 
+                    objStepsNode);
 
-                string mode = obj + ".MODES";
-                string oper = obj + ".OPERATIONS";
-                string av = obj + ".AVAILABILITY";
-                string step = mode + "_STEPS";
-                if (cdbxTagView == true)
-                {
-                    objNode.Nodes.Add(obj + ".CMD", obj + ".CMD");
-                }
-                else
-                {
-                    objModesNode.Nodes.Add(obj + ".CMD", obj + ".CMD");
-                }
+                GenerateSingleStepsTags(item, objName, objNode, 
+                    objSingleStepsNode);
 
-                int stCount = item.ModesManager.Modes.Count / 33;
-                for (int i = 0; i <= stCount; i++)
-                {
-                    string number = "[ " + (i + 1).ToString() + " ]";
-
-                    if (cdbxTagView == true)
-                    {
-                        objNode.Nodes.Add(obj + ".ST" + number, 
-                            obj + ".ST" + number);
-                    }
-                    else
-                    {
-                        objModesNode.Nodes.Add(obj + ".ST" + number,
-                            obj + ".ST" + number);
-                    }
-                }
-
-                for (int i = 1; i <= item.ModesManager.Modes.Count; i++)
-                {
-                    string number = "[ " + i.ToString() + " ]";
-                    if (cdbxTagView == true)
-                    {
-                        objNode.Nodes.Add(mode + number, mode + number);
-                        objNode.Nodes.Add(oper + number, oper + number);
-                        objNode.Nodes.Add(av + number, av + number);
-                        objNode.Nodes.Add(step + number, step + number);
-                    }
-                    else
-                    {
-                        objModesNode.Nodes.Add(mode + number, mode + number);
-                        objOperStateNode.Nodes.Add(oper + number, oper + 
-                            number);
-                        objAvOperNode.Nodes.Add(av + number, av + number);
-                        objStepsNode.Nodes.Add(step + number, step + number);
-                    }
-                }
-
-                string sFl = obj + ".S_PAR_F";
-                string sUi = obj + ".S_PAR_UI";
-                string rtFl = obj + ".RT_PAR_F";
-                string rtUi = obj + ".RT_PAR_UI";
+                string sFl = objName + ".S_PAR_F";
                 int count = item.GetParamsManager().Float.Items.Length;
+                GenerateParametersTags(count, objNode, objParamsNode, sFl);
 
-                for (int i = 1; i <= count; i++)
-                {
-                    string number = "[ " + i.ToString() + " ]";
-
-                    if (cdbxTagView == true)
-                    {
-                        objNode.Nodes.Add(sFl + number, sFl + number);
-                    }
-                    else
-                    {
-                        objParamsNode.Nodes.Add(sFl + number, sFl + number);
-                    }
-                }
-
+                string sUi = objName + ".S_PAR_UI";
                 count = item.GetParamsManager().Items[1].Items.Length;
-                for (int i = 1; i <= count; i++)
-                {
-                    string number = "[ " + i.ToString() + " ]";
+                GenerateParametersTags(count, objNode, objParamsNode, sUi);
 
-                    if (cdbxTagView == true)
-                    {
-                        objNode.Nodes.Add(sUi + number, sUi + number);
-                    }
-                    else
-                    {
-                        objParamsNode.Nodes.Add(sUi + number, sUi + number);
-                    }
-                }
-
+                string rtFl = objName + ".RT_PAR_F";
                 count = item.GetParamsManager().Items[2].Items.Length;
-                for (int i = 1; i <= count; i++)
-                {
-                    string number = "[ " + i.ToString() + " ]";
+                GenerateParametersTags(count, objNode, objParamsNode, rtFl);
 
-                    if (cdbxTagView == true)
-                    {
-                        objNode.Nodes.Add(rtFl + number, rtFl + number);
-                    }
-                    else
-                    {
-                        objParamsNode.Nodes.Add(rtFl + number, rtFl + number);
-                    }
-                }
-
+                string rtUi = objName + ".RT_PAR_UI";
                 count = item.GetParamsManager().Items[3].Items.Length;
-                for (int i = 1; i <= count; i++)
-                {
-                    string number = "[ " + i.ToString() + " ]";
+                GenerateParametersTags(count, objNode, objParamsNode, rtUi);
 
-                    if (cdbxTagView == true)
-                    {
-                        objNode.Nodes.Add(rtUi + number, rtUi + number);
-                    }
-                    else
-                    {
-                        objParamsNode.Nodes.Add(rtUi + number, rtUi + number);
-                    }
-                }
-                if (cdbxTagView == true)
+                var singleNodes = new TreeNode[] { objModesNode, 
+                    objOperStateNode, objAvOperNode, objStepsNode, 
+                    objSingleStepsNode, objParamsNode};
+                GenerateRootNode(rootNode, objNode, singleNodes);
+
+                if(item.BaseTechObject.IsPID)
                 {
-                    rootNode.Nodes.AddRange(new TreeNode[] { objNode });
-                }
-                else
-                {
-                    rootNode.Nodes.AddRange(new TreeNode[] 
-                    { 
-                        objModesNode, 
-                        objOperStateNode, 
-                        objAvOperNode, 
-                        objStepsNode, 
-                        objParamsNode 
-                    });
+                    GeneratePIDNode(rootNode, item.GlobalNumber);
                 }
             }
         }
+
+        /// <summary>
+        /// Генерация системных тегов
+        /// </summary>
+        /// <param name="rootNode">Узловой узел</param>
+        private void GenerateSystemNode(TreeNode rootNode)
+        {
+            var systemNode = new TreeNode("SYSTEM");
+            systemNode.Nodes.Add("SYSTEM.UP_TIME", "SYSTEM.UP_TIME");
+            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_SEAT_PERIOD",
+                "SYSTEM.WASH_VALVE_SEAT_PERIOD");
+            systemNode.Nodes.Add("SYSTEM.P_V_OFF_DELAY_TIME",
+                "SYSTEM.P_V_OFF_DELAY_TIME");
+            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_UPPER_SEAT_TIME",
+                "SYSTEM.WASH_VALVE_UPPER_SEAT_TIME");
+            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_LOWER_SEAT_TIME",
+                "SYSTEM.WASH_VALVE_LOWER_SEAT_TIME");
+            systemNode.Nodes.Add("SYSTEM.CMD", "SYSTEM.CMD");
+            systemNode.Nodes.Add("SYSTEM.CMD_ANSWER", "SYSTEM.CMD_ANSWER");
+            systemNode.Nodes.Add("SYSTEM.P_RESTRICTIONS_MODE",
+                "SYSTEM.P_RESTRICTIONS_MODE");
+            systemNode.Nodes.Add("SYSTEM.P_RESTRICTIONS_MANUAL_TIME",
+                "SYSTEM.P_RESTRICTIONS_MANUAL_TIME");
+            systemNode.Nodes.Add("SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR",
+                "SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR");
+            rootNode.Nodes.Add(systemNode);
+        }
+
+        /// <summary>
+        /// Генерация имени объекта
+        /// </summary>
+        /// <param name="item">Объект</param>
+        /// <param name="itemNumber">Глобальный номер</param>
+        /// <returns></returns>
+        private string GenerateObjectName(TechObject item, int itemNumber)
+        {
+            if (cdbxNewNames == true)
+            {
+                return item.NameBC.ToUpper() + item.TechNumber.ToString();
+            }
+            else
+            {
+                return "OBJECT" + itemNumber.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Генерация CMD-тэгов для объекта
+        /// </summary>
+        /// <param name="obj">Имя объекта</param>
+        private void GenerateCMDTags(string obj, TreeNode objNode, 
+            TreeNode objModesNode)
+        {
+            string tagName = obj + ".CMD";
+            if (cdbxTagView == true)
+            {
+                objNode.Nodes.Add(tagName, tagName);
+            }
+            else
+            {
+                objModesNode.Nodes.Add(tagName, tagName);
+            }
+        }
+
+        /// <summary>
+        /// Генерация ST-тегов для проекта
+        /// </summary>
+        /// <param name="item">Объект</param>
+        /// <param name="objName">Имя объекта</param>
+        private void GenerateSTTags(TechObject item, string objName, 
+            TreeNode objNode, TreeNode objModesNode)
+        {
+            // 33 - Magic number
+            int stCount = item.ModesManager.Modes.Count / 33;
+            for (int i = 0; i <= stCount; i++)
+            {
+                string number = "[ " + (i + 1).ToString() + " ]";
+                string fullTagName = objName + ".ST" + number;
+                if (cdbxTagView == true)
+                {
+                    objNode.Nodes.Add(fullTagName, fullTagName);
+                }
+                else
+                {
+                    objModesNode.Nodes.Add(fullTagName, fullTagName);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Генерация тэгов по операциям, шагам, доступности, состояниям
+        /// </summary>
+        /// <param name="item">Объект</param>
+        /// <param name="itemNumber">Глобальный номер</param>
+        private void GenerateModesOpersAvsStepsTags(TechObject item, string obj,
+            TreeNode objNode, TreeNode objModesNode, TreeNode objOperStateNode,
+            TreeNode objAvOperNode, TreeNode objStepsNode)
+        {
+            string mode = obj + ".MODES";
+            string step = mode + "_STEPS";
+            string oper = obj + ".OPERATIONS";
+            string av = obj + ".AVAILABILITY";
+            for (int i = 1; i <= item.ModesManager.Modes.Count; i++)
+            {
+                string number = "[ " + i.ToString() + " ]";
+                if (cdbxTagView == true)
+                {
+                    objNode.Nodes.Add(mode + number, mode + number);
+                    objNode.Nodes.Add(oper + number, oper + number);
+                    objNode.Nodes.Add(av + number, av + number);
+                    objNode.Nodes.Add(step + number, step + number);
+                }
+                else
+                {
+                    objModesNode.Nodes.Add(mode + number, mode + number);
+                    objOperStateNode.Nodes.Add(oper + number, oper + number);
+                    objAvOperNode.Nodes.Add(av + number, av + number);
+                    objStepsNode.Nodes.Add(step + number, step + number);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Генерация одиночных шагов для объекта
+        /// </summary>
+        /// <param name="item">Объект</param>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="objSingleStepsNode"></param>
+        private void GenerateSingleStepsTags(TechObject item, string objName, 
+            TreeNode objNode, TreeNode objSingleStepsNode)
+        {
+            List<Mode> modes = item.ModesManager.Modes;
+            for(int modeNum = 1; modeNum <= modes.Count; modeNum++)
+            {
+                // Шаги "Пауза" и "Остановка" игнорируются
+                int stepsCount = modes[modeNum - 1].MainSteps.Count;
+                for (int stepNum = 1; stepNum <= stepsCount; stepNum++)
+                {
+                    string stepTag = $"{objName}.STEPS{modeNum}[ {stepNum} ]";
+                    if(cdbxTagView == true)
+                    {
+                        objNode.Nodes.Add(stepTag, stepTag);
+                    }
+                    else
+                    {
+                        objSingleStepsNode.Nodes.Add(stepTag, stepTag);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Генерация тэгов параметров объекта
+        /// </summary>
+        /// <param name="paramsCount">Количество параметров</param>
+        /// <param name="objNode"></param>
+        /// <param name="tagName">Имя тэга</param>
+        private void GenerateParametersTags(int paramsCount, TreeNode objNode,
+            TreeNode objParamsNode, string tagName)
+        {
+            for (int i = 1; i <= paramsCount; i++)
+            {
+                string number = "[ " + i.ToString() + " ]";
+                string fullTagName = tagName + number;
+                if (cdbxTagView == true)
+                {
+                    objNode.Nodes.Add(fullTagName, fullTagName);
+                }
+                else
+                {
+                    objParamsNode.Nodes.Add(fullTagName, fullTagName);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Генерация главного узла для экспорта в XML
+        /// </summary>
+        private void GenerateRootNode(TreeNode rootNode, TreeNode objNode,
+            TreeNode[] singleNodes)
+        {
+            if (cdbxTagView == true)
+            {
+                rootNode.Nodes.Add(objNode);
+            }
+            else
+            {
+                rootNode.Nodes.AddRange(singleNodes);
+            }
+        }
+
+        /// <summary>
+        /// Генерация объекта-ПИДа
+        /// </summary>
+        /// <param name="rootNode">Главный узел</param>
+        private void GeneratePIDNode(TreeNode rootNode, int num)
+        {
+            string tagName = $"PID{num}";
+            TreeNode pidNode;
+            if (cdbxTagView == true)
+            {
+                pidNode = new TreeNode($"{tagName}");
+            }
+            else
+            {
+                pidNode = new TreeNode($"{tagName}_Параметры");
+            }
+
+            const int rtParCount = 2;
+            for (int i = 1; i <= rtParCount; i++)
+            {
+                string nodeDescription = $"{tagName}.RT_PAR_F[ {i} ]";
+                pidNode.Nodes.Add(nodeDescription, nodeDescription);
+            }
+
+            const int sParCount = 14;
+            for (int i = 1; i <= sParCount; i++)
+            {
+                string nodeDescription = $"{tagName}.S_PAR_F[ {i} ]";
+                pidNode.Nodes.Add(nodeDescription, nodeDescription);
+            }
+
+            rootNode.Nodes.Add(pidNode);
+        }
+        #endregion
 
         /// <summary>
         /// Получение экземпляра класса.
@@ -547,15 +649,19 @@ namespace TechObject
 
         }
 
+        /// <summary>
+        /// Загрузка ограничений объектов
+        /// </summary>
+        /// <param name="LuaStr">Описание ограничений объектов</param>
         public void LoadRestriction(string LuaStr)
         {
-
             lua.RegisterFunction("Get_TECH_OBJECT", this,
                 GetType().GetMethod("GetTObject"));
 
-            lua.DoFile(System.IO.Path.GetDirectoryName(
-                System.Reflection.Assembly.GetExecutingAssembly().Location) +
-                "\\Lua\\sys_restriction.lua");
+            string fileName = "sys_restriction.lua";
+            string pathToRestrictionInitializer = Path.Combine(
+                ProjectManager.GetInstance().SystemFilesPath, fileName);
+            lua.DoFile(pathToRestrictionInitializer);
 
             //Выполнения Lua скрипта с описанием объектов.
             lua.DoString(LuaStr);
@@ -654,6 +760,35 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Изменение привязки объектов при перемещении объектов по дереву
+        /// </summary>
+        /// <param name="newIndex">Новый индекс объекта</param>
+        /// <param name="oldIndex">Старый индекс объекта</param>
+        private void ChangeAttachingToObject(int oldIndex, int newIndex)
+        {
+            int oldObjNum = oldIndex + 1;
+            int newObjNum = newIndex + 1;
+            foreach (var techObj in Objects)
+            {
+                string attachingObjectsStr = techObj.AttachedObjects.Value;
+                string[] attachingObjectsArr = attachingObjectsStr.Split(' ');
+                for(int index = 0; index < attachingObjectsArr.Length; index++)
+                {
+                    if(attachingObjectsArr[index] == newObjNum.ToString())
+                    {
+                        attachingObjectsArr[index] = oldObjNum.ToString();
+                    }
+                    else if (attachingObjectsArr[index] == oldObjNum.ToString())
+                    {
+                        attachingObjectsArr[index] = newObjNum.ToString();
+                    }
+                }
+                techObj.AttachedObjects
+                    .SetValue(string.Join(" ", attachingObjectsArr));
+            }
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {
@@ -715,6 +850,7 @@ namespace TechObject
                     objects.Insert(index + 1, techObject);
 
                     SetRestrictionOwner();
+                    ChangeAttachingToObject(index, index + 1);
                     return objects[index];
                 }
             }
@@ -737,6 +873,7 @@ namespace TechObject
                     objects.Insert(index - 1, techObject);
 
                     SetRestrictionOwner();
+                    ChangeAttachingToObject(index, index - 1);
                     return objects[index];
                 }
             }

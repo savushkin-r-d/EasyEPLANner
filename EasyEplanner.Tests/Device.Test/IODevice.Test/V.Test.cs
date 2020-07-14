@@ -230,8 +230,6 @@ namespace Tests
                 "BLINK",
                 "CS",
                 "ERR",
-                "FB_OFF_ST",
-                "FB_ON_ST"
             };
 
             return new object[]

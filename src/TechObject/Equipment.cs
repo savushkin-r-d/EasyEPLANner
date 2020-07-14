@@ -33,21 +33,23 @@ namespace TechObject
         /// Добавить оборудование.
         /// </summary>
         /// <param name="properties">Список оборудования</param>
-        public void AddItems(BaseProperty[] properties)
+        public void AddItems(List<BaseParameter> properties)
         {
-            foreach(BaseProperty property in properties)
+            foreach(BaseParameter property in properties)
             {
                 items.Add(property);
             }
+            Sort();
         }
 
         /// <summary>
         /// Добавить оборудование.
         /// </summary>
         /// <param name="property">Оборудование</param>
-        private void AddItem(BaseProperty property)
+        private void AddItem(BaseParameter property)
         {
             items.Add(property);
+            Sort();
         }
 
         /// <summary>
@@ -59,7 +61,7 @@ namespace TechObject
         {
             foreach (Editor.ITreeViewItem item in items)
             {
-                var property = item as BaseProperty;
+                var property = item as BaseParameter;
                 if (property.LuaName == name)
                 {
                     property.SetValue(value);
@@ -78,8 +80,10 @@ namespace TechObject
 
             foreach(Editor.ITreeViewItem item in items)
             {
-                var property = item as BaseProperty;
-                equipment.AddItem(property.Clone());
+                var property = item as BaseParameter;
+                var newProperty = property.Clone();
+                newProperty.Owner = this;
+                equipment.AddItem(newProperty);
             }
 
             return equipment;
@@ -93,28 +97,37 @@ namespace TechObject
         public string SaveAsLuaTable(string prefix)
         {
             var res = "";
-
             if (items.Count == 0)
             {
                 return res;
             }
 
-            res += prefix + "equipment = \n" +
-                prefix + "\t{\n";
-            foreach(Editor.ITreeViewItem item in items)
+            string equipmentForSave = "";
+            foreach (Editor.ITreeViewItem item in items)
             {
-                var property = item as BaseProperty;
-                res += prefix + $"\t{property.LuaName} = " +
-                    $"\'{property.Value}\',\n";
+                var property = item as BaseParameter;
+                if (!property.IsEmpty)
+                {
+                    equipmentForSave += prefix + $"\t{property.LuaName} = " +
+                        $"\'{property.Value}\',\n";
+                }
             }
-            res += prefix + "\t},\n";
+
+            bool needSaveQuipment = equipmentForSave != "";
+            if (needSaveQuipment)
+            {
+                res += prefix + "equipment = \n" +
+                    prefix + "\t{\n";
+                res += equipmentForSave;
+                res += prefix + "\t},\n";
+            }
 
             return res;
         }
 
         public void ModifyDevNames(string newTechObjName, int techNumber)
         {
-            var properties = items.Select(x => x as BaseProperty).ToArray();
+            var properties = items.Select(x => x as BaseParameter).ToArray();
             foreach (var property in properties)
             {
                 string oldDevName = property.Value;
@@ -139,7 +152,7 @@ namespace TechObject
             int techNumber = owner.TechNumber;
             string eplanName = owner.NameEplan;
 
-            var properties = items.Select(x => x as BaseProperty).ToArray();
+            var properties = items.Select(x => x as BaseParameter).ToArray();
             foreach (var property in properties)
             {
                 string oldDevName = property.Value;
@@ -163,46 +176,77 @@ namespace TechObject
         {
             var errors = "";
 
-            var equipment = Items.Select(x => x as BaseProperty).ToArray();
+            var equipment = Items.Select(x => x as BaseParameter).ToArray();
             foreach (var equip in equipment)
             {
-                string currentValue = equip.Value;
-                if (currentValue == equip.DefaultValue)
-                {
-                    string deviceName = owner.NameEplan + owner.TechNumber + 
-                        equip.DefaultValue;
-                    var device = Device.DeviceManager.GetInstance()
-                        .GetDevice(deviceName);
-                    if (device.Description != "заглушка")
-                    {
-                        equip.SetNewValue(deviceName);
-                    }
-                }
-
-                // Обработка ПИДа
-                if (equip.LuaName == "SET_VALUE")
-                {
-                    bool isValid = false;
-                    var device = Device.DeviceManager.GetInstance()
-                        .GetDevice(currentValue);
-                    if (device.Description != "заглушка")
-                    {
-                        isValid = true;
-                    }
-
-                    if (owner.Params.GetFParam(currentValue) != null)
-                    {
-                        isValid = true;
-                    }
-
-                    if (isValid == false)
-                    {
-                        errors += $"Отсутствует задание для ПИД регулятора" +
-                            $" №{owner.GlobalNumber}\n";
-                    }
-                }
+                SetDeviceAutomatically(equip);
+                errors += CheckEquipmentValues(equip);
             }
 
+            return errors;
+        }
+
+        /// <summary>
+        /// Установка устройств в оборудовании автоматически
+        /// </summary>
+        /// <param name="equipment">Оборудование</param>
+        private void SetDeviceAutomatically(BaseParameter equipment)
+        {
+            string currentValue = equipment.Value;
+            if (equipment.DefaultValue != "" && 
+                currentValue == equipment.DefaultValue)
+            {
+                string deviceName = owner.NameEplan + owner.TechNumber +
+                    equipment.DefaultValue;
+                var device = Device.DeviceManager.GetInstance()
+                    .GetDevice(deviceName);
+                if (device.Description != "заглушка")
+                {
+                    equipment.SetNewValue(deviceName);
+                }
+                else
+                {
+                    equipment.SetNewValue("");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Проверить параметры и устройства для ПИД
+        /// </summary>
+        /// <param name="equipment">Оборудование</param>
+        /// <returns></returns>
+        private string CheckEquipmentValues(BaseParameter equipment)
+        {
+            var errors = "";
+            string currentValue = equipment.Value;
+            var device = Device.DeviceManager.GetInstance()
+                    .GetDeviceByEplanName(currentValue);
+            if (equipment.LuaName == "SET_VALUE")
+            {
+               
+                bool isValid = (device.Description != "заглушка" ||
+                    owner.Params.GetFParam(currentValue) != null);
+                if (!isValid)
+                {
+                    errors += $"Отсутствует задание для ПИД регулятора" +
+                        $" №{owner.GlobalNumber}\n";
+                }
+            }
+            else
+            {
+                bool isValid = device.Description != "заглушка" ||
+                    currentValue == "" ||
+                    currentValue == equipment.DefaultValue;
+                if (!isValid)
+                {
+                    string techObjectName = owner.DisplayText[0];
+                    errors += $"Проверьте оборудование: \"{equipment.Name}\" " +
+                        $"в объекте \"{techObjectName}\". " +
+                        $"Не найдено устройство или " +
+                        $"задано более 1 устройства.\n";
+                }
+            }
             return errors;
         }
 
@@ -244,10 +288,10 @@ namespace TechObject
         public override Editor.ITreeViewItem Replace(object child, 
             object copyObject)
         {
-            var property = child as ShowedBaseProperty;
-            if (property != null && copyObject is ShowedBaseProperty)
+            var property = child as ActiveParameter;
+            if (property != null && copyObject is ActiveParameter)
             {
-                property.SetNewValue((copyObject as ShowedBaseProperty).Value);
+                property.SetNewValue((copyObject as ActiveParameter).Value);
                 ModifyDevNames(owner.NameEplan, owner.TechNumber);
                 return property as Editor.ITreeViewItem;
             }
@@ -269,9 +313,9 @@ namespace TechObject
 
         public override bool Delete(object child)
         {
-            if (child is BaseProperty)
+            if (child is BaseParameter)
             {
-                var property = child as BaseProperty;
+                var property = child as BaseParameter;
                 property.SetNewValue("");
                 return true;
             }
@@ -286,6 +330,24 @@ namespace TechObject
             }
         }
         #endregion
+
+        public override string GetLinkToHelpPage()
+        {
+            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
+                .GetOstisHelpSystemLink();
+            return ostisLink + "?sys_id=control_module";
+        }
+
+        /// <summary>
+        /// Сортировка оборудования в списке по-алфавиту
+        /// </summary>
+        private void Sort()
+        {
+            items.Sort(delegate (Editor.ITreeViewItem x, Editor.ITreeViewItem y)
+            {
+                return x.DisplayText[0].CompareTo(y.DisplayText[0]);
+            });
+        }
 
         private TechObject owner;
         private List<Editor.ITreeViewItem> items;

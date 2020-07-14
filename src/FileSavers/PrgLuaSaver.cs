@@ -133,7 +133,7 @@ namespace EasyEPlanner
             Dictionary<int, string> attachedObjects)
         {
             var res = "";
-            res += "\n";
+            var temp = "";
 
             string previouslyObjectName = "";
             bool isDigit = false;
@@ -170,12 +170,12 @@ namespace EasyEPlanner
                         if (previouslyObjectName != techObj.NameEplanForFile
                             .ToLower() && previouslyObjectName != "")
                         {
-                            res += "\n";
+                            temp += "\n";
                         }
 
-                        res += GenerateStringForAttachingObject(
-                            attachedTechObject, techObjNameForFile,
-                            attachedTechObjNameForFile);
+                        temp += techObjNameForFile + "." +
+                            attachedTechObject.BaseTechObject.BindingName +
+                            " = prg." + attachedTechObjNameForFile + "\n";
 
                         previouslyObjectName = techObj.NameEplanForFile
                             .ToLower();
@@ -189,65 +189,11 @@ namespace EasyEPlanner
                     }
                 }
             }
-            res += "\n";
-            return res;
-        }
 
-        /// <summary>
-        /// Генерировать строку для записи привязки агрегатов к аппаратам в
-        /// prg.lua
-        /// </summary>
-        /// <param name="attachedTechObject">Привязанный тех. объект</param>
-        /// <param name="attachedTechObjNameForFile">Имя привязанного
-        /// тех. объекта для файла</param>
-        /// <param name="techObjNameForFile">Имя тех. объекта к которому
-        /// привязывается объект</param>
-        /// <returns></returns>
-        private static string GenerateStringForAttachingObject(
-            TechObject.TechObject attachedTechObject, 
-            string techObjNameForFile, string attachedTechObjNameForFile)
-        {
-            var res = "";
-
-            if (attachedTechObject.BaseTechObject is BaseMixer)
+            if (temp != "")
             {
-                res += techObjNameForFile + ".mix_node = " +
-                        "prg." + attachedTechObjNameForFile + "\n";
+                res += "\n" + temp + "\n";
             }
-
-            if (attachedTechObject.BaseTechObject is BaseCooler ||
-                attachedTechObject.BaseTechObject is BaseCoolerPID)
-            {
-                res += techObjNameForFile + ".cooler_node = " +
-                        "prg." + attachedTechObjNameForFile + "\n";
-            }
-            
-            if (attachedTechObject.BaseTechObject is BaseHeater ||
-                attachedTechObject.BaseTechObject is BaseHeaterPID)
-            {
-                res += techObjNameForFile + ".heater_node = " +
-                        "prg." + attachedTechObjNameForFile + "\n";
-            }
-            
-            if (attachedTechObject.BaseTechObject is BasePressurePID)
-            {
-                res += techObjNameForFile + ".pressure_node = " +
-                    "prg." + attachedTechObjNameForFile + "\n";
-            }
-            
-            if (attachedTechObject.BaseTechObject is BaseFlowNodePID)
-            {
-                res += techObjNameForFile + ".flow_node = " +
-                    "prg." + attachedTechObjNameForFile + "\n";
-            }
-            
-            if (attachedTechObject.BaseTechObject is BaseWaterTank ||
-                attachedTechObject.BaseTechObject is BaseWaterTankPID)
-            {
-                res += techObjNameForFile + ".ice_water_pump_tank = " +
-                    "prg." + attachedTechObjNameForFile + "\n";
-            }
-
             return res;
         }
 
@@ -258,16 +204,57 @@ namespace EasyEPlanner
         /// <returns></returns>
         private static string SaveObjectsInformationToPrgLua(string prefix)
         {
-            var res = "";
+            string objectsInfo = "";
+            string operations = "";
+            string operationsSteps = "";
+            string operationsParameters = "";
+            string equipments = "";
+            
             var objects = techObjectManager.Objects;
-
             foreach (TechObject.TechObject obj in objects)
             {
+                BaseTechObject baseObj = obj.BaseTechObject;
                 var objName = "prg." + obj.NameEplanForFile.ToLower() +
                     obj.TechNumber.ToString();
-                res += obj.BaseTechObject.SaveToPrgLua(objName, prefix);
+
+                objectsInfo += baseObj.SaveObjectInfoToPrgLua(objName, prefix);
+                
+                var modesManager = baseObj.Owner.ModesManager;
+                var modes = modesManager.Modes;
+                bool haveBaseOperations = modes
+                    .Where(x => x.DisplayText[1] != "").Count() != 0;
+                if (haveBaseOperations)
+                {
+                    operations += baseObj.SaveOperations(
+                        objName, prefix, modes);
+                    operationsSteps += baseObj.SaveOperationsSteps(
+                        objName, prefix, modes);
+                    operationsParameters += baseObj.SaveOperationsParameters(
+                        objName, prefix, modes);
+                }
+
+                equipments += baseObj.SaveEquipment(objName);
             }
-            return res;
+
+            var accumulatedData = new string[] 
+            {
+                objectsInfo, 
+                operations, 
+                operationsSteps,                
+                operationsParameters, 
+                equipments
+            };
+
+            var result = "";
+            foreach (var stringsForSave in accumulatedData)
+            {
+                if (stringsForSave != "")
+                {
+                    result += stringsForSave + "\n";
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -282,8 +269,7 @@ namespace EasyEPlanner
 
             foreach (TechObject.TechObject obj in objects)
             {
-                var basicObj = DataBase.Imitation
-                    .GetBasicName(obj.DisplayText[1]);
+                var basicObj = obj.BaseTechObject.BasicName;
 
                 if (previouslyObjectName != obj.NameEplanForFile.ToLower() &&
                     previouslyObjectName != "")

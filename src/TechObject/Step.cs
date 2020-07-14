@@ -27,7 +27,8 @@ namespace TechObject
             this.getN = getN;
             this.IsMode = isMode;
             this.owner = owner;
-            this.baseStep = new NonShowedBaseProperty("", "", false);
+            this.baseStep = new ActiveParameter("", "");
+            this.baseStep.Owner = this;
 
             items = new List<Editor.ITreeViewItem>();
 
@@ -118,6 +119,7 @@ namespace TechObject
             }
 
             clone.baseStep = baseStep.Clone();
+            clone.baseStep.Owner = this;
 
             return clone;
         }
@@ -215,7 +217,12 @@ namespace TechObject
             int additionalParam = 0)
         {
             int index = Device.DeviceManager.GetInstance()
-                .GetDeviceListNumber(devName);
+                .GetDeviceIndex(devName);
+            if (index == -1)
+            {
+                return false;
+            }
+
             foreach (Action act in actions)
             {
                 if (act.LuaName == actionLuaName)
@@ -350,7 +357,7 @@ namespace TechObject
             }
 
             Mode mode = state.Owner;
-            BaseProperty baseStep = mode.BaseOperation.Steps
+            BaseParameter baseStep = mode.BaseOperation.Steps
                 .Where(x => x.LuaName == newVal).FirstOrDefault();
             if (baseStep == null)
             {
@@ -360,8 +367,9 @@ namespace TechObject
 
             if (baseStep != null)
             {
-                this.baseStep = new NonShowedBaseProperty(baseStep.LuaName, 
-                    baseStep.Name, baseStep.CanSave());
+                this.baseStep = new ActiveParameter(baseStep.LuaName, 
+                    baseStep.Name);
+                this.baseStep.Owner = this;
                 return true;
             }
             
@@ -462,6 +470,33 @@ namespace TechObject
 
             return devToDraw;
         }
+
+        public override List<string> BaseObjectsList
+        {
+            get
+            {
+                State state = this.Owner;
+                if (state.IsMain)
+                {
+                    Mode mode = state.Owner;
+                    var stepsNames = mode.BaseOperation.Steps
+                        .Select(x => x.Name).ToList();
+                    return stepsNames;
+                }
+                else
+                {
+                    return new List<string>();
+                }
+            }
+        }
+
+        public override bool ContainsBaseObject
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         /// <summary>
@@ -503,6 +538,28 @@ namespace TechObject
             return errors;
         }
 
+        public override string GetLinkToHelpPage()
+        {
+            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
+                .GetOstisHelpSystemLink();
+            return ostisLink + "?sys_id=phase";
+        }
+
+        public bool Empty
+        {
+            get
+            {
+                if(actions.Where(x => x.Empty == true).Count() == actions.Count)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         /// <summary>
         /// Признак шага операции.
         /// </summary>
@@ -518,6 +575,6 @@ namespace TechObject
         internal List<Action> actions; ///< Список действий шага.
         private State owner;           ///< Владелей элемента
 
-        private BaseProperty baseStep;
+        private BaseParameter baseStep;
     }
 }

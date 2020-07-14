@@ -191,6 +191,13 @@ namespace TechObject
             return null;
         }
 
+        public override string GetLinkToHelpPage()
+        {
+            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
+                .GetOstisHelpSystemLink();
+            return ostisLink + "?sys_id=process_parameter";
+        }
+
         private string name;
         private List<Restriction> restrictions;
     }

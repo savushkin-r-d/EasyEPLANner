@@ -22,6 +22,11 @@ namespace TechObject
             parUIntRunTime = new Params("Рабочие параметры uint", 
                 "rt_par_uint", "init_rt_params_uint", true);
 
+            parFLoat.Parent = this;
+            parUInt.Parent = this;
+            parFLoatRunTime.Parent = this;
+            parUIntRunTime.Parent = this;
+
             items = new List<Editor.ITreeViewItem>();
             items.Add(parFLoat);
             items.Add(parUInt);
@@ -177,7 +182,7 @@ namespace TechObject
             if (params_ != null)
             {
                 params_.Clear();
-                return false;
+                return true;
             }
 
             return false;
@@ -203,6 +208,13 @@ namespace TechObject
             return null;
         }
         #endregion
+
+        public override string GetLinkToHelpPage()
+        {
+            string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
+                .GetOstisHelpSystemLink();
+            return ostisLink + "?sys_id=process_parameter";
+        }
 
         private Params parFLoat;
         private Params parUInt;

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
+using EasyEPlanner;
 
 /// <summary>
 /// Пространство имен технологических устройств проекта (клапана, насосы...).
@@ -192,7 +193,29 @@ namespace Device
             return devStub;
         }
 
-        public int GetDeviceListNumber(string devName)
+        /// <summary>
+        /// Получить устройство по индексу
+        /// </summary>
+        /// <param name="index">Индекс устройства</param>
+        /// <returns></returns>
+        public IODevice GetDeviceByIndex(int index)
+        {
+            if (index >= 0)
+            {
+                return devices[index];
+            }
+            else
+            {
+                return cap;
+            }
+        }
+
+        /// <summary>
+        /// Получить индекс устройства по его имени из общего пула устройств.
+        /// </summary>
+        /// <param name="devName">Имя устройства</param>
+        /// <returns></returns>
+        public int GetDeviceIndex(string devName)
         {
             string name;
             string objectName;
@@ -202,7 +225,6 @@ namespace Device
 
             CheckDeviceName(devName, out name, out objectName, out objectNumber,
                 out deviceType, out deviceNumber);
-
             IODevice devStub = new IODevice(name, "заглушка",
                 deviceType, deviceNumber, objectName, objectNumber);
 
@@ -706,12 +728,10 @@ namespace Device
         private void InitIOLinkSizesForDevices()
         {
             IOLinkSizes = new Dictionary<string, IODevice.IOLinkSize>();
-            LuaInterface.Lua lua = new LuaInterface.Lua();
+            var lua = new LuaInterface.Lua();
             const string devicesFile = "sys_iolink_devices.lua";
-            const string luaDirectory = "\\Lua";
-            var pathToLua = Path.GetDirectoryName(Assembly
-                .GetExecutingAssembly().Location) + luaDirectory;
-            var fullPath = Path.Combine(pathToLua, devicesFile);
+            var fullPath = Path.Combine(
+                ProjectManager.GetInstance().SystemFilesPath, devicesFile);
 
             if (File.Exists(fullPath))
             {
@@ -726,13 +746,25 @@ namespace Device
                 {
                     var tableData = table as LuaInterface.LuaTable;
                     string articleName = (string)tableData["articleName"];
-                    int sizeIn = Convert.ToInt32((double)tableData["sizeIn"]);
-                    int sizeOut = Convert.ToInt32((double)tableData["sizeOut"]);
+                    // Читаем float т.к могут быть 0.5 размер (в словах)
+                    float sizeIn = (float)((double)tableData["sizeIn"]);
+                    float sizeOut = (float)((double)tableData["sizeOut"]);
 
                     if (IOLinkSizes.ContainsKey(articleName) == false)
                     {
-                        var properties = new IODevice.IOLinkSize(sizeIn,
-                            sizeOut);
+                        // Для расчета IO-Link округляем до целого, кроме 0
+                        // Для настройки - оставляем как есть
+                        int intSizeIn = Convert.ToInt32(
+                            Math.Round(sizeIn, MidpointRounding.AwayFromZero));
+                        int intSizeOut = Convert.ToInt32(
+                            Math.Round(sizeOut, MidpointRounding.AwayFromZero));
+                        var properties = new IODevice.IOLinkSize
+                        {
+                            SizeIn = intSizeIn,
+                            SizeOut = intSizeOut,
+                            SizeInFromFile = sizeIn,
+                            SizeOutFromFile = sizeOut
+                        };
                         IOLinkSizes.Add(articleName, properties);
                     }
                 }
@@ -774,18 +806,6 @@ namespace Device
             get
             {
                 return devices;
-            }
-        }
-
-        public IODevice GetDeviceByIndex(int index)
-        {
-            if (index >= 0)
-            {
-                return devices[index];
-            }
-            else
-            {
-                return cap;
             }
         }
 

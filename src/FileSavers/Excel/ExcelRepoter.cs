@@ -104,11 +104,11 @@ namespace EasyEPlanner
                 }
 
                 workBook.SetWriteProtectionPassword("1");
-                workBook.SaveToFile(fileName);
+                workBook.SaveToFile(fileName, ExcelVersion.Version2010);
             }
             else
             {
-                workBook.SaveToFile(fileName);
+                workBook.SaveToFile(fileName, ExcelVersion.Version2010);
             }
         }
 
@@ -174,13 +174,13 @@ namespace EasyEPlanner
                             rangeCurrent.Row - 1, rangeCurrent.Column + 1]
                             .Merge();
                         workSheet.Range[rangeStart.Row, rangeStart.Column, 
-                            rangeCurrent.Row - 1, rangeCurrent.Column + 3]
+                            rangeCurrent.Row - 1, rangeCurrent.Column + 5]
                             .BorderAround(LineStyleType.Thick);
                     }
                     else
                     {
                         workSheet.Range[rangeStart.Row, rangeStart.Column, 
-                            rangeCurrent.Row - 1, rangeCurrent.Column + 3]
+                            rangeCurrent.Row - 1, rangeCurrent.Column + 5]
                             .Borders.LineStyle = LineStyleType.None;
                     }
                     rangeStart = rangeCurrent;
@@ -296,7 +296,7 @@ namespace EasyEPlanner
             rangeCurrent = workSheet.Range[$"A{totalStart}:A{totalStart}"];
             rangeStart = rangeCurrent;
 
-            workSheet.Range.AutoFitRows();
+            workSheet.Range.EntireRow.AutoFitRows();
 
             // Окрас ячеек
             i = totalStart;
@@ -372,6 +372,8 @@ namespace EasyEPlanner
             workSheet.Range.IsWrapText = true;
             workSheet.PageSetup.IsSummaryColumnRight = true;
             workSheet.PageSetup.IsSummaryRowBelow = false;
+
+            workSheet.Range.EntireRow.AutoFitRows();
         }
 
         /// <summary>
@@ -409,6 +411,8 @@ namespace EasyEPlanner
             workSheet.Range[$"A1:G{row}"].EntireColumn.AutoFitColumns();
             workSheet.PageSetup.IsSummaryColumnRight = true;
             workSheet.PageSetup.IsSummaryRowBelow = false;
+
+            workSheet.Range.EntireRow.AutoFitRows();
         }
 
         /// <summary>
@@ -443,7 +447,8 @@ namespace EasyEPlanner
             workSheet.Range.Style.Font.FontName = "Calibri";
             workSheet.Range.Style.Font.Size = 11;
             workSheet.Range.AutoFitColumns();
-            workSheet.Range.AutoFitRows();
+
+            workSheet.Range.EntireRow.AutoFitRows();
         }
 
         /// <summary>
@@ -459,6 +464,8 @@ namespace EasyEPlanner
             workSheet.Range.Style.Font.FontName = "Calibri";
             workSheet.Range.Style.Font.Size = 11;
             workSheet.Range.EntireColumn.AutoFitColumns();
+
+            workSheet.Range.EntireRow.AutoFitRows();
         }
 
         /// <summary>
@@ -477,6 +484,8 @@ namespace EasyEPlanner
             workSheet.Range.EntireColumn.IsWrapText = true;
             workSheet.PageSetup.IsSummaryRowBelow = false;
             workSheet.PageSetup.IsSummaryColumnRight = true;
+
+            workSheet.Range.EntireRow.AutoFitRows();
         }
 
         /// <summary>
@@ -493,6 +502,8 @@ namespace EasyEPlanner
             workSheet.Range.Style.Font.FontName = "Calibri";
             workSheet.Range.Style.Font.Size = 11;
             workSheet.Range.EntireColumn.AutoFitColumns();
+
+            workSheet.Range.EntireRow.AutoFitRows();
         }
 
         /// <summary>
@@ -522,6 +533,8 @@ namespace EasyEPlanner
             workSheet.Range[$"A1:A{row}"].ColumnWidth = widthColumnA;
             workSheet.Range[$"C1:C{row}"].ColumnWidth = widthColumnC;
             workSheet.Range[$"E1:E{row}"].ColumnWidth = widthColumnE;
+
+            workSheet.Range.EntireRow.AutoFitRows();
         }
 
         /// <summary>
