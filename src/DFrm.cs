@@ -495,6 +495,11 @@ namespace EasyEPlanner
             devicesTreeViewAdv.EndUpdate();
         }
 
+        /// <summary>
+        /// Рекурсивная функция отметки галочками узлов
+        /// </summary>
+        /// <param name="nodes"></param>
+        /// <param name="checkedDev"></param>
         private void SelectedDevices(List<Node> nodes, string checkedDev)
         {
             foreach (Node subNode in nodes)
@@ -517,6 +522,10 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Скрыть все устройства
+        /// </summary>
+        /// <returns></returns>
         public bool ShowNoDevices()
         {
             devicesTreeViewAdv.BeginUpdate();
@@ -541,7 +550,7 @@ namespace EasyEPlanner
         private bool prevShowCheckboxes = false;
 
         /// <summary>
-        /// Обновления дерева устройств
+        /// Обновления видимости дерева устройств
         /// </summary>
         static class RefreshOperationTree
         {
@@ -549,100 +558,127 @@ namespace EasyEPlanner
             {
                 var node = treeNode.Tag as Node;
 
+                if(node.Tag is Device.IODevice)
+                {
+                    RefreshDevice(node, treeNode);
+                }
+                else if(node.Tag is Device.IODevice.IOChannel)
+                {
+                    RefreshChannel(node, treeNode);
+                }
+                else
+                {
+                    RefreshOthers(node, treeNode);
+                }
+            }
+
+            /// <summary>
+            /// Обновить устройства
+            /// </summary>
+            private static void RefreshDevice(Node node, TreeNodeAdv treeNode)
+            {
                 var dev = node.Tag as Device.IODevice;
-                if (dev != null)
+
+                bool isDevHidden = true;
+                foreach (Device.IODevice.IOChannel ch in dev.Channels)
                 {
-                    bool isDevHidden = true;
-
-                    //Показываем каналы.
-                    foreach (Device.IODevice.IOChannel ch in dev.Channels)
+                    if (ch.IsEmpty())
                     {
-                        if (ch.IsEmpty())
-                        {
-                            isDevHidden = false;
-                        }
-                    }
-
-                    node.IsHidden = isDevHidden;
-
-                    if (treeNode.Children.Count < 1)
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        List<TreeNodeAdv> childs = treeNode.Children.ToList();
-                        foreach (TreeNodeAdv child in childs)
-                        {
-                            Execute(child);
-                        }
-
-                        return;
+                        //Показываем каналы.
+                        isDevHidden = false;
                     }
                 }
 
+                node.IsHidden = isDevHidden;
+
+                if (treeNode.Children.Count < 1)
+                {
+                    return;
+                }
+                else
+                {
+                    RefreshChildRecursive(treeNode);
+                }
+
+            }
+
+            /// <summary>
+            /// Обновить канал
+            /// </summary>
+            private static void RefreshChannel(Node node, TreeNodeAdv treeNode)
+            {
                 var chn = node.Tag as Device.IODevice.IOChannel;
-                if (chn != null)
+                if (chn.IsEmpty())
                 {
-                    if (chn.IsEmpty())
-                    {
-                        node.IsHidden = false;
-                    }
-                    else
-                    {
-                        node.IsHidden = true;
-                    }
-
-                    if (treeNode.Children.Count < 1)
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        List<TreeNodeAdv> childs = treeNode.Children.ToList();
-                        foreach (TreeNodeAdv child in childs)
-                        {
-                            Execute(child);
-                        }
-
-                        return;
-                    }
+                    node.IsHidden = false;
+                }
+                else
+                {
+                    node.IsHidden = true;
                 }
 
+                if (treeNode.Children.Count < 1)
+                {
+                    return;
+                }
+                else
+                {
+                    RefreshChildRecursive(treeNode);
+                }
+            }
+
+            /// <summary>
+            /// Обновить остальные узлы
+            /// </summary>
+            private static void RefreshOthers(Node node, TreeNodeAdv treeNode)
+            {
                 if (treeNode.Children.Count < 1)
                 {
                     node.IsHidden = false;
                 }
                 else
                 {
-                    List<TreeNodeAdv> childs = treeNode.Children.ToList();
-                    foreach (TreeNodeAdv child in childs)
-                    {
-                        Execute(child);
-                    }
-
-                    return;
+                    RefreshChildRecursive(treeNode);
                 }
+            }
+
+            /// <summary>
+            /// Рекурсивный вызов обновления дочерних элементов
+            /// </summary>
+            private static void RefreshChildRecursive(TreeNodeAdv treeNode)
+            {
+                List<TreeNodeAdv> childs = treeNode.Children.ToList();
+                foreach (TreeNodeAdv child in childs)
+                {
+                    Execute(child);
+                }
+
+                return;
             }
         }
 
         /// <summary>
-        /// Класс для скрытия устройств в дереве
+        /// Скрытие пустых узлов
         /// </summary>
         static class OnHideOperationTree
         {
-            public static void Execute(TreeNodeAdv treeNode, bool 
-                isHiddenNodeFull = false)
+            public static void Execute(TreeNodeAdv treeNode, 
+                bool isHiddenNodeFull = false)
             {
                 var node = treeNode.Tag as Node;
-                if (treeNode.Level == 1 + correctionValue &&
-                    treeNode.Children.Count < 1)
+
+                bool firstTreeLevel = treeNode.Level == 1 + correctionValue;
+                bool notExistChildren = firstTreeLevel &&
+                    treeNode.Children.Count < 1;
+                bool existChildren = firstTreeLevel &&
+                    treeNode.Children.Count >= 1;
+
+                if (notExistChildren)
                 {
                     treeNode.IsHidden = true;
                     return;
                 }
-                else if (treeNode.Level == 1 + correctionValue &&
-                    treeNode.Children.Count >= 1)
+                else if (existChildren)
                 {
                     // Проверка, есть ли устройства, которые не отображаются
                     if (node.Text.Contains("(0)"))
@@ -667,6 +703,7 @@ namespace EasyEPlanner
                         {
                             Execute(child, true);
                         }
+
                         if (child.IsHidden == false)
                         {
                             isHidden = false;
@@ -704,10 +741,8 @@ namespace EasyEPlanner
                 root.Nodes.Add(r);
             }
 
-            int deviceEnumCount = Enum.GetValues(typeof(Device.DeviceType))
-                .Length;
+            int deviceEnumCount = root.Nodes.Count;
             var countDev = new int[deviceEnumCount];
-
 
             //Заполняем узлы дерева устройствами.
             foreach (Device.IODevice dev in deviceManager.Devices)
@@ -853,32 +888,8 @@ namespace EasyEPlanner
                 }
             }
 
-            //Обновляем названия строк (добавляем количество устройств).
-            int idx = 0;
-            int total = 0;
-            foreach (Device.DeviceType devType in deviceEnum)
-            {
-                foreach (Node node in root.Nodes)
-                {
-                    if ((Device.DeviceType)node.Tag == devType)
-                    {
-                        total += countDev[idx];
-                        node.Text = devType.ToString() + " (" + 
-                            countDev[idx++] + ")  ";
-                        break;
-                    }
-                }
-            }
-
-            root.Text = "Устройства проекта (" + total + ")";
-
-            // Сортировка узлов
-            List<Node> rootNodes = treeModel.Nodes.ToList();
-            // Сортируем узлы внутри каждого устройства Device
-            foreach (Node node in rootNodes)
-            {
-                TreeSort(node.Nodes.ToList(), node);
-            }
+            UpdateDevicesCountInHeaders(deviceEnum, root, countDev);
+            SortTreeView(treeModel);
 
             devicesTreeViewAdv.Model = treeModel;
 
@@ -889,6 +900,49 @@ namespace EasyEPlanner
             devicesTreeViewAdv.ExpandAll();
             devicesTreeViewAdv.Refresh();
             devicesTreeViewAdv.EndUpdate();
+        }
+
+        /// <summary>
+        /// Обновление количества устройств шапках их типов
+        /// </summary>
+        /// <param name="deviceEnum">Названия</param>
+        /// <param name="root">Узел</param>
+        /// <param name="countDev">Массив с количеством по индексам</param>
+        private void UpdateDevicesCountInHeaders(Array deviceEnum, Node root, 
+            int[] countDev)
+        {
+            //Обновляем названия строк (добавляем количество устройств).
+            int idx = 0;
+            int total = 0;
+            foreach (Device.DeviceType devType in deviceEnum)
+            {
+                foreach (Node node in root.Nodes)
+                {
+                    if ((Device.DeviceType)node.Tag == devType)
+                    {
+                        total += countDev[idx];
+                        node.Text = devType.ToString() + " (" +
+                            countDev[idx++] + ")  ";
+                        break;
+                    }
+                }
+            }
+
+            root.Text = "Устройства проекта (" + total + ")";
+        }
+
+        /// <summary>
+        /// Сортировка модели дерева устройств
+        /// </summary>
+        private void SortTreeView(TreeModel treeModel)
+        {
+            // Сортировка узлов
+            List<Node> rootNodes = treeModel.Nodes.ToList();
+            // Сортируем узлы внутри каждого устройства Device
+            foreach (Node node in rootNodes)
+            {
+                TreeSort(node.Nodes.ToList(), node);
+            }
         }
 
         /// <summary>
