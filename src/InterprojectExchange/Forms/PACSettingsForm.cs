@@ -12,15 +12,38 @@ namespace InterprojectExchange
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Межконтроллерный обмен
+        /// </summary>
         private InterprojectExchange interprojectExchange;
+
+        /// <summary>
+        /// PAC-инфо о проектах, сигналы которым отправляются из главного
+        /// </summary>
         private Dictionary<string, PacInfo> projectsSendingFromMain;
+
+        /// <summary>
+        /// PAC-инфо о проектах, сигналы которые отправляются в главный
+        /// </summary>
         private Dictionary<string, PacInfo> projectsSendingToMain;
+
+        /// <summary>
+        /// Имя проекта до открытия формы
+        /// </summary>
         private string projectBeforeOpenForm = "";
+
+        /// <summary>
+        /// Режим редактирования PAC-инфо
+        /// </summary>
         private EditMode editMode;
+
+        /// <summary>
+        /// Главная модель проекта.
+        /// </summary>
+        private CurrentProjectModel mainModel;
 
         private void cancelBtn_Click(object sender, EventArgs e)
         {
-            CurrentProjectModel mainModel = interprojectExchange.MainModel;
             mainModel.SelectedAdvancedProject = projectBeforeOpenForm;
             Close();
         }
@@ -39,8 +62,44 @@ namespace InterprojectExchange
                 SaveIntermediateData(projectName);
             }
 
-            WorkWithProjectsData(false);
-            Close();
+            bool validStations = CheckPACStationNumbers();
+            if (validStations)
+            {
+                WorkWithProjectsData(false);
+                Close();
+            }
+            else
+            {
+                MessageBox.Show("Проверьте номера станций главного объекта " +
+                    "в режиме \"Источник\", дублирование номеров.",
+                    "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        /// <summary>
+        /// Проверка номеров станции на коллизию.
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckPACStationNumbers()
+        {
+            var checkList = new List<int>();
+            foreach (var pacInfo in projectsSendingFromMain)
+            {
+                int station = pacInfo.Value.Station; 
+                if (station > 0)
+                {
+                    if (checkList.Contains(station))
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        checkList.Add(station);
+                    }
+                }
+            }
+
+            return true;
         }
 
         private void PACSettingsForm_Load(object sender, EventArgs e)
@@ -54,6 +113,7 @@ namespace InterprojectExchange
                 modeComboBox_SelectedValueChanged;
 
             interprojectExchange = InterprojectExchange.GetInstance();
+            mainModel = interprojectExchange.MainModel;
             projectsSendingFromMain = new Dictionary<string, PacInfo>();
             projectsSendingToMain = new Dictionary<string, PacInfo>();
             WorkWithProjectsData(true);
@@ -72,7 +132,6 @@ namespace InterprojectExchange
         private void WorkWithProjectsData(bool loadProjectsData)
         {
             var loadedModels = interprojectExchange.LoadedAdvancedModelNames;
-            CurrentProjectModel mainModel = interprojectExchange.MainModel;
             foreach (var modelName in loadedModels)
             {
                 IProjectModel model = interprojectExchange.GetModel(modelName);
