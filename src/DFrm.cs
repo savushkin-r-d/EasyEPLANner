@@ -110,7 +110,7 @@ namespace EasyEPlanner
                         toolStrip.Width = w;
                         devicesTreeViewAdv.Width = w;
                         devicesTreeViewAdv.Height = h - toolStrip.Height;
-                        devicesTreeViewAdv.AutoSizeColumn(treeColumn1);
+                        devicesTreeViewAdv.AutoSizeColumn(nodeColumn);
                         break;
                 }
 
@@ -387,7 +387,7 @@ namespace EasyEPlanner
             toolStrip.Width = w;
             devicesTreeViewAdv.Width = w;
             devicesTreeViewAdv.Height = h - toolStrip.Height;
-            devicesTreeViewAdv.AutoSizeColumn(treeColumn1);
+            devicesTreeViewAdv.AutoSizeColumn(nodeColumn);
 
             uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);        //6
             dialogHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_CALLWNDPROC,
@@ -404,7 +404,7 @@ namespace EasyEPlanner
             InitializeComponent();
 
             InitTreeViewComponents();
-            devicesTreeViewAdv.Columns.Add(treeColumn1);
+            devicesTreeViewAdv.Columns.Add(nodeColumn);
             devicesTreeViewAdv.NodeControls.Add(nodeTextBox);
 
             // Событие рисования узлов дерева
@@ -432,24 +432,24 @@ namespace EasyEPlanner
             devicesTreeViewAdv.RowHeight = 20;
             devicesTreeViewAdv.SelectionMode = TreeSelectionMode.Single;
 
-            treeColumn1.Sortable = false;
-            treeColumn1.Header = "Устройства";
-            treeColumn1.Width = 300;
+            nodeColumn.Sortable = false;
+            nodeColumn.Header = "Устройства";
+            nodeColumn.Width = 300;
 
             nodeCheckBox.DataPropertyName = "CheckState";
             nodeCheckBox.VerticalAlign = VerticalAlignment.Center;
-            nodeCheckBox.ParentColumn = treeColumn1;
+            nodeCheckBox.ParentColumn = nodeColumn;
             nodeCheckBox.EditEnabled = true;
 
             nodeTextBox.DataPropertyName = "Text";
             nodeTextBox.VerticalAlign = VerticalAlignment.Center;
-            nodeTextBox.ParentColumn = treeColumn1;
+            nodeTextBox.ParentColumn = nodeColumn;
         }
 
         ///<summary>
         ///Компоненты TreeView для инициализации
         ///</summary>
-        TreeColumn treeColumn1 = new TreeColumn();
+        TreeColumn nodeColumn = new TreeColumn();
         NodeCheckBox nodeCheckBox = new NodeCheckBox();
         NodeTextBox nodeTextBox = new NodeTextBox();
         // Коррекция уровней дерева для нового элемента управления
@@ -471,7 +471,7 @@ namespace EasyEPlanner
 
             foreach (TreeNodeAdv boxedNode in devicesTreeViewAdv.AllNodes)
             {
-                Node node = boxedNode.Tag as Node;
+                var node = boxedNode.Tag as Node;
                 node.CheckState = CheckState.Unchecked;
             }
 
@@ -487,7 +487,7 @@ namespace EasyEPlanner
 
             var treeModel = devicesTreeViewAdv.Model as TreeModel;
             List<Node> nodes = treeModel.Nodes.ToList();
-            selectedDevices(nodes, checkedDev);
+            SelectedDevices(nodes, checkedDev);
 
             nodeCheckBox.CheckStateChanged += 
                 new EventHandler<TreePathEventArgs>(treeItem_AfterCheck);
@@ -495,7 +495,7 @@ namespace EasyEPlanner
             devicesTreeViewAdv.EndUpdate();
         }
 
-        private void selectedDevices(List<Node> nodes, string checkedDev)
+        private void SelectedDevices(List<Node> nodes, string checkedDev)
         {
             foreach (Node subNode in nodes)
             {
@@ -513,7 +513,7 @@ namespace EasyEPlanner
                         RecursiveCheck(subNode);
                     }
                 }
-                selectedDevices(subNode.Nodes.ToList(), checkedDev);
+                SelectedDevices(subNode.Nodes.ToList(), checkedDev);
             }
         }
 
@@ -540,6 +540,9 @@ namespace EasyEPlanner
         private bool prevShowChannels = false;
         private bool prevShowCheckboxes = false;
 
+        /// <summary>
+        /// Обновления дерева устройств
+        /// </summary>
         static class RefreshOperationTree
         {
             public static void Execute(TreeNodeAdv treeNode)
@@ -623,6 +626,9 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Класс для скрытия устройств в дереве
+        /// </summary>
         static class OnHideOperationTree
         {
             public static void Execute(TreeNodeAdv treeNode, bool 
@@ -956,7 +962,6 @@ namespace EasyEPlanner
         /// <summary>
         /// Построение дерева на основе определенных устройств проекта.
         /// </summary>
-        /// 
         /// <param name="deviceManager">Менеджер устройств проекта.</param>
         /// <param name="devTypes">Показывать данные типы устройств.</param>
         /// /// <param name="devSubTypes">Показывать данные подтипы устройств.
@@ -1033,7 +1038,7 @@ namespace EasyEPlanner
 
             public static void Execute(TreeNodeAdv treeNode)
             {
-                Node node = treeNode.Tag as Node;
+                var node = treeNode.Tag as Node;
 
                 if (treeNode.IsHidden == false)
                 {
