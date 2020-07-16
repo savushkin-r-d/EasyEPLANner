@@ -738,8 +738,16 @@ namespace EasyEPlanner
             var root = new Node("Устройства проекта");
             treeModel.Nodes.Add(root);
 
-            Array deviceEnum = Enum.GetValues(typeof(Device.DeviceType));
-            FillDeviceTypesInNode(root, deviceEnum);
+            Array deviceTypesEnum = Enum.GetValues(typeof(Device.DeviceType));
+            Array deviceSubTypesEnum = new string[]
+            { 
+                "AI_VIRT",
+                "AO_VIRT",
+                "DI_VIRT",
+                "DO_VIRT", 
+            };
+            FillMainDevicesInNode(root, deviceTypesEnum);
+            FillMainDevicesInNode(root, deviceSubTypesEnum);
 
             int deviceEnumCount = root.Nodes.Count;
             var countDev = new int[deviceEnumCount];
@@ -747,12 +755,10 @@ namespace EasyEPlanner
             //Заполняем узлы дерева устройствами.
             foreach (Device.IODevice dev in deviceManager.Devices)
             {
-                //FillDevTypes
-                //FillDevSubTypes
                 Node devTypeNode = FindDevTypeNode(root, dev);
                 if (devTypeNode == null)
                 {
-                    break;
+                    continue;
                 }
 
                 Node devObjectNode = MakeObjectNode(dev.ObjectName, 
@@ -763,9 +769,19 @@ namespace EasyEPlanner
                 ChangeDevicesCheckState(devNode, checkedDev, dev);
                 bool isDevVisible = AddDevChannels(devNode, dev);
                 HideIncorrectDeviceTypes(devNode, isDevVisible, countDev, dev);
+
+                Node devSubTypeNode = FindDevSubTypeNode(root, dev);
+                if(devSubTypeNode == null)
+                {
+                    continue;
+                }
+                Node subDevObjectNode = MakeObjectNode(dev.ObjectName, 
+                    dev.ObjectNumber, devSubTypeNode);
+                MakeDeviceNode(devSubTypeNode, subDevObjectNode, dev,
+                   deviceDescription);
             }
 
-            UpdateDevicesCountInHeaders(deviceEnum, root, countDev);
+            UpdateDevicesCountInHeaders(deviceTypesEnum, root, countDev);
             SortTreeView(treeModel);
 
             devicesTreeViewAdv.Model = treeModel;
@@ -780,14 +796,24 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Заполнить узел типами устройств
+        /// Заполнить узел типами и подтипами устройств
         /// </summary>
-        private void FillDeviceTypesInNode(Node root, Array deviceEnum)
+        private void FillMainDevicesInNode(Node root, Array deviceEnum)
         {
-            foreach (Device.DeviceType devType in deviceEnum)
+            foreach (var devType in deviceEnum)
             {
                 var r = new Node(devType.ToString());
-                r.Tag = devType;
+                if (devType is Device.DeviceType)
+                {
+                    r.Tag = (Device.DeviceType)devType;
+                }
+                else
+                {
+                    var devSubType = (Device.DeviceSubType)Enum
+                        .Parse(typeof(Device.DeviceSubType), 
+                        devType.ToString());
+                    r.Tag = devSubType;
+                }
                 root.Nodes.Add(r);
             }
         }
@@ -800,7 +826,28 @@ namespace EasyEPlanner
         {
             foreach (Node node in root.Nodes)
             {
-                if ((Device.DeviceType)node.Tag == dev.DeviceType)
+                if (node.Tag is Device.DeviceType && 
+                    (Device.DeviceType)node.Tag == dev.DeviceType)
+                {
+                    return node;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Поиск узла подтипа устройства
+        /// </summary>
+        /// <returns></returns>
+        private Node FindDevSubTypeNode(Node root, Device.IODevice dev)
+        {
+            foreach (Node node in root.Nodes)
+            {
+                string devSubType = dev.GetDeviceSubTypeStr(dev.DeviceType, 
+                    dev.DeviceSubType);
+                if (node.Tag is Device.DeviceSubType && 
+                   node.Text == devSubType)
                 {
                     return node;
                 }
@@ -1087,7 +1134,7 @@ namespace EasyEPlanner
                    if(x.Tag is Device.DeviceSubType &&
                    y.Tag is Device.DeviceSubType)
                    {
-                       res = x.Tag.ToString().CompareTo(y.Tag.ToString());
+                       res = x.ToString().CompareTo(y.ToString());
                        return res;
                    }
 
