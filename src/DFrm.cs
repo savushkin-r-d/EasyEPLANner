@@ -749,8 +749,8 @@ namespace EasyEPlanner
             FillMainDevicesInNode(root, deviceTypesEnum);
             FillMainDevicesInNode(root, deviceSubTypesEnum);
 
-            int deviceEnumCount = root.Nodes.Count;
-            var countDev = new int[deviceEnumCount];
+            Dictionary<string, int> countDev = MakeDevicesCounterDictionary(
+                root.Nodes);
 
             //Заполняем узлы дерева устройствами.
             foreach (Device.IODevice dev in deviceManager.Devices)
@@ -777,8 +777,8 @@ namespace EasyEPlanner
                 }
                 Node subDevObjectNode = MakeObjectNode(dev.ObjectName, 
                     dev.ObjectNumber, devSubTypeNode);
-                MakeDeviceNode(devSubTypeNode, subDevObjectNode, dev,
-                   deviceDescription);
+                Node subDevNode = MakeDeviceNode(devSubTypeNode, 
+                    subDevObjectNode, dev, deviceDescription);
             }
 
             UpdateDevicesCountInHeaders(deviceTypesEnum, root, countDev);
@@ -793,6 +793,25 @@ namespace EasyEPlanner
             devicesTreeViewAdv.ExpandAll();
             devicesTreeViewAdv.Refresh();
             devicesTreeViewAdv.EndUpdate();
+        }
+
+        /// <summary>
+        /// Генерация словаря с количеством устройств каждого типа
+        /// </summary>
+        /// <param name="nodes">Коллекция узлов с названиями типов и подтипов
+        /// </param>
+        /// <returns></returns>
+        public Dictionary<string, int> MakeDevicesCounterDictionary(
+            IEnumerable<Node> nodes)
+        {
+            var devicesText = new Dictionary<string, int>();
+            foreach(var node in nodes)
+            {
+                int defaultValue = 0;
+                devicesText.Add(node.Text, defaultValue);
+            }
+
+            return devicesText;
         }
 
         /// <summary>
@@ -1007,7 +1026,7 @@ namespace EasyEPlanner
         /// Скрываем устройства ненужных типов (неправильных)
         /// </summary>
         private void HideIncorrectDeviceTypes(Node devNode, bool isDevVisible,
-            int[] countDev, Device.IODevice dev)
+            Dictionary<string,int> countDev, Device.IODevice dev)
         {
             if (devTypesLastSelected != null &&
                 !devTypesLastSelected.Contains(dev.DeviceType))
@@ -1029,7 +1048,7 @@ namespace EasyEPlanner
                     }
                     else
                     {
-                        countDev[(int)dev.DeviceType]++;
+                        countDev[dev.DeviceType.ToString()]++;
                     }
                 }
             }
@@ -1040,12 +1059,11 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="deviceEnum">Названия</param>
         /// <param name="root">Узел</param>
-        /// <param name="countDev">Массив с количеством по индексам</param>
+        /// <param name="countDev">Словарь с количеством по индексам</param>
         private void UpdateDevicesCountInHeaders(Array deviceEnum, Node root, 
-            int[] countDev)
+            Dictionary<string, int> countDev)
         {
             //Обновляем названия строк (добавляем количество устройств).
-            int idx = 0;
             int total = 0;
             foreach (Device.DeviceType devType in deviceEnum)
             {
@@ -1053,9 +1071,9 @@ namespace EasyEPlanner
                 {
                     if ((Device.DeviceType)node.Tag == devType)
                     {
-                        total += countDev[idx];
+                        total += countDev[devType.ToString()];
                         node.Text = devType.ToString() + " (" +
-                            countDev[idx++] + ")  ";
+                            countDev[devType.ToString()] + ")  ";
                         break;
                     }
                 }
