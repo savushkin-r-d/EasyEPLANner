@@ -747,6 +747,8 @@ namespace EasyEPlanner
             //Заполняем узлы дерева устройствами.
             foreach (Device.IODevice dev in deviceManager.Devices)
             {
+                //FillDevTypes
+                //FillDevSubTypes
                 Node devTypeNode = FindDevTypeNode(root, dev);
                 if (devTypeNode == null)
                 {
@@ -1079,6 +1081,13 @@ namespace EasyEPlanner
                        var yDev = y.Tag as Device.Device;
 
                        res = Device.Device.Compare(xDev, yDev);
+                       return res;
+                   }
+
+                   if(x.Tag is Device.DeviceSubType &&
+                   y.Tag is Device.DeviceSubType)
+                   {
+                       res = x.Tag.ToString().CompareTo(y.Tag.ToString());
                        return res;
                    }
 
