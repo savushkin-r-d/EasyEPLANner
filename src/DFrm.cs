@@ -80,6 +80,7 @@ namespace EasyEPlanner
             deviceIsShown = false;
         }
 
+        #region Dialog window hook
         private IntPtr DlgWndHookCallbackFunction(int code, IntPtr wParam, 
             IntPtr lParam)
         {
@@ -158,7 +159,9 @@ namespace EasyEPlanner
 
             return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }
+        #endregion
 
+        #region ShowDialog
         public static IntPtr wndDevVisibilePtr; // Дескриптор окна устройств
         public static bool deviceIsShown = false; // Показано ли окно.
 
@@ -398,6 +401,7 @@ namespace EasyEPlanner
 
             deviceIsShown = true;
         }
+        #endregion
 
         private DFrm()
         {
@@ -716,6 +720,7 @@ namespace EasyEPlanner
             }
         }
 
+        #region Refresh
         /// <summary>
         /// Обновление дерева на основе текущих устройств проекта.
         /// </summary>
@@ -748,11 +753,13 @@ namespace EasyEPlanner
                     break;
                 }
 
+                Node devObjectNode = MakeObjectNode(dev.ObjectName, 
+                    dev.ObjectNumber, devTypeNode);
                 string deviceDescription = GenerateDeviceDescription(dev);
-                Node devNode = MakeAndFillDeviceNode(devTypeNode, dev, 
+                Node devNode = MakeDeviceNode(devTypeNode, devObjectNode, dev, 
                     deviceDescription);
                 ChangeDevicesCheckState(devNode, checkedDev, dev);
-                bool isDevVisible = ShowDevChannels(devNode, dev);
+                bool isDevVisible = AddDevChannels(devNode, dev);
                 HideIncorrectDeviceTypes(devNode, isDevVisible, countDev, dev);
             }
 
@@ -824,45 +831,63 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Сделать и заполнить узел устройства
+        /// Сделать и заполнить узел объекта
         /// </summary>
-        /// <returns>Заполненный узел</returns>
-        private Node MakeAndFillDeviceNode(Node devTypeNode, 
-            Device.IODevice dev, string deviceDescription)
+        /// <returns></returns>
+        private Node MakeObjectNode(string objectName, long objectNumber, 
+            Node devTypeNode)
         {
-            Node devNode = null;
-            if (dev.ObjectName != "")
+            Node devObjectNode = null;
+            string fullObjectName = objectName + objectNumber;
+            if (objectName != "")
             {
-                string objectName = dev.ObjectName + dev.ObjectNumber;
-                Node devParent = null;
-
                 foreach (Node node in devTypeNode.Nodes)
                 {
-                    if ((node.Tag is string) &&
-                        (string)node.Tag == objectName)
+                    if ((node.Tag is string) && 
+                        (string)node.Tag == fullObjectName)
                     {
-                        devParent = node;
-                        break;
+                        return node;
                     }
                 }
 
-                if (devParent == null)
+                if (devObjectNode == null)
                 {
-                    devParent = new Node(objectName);
-                    devParent.Tag = objectName;
-                    devTypeNode.Nodes.Add(devParent);
+                    devObjectNode = new Node(fullObjectName);
+                    devObjectNode.Tag = fullObjectName;
+                    devTypeNode.Nodes.Add(devObjectNode);
+                    return devObjectNode;
                 }
+            }
 
-                string devName = dev.DeviceType +
-                    dev.DeviceNumber.ToString() + "\t  " + deviceDescription;
+            return devObjectNode;
+        }
+
+        /// <summary>
+        /// Сделать и заполнить узел устройства
+        /// </summary>
+        /// <returns>Заполненный узел</returns>
+        private Node MakeDeviceNode(Node devTypeNode, Node devObjectNode, 
+            Device.IODevice dev, string deviceDescription)
+        {
+            Node devNode;
+            if (dev.ObjectName != "")
+            {
+                string devName = dev.DeviceType + dev.DeviceNumber.ToString() + 
+                    "\t  " + deviceDescription;
                 devNode = new Node(devName);
-                devNode.Tag = dev;
-                devParent.Nodes.Add(devNode);
             }
             else
             {
                 devNode = new Node(dev.name + "\t  " + deviceDescription);
-                devNode.Tag = dev;
+            }
+            devNode.Tag = dev;
+
+            if (devObjectNode != null)
+            {
+                devObjectNode.Nodes.Add(devNode);
+            }
+            else
+            {
                 devTypeNode.Nodes.Add(devNode);
             }
 
@@ -891,25 +916,25 @@ namespace EasyEPlanner
         /// Отображение каналов устройств
         /// </summary>
         /// <returns></returns>
-        private bool ShowDevChannels(Node devNode, Device.IODevice dev)
+        private bool AddDevChannels(Node devNode, Device.IODevice dev)
         {
             bool isDevVisible = false;
             if (prevShowChannels)
             {
-                Node newNodeCh;
+                Node channelNode;
                 //Показываем каналы.
                 foreach (Device.IODevice.IOChannel ch in dev.Channels)
                 {
                     if (!ch.IsEmpty())
                     {
-                        newNodeCh = new Node(ch.Name + " " + ch.Comment +
+                        channelNode = new Node(ch.Name + " " + ch.Comment +
                             $" (A{ch.FullModule}:" + ch.PhysicalClamp + ")");
-                        newNodeCh.Tag = ch;
-                        devNode.Nodes.Add(newNodeCh);
+                        channelNode.Tag = ch;
+                        devNode.Nodes.Add(channelNode);
 
                         if (noAssigmentBtn.Checked)
                         {
-                            newNodeCh.IsHidden = true;
+                            channelNode.IsHidden = true;
                         }
                         else
                         {
@@ -918,9 +943,9 @@ namespace EasyEPlanner
                     }
                     else
                     {
-                        newNodeCh = new Node(ch.Name + " " + ch.Comment);
-                        newNodeCh.Tag = ch;
-                        devNode.Nodes.Add(newNodeCh);
+                        channelNode = new Node(ch.Name + " " + ch.Comment);
+                        channelNode.Tag = ch;
+                        devNode.Nodes.Add(channelNode);
 
                         isDevVisible = true;
                     }
@@ -1071,6 +1096,7 @@ namespace EasyEPlanner
                 }
             }
         }
+        #endregion
 
         /// <summary>
         /// Построение дерева на основе определенных устройств проекта.
