@@ -276,7 +276,6 @@
             this.bindedSignalsList.ShowGroups = false;
             this.bindedSignalsList.ShowItemToolTips = true;
             this.bindedSignalsList.Size = new System.Drawing.Size(354, 391);
-            this.bindedSignalsList.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.bindedSignalsList.TabIndex = 100;
             this.bindedSignalsList.UseCompatibleStateImageBehavior = false;
             this.bindedSignalsList.View = System.Windows.Forms.View.Details;

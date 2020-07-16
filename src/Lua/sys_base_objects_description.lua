@@ -444,6 +444,13 @@ return
                 },
                 COOLING_AFTER_SOURING = {
                     name = "Охлаждение после сквашивания",
+                    params =
+                        {
+                            active =
+                            {
+                                MIXING_TIME = { name = "Время перемешивания (2-го шага)" },
+                            },
+                        },
                     steps =
                     {
                         COOLING = { name = "Охлаждение" },
@@ -725,16 +732,50 @@ return
         sterile_air_node = {
             name = "Узел стерильного воздуха",
             s88Level = 2,
-            baseOperationg = { },
+            baseOperations =
+            {
+                WORKING =
+                {
+                    name = "Работа",
+                    steps =
+                    {
+                        WORKING = { name = "Работа" },
+                        WAITING = { name = "Ожидание" },
+                    },
+                },
+                STERILIZATION =
+                {
+                    name = "Стерилизация",
+                    steps =
+                    {
+                        HEATING = { name = "Нагрев" },
+                        STERILIZATION = { name = "Стерилизация" },
+                        COOLING = { name = "Охлаждение" },
+                    },
+                    params =
+                    {
+                        active =
+                        {
+                            STERILIZATION_TEMPERATURE = { name = "Температура стерилизации" },
+                            MIN_STERILIZATION_TEMPERATURE = { name = "Минимальная температура стерилизации" },
+                            COOL_TEMPERATURE = { name = "Температура охлаждения" },
+                            MAX_OPERATION_TIME = { name = "Максимальное время операции" },
+                        },
+                    },
+                },
+            },
             basicName = "sterile_air_node",
-            equipment = { },
+            equipment =
+            {
+                TE1 = { name = "Датчик температуры", defaultValue = "TE1" },
+            },
             aggregateParameters = { },
             bindingName = "sterile_air_node",
         },
         steam_blast_node = {
             name = "Узел продувания",
             s88Level = 2,
-            baseOperationg = { },
+            baseOperations = { },
             basicName = "steam_blast_node",
             equipment = { },
             aggregateParameters = { },

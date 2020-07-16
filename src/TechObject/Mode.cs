@@ -656,6 +656,14 @@ namespace TechObject
                 return true;
             }
         }
+
+        public override bool NeedRebuildParent
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         public override string GetLinkToHelpPage()

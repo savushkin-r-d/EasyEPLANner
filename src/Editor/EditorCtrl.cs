@@ -882,6 +882,10 @@ namespace Editor
                 newItem.AddParent(item);
                 editorTView.RefreshObjects(item.Items);
                 editorTView.RefreshObject(item);
+                if(item.NeedRebuildParent && item.Parent != null)
+                {
+                    editorTView.RefreshObject(item.Parent);
+                }
 
                 OnModify();
             }
@@ -946,6 +950,12 @@ namespace Editor
                     newItem.AddParent(item);
                     OnModify();
                     editorTView.RefreshObjects(item.Items);
+
+                    if(item.NeedRebuildParent && item.Parent != null)
+                    {
+                        editorTView.RefreshObject(item.Parent);
+                    }
+
                     DisableNeededObjects(new ITreeViewItem[] { newItem });
                 }
             }
@@ -960,19 +970,28 @@ namespace Editor
             if (copyItem != null && item.IsReplaceable)
             {
                 ITreeViewItem parent = item.Parent;
-                ITreeViewItem newItem = parent.Replace(item, copyItem);
-                if (newItem != null)
+                if(parent != null)
                 {
-                    newItem.AddParent(parent);
-                    editorTView.RefreshObjects(parent.Items);
-                    if (item.NeedRebuildMainObject)
+                    ITreeViewItem newItem = parent.Replace(item, copyItem);
+                    if (newItem != null)
                     {
-                        var mainObject = GetParentBranch(item);
-                        editorTView.RefreshObjects(mainObject.Items);
+                        newItem.AddParent(parent);
+                        editorTView.RefreshObjects(parent.Items);
+                        if (item.NeedRebuildMainObject)
+                        {
+                            var mainObject = GetParentBranch(item);
+                            editorTView.RefreshObjects(mainObject.Items);
+                        }
+
+                        if (item.NeedRebuildParent)
+                        {
+                            editorTView.RefreshObject(parent);
+                        }
+
+                        DisableNeededObjects(new ITreeViewItem[] { newItem });
                     }
-                    DisableNeededObjects(new ITreeViewItem[] { newItem });
+                    OnModify();
                 }
-                OnModify();
             }
         }
 
