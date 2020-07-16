@@ -448,13 +448,15 @@ return
                         {
                             active =
                             {
-                                MIXING_TIME = { name = "Время перемешивания (2-го шага)" },
+                                COOLING_TIME = { name = "Время охлаждения (1-го шага)" },
+                                MIXING_CHECK_TIME = { name = "Время проверки температуры (3-го шага)" },
                             },
                         },
                     steps =
                     {
                         COOLING = { name = "Охлаждение" },
-                        MIXING = { name = "Перемешивание" },
+                        MIXING = { name = "Охлаждение и перемешивание" },
+                        CHECKING_TEMPERATURE = { name = "Проверка заданной температуры" },
                     },
                 },
                 WORK = {
