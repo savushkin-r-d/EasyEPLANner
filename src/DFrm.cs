@@ -734,12 +734,7 @@ namespace EasyEPlanner
             treeModel.Nodes.Add(root);
 
             Array deviceEnum = Enum.GetValues(typeof(Device.DeviceType));
-            foreach (Device.DeviceType devType in deviceEnum)
-            {
-                var r = new Node(devType.ToString());
-                r.Tag = devType;
-                root.Nodes.Add(r);
-            }
+            FillDeviceTypesInNode(root, deviceEnum);
 
             int deviceEnumCount = root.Nodes.Count;
             var countDev = new int[deviceEnumCount];
@@ -747,145 +742,18 @@ namespace EasyEPlanner
             //Заполняем узлы дерева устройствами.
             foreach (Device.IODevice dev in deviceManager.Devices)
             {
-                Node parent = null;
-                Node devNode = null;
-                foreach (Node node in root.Nodes)
-                {
-                    if ((Device.DeviceType)node.Tag == dev.DeviceType)
-                    {
-                        parent = node;
-                        break;
-                    }
-                }
-
-                //Не найден тип устройства.
-                if (parent == null)
+                Node devTypeNode = FindDevTypeNode(root, dev);
+                if (devTypeNode == null)
                 {
                     break;
                 }
 
-                // Если есть символы переноса строки
-                string result = "";
-                if (dev.Description.Contains('\n'))
-                {
-                    string[] devDescr = dev.Description.Split('\n');
-                    foreach (string str in devDescr)
-                    {
-                        result += str + " ";
-                    }
-                }
-                else
-                {
-                    result = dev.Description;
-                }
-
-                if (dev.ObjectName != "")
-                {
-                    string objectName = dev.ObjectName + dev.ObjectNumber;
-                    Node devParent = null;
-
-                    foreach (Node node in parent.Nodes)
-                    {
-                        if ((node.Tag is String) &&
-                            (string)node.Tag == objectName)
-                        {
-                            devParent = node;
-                            break;
-                        }
-                    }
-
-                    if (devParent == null)
-                    {
-                        devParent = new Node(objectName);
-                        devParent.Tag = objectName;
-                        parent.Nodes.Add(devParent);
-                    }
-
-                    string devName = dev.DeviceType + 
-                        dev.DeviceNumber.ToString() + "\t  " + result;
-                    devNode = new Node(devName);
-                    devNode.Tag = dev;
-                    devParent.Nodes.Add(devNode);
-                }
-                else
-                {
-                    devNode = new Node(dev.name + "\t  " + result);
-                    devNode.Tag = dev;
-                    parent.Nodes.Add(devNode);
-                }
-
-                //Check.     
-                checkedDev = ' ' + checkedDev + ' ';
-                if (checkedDev != "  " && 
-                    checkedDev.Contains(' ' + dev.Name + ' '))
-                {
-                    devNode.CheckState = CheckState.Checked;
-                }
-                else
-                {
-                    devNode.CheckState = CheckState.Unchecked;
-                }
-
-                bool isDevVisible = false;
-                if (prevShowChannels)
-                {
-                    Node newNodeCh = null;
-
-                    //Показываем каналы.
-                    foreach (Device.IODevice.IOChannel ch in dev.Channels)
-                    {
-                        if (!ch.IsEmpty())
-                        {
-                            newNodeCh = new Node(ch.Name + " " + ch.Comment +
-                                $" (A{ch.FullModule}:" + ch.PhysicalClamp + ")");
-                            newNodeCh.Tag = ch;
-                            devNode.Nodes.Add(newNodeCh);
-
-                            if (noAssigmentBtn.Checked)
-                            {
-                                newNodeCh.IsHidden = true;
-                            }
-                            else
-                            {
-                                isDevVisible = true;
-                            }
-                        }
-                        else
-                        {
-                            newNodeCh = new Node(ch.Name + " " + ch.Comment);
-                            newNodeCh.Tag = ch;
-                            devNode.Nodes.Add(newNodeCh);
-
-                            isDevVisible = true;
-                        }
-                    }
-                }
-
-                //Пропускаем устройства ненужных типов.
-                if (devTypesLastSelected != null &&
-                    !devTypesLastSelected.Contains(dev.DeviceType))
-                {
-                    devNode.IsHidden = true;
-                }
-                else
-                {
-                    if (devSubTypesLastSelected != null &&
-                        !devSubTypesLastSelected.Contains(dev.DeviceSubType))
-                    {
-                        devNode.IsHidden = true;
-                    }
-                    else
-                    {
-                        if (prevShowChannels && !isDevVisible)
-                        {
-                            devNode.IsHidden = true;
-                        }
-                        else
-                        {
-                            countDev[(int)dev.DeviceType]++;
-                        }
-                    }
-                }
+                string deviceDescription = GenerateDeviceDescription(dev);
+                Node devNode = MakeAndFillDeviceNode(devTypeNode, dev, 
+                    deviceDescription);
+                ChangeDevicesCheckState(devNode, checkedDev, dev);
+                bool isDevVisible = ShowDevChannels(devNode, dev);
+                HideIncorrectDeviceTypes(devNode, isDevVisible, countDev, dev);
             }
 
             UpdateDevicesCountInHeaders(deviceEnum, root, countDev);
@@ -900,6 +768,197 @@ namespace EasyEPlanner
             devicesTreeViewAdv.ExpandAll();
             devicesTreeViewAdv.Refresh();
             devicesTreeViewAdv.EndUpdate();
+        }
+
+        /// <summary>
+        /// Заполнить узел типами устройств
+        /// </summary>
+        private void FillDeviceTypesInNode(Node root, Array deviceEnum)
+        {
+            foreach (Device.DeviceType devType in deviceEnum)
+            {
+                var r = new Node(devType.ToString());
+                r.Tag = devType;
+                root.Nodes.Add(r);
+            }
+        }
+
+        /// <summary>
+        /// Поиск узла типа устройства
+        /// </summary>
+        /// <returns></returns>
+        private Node FindDevTypeNode(Node root, Device.IODevice dev)
+        {
+            foreach (Node node in root.Nodes)
+            {
+                if ((Device.DeviceType)node.Tag == dev.DeviceType)
+                {
+                    return node;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Генерация описания устройства
+        /// </summary>
+        /// <returns></returns>
+        private string GenerateDeviceDescription(Device.IODevice dev)
+        {
+            string result = "";
+            if (dev.Description.Contains('\n'))
+            {
+                string[] devDescr = dev.Description.Split('\n');
+                foreach (string str in devDescr)
+                {
+                    result += str + " ";
+                }
+            }
+            else
+            {
+                result = dev.Description;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Сделать и заполнить узел устройства
+        /// </summary>
+        /// <returns>Заполненный узел</returns>
+        private Node MakeAndFillDeviceNode(Node devTypeNode, 
+            Device.IODevice dev, string deviceDescription)
+        {
+            Node devNode = null;
+            if (dev.ObjectName != "")
+            {
+                string objectName = dev.ObjectName + dev.ObjectNumber;
+                Node devParent = null;
+
+                foreach (Node node in devTypeNode.Nodes)
+                {
+                    if ((node.Tag is string) &&
+                        (string)node.Tag == objectName)
+                    {
+                        devParent = node;
+                        break;
+                    }
+                }
+
+                if (devParent == null)
+                {
+                    devParent = new Node(objectName);
+                    devParent.Tag = objectName;
+                    devTypeNode.Nodes.Add(devParent);
+                }
+
+                string devName = dev.DeviceType +
+                    dev.DeviceNumber.ToString() + "\t  " + deviceDescription;
+                devNode = new Node(devName);
+                devNode.Tag = dev;
+                devParent.Nodes.Add(devNode);
+            }
+            else
+            {
+                devNode = new Node(dev.name + "\t  " + deviceDescription);
+                devNode.Tag = dev;
+                devTypeNode.Nodes.Add(devNode);
+            }
+
+            return devNode;
+        }
+
+        /// <summary>
+        /// Изменение состояния CheckBox
+        /// </summary>
+        private void ChangeDevicesCheckState(Node devNode , string checkedDev, 
+            Device.IODevice dev)
+        {
+            checkedDev = ' ' + checkedDev + ' ';
+            if (checkedDev != "  " &&
+                checkedDev.Contains(' ' + dev.Name + ' '))
+            {
+                devNode.CheckState = CheckState.Checked;
+            }
+            else
+            {
+                devNode.CheckState = CheckState.Unchecked;
+            }
+        }
+
+        /// <summary>
+        /// Отображение каналов устройств
+        /// </summary>
+        /// <returns></returns>
+        private bool ShowDevChannels(Node devNode, Device.IODevice dev)
+        {
+            bool isDevVisible = false;
+            if (prevShowChannels)
+            {
+                Node newNodeCh;
+                //Показываем каналы.
+                foreach (Device.IODevice.IOChannel ch in dev.Channels)
+                {
+                    if (!ch.IsEmpty())
+                    {
+                        newNodeCh = new Node(ch.Name + " " + ch.Comment +
+                            $" (A{ch.FullModule}:" + ch.PhysicalClamp + ")");
+                        newNodeCh.Tag = ch;
+                        devNode.Nodes.Add(newNodeCh);
+
+                        if (noAssigmentBtn.Checked)
+                        {
+                            newNodeCh.IsHidden = true;
+                        }
+                        else
+                        {
+                            isDevVisible = true;
+                        }
+                    }
+                    else
+                    {
+                        newNodeCh = new Node(ch.Name + " " + ch.Comment);
+                        newNodeCh.Tag = ch;
+                        devNode.Nodes.Add(newNodeCh);
+
+                        isDevVisible = true;
+                    }
+                }
+            }
+
+            return isDevVisible;
+        }
+        /// <summary>
+        /// Скрываем устройства ненужных типов (неправильных)
+        /// </summary>
+        private void HideIncorrectDeviceTypes(Node devNode, bool isDevVisible,
+            int[] countDev, Device.IODevice dev)
+        {
+            if (devTypesLastSelected != null &&
+                !devTypesLastSelected.Contains(dev.DeviceType))
+            {
+                devNode.IsHidden = true;
+            }
+            else
+            {
+                if (devSubTypesLastSelected != null &&
+                    !devSubTypesLastSelected.Contains(dev.DeviceSubType))
+                {
+                    devNode.IsHidden = true;
+                }
+                else
+                {
+                    if (prevShowChannels && !isDevVisible)
+                    {
+                        devNode.IsHidden = true;
+                    }
+                    else
+                    {
+                        countDev[(int)dev.DeviceType]++;
+                    }
+                }
+            }
         }
 
         /// <summary>
