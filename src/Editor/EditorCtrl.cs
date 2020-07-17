@@ -1134,7 +1134,7 @@ namespace Editor
                 }
 
                 DFrm.CheckShown();
-                if (DFrm.GetInstance().isVisible())
+                if (DFrm.GetInstance().IsVisible())
                 {
                     DFrm.GetInstance().ShowDevices(
                         Device.DeviceManager.GetInstance(),
@@ -1164,7 +1164,7 @@ namespace Editor
                 }
 
                 DFrm.CheckShown();
-                if (DFrm.GetInstance().isVisible())
+                if (DFrm.GetInstance().IsVisible())
                 {
                     ITreeViewItem item = GetActiveItem();
                     if (item != null)
@@ -1494,12 +1494,12 @@ namespace Editor
             {
                 DFrm.CheckShown();
                 //Обновление списка устройств при его наличии.
-                if (DFrm.GetInstance().isVisible() == true)
+                if (DFrm.GetInstance().IsVisible() == true)
                 {
                     if (item.IsUseDevList == false)
                     {
                         DFrm.CheckShown();
-                        if (DFrm.GetInstance().isVisible())
+                        if (DFrm.GetInstance().IsVisible())
                         {
                             DFrm.GetInstance().ShowNoDevices();
                         }
@@ -1507,7 +1507,7 @@ namespace Editor
                     else
                     {
                         DFrm.CheckShown();
-                        if (DFrm.GetInstance().isVisible())
+                        if (DFrm.GetInstance().IsVisible())
                         {
                             Device.DeviceType[] devTypes;
                             Device.DeviceSubType[] devSubTypes;
