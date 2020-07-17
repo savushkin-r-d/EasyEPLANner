@@ -735,9 +735,11 @@ namespace EasyEPlanner
             devicesTreeViewAdv.Refresh();
             var treeModel = new TreeModel();
 
-            var root = new Node("Устройства проекта");
+            string mainNodeName = "Устройства проекта";
+            var root = new Node(mainNodeName);
             treeModel.Nodes.Add(root);
 
+            // Подтипы, которые отдельно записываем в устройства
             var devicesSubTypesEnum = new string[]
             {
                 "AI_VIRT",
@@ -745,50 +747,25 @@ namespace EasyEPlanner
                 "DI_VIRT",
                 "DO_VIRT"
             };
-            object[] devicesArray = MakeDevicesTypesSubTypesObjectArray(
+            object[] devicesArray = GenerateArrayObjectsForFill(
                 devicesSubTypesEnum);
             FillMainDevicesInNode(root, devicesArray);
 
             Dictionary<string, int> countDev = MakeDevicesCounterDictionary(
                 root.Nodes);
-            //Заполняем узлы дерева устройствами.
             foreach (Device.IODevice dev in deviceManager.Devices)
             {
-                bool isDevVisible;
                 string deviceDescription = GenerateDeviceDescription(dev);
                 string devSubType = dev.GetDeviceSubTypeStr(dev.DeviceType,
                     dev.DeviceSubType);
                 if (devicesSubTypesEnum.Contains(devSubType))
                 {
-                    Node devSubTypeNode = FindDevSubTypeNode(root, dev);
-                    if (devSubTypeNode == null)
-                    {
-                        continue;
-                    }
-                    Node subDevObjectNode = MakeObjectNode(dev.ObjectName,
-                        dev.ObjectNumber, devSubTypeNode);
-                    Node subDevNode = MakeDeviceNode(devSubTypeNode,
-                        subDevObjectNode, dev, deviceDescription);
-                    isDevVisible = noAssigmentBtn.Checked ? false : true;
-                    HideIncorrectDeviceSubTypes(subDevNode, isDevVisible,
-                        countDev, dev);
+                    FillSubTypeNode(dev, root, deviceDescription, countDev);
                 }
                 else
                 {
-                    Node devTypeNode = FindDevTypeNode(root, dev);
-                    if (devTypeNode == null)
-                    {
-                        continue;
-                    }
-
-                    Node devObjectNode = MakeObjectNode(dev.ObjectName,
-                        dev.ObjectNumber, devTypeNode);
-                    Node devNode = MakeDeviceNode(devTypeNode, devObjectNode, 
-                        dev, deviceDescription);
-                    ChangeDevicesCheckState(devNode, checkedDev, dev);
-                    isDevVisible = AddDevChannels(devNode, dev);
-                    HideIncorrectDeviceTypes(devNode, isDevVisible, countDev,
-                        dev);
+                    FillTypeNode(dev, root, deviceDescription, countDev,
+                        checkedDev);
                 }
             }
 
@@ -806,31 +783,39 @@ namespace EasyEPlanner
             devicesTreeViewAdv.EndUpdate();
         }
 
-        private object[] MakeDevicesTypesSubTypesObjectArray(
-            string[] subTypes)
+        /// <summary>
+        /// Сгенерировать массив со список типов и подтипов для заполнения
+        /// </summary>
+        /// <param name="subTypes">Список подтипов добавляемых в узлы</param>
+        /// <returns></returns>
+        private object[] GenerateArrayObjectsForFill(string[] subTypes)
         {
             Array devicesTypesEnum = Enum.GetValues(typeof(Device.DeviceType));
-
-            int publicLength = devicesTypesEnum.Length + 
-                subTypes.Length;
+            int publicLength = devicesTypesEnum.Length + subTypes.Length;
             var objectArray = new object[publicLength];
-            int index = 0;
+            
+            int index = 0;       
             foreach(Device.DeviceType devType in devicesTypesEnum)
             {
                 objectArray[index] = devType;
                 index++;
             }
+            
             foreach(var devSubType in subTypes)
             {
                 objectArray[index] = devSubType;
                 index++;
             }
+
             return objectArray;
         }
 
         /// <summary>
         /// Заполнить узел типами и подтипами устройств
         /// </summary>
+        /// <param name="deviceEnum">Список типов и подтипов для добавления
+        /// </param>
+        /// <param name="root">Главный узел</param>
         private void FillMainDevicesInNode(Node root, object[] deviceEnum)
         {
             foreach (var devType in deviceEnum)
@@ -871,8 +856,62 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Заполнить узел для типа устройства
+        /// </summary>
+        /// <param name="dev">Устройство</param>
+        /// <param name="root">Главный узел</param>
+        /// <param name="deviceDescription">Описание устройства</param>
+        /// <param name="countDev">Словарь для подсчета количества</param>
+        /// <param name="checkedDev">Выбранные устройств в действии</param>
+        private void FillTypeNode(Device.IODevice dev, Node root,
+            string deviceDescription, Dictionary<string, int> countDev,
+            string checkedDev)
+        {
+            Node devTypeNode = FindDevTypeNode(root, dev);
+            if (devTypeNode == null)
+            {
+                return;
+            }
+
+            Node devObjectNode = MakeObjectNode(dev.ObjectName,
+                dev.ObjectNumber, devTypeNode);
+            Node devNode = MakeDeviceNode(devTypeNode, devObjectNode,
+                dev, deviceDescription);
+            ChangeDevicesCheckState(devNode, checkedDev, dev);
+            bool isDevVisible = AddDevChannels(devNode, dev);
+            HideIncorrectDeviceTypeSubType(devNode, isDevVisible, countDev, 
+                dev);
+        }
+
+        /// <summary>
+        /// Заполнить узел для подтипа устройства
+        /// </summary>
+        /// <param name="dev">Устройство</param>
+        /// <param name="root">Главный узел</param>
+        /// <param name="deviceDescription">Описание устройства</param>
+        /// <param name="countDev">Словарь для подсчета количества</param>
+        private void FillSubTypeNode(Device.IODevice dev, Node root, 
+            string deviceDescription, Dictionary<string, int> countDev)
+        {
+            Node devSubTypeNode = FindDevSubTypeNode(root, dev);
+            if (devSubTypeNode == null)
+            {
+                return;
+            }
+            Node subDevObjectNode = MakeObjectNode(dev.ObjectName,
+                dev.ObjectNumber, devSubTypeNode);
+            Node subDevNode = MakeDeviceNode(devSubTypeNode,
+                subDevObjectNode, dev, deviceDescription);
+            bool isDevVisible = noAssigmentBtn.Checked ? false : true;
+            HideIncorrectDeviceTypeSubType(subDevNode, isDevVisible, countDev, 
+                dev);
+        }
+
+        /// <summary>
         /// Поиск узла типа устройства
         /// </summary>
+        /// <param name="root">главный узел</param>
+        /// <param name="dev">Устройство</param>
         /// <returns></returns>
         private Node FindDevTypeNode(Node root, Device.IODevice dev)
         {
@@ -891,6 +930,8 @@ namespace EasyEPlanner
         /// <summary>
         /// Поиск узла подтипа устройства
         /// </summary>
+        /// <param name="dev">Устройство</param>
+        /// <param name="root">Главный узел</param>
         /// <returns></returns>
         private Node FindDevSubTypeNode(Node root, Device.IODevice dev)
         {
@@ -911,6 +952,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Генерация описания устройства
         /// </summary>
+        /// <param name="dev">Устройство</param>
         /// <returns></returns>
         private string GenerateDeviceDescription(Device.IODevice dev)
         {
@@ -934,6 +976,9 @@ namespace EasyEPlanner
         /// <summary>
         /// Сделать и заполнить узел объекта
         /// </summary>
+        /// <param name="devTypeNode">Узел для добавления объекта</param>
+        /// <param name="objectName">Имя объекта</param>
+        /// <param name="objectNumber">Номер объекта</param>
         /// <returns></returns>
         private Node MakeObjectNode(string objectName, long objectNumber, 
             Node devTypeNode)
@@ -964,8 +1009,12 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Сделать и заполнить узел устройства
+        /// Сделать узел устройства
         /// </summary>
+        /// <param name="devTypeNode">Узел типа устройства</param>
+        /// <param name="dev">Устройство</param>
+        /// <param name="deviceDescription">Описание устройства</param>
+        /// <param name="devObjectNode">Узел объекта или null</param>
         /// <returns>Заполненный узел</returns>
         private Node MakeDeviceNode(Node devTypeNode, Node devObjectNode, 
             Device.IODevice dev, string deviceDescription)
@@ -998,6 +1047,9 @@ namespace EasyEPlanner
         /// <summary>
         /// Изменение состояния CheckBox
         /// </summary>
+        /// <param name="dev">Устройство</param>
+        /// <param name="checkedDev">Выбранные устройств в действии</param>
+        /// <param name="devNode">Узел устройства</param>
         private void ChangeDevicesCheckState(Node devNode , string checkedDev, 
             Device.IODevice dev)
         {
@@ -1016,6 +1068,8 @@ namespace EasyEPlanner
         /// <summary>
         /// Отображение каналов устройств
         /// </summary>
+        /// <param name="devNode">Узел устройства</param>
+        /// <param name="dev">Устройство</param>
         /// <returns></returns>
         private bool AddDevChannels(Node devNode, Device.IODevice dev)
         {
@@ -1055,69 +1109,50 @@ namespace EasyEPlanner
 
             return isDevVisible;
         }
-        /// <summary>
-        /// Скрываем устройства ненужных типов (неправильных)
-        /// </summary>
-        private void HideIncorrectDeviceTypes(Node devTypeNode, 
-            bool isDevVisible, Dictionary<string,int> countDev, 
-            Device.IODevice dev)
-        {
-            if (devTypesLastSelected != null &&
-                !devTypesLastSelected.Contains(dev.DeviceType))
-            {
-                devTypeNode.IsHidden = true;
-            }
-            else
-            {
-                if (devSubTypesLastSelected != null &&
-                    !devSubTypesLastSelected.Contains(dev.DeviceSubType))
-                {
-                    devTypeNode.IsHidden = true;
-                }
-                else
-                {
-                    if (prevShowChannels && !isDevVisible)
-                    {
-                        devTypeNode.IsHidden = true;
-                    }
-                    else
-                    {
-                        countDev[dev.DeviceType.ToString()]++;
-                    }
-                }
-            }
-        }
 
         /// <summary>
-        /// Скрываем устройства ненужных подтипов (неправильных)
+        /// Скрываем устройства ненужных подтипов и типов
         /// </summary>
-        private void HideIncorrectDeviceSubTypes(Node devSubTypeNode,
+        /// <param name="dev">Устройство</param>
+        /// <param name="countDev">Словарь для подсчета количества устройств
+        /// </param>
+        /// <param name="devTypeSubTypeNode">Узел типа или подтипа</param>
+        /// <param name="isDevVisible">Видимость устройства</param>
+        private void HideIncorrectDeviceTypeSubType(Node devTypeSubTypeNode,
             bool isDevVisible, Dictionary<string,int> countDev, 
             Device.IODevice dev)
         {
             if (devTypesLastSelected != null &&
                 !devTypesLastSelected.Contains(dev.DeviceType))
             {
-                devSubTypeNode.IsHidden = true;
+                devTypeSubTypeNode.IsHidden = true;
             }
             else
             {
                 if (devSubTypesLastSelected != null &&
                     !devSubTypesLastSelected.Contains(dev.DeviceSubType))
                 {
-                    devSubTypeNode.IsHidden = true;
+                    devTypeSubTypeNode.IsHidden = true;
                 }
                 else
                 {
                     if (prevShowChannels && !isDevVisible)
                     {
-                        devSubTypeNode.IsHidden = true;
+                        devTypeSubTypeNode.IsHidden = true;
                     }
                     else
                     {
                         string subTypeName = dev.GetDeviceSubTypeStr(
                             dev.DeviceType, dev.DeviceSubType);
-                        countDev[subTypeName]++;
+                        if(subTypeName != "" && 
+                            countDev.ContainsKey(subTypeName))
+                        {
+                            countDev[subTypeName]++;
+                        }
+                        else
+                        {
+                            countDev[dev.DeviceType.ToString()]++;
+                        }
                     }
                 }
             }
@@ -1139,8 +1174,8 @@ namespace EasyEPlanner
                 Node node = root.Nodes.Where(x => x.Text == dev.ToString())
                     .FirstOrDefault();
                 total += countDev[dev.ToString()];
-                node.Text = dev.ToString() + " (" + countDev[dev.ToString()] + 
-                    ")  ";
+                node.Text = dev.ToString() + 
+                    " (" + countDev[dev.ToString()] + ")  ";
             }
 
             root.Text = "Устройства проекта (" + total + ")";
@@ -1210,13 +1245,6 @@ namespace EasyEPlanner
                        var yDev = y.Tag as Device.Device;
 
                        res = Device.Device.Compare(xDev, yDev);
-                       return res;
-                   }
-
-                   if (x.Tag is Device.DeviceSubType &&
-                       y.Tag is Device.DeviceSubType)
-                   {
-                       res = x.ToString().CompareTo(y.ToString());
                        return res;
                    }
 
