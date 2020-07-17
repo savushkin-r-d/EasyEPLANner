@@ -1219,14 +1219,14 @@ namespace EasyEPlanner
                        return res;
                    }
 
-                   if (x.Tag is Device.DeviceType && y.Tag is Device.DeviceType)
+                   bool checkDevTypeSubType =
+                   (x.Tag is Device.DeviceType || 
+                   x.Tag is Device.DeviceSubType) &&
+                   (y.Tag is Device.DeviceSubType || 
+                   y.Tag is Device.DeviceSubType);
+                   if (checkDevTypeSubType)
                    {
-                       string xDevTypeName = ((Device.DeviceType)x.Tag)
-                           .ToString();
-                       string yDevTypeName = ((Device.DeviceType)y.Tag)
-                           .ToString();
-
-                       res = xDevTypeName.CompareTo(yDevTypeName);
+                       res = x.Text.CompareTo(y.Text);
                        return res;
                    }
 
@@ -1248,7 +1248,7 @@ namespace EasyEPlanner
                        return res;
                    }
 
-                   res = string.Compare(x.Text, y.Text);
+                   res = x.Text.CompareTo(y.Text);
                    return res;
                });
 
