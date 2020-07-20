@@ -415,6 +415,10 @@ return
                     name = "Томление",
                     params = 
                     {
+                        bool =
+                        {
+                            AUTO_COOLING_BEFORE_LEAVENING = { name = "Автоматический переход к охлаждению для заквашивания", defaultValue = "true" },
+                        },
                         active =
                         {
                             BAKE_TIME = { name = "Время нагрева (2-го шага)" },
