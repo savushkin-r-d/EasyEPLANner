@@ -113,7 +113,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigurationChecker.cs" />
+    <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Editor\TechObjectsImporter.cs" />
     <Compile Include="InterprojectExchange\DeviceComparer.cs" />
     <Compile Include="InterprojectExchange\DeviceInfo.cs" />
@@ -152,12 +152,12 @@
       <DependentUpon>UnknownDevTypeForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Main\InterprojectExchangeAction.cs" />
-    <Compile Include="ProjectHealthChecker.cs" />
+    <Compile Include="Configuration\ProjectHealthChecker.cs" />
     <Compile Include="TechObject\Base\BaseObjectsManager.cs" />
     <Compile Include="Device\DeviceManager.cs" />
-    <Compile Include="DeviceBindingReader.cs" />
-    <Compile Include="DeviceReader.cs" />
-    <Compile Include="DeviceSynchronizer.cs" />
+    <Compile Include="Configuration\DeviceBindingReader.cs" />
+    <Compile Include="Configuration\DeviceReader.cs" />
+    <Compile Include="Configuration\DeviceSynchronizer.cs" />
     <Compile Include="Device\Device.cs" />
     <Compile Include="Device\DeviceSubTypeEnum.cs" />
     <Compile Include="Device\IODevice.cs" />
@@ -219,7 +219,7 @@
     <Compile Include="Editor\TechObjectsImportForm.Designer.cs">
       <DependentUpon>TechObjectsImportForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="IOReader.cs" />
+    <Compile Include="Configuration\IOReader.cs" />
     <Compile Include="IO\IOLinkCalculator.cs" />
     <Compile Include="IO\IOManager.cs" />
     <Compile Include="IO\IOModule.cs" />
@@ -251,7 +251,7 @@
     <Compile Include="ModulesBindingUpdater.cs" />
     <Compile Include="PInvokeUtil.cs" />
     <Compile Include="FileSavers\PrgLuaSaver.cs" />
-    <Compile Include="ProjectConfiguration.cs" />
+    <Compile Include="Configuration\ProjectConfiguration.cs" />
     <Compile Include="FileSavers\ProjectDescriptionSaver.cs" />
     <Compile Include="ProjectManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -416,6 +416,8 @@
     <None Include="Resources\off.ico" />
     <None Include="Resources\lowerSeats.ico" />
     <None Include="Resources\highlight.png" />
+    <Content Include="Configuration\CMDScripts\TestLuaAvailability.txt" />
+    <Content Include="Configuration\CMDScripts\TestProjectScript.txt" />
     <Content Include="LuaInterface\KopiLua.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
