@@ -17,6 +17,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Протестировать текущий проект на наличие ошибок.
         /// </summary>
+        /// <returns>Строка с ошибками</returns>
         public string Check()
         {
             bool enabled = CheckEnable();
@@ -53,7 +54,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Проверка включена ли опция тестирования проекта
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Включена ли опция тестирования проекта</returns>
         private bool CheckEnable()
         {
             const bool defaultValue = false;
@@ -80,23 +81,15 @@ namespace EasyEPlanner
         /// <summary>
         /// Проверка доступности LUA в системе
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Найден LUA или нет</returns>
         private bool CheckLua()
         {
             bool isValid = false;
             const string luaCheckScriptFileName = "TestLuaAvailability.txt";
             string arguments = GetArguments(luaCheckScriptFileName);
+            string workingDirectory = GetWorkingDirectory();
 
-            var cmdProcess = new Process();
-            var startInfo = new ProcessStartInfo()
-            {
-                FileName = cmdFileName,
-                Arguments = arguments,
-                UseShellExecute = false,
-                WindowStyle = ProcessWindowStyle.Hidden,
-            };
-            cmdProcess.StartInfo = startInfo;
-
+            Process cmdProcess = MakeCMDProcess(arguments, workingDirectory);
             cmdProcess.Start();
             cmdProcess.WaitForExit();
 
@@ -112,7 +105,7 @@ namespace EasyEPlanner
         // <summary>
         // Проверка работоспособности проекта
         // </summary>
-        // <returns></returns>
+        // <returns>Рабочий или нет проект</returns>
         private bool CheckProject(out string errors)
         {
             bool isValid = false;
@@ -120,18 +113,7 @@ namespace EasyEPlanner
             string arguments = GetArguments(projectCheckScriptFileName);
             string workingDirectory = GetWorkingDirectory();
 
-            var cmdProcess = new Process();
-            var startInfo = new ProcessStartInfo()
-            {
-                FileName = cmdFileName,
-                Arguments = arguments,
-                UseShellExecute = false,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                RedirectStandardOutput = true,
-                WorkingDirectory = workingDirectory,
-            };
-            cmdProcess.StartInfo = startInfo;
-
+            Process cmdProcess = MakeCMDProcess(arguments, workingDirectory);
             cmdProcess.Start();
             cmdProcess.WaitForExit();
 
@@ -152,9 +134,32 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Сделать процесс CMD для запуска
+        /// </summary>
+        /// <param name="arguments">Аргументы командной строки</param>
+        /// <param name="workingDirectory">Рабочая директория</param>
+        /// <returns>Процесс с CMD для запуска</returns>
+        public Process MakeCMDProcess(string arguments, string workingDirectory)
+        {
+            var cmdProcess = new Process();
+            var startInfo = new ProcessStartInfo()
+            {
+                FileName = cmdFileName,
+                Arguments = arguments,
+                UseShellExecute = false,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true,
+                WorkingDirectory = workingDirectory,
+            };
+            cmdProcess.StartInfo = startInfo;
+
+            return cmdProcess;
+        }
+
+        /// <summary>
         /// Получить рабочий каталог с проектом.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Путь к рабочему каталогу с проектом</returns>
         private string GetWorkingDirectory()
         {
             string result;
@@ -169,7 +174,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Получить аргументы командной строки для проверки доступности LUA
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Аргументы командной строки одной строкой</returns>
         private string GetArguments(string fileName)
         {
             string pathToFile = 
