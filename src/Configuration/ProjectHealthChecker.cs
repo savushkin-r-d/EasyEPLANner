@@ -75,7 +75,6 @@ namespace EasyEPlanner
             }
 
             return isValid;
-
         }
 
         // <summary>
@@ -147,9 +146,10 @@ namespace EasyEPlanner
             string[] arguments = File.ReadAllLines(pathToFile,
                 System.Text.Encoding.GetEncoding(1251));
 
-            return string.Join("&", arguments);
+            return string.Join(connectCommandsChar, arguments);
         }
 
+        private readonly string connectCommandsChar = "&";
         private readonly string cmdFileName = "cmd.exe";
         private ProjectManager projectManager;
         private EProjectManager eProjectManager;
