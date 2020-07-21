@@ -52,7 +52,7 @@ namespace EasyEPlanner
         private bool CheckLua()
         {
             bool isValid = false;
-            const string luaCheckScriptFileName = "TestLuaAvaliability.txt";
+            const string luaCheckScriptFileName = "TestLuaAvailability.txt";
             string arguments = GetArguments(luaCheckScriptFileName);
 
             var cmdProcess = new Process();
