@@ -32,8 +32,7 @@ namespace EasyEPlanner
                 bool validProject = CheckProject(out errors);
                 if (validProject)
                 {
-                    string message = "Тестирование проекта прошло успешно. " +
-                        "Проект работоспособен. ";
+                    string message = "Тестирование проекта прошло успешно. ";
                     return message;
                 }
                 else
