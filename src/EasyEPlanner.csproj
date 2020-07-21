@@ -416,8 +416,12 @@
     <None Include="Resources\off.ico" />
     <None Include="Resources\lowerSeats.ico" />
     <None Include="Resources\highlight.png" />
-    <Content Include="Configuration\CMDScripts\TestLuaAvailability.txt" />
-    <Content Include="Configuration\CMDScripts\TestProjectScript.txt" />
+    <Content Include="CMD\TestLuaAvailability.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="CMD\TestProjectScript.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="LuaInterface\KopiLua.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

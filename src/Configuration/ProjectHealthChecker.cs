@@ -52,14 +52,15 @@ namespace EasyEPlanner
         private bool CheckLua()
         {
             bool isValid = false;
-            string arguments = GetArgumentsForCheckLua();
+            const string luaCheckScriptFileName = "TestLuaAvaliability.txt";
+            string arguments = GetArguments(luaCheckScriptFileName);
 
             var cmdProcess = new Process();
             var startInfo = new ProcessStartInfo()
             {
                 FileName = cmdFileName,
                 Arguments = arguments,
-                UseShellExecute = true,
+                UseShellExecute = false,
                 WindowStyle = ProcessWindowStyle.Hidden,
             };
             cmdProcess.StartInfo = startInfo;
@@ -84,7 +85,8 @@ namespace EasyEPlanner
         private bool CheckProject(out string errors)
         {
             bool isValid = false;
-            string arguments = GetArgumentsForCheckProject();
+            const string projectCheckScriptFileName = "TestProjectScript.txt";
+            string arguments = GetArguments(projectCheckScriptFileName);
             string workingDirectory = GetWorkingDirectory();
 
             var cmdProcess = new Process();
@@ -137,22 +139,15 @@ namespace EasyEPlanner
         /// Получить аргументы командной строки для проверки доступности LUA
         /// </summary>
         /// <returns></returns>
-        private string GetArgumentsForCheckLua()
+        private string GetArguments(string fileName)
         {
-            string result = "";
-            // "/C lua -v";
-            return result;
-        }
+            string pathToFile = 
+                Path.Combine(projectManager.OriginalCMDFilesPath, fileName);
 
-        /// <summary>
-        /// Получить аргументы командной строки для проверки проекта.
-        /// </summary>
-        /// <returns></returns>
-        private string GetArgumentsForCheckProject()
-        {
-            string result = "";
-            // "/C chcp1251&lua ..\\..\\spec\\main.lua -o TAP";
-            return result;
+            string[] arguments = File.ReadAllLines(pathToFile,
+                System.Text.Encoding.GetEncoding(1251));
+
+            return string.Join("&", arguments);
         }
 
         private readonly string cmdFileName = "cmd.exe";
