@@ -211,7 +211,10 @@ return
                 },
             },
             basicName = "line",
-            equipment = { },
+            equipment =
+            {
+                product_CTR = { name = "Счетчик", defaultValue = "FQT1" },
+            },
             aggregateParameters = { },
             bindingName = "line"
         },
@@ -259,7 +262,10 @@ return
                 },
             },
             basicName = "line",
-            equipment = { },
+            equipment =
+            {
+                product_CTR = { name = "Счетчик", defaultValue = "FQT1" },
+            },
             aggregateParameters = { },
             bindingName = "line_in"
         },
@@ -307,7 +313,10 @@ return
                 },
             },
             basicName = "line",
-            equipment = { },
+            equipment =
+            {
+                product_CTR = { name = "Счетчик", defaultValue = "FQT1" },
+            },
             aggregateParameters = { },
             bindingName = "line_out"
         },
