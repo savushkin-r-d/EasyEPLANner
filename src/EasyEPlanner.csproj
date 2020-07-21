@@ -152,6 +152,7 @@
       <DependentUpon>UnknownDevTypeForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Main\InterprojectExchangeAction.cs" />
+    <Compile Include="ProjectHealthChecker.cs" />
     <Compile Include="TechObject\Base\BaseObjectsManager.cs" />
     <Compile Include="Device\DeviceManager.cs" />
     <Compile Include="DeviceBindingReader.cs" />
