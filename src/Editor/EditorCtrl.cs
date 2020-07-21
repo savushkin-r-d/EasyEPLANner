@@ -1254,9 +1254,6 @@ namespace Editor
 
             DFrm.GetInstance().RefreshTree();
             editorTView.RefreshObjects(treeViewItemsList);
-
-            var tester = new ProjectHealthChecker();
-            tester.Test();
         }
 
         /// <summary>
