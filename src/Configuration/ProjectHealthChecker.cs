@@ -19,6 +19,12 @@ namespace EasyEPlanner
         /// </summary>
         public string Check()
         {
+            bool enabled = CheckEnable();
+            if (!enabled)
+            {
+                return "";
+            }
+
             bool validLUA = CheckLua();
             if (validLUA)
             {
@@ -42,6 +48,33 @@ namespace EasyEPlanner
                 string message = "В системе не найден LUA, тестирование " +
                     "проекта невозможно. ";
                 return message;
+            }
+        }
+
+        /// <summary>
+        /// Проверка включена ли опция тестирования проекта
+        /// </summary>
+        /// <returns></returns>
+        private bool CheckEnable()
+        {
+            const bool defaultValue = false;
+            const string keyName = "ProjectTestEnabled";
+            const string sectionName = "TestSettings";
+
+            string pathToFile = Path.Combine(projectManager
+                .OriginalAssemblyPath, StaticHelper.CommonConst.ConfigFileName);          
+            var iniFile = new PInvoke.IniFile(pathToFile);
+            string result = iniFile.ReadString(sectionName, keyName,
+                defaultValue.ToString());
+
+            bool converted = bool.TryParse(result, out bool enabled);
+            if(converted)
+            {
+                return enabled;
+            }
+            else
+            {
+                return defaultValue;
             }
         }
 
