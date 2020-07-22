@@ -1,0 +1,2 @@
+/C chcp 1251
+lua ..\..\spec\main.lua -o TAP

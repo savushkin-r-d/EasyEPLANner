@@ -12,9 +12,10 @@ namespace EasyEPlanner
     {
         public ConfigurationChecker()
         {
-            this.deviceManager = Device.DeviceManager.GetInstance();
-            this.IOManager = IO.IOManager.GetInstance();
-            this.techObjectManager = TechObject.TechObjectManager.GetInstance();
+            deviceManager = Device.DeviceManager.GetInstance();
+            IOManager = IO.IOManager.GetInstance();
+            techObjectManager = TechObject.TechObjectManager.GetInstance();
+            projectHealthChecker = new ProjectHealthChecker();
         }
 
         public void Check() 
@@ -24,6 +25,7 @@ namespace EasyEPlanner
             errors += deviceManager.Check();
             errors += IOManager.Check();
             errors += techObjectManager.Check();
+            errors += projectHealthChecker.Check();
         }
 
         /// <summary>
@@ -95,5 +97,6 @@ namespace EasyEPlanner
         Device.DeviceManager deviceManager;
         IO.IOManager IOManager;
         TechObject.TechObjectManager techObjectManager;
+        ProjectHealthChecker projectHealthChecker;
     }
 }

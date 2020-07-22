@@ -608,6 +608,11 @@ namespace EasyEPlanner
         private const string luaFolder = "Lua";
 
         /// <summary>
+        /// Папка с скриптами командой строки
+        /// </summary>
+        private const string cmdScriptsFolder = "CMD";
+
+        /// <summary>
         /// Путь к надстройке в теневом хранилище Eplan
         /// </summary>
         public string AssemblyPath 
@@ -638,6 +643,18 @@ namespace EasyEPlanner
             get
             {
                 return Path.Combine(OriginalAssemblyPath, luaFolder);
+            }
+        }
+
+        /// <summary>
+        /// Путь к файлам с скриптами командной строки для проверки проекта по
+        /// месту подключения надстройки
+        /// </summary>
+        public string OriginalCMDFilesPath
+        {
+            get
+            {
+                return Path.Combine(OriginalAssemblyPath, cmdScriptsFolder);
             }
         }
 
