@@ -40,7 +40,7 @@ namespace EasyEPlanner
                 {
                     string message = "Тестирование проекта завершилось с " +
                         "ошибками. Проект не работоспособен. ";
-                    return errors + StaticHelper.CommonConst.NewLine + message;
+                    return message + StaticHelper.CommonConst.NewLine + errors;
                 }
             }
             else
@@ -147,10 +147,9 @@ namespace EasyEPlanner
                 FileName = cmdFileName,
                 Arguments = arguments,
                 UseShellExecute = false,
-                WindowStyle = ProcessWindowStyle.Hidden,
                 RedirectStandardOutput = true,
                 WorkingDirectory = workingDirectory,
-            };
+        };
             cmdProcess.StartInfo = startInfo;
 
             return cmdProcess;
