@@ -58,7 +58,6 @@ namespace EasyEPlanner
         /// <returns>Включена ли опция тестирования проекта</returns>
         private bool CheckEnable()
         {
-            const bool defaultValue = false;
             const string keyName = "ProjectTestEnabled";
             const string sectionName = "TestSettings";
 
@@ -66,7 +65,12 @@ namespace EasyEPlanner
                 .OriginalAssemblyPath, StaticHelper.CommonConst.ConfigFileName);          
             var iniFile = new PInvoke.IniFile(pathToFile);
             string result = iniFile.ReadString(sectionName, keyName,
-                defaultValue.ToString());
+                null);
+            if (string.IsNullOrEmpty(result))
+            {
+                iniFile.WriteString("TestSettings", "ProjectTestEnabled", 
+                    "False");
+            }
 
             bool converted = bool.TryParse(result, out bool enabled);
             if(converted)
@@ -75,6 +79,7 @@ namespace EasyEPlanner
             }
             else
             {
+                const bool defaultValue = false;
                 return defaultValue;
             }
         }
