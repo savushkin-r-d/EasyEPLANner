@@ -130,7 +130,8 @@ namespace EasyEPlanner
             }
             else
             {
-                string output = outputBuilder.ToString();
+                string output = $"Лог ошибок:" + 
+                    StaticHelper.CommonConst.NewLine + outputBuilder.ToString();
                 errors = output;
             }
 
@@ -153,6 +154,7 @@ namespace EasyEPlanner
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 WorkingDirectory = workingDirectory,
+                CreateNoWindow = true,
             };
             cmdProcess.StartInfo = startInfo;
 
@@ -184,7 +186,7 @@ namespace EasyEPlanner
                 Path.Combine(projectManager.OriginalCMDFilesPath, fileName);
 
             string[] arguments = File.ReadAllLines(pathToFile,
-                System.Text.Encoding.GetEncoding(1251));
+                Encoding.GetEncoding(1251));
 
             return string.Join(connectCommandsChar, arguments);
         }
