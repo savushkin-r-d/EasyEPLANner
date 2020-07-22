@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using System.Text;
 
 namespace EasyEPlanner
 {
@@ -113,8 +114,12 @@ namespace EasyEPlanner
             string arguments = GetArguments(projectCheckScriptFileName);
             string workingDirectory = GetWorkingDirectory();
 
+            var outputBuilder = new StringBuilder();
             Process cmdProcess = MakeCMDProcess(arguments, workingDirectory);
+            cmdProcess.OutputDataReceived += 
+                (sender, args) => outputBuilder.AppendLine(args.Data);
             cmdProcess.Start();
+            cmdProcess.BeginOutputReadLine();
             cmdProcess.WaitForExit();
 
             int exitCode = cmdProcess.ExitCode;
@@ -125,8 +130,7 @@ namespace EasyEPlanner
             }
             else
             {
-                StreamReader reader = cmdProcess.StandardOutput;
-                string output = reader.ReadToEnd();
+                string output = outputBuilder.ToString();
                 errors = output;
             }
 
@@ -149,7 +153,7 @@ namespace EasyEPlanner
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 WorkingDirectory = workingDirectory,
-        };
+            };
             cmdProcess.StartInfo = startInfo;
 
             return cmdProcess;
