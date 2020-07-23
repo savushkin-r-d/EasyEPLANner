@@ -296,7 +296,6 @@
     <Compile Include="TechObject\Step.cs" />
     <Compile Include="TechObject\TechObject.cs" />
     <Compile Include="TechObject\TechObjectManager.cs" />
-    <Compile Include="TechObject\TimersManager.cs" />
     <Compile Include="FileSavers\XMLReporter.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -407,7 +406,6 @@
     <None Include="Resources\reqiredFB.ico" />
     <None Include="Resources\wash.ico" />
     <None Include="Resources\upperSeats.ico" />
-    <None Include="Resources\timers.ico" />
     <None Include="Resources\tank.ico" />
     <None Include="Resources\plant.ico" />
     <None Include="Resources\params.ico" />

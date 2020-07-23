@@ -473,10 +473,6 @@ namespace Editor
                     res = 12;
                     break;
 
-                case "TimersManager":
-                    res = 13;
-                    break;
-
                 default:
                     break;
             }

@@ -33,8 +33,6 @@ init = function()
         -- Аналогично с предыдущим циклом.
         if (#value == 0) then
             local obj = initialized_objects[fields]
-            local timers_count = value.timers or 1
-            obj:SetTimersCount( timers_count )
 
             --Оборудование
             if value.equipment ~= nil then

@@ -505,16 +505,6 @@ namespace EasyEPlanner.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap timers {
-            get {
-                object obj = ResourceManager.GetObject("timers", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap To_Do_s {
             get {
                 object obj = ResourceManager.GetObject("To Do\'s", resourceCulture);

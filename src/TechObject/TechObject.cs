@@ -360,7 +360,6 @@ namespace TechObject
                 "\',\n" +
                 prefix + "attached_objects = \'" + AttachedObjects.Value + "\',\n";
 
-            res += timers.SaveAsLuaTable(prefix);
             res += parameters.SaveAsLuaTable(prefix);
             res += "\n";
 
@@ -426,7 +425,6 @@ namespace TechObject
             baseTechObject = new BaseTechObject(this); 
 
             modes = new ModesManager(this);
-            timers = new TimersManager();
             parameters = new ParamsManager();
             parameters.Parent = this;
 
@@ -469,7 +467,7 @@ namespace TechObject
 
         private void SetItems()
         {
-            items = new Editor.ITreeViewItem[11];
+            items = new Editor.ITreeViewItem[10];
             items[0] = this.s88Level;
             items[1] = this.techNumber;
             items[2] = this.techType;
@@ -480,8 +478,7 @@ namespace TechObject
 
             items[7] = modes;
             items[8] = parameters;
-            items[9] = timers;
-            items[10] = equipment;
+            items[9] = equipment;
         }
         /// <summary>
         /// Добавление операции.
@@ -526,15 +523,6 @@ namespace TechObject
                 }
             }
             return null;
-        }
-
-        /// <summary>
-        /// Установка количества таймеров.
-        /// </summary>
-        /// <param name="count">Количество таймеров.</param>        
-        public void SetTimersCount(int count)
-        {
-            timers.Count = count;
         }
 
         public void ModifyDevNames(int oldNumber)
@@ -1059,7 +1047,6 @@ namespace TechObject
         private string name; /// Имя объекта.
         private Editor.ObjectProperty nameBC; /// Имя объекта в Monitor.
         private ModesManager modes; /// Операции объекта.
-        private TimersManager timers; /// Таймеры объекта.
         private ParamsManager parameters; /// Параметры объекта.
 
         private Editor.ITreeViewItem[] items; /// Параметры объекта для редактирования.
