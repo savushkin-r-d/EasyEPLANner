@@ -703,7 +703,8 @@ namespace TechObject
                 return result;
             }
 
-            bool isParameter = owner.Params.GetFParam(parameterValue) != null;
+            bool isParameter = owner.GetParams()
+                .GetParam(parameterValue) != null;
             if (isParameter)
             {
                 result = ParameterValueType.Parameter;

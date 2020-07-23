@@ -469,8 +469,12 @@ namespace Editor
                     res = 10;
                     break;
 
-                case "ParamsManager":
+                case "Params":
                     res = 12;
+                    break;
+
+                case "Equipment":
+                    res = 13;
                     break;
 
                 default:

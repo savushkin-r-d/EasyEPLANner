@@ -289,7 +289,6 @@
     <Compile Include="TechObject\Param.cs" />
     <Compile Include="TechObject\ParamProperty.cs" />
     <Compile Include="TechObject\Params.cs" />
-    <Compile Include="TechObject\ParamsManager.cs" />
     <Compile Include="TechObject\Restriction.cs" />
     <Compile Include="TechObject\RestrictionManager.cs" />
     <Compile Include="TechObject\State.cs" />
@@ -432,6 +431,8 @@
     <Content Include="Resources\edit.ico" />
     <None Include="Resources\edit1.png" />
     <None Include="Resources\export.png" />
+    <None Include="Resources\equipment.ico" />
+    <Content Include="Resources\equipment.png" />
     <Content Include="Resources\highlight.ico" />
     <None Include="Resources\refresh.png" />
     <None Include="Resources\save.png" />

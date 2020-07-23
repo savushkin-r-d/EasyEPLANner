@@ -425,7 +425,7 @@ namespace TechObject
             baseTechObject = new BaseTechObject(this); 
 
             modes = new ModesManager(this);
-            parameters = new ParamsManager();
+            parameters = new Params();
             parameters.Parent = this;
 
             equipment = new Equipment(this);
@@ -538,24 +538,12 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Получение менеджера параметров.
-        /// </summary>
-        /// <returns>Менеджер параметров.</returns>        
-        public ParamsManager GetParamsManager()
-        {
-            return parameters;
-        }
-
-        /// <summary>
         /// Получение параметров.
         /// </summary>
-        /// <returns>Параметры.</returns>
-        public ParamsManager Params
+        /// <returns>Параметры</returns>
+        public Params GetParams()
         {
-            get
-            {
-                return parameters;
-            }
+            return parameters;
         }
 
         public int TechNumber
@@ -807,7 +795,7 @@ namespace TechObject
                 errors += mode.Check();
             }
 
-            errors += Params.Check(objName);
+            errors += GetParams().Check(objName);
 
             return errors;
         }
@@ -919,6 +907,14 @@ namespace TechObject
                     equip.SetNewValue("");
                 }
             }
+
+            var parameters = child as Params;
+            if (parameters != null)
+            {
+                parameters.Clear();
+                return true;
+            }
+
             return false;
         }
 
@@ -954,18 +950,19 @@ namespace TechObject
         override public Editor.ITreeViewItem Replace(object child,
             object copyObject)
         {
-            if (child is ParamsManager)
+            if (child is Params)
             {
-                ParamsManager paramMan = child as ParamsManager;
-
-                if (copyObject is ParamsManager && paramMan != null)
+                var pars = child as Params;
+                if (copyObject is Params && pars != null)
                 {
-                    ParamsManager copyMan = copyObject as ParamsManager;
-                    for (int i = 0; i < 4; i++)
+                    pars.Clear();
+                    Params copyPars = copyObject as Params;
+                    foreach (Param par in copyPars.Items)
                     {
-                        paramMan.Replace(paramMan.Items[i], copyMan.Items[i]);
+                        pars.InsertCopy(par);
                     }
-                    return paramMan;
+
+                    return pars;
                 }
             }
 
@@ -1047,7 +1044,7 @@ namespace TechObject
         private string name; /// Имя объекта.
         private Editor.ObjectProperty nameBC; /// Имя объекта в Monitor.
         private ModesManager modes; /// Операции объекта.
-        private ParamsManager parameters; /// Параметры объекта.
+        private Params parameters; /// Параметры объекта.
 
         private Editor.ITreeViewItem[] items; /// Параметры объекта для редактирования.
 

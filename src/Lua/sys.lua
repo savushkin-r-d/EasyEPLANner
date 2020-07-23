@@ -42,13 +42,9 @@ init = function()
             end
 
             --Параметры
-            proc_params( value.par_float, "par_float", obj )
-            proc_params( value.par_uint, "par_uint", obj )
-            proc_params( value.rt_par_float, "rt_par_float", obj )
-            proc_params( value.rt_par_uint, "rt_par_uint", obj )
-
+            proc_params( value.par_float, obj )
             local params_float = value.par_float
-
+            
             for fields, value in ipairs( value.modes ) do
                 local mode_name = value.name or "Операция ??"
 			    local mode_base_operation = value.base_operation or ""
@@ -133,12 +129,11 @@ proc_operation = function( value, mode, state_n )
     end
 end
 
-proc_params = function( par, par_name, obj )
+proc_params = function( par, obj )
     if type( par ) == "table" then
         for fields, value in ipairs( par ) do
-            local param = obj:GetParamsManager():AddParam( par_name,
-                value.name or "Параметр", value.value or 0,
-                value.meter or "шт.", value.nameLua or "" )
+            local param = obj:GetParams():AddParam(value.name or "Параметр", 
+                 value.value or 0, value.meter or "шт.", value.nameLua or "" )
 
             if value.oper ~= nil then param:SetOperationN( value.oper ) end
         end
@@ -148,7 +143,7 @@ end
 proc_oper_params = function( par, operation, idx, obj )
     if type( par ) == "table" then
         for fields, value in ipairs( par ) do
-            local pr = obj:GetParamsManager():GetFParam( value.nameLua or "" )
+            local pr = obj:GetParams():GetParam( value.nameLua or "" )
             if pr ~= nil then
                 if type( value.oper ) == "table" then
                     for field, operationNumber in ipairs(value.oper) do
