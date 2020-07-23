@@ -492,7 +492,6 @@ return
                 LS_down = { name = "Датчик нижнего уровня", defaultValue = "LS1" },
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
                 TE = { name = "Датчик температуры", defaultValue = "TE1" },
-                TE_water_jacket = { name = "Датчик температуры рубашки", defaultValue = "TE2" },
                 -- out_pump defaultValue пустое т.к по другому происходит
                 -- обработка ОУ. Обрабатывается не объект, а устройство.
                 out_pump = { name = "Откачивающий насос" },
