@@ -467,18 +467,17 @@ namespace TechObject
 
         private void SetItems()
         {
-            items = new Editor.ITreeViewItem[10];
-            items[0] = this.s88Level;
-            items[1] = this.techNumber;
-            items[2] = this.techType;
-            items[3] = this.nameEplan;
-            items[4] = this.nameBC;
-            items[5] = this.attachedObjects;
-            items[6] = this.cooperParamNumber;
+            items = new Editor.ITreeViewItem[9];
+            items[0] = this.techNumber;
+            items[1] = this.techType;
+            items[2] = this.nameEplan;
+            items[3] = this.nameBC;
+            items[4] = this.attachedObjects;
+            items[5] = this.cooperParamNumber;
 
-            items[7] = modes;
-            items[8] = parameters;
-            items[9] = equipment;
+            items[6] = modes;
+            items[7] = parameters;
+            items[8] = equipment;
         }
         /// <summary>
         /// Добавление операции.
