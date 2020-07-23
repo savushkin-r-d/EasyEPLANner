@@ -745,27 +745,35 @@ namespace TechObject
         /// <summary>
         /// Удалить этот агрегат из привязки к аппарату
         /// </summary>
-        /// <param name="techObject"></param>
+        /// <param name="techObject">Агрегат</param>
         private void RemoveAttachingToUnit(TechObject techObject)
         {
-            string objNum = techObject.GlobalNumber.ToString();
-            foreach(var obj in objects) 
+            int objNum = techObject.GlobalNumber;
+            foreach(var obj in Objects) 
             {
-                if (obj.AttachedObjects.Value.Contains(objNum))
+                if(obj.AttachedObjects.Value == "")
                 {
-                    string currentValue = obj.AttachedObjects.Value;
+                    continue;
+                }
+
+                List<int> attachedObjectsNums = obj.AttachedObjects.Value
+                    .Split(' ')
+                    .Select(int.Parse).ToList();
+                if (attachedObjectsNums.Contains(objNum))
+                {
+                    attachedObjectsNums.Remove(objNum);
                     obj.AttachedObjects
-                        .SetNewValue(currentValue.Replace(objNum, ""));
+                        .SetNewValue(string.Join(" ", attachedObjectsNums));
                 }
             }
         }
 
         /// <summary>
-        /// Изменение привязки объектов при перемещении объектов по дереву
+        /// Изменение привязки объектов при перемещении объекта по дереву
         /// </summary>
         /// <param name="newIndex">Новый индекс объекта</param>
         /// <param name="oldIndex">Старый индекс объекта</param>
-        private void ChangeAttachingToObject(int oldIndex, int newIndex)
+        private void ChangeAttachedObjectsAfterMove(int oldIndex, int newIndex)
         {
             int oldObjNum = oldIndex + 1;
             int newObjNum = newIndex + 1;
@@ -782,6 +790,36 @@ namespace TechObject
                     else if (attachingObjectsArr[index] == oldObjNum.ToString())
                     {
                         attachingObjectsArr[index] = newObjNum.ToString();
+                    }
+                }
+                techObj.AttachedObjects
+                    .SetValue(string.Join(" ", attachingObjectsArr));
+            }
+        }
+
+        /// <summary>
+        /// Изменение привязки объектов при удалении объекта из дерева
+        /// </summary>
+        /// <param name="deletedObjectNum">Номер удаленного объекта</param>
+        private void ChangeAttachedObjectsAfterDelete(int deletedObjectNum)
+        {
+            foreach(var techObj in Objects)
+            {
+                if (techObj.AttachedObjects.Value == "" ||
+                    techObj.BaseTechObject.IsAttachable)
+                {
+                    continue;
+                }
+
+                string attachingObjectsStr = techObj.AttachedObjects.Value;
+                int[] attachingObjectsArr = attachingObjectsStr.Split(' ')
+                    .Select(int.Parse).ToArray();
+                for (int index = 0; index < attachingObjectsArr.Length; index++)
+                {
+                    int attachedObjectNum = attachingObjectsArr[index];
+                    if (attachedObjectNum > deletedObjectNum)
+                    {
+                        attachingObjectsArr[index] = attachedObjectNum - 1;
                     }
                 }
                 techObj.AttachedObjects
@@ -829,6 +867,7 @@ namespace TechObject
                 objects.Remove(techObject);
 
                 SetRestrictionOwner();
+                ChangeAttachedObjectsAfterDelete(idx);
                 return true;
             }
 
@@ -850,7 +889,7 @@ namespace TechObject
                     objects.Insert(index + 1, techObject);
 
                     SetRestrictionOwner();
-                    ChangeAttachingToObject(index, index + 1);
+                    ChangeAttachedObjectsAfterMove(index, index + 1);
                     return objects[index];
                 }
             }
@@ -873,7 +912,7 @@ namespace TechObject
                     objects.Insert(index - 1, techObject);
 
                     SetRestrictionOwner();
-                    ChangeAttachingToObject(index, index - 1);
+                    ChangeAttachedObjectsAfterMove(index, index - 1);
                     return objects[index];
                 }
             }
