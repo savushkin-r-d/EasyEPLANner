@@ -10,37 +10,22 @@ namespace TechObject
     /// </summary>
     public class Param : Editor.TreeViewItem
     {
-        public Param(GetN getN, string name, bool isRuntime = false,
-            double value = 0, string meter = "шт", string nameLua = "",
-            bool isUseOperation = false)
+        public Param(GetN getN, string name, double value = 0,
+            string meter = "шт", string nameLua = "")
         {
-            this.isRuntime = isRuntime;
-
             this.name = name;
             this.getN = getN;
-            if (!isRuntime)
-            {
-                this.value = new Editor.ObjectProperty("Значение", value);
-            }
-            if (isUseOperation)
-            {
-                this.oper = new ParamProperty("Операция", -1);
-                this.oper.Parent = this;
-            }
+            this.value = new Editor.ObjectProperty("Значение", value);
+            this.oper = new ParamProperty("Операция", -1);
+            this.oper.Parent = this;
 
             this.meter = new Editor.ObjectProperty("Размерность", meter);
             this.nameLua = new Editor.ObjectProperty("Lua имя", nameLua);
 
             items = new List<Editor.ITreeViewItem>();
-            if (!isRuntime)
-            {
-                items.Add(this.value);
-            }
+            items.Add(this.value);
             items.Add(this.meter);
-            if (isUseOperation)
-            {
-                items.Add(oper);
-            }
+            items.Add(oper);
             items.Add(this.nameLua);
         }
 
@@ -54,10 +39,7 @@ namespace TechObject
             string res = prefix + "[ " + getN(this) + " ] =\n";
             res += prefix + "\t{\n";
             res += prefix + "\tname = \'" + name + "\',\n";
-            if (!isRuntime)
-            {
-                res += prefix + "\tvalue = " + value.EditText[1] + ",\n";
-            }
+            res += prefix + "\tvalue = " + value.EditText[1] + ",\n";
             res += prefix + "\tmeter = \'" + meter.EditText[1] + "\',\n";
             if (oper != null)
             {
@@ -128,17 +110,8 @@ namespace TechObject
             get
             {
                 string res = "";
-                if (!isRuntime)
-                {
-                    res = getN(this) + ". " + name + " - " + 
-                        value.EditText[1] + " " + meter.EditText[1] + ".";
-                }
-                else
-                {
-                    res = getN(this) + ". " + name +
-                        ", " + meter.EditText[1] + ".";
-                }
-
+                res = getN(this) + ". " + name + " - " +
+                    value.EditText[1] + " " + meter.EditText[1] + ".";
                 return new string[] { res, "" };
             }
         }
@@ -297,14 +270,8 @@ namespace TechObject
             }
         }
 
-        public bool IsUseOperation()
-        {
-            return oper != null;
-        }
-
         private GetN getN;
 
-        private bool isRuntime;
         private string name;
         private List<Editor.ITreeViewItem> items; ///Данные для редактирования.
         private Editor.ObjectProperty nameLua;     ///Имя в Lua.

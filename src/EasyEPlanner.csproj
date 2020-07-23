@@ -289,14 +289,12 @@
     <Compile Include="TechObject\Param.cs" />
     <Compile Include="TechObject\ParamProperty.cs" />
     <Compile Include="TechObject\Params.cs" />
-    <Compile Include="TechObject\ParamsManager.cs" />
     <Compile Include="TechObject\Restriction.cs" />
     <Compile Include="TechObject\RestrictionManager.cs" />
     <Compile Include="TechObject\State.cs" />
     <Compile Include="TechObject\Step.cs" />
     <Compile Include="TechObject\TechObject.cs" />
     <Compile Include="TechObject\TechObjectManager.cs" />
-    <Compile Include="TechObject\TimersManager.cs" />
     <Compile Include="FileSavers\XMLReporter.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -407,7 +405,6 @@
     <None Include="Resources\reqiredFB.ico" />
     <None Include="Resources\wash.ico" />
     <None Include="Resources\upperSeats.ico" />
-    <None Include="Resources\timers.ico" />
     <None Include="Resources\tank.ico" />
     <None Include="Resources\plant.ico" />
     <None Include="Resources\params.ico" />
@@ -434,6 +431,8 @@
     <Content Include="Resources\edit.ico" />
     <None Include="Resources\edit1.png" />
     <None Include="Resources\export.png" />
+    <None Include="Resources\equipment.ico" />
+    <Content Include="Resources\equipment.png" />
     <Content Include="Resources\highlight.ico" />
     <None Include="Resources\refresh.png" />
     <None Include="Resources\save.png" />

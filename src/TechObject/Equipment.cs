@@ -226,7 +226,7 @@ namespace TechObject
             {
                
                 bool isValid = (device.Description != "заглушка" ||
-                    owner.Params.GetFParam(currentValue) != null);
+                    owner.GetParams().GetParam(currentValue) != null);
                 if (!isValid)
                 {
                     errors += $"Отсутствует задание для ПИД регулятора" +

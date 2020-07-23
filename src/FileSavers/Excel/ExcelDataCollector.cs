@@ -121,41 +121,28 @@ namespace EasyEPlanner
                     techObj.TechNumber.ToString();
                 var objectNode = new TreeNode(techName);
                 objectNode.Tag = techObj;
-                
-                string[] ParamsType = 
-                { 
-                    "S_PAR_F", 
-                    "S_PAR_UI", 
-                    "RT_PAR_F",
-                    "RT_PAR_UI" 
-                };
-                for (int j = 0; j < techObj.Params.Items.Length; j++)
+
+                string ParamsType = "S_PAR_F";
+                var parTypeNode = new TreeNode(ParamsType);
+                parTypeNode.Tag = ParamsType;
+                objectNode.Nodes.Add(parTypeNode);
+                for (int i = 0; i < techObj.GetParams().Items.Length; i++)
                 {
-                    if (techObj.Params.Items[j].Items != null)
+                    var param = techObj.GetParams().Items[i] as Param;
+                    string parName = (i + 1).ToString() + ". " +
+                        param.EditText[0];
+                    var parNode = new TreeNode(parName);
+                    parNode.Tag = new string[]
                     {
-                        var parTypeNode = new TreeNode(ParamsType[j]);
-                        parTypeNode.Tag = ParamsType[j];
-                        objectNode.Nodes.Add(parTypeNode);
-                        for (int i = 0; i < techObj.Params.Items[j].Items
-                            .Length; i++)
-                        {
-                            Param param = techObj.Params.Items[j].Items[i] as 
-                                Param;
-                            string parName = (i + 1).ToString() + ". " +
-                                param.EditText[0];
-                            var parNode = new TreeNode(parName);
-                            parNode.Tag = new string[]
-                            {
-                                parName,
-                                param.GetValue(),
-                                param.GetMeter(),
-                                param.Operations,
-                                param.GetNameLua(),
-                            };
-                            parTypeNode.Nodes.Add(parNode);
-                        }
-                    }
+                        parName,
+                        param.GetValue(),
+                        param.GetMeter(),
+                        param.Operations,
+                        param.GetNameLua(),
+                    };
+                    parTypeNode.Nodes.Add(parNode);
                 }
+
                 tree.Nodes.Add(objectNode);
             }
             return tree;
@@ -325,9 +312,9 @@ namespace EasyEPlanner
             TechObject.TechObject techObject)
         {
             bool parameterTitleisWrited = false;
-            for (int i = 0; i < techObject.Params.Float.Items.Length; i++)
+            for (int i = 0; i < techObject.GetParams().Items.Length; i++)
             {
-                var parameter = techObject.Params.Float.Items[i] as Param;
+                var parameter = techObject.GetParams().Items[i] as Param;
                 if (parameterTitleisWrited == false)
                 {
                     var titleNode = new TreeNode();

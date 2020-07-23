@@ -311,7 +311,7 @@
             this.imageList1.Images.SetKeyName(10, "pairDIDO.ico");
             this.imageList1.Images.SetKeyName(11, "wash.ico");
             this.imageList1.Images.SetKeyName(12, "params.ico");
-            this.imageList1.Images.SetKeyName(13, "timers.ico");
+            this.imageList1.Images.SetKeyName(13, "equipment.ico");
             // 
             // editorTView
             // 

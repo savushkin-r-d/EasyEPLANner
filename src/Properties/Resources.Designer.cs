@@ -133,6 +133,16 @@ namespace EasyEPlanner.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap equipment {
+            get {
+                object obj = ResourceManager.GetObject("equipment", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap export {
             get {
                 object obj = ResourceManager.GetObject("export", resourceCulture);
@@ -498,16 +508,6 @@ namespace EasyEPlanner.Properties {
         public static System.Drawing.Bitmap tank {
             get {
                 object obj = ResourceManager.GetObject("tank", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap timers {
-            get {
-                object obj = ResourceManager.GetObject("timers", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
