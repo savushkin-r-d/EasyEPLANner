@@ -11,7 +11,6 @@ namespace TechObject
     {
         public Params()
         {
-            name = "Параметры";
             nameLua = "par_float";
             parameters = new List<Param>();
         }
@@ -132,7 +131,11 @@ namespace TechObject
         {
             get
             {
-                string res = string.Format("{0} ({1})", name, parameters.Count);
+                string res = "Параметры";
+                if (parameters.Count > 0)
+                {
+                    res += " (" + parameters.Count + ")";
+                }
 
                 return new string[] { res, "" };
             }
@@ -364,8 +367,6 @@ namespace TechObject
         }
 
         private string nameLua;
-        private string name;
-
         private List<Param> parameters;
     }
 }
