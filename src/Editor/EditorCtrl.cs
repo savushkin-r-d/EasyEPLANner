@@ -1670,5 +1670,10 @@ namespace Editor
             editorTView.Columns[0].AutoResize(
                 ColumnHeaderAutoResizeStyle.ColumnContent);
         }
+
+        private void hideEmptyItemsBtn_Click(object sender, EventArgs e)
+        {
+            editorTView.UseFiltering = true;
+        }
     }
 }
