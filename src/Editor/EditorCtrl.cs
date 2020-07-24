@@ -1405,6 +1405,11 @@ namespace Editor
         {
             foreach(var item in items)
             {
+                if (item.IsFilled == false && hideEmptyItemsBtn.Checked)
+                {
+                    return;
+                }
+
                 if (item.Items != null)
                 {
                     if (item.Items.Length != 0)
