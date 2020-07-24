@@ -9,8 +9,7 @@ namespace TechObject
     /// <summary>
     /// Параметр технологической операции.
     /// </summary>
-    public class OperationParam : Editor.TreeViewItem, 
-        BrightIdeasSoftware.IModelFilter
+    public class OperationParam : Editor.TreeViewItem
     {
         public OperationParam(Param par)
         {
@@ -45,17 +44,6 @@ namespace TechObject
             }
         }
         #endregion
-
-        /// <summary>
-        /// Реализация Filter для IModelFilter
-        /// </summary>
-        /// <param name="filterobject">Фильтруемый объект</param>
-        /// <returns></returns>
-        public bool Filter(object filterobject)
-        {
-            //TODO: определение, когда нужно скрыть или показать объект.
-            return true;
-        }
 
         private List<Editor.ITreeViewItem> items;
         private Param par;

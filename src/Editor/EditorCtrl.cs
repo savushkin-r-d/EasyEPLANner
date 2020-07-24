@@ -22,6 +22,12 @@ namespace Editor
             mainWndKeyboardCallbackDelegate =
                 new PI.LowLevelKeyboardProc(GlobalHookKeyboardCallbackFunction);
 
+            editorTView.ModelFilter = new ModelFilter(delegate (object obj) 
+            {
+                //TODO: Заменить return на свойство Empty
+                return ((ITreeViewItem)obj).IsEditable;
+            });
+
             wasInit = false;
         }
 
@@ -1671,9 +1677,16 @@ namespace Editor
                 ColumnHeaderAutoResizeStyle.ColumnContent);
         }
 
-        private void hideEmptyItemsBtn_Click(object sender, EventArgs e)
+        private void hideEmptyItemsBtn_CheckStateChanged(object sender, EventArgs e)
         {
-            editorTView.UseFiltering = true;
+            if (hideEmptyItemsBtn.Checked)
+            {
+                editorTView.UseFiltering = true;
+            }
+            else
+            {
+                editorTView.UseFiltering = false;
+            }
         }
     }
 }

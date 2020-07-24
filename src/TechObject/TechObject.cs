@@ -10,8 +10,7 @@ namespace TechObject
     /// <summary>
     /// Технологический объект проекта (танк, гребенка).
     /// </summary>
-    public class TechObject : Editor.TreeViewItem,
-        BrightIdeasSoftware.IModelFilter
+    public class TechObject : Editor.TreeViewItem
     {
         /// <summary>
         /// Класс для обозначения устройства (ОУ) в Eplan'е. При изменении
@@ -1036,17 +1035,6 @@ namespace TechObject
             {
                 return ostisLink + "?sys_id=equipment_module";
             }
-        }
-
-        /// <summary>
-        /// Реализация Filter для IModelFilter
-        /// </summary>
-        /// <param name="filterobject">Фильтруемый объект</param>
-        /// <returns></returns>
-        public bool Filter(object filterobject)
-        {
-            //TODO: определение, когда нужно скрыть или показать объект.
-            return true;
         }
 
         private TechObjectN techNumber; /// Номер объекта технологический.

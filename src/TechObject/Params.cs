@@ -7,7 +7,7 @@ namespace TechObject
     /// <summary>
     /// Параметры технологического объекта.
     /// </summary>
-    public class Params : Editor.TreeViewItem, BrightIdeasSoftware.IModelFilter
+    public class Params : Editor.TreeViewItem
     {
         public Params()
         {
@@ -364,17 +364,6 @@ namespace TechObject
             string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
                 .GetOstisHelpSystemLink();
             return ostisLink + "?sys_id=process_parameter";
-        }
-
-        /// <summary>
-        /// Реализация Filter для IModelFilter
-        /// </summary>
-        /// <param name="filterobject">Фильтруемый объект</param>
-        /// <returns></returns>
-        public bool Filter(object filterobject)
-        {
-            //TODO: определение, когда нужно скрыть или показать объект.
-            return true;
         }
 
         private string nameLua;

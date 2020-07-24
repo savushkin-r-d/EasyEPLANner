@@ -10,7 +10,7 @@ namespace TechObject
     /// Состояние операции. Содержит группу шагов, выполняемых последовательно
     /// (или в ином порядке).
     /// </summary>
-    public class State : Editor.TreeViewItem, BrightIdeasSoftware.IModelFilter
+    public class State : Editor.TreeViewItem
     {
         /// <summary>
         /// Получение шага по номеру (нумерация с -1 - шаг операции, который 
@@ -504,17 +504,6 @@ namespace TechObject
                     return false;
                 }
             }
-        }
-
-        /// <summary>
-        /// Реализация Filter для IModelFilter
-        /// </summary>
-        /// <param name="filterobject">Фильтруемый объект</param>
-        /// <returns></returns>
-        public bool Filter(object filterobject)
-        {
-            //TODO: определение, когда нужно скрыть или показать объект.
-            return true;
         }
 
         private string name;        ///< Имя.

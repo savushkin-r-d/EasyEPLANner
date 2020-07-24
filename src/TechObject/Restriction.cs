@@ -9,8 +9,7 @@ namespace TechObject
     /// <summary>
     /// Ограничения
     /// </summary>
-    public class Restriction : Editor.TreeViewItem, 
-        BrightIdeasSoftware.IModelFilter
+    public class Restriction : Editor.TreeViewItem
     {
         public Restriction(string Name, string Value, string LuaName, 
             SortedDictionary<int, List<int>> dict)
@@ -678,17 +677,6 @@ namespace TechObject
             {
                 return luaName;
             }
-        }
-
-        /// <summary>
-        /// Реализация Filter для IModelFilter
-        /// </summary>
-        /// <param name="filterobject">Фильтруемый объект</param>
-        /// <returns></returns>
-        public bool Filter(object filterobject)
-        {
-            //TODO: определение, когда нужно скрыть или показать объект.
-            return true;
         }
 
         private string name;

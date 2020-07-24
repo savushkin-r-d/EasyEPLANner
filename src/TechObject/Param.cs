@@ -8,7 +8,7 @@ namespace TechObject
     /// <summary>
     /// Отдельный параметр технологического объекта.
     /// </summary>
-    public class Param : Editor.TreeViewItem, BrightIdeasSoftware.IModelFilter
+    public class Param : Editor.TreeViewItem
     {
         public Param(GetN getN, string name, double value = 0,
             string meter = "шт", string nameLua = "")
@@ -268,17 +268,6 @@ namespace TechObject
             {
                 oper.EditText[1] = value;
             }
-        }
-
-        /// <summary>
-        /// Реализация Filter для IModelFilter
-        /// </summary>
-        /// <param name="filterobject">Фильтруемый объект</param>
-        /// <returns></returns>
-        public bool Filter(object filterobject)
-        {
-            //TODO: определение, когда нужно скрыть или показать объект.
-            return true;
         }
 
         private GetN getN;

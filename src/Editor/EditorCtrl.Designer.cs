@@ -313,7 +313,7 @@
             this.hideEmptyItemsBtn.Size = new System.Drawing.Size(24, 24);
             this.hideEmptyItemsBtn.Text = "hideEmptyItems";
             this.hideEmptyItemsBtn.ToolTipText = "Скрыть пустые элементы";
-            this.hideEmptyItemsBtn.Click += new System.EventHandler(this.hideEmptyItemsBtn_Click);
+            this.hideEmptyItemsBtn.CheckStateChanged += new System.EventHandler(this.hideEmptyItemsBtn_CheckStateChanged);
             // 
             // imageList1
             // 

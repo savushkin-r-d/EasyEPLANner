@@ -10,8 +10,7 @@ namespace TechObject
     /// Менеджер ограничений. Содержит ограничения среди всех объектов 
     /// и для конкретного объекта
     /// </summary>
-    public class RestrictionManager : Editor.TreeViewItem, 
-        BrightIdeasSoftware.IModelFilter
+    public class RestrictionManager : Editor.TreeViewItem
     {
         public RestrictionManager()
         {
@@ -197,17 +196,6 @@ namespace TechObject
             string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
                 .GetOstisHelpSystemLink();
             return ostisLink + "?sys_id=process_parameter";
-        }
-
-        /// <summary>
-        /// Реализация Filter для IModelFilter
-        /// </summary>
-        /// <param name="filterobject">Фильтруемый объект</param>
-        /// <returns></returns>
-        public bool Filter(object filterobject)
-        {
-            //TODO: определение, когда нужно скрыть или показать объект.
-            return true;
         }
 
         private string name;

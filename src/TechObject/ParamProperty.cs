@@ -9,8 +9,7 @@ namespace TechObject
     /// <summary>
     /// Свойство параметра
     /// </summary>
-    class ParamProperty : Editor.ObjectProperty, 
-        BrightIdeasSoftware.IModelFilter
+    class ParamProperty : Editor.ObjectProperty
     {
         public ParamProperty(string name, object value) : base(name, value)
         {
@@ -91,17 +90,6 @@ namespace TechObject
             {
                 return true;
             }
-        }
-
-        /// <summary>
-        /// Реализация Filter для IModelFilter
-        /// </summary>
-        /// <param name="filterobject">Фильтруемый объект</param>
-        /// <returns></returns>
-        public bool Filter(object filterobject)
-        {
-            //TODO: определение, когда нужно скрыть или показать объект.
-            return true;
         }
     }
 }

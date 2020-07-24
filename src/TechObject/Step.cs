@@ -11,7 +11,7 @@ namespace TechObject
     /// Шаг технологического объекта. Состоит из параллельно выполняемых 
     /// действий.
     /// </summary>
-    public class Step : Editor.TreeViewItem, BrightIdeasSoftware.IModelFilter
+    public class Step : Editor.TreeViewItem
     {
         /// <summary>
         /// Создание нового шага.
@@ -558,17 +558,6 @@ namespace TechObject
                     return false;
                 }
             }
-        }
-
-        /// <summary>
-        /// Реализация Filter для IModelFilter
-        /// </summary>
-        /// <param name="filterobject">Фильтруемый объект</param>
-        /// <returns></returns>
-        public bool Filter(object filterobject)
-        {
-            //TODO: определение, когда нужно скрыть или показать объект.
-            return true;
         }
 
         /// <summary>
