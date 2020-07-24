@@ -33,9 +33,9 @@ namespace TechObject
     /// <summary>
     /// Менеджер технологических объектов проекта.
     /// </summary>
-    public class TechObjectManager : Editor.TreeViewItem, ITechObjectManager
+    public class TechObjectManager : Editor.TreeViewItem, ITechObjectManager,
+        BrightIdeasSoftware.IModelFilter
     {
-
         private TechObjectManager()
         {
             lua = new Lua();
@@ -1026,6 +1026,17 @@ namespace TechObject
         }
 
         #endregion
+
+        /// <summary>
+        /// Реализация Filter для IModelFilter
+        /// </summary>
+        /// <param name="filterobject">Фильтруемый объект</param>
+        /// <returns></returns>
+        public bool Filter(object filterobject)
+        {
+            // Оставляем true, чтобы всегда отображались объекты
+            return true;
+        }
 
         private bool cdbxTagView;
         private bool cdbxNewNames;

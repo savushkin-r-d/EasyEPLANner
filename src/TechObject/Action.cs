@@ -10,7 +10,8 @@ namespace TechObject
     /// <summary>
     /// Действие над устройствами (включение, выключение и т.д.).
     /// </summary>
-    public class Action : Editor.TreeViewItem
+    public class Action : Editor.TreeViewItem, 
+        BrightIdeasSoftware.IModelFilter
     {
         /// <summary>
         /// Создание нового действия.
@@ -540,6 +541,16 @@ namespace TechObject
                     return false;
                 }
             }
+        }
+
+        /// <summary>
+        /// Реализация Filter для IModelFilter
+        /// </summary>
+        /// <param name="filterobject">Фильтруемый объект</param>
+        /// <returns></returns>
+        public bool Filter(object filterobject)
+        {
+            return true;
         }
 
         protected string luaName;               /// Имя действия в таблице Lua.

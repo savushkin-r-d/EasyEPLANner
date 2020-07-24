@@ -9,7 +9,8 @@ namespace TechObject
     /// <summary>
     /// Класс, содержащий оборудование технологического объекта
     /// </summary>
-    public class Equipment : Editor.TreeViewItem
+    public class Equipment : Editor.TreeViewItem, 
+        BrightIdeasSoftware.IModelFilter
     {
         /// <summary>
         /// Конструктор
@@ -347,6 +348,16 @@ namespace TechObject
             {
                 return x.DisplayText[0].CompareTo(y.DisplayText[0]);
             });
+        }
+
+        /// <summary>
+        /// Реализация Filter для IModelFilter
+        /// </summary>
+        /// <param name="filterobject">Фильтруемый объект</param>
+        /// <returns></returns>
+        public bool Filter(object filterobject)
+        {
+            return true;
         }
 
         private TechObject owner;

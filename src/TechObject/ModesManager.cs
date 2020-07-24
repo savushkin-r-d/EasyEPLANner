@@ -9,7 +9,8 @@ namespace TechObject
     /// <summary>
     /// Операции технологического объекта.
     /// </summary>
-    public class ModesManager : Editor.TreeViewItem
+    public class ModesManager : Editor.TreeViewItem, 
+        BrightIdeasSoftware.IModelFilter
     {
         public ModesManager(TechObject owner)
         {
@@ -522,6 +523,16 @@ namespace TechObject
             string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
                 .GetOstisHelpSystemLink();
             return ostisLink + "?sys_id=operation";
+        }
+
+        /// <summary>
+        /// Реализация Filter для IModelFilter
+        /// </summary>
+        /// <param name="filterobject">Фильтруемый объект</param>
+        /// <returns></returns>
+        public bool Filter(object filterobject)
+        {
+            return true;
         }
 
         private List<Mode> modes; /// Список операций.

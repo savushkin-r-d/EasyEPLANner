@@ -10,7 +10,8 @@ namespace TechObject
     /// Операция технологического объекта. Состоит из последовательно 
     /// (или в ином порядке) выполняемых шагов.
     /// </summary>
-    public class Mode : Editor.TreeViewItem
+    public class Mode : Editor.TreeViewItem, 
+        BrightIdeasSoftware.IModelFilter
     {
         /// <summary>
         /// Получение состояния номеру (нумерация с 0).
@@ -671,6 +672,16 @@ namespace TechObject
             string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
                 .GetOstisHelpSystemLink();
             return ostisLink + "?sys_id=operation";
+        }
+
+        /// <summary>
+        /// Реализация Filter для IModelFilter
+        /// </summary>
+        /// <param name="filterobject">Фильтруемый объект</param>
+        /// <returns></returns>
+        public bool Filter(object filterobject)
+        {
+            return true;
         }
 
         public enum StateName
