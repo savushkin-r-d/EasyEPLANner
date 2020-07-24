@@ -374,6 +374,13 @@ namespace Editor
         /// </summary>
         /// <returns></returns>
         bool NeedDisable { get; set; }
+
+        /// <summary>
+        /// Заполнен или нет элемент дерева
+        /// True - отображать
+        /// False - скрывать
+        /// </summary>
+        bool IsFilled { get; }
     }
     
     /// <summary>
@@ -854,6 +861,19 @@ namespace Editor
                 needDisable = value;
             }
         }
+
+        /// <summary>
+        /// Заполнен или нет элемент дерева.
+        /// True - отображать
+        /// False - скрывать
+        /// </summary>
+        public virtual bool IsFilled
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         /// <summary>
@@ -1167,6 +1187,19 @@ namespace Editor
         }
 
         private bool needDisable = false;
+
+        /// <summary>
+        /// Заполнен или нет элемент дерева
+        /// True - отображать
+        /// False - скрывать
+        /// </summary>
+        public virtual bool IsFilled
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         /// <summary>

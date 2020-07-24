@@ -22,10 +22,10 @@ namespace Editor
             mainWndKeyboardCallbackDelegate =
                 new PI.LowLevelKeyboardProc(GlobalHookKeyboardCallbackFunction);
 
+            // Фильтр
             editorTView.ModelFilter = new ModelFilter(delegate (object obj) 
             {
-                //TODO: Заменить return на свойство Empty
-                return ((ITreeViewItem)obj).IsEditable;
+                return ((ITreeViewItem)obj).IsFilled;
             });
 
             wasInit = false;
