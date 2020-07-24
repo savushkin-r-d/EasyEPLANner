@@ -48,6 +48,7 @@
             // 
             // checkedListBox
             // 
+            this.checkedListBox.CheckOnClick = true;
             this.checkedListBox.FormattingEnabled = true;
             this.checkedListBox.Location = new System.Drawing.Point(12, 40);
             this.checkedListBox.Name = "checkedListBox";
@@ -115,7 +116,7 @@
             this.clearSelectedObjectsLink.VisitedLinkColor = System.Drawing.Color.Black;
             this.clearSelectedObjectsLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.clearSelectedObjects_LinkClicked);
             // 
-            // ExportObjectsForm
+            // TechObjectsExportForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(384, 441);
@@ -131,7 +132,7 @@
             this.MaximumSize = new System.Drawing.Size(400, 480);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(400, 480);
-            this.Name = "ExportObjectsForm";
+            this.Name = "TechObjectsExportForm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Экспорт объектов";

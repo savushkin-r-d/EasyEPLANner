@@ -63,21 +63,24 @@ namespace EasyEPlanner
 
                     // Убираем привязку при экспорте.
                     exportingObject.AttachedObjects.SetValue("");
-                    
-                    string description = exportingObject.SaveAsLuaTable("\t\t");
+
                     // Обходим нулевое значение т.к объект ни находится ни в
                     // каком списке объектов.
+                    string description = exportingObject.SaveAsLuaTable("\t\t");
                     description = description.Replace("[ 0 ]", 
                         $"[ {obj.GlobalNumber} ]");
                     string restriction = exportingObject
                         .SaveRestrictionAsLua("\t");
+                    restriction = restriction
+                        .Replace("[ 0 ]", $"[ {obj.GlobalNumber} ]");
 
                     objectsDescription += description;
                     objectsRestriction += restriction;
                 }
                 else
                 {
-                    objectsDescription += $"\t[ {obj.GlobalNumber} ] = {{0}},\n";
+                    objectsDescription += 
+                        $"\t[ {obj.GlobalNumber} ] = {{0}},\n";
                 }
             }
 
