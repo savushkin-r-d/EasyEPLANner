@@ -35,6 +35,7 @@ namespace TechObject
     /// </summary>
     public class TechObjectManager : Editor.TreeViewItem, ITechObjectManager
     {
+
         private TechObjectManager()
         {
             lua = new Lua();
