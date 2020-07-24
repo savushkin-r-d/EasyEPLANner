@@ -71,6 +71,7 @@
             // 
             // checkedListBox
             // 
+            this.checkedListBox.CheckOnClick = true;
             this.checkedListBox.FormattingEnabled = true;
             this.checkedListBox.Location = new System.Drawing.Point(12, 66);
             this.checkedListBox.Name = "checkedListBox";
@@ -138,7 +139,7 @@
             this.clearSelectedObjects.VisitedLinkColor = System.Drawing.Color.Black;
             this.clearSelectedObjects.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.clearSelectedObjects_LinkClicked);
             // 
-            // ImportObjectsForm
+            // TechObjectsImportForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(384, 441);
@@ -156,7 +157,7 @@
             this.MaximumSize = new System.Drawing.Size(400, 480);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(400, 480);
-            this.Name = "ImportObjectsForm";
+            this.Name = "TechObjectsImportForm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Импорт объектов";
