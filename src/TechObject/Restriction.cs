@@ -24,7 +24,7 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Функция для создания копии объекта ограниченй
+        /// Функция для создания копии объекта ограничений
         /// </summary>
         /// <returns></returns>
         public Restriction Clone()
@@ -667,6 +667,21 @@ namespace TechObject
             get
             {
                 return true;
+            }
+        }
+
+        public override bool IsFilled
+        {
+            get
+            {
+                if(restrictList.Count > 0 )
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
         #endregion

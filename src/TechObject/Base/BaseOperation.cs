@@ -451,7 +451,7 @@ namespace TechObject
         {
             get
             {
-                if(items.Length > 0)
+                if(items.Where(x=> x.IsFilled).Count() > 0)
                 {
                     return true;
                 }
