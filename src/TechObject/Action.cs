@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace TechObject
 {
@@ -516,8 +512,22 @@ namespace TechObject
         {
             return devSubTypes;
         }
-        #endregion
 
+        public override bool IsFilled
+        {
+            get
+            {
+                if (Empty)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+        #endregion
 
         public string stepName
         {
@@ -531,7 +541,7 @@ namespace TechObject
         {
             get
             {
-                if(deviceIndex.Count == 0)
+                if (deviceIndex.Count == 0)
                 {
                     return true;
                 }

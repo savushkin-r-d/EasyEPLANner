@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TechObject
 {
@@ -312,6 +310,7 @@ namespace TechObject
                 return res;
             }
 
+            #region реализация ITreeViewItem
             public override bool NeedRebuildParent 
             { 
                 get 
@@ -319,8 +318,6 @@ namespace TechObject
                     return true; 
                 } 
             }
-
-            private TechObject owner;
 
             override public bool IsEditable
             {
@@ -339,6 +336,24 @@ namespace TechObject
                     }
                 }
             }
+
+            public override bool IsFilled
+            {
+                get
+                {
+                    if(Value != "")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            #endregion
+
+            private TechObject owner;
         }
 
         /// <summary>

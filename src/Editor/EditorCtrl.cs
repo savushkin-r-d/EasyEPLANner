@@ -22,6 +22,12 @@ namespace Editor
             mainWndKeyboardCallbackDelegate =
                 new PI.LowLevelKeyboardProc(GlobalHookKeyboardCallbackFunction);
 
+            // Фильтр
+            editorTView.ModelFilter = new ModelFilter(delegate (object obj) 
+            {
+                return ((ITreeViewItem)obj).IsFilled;
+            });
+
             wasInit = false;
         }
 
@@ -1153,6 +1159,11 @@ namespace Editor
             }
             else
             {
+                if(hideEmptyItemsBtn.Checked)
+                {
+                    hideEmptyItemsBtn.Checked = false;
+                }
+
                 edit_toolStripButton.Checked = true;
                 Editable = true;
 
@@ -1399,6 +1410,11 @@ namespace Editor
         {
             foreach(var item in items)
             {
+                if (item.IsFilled == false && hideEmptyItemsBtn.Checked)
+                {
+                    return;
+                }
+
                 if (item.Items != null)
                 {
                     if (item.Items.Length != 0)
@@ -1669,6 +1685,29 @@ namespace Editor
         {
             editorTView.Columns[0].AutoResize(
                 ColumnHeaderAutoResizeStyle.ColumnContent);
+        }
+
+        private void hideEmptyItemsBtn_CheckStateChanged(object sender, EventArgs e)
+        {
+            if (edit_toolStripButton.Checked && hideEmptyItemsBtn.Checked)
+            {
+                hideEmptyItemsBtn.Checked = false;
+                editorTView.UseFiltering = false;
+                MessageBox.Show("Режим сокрытия пустых элементов можно " +
+                    "включить только при отключенном режиме редактирования.",
+                    "Информация", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                return;
+            }
+
+            if (hideEmptyItemsBtn.Checked)
+            {
+                editorTView.UseFiltering = true;
+            }
+            else
+            {
+                editorTView.UseFiltering = false;
+            }
         }
     }
 }

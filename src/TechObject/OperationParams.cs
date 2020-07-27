@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TechObject
 {
@@ -125,6 +122,21 @@ namespace TechObject
             {
 
                 return items.ToArray();
+            }
+        }
+
+        public override bool IsFilled
+        {
+            get
+            {
+                if(items.Count > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
         #endregion

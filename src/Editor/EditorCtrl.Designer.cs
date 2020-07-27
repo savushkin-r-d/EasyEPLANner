@@ -52,6 +52,8 @@
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.importButton = new System.Windows.Forms.ToolStripButton();
             this.exportButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.hideEmptyItemsBtn = new System.Windows.Forms.ToolStripButton();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.editorTView = new BrightIdeasSoftware.TreeListView();
             this.statusStrip.SuspendLayout();
@@ -100,10 +102,12 @@
             this.replaceButton,
             this.toolStripSeparator3,
             this.importButton,
-            this.exportButton});
+            this.exportButton,
+            this.toolStripSeparator4,
+            this.hideEmptyItemsBtn});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(396, 27);
+            this.toolStrip.Size = new System.Drawing.Size(440, 27);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -294,6 +298,23 @@
             this.exportButton.ToolTipText = "Экспорт объектов";
             this.exportButton.Click += new System.EventHandler(this.exportButton_Click);
             // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 27);
+            // 
+            // hideEmptyItemsBtn
+            // 
+            this.hideEmptyItemsBtn.CheckOnClick = true;
+            this.hideEmptyItemsBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.hideEmptyItemsBtn.Image = global::EasyEPlanner.Properties.Resources.hideEmptyItems;
+            this.hideEmptyItemsBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.hideEmptyItemsBtn.Name = "hideEmptyItemsBtn";
+            this.hideEmptyItemsBtn.Size = new System.Drawing.Size(24, 24);
+            this.hideEmptyItemsBtn.Text = "hideEmptyItems";
+            this.hideEmptyItemsBtn.ToolTipText = "Скрыть пустые элементы";
+            this.hideEmptyItemsBtn.CheckStateChanged += new System.EventHandler(this.hideEmptyItemsBtn_CheckStateChanged);
+            // 
             // imageList1
             // 
             this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
@@ -403,5 +424,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton importButton;
         private System.Windows.Forms.ToolStripButton exportButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripButton hideEmptyItemsBtn;
     }
     }

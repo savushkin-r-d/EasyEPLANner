@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TechObject
 {
@@ -481,6 +478,21 @@ namespace TechObject
             }
 
             return devToDraw;
+        }
+
+        public override bool IsFilled
+        {
+            get
+            {
+                if(Empty)
+                {
+                    return false;
+                }
+                else 
+                {
+                    return true;
+                }
+            }
         }
         #endregion
 

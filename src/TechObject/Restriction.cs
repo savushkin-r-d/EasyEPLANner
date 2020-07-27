@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace TechObject
 {
@@ -24,7 +20,7 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Функция для создания копии объекта ограниченй
+        /// Функция для создания копии объекта ограничений
         /// </summary>
         /// <returns></returns>
         public Restriction Clone()
@@ -137,7 +133,7 @@ namespace TechObject
                 new SortedDictionary<int, List<int>>(restrictList);
             restrictList = null;
             restrictList = new SortedDictionary<int, List<int>>(dict);
-            //Компануем строку для отображения
+            //Генерируем строку для отображения
             ChangeRestrictStr();
 
             SortedDictionary<int, List<int>> deletedRestriction =
@@ -229,7 +225,7 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Установка перекрестных ограничеий
+        /// Установка перекрестных ограничений
         /// </summary>
         protected void SetCrossRestriction()
         {
@@ -254,7 +250,7 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Удаление перекрестных ограничеий
+        /// Удаление перекрестных ограничений
         /// </summary>
         protected void ClearCrossRestriction(SortedDictionary<int, 
             List<int>> diffDict)
@@ -285,7 +281,7 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Изменение словаря огарничений на основании строки ограничний
+        /// Изменение словаря ограничений на основании строки ограничений
         /// </summary>
         protected void ChangeRestrictList()
         {
@@ -339,7 +335,7 @@ namespace TechObject
                 restrictList[ObjNum].Sort();
             }
 
-            //Компануем строку для отображения
+            //Генерируем строку для отображения
             ChangeRestrictStr();
         }
 
@@ -365,7 +361,7 @@ namespace TechObject
                 }
             }
 
-            //Компануем строку для отображения
+            //Генерируем строку для отображения
             ChangeRestrictStr();
         }
 
@@ -596,6 +592,7 @@ namespace TechObject
             }
         }
 
+        #region Реализация ITreeViewItem
         override public Editor.ITreeViewItem[] Items
         {
             get
@@ -668,6 +665,22 @@ namespace TechObject
                 return true;
             }
         }
+
+        public override bool IsFilled
+        {
+            get
+            {
+                if(restrictList.Count > 0 )
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        #endregion
 
         public string LuaName
         {

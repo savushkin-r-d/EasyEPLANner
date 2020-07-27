@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TechObject
+﻿namespace TechObject
 {
     /// <summary>
     /// Активный (отображаемый) параметр
@@ -70,6 +64,21 @@ namespace TechObject
             get
             {
                 return true;
+            }
+        }
+
+        public override bool IsFilled
+        {
+            get
+            {
+                if(Value == "")
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
         }
         #endregion

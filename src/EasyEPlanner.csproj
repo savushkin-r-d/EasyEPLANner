@@ -433,6 +433,7 @@
     <None Include="Resources\export.png" />
     <None Include="Resources\equipment.ico" />
     <Content Include="Resources\equipment.png" />
+    <None Include="Resources\hideEmptyItems.png" />
     <Content Include="Resources\highlight.ico" />
     <None Include="Resources\refresh.png" />
     <None Include="Resources\save.png" />
