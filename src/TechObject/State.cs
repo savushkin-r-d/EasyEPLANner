@@ -482,6 +482,21 @@ namespace TechObject
 
             return devToDraw;
         }
+
+        public override bool IsFilled
+        {
+            get
+            {
+                if(Empty)
+                {
+                    return false;
+                }
+                else 
+                {
+                    return true;
+                }
+            }
+        }
         #endregion
 
         public override string GetLinkToHelpPage()

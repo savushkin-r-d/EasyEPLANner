@@ -357,6 +357,21 @@ namespace TechObject
                 return true;
             }
         }
+
+        public override bool IsFilled
+        {
+            get
+            {
+                if(parameters.Count > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
         #endregion
 
         public override string GetLinkToHelpPage()
