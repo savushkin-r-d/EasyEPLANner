@@ -290,7 +290,7 @@ namespace TechObject
             {
                 property.SetNewValue((copyObject as ActiveParameter).Value);
                 ModifyDevNames(owner.NameEplan, owner.TechNumber);
-                return property as Editor.ITreeViewItem;
+                return property;
             }
             return null;
         }

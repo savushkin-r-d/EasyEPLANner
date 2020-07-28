@@ -1,9 +1,6 @@
 ﻿using EasyEPlanner;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TechObject
 {
@@ -577,18 +574,22 @@ namespace TechObject
                             paramsForSave += $"{prefix}{parameter.LuaName} = " +
                                     $"{parameter.Value},\n";
                             break;
+
                         case ParameterValueType.Device:
                             paramsForSave += $"{prefix}{parameter.LuaName}" +
                                 $" = prg.control_modules.{parameter.Value},\n";
                             break;
+
                         case ParameterValueType.Number:
                             paramsForSave += GetNumberParameterStringForSave(
                                 prefix, parameter, mode);
                             break;
+
                         case ParameterValueType.Parameter:
                             paramsForSave += $"{prefix}{parameter.LuaName} = " +
                             $"{objName}.PAR_FLOAT.{parameter.Value},\n";
                             break;
+
                         case ParameterValueType.Other:
                             paramsForSave += $"{prefix}{parameter.LuaName} = " +
                                     $"{parameter.Value},\n";
@@ -618,7 +619,7 @@ namespace TechObject
         /// <param name="mainObjMode">Проверяемая операция главного объекта
         /// </param>
         /// <returns></returns>
-        public string GetNumberParameterStringForSave(string prefix, 
+        private string GetNumberParameterStringForSave(string prefix, 
             BaseParameter parameter, Mode mainObjMode)
         {
             BaseTechObject baseTechObject = null;
@@ -720,6 +721,30 @@ namespace TechObject
                 return result;
             }
 
+            string[] devices = parameterValue.Split(' ');
+            if(devices.Length > 1)
+            {
+                bool haveBadDevices = false;
+                var validDevices = new List<bool>();
+                foreach(var device in devices)
+                {
+                    isDevice = deviceManager.GetDeviceByEplanName(
+                        parameterValue).Description != "заглушка";
+                    if(isDevice == false)
+                    {
+                        haveBadDevices = true;
+                    }
+                    validDevices.Add(isDevice);
+                }
+
+                validDevices = validDevices.Distinct().ToList();
+                if(validDevices.Count == 1 && haveBadDevices == false)
+                {
+                    result = ParameterValueType.ManyDevices;
+                    return result;
+                }
+            }
+
             return result;
         }
 
@@ -746,11 +771,41 @@ namespace TechObject
                         res += objName + $".{luaName} = " +
                             $"prg.control_modules.{value}\n";
                         break;
+                    case ParameterValueType.ManyDevices:
+                        res += SaveMoreThanOneDeviceInEquipment(objName, 
+                            luaName, value);
+                        break;
                     case ParameterValueType.Parameter:
                         res += objName + $".{luaName} = " +
                             $"{objName}.PAR_FLOAT.{value}\n";
                         break;
                 }
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить более 1 устройства в одном оборудовании.
+        /// </summary>
+        /// <param name="luaName">LUA имя оборудования</param>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="value">Значение параметра</param>
+        /// <returns></returns>
+        private string SaveMoreThanOneDeviceInEquipment(string objName,
+            string luaName, string value)
+        {
+            string res = "";
+
+            string[] devices = value.Split(' ');
+            if(devices.Length > 1)
+            {
+                res = objName + $".{luaName} = " +
+                    $"{{ {string.Join(",", devices)} }} \n";
+            }
+            else
+            {
+                res = objName + $".{luaName} = prg.control_modules.{value}\n";
             }
 
             return res;
@@ -763,6 +818,7 @@ namespace TechObject
         enum ParameterValueType
         {
             Other,
+            ManyDevices,
             Device,
             Boolean,
             Parameter,
