@@ -30,8 +30,6 @@
             {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewEditorControl));
-            this.statusStrip = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel_1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButton_1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton_2 = new System.Windows.Forms.ToolStripButton();
@@ -56,26 +54,9 @@
             this.hideEmptyItemsBtn = new System.Windows.Forms.ToolStripButton();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.editorTView = new BrightIdeasSoftware.TreeListView();
-            this.statusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.editorTView)).BeginInit();
             this.SuspendLayout();
-            // 
-            // statusStrip
-            // 
-            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel_1});
-            this.statusStrip.Location = new System.Drawing.Point(0, 478);
-            this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(506, 22);
-            this.statusStrip.TabIndex = 1;
-            this.statusStrip.Text = "statusStrip1";
-            // 
-            // toolStripStatusLabel_1
-            // 
-            this.toolStripStatusLabel_1.Name = "toolStripStatusLabel_1";
-            this.toolStripStatusLabel_1.Size = new System.Drawing.Size(112, 17);
-            this.toolStripStatusLabel_1.Text = "toolStripStatusLabel";
             // 
             // toolStrip
             // 
@@ -107,7 +88,7 @@
             this.hideEmptyItemsBtn});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(440, 27);
+            this.toolStrip.Size = new System.Drawing.Size(426, 27);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -358,7 +339,7 @@
             this.editorTView.ShowGroups = false;
             this.editorTView.ShowImagesOnSubItems = true;
             this.editorTView.ShowSortIndicators = false;
-            this.editorTView.Size = new System.Drawing.Size(500, 447);
+            this.editorTView.Size = new System.Drawing.Size(500, 469);
             this.editorTView.SmallImageList = this.imageList1;
             this.editorTView.TabIndex = 4;
             this.editorTView.TriggerCellOverEventsWhenOverHeader = false;
@@ -379,17 +360,14 @@
             this.editorTView.MouseEnter += new System.EventHandler(this.editorTView_MouseEnter);
             this.editorTView.MouseLeave += new System.EventHandler(this.editorTView_MouseLeave);
             // 
-            // EditorCtrl
+            // NewEditorControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.editorTView);
             this.Controls.Add(this.toolStrip);
-            this.Controls.Add(this.statusStrip);
-            this.Name = "EditorCtrl";
+            this.Name = "NewEditorControl";
             this.Size = new System.Drawing.Size(506, 500);
-            this.statusStrip.ResumeLayout(false);
-            this.statusStrip.PerformLayout();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.editorTView)).EndInit();
@@ -399,8 +377,6 @@
             }
 
         #endregion
-
-        private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton toolStripButton_1;
         private System.Windows.Forms.ToolStripButton toolStripButton_2;
@@ -408,7 +384,6 @@
         private System.Windows.Forms.ToolStripButton toolStripButton_4;
         private System.Windows.Forms.ToolStripButton toolStripButton_5;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator_1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton drawDev_toolStripButton;
         private System.Windows.Forms.ToolStripButton edit_toolStripButton;
