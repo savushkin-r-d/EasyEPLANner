@@ -789,9 +789,17 @@ return
         steam_blast_node = {
             name = "Узел продувания",
             s88Level = 2,
-            baseOperations = { },
+            baseOperations =
+            {
+                WORKING = {
+                    name = "Работа",
+                },
+            },
             basicName = "steam_blast_node",
-            equipment = { },
+            equipment =
+            {
+                GS = { name = "Датчик(и) люка", defaultValue = "GS1" },
+            },
             aggregateParameters = { },
             bindingName = "steam_blast_node",
         },
