@@ -728,8 +728,8 @@ namespace TechObject
                 var validDevices = new List<bool>();
                 foreach(var device in devices)
                 {
-                    isDevice = deviceManager.GetDeviceByEplanName(
-                        parameterValue).Description != "заглушка";
+                    isDevice = deviceManager.GetDeviceByEplanName(device)
+                        .Description != "заглушка";
                     if(isDevice == false)
                     {
                         haveBadDevices = true;
@@ -800,8 +800,10 @@ namespace TechObject
             string[] devices = value.Split(' ');
             if(devices.Length > 1)
             {
+                string[] modifiedDevices = devices
+                    .Select(x => "prg.control_modules." + x).ToArray();
                 res = objName + $".{luaName} = " +
-                    $"{{ {string.Join(",", devices)} }} \n";
+                    $"{{ {string.Join(", ", modifiedDevices)} }} \n";
             }
             else
             {
