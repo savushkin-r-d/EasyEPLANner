@@ -31,8 +31,10 @@ namespace EasyEPlanner
                 crc ^= (ushort)(pcBlock[idx++] << 8);
 
                 for (int i = 0; i < 8; i++)
-                    crc = (ushort)((crc & 0x8000) > 0 ?
-                         ((crc << 1) ^ 0x1021) : (crc << 1));
+                {
+                    crc = (ushort)((crc & 0x8000) > 0 ? 
+                        ((crc << 1) ^ 0x1021) : (crc << 1));
+                }
             }
 
             return crc;
@@ -251,9 +253,11 @@ namespace EasyEPlanner
         /// </summary>
         public void Init()
         {
-            //TODO: New editor GetInstance
+            newEditor = NewEditor.NewEditor.GetInstance();
             editor = Editor.Editor.GetInstance();
             techObjectManager = TechObjectManager.GetInstance();
+            newTechObjectManager = NewTechObject.TechObjectManager
+                .GetInstance();
             Logs.Init(new LogFrm());           
             IOManager = IOManager.GetInstance();
             DeviceManager.GetInstance();
@@ -439,11 +443,10 @@ namespace EasyEPlanner
         /// Редактирование технологических объектов. Новое дерево.
         /// </summary>
         /// <returns>Результат редактирования</returns>
-        public string NewEdit()
+        public void StartEdit()
         {
-            string res = "";
-
-            return res;
+            newEditor
+                .OpenEditor(newTechObjectManager as NewEditor.ITreeViewItem);
         }
 
         /// <summary>
@@ -480,15 +483,15 @@ namespace EasyEPlanner
 
             foreach (DrawInfo drawObj in objectsToDraw)
             {
-                DrawInfo.Style howToDraw = drawObj.style;
+                DrawInfo.Style howToDraw = drawObj.DrawingStyle;
 
                 if (howToDraw == DrawInfo.Style.NO_DRAW)
                 {
                     continue;
                 }
 
-                Eplan.EplApi.DataModel.Function oF = (drawObj.dev as IODevice)
-                    .EplanObjectFunction;
+                Eplan.EplApi.DataModel.Function oF = 
+                    (drawObj.DrawingDevice as IODevice).EplanObjectFunction;
 
                 if (oF == null)
                 {
@@ -689,9 +692,19 @@ namespace EasyEPlanner
         private IEditor editor;
 
         /// <summary>
+        /// Редактор технологических объектов.
+        /// </summary>
+        private NewEditor.INewEditor newEditor;
+
+        /// <summary>
         /// Менеджер технологических объектов.
         /// </summary>
         private ITechObjectManager techObjectManager;
+
+        /// <summary>
+        /// Менеджер технологических объектов.
+        /// </summary>
+        private NewTechObject.ITechObjectManager newTechObjectManager;
 
         /// <summary>
         /// Менеджер модулей ввода/вывода.

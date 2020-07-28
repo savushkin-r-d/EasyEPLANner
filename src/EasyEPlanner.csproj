@@ -115,6 +115,19 @@
   <ItemGroup>
     <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Device\IODevices\F.cs" />
+    <Compile Include="EditorNew\DrawInfo.cs" />
+    <Compile Include="EditorNew\Editor.cs" />
+    <Compile Include="EditorNew\IHelperItem.cs" />
+    <Compile Include="EditorNew\ITreeViewItem.cs" />
+    <Compile Include="EditorNew\NewEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EditorNew\NewEditorControl.Designer.cs">
+      <DependentUpon>NewEditorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditorNew\INewEditor.cs" />
+    <Compile Include="EditorNew\ObjectProperty.cs" />
+    <Compile Include="EditorNew\TreeViewItem.cs" />
     <Compile Include="Editor\DrawInfo.cs" />
     <Compile Include="Editor\IEditor.cs" />
     <Compile Include="Editor\IHelperItem.cs" />
@@ -160,7 +173,7 @@
     </Compile>
     <Compile Include="Main\InterprojectExchangeAction.cs" />
     <Compile Include="Configuration\ProjectHealthChecker.cs" />
-    <Compile Include="TechObject\Base\BaseObjectsManager.cs" />
+    <Compile Include="Main\ShowNewTechObjectsAction.cs" />
     <Compile Include="Device\DeviceManager.cs" />
     <Compile Include="Configuration\DeviceBindingReader.cs" />
     <Compile Include="Configuration\DeviceReader.cs" />
@@ -275,11 +288,15 @@
       <DependentUpon>EditorCtrl.cs</DependentUpon>
     </Compile>
     <Compile Include="Editor\ImportExport\TechObjectsExporter.cs" />
+    <Compile Include="FileSavers\XMLReporter.cs" />
+    <Compile Include="TechObjectNew\ITechObjectManager.cs" />
+    <Compile Include="TechObjectNew\TechObjectManager.cs" />
     <Compile Include="TechObject\Action.cs" />
     <Compile Include="TechObject\Action_AI_AO.cs" />
     <Compile Include="TechObject\Action_DI_DO.cs" />
     <Compile Include="TechObject\Action_Wash.cs" />
     <Compile Include="TechObject\Action_WashSeats.cs" />
+    <Compile Include="TechObject\Base\BaseObjectsManager.cs" />
     <Compile Include="TechObject\Base\BaseOperation.cs" />
     <Compile Include="TechObject\Base\BaseParameter.cs" />
     <Compile Include="TechObject\Base\BaseTechObject.cs" />
@@ -301,11 +318,14 @@
     <Compile Include="TechObject\Step.cs" />
     <Compile Include="TechObject\TechObject.cs" />
     <Compile Include="TechObject\TechObjectManager.cs" />
-    <Compile Include="FileSavers\XMLReporter.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DFrm.resx">
       <DependentUpon>DFrm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditorNew\NewEditorControl.resx">
+      <DependentUpon>NewEditorControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FileSavers\XMLReporterDialog.resx">
       <DependentUpon>XMLReporterDialog.cs</DependentUpon>
