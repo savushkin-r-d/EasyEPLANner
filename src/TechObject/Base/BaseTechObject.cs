@@ -714,7 +714,7 @@ namespace TechObject
 
             var deviceManager = Device.DeviceManager.GetInstance();
             bool isDevice = deviceManager.GetDeviceByEplanName(parameterValue)
-                .Description != "заглушка";
+                .Description != StaticHelper.CommonConst.Cap;
             if (isDevice)
             {
                 result = ParameterValueType.Device;
@@ -729,7 +729,7 @@ namespace TechObject
                 foreach(var device in devices)
                 {
                     isDevice = deviceManager.GetDeviceByEplanName(device)
-                        .Description != "заглушка";
+                        .Description != StaticHelper.CommonConst.Cap;
                     if(isDevice == false)
                     {
                         haveBadDevices = true;

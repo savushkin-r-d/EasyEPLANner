@@ -84,13 +84,13 @@ namespace Tests
         [TestCase("TANK2V1", "TANK2V1")]
         [TestCase("KOAG3PT1", "KOAG3PT1")]
         [TestCase("BATH4TE2", "BATH4TE2")]
-        [TestCase("BATH4TE99", "заглушка")]
+        [TestCase("BATH4TE99", StaticHelper.CommonConst.Cap)]
         [TestCase("", "")]
         public void GetDeviceTest(string devName, string expectedDevName)
         {
             var dev = Device.DeviceManager.GetInstance().GetDevice(devName);
             string actualDevName = dev.Name;
-            if (expectedDevName == "заглушка")
+            if (expectedDevName == StaticHelper.CommonConst.Cap)
             {
                 Assert.AreEqual(expectedDevName, dev.Description);
             }
@@ -108,14 +108,14 @@ namespace Tests
         [TestCase("TANK2V1", "TANK2V1")]
         [TestCase("KOAG3PT1", "KOAG3PT1")]
         [TestCase("BATH4TE2", "BATH4TE2")]
-        [TestCase("BATH4TE99", "заглушка")]
+        [TestCase("BATH4TE99", StaticHelper.CommonConst.Cap)]
         [TestCase("", "")]
         public void GetDeviceByEplanNameTest(string devName, string expectedDevName)
         {
             var dev = Device.DeviceManager.GetInstance().GetDeviceByEplanName(
                 devName);
             string actualDevName = dev.Name;
-            if (expectedDevName == "заглушка")
+            if (expectedDevName == StaticHelper.CommonConst.Cap)
             {
                 Assert.AreEqual(expectedDevName, dev.Description);
             }

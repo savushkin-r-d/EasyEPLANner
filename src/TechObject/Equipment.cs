@@ -139,15 +139,18 @@ namespace TechObject
                 {
                     var device = Device.DeviceManager.GetInstance()
                         .GetDeviceByEplanName(oldDevName);
-                    if(device.Description != "заглушка" &&
+                    bool isValid = 
+                        device.Description != StaticHelper.CommonConst.Cap &&
                         device.ObjectName == owner.NameEplan &&
-                        device.ObjectNumber == owner.TechNumber)
+                        device.ObjectNumber == owner.TechNumber;
+                    if (isValid)
                     {
                         string newDevName = newTechObjName + techNumber +
                             device.DeviceType.ToString() + device.DeviceNumber;
                         var newDevice = Device.DeviceManager.GetInstance().
                             GetDeviceByEplanName(newDevName);
-                        if(newDevice.Description != "заглушка")
+                        if(newDevice.Description != 
+                            StaticHelper.CommonConst.Cap)
                         {
                             newDevNames.Add(newDevName);
                         }
@@ -161,11 +164,7 @@ namespace TechObject
                         newDevNames.Add(oldDevName);
                     }
                 }
-
-                if (newDevNames.Count > 0)
-                {
-                    property.SetNewValue(string.Join(" ", newDevNames));
-                }
+                property.SetNewValue(string.Join(" ", newDevNames));
             }
         }
 
@@ -187,14 +186,17 @@ namespace TechObject
                 {
                     var device = Device.DeviceManager.GetInstance()
                         .GetDeviceByEplanName(oldDevName);
-                    if (device.Description != "заглушка" &&
-                        eplanName == device.ObjectName)
+                    bool isValid = 
+                        device.Description != StaticHelper.CommonConst.Cap &&
+                        eplanName == device.ObjectName;
+                    if (isValid)
                     {
                         string newDevName = eplanName + techNumber +
                             device.DeviceType.ToString() + device.DeviceNumber;
                         var newDevice = Device.DeviceManager.GetInstance().
                             GetDeviceByEplanName(newDevName);
-                        if (newDevice.Description != "заглушка")
+                        if (newDevice.Description != 
+                            StaticHelper.CommonConst.Cap)
                         {
                             newDevNames.Add(newDevName);
                         }
@@ -208,11 +210,7 @@ namespace TechObject
                         newDevNames.Add(oldDevName);
                     }
                 }
-
-                if(newDevNames.Count > 0)
-                {
-                    property.SetNewValue(string.Join(" ", newDevNames));
-                }
+                property.SetNewValue(string.Join(" ", newDevNames));
             }
         }
 
@@ -244,7 +242,7 @@ namespace TechObject
                     equipment.DefaultValue;
                 var device = Device.DeviceManager.GetInstance()
                     .GetDevice(deviceName);
-                if (device.Description != "заглушка")
+                if (device.Description != StaticHelper.CommonConst.Cap)
                 {
                     equipment.SetNewValue(deviceName);
                 }
@@ -296,7 +294,7 @@ namespace TechObject
             {
                 var device = Device.DeviceManager.GetInstance()
                     .GetDeviceByEplanName(deviceStr);
-                if (device.Description == "заглушка")
+                if (device.Description == StaticHelper.CommonConst.Cap)
                 {
                     unknownDevices.Add(deviceStr);
                 }           
@@ -330,7 +328,8 @@ namespace TechObject
                     .GetDeviceByEplanName(currentValue);
             if (equipment.LuaName == "SET_VALUE")
             {
-                bool isValid = (device.Description != "заглушка" ||
+                bool isValid = 
+                    (device.Description != StaticHelper.CommonConst.Cap ||
                     owner.GetParams().GetParam(currentValue) != null);
                 if (!isValid)
                 {
@@ -340,7 +339,8 @@ namespace TechObject
             }
             else
             {
-                bool isValid = device.Description != "заглушка" ||
+                bool isValid = 
+                    device.Description != StaticHelper.CommonConst.Cap ||
                     currentValue == "" ||
                     currentValue == equipment.DefaultValue;
                 if (!isValid)

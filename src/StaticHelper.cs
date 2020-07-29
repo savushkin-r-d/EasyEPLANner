@@ -351,6 +351,11 @@ namespace StaticHelper
         public const string Reserve = "Резерв";
 
         /// <summary>
+        /// Текст "Заглушка"
+        /// </summary>
+        public const string Cap = "Заглушка";
+
+        /// <summary>
         /// Шаблон поиска IP-адреса.
         /// </summary>
         public const string IPAddressPattern = @"\b(25[0-5]|2[0-4][0-9]|" +
