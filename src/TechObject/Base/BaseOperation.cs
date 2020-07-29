@@ -353,8 +353,11 @@ namespace TechObject
                     property.Value == "";
                 if (emptyDisabledAggregateProperty)
                 {
+                    string modeName = owner.DisplayText[0];
+                    string techObjName = Owner.Owner.Owner.DisplayText[0];
                     string message = $"Свойство \"{property.Name}\" в " +
-                        $"операции \"{""}\", объекта \"{""}\" не заполнено.\n";
+                        $"операции \"{modeName}\", объекта \"{techObjName}\"" +
+                        $" не заполнено.\n";
                     errors += message;
                 }
             }
