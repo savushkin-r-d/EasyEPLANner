@@ -336,15 +336,33 @@ namespace TechObject
         /// <summary>
         /// Проверка базовой операции
         /// </summary>
-        public void Check()
+        /// <returns>Ошибки</returns>
+        public string Check()
         {
+            string errors = "";
             foreach(var property in Properties)
             {
                 if (property is MainAggregateParameter)
                 {
                     (property as MainAggregateParameter).Check();
                 }
+
+                bool emptyDisabledAggregateProperty = 
+                    property.Owner is BaseTechObject &&
+                    !property.Disabled &&
+                    property.Value == "";
+                if (emptyDisabledAggregateProperty)
+                {
+                    string modeName = owner.DisplayText[0];
+                    string techObjName = Owner.Owner.Owner.DisplayText[0];
+                    string message = $"Свойство \"{property.Name}\" в " +
+                        $"операции \"{modeName}\", объекта \"{techObjName}\"" +
+                        $" не заполнено.\n";
+                    errors += message;
+                }
             }
+
+            return errors;
         }
 
         /// <summary>
