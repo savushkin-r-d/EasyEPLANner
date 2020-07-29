@@ -269,7 +269,7 @@ namespace EasyEPlanner
                         }
                         else
                         {
-                            newDevices = oldDevices + devName;
+                            newDevices = oldDevices + devName.Trim();
                         }
                         Editor.Editor.GetInstance().EForm.SetNewVal(newDevices);
 
