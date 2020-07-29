@@ -160,7 +160,7 @@ namespace Device
             // Устройства нет, вернет состояние заглушки.
             CheckDeviceName(devName, out name, out objectName,
                 out objectNumber, out deviceType, out deviceNumber);
-            return new IODevice(name, "заглушка", deviceType,
+            return new IODevice(name, StaticHelper.CommonConst.Cap, deviceType,
                 deviceNumber, objectName, objectNumber);
         }
 
@@ -180,7 +180,7 @@ namespace Device
             CheckDeviceName(devName, out name, out objectName, out objectNumber,
                 out deviceType, out deviceNumber);
 
-            IODevice devStub = new IODevice(name, "заглушка",
+            IODevice devStub = new IODevice(name, StaticHelper.CommonConst.Cap,
                 deviceType, deviceNumber, objectName, objectNumber);
 
             int resDevN = devices.BinarySearch(devStub);
@@ -225,7 +225,7 @@ namespace Device
 
             CheckDeviceName(devName, out name, out objectName, out objectNumber,
                 out deviceType, out deviceNumber);
-            IODevice devStub = new IODevice(name, "заглушка",
+            IODevice devStub = new IODevice(name, StaticHelper.CommonConst.Cap,
                 deviceType, deviceNumber, objectName, objectNumber);
 
             int resDevN = devices.IndexOf(devStub);
@@ -952,7 +952,8 @@ namespace Device
         /// </summary>
         public const string valveTerminalPattern = @"([A-Z0-9]+\-[Y0-9]+)";
 
-        private static IODevice cap = new IODevice("Заглушка", "", 0, "", 0);
+        private static IODevice cap = 
+            new IODevice(StaticHelper.CommonConst.Cap, "", 0, "", 0);
         private List<IODevice> devices;       ///Устройства проекта.     
         private static DeviceManager instance;  ///Экземпляр класса.
 

@@ -122,28 +122,55 @@ namespace TechObject
             return res;
         }
 
+        /// <summary>
+        /// Модификация ОУ объекта
+        /// </summary>
+        /// <param name="newTechObjName">Новое ОУ</param>
+        /// <param name="techNumber">Номер объекта</param>
         public void ModifyDevNames(string newTechObjName, int techNumber)
         {
             var properties = items.Select(x => x as BaseParameter).ToArray();
             foreach (var property in properties)
             {
-                string oldDevName = property.Value;
-                var device = Device.DeviceManager.GetInstance()
-                    .GetDevice(oldDevName);
-                if (device.Description != "заглушка")
+                string propertyValue = property.Value;
+                string[] oldDevices = propertyValue.Split(' ');
+                var newDevNames = new List<string>();
+                foreach(var oldDevName in oldDevices)
                 {
-                    string newDevName = newTechObjName + techNumber + 
-                        device.DeviceType.ToString() + device.DeviceNumber;
-                    var newDevice = Device.DeviceManager.GetInstance()
-                        .GetDevice(newDevName);
-                    if (newDevice.Description != "заглушка")
+                    var device = Device.DeviceManager.GetInstance()
+                        .GetDeviceByEplanName(oldDevName);
+                    bool isValid = 
+                        device.Description != StaticHelper.CommonConst.Cap &&
+                        device.ObjectName == owner.NameEplan &&
+                        device.ObjectNumber == owner.TechNumber;
+                    if (isValid)
                     {
-                        property.SetNewValue(newDevName);
+                        string newDevName = newTechObjName + techNumber +
+                            device.DeviceType.ToString() + device.DeviceNumber;
+                        var newDevice = Device.DeviceManager.GetInstance().
+                            GetDeviceByEplanName(newDevName);
+                        if(newDevice.Description != 
+                            StaticHelper.CommonConst.Cap)
+                        {
+                            newDevNames.Add(newDevName);
+                        }
+                        else
+                        {
+                            newDevNames.Add(oldDevName);
+                        }
+                    }
+                    else
+                    {
+                        newDevNames.Add(oldDevName);
                     }
                 }
+                property.SetNewValue(string.Join(" ", newDevNames));
             }
         }
 
+        /// <summary>
+        /// Модификация номера объекта
+        /// </summary>
         public void ModifyDevNames()
         {
             int techNumber = owner.TechNumber;
@@ -152,20 +179,38 @@ namespace TechObject
             var properties = items.Select(x => x as BaseParameter).ToArray();
             foreach (var property in properties)
             {
-                string oldDevName = property.Value;
-                var device = Device.DeviceManager.GetInstance()
-                    .GetDevice(oldDevName);
-                if (device.Description != "заглушка")
+                string propertyValue = property.Value;
+                string[] oldDevices = propertyValue.Split(' ');
+                var newDevNames = new List<string>();
+                foreach (var oldDevName in oldDevices)
                 {
-                    string newDevName = eplanName + techNumber +
-                        device.DeviceType.ToString() + device.DeviceNumber;
-                    var newDevice = Device.DeviceManager.GetInstance()
-                        .GetDevice(newDevName);
-                    if (newDevice.Description != "заглушка")
+                    var device = Device.DeviceManager.GetInstance()
+                        .GetDeviceByEplanName(oldDevName);
+                    bool isValid = 
+                        device.Description != StaticHelper.CommonConst.Cap &&
+                        eplanName == device.ObjectName;
+                    if (isValid)
                     {
-                        property.SetNewValue(newDevName);
+                        string newDevName = eplanName + techNumber +
+                            device.DeviceType.ToString() + device.DeviceNumber;
+                        var newDevice = Device.DeviceManager.GetInstance().
+                            GetDeviceByEplanName(newDevName);
+                        if (newDevice.Description != 
+                            StaticHelper.CommonConst.Cap)
+                        {
+                            newDevNames.Add(newDevName);
+                        }
+                        else
+                        {
+                            newDevNames.Add(oldDevName);
+                        }
+                    }
+                    else
+                    {
+                        newDevNames.Add(oldDevName);
                     }
                 }
+                property.SetNewValue(string.Join(" ", newDevNames));
             }
         }
 
@@ -197,7 +242,7 @@ namespace TechObject
                     equipment.DefaultValue;
                 var device = Device.DeviceManager.GetInstance()
                     .GetDevice(deviceName);
-                if (device.Description != "заглушка")
+                if (device.Description != StaticHelper.CommonConst.Cap)
                 {
                     equipment.SetNewValue(deviceName);
                 }
@@ -216,34 +261,97 @@ namespace TechObject
         private string CheckEquipmentValues(BaseParameter equipment)
         {
             var errors = "";
+            string techObjectName = owner.DisplayText[0];
             string currentValue = equipment.Value;
+            string[] devices = currentValue.Split(' ');
+            if(devices.Length > 1)
+            {
+                errors += CheckMultiValue(devices, equipment, techObjectName);
+            }
+            else
+            {
+                errors += CheckSingleValue(currentValue, equipment, 
+                    techObjectName);
+            }
+
+            return errors;
+        }
+        
+        /// <summary>
+        /// Проверка множественных значений в оборудовании
+        /// </summary>
+        /// <param name="devices">Устройства</param>
+        /// <param name="equipment">Оборудование</param>
+        /// <param name="techObjectName">Имя объекта</param>
+        /// <returns></returns>
+        private string CheckMultiValue(string[] devices, 
+            BaseParameter equipment, string techObjectName)
+        {
+            string errors = "";
+            var unknownDevices = new List<string>();
+
+            foreach (var deviceStr in devices)
+            {
+                var device = Device.DeviceManager.GetInstance()
+                    .GetDeviceByEplanName(deviceStr);
+                if (device.Description == StaticHelper.CommonConst.Cap)
+                {
+                    unknownDevices.Add(deviceStr);
+                }           
+            }
+
+            if(unknownDevices.Count > 0)
+            {
+                errors = $"Проверьте оборудование: " +
+                    $"\"{equipment.Name}\" в объекте " +
+                    $"\"{techObjectName}\". " +
+                    $"Некорректные устройства: " +
+                    $"{string.Join(",", unknownDevices)}.\n";
+            }
+
+            return errors;
+        }
+
+        /// <summary>
+        /// Проверка одиночных значений в оборудовании
+        /// </summary>
+        /// <param name="currentValue">Текущее значение</param>
+        /// <param name="equipment">Оборудование</param>
+        /// <param name="techObjectName">Имя объекта</param>
+        /// <returns></returns>
+        private string CheckSingleValue(string currentValue, 
+            BaseParameter equipment, string techObjectName)
+        {
+            string errors = "";
+
             var device = Device.DeviceManager.GetInstance()
                     .GetDeviceByEplanName(currentValue);
             if (equipment.LuaName == "SET_VALUE")
             {
-               
-                bool isValid = (device.Description != "заглушка" ||
+                bool isValid = 
+                    (device.Description != StaticHelper.CommonConst.Cap ||
                     owner.GetParams().GetParam(currentValue) != null);
                 if (!isValid)
                 {
                     errors += $"Отсутствует задание для ПИД регулятора" +
-                        $" №{owner.GlobalNumber}\n";
+                        $" №{owner.GlobalNumber}.\n";
                 }
             }
             else
             {
-                bool isValid = device.Description != "заглушка" ||
+                bool isValid = 
+                    device.Description != StaticHelper.CommonConst.Cap ||
                     currentValue == "" ||
                     currentValue == equipment.DefaultValue;
                 if (!isValid)
                 {
-                    string techObjectName = owner.DisplayText[0];
-                    errors += $"Проверьте оборудование: \"{equipment.Name}\" " +
-                        $"в объекте \"{techObjectName}\". " +
-                        $"Не найдено устройство или " +
-                        $"задано более 1 устройства.\n";
+                    errors += $"Проверьте оборудование: " +
+                        $"\"{equipment.Name}\" в объекте " +
+                        $"\"{techObjectName}\". " +
+                        $"Некорректное устройство: {currentValue}.\n";
                 }
             }
+
             return errors;
         }
 
@@ -290,7 +398,7 @@ namespace TechObject
             {
                 property.SetNewValue((copyObject as ActiveParameter).Value);
                 ModifyDevNames(owner.NameEplan, owner.TechNumber);
-                return property as Editor.ITreeViewItem;
+                return property;
             }
             return null;
         }

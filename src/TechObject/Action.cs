@@ -171,7 +171,8 @@ namespace TechObject
             int devicesCounter = 0;
             foreach (int index in deviceIndex)
             {
-                if (deviceManager.GetDeviceByIndex(index).Name != "Заглушка")
+                if (deviceManager.GetDeviceByIndex(index).Name != 
+                    StaticHelper.CommonConst.Cap)
                 {
                     devicesCounter++;
                     res += "'" + deviceManager.GetDeviceByIndex(index).Name +
@@ -200,7 +201,7 @@ namespace TechObject
         {
             var device = Device.DeviceManager.GetInstance()
                 .GetDeviceByIndex(index);
-            if (device.Description != "Заглушка")
+            if (device.Description != StaticHelper.CommonConst.Cap)
             {
                 deviceIndex.Add(index);
             }

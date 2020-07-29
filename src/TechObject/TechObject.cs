@@ -539,12 +539,20 @@ namespace TechObject
             return null;
         }
 
+        /// <summary>
+        /// Модификация номера объекта
+        /// </summary>
+        /// <param name="oldNumber">Старый номер</param>
         public void ModifyDevNames(int oldNumber)
         {
             modes.ModifyDevNames(oldNumber);
             equipment.ModifyDevNames();
         }
 
+        /// <summary>
+        /// Модификация ОУ объекта.
+        /// </summary>
+        /// <param name="newTechObjectName">Новое имя объекта</param>
         public void ModifyDevNames(string newTechObjectName)
         {
             modes.ModifyDevNames(newTechObjectName, this.TechNumber);
