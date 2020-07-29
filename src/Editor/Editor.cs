@@ -381,6 +381,11 @@ namespace Editor
         /// False - скрывать
         /// </summary>
         bool IsFilled { get; }
+
+        /// <summary>
+        /// Отключено или нет свойство
+        /// </summary>
+        bool Disabled { get; set; }
     }
     
     /// <summary>
@@ -874,6 +879,11 @@ namespace Editor
                 return true;
             }
         }
+
+        /// <summary>
+        /// Отключено или нет свойство
+        /// </summary>
+        public bool Disabled { get; set; }
         #endregion
 
         /// <summary>
@@ -1200,6 +1210,11 @@ namespace Editor
                 return true;
             }
         }
+
+        /// <summary>
+        /// Отключено или нет свойство
+        /// </summary>
+        public bool Disabled { get; set; }
         #endregion
 
         /// <summary>
