@@ -122,28 +122,56 @@ namespace TechObject
             return res;
         }
 
+        /// <summary>
+        /// Модификация ОУ объекта
+        /// </summary>
+        /// <param name="newTechObjName">Новое ОУ</param>
+        /// <param name="techNumber">Номер объекта</param>
         public void ModifyDevNames(string newTechObjName, int techNumber)
         {
             var properties = items.Select(x => x as BaseParameter).ToArray();
             foreach (var property in properties)
             {
-                string oldDevName = property.Value;
-                var device = Device.DeviceManager.GetInstance()
-                    .GetDevice(oldDevName);
-                if (device.Description != "заглушка")
+                string propertyValue = property.Value;
+                string[] oldDevices = propertyValue.Split(' ');
+                var newDevNames = new List<string>();
+                foreach(var oldDevName in oldDevices)
                 {
-                    string newDevName = newTechObjName + techNumber + 
-                        device.DeviceType.ToString() + device.DeviceNumber;
-                    var newDevice = Device.DeviceManager.GetInstance()
-                        .GetDevice(newDevName);
-                    if (newDevice.Description != "заглушка")
+                    var device = Device.DeviceManager.GetInstance()
+                        .GetDeviceByEplanName(oldDevName);
+                    if(device.Description != "заглушка" &&
+                        device.ObjectName == owner.NameEplan &&
+                        device.ObjectNumber == owner.TechNumber)
                     {
-                        property.SetNewValue(newDevName);
+                        string newDevName = newTechObjName + techNumber +
+                            device.DeviceType.ToString() + device.DeviceNumber;
+                        var newDevice = Device.DeviceManager.GetInstance().
+                            GetDeviceByEplanName(newDevName);
+                        if(newDevice.Description != "заглушка")
+                        {
+                            newDevNames.Add(newDevName);
+                        }
+                        else
+                        {
+                            newDevNames.Add(oldDevName);
+                        }
                     }
+                    else
+                    {
+                        newDevNames.Add(oldDevName);
+                    }
+                }
+
+                if (newDevNames.Count > 0)
+                {
+                    property.SetNewValue(string.Join(" ", newDevNames));
                 }
             }
         }
 
+        /// <summary>
+        /// Модификация номера объекта
+        /// </summary>
         public void ModifyDevNames()
         {
             int techNumber = owner.TechNumber;
@@ -152,19 +180,38 @@ namespace TechObject
             var properties = items.Select(x => x as BaseParameter).ToArray();
             foreach (var property in properties)
             {
-                string oldDevName = property.Value;
-                var device = Device.DeviceManager.GetInstance()
-                    .GetDevice(oldDevName);
-                if (device.Description != "заглушка")
+                string propertyValue = property.Value;
+                string[] oldDevices = propertyValue.Split(' ');
+                var newDevNames = new List<string>();
+                foreach (var oldDevName in oldDevices)
                 {
-                    string newDevName = eplanName + techNumber +
-                        device.DeviceType.ToString() + device.DeviceNumber;
-                    var newDevice = Device.DeviceManager.GetInstance()
-                        .GetDevice(newDevName);
-                    if (newDevice.Description != "заглушка")
+                    var device = Device.DeviceManager.GetInstance()
+                        .GetDeviceByEplanName(oldDevName);
+                    if (device.Description != "заглушка" &&
+                        eplanName == device.ObjectName)
                     {
-                        property.SetNewValue(newDevName);
+                        string newDevName = eplanName + techNumber +
+                            device.DeviceType.ToString() + device.DeviceNumber;
+                        var newDevice = Device.DeviceManager.GetInstance().
+                            GetDeviceByEplanName(newDevName);
+                        if (newDevice.Description != "заглушка")
+                        {
+                            newDevNames.Add(newDevName);
+                        }
+                        else
+                        {
+                            newDevNames.Add(oldDevName);
+                        }
                     }
+                    else
+                    {
+                        newDevNames.Add(oldDevName);
+                    }
+                }
+
+                if(newDevNames.Count > 0)
+                {
+                    property.SetNewValue(string.Join(" ", newDevNames));
                 }
             }
         }
