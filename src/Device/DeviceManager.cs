@@ -299,7 +299,7 @@ namespace Device
                     case "SB":
                     case "WT":
                     case "PT":
-
+                    case "F":
                     case "Y":
                     case "DEV_VTUG": // Совместимость со старыми проектами
 
@@ -496,6 +496,10 @@ namespace Device
                         objectNumber, articleName);
                     break;
 
+                case "F":
+                    dev = new F(name, description, deviceNumber, objectName,
+                        objectNumber, articleName);
+                    break;
                 default:
                     break;
             }
