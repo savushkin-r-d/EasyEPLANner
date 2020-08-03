@@ -68,7 +68,13 @@ namespace Device
                             return new List<string>(new string[]
                             {
                                 "M",
-                                "V"
+                                "V",
+                                "ST",
+                                "ST_CH",
+                                "NOMINAL_CURRENT",
+                                "LOAD_CURRENT",
+                                "ERR",
+                                "ERR_CH",
                             });
                     }
                     break;
