@@ -124,7 +124,7 @@ namespace EasyEPlanner
         /// <param name="folderPath"></param>
         private static void SaveDevicesCount(string folderPath)
         {
-            const int maxDevicesCount = 500;
+            const int maxDevicesCount = 1000;
 
             folderPath += countOfDevicesFileName;
             int devicesCount = devicemanager.Devices.Count;
