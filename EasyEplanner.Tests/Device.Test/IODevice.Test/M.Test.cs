@@ -44,8 +44,9 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
-        public void GetDevicePropertiesTest(List<string> expectedProperties,
-            string subType, Device.IODevice device)
+        public void GetDevicePropertiesTest(
+            Dictionary<string, int> expectedProperties, string subType,
+            Device.IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -166,40 +167,40 @@ namespace Tests
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForM = new List<string>
+            var exportForM = new Dictionary<string, int>()
             {
-                "ST",
-                "M",
-                "P_ON_TIME",
+                {"ST", 1},
+                {"M", 1},
+                {"P_ON_TIME", 1},
             };
 
-            var exportForMFreq = new List<string>
+            var exportForMFreq = new Dictionary<string, int>()
             {
-                "ST",
-                "M",
-                "P_ON_TIME",
-                "V"
+                {"ST", 1},
+                {"M", 1},
+                {"P_ON_TIME", 1},
+                {"V", 1},
             };
 
-            var exportForMRev = new List<string>
+            var exportForMRev = new Dictionary<string, int>()
             {
-                "ST",
-                "M",
-                "P_ON_TIME",
-                "V",
-                "R"
+                {"ST", 1},
+                {"M", 1},
+                {"P_ON_TIME", 1},
+                {"V", 1},
+                {"R", 1},
             };
 
-            var exportForMATV = new List<string>
+            var exportForMATV = new Dictionary<string, int>()
             {
-                "M",
-                "ST",
-                "R",
-                "FRQ",
-                "RPM",
-                "EST",
-                "V",
-                "P_ON_TIME"
+                {"M", 1},
+                {"ST", 1},
+                {"R", 1},
+                {"FRQ", 1},
+                {"RPM", 1},
+                {"EST", 1},
+                {"V", 1},
+                {"P_ON_TIME", 1},
             };
 
             return new object[]

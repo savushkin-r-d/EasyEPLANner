@@ -44,8 +44,9 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
-        public void GetDevicePropertiesTest(List<string> expectedProperties,
-            string subType, Device.IODevice device)
+        public void GetDevicePropertiesTest(
+            Dictionary<string, int> expectedProperties, string subType,
+            Device.IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -153,65 +154,65 @@ namespace Tests
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForLT = new List<string>
+            var exportForLT = new Dictionary<string, int>()
             {
-                "M",
-                "P_CZ",
-                "V",
-                "P_ERR"
+                {"M", 1},
+                {"P_CZ", 1},
+                {"V", 1},
+                {"P_ERR", 1},
             };
 
-            var exportForLTIOLink = new List<string>
+            var exportForLTIOLink = new Dictionary<string, int>()
             {
-                "M",
-                "P_CZ",
-                "V",
-                "P_H_CONE",
-                "P_MAX_P",
-                "P_R",
-                "CLEVEL",
-                "P_ERR"
+                {"M", 1},
+                {"P_CZ", 1},
+                {"V", 1},
+                {"P_H_CONE", 1},
+                {"P_MAX_P", 1},
+                {"P_R", 1},
+                {"CLEVEL", 1},
+                {"P_ERR", 1},
             };
 
-            var exportForLTCyl = new List<string>
+            var exportForLTCyl = new Dictionary<string, int>()
             {
-                "M",
-                "P_CZ",
-                "V",
-                "P_MAX_P",
-                "P_R",
-                "CLEVEL",
-                "P_ERR"
+                {"M", 1},
+                {"P_CZ", 1},
+                {"V", 1},
+                {"P_MAX_P", 1},
+                {"P_R", 1},
+                {"CLEVEL", 1},
+                {"P_ERR", 1},
             };
 
-            var exportForLTCone = new List<string>
+            var exportForLTCone = new Dictionary<string, int>()
             {
-                "M",
-                "P_CZ",
-                "V",
-                "P_MAX_P",
-                "P_R",
-                "P_H_CONE",
-                "CLEVEL",
-                "P_ERR"
+                {"M", 1},
+                {"P_CZ", 1},
+                {"V", 1},
+                {"P_MAX_P", 1},
+                {"P_R", 1},
+                {"P_H_CONE", 1},
+                {"CLEVEL", 1},
+                {"P_ERR", 1},
             };
 
-            var exportForLTTrunc = new List<string>
+            var exportForLTTrunc = new Dictionary<string, int>()
             {
-                "M",
-                "P_CZ",
-                "V",
-                "P_MAX_P",
-                "P_R",
-                "P_H_TRUNC",
-                "CLEVEL",
-                "P_ERR"
+                {"M", 1},
+                {"P_CZ", 1},
+                {"V", 1},
+                {"P_MAX_P", 1},
+                {"P_R", 1},
+                {"P_H_TRUNC", 1},
+                {"CLEVEL", 1},
+                {"P_ERR", 1},
             };
 
-            var exportForLTVirt = new List<string>
+            var exportForLTVirt = new Dictionary<string, int>()
             {
-                "M",
-                "V",
+                {"M", 1},
+                {"V", 1},
             };
 
             return new object[]

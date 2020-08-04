@@ -44,8 +44,9 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
-        public void GetDevicePropertiesTest(List<string> expectedProperties,
-            string subType, Device.IODevice device)
+        public void GetDevicePropertiesTest(
+            Dictionary<string, int> expectedProperties, string subType,
+            Device.IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -194,42 +195,42 @@ namespace Tests
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForV = new List<string>
+            var exportForV = new Dictionary<string, int>()
             {
-                "ST",
-                "M"
+                {"ST", 1},
+                {"M", 1},
             };
 
 
-            var exportForVFBOff = new List<string>
+            var exportForVFBOff = new Dictionary<string, int>()
             {
-                "ST",
-                "M",
-                "P_ON_TIME",
-                "P_FB",
-                "FB_OFF_ST"
+                {"ST", 1},
+                {"M", 1},
+                {"P_ON_TIME", 1},
+                {"P_FB", 1},
+                {"FB_OFF_ST", 1},
             };
 
-            var exportForVFBOn = new List<string>
+            var exportForVFBOn = new Dictionary<string, int>()
             {
-                "ST",
-                "M",
-                "P_ON_TIME",
-                "P_FB",
-                "FB_OFF_ST",
-                "FB_ON_ST"
+                {"ST", 1},
+                {"M", 1},
+                {"P_ON_TIME", 1},
+                {"P_FB", 1},
+                {"FB_OFF_ST", 1},
+                {"FB_ON_ST", 1},
             };
 
-            var exportForVIOLinkMixproof = new List<string>
+            var exportForVIOLinkMixproof = new Dictionary<string, int>()
             {
-                "ST",
-                "M",
-                "P_ON_TIME",
-                "P_FB",
-                "V",
-                "BLINK",
-                "CS",
-                "ERR",
+                {"ST", 1},
+                {"M", 1},
+                {"P_ON_TIME", 1},
+                {"P_FB", 1},
+                {"V", 1},
+                {"BLINK", 1},
+                {"CS", 1},
+                {"ERR", 1},
             };
 
             return new object[]
