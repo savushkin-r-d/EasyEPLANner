@@ -46,11 +46,7 @@ namespace EasyEPlanner
             int currentValue = ValueAsPercentage(loc, maxLOCCount);
             string result = string.Format(svgFilePattern, percents, 
                 currentValue, strForWriting);
-
-            var locWriter = new StreamWriter(folderPath, false, Encoding.UTF8);
-            locWriter.WriteLine(result);
-            locWriter.Flush();
-            locWriter.Close();
+            WriteFile(result, folderPath);
         }
 
         /// <summary>
@@ -67,11 +63,7 @@ namespace EasyEPlanner
             int currentValue = ValueAsPercentage(tagsCount, maxTagsCount);
             string result = string.Format(svgFilePattern, percents, 
                 currentValue, strForWriting);
-
-            var tagsWriter = new StreamWriter(folderPath, false, Encoding.UTF8);
-            tagsWriter.WriteLine(result);
-            tagsWriter.Flush();
-            tagsWriter.Close();
+            WriteFile(result, folderPath);
         }
 
         /// <summary>
@@ -88,12 +80,7 @@ namespace EasyEPlanner
             int currentValue = ValueAsPercentage(unitsCount, maxUnitsCount);
             string result = string.Format(svgFilePattern, percents, 
                 currentValue, strForWriting);
-
-            var unitsWriter = new StreamWriter(folderPath, false, 
-                Encoding.UTF8);
-            unitsWriter.WriteLine(result);
-            unitsWriter.Flush();
-            unitsWriter.Close();
+            WriteFile(result, folderPath);
         }
 
         /// <summary>
@@ -110,12 +97,7 @@ namespace EasyEPlanner
             int currentValue = ValueAsPercentage(equipCount, maxEquipCount);
             string result = string.Format(svgFilePattern, percents, 
                 currentValue, strForWriting);
-
-            var equipmentWriter = new StreamWriter(folderPath, false, 
-                Encoding.UTF8);
-            equipmentWriter.WriteLine(result);
-            equipmentWriter.Flush();
-            equipmentWriter.Close();
+            WriteFile(result, folderPath);
         }
 
         /// <summary>
@@ -132,12 +114,7 @@ namespace EasyEPlanner
             int currentValue = ValueAsPercentage(devicesCount, maxDevicesCount);
             string result = string.Format(svgFilePattern, percents,
                 currentValue, strForWriting);
-
-            var equipmentWriter = new StreamWriter(folderPath, false,
-                Encoding.UTF8);
-            equipmentWriter.WriteLine(result);
-            equipmentWriter.Flush();
-            equipmentWriter.Close();
+            WriteFile(result, folderPath);
         }
 
         /// <summary>
@@ -149,9 +126,22 @@ namespace EasyEPlanner
         private static int ValueAsPercentage(int currentValue, int maxValue)
         {
             int result;
-            const int maxPercent = 100;
-            result = (currentValue * maxPercent) / maxValue;
+            result = (currentValue * percents) / maxValue;
             return result;
+        }
+
+        /// <summary>
+        /// Запись файла со статистикой.
+        /// </summary>
+        /// <param name="text">Текст для записи</param>
+        /// <param name="folderPath">Путь для записи</param>
+        private static void WriteFile(string text, string folderPath)
+        {
+            var equipmentWriter = new StreamWriter(folderPath, false,
+                Encoding.UTF8);
+            equipmentWriter.WriteLine(text);
+            equipmentWriter.Flush();
+            equipmentWriter.Close();
         }
 
         static string svgFilePattern;
