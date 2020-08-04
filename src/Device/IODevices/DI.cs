@@ -61,8 +61,8 @@ namespace Device
             return "";
         }
 
-        public override List<string> GetDeviceProperties(DeviceType dt,
-            DeviceSubType dst)
+        public override Dictionary<string, int> GetDeviceProperties(
+            DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
             {
@@ -70,19 +70,19 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.DI:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M",
-                                "P_DT"
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                                {"P_DT", 1},
+                            };
 
                         case DeviceSubType.DI_VIRT:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M"
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                            };
                     }
                     break;
             }

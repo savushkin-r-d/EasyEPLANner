@@ -130,8 +130,8 @@ namespace Device
             return "";
         }
 
-        public override List<string> GetDeviceProperties(DeviceType dt,
-            DeviceSubType dst)
+        public override Dictionary<string, int> GetDeviceProperties(
+            DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
             {
@@ -141,21 +141,21 @@ namespace Device
                         case DeviceSubType.LS_MIN:
                         case DeviceSubType.LS_MAX:
                         case DeviceSubType.LS_VIRT:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M",
-                                "P_DT"
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                                {"P_DT", 1},
+                            };
 
                         case DeviceSubType.LS_IOLINK_MIN:
                         case DeviceSubType.LS_IOLINK_MAX:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M",
-                                "V"
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                                {"V", 1},
+                            };
                     }
                     break;
             }

@@ -125,8 +125,8 @@ namespace Device
             return "";
         }
 
-        public override List<string> GetDeviceProperties(DeviceType dt,
-            DeviceSubType dst)
+        public override Dictionary<string, int> GetDeviceProperties(
+            DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
             {
@@ -134,56 +134,56 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.FQT:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M",
-                                "V",
-                                "ABS_V"
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                                {"V", 1},
+                                {"ABS_V", 1},
+                            };
 
                         case DeviceSubType.FQT_F:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M",
-                                "V",
-                                "P_MIN_FLOW",
-                                "P_MAX_FLOW",
-                                "P_CZ",
-                                "F",
-                                "P_DT",
-                                "ABS_V"
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                                {"V", 1},
+                                {"P_MIN_FLOW", 1},
+                                {"P_MAX_FLOW", 1},
+                                {"P_CZ", 1},
+                                {"F", 1},
+                                {"P_DT", 1},
+                                {"ABS_V", 1},
+                            };
 
                         case DeviceSubType.FQT_F_OK:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M",
-                                "V",
-                                "P_MIN_FLOW",
-                                "P_MAX_FLOW",
-                                "P_CZ",
-                                "F",
-                                "P_DT",
-                                "ABS_V",
-                                "OK"
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                                {"V", 1},
+                                {"P_MIN_FLOW", 1},
+                                {"P_MAX_FLOW", 1},
+                                {"P_CZ", 1},
+                                {"F", 1},
+                                {"P_DT", 1},
+                                {"ABS_V", 1},
+                                {"OK", 1},
+                            };
 
                         case DeviceSubType.FQT_VIRT:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M",
-                                "V",
-                                "P_MIN_FLOW",
-                                "P_MAX_FLOW",
-                                "P_CZ",
-                                "F",
-                                "P_DT",
-                                "ABS_V",
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                                {"V", 1},
+                                {"P_MIN_FLOW", 1},
+                                {"P_MAX_FLOW", 1},
+                                {"P_CZ", 1},
+                                {"F", 1},
+                                {"P_DT", 1},
+                                {"ABS_V", 1},
+                            };
                     }
                     break;
             }

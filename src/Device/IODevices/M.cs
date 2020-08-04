@@ -136,8 +136,8 @@ namespace Device
             return "";
         }
 
-        public override List<string> GetDeviceProperties(DeviceType dt,
-            DeviceSubType dst)
+        public override Dictionary<string, int> GetDeviceProperties(
+            DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
             {
@@ -145,48 +145,48 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.M:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M",
-                                "P_ON_TIME",
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                                {"P_ON_TIME", 1},
+                            };
 
                         case DeviceSubType.M_FREQ:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M",
-                                "P_ON_TIME",
-                                "V"
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                                {"P_ON_TIME", 1},
+                                {"V", 1},
+                            };
 
                         case DeviceSubType.M_REV:
                         case DeviceSubType.M_REV_FREQ:
                         case DeviceSubType.M_REV_2:
                         case DeviceSubType.M_REV_FREQ_2:
                         case DeviceSubType.M_REV_2_ERROR:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M",
-                                "P_ON_TIME",
-                                "V",
-                                "R"
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                                {"P_ON_TIME", 1},
+                                {"V", 1},
+                                {"R", 1},
+                            };
 
                         case DeviceSubType.M_ATV:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "M",
-                                "ST",
-                                "R",
-                                "FRQ",
-                                "RPM",
-                                "EST",
-                                "V",
-                                "P_ON_TIME"
-                            });
+                                {"M", 1},
+                                {"ST", 1},
+                                {"R", 1},
+                                {"FRQ", 1},
+                                {"RPM", 1},
+                                {"EST", 1},
+                                {"V", 1},
+                                {"P_ON_TIME", 1},
+                            };
                     }
                     break;
             }

@@ -56,8 +56,8 @@ namespace Device
             return "";
         }
 
-        public override List<string> GetDeviceProperties(DeviceType dt,
-            DeviceSubType dst)
+        public override Dictionary<string, int> GetDeviceProperties(
+            DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
             {
@@ -65,29 +65,17 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.F:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "M",
-                                "V",
-                                "ST",
-                                "ERR",
-                                "ST_CH[1]",
-                                "ST_CH[2]",
-                                "ST_CH[3]",
-                                "ST_CH[4]",
-                                "NOMINAL_CURRENT[1]",
-                                "NOMINAL_CURRENT[2]",
-                                "NOMINAL_CURRENT[3]",
-                                "NOMINAL_CURRENT[4]",
-                                "LOAD_CURRENT[1]",
-                                "LOAD_CURRENT[2]",
-                                "LOAD_CURRENT[3]",
-                                "LOAD_CURRENT[4]",
-                                "ERR_CH[1]",
-                                "ERR_CH[2]",
-                                "ERR_CH[3]",
-                                "ERR_CH[4]",
-                            });
+                                {"M", 1},
+                                {"V", 1},
+                                {"ST", 1},
+                                {"ERR", 1},
+                                {"ST_CH", 4},
+                                {"NOMINAL_CURRENT", 4},
+                                {"LOAD_CURRENT", 4},
+                                {"ERR_CH", 4},
+                            };
                     }
                     break;
             }
