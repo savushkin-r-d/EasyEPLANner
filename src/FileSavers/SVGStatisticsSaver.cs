@@ -23,6 +23,7 @@ namespace EasyEPlanner
             SaveTagsCount(pathToFiles);
             SaveUnintsCount(pathToFiles);
             SaveEquipmentModulesCount(pathToFiles);
+            SaveDevicesCount(pathToFiles);
         }
 
         /// <summary>
@@ -41,15 +42,10 @@ namespace EasyEPlanner
             string[] readedFile = File.ReadAllLines(locFilePath, 
                 Encoding.GetEncoding(1251));
             int loc = readedFile.Length;
-            string strForWriting = $"{loc.ToString()} строк кода";
-            int currentValue = ValueAsPercentage(loc, maxLOCCount);
-            string result = string.Format(svgFilePattern, percents, 
-                currentValue, strForWriting);
-
-            var locWriter = new StreamWriter(folderPath, false, Encoding.UTF8);
-            locWriter.WriteLine(result);
-            locWriter.Flush();
-            locWriter.Close();
+            string displayingText = $"{loc} строк кода";
+            string result = MakeStringForWriting(loc, maxLOCCount,
+                displayingText);
+            WriteFile(result, folderPath);
         }
 
         /// <summary>
@@ -62,15 +58,10 @@ namespace EasyEPlanner
 
             folderPath += countOfTagsFileName;
             int tagsCount = XMLReporter.GetTagsCount();
-            string strForWriting = $"{tagsCount.ToString()} тэг(ов)";
-            int currentValue = ValueAsPercentage(tagsCount, maxTagsCount);
-            string result = string.Format(svgFilePattern, percents, 
-                currentValue, strForWriting);
-
-            var tagsWriter = new StreamWriter(folderPath, false, Encoding.UTF8);
-            tagsWriter.WriteLine(result);
-            tagsWriter.Flush();
-            tagsWriter.Close();
+            string displayingText = $"{tagsCount} тэг(ов)";
+            string result = MakeStringForWriting(tagsCount, maxTagsCount,
+                displayingText);
+            WriteFile(result, folderPath);
         }
 
         /// <summary>
@@ -83,16 +74,10 @@ namespace EasyEPlanner
 
             folderPath += countOfUnitsFileName;
             int unitsCount = techObjectManager.UnitsCount;
-            string strForWriting = $"{unitsCount.ToString()} аппарат(ов)";
-            int currentValue = ValueAsPercentage(unitsCount, maxUnitsCount);
-            string result = string.Format(svgFilePattern, percents, 
-                currentValue, strForWriting);
-
-            var unitsWriter = new StreamWriter(folderPath, false, 
-                Encoding.UTF8);
-            unitsWriter.WriteLine(result);
-            unitsWriter.Flush();
-            unitsWriter.Close();
+            string displayingText = $"{unitsCount} аппарат(ов)";
+            string result = MakeStringForWriting(unitsCount, maxUnitsCount,
+                displayingText);
+            WriteFile(result, folderPath);
         }
 
         /// <summary>
@@ -103,18 +88,45 @@ namespace EasyEPlanner
         {
             const int maxEquipCount = 50;
 
-            folderPath += counstOfEquipmentModulesFileName;
+            folderPath += countOfEquipmentModulesFileName;
             int equipCount = techObjectManager.EquipmentModulesCount;
-            string strForWriting = $"{equipCount.ToString()} агрегат(ов)";
-            int currentValue = ValueAsPercentage(equipCount, maxEquipCount);
-            string result = string.Format(svgFilePattern, percents, 
-                currentValue, strForWriting);
+            string displayingText = $"{equipCount} агрегат(ов)";
+            string result = MakeStringForWriting(equipCount, maxEquipCount,
+                displayingText);
+            WriteFile(result, folderPath);
+        }
 
-            var equipmentWriter = new StreamWriter(folderPath, false, 
-                Encoding.UTF8);
-            equipmentWriter.WriteLine(result);
-            equipmentWriter.Flush();
-            equipmentWriter.Close();
+        /// <summary>
+        /// Сохранить количество устройств в SVG.
+        /// </summary>
+        /// <param name="folderPath"></param>
+        private static void SaveDevicesCount(string folderPath)
+        {
+            const int maxDevicesCount = 1000;
+
+            folderPath += countOfDevicesFileName;
+            int devicesCount = devicemanager.Devices.Count;
+            string displayingText = $"{devicesCount} устройств";
+            string result = MakeStringForWriting(devicesCount, maxDevicesCount,
+                displayingText);
+            WriteFile(result, folderPath);
+        }
+
+        /// <summary>
+        /// Сделать текст для записи в файл
+        /// </summary>
+        /// <param name="itemsCount">Количество элементов</param>
+        /// <param name="maxItemsCount">Максимальное количество элементов
+        /// </param>
+        /// <param name="displayingText">Отображаемый текст</param>
+        /// <returns></returns>
+        private static string MakeStringForWriting(int itemsCount, 
+            int maxItemsCount, string displayingText)
+        {
+            int currentValue = ValueAsPercentage(itemsCount, maxItemsCount);
+            string result = string.Format(svgFilePattern, percents,
+                currentValue, displayingText);
+            return result;
         }
 
         /// <summary>
@@ -125,10 +137,23 @@ namespace EasyEPlanner
         /// <returns></returns>
         private static int ValueAsPercentage(int currentValue, int maxValue)
         {
-            int result = 0;
-            const int maxPercent = 100;
-            result = (currentValue * maxPercent) / maxValue;
+            int result;
+            result = (currentValue * percents) / maxValue;
             return result;
+        }
+
+        /// <summary>
+        /// Запись файла со статистикой.
+        /// </summary>
+        /// <param name="text">Текст для записи</param>
+        /// <param name="folderPath">Путь для записи</param>
+        private static void WriteFile(string text, string folderPath)
+        {
+            var equipmentWriter = new StreamWriter(folderPath, false,
+                Encoding.UTF8);
+            equipmentWriter.WriteLine(text);
+            equipmentWriter.Flush();
+            equipmentWriter.Close();
         }
 
         static string svgFilePattern;
@@ -136,11 +161,17 @@ namespace EasyEPlanner
         static string linesOfCodeMainProgramFileName = "lines_total.svg";
         static string countOfTagsFileName = "tags_total.svg";
         static string countOfUnitsFileName = "units_total.svg";
-        static string counstOfEquipmentModulesFileName = "agregates_total.svg";
+        static string countOfEquipmentModulesFileName = "agregates_total.svg";
+        static string countOfDevicesFileName = "devices_total.svg";
 
-        const int percents = 100; // 100% длина линии SVG. 
+        /// <summary>
+        /// 100% длина линии SVG. 
+        /// </summary>
+        const int percents = 100;
 
         static TechObjectManager techObjectManager = TechObjectManager
+            .GetInstance();
+        static Device.DeviceManager devicemanager = Device.DeviceManager
             .GetInstance();
     }
 }
