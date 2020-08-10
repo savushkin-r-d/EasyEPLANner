@@ -294,6 +294,22 @@ namespace NewEditor
                 return indexWithoutPicture;
             }
         }
+
+        public virtual bool ContainsBaseObject
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public virtual List<string> BaseObjectsList
+        {
+            get
+            {
+                return new List<string>();
+            }
+        }
         #endregion
 
         #region реализация IHelperItem

@@ -2,19 +2,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NewEditor;
 
-namespace TechObject
+namespace NewTechObject
 {
     /// <summary>
     /// Технологический объект проекта (танк, гребенка).
     /// </summary>
-    public class TechObject : Editor.TreeViewItem
+    public class TechObject : TreeViewItem
     {
         /// <summary>
         /// Класс для обозначения устройства (ОУ) в Eplan'е. При изменении
         /// также меняются названия устройств, участвующих в операциях объекта.
         /// </summary>
-        public class NameInEplan : Editor.ObjectProperty
+        public class NameInEplan : ObjectProperty
         {
             /// <param name="nameEplan">Обозначение устройства.</param>
             /// <param name="owner">Технологический объект-родитель.</param>
@@ -46,7 +47,7 @@ namespace TechObject
             private TechObject owner;
         }
 
-        private class TechObjectN : Editor.ObjectProperty
+        private class TechObjectN : ObjectProperty
         {
             public TechObjectN(TechObject techObject, int value)
                 : base("Номер", techObject.TechNumber.ToString())
@@ -78,7 +79,7 @@ namespace TechObject
         }
 
         // Класс иерархического уровня устройства
-        public class ObjS88Level : Editor.ObjectProperty
+        public class ObjS88Level : ObjectProperty
         {
             public ObjS88Level(int s88Level, TechObject owner) : 
                 base("S88Level", s88Level.ToString())
@@ -107,7 +108,7 @@ namespace TechObject
         }
 
         // Класс привязанных агрегатов к аппарату
-        public class AttachedToObjects : Editor.ObjectProperty
+        public class AttachedToObjects : ObjectProperty
         {
             public AttachedToObjects(string attachedObjects, TechObject owner)
                 : base("Привязанные агрегаты", attachedObjects)
@@ -424,11 +425,11 @@ namespace TechObject
             this.getN = getN;
 
             this.techNumber = new TechObjectN(this, technologicalNumber);
-            this.techType = new Editor.ObjectProperty("Тип", techType);
-            this.nameBC = new Editor.ObjectProperty("Имя объекта Monitor", 
+            this.techType = new ObjectProperty("Тип", techType);
+            this.nameBC = new ObjectProperty("Имя объекта Monitor", 
                 NameBC);
             this.nameEplan = new NameInEplan(nameEplan, this);
-            this.cooperParamNumber = new Editor.ObjectProperty(
+            this.cooperParamNumber = new ObjectProperty(
                 "Время совместного перехода шагов (параметр)", 
                 cooperParamNumber);
 
@@ -454,9 +455,8 @@ namespace TechObject
             TechObject clone = (TechObject)MemberwiseClone();
 
             clone.techNumber = new TechObjectN(clone, newNumber);
-            clone.techType = new Editor.ObjectProperty("Тип", TechType);
-            clone.nameBC = new Editor.ObjectProperty("Имя объекта Monitor",
-                NameBC);
+            clone.techType = new ObjectProperty("Тип", TechType);
+            clone.nameBC = new ObjectProperty("Имя объекта Monitor", NameBC);
             clone.nameEplan = new NameInEplan(NameEplan, clone);
             clone.s88Level = new ObjS88Level(S88Level, clone);
             clone.attachedObjects = new AttachedToObjects(AttachedObjects.Value, 
@@ -482,7 +482,7 @@ namespace TechObject
 
         private void SetItems()
         {
-            items = new Editor.ITreeViewItem[9];
+            items = new ITreeViewItem[9];
             items[0] = this.techNumber;
             items[1] = this.techType;
             items[2] = this.nameEplan;
@@ -507,7 +507,7 @@ namespace TechObject
             if (operExtraParams.Keys.Count > 0)
             {
                 var extraParams = StaticHelper.LuaHelper
-                    .OEditorConvertLuaTableToCArray(operExtraParams);
+                    .NEditorConvertLuaTableToCArray(operExtraParams);
                 return modes.AddMode(modeName, baseOperationName, extraParams);
             }
             else
@@ -539,20 +539,12 @@ namespace TechObject
             return null;
         }
 
-        /// <summary>
-        /// Модификация номера объекта
-        /// </summary>
-        /// <param name="oldNumber">Старый номер</param>
         public void ModifyDevNames(int oldNumber)
         {
             modes.ModifyDevNames(oldNumber);
             equipment.ModifyDevNames();
         }
 
-        /// <summary>
-        /// Модификация ОУ объекта.
-        /// </summary>
-        /// <param name="newTechObjectName">Новое имя объекта</param>
         public void ModifyDevNames(string newTechObjectName)
         {
             modes.ModifyDevNames(newTechObjectName, this.TechNumber);
@@ -753,7 +745,7 @@ namespace TechObject
         /// Номер параметра со временем совместного включения операций 
         /// для шагов.
         /// </summary>
-        private Editor.ObjectProperty cooperParamNumber;
+        private ObjectProperty cooperParamNumber;
 
         public string Name
         {
@@ -833,7 +825,7 @@ namespace TechObject
             }
         }
 
-        override public Editor.ITreeViewItem[] Items
+        override public ITreeViewItem[] Items
         {
             get
             {
@@ -969,7 +961,7 @@ namespace TechObject
             return this;
         }
 
-        override public Editor.ITreeViewItem Replace(object child,
+        override public ITreeViewItem Replace(object child,
             object copyObject)
         {
             if (child is Params)
@@ -1006,18 +998,9 @@ namespace TechObject
                     }
                 }
                 equipment.ModifyDevNames(this.NameEplan, this.TechNumber);
-                return child as Editor.ITreeViewItem;
+                return child as ITreeViewItem;
             }
             return null;
-        }
-
-        override public List<string> BaseObjectsList
-        {
-            get
-            {
-                return BaseTechObjectManager.GetInstance().GetBaseTechObjects()
-                .Select(x => x.Name).ToList();
-            }
         }
 
         public override bool ContainsBaseObject
@@ -1061,14 +1044,14 @@ namespace TechObject
         }
 
         private TechObjectN techNumber; /// Номер объекта технологический.
-        private Editor.ObjectProperty techType; /// Тип объекта технологический.
+        private ObjectProperty techType; /// Тип объекта технологический.
 
         private string name; /// Имя объекта.
-        private Editor.ObjectProperty nameBC; /// Имя объекта в Monitor.
+        private ObjectProperty nameBC; /// Имя объекта в Monitor.
         private ModesManager modes; /// Операции объекта.
         private Params parameters; /// Параметры объекта.
 
-        private Editor.ITreeViewItem[] items; /// Параметры объекта для редактирования.
+        private ITreeViewItem[] items; /// Параметры объекта для редактирования.
 
         private GetN getN;
 

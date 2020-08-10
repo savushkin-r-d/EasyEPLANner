@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace NewTechObject
 {
     /// <summary>
-    /// Интерфейс класса TechObjectManager
+    /// Объект мастера проектов.
     /// </summary>
-    interface ITechObjectManager
+    public class Master : NewEditor.TreeViewItem
     {
-        string ProjectName { get; set; }
+
     }
 }

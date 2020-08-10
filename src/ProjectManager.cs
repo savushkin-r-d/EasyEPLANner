@@ -229,6 +229,8 @@ namespace EasyEPlanner
                         projectName, "\\main.restrictions.lua");
                     techObjectManager.LoadRestriction(LuaStr);
                     oProgress.EndPart();
+
+                    newTechObjectManager.ProjectName = projectName;
                 }
 
                 oProgress.BeginPart(15, "Проверка данных");

@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using EasyEPlanner;
 
-namespace TechObject
+namespace NewTechObject
 {
     /// <summary>
     /// Менеджер базовых технологических объектов

@@ -150,7 +150,7 @@ return
         },
         master = {
             name = "Мастер",
-            s88Level = 1,
+            s88Level = 0,
             baseOperations = { },
             basicName = "master",
             equipment = { },

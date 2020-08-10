@@ -285,5 +285,15 @@ namespace NewEditor
         /// Индекс картинки из формы, для вставки в элемент.
         /// </summary>
         int ImageIndex { get; }
+
+        /// <summary>
+        /// Содержит ли объект базовый объект/операцию/шаг
+        /// </summary>
+        bool ContainsBaseObject { get; }
+
+        /// <summary>
+        /// Список базовых объектов/операций/шагов объекта.
+        /// </summary>
+        List<string> BaseObjectsList { get; }
     }
 }

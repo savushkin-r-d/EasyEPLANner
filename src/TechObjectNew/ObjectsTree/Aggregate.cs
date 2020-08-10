@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace NewTechObject
 {
     /// <summary>
-    /// Интерфейс класса TechObjectManager
+    /// Объект агрегатов проекта.
     /// </summary>
-    interface ITechObjectManager
+    public class Aggregate : NewEditor.TreeViewItem
     {
-        string ProjectName { get; set; }
+
     }
 }

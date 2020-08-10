@@ -1363,9 +1363,9 @@ namespace NewEditor
             if (item == null || 
                 !item.IsEditable || 
                 item.EditablePart[e.Column.Index] != e.Column.Index ||
-                (e.Column.Index == 1 /*&& 
+                (e.Column.Index == 1 && 
                 item.ContainsBaseObject && 
-                item.BaseObjectsList.Count == 0*/))
+                item.BaseObjectsList.Count == 0))
             {
                 IsCellEditing = false;
                 e.Cancel = true;
@@ -1374,9 +1374,9 @@ namespace NewEditor
 
             // Проверяем колонку, и какой объект редактируется и вызываем
             // соответствующий редактор для ячейки.
-            if (e.Column.Index == 1 /*&& item.ContainsBaseObject*/)
+            if (e.Column.Index == 1 && item.ContainsBaseObject)
             {
-                //InitComboBoxCellEditor(item.BaseObjectsList);
+                InitComboBoxCellEditor(item.BaseObjectsList);
                 comboBoxCellEditor.Text = e.Value.ToString();
                 comboBoxCellEditor.Bounds = e.CellBounds;
                 e.Control = comboBoxCellEditor;
@@ -1459,7 +1459,7 @@ namespace NewEditor
             }
 
             // Если редактируются базовые операции/объекты/шаги
-            if (e.Column.Index == 1/* && selectedItem.ContainsBaseObject*/)
+            if (e.Column.Index == 1 && selectedItem.ContainsBaseObject)
             {       
                 e.NewValue = comboBoxCellEditor.Text;
                 editorTView.Controls.Remove(comboBoxCellEditor);
