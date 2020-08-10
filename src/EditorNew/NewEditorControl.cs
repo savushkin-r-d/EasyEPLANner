@@ -197,7 +197,7 @@ namespace NewEditor
             editorTView.BeginUpdate();
             treeViewItemsList = new List<ITreeViewItem>();
             treeViewItemsList.Add(data);
-            data.AddParent(null);
+            //data.AddParent(null);
             editorTView.Roots = treeViewItemsList;
             editorTView.Columns[0]
                 .AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -529,8 +529,7 @@ namespace NewEditor
 
         public void ShowDlg()
         {
-            System.Diagnostics.Process oCurrent =
-                System.Diagnostics.Process.GetCurrentProcess();
+            Process oCurrent = Process.GetCurrentProcess();
 
             // Идентификатор команды вызова окна "Навигатор комментариев"
             const int wndWmCommand = 35381; 
@@ -764,7 +763,6 @@ namespace NewEditor
                 ProjectManager.GetInstance().RemoveHighLighting();
                 if (item != null && item.IsDrawOnEplanPage)
                 {
-                    //TODO: Починить метод.
                     //ProjectManager.GetInstance().SetHighLighting(
                     //    item.GetObjectToDrawOnEplanPage());
                 }
@@ -1113,7 +1111,6 @@ namespace NewEditor
                 {
                     if (item.IsDrawOnEplanPage)
                     {
-                        //TODO: Починить метод.
                         //ProjectManager.GetInstance().SetHighLighting(
                         //    item.GetObjectToDrawOnEplanPage());
                     }
@@ -1212,7 +1209,6 @@ namespace NewEditor
                     {
                         if (parentItem != null)
                         {
-                            //TODO: Починить метод.
                             //ModeFrm.GetInstance().ShowModes(
                             //    TechObject.TechObjectManager.GetInstance(), 
                             //    true, item.IsLocalRestrictionUse, parentItem, 
@@ -1563,7 +1559,6 @@ namespace NewEditor
                     else
                     {
                         ITreeViewItem parentItem = GetParentBranch(item);
-                        //TODO: Починить метод.
                         //ModeFrm.GetInstance().ShowModes(
                         //    TechObject.TechObjectManager.GetInstance(), true,
                         //    item.IsLocalRestrictionUse, parentItem,
@@ -1593,11 +1588,13 @@ namespace NewEditor
         /// <summary>
         /// Изменение ширины колонки и пересчет ширины другой колонки
         /// </summary>
-        private void editorTView_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
+        private void editorTView_ColumnWidthChanging(object sender, 
+            ColumnWidthChangingEventArgs e)
         {
             if (e.ColumnIndex == 0)
             {
-                editorTView.Columns[1].Width = editorTView.Width - deltaWidth - editorTView.Columns[0].Width;
+                editorTView.Columns[1].Width = editorTView.Width - 
+                    deltaWidth - editorTView.Columns[0].Width;
             }
         }
 

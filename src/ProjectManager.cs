@@ -617,6 +617,74 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Проверить Excel библиотеки надстройки.
+        /// </summary>
+        private void CheckExcelLibs()
+        {
+            const string spireLicense = "Spire.License.dll";
+            const string spireXLS = "Spire.XLS.dll";
+            const string spirePDF = "Spire.Pdf.dll";
+
+            string SpireLicensePath = Path.Combine(AssemblyPath, spireLicense);
+            string SpireXLSPath = Path.Combine(AssemblyPath, spireXLS);
+            string SpirePDFPath = Path.Combine(AssemblyPath, spirePDF);
+
+            if (File.Exists(SpireLicensePath) == false ||
+                File.Exists(SpireXLSPath) == false ||
+                File.Exists(SpirePDFPath) == false)
+            {
+                var files = new string[] { spireLicense, spireXLS, spirePDF };
+                CopySpireXLSFiles(AssemblyPath, files, OriginalAssemblyPath);
+            }
+        }
+
+        /// <summary>
+        /// Копировать файлы библиотек Spire XLS
+        /// </summary>
+        /// <param name="shadowAssemblySpireFilesDir">Путь к библиотекам
+        /// в теневом хранилище Eplan</param>
+        /// <param name="files">Имена файлов для копирования</param>
+        /// <param name="originalPath">Путь к надстройке из каталога
+        /// подключения надстройки</param>
+        private void CopySpireXLSFiles(string shadowAssemblySpireFilesDir,
+            string[] files, string originalPath)
+        {
+            var libsDir = new DirectoryInfo(originalPath);
+            foreach (FileInfo file in libsDir.GetFiles())
+            {
+                if (files.Contains(file.Name))
+                {
+                    string path = Path.Combine(shadowAssemblySpireFilesDir,
+                        file.Name);
+                    file.CopyTo(path, true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Копирует системные .lua файлы если они не загрузились
+        /// в теневое хранилище (Win 7 fix).
+        /// <param name="systemFilesPath">Путь к Lua файлам
+        /// в теневом хранилище Eplan</param>
+        /// <param name="originalSystemFilesPath">Путь к файлам Lua в месте 
+        /// подключения надстройки к программе</param>
+        /// </summary>
+        private void CopySystemFiles(string systemFilesPath,
+            string originalSystemFilesPath)
+        {
+            Directory.CreateDirectory(systemFilesPath);
+
+            var systemFilesDir = new DirectoryInfo(originalSystemFilesPath);
+            FileInfo[] systemFiles = systemFilesDir.GetFiles();
+            foreach (FileInfo systemFile in systemFiles)
+            {
+                string pathToFile = Path.Combine(systemFilesPath,
+                    systemFile.Name);
+                systemFile.CopyTo(pathToFile, true);
+            }
+        }
+
+        /// <summary>
         /// Путь к надстройке, к месту, из которого она подключалась к программе
         /// инженером.
         /// </summary>
@@ -684,7 +752,11 @@ namespace EasyEPlanner
             }
         }
 
-        private ProjectManager() { }
+        private ProjectManager() 
+        {
+            CheckExcelLibs();
+            CopySystemFiles(SystemFilesPath, OriginalSystemFilesPath);
+        }
 
         /// <summary>
         /// Редактор технологических объектов.
