@@ -51,6 +51,14 @@ namespace NewTechObject
                 return null;
             }
         }
+
+        public override bool IsInsertable
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         List<TechObject> objects;

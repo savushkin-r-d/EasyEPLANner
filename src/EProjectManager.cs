@@ -176,6 +176,7 @@ namespace EasyEPlanner
             }
 
             DFrm.GetInstance().CloseEditor();
+            NewEditor.NewEditor.GetInstance().CloseEditor();
         }
 
         private Project currentProject = null;

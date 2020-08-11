@@ -30,7 +30,14 @@ namespace NewTechObject
         {
             get
             {
-                return new string[] { $"Агрегат ({Items.Length})", "" };
+                if (Items.Length > 0)
+                {
+                    return new string[] { $"Агрегат ({Items.Length})", "" };
+                }
+                else
+                {
+                    return new string[] { $"Агрегат", "" };
+                }
             }
         }
 
