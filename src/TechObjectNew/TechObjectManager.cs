@@ -108,6 +108,14 @@ namespace NewTechObject
                 return objects.ToArray();
             }
         }
+
+        public override ImageIndexEnum ImageIndex
+        {
+            get
+            {
+                return ImageIndexEnum.TechObjectManager;
+            }
+        }
         #endregion
 
         public string ProjectName { get;set; }

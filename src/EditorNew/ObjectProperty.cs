@@ -7,109 +7,13 @@ namespace NewEditor
     /// </summary>
     public class ObjectProperty : ITreeViewItem, IHelperItem
     {
-        public virtual int ImageIndex
+        public virtual ImageIndexEnum ImageIndex
         {
             get
             {
-                int indexWithoutPicture = 100;
-                return indexWithoutPicture;
+                return ImageIndexEnum.NONE;
             }
         }
-
-        /// <summary>    
-        /// Получение индекса иконки объекта по названию. Картинки настраиваются
-        /// в графическом компоненте (номера)
-        /// </summary>
-        ///  <param name="obj">Объект.</param>
-        //static public int GetImageIndex(object obj)
-        //{
-        //    int res = 100;
-        //    switch (obj.GetType().Name)
-        //    {
-        //        case "TechObjectManager":
-        //            res = 0;
-        //            break;
-
-        //        case "TechObject":
-        //            res = 1;
-        //            break;
-
-        //        case "ModesManager":
-        //            res = 2;
-        //            break;
-
-        //        case "Mode":
-        //            res = 3;
-        //            break;
-
-        //        case "Step":
-        //            res = 4;
-        //            break;
-
-        //        case "Action":
-        //            var action = obj as TechObject.Action;
-        //            switch (action.stepName)
-        //            {
-        //                case "Включать":
-        //                    res = 5;
-        //                    break;
-
-        //                case "Выключать":
-        //                    res = 6;
-        //                    break;
-
-        //                case "Сигналы для включения":
-        //                    res = 7;
-        //                    break;
-
-        //                case "Мойка ( DI, DO, устройства)":
-        //                    res = 10;
-        //                    break;
-
-        //                default:
-        //                    break;
-        //            }
-        //            break;
-
-        //        case "Action_WashSeats":
-        //            var actionWash = obj as TechObject.Action_WashSeats;
-        //            switch (actionWash.stepName)
-        //            {
-        //                case "Верхние седла":
-        //                    res = 8;
-        //                    break;
-
-        //                case "Нижние седла":
-        //                    res = 9;
-        //                    break;
-
-        //                default:
-        //                    break;
-        //            }
-        //            break;
-
-        //        case "ActionWash":
-        //            res = 11;
-        //            break;
-
-        //        case "Action_DI_DO":
-        //            res = 10;
-        //            break;
-
-        //        case "Params":
-        //            res = 12;
-        //            break;
-
-        //        case "Equipment":
-        //            res = 13;
-        //            break;
-
-        //        default:
-        //            break;
-        //    }
-
-        //    return res;
-        //}
 
         /// <param name="name">Имя свойства.</param>
         /// <param name="value">Значение свойства.</param>

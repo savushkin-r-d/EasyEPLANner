@@ -524,6 +524,30 @@ namespace NewTechObject
                 }
             }
         }
+
+        public override ImageIndexEnum ImageIndex
+        {
+            get
+            {
+                switch(name)
+                {
+                    case "Включать":
+                        return ImageIndexEnum.ActionON;
+
+                    case "Выключать":
+                        return ImageIndexEnum.ActionOFF;
+
+                    case "Сигналы для включения":
+                        return ImageIndexEnum.ActionSignals;
+
+                    case "Мойка ( DI, DO, устройства)":
+                        return ImageIndexEnum.ActionWashDIDO;
+
+                    default:
+                        return ImageIndexEnum.NONE;
+                }
+            }
+        }
         #endregion
 
         public string stepName

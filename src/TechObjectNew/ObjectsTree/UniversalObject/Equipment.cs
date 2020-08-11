@@ -342,6 +342,14 @@ namespace NewTechObject
                 }
             }
         }
+
+        public override ImageIndexEnum ImageIndex
+        {
+            get
+            {
+                return ImageIndexEnum.Equipment;
+            }
+        }
         #endregion
 
         public override string GetLinkToHelpPage()

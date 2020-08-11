@@ -118,6 +118,7 @@
     <Compile Include="EditorNew\DrawInfo.cs" />
     <Compile Include="EditorNew\Editor.cs" />
     <Compile Include="EditorNew\IHelperItem.cs" />
+    <Compile Include="EditorNew\ImageIndexEnum.cs" />
     <Compile Include="EditorNew\ITreeViewItem.cs" />
     <Compile Include="EditorNew\NewEditorControl.cs">
       <SubType>UserControl</SubType>

@@ -284,7 +284,7 @@ namespace NewEditor
         /// <summary>
         /// Индекс картинки из формы, для вставки в элемент.
         /// </summary>
-        int ImageIndex { get; }
+        ImageIndexEnum ImageIndex { get; }
 
         /// <summary>
         /// Содержит ли объект базовый объект/операцию/шаг

@@ -508,6 +508,14 @@ namespace NewTechObject
                 }
             }
         }
+
+        public override ImageIndexEnum ImageIndex
+        {
+            get
+            {
+                return ImageIndexEnum.TechObjectManager;
+            }
+        }
         #endregion
 
         /// <summary>

@@ -213,6 +213,14 @@ namespace NewTechObject
                 return false;
             }
         }
+
+        public override ImageIndexEnum ImageIndex
+        {
+            get
+            {
+                return ImageIndexEnum.ActionDIDOPairs;
+            }
+        }
         #endregion
 
         private List<Action> subAction_DI_DO_Group;

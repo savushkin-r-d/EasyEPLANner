@@ -241,6 +241,24 @@ namespace NewTechObject
                 }
             }
         }
+
+        public override ImageIndexEnum ImageIndex
+        {
+            get
+            {
+                switch(name)
+                {
+                    case "Верхние седла":
+                        return ImageIndexEnum.ActionWashUpperSeats;
+
+                    case "Нижние седла":
+                        return ImageIndexEnum.ActionWashLowerSeats;
+
+                    default:
+                        return ImageIndexEnum.NONE;
+                }
+            }
+        }
         #endregion
 
         private List<Action> subAction_WashGroupSeats;

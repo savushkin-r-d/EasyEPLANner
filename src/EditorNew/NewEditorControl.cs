@@ -98,9 +98,9 @@ namespace NewEditor
                 {
                     ITreeViewItem objTreeViewItem = obj as ITreeViewItem;
                     int countOfImages = editorTView.SmallImageList.Images.Count;
-                    if (objTreeViewItem.ImageIndex < countOfImages)
+                    if ((int)objTreeViewItem.ImageIndex < countOfImages)
                     {
-                        return objTreeViewItem.ImageIndex;
+                        return (int)objTreeViewItem.ImageIndex;
                     }
                     else
                     {

@@ -233,6 +233,14 @@ namespace NewTechObject
                 return false;
             }
         }
+
+        public override ImageIndexEnum ImageIndex
+        {
+            get
+            {
+                return ImageIndexEnum.ActionWashDIDO;
+            }
+        }
         #endregion
 
         List<Action> vGroups;

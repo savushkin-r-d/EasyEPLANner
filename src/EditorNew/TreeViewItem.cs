@@ -286,12 +286,11 @@ namespace NewEditor
             }
         }
 
-        public virtual int ImageIndex
+        public virtual ImageIndexEnum ImageIndex
         {
             get
             {
-                int indexWithoutPicture = 100;
-                return indexWithoutPicture;
+                return ImageIndexEnum.NONE;
             }
         }
 
