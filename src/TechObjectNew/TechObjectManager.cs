@@ -20,6 +20,16 @@ namespace NewTechObject
         private TechObjectManager()
         {
             objects = new List<ITreeViewItem>();
+            MakeMasterObject();
+        }
+
+        private void MakeMasterObject()
+        {
+            var master = new Master();
+            var masterObject = new TechObject("Мастер", GetTechObjectN, 1, 1, 
+                "MASTER", -1, "MasterObj", "");
+            master.Objects.Add(masterObject);
+            objects.Add(master);
         }
 
         /// <summary>
@@ -115,6 +125,33 @@ namespace NewTechObject
             {
                 return ImageIndexEnum.TechObjectManager;
             }
+        }
+
+        public override bool IsInsertable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override ITreeViewItem Insert()
+        {
+            var objectsAdder = new ObjectsAdder();
+            objectsAdder.ShowDialog();
+            string selectedType = ObjectsAdder.SelectedType;
+            string selectedSubType = ObjectsAdder.SelectedSubType;
+            if(selectedType != null && selectedSubType != null)
+            {
+                var selectedObject = objects
+                    .Where(x => x.DisplayText[0].Contains(selectedType))
+                    .FirstOrDefault();
+                return selectedObject.Insert();
+            }
+            else
+            {
+                return null;
+            }       
         }
         #endregion
 

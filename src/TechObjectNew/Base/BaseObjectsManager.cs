@@ -162,14 +162,63 @@ namespace NewTechObject
         /// <summary>
         /// Базовые технологические объекты
         /// </summary>
-        public List<BaseTechObject> GetBaseTechObjects()
+        public List<BaseTechObject> Objects
         {
-            var objects = new List<BaseTechObject>();
-            foreach (var obj in baseTechObjects)
+            get
             {
-                objects.Add(obj.Clone());
+                var objects = new List<BaseTechObject>();
+                foreach (var obj in baseTechObjects)
+                {
+                    objects.Add(obj.Clone());
+                }
+                return objects;
             }
-            return objects;
+        }
+
+        /// <summary>
+        /// Получить базовый объект мастера проекта.
+        /// </summary>
+        public BaseTechObject Master
+        {
+            get
+            {
+                return Objects
+                    .Where(x => x.S88Level == (int)ObjectsS88Levels.Master)
+                    .First();
+            }
+        }
+
+        /// <summary>
+        /// Получить аппараты.
+        /// </summary>
+        public List<BaseTechObject> Units
+        {
+            get
+            {
+                return Objects.
+                    Where(x => x.S88Level == (int)ObjectsS88Levels.Unit)
+                    .ToList();
+            }
+        }
+
+        /// <summary>
+        /// Получить агрегаты.
+        /// </summary>
+        public List<BaseTechObject> Aggregates
+        {
+            get
+            {
+                return Objects
+                    .Where(x => x.S88Level == (int)ObjectsS88Levels.Aggregate)
+                    .ToList();
+            }
+        }
+
+        enum ObjectsS88Levels
+        {
+            Master = 0,
+            Unit = 1,
+            Aggregate = 2
         }
 
         private List<BaseTechObject> baseTechObjects;
