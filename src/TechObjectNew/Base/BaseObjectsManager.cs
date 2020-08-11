@@ -141,12 +141,6 @@ namespace NewTechObject
         public BaseTechObject AddBaseObject(string name, string eplanName,
             int s88Level, string basicName, string bindingName, bool isPID)
         {
-            if (baseTechObjects.Count == 0)
-            {
-                // Пустой объект, если не должно быть выбрано никаких объектов
-                baseTechObjects.Add(BaseTechObject.EmptyBaseTechObject());
-            }
-
             var obj = BaseTechObject.EmptyBaseTechObject();
             obj.Name = name;
             obj.EplanName = eplanName;
