@@ -417,12 +417,12 @@ namespace NewTechObject
         /// <param name="technologicalNumber">Технологический номер.</param>
         /// <param name="nameEplan">ОУ объекта в Eplan'е.</param>
         /// <param name="cooperParamNumber">Время совместного перехода шагов (параметр).</param>        
-        public TechObject(string name, GetN getN, int technologicalNumber,
+        public TechObject(string name/*, GetN getN*/, int technologicalNumber,
             int techType, string nameEplan, int cooperParamNumber, 
             string NameBC, string attachedObjects)
         {
             this.name = name;
-            this.getN = getN;
+            //this.getN = getN;
 
             this.techNumber = new TechObjectN(this, technologicalNumber);
             this.techType = new ObjectProperty("Тип", techType);

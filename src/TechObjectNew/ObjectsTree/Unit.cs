@@ -17,20 +17,20 @@ namespace NewTechObject
             objects = new List<ITreeViewItem>();
         }
 
-        public List<ITreeViewItem> Objects
+        #region реализация ITreeViewItem
+        public override ITreeViewItem[] Items
         {
             get
             {
-                return objects;
+                return objects.ToArray();
             }
         }
 
-        #region реализация ITreeViewItem
         public override string[] DisplayText
         {
             get
             {
-                return new string[] { $"Аппарат ({Objects.Count})", "" };
+                return new string[] { $"Аппарат ({Items.Length})", "" };
             }
         }
 

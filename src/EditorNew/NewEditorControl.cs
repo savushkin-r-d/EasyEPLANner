@@ -884,15 +884,18 @@ namespace NewEditor
             if (item.IsInsertable == true)
             {
                 ITreeViewItem newItem = item.Insert();
-                newItem.AddParent(item);
-                editorTView.RefreshObjects(item.Items);
-                editorTView.RefreshObject(item);
-                if(item.NeedRebuildParent && item.Parent != null)
+                if(newItem != null)
                 {
-                    editorTView.RefreshObject(item.Parent);
-                }
+                    newItem.AddParent(item);
+                    editorTView.RefreshObjects(item.Items);
+                    editorTView.RefreshObject(item);
+                    if (item.NeedRebuildParent && item.Parent != null)
+                    {
+                        editorTView.RefreshObject(item.Parent);
+                    }
 
-                OnModify();
+                    OnModify();
+                }
             }
         }
 

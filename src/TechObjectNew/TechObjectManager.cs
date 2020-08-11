@@ -20,6 +20,9 @@ namespace NewTechObject
         private TechObjectManager()
         {
             objects = new List<ITreeViewItem>();
+            objects.Add(new Master());
+            objects.Add(new Unit());
+            objects.Add(new Aggregate());
         }
 
         /// <summary>

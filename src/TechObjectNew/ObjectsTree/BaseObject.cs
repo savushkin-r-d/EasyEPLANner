@@ -11,7 +11,7 @@ namespace NewTechObject
     {
         public BaseObject()
         {
-
+            objects = new List<ITreeViewItem>();
         }
 
         public List<ITreeViewItem> Objects

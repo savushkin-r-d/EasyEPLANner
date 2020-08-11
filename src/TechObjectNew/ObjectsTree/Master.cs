@@ -1,9 +1,5 @@
 ﻿using NewEditor;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NewTechObject
 {
@@ -17,20 +13,19 @@ namespace NewTechObject
             objects = new List<TechObject>();
         }
 
-        public List<TechObject> Objects
-        {
-            get
-            {
-                return objects;
-            }
-        }
-
         #region реализация ITreeViewItem
         public override string[] DisplayText
         {
             get
             {
-                return new string[] { $"Мастер ({objects.Count})", "" };
+                if(Items.Length > 0)
+                {
+                    return new string[] { $"Мастер ({objects.Count})", "" };
+                }
+                else
+                {
+                    return new string[] { $"Мастер", "" };
+                }
             }
         }
 
@@ -41,8 +36,23 @@ namespace NewTechObject
                 return objects.ToArray();
             }
         }
+
+        public override ITreeViewItem Insert()
+        {
+            if(Items.Length == 0)
+            {
+                var newObject = new TechObject("Мастер"/*, GetTechObjectN*/, 
+                    1, 1, "MASTER", -1, "MasterObj", "");
+                objects.Add(newObject);
+                return newObject;
+            }
+            else
+            {
+                return null;
+            }
+        }
         #endregion
 
-        private List<TechObject> objects;
+        List<TechObject> objects;
     }
 }
