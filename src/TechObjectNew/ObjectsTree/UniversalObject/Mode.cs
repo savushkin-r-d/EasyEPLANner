@@ -407,7 +407,7 @@ namespace NewTechObject
                 errors += state.Check();
             }
 
-            this.BaseOperation.Check();
+            errors += BaseOperation.Check();
 
             return errors;
         }

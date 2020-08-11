@@ -309,6 +309,11 @@ namespace NewEditor
                 return new List<string>();
             }
         }
+
+        /// <summary>
+        /// Отключено или нет свойство
+        /// </summary>
+        public bool Disabled { get; set; }
         #endregion
 
         #region реализация IHelperItem

@@ -295,5 +295,10 @@ namespace NewEditor
         /// Список базовых объектов/операций/шагов объекта.
         /// </summary>
         List<string> BaseObjectsList { get; }
+
+        /// <summary>
+        /// Отключено или нет свойство
+        /// </summary>
+        bool Disabled { get; set; }
     }
 }

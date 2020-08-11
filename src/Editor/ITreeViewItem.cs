@@ -290,5 +290,10 @@ namespace Editor
         /// False - скрывать
         /// </summary>
         bool IsFilled { get; }
+
+        /// <summary>
+        /// Отключено или нет свойство
+        /// </summary>
+        bool Disabled { get; set; }
     }
 }

@@ -1432,10 +1432,12 @@ namespace NewEditor
                     if (item.NeedDisable)
                     {
                         editorTView.DisableObject(item);
+                        item.Disabled = true;
                     }
                     else
                     {
                         editorTView.EnableObject(item);
+                        item.Disabled = false;
                     }
                 }
             }
