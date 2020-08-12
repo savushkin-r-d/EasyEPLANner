@@ -154,7 +154,6 @@ namespace NewTechObject
                 return null;
             }
         }
-        #endregion
 
         /// <summary>
         /// Создать объект дерева, описывающий базу по S88.
@@ -188,6 +187,21 @@ namespace NewTechObject
                 return treeItem;
             }
         }
+
+        public override bool Delete(object child)
+        {
+            var treeViewItem = child as ITreeViewItem;
+            if(treeViewItem != null && objects.Contains(treeViewItem))
+            {
+                objects.Remove(child as ITreeViewItem);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        #endregion
 
         public string ProjectName { get;set; }
 

@@ -73,7 +73,6 @@ namespace NewTechObject
                 return insertedItem;
             }
         }
-        #endregion
 
         /// <summary>
         /// Вставить подтип в дерево.
@@ -110,7 +109,7 @@ namespace NewTechObject
             var item = objects
                 .Where(x => x.DisplayText[0].Contains(selectedSubType))
                 .FirstOrDefault();
-            if(item != null)
+            if (item != null)
             {
                 return item;
             }
@@ -119,6 +118,23 @@ namespace NewTechObject
                 return new BaseObject(selectedSubType);
             }
         }
+
+        override public bool Delete(object child)
+        {
+            var baseObject = child as BaseObject;
+            if (baseObject != null)
+            {
+                objects.Remove(baseObject);
+                if (objects.Count == 0)
+                {
+                    Parent.Delete(this);
+                }
+                return true;
+            }
+
+            return false;
+        }
+        #endregion
 
         string name = "Аппарат";
         List<ITreeViewItem> objects;

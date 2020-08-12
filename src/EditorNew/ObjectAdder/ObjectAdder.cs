@@ -72,25 +72,34 @@ namespace NewEditor
         {
             objectSubTypes.ClearSelected();
             objectSubTypes.Items.Clear();
-            switch (objectTypes.SelectedItem.ToString())
+
+            if(objectTypes.SelectedItem == null)
             {
-                case "Мастер":
-                    var master = baseTechObjectsManager.Master
-                        .Name;
-                    objectSubTypes.Items.Add(master);
-                    break;
+                return;
+            }
+            else
+            {
+                string selectedItem = objectTypes.SelectedItem.ToString();
+                switch (selectedItem)
+                {
+                    case "Мастер":
+                        var master = baseTechObjectsManager.Master
+                            .Name;
+                        objectSubTypes.Items.Add(master);
+                        break;
 
-                case "Аппарат":
-                    var units = baseTechObjectsManager.Units
-                        .Select(x => x.Name).ToArray();
-                    objectSubTypes.Items.AddRange(units);
-                    break;
+                    case "Аппарат":
+                        var units = baseTechObjectsManager.Units
+                            .Select(x => x.Name).ToArray();
+                        objectSubTypes.Items.AddRange(units);
+                        break;
 
-                case "Агрегат":
-                    var aggregates = baseTechObjectsManager.Aggregates
-                        .Select(x => x.Name).ToArray();
-                    objectSubTypes.Items.AddRange(aggregates);
-                    break;
+                    case "Агрегат":
+                        var aggregates = baseTechObjectsManager.Aggregates
+                            .Select(x => x.Name).ToArray();
+                        objectSubTypes.Items.AddRange(aggregates);
+                        break;
+                }
             }
         }
 

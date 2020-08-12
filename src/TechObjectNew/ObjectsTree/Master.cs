@@ -59,6 +59,34 @@ namespace NewTechObject
                 return true;
             }
         }
+
+        override public bool Delete(object child)
+        {
+            var techObject = child as TechObject;
+            if (techObject != null)
+            {
+                //if (techObject.BaseTechObject.IsAttachable)
+                //{
+                //    RemoveAttachingToUnit(techObject);
+                //}
+
+                int idx = objects.IndexOf(techObject) + 1;
+                //CheckRestriction(idx, -1);
+
+                objects.Remove(techObject);
+                //SetRestrictionOwner();
+                //ChangeAttachedObjectsAfterDelete(idx);
+
+                if(objects.Count == 0)
+                {
+                    Parent.Delete(this);
+                }
+                //TODO: Hide parent object or delete if it is empty
+                return true;
+            }
+
+            return false;
+        }
         #endregion
 
         string name = "Мастер";

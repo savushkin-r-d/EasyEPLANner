@@ -73,6 +73,22 @@ namespace NewTechObject
                 return insertedItem;
             }
         }
+
+        override public bool Delete(object child)
+        {
+            var baseObject = child as BaseObject;
+            if (baseObject != null)
+            {
+                objects.Remove(baseObject);
+                if (objects.Count == 0)
+                {
+                    Parent.Delete(this);
+                }
+                return true;
+            }
+
+            return false;
+        }
         #endregion
 
         /// <summary>
