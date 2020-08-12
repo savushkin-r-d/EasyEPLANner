@@ -20,11 +20,11 @@ namespace NewTechObject
             {
                 if(Items.Length > 0)
                 {
-                    return new string[] { $"Мастер ({objects.Count})", "" };
+                    return new string[] { $"{name} ({objects.Count})", "" };
                 }
                 else
                 {
-                    return new string[] { $"Мастер", "" };
+                    return new string[] { name, "" };
                 }
             }
         }
@@ -41,7 +41,7 @@ namespace NewTechObject
         {
             if(Items.Length == 0)
             {
-                var newObject = new TechObject("Мастер"/*, GetTechObjectN*/, 
+                var newObject = new TechObject(name/*, GetTechObjectN*/, 
                     1, 1, "MASTER", -1, "MasterObj", "");
                 objects.Add(newObject);
                 return newObject;
@@ -61,6 +61,7 @@ namespace NewTechObject
         }
         #endregion
 
+        string name = "Мастер";
         List<TechObject> objects;
     }
 }

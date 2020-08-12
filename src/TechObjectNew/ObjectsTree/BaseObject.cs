@@ -30,8 +30,35 @@ namespace NewTechObject
             get
             {
                 var name = baseTechObject.Name;
-                return new string[] { name, "" };
+                if (objects.Count == 0)
+                {
+                    return new string[] { name, "" };
+                }
+                else
+                {
+                    return new string[] { $"{name} ({objects.Count})", "" };
+                }
             }
+        }
+
+        public override bool IsInsertable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override ITreeViewItem Insert()
+        {
+            //TODO: set TechType
+            //TODO: nameBC set
+            ObjectsAdder.Reset();
+            var newObject = new TechObject(baseTechObject.Name,
+                objects.Count + 1, 1, baseTechObject.EplanName.ToUpper(), -1,
+                baseTechObject.EplanName, "");
+            objects.Add(newObject);
+            return newObject;
         }
         #endregion
 

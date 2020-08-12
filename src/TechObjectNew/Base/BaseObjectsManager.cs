@@ -177,7 +177,7 @@ namespace NewTechObject
             get
             {
                 return Objects
-                    .Where(x => x.S88Level == (int)ObjectsS88Levels.Master)
+                    .Where(x => x.S88Level == (int)ObjectType.Master)
                     .First();
             }
         }
@@ -190,7 +190,7 @@ namespace NewTechObject
             get
             {
                 return Objects.
-                    Where(x => x.S88Level == (int)ObjectsS88Levels.Unit)
+                    Where(x => x.S88Level == (int)ObjectType.Unit)
                     .ToList();
             }
         }
@@ -203,12 +203,12 @@ namespace NewTechObject
             get
             {
                 return Objects
-                    .Where(x => x.S88Level == (int)ObjectsS88Levels.Aggregate)
+                    .Where(x => x.S88Level == (int)ObjectType.Aggregate)
                     .ToList();
             }
         }
 
-        enum ObjectsS88Levels
+        public enum ObjectType
         {
             Master = 0,
             Unit = 1,

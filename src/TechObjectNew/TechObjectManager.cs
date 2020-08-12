@@ -124,7 +124,70 @@ namespace NewTechObject
                 return true;
             }
         }
+
+        public override ITreeViewItem Insert()
+        {
+            var objectsAdderForm = new ObjectsAdder();
+            objectsAdderForm.ShowDialog();
+            string selectedType = ObjectsAdder.LastSelectedType;
+            string selectedSubType = ObjectsAdder.LastSelectedSubType;
+            if(selectedType != null && selectedSubType != null)
+            {
+                var treeItem = GetTreeItem(selectedType);
+                var innerItem = treeItem.Insert();
+                if(innerItem != null)
+                {
+                    if(!objects.Contains(treeItem))
+                    {
+                        objects.Add(treeItem);
+                    }
+
+                    return treeItem;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
         #endregion
+
+        /// <summary>
+        /// Создать объект дерева, описывающий базу по S88.
+        /// </summary>
+        /// <param name="selectedType">Выбранный на форме тип объекта</param>
+        /// <returns></returns>
+        private ITreeViewItem GetTreeItem(string selectedType)
+        {
+            var treeItem = objects
+                .Where(x => x.DisplayText[0].Contains(selectedType))
+                .FirstOrDefault();
+            if (treeItem == null)
+            {
+                switch (selectedType)
+                {
+                    case "Мастер":
+                        return new Master();
+
+                    case "Аппарат":
+                        return new Unit();
+
+                    case "Агрегат":
+                        return new Aggregate();
+
+                    default:
+                        return null;
+                }
+            }
+            else
+            {
+                return treeItem;
+            }
+        }
 
         public string ProjectName { get;set; }
 

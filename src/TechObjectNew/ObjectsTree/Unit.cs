@@ -32,11 +32,11 @@ namespace NewTechObject
             {
                 if(Items.Length > 0)
                 {
-                    return new string[] { $"Аппарат ({Items.Length})", "" };
+                    return new string[] { $"{name} ({Items.Length})", "" };
                 }
                 else
                 {
-                    return new string[] { $"Аппарат", "" };
+                    return new string[] { name, "" };
                 }
             }
         }
@@ -48,8 +48,79 @@ namespace NewTechObject
                 return true;
             }
         }
+
+        public override ITreeViewItem Insert()
+        {
+            string selectedSubType = ObjectsAdder.LastSelectedSubType;
+            if(selectedSubType == null)
+            {
+                var objectsAdderForm = new ObjectsAdder(name);
+                objectsAdderForm.ShowDialog();
+                string subType = ObjectsAdder.LastSelectedSubType;
+                if(subType != null)
+                {
+                    var insertedItem = InsertSubType(subType);
+                    return insertedItem;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                var insertedItem = InsertSubType(selectedSubType);
+                return insertedItem;
+            }
+        }
         #endregion
 
+        /// <summary>
+        /// Вставить подтип в дерево.
+        /// </summary>
+        /// <param name="selectedSubType">Выбранный подтип на форме</param>
+        /// <returns></returns>
+        private ITreeViewItem InsertSubType(string selectedSubType)
+        {
+            ITreeViewItem baseTreeItem = GetTreeItem(selectedSubType);
+            var currentObject = baseTreeItem.Insert();
+            if (currentObject != null)
+            {
+                if (!objects.Contains(baseTreeItem))
+                {
+                    objects.Add(baseTreeItem);
+                }
+
+                return baseTreeItem;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Получить объект дерева, описывающий базу по S88.
+        /// </summary>
+        /// <param name="selectedSubType">Выбранный на форме подтип объекта
+        /// </param>
+        /// <returns></returns>
+        private ITreeViewItem GetTreeItem(string selectedSubType)
+        {
+            var item = objects
+                .Where(x => x.DisplayText[0].Contains(selectedSubType))
+                .FirstOrDefault();
+            if(item != null)
+            {
+                return item;
+            }
+            else
+            {
+                return new BaseObject(selectedSubType);
+            }
+        }
+
+        string name = "Аппарат";
         List<ITreeViewItem> objects;
     }
 }

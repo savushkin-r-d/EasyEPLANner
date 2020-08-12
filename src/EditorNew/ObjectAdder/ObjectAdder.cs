@@ -12,21 +12,58 @@ namespace NewEditor
             InitializeComponent();
             baseTechObjectsManager = NewTechObject.BaseTechObjectManager
                 .GetInstance();
-            SelectedType = null;
-            SelectedSubType = null;
+            LastSelectedType = null;
+            LastSelectedSubType = null;
+        }
+
+        /// <summary>
+        /// Конструктор, если известен выбранный тип объекта.
+        /// </summary>
+        /// <param name="typeName">тип объекта, имя</param>
+        public ObjectsAdder(string typeName)
+        {
+            InitializeComponent();
+            baseTechObjectsManager = NewTechObject.BaseTechObjectManager
+                .GetInstance();
+            LastSelectedType = typeName;
+            LastSelectedSubType = null;
+
+            SetUpObjectTypesListView();
+        }
+
+        /// <summary>
+        /// Настройка дерева с типами объектов.
+        /// </summary>
+        private void SetUpObjectTypesListView()
+        {
+            int index = objectTypes.FindString(LastSelectedType);
+            objectTypes.SetSelected(index, true);
+            objectTypes.Enabled = false;
         }
 
         private void acceptButton_Click(object sender, EventArgs e)
         {
-            SelectedSubType = objectSubTypes.SelectedValue.ToString();
-            SelectedType = objectTypes.SelectedValue.ToString();
-            Close();
+            bool incorrectInput =
+                (objectSubTypes.Enabled && objectSubTypes.SelectedIndex == -1) ||
+                (objectTypes.Enabled && objectTypes.SelectedIndex == -1);
+            if (incorrectInput)
+            {
+                string message = "Ошибка. Выберите значения в списке(-ах)";
+                MessageBox.Show(message, "Внимание", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+            else
+            {
+                LastSelectedSubType = objectSubTypes.SelectedItem.ToString();
+                LastSelectedType = objectTypes.SelectedItem.ToString();
+                Close();
+            }
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            SelectedType = null;
-            SelectedSubType = null;
+            LastSelectedType = null;
+            LastSelectedSubType = null;
             Close();
         }
 
@@ -58,14 +95,23 @@ namespace NewEditor
         }
 
         /// <summary>
+        /// Сброс выбранных типов и подтипов.
+        /// </summary>
+        public static void Reset()
+        {
+            LastSelectedSubType = null;
+            LastSelectedType = null;
+        }
+
+        /// <summary>
         /// Установленное значение типа (Мастер, Аппарат, Агрегат)
         /// </summary>
-        public static string SelectedType { get; set; }
+        public static string LastSelectedType { get; set; }
 
         /// <summary>
         /// Установленное значение подтипа (Танк и др.)
         /// </summary>
-        public static string SelectedSubType { get; set; }
+        public static string LastSelectedSubType { get; set; }
 
         NewTechObject.BaseTechObjectManager baseTechObjectsManager;
     }

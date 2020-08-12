@@ -364,7 +364,7 @@ namespace NewTechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix)
         {
-            string res = "\t[ " + getN(this) + " ] =\n"+
+            string res = "\t[ " /*+ getN(this)*/ + " ] =\n"+
                 prefix + "{\n" +
                 prefix + "n          = " + TechNumber + ",\n" +
                 prefix + "tech_type  = " + TechType + ",\n" +
@@ -402,7 +402,7 @@ namespace NewTechObject
             tmp += modes.SaveRestrictionAsLua(prefix);
             if (tmp != "")
             {
-                res += prefix + "[ " + getN(this) + " ] =" + comment + "\n" + 
+                res += prefix + "[ " /*+ getN(this)*/ + " ] =" + comment + "\n" + 
                     tmp + "\n";
             }
 
@@ -462,7 +462,7 @@ namespace NewTechObject
             clone.attachedObjects = new AttachedToObjects(AttachedObjects.Value, 
                 clone);
 
-            clone.getN = getN;
+            //clone.getN = getN;
       
             clone.baseTechObject = baseTechObject.Clone(clone);
 
@@ -820,7 +820,7 @@ namespace NewTechObject
             get
             {
                 return new string[] {
-                    getN( this ) + ". " + name + ' ' + 
+                    /*getN( this ) + */". " + name + ' ' + 
                     techNumber.EditText[ 1 ], baseTechObject.Name };
             }
         }
@@ -1061,7 +1061,7 @@ namespace NewTechObject
 
         private ITreeViewItem[] items; /// Параметры объекта для редактирования.
 
-        private GetN getN;
+        //private GetN getN;
 
         /// Базовый аппарат (технологический объект)
         private BaseTechObject baseTechObject; 
