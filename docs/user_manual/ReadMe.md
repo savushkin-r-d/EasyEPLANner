@@ -362,10 +362,10 @@ Phoenix Contact | AXL F DI16/4 2F (2688022) | DI | 16 каналов
 Phoenix Contact | AXL F DO16/3 2F (2688048) | DO | 16 каналов 
 Phoenix Contact | AXL F DI8/3 DO8/3 2H (2702071) | DI/DO | 8 каналов DI и 8 каналов DO
 Phoenix Contact | AXL F DI8/1 DO8/1 1H (2701916) | DI/DO | 8 каналов DI и 8 каналов DO
-Phoenix Contact | AXL SE AI4 4-20 (1088062) | AI | 4 канала
+Phoenix Contact | AXL SE AI4 I 4-20 (1088062) | AI | 4 канала
 Phoenix Contact | AXL SE RTD4 PT100 (1088106) | AI | 4 канала RTD
 Phoenix Contact | AXL SE CNT1 (1088131) | AI | 1 канал, счетчик
-Phoenix Contact | AXL SE AO4 4-20 (1088123) | AO | 4 канала
+Phoenix Contact | AXL SE AO4 I 4-20 (1088123) | AO | 4 канала
 Phoenix Contact | AXL SE IOL4 (1088132) | AI/AO/DI/DO | IO-Link с привязкой DI/DO, 4 канала
 Phoenix Contact | AXL SE DI16/1 (1088127) | DI | 16 каналов 
 Phoenix Contact | AXL SE DO16/1 (1088129) | DO | 16 каналов

@@ -705,7 +705,7 @@ local io_modules =
 
     [ 37 ] = {
             n = 1088062,
-            name = 'AXL SE AI4 4-20',
+            name = 'AXL SE AI4 I 4-20',
             description = '4-Channel analog input',
             addressSpaceType = 4,
             typeName = 'Аналоговый вход',
@@ -722,7 +722,7 @@ local io_modules =
 
     [ 38 ] = {
             n = 1088123,
-            name = 'AXL SE AO4 4-20',
+            name = 'AXL SE AO4 I 4-20',
             description = '4-Channel analog output',
             addressSpaceType = 3,
             typeName = 'Аналоговый выход',
