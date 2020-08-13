@@ -11,6 +11,8 @@ namespace NewTechObject
         public Master() 
         {
             objects = new List<TechObject>();
+            baseTechObject = BaseTechObjectManager.GetInstance()
+                .GetTechObject(name);
         }
 
         #region реализация ITreeViewItem
@@ -42,7 +44,7 @@ namespace NewTechObject
             if(Items.Length == 0)
             {
                 var newObject = new TechObject(name/*, GetTechObjectN*/, 
-                    1, 1, "MASTER", -1, "MasterObj", "");
+                    1, 1, "MASTER", -1, "MasterObj", "", baseTechObject);
                 objects.Add(newObject);
                 return newObject;
             }
@@ -87,9 +89,74 @@ namespace NewTechObject
 
             return false;
         }
+
+        override public bool IsInsertableCopy
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        override public ITreeViewItem InsertCopy(object obj)
+        {
+            var techObj = obj as TechObject;
+            if (techObj != null &&
+                techObj.BaseTechObject.Name == name)
+            {
+                int newN = 1;
+                if (objects.Count > 0)
+                {
+                    newN = objects[objects.Count - 1].TechNumber + 1;
+                }
+
+                //Старый и новый номер объекта - для замены в ограничениях
+                //int oldObjN = GetTechObjectN(obj as TechObject);
+                //int newObjN = objects.Count + 1;
+
+                TechObject newObject = (obj as TechObject).Clone(
+                    /*GetTechObjectN, */newN/*, oldObjN, newObjN*/);
+                objects.Add(newObject);
+
+                //newObject.ChangeCrossRestriction();
+                newObject.Equipment.ModifyDevNames();
+
+                return newObject;
+            }
+
+            return null;
+        }
+
+        override public ITreeViewItem Replace(object child,
+            object copyObject)
+        {
+            var techObject = child as TechObject;
+            var copiedObject = copyObject as TechObject;
+            if (copiedObject != null && techObject != null &&
+                copiedObject.BaseTechObject.Name == baseTechObject.Name)
+            {
+                int newN = techObject.TechNumber;
+
+                //Старый и новый номер объекта - для замены в ограничениях
+                //int oldObjN = GetTechObjectN(copyObject as TechObject);
+                //int newObjN = GetTechObjectN(child as TechObject);
+
+                TechObject newObject = (copyObject as TechObject).Clone(
+                    /*GetTechObjectN, */newN/*, oldObjN, newObjN*/);
+                int index = objects.IndexOf(techObject);
+                objects.Remove(techObject);
+                objects.Insert(index, newObject);
+                //newObject.ChangeCrossRestriction(techObject);
+
+                return newObject;
+            }
+
+            return null;
+        }
         #endregion
 
         string name = "Мастер";
         List<TechObject> objects;
+        BaseTechObject baseTechObject;
     }
 }

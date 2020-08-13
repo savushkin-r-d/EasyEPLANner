@@ -110,10 +110,11 @@ namespace NewTechObject
         // Класс привязанных агрегатов к аппарату
         public class AttachedToObjects : ObjectProperty
         {
-            public AttachedToObjects(string attachedObjects, TechObject owner)
-                : base("Привязанные агрегаты", attachedObjects)
+            public AttachedToObjects(string attachedObjects, 
+                TechObject techObject) : base("Привязанные агрегаты", 
+                    attachedObjects)
             {
-                this.owner = owner;
+                this.techObject = techObject;
                 SetValue(attachedObjects);
             }
 
@@ -237,7 +238,7 @@ namespace NewTechObject
                         deletingProperties.Add(removingBaseTechObject
                             .MainAggregateParameter);
                     }
-                    TechObject thisTechObject = owner;
+                    TechObject thisTechObject = techObject;
                     List<Mode> modes = thisTechObject.ModesManager.Modes;
                     foreach (var mode in modes)
                     {
@@ -273,7 +274,7 @@ namespace NewTechObject
                         addingProperties.Add(attachedBaseTechObject
                             .MainAggregateParameter);
                     }
-                    TechObject thisThechObject = owner;
+                    TechObject thisThechObject = techObject;
                     List<Mode> modes = thisThechObject.ModesManager.Modes;
                     foreach(var mode in modes)
                     {
@@ -301,8 +302,8 @@ namespace NewTechObject
                 if (checkedValue != this.Value)
                 {
                     res += $"Проверьте привязанные агрегаты в объекте: " +
-                        $"{owner.GlobalNumber}." +
-                        $"{owner.Name + owner.TechNumber}. " +
+                        $"{techObject.GlobalNumber}." +
+                        $"{techObject.Name + techObject.TechNumber}. " +
                         $"В поле присутствуют агрегаты, которые нельзя " +
                         $"привязывать.\n";
                 }
@@ -324,10 +325,10 @@ namespace NewTechObject
             {
                 get
                 {
-                    if (owner.baseTechObject.Name == "Танк" ||
-                        owner.baseTechObject.Name == "Линия" ||
-                        owner.baseTechObject.Name == "Линия приемки" ||
-                        owner.baseTechObject.Name == "Линия выдачи")
+                    if (techObject.BaseTechObject.Name == "Танк" ||
+                        techObject.BaseTechObject.Name == "Линия" ||
+                        techObject.BaseTechObject.Name == "Линия приемки" ||
+                        techObject.BaseTechObject.Name == "Линия выдачи")
                     {
                         return true;
                     }
@@ -354,7 +355,7 @@ namespace NewTechObject
             }
             #endregion
 
-            private TechObject owner;
+            private TechObject techObject;
         }
 
         /// <summary>
@@ -416,10 +417,16 @@ namespace NewTechObject
         /// <param name="getN">Функция получения порядкового номера.</param>
         /// <param name="technologicalNumber">Технологический номер.</param>
         /// <param name="nameEplan">ОУ объекта в Eplan'е.</param>
-        /// <param name="cooperParamNumber">Время совместного перехода шагов (параметр).</param>        
+        /// <param name="cooperParamNumber">Время совместного перехода шагов 
+        /// (параметр).</param>
+        /// <param name="attachedObjects">Привязанные объекты</param>
+        /// <param name="baseTechObject">Базовый технологический объект</param>
+        /// <param name="NameBC">Имя объекта Monitor</param>
+        /// <param name="techType">Номер типа</param>
         public TechObject(string name/*, GetN getN*/, int technologicalNumber,
             int techType, string nameEplan, int cooperParamNumber, 
-            string NameBC, string attachedObjects)
+            string NameBC, string attachedObjects, 
+            BaseTechObject baseTechObject)
         {
             this.name = name;
             //this.getN = getN;
@@ -438,7 +445,7 @@ namespace NewTechObject
                 this);
 
             // Экземпляр класса базового агрегата
-            baseTechObject = new BaseTechObject(this); 
+            this.baseTechObject = baseTechObject.Clone(); 
 
             modes = new ModesManager(this);
             parameters = new Params();
@@ -449,8 +456,8 @@ namespace NewTechObject
             SetItems();
         }
 
-        public TechObject Clone(GetN getN, int newNumber, int oldObjN, 
-            int newObjN)
+        public TechObject Clone(/*GetN getN, */int newNumber/*, int oldObjN, 
+            int newObjN*/)
         {
             TechObject clone = (TechObject)MemberwiseClone();
 
@@ -471,7 +478,7 @@ namespace NewTechObject
             clone.modes.ChngeOwner(clone);
             clone.modes = modes.Clone(clone);
             clone.modes.ModifyDevNames(TechNumber);
-            clone.modes.ModifyRestrictObj(oldObjN, newObjN);
+            //clone.modes.ModifyRestrictObj(oldObjN, newObjN);
 
             clone.equipment = equipment.Clone(clone);
             clone.equipment.ModifyDevNames();
@@ -821,7 +828,7 @@ namespace NewTechObject
             {
                 return new string[] {
                     /*getN( this ) + */". " + name + ' ' + 
-                    techNumber.EditText[ 1 ], baseTechObject.Name };
+                    techNumber.EditText[ 1 ], "" };
             }
         }
 
@@ -897,7 +904,7 @@ namespace NewTechObject
         {
             get
             {
-                return new string[] { name, baseTechObject.Name };
+                return new string[] { name, "" };
             }
         }
 

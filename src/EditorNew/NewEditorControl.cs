@@ -22,11 +22,11 @@ namespace NewEditor
             mainWndKeyboardCallbackDelegate =
                 new PI.LowLevelKeyboardProc(GlobalHookKeyboardCallbackFunction);
 
-            // Фильтр
-            //editorTView.ModelFilter = new ModelFilter(delegate (object obj) 
-            //{
-            //    return ((ITreeViewItem)obj).IsFilled;
-            //});
+            //Фильтр
+            editorTView.ModelFilter = new ModelFilter(delegate (object obj)
+            {
+                return ((ITreeViewItem)obj).IsFilled;
+            });
 
             wasInit = false;
         }
@@ -215,7 +215,10 @@ namespace NewEditor
             wasInit = true;
         }
 
-        public static void CheckShown() // Проверка текущего состояния окон
+        /// <summary>
+        /// Проверка текущего состояния окон
+        /// </summary>
+        public static void CheckShown()
         {
             if (PI.IsWindowVisible(wndEditVisiblePtr) == true)
             {
@@ -227,7 +230,9 @@ namespace NewEditor
             }
         }
 
-        // Сохранение конфигурации окон
+        /// <summary>
+        /// Сохранение конфигурации окон
+        /// </summary>
         public static void SaveCfg()
         {
             string path = Environment.GetFolderPath(
@@ -807,21 +812,21 @@ namespace NewEditor
                 // Копирование элемента.
                 if (e.KeyCode == Keys.C && e.Control == true)
                 {
-                    //CopyItem(item);
+                    CopyItem(item);
                     return;
                 }
 
                 // Вставка скопированного ранее элемента.
                 if (e.KeyCode == Keys.V && e.Control == true)
                 {
-                    //PasteItem(item);
+                    PasteItem(item);
                     return;
                 }
 
                 // Замена элемента.
                 if (e.KeyCode == Keys.B && e.Control == true)
                 {
-                    //ReplaceItem(item);
+                    ReplaceItem(item);
                     return;
                 }
 
@@ -1348,50 +1353,50 @@ namespace NewEditor
             CellEditEventArgs e)
         {
             IsCellEditing = true;
-            //ITreeViewItem item = editorTView.SelectedObject as ITreeViewItem;
+            ITreeViewItem item = editorTView.SelectedObject as ITreeViewItem;
 
-            //if (item == null || 
-            //    !item.IsEditable || 
-            //    item.EditablePart[e.Column.Index] != e.Column.Index ||
-            //    (e.Column.Index == 1 && 
-            //    item.ContainsBaseObject && 
-            //    item.BaseObjectsList.Count == 0))
-            //{
-            //    IsCellEditing = false;
-            //    e.Cancel = true;
-            //    return;
-            //}
+            if (item == null ||
+                !item.IsEditable ||
+                item.EditablePart[e.Column.Index] != e.Column.Index ||
+                (e.Column.Index == 1 &&
+                item.ContainsBaseObject &&
+                item.BaseObjectsList.Count == 0))
+            {
+                IsCellEditing = false;
+                e.Cancel = true;
+                return;
+            }
 
-            //// Проверяем колонку, и какой объект редактируется и вызываем
-            //// соответствующий редактор для ячейки.
-            //if (e.Column.Index == 1 && item.ContainsBaseObject)
-            //{
-            //    InitComboBoxCellEditor(item.BaseObjectsList);
-            //    comboBoxCellEditor.Text = e.Value.ToString();
-            //    comboBoxCellEditor.Bounds = e.CellBounds;
-            //    e.Control = comboBoxCellEditor;
-            //    comboBoxCellEditor.Focus();
-            //    editorTView.Freeze();
-            //}
-            //else if(e.Column.Index == 1 && item.IsBoolParameter)
-            //{
-            //    item.SetNewValue(e.Value.ToString());
-            //    IsCellEditing = false;
-            //    e.Cancel = true;
-            //    var parentItems = item.Parent.Items;
-            //    DisableNeededObjects(parentItems);
-            //    editorTView.RefreshObjects(parentItems);
-            //    return;
-            //}
-            //else
-            //{
-            //    InitTextBoxCellEditor();
-            //    textBoxCellEditor.Text = item.EditText[e.Column.Index];
-            //    textBoxCellEditor.Bounds = e.CellBounds;
-            //    e.Control = textBoxCellEditor;
-            //    textBoxCellEditor.Focus();
-            //    editorTView.Freeze();
-            //}
+            // Проверяем колонку, и какой объект редактируется и вызываем
+            // соответствующий редактор для ячейки.
+            if (e.Column.Index == 1 && item.ContainsBaseObject)
+            {
+                InitComboBoxCellEditor(item.BaseObjectsList);
+                comboBoxCellEditor.Text = e.Value.ToString();
+                comboBoxCellEditor.Bounds = e.CellBounds;
+                e.Control = comboBoxCellEditor;
+                comboBoxCellEditor.Focus();
+                editorTView.Freeze();
+            }
+            else if (e.Column.Index == 1 && item.IsBoolParameter)
+            {
+                item.SetNewValue(e.Value.ToString());
+                IsCellEditing = false;
+                e.Cancel = true;
+                var parentItems = item.Parent.Items;
+                DisableNeededObjects(parentItems);
+                editorTView.RefreshObjects(parentItems);
+                return;
+            }
+            else
+            {
+                InitTextBoxCellEditor();
+                textBoxCellEditor.Text = item.EditText[e.Column.Index];
+                textBoxCellEditor.Bounds = e.CellBounds;
+                e.Control = textBoxCellEditor;
+                textBoxCellEditor.Focus();
+                editorTView.Freeze();
+            }
         }
 
         /// <summary>
@@ -1437,7 +1442,7 @@ namespace NewEditor
             CellEditEventArgs e)
         {
             IsCellEditing = false;
-            //bool isModified = false;
+            bool isModified = false;
             editorTView.LabelEdit = false;
             var selectedItem = editorTView.SelectedObject as ITreeViewItem;
 
@@ -1450,34 +1455,34 @@ namespace NewEditor
                 return;
             }
 
-            //// Если редактируются базовые операции/объекты/шаги
-            //if (e.Column.Index == 1 && selectedItem.ContainsBaseObject)
-            //{       
-            //    e.NewValue = comboBoxCellEditor.Text;
-            //    editorTView.Controls.Remove(comboBoxCellEditor);
-            //    // true (IsExtraBool) - флаг работы с "экстра" полями
-            //    isModified = selectedItem.SetNewValue(e.NewValue.ToString(), 
-            //        true);
-            //}
-            //else
-            //{
-            //    editorTView.Controls.Remove(textBoxCellEditor);
-            //    isModified = selectedItem.SetNewValue(e.NewValue.ToString());
-            //}
+            // Если редактируются базовые операции/объекты/шаги
+            if (e.Column.Index == 1 && selectedItem.ContainsBaseObject)
+            {
+                e.NewValue = comboBoxCellEditor.Text;
+                editorTView.Controls.Remove(comboBoxCellEditor);
+                // true (IsExtraBool) - флаг работы с "экстра" полями
+                isModified = selectedItem.SetNewValue(e.NewValue.ToString(),
+                    true);
+            }
+            else
+            {
+                editorTView.Controls.Remove(textBoxCellEditor);
+                isModified = selectedItem.SetNewValue(e.NewValue.ToString());
+            }
 
-            //if (isModified)
-            //{
-            //    RefreshTree();
-            //    //Обновляем также и узел родителя при его наличии.
-            //    if (selectedItem.NeedRebuildParent)
-            //    {
-            //        DisableNeededObjects(selectedItem.Parent.Items);
-            //    }
-            //    OnModify();
-            //}
+            if (isModified)
+            {
+                RefreshTree();
+                //Обновляем также и узел родителя при его наличии.
+                if (selectedItem.NeedRebuildParent)
+                {
+                    DisableNeededObjects(selectedItem.Parent.Items);
+                }
+                OnModify();
+            }
 
-            //e.Cancel = true;
-            //editorTView.Unfreeze();
+            e.Cancel = true;
+            editorTView.Unfreeze();
         }
 
         /// <summary>
