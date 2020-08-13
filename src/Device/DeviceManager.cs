@@ -801,28 +801,6 @@ namespace Device
             }
         }
 
-        /// <summary>
-        /// Количество IO-Link устройств.
-        /// </summary>
-        public int IOLinkDevicesCount
-        {
-            get
-            {
-                if(Devices.Count == 0)
-                {
-                    return 0;
-                }
-                else
-                {
-                    int count = Devices
-                        .Where(x => x.IOLinkProperties.SizeInFromFile != 0 &&
-                        x.IOLinkProperties.SizeOutFromFile != 0)
-                        .Count();
-                    return count;
-                }
-            }
-        }
-
         public List<IODevice> Devices
         {
             get

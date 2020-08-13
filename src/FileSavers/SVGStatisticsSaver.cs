@@ -120,14 +120,25 @@ namespace EasyEPlanner
         /// <param name="folderPath">Путь к каталогу</param>
         private static void SaveIOLinkDevicesPercentage(string folderPath)
         {
-            int devicesCount = deviceManager.Devices.Count;
-            int devicesWithIOLinkCount = deviceManager.IOLinkDevicesCount;
-            int valueInPercents = ValueAsPercentage(devicesWithIOLinkCount,
-                devicesCount);
-            string displayingText = $"{valueInPercents}% IOL ус-в";
-            string result = MakeStringForWriting(devicesWithIOLinkCount,
-                devicesCount, displayingText);
-            folderPath += deviceIOLinkPercentageFileName;
+            int modulesCount = 0;
+            int ioLinkModules = 0;
+            foreach(var node in ioManager.IONodes)
+            {
+                modulesCount += node.IOModules.Count;
+                foreach(var module in node.IOModules)
+                {
+                    if(module.isIOLink())
+                    {
+                        ioLinkModules++;
+                    }
+                }
+            }
+            int valueInPercents = ValueAsPercentage(ioLinkModules,
+                modulesCount);
+            string displayingText = $"{valueInPercents}% IO-Link";
+            string result = MakeStringForWriting(ioLinkModules,
+                modulesCount, displayingText);
+            folderPath += ioModulesInPercentage;
             WriteFile(result, folderPath);
         }
 
@@ -182,7 +193,7 @@ namespace EasyEPlanner
         static string countOfUnitsFileName = "units_total.svg";
         static string countOfEquipmentModulesFileName = "agregates_total.svg";
         static string countOfDevicesFileName = "devices_total.svg";
-        static string deviceIOLinkPercentageFileName = "io_link_usage.svg";
+        static string ioModulesInPercentage = "io_link_usage.svg";
 
         /// <summary>
         /// 100% длина линии SVG. 
@@ -193,5 +204,6 @@ namespace EasyEPlanner
             .GetInstance();
         static Device.DeviceManager deviceManager = Device.DeviceManager
             .GetInstance();
+        static IO.IOManager ioManager = IO.IOManager.GetInstance();
     }
 }
