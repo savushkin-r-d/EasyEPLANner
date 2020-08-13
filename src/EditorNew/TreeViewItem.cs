@@ -223,14 +223,6 @@ namespace NewEditor
             }
         }
 
-        public virtual bool NeedRebuildMainObject
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         public virtual bool ShowWarningBeforeDelete
         {
             get

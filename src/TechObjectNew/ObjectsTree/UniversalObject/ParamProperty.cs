@@ -84,13 +84,5 @@ namespace NewTechObject
                 }
             }
         }
-
-        public override bool NeedRebuildMainObject
-        {
-            get
-            {
-                return true;
-            }
-        }
     }
 }

@@ -912,7 +912,7 @@ namespace NewEditor
                 {
                     string message = "Вы действительно хотите удалить " +
                         "выделенный элемент?";
-                    showWarningResult = MessageBox.Show(message, "Внимание", 
+                    showWarningResult = MessageBox.Show(message, "Внимание",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (showWarningResult == DialogResult.No)
                     {
@@ -924,13 +924,7 @@ namespace NewEditor
                 bool isDelete = parent.Delete(item);
                 if (isDelete)
                 {
-                    if (item.NeedRebuildMainObject)
-                    {
-                        var mainObject = GetParentBranch(item);
-                        editorTView.RefreshObjects(mainObject.Items);
-                    }
-                    editorTView.RefreshObjects(parent.Items);
-                    editorTView.RefreshObject(parent);
+                    RefreshTree();
                 }
                 else
                 {
@@ -984,18 +978,7 @@ namespace NewEditor
                     if (newItem != null)
                     {
                         newItem.AddParent(parent);
-                        editorTView.RefreshObjects(parent.Items);
-                        if (item.NeedRebuildMainObject)
-                        {
-                            var mainObject = GetParentBranch(item);
-                            editorTView.RefreshObjects(mainObject.Items);
-                        }
-
-                        if (item.NeedRebuildParent)
-                        {
-                            editorTView.RefreshObject(parent);
-                        }
-
+                        RefreshTree();
                         DisableNeededObjects(new ITreeViewItem[] { newItem });
                     }
                     OnModify();
@@ -1484,19 +1467,12 @@ namespace NewEditor
 
             //if (isModified)
             //{
+            //    RefreshTree();
             //    //Обновляем также и узел родителя при его наличии.
             //    if (selectedItem.NeedRebuildParent)
             //    {
-            //        editorTView.RefreshObjects(selectedItem.Parent.Items);
             //        DisableNeededObjects(selectedItem.Parent.Items);
             //    }
-            //    else if (selectedItem.NeedRebuildMainObject)
-            //    {
-            //        var mainObject = GetParentBranch(selectedItem);
-            //        editorTView.RefreshObjects(mainObject.Items);
-            //    }
-
-            //    editorTView.RefreshObject(selectedItem);
             //    OnModify();
             //}
 

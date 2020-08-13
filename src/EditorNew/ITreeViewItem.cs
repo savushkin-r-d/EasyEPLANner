@@ -247,14 +247,6 @@ namespace NewEditor
         }
 
         /// <summary>
-        /// Необходимость обновить главный объект дерева.
-        /// </summary>
-        bool NeedRebuildMainObject
-        {
-            get;
-        }
-
-        /// <summary>
         /// Отображать предупреждение перед удалением
         /// </summary>
         bool ShowWarningBeforeDelete

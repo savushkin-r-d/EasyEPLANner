@@ -343,14 +343,6 @@ namespace NewTechObject
             return null;
         }
 
-        public override bool NeedRebuildMainObject
-        {
-            get
-            {
-                return true;
-            }
-        }
-
         public override bool ShowWarningBeforeDelete
         {
             get

@@ -513,7 +513,7 @@ namespace NewTechObject
         {
             get
             {
-                return ImageIndexEnum.TechObjectManager;
+                return ImageIndexEnum.Step;
             }
         }
         #endregion
