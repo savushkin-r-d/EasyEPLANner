@@ -793,14 +793,14 @@ namespace NewEditor
                 // Перемещение элемента вверх.
                 if (e.KeyCode == Keys.Up && e.Shift == true)
                 {
-                    //MoveUpItem(item);
+                    MoveUpItem(item);
                     return;
                 }
 
                 //Перемещение элемента вниз.
                 if (e.KeyCode == Keys.Down && e.Shift == true)
                 {
-                    //MoveDownItem(item);
+                    MoveDownItem(item);
                     return;
                 }
 

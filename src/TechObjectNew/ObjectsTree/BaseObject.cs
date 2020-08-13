@@ -87,6 +87,52 @@ namespace NewTechObject
 
             return false;
         }
+
+        override public ITreeViewItem MoveDown(object child)
+        {
+            var techObject = child as TechObject;
+
+            if (techObject != null)
+            {
+                int index = objects.IndexOf(techObject);
+                if (index <= objects.Count - 2)
+                {
+                    //CheckRestriction(index + 1, index + 2);
+
+                    objects.Remove(techObject);
+                    objects.Insert(index + 1, techObject);
+
+                    //SetRestrictionOwner();
+                    //ChangeAttachedObjectsAfterMove(index, index + 1);
+                    return objects[index];
+                }
+            }
+
+            return null;
+        }
+
+        override public ITreeViewItem MoveUp(object child)
+        {
+            var techObject = child as TechObject;
+
+            if (techObject != null)
+            {
+                int index = objects.IndexOf(techObject);
+                if (index > 0)
+                {
+                    //CheckRestriction(index + 1, index);
+
+                    objects.Remove(techObject);
+                    objects.Insert(index - 1, techObject);
+
+                    //SetRestrictionOwner();
+                    //ChangeAttachedObjectsAfterMove(index, index - 1);
+                    return objects[index];
+                }
+            }
+
+            return null;
+        }
         #endregion
 
         List<ITreeViewItem> objects;
