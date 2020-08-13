@@ -24,6 +24,7 @@ namespace EasyEPlanner
             SaveUnintsCount(pathToFiles);
             SaveEquipmentModulesCount(pathToFiles);
             SaveDevicesCount(pathToFiles);
+            SaveIOLinkDevicesPercentage(pathToFiles);
         }
 
         /// <summary>
@@ -99,16 +100,34 @@ namespace EasyEPlanner
         /// <summary>
         /// Сохранить количество устройств в SVG.
         /// </summary>
-        /// <param name="folderPath"></param>
+        /// <param name="folderPath">Путь к каталогу</param>
         private static void SaveDevicesCount(string folderPath)
         {
             const int maxDevicesCount = 1000;
 
             folderPath += countOfDevicesFileName;
-            int devicesCount = devicemanager.Devices.Count;
+            int devicesCount = deviceManager.Devices.Count;
             string displayingText = $"{devicesCount} устройств";
             string result = MakeStringForWriting(devicesCount, maxDevicesCount,
                 displayingText);
+            WriteFile(result, folderPath);
+        }
+
+        /// <summary>
+        /// Сохранить количество IO-Link устройств в процентном соотношении
+        /// к общему количеству в SVG.
+        /// </summary>
+        /// <param name="folderPath">Путь к каталогу</param>
+        private static void SaveIOLinkDevicesPercentage(string folderPath)
+        {
+            int devicesCount = deviceManager.Devices.Count;
+            int devicesWithIOLinkCount = deviceManager.IOLinkDevicesCount;
+            int valueInPercents = ValueAsPercentage(devicesWithIOLinkCount,
+                devicesCount);
+            string displayingText = $"{valueInPercents}% IOL ус-в";
+            string result = MakeStringForWriting(devicesWithIOLinkCount,
+                devicesCount, displayingText);
+            folderPath += deviceIOLinkPercentageFileName;
             WriteFile(result, folderPath);
         }
 
@@ -163,6 +182,7 @@ namespace EasyEPlanner
         static string countOfUnitsFileName = "units_total.svg";
         static string countOfEquipmentModulesFileName = "agregates_total.svg";
         static string countOfDevicesFileName = "devices_total.svg";
+        static string deviceIOLinkPercentageFileName = "io_link_usage.svg";
 
         /// <summary>
         /// 100% длина линии SVG. 
@@ -171,7 +191,7 @@ namespace EasyEPlanner
 
         static TechObjectManager techObjectManager = TechObjectManager
             .GetInstance();
-        static Device.DeviceManager devicemanager = Device.DeviceManager
+        static Device.DeviceManager deviceManager = Device.DeviceManager
             .GetInstance();
     }
 }
