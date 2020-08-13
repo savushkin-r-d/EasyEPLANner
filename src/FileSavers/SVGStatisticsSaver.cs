@@ -24,7 +24,7 @@ namespace EasyEPlanner
             SaveUnintsCount(pathToFiles);
             SaveEquipmentModulesCount(pathToFiles);
             SaveDevicesCount(pathToFiles);
-            SaveIOLinkDevicesPercentage(pathToFiles);
+            SaveIOLinkModulesPercentage(pathToFiles);
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace EasyEPlanner
         /// к общему количеству в SVG.
         /// </summary>
         /// <param name="folderPath">Путь к каталогу</param>
-        private static void SaveIOLinkDevicesPercentage(string folderPath)
+        private static void SaveIOLinkModulesPercentage(string folderPath)
         {
             int modulesCount = 0;
             int ioLinkModules = 0;
