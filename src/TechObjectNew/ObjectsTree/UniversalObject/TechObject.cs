@@ -118,14 +118,6 @@ namespace NewTechObject
                 SetValue(attachedObjects);
             }
 
-            /// <summary>
-            /// Сбросить привязку
-            /// </summary>
-            public void Reset()
-            {
-                this.SetNewValue("");
-            }
-
             public override bool SetNewValue(string newValue)
             {
                 string oldValue = this.Value;
@@ -440,20 +432,66 @@ namespace NewTechObject
                 "Время совместного перехода шагов (параметр)", 
                 cooperParamNumber);
 
-            this.s88Level = new ObjS88Level(0, this);
             this.attachedObjects = new AttachedToObjects(attachedObjects, 
                 this);
 
-            // Экземпляр класса базового агрегата
-            this.baseTechObject = baseTechObject.Clone(); 
-
             modes = new ModesManager(this);
+
             parameters = new Params();
             parameters.Parent = this;
-
+            
             equipment = new Equipment(this);
 
+            InitBaseTechObject(baseTechObject);
             SetItems();
+        }
+
+        /// <summary>
+        /// Инициализация базового объекта
+        /// </summary>
+        /// <param name="baseTechObject">Базовый объект</param>
+        private void InitBaseTechObject(BaseTechObject baseTechObject)
+        {
+            if (baseTechObject != null)
+            {
+                this.baseTechObject = baseTechObject.Clone();
+                
+                equipment.AddItems(baseTechObject.Equipment);
+                equipment.Check();
+
+                // Установили новое значение, произошла смена базового объекта
+                // Надо сравнить ОУ и изменить его, если требуется
+                CompareEplanNames();
+            }
+        }
+
+        /// <summary>
+        /// Сравнение имен Eplan базового тех. объекта с текущим.
+        /// </summary>
+        public void CompareEplanNames()
+        {
+            // Если не выбран базовый объект, то пустое имя
+            // Если выбран, то сравниваем имена
+            if (baseTechObject.S88Level != 0)
+            {
+                string baseObjectNameEplan = baseTechObject.EplanName
+                    .ToLower();
+                string thisObjectNameEplan = NameEplan.ToLower();
+                // Если тех. объект не содержит базовое ОУ, то добавить его.
+                if (thisObjectNameEplan.Contains(baseObjectNameEplan) == false)
+                {
+                    NameEplanForFile = baseTechObject.EplanName + "_" +
+                        NameEplan;
+                }
+                else
+                {
+                    NameEplanForFile = NameEplan;
+                }
+            }
+            else
+            {
+                NameEplanForFile = string.Empty;
+            }
         }
 
         public TechObject Clone(/*GetN getN, */int newNumber/*, int oldObjN, 
@@ -465,7 +503,6 @@ namespace NewTechObject
             clone.techType = new ObjectProperty("Тип", TechType);
             clone.nameBC = new ObjectProperty("Имя объекта Monitor", NameBC);
             clone.nameEplan = new NameInEplan(NameEplan, clone);
-            clone.s88Level = new ObjS88Level(S88Level, clone);
             clone.attachedObjects = new AttachedToObjects(AttachedObjects.Value, 
                 clone);
 
@@ -501,6 +538,7 @@ namespace NewTechObject
             items[7] = parameters;
             items[8] = equipment;
         }
+
         /// <summary>
         /// Добавление операции.
         /// </summary>
@@ -600,19 +638,6 @@ namespace NewTechObject
             }
         }
 
-        // Уровень по S88
-        public int S88Level
-        {
-            get
-            {
-                return Convert.ToInt32(s88Level.EditText[1]);
-            }
-            set
-            {
-                s88Level.SetNewValue(value.ToString());
-            }
-        }
-
         /// <summary>
         /// Привязанные к аппарату агрегаты.
         /// </summary>
@@ -697,45 +722,10 @@ namespace NewTechObject
             modes.SetRestrictionOwner();
         }
 
-        public string NameEplanForFile
-        {
-            get
-            {
-                return nameEplanForFile;
-            }
-            set
-            {
-                nameEplanForFile = value;
-            }
-        }
-
-        private string nameEplanForFile = string.Empty; // ОУ для файла main.prg.lua
-        // Сравнение имен Eplan базового тех. объекта с текущим
-        public void CompareEplanNames()
-        {
-            // Если не выбран базовый объект, то пустое имя
-            // Если выбран, то сравниваем имена
-            if (baseTechObject.S88Level != 0)
-            {
-                string baseObjectNameEplan = baseTechObject.EplanName
-                    .ToLower();
-                string thisObjectNameEplan = NameEplan.ToLower();
-                // Если тех. объект не содержит базовое ОУ, то добавить его.
-                if (thisObjectNameEplan.Contains(baseObjectNameEplan) == false)
-                {
-                    NameEplanForFile = baseTechObject.EplanName + "_" + 
-                        NameEplan;
-                }
-                else
-                {
-                    NameEplanForFile = NameEplan;
-                }
-            }
-            else
-            {
-                NameEplanForFile = string.Empty;
-            }
-        }
+        /// <summary>
+        /// ОУ для файла main.prg.lua
+        /// </summary>
+        public string NameEplanForFile { get; set; }
 
         /// <summary>
         /// Базовый технологический объект
@@ -844,42 +834,6 @@ namespace NewTechObject
         {
             name = newName;
 
-            return true;
-        }
-
-        override public bool SetNewValue(string newValue, bool isExtraValue)
-        {
-            if (baseTechObject.Name == newValue ||
-                baseTechObject.EplanName == newValue)
-            {
-                return false;
-            }
-
-            if (baseTechObject.Name != "" && 
-                (newValue != baseTechObject.Name ||
-                newValue != baseTechObject.EplanName))
-            {
-                baseTechObject.ResetBaseOperations();
-                attachedObjects.Reset();
-                equipment.Clear();
-            }
-
-            BaseTechObject techObjFromDB = BaseTechObjectManager.GetInstance()
-                .GetTechObject(newValue);
-            if (techObjFromDB == null)
-            {
-                return false;
-            }
-
-            techObjFromDB.Owner = baseTechObject.Owner;
-            baseTechObject = techObjFromDB;
-            S88Level = baseTechObject.S88Level;
-            equipment.AddItems(baseTechObject.Equipment);
-            equipment.Check();
-
-            // Т.к установили новое значение, произошла смена базового объекта
-            // Надо сравнить ОУ и изменить его, если требуется
-            CompareEplanNames();
             return true;
         }
 
@@ -1047,7 +1001,7 @@ namespace NewTechObject
         {
             string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
                 .GetOstisHelpSystemLink();
-            if (S88Level == 1)
+            if (baseTechObject.S88Level == 1)
             {
                 return ostisLink + "?sys_id=unit";
 
@@ -1072,10 +1026,7 @@ namespace NewTechObject
 
         /// Базовый аппарат (технологический объект)
         private BaseTechObject baseTechObject; 
-
-        private ObjS88Level s88Level; // Уровень объекта в спецификации S88
         private AttachedToObjects attachedObjects; // Привязанные агрегаты
-
         private Equipment equipment; // Оборудование объекта
     }
 }

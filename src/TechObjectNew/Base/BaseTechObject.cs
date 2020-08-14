@@ -329,17 +329,6 @@ namespace NewTechObject
         }
 
         /// <summary>
-        /// Сброс базовых операций объекта
-        /// </summary>
-        public void ResetBaseOperations()
-        {
-            foreach (Mode operation in Owner.ModesManager.Modes)
-            {
-                operation.BaseOperation.Init("");
-            }
-        }
-
-        /// <summary>
         /// Является ли базовый объект привязываемым к другому объекту.
         /// </summary>
         public virtual bool IsAttachable

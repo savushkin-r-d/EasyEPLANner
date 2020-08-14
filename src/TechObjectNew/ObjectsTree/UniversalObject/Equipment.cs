@@ -20,14 +20,6 @@ namespace NewTechObject
         }
 
         /// <summary>
-        /// Очистить список оборудования
-        /// </summary>
-        public void Clear()
-        {
-            items.Clear();
-        }
-        
-        /// <summary>
         /// Добавить оборудование.
         /// </summary>
         /// <param name="properties">Список оборудования</param>
