@@ -77,6 +77,49 @@ namespace NewTechObject
             //}
         }
 
+        /// <summary>
+        /// Сохранение в виде таблицы Lua.
+        /// </summary>
+        /// <param name="prefix">Префикс (для выравнивания).</param>
+        /// <returns>Описание в виде таблицы Lua.</returns>
+        public string SaveAsLuaTable(string prefix)
+        {
+            string res = "";
+            var objectsForSave = FindObjects(objects);
+            foreach (TechObject obj in FindObjects(objects))
+            {
+                int num = objectsForSave.IndexOf(obj) + 1;
+                res += obj.SaveAsLuaTable(prefix + "\t\t", num);
+            }
+            res = res.Replace("\t", "    ");
+            return res;
+        }
+
+        /// <summary>
+        /// Рекурсивный поиск всех технологических объектов в дереве
+        /// </summary>
+        /// <param name="objects">Объекты дерева</param>
+        /// <returns></returns>
+        private List<TechObject> FindObjects(List<ITreeViewItem> objects)
+        {
+            var allObjects = new List<TechObject>();
+            foreach(var obj in objects)
+            {
+                if(obj is TechObject techObj)
+                {
+                    allObjects.Add(techObj);
+                }
+                else
+                {
+                    List<TechObject> findedObjects = FindObjects(
+                        obj.Items.ToList());
+                    allObjects.AddRange(findedObjects);
+                }
+            }
+
+            return allObjects;
+        }
+
         public List<TechObject> Objects
         {
             get

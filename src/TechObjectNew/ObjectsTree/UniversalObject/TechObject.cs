@@ -354,10 +354,11 @@ namespace NewTechObject
         /// Сохранение в виде таблицы Lua.
         /// </summary>
         /// <param name="prefix">Префикс (для выравнивания).</param>
+        /// <param name="globalNum">Глобальный номер объекта</param>
         /// <returns>Описание в виде таблицы Lua.</returns>
-        public string SaveAsLuaTable(string prefix)
+        public string SaveAsLuaTable(string prefix, int globalNum)
         {
-            string res = "\t[ " /*+ getN(this)*/ + " ] =\n"+
+            string res = "\t[ " + globalNum + " ] =\n"+
                 prefix + "{\n" +
                 prefix + "n          = " + TechNumber + ",\n" +
                 prefix + "tech_type  = " + TechType + ",\n" +
@@ -406,7 +407,8 @@ namespace NewTechObject
         /// Создание технологического объекта.
         /// </summary>
         /// <param name="name">Имя.</param>
-        /// <param name="getN">Функция получения порядкового номера.</param>
+        /// <param name="getN">Функция получения порядкового локального номера.
+        /// </param>
         /// <param name="technologicalNumber">Технологический номер.</param>
         /// <param name="nameEplan">ОУ объекта в Eplan'е.</param>
         /// <param name="cooperParamNumber">Время совместного перехода шагов 
