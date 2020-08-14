@@ -59,7 +59,12 @@ namespace NewTechObject
                 GetTechObjectLocalNum, objects.Count + 1, 1, 
                 baseTechObject.EplanName.ToUpper(), -1, 
                 baseTechObject.EplanName, "", baseTechObject);
+            
+            // Работа со списком в дереве и общим списком объектов.
             objects.Add(newObject);
+            TechObjectManager.GetInstance().TechObjectsList
+                    .Add(newObject);
+            
             return newObject;
         }
 
@@ -76,7 +81,11 @@ namespace NewTechObject
                 int idx = objects.IndexOf(techObject) + 1;
                 //CheckRestriction(idx, -1);
 
+                // Работа со списком в дереве и общим списком объектов.
                 objects.Remove(techObject);
+                TechObjectManager.GetInstance().TechObjectsList
+                    .Remove(techObject);
+
                 //SetRestrictionOwner();
                 //ChangeAttachedObjectsAfterDelete(idx);
 
@@ -101,8 +110,16 @@ namespace NewTechObject
                 {
                     //CheckRestriction(index + 1, index + 2);
 
+                    // Работа со списком в дереве и общим списком объектов.
                     objects.Remove(techObject);
                     objects.Insert(index + 1, techObject);
+                    var allTechObjectsList = TechObjectManager.GetInstance()
+                        .TechObjectsList;
+                    int indexInAllObjectsTree = allTechObjectsList
+                        .IndexOf(techObject);
+                    allTechObjectsList.Remove(techObject);
+                    allTechObjectsList
+                        .Insert(indexInAllObjectsTree + 1, techObject);
 
                     //SetRestrictionOwner();
                     //ChangeAttachedObjectsAfterMove(index, index + 1);
@@ -124,8 +141,16 @@ namespace NewTechObject
                 {
                     //CheckRestriction(index + 1, index);
 
+                    // Работа со списком в дереве и общим списком объектов.
                     objects.Remove(techObject);
                     objects.Insert(index - 1, techObject);
+                    var allTechObjectsList = TechObjectManager.GetInstance()
+                        .TechObjectsList;
+                    int indexInAllObjectsTree = allTechObjectsList
+                        .IndexOf(techObject);
+                    allTechObjectsList.Remove(techObject);
+                    allTechObjectsList
+                        .Insert(indexInAllObjectsTree - 1, techObject);
 
                     //SetRestrictionOwner();
                     //ChangeAttachedObjectsAfterMove(index, index - 1);
@@ -162,7 +187,10 @@ namespace NewTechObject
 
                 TechObject newObject = (obj as TechObject).Clone(
                     GetTechObjectLocalNum, newN/*, oldObjN, newObjN*/);
+
+                // Работа со списком в дереве и общим списком объектов.
                 objects.Add(newObject);
+                TechObjectManager.GetInstance().TechObjectsList.Add(newObject);
 
                 //newObject.ChangeCrossRestriction();
                 newObject.Equipment.ModifyDevNames();
@@ -189,9 +217,18 @@ namespace NewTechObject
 
                 TechObject newObject = (copyObject as TechObject).Clone(
                     GetTechObjectLocalNum, newN/*, oldObjN, newObjN*/);
+
                 int index = objects.IndexOf(techObject);
+                // Работа со списком в дереве и общим списком объектов.
                 objects.Remove(techObject);
                 objects.Insert(index, newObject);
+                var allTechObjectsList = TechObjectManager.GetInstance()
+                    .TechObjectsList;
+                int indexInAllObjectsTree = allTechObjectsList
+                    .IndexOf(techObject);
+                allTechObjectsList.Remove(techObject);
+                allTechObjectsList.Insert(indexInAllObjectsTree, newObject);
+
                 //newObject.ChangeCrossRestriction(techObject);
 
                 return newObject;

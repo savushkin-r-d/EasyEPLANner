@@ -45,7 +45,12 @@ namespace NewTechObject
             {
                 var newObject = new TechObject(name, GetTechObjectLocalNum, 
                     1, 1, "MASTER", -1, "MasterObj", "", baseTechObject);
+
+                // Работа со списком в дереве и общим списком объектов.
                 objects.Add(newObject);
+                TechObjectManager.GetInstance().TechObjectsList
+                    .Add(newObject);
+
                 return newObject;
             }
             else
@@ -75,7 +80,11 @@ namespace NewTechObject
                 int idx = objects.IndexOf(techObject) + 1;
                 //CheckRestriction(idx, -1);
 
+                // Работа со списком в дереве и общим списком объектов.
                 objects.Remove(techObject);
+                TechObjectManager.GetInstance().TechObjectsList
+                    .Remove(techObject);
+
                 //SetRestrictionOwner();
                 //ChangeAttachedObjectsAfterDelete(idx);
 
@@ -116,7 +125,10 @@ namespace NewTechObject
 
                 TechObject newObject = (obj as TechObject).Clone(
                     GetTechObjectLocalNum, newN/*, oldObjN, newObjN*/);
+
+                // Работа со списком в дереве и общим списком объектов.
                 objects.Add(newObject);
+                TechObjectManager.GetInstance().TechObjectsList.Add(newObject);
 
                 //newObject.ChangeCrossRestriction();
                 newObject.Equipment.ModifyDevNames();
@@ -143,9 +155,18 @@ namespace NewTechObject
 
                 TechObject newObject = (copyObject as TechObject).Clone(
                     GetTechObjectLocalNum, newN/*, oldObjN, newObjN*/);
+
+                // Работа со списком в дереве и общим списком объектов.
                 int index = objects.IndexOf(techObject);
                 objects.Remove(techObject);
                 objects.Insert(index, newObject);
+                var allTechObjectsList = TechObjectManager.GetInstance()
+                    .TechObjectsList;
+                int indexInAllObjectsTree = allTechObjectsList
+                    .IndexOf(techObject);
+                allTechObjectsList.Remove(techObject);
+                allTechObjectsList.Insert(indexInAllObjectsTree, newObject);
+
                 //newObject.ChangeCrossRestriction(techObject);
 
                 return newObject;

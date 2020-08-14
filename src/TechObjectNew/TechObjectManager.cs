@@ -20,6 +20,7 @@ namespace NewTechObject
         private TechObjectManager()
         {
             objects = new List<ITreeViewItem>();
+            techObjectsList = new List<TechObject>();
         }
 
         /// <summary>
@@ -85,39 +86,13 @@ namespace NewTechObject
         public string SaveAsLuaTable(string prefix)
         {
             string res = "";
-            var objectsForSave = FindObjects(objects);
-            foreach (TechObject obj in FindObjects(objects))
+            foreach (TechObject obj in TechObjectsList)
             {
-                int num = objectsForSave.IndexOf(obj) + 1;
+                int num = TechObjectsList.IndexOf(obj) + 1;
                 res += obj.SaveAsLuaTable(prefix + "\t\t", num);
             }
             res = res.Replace("\t", "    ");
             return res;
-        }
-
-        /// <summary>
-        /// Рекурсивный поиск всех технологических объектов в дереве
-        /// </summary>
-        /// <param name="objects">Объекты дерева</param>
-        /// <returns></returns>
-        private List<TechObject> FindObjects(List<ITreeViewItem> objects)
-        {
-            var allObjects = new List<TechObject>();
-            foreach(var obj in objects)
-            {
-                if(obj is TechObject techObj)
-                {
-                    allObjects.Add(techObj);
-                }
-                else
-                {
-                    List<TechObject> findedObjects = FindObjects(
-                        obj.Items.ToList());
-                    allObjects.AddRange(findedObjects);
-                }
-            }
-
-            return allObjects;
         }
 
         public List<TechObject> Objects
@@ -266,9 +241,32 @@ namespace NewTechObject
         }
         #endregion
 
+        /// <summary>
+        /// Имя проекта.
+        /// </summary>
         public string ProjectName { get;set; }
 
+        /// <summary>
+        /// Список всех технологических объектов в дереве.
+        /// </summary>
+        public List<TechObject> TechObjectsList
+        {
+            get
+            {
+                return techObjectsList;
+            }
+        }
+
         private static TechObjectManager instance;
+
+        /// <summary>
+        /// Список объектов дерева
+        /// </summary>
         private List<ITreeViewItem> objects;
+
+        /// <summary>
+        /// Список всех технологических объектов в дереве.
+        /// </summary>
+        private List<TechObject> techObjectsList;
     }
 }
