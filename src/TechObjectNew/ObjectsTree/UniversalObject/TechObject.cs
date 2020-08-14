@@ -415,13 +415,13 @@ namespace NewTechObject
         /// <param name="baseTechObject">Базовый технологический объект</param>
         /// <param name="NameBC">Имя объекта Monitor</param>
         /// <param name="techType">Номер типа</param>
-        public TechObject(string name/*, GetN getN*/, int technologicalNumber,
-            int techType, string nameEplan, int cooperParamNumber, 
-            string NameBC, string attachedObjects, 
+        public TechObject(string name, GetN getLocalNum, 
+            int technologicalNumber, int techType, string nameEplan, 
+            int cooperParamNumber, string NameBC, string attachedObjects, 
             BaseTechObject baseTechObject)
         {
             this.name = name;
-            //this.getN = getN;
+            this.getLocalNum = getLocalNum;
 
             this.techNumber = new TechObjectN(this, technologicalNumber);
             this.techType = new ObjectProperty("Тип", techType);
@@ -494,8 +494,8 @@ namespace NewTechObject
             }
         }
 
-        public TechObject Clone(/*GetN getN, */int newNumber/*, int oldObjN, 
-            int newObjN*/)
+        public TechObject Clone(GetN getLocalNum, int newNumber
+            /*, int oldObjN, int newObjN*/)
         {
             TechObject clone = (TechObject)MemberwiseClone();
 
@@ -506,8 +506,8 @@ namespace NewTechObject
             clone.attachedObjects = new AttachedToObjects(AttachedObjects.Value, 
                 clone);
 
-            //clone.getN = getN;
-      
+            clone.getLocalNum = getLocalNum;
+
             clone.baseTechObject = baseTechObject.Clone(clone);
 
             clone.parameters = parameters.Clone();
@@ -817,7 +817,7 @@ namespace NewTechObject
             get
             {
                 return new string[] {
-                    /*getN( this ) + */". " + name + ' ' + 
+                    getLocalNum( this ) + ". " + name + ' ' + 
                     techNumber.EditText[ 1 ], "" };
             }
         }
@@ -1022,7 +1022,7 @@ namespace NewTechObject
 
         private ITreeViewItem[] items; /// Параметры объекта для редактирования.
 
-        //private GetN getN;
+        private GetN getLocalNum;
 
         /// Базовый аппарат (технологический объект)
         private BaseTechObject baseTechObject; 

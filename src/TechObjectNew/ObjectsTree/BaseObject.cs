@@ -53,9 +53,9 @@ namespace NewTechObject
         {
             //TODO: set TechType
             //TODO: nameBC set
-            //TODO: set TechNumber
+            //TODO: set TechNumber (prevObj + 1)
             ObjectsAdder.Reset();
-            var newObject = new TechObject(baseTechObject.Name,
+            var newObject = new TechObject(baseTechObject.Name, GetTechObjectN,
                 objects.Count + 1, 1, baseTechObject.EplanName.ToUpper(), -1,
                 baseTechObject.EplanName, "", baseTechObject);
             objects.Add(newObject);
@@ -160,7 +160,7 @@ namespace NewTechObject
                 //int newObjN = objects.Count + 1;
 
                 TechObject newObject = (obj as TechObject).Clone(
-                    /*GetTechObjectN,*/newN/*, oldObjN, newObjN*/);
+                    GetTechObjectN, newN/*, oldObjN, newObjN*/);
                 objects.Add(newObject);
 
                 //newObject.ChangeCrossRestriction();
@@ -187,7 +187,7 @@ namespace NewTechObject
                 //int newObjN = GetTechObjectN(child as TechObject);
 
                 TechObject newObject = (copyObject as TechObject).Clone(
-                    /*GetTechObjectN, */newN/*, oldObjN, newObjN*/);
+                    GetTechObjectN, newN/*, oldObjN, newObjN*/);
                 int index = objects.IndexOf(techObject);
                 objects.Remove(techObject);
                 objects.Insert(index, newObject);
@@ -199,6 +199,18 @@ namespace NewTechObject
             return null;
         }
         #endregion
+
+        /// <summary>
+        /// Получить локальный номер технологического объекта
+        /// </summary>
+        /// <param name="searchingObject">Искомый объект</param>
+        /// <returns></returns>
+        private int GetTechObjectN(object searchingObject)
+        {
+            var techObject = searchingObject as TechObject;
+            int num = objects.IndexOf(techObject) + 1;
+            return num;
+        }
 
         List<TechObject> objects;
         BaseTechObject baseTechObject;

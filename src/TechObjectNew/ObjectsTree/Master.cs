@@ -43,7 +43,7 @@ namespace NewTechObject
         {
             if(Items.Length == 0)
             {
-                var newObject = new TechObject(name/*, GetTechObjectN*/, 
+                var newObject = new TechObject(name, GetTechObjectN, 
                     1, 1, "MASTER", -1, "MasterObj", "", baseTechObject);
                 objects.Add(newObject);
                 return newObject;
@@ -115,7 +115,7 @@ namespace NewTechObject
                 //int newObjN = objects.Count + 1;
 
                 TechObject newObject = (obj as TechObject).Clone(
-                    /*GetTechObjectN, */newN/*, oldObjN, newObjN*/);
+                    GetTechObjectN, newN/*, oldObjN, newObjN*/);
                 objects.Add(newObject);
 
                 //newObject.ChangeCrossRestriction();
@@ -142,7 +142,7 @@ namespace NewTechObject
                 //int newObjN = GetTechObjectN(child as TechObject);
 
                 TechObject newObject = (copyObject as TechObject).Clone(
-                    /*GetTechObjectN, */newN/*, oldObjN, newObjN*/);
+                    GetTechObjectN, newN/*, oldObjN, newObjN*/);
                 int index = objects.IndexOf(techObject);
                 objects.Remove(techObject);
                 objects.Insert(index, newObject);
@@ -154,6 +154,36 @@ namespace NewTechObject
             return null;
         }
         #endregion
+
+        /// <summary>
+        /// Мастер-объект проекта.
+        /// </summary>
+        public TechObject MasterObject
+        {
+            get
+            {
+                if(objects[0] != null)
+                {
+                    return objects[0];
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Получить локальный номер технологического объекта
+        /// </summary>
+        /// <param name="searchingObject">Искомый объект</param>
+        /// <returns></returns>
+        private int GetTechObjectN(object searchingObject)
+        {
+            var techObject = searchingObject as TechObject;
+            int num = objects.IndexOf(techObject) + 1;
+            return num;
+        }
 
         string name = "Мастер";
         List<TechObject> objects;

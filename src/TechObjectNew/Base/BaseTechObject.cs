@@ -420,9 +420,7 @@ namespace NewTechObject
                 return res;
             }
 
-            var objects = TechObjectManager.GetInstance();
-            var masterObj = objects.Objects
-                .Where(x => x.Name.Contains("Мастер")).FirstOrDefault();
+            var masterObj = TechObjectManager.GetInstance().MasterObject;
             if (masterObj != null)
             {
                 res += objName + ".master = prg." + masterObj.NameEplan

@@ -86,6 +86,26 @@ namespace NewTechObject
             }
         }
 
+        /// <summary>
+        /// Объект мастера проекта.
+        /// </summary>
+        public TechObject MasterObject
+        {
+            get
+            {
+                var masterObject = objects.Where(x => x is Master)
+                    .FirstOrDefault() as Master;
+                if(masterObject != null)
+                {
+                    return masterObject.MasterObject;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
         #region реализация ITreeViewItem
         public override string[] DisplayText
         {
