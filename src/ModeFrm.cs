@@ -826,99 +826,12 @@ namespace EasyEPlanner
 
             int toNum = 0;
             int modeNum = 0;
-            var mainTO = item as NewTechObject.TechObject;
+            var mainTechObject = item as NewTechObject.TechObject;
+
             var restriction = checkedMode as NewTechObject.Restriction;
-            //Заполняем узлы дерева устройствами.
-            foreach (NewTechObject.TechObject to in techManager.TechObjectsList)
-            {
-                toNum++;
 
-                var parentNode = new Node(to.DisplayText[0]);
-                parentNode.Tag = to.GetType().FullName;
-                root.Nodes.Add(parentNode);
-
-                List<NewTechObject.Mode> modes = to.ModesManager.Modes;
-
-                foreach (NewTechObject.Mode mode in modes)
-                {
-                    modeNum++;
-
-                    var childNode = new Node(mode.DisplayText[0]);
-                    childNode.Tag = mode.GetType().FullName;
-                    parentNode.Nodes.Add(childNode);
-
-                    if (restriction != null)
-                    {
-                        var restrictionManager = restriction.Parent;
-                        var selectedMode = restrictionManager.Parent as
-                            NewTechObject.Mode;
-                        var modeManager = selectedMode.Parent;
-                        var selectedTO = modeManager.Parent as
-                            NewTechObject.TechObject;
-                        if (to.DisplayText[0] == selectedTO.DisplayText[0] &&
-                            mode.Name == selectedMode.Name)
-                        {
-                            childNode.IsHidden = true;
-                        }
-                    }
-
-                    string checkedStr;
-                    if (checkedMode != null)
-                    {
-                        checkedStr = checkedMode.EditText[1];
-                        if (restriction != null)
-                        {
-                            if (restriction.RestrictDictionary != null)
-                            {
-                                if (restriction.RestrictDictionary
-                                    .ContainsKey(toNum))
-                                {
-                                    if (restriction.RestrictDictionary[toNum]
-                                        .Contains(modeNum))
-                                    {
-                                        childNode.CheckState = CheckState
-                                            .Checked;
-                                    }
-                                    else
-                                    {
-                                        childNode.CheckState = CheckState
-                                            .Unchecked;
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-                    else
-                    {
-                        checkedStr = "";
-                        childNode.CheckState = CheckState.Unchecked;
-                    }
-                }
-
-                if (showOneNode == true)
-                {
-                    if (to != mainTO)
-                    {
-                        parentNode.IsHidden = true;
-                        foreach (Node child in parentNode.Nodes)
-                        {
-                            child.IsHidden = true;
-                        }
-                    }
-                }
-                else
-                {
-                    if (to == mainTO)
-                    {
-                        parentNode.IsHidden = true;
-                        foreach (Node child in parentNode.Nodes)
-                        {
-                            child.IsHidden = true;
-                        }
-                    }
-                }
-            }
+            FillTreeObjects(techManager.Items, root, mainTechObject,
+                showOneNode, ref toNum, ref modeNum, restriction);
 
             modesTreeViewAdv.Model = treeModel;
             
@@ -930,6 +843,100 @@ namespace EasyEPlanner
             modesTreeViewAdv.ExpandAll();
             modesTreeViewAdv.Refresh();
             modesTreeViewAdv.EndUpdate();
+        }
+
+        /// <summary>
+        /// Заполнение дерева с операциями
+        /// </summary>
+        /// <param name="treeItems"></param>
+        /// <param name="root"></param>
+        /// <param name="mainTechObject"></param>
+        /// <param name="showOneNode"></param>
+        /// <param name="techObjNum"></param>
+        /// <param name="modeNum"></param>
+        /// <param name="restriction"></param>
+        private void FillTreeObjects(NewEditor.ITreeViewItem[] treeItems,
+            Node root, NewTechObject.TechObject mainTechObject, 
+            bool showOneNode, ref int techObjNum, ref int modeNum, 
+            NewTechObject.Restriction restriction)
+        {
+            foreach(var treeItem in treeItems)
+            {
+                var parentNode = new Node(treeItem.DisplayText[0]);
+                parentNode.Tag = treeItem.GetType().FullName;
+                root.Nodes.Add(parentNode);
+
+                if (treeItem is NewTechObject.TechObject techObject)
+                {
+                    techObjNum++;
+                    List<NewTechObject.Mode> modes = techObject.ModesManager
+                        .Modes;
+
+                    foreach(var mode in modes)
+                    {
+                        modeNum++;
+                        var childNode = new Node(mode.DisplayText[0]);
+                        childNode.Tag = mode.GetType().FullName;
+                        parentNode.Nodes.Add(childNode);
+
+                        if (restriction != null)
+                        {
+                            var restrictionManager = restriction.Parent;
+                            var selectedMode = restrictionManager.Parent as NewTechObject.Mode;
+                            var modeManager = selectedMode.Parent;
+                            var selectedTO = modeManager.Parent as NewTechObject.TechObject;
+                            bool notSameObjects =
+                                techObject.DisplayText[0] == selectedTO.DisplayText[0] &&
+                                mode.Name == selectedMode.Name;
+                            if (notSameObjects)
+                            {
+                                childNode.IsHidden = true;
+                            }
+                        }
+
+                        if (restriction != null &&
+                            restriction.RestrictDictionary != null &&
+                            restriction.RestrictDictionary.ContainsKey(techObjNum) &&
+                            restriction.RestrictDictionary[techObjNum].Contains(modeNum))
+                        {
+
+                            childNode.CheckState = CheckState.Checked;
+                        }
+                        else
+                        {
+                            childNode.CheckState = CheckState.Unchecked;
+                        }
+                    }
+
+                    if (showOneNode == true)
+                    {
+                        if (techObject != mainTechObject)
+                        {
+                            parentNode.IsHidden = true;
+                            foreach (Node child in parentNode.Nodes)
+                            {
+                                child.IsHidden = true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (techObject == mainTechObject)
+                        {
+                            parentNode.IsHidden = true;
+                            foreach (Node child in parentNode.Nodes)
+                            {
+                                child.IsHidden = true;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    FillTreeObjects(treeItem.Items, parentNode, mainTechObject,
+                        showOneNode, ref techObjNum, ref modeNum, restriction);
+                }
+            }
         }
         #endregion
 
