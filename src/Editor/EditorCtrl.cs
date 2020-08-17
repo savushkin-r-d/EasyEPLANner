@@ -1148,7 +1148,7 @@ namespace Editor
                 }
 
                 ModeFrm.CheckShown();
-                if (ModeFrm.GetInstance().isVisible())
+                if (ModeFrm.GetInstance().IsVisible())
                 {
                     ModeFrm.GetInstance().ShowModes(
                        TechObject.TechObjectManager.GetInstance(),
@@ -1196,7 +1196,7 @@ namespace Editor
                 }
 
                 ModeFrm.CheckShown();
-                if (ModeFrm.GetInstance().isVisible())
+                if (ModeFrm.GetInstance().IsVisible())
                 {
                     ITreeViewItem item = GetActiveItem();
 
@@ -1546,12 +1546,12 @@ namespace Editor
                 }
 
                 ModeFrm.CheckShown();
-                if (ModeFrm.GetInstance().isVisible() == true)
+                if (ModeFrm.GetInstance().IsVisible() == true)
                 {
                     if (item.IsUseRestriction == false)
                     {
                         ModeFrm.CheckShown();
-                        if (ModeFrm.GetInstance().isVisible())
+                        if (ModeFrm.GetInstance().IsVisible())
                         {
                             ModeFrm.GetInstance().ShowNoModes();
                         }
