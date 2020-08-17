@@ -1051,7 +1051,8 @@ namespace NewEditor
         /// <param name="newVal">Новое значение</param>
         internal void SetNewVal(string newVal)
         {
-            bool isModified = (editorTView.SelectedObject as ITreeViewItem).SetNewValue(newVal);
+            bool isModified = (editorTView.SelectedObject as ITreeViewItem)
+                .SetNewValue(newVal);
 
             if (isModified)
             {
@@ -1141,7 +1142,7 @@ namespace NewEditor
                 if (ModeFrm.GetInstance().isVisible())
                 {
                     ModeFrm.GetInstance().ShowModes(
-                       TechObject.TechObjectManager.GetInstance(),
+                       NewTechObject.TechObjectManager.GetInstance(),
                        false, false, null, null, null, true);
                 }
 
@@ -1200,12 +1201,12 @@ namespace NewEditor
                     {
                         if (parentItem != null)
                         {
-                            //ModeFrm.GetInstance().ShowModes(
-                            //    TechObject.TechObjectManager.GetInstance(), 
-                            //    true, item.IsLocalRestrictionUse, parentItem, 
-                            //    item, SetNewVal, true);
-                            //ModeFrm.GetInstance()
-                            //    .SelectDevices(item, SetNewVal);
+                            ModeFrm.GetInstance().ShowModes(
+                                NewTechObject.TechObjectManager.GetInstance(),
+                                true, item.IsLocalRestrictionUse, parentItem,
+                                item, SetNewVal, true);
+                            ModeFrm.GetInstance().SelectDevices(item,
+                                SetNewVal);
                         }
                         else
                         {
@@ -1549,11 +1550,11 @@ namespace NewEditor
                     else
                     {
                         ITreeViewItem parentItem = GetParentBranch(item);
-                        //ModeFrm.GetInstance().ShowModes(
-                        //    TechObject.TechObjectManager.GetInstance(), true,
-                        //    item.IsLocalRestrictionUse, parentItem,
-                        //    item, SetNewVal, true);
-                        //ModeFrm.GetInstance().SelectDevices(item, SetNewVal);
+                        ModeFrm.GetInstance().ShowModes(
+                            NewTechObject.TechObjectManager.GetInstance(), true,
+                            item.IsLocalRestrictionUse, parentItem,
+                            item, SetNewVal, true);
+                        ModeFrm.GetInstance().SelectDevices(item, SetNewVal);
                         OnModify();
                     }
                 }

@@ -240,7 +240,7 @@ namespace NewTechObject
                 foreach (int key in keyColl)
                 {
                     TechObject to = TechObjectManager.GetInstance()
-                        .Objects[key - 1];
+                        .TechObjectsList[key - 1];
                     foreach (int val in restrictList[key])
                     {
                         Mode mode = to.GetMode(val - 1);
@@ -266,7 +266,7 @@ namespace NewTechObject
                 foreach (int key in keyColl)
                 {
                     TechObject to = TechObjectManager.GetInstance()
-                        .Objects[key - 1];
+                        .TechObjectsList[key - 1];
                     foreach (int val in diffDict[key])
                     {
                         Mode mode = to.GetMode(val - 1);
@@ -287,10 +287,11 @@ namespace NewTechObject
         protected void ChangeRestrictList()
         {
             var res = new SortedDictionary<int, List<int>>();
-            for (int i = 0; i < TechObjectManager.GetInstance().Objects.Count; 
-                i++)
+            for (int i = 0; i < TechObjectManager.GetInstance().TechObjectsList
+                .Count; i++)
             {
-                TechObject to = TechObjectManager.GetInstance().Objects[i];
+                TechObject to = TechObjectManager.GetInstance()
+                    .TechObjectsList[i];
                 for (int j = 0; j < to.ModesManager.Modes.Count; j++)
                 {
                     string restrictPair = "{ " + (i + 1).ToString() + ", " + 
@@ -461,8 +462,8 @@ namespace NewTechObject
                 else
                 {
                     for (int i = prev + 1;
-                        i < TechObjectManager.GetInstance().Objects.Count; 
-                        i++)
+                        i < TechObjectManager.GetInstance().TechObjectsList
+                        .Count; i++)
                     {
                         if (restrictStr.Contains("{ " + i.ToString()))
                         {
@@ -540,8 +541,8 @@ namespace NewTechObject
                 {
                     for (int i = prev + 1;
                         i < TechObjectManager.GetInstance()
-                        .Objects[objNum - 1].ModesManager
-                        .Modes.Count; i++)
+                        .TechObjectsList[objNum - 1].ModesManager.Modes.Count;
+                        i++)
                     {
                         if (restrictStr.Contains("{ " + objNum.ToString() + 
                             ", " + i.ToString() + " }"))

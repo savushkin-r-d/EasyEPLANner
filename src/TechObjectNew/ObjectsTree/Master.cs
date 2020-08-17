@@ -15,6 +15,28 @@ namespace NewTechObject
                 .GetTechObject(name);
         }
 
+        /// <summary>
+        /// Проверка и исправление ограничений при удалении/перемещении объекта
+        /// </summary>
+        public void CheckRestriction(int prev, int curr)
+        {
+            foreach (TechObject to in objects)
+            {
+                to.CheckRestriction(prev, curr);
+            }
+        }
+
+        /// <summary>
+        /// Изменение номеров владельцев ограничений
+        /// </summary>
+        public void SetRestrictionOwner()
+        {
+            foreach (TechObject to in objects)
+            {
+                to.SetRestrictionOwner();
+            }
+        }
+
         #region реализация ITreeViewItem
         public override string[] DisplayText
         {
@@ -77,22 +99,22 @@ namespace NewTechObject
                 //    RemoveAttachingToUnit(techObject);
                 //}
 
-                int idx = objects.IndexOf(techObject) + 1;
-                //CheckRestriction(idx, -1);
+                int idx = TechObjectManager.GetInstance().TechObjectsList
+                    .IndexOf(techObject) + 1;
+                CheckRestriction(idx, -1);
 
                 // Работа со списком в дереве и общим списком объектов.
                 objects.Remove(techObject);
                 TechObjectManager.GetInstance().TechObjectsList
                     .Remove(techObject);
 
-                //SetRestrictionOwner();
+                SetRestrictionOwner();
                 //ChangeAttachedObjectsAfterDelete(idx);
 
                 if(objects.Count == 0)
                 {
                     Parent.Delete(this);
                 }
-                //TODO: Hide parent object or delete if it is empty
                 return true;
             }
 
@@ -120,17 +142,19 @@ namespace NewTechObject
                 }
 
                 //Старый и новый номер объекта - для замены в ограничениях
-                //int oldObjN = GetTechObjectN(obj as TechObject);
-                //int newObjN = objects.Count + 1;
+                int oldObjN = TechObjectManager.GetInstance()
+                    .GetTechObjectN(obj as TechObject);
+                int newObjN = TechObjectManager.GetInstance()
+                    .TechObjectsList.Count + 1;
 
                 TechObject newObject = (obj as TechObject).Clone(
-                    GetTechObjectLocalNum, newN/*, oldObjN, newObjN*/);
+                    GetTechObjectLocalNum, newN, oldObjN, newObjN);
 
                 // Работа со списком в дереве и общим списком объектов.
                 objects.Add(newObject);
                 TechObjectManager.GetInstance().TechObjectsList.Add(newObject);
 
-                //newObject.ChangeCrossRestriction();
+                newObject.ChangeCrossRestriction();
                 newObject.Equipment.ModifyDevNames();
 
                 return newObject;
@@ -150,11 +174,13 @@ namespace NewTechObject
                 int newN = techObject.TechNumber;
 
                 //Старый и новый номер объекта - для замены в ограничениях
-                //int oldObjN = GetTechObjectN(copyObject as TechObject);
-                //int newObjN = GetTechObjectN(child as TechObject);
+                int oldObjN = TechObjectManager.GetInstance()
+                    .GetTechObjectN(copyObject as TechObject);
+                int newObjN = TechObjectManager.GetInstance()
+                    .GetTechObjectN(child as TechObject);
 
                 TechObject newObject = (copyObject as TechObject).Clone(
-                    GetTechObjectLocalNum, newN/*, oldObjN, newObjN*/);
+                    GetTechObjectLocalNum, newN, oldObjN, newObjN);
 
                 // Работа со списком в дереве и общим списком объектов.
                 int index = objects.IndexOf(techObject);
@@ -167,7 +193,7 @@ namespace NewTechObject
                 allTechObjectsList.Remove(techObject);
                 allTechObjectsList.Insert(indexInAllObjectsTree, newObject);
 
-                //newObject.ChangeCrossRestriction(techObject);
+                newObject.ChangeCrossRestriction(techObject);
 
                 return newObject;
             }

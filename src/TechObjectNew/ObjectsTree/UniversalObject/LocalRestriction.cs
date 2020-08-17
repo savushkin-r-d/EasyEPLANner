@@ -74,7 +74,10 @@ namespace NewTechObject
                     newOperations.Add(value);
                 }
             }
-            newDict.Add( techObject.GlobalNumber , newOperations);
+
+            int objGlobalNumber = TechObjectManager.GetInstance()
+                        .GetTechObjectN(techObject);
+            newDict.Add(objGlobalNumber, newOperations);
             
             return newDict;
         }

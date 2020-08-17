@@ -293,8 +293,10 @@ namespace NewTechObject
                 string checkedValue = string.Join(" ", numbers);
                 if (checkedValue != this.Value)
                 {
+                    int objGlobalNumber = TechObjectManager.GetInstance()
+                        .GetTechObjectN(techObject);
                     res += $"Проверьте привязанные агрегаты в объекте: " +
-                        $"{techObject.GlobalNumber}." +
+                        $"{objGlobalNumber}." +
                         $"{techObject.Name + techObject.TechNumber}. " +
                         $"В поле присутствуют агрегаты, которые нельзя " +
                         $"привязывать.\n";
@@ -496,8 +498,8 @@ namespace NewTechObject
             }
         }
 
-        public TechObject Clone(GetN getLocalNum, int newNumber
-            /*, int oldObjN, int newObjN*/)
+        public TechObject Clone(GetN getLocalNum, int newNumber, int oldObjN,
+            int newObjN)
         {
             TechObject clone = (TechObject)MemberwiseClone();
 
@@ -517,7 +519,7 @@ namespace NewTechObject
             clone.modes.ChngeOwner(clone);
             clone.modes = modes.Clone(clone);
             clone.modes.ModifyDevNames(TechNumber);
-            //clone.modes.ModifyRestrictObj(oldObjN, newObjN);
+            clone.modes.ModifyRestrictObj(oldObjN, newObjN);
 
             clone.equipment = equipment.Clone(clone);
             clone.equipment.ModifyDevNames();
@@ -762,19 +764,6 @@ namespace NewTechObject
             get
             {
                 return equipment;
-            }
-        }
-
-        /// <summary>
-        /// Глобальный порядковый номер объекта.
-        /// </summary>
-        public int GlobalNumber
-        {
-            get
-            {
-                var number = this.DisplayText[0].Split('.')[0];
-                number = number.Trim();
-                return int.Parse(number);
             }
         }
 

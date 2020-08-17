@@ -219,8 +219,10 @@ namespace NewTechObject
                     owner.GetParams().GetParam(currentValue) != null);
                 if (!isValid)
                 {
+                    int objGlobalNumber = TechObjectManager.GetInstance()
+                        .GetTechObjectN(owner);
                     errors += $"Отсутствует задание для ПИД регулятора" +
-                        $" №{owner.GlobalNumber}\n";
+                        $" №{objGlobalNumber}\n";
                 }
             }
             else

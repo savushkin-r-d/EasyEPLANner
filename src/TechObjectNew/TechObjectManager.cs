@@ -44,14 +44,14 @@ namespace NewTechObject
          /// <returns></returns>
         public TechObject GetTObject(int i)
         {
-            //if (objects != null)
-            //{
-            //    if (objects.Count >= i)
-            //    {
-            //        return objects[i - 1];
-            //    }
-            //}
-            return null;
+            if (techObjectsList != null && techObjectsList.Count >= i)
+            {
+                return techObjectsList[i - 1];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -62,8 +62,7 @@ namespace NewTechObject
         /// <returns>Номер заданной операции.</returns>
         public int GetTechObjectN(object techObject)
         {
-            //return objects.IndexOf(techObject as TechObject) + 1;
-            return 0;
+            return techObjectsList.IndexOf(techObject as TechObject) + 1;
         }
 
         /// <summary>
@@ -71,11 +70,10 @@ namespace NewTechObject
         /// операции </summary>
         public void ChangeModeNum(int objNum, int prev, int curr)
         {
-            //TODO: Переделать
-            //foreach (TechObject to in objects)
-            //{
-            //    to.ChangeModeNum(objNum, prev, curr);
-            //}
+            foreach (TechObject to in TechObjectsList)
+            {
+                to.ChangeModeNum(objNum, prev, curr);
+            }
         }
 
         /// <summary>
@@ -93,15 +91,6 @@ namespace NewTechObject
             }
             res = res.Replace("\t", "    ");
             return res;
-        }
-
-        public List<TechObject> Objects
-        {
-            get
-            {
-                //TODO: Переделать
-                return new List<TechObject>();
-            }
         }
 
         /// <summary>
