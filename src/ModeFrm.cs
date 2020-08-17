@@ -565,7 +565,6 @@ namespace EasyEPlanner
         /// <summary>
         /// Обновление дерева на основе текущих устройств проекта.
         /// </summary>
-        /// 
         /// <param name="techManager">Менеджер техустройств проекта.</param>
         /// <param name="checkedMode">Выбранные операции.</param>
         private void Refresh(TechObject.TechObjectManager techManager,
@@ -809,7 +808,6 @@ namespace EasyEPlanner
         /// <summary>
         /// Обновление дерева на основе текущих устройств проекта.
         /// </summary>
-        /// 
         /// <param name="techManager">Менеджер техустройств проекта.</param>
         /// <param name="checkedMode">Выбранные операции.</param>
         private void Refresh(NewTechObject.TechObjectManager techManager,
