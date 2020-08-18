@@ -738,32 +738,31 @@ namespace EasyEPlanner
             {
                 if (subNode.Tag.ToString() == "NewTechObject.Mode")
                 {
-                    Node parentNode = subNode.Parent;
                     var restriction = checkedMode as NewTechObject.Restriction;
-                    // Если не ограничения, то выходим из функции
                     if (restriction == null)
                     {
                         return;
                     }
 
-                    if (restriction.RestrictDictionary != null)
+                    Node parentNode = subNode.Parent;
+                    int objectNum = NewTechObject.TechObjectManager
+                        .GetInstance()
+                        .GetTechObjectNumByDisplayText(parentNode.Text);
+                    int modeNum = nodes.IndexOf(subNode) + 1;
+                    bool correctRestriction =
+                        restriction.RestrictDictionary != null &&
+                        restriction.RestrictDictionary.ContainsKey(objectNum) &&
+                        restriction.RestrictDictionary[objectNum]
+                        .Contains(modeNum);
+                    if (correctRestriction)
                     {
-                        if (restriction.RestrictDictionary.ContainsKey(
-                            parentNode.Parent.Nodes.IndexOf(parentNode) + 1))
-                        {
-                            if (restriction.RestrictDictionary[
-                                parentNode.Parent.Nodes.IndexOf(parentNode) + 1]
-                                .Contains(nodes.IndexOf(subNode) + 1))
-                            {
-                                subNode.CheckState = CheckState.Checked;
+                        subNode.CheckState = CheckState.Checked;
 
-                                // Выставляем состояние родителя
-                                RecursiveCheckParent(subNode.Parent);
+                        // Выставляем состояние родителя
+                        RecursiveCheckParent(subNode.Parent);
 
-                                // Выставляем состояние узла
-                                RecursiveCheck(subNode);
-                            }
-                        }
+                        // Выставляем состояние узла
+                        RecursiveCheck(subNode);
                     }
                 }
                 selectedDevices(subNode.Nodes.ToList(), checkedMode);
@@ -792,14 +791,10 @@ namespace EasyEPlanner
                 modesTreeViewAdv.NodeControls.Remove(nodeCheckBox);
             }
 
-            //Проверяем на изменение типов отображаемых операций.
-            if (isRebuiltTree == false)
+            if (isRebuiltTree == true)
             {
-                ShowDlg();
-                return true;
+                Refresh(techManager, checkedMode, showOneNode, item);
             }
-
-            Refresh(techManager, checkedMode, showOneNode, item);
 
             ShowDlg();
             return true;
@@ -824,18 +819,17 @@ namespace EasyEPlanner
             root.Tag = techManager.GetType().FullName;
             treeModel.Nodes.Add(root);
 
-            int toNum = 0;
-            int modeNum = 0;
+            int techObjectNumber = 0;
+            int modeNumber = 0;
             var mainTechObject = item as NewTechObject.TechObject;
 
             var restriction = checkedMode as NewTechObject.Restriction;
 
             FillTreeObjects(techManager.Items, root, mainTechObject,
-                showOneNode, ref toNum, ref modeNum, restriction);
+                showOneNode, ref techObjectNumber, ref modeNumber, restriction);
 
             modesTreeViewAdv.Model = treeModel;
             
-            //Обновляем названия строк (добавляем количество объектов).
             List<TreeNodeAdv> nodes = modesTreeViewAdv.AllNodes.ToList();
             TreeNodeAdv treeNode = nodes[0];
             OnHideOperationTree.Execute(treeNode);
@@ -846,7 +840,7 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Заполнение дерева с операциями
+        /// Заполнение дерева с операциями для настройки ограничений
         /// </summary>
         /// <param name="treeItems"></param>
         /// <param name="root"></param>
@@ -868,73 +862,110 @@ namespace EasyEPlanner
 
                 if (treeItem is NewTechObject.TechObject techObject)
                 {
-                    techObjNum++;
+                    techObjNum = NewTechObject.TechObjectManager.GetInstance()
+                        .GetTechObjectN(techObject);
                     List<NewTechObject.Mode> modes = techObject.ModesManager
                         .Modes;
 
-                    foreach(var mode in modes)
-                    {
-                        modeNum++;
-                        var childNode = new Node(mode.DisplayText[0]);
-                        childNode.Tag = mode.GetType().FullName;
-                        parentNode.Nodes.Add(childNode);
-
-                        if (restriction != null)
-                        {
-                            var restrictionManager = restriction.Parent;
-                            var selectedMode = restrictionManager.Parent as NewTechObject.Mode;
-                            var modeManager = selectedMode.Parent;
-                            var selectedTO = modeManager.Parent as NewTechObject.TechObject;
-                            bool notSameObjects =
-                                techObject.DisplayText[0] == selectedTO.DisplayText[0] &&
-                                mode.Name == selectedMode.Name;
-                            if (notSameObjects)
-                            {
-                                childNode.IsHidden = true;
-                            }
-                        }
-
-                        if (restriction != null &&
-                            restriction.RestrictDictionary != null &&
-                            restriction.RestrictDictionary.ContainsKey(techObjNum) &&
-                            restriction.RestrictDictionary[techObjNum].Contains(modeNum))
-                        {
-
-                            childNode.CheckState = CheckState.Checked;
-                        }
-                        else
-                        {
-                            childNode.CheckState = CheckState.Unchecked;
-                        }
-                    }
-
-                    if (showOneNode == true)
-                    {
-                        if (techObject != mainTechObject)
-                        {
-                            parentNode.IsHidden = true;
-                            foreach (Node child in parentNode.Nodes)
-                            {
-                                child.IsHidden = true;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (techObject == mainTechObject)
-                        {
-                            parentNode.IsHidden = true;
-                            foreach (Node child in parentNode.Nodes)
-                            {
-                                child.IsHidden = true;
-                            }
-                        }
-                    }
+                    FillTreeObjectsModes(modes, parentNode, restriction,
+                        techObject, ref techObjNum, ref modeNum);
+                    SetUpNodeVisivility(showOneNode, parentNode, techObject, 
+                        mainTechObject);
                 }
                 else
                 {
                     FillTreeObjects(treeItem.Items, parentNode, mainTechObject,
                         showOneNode, ref techObjNum, ref modeNum, restriction);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Заполнение дерева объектов операциями.
+        /// </summary>
+        /// <param name="modes">Операции</param>
+        /// <param name="parentNode">Родительский узел</param>
+        /// <param name="restriction">Ограничения</param>
+        /// <param name="techObject">Технологический объект</param>
+        /// <param name="techObjNum">Номер объекта</param>
+        /// <param name="modeNum">Номер операции</param>
+        private void FillTreeObjectsModes(List<NewTechObject.Mode> modes,
+            Node parentNode, NewTechObject.Restriction restriction,
+            NewTechObject.TechObject techObject, ref int techObjNum,
+            ref int modeNum)
+        {
+            foreach (var mode in modes)
+            {
+                modeNum = mode.GetModeNumber();
+                var childNode = new Node(mode.DisplayText[0]);
+                childNode.Tag = mode.GetType().FullName;
+                parentNode.Nodes.Add(childNode);
+
+                if (restriction != null)
+                {
+                    var restrictionManager = restriction.Parent;
+                    var selectedMode = restrictionManager.Parent as 
+                        NewTechObject.Mode;
+                    var modeManager = selectedMode.Parent;
+                    var selectedTechObject = modeManager.Parent as 
+                        NewTechObject.TechObject;
+                    bool notSameObjects = 
+                        techObject.DisplayText[0] == selectedTechObject
+                        .DisplayText[0] && mode.Name == selectedMode.Name;
+                    if (notSameObjects)
+                    {
+                        childNode.IsHidden = true;
+                    }
+                }
+
+                if (restriction != null &&
+                    restriction.RestrictDictionary != null &&
+                    restriction.RestrictDictionary.ContainsKey(techObjNum) &&
+                    restriction.RestrictDictionary[techObjNum]
+                    .Contains(modeNum))
+                {
+                    childNode.CheckState = CheckState.Checked;
+                }
+                else
+                {
+                    childNode.CheckState = CheckState.Unchecked;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Настройка видимости узла в дереве
+        /// </summary>
+        /// <param name="showOneNode">Флаг, указывающий скрывать ли узлы,
+        /// которые не равны выделенному объекту</param>
+        /// <param name="parentNode">Родительский узел</param>
+        /// <param name="techObject">Технологический объект</param>
+        /// <param name="mainTechObject">Выбранный технологический объект
+        /// </param>
+        private void SetUpNodeVisivility(bool showOneNode, Node parentNode, 
+            NewTechObject.TechObject techObject, 
+            NewTechObject.TechObject mainTechObject)
+        {
+            if (showOneNode == true)
+            {
+                if (techObject != mainTechObject)
+                {
+                    parentNode.IsHidden = true;
+                    foreach (Node child in parentNode.Nodes)
+                    {
+                        child.IsHidden = true;
+                    }
+                }
+            }
+            else
+            {
+                if (techObject == mainTechObject)
+                {
+                    parentNode.IsHidden = true;
+                    foreach (Node child in parentNode.Nodes)
+                    {
+                        child.IsHidden = true;
+                    }
                 }
             }
         }
@@ -1012,13 +1043,14 @@ namespace EasyEPlanner
                 new SortedDictionary<int, List<int>>();
 
             /// <summary>
-            /// Допустимые типы для выбора устройств участвующих в операции
+            /// Допустимый тип в старом редакторе
             /// </summary>
-            static string[] allowedTypes = new string[]
-            {
-                "TechObject.Mode", // Старое дерево
-                "NewTechObject.Mode" // Новое дерево
-            };
+            const string oldEditorAllowedType = "TechObject.Mode";
+
+            /// <summary>
+            /// Допустимый тип в новом редакторе
+            /// </summary>
+            const string newEditorAllowedType = "NewTechObject.Mode";
 
             public static void ResetResStr()
             {
@@ -1043,23 +1075,20 @@ namespace EasyEPlanner
             public static void Execute(TreeNodeAdv treeNode)
             {
                 var node = treeNode.Tag as Node;
-                if (node.CheckState == CheckState.Checked &&
-                    allowedTypes.Contains(node.Tag.ToString()))
+                if (node.CheckState == CheckState.Checked)
                 {
-                    Node parentNode = node.Parent;
-                    string idx = "{ " + (parentNode.Parent.Nodes.IndexOf(parentNode) + 1).ToString();
-                    res += idx + ", " + (parentNode.Nodes.IndexOf(node) + 1).ToString() + " } ";
+                    switch(node.Tag.ToString())
+                    {
+                        case oldEditorAllowedType:
+                            ExecuteOldEditor(node);
+                            break;
 
-                    if (resDict.ContainsKey(parentNode.Parent.Nodes.IndexOf(parentNode) + 1))
-                    {
-                        resDict[parentNode.Parent.Nodes.IndexOf(parentNode) + 1]
-                            .Add(parentNode.Nodes.IndexOf(node) + 1);
-                    }
-                    else
-                    {
-                        List<int> modeList = new List<int>();
-                        modeList.Add(parentNode.Nodes.IndexOf(node) + 1);
-                        resDict.Add(parentNode.Parent.Nodes.IndexOf(parentNode) + 1, modeList);
+                        case newEditorAllowedType:
+                            ExecuteNewEditor(node);
+                            break;
+
+                        default:
+                            break;
                     }
                 }
 
@@ -1070,6 +1099,54 @@ namespace EasyEPlanner
                     {
                         Execute(child);
                     }
+                }
+            }
+
+            /// <summary>
+            /// Обработка отметки операции в старом редакторе
+            /// </summary>
+            /// <param name="node">Узел дерева</param>
+            private static void ExecuteOldEditor(Node node)
+            {
+                Node parentNode = node.Parent;
+                int objectIndex = parentNode.Parent.Nodes
+                    .IndexOf(parentNode) + 1;
+                int modeIndex = parentNode.Nodes.IndexOf(node) + 1;
+                ModifyRestriction(objectIndex, modeIndex);
+            }
+
+            /// <summary>
+            /// Обработка отметки операции в новом редакторе
+            /// </summary>
+            /// <param name="node">Узел дерева</param>
+            private static void ExecuteNewEditor(Node node)
+            {
+                Node parentNode = node.Parent;
+                int objectIndex = NewTechObject.TechObjectManager.GetInstance()
+                    .GetTechObjectNumByDisplayText(parentNode.Text);
+                int modeIndex = parentNode.Nodes.IndexOf(node) + 1;
+                ModifyRestriction(objectIndex, modeIndex);
+            }
+
+            /// <summary>
+            /// Добавление ограничений в словари.
+            /// </summary>
+            /// <param name="objectIndex">Индекс объекта</param>
+            /// <param name="modeIndex">Индекс операции</param>
+            private static void ModifyRestriction(int objectIndex,
+                int modeIndex)
+            {
+                res += $"{{ {objectIndex}, {modeIndex} }} ";
+
+                if (resDict.ContainsKey(objectIndex))
+                {
+                    resDict[objectIndex].Add(modeIndex);
+                }
+                else
+                {
+                    List<int> modeList = new List<int>();
+                    modeList.Add(modeIndex);
+                    resDict.Add(objectIndex, modeList);
                 }
             }
         }
@@ -1091,7 +1168,8 @@ namespace EasyEPlanner
 
                 treeItem_ChangeCheckBoxState(sender, e);
 
-                List<TreeNodeAdv> treeNodes = modesTreeViewAdv.AllNodes.ToList();
+                List<TreeNodeAdv> treeNodes = modesTreeViewAdv.AllNodes
+                    .ToList();
                 TreeNodeAdv treeNode = treeNodes[0];
                 OnCheckOperationTree.Execute(treeNode);
 
@@ -1239,7 +1317,8 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="sender">Объект вызвавший событие</param>
         /// <param name="e">Контекст переданный событием</param>
-        private void modesTreeViewAdv_DrawNode(object sender, DrawTextEventArgs e)
+        private void modesTreeViewAdv_DrawNode(object sender, 
+            DrawTextEventArgs e)
         {
             e.TextColor = Color.Black;
         }

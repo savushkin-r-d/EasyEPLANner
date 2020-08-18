@@ -66,6 +66,26 @@ namespace NewTechObject
         }
 
         /// <summary>
+        /// Получить номер объекта по его отображаемому имени в дереве.
+        /// </summary>
+        /// <param name="displayText">Отображаемый текст</param>
+        /// <returns></returns>
+        public int GetTechObjectNumByDisplayText(string displayText)
+        {
+            TechObject findedObject = TechObjectsList
+                .Where(x => x.DisplayText[0] == displayText).FirstOrDefault();
+
+            if(findedObject != null)
+            {
+                return techObjectsList.IndexOf(findedObject) + 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        /// <summary>
         /// Проверка и исправление ограничений при удалении/перемещении
         /// операции </summary>
         public void ChangeModeNum(int objNum, int prev, int curr)
