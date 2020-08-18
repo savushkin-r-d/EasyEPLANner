@@ -44,6 +44,8 @@ local iolink_devices =
     { articleName = "FES.VTUG-10-VRLK-B1Y-G18FD-DTFD-M7SFD-16K+SCVA", sizeIn = 0, sizeOut = 2 },
     { articleName = "FES.VTUG-10-VRLK-B1Y-G18FD-DTFD-M7SFD-8K+SCVA", sizeIn = 0, sizeOut = 1 },
     { articleName = "FES.VTUG-10-VRLK-B1Y-G18FDL-DTFDL-M7SFD-4K+SCVA", sizeIn = 0, sizeOut = 1 },
+    -- F
+    { articleName = "PXC.2910411", sizeIn = 4, sizeOut = 1.5 }
 }
 
 return iolink_devices

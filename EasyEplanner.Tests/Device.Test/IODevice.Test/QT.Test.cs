@@ -44,8 +44,9 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
-        public void GetDevicePropertiesTest(List<string> expectedProperties,
-            string subType, Device.IODevice device)
+        public void GetDevicePropertiesTest(
+            Dictionary<string, int> expectedProperties, string subType,
+            Device.IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -162,34 +163,34 @@ namespace Tests
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForQT = new List<string>
+            var exportForQT = new Dictionary<string, int>()
             {
-                "ST",
-                "M",
-                "V",
-                "P_MIN_V",
-                "P_MAX_V",
-                "P_CZ"
+                {"ST", 1},
+                {"M", 1},
+                {"V", 1},
+                {"P_MIN_V", 1},
+                {"P_MAX_V", 1},
+                {"P_CZ", 1},
             };
 
-            var exportForQTIOLink = new List<string>
+            var exportForQTIOLink = new Dictionary<string, int>()
             {
-                "ST",             
-                "M",
-                "V",
-                "P_CZ",
-                "T",
+                {"ST", 1},
+                {"M", 1},
+                {"V", 1},
+                {"P_CZ", 1},
+                {"T", 1},
             };
 
-            var exportForQTOk = new List<string>
+            var exportForQTOk = new Dictionary<string, int>()
             {
-                "ST",
-                "M",
-                "V",
-                "OK",
-                "P_MIN_V",
-                "P_MAX_V",
-                "P_CZ"
+                {"ST", 1},
+                {"M", 1},
+                {"V", 1},
+                {"OK", 1},
+                {"P_MIN_V", 1},
+                {"P_MAX_V", 1},
+                {"P_CZ", 1},
             };
 
             return new object[]

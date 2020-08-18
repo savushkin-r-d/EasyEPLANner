@@ -2,17 +2,15 @@
 
 namespace Device
 {
-    /// <summary>
-    /// Технологическое устройство - дискретный вход.
-    /// </summary>
-    public class DI : IODevice
+    public class F : IODevice
     {
-        public DI(string fullName, string description, int deviceNumber,
-            string objectName, int objectNumber) : base(fullName, description,
-                deviceNumber, objectName, objectNumber)
+        public F(string fullName, string description, int deviceNumber,
+            string objectName, int objectNumber, string articleName) : base(
+                fullName, description, deviceNumber, objectName, objectNumber)
         {
             dSubType = DeviceSubType.NONE;
-            dType = DeviceType.DI;
+            dType = DeviceType.F;
+            ArticleName = articleName;
         }
 
         public override string SetSubType(string subtype)
@@ -22,20 +20,19 @@ namespace Device
             string errStr = "";
             switch (subtype)
             {
-                case "DI_VIRT":
-                    dSubType = DeviceSubType.DI_VIRT;
-                    break;
-
-                case "DI":
+                case "F":
                 case "":
-                    parameters.Add("P_DT", null);
-                    dSubType = DeviceSubType.DI;
-                    DI.Add(new IOChannel("DI", -1, -1, -1, ""));
+                    dSubType = DeviceSubType.F;
+
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+                    AO.Add(new IOChannel("AO", -1, -1, -1, ""));
+
+                    SetIOLinkSizes(ArticleName);
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (DI, DI_VIRT).\n",
+                        " (пустая строка, F).\n",
                         Name);
                     break;
             }
@@ -48,13 +45,11 @@ namespace Device
         {
             switch (dt)
             {
-                case DeviceType.DI:
+                case DeviceType.F:
                     switch (dst)
                     {
-                        case DeviceSubType.DI:
-                            return "DI";
-                        case DeviceSubType.DI_VIRT:
-                            return "DI_VIRT";
+                        case DeviceSubType.F:
+                            return "F";
                     }
                     break;
             }
@@ -66,22 +61,20 @@ namespace Device
         {
             switch (dt)
             {
-                case DeviceType.DI:
+                case DeviceType.F:
                     switch (dst)
                     {
-                        case DeviceSubType.DI:
+                        case DeviceSubType.F:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
                                 {"M", 1},
-                                {"P_DT", 1},
-                            };
-
-                        case DeviceSubType.DI_VIRT:
-                            return new Dictionary<string, int>()
-                            {
+                                {"V", 1},
                                 {"ST", 1},
-                                {"M", 1},
+                                {"ERR", 1},
+                                {"ST_CH", 4},
+                                {"NOMINAL_CURRENT", 4},
+                                {"LOAD_CURRENT", 4},
+                                {"ERR_CH", 4},
                             };
                     }
                     break;

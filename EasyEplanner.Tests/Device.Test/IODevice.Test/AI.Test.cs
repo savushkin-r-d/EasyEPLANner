@@ -43,8 +43,9 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
-        public void GetDevicePropertiesTest(List<string> expectedProperties, 
-            string subType, Device.IODevice device)
+        public void GetDevicePropertiesTest(
+            Dictionary<string, int> expectedProperties, string subType, 
+            Device.IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -158,20 +159,20 @@ namespace Tests
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForAI = new List<string>
+            var exportForAI = new Dictionary<string, int>()
             {
-                "M", 
-                "ST", 
-                "P_MIN_V", 
-                "P_MAX_V", 
-                "V"
+                {"M", 1},
+                {"ST", 1},
+                {"P_MIN_V", 1},
+                {"P_MAX_V", 1},
+                {"V", 1},
             };
 
-            var exportForAIVirt = new List<string>
+            var exportForAIVirt = new Dictionary<string, int>()
             {
-                "M",
-                "ST",
-                "V"
+                {"M", 1},
+                {"ST", 1},
+                {"V", 1},
             };
 
             return new object[]

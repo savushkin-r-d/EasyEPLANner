@@ -81,8 +81,8 @@ namespace Device
             return "";
         }
 
-        public override List<string> GetDeviceProperties(DeviceType dt,
-            DeviceSubType dst)
+        public override Dictionary<string, int> GetDeviceProperties(
+            DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
             {
@@ -91,13 +91,13 @@ namespace Device
                     {
                         case DeviceSubType.TE:
                         case DeviceSubType.TE_IOLINK:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "M",
-                                "P_CZ",
-                                "V",
-                                "ST"
-                            });
+                                {"M", 1},
+                                {"P_CZ", 1},
+                                {"V", 1},
+                                {"ST", 1},
+                            };
                     }
                     break;
             }

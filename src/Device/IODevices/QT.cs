@@ -120,8 +120,8 @@ namespace Device
             return "";
         }
 
-        public override List<string> GetDeviceProperties(DeviceType dt,
-            DeviceSubType dst)
+        public override Dictionary<string, int> GetDeviceProperties(
+            DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
             {
@@ -129,37 +129,37 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.QT:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M",
-                                "V",
-                                "P_MIN_V",
-                                "P_MAX_V",
-                                "P_CZ"
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                                {"V", 1},
+                                {"P_MIN_V", 1},
+                                {"P_MAX_V", 1},
+                                {"P_CZ", 1},
+                            };
 
                         case DeviceSubType.QT_OK:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M",
-                                "V",
-                                "OK",
-                                "P_MIN_V",
-                                "P_MAX_V",
-                                "P_CZ"
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                                {"V", 1},
+                                {"OK", 1},
+                                {"P_MIN_V", 1},
+                                {"P_MAX_V", 1},
+                                {"P_CZ", 1},
+                            };
 
                         case DeviceSubType.QT_IOLINK:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M",
-                                "V",
-                                "P_CZ",
-                                "T",
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                                {"V", 1},
+                                {"P_CZ", 1},
+                                {"T", 1},
+                            };
                     }
                     break;
             }
