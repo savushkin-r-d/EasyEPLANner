@@ -827,6 +827,7 @@ namespace EasyEPlanner
 
             FillTreeObjects(techManager.Items, root, mainTechObject,
                 showOneNode, ref techObjectNumber, ref modeNumber, restriction);
+            SetUpTreeVisibility(root);
 
             modesTreeViewAdv.Model = treeModel;
             
@@ -869,8 +870,8 @@ namespace EasyEPlanner
 
                     FillTreeObjectsModes(modes, parentNode, restriction,
                         techObject, ref techObjNum, ref modeNum);
-                    SetUpNodeVisivility(showOneNode, parentNode, techObject, 
-                        mainTechObject);
+                    SetUpTechObjectNodeVisibility(showOneNode, parentNode,
+                        techObject, mainTechObject);
                 }
                 else
                 {
@@ -934,7 +935,7 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Настройка видимости узла в дереве
+        /// Настройка видимости узла в дереве для тех. объектов и операций
         /// </summary>
         /// <param name="showOneNode">Флаг, указывающий скрывать ли узлы,
         /// которые не равны выделенному объекту</param>
@@ -942,30 +943,78 @@ namespace EasyEPlanner
         /// <param name="techObject">Технологический объект</param>
         /// <param name="mainTechObject">Выбранный технологический объект
         /// </param>
-        private void SetUpNodeVisivility(bool showOneNode, Node parentNode, 
-            NewTechObject.TechObject techObject, 
+        private void SetUpTechObjectNodeVisibility(bool showOneNode,
+            Node parentNode, NewTechObject.TechObject techObject, 
             NewTechObject.TechObject mainTechObject)
         {
             if (showOneNode == true)
             {
                 if (techObject != mainTechObject)
                 {
-                    parentNode.IsHidden = true;
-                    foreach (Node child in parentNode.Nodes)
-                    {
-                        child.IsHidden = true;
-                    }
+                    SetUpHiddenProperty(parentNode);
                 }
             }
             else
             {
                 if (techObject == mainTechObject)
                 {
-                    parentNode.IsHidden = true;
-                    foreach (Node child in parentNode.Nodes)
-                    {
-                        child.IsHidden = true;
-                    }
+                    SetUpHiddenProperty(parentNode);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Установка пометки узла на скрытие для тех. объектов и операций.
+        /// </summary>
+        /// <param name="parentNode">Узел для установки</param>
+        private void SetUpHiddenProperty(Node parentNode)
+        {
+            parentNode.IsHidden = true;
+            foreach (Node child in parentNode.Nodes)
+            {
+                child.IsHidden = true;
+            }
+        }
+
+        /// <summary>
+        /// Обход дерева и отметка элементов, которые надо скрыть.
+        /// </summary>
+        /// <param name="node">Узел дерева, корень</param>
+        /// <returns>Нужно ли скрыть переданные</returns>
+        private bool SetUpTreeVisibility(Node node)
+        {
+            bool withoutChildren = node.Nodes.Count == 0;
+            if(withoutChildren)
+            {
+                return node.IsHidden;
+            }
+
+            bool allChildItemsHidden = node.Nodes
+                .Where(x => x.IsHidden).Count() == node.Nodes.Count;
+        
+            if(allChildItemsHidden)
+            {
+                return true;
+            }
+            else
+            {
+                foreach(var childTreeNode in node.Nodes)
+                {
+                    bool isHidden = SetUpTreeVisibility(childTreeNode);
+                    childTreeNode.IsHidden = isHidden;
+                }
+
+                allChildItemsHidden = node.Nodes
+                    .Where(x => x.IsHidden).Count() == node.Nodes.Count;
+                if (allChildItemsHidden)
+                {
+                    bool hideItem = true;
+                    return hideItem;
+                }
+                else
+                {
+                    bool notHideItem = false;
+                    return notHideItem;
                 }
             }
         }
