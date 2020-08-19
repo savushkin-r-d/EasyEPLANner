@@ -8,9 +8,9 @@ namespace TechObject
 {
     public class LocalRestriction : Restriction
     {
-        public LocalRestriction(string Name, string Value, string LuaName, 
-            SortedDictionary<int, List<int>> dict) : base(Name, Value, 
-                LuaName, dict)
+        public LocalRestriction(string name, string value, string luaName, 
+            SortedDictionary<int, List<int>> dict) : base(name, value, 
+                luaName, dict)
         {
         }
 
@@ -29,7 +29,6 @@ namespace TechObject
             var selectedTechObject = selectedModesManager.Parent as TechObject;
             var selectedTechObjectManager = selectedTechObject.Parent;
 
-            const string restrictionName = "Ограничения внутри объекта";
             foreach(var item  in selectedTechObjectManager.Items)
             {
                 var techObject = item as TechObject;
@@ -45,7 +44,7 @@ namespace TechObject
                     {
                         var restrictions = mode.GetRestrictionManager()
                             .Restrictions
-                            .Where(x => x.Name == restrictionName)
+                            .Where(x => x.Name == Name)
                             .FirstOrDefault();
 
                         restrictions.SetValue(newDict);
@@ -107,17 +106,7 @@ namespace TechObject
         /// <returns></returns>
         override public bool SetNewValue(SortedDictionary<int, List<int>> dict)
         {
-            SortedDictionary<int, List<int>> oldRestriction =
-                new SortedDictionary<int, List<int>>(restrictList);
-            restrictList = null;
-            restrictList = new SortedDictionary<int, List<int>>(dict);
-            //Компануем строку для отображения
-            ChangeRestrictStr();
-
-            SortedDictionary<int, List<int>> deletedRestriction =
-                GetDeletedRestriction(oldRestriction);
-            ClearCrossRestriction(deletedRestriction);
-            SetCrossRestriction();
+            base.SetNewValue(dict);
             SetNewValueAtTheSameObjects(dict);
             return true;
         }
