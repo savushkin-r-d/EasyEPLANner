@@ -856,7 +856,8 @@ namespace EasyEPlanner
             NewEditor.ITreeViewItem checkedMode)
         {
             bool notAllowedTypes = !(checkedMode is NewTechObject.Restriction ||
-                checkedMode is NewTechObject.TechObject.AttachedToObjects);
+                checkedMode is NewTechObject.TechObject.AttachedToObjects) ||
+                checkedMode.IsEditable == false;
             if (notAllowedTypes)
             {
                 ShowNoModes();
@@ -993,17 +994,18 @@ namespace EasyEPlanner
         /// Обход дерева и отметка элементов, которые надо скрыть.
         /// </summary>
         /// <param name="node">Узел дерева, корень</param>
-        /// <param name="checkedMode">Выбранный узел</param>
+        /// <param name="checkedNode">Выбранный узел</param>
         /// <returns>Нужно ли скрыть переданные</returns>
         private bool SetUpTreeVisibility(Node node, 
-            NewEditor.ITreeViewItem checkedMode)
+            NewEditor.ITreeViewItem checkedNode)
         {
             bool withoutChildren = node.Nodes.Count == 0;
-            if(withoutChildren)
+            if (withoutChildren)
             {
-                if(checkedMode is NewTechObject.TechObject.AttachedToObjects)
+                if(checkedNode is NewTechObject.Restriction &&
+                    node.Tag.ToString() == "NewTechObject.TechObject")
                 {
-                    return false;
+                    return true;
                 }
                 else
                 {
@@ -1023,7 +1025,7 @@ namespace EasyEPlanner
                 foreach(var childTreeNode in node.Nodes)
                 {
                     bool isHidden = SetUpTreeVisibility(childTreeNode, 
-                        checkedMode);
+                        checkedNode);
                     childTreeNode.IsHidden = isHidden;
                 }
 
@@ -1115,14 +1117,22 @@ namespace EasyEPlanner
                 new SortedDictionary<int, List<int>>();
 
             /// <summary>
-            /// Допустимый тип в старом редакторе
+            /// Допустимый тип в старом редакторе для настройки ограничений
             /// </summary>
-            const string oldEditorAllowedType = "TechObject.Mode";
+            const string oldEditorRestrictionsAllowedRestrictions = 
+                "TechObject.Mode";
 
             /// <summary>
-            /// Допустимый тип в новом редакторе
+            /// Допустимый тип в новом редакторе для настройки ограничений
             /// </summary>
-            const string newEditorAllowedType = "NewTechObject.Mode";
+            const string newEditorRestrictionsAllowedType = 
+                "NewTechObject.Mode";
+
+            /// <summary>
+            /// Допустимый тип для настройки привязанных агрегатов
+            /// </summary>
+            const string newEditorAttaсhedObjectsAllowedType = 
+                "NewTechObject.TechObject";
 
             public static void ResetResStr()
             {
@@ -1151,12 +1161,16 @@ namespace EasyEPlanner
                 {
                     switch(node.Tag.ToString())
                     {
-                        case oldEditorAllowedType:
-                            ExecuteOldEditor(node);
+                        case oldEditorRestrictionsAllowedRestrictions:
+                            ExecuteOldEditorRestrictions(node);
                             break;
 
-                        case newEditorAllowedType:
-                            ExecuteNewEditor(node);
+                        case newEditorRestrictionsAllowedType:
+                            ExecuteNewEditorRestrictions(node);
+                            break;
+
+                        case newEditorAttaсhedObjectsAllowedType:
+                            ExecuteNewEditorAttachedObjects(node);
                             break;
 
                         default:
@@ -1175,10 +1189,10 @@ namespace EasyEPlanner
             }
 
             /// <summary>
-            /// Обработка отметки операции в старом редакторе
+            /// Обработка отметки операции в старом редакторе в ограничениях
             /// </summary>
             /// <param name="node">Узел дерева</param>
-            private static void ExecuteOldEditor(Node node)
+            private static void ExecuteOldEditorRestrictions(Node node)
             {
                 Node parentNode = node.Parent;
                 int objectIndex = parentNode.Parent.Nodes
@@ -1188,10 +1202,10 @@ namespace EasyEPlanner
             }
 
             /// <summary>
-            /// Обработка отметки операции в новом редакторе
+            /// Обработка отметки операции в новом редакторе в ограничениях
             /// </summary>
             /// <param name="node">Узел дерева</param>
-            private static void ExecuteNewEditor(Node node)
+            private static void ExecuteNewEditorRestrictions(Node node)
             {
                 Node parentNode = node.Parent;
                 int objectIndex = NewTechObject.TechObjectManager.GetInstance()
@@ -1220,6 +1234,19 @@ namespace EasyEPlanner
                     modeList.Add(modeIndex);
                     resDict.Add(objectIndex, modeList);
                 }
+            }
+
+            /// <summary>
+            /// Обработка отметки объекта в новом редакторе при настройке
+            /// привязанных объектов
+            /// </summary>
+            /// <param name="node">Узел объекта</param>
+            private static void ExecuteNewEditorAttachedObjects(Node node)
+            {
+                int objectIndex = NewTechObject.TechObjectManager.GetInstance()
+                    .GetTechObjectNumByDisplayText(node.Text);
+                // Заполняем нулями список т.к правая часть не нужна.
+                resDict.Add(objectIndex, new List<int> (0));
             }
         }
 

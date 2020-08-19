@@ -47,6 +47,9 @@ namespace NewTechObject
             private TechObject owner;
         }
 
+        /// <summary>
+        /// Класс внутреннего номера технологического объекта
+        /// </summary>
         private class TechObjectN : ObjectProperty
         {
             public TechObjectN(TechObject techObject, int value)
@@ -78,36 +81,9 @@ namespace NewTechObject
             private TechObject techObject;
         }
 
-        // Класс иерархического уровня устройства
-        public class ObjS88Level : ObjectProperty
-        {
-            public ObjS88Level(int s88Level, TechObject owner) : 
-                base("S88Level", s88Level.ToString())
-            {
-                this.owner = owner;
-                SetValue(s88Level);
-            }
-
-            public override bool SetNewValue(string newValue)
-            {
-                base.SetNewValue(newValue);
-                return true;
-            }
-
-            override public bool IsEditable
-            {
-                get
-                {
-                    return false;
-                }
-            }
-
-            public override bool NeedRebuildParent { get { return true; } }
-
-            private TechObject owner;
-        }
-
-        // Класс привязанных агрегатов к аппарату
+        /// <summary>
+        /// Класс привязки агрегатов к аппарату
+        /// </summary>
         public class AttachedToObjects : ObjectProperty
         {
             public AttachedToObjects(string attachedObjects, 
@@ -138,13 +114,14 @@ namespace NewTechObject
             public override bool SetNewValue(
                 SortedDictionary<int, List<int>> newDict)
             {
-                // Используем эту функцию для того, чтобы получать список
-                // отмеченного пользователем оборудования.
+                var objectsList = new List<int>();
+                foreach(var objectNumber in newDict.Keys)
+                {
+                    objectsList.Add(objectNumber);
+                }
+                objectsList.Sort();
 
-                //TODO: Сделать из словаря строку для вставки.
-                //TODO: Вызывать return base.SetNewValue(newString);
-
-                return base.SetNewValue(newDict);
+                return SetNewValue(string.Join(" ", objectsList));
             }
 
             /// <summary>
