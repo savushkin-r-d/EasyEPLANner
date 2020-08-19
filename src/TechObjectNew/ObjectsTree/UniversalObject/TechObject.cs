@@ -135,6 +135,18 @@ namespace NewTechObject
                 return true;
             }
 
+            public override bool SetNewValue(
+                SortedDictionary<int, List<int>> newDict)
+            {
+                // Используем эту функцию для того, чтобы получать список
+                // отмеченного пользователем оборудования.
+
+                //TODO: Сделать из словаря строку для вставки.
+                //TODO: Вызывать return base.SetNewValue(newString);
+
+                return base.SetNewValue(newDict);
+            }
+
             /// <summary>
             /// Получить корректные номера технологических объектов из
             /// входной строки

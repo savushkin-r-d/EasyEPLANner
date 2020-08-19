@@ -636,14 +636,6 @@ namespace NewTechObject
             }
         }
 
-        override public bool IsUseRestriction
-        {
-            get
-            {
-                return true;
-            }
-        }
-
         override public bool IsLocalRestrictionUse
         {
             get

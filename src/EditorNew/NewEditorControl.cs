@@ -1197,22 +1197,14 @@ namespace NewEditor
                         parentItem = GetParentBranch(item);
                     }
 
-                    if (item != null)
+                    if (item != null && parentItem != null)
                     {
-                        if (parentItem != null)
-                        {
-                            ModeFrm.GetInstance().ShowModes(
-                                NewTechObject.TechObjectManager.GetInstance(),
-                                true, item.IsLocalRestrictionUse, parentItem,
-                                item, SetNewVal, true);
-                            ModeFrm.GetInstance().SelectDevices(item,
-                                SetNewVal);
-                        }
-                        else
-                        {
-                            ModeFrm.GetInstance().ShowNoModes();
-                        }
-
+                        ModeFrm.GetInstance().ShowModes(
+                            NewTechObject.TechObjectManager.GetInstance(),
+                            true, item.IsLocalRestrictionUse, parentItem,
+                            item, SetNewVal, true);
+                        ModeFrm.GetInstance().SelectDevices(item,
+                            SetNewVal);
                     }
                     else
                     {
@@ -1539,24 +1531,13 @@ namespace NewEditor
                 ModeFrm.CheckShown();
                 if (ModeFrm.GetInstance().IsVisible() == true)
                 {
-                    if (item.IsUseRestriction == false)
-                    {
-                        ModeFrm.CheckShown();
-                        if (ModeFrm.GetInstance().IsVisible())
-                        {
-                            ModeFrm.GetInstance().ShowNoModes();
-                        }
-                    }
-                    else
-                    {
-                        ITreeViewItem parentItem = GetParentBranch(item);
-                        ModeFrm.GetInstance().ShowModes(
-                            NewTechObject.TechObjectManager.GetInstance(), true,
-                            item.IsLocalRestrictionUse, parentItem,
-                            item, SetNewVal, true);
-                        ModeFrm.GetInstance().SelectDevices(item, SetNewVal);
-                        OnModify();
-                    }
+                    ITreeViewItem parentItem = GetParentBranch(item);
+                    ModeFrm.GetInstance().ShowModes(
+                        NewTechObject.TechObjectManager.GetInstance(), true,
+                        item.IsLocalRestrictionUse, parentItem,
+                        item, SetNewVal, true);
+                    ModeFrm.GetInstance().SelectDevices(item, SetNewVal);
+                    OnModify();
                 }
             }
 

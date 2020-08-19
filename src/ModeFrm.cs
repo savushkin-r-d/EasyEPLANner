@@ -690,7 +690,7 @@ namespace EasyEPlanner
         }
         #endregion
 
-        #region Реализация под новый редактор
+        #region Реализация под новый редактор в т.ч. привязка агрегатов
         /// <summary>
         /// Выбор операции на дереве, которые входят в ограничения.
         /// </summary> 
@@ -823,11 +823,11 @@ namespace EasyEPlanner
             int modeNumber = 0;
             var mainTechObject = item as NewTechObject.TechObject;
 
-            var restriction = checkedMode as NewTechObject.Restriction;
-
             FillTreeObjects(techManager.Items, root, mainTechObject,
-                showOneNode, ref techObjectNumber, ref modeNumber, restriction);
-            SetUpTreeVisibility(root);
+                showOneNode, ref techObjectNumber, ref modeNumber,
+                checkedMode);
+
+            SetUpTreeVisibility(root, checkedMode);
 
             modesTreeViewAdv.Model = treeModel;
             
@@ -849,12 +849,20 @@ namespace EasyEPlanner
         /// <param name="showOneNode"></param>
         /// <param name="techObjNum"></param>
         /// <param name="modeNum"></param>
-        /// <param name="restriction"></param>
+        /// <param name="checkedMode"></param>
         private void FillTreeObjects(NewEditor.ITreeViewItem[] treeItems,
             Node root, NewTechObject.TechObject mainTechObject, 
-            bool showOneNode, ref int techObjNum, ref int modeNum, 
-            NewTechObject.Restriction restriction)
+            bool showOneNode, ref int techObjNum, ref int modeNum,
+            NewEditor.ITreeViewItem checkedMode)
         {
+            bool notAllowedTypes = !(checkedMode is NewTechObject.Restriction ||
+                checkedMode is NewTechObject.TechObject.AttachedToObjects);
+            if (notAllowedTypes)
+            {
+                ShowNoModes();
+                return;
+            }
+
             foreach(var treeItem in treeItems)
             {
                 var parentNode = new Node(treeItem.DisplayText[0]);
@@ -868,15 +876,19 @@ namespace EasyEPlanner
                     List<NewTechObject.Mode> modes = techObject.ModesManager
                         .Modes;
 
-                    FillTreeObjectsModes(modes, parentNode, restriction,
-                        techObject, ref techObjNum, ref modeNum);
+                    if(checkedMode is NewTechObject.Restriction)
+                    {
+                        FillTreeObjectsModes(modes, parentNode, checkedMode,
+                            techObject, ref techObjNum, ref modeNum);
+                    }
+
                     SetUpTechObjectNodeVisibility(showOneNode, parentNode,
                         techObject, mainTechObject);
                 }
                 else
                 {
                     FillTreeObjects(treeItem.Items, parentNode, mainTechObject,
-                        showOneNode, ref techObjNum, ref modeNum, restriction);
+                        showOneNode, ref techObjNum, ref modeNum, checkedMode);
                 }
             }
         }
@@ -886,15 +898,16 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="modes">Операции</param>
         /// <param name="parentNode">Родительский узел</param>
-        /// <param name="restriction">Ограничения</param>
+        /// <param name="checkedMode">Выбранный режим</param>
         /// <param name="techObject">Технологический объект</param>
         /// <param name="techObjNum">Номер объекта</param>
         /// <param name="modeNum">Номер операции</param>
         private void FillTreeObjectsModes(List<NewTechObject.Mode> modes,
-            Node parentNode, NewTechObject.Restriction restriction,
+            Node parentNode, NewEditor.ITreeViewItem checkedMode,
             NewTechObject.TechObject techObject, ref int techObjNum,
             ref int modeNum)
         {
+            var restriction = checkedMode as NewTechObject.Restriction;
             foreach (var mode in modes)
             {
                 modeNum = mode.GetModeNumber();
@@ -902,9 +915,9 @@ namespace EasyEPlanner
                 childNode.Tag = mode.GetType().FullName;
                 parentNode.Nodes.Add(childNode);
 
-                if (restriction != null)
+                if (checkedMode != null)
                 {
-                    var restrictionManager = restriction.Parent;
+                    var restrictionManager = checkedMode.Parent;
                     var selectedMode = restrictionManager.Parent as 
                         NewTechObject.Mode;
                     var modeManager = selectedMode.Parent;
@@ -919,7 +932,7 @@ namespace EasyEPlanner
                     }
                 }
 
-                if (restriction != null &&
+                if (checkedMode != null &&
                     restriction.RestrictDictionary != null &&
                     restriction.RestrictDictionary.ContainsKey(techObjNum) &&
                     restriction.RestrictDictionary[techObjNum]
@@ -980,13 +993,22 @@ namespace EasyEPlanner
         /// Обход дерева и отметка элементов, которые надо скрыть.
         /// </summary>
         /// <param name="node">Узел дерева, корень</param>
+        /// <param name="checkedMode">Выбранный узел</param>
         /// <returns>Нужно ли скрыть переданные</returns>
-        private bool SetUpTreeVisibility(Node node)
+        private bool SetUpTreeVisibility(Node node, 
+            NewEditor.ITreeViewItem checkedMode)
         {
             bool withoutChildren = node.Nodes.Count == 0;
             if(withoutChildren)
             {
-                return node.IsHidden;
+                if(checkedMode is NewTechObject.TechObject.AttachedToObjects)
+                {
+                    return false;
+                }
+                else
+                {
+                    return node.IsHidden;
+                }
             }
 
             bool allChildItemsHidden = node.Nodes
@@ -1000,7 +1022,8 @@ namespace EasyEPlanner
             {
                 foreach(var childTreeNode in node.Nodes)
                 {
-                    bool isHidden = SetUpTreeVisibility(childTreeNode);
+                    bool isHidden = SetUpTreeVisibility(childTreeNode, 
+                        checkedMode);
                     childTreeNode.IsHidden = isHidden;
                 }
 

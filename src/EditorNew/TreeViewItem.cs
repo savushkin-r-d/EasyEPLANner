@@ -169,14 +169,6 @@ namespace NewEditor
             }
         }
 
-        virtual public bool IsUseRestriction
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         virtual public bool IsLocalRestrictionUse
         {
             get

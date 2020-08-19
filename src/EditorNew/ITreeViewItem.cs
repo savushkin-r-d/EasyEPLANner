@@ -174,14 +174,6 @@ namespace NewEditor
         }
 
         /// <summary>    
-        /// Признак возможности добавления ограничений.
-        /// </summary>
-        bool IsUseRestriction
-        {
-            get;
-        }
-
-        /// <summary>    
         /// Признак возможности добавления ограничений в текущем объекте.
         /// </summary>
         bool IsLocalRestrictionUse
