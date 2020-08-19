@@ -317,7 +317,6 @@
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\LocalRestriction.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Mode.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\ModesManager.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\NextModeRestriction.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\OperationParam.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\OperationParams.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Param.cs" />
