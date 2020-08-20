@@ -757,7 +757,7 @@ namespace NewEditor
         /// <summary>
         /// Обработка изменений при редактировании.
         /// </summary>
-        private void OnModify()
+        private void HiglihtItems()
         {
             //Отображение (подсветка) участвующих в операции устройств на карте
             //Eplan'a.
@@ -899,7 +899,7 @@ namespace NewEditor
                         editorTView.RefreshObject(item.Parent);
                     }
 
-                    OnModify();
+                    HiglihtItems();
                 }
             }
         }
@@ -939,7 +939,7 @@ namespace NewEditor
                         editorTView.RefreshObjects(item.Items);
                     }
                 }
-                OnModify();
+                HiglihtItems();
             }
         }
 
@@ -955,7 +955,7 @@ namespace NewEditor
                 if (newItem != null)
                 {
                     newItem.AddParent(item);
-                    OnModify();
+                    HiglihtItems();
                     editorTView.RefreshObjects(item.Items);
 
                     if(item.NeedRebuildParent && item.Parent != null)
@@ -986,7 +986,7 @@ namespace NewEditor
                         RefreshTree();
                         DisableNeededObjects(new ITreeViewItem[] { newItem });
                     }
-                    OnModify();
+                    HiglihtItems();
                 }
             }
         }
@@ -1007,7 +1007,7 @@ namespace NewEditor
                     editorTView.RefreshObjects(itemParent.Items);
                     editorTView.SelectedIndex--;
                 }
-                OnModify();
+                HiglihtItems();
             }
         }
 
@@ -1027,7 +1027,7 @@ namespace NewEditor
                     editorTView.RefreshObjects(itemParent.Items);
                     editorTView.SelectedIndex++;
                 }
-                OnModify();
+                HiglihtItems();
             }
         }
 
@@ -1060,7 +1060,7 @@ namespace NewEditor
                 noOnChange = true;
                 editorTView.RefreshObject(item);
                 noOnChange = false;
-                OnModify();
+                HiglihtItems();
             }
         }
 
@@ -1079,8 +1079,9 @@ namespace NewEditor
                 ITreeViewItem item = editorTView.SelectedObject as ITreeViewItem;
                 noOnChange = true;
                 editorTView.RefreshObject(item.Parent);
+                DisableNeededObjects(item.Parent.Items);
                 noOnChange = false;
-                OnModify();
+                HiglihtItems();
             }
         }
 
@@ -1471,7 +1472,7 @@ namespace NewEditor
                 {
                     DisableNeededObjects(selectedItem.Parent.Items);
                 }
-                OnModify();
+                HiglihtItems();
             }
 
             e.Cancel = true;
@@ -1523,7 +1524,7 @@ namespace NewEditor
                                 SetNewVal);
 
                             editorTView.RefreshObjects(treeViewItemsList);
-                            OnModify();
+                            HiglihtItems();
                         }
                     }
                 }
@@ -1537,7 +1538,7 @@ namespace NewEditor
                         item.IsLocalRestrictionUse, parentItem,
                         item, SetNewVal, true);
                     ModeFrm.GetInstance().SelectDevices(item, SetNewVal);
-                    OnModify();
+                    HiglihtItems();
                 }
             }
 
