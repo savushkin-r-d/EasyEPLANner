@@ -148,6 +148,7 @@ namespace NewTechObject
         /// <param name="mode">Операция владелец</param>
         public void Init(string baseOperName, Mode mode = null)
         {
+            const string defaultModeName = "Новая операция";
             TechObject techObject = owner.Owner.Owner;
             string baseTechObjectName = techObject.BaseTechObject.Name;
 
@@ -178,6 +179,10 @@ namespace NewTechObject
 
                     baseSteps = operation.Steps;
                     operation.owner = mode;
+                    if(mode.Name == defaultModeName)
+                    {
+                        mode.SetNewValue(operation.Name);
+                    }
                 }
             }
             else
