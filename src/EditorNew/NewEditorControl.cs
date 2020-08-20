@@ -534,6 +534,10 @@ namespace NewEditor
 
         public void ShowDlg()
         {
+            //TODO: Костыль для перекрытия работы редакторов.
+            //TODO: Удалить после удаления редактора.
+            Editor.Editor.GetInstance().CloseEditor();
+
             Process oCurrent = Process.GetCurrentProcess();
 
             // Идентификатор команды вызова окна "Навигатор комментариев"
@@ -768,8 +772,8 @@ namespace NewEditor
                 ProjectManager.GetInstance().RemoveHighLighting();
                 if (item != null && item.IsDrawOnEplanPage)
                 {
-                    //ProjectManager.GetInstance().SetHighLighting(
-                    //    item.GetObjectToDrawOnEplanPage());
+                    ProjectManager.GetInstance().SetHighLighting(
+                        item.GetObjectToDrawOnEplanPage());
                 }
             }
         }
@@ -1104,8 +1108,8 @@ namespace NewEditor
                 {
                     if (item.IsDrawOnEplanPage)
                     {
-                        //ProjectManager.GetInstance().SetHighLighting(
-                        //    item.GetObjectToDrawOnEplanPage());
+                        ProjectManager.GetInstance().SetHighLighting(
+                            item.GetObjectToDrawOnEplanPage());
                     }
                 }
             }
@@ -1549,9 +1553,8 @@ namespace NewEditor
                 ProjectManager.GetInstance().RemoveHighLighting();
                 if (item.IsDrawOnEplanPage)
                 {
-                    //TODO: Починить метод.
-                    //ProjectManager.GetInstance().SetHighLighting(
-                    //    item.GetObjectToDrawOnEplanPage());
+                    ProjectManager.GetInstance().SetHighLighting(
+                        item.GetObjectToDrawOnEplanPage());
                 }
             }
             editorTView.EndUpdate();

@@ -62,7 +62,7 @@
         /// <summary>
         /// Форма редактора технологических объектов.
         /// </summary>
-        public NewEditorControl EditortForm
+        public NewEditorControl EditorForm
         {
             get
             {

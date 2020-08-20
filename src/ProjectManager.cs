@@ -476,13 +476,33 @@ namespace EasyEPlanner
             highlightedObjects.Clear();
         }
 
-        public void SetHighLighting(List<DrawInfo> objectsToDraw)
+        /// <summary>
+        /// Установка подсветки устройств
+        /// </summary>
+        /// <param name="objectsToDraw">Устройства для подсветки</param>
+        public void SetHighLighting(object objectsToDraw)
         {
             if (objectsToDraw == null)
             {
                 return;
             }
 
+            if(objectsToDraw is List<DrawInfo> drawInfoOld)
+            {
+                OldEditorSetHighlighting(drawInfoOld);
+            }
+            else if(objectsToDraw is List<NewEditor.DrawInfo> drawInfoNew)
+            {
+                NewEditorSetHighlighting(drawInfoNew);
+            }
+        }
+
+        /// <summary>
+        /// Подсветка из старого редактора
+        /// </summary>
+        /// <param name="objectsToDraw"></param>
+        private void OldEditorSetHighlighting(List<DrawInfo> objectsToDraw)
+        {
             foreach (DrawInfo drawObj in objectsToDraw)
             {
                 DrawInfo.Style howToDraw = drawObj.DrawingStyle;
@@ -492,7 +512,7 @@ namespace EasyEPlanner
                     continue;
                 }
 
-                Eplan.EplApi.DataModel.Function oF = 
+                Eplan.EplApi.DataModel.Function oF =
                     (drawObj.DrawingDevice as IODevice).EplanObjectFunction;
 
                 if (oF == null)
@@ -501,88 +521,198 @@ namespace EasyEPlanner
                 }
 
                 Eplan.EplApi.Base.PointD[] points = oF.GetBoundingBox();
-                int number = 0;
-
-                var rc = new Eplan.EplApi.DataModel.Graphics.Rectangle();
-                rc.Create(oF.Page);
-                rc.IsSurfaceFilled = true;
-                rc.DrawingOrder = -1;
-
                 short colour = 0;
                 switch (howToDraw)
                 {
                     case DrawInfo.Style.GREEN_BOX:
-                        colour = 3; //Green.
-
-                        //Для сигналов подсвечиваем полностью всю линию.
-                        if (oF.Name.Contains("DI") || oF.Name.Contains("DO"))
-                        {
-                            if (oF.Connections.Length > 0)
-                            {
-                                points[1].X = oF.Connections[0].StartPin
-                                    .ParentFunction.GetBoundingBox()[1].X;
-                            }
-                        }
+                        SetGreenBoxHighlight(ref colour, oF, points);
                         break;
 
                     case DrawInfo.Style.RED_BOX:
-                        colour = 252; //Red.
+                        SetRedBoxHiglight(ref colour);
                         break;
 
                     case DrawInfo.Style.GREEN_UPPER_BOX:
-                        points[0].Y += (points[1].Y - points[0].Y) / 2;
-                        colour = 3; //Green.
+                        SetGreenUpperBoxHighlight(ref colour, points);
                         break;
 
                     case DrawInfo.Style.GREEN_LOWER_BOX:
-                        points[1].Y -= (points[1].Y - points[0].Y) / 2;
-                        colour = 3; //Green.
+                        SetGreenLowerBoxHighlight(ref colour, points);
                         break;
 
                     case DrawInfo.Style.GREEN_RED_BOX:
-                        var rc2 = new Eplan.EplApi.DataModel.Graphics
-                            .Rectangle();
-                        rc2.Create(oF.Page);
-                        rc2.IsSurfaceFilled = true;
-                        rc2.DrawingOrder = 1;
-                        rc2.SetArea(new Eplan.EplApi.Base.PointD(points[0].X, 
-                            points[0].Y + (points[1].Y - points[0].Y) / 2),
-                            points[1]);
-
-                        rc2.Pen = new Eplan.EplApi.DataModel.Graphics.Pen(
-                            252 /*Red*/, -16002, -16002, -16002, 0);
-
-                        rc2.Properties.set_PROPUSER_TEST(1, 
-                            oF.ToStringIdentifier());
-                        highlightedObjects.Add(rc2);
-
-                        points[1].Y -= (points[1].Y - points[0].Y) / 2;
-                        colour = 3; //Green.
+                        SetGrenRedBoxHiglight(ref colour, oF, points);
                         break;
                 }
 
-                rc.SetArea(points[0], points[1]);
-                rc.Pen = new Eplan.EplApi.DataModel.Graphics.Pen(colour, -16002,
-                    -16002, -16002, 0);
-
-                if (number != 0)
-                {
-                    var txt = new Eplan.EplApi.DataModel.Graphics.Text();
-                    txt.Create(oF.Page, number.ToString(), 3);
-                    txt.Location = new Eplan.EplApi.Base.PointD(points[1].X, 
-                        points[1].Y);
-                    txt.Justification = Eplan.EplApi.DataModel.Graphics
-                        .TextBase.JustificationType.BottomRight;
-                    txt.TextColorId = 0;
-
-                    highlightedObjects.Add(txt);
-                }
-
-                rc.Properties.set_PROPUSER_TEST(1, oF.ToStringIdentifier());
-                highlightedObjects.Add(rc);
+                AddBoxForHighlighting(colour, oF, points);
             }
         }
 
+        /// <summary>
+        /// Подсветка из нового редактора
+        /// </summary>
+        /// <param name="objectsToDraw"></param>
+        private void NewEditorSetHighlighting(
+            List<NewEditor.DrawInfo> objectsToDraw)
+        {
+            foreach (NewEditor.DrawInfo drawObj in objectsToDraw)
+            {
+                NewEditor.DrawInfo.Style howToDraw = drawObj.DrawingStyle;
+
+                if (howToDraw == NewEditor.DrawInfo.Style.NO_DRAW)
+                {
+                    continue;
+                }
+
+                Eplan.EplApi.DataModel.Function objectFunction =
+                    (drawObj.DrawingDevice as IODevice).EplanObjectFunction;
+
+                if (objectFunction == null)
+                {
+                    continue;
+                }
+
+                Eplan.EplApi.Base.PointD[] points = objectFunction
+                    .GetBoundingBox();
+                short colour = 0;
+                switch (howToDraw)
+                {
+                    case NewEditor.DrawInfo.Style.GREEN_BOX:
+                        SetGreenBoxHighlight(ref colour, objectFunction,
+                            points);
+                        break;
+
+                    case NewEditor.DrawInfo.Style.RED_BOX:
+                        SetRedBoxHiglight(ref colour);
+                        break;
+
+                    case NewEditor.DrawInfo.Style.GREEN_UPPER_BOX:
+                        SetGreenUpperBoxHighlight(ref colour, points);
+                        break;
+
+                    case NewEditor.DrawInfo.Style.GREEN_LOWER_BOX:
+                        SetGreenLowerBoxHighlight(ref colour, points);
+                        break;
+
+                    case NewEditor.DrawInfo.Style.GREEN_RED_BOX:
+                        SetGrenRedBoxHiglight(ref colour, objectFunction,
+                            points);
+                        break;
+                }
+
+                AddBoxForHighlighting(colour, objectFunction, points);
+            }
+        }
+
+        /// <summary>
+        /// Настроить как зеленый прямоугольник.
+        /// </summary>
+        /// <param name="colour">Цвет</param>
+        /// <param name="oF">Функция объекта</param>
+        /// <param name="points">Точки</param>
+        private void SetGreenBoxHighlight(ref short colour, 
+            Eplan.EplApi.DataModel.Function oF,
+            Eplan.EplApi.Base.PointD[] points)
+        {
+            colour = 3; //Green.
+
+            //Для сигналов подсвечиваем полностью всю линию.
+            if (oF.Name.Contains("DI") || oF.Name.Contains("DO"))
+            {
+                if (oF.Connections.Length > 0)
+                {
+                    points[1].X = oF.Connections[0].StartPin
+                        .ParentFunction.GetBoundingBox()[1].X;
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Настроить как красный прямоугольник
+        /// </summary>
+        /// <param name="colour">Цвет</param>
+        private void SetRedBoxHiglight(ref short colour)
+        {
+            colour = 252; //Red.
+        }
+
+        /// <summary>
+        /// Настроить как половина зеленого прямоугольника сверху
+        /// </summary>
+        /// <param name="colour">Цвет</param>
+        /// <param name="points">Точки</param>
+        private void SetGreenUpperBoxHighlight(ref short colour,
+            Eplan.EplApi.Base.PointD[] points)
+        {
+            points[0].Y += (points[1].Y - points[0].Y) / 2;
+            colour = 3; //Green.
+        }
+
+        /// <summary>
+        /// Настроить как половина зеленого прямоугольника снизу
+        /// </summary>
+        /// <param name="colour">Цвет</param>
+        /// <param name="points">Точки</param>
+        private void SetGreenLowerBoxHighlight(ref short colour,
+            Eplan.EplApi.Base.PointD[] points)
+        {
+            points[1].Y -= (points[1].Y - points[0].Y) / 2;
+            colour = 3; //Green.
+        }
+
+        /// <summary>
+        /// Настроить как зелено-серый прямоугольник
+        /// </summary>
+        /// <param name="colour">Цвет</param>
+        /// <param name="oF">Функция объекта</param>
+        /// <param name="points">Точки</param>
+        private void SetGrenRedBoxHiglight(ref short colour,
+            Eplan.EplApi.DataModel.Function oF,
+            Eplan.EplApi.Base.PointD[] points)
+        {
+            var rc2 = new Eplan.EplApi.DataModel.Graphics.Rectangle();
+            rc2.Create(oF.Page);
+            rc2.IsSurfaceFilled = true;
+            rc2.DrawingOrder = 1;
+            rc2.SetArea(new Eplan.EplApi.Base.PointD(points[0].X,
+                points[0].Y + (points[1].Y - points[0].Y) / 2),
+                points[1]);
+
+            rc2.Pen = new Eplan.EplApi.DataModel.Graphics.Pen(
+                252 /*Red*/, -16002, -16002, -16002, 0);
+
+            rc2.Properties.set_PROPUSER_TEST(1,
+                oF.ToStringIdentifier());
+            highlightedObjects.Add(rc2);
+
+            points[1].Y -= (points[1].Y - points[0].Y) / 2;
+            colour = 3; //Green.
+        }
+
+        /// <summary>
+        /// Добавить прямоугольник в подсвечиваемые элементы
+        /// </summary>
+        /// <param name="colour">Цвет</param>
+        /// <param name="objectFunction">Функция объекта</param>
+        /// <param name="points">Точки</param>
+        private void AddBoxForHighlighting(short colour,
+            Eplan.EplApi.DataModel.Function objectFunction,
+            Eplan.EplApi.Base.PointD[] points)
+        {
+            var rc = new Eplan.EplApi.DataModel.Graphics.Rectangle();
+            rc.Create(objectFunction.Page);
+            rc.IsSurfaceFilled = true;
+            rc.DrawingOrder = -1;
+            rc.SetArea(points[0], points[1]);
+            rc.Pen = new Eplan.EplApi.DataModel.Graphics.Pen(colour, -16002,
+                -16002, -16002, 0);
+            rc.Properties.set_PROPUSER_TEST(1, objectFunction
+                .ToStringIdentifier());
+            highlightedObjects.Add(rc);
+        }
+
+        #region OSTIS
         /// <summary>
         /// Получить ссылку на систему помощи Ostis
         /// </summary>
@@ -617,6 +747,7 @@ namespace EasyEPlanner
             }
             return link;
         }
+        #endregion
 
         /// <summary>
         /// Проверить Excel библиотеки надстройки.

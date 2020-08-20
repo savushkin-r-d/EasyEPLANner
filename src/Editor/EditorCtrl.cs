@@ -529,6 +529,10 @@ namespace Editor
 
         public void ShowDlg()
         {
+            //TODO: Костыль для перекрытия работы редакторов.
+            //TODO: Удалить после удаления редактора.
+            NewEditor.NewEditor.GetInstance().CloseEditor();
+
             System.Diagnostics.Process oCurrent =
                 System.Diagnostics.Process.GetCurrentProcess();
 
