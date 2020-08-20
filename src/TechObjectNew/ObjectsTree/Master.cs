@@ -91,11 +91,12 @@ namespace NewTechObject
 
         override public bool Delete(object child)
         {
+            const int markAsDelete = -1;
             var techObject = child as TechObject;
             if (techObject != null)
             {
-                int idx = globalObjectsList.IndexOf(techObject) + 1;
-                CheckRestriction(idx, -1);
+                int globalIndex = globalObjectsList.IndexOf(techObject) + 1;
+                CheckRestriction(globalIndex, markAsDelete);
 
                 // Работа со списком в дереве и общим списком объектов.
                 objects.Remove(techObject);
@@ -134,11 +135,12 @@ namespace NewTechObject
                 }
 
                 //Старый и новый номер объекта - для замены в ограничениях
-                int oldObjN = globalObjectsList.IndexOf(obj as TechObject) + 1;
-                int newObjN = globalObjectsList.Count + 1;
+                int oldObjNum = globalObjectsList
+                    .IndexOf(obj as TechObject) + 1;
+                int newObjNum = globalObjectsList.Count + 1;
 
                 var newObject = (obj as TechObject).Clone(GetTechObjectLocalNum,
-                    newN, oldObjN, newObjN);
+                    newN, oldObjNum, newObjNum);
 
                 // Работа со списком в дереве и общим списком объектов.
                 objects.Add(newObject);
@@ -153,8 +155,7 @@ namespace NewTechObject
             return null;
         }
 
-        override public ITreeViewItem Replace(object child,
-            object copyObject)
+        override public ITreeViewItem Replace(object child, object copyObject)
         {
             var techObject = child as TechObject;
             var copiedObject = copyObject as TechObject;
@@ -163,27 +164,28 @@ namespace NewTechObject
                 copiedObject.BaseTechObject.Name == baseTechObject.Name;
             if (objectsNotNull && sameBaseObjectName)
             {
-                int newN = techObject.TechNumber;
+                int newNum = techObject.TechNumber;
 
                 //Старый и новый номер объекта - для замены в ограничениях
-                int oldObjN = globalObjectsList
+                int oldObjNum = globalObjectsList
                     .IndexOf(copyObject as TechObject) + 1;
-                int newObjN = globalObjectsList
+                int newObjNum = globalObjectsList
                     .IndexOf(child as TechObject) + 1;
 
                 TechObject newObject = (copyObject as TechObject).Clone(
-                    GetTechObjectLocalNum, newN, oldObjN, newObjN);
+                    GetTechObjectLocalNum, newNum, oldObjNum, newObjNum);
 
-                // Работа со списком в дереве и общим списком объектов.
-                int index = objects.IndexOf(techObject);
+                // Работа со списком в дереве
+                int localIndex = objects.IndexOf(techObject);
                 objects.Remove(techObject);
-                objects.Insert(index, newObject);
-                int indexInAllObjectsTree = globalObjectsList
-                    .IndexOf(techObject);
+                objects.Insert(localIndex, newObject);
+                
+                // Глобальный список объектов
+                int globalIndex = globalObjectsList.IndexOf(techObject);
                 globalObjectsList.Remove(techObject);
-                globalObjectsList.Insert(indexInAllObjectsTree, newObject);
+                globalObjectsList.Insert(globalIndex, newObject);
 
-                newObject.ChangeCrossRestriction(techObject);
+                //newObject.ChangeCrossRestriction(techObject);
 
                 return newObject;
             }

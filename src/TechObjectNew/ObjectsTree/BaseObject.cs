@@ -11,7 +11,7 @@ namespace NewTechObject
     {
         public BaseObject(string baseTechObjectName)
         {
-            objects = new List<TechObject>();
+            localObjects = new List<TechObject>();
             baseTechObject = BaseTechObjectManager.GetInstance()
                 .GetTechObject(baseTechObjectName);
             globalObjectsList = TechObjectManager.GetInstance().TechObjectsList;
@@ -22,7 +22,7 @@ namespace NewTechObject
         /// </summary>
         public void CheckRestriction(int prev, int curr)
         {
-            foreach (TechObject techObject in objects)
+            foreach (TechObject techObject in localObjects)
             {
                 techObject.CheckRestriction(prev, curr);
             }
@@ -33,7 +33,7 @@ namespace NewTechObject
         /// </summary>
         public void SetRestrictionOwner()
         {
-            foreach (TechObject techObject in objects)
+            foreach (TechObject techObject in localObjects)
             {
                 techObject.SetRestrictionOwner();
             }
@@ -44,7 +44,7 @@ namespace NewTechObject
         {
             get
             {
-                return objects.ToArray();
+                return localObjects.ToArray();
             }
         }
 
@@ -53,13 +53,17 @@ namespace NewTechObject
             get
             {
                 var name = baseTechObject.Name;
-                if (objects.Count == 0)
+                if (localObjects.Count == 0)
                 {
                     return new string[] { name, "" };
                 }
                 else
                 {
-                    return new string[] { $"{name} ({objects.Count})", "" };
+                    return new string[] 
+                    { 
+                        $"{name} ({localObjects.Count})", 
+                        "" 
+                    };
                 }
             }
         }
@@ -79,12 +83,12 @@ namespace NewTechObject
             //TODO: set TechNumber (prevObj + 1)
             ObjectsAdder.Reset();
             var newObject = new TechObject(baseTechObject.Name, 
-                GetTechObjectLocalNum, objects.Count + 1, 1, 
+                GetTechObjectLocalNum, localObjects.Count + 1, 1, 
                 baseTechObject.EplanName.ToUpper(), -1, 
                 baseTechObject.EplanName, "", baseTechObject);
             
             // Работа со списком в дереве и общим списком объектов.
-            objects.Add(newObject);
+            localObjects.Add(newObject);
             globalObjectsList.Add(newObject);
             
             return newObject;
@@ -92,25 +96,26 @@ namespace NewTechObject
 
         override public bool Delete(object child)
         {
+            const int markAsDelete = -1;
             var techObject = child as TechObject;
             if (techObject != null)
             {
-                //if (techObject.BaseTechObject.IsAttachable)
-                //{
-                //    RemoveAttachingToUnit(techObject);
-                //}
+                if (techObject.BaseTechObject.IsAttachable)
+                {
+                    RemoveAttachingToUnit(techObject);
+                }
 
-                int idx = globalObjectsList.IndexOf(techObject) + 1;
-                CheckRestriction(idx, -1);
+                int globalIndex = globalObjectsList.IndexOf(techObject) + 1;
+                //CheckRestriction(globalIndex, markAsDelete);
 
                 // Работа со списком в дереве и общим списком объектов.
-                objects.Remove(techObject);
+                localObjects.Remove(techObject);
                 globalObjectsList.Remove(techObject);
 
                 SetRestrictionOwner();
-                //ChangeAttachedObjectsAfterDelete(idx);
+                ChangeAttachedObjectsAfterDelete(globalIndex);
 
-                if (objects.Count == 0)
+                if (localObjects.Count == 0)
                 {
                     Parent.Delete(this);
                 }
@@ -126,23 +131,31 @@ namespace NewTechObject
 
             if (techObject != null)
             {
-                int index = globalObjectsList.IndexOf(techObject);
-                if (index <= objects.Count - 2)
+                int oldLocalIndex = localObjects.IndexOf(techObject);
+                int lastItemNum = localObjects.Count - 1;
+                if (oldLocalIndex < lastItemNum)
                 {
-                    CheckRestriction(index + 1, index + 2);
+                    int newLocalIndex = oldLocalIndex + 1; 
+                    int oldGlobalIndex = globalObjectsList.IndexOf(techObject);
+                    int newGlobalIndex = globalObjectsList
+                        .IndexOf(localObjects[newLocalIndex]);
 
-                    // Работа со списком в дереве и общим списком объектов.
-                    objects.Remove(techObject);
-                    objects.Insert(index + 1, techObject);
-                    int indexInAllObjectsTree = globalObjectsList
-                        .IndexOf(techObject);
-                    globalObjectsList.Remove(techObject);
-                    globalObjectsList
-                        .Insert(indexInAllObjectsTree + 1, techObject);
+                    //CheckRestriction(oldGlobalIndex, newGlobalIndex);
+
+                    // Работа со списком в дереве
+                    localObjects.Remove(techObject);
+                    localObjects.Insert(newLocalIndex, techObject);
+
+                    // Глобальный список объектов
+                    var temporary = globalObjectsList[oldGlobalIndex];
+                    globalObjectsList[oldGlobalIndex] =
+                        globalObjectsList[newGlobalIndex];
+                    globalObjectsList[newGlobalIndex] = temporary;
 
                     SetRestrictionOwner();
-                    //ChangeAttachedObjectsAfterMove(index, index + 1);
-                    return objects[index];
+                    ChangeAttachedObjectsAfterMove(oldGlobalIndex,
+                        newGlobalIndex);
+                    return localObjects[newLocalIndex];
                 }
             }
 
@@ -155,23 +168,30 @@ namespace NewTechObject
 
             if (techObject != null)
             {
-                int index = globalObjectsList.IndexOf(techObject);
-                if (index > 0)
+                int oldLocalIndex = localObjects.IndexOf(techObject);
+                if (oldLocalIndex > 0)
                 {
-                    CheckRestriction(index + 1, index);
+                    int newLocalIndex = oldLocalIndex - 1;
+                    int oldGlobalIndex = globalObjectsList.IndexOf(techObject);
+                    int newGlobalIndex = globalObjectsList
+                        .IndexOf(localObjects[newLocalIndex]);
 
-                    // Работа со списком в дереве и общим списком объектов.
-                    objects.Remove(techObject);
-                    objects.Insert(index - 1, techObject);
-                    int indexInAllObjectsTree = globalObjectsList
-                        .IndexOf(techObject);
-                    globalObjectsList.Remove(techObject);
-                    globalObjectsList
-                        .Insert(indexInAllObjectsTree - 1, techObject);
+                    //CheckRestriction(oldGlobalIndex, newGlobalIndex);
+
+                    // Работа со списком в дереве
+                    localObjects.Remove(techObject);
+                    localObjects.Insert(newLocalIndex, techObject);
+
+                    // Глобальный список
+                    var temporary = globalObjectsList[oldGlobalIndex];
+                    globalObjectsList[oldGlobalIndex] =
+                        globalObjectsList[newGlobalIndex];
+                    globalObjectsList[newGlobalIndex] = temporary;
 
                     SetRestrictionOwner();
-                    //ChangeAttachedObjectsAfterMove(index, index - 1);
-                    return objects[index];
+                    ChangeAttachedObjectsAfterMove(oldGlobalIndex,
+                        newGlobalIndex);
+                    return localObjects[newLocalIndex];
                 }
             }
 
@@ -193,9 +213,9 @@ namespace NewTechObject
                 techObj.BaseTechObject.Name == baseTechObject.Name)
             {
                 int newN = 1;
-                if (objects.Count > 0)
+                if (localObjects.Count > 0)
                 {
-                    newN = objects[objects.Count - 1].TechNumber + 1;
+                    newN = localObjects[localObjects.Count - 1].TechNumber + 1;
                 }
 
                 //Старый и новый номер объекта - для замены в ограничениях
@@ -206,7 +226,7 @@ namespace NewTechObject
                     newN, oldObjN, newObjN);
 
                 // Работа со списком в дереве и общим списком объектов.
-                objects.Add(newObject);
+                localObjects.Add(newObject);
                 globalObjectsList.Add(newObject);
 
                 newObject.ChangeCrossRestriction();
@@ -218,12 +238,11 @@ namespace NewTechObject
             return null;
         }
 
-        override public ITreeViewItem Replace(object child,
-            object copyObject)
+        override public ITreeViewItem Replace(object child, object copyObject)
         {
             var techObject = child as TechObject;
             var copiedObject = copyObject as TechObject;
-            bool objectsNotNull = copiedObject != null && techObject != null;
+            bool objectsNotNull = (copiedObject != null && techObject != null);
             bool sameBaseObjectName = 
                 copiedObject.BaseTechObject.Name == baseTechObject.Name;
             if (objectsNotNull && sameBaseObjectName)
@@ -231,24 +250,25 @@ namespace NewTechObject
                 int newN = techObject.TechNumber;
 
                 //Старый и новый номер объекта - для замены в ограничениях
-                int oldObjN = globalObjectsList
+                int oldObjNum = globalObjectsList
                     .IndexOf(copyObject as TechObject) + 1;
-                int newObjN = globalObjectsList
+                int newObjNum = globalObjectsList
                     .IndexOf(child as TechObject) + 1;
 
                 var newObject = (copyObject as TechObject).Clone(
-                    GetTechObjectLocalNum, newN, oldObjN, newObjN);
+                    GetTechObjectLocalNum, newN, oldObjNum, newObjNum);
 
-                int index = objects.IndexOf(techObject);
-                // Работа со списком в дереве и общим списком объектов.
-                objects.Remove(techObject);
-                objects.Insert(index, newObject);
-                int indexInAllObjectsTree = globalObjectsList
-                    .IndexOf(techObject);
+                int localIndex = localObjects.IndexOf(techObject);
+                // Работа со списком в дереве
+                localObjects.Remove(techObject);
+                localObjects.Insert(localIndex, newObject);
+                
+                // Глобальный список объектов
+                int globalIndex = globalObjectsList.IndexOf(techObject);
                 globalObjectsList.Remove(techObject);
-                globalObjectsList.Insert(indexInAllObjectsTree, newObject);
+                globalObjectsList.Insert(globalIndex, newObject);
 
-                newObject.ChangeCrossRestriction(techObject);
+                //newObject.ChangeCrossRestriction(techObject);
 
                 return newObject;
             }
@@ -258,6 +278,92 @@ namespace NewTechObject
         #endregion
 
         /// <summary>
+        /// Удалить этот агрегат из привязки к аппарату
+        /// </summary>
+        /// <param name="techObject">Агрегат</param>
+        private void RemoveAttachingToUnit(TechObject techObject)
+        {
+            int objNum = TechObjectManager.GetInstance()
+                .GetTechObjectN(techObject);
+            foreach (var obj in globalObjectsList)
+            {
+                if (obj.AttachedObjects.Value == "")
+                {
+                    continue;
+                }
+
+                List<int> attachedObjectsNums = obj.AttachedObjects.Value
+                    .Split(' ')
+                    .Select(int.Parse).ToList();
+                if (attachedObjectsNums.Contains(objNum))
+                {
+                    attachedObjectsNums.Remove(objNum);
+                    obj.AttachedObjects
+                        .SetNewValue(string.Join(" ", attachedObjectsNums));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Изменение привязки объектов при удалении объекта из дерева
+        /// </summary>
+        /// <param name="deletedObjectNum">Номер удаленного объекта</param>
+        private void ChangeAttachedObjectsAfterDelete(int deletedObjectNum)
+        {
+            foreach (var techObj in globalObjectsList)
+            {
+                if (techObj.AttachedObjects.Value == "" ||
+                    techObj.BaseTechObject.IsAttachable)
+                {
+                    continue;
+                }
+
+                string attachingObjectsStr = techObj.AttachedObjects.Value;
+                int[] attachingObjectsArr = attachingObjectsStr.Split(' ')
+                    .Select(int.Parse).ToArray();
+                for (int index = 0; index < attachingObjectsArr.Length; index++)
+                {
+                    int attachedObjectNum = attachingObjectsArr[index];
+                    if (attachedObjectNum > deletedObjectNum)
+                    {
+                        attachingObjectsArr[index] = attachedObjectNum - 1;
+                    }
+                }
+                techObj.AttachedObjects
+                    .SetValue(string.Join(" ", attachingObjectsArr));
+            }
+        }
+
+        /// <summary>
+        /// Изменение привязки объектов при перемещении объекта по дереву
+        /// </summary>
+        /// <param name="newIndex">Новый индекс объекта</param>
+        /// <param name="oldIndex">Старый индекс объекта</param>
+        private void ChangeAttachedObjectsAfterMove(int oldIndex, int newIndex)
+        {
+            int oldObjNum = oldIndex + 1;
+            int newObjNum = newIndex + 1;
+            foreach (var techObj in globalObjectsList)
+            {
+                string attachingObjectsStr = techObj.AttachedObjects.Value;
+                string[] attachingObjectsArr = attachingObjectsStr.Split(' ');
+                for (int index = 0; index < attachingObjectsArr.Length; index++)
+                {
+                    if (attachingObjectsArr[index] == newObjNum.ToString())
+                    {
+                        attachingObjectsArr[index] = oldObjNum.ToString();
+                    }
+                    else if (attachingObjectsArr[index] == oldObjNum.ToString())
+                    {
+                        attachingObjectsArr[index] = newObjNum.ToString();
+                    }
+                }
+                techObj.AttachedObjects
+                    .SetValue(string.Join(" ", attachingObjectsArr));
+            }
+        }
+
+        /// <summary>
         /// Получить локальный номер технологического объекта
         /// </summary>
         /// <param name="searchingObject">Искомый объект</param>
@@ -265,11 +371,11 @@ namespace NewTechObject
         private int GetTechObjectLocalNum(object searchingObject)
         {
             var techObject = searchingObject as TechObject;
-            int num = objects.IndexOf(techObject) + 1;
+            int num = localObjects.IndexOf(techObject) + 1;
             return num;
         }
 
-        List<TechObject> objects;
+        List<TechObject> localObjects;
         BaseTechObject baseTechObject;
         List<TechObject> globalObjectsList;
     }
