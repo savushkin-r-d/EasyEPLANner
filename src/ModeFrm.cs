@@ -718,7 +718,7 @@ namespace EasyEPlanner
 
             var treeModel = modesTreeViewAdv.Model as TreeModel;
             List<Node> nodes = treeModel.Nodes.ToList();
-            selectedDevices(nodes, checkedDev);
+            SelectedDevices(nodes, checkedDev);
 
             nodeCheckBox.CheckStateChanged += new 
                 EventHandler<TreePathEventArgs>(treeItem_AfterCheck);
@@ -731,41 +731,85 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="nodes">узлы</param>
         /// <param name="checkedMode">выбранные (отмеченные) операции</param>
-        private void selectedDevices(List<Node> nodes,
+        private void SelectedDevices(List<Node> nodes,
             NewEditor.ITreeViewItem checkedMode)
         {
             foreach (Node subNode in nodes)
             {
-                if (subNode.Tag.ToString() == "NewTechObject.Mode")
+                switch (subNode.Tag.ToString())
                 {
-                    var restriction = checkedMode as NewTechObject.Restriction;
-                    if (restriction == null)
-                    {
-                        return;
-                    }
+                    case "NewTechObject.Mode":
+                        SelectRestriction(nodes, subNode, checkedMode);
+                        break;
 
-                    Node parentNode = subNode.Parent;
-                    int objectNum = NewTechObject.TechObjectManager
-                        .GetInstance()
-                        .GetTechObjectNumByDisplayText(parentNode.Text);
-                    int modeNum = nodes.IndexOf(subNode) + 1;
-                    bool correctRestriction =
-                        restriction.RestrictDictionary != null &&
-                        restriction.RestrictDictionary.ContainsKey(objectNum) &&
-                        restriction.RestrictDictionary[objectNum]
-                        .Contains(modeNum);
-                    if (correctRestriction)
-                    {
-                        subNode.CheckState = CheckState.Checked;
-
-                        // Выставляем состояние родителя
-                        RecursiveCheckParent(subNode.Parent);
-
-                        // Выставляем состояние узла
-                        RecursiveCheck(subNode);
-                    }
+                    case "NewTechObject.TechObject":
+                        SelectAttachedObject(subNode, checkedMode);
+                        break;
                 }
-                selectedDevices(subNode.Nodes.ToList(), checkedMode);
+                SelectedDevices(subNode.Nodes.ToList(), checkedMode);
+            }
+        }
+        
+        /// <summary>
+        /// Отметка ограничения в дереве
+        /// </summary>
+        /// <param name="nodes">Список узлов</param>
+        /// <param name="subNode">Текущий узел</param>
+        /// <param name="checkedMode">Выбранный элемент на дереве</param>
+        private void SelectRestriction(List<Node> nodes, Node subNode, 
+            NewEditor.ITreeViewItem checkedMode)
+        {
+            var restriction = checkedMode as NewTechObject.Restriction;
+            if (restriction == null)
+            {
+                return;
+            }
+
+            Node parentNode = subNode.Parent;
+            int objectNum = NewTechObject.TechObjectManager
+                .GetInstance()
+                .GetTechObjectNumByDisplayText(parentNode.Text);
+            int modeNum = nodes.IndexOf(subNode) + 1;
+            bool correctRestriction =
+                restriction.RestrictDictionary != null &&
+                restriction.RestrictDictionary
+                .ContainsKey(objectNum) &&
+                restriction.RestrictDictionary[objectNum]
+                .Contains(modeNum);
+            if (correctRestriction)
+            {
+                subNode.CheckState = CheckState.Checked;
+                RecursiveCheckParent(subNode.Parent);
+                RecursiveCheck(subNode);
+            }
+        }
+
+        /// <summary>
+        /// Отметка привязанных объектов в дереве
+        /// </summary>
+        /// <param name="subNode">Текущий узел</param>
+        /// <param name="checkedMode">Выбранный элемент на дереве</param>
+        private void SelectAttachedObject(Node subNode,
+            NewEditor.ITreeViewItem checkedMode)
+        {
+            var attachedObjects = checkedMode as NewTechObject
+                .TechObject.AttachedToObjects;
+            if (attachedObjects == null)
+            {
+                return;
+            }
+
+            int objectNum = NewTechObject.TechObjectManager
+                .GetInstance()
+                .GetTechObjectNumByDisplayText(subNode.Text);
+            bool correctObject = attachedObjects.Value
+                .Split(' ').ToArray()
+                .Contains(objectNum.ToString());
+            if (correctObject)
+            {
+                subNode.CheckState = CheckState.Checked;
+                RecursiveCheckParent(subNode.Parent);
+                RecursiveCheck(subNode);
             }
         }
 

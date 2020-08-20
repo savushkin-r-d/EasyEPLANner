@@ -96,7 +96,7 @@ namespace NewTechObject
 
         override public bool Delete(object child)
         {
-            const int markAsDelete = -1;
+            //const int markAsDelete = -1;
             var techObject = child as TechObject;
             if (techObject != null)
             {
