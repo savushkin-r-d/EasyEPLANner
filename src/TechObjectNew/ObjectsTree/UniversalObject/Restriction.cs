@@ -420,6 +420,7 @@ namespace NewTechObject
         /// <param name="curr">Текущий номер объекта</param>
         public void ChangeObjNum(int prev, int curr)
         {
+            const int markForDelete = -1;
             if (curr != -1)
             {
                 // Перемещение объекта вверх
