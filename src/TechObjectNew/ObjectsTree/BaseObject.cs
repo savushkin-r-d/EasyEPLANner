@@ -229,7 +229,10 @@ namespace NewTechObject
                 localObjects.Add(newObject);
                 globalObjectsList.Add(newObject);
 
+                // Для корректного копирования ограничений
+                newObject.ModesManager.ModifyRestrictObj(oldObjN, newObjN);
                 newObject.ChangeCrossRestriction();
+
                 newObject.Equipment.ModifyDevNames();
 
                 return newObject;
@@ -262,13 +265,15 @@ namespace NewTechObject
                 // Работа со списком в дереве
                 localObjects.Remove(techObject);
                 localObjects.Insert(localIndex, newObject);
-                
+
                 // Глобальный список объектов
                 int globalIndex = globalObjectsList.IndexOf(techObject);
                 globalObjectsList.Remove(techObject);
                 globalObjectsList.Insert(globalIndex, newObject);
 
-                //newObject.ChangeCrossRestriction(techObject);
+                // Для корректного копирования ограничений
+                newObject.ModesManager.ModifyRestrictObj(oldObjNum, newObjNum);
+                newObject.ChangeCrossRestriction(techObject);
 
                 return newObject;
             }

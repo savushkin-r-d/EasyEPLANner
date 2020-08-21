@@ -465,7 +465,7 @@ namespace NewTechObject
         {
             // Если не выбран базовый объект, то пустое имя
             // Если выбран, то сравниваем имена
-            if (baseTechObject.S88Level != 0)
+            if (baseTechObject.S88Level >= 0)
             {
                 string baseObjectNameEplan = baseTechObject.EplanName
                     .ToLower();
@@ -508,7 +508,6 @@ namespace NewTechObject
             clone.modes.ChngeOwner(clone);
             clone.modes = modes.Clone(clone);
             clone.modes.ModifyDevNames(TechNumber);
-            clone.modes.ModifyRestrictObj(oldObjN, newObjN);
 
             clone.equipment = equipment.Clone(clone);
             clone.equipment.ModifyDevNames();

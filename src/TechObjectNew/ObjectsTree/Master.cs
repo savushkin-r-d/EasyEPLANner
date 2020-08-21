@@ -125,8 +125,10 @@ namespace NewTechObject
         override public ITreeViewItem InsertCopy(object obj)
         {
             var techObj = obj as TechObject;
+            bool masterNotAdd = objects.Count == 0;
             if (techObj != null &&
-                techObj.BaseTechObject.Name == name)
+                techObj.BaseTechObject.Name == name &&
+                masterNotAdd)
             {
                 int newN = 1;
                 if (objects.Count > 0)
@@ -146,7 +148,10 @@ namespace NewTechObject
                 objects.Add(newObject);
                 globalObjectsList.Add(newObject);
 
+                // Для корректного копирования ограничений
+                newObject.ModesManager.ModifyRestrictObj(oldObjNum, newObjNum);
                 newObject.ChangeCrossRestriction();
+
                 newObject.Equipment.ModifyDevNames();
 
                 return newObject;
@@ -185,7 +190,9 @@ namespace NewTechObject
                 globalObjectsList.Remove(techObject);
                 globalObjectsList.Insert(globalIndex, newObject);
 
-                //newObject.ChangeCrossRestriction(techObject);
+                // Для корректного копирования ограничений
+                newObject.ModesManager.ModifyRestrictObj(oldObjNum, newObjNum);
+                newObject.ChangeCrossRestriction(techObject);
 
                 return newObject;
             }

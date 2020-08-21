@@ -1421,13 +1421,19 @@ namespace NewEditor
                 {
                     if (item.NeedDisable)
                     {
-                        editorTView.DisableObject(item);
-                        item.Disabled = true;
+                        if(!item.Disabled)
+                        {
+                            editorTView.DisableObject(item);
+                            item.Disabled = true;
+                        }
                     }
                     else
                     {
-                        editorTView.EnableObject(item);
-                        item.Disabled = false;
+                        if(item.Disabled)
+                        {
+                            editorTView.EnableObject(item);
+                            item.Disabled = false;
+                        }
                     }
                 }
             }
