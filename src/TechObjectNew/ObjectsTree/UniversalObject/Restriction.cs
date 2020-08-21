@@ -382,6 +382,11 @@ namespace NewTechObject
             ChangeRestrictStr();
         }
 
+        /// <summary>
+        /// Установить владельца ограничений.
+        /// </summary>
+        /// <param name="objNum">Номер объекта</param>
+        /// <param name="modeNum">Номер операции</param>
         public void SetRestrictionOwner(int objNum, int modeNum)
         {
             ownerObjNum = objNum;
@@ -408,6 +413,11 @@ namespace NewTechObject
             restrictStr = res.Trim();
         }
 
+        /// <summary>
+        /// Изменить номер объекта.
+        /// </summary>
+        /// <param name="prev">Предыдущий номер объекта</param>
+        /// <param name="curr">Текущий номер объекта</param>
         public void ChangeObjNum(int prev, int curr)
         {
             if (curr != -1)
@@ -446,9 +456,9 @@ namespace NewTechObject
                     }
                 }
             }
-            // Удаление объекта ( индекс -1 )
             else
             {
+                // Удаление объекта ( индекс -1 )
                 if (restrictStr.Contains("{ " + prev.ToString()))
                 {
                     restrictStr += " ";
@@ -457,7 +467,7 @@ namespace NewTechObject
                     // 2й символ для пробела
                     restrictStr = restrictStr.Remove(idx, idx_end - idx + 2); 
                     restrictStr.Trim();
-                    this.ChangeObjNum(prev, -1);
+                    ChangeObjNum(prev, markForDelete);
                 }
                 else
                 {
@@ -477,6 +487,12 @@ namespace NewTechObject
             ChangeRestrictList();
         }
 
+        /// <summary>
+        /// Изменить номер операции
+        /// </summary>
+        /// <param name="objNum">Номер объекта</param>
+        /// <param name="prev">Старый номер операции</param>
+        /// <param name="curr">Новый номер операции</param>
         public void ChangeModeNum(int objNum, int prev, int curr)
         {
             if (curr != -1)

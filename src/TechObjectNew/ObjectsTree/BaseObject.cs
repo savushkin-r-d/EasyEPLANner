@@ -90,7 +90,10 @@ namespace NewTechObject
             // Работа со списком в дереве и общим списком объектов.
             localObjects.Add(newObject);
             globalObjectsList.Add(newObject);
-            
+
+            // Обозначение начального номера объекта для ограничений.
+            SetRestrictionOwner();
+
             return newObject;
         }
 
@@ -105,15 +108,17 @@ namespace NewTechObject
                     RemoveAttachingToUnit(techObject);
                 }
 
-                int globalIndex = globalObjectsList.IndexOf(techObject) + 1;
-                //CheckRestriction(globalIndex, markAsDelete);
+                int globalNum = globalObjectsList.IndexOf(techObject) + 1;
+                //CheckRestriction(globalNum, markAsDelete);
 
                 // Работа со списком в дереве и общим списком объектов.
                 localObjects.Remove(techObject);
                 globalObjectsList.Remove(techObject);
 
+                // Обозначение начального номера объекта для ограничений.
                 SetRestrictionOwner();
-                ChangeAttachedObjectsAfterDelete(globalIndex);
+
+                ChangeAttachedObjectsAfterDelete(globalNum);
 
                 if (localObjects.Count == 0)
                 {
@@ -152,9 +157,11 @@ namespace NewTechObject
                         globalObjectsList[newGlobalIndex];
                     globalObjectsList[newGlobalIndex] = temporary;
 
+                    // Обозначение начального номера объекта для ограничений.
                     SetRestrictionOwner();
-                    ChangeAttachedObjectsAfterMove(oldGlobalIndex,
-                        newGlobalIndex);
+
+                    ChangeAttachedObjectsAfterMove(oldGlobalIndex + 1,
+                        newGlobalIndex + 1);
                     return localObjects[newLocalIndex];
                 }
             }
@@ -188,9 +195,11 @@ namespace NewTechObject
                         globalObjectsList[newGlobalIndex];
                     globalObjectsList[newGlobalIndex] = temporary;
 
+                    // Обозначение начального номера объекта для ограничений.
                     SetRestrictionOwner();
-                    ChangeAttachedObjectsAfterMove(oldGlobalIndex,
-                        newGlobalIndex);
+
+                    ChangeAttachedObjectsAfterMove(oldGlobalIndex + 1,
+                        newGlobalIndex + 1);
                     return localObjects[newLocalIndex];
                 }
             }
@@ -317,8 +326,7 @@ namespace NewTechObject
         {
             foreach (var techObj in globalObjectsList)
             {
-                if (techObj.AttachedObjects.Value == "" ||
-                    techObj.BaseTechObject.IsAttachable)
+                if (techObj.AttachedObjects.Value == "")
                 {
                     continue;
                 }
@@ -342,25 +350,23 @@ namespace NewTechObject
         /// <summary>
         /// Изменение привязки объектов при перемещении объекта по дереву
         /// </summary>
-        /// <param name="newIndex">Новый индекс объекта</param>
-        /// <param name="oldIndex">Старый индекс объекта</param>
-        private void ChangeAttachedObjectsAfterMove(int oldIndex, int newIndex)
+        /// <param name="newNum">Новый глобальный номер объекта</param>
+        /// <param name="oldNum">Старый глобальный номер объекта</param>
+        private void ChangeAttachedObjectsAfterMove(int oldNum, int newNum)
         {
-            int oldObjNum = oldIndex + 1;
-            int newObjNum = newIndex + 1;
             foreach (var techObj in globalObjectsList)
             {
                 string attachingObjectsStr = techObj.AttachedObjects.Value;
                 string[] attachingObjectsArr = attachingObjectsStr.Split(' ');
                 for (int index = 0; index < attachingObjectsArr.Length; index++)
                 {
-                    if (attachingObjectsArr[index] == newObjNum.ToString())
+                    if (attachingObjectsArr[index] == newNum.ToString())
                     {
-                        attachingObjectsArr[index] = oldObjNum.ToString();
+                        attachingObjectsArr[index] = oldNum.ToString();
                     }
-                    else if (attachingObjectsArr[index] == oldObjNum.ToString())
+                    else if (attachingObjectsArr[index] == oldNum.ToString())
                     {
-                        attachingObjectsArr[index] = newObjNum.ToString();
+                        attachingObjectsArr[index] = newNum.ToString();
                     }
                 }
                 techObj.AttachedObjects

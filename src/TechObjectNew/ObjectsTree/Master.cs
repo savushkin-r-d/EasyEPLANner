@@ -73,6 +73,9 @@ namespace NewTechObject
                 objects.Add(newObject);
                 globalObjectsList.Add(newObject);
 
+                // Обозначение начального номера объекта для ограничений.
+                SetRestrictionOwner();
+
                 return newObject;
             }
             else
@@ -102,6 +105,7 @@ namespace NewTechObject
                 objects.Remove(techObject);
                 globalObjectsList.Remove(techObject);
 
+                // Обозначение начального номера объекта для ограничений.
                 SetRestrictionOwner();
 
                 if(objects.Count == 0)
