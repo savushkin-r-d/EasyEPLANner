@@ -226,17 +226,16 @@ namespace NewTechObject
                 {
                     newN = localObjects[localObjects.Count - 1].TechNumber + 1;
                 }
-
-                //Старый и новый номер объекта - для замены в ограничениях
-                int oldObjN = globalObjectsList.IndexOf(obj as TechObject) + 1;
-                int newObjN = globalObjectsList.Count + 1;
-
                 var newObject = (obj as TechObject).Clone(GetTechObjectLocalNum,
-                    newN, oldObjN, newObjN);
+                    newN);
 
                 // Работа со списком в дереве и общим списком объектов.
                 localObjects.Add(newObject);
                 globalObjectsList.Add(newObject);
+
+                //Старый и новый номер объекта - для замены в ограничениях
+                int oldObjN = globalObjectsList.IndexOf(obj as TechObject) + 1;
+                int newObjN = globalObjectsList.Count + 1;
 
                 // Для корректного копирования ограничений
                 newObject.ModesManager.ModifyRestrictObj(oldObjN, newObjN);
@@ -260,15 +259,8 @@ namespace NewTechObject
             if (objectsNotNull && sameBaseObjectName)
             {
                 int newN = techObject.TechNumber;
-
-                //Старый и новый номер объекта - для замены в ограничениях
-                int oldObjNum = globalObjectsList
-                    .IndexOf(copyObject as TechObject) + 1;
-                int newObjNum = globalObjectsList
-                    .IndexOf(child as TechObject) + 1;
-
                 var newObject = (copyObject as TechObject).Clone(
-                    GetTechObjectLocalNum, newN, oldObjNum, newObjNum);
+                    GetTechObjectLocalNum, newN);
 
                 int localIndex = localObjects.IndexOf(techObject);
                 // Работа со списком в дереве
@@ -279,6 +271,12 @@ namespace NewTechObject
                 int globalIndex = globalObjectsList.IndexOf(techObject);
                 globalObjectsList.Remove(techObject);
                 globalObjectsList.Insert(globalIndex, newObject);
+
+                //Старый и новый номер объекта - для замены в ограничениях
+                int oldObjNum = globalObjectsList
+                    .IndexOf(copyObject as TechObject) + 1;
+                int newObjNum = globalObjectsList
+                    .IndexOf(child as TechObject) + 1;
 
                 // Для корректного копирования ограничений
                 newObject.ModesManager.ModifyRestrictObj(oldObjNum, newObjNum);

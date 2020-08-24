@@ -487,8 +487,7 @@ namespace NewTechObject
             }
         }
 
-        public TechObject Clone(GetN getLocalNum, int newNumber, int oldObjN,
-            int newObjN)
+        public TechObject Clone(GetN getLocalNum, int newNumber)
         {
             TechObject clone = (TechObject)MemberwiseClone();
 
