@@ -459,7 +459,7 @@ namespace NewTechObject
                 {
                     var techObjectsList = TechObjectManager.GetInstance()
                         .TechObjectsList;
-                    for (int i = oldNum + 1; i < techObjectsList.Count; i++)
+                    for (int i = oldNum + 1; i <= techObjectsList.Count; i++)
                     {
                         if (restrictStr.Contains($"{{ {i},"))
                         {
@@ -522,7 +522,7 @@ namespace NewTechObject
                 {
                     var modesCount = TechObjectManager.GetInstance()
                         .TechObjectsList[objNum - 1].ModesManager.Modes.Count;
-                    for (int i = prev + 1; i < modesCount; i++)
+                    for (int i = prev + 1; i <= modesCount; i++)
                     {
                         if (restrictStr.Contains($"{{ {objNum}, {i} }}"))
                         {

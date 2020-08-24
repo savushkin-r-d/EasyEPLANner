@@ -21,7 +21,7 @@ namespace NewTechObject
         /// </summary>
         public void CheckRestriction(int oldNum, int newNum)
         {
-            foreach (TechObject techObject in objects)
+            foreach (TechObject techObject in globalObjectsList)
             {
                 techObject.CheckRestriction(oldNum, newNum);
             }

@@ -22,7 +22,7 @@ namespace NewTechObject
         /// </summary>
         public void CheckRestriction(int oldNum, int newNum)
         {
-            foreach (TechObject techObject in localObjects)
+            foreach (TechObject techObject in globalObjectsList)
             {
                 techObject.CheckRestriction(oldNum, newNum);
             }
@@ -33,7 +33,7 @@ namespace NewTechObject
         /// </summary>
         public void SetRestrictionOwner()
         {
-            foreach (TechObject techObject in localObjects)
+            foreach (TechObject techObject in globalObjectsList)
             {
                 techObject.SetRestrictionOwner();
             }
@@ -78,14 +78,14 @@ namespace NewTechObject
 
         public override ITreeViewItem Insert()
         {
-            //TODO: set TechType
-            //TODO: nameBC set
-            //TODO: set TechNumber (prevObj + 1)
+            // TODO: Подумать над автоматической установкой в зависимости
+            // от базового объекта.
+            const int techTypeNum = 2;
+            const int cooperParamNum = -1;
             ObjectsAdder.Reset();
             var newObject = new TechObject(baseTechObject.Name, 
-                GetTechObjectLocalNum, localObjects.Count + 1, 1, 
-                baseTechObject.EplanName.ToUpper(), -1, 
-                baseTechObject.EplanName, "", baseTechObject);
+                GetTechObjectLocalNum, localObjects.Count + 1, techTypeNum, 
+                "TANK", cooperParamNum, "TankObj", "", baseTechObject);
             
             // Работа со списком в дереве и общим списком объектов.
             localObjects.Add(newObject);
