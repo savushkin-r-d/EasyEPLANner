@@ -78,8 +78,6 @@ namespace NewTechObject
 
         public override ITreeViewItem Insert()
         {
-            // TODO: Подумать над автоматической установкой в зависимости
-            // от базового объекта.
             const int techTypeNum = 2;
             const int cooperParamNum = -1;
             ObjectsAdder.Reset();
