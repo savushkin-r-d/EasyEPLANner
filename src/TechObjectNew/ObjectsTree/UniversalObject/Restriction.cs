@@ -309,6 +309,7 @@ namespace NewTechObject
                 }
             }
             restrictList = res;
+            ChangeRestrictStr();
         }
 
         /// <summary>
