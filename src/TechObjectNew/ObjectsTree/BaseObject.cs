@@ -20,11 +20,11 @@ namespace NewTechObject
         /// <summary>
         /// Проверка и исправление ограничений при удалении/перемещении объекта
         /// </summary>
-        public void CheckRestriction(int prev, int curr)
+        public void CheckRestriction(int oldNum, int newNum)
         {
             foreach (TechObject techObject in localObjects)
             {
-                techObject.CheckRestriction(prev, curr);
+                techObject.CheckRestriction(oldNum, newNum);
             }
         }
 
@@ -99,7 +99,7 @@ namespace NewTechObject
 
         override public bool Delete(object child)
         {
-            //const int markAsDelete = -1;
+            const int markAsDelete = -1;
             var techObject = child as TechObject;
             if (techObject != null)
             {
@@ -109,7 +109,7 @@ namespace NewTechObject
                 }
 
                 int globalNum = globalObjectsList.IndexOf(techObject) + 1;
-                //CheckRestriction(globalNum, markAsDelete);
+                CheckRestriction(globalNum, markAsDelete);
 
                 // Работа со списком в дереве и общим списком объектов.
                 localObjects.Remove(techObject);
@@ -145,7 +145,7 @@ namespace NewTechObject
                     int newGlobalIndex = globalObjectsList
                         .IndexOf(localObjects[newLocalIndex]);
 
-                    //CheckRestriction(oldGlobalIndex, newGlobalIndex);
+                    CheckRestriction(oldGlobalIndex + 1, newGlobalIndex + 1);
 
                     // Работа со списком в дереве
                     localObjects.Remove(techObject);
@@ -183,7 +183,7 @@ namespace NewTechObject
                     int newGlobalIndex = globalObjectsList
                         .IndexOf(localObjects[newLocalIndex]);
 
-                    //CheckRestriction(oldGlobalIndex, newGlobalIndex);
+                    CheckRestriction(oldGlobalIndex + 1, newGlobalIndex + 1);
 
                     // Работа со списком в дереве
                     localObjects.Remove(techObject);

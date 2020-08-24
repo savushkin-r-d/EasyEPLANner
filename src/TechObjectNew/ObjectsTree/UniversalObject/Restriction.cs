@@ -26,7 +26,7 @@ namespace NewTechObject
         /// <returns></returns>
         public Restriction Clone()
         {
-            Restriction clone = (Restriction)MemberwiseClone();
+            var clone = (Restriction)MemberwiseClone();
             clone.restrictList = new SortedDictionary<int, List<int>>();
             SortedDictionary<int, List<int>>.KeyCollection keyColl =
                     restrictList.Keys;
@@ -41,7 +41,7 @@ namespace NewTechObject
                     }
                     else
                     {
-                        List<int> restrictMode = new List<int>();
+                        var restrictMode = new List<int>();
                         restrictMode.Add(val);
                         clone.restrictList.Add(key, restrictMode);
                     }
@@ -130,7 +130,7 @@ namespace NewTechObject
         /// <returns></returns>
         override public bool SetNewValue(SortedDictionary<int, List<int>> dict)
         {
-            SortedDictionary<int, List<int>> oldRestriction =
+            var oldRestriction =
                 new SortedDictionary<int, List<int>>(restrictList);
             restrictList = null;
             restrictList = new SortedDictionary<int, List<int>>(dict);
@@ -151,7 +151,7 @@ namespace NewTechObject
         /// <returns></returns>
         public override bool SetNewValue(string newRestriction)
         {
-            SortedDictionary<int, List<int>> oldRestriction =
+            var oldRestriction =
                 new SortedDictionary<int, List<int>>(restrictList);
             restrictStr = newRestriction;
             ChangeRestrictList();
@@ -169,7 +169,7 @@ namespace NewTechObject
             if (oldDictionary != null)
             {
                 SortedDictionary<int, List<int>> deletedRestriction =
-                                GetDeletedRestriction(oldDictionary);
+                    GetDeletedRestriction(oldDictionary);
 
                 ClearCrossRestriction(deletedRestriction);
             }
@@ -185,8 +185,7 @@ namespace NewTechObject
         protected SortedDictionary<int, List<int>> GetDeletedRestriction(
             SortedDictionary<int, List<int>> oldRestriction)
         {
-            SortedDictionary<int, List<int>> delRestriction =
-                new SortedDictionary<int, List<int>>();
+            var delRestriction = new SortedDictionary<int, List<int>>();
 
             SortedDictionary<int, List<int>>.KeyCollection keyColl =
                      oldRestriction.Keys;
@@ -194,7 +193,7 @@ namespace NewTechObject
             {
                 if (!restrictList.ContainsKey(key))
                 {
-                    List<int> newVal = new List<int>();
+                    var newVal = new List<int>();
                     delRestriction.Add(key, newVal);
                     foreach (int val in oldRestriction[key])
                     {
@@ -209,7 +208,7 @@ namespace NewTechObject
                         {
                             if (!delRestriction.ContainsKey(key))
                             {
-                                List<int> newVal = new List<int>();
+                                var newVal = new List<int>();
                                 delRestriction.Add(key, newVal);
                                 delRestriction[key].Add(val);
                             }
@@ -274,7 +273,6 @@ namespace NewTechObject
                         {
                             mode.DelRestriction(luaName, ownerObjNum, 
                                 ownerModeNum);
-
                         }
                     }
                 }
@@ -287,15 +285,14 @@ namespace NewTechObject
         protected void ChangeRestrictList()
         {
             var res = new SortedDictionary<int, List<int>>();
-            for (int i = 0; i < TechObjectManager.GetInstance().TechObjectsList
-                .Count; i++)
+            var techObjectsList = TechObjectManager.GetInstance()
+                .TechObjectsList;
+            for (int i = 0; i < techObjectsList.Count; i++)
             {
-                TechObject to = TechObjectManager.GetInstance()
-                    .TechObjectsList[i];
+                TechObject to = techObjectsList[i];
                 for (int j = 0; j < to.ModesManager.Modes.Count; j++)
                 {
-                    string restrictPair = "{ " + (i + 1).ToString() + ", " + 
-                        (j + 1).ToString() + " }";
+                    string restrictPair = $"{{ {i+1}, {j + 1} }}";
                     if (restrictStr.Contains(restrictPair))
                     {
                         if (res.ContainsKey(i + 1))
@@ -304,7 +301,7 @@ namespace NewTechObject
                         }
                         else
                         {
-                            List<int> restrictMode = new List<int>();
+                            var restrictMode = new List<int>();
                             restrictMode.Add(j + 1);
                             res.Add(i + 1, restrictMode);
                         }
@@ -331,7 +328,7 @@ namespace NewTechObject
             }
             else
             {
-                List<int> restrictMode = new List<int>();
+                var restrictMode = new List<int>();
                 restrictMode.Add(ModeNum);
                 restrictList.Add(ObjNum, restrictMode);
                 restrictList[ObjNum].Sort();
@@ -406,7 +403,7 @@ namespace NewTechObject
                 List<int> valueColl = restrictList[key];
                 foreach (int val in valueColl)
                 {
-                    res += "{ " + key.ToString() + ", " + val.ToString() + " } ";
+                    res += $"{{ {key}, {val} }} ";
                 }
             }
 
@@ -416,70 +413,57 @@ namespace NewTechObject
         /// <summary>
         /// Изменить номер объекта.
         /// </summary>
-        /// <param name="prev">Предыдущий номер объекта</param>
-        /// <param name="curr">Текущий номер объекта</param>
-        public void ChangeObjNum(int prev, int curr)
+        /// <param name="oldNum">Предыдущий номер объекта</param>
+        /// <param name="newNum">Текущий номер объекта</param>
+        public void ChangeObjNum(int oldNum, int newNum)
         {
             const int markForDelete = -1;
-            if (curr != -1)
+            if (newNum != markForDelete)
             {
-                // Перемещение объекта вверх
-                if (prev > curr)
+                // Замена нового на старый
+                if (restrictStr.Contains($"{{ {newNum},"))
                 {
-                    for (int i = curr; i < prev; i++)
-                    {
-                        if (restrictStr.Contains("{ " + i.ToString()))
-                        {
-                            restrictStr = restrictStr.Replace("{ " + 
-                                i.ToString(), "{N " + (i + 1).ToString());
-                        }
-                    }
+                    restrictStr = restrictStr
+                        .Replace($"{{ {newNum},", $"{{N {oldNum},");
                 }
-                // Перемещение объекта вниз
-                if (prev < curr)
+
+                //Замена старого на новый
+                if (restrictStr.Contains($"{{ {oldNum},"))
                 {
-                    for (int i = curr; i > prev; i--)
-                    {
-                        if (restrictStr.Contains("{ " + i.ToString()))
-                        {
-                            restrictStr = restrictStr.Replace("{ " + 
-                                i.ToString(), "{N " + (i - 1).ToString());
-                        }
-                    }
+                    restrictStr = restrictStr
+                       .Replace($"{{ {oldNum},", $"{{ {newNum},");
                 }
-                if (restrictStr.Contains("{ " + prev.ToString()))
+
+                // Убираем букву-заглушку, которая закрывала уже измененный
+                // текст от изменений
+                if (restrictStr.Contains("N"))
                 {
-                    restrictStr = restrictStr.Replace("{ " + prev.ToString(), 
-                        "{ " + curr.ToString());
-                    if (restrictStr.Contains("N"))
-                    {
-                        restrictStr = restrictStr.Replace("N", "");
-                    }
+                    restrictStr = restrictStr.Replace("N", "");
                 }
             }
             else
             {
-                // Удаление объекта ( индекс -1 )
-                if (restrictStr.Contains("{ " + prev.ToString()))
+                // Удаление объекта (индекс -1)
+                if (restrictStr.Contains($"{{ {oldNum},"))
                 {
                     restrictStr += " ";
-                    int idx = restrictStr.IndexOf("{ " + prev.ToString());
+                    int idx = restrictStr.IndexOf($"{{ {oldNum},");
                     int idx_end = restrictStr.IndexOf("}", idx);
                     // 2й символ для пробела
                     restrictStr = restrictStr.Remove(idx, idx_end - idx + 2); 
                     restrictStr.Trim();
-                    ChangeObjNum(prev, markForDelete);
+                    ChangeObjNum(oldNum, markForDelete);
                 }
                 else
                 {
-                    for (int i = prev + 1;
-                        i < TechObjectManager.GetInstance().TechObjectsList
-                        .Count; i++)
+                    var techObjectsList = TechObjectManager.GetInstance()
+                        .TechObjectsList;
+                    for (int i = oldNum + 1; i < techObjectsList.Count; i++)
                     {
-                        if (restrictStr.Contains("{ " + i.ToString()))
+                        if (restrictStr.Contains($"{{ {i},"))
                         {
-                            restrictStr = restrictStr.Replace("{ " + 
-                                i.ToString(), "{ " + (i - 1).ToString());
+                            restrictStr = restrictStr
+                                .Replace($"{{ {i},", $"{{ {i - 1},");
                         }
                     }
                 }
@@ -496,78 +480,54 @@ namespace NewTechObject
         /// <param name="curr">Новый номер операции</param>
         public void ChangeModeNum(int objNum, int prev, int curr)
         {
-            if (curr != -1)
-            {
-                // Перемещение объекта вверх
-                if (prev > curr)
+            const int markAsDelete = -1;
+            if (curr != markAsDelete)
+            {               
+                // Замена нового на старый    
+                if (restrictStr.Contains($"{{ {objNum}, {curr} }}"))
                 {
-                    for (int i = curr; i < prev; i++)
-                    {
-                        if (restrictStr.Contains("{ " + objNum.ToString() + 
-                            ", " + i.ToString() + " }"))
-                        {
-                            restrictStr = restrictStr.Replace("{ " + 
-                                objNum.ToString() + ", " + i.ToString() + " }",
-                                "{ " + objNum.ToString() + ", " + 
-                                (i + 1).ToString() + " N}");
-                        }
-                    }
+                    restrictStr = restrictStr
+                        .Replace($"{{ {objNum}, {curr} }}",
+                        $"{{ {objNum}, {prev} N}}");
                 }
-                // Перемещение объекта вниз
-                if (prev < curr)
-                {
-                    for (int i = curr; i > prev; i--)
-                    {
-                        if (restrictStr.Contains("{ " + objNum.ToString() + 
-                            ", " + i.ToString() + " }"))
-                        {
-                            restrictStr = restrictStr.Replace("{ " + 
-                                objNum.ToString() + ", " + i.ToString() + " }",
-                                "{ " + objNum.ToString() + ", " + 
-                                (i - 1).ToString() + " N}");
-                        }
-                    }
-                }
-                if (restrictStr.Contains("{ " + objNum.ToString() + ", " + 
-                    prev.ToString() + " }"))
-                {
-                    restrictStr = restrictStr.Replace("{ " + 
-                        objNum.ToString() + ", " + prev.ToString() + " }",
-                            "{ " + objNum.ToString() + ", " + 
-                            curr.ToString() + " }");
 
+                //Замена старого на новый
+                if (restrictStr.Contains($"{{ {objNum}, {prev} }}"))
+                {
+                    restrictStr = restrictStr
+                        .Replace($"{{ {objNum}, {prev} }}",
+                        $"{{ {objNum}, {curr} }}");
                 }
+
+                // Убираем букву-заглушку, которая закрывала уже измененный
+                // текст от изменений
                 if (restrictStr.Contains("N"))
                 {
                     restrictStr = restrictStr.Replace("N", "");
                 }
             }
-            // Удаление объекта ( индекс -1 )
+            // Удаление объекта (индекс -1)
             else
             {
-                if (restrictStr.Contains("{ " + objNum.ToString() + ", " + 
-                    prev.ToString() + " }"))
+                if (restrictStr.Contains($"{{ {objNum}, {prev} }}"))
                 {
                     restrictStr += " ";
-                    restrictStr = restrictStr.Replace("{ " + 
-                        objNum.ToString() + ", " + prev.ToString() + " } ", "");
+                    restrictStr = restrictStr
+                        .Replace($"{{ {objNum}, {prev} }} ", "");
                     restrictStr.Trim();
-                    this.ChangeModeNum(objNum, prev, -1);
+                    ChangeModeNum(objNum, prev, markAsDelete);
                 }
                 else
                 {
-                    for (int i = prev + 1;
-                        i < TechObjectManager.GetInstance()
+                    var modesCount = TechObjectManager.GetInstance()
                         .TechObjectsList[objNum - 1].ModesManager.Modes.Count;
-                        i++)
+                    for (int i = prev + 1; i < modesCount; i++)
                     {
-                        if (restrictStr.Contains("{ " + objNum.ToString() + 
-                            ", " + i.ToString() + " }"))
+                        if (restrictStr.Contains($"{{ {objNum}, {i} }}"))
                         {
-                            restrictStr = restrictStr.Replace("{ " + 
-                                objNum.ToString() + ", " + i.ToString() + " }",
-                                "{ " + objNum.ToString() + ", " + 
-                                (i - 1).ToString() + " }");
+                            restrictStr = restrictStr
+                                .Replace($"{{ {objNum}, {i} }}",
+                                $"{{ {objNum}, {i - 1} }}");
                         }
                     }
                 }
@@ -586,10 +546,10 @@ namespace NewTechObject
 
             if (IsLocalRestrictionUse)
             {
-                if (restrictStr.Contains("{ " + oldObjN.ToString()))
+                if (restrictStr.Contains($"{{ {oldObjN},"))
                 {
-                    restrictStr = restrictStr.Replace("{ " + 
-                        oldObjN.ToString(), "{ " + newObjN.ToString());
+                    restrictStr = restrictStr
+                        .Replace($"{{ {oldObjN},", $"{{ {newObjN},");
                 }
             }
             ChangeRestrictList();

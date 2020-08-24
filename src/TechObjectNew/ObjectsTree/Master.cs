@@ -19,11 +19,11 @@ namespace NewTechObject
         /// <summary>
         /// Проверка и исправление ограничений при удалении/перемещении объекта
         /// </summary>
-        public void CheckRestriction(int prev, int curr)
+        public void CheckRestriction(int oldNum, int newNum)
         {
             foreach (TechObject techObject in objects)
             {
-                techObject.CheckRestriction(prev, curr);
+                techObject.CheckRestriction(oldNum, newNum);
             }
         }
 
