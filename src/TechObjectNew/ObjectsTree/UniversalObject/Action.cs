@@ -540,9 +540,6 @@ namespace NewTechObject
                     case "Сигналы для включения":
                         return ImageIndexEnum.ActionSignals;
 
-                    case "Мойка ( DI, DO, устройства)":
-                        return ImageIndexEnum.ActionWashDIDO;
-
                     default:
                         return ImageIndexEnum.NONE;
                 }

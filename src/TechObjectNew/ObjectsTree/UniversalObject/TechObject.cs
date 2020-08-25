@@ -517,17 +517,23 @@ namespace NewTechObject
 
         private void SetItems()
         {
-            items = new ITreeViewItem[9];
-            items[0] = this.techNumber;
-            items[1] = this.techType;
-            items[2] = this.nameEplan;
-            items[3] = this.nameBC;
-            items[4] = this.attachedObjects;
-            items[5] = this.cooperParamNumber;
+            var itemsList = new List<ITreeViewItem>();
+            itemsList.Add(techNumber);
+            itemsList.Add(techType);
+            itemsList.Add(nameEplan);
+            itemsList.Add(nameBC);
+            
+            if(attachedObjects.IsEditable)
+            {
+                itemsList.Add(attachedObjects);
+            }
 
-            items[6] = modes;
-            items[7] = parameters;
-            items[8] = equipment;
+            itemsList.Add(cooperParamNumber); // ??
+            itemsList.Add(modes);
+            itemsList.Add(parameters);
+            itemsList.Add(equipment);
+
+            items = itemsList.ToArray();
         }
 
         /// <summary>

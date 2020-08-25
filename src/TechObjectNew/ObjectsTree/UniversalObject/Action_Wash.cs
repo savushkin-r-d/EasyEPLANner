@@ -238,7 +238,7 @@ namespace NewTechObject
         {
             get
             {
-                return ImageIndexEnum.ActionWashDIDO;
+                return ImageIndexEnum.NONE;
             }
         }
         #endregion
