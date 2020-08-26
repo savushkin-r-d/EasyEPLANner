@@ -47,7 +47,7 @@ namespace NewTechObject
         /// </summary>
         /// <param name="name">Lua имя</param>
         /// <param name="value">Значение</param>
-        public void AddEquipment(string name, string value)
+        public void SetEquipmentValue(string name, string value)
         {
             foreach (ITreeViewItem item in items)
             {

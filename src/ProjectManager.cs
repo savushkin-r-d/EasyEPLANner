@@ -187,6 +187,7 @@ namespace EasyEPlanner
         {
             errStr = "";
             Logs.Clear();
+            ProjectDataIsLoaded = false;
 
             string LuaStr;
             int res = 0;
@@ -222,15 +223,15 @@ namespace EasyEPlanner
                         "объектов");
                     res = LoadDescriptionFromFile(out LuaStr, out errStr, 
                         projectName, "\\main.objects.lua");
-                    techObjectManager.LoadFromLuaStr(LuaStr, projectName);
+                    techObjectManager.LoadDescription(LuaStr, projectName);
+                    newTechObjectManager.LoadDescription(LuaStr, projectName);
                     errStr = "";
                     LuaStr = "";
                     res = LoadDescriptionFromFile(out LuaStr, out errStr, 
                         projectName, "\\main.restrictions.lua");
                     techObjectManager.LoadRestriction(LuaStr);
+                    newTechObjectManager.LoadRestriction(LuaStr);
                     oProgress.EndPart();
-
-                    newTechObjectManager.ProjectName = projectName;
                 }
 
                 oProgress.BeginPart(15, "Проверка данных");
@@ -240,11 +241,13 @@ namespace EasyEPlanner
                 oProgress.BeginPart(15, "Расчет IO-Link");
                 IOManager.CalculateIOLinkAdresses();
                 oProgress.EndPart(true);
+                ProjectDataIsLoaded = true;
             }
             catch (System.Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 oProgress.EndPart(true);
+                ProjectDataIsLoaded = false;
             }
 
             return res;
@@ -816,6 +819,11 @@ namespace EasyEPlanner
                 systemFile.CopyTo(pathToFile, true);
             }
         }
+
+        /// <summary>
+        /// Загружены или нет данные проекта.
+        /// </summary>
+        public bool ProjectDataIsLoaded { get; set; }
 
         /// <summary>
         /// Путь к надстройке, к месту, из которого она подключалась к программе

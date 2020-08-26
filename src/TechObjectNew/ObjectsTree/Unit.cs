@@ -17,6 +17,24 @@ namespace NewTechObject
             objects = new List<ITreeViewItem>();
         }
 
+        /// <summary>
+        /// Добавление объекта при загрузке из LUA
+        /// </summary>
+        /// <param name="obj">Объект</param>
+        public void AddObjectWhenLoadFromLua(TechObject obj)
+        {
+            var findedBaseObject = objects
+                .Where(x => x.EditText[0] == obj.BaseTechObject.Name)
+                .FirstOrDefault() as BaseObject;
+            if (findedBaseObject == null)
+            {
+                findedBaseObject = new BaseObject(obj.BaseTechObject.Name);
+                objects.Add(findedBaseObject);
+            }
+
+            findedBaseObject.AddObjectWhenLoadFromLua(obj);
+        }
+
         #region реализация ITreeViewItem
         public override ITreeViewItem[] Items
         {

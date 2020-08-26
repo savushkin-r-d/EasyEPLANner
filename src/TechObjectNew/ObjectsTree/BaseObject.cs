@@ -39,6 +39,16 @@ namespace NewTechObject
             }
         }
 
+        /// <summary>
+        /// Добавить объект при загрузке из LUA
+        /// </summary
+        /// <param name="obj">Объект</param>
+        public void AddObjectWhenLoadFromLua(TechObject obj)
+        {
+            obj.SetGetLocalN(GetTechObjectLocalNum);
+            localObjects.Add(obj);
+        }
+
         #region реализация ITreeViewItem
         public override ITreeViewItem[] Items
         {
@@ -65,6 +75,14 @@ namespace NewTechObject
                         "" 
                     };
                 }
+            }
+        }
+
+        public override string[] EditText
+        {
+            get
+            {
+                return new string[] { baseTechObject.Name , "" };
             }
         }
 

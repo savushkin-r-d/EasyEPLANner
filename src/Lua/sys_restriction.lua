@@ -14,7 +14,6 @@ init_restriction = function()
 
                 if mode ~= nil then
                     for keyRM, valRM in pairs ( valM ) do
-
                         for keyR, valR in pairs(valRM) do
                             if valR == 1 then
                                 if keyRM == 1 then
@@ -27,9 +26,7 @@ init_restriction = function()
                                     mode:AddRestriction("TotalRestriction", keyR, keyRT)
                                 end
                             end
-
                         end
-
                     end
                     mode:SortRestriction()
                 end
@@ -39,5 +36,3 @@ init_restriction = function()
 
     return 0
 end
-
-

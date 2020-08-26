@@ -768,7 +768,7 @@ namespace EasyEPlanner
             Node parentNode = subNode.Parent;
             int objectNum = NewTechObject.TechObjectManager
                 .GetInstance()
-                .GetTechObjectNumByDisplayText(parentNode.Text);
+                .GetTechObjectN(parentNode.Text);
             int modeNum = nodes.IndexOf(subNode) + 1;
             bool correctRestriction =
                 restriction.RestrictDictionary != null &&
@@ -801,7 +801,7 @@ namespace EasyEPlanner
 
             int objectNum = NewTechObject.TechObjectManager
                 .GetInstance()
-                .GetTechObjectNumByDisplayText(subNode.Text);
+                .GetTechObjectN(subNode.Text);
             bool correctObject = attachedObjects.Value
                 .Split(' ').ToArray()
                 .Contains(objectNum.ToString());
@@ -1253,7 +1253,7 @@ namespace EasyEPlanner
             {
                 Node parentNode = node.Parent;
                 int objectIndex = NewTechObject.TechObjectManager.GetInstance()
-                    .GetTechObjectNumByDisplayText(parentNode.Text);
+                    .GetTechObjectN(parentNode.Text);
                 int modeIndex = parentNode.Nodes.IndexOf(node) + 1;
                 ModifyRestriction(objectIndex, modeIndex);
             }
@@ -1288,7 +1288,7 @@ namespace EasyEPlanner
             private static void ExecuteNewEditorAttachedObjects(Node node)
             {
                 int objectIndex = NewTechObject.TechObjectManager.GetInstance()
-                    .GetTechObjectNumByDisplayText(node.Text);
+                    .GetTechObjectN(node.Text);
                 // Заполняем нулями список т.к правая часть не нужна.
                 resDict.Add(objectIndex, new List<int> (0));
             }

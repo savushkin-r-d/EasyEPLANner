@@ -147,7 +147,9 @@ namespace NewTechObject
 
                     TechObject obj = TechObjectManager.GetInstance()
                         .GetTObject(number);
-                    if (obj != null && obj.BaseTechObject.IsAttachable)
+                    bool correctBaseObject = obj.BaseTechObject != null &&
+                        obj.BaseTechObject.IsAttachable;
+                    if (obj != null && correctBaseObject)
                     {
                         numbers.Add(number);
                     }
@@ -308,17 +310,19 @@ namespace NewTechObject
             {
                 get
                 {
-                    if (techObject.BaseTechObject.Name == "Танк" ||
-                        techObject.BaseTechObject.Name == "Линия" ||
-                        techObject.BaseTechObject.Name == "Линия приемки" ||
-                        techObject.BaseTechObject.Name == "Линия выдачи")
+                    bool baseObjectIsExist = techObject.BaseTechObject != null;
+                    if(baseObjectIsExist)
                     {
-                        return true;
+                        if (techObject.BaseTechObject.Name == "Танк" ||
+                            techObject.BaseTechObject.Name == "Линия" ||
+                            techObject.BaseTechObject.Name == "Линия приемки" ||
+                            techObject.BaseTechObject.Name == "Линия выдачи")
+                        {
+                            return true;
+                        }
                     }
-                    else
-                    {
-                        return false;
-                    }
+
+                    return false;
                 }
             }
 
@@ -565,7 +569,7 @@ namespace NewTechObject
         /// <param name="value">Значение</param>
         public void AddEquipment(string equipmentName, string value)
         {
-            equipment.AddEquipment(equipmentName, value);
+            equipment.SetEquipmentValue(equipmentName, value);
         }
 
         // Получение операции. 
@@ -795,6 +799,15 @@ namespace NewTechObject
             return errors;
         }
 
+        /// <summary>
+        /// Установить делегат для поиска локального номера объекта;
+        /// </summary>
+        /// <param name="getLocalNumMethod">Метод</param>
+        public void SetGetLocalN(GetN getLocalNumMethod)
+        {
+            getLocalNum = getLocalNumMethod;
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {
@@ -1006,7 +1019,7 @@ namespace NewTechObject
 
         private ITreeViewItem[] items; /// Параметры объекта для редактирования.
 
-        private GetN getLocalNum;
+        private GetN getLocalNum; /// Делегат для функции поиска номера объекта.
 
         /// Базовый аппарат (технологический объект)
         private BaseTechObject baseTechObject; 

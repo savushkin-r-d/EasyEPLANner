@@ -420,7 +420,7 @@ namespace NewTechObject
                 return res;
             }
 
-            var masterObj = TechObjectManager.GetInstance().MasterObject;
+            var masterObj = TechObjectManager.GetInstance().Master;
             if (masterObj != null)
             {
                 res += objName + ".master = prg." + masterObj.NameEplan

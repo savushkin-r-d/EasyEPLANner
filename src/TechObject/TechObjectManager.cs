@@ -15,7 +15,7 @@ namespace TechObject
     /// </summary>
     public interface ITechObjectManager
     {
-        void LoadFromLuaStr(string LuaStr, string projectName);
+        void LoadDescription(string LuaStr, string projectName);
         void LoadRestriction(string LuaStr);
         string SaveAsLuaTable(string prefixStr);
         void GetObjectForXML(TreeNode rootNode);
@@ -526,7 +526,7 @@ namespace TechObject
             }
         }
 
-        public void LoadFromLuaStr(string LuaStr, string projectName)
+        public void LoadDescription(string LuaStr, string projectName)
         {
             this.projectName = projectName;
 
