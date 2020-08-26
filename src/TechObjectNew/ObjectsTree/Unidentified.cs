@@ -96,12 +96,30 @@ namespace NewTechObject
             return false;
         }
 
-        public override bool IsCopyable
+        public override bool IsCuttable
         {
             get
             {
                 return true;
             }
+        }
+
+        public override ITreeViewItem Cut(ITreeViewItem item)
+        {
+            var techObject = item as TechObject;
+            if (techObject != null)
+            {
+                localObjects.Remove(techObject);
+
+                if(localObjects.Count == 0)
+                {
+                    Parent.Delete(this);
+                }
+
+                return techObject;
+            }
+
+            return null;
         }
         #endregion
 

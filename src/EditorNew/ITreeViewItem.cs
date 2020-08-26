@@ -284,5 +284,21 @@ namespace NewEditor
         /// Отключено или нет свойство
         /// </summary>
         bool Disabled { get; set; }
+
+        /// <summary>
+        /// Можно ли вырезать объект/из объекта
+        /// </summary>
+        bool IsCuttable { get; }
+
+        /// <summary>
+        /// Вырезать объект
+        /// </summary>
+        /// <param name="item">Объект</param>
+        ITreeViewItem Cut(ITreeViewItem item);
+
+        /// <summary>
+        /// Помечен на вырезание
+        /// </summary>
+        bool Cutted { get; set; }
     }
 }

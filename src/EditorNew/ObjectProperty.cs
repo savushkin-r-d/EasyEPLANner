@@ -411,6 +411,15 @@ namespace NewEditor
         /// Отключено или нет свойство
         /// </summary>
         public bool Disabled { get; set; }
+
+        public bool Cutted { get; set; }
+
+        public ITreeViewItem Cut(ITreeViewItem item)
+        {
+            return null;
+        }
+
+        public  bool IsCuttable { get; } = false;
         #endregion
 
         #region реализация IHelperItem

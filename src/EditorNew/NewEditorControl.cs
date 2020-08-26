@@ -332,6 +332,16 @@ namespace NewEditor
                             editorTView.FinishCellEdit();
                             return (IntPtr) 1;
                         }
+
+                        if (editorTView.Focused)
+                        {
+                            PI.SendMessage(PI.GetFocus(),
+                                (int)PI.WM.KEYDOWN,
+                                (int)Keys.Escape, 0);
+
+                            return (IntPtr)1;
+                        }
+
                         break;
 
                     case PI.VIRTUAL_KEY.VK_RETURN:                       //Enter
@@ -363,15 +373,6 @@ namespace NewEditor
 
                                 return (IntPtr) 1;
                             }
-
-                            if (editorTView.Focused)
-                            {
-                                PI.SendMessage(PI.GetFocus(),
-                                    (int)PI.WM.KEYDOWN,
-                                    (int)Keys.C, 0);
-
-                                return (IntPtr) 1;
-                            }
                         }
                         break;
 
@@ -384,6 +385,15 @@ namespace NewEditor
                             {
                                 PI.SendMessage(PI.GetFocus(),
                                     (int)PI.WM.CUT, 0, 0);
+                                return (IntPtr)1;
+                            }
+
+                            if (editorTView.Focused)
+                            {
+                                PI.SendMessage(PI.GetFocus(),
+                                    (int)PI.WM.KEYDOWN,
+                                    (int)Keys.X, 0);
+
                                 return (IntPtr)1;
                             }
                         }
@@ -778,7 +788,9 @@ namespace NewEditor
             }
         }
 
-        // Хранение скопированного объекта.
+        /// <summary>
+        /// Хранение скопированного объекта.
+        /// </summary>
         private object copyItem = null;
 
         private bool noOnChange = default;
@@ -846,6 +858,19 @@ namespace NewEditor
                 {
                     DeleteItem(item);
                     return;
+                }
+
+                // Вырезка существующего элемента
+                if(e.KeyCode == Keys.X && e.Control == true)
+                {
+                    CutItem(item);
+                    return;
+                }
+
+                // Отмена вырезки существующего элемента
+                if(e.KeyCode == Keys.Escape)
+                {
+                    CancelCut(copyItem as ITreeViewItem);
                 }
             }
             
@@ -958,16 +983,16 @@ namespace NewEditor
                 ITreeViewItem newItem = item.InsertCopy(copyItem);
                 if (newItem != null)
                 {
-                    newItem.AddParent(item);
-                    HiglihtItems();
-                    editorTView.RefreshObjects(item.Items);
-
-                    if(item.NeedRebuildParent && item.Parent != null)
+                    if(newItem.Cutted)
                     {
-                        editorTView.RefreshObject(item.Parent);
+                        newItem.Cutted = false;
+                        copyItem = null;
                     }
 
+                    newItem.AddParent(item);
+                    HiglihtItems();
                     DisableNeededObjects(new ITreeViewItem[] { newItem });
+                    RefreshTree();
                 }
             }
         }
@@ -1032,6 +1057,56 @@ namespace NewEditor
                     editorTView.SelectedIndex++;
                 }
                 HiglihtItems();
+            }
+        }
+
+        /// <summary>
+        /// Вырезать элемент (Ctrl + X)
+        /// </summary>
+        /// <param name="item"></param>
+        private void CutItem(ITreeViewItem item)
+        {
+            if(item.Parent.IsCuttable && item.IsMainObject)
+            {
+                copyItem = item;
+                item.Cutted = true;
+
+                item.Disabled = true;
+                editorTView.DisableObject(item);
+            }
+        }
+
+        /// <summary>
+        /// Отменить вырезку объекта.
+        /// </summary>
+        /// <param name="item"></param>
+        private void CancelCut(ITreeViewItem item)
+        {
+            if (item != null && item.Cutted)
+            {
+                DisableCutting(treeViewItemsList.ToArray());
+                DisableNeededObjects(treeViewItemsList.ToArray());
+                copyItem = null;
+            }
+        }
+
+        /// <summary>
+        /// Снять флаг, что объект вырезан.
+        /// </summary>
+        private void DisableCutting(ITreeViewItem[] items)
+        {
+            foreach(var item in items)
+            {
+
+                if(item.Cutted)
+                {
+                    item.Cutted = false;
+                }
+                
+                if(item.Items != null && item.Items.Length != 0)
+                {
+                    DisableCutting(item.Items);
+                }
             }
         }
 
@@ -1417,23 +1492,21 @@ namespace NewEditor
                         DisableNeededObjects(item.Items);
                     }
                 }
+
+                if (item.NeedDisable)
+                {
+                    if (!item.Disabled)
+                    {
+                        editorTView.DisableObject(item);
+                        item.Disabled = true;
+                    }
+                }
                 else
                 {
-                    if (item.NeedDisable)
+                    if (item.Disabled)
                     {
-                        if(!item.Disabled)
-                        {
-                            editorTView.DisableObject(item);
-                            item.Disabled = true;
-                        }
-                    }
-                    else
-                    {
-                        if(item.Disabled)
-                        {
-                            editorTView.EnableObject(item);
-                            item.Disabled = false;
-                        }
+                        editorTView.EnableObject(item);
+                        item.Disabled = false;
                     }
                 }
             }
@@ -1677,7 +1750,8 @@ namespace NewEditor
                 ColumnHeaderAutoResizeStyle.ColumnContent);
         }
 
-        private void hideEmptyItemsBtn_CheckStateChanged(object sender, EventArgs e)
+        private void hideEmptyItemsBtn_CheckStateChanged(object sender,
+            EventArgs e)
         {
             if (edit_toolStripButton.Checked && hideEmptyItemsBtn.Checked)
             {

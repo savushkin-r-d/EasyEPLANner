@@ -447,7 +447,7 @@ namespace NewTechObject
         /// Инициализация базового объекта
         /// </summary>
         /// <param name="baseTechObject">Базовый объект</param>
-        private void InitBaseTechObject(BaseTechObject baseTechObject)
+        public void InitBaseTechObject(BaseTechObject baseTechObject)
         {
             if (baseTechObject != null)
             {

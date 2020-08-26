@@ -139,10 +139,15 @@ namespace NewTechObject
         override public ITreeViewItem InsertCopy(object obj)
         {
             var techObj = obj as TechObject;
+            if(techObj == null)
+            {
+                return null;
+            }
+            
             bool masterNotAdd = objects.Count == 0;
-            if (techObj != null &&
-                techObj.BaseTechObject.Name == name &&
-                masterNotAdd)
+            bool correctedBaseObject = techObj.BaseTechObject != null &&
+                techObj.BaseTechObject.Name == name;
+            if (correctedBaseObject && masterNotAdd)
             {
                 int newN = 1;
                 if (objects.Count > 0)
@@ -169,8 +174,17 @@ namespace NewTechObject
 
                 return newObject;
             }
+            else
+            {
+                var techObjParent = techObj.Parent;
+                techObjParent.Cut(techObj);
 
-            return null;
+                objects.Add(techObj);
+                techObj.SetGetLocalN(GetTechObjectLocalNum);
+                techObj.InitBaseTechObject(baseTechObject);
+
+                return techObj;
+            }
         }
 
         override public ITreeViewItem Replace(object child, object copyObject)
