@@ -197,7 +197,7 @@ namespace NewEditor
             editorTView.BeginUpdate();
             treeViewItemsList = new List<ITreeViewItem>();
             treeViewItemsList.Add(data);
-            //data.AddParent(null);
+            data.AddParent(null);
             editorTView.Roots = treeViewItemsList;
             editorTView.Columns[0]
                 .AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
