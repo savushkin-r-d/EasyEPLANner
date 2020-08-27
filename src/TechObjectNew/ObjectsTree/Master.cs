@@ -184,9 +184,10 @@ namespace NewTechObject
                     techObj.SetGetLocalN(GetTechObjectLocalNum);
                     techObj.InitBaseTechObject(baseTechObject);
 
-                    ObjectsAdder.Reset();
                     return techObj;
                 }
+
+                ObjectsAdder.Reset();
             }
 
             return null;
