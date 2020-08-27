@@ -175,6 +175,7 @@ namespace NewTechObject
             }
             else
             {
+                ObjectsAdder.Reset();
                 if (techObj.MarkToCut && masterNotAdd)
                 {
                     var techObjParent = techObj.Parent;
@@ -186,8 +187,6 @@ namespace NewTechObject
 
                     return techObj;
                 }
-
-                ObjectsAdder.Reset();
             }
 
             return null;

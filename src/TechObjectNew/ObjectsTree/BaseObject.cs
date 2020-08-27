@@ -265,6 +265,7 @@ namespace NewTechObject
             }
             else
             {
+                ObjectsAdder.Reset();
                 if (techObj.MarkToCut)
                 {
                     var techObjParent = techObj.Parent;
@@ -276,8 +277,6 @@ namespace NewTechObject
 
                     return techObj;
                 }
-
-                ObjectsAdder.Reset();
             }
 
             return null;
