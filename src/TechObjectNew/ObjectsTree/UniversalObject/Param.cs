@@ -188,11 +188,6 @@ namespace NewTechObject
                 return true;
             }
         }
-
-        override public object Copy()
-        {
-            return this;
-        }
         #endregion
 
         public string GetName()

@@ -281,18 +281,15 @@ namespace NewTechObject
             object copyObject)
         {
             var property = child as ActiveParameter;
-            if (property != null && copyObject is ActiveParameter)
+            var copiedObject = copyObject as ActiveParameter;
+            bool objectsNotNull = property != null && copiedObject != null;
+            if (objectsNotNull)
             {
-                property.SetNewValue((copyObject as ActiveParameter).Value);
+                property.SetNewValue(copiedObject.Value);
                 ModifyDevNames(owner.NameEplan, owner.TechNumber);
-                return property as ITreeViewItem;
+                return property;
             }
             return null;
-        }
-
-        public override object Copy()
-        {
-            return this;
         }
 
         override public bool IsCopyable
@@ -305,9 +302,9 @@ namespace NewTechObject
 
         public override bool Delete(object child)
         {
-            if (child is BaseParameter)
+            var property = child as BaseParameter;
+            if (property != null)
             {
-                var property = child as BaseParameter;
                 property.SetNewValue("");
                 return true;
             }

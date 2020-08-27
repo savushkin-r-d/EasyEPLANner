@@ -140,7 +140,14 @@ namespace NewEditor
 
         public virtual object Copy()
         {
-            return null;
+            if(IsCopyable)
+            {
+                return this;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public bool IsMoveable
@@ -352,10 +359,10 @@ namespace NewEditor
         /// <param name="parent">Родительский элемент</param>
         public void AddParent(ITreeViewItem parent)
         {
-            this.Parent = parent;
-            if (this.Items != null)
+            Parent = parent;
+            if (Items != null)
             {
-                foreach (ITreeViewItem item in this.Items)
+                foreach (ITreeViewItem item in Items)
                 {
                     item.AddParent(this);
                 }
@@ -412,7 +419,7 @@ namespace NewEditor
         /// </summary>
         public bool Disabled { get; set; }
 
-        public bool Cutted { get; set; }
+        public bool MarkToCut { get; set; }
 
         public ITreeViewItem Cut(ITreeViewItem item)
         {

@@ -441,8 +441,7 @@ namespace NewTechObject
 
         override public bool Delete(object child)
         {
-            Action action = child as Action;
-
+            var action = child as Action;
             if (action != null)
             {
                 action.Clear();

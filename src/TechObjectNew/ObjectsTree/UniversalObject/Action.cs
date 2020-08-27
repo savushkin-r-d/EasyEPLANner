@@ -369,14 +369,6 @@ namespace NewTechObject
             }
         }
 
-        override public ITreeViewItem[] Items
-        {
-            get
-            {
-                return null;
-            }
-        }
-
         override public bool SetNewValue(string newName)
         {
             newName = newName.Trim();
@@ -432,7 +424,8 @@ namespace NewTechObject
         override public int[] EditablePart
         {
             get
-            {//Можем редактировать содержимое второй колонки.
+            {
+                //Можем редактировать содержимое второй колонки.
                 return new int[] { -1, 1 };
             }
         }

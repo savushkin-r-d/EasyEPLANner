@@ -168,14 +168,19 @@ namespace NewTechObject
 
         override public bool Delete(object child)
         {
-            var removedParam = child as Param;
-            if (removedParam != null)
+            var removingParam = child as Param;
+            if (removingParam != null)
             {
-                removedParam.ClearOperationsBinding();
-                parameters.Remove(removedParam);
+                removingParam.ClearOperationsBinding();
+                parameters.Remove(removingParam);
                 return true;
             }
 
+            return false;
+        }
+
+        override public bool SetNewValue(string newValue)
+        {
             return false;
         }
 
@@ -185,11 +190,6 @@ namespace NewTechObject
             {
                 return true;
             }
-        }
-
-        override public bool SetNewValue(string newValue)
-        {
-            return false;
         }
 
         override public ITreeViewItem Insert()
@@ -238,11 +238,6 @@ namespace NewTechObject
             }
         }
 
-        override public object Copy()
-        {
-            return this;
-        }
-
         override public bool IsInsertableCopy
         {
             get
@@ -253,10 +248,9 @@ namespace NewTechObject
 
         override public ITreeViewItem InsertCopy(object obj)
         {
-            if (obj is Param)
+            var newParam = obj as Param;
+            if (newParam != null)
             {
-                var newParam = obj as Param;
-
                 string newName = newParam.GetName();
                 string newValueStr = newParam.GetValue();
                 double newValue = Convert.ToDouble(newValueStr);
@@ -280,7 +274,6 @@ namespace NewTechObject
         override public ITreeViewItem MoveDown(object child)
         {
             var par = child as Param;
-
             if (par != null)
             {
                 int index = parameters.IndexOf(par);
@@ -299,7 +292,6 @@ namespace NewTechObject
         override public ITreeViewItem MoveUp(object child)
         {
             var par = child as Param;
-
             if (par != null)
             {
                 int index = parameters.IndexOf(par);
@@ -319,7 +311,9 @@ namespace NewTechObject
             object copyObject)
         {
             var par = child as Param;
-            if (copyObject is Param && par != null)
+            var copiedObject = copyObject as Param;
+            bool objectsNotNull = par != null && copiedObject != null;
+            if (objectsNotNull)
             {
                 string newName = (copyObject as Param).GetName();
                 string newValueStr = (copyObject as Param).GetValue();

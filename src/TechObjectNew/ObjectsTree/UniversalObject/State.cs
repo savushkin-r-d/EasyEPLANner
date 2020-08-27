@@ -276,30 +276,6 @@ namespace NewTechObject
             }
         }
 
-        override public bool IsEditable
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        override public bool IsDeletable
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        override public bool IsMoveable
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         override public bool IsReplaceable
         {
             get
@@ -310,15 +286,14 @@ namespace NewTechObject
 
         override public bool Delete(object child)
         {
-            Step step = child as Step;
-
+            var step = child as Step;
             if (step != null)
             {
                 const string ignoreStateName = "Выполнение";
                 if (steps.IndexOf(step) == 0 &&
                     steps[0].Owner.name == ignoreStateName)
                 {
-                    //Не удаляем шаг операции.
+                    // Не удаляем шаг операции.
                     return false;
                 }
 
@@ -326,7 +301,7 @@ namespace NewTechObject
                 return true;
             }
 
-            Action action = child as Action;
+            var action = child as Action;
             if (action != null)
             {
                 action.Clear();
@@ -338,8 +313,7 @@ namespace NewTechObject
 
         override public ITreeViewItem MoveUp(object child)
         {
-            Step step = child as Step;
-
+            var step = child as Step;
             if (step != null)
             {
                 int index = steps.IndexOf(step);
@@ -349,7 +323,6 @@ namespace NewTechObject
                     steps.Insert(index - 1, step);
                     return steps[index];
                 }
-
             }
 
             return null;
@@ -357,8 +330,7 @@ namespace NewTechObject
 
         override public ITreeViewItem MoveDown(object child)
         {
-            Step step = child as Step;
-
+            var step = child as Step;
             if (step != null)
             {
                 int index = steps.IndexOf(step);
@@ -368,24 +340,22 @@ namespace NewTechObject
                     steps.Insert(index + 1, step);
                     return steps[index];
                 }
-
             }
 
             return null;
         }
 
-        override public ITreeViewItem Replace(object child,
-            object copyObject)
+        override public ITreeViewItem Replace(object child, object copyObject)
         {
-            Step step = child as Step;
-            if (copyObject is Step && step != null)
+            var step = child as Step;
+            var copy = copyObject as Step;
+            bool objectsNotNull = step != null && copy != null;
+            if (objectsNotNull)
             {
-                Step newStep = (copyObject as Step).Clone(GetStepN);
+                Step newStep = copy.Clone(GetStepN);
                 int index = steps.IndexOf(step);
                 steps.Remove(step);
-
                 steps.Insert(index, newStep);
-
                 index = steps.IndexOf(newStep);
 
                 return newStep;
@@ -402,11 +372,6 @@ namespace NewTechObject
             }
         }
 
-        override public object Copy()
-        {
-            return this;
-        }
-
         override public bool IsInsertable
         {
             get
@@ -417,24 +382,16 @@ namespace NewTechObject
 
         override public ITreeViewItem Insert()
         {
-            if (modeStep == null)
+            if (modeStep == null || Items.Count() == 0)
             {
-                modeStep = new Step("Во время операции", GetStepN, this, 
-                    isMain);
+                modeStep = new Step("Во время операции", GetStepN, this, isMain);
                 steps.Add(modeStep);
-                return modeStep;
-            }
-            else if (this.Items.Count() == 0)
-            {
-                modeStep = new Step("Во время операции", GetStepN, this,
-                    isMain);
-                steps.Add(modeStep);
+                modeStep.AddParent(this);
                 return modeStep;
             }
 
             Step newStep = new Step("Новый шаг", GetStepN, this);
             steps.Add(newStep);
-
             return newStep;
         }
 

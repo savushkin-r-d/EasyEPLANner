@@ -391,28 +391,22 @@ namespace NewTechObject
             objectsAdderForm.ShowDialog();
             string selectedType = ObjectsAdder.LastSelectedType;
             string selectedSubType = ObjectsAdder.LastSelectedSubType;
-            if(selectedType != null && selectedSubType != null)
+            if (selectedType != null && selectedSubType != null)
             {
                 var treeItem = GetTreeItem(selectedType);
                 var innerItem = treeItem.Insert();
-                if(innerItem != null)
+                if (innerItem != null)
                 {
-                    if(!objects.Contains(treeItem))
+                    if (!objects.Contains(treeItem))
                     {
                         objects.Add(treeItem);
                     }
 
                     return treeItem;
                 }
-                else
-                {
-                    return null;
-                }
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         /// <summary>

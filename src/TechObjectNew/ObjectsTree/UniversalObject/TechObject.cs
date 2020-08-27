@@ -313,10 +313,8 @@ namespace NewTechObject
                     bool baseObjectIsExist = techObject.BaseTechObject != null;
                     if(baseObjectIsExist)
                     {
-                        if (techObject.BaseTechObject.Name == "Танк" ||
-                            techObject.BaseTechObject.Name == "Линия" ||
-                            techObject.BaseTechObject.Name == "Линия приемки" ||
-                            techObject.BaseTechObject.Name == "Линия выдачи")
+                        string baseObjectName = techObject.BaseTechObject.Name;
+                        if (allowedBaseObjects.Contains(baseObjectName))
                         {
                             return true;
                         }
@@ -341,6 +339,14 @@ namespace NewTechObject
                 }
             }
             #endregion
+
+            private string[] allowedBaseObjects = new string[]
+            {
+                "Танк",
+                "Линия",
+                "Линия приемки",
+                "Линия выдачи"
+            };
 
             private TechObject techObject;
         }
@@ -491,7 +497,8 @@ namespace NewTechObject
             }
         }
 
-        public TechObject Clone(GetN getLocalNum, int newNumber)
+        public TechObject Clone(GetN getLocalNum, int newNumber,
+            int oldGlobalNum, int newGlobalNum)
         {
             TechObject clone = (TechObject)MemberwiseClone();
 
@@ -511,6 +518,7 @@ namespace NewTechObject
             clone.modes.ChngeOwner(clone);
             clone.modes = modes.Clone(clone);
             clone.modes.ModifyDevNames(TechNumber);
+            clone.modes.ModifyRestrictObj(oldGlobalNum, newGlobalNum);
 
             clone.equipment = equipment.Clone(clone);
             clone.equipment.ModifyDevNames();
@@ -869,9 +877,9 @@ namespace NewTechObject
 
         public override bool Delete(object child)
         {
-            if (child is Equipment)
+            var equipment = child as Equipment;
+            if (equipment != null)
             {
-                var equipment = child as Equipment;
                 var objEquips = equipment.Items
                     .Select(x => x as BaseParameter).ToArray();
                 foreach(var equip in objEquips)
@@ -914,37 +922,32 @@ namespace NewTechObject
             }
         }
 
-        override public object Copy()
-        {
-            return this;
-        }
-
         override public ITreeViewItem Replace(object child,
             object copyObject)
         {
-            if (child is Params)
+            var pars = child as Params;
+            var copyPars = copyObject as Params;
+            bool parsNotNull = pars != null && copyPars != null;
+            if (parsNotNull)
             {
-                var pars = child as Params;
-                if (copyObject is Params && pars != null)
+                pars.Clear();
+                foreach (Param par in copyPars.Items)
                 {
-                    pars.Clear();
-                    Params copyPars = copyObject as Params;
-                    foreach (Param par in copyPars.Items)
-                    {
-                        pars.InsertCopy(par);
-                    }
-
-                    return pars;
+                    pars.InsertCopy(par);
                 }
+
+                return pars;
             }
 
-            if (child is Equipment && copyObject is Equipment)
+            var equipment = child as Equipment;
+            var copyEquipment = copyObject as Equipment;
+            bool equipmentNotNull = equipment != null && copyEquipment != null;
+            if (equipmentNotNull)
             {
-                var equipment = child as Equipment;
                 BaseParameter[] objEquips = equipment.Items
                     .Select(x => x as BaseParameter).ToArray();
-                BaseParameter[] copyEquips = (copyObject as Equipment)
-                    .Items.Select(x => x as BaseParameter).ToArray();
+                BaseParameter[] copyEquips = copyEquipment.Items
+                    .Select(x => x as BaseParameter).ToArray();
                 foreach (var objEquip in objEquips)
                 {
                     foreach(var copyEquip in copyEquips)
@@ -955,7 +958,7 @@ namespace NewTechObject
                         }
                     }
                 }
-                equipment.ModifyDevNames(this.NameEplan, this.TechNumber);
+                equipment.ModifyDevNames(NameEplan, TechNumber);
                 return child as ITreeViewItem;
             }
             return null;

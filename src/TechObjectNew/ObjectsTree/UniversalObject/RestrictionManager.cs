@@ -132,30 +132,6 @@ namespace NewTechObject
             }
         }
 
-        override public bool IsEditable
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        override public bool IsDeletable
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        override public bool IsMoveable
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         override public bool IsReplaceable
         {
             get
@@ -175,17 +151,13 @@ namespace NewTechObject
         override public ITreeViewItem Replace(object child,
             object copyObject)
         {
-            if (child is Restriction)
+            var restriction = child as Restriction;
+            var copy = copyObject as Restriction;
+            bool objectsNotNull = restriction != null && copy != null;
+            if (objectsNotNull)
             {
-                Restriction restrict = child as Restriction;
-
-                if (copyObject is Restriction && restrict != null)
-                {
-                    Restriction copy = copyObject as Restriction;
-                    restrict.SetNewValue(copy.EditText[1]);
-
-                    return restrict;
-                }
+                restriction.SetNewValue(copy.EditText[1]);
+                return restriction;
             }
             return null;
         }

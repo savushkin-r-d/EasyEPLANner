@@ -229,9 +229,7 @@ namespace NewTechObject
         /// </summary>
         protected void SetCrossRestriction()
         {
-            // Для ограничений на последующие операции
-            // не должны проставляться симметричные ограничения.
-            if (luaName != "NextModeRestriction")
+            if(!IsLocalRestrictionUse)
             {
                 SortedDictionary<int, List<int>>.KeyCollection keyColl =
                     restrictList.Keys;
@@ -573,14 +571,6 @@ namespace NewTechObject
         }
 
         #region Реализация ITreeViewItem
-        override public ITreeViewItem[] Items
-        {
-            get
-            {
-                return null;
-            }
-        }
-
         override public bool IsEditable
         {
             get
@@ -611,14 +601,6 @@ namespace NewTechObject
             get
             {
                 return new string[] { "", restrictStr };
-            }
-        }
-
-        override public bool IsLocalRestrictionUse
-        {
-            get
-            {
-                return false;
             }
         }
 

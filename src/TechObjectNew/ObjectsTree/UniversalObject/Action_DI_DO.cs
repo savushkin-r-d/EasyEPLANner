@@ -173,8 +173,7 @@ namespace NewTechObject
 
         override public bool Delete(object child)
         {
-            Action subAction = child as Action;
-
+            var subAction = child as Action;
             if (subAction != null)
             {
                 subAction_DI_DO_Group.Remove(subAction);
@@ -194,8 +193,9 @@ namespace NewTechObject
 
         override public ITreeViewItem Insert()
         {
-            subAction_DI_DO_Group.Add(new Action("Группа", owner));
-            return subAction_DI_DO_Group[subAction_DI_DO_Group.Count - 1];
+            var newAction = new Action("Группа", owner);
+            subAction_DI_DO_Group.Add(newAction);
+            return newAction;
         }
 
         override public void Clear()

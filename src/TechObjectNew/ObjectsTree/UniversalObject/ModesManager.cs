@@ -319,35 +319,28 @@ namespace NewTechObject
 
         override public bool Delete(object child)
         {
-            Mode mode = child as Mode;
-            if (mode == null)
+            var mode = child as Mode;
+            if (mode != null)
             {
-                return false;
+                int idx = modes.IndexOf(mode) + 1;
+                int tobjNum = TechObjectManager.GetInstance()
+                    .GetTechObjectN(owner);
+                TechObjectManager.GetInstance().ChangeModeNum(tobjNum, idx, -1);
+                modes.Remove(mode);
+
+                foreach (Mode newMode in modes)
+                {
+                    ChangeRestrictionModeOwner(newMode);
+                }
+
+                return true;
             }
-
-            int idx = modes.IndexOf(mode) + 1;
-
-            int tobjNum = TechObjectManager.GetInstance()
-                .GetTechObjectN(owner);
-            TechObjectManager.GetInstance()
-                .ChangeModeNum(tobjNum, idx, -1);
-
-            modes.Remove(mode);
-
-            foreach (Mode newMode in modes)
-            {
-                ChangeRestrictionModeOwner(newMode);
-            }
-
-            //TODO: коррекция параметров при удалении
-
-            return true;
+            return false;
         }
 
         override public ITreeViewItem MoveUp(object child)
         {
-            Mode mode = child as Mode;
-
+            var mode = child as Mode;
             if (mode != null)
             {
                 int index = modes.IndexOf(mode);
@@ -367,8 +360,6 @@ namespace NewTechObject
                         ChangeRestrictionModeOwner(newMode);
                     }
 
-                    //TODO: корректировка параметров при перемещении операции
-
                     return modes[index];
                 }
             }
@@ -378,8 +369,7 @@ namespace NewTechObject
 
         override public ITreeViewItem MoveDown(object child)
         {
-            Mode mode = child as Mode;
-
+            var mode = child as Mode;
             if (mode != null)
             {
                 int index = modes.IndexOf(mode);
@@ -399,8 +389,6 @@ namespace NewTechObject
                         ChangeRestrictionModeOwner(newMode);
                     }
 
-                    //TODO: корректировка параметров при перемещении операции
-
                     return modes[index];
                 }
             }
@@ -411,10 +399,11 @@ namespace NewTechObject
         override public ITreeViewItem Replace(object child, 
             object copyObject)
         {
-            Mode mode = child as Mode;
-            if (copyObject is Mode && mode != null)
+            var mode = child as Mode;
+            var copyMode = copyObject as Mode;
+            bool objectsNotNull = mode != null && copyMode != null;
+            if (objectsNotNull)
             {
-                Mode copyMode = copyObject as Mode;
                 Mode newMode = copyMode.Clone(GetModeN, this, copyMode.Name);
                 int index = modes.IndexOf(mode);
 
@@ -436,12 +425,8 @@ namespace NewTechObject
                         copyObjTechObjName, copyObjTechObjNumber);
                 }
 
-
                 ChangeRestrictionModeOwner(newMode);
                 newMode.ChangeCrossRestriction(mode);
-
-                //TODO: замена параметров при замене операции
-
                 return newMode;
             }
 
@@ -458,10 +443,10 @@ namespace NewTechObject
 
         override public ITreeViewItem InsertCopy(object obj)
         {
-            if (obj is Mode)
+            var objMode = obj as Mode;
+            if (objMode != null)
             {
-                Mode objMode = obj as Mode;
-                Mode newMode = (obj as Mode).Clone(GetModeN, this);
+                Mode newMode = objMode.Clone(GetModeN, this);
                 modes.Add(newMode);
 
                 string objModeTechObjectName = objMode.Owner.Owner.NameEplan;
@@ -479,8 +464,6 @@ namespace NewTechObject
 
                 ChangeRestrictionModeOwner(newMode);
                 newMode.ChangeCrossRestriction();
-
-                //TODO: дополнение параметров при вставке копии
 
                 return newMode;
             }

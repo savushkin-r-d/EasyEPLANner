@@ -299,6 +299,6 @@ namespace NewEditor
         /// <summary>
         /// Помечен на вырезание
         /// </summary>
-        bool Cutted { get; set; }
+        bool MarkToCut { get; set; }
     }
 }

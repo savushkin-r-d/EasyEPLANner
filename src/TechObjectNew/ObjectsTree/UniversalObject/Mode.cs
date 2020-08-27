@@ -512,50 +512,45 @@ namespace NewTechObject
 
         override public ITreeViewItem Replace(object child, object copyObject)
         {
-
-            if (child is State && copyObject is State)
+            var selectedState = child as State;
+            var copiedState = copyObject as State;
+            bool statesNotNull = selectedState != null && copiedState != null;
+            if (statesNotNull)
             {
-                var selectedState = child as State;
-                var copyingObject = copyObject as State;
-
-                if (selectedState != null)
+                State newState = copiedState.Clone();
+                if (newState.Name != selectedState.Name)
                 {
-                    State newState = copyingObject.Clone();
-                    if(newState.Name != selectedState.Name)
-                    {
-                        newState.Name = selectedState.Name;
-                    }
-                    int index = stepsMngr.IndexOf(selectedState);
-                    stepsMngr.Remove(selectedState);
-                    stepsMngr.Insert(index, newState);
-                    SetItems();
-
-                    return newState;
+                    newState.Name = selectedState.Name;
                 }
+                int index = stepsMngr.IndexOf(selectedState);
+                stepsMngr.Remove(selectedState);
+                stepsMngr.Insert(index, newState);
+                SetItems();
+
+                return newState;
             }
 
-            if (child is RestrictionManager && copyObject is RestrictionManager)
+            var selectesRestrMan = child as RestrictionManager;
+            var copiedRestrMan = copyObject as RestrictionManager;
+            bool restrictionNotNull =
+                selectesRestrMan != null && copiedRestrMan != null;
+            if (restrictionNotNull)
             {
-                var restrictMan = child as RestrictionManager;
-                if (restrictMan != null)
+                for (int i = 0; i < selectesRestrMan.Restrictions.Count; i++)
                 {
-                    var copyMan = copyObject as RestrictionManager;
-                    for (int i = 0; i < restrictMan.Restrictions.Count; i++)
-                    {
-                        restrictMan.Replace(restrictMan.Items[i], 
-                            copyMan.Items[i]);
-                    }
-
-                    int objNum = TechObjectManager.GetInstance()
-                        .GetTechObjectN(owner.Owner);
-                    int modeNum = getN(this);
-
-                    foreach (var restrict in restrictMan.Restrictions)
-                    {
-                        restrict.SetRestrictionOwner(objNum, modeNum);
-                    }
-                    return restrictMan;
+                    selectesRestrMan.Replace(selectesRestrMan.Items[i],
+                        copiedRestrMan.Items[i]);
                 }
+
+                int objNum = TechObjectManager.GetInstance()
+                    .GetTechObjectN(owner.Owner);
+                int modeNum = getN(this);
+
+                foreach (var restrict in selectesRestrMan.Restrictions)
+                {
+                    restrict.SetRestrictionOwner(objNum, modeNum);
+                }
+                return selectesRestrMan;
             }
 
             return null;
@@ -566,19 +561,6 @@ namespace NewTechObject
             get
             {
                 return true;
-            }
-        }
-
-        override public object Copy()
-        {
-            return this;
-        }
-
-        override public bool IsInsertable
-        {
-            get
-            {
-                return false;
             }
         }
 

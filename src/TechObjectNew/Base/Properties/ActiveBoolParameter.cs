@@ -48,11 +48,6 @@ namespace NewTechObject
             }
         }
 
-        public override object Copy()
-        {
-            return this;
-        }
-
         override public bool IsCopyable
         {
             get

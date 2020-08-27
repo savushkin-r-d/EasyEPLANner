@@ -182,8 +182,7 @@ namespace NewTechObject
 
         override public bool Delete(object child)
         {
-            Action subAction = child as Action;
-
+            var subAction = child as Action;
             if (subAction != null)
             {
                 subAction_WashGroupSeats.Remove(subAction);
@@ -203,11 +202,10 @@ namespace NewTechObject
 
         override public ITreeViewItem Insert()
         {
-            subAction_WashGroupSeats.Add(new Action("Группа", owner));
-            subAction_WashGroupSeats[
-                    subAction_WashGroupSeats.Count - 1].DrawStyle = DrawStyle;
-
-            return subAction_WashGroupSeats[subAction_WashGroupSeats.Count - 1];
+            var newAction = new Action("Группа", owner);
+            newAction.DrawStyle = DrawStyle;
+            subAction_WashGroupSeats.Add(newAction);
+            return newAction;
         }
 
         override public void Clear()

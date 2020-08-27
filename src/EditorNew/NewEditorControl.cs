@@ -903,10 +903,7 @@ namespace NewEditor
         /// <param name="item">Копируемый элемент</param>
         private void CopyItem(ITreeViewItem item)
         {
-            if (item.IsCopyable)
-            {
-                copyItem = item;
-            }
+            copyItem = item.Copy();
         }
 
         /// <summary>
@@ -983,9 +980,9 @@ namespace NewEditor
                 ITreeViewItem newItem = item.InsertCopy(copyItem);
                 if (newItem != null)
                 {
-                    if(newItem.Cutted)
+                    if(newItem.MarkToCut)
                     {
-                        newItem.Cutted = false;
+                        newItem.MarkToCut = false;
                         copyItem = null;
                     }
 
@@ -1069,7 +1066,7 @@ namespace NewEditor
             if(item.Parent.IsCuttable && item.IsMainObject)
             {
                 copyItem = item;
-                item.Cutted = true;
+                item.MarkToCut = true;
 
                 item.Disabled = true;
                 editorTView.DisableObject(item);
@@ -1082,7 +1079,7 @@ namespace NewEditor
         /// <param name="item"></param>
         private void CancelCut(ITreeViewItem item)
         {
-            if (item != null && item.Cutted)
+            if (item != null && item.MarkToCut)
             {
                 DisableCutting(treeViewItemsList.ToArray());
                 DisableNeededObjects(treeViewItemsList.ToArray());
@@ -1098,9 +1095,9 @@ namespace NewEditor
             foreach(var item in items)
             {
 
-                if(item.Cutted)
+                if(item.MarkToCut)
                 {
-                    item.Cutted = false;
+                    item.MarkToCut = false;
                 }
                 
                 if(item.Items != null && item.Items.Length != 0)

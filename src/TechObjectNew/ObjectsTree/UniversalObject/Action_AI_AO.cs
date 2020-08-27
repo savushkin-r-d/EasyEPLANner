@@ -171,8 +171,7 @@ namespace NewTechObject
 
         override public bool Delete(object child)
         {
-            Action subAction = child as Action;
-
+            var subAction = child as Action;
             if (subAction != null)
             {
                 subAction_AI_AO_Group.Remove(subAction);
@@ -192,8 +191,9 @@ namespace NewTechObject
 
         override public ITreeViewItem Insert()
         {
-            subAction_AI_AO_Group.Add(new Action("Группа", owner));
-            return subAction_AI_AO_Group[subAction_AI_AO_Group.Count - 1];
+            var newAction = new Action("Группа", owner);
+            subAction_AI_AO_Group.Add(newAction);
+            return newAction;
         }
 
         override public void Clear()
