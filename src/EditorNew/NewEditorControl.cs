@@ -980,10 +980,11 @@ namespace NewEditor
                 ITreeViewItem newItem = item.InsertCopy(copyItem);
                 if (newItem != null)
                 {
-                    if(newItem.MarkToCut)
+                    var copiedItem = copyItem as ITreeViewItem;
+                    if(copiedItem != null && copiedItem.MarkToCut)
                     {
-                        newItem.MarkToCut = false;
-                        copyItem = null;
+                        copiedItem.MarkToCut = false;
+                        copiedItem = null;
                     }
 
                     newItem.AddParent(item);

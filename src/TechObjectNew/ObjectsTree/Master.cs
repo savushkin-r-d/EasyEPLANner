@@ -175,7 +175,7 @@ namespace NewTechObject
             }
             else
             {
-                if (techObj.MarkToCut)
+                if (techObj.MarkToCut && masterNotAdd)
                 {
                     var techObjParent = techObj.Parent;
                     techObjParent.Cut(techObj);
@@ -184,6 +184,7 @@ namespace NewTechObject
                     techObj.SetGetLocalN(GetTechObjectLocalNum);
                     techObj.InitBaseTechObject(baseTechObject);
 
+                    ObjectsAdder.Reset();
                     return techObj;
                 }
             }

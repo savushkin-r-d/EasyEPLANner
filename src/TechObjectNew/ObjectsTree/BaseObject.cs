@@ -273,6 +273,7 @@ namespace NewTechObject
                     localObjects.Add(techObj);
                     techObj.SetGetLocalN(GetTechObjectLocalNum);
                     techObj.InitBaseTechObject(baseTechObject);
+                    ObjectsAdder.Reset();
 
                     return techObj;
                 }

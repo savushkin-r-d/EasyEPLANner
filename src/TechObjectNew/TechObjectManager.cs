@@ -377,6 +377,42 @@ namespace NewTechObject
             }
         }
 
+        public override bool IsInsertableCopy
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override ITreeViewItem InsertCopy(object obj)
+        {
+            var techObj = obj as TechObject;
+            if(techObj != null && techObj.MarkToCut)
+            {
+                var objectsAdderForm = new ObjectsAdder();
+                objectsAdderForm.ShowDialog();
+                string selectedType = ObjectsAdder.LastSelectedType;
+                string selectedSubType = ObjectsAdder.LastSelectedSubType;
+                if(selectedType != null && selectedSubType != null)
+                {
+                    var treeItem = GetTreeItem(selectedType);
+                    var innerItem = treeItem.InsertCopy(techObj);
+                    if(innerItem != null)
+                    {
+                        if (!objects.Contains(treeItem))
+                        {
+                            objects.Add(treeItem);
+                        }
+
+                        return treeItem;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public override bool IsInsertable
         {
             get
