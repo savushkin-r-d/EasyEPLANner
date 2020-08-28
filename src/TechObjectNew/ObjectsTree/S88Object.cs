@@ -67,9 +67,14 @@ namespace NewTechObject
 
         public override ITreeViewItem InsertCopy(object obj)
         {
-            string selectedSubType = GetSelectedSubType();
             var techObject = obj as TechObject;
-            if (selectedSubType != null && techObject != null)
+            if (techObject == null || !techObject.MarkToCut)
+            {
+                return null;
+            }
+
+            string selectedSubType = GetSelectedSubType();
+            if (selectedSubType != null)
             {
                 ITreeViewItem insertedItem = InsertSubType(selectedSubType,
                     techObject);
@@ -90,7 +95,7 @@ namespace NewTechObject
         public override ITreeViewItem Insert()
         {
             string selectedSubType = GetSelectedSubType();
-            if (selectedSubType == null)
+            if (selectedSubType != null)
             {
                 ITreeViewItem insertedItem = InsertSubType(selectedSubType);
                 return insertedItem;
