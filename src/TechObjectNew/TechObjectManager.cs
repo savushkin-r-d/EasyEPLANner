@@ -166,7 +166,8 @@ namespace NewTechObject
             var res = "";
             foreach (TechObject obj in Objects)
             {
-                res += obj.SaveRestrictionAsLua(prefix + "\t");
+                int num = Objects.IndexOf(obj) + 1;
+                res += obj.SaveRestrictionAsLua(prefix + "\t", num);
             }
             res = res.Replace("\t", "    ");
             return res;

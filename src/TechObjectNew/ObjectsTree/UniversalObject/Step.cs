@@ -64,7 +64,7 @@ namespace NewTechObject
                     Device.DeviceType.DI,
                     Device.DeviceType.GS }));
 
-            actions.Add(new Action_Wash("Мойка (DI, DO, устройства)", this,
+            actions.Add(new Action_Wash("Мойка( DI, DO, устройства)", this,
                 "wash_data"));
 
             actions.Add(new Action_DI_DO("Группы DI -> DO DO ...", this,

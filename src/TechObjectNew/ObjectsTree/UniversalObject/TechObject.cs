@@ -359,6 +359,12 @@ namespace NewTechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix, int globalNum)
         {
+            string baseObjectName = "";
+            if (baseTechObject != null)
+            {
+                baseObjectName = baseTechObject.EplanName;
+            }
+
             string res = "\t[ " + globalNum + " ] =\n"+
                 prefix + "{\n" +
                 prefix + "n          = " + TechNumber + ",\n" +
@@ -367,8 +373,7 @@ namespace NewTechObject
                 prefix + "name_eplan = \'" + NameEplan + "\',\n" +
                 prefix + "name_BC    = \'" + NameBC + "\',\n" +
                 prefix + "cooper_param_number = " + CooperParamNumber + ",\n" +
-                prefix + "base_tech_object = \'" + baseTechObject.EplanName + 
-                "\',\n" +
+                prefix + "base_tech_object = \'" + baseObjectName + "\',\n" +
                 prefix + "attached_objects = \'" + AttachedObjects.Value + "\',\n";
 
             res += parameters.SaveAsLuaTable(prefix);
@@ -387,8 +392,9 @@ namespace NewTechObject
         /// Сохранение в виде таблицы Lua.
         /// </summary>
         /// <param name="prefix">Префикс (для выравнивания).</param>
+        /// <param name="globalNum">Глобальный номер объекта</param>
         /// <returns>Описание в виде таблицы Lua.</returns>
-        public string SaveRestrictionAsLua(string prefix)
+        public string SaveRestrictionAsLua(string prefix, int globalNum)
         {
             string res = "";
             string tmp = "";
@@ -397,7 +403,7 @@ namespace NewTechObject
             tmp += modes.SaveRestrictionAsLua(prefix);
             if (tmp != "")
             {
-                res += prefix + "[ " /*+ getN(this)*/ + " ] =" + comment + "\n" + 
+                res += prefix + "[ " + globalNum + " ] =" + comment + "\n" +
                     tmp + "\n";
             }
 
