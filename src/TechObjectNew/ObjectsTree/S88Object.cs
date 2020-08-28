@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NewEditor;
 
 namespace NewTechObject
 {
     /// <summary>
-    /// Объект агрегатов проекта.
+    /// Объект S88, описывающий Аппарат или Агрегат проекта.
     /// </summary>
-    public class Aggregate : TreeViewItem
+    public class S88Object : TreeViewItem
     {
-        public Aggregate()
+        public S88Object(string name)
         {
+            this.name = name;
             objects = new List<ITreeViewItem>();
         }
 
@@ -26,7 +24,7 @@ namespace NewTechObject
             var findedBaseObject = objects
                 .Where(x => x.EditText[0] == obj.BaseTechObject.Name)
                 .FirstOrDefault() as BaseObject;
-            if(findedBaseObject == null)
+            if (findedBaseObject == null)
             {
                 findedBaseObject = new BaseObject(obj.BaseTechObject.Name);
                 objects.Add(findedBaseObject);
@@ -48,7 +46,7 @@ namespace NewTechObject
         {
             get
             {
-                if (Items.Length > 0)
+                if(Items.Length > 0)
                 {
                     return new string[] { $"{name} ({Items.Length})", "" };
                 }
@@ -69,49 +67,16 @@ namespace NewTechObject
 
         public override ITreeViewItem InsertCopy(object obj)
         {
-            string selectedSubType = ObjectsAdder.LastSelectedSubType;
+            string selectedSubType = GetSelectedSubType();
             var techObject = obj as TechObject;
-            if (selectedSubType == null)
+            if (selectedSubType != null && techObject != null)
             {
-                var objectsAdderForm = new ObjectsAdder(name);
-                objectsAdderForm.ShowDialog();
-                string subType = ObjectsAdder.LastSelectedSubType;
-                if (subType != null)
-                {
-                    var insertedItem = InsertCopySubType(subType, techObject);
-                    return insertedItem;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            else
-            {
-                var insertedItem = InsertCopySubType(selectedSubType,
+                ITreeViewItem insertedItem = InsertSubType(selectedSubType,
                     techObject);
                 return insertedItem;
             }
-        }
 
-        private ITreeViewItem InsertCopySubType(string selectedSubType,
-            TechObject obj)
-        {
-            ITreeViewItem baseTreeItem = GetTreeItem(selectedSubType);
-            var currentObject = baseTreeItem.InsertCopy(obj);
-            if (currentObject != null)
-            {
-                if (!objects.Contains(baseTreeItem))
-                {
-                    objects.Add(baseTreeItem);
-                }
-
-                return baseTreeItem;
-            }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         public override bool IsInsertable
@@ -124,38 +89,65 @@ namespace NewTechObject
 
         public override ITreeViewItem Insert()
         {
-            string selectedSubType = ObjectsAdder.LastSelectedSubType;
+            string selectedSubType = GetSelectedSubType();
             if (selectedSubType == null)
+            {
+                ITreeViewItem insertedItem = InsertSubType(selectedSubType);
+                return insertedItem;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Получить имя базового объекта (подтип S88)
+        /// </summary>
+        /// <returns></returns>
+        private string GetSelectedSubType()
+        {
+            string selectedSubType = ObjectsAdder.LastSelectedSubType;
+            if(selectedSubType == null)
             {
                 var objectsAdderForm = new ObjectsAdder(name);
                 objectsAdderForm.ShowDialog();
                 string subType = ObjectsAdder.LastSelectedSubType;
                 if (subType != null)
                 {
-                    var insertedItem = InsertSubType(subType);
-                    return insertedItem;
-                }
-                else
-                {
-                    return null;
+                    return subType;
                 }
             }
             else
             {
-                var insertedItem = InsertSubType(selectedSubType);
-                return insertedItem;
+                return selectedSubType;
             }
+
+            return null;
         }
 
         /// <summary>
-        /// Вставить подтип в дерево.
+        /// Вставить подтип в дерево. Выполняется или вставка или 
+        /// копирование и вставка.
         /// </summary>
         /// <param name="selectedSubType">Выбранный подтип на форме</param>
+        /// <param name="techObj">Объект, который надо вставить (скопировать)
+        /// </param>
         /// <returns></returns>
-        private ITreeViewItem InsertSubType(string selectedSubType)
+        private ITreeViewItem InsertSubType(string selectedSubType, 
+            TechObject techObj = null)
         {
             ITreeViewItem baseTreeItem = GetTreeItem(selectedSubType);
-            var currentObject = baseTreeItem.Insert();
+            ITreeViewItem currentObject;
+
+            bool needInsert = techObj == null;
+            if(needInsert)
+            {
+                currentObject = baseTreeItem.Insert();
+            }
+            else
+            {
+                currentObject = baseTreeItem.InsertCopy(techObj);
+            }
+
             if (currentObject != null)
             {
                 if (!objects.Contains(baseTreeItem))
@@ -209,7 +201,7 @@ namespace NewTechObject
         }
         #endregion
 
-        string name = "Агрегат";
+        string name;
         List<ITreeViewItem> objects;
     }
 }

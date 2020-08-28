@@ -251,8 +251,7 @@ namespace NewTechObject
                 int oldObjN = globalObjectsList.IndexOf(techObj) + 1;
                 int newObjN = globalObjectsList.Count + 1;
 
-                var newObject = CloneObject(techObj, newN, oldObjN,
-                    newObjN);
+                var newObject = CloneObject(techObj, newN, oldObjN, newObjN);
 
                 // Работа со списком в дереве и общим списком объектов.
                 localObjects.Add(newObject);
@@ -268,14 +267,7 @@ namespace NewTechObject
                 ObjectsAdder.Reset();
                 if (techObj.MarkToCut)
                 {
-                    var techObjParent = techObj.Parent;
-                    techObjParent.Cut(techObj);
-
-                    localObjects.Add(techObj);
-                    techObj.SetGetLocalN(GetTechObjectLocalNum);
-                    techObj.InitBaseTechObject(baseTechObject);
-
-                    return techObj;
+                    return InsertCuttedCopy(techObj);
                 }
             }
 
@@ -283,38 +275,20 @@ namespace NewTechObject
         }
 
         /// <summary>
-        /// Копирования объекта при вставке копии или при замене объекта
+        /// Вставить вырезанный объект
         /// </summary>
-        /// <param name="obj">Объект</param>
-        /// <param name="newN">Номер внутренний объекта</param>
-        /// <param name="oldObjNum">Старый глобальный номер</param>
-        /// <param name="newObjNum">Новый глобальный номер</param>
+        /// <param name="techObj">Объект</param>
         /// <returns></returns>
-        private TechObject CloneObject(object obj, int newN,
-            int oldObjNum, int newObjNum)
+        private TechObject InsertCuttedCopy(TechObject techObj)
         {
-            var techObject = obj as TechObject;
-            var stubObject = techObject.Clone(GetTechObjectLocalNum, newN,
-                    oldObjNum, newObjNum);
+            var techObjParent = techObj.Parent;
+            techObjParent.Cut(techObj);
 
-            bool isInsertCopy = newObjNum > globalObjectsList.Count;
-            if(isInsertCopy)
-            {
-                globalObjectsList.Add(stubObject);
-                var clonedObject = techObject.Clone(GetTechObjectLocalNum, newN,
-                    oldObjNum, newObjNum);
-                globalObjectsList.Remove(stubObject);
-                return clonedObject;
-            }
-            else
-            {
-                var objectFromGlobalList = globalObjectsList[newObjNum - 1];
-                globalObjectsList[newObjNum - 1] = stubObject;
-                var clonedObject = techObject.Clone(GetTechObjectLocalNum, newN,
-                    oldObjNum, newObjNum);
-                globalObjectsList[newObjNum - 1] = objectFromGlobalList;
-                return clonedObject;
-            }
+            localObjects.Add(techObj);
+            techObj.SetGetLocalN(GetTechObjectLocalNum);
+            techObj.InitBaseTechObject(baseTechObject);
+
+            return techObj;
         }
 
         override public ITreeViewItem Replace(object child, object copyObject)
@@ -353,6 +327,73 @@ namespace NewTechObject
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Клонирование объекта (копирование)
+        /// </summary>
+        /// <param name="obj">Объект</param>
+        /// <param name="newN">Номер внутренний объекта</param>
+        /// <param name="oldObjNum">Старый глобальный номер</param>
+        /// <param name="newObjNum">Новый глобальный номер</param>
+        /// <returns></returns>
+        private TechObject CloneObject(object obj, int newN, int oldObjNum,
+            int newObjNum)
+        {
+            var techObject = obj as TechObject;
+            var stubObject = techObject.Clone(GetTechObjectLocalNum, newN,
+                    oldObjNum, newObjNum);
+
+            bool isInsertCopy = newObjNum > globalObjectsList.Count;
+            if (isInsertCopy)
+            {
+                return CloneForInsert(techObject, stubObject, newN, oldObjNum,
+                    newObjNum);
+            }
+            else
+            {
+                return CloneForReplace(techObject, stubObject, newN, oldObjNum,
+                    newObjNum);
+            }
+        }
+
+        /// <summary>
+        /// Клонирование для вставки
+        /// </summary>
+        /// <param name="cloningObject">Клонируемый объект</param>
+        /// <param name="stubObject">Объект-заглушка</param>
+        /// <param name="newN">Номер внутренний объекта</param>
+        /// <param name="oldObjNum">Старый глобальный номер</param>
+        /// <param name="newObjNum">Новый глобальный номер</param>
+        /// <returns></returns>
+        private TechObject CloneForInsert(TechObject cloningObject,
+            TechObject stubObject, int newN, int oldObjNum, int newObjNum)
+        {
+            globalObjectsList.Add(stubObject);
+            var clonedObject = cloningObject.Clone(GetTechObjectLocalNum, newN,
+                oldObjNum, newObjNum);
+            globalObjectsList.Remove(stubObject);
+            return clonedObject;
+        }
+
+        /// <summary>
+        /// Клонирование для замены
+        /// </summary>
+        /// <param name="cloningObject">Клонируемый объект</param>
+        /// <param name="stubObject">Объект-заглушка</param>
+        /// <param name="newN">Номер внутренний объекта</param>
+        /// <param name="oldObjNum">Старый глобальный номер</param>
+        /// <param name="newObjNum">Новый глобальный номер</param>
+        /// <returns></returns>
+        private TechObject CloneForReplace(TechObject cloningObject,
+            TechObject stubObject, int newN, int oldObjNum, int newObjNum)
+        {
+            var objectFromGlobalList = globalObjectsList[newObjNum - 1];
+            globalObjectsList[newObjNum - 1] = stubObject;
+            var clonedObject = cloningObject.Clone(GetTechObjectLocalNum, newN,
+                oldObjNum, newObjNum);
+            globalObjectsList[newObjNum - 1] = objectFromGlobalList;
+            return clonedObject;
         }
         #endregion
 

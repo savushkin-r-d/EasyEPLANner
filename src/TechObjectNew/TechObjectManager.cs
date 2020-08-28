@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LuaInterface;
 
 namespace NewTechObject
@@ -252,23 +250,24 @@ namespace NewTechObject
         /// <param name="obj">Объект</param>
         private void AddIdentifiedObjectWhenLoadFromLua(TechObject obj)
         {
-            const int masterLevel = 0;
-            const int unitLevel = 1;
-            const int aggregateLevel = 2;
-
             BaseTechObject baseTechObject = obj.BaseTechObject;
-            switch(baseTechObject.S88Level)
+            var type = (BaseTechObjectManager.ObjectType)baseTechObject
+                .S88Level;
+            string name = BaseTechObjectManager.GetInstance()
+                        .GetS88NameFromLevel(baseTechObject.S88Level);
+            switch (type)
             {
-                case masterLevel:
+                case BaseTechObjectManager.ObjectType.Master:
                      AddMasterFromLua(obj);
                     break;
 
-                case unitLevel:
-                    AddUnitFromLua(obj);
+                case BaseTechObjectManager.ObjectType.Unit:
+                    
+                    AddS88ObjectFromLua(obj, name);
                     break;
 
-                case aggregateLevel:
-                    AddAggregateFromLua(obj);
+                case BaseTechObjectManager.ObjectType.Aggregate:
+                    AddS88ObjectFromLua(obj, name);
                     break;
             }
         }
@@ -295,36 +294,20 @@ namespace NewTechObject
         /// Добавить аппарат из LUA
         /// </summary>
         /// <param name="obj">Объект</param>
+        /// <param name="name">Имя объекта</param>
         /// <returns></returns>
-        private void AddUnitFromLua(TechObject obj)
+        private void AddS88ObjectFromLua(TechObject obj, string name)
         {
-            var unitItem = objects.Where(x => x is Unit)
-                        .FirstOrDefault() as Unit;
-            if (unitItem == null)
+            var s88Item = objects
+                .Where(x => x is S88Object && x.DisplayText[0].Contains(name))
+                .FirstOrDefault() as S88Object;
+            if (s88Item == null)
             {
-                unitItem = new Unit();
-                objects.Add(unitItem);
+                s88Item = new S88Object(name);
+                objects.Add(s88Item);
             }
 
-            unitItem.AddObjectWhenLoadFromLua(obj);
-        }
-
-        /// <summary>
-        /// Добавить агрегат из LUA
-        /// </summary>
-        /// <param name="obj">Объект</param>
-        /// <returns></returns>
-        private void AddAggregateFromLua(TechObject obj)
-        {
-            var aggregateItem = objects.Where(x => x is Aggregate)
-                        .FirstOrDefault() as Aggregate;
-            if (aggregateItem == null)
-            {
-                aggregateItem = new Aggregate();
-                objects.Add(aggregateItem);
-            }
-
-            aggregateItem.AddObjectWhenLoadFromLua(obj);
+            s88Item.AddObjectWhenLoadFromLua(obj);
         }
 
         /// <summary>
@@ -390,23 +373,13 @@ namespace NewTechObject
             var techObj = obj as TechObject;
             if(techObj != null && techObj.MarkToCut)
             {
-                var objectsAdderForm = new ObjectsAdder();
-                objectsAdderForm.ShowDialog();
-                string selectedType = ObjectsAdder.LastSelectedType;
-                string selectedSubType = ObjectsAdder.LastSelectedSubType;
-                if(selectedType != null && selectedSubType != null)
+                ChooseObjectTypes(out string selectedType,
+                    out string selectedSubType);
+                if (selectedType != null && selectedSubType != null)
                 {
-                    var treeItem = GetTreeItem(selectedType);
-                    var innerItem = treeItem.InsertCopy(techObj);
-                    if(innerItem != null)
-                    {
-                        if (!objects.Contains(treeItem))
-                        {
-                            objects.Add(treeItem);
-                        }
-
-                        return treeItem;
-                    }
+                    ITreeViewItem insertedItem = InsertType(selectedType,
+                        techObj);
+                    return insertedItem;
                 }
             }
 
@@ -423,23 +396,55 @@ namespace NewTechObject
 
         public override ITreeViewItem Insert()
         {
-            var objectsAdderForm = new ObjectsAdder();
-            objectsAdderForm.ShowDialog();
-            string selectedType = ObjectsAdder.LastSelectedType;
-            string selectedSubType = ObjectsAdder.LastSelectedSubType;
+            ChooseObjectTypes(out string selectedType,
+                out string selectedSubType);
             if (selectedType != null && selectedSubType != null)
             {
-                var treeItem = GetTreeItem(selectedType);
-                var innerItem = treeItem.Insert();
-                if (innerItem != null)
-                {
-                    if (!objects.Contains(treeItem))
-                    {
-                        objects.Add(treeItem);
-                    }
+                ITreeViewItem insertedItem = InsertType(selectedType);
+                return insertedItem;
+            }
 
-                    return treeItem;
+            return null;
+        }
+
+        /// <summary>
+        /// Выбор типа и подтипа объекта на форме.
+        /// </summary>
+        /// <param name="selectedType">Тип</param>
+        /// <param name="selectedSubType">Подтип</param>
+        private void ChooseObjectTypes(out string selectedType,
+            out string selectedSubType)
+        {
+            var objectsAdderForm = new ObjectsAdder();
+            objectsAdderForm.ShowDialog();
+            selectedType = ObjectsAdder.LastSelectedType;
+            selectedSubType = ObjectsAdder.LastSelectedSubType;
+        }
+
+        private ITreeViewItem InsertType(string selectedType,
+            TechObject techObj = null)
+        {
+            ITreeViewItem treeItem = GetTreeItem(selectedType);
+            ITreeViewItem innerItem;
+
+            bool needInsert = techObj == null;
+            if (needInsert)
+            {
+                innerItem = treeItem.Insert();
+            }
+            else
+            {
+                innerItem = treeItem.InsertCopy(techObj);
+            }
+
+            if (innerItem != null)
+            {
+                if (!objects.Contains(treeItem))
+                {
+                    objects.Add(treeItem);
                 }
+
+                return treeItem;
             }
 
             return null;
@@ -452,24 +457,18 @@ namespace NewTechObject
         /// <returns></returns>
         private ITreeViewItem GetTreeItem(string selectedType)
         {
-            var treeItem = objects
+            ITreeViewItem treeItem = objects
                 .Where(x => x.DisplayText[0].Contains(selectedType))
                 .FirstOrDefault();
             if (treeItem == null)
             {
-                switch (selectedType)
+                if (selectedType == "Мастер")
                 {
-                    case "Мастер":
-                        return new Master();
-
-                    case "Аппарат":
-                        return new Unit();
-
-                    case "Агрегат":
-                        return new Aggregate();
-
-                    default:
-                        return null;
+                    return new Master();
+                }
+                else
+                {
+                    return new S88Object(selectedType);
                 }
             }
             else

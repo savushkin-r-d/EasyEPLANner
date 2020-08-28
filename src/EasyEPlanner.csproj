@@ -304,10 +304,9 @@
     <Compile Include="TechObjectNew\Base\Properties\ActiveParameter.cs" />
     <Compile Include="TechObjectNew\Base\Properties\MainAggregateParameter.cs" />
     <Compile Include="TechObjectNew\ITechObjectManager.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\Aggregate.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\BaseObject.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\Unidentified.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\Unit.cs" />
+    <Compile Include="TechObjectNew\ObjectsTree\S88Object.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\Master.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Action.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Action_AI_AO.cs" />

@@ -178,18 +178,28 @@ namespace NewTechObject
                 ObjectsAdder.Reset();
                 if (techObj.MarkToCut && masterNotAdd)
                 {
-                    var techObjParent = techObj.Parent;
-                    techObjParent.Cut(techObj);
-
-                    objects.Add(techObj);
-                    techObj.SetGetLocalN(GetTechObjectLocalNum);
-                    techObj.InitBaseTechObject(baseTechObject);
-
-                    return techObj;
+                    return InserCuttedCopy(techObj);
                 }
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Вставка вырезанного объекта
+        /// </summary>
+        /// <param name="techObj">Объект</param>
+        /// <returns></returns>
+        private TechObject InserCuttedCopy(TechObject techObj)
+        {
+            var techObjParent = techObj.Parent;
+            techObjParent.Cut(techObj);
+
+            objects.Add(techObj);
+            techObj.SetGetLocalN(GetTechObjectLocalNum);
+            techObj.InitBaseTechObject(baseTechObject);
+
+            return techObj;
         }
 
         override public ITreeViewItem Replace(object child, object copyObject)
@@ -261,7 +271,7 @@ namespace NewTechObject
             return num;
         }
 
-        string name = "Мастер";
+        const string name = "Мастер";
         List<TechObject> objects;
         BaseTechObject baseTechObject;
         List<TechObject> globalObjectsList;

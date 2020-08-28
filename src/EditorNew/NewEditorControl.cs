@@ -984,7 +984,7 @@ namespace NewEditor
                     if(copiedItem != null && copiedItem.MarkToCut)
                     {
                         copiedItem.MarkToCut = false;
-                        copiedItem = null;
+                        copyItem = null;
                     }
 
                     newItem.AddParent(item);

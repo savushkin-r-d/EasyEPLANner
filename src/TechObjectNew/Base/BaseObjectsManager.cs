@@ -154,6 +154,29 @@ namespace NewTechObject
         }
 
         /// <summary>
+        /// Получить имя объекта S88 по его уровню
+        /// </summary>
+        /// <param name="s88Level">Уровень объекта</param>
+        /// <returns></returns>
+        public string GetS88NameFromLevel(int s88Level)
+        {
+            switch(s88Level)
+            {
+                case (int)ObjectType.Master:
+                    return "Мастер";
+
+                case (int)ObjectType.Unit:
+                    return "Аппарат";
+
+                case (int)ObjectType.Aggregate:
+                    return "Агрегат";
+
+                default:
+                    return null;
+            }
+        }
+
+        /// <summary>
         /// Базовые технологические объекты
         /// </summary>
         public List<BaseTechObject> Objects
