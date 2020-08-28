@@ -14,7 +14,7 @@ namespace NewTechObject
             localObjects = new List<TechObject>();
             baseTechObject = BaseTechObjectManager.GetInstance()
                 .GetTechObject(baseTechObjectName);
-            globalObjectsList = TechObjectManager.GetInstance().TechObjectsList;
+            globalObjectsList = TechObjectManager.GetInstance().Objects;
         }
 
         /// <summary>

@@ -21,8 +21,10 @@ namespace TechObject
         void GetObjectForXML(TreeNode rootNode);
         void SetCDBXTagView(bool combineTag);
         string SaveRestrictionAsLua(string prefixStr);
-        List<TechObject> GetTechObjects();
         void SetCDBXNewNames(bool useNewNames);
+        List<TechObject> Objects { get; }
+        TechObject GetTObject(int globalNum);
+        int GetTechObjectN(object techObject);
     }
 
     /// <summary>
@@ -215,15 +217,6 @@ namespace TechObject
                 }
             }
             return null;
-        }
-
-        /// <summary>
-        /// Получение списка объектов
-        /// </summary>
-        /// <returns></returns>
-        public List<TechObject> GetTechObjects()
-        {
-            return Objects;
         }
 
         #region XML Report

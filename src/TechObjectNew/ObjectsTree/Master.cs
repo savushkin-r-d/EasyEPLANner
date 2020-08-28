@@ -13,7 +13,7 @@ namespace NewTechObject
             objects = new List<TechObject>();
             baseTechObject = BaseTechObjectManager.GetInstance()
                 .GetTechObject(name);
-            globalObjectsList = TechObjectManager.GetInstance().TechObjectsList;
+            globalObjectsList = TechObjectManager.GetInstance().Objects;
         }
 
         /// <summary>

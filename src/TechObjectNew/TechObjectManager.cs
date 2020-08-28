@@ -114,7 +114,7 @@ namespace NewTechObject
         /// <returns></returns>
         public int GetTechObjectN(string displayText)
         {
-            TechObject findedObject = TechObjectsList
+            TechObject findedObject = Objects
                 .Where(x => x.DisplayText[0] == displayText).FirstOrDefault();
 
             if(findedObject != null)
@@ -133,7 +133,7 @@ namespace NewTechObject
         /// </summary>
         public void ChangeModeNum(int objNum, int oldNum, int newNum)
         {
-            foreach (TechObject to in TechObjectsList)
+            foreach (TechObject to in Objects)
             {
                 to.ChangeModeNum(objNum, oldNum, newNum);
             }
@@ -147,10 +147,26 @@ namespace NewTechObject
         public string SaveAsLuaTable(string prefix)
         {
             string res = "";
-            foreach (TechObject obj in TechObjectsList)
+            foreach (TechObject obj in Objects)
             {
-                int num = TechObjectsList.IndexOf(obj) + 1;
+                int num = Objects.IndexOf(obj) + 1;
                 res += obj.SaveAsLuaTable(prefix + "\t\t", num);
+            }
+            res = res.Replace("\t", "    ");
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранение ограничений в виде таблицы Lua.
+        /// </summary>
+        /// <param name="prefix">Префикс (для выравнивания).</param>
+        /// <returns>Описание в виде таблицы Lua.</returns>
+        public string SaveRestrictionAsLua(string prefix)
+        {
+            var res = "";
+            foreach (TechObject obj in Objects)
+            {
+                res += obj.SaveRestrictionAsLua(prefix + "\t");
             }
             res = res.Replace("\t", "    ");
             return res;
@@ -520,7 +536,7 @@ namespace NewTechObject
         /// <summary>
         /// Список всех технологических объектов в дереве.
         /// </summary>
-        public List<TechObject> TechObjectsList
+        public List<TechObject> Objects
         {
             get
             {

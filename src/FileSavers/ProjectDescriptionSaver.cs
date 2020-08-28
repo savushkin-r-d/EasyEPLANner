@@ -162,6 +162,7 @@ namespace EasyEPlanner
         {
             string filePattern = Properties.Resources.ResourceManager
                 .GetString("mainObjectsPattern");
+            //TODO: Insert save method (and new TechObjectManager)
             string desctiption = techObjectManager.SaveAsLuaTable("");
             var descriptionFileData = string.Format(filePattern,
                 mainTechObjectsFileVersion, par.PAC_Name, desctiption);
@@ -205,6 +206,7 @@ namespace EasyEPlanner
         {
             string filePattern = Properties.Resources.ResourceManager
                 .GetString("mainRestrictionsPattern");
+            //TODO: Insert save method (and new TechObjectManager)
             string resctrictions = techObjectManager
                 .SaveRestrictionAsLua("");
             var restrictionsFileData = string.Format(filePattern, 
@@ -330,7 +332,7 @@ namespace EasyEPlanner
 
         private const int numberOfDashes = 78;
 
-        private static TechObjectManager techObjectManager = TechObjectManager
+        private static ITechObjectManager techObjectManager = TechObjectManager
             .GetInstance();
         private static DeviceManager deviceManager = DeviceManager
             .GetInstance();
@@ -342,7 +344,8 @@ namespace EasyEPlanner
             public string path;
             public bool silentMode;
 
-            public ParametersForSave(string PAC_Name, string path, bool silentMode)
+            public ParametersForSave(string PAC_Name, string path,
+                bool silentMode)
             {
                 this.PAC_Name = PAC_Name;
                 this.path = path;

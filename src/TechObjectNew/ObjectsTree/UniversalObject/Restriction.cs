@@ -237,7 +237,7 @@ namespace NewTechObject
                 foreach (int key in keyColl)
                 {
                     TechObject to = TechObjectManager.GetInstance()
-                        .TechObjectsList[key - 1];
+                        .Objects[key - 1];
                     foreach (int val in restrictList[key])
                     {
                         Mode mode = to.GetMode(val - 1);
@@ -263,7 +263,7 @@ namespace NewTechObject
                 foreach (int key in keyColl)
                 {
                     TechObject to = TechObjectManager.GetInstance()
-                        .TechObjectsList[key - 1];
+                        .Objects[key - 1];
                     foreach (int val in diffDict[key])
                     {
                         Mode mode = to.GetMode(val - 1);
@@ -284,7 +284,7 @@ namespace NewTechObject
         {
             var res = new SortedDictionary<int, List<int>>();
             var techObjectsList = TechObjectManager.GetInstance()
-                .TechObjectsList;
+                .Objects;
             for (int i = 0; i < techObjectsList.Count; i++)
             {
                 TechObject to = techObjectsList[i];
@@ -456,7 +456,7 @@ namespace NewTechObject
                 else
                 {
                     var techObjectsList = TechObjectManager.GetInstance()
-                        .TechObjectsList;
+                        .Objects;
                     for (int i = oldNum + 1; i <= techObjectsList.Count; i++)
                     {
                         if (restrictStr.Contains($"{{ {i},"))
@@ -519,7 +519,7 @@ namespace NewTechObject
                 else
                 {
                     var modesCount = TechObjectManager.GetInstance()
-                        .TechObjectsList[objNum - 1].ModesManager.Modes.Count;
+                        .Objects[objNum - 1].ModesManager.Modes.Count;
                     for (int i = prev + 1; i <= modesCount; i++)
                     {
                         if (restrictStr.Contains($"{{ {objNum}, {i} }}"))

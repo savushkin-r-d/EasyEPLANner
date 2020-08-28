@@ -19,6 +19,7 @@ namespace EasyEPlanner
         {
             var attachedObjects = new Dictionary<int, string>();
             deviceManager = DeviceManager.GetInstance();
+            //TODO: Insert new techObjectManager
             techObjectManager = TechObjectManager.GetInstance();
 
             var res = "";
@@ -294,6 +295,6 @@ namespace EasyEPlanner
         }
 
         private static DeviceManager deviceManager;
-        private static TechObjectManager techObjectManager;
+        private static ITechObjectManager techObjectManager;
     }
 }
