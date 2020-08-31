@@ -6,8 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using TechObject;
+using EasyEPlanner;
 
-namespace EasyEPlanner
+namespace Editor
 {
     class TechObjectsImporter
     {

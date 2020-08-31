@@ -123,13 +123,13 @@ namespace NewTechObject
                 string oldDevName = property.Value;
                 var device = Device.DeviceManager.GetInstance()
                     .GetDevice(oldDevName);
-                if (device.Description != "заглушка")
+                if (device.Description != StaticHelper.CommonConst.Cap)
                 {
                     string newDevName = newTechObjName + techNumber + 
                         device.DeviceType.ToString() + device.DeviceNumber;
                     var newDevice = Device.DeviceManager.GetInstance()
                         .GetDevice(newDevName);
-                    if (newDevice.Description != "заглушка")
+                    if (newDevice.Description != StaticHelper.CommonConst.Cap)
                     {
                         property.SetNewValue(newDevName);
                     }
@@ -148,13 +148,13 @@ namespace NewTechObject
                 string oldDevName = property.Value;
                 var device = Device.DeviceManager.GetInstance()
                     .GetDevice(oldDevName);
-                if (device.Description != "заглушка")
+                if (device.Description != StaticHelper.CommonConst.Cap)
                 {
                     string newDevName = eplanName + techNumber +
                         device.DeviceType.ToString() + device.DeviceNumber;
                     var newDevice = Device.DeviceManager.GetInstance()
                         .GetDevice(newDevName);
-                    if (newDevice.Description != "заглушка")
+                    if (newDevice.Description != StaticHelper.CommonConst.Cap)
                     {
                         property.SetNewValue(newDevName);
                     }
@@ -190,7 +190,7 @@ namespace NewTechObject
                     equipment.DefaultValue;
                 var device = Device.DeviceManager.GetInstance()
                     .GetDevice(deviceName);
-                if (device.Description != "заглушка")
+                if (device.Description != StaticHelper.CommonConst.Cap)
                 {
                     equipment.SetNewValue(deviceName);
                 }
@@ -215,7 +215,8 @@ namespace NewTechObject
             if (equipment.LuaName == "SET_VALUE")
             {
                
-                bool isValid = (device.Description != "заглушка" ||
+                bool isValid = 
+                    (device.Description != StaticHelper.CommonConst.Cap ||
                     owner.GetParams().GetParam(currentValue) != null);
                 if (!isValid)
                 {
@@ -227,7 +228,8 @@ namespace NewTechObject
             }
             else
             {
-                bool isValid = device.Description != "заглушка" ||
+                bool isValid = 
+                    device.Description != StaticHelper.CommonConst.Cap ||
                     currentValue == "" ||
                     currentValue == equipment.DefaultValue;
                 if (!isValid)

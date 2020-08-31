@@ -1,4 +1,4 @@
-﻿namespace EasyEPlanner
+﻿namespace Editor
 {
     partial class TechObjectsImportForm
     {

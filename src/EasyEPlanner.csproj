@@ -119,6 +119,20 @@
     <Compile Include="EditorNew\Editor.cs" />
     <Compile Include="EditorNew\IHelperItem.cs" />
     <Compile Include="EditorNew\ImageIndexEnum.cs" />
+    <Compile Include="EditorNew\ImportExport\TechObjectsExporter.cs" />
+    <Compile Include="EditorNew\ImportExport\TechObjectsExportForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditorNew\ImportExport\TechObjectsExportForm.Designer.cs">
+      <DependentUpon>TechObjectsExportForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditorNew\ImportExport\TechObjectsImporter.cs" />
+    <Compile Include="EditorNew\ImportExport\TechObjectsImportForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditorNew\ImportExport\TechObjectsImportForm.Designer.cs">
+      <DependentUpon>TechObjectsImportForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="EditorNew\ITreeViewItem.cs" />
     <Compile Include="EditorNew\NewEditorControl.cs">
       <SubType>UserControl</SubType>
@@ -360,6 +374,12 @@
     <EmbeddedResource Include="DFrm.resx">
       <DependentUpon>DFrm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="EditorNew\ImportExport\TechObjectsExportForm.resx">
+      <DependentUpon>TechObjectsExportForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditorNew\ImportExport\TechObjectsImportForm.resx">
+      <DependentUpon>TechObjectsImportForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="EditorNew\NewEditorControl.resx">
       <DependentUpon>NewEditorControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -512,7 +532,6 @@
     <None Include="Resources\save.ico" />
     <None Include="Resources\To Do%27s.png" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

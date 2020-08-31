@@ -700,7 +700,7 @@ namespace NewTechObject
 
             var deviceManager = Device.DeviceManager.GetInstance();
             bool isDevice = deviceManager.GetDeviceByEplanName(parameterValue)
-                .Description != "заглушка";
+                .Description != StaticHelper.CommonConst.Cap;
             if (isDevice)
             {
                 result = ParameterValueType.Device;

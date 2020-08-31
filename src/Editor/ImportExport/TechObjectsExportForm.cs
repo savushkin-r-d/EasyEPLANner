@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace EasyEPlanner
+namespace Editor
 {
     public partial class TechObjectsExportForm : Form
     {

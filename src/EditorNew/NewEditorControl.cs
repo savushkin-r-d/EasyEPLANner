@@ -1717,9 +1717,8 @@ namespace NewEditor
         /// <param name="e"></param>
         private void importButton_Click(object sender, EventArgs e)
         {
-            // TODO: Отключено, надо переделывать.
-            //var importForm = new TechObjectsImportForm();
-            //importForm.ShowDialog();
+            var importForm = new TechObjectsImportForm();
+            importForm.ShowDialog();
         }
 
         /// <summary>
@@ -1729,9 +1728,8 @@ namespace NewEditor
         /// <param name="e"></param>
         private void exportButton_Click(object sender, EventArgs e)
         {
-            // TODO: Отключено, надо переделывать.
-            //var exportForm = new TechObjectsExportForm();
-            //exportForm.ShowDialog();
+            var exportForm = new TechObjectsExportForm();
+            exportForm.ShowDialog();
         }
 
         private void editorTView_Expanded(object sender, 

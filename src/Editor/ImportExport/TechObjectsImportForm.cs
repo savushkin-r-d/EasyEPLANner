@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace EasyEPlanner
+namespace Editor
 {
     public partial class TechObjectsImportForm : Form
     {
@@ -100,11 +100,11 @@ namespace EasyEPlanner
             {
                 MessageBox.Show(exception.Message, "Предупреждение",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                Editor.Editor.GetInstance().EForm.RefreshTree();
+                Editor.GetInstance().EForm.RefreshTree();
                 return;
             }
 
-            Editor.Editor.GetInstance().EForm.RefreshTree();
+            Editor.GetInstance().EForm.RefreshTree();
             this.Close();
         }
 
