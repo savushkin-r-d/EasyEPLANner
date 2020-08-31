@@ -147,8 +147,11 @@ namespace NewTechObject
 
             // Установка имени базовой операции в Mode
             newMode.SetNewValue(baseOperationName, true);
+            
             // Установка параметров базовой операции
             newMode.SetBaseOperExtraParams(extraParams);
+
+            newMode.BaseOperation.Check();
 
             ChangeRestrictionModeOwner(newMode);
             return newMode;

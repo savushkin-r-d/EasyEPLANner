@@ -1406,7 +1406,7 @@ namespace NewEditor
                 }
             }
 
-            var boolProperty = e.Model as TechObject.ActiveBoolParameter;
+            var boolProperty = e.Model as NewTechObject.ActiveBoolParameter;
             if (boolProperty != null && 
                 e.ColumnIndex == 1 &&
                 boolProperty.DefaultValue != boolProperty.Value)
