@@ -334,6 +334,8 @@ namespace EasyEPlanner
 
         private static ITechObjectManager techObjectManager = TechObjectManager
             .GetInstance();
+        //private static NewTechObject.ITechObjectManager techObjectManager =
+        //    NewTechObject.TechObjectManager.GetInstance();
         private static DeviceManager deviceManager = DeviceManager
             .GetInstance();
         private static IOManager IOManager = IOManager.GetInstance();
