@@ -82,7 +82,7 @@ namespace NewEditor
                 string selectedItem = objectTypes.SelectedItem.ToString();
                 switch (selectedItem)
                 {
-                    case "Мастер":
+                    case "Ячейка процесса":
                         var master = baseTechObjectsManager.Master
                             .Name;
                         objectSubTypes.Items.Add(master);
@@ -113,7 +113,7 @@ namespace NewEditor
         }
 
         /// <summary>
-        /// Установленное значение типа (Мастер, Аппарат, Агрегат)
+        /// Установленное значение типа (Ячейка процесса, Аппарат, Агрегат)
         /// </summary>
         public static string LastSelectedType { get; set; }
 

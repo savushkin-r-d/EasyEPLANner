@@ -4,11 +4,11 @@ using System.Collections.Generic;
 namespace NewTechObject
 {
     /// <summary>
-    /// Объект мастера проектов.
+    /// Объект ячейки производства (мастера).
     /// </summary>
-    public class Master : TreeViewItem
+    public class ProcessCell : TreeViewItem
     {
-        public Master() 
+        public ProcessCell() 
         {
             objects = new List<TechObject>();
             baseTechObject = BaseTechObjectManager.GetInstance()
@@ -144,10 +144,10 @@ namespace NewTechObject
                 return null;
             }
             
-            bool masterNotAdd = objects.Count == 0;
+            bool processCellNotAdd = objects.Count == 0;
             bool correctedBaseObject = techObj.BaseTechObject != null &&
                 techObj.BaseTechObject.Name == name;
-            if (correctedBaseObject && masterNotAdd)
+            if (correctedBaseObject && processCellNotAdd)
             {
                 int newN = 1;
                 if (objects.Count > 0)
@@ -176,7 +176,7 @@ namespace NewTechObject
             else
             {
                 ObjectsAdder.Reset();
-                if (techObj.MarkToCut && masterNotAdd)
+                if (techObj.MarkToCut && processCellNotAdd)
                 {
                     return InserCuttedCopy(techObj);
                 }
@@ -242,9 +242,9 @@ namespace NewTechObject
         #endregion
 
         /// <summary>
-        /// Мастер-объект проекта.
+        /// Ячейка процесса (мастер-объект) проекта.
         /// </summary>
-        public TechObject MasterObject
+        public TechObject ProcessCellObject
         {
             get
             {
@@ -271,7 +271,7 @@ namespace NewTechObject
             return num;
         }
 
-        const string name = "Мастер";
+        const string name = "Ячейка процесса";
         List<TechObject> objects;
         BaseTechObject baseTechObject;
         List<TechObject> globalObjectsList;

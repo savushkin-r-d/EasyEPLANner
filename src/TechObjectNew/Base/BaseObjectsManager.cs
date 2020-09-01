@@ -162,8 +162,8 @@ namespace NewTechObject
         {
             switch(s88Level)
             {
-                case (int)ObjectType.Master:
-                    return "Мастер";
+                case (int)ObjectType.ProcessCell:
+                    return "Ячейка процесса";
 
                 case (int)ObjectType.Unit:
                     return "Аппарат";
@@ -200,7 +200,7 @@ namespace NewTechObject
             get
             {
                 return Objects
-                    .Where(x => x.S88Level == (int)ObjectType.Master)
+                    .Where(x => x.S88Level == (int)ObjectType.ProcessCell)
                     .First();
             }
         }
@@ -233,7 +233,7 @@ namespace NewTechObject
 
         public enum ObjectType
         {
-            Master = 0,
+            ProcessCell = 0,
             Unit = 1,
             Aggregate = 2
         }

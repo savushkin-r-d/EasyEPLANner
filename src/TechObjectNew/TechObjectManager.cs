@@ -257,8 +257,8 @@ namespace NewTechObject
                         .GetS88NameFromLevel(baseTechObject.S88Level);
             switch (type)
             {
-                case BaseTechObjectManager.ObjectType.Master:
-                     AddMasterFromLua(obj);
+                case BaseTechObjectManager.ObjectType.ProcessCell:
+                     AddProcessCellFromLua(obj);
                     break;
 
                 case BaseTechObjectManager.ObjectType.Unit:
@@ -273,17 +273,17 @@ namespace NewTechObject
         }
 
         /// <summary>
-        /// Добавить Мастер из LUA
+        /// Добавить ячейку процесса (мастер) из LUA
         /// </summary>
         /// <param name="obj">Объект</param>
         /// <returns></returns>
-        private void AddMasterFromLua(TechObject obj)
+        private void AddProcessCellFromLua(TechObject obj)
         {
-            var masterItem = objects.Where(x => x is Master)
-                        .FirstOrDefault() as Master;
+            var masterItem = objects.Where(x => x is ProcessCell)
+                        .FirstOrDefault() as ProcessCell;
             if (masterItem == null)
             {
-                masterItem = new Master();
+                masterItem = new ProcessCell();
                 objects.Add(masterItem);
             }
 
@@ -462,9 +462,9 @@ namespace NewTechObject
                 .FirstOrDefault();
             if (treeItem == null)
             {
-                if (selectedType == "Мастер")
+                if (selectedType == "Ячейка процесса")
                 {
-                    return new Master();
+                    return new ProcessCell();
                 }
                 else
                 {
@@ -493,17 +493,17 @@ namespace NewTechObject
         #endregion
 
         /// <summary>
-        /// Объект мастера проекта.
+        /// Объект ячейки процесса (мастера).
         /// </summary>
-        public TechObject Master
+        public TechObject ProcessCell
         {
             get
             {
-                var masterObject = objects.Where(x => x is Master)
-                    .FirstOrDefault() as Master;
+                var masterObject = objects.Where(x => x is ProcessCell)
+                    .FirstOrDefault() as ProcessCell;
                 if (masterObject != null)
                 {
-                    return masterObject.MasterObject;
+                    return masterObject.ProcessCellObject;
                 }
                 else
                 {
