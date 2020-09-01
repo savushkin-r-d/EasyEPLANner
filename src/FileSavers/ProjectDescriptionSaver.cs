@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using TechObject;
 using Device;
 using IO;
 using System.Windows.Forms;
@@ -162,7 +161,6 @@ namespace EasyEPlanner
         {
             string filePattern = Properties.Resources.ResourceManager
                 .GetString("mainObjectsPattern");
-            //TODO: Insert save method (and new TechObjectManager)
             string desctiption = techObjectManager.SaveAsLuaTable("");
             var descriptionFileData = string.Format(filePattern,
                 mainTechObjectsFileVersion, par.PAC_Name, desctiption);
@@ -206,7 +204,6 @@ namespace EasyEPlanner
         {
             string filePattern = Properties.Resources.ResourceManager
                 .GetString("mainRestrictionsPattern");
-            //TODO: Insert save method (and new TechObjectManager)
             string resctrictions = techObjectManager
                 .SaveRestrictionAsLua("");
             var restrictionsFileData = string.Format(filePattern, 
@@ -332,10 +329,8 @@ namespace EasyEPlanner
 
         private const int numberOfDashes = 78;
 
-        private static ITechObjectManager techObjectManager = TechObjectManager
-            .GetInstance();
-        //private static NewTechObject.ITechObjectManager techObjectManager =
-        //    NewTechObject.TechObjectManager.GetInstance();
+        private static NewTechObject.ITechObjectManager techObjectManager =
+              NewTechObject.TechObjectManager.GetInstance();
         private static DeviceManager deviceManager = DeviceManager
             .GetInstance();
         private static IOManager IOManager = IOManager.GetInstance();

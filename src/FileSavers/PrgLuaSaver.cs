@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TechObject;
+using NewTechObject;
 using Device;
 
 namespace EasyEPlanner
@@ -19,7 +19,6 @@ namespace EasyEPlanner
         {
             var attachedObjects = new Dictionary<int, string>();
             deviceManager = DeviceManager.GetInstance();
-            //techObjectManager = NewTechObject.TechObjectManager.GetInstance();
             techObjectManager = TechObjectManager.GetInstance();
 
             var res = "";
@@ -212,7 +211,7 @@ namespace EasyEPlanner
             string equipments = "";
             
             var objects = techObjectManager.Objects;
-            foreach (TechObject.TechObject obj in objects)
+            foreach (NewTechObject.TechObject obj in objects)
             {
                 BaseTechObject baseObj = obj.BaseTechObject;
                 var objName = "prg." + obj.NameEplanForFile.ToLower() +
@@ -268,7 +267,7 @@ namespace EasyEPlanner
             var res = "";
             var objects = techObjectManager.Objects;
 
-            foreach (TechObject.TechObject obj in objects)
+            foreach (NewTechObject.TechObject obj in objects)
             {
                 var basicObj = obj.BaseTechObject.BasicName;
 
@@ -296,6 +295,5 @@ namespace EasyEPlanner
 
         private static DeviceManager deviceManager;
         private static ITechObjectManager techObjectManager;
-        // private static NewTechObject.ITechObjectManager techObjectManager;
     }
 }
