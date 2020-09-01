@@ -321,7 +321,7 @@
     <Compile Include="TechObjectNew\ObjectsTree\BaseObject.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\Unidentified.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\S88Object.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\Master.cs" />
+    <Compile Include="TechObjectNew\ObjectsTree\ProcessCell.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Action.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Action_AI_AO.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Action_DI_DO.cs" />

@@ -149,7 +149,7 @@ return
             bindingName = "boiler"
         },
         master = {
-            name = "Мастер",
+            name = "Ячейка процесса",
             s88Level = 0,
             baseOperations = { },
             basicName = "master",

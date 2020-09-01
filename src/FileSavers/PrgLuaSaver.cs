@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TechObject;
+using NewTechObject;
 using Device;
 
 namespace EasyEPlanner
@@ -19,7 +19,6 @@ namespace EasyEPlanner
         {
             var attachedObjects = new Dictionary<int, string>();
             deviceManager = DeviceManager.GetInstance();
-            //techObjectManager = NewTechObject.TechObjectManager.GetInstance();
             techObjectManager = TechObjectManager.GetInstance();
 
             var res = "";
@@ -212,15 +211,20 @@ namespace EasyEPlanner
             string equipments = "";
             
             var objects = techObjectManager.Objects;
-            foreach (TechObject.TechObject obj in objects)
+            foreach (NewTechObject.TechObject obj in objects)
             {
                 BaseTechObject baseObj = obj.BaseTechObject;
+                if(baseObj == null)
+                {
+                    continue;
+                }
+
                 var objName = "prg." + obj.NameEplanForFile.ToLower() +
                     obj.TechNumber.ToString();
 
                 objectsInfo += baseObj.SaveObjectInfoToPrgLua(objName, prefix);
                 
-                var modesManager = baseObj.Owner.ModesManager;
+                var modesManager = obj.ModesManager;
                 var modes = modesManager.Modes;
                 bool haveBaseOperations = modes
                     .Where(x => x.DisplayText[1] != "").Count() != 0;
@@ -231,10 +235,10 @@ namespace EasyEPlanner
                     operationsSteps += baseObj.SaveOperationsSteps(
                         objName, prefix, modes);
                     operationsParameters += baseObj.SaveOperationsParameters(
-                        objName, prefix, modes);
+                        obj, objName, prefix, modes);
                 }
 
-                equipments += baseObj.SaveEquipment(objName);
+                equipments += obj.BaseTechObject.SaveEquipment(obj, objName);
             }
 
             var accumulatedData = new string[] 
@@ -268,9 +272,13 @@ namespace EasyEPlanner
             var res = "";
             var objects = techObjectManager.Objects;
 
-            foreach (TechObject.TechObject obj in objects)
+            foreach (NewTechObject.TechObject obj in objects)
             {
-                var basicObj = obj.BaseTechObject.BasicName;
+                string basicObj = "";
+                if(obj.BaseTechObject != null)
+                {
+                    basicObj = obj.BaseTechObject.BasicName;
+                }
 
                 if (previouslyObjectName != obj.NameEplanForFile.ToLower() &&
                     previouslyObjectName != "")
@@ -296,6 +304,5 @@ namespace EasyEPlanner
 
         private static DeviceManager deviceManager;
         private static ITechObjectManager techObjectManager;
-        // private static NewTechObject.ITechObjectManager techObjectManager;
     }
 }
