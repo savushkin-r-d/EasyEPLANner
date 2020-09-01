@@ -61,7 +61,7 @@
             // 
             this.objectTypes.FormattingEnabled = true;
             this.objectTypes.Items.AddRange(new object[] {
-            "Мастер",
+            "Ячейка процесса",
             "Аппарат",
             "Агрегат"});
             this.objectTypes.Location = new System.Drawing.Point(12, 28);

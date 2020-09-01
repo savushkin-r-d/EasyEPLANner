@@ -467,21 +467,22 @@ namespace NewTechObject
                 
                 equipment.AddItems(baseTechObject.Equipment);
                 equipment.Check();
-
-                // Установили новое значение, произошла смена базового объекта
-                // Надо сравнить ОУ и изменить его, если требуется
-                CompareEplanNames();
             }
+
+            // Установили новое значение, произошла смена базового объекта
+            // Надо сравнить ОУ и изменить его, если требуется
+            CompareEplanNames();
         }
 
         /// <summary>
         /// Сравнение имен Eplan базового тех. объекта с текущим.
         /// </summary>
+        /// <param name="baseTechObject">Базовый объект</param>
         public void CompareEplanNames()
         {
             // Если не выбран базовый объект, то пустое имя
             // Если выбран, то сравниваем имена
-            if (baseTechObject.S88Level >= 0)
+            if (baseTechObject != null && baseTechObject.S88Level >= 0)
             {
                 string baseObjectNameEplan = baseTechObject.EplanName
                     .ToLower();
