@@ -34,7 +34,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.selectAllObjectsLink = new System.Windows.Forms.LinkLabel();
             this.clearSelectedObjectsLink = new System.Windows.Forms.LinkLabel();
-            this.exportingDevicesTree = new Aga.Controls.Tree.TreeViewAdv();
+            this.exportingObjectsTree = new Aga.Controls.Tree.TreeViewAdv();
             this.SuspendLayout();
             // 
             // label1
@@ -107,35 +107,35 @@
             this.clearSelectedObjectsLink.VisitedLinkColor = System.Drawing.Color.Black;
             this.clearSelectedObjectsLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.clearSelectedObjects_LinkClicked);
             // 
-            // exportingDevices
+            // exportingObjectsTree
             // 
-            this.exportingDevicesTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.exportingObjectsTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.exportingDevicesTree.BackColor = System.Drawing.SystemColors.Window;
-            this.exportingDevicesTree.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.exportingDevicesTree.DefaultToolTipProvider = null;
-            this.exportingDevicesTree.DragDropMarkColor = System.Drawing.Color.Black;
-            this.exportingDevicesTree.FullRowSelect = true;
-            this.exportingDevicesTree.FullRowSelectActiveColor = System.Drawing.Color.Empty;
-            this.exportingDevicesTree.FullRowSelectInactiveColor = System.Drawing.Color.Empty;
-            this.exportingDevicesTree.GridLineStyle = Aga.Controls.Tree.GridLineStyle.Horizontal;
-            this.exportingDevicesTree.LineColor = System.Drawing.SystemColors.ControlDark;
-            this.exportingDevicesTree.Location = new System.Drawing.Point(12, 39);
-            this.exportingDevicesTree.Model = null;
-            this.exportingDevicesTree.Name = "exportingDevices";
-            this.exportingDevicesTree.NodeFilter = null;
-            this.exportingDevicesTree.SelectedNode = null;
-            this.exportingDevicesTree.ShowNodeToolTips = true;
-            this.exportingDevicesTree.Size = new System.Drawing.Size(360, 350);
-            this.exportingDevicesTree.TabIndex = 8;
-            this.exportingDevicesTree.Text = "exportingDevices";
-            this.exportingDevicesTree.UseColumns = true;
+            this.exportingObjectsTree.BackColor = System.Drawing.SystemColors.Window;
+            this.exportingObjectsTree.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.exportingObjectsTree.DefaultToolTipProvider = null;
+            this.exportingObjectsTree.DragDropMarkColor = System.Drawing.Color.Black;
+            this.exportingObjectsTree.FullRowSelect = true;
+            this.exportingObjectsTree.FullRowSelectActiveColor = System.Drawing.Color.Empty;
+            this.exportingObjectsTree.FullRowSelectInactiveColor = System.Drawing.Color.Empty;
+            this.exportingObjectsTree.GridLineStyle = Aga.Controls.Tree.GridLineStyle.Horizontal;
+            this.exportingObjectsTree.LineColor = System.Drawing.SystemColors.ControlDark;
+            this.exportingObjectsTree.Location = new System.Drawing.Point(12, 39);
+            this.exportingObjectsTree.Model = null;
+            this.exportingObjectsTree.Name = "exportingObjectsTree";
+            this.exportingObjectsTree.NodeFilter = null;
+            this.exportingObjectsTree.SelectedNode = null;
+            this.exportingObjectsTree.ShowNodeToolTips = true;
+            this.exportingObjectsTree.Size = new System.Drawing.Size(360, 350);
+            this.exportingObjectsTree.TabIndex = 8;
+            this.exportingObjectsTree.Text = "exportingDevices";
+            this.exportingObjectsTree.UseColumns = true;
             // 
             // TechObjectsExportForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(384, 441);
-            this.Controls.Add(this.exportingDevicesTree);
+            this.Controls.Add(this.exportingObjectsTree);
             this.Controls.Add(this.clearSelectedObjectsLink);
             this.Controls.Add(this.selectAllObjectsLink);
             this.Controls.Add(this.label2);
@@ -166,6 +166,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.LinkLabel selectAllObjectsLink;
         private System.Windows.Forms.LinkLabel clearSelectedObjectsLink;
-        private Aga.Controls.Tree.TreeViewAdv exportingDevicesTree;
+        private Aga.Controls.Tree.TreeViewAdv exportingObjectsTree;
     }
 }

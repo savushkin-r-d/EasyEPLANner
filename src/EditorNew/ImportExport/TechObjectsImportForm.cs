@@ -8,12 +8,12 @@ using System.Windows.Forms;
 
 namespace NewEditor
 {
-    public partial class TechObjectsExportForm : Form
+    public partial class TechObjectsImportForm : Form
     {
-        public TechObjectsExportForm()
+        public TechObjectsImportForm()
         {
             InitializeComponent();
-            exportButton.Enabled = false;
+            importButton.Enabled = false;
             InitTreeViewComponents();
         }
 
@@ -31,17 +31,17 @@ namespace NewEditor
             nodeCheckBox.ParentColumn = nodeColumn;
             nodeCheckBox.EditEnabled = true;
             nodeCheckBox.CheckStateChanged +=
-                exportingObjectsTree_ChangeCheckBoxState;
+                importingObjectsTree_ChangeCheckBoxState;
 
             nodeTextBox.DataPropertyName = "Text";
             nodeTextBox.VerticalAlign = VerticalAlignment.Center;
             nodeTextBox.ParentColumn = nodeColumn;
-            nodeTextBox.DrawText += 
+            nodeTextBox.DrawText +=
                 new EventHandler<DrawTextEventArgs>(nodeTextBox_DrawText);
 
-            exportingObjectsTree.Columns.Add(nodeColumn);
-            exportingObjectsTree.NodeControls.Add(nodeCheckBox);
-            exportingObjectsTree.NodeControls.Add(nodeTextBox);
+            importingObjectsTree.Columns.Add(nodeColumn);
+            importingObjectsTree.NodeControls.Add(nodeCheckBox);
+            importingObjectsTree.NodeControls.Add(nodeTextBox);
         }
 
         ///<summary>
@@ -52,7 +52,69 @@ namespace NewEditor
         NodeTextBox nodeTextBox = new NodeTextBox();
 
         /// <summary>
-        /// Кнопка "Отмена"
+        /// Кнопка "Обзор".
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void overviewButton_Click(object sender, EventArgs e)
+        {
+            const string fileExtension = "lua";
+            const string fileFilter = "Скрипт LUA (.lua)|*.lua";
+
+            var ofd = new OpenFileDialog();
+            ofd.DefaultExt = fileExtension;
+            ofd.Filter = fileFilter;
+
+            DialogResult dialog = ofd.ShowDialog();
+            if (dialog == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            try
+            {
+                TechObjectsImporter.GetInstance()
+                    .LoadImportingObjects(ofd.FileName);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message, "Предупреждение", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                importButton.Enabled = false;
+                importingObjectsTree.Model = null;
+                return;
+            }
+
+            FillCheckedListBox();
+        }
+
+        /// <summary>
+        /// Заполнение списка именами объектов
+        /// </summary>
+        private void FillCheckedListBox()
+        {
+            importingObjectsTree.Model = null;
+
+            var importedObjectsNames = TechObjectsImporter.GetInstance().
+                ImportedObjectsNamesArray;
+            bool objectsIsEmpty = importedObjectsNames.Length == 0;
+            if (!objectsIsEmpty)
+            {
+                //checkedListBox.Items.AddRange(TechObjectsImporter.GetInstance()
+                //   .ImportedObjectsNamesArray);
+                importButton.Enabled = true;
+            }
+            else
+            {
+                MessageBox.Show("Объекты для импорта не найдены", 
+                    "Предупреждение", MessageBoxButtons.OK, 
+                    MessageBoxIcon.Warning);
+                importButton.Enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Кнопка "Отмена".
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -62,84 +124,61 @@ namespace NewEditor
         }
 
         /// <summary>
-        /// Событие после закрытия формы.
+        /// Кнопка "Импортировать"
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ExportObjectsForm_FormClosed(object sender, 
-            FormClosedEventArgs e)
+        private void importButton_Click(object sender, EventArgs e)
         {
-            Dispose();
-        }
-
-        /// <summary>
-        /// Кнопка "Экспортировать".
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void exportButton_Click(object sender, EventArgs e)
-        {
-            var sfd = new SaveFileDialog();
-            sfd.Filter = saveFileDialogFilter;
-            sfd.DefaultExt = luaExtension;
+            var checkedItems = GetCheckedForImportItems();
 
             try
             {
-                var checkedItems = GetCheckedItemsNumbers();
-
-                DialogResult saveResult = sfd.ShowDialog();
-                if (saveResult == DialogResult.Cancel)
-                {
-                    return;
-                }
-                string fileName = sfd.FileName;
-
-                TechObjectsExporter.GetInstance()
-                    .Export(fileName, checkedItems);
+                TechObjectsImporter.GetInstance().Import(checkedItems);
             }
             catch (Exception exception)
             {
                 MessageBox.Show(exception.Message, "Предупреждение",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Editor.Editor.GetInstance().EForm.RefreshTree();
                 return;
             }
 
+            NewEditor.GetInstance().EditorForm.RefreshTree();
             Close();
         }
 
         /// <summary>
-        /// Получить список номеров выбранных элементов в списке на форме.
+        /// Получить номера выбранных для импорта элементов.
         /// </summary>
         /// <returns></returns>
-        private List<int> GetCheckedItemsNumbers()
+        private List<int> GetCheckedForImportItems()
         {
             var checkedItems = new List<int>();
-            foreach(var treeNode in exportingObjectsTree.AllNodes)
-            {
-                var node = treeNode.Tag as Node;
-                if(node != null && node.CheckState == CheckState.Checked &&
-                    node.Tag is ITreeViewItem item)
-                {
-                    if(item != null && item.IsMainObject)
-                    {
-                        List<ITreeViewItem> objects = TechObjectsExporter
-                            .GetInstance().Objects.ToList();
-                        int objGlobalNum = objects.IndexOf(item) + 1;
-                        if (objGlobalNum > 0) 
-                        {
-                            checkedItems.Add(objGlobalNum);
-                        }
-                    }
-                }
-            }
-
-            bool isEmpty = checkedItems.Count == 0;
-            if (isEmpty)
-            {
-                throw new Exception("Выберите хотя бы 1 объект для экспорта");
-            }
+            //for (int item = 0; item < checkedListBox.Items.Count; item++)
+            //{
+            //    bool itemChecked = checkedListBox.GetItemChecked(item);
+            //    if (itemChecked)
+            //    {
+            //        var checkedItem = checkedListBox.Items[item] as string;
+            //        string itemNumber = checkedItem.Split('.')[0];
+            //        int itemNum = Convert.ToInt32(itemNumber);
+            //        checkedItems.Add(itemNum);
+            //    }
+            //}
 
             return checkedItems;
+        }
+
+        /// <summary>
+        /// Событие после закрытия формы.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ImportObjectsForm_FormClosed(object sender, 
+            FormClosedEventArgs e)
+        {
+            Dispose();
         }
 
         /// <summary>
@@ -150,10 +189,10 @@ namespace NewEditor
         private void clearSelectedObjects_LinkClicked(object sender, 
             LinkLabelLinkClickedEventArgs e)
         {
-            foreach(TreeNodeAdv treeNode in exportingObjectsTree.AllNodes)
+            foreach (TreeNodeAdv treeNode in importingObjectsTree.AllNodes)
             {
                 var node = treeNode.Tag as Node;
-                if(node != null)
+                if (node != null)
                 {
                     node.CheckState = CheckState.Unchecked;
                 }
@@ -161,14 +200,14 @@ namespace NewEditor
         }
 
         /// <summary>
-        /// Выбрать все объекты в списке.
+        /// Выделить все объекты в списке.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void selectAllObjects_LinkClicked(object sender, 
+        private void selectedAllObjects_LinkClicked(object sender, 
             LinkLabelLinkClickedEventArgs e)
         {
-            foreach (TreeNodeAdv treeNode in exportingObjectsTree.AllNodes)
+            foreach (TreeNodeAdv treeNode in importingObjectsTree.AllNodes)
             {
                 var node = treeNode.Tag as Node;
                 if (node != null)
@@ -179,59 +218,11 @@ namespace NewEditor
         }
 
         /// <summary>
-        /// Событие при загрузке формы.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ExportObjectsForm_Load(object sender, EventArgs e)
-        {
-            exportingObjectsTree.BeginUpdate();
-            exportingObjectsTree.Model = null;
-            exportingObjectsTree.Refresh();
-            var treeModel = new TreeModel();
-            var root = new Node(TechObjectsExporter.GetInstance().ProjectName);
-            treeModel.Nodes.Add(root);
-
-            ITreeViewItem[] objects = TechObjectsExporter.GetInstance()
-                .RootItems;
-            LoadObjectsForExport(objects, root);
-
-            exportingObjectsTree.Model = treeModel;
-            exportingObjectsTree.EndUpdate();
-        }
-
-        /// <summary>
-        /// Рекурсивная загрузка объектов для экспорта
-        /// </summary>
-        /// <param name="items">Объект родитель</param>
-        /// <param name="parent">Узел родитель</param>
-        private void LoadObjectsForExport(ITreeViewItem[] items, Node parent)
-        {
-            if(items == null)
-            {
-                return;
-            }
-
-            foreach(var item in items)
-            {
-                var newNode = new Node(item.DisplayText[0]);
-                newNode.Tag = item;
-                parent.Nodes.Add(newNode);
-
-                if(!item.IsMainObject)
-                {
-                    LoadObjectsForExport(item.Items, newNode);
-                }
-            }
-            exportButton.Enabled = true;
-        }
-
-        /// <summary>
         /// Функция обновления состояний чекбоксов
         /// </summary>
         /// <param name="sender">Объект, который вызвал функцию</param>
         /// <param name="e">Контекст переданный вызывающим кодом</param>
-        private void exportingObjectsTree_ChangeCheckBoxState(object sender,
+        private void importingObjectsTree_ChangeCheckBoxState(object sender,
             TreePathEventArgs e)
         {
             object nodeObject = e.Path.LastNode;
@@ -322,8 +313,5 @@ namespace NewEditor
         {
             e.TextColor = Color.Black;
         }
-
-        private const string luaExtension = "lua";
-        private const string saveFileDialogFilter = "Скрипт LUA (.lua)|*.lua";
     }
 }
