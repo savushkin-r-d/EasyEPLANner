@@ -214,12 +214,17 @@ namespace EasyEPlanner
             foreach (NewTechObject.TechObject obj in objects)
             {
                 BaseTechObject baseObj = obj.BaseTechObject;
+                if(baseObj == null)
+                {
+                    continue;
+                }
+
                 var objName = "prg." + obj.NameEplanForFile.ToLower() +
                     obj.TechNumber.ToString();
 
                 objectsInfo += baseObj.SaveObjectInfoToPrgLua(objName, prefix);
                 
-                var modesManager = baseObj.Owner.ModesManager;
+                var modesManager = obj.ModesManager;
                 var modes = modesManager.Modes;
                 bool haveBaseOperations = modes
                     .Where(x => x.DisplayText[1] != "").Count() != 0;
@@ -230,10 +235,10 @@ namespace EasyEPlanner
                     operationsSteps += baseObj.SaveOperationsSteps(
                         objName, prefix, modes);
                     operationsParameters += baseObj.SaveOperationsParameters(
-                        objName, prefix, modes);
+                        obj, objName, prefix, modes);
                 }
 
-                equipments += baseObj.SaveEquipment(objName);
+                equipments += obj.BaseTechObject.SaveEquipment(obj, objName);
             }
 
             var accumulatedData = new string[] 
@@ -269,7 +274,11 @@ namespace EasyEPlanner
 
             foreach (NewTechObject.TechObject obj in objects)
             {
-                var basicObj = obj.BaseTechObject.BasicName;
+                string basicObj = "";
+                if(obj.BaseTechObject != null)
+                {
+                    basicObj = obj.BaseTechObject.BasicName;
+                }
 
                 if (previouslyObjectName != obj.NameEplanForFile.ToLower() &&
                     previouslyObjectName != "")

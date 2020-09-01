@@ -463,7 +463,7 @@ namespace NewTechObject
         {
             if (baseTechObject != null)
             {
-                this.baseTechObject = baseTechObject.Clone();
+                this.baseTechObject = baseTechObject.Clone(this);
                 
                 equipment.AddItems(baseTechObject.Equipment);
                 equipment.Check();
