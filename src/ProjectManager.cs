@@ -31,8 +31,10 @@ namespace EasyEPlanner
                 crc ^= (ushort)(pcBlock[idx++] << 8);
 
                 for (int i = 0; i < 8; i++)
-                    crc = (ushort)((crc & 0x8000) > 0 ?
-                         ((crc << 1) ^ 0x1021) : (crc << 1));
+                {
+                    crc = (ushort)((crc & 0x8000) > 0 ? 
+                        ((crc << 1) ^ 0x1021) : (crc << 1));
+                }
             }
 
             return crc;
@@ -68,14 +70,15 @@ namespace EasyEPlanner
             errStr = "";
 
             StreamReader sr = null;
-            string path = GetPtusaProjectsPath(projectName) + projectName + fileName;
+            string path = GetPtusaProjectsPath(projectName) + projectName + 
+                fileName;
 
             try
             {
                 if (!File.Exists(path))
                 {
-                    errStr = "Файл описания проекта \"" + path + "\" отсутствует!" +
-                        " Создано пустое описание.";
+                    errStr = "Файл описания проекта \"" + path + 
+                        "\" отсутствует! Создано пустое описание.";
                     return 1;
                 }
             }
@@ -85,8 +88,7 @@ namespace EasyEPlanner
                 return 1;
             }
 
-            sr = new StreamReader(path,
-                System.Text.Encoding.GetEncoding(1251));
+            sr = new StreamReader(path, System.Text.Encoding.GetEncoding(1251));
             LuaStr = sr.ReadToEnd();
             sr.Close();
 
@@ -117,14 +119,15 @@ namespace EasyEPlanner
                 // Поиск файла .ini
                 if (!File.Exists(path))
                 {
-                    // Если не нашли - создаем новый и записываем дефолтные данные
+                    // Если не нашли - создаем новый, 
+                    // записываем дефолтные данные
                     new PInvoke.IniFile(path);
                     StreamWriter sr = new StreamWriter(path, true);
                     sr.WriteLine("[path]\nfolder_path=");
                     sr.Close();
                     sr.Flush();
                 }
-                PInvoke.IniFile iniFile = new PInvoke.IniFile(path);
+                var iniFile = new PInvoke.IniFile(path);
 
                 // Считывание и возврат пути каталога проектов
                 string projectsFolders =
@@ -158,7 +161,8 @@ namespace EasyEPlanner
                 if (firstPathIsSaved == false && firstPath == "")
                 {
                     MessageBox.Show("Путь к каталогу с проектами не найден.\n" +
-                        "Пожалуйста, проверьте конфигурацию!", "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        "Пожалуйста, проверьте конфигурацию!", "Внимание", 
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
@@ -167,8 +171,9 @@ namespace EasyEPlanner
             }
             catch
             {
-                MessageBox.Show("Файл конфигурации не найден - будет создан новый со стандартным описанием." +
-                    " Пожалуйста, измените путь к каталогу с проектами, где хранятся Lua файлы!",
+                MessageBox.Show("Файл конфигурации не найден - будет создан " +
+                    "новый со стандартным описанием. Пожалуйста, измените " +
+                    "путь к каталогу с проектами, где хранятся Lua файлы!",
                     "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             return "";
@@ -182,12 +187,12 @@ namespace EasyEPlanner
         {
             errStr = "";
             Logs.Clear();
+            ProjectDataIsLoaded = false;
 
             string LuaStr;
             int res = 0;
 
-            Eplan.EplApi.Base.Progress oProgress =
-                new Eplan.EplApi.Base.Progress("EnhancedProgress");
+            var oProgress = new Eplan.EplApi.Base.Progress("EnhancedProgress");
             oProgress.SetAllowCancel(false);
             oProgress.SetTitle("Считывание данных проекта");
 
@@ -214,13 +219,18 @@ namespace EasyEPlanner
 
                 if (loadFromLua)
                 {
-                    oProgress.BeginPart(15, "Считывание технологических объектов");
-                    res = LoadDescriptionFromFile(out LuaStr, out errStr, projectName, "\\main.objects.lua");
-                    techObjectManager.LoadFromLuaStr(LuaStr, projectName);
+                    oProgress.BeginPart(15, "Считывание технологических " +
+                        "объектов");
+                    res = LoadDescriptionFromFile(out LuaStr, out errStr, 
+                        projectName, "\\main.objects.lua");
+                    techObjectManager.LoadDescription(LuaStr, projectName);
+                    newTechObjectManager.LoadDescription(LuaStr, projectName);
                     errStr = "";
                     LuaStr = "";
-                    res = LoadDescriptionFromFile(out LuaStr, out errStr, projectName, "\\main.restrictions.lua");
+                    res = LoadDescriptionFromFile(out LuaStr, out errStr, 
+                        projectName, "\\main.restrictions.lua");
                     techObjectManager.LoadRestriction(LuaStr);
+                    newTechObjectManager.LoadRestriction(LuaStr);
                     oProgress.EndPart();
                 }
 
@@ -231,11 +241,13 @@ namespace EasyEPlanner
                 oProgress.BeginPart(15, "Расчет IO-Link");
                 IOManager.CalculateIOLinkAdresses();
                 oProgress.EndPart(true);
+                ProjectDataIsLoaded = true;
             }
             catch (System.Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 oProgress.EndPart(true);
+                ProjectDataIsLoaded = false;
             }
 
             return res;
@@ -246,12 +258,15 @@ namespace EasyEPlanner
         /// </summary>
         public void Init()
         {
-            this.editor = Editor.Editor.GetInstance();
-            this.techObjectManager = TechObjectManager.GetInstance();
+            newEditor = NewEditor.NewEditor.GetInstance();
+            editor = Editor.Editor.GetInstance();
+            techObjectManager = TechObjectManager.GetInstance();
+            newTechObjectManager = NewTechObject.TechObjectManager
+                .GetInstance();
             Logs.Init(new LogFrm());           
-            this.IOManager = IOManager.GetInstance();
+            IOManager = IOManager.GetInstance();
             DeviceManager.GetInstance();
-            this.projectConfiguration = ProjectConfiguration.GetInstance();
+            projectConfiguration = ProjectConfiguration.GetInstance();
             EProjectManager.GetInstance();
             BaseTechObjectManager.GetInstance();
         }
@@ -261,8 +276,9 @@ namespace EasyEPlanner
         /// </summary>
         public void SaveAsExcelDescription(string path)
         {
-            System.Threading.Thread t = new System.Threading.Thread(
-                    new System.Threading.ParameterizedThreadStart(ExportToExcel));
+            var t = new System.Threading.Thread(
+                new System.Threading.ParameterizedThreadStart(
+                    ExportToExcel));
 
             t.Start(path);
         }
@@ -354,6 +370,10 @@ namespace EasyEPlanner
 
         }
 
+        /// <summary>
+        /// Экспорт базы каналов, поток.
+        /// </summary>
+        /// <param name="param">Параметр потока</param>
         private void SaveAsXMLThread(object param)
         {
             var data = param as DataForSaveAsXML;
@@ -416,7 +436,6 @@ namespace EasyEPlanner
         /// <summary>
         /// Редактирование технологических объектов.
         /// </summary>
-        /// <param name="objectsLuaStr">Скрипт Lua с текущими описанием.</param>        
         /// <returns>Результат редактирования.</returns>
         public string Edit()
         {
@@ -425,7 +444,19 @@ namespace EasyEPlanner
             return res;
         }
 
-        //Участвующие в операции устройства, подсвеченные на карте Eplan.
+        /// <summary>
+        /// Редактирование технологических объектов. Новое дерево.
+        /// </summary>
+        /// <returns>Результат редактирования</returns>
+        public void StartEdit()
+        {
+            newEditor
+                .OpenEditor(newTechObjectManager as NewEditor.ITreeViewItem);
+        }
+
+        /// <summary>
+        /// Участвующие в операции устройства, подсвеченные на карте Eplan.
+        /// </summary>
         List<object> highlightedObjects = new List<object>();
 
         /// <summary>
@@ -448,15 +479,36 @@ namespace EasyEPlanner
             highlightedObjects.Clear();
         }
 
-        public void SetHighLighting(List<DrawInfo> objectsToDraw)
+        /// <summary>
+        /// Установка подсветки устройств
+        /// </summary>
+        /// <param name="objectsToDraw">Устройства для подсветки</param>
+        public void SetHighLighting(object objectsToDraw)
         {
             if (objectsToDraw == null)
             {
                 return;
             }
+
+            if(objectsToDraw is List<DrawInfo> drawInfoOld)
+            {
+                OldEditorSetHighlighting(drawInfoOld);
+            }
+            else if(objectsToDraw is List<NewEditor.DrawInfo> drawInfoNew)
+            {
+                NewEditorSetHighlighting(drawInfoNew);
+            }
+        }
+
+        /// <summary>
+        /// Подсветка из старого редактора
+        /// </summary>
+        /// <param name="objectsToDraw"></param>
+        private void OldEditorSetHighlighting(List<DrawInfo> objectsToDraw)
+        {
             foreach (DrawInfo drawObj in objectsToDraw)
             {
-                DrawInfo.Style howToDraw = drawObj.style;
+                DrawInfo.Style howToDraw = drawObj.DrawingStyle;
 
                 if (howToDraw == DrawInfo.Style.NO_DRAW)
                 {
@@ -464,97 +516,206 @@ namespace EasyEPlanner
                 }
 
                 Eplan.EplApi.DataModel.Function oF =
-                    (drawObj.dev as IODevice).EplanObjectFunction;
+                    (drawObj.DrawingDevice as IODevice).EplanObjectFunction;
+
                 if (oF == null)
                 {
                     continue;
                 }
 
                 Eplan.EplApi.Base.PointD[] points = oF.GetBoundingBox();
-                int number = 0;
-
-                Eplan.EplApi.DataModel.Graphics.Rectangle rc =
-                    new Eplan.EplApi.DataModel.Graphics.Rectangle();
-                rc.Create(oF.Page);
-                rc.IsSurfaceFilled = true;
-                rc.DrawingOrder = -1;
-
                 short colour = 0;
                 switch (howToDraw)
                 {
                     case DrawInfo.Style.GREEN_BOX:
-                        colour = 3; //Green.
-
-                        //Для сигналов подсвечиваем полностью всю линию.
-                        if (oF.Name.Contains("DI") || oF.Name.Contains("DO"))
-                        {
-                            if (oF.Connections.Length > 0)
-                            {
-                                points[1].X =
-                                oF.Connections[0].StartPin.ParentFunction.GetBoundingBox()[1].X;
-                            }
-                        }
+                        SetGreenBoxHighlight(ref colour, oF, points);
                         break;
 
                     case DrawInfo.Style.RED_BOX:
-                        colour = 252; //Red.
+                        SetRedBoxHiglight(ref colour);
                         break;
 
                     case DrawInfo.Style.GREEN_UPPER_BOX:
-                        points[0].Y += (points[1].Y - points[0].Y) / 2;
-                        colour = 3; //Green.
+                        SetGreenUpperBoxHighlight(ref colour, points);
                         break;
 
                     case DrawInfo.Style.GREEN_LOWER_BOX:
-                        points[1].Y -= (points[1].Y - points[0].Y) / 2;
-                        colour = 3; //Green.
+                        SetGreenLowerBoxHighlight(ref colour, points);
                         break;
 
                     case DrawInfo.Style.GREEN_RED_BOX:
-                        Eplan.EplApi.DataModel.Graphics.Rectangle rc2 =
-                            new Eplan.EplApi.DataModel.Graphics.Rectangle();
-                        rc2.Create(oF.Page);
-                        rc2.IsSurfaceFilled = true;
-                        rc2.DrawingOrder = 1;
-                        rc2.SetArea(
-                            new Eplan.EplApi.Base.PointD(
-                                points[0].X, points[0].Y + (points[1].Y - points[0].Y) / 2),
-                                points[1]);
-
-                        rc2.Pen = new Eplan.EplApi.DataModel.Graphics.Pen(
-                            252 /*Red*/, -16002, -16002, -16002, 0);
-
-                        rc2.Properties.set_PROPUSER_TEST(1, oF.ToStringIdentifier());
-                        highlightedObjects.Add(rc2);
-
-                        points[1].Y -= (points[1].Y - points[0].Y) / 2;
-                        colour = 3; //Green.
+                        SetGrenRedBoxHiglight(ref colour, oF, points);
                         break;
                 }
 
-                rc.SetArea(points[0], points[1]);
-                rc.Pen = new Eplan.EplApi.DataModel.Graphics.Pen(
-                    colour, -16002, -16002, -16002, 0);
-
-                if (number != 0)
-                {
-                    Eplan.EplApi.DataModel.Graphics.Text txt =
-                        new Eplan.EplApi.DataModel.Graphics.Text();
-                    txt.Create(oF.Page, number.ToString(), 3);
-                    txt.Location = new Eplan.EplApi.Base.PointD(
-                        points[1].X, points[1].Y);
-                    txt.Justification =
-                        Eplan.EplApi.DataModel.Graphics.TextBase.JustificationType.BottomRight;
-                    txt.TextColorId = 0;
-
-                    highlightedObjects.Add(txt);
-                }
-
-                rc.Properties.set_PROPUSER_TEST(1, oF.ToStringIdentifier());
-                highlightedObjects.Add(rc);
+                AddBoxForHighlighting(colour, oF, points);
             }
         }
 
+        /// <summary>
+        /// Подсветка из нового редактора
+        /// </summary>
+        /// <param name="objectsToDraw"></param>
+        private void NewEditorSetHighlighting(
+            List<NewEditor.DrawInfo> objectsToDraw)
+        {
+            foreach (NewEditor.DrawInfo drawObj in objectsToDraw)
+            {
+                NewEditor.DrawInfo.Style howToDraw = drawObj.DrawingStyle;
+
+                if (howToDraw == NewEditor.DrawInfo.Style.NO_DRAW)
+                {
+                    continue;
+                }
+
+                Eplan.EplApi.DataModel.Function objectFunction =
+                    (drawObj.DrawingDevice as IODevice).EplanObjectFunction;
+
+                if (objectFunction == null)
+                {
+                    continue;
+                }
+
+                Eplan.EplApi.Base.PointD[] points = objectFunction
+                    .GetBoundingBox();
+                short colour = 0;
+                switch (howToDraw)
+                {
+                    case NewEditor.DrawInfo.Style.GREEN_BOX:
+                        SetGreenBoxHighlight(ref colour, objectFunction,
+                            points);
+                        break;
+
+                    case NewEditor.DrawInfo.Style.RED_BOX:
+                        SetRedBoxHiglight(ref colour);
+                        break;
+
+                    case NewEditor.DrawInfo.Style.GREEN_UPPER_BOX:
+                        SetGreenUpperBoxHighlight(ref colour, points);
+                        break;
+
+                    case NewEditor.DrawInfo.Style.GREEN_LOWER_BOX:
+                        SetGreenLowerBoxHighlight(ref colour, points);
+                        break;
+
+                    case NewEditor.DrawInfo.Style.GREEN_RED_BOX:
+                        SetGrenRedBoxHiglight(ref colour, objectFunction,
+                            points);
+                        break;
+                }
+
+                AddBoxForHighlighting(colour, objectFunction, points);
+            }
+        }
+
+        /// <summary>
+        /// Настроить как зеленый прямоугольник.
+        /// </summary>
+        /// <param name="colour">Цвет</param>
+        /// <param name="oF">Функция объекта</param>
+        /// <param name="points">Точки</param>
+        private void SetGreenBoxHighlight(ref short colour, 
+            Eplan.EplApi.DataModel.Function oF,
+            Eplan.EplApi.Base.PointD[] points)
+        {
+            colour = 3; //Green.
+
+            //Для сигналов подсвечиваем полностью всю линию.
+            if (oF.Name.Contains("DI") || oF.Name.Contains("DO"))
+            {
+                if (oF.Connections.Length > 0)
+                {
+                    points[1].X = oF.Connections[0].StartPin
+                        .ParentFunction.GetBoundingBox()[1].X;
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Настроить как красный прямоугольник
+        /// </summary>
+        /// <param name="colour">Цвет</param>
+        private void SetRedBoxHiglight(ref short colour)
+        {
+            colour = 252; //Red.
+        }
+
+        /// <summary>
+        /// Настроить как половина зеленого прямоугольника сверху
+        /// </summary>
+        /// <param name="colour">Цвет</param>
+        /// <param name="points">Точки</param>
+        private void SetGreenUpperBoxHighlight(ref short colour,
+            Eplan.EplApi.Base.PointD[] points)
+        {
+            points[0].Y += (points[1].Y - points[0].Y) / 2;
+            colour = 3; //Green.
+        }
+
+        /// <summary>
+        /// Настроить как половина зеленого прямоугольника снизу
+        /// </summary>
+        /// <param name="colour">Цвет</param>
+        /// <param name="points">Точки</param>
+        private void SetGreenLowerBoxHighlight(ref short colour,
+            Eplan.EplApi.Base.PointD[] points)
+        {
+            points[1].Y -= (points[1].Y - points[0].Y) / 2;
+            colour = 3; //Green.
+        }
+
+        /// <summary>
+        /// Настроить как зелено-серый прямоугольник
+        /// </summary>
+        /// <param name="colour">Цвет</param>
+        /// <param name="oF">Функция объекта</param>
+        /// <param name="points">Точки</param>
+        private void SetGrenRedBoxHiglight(ref short colour,
+            Eplan.EplApi.DataModel.Function oF,
+            Eplan.EplApi.Base.PointD[] points)
+        {
+            var rc2 = new Eplan.EplApi.DataModel.Graphics.Rectangle();
+            rc2.Create(oF.Page);
+            rc2.IsSurfaceFilled = true;
+            rc2.DrawingOrder = 1;
+            rc2.SetArea(new Eplan.EplApi.Base.PointD(points[0].X,
+                points[0].Y + (points[1].Y - points[0].Y) / 2),
+                points[1]);
+
+            rc2.Pen = new Eplan.EplApi.DataModel.Graphics.Pen(
+                252 /*Red*/, -16002, -16002, -16002, 0);
+
+            rc2.Properties.set_PROPUSER_TEST(1,
+                oF.ToStringIdentifier());
+            highlightedObjects.Add(rc2);
+
+            points[1].Y -= (points[1].Y - points[0].Y) / 2;
+            colour = 3; //Green.
+        }
+
+        /// <summary>
+        /// Добавить прямоугольник в подсвечиваемые элементы
+        /// </summary>
+        /// <param name="colour">Цвет</param>
+        /// <param name="objectFunction">Функция объекта</param>
+        /// <param name="points">Точки</param>
+        private void AddBoxForHighlighting(short colour,
+            Eplan.EplApi.DataModel.Function objectFunction,
+            Eplan.EplApi.Base.PointD[] points)
+        {
+            var rc = new Eplan.EplApi.DataModel.Graphics.Rectangle();
+            rc.Create(objectFunction.Page);
+            rc.IsSurfaceFilled = true;
+            rc.DrawingOrder = -1;
+            rc.SetArea(points[0], points[1]);
+            rc.Pen = new Eplan.EplApi.DataModel.Graphics.Pen(colour, -16002,
+                -16002, -16002, 0);
+            rc.Properties.set_PROPUSER_TEST(1, objectFunction
+                .ToStringIdentifier());
+            highlightedObjects.Add(rc);
+        }
+
+        #region OSTIS
         /// <summary>
         /// Получить ссылку на систему помощи Ostis
         /// </summary>
@@ -589,6 +750,80 @@ namespace EasyEPlanner
             }
             return link;
         }
+        #endregion
+
+        /// <summary>
+        /// Проверить Excel библиотеки надстройки.
+        /// </summary>
+        private void CheckExcelLibs()
+        {
+            const string spireLicense = "Spire.License.dll";
+            const string spireXLS = "Spire.XLS.dll";
+            const string spirePDF = "Spire.Pdf.dll";
+
+            string SpireLicensePath = Path.Combine(AssemblyPath, spireLicense);
+            string SpireXLSPath = Path.Combine(AssemblyPath, spireXLS);
+            string SpirePDFPath = Path.Combine(AssemblyPath, spirePDF);
+
+            if (File.Exists(SpireLicensePath) == false ||
+                File.Exists(SpireXLSPath) == false ||
+                File.Exists(SpirePDFPath) == false)
+            {
+                var files = new string[] { spireLicense, spireXLS, spirePDF };
+                CopySpireXLSFiles(AssemblyPath, files, OriginalAssemblyPath);
+            }
+        }
+
+        /// <summary>
+        /// Копировать файлы библиотек Spire XLS
+        /// </summary>
+        /// <param name="shadowAssemblySpireFilesDir">Путь к библиотекам
+        /// в теневом хранилище Eplan</param>
+        /// <param name="files">Имена файлов для копирования</param>
+        /// <param name="originalPath">Путь к надстройке из каталога
+        /// подключения надстройки</param>
+        private void CopySpireXLSFiles(string shadowAssemblySpireFilesDir,
+            string[] files, string originalPath)
+        {
+            var libsDir = new DirectoryInfo(originalPath);
+            foreach (FileInfo file in libsDir.GetFiles())
+            {
+                if (files.Contains(file.Name))
+                {
+                    string path = Path.Combine(shadowAssemblySpireFilesDir,
+                        file.Name);
+                    file.CopyTo(path, true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Копирует системные .lua файлы если они не загрузились
+        /// в теневое хранилище (Win 7 fix).
+        /// <param name="systemFilesPath">Путь к Lua файлам
+        /// в теневом хранилище Eplan</param>
+        /// <param name="originalSystemFilesPath">Путь к файлам Lua в месте 
+        /// подключения надстройки к программе</param>
+        /// </summary>
+        private void CopySystemFiles(string systemFilesPath,
+            string originalSystemFilesPath)
+        {
+            Directory.CreateDirectory(systemFilesPath);
+
+            var systemFilesDir = new DirectoryInfo(originalSystemFilesPath);
+            FileInfo[] systemFiles = systemFilesDir.GetFiles();
+            foreach (FileInfo systemFile in systemFiles)
+            {
+                string pathToFile = Path.Combine(systemFilesPath,
+                    systemFile.Name);
+                systemFile.CopyTo(pathToFile, true);
+            }
+        }
+
+        /// <summary>
+        /// Загружены или нет данные проекта.
+        /// </summary>
+        public bool ProjectDataIsLoaded { get; set; }
 
         /// <summary>
         /// Путь к надстройке, к месту, из которого она подключалась к программе
@@ -658,14 +893,45 @@ namespace EasyEPlanner
             }
         }
 
-        private ProjectManager() { }
+        private ProjectManager() 
+        {
+            CheckExcelLibs();
+            CopySystemFiles(SystemFilesPath, OriginalSystemFilesPath);
+        }
 
-        private IEditor editor; /// Редактор технологических объектов.
-        private ITechObjectManager techObjectManager; /// Менеджер технологических объектов.
+        /// <summary>
+        /// Редактор технологических объектов.
+        /// </summary>
+        private IEditor editor;
 
-        private IOManager IOManager; /// Менеджер модулей ввода/вывода
-        private ProjectConfiguration projectConfiguration; // Конфигурация проекта
+        /// <summary>
+        /// Редактор технологических объектов.
+        /// </summary>
+        private NewEditor.INewEditor newEditor;
 
-        private static ProjectManager instance; /// Экземпляр класса.         
+        /// <summary>
+        /// Менеджер технологических объектов.
+        /// </summary>
+        private ITechObjectManager techObjectManager;
+
+        /// <summary>
+        /// Менеджер технологических объектов.
+        /// </summary>
+        private NewTechObject.ITechObjectManager newTechObjectManager;
+
+        /// <summary>
+        /// Менеджер модулей ввода/вывода.
+        /// </summary>
+        private IOManager IOManager;
+
+        /// <summary>
+        /// Конфигурация проекта.
+        /// </summary>
+        private ProjectConfiguration projectConfiguration;
+
+        /// <summary>
+        /// Экземпляр класса ProjectManager
+        /// </summary>
+        private static ProjectManager instance;      
     }
 }

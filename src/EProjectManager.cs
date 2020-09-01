@@ -176,6 +176,7 @@ namespace EasyEPlanner
             }
 
             DFrm.GetInstance().CloseEditor();
+            NewEditor.NewEditor.GetInstance().CloseEditor();
         }
 
         private Project currentProject = null;
@@ -205,7 +206,9 @@ namespace EasyEPlanner
         {
             EProjectManager.GetInstance().SetEditInteraction(this);
 
-            return RequestCode.Select | RequestCode.NoPreselect | RequestCode.NoMultiSelect;
+            return RequestCode.Select |
+                   RequestCode.NoPreselect |
+                   RequestCode.NoMultiSelect;
         }
 
         public override RequestCode OnSelect(
@@ -220,76 +223,159 @@ namespace EasyEPlanner
                 return RequestCode.Stop;
             }
 
-            Function oF = null;
-
-            if (arrSelectedObjects[0] is Rectangle)
-            {
-                string oFName =
-                    (arrSelectedObjects[0] as Rectangle).Properties.get_PROPUSER_TEST(1);
-
-                oF = Function.FromStringIdentifier(oFName) as Function;
-            }
-
-            if (arrSelectedObjects[0] is Function)
-            {
-                oF = arrSelectedObjects[0] as Function;
-            }
-
+            Function oF = SearchSelectedObjectFunction(arrSelectedObjects[0]);
             if (oF != null)
             {
-                Editor.ITreeViewItem item = Editor.Editor.GetInstance().EForm.GetActiveItem();
-
-                if (item == null)
+                Editor.ITreeViewItem oldEditorItem = Editor.Editor.GetInstance()
+                    .EForm.GetActiveItem();
+                NewEditor.ITreeViewItem newEditorItem = NewEditor.NewEditor
+                    .GetInstance().EditorForm.GetActiveItem();
+                if (oldEditorItem == null && newEditorItem == null)
                 {
                     return RequestCode.Nothing;
                 }
-
-                if (item.IsUseDevList)
+                
+                if(oldEditorItem != null && newEditorItem == null)
                 {
-                    string devName;
-                    string objectName;
-                    int objectNumber;
-                    string deviceType;
-                    int deviceNumbe;
+                    ExecuteForOldEditor(oldEditorItem, oF);
+                }
 
-                    bool res = Device.DeviceManager.CheckDeviceName(oF.Name,
-                        out devName, out objectName, out objectNumber, out deviceType,
-                        out deviceNumbe);
-
-                    if (res)
-                    {
-                        string oldDevices = " " + item.EditText[1] + " ";
-                        string newDevices = "";
-                        //Для корректного поиска отделяем пробелами.
-                        devName = " " + devName + " ";
-
-                        if (oldDevices.Contains(devName))
-                        {
-                            newDevices = oldDevices.Replace(devName, " ");
-                        }
-                        else
-                        {
-                            newDevices = oldDevices + devName.Trim();
-                        }
-                        Editor.Editor.GetInstance().EForm.SetNewVal(newDevices);
-
-                        //Обновление списка устройств при его наличии.
-                        if (DFrm.GetInstance().IsVisible() == true)
-                        {
-                            Device.DeviceType[] devTypes;
-                            Device.DeviceSubType[] devSubTypes;
-                            item.GetDevTypes(out devTypes, out devSubTypes);
-
-                            DFrm.GetInstance().ShowDevices(
-                                Device.DeviceManager.GetInstance(),
-                                    devTypes, devSubTypes, false, true,
-                                    item.EditText[1], null);
-                        }
-                    }
+                if(oldEditorItem == null && newEditorItem != null)
+                {
+                    ExecuteForNewEditor(newEditorItem, oF);
                 }
             }
 
-            return RequestCode.Select | RequestCode.NoPreselect | RequestCode.NoMultiSelect;
+            return RequestCode.Select |
+                   RequestCode.NoPreselect |
+                   RequestCode.NoMultiSelect;
+        }
+
+        /// <summary>
+        /// Поиск функции выбранного объекта
+        /// </summary>
+        /// <param name="selectedObject">Выбранный объект</param>
+        /// <returns></returns>
+        private Function SearchSelectedObjectFunction(StorableObject 
+            selectedObject)
+        {
+            Function oF = null;
+            if (selectedObject is Rectangle)
+            {
+                string oFName = (selectedObject as Rectangle).Properties
+                    .get_PROPUSER_TEST(1);
+                oF = Function.FromStringIdentifier(oFName) as Function;
+            }
+
+            if (selectedObject is Function)
+            {
+                oF = selectedObject as Function;
+            }
+
+            return oF;
+        }
+
+        /// <summary>
+        /// Обработка для старого редактора
+        /// </summary>
+        /// <param name="oldEditorItem">Элемент из старого редактора</param>
+        /// <param name="oF">Функция</param>
+        private void ExecuteForOldEditor(Editor.ITreeViewItem oldEditorItem,
+            Function oF)
+        {
+            if (oldEditorItem.IsUseDevList)
+            {
+                string devName;
+                bool res = Device.DeviceManager.CheckDeviceName(oF.Name,
+                    out devName, out _, out _, out _, out _);
+
+                if (res)
+                {
+                    string checkedDevices = oldEditorItem.EditText[1];
+                    string newDevices = MakeNewCheckedDevices(devName,
+                        checkedDevices);
+                    Editor.Editor.GetInstance().EForm.SetNewVal(newDevices);
+
+                    //Обновление списка устройств при его наличии.
+                    string checkedDev = oldEditorItem.EditText[1];
+                    if (DFrm.GetInstance().IsVisible() == true)
+                    {
+                        Device.DeviceType[] devTypes;
+                        Device.DeviceSubType[] devSubTypes;
+                        oldEditorItem.GetDevTypes(out devTypes,
+                            out devSubTypes);
+
+                        DFrm.GetInstance().ShowDevices(
+                            Device.DeviceManager.GetInstance(), devTypes,
+                            devSubTypes, false, true, checkedDev, null);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Обработка для нового редактора
+        /// </summary>
+        /// <param name="newEditorItem">Элемент из нового редактора</param>
+        /// <param name="oF">Функция</param>
+        private void ExecuteForNewEditor(
+                NewEditor.ITreeViewItem newEditorItem, Function oF)
+        {
+            if (newEditorItem.IsUseDevList)
+            {
+                string devName;
+                bool res = Device.DeviceManager.CheckDeviceName(oF.Name,
+                    out devName, out _, out _, out _, out _);
+
+                if (res)
+                {
+                    string checkedDevices = newEditorItem.EditText[1];
+                    string newDevices = MakeNewCheckedDevices(devName,
+                        checkedDevices);
+                    NewEditor.NewEditor.GetInstance().EditorForm
+                        .SetNewVal(newDevices);
+
+                    //Обновление списка устройств при его наличии.
+                    string checkedDev = newEditorItem.EditText[1];
+                    if (DFrm.GetInstance().IsVisible() == true)
+                    {
+                        Device.DeviceType[] devTypes;
+                        Device.DeviceSubType[] devSubTypes;
+                        newEditorItem.GetDevTypes(out devTypes,
+                            out devSubTypes);
+
+                        DFrm.GetInstance().ShowDevices(
+                            Device.DeviceManager.GetInstance(), devTypes,
+                            devSubTypes, false, true, checkedDev, null);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Сгенерировать новую строку устройств
+        /// </summary>
+        /// <param name="devName">Устройство</param>
+        /// <param name="checkedDevices">Текущие устройства</param>
+        /// <returns></returns>
+        private string MakeNewCheckedDevices(string devName,
+            string checkedDevices)
+        {
+            string oldDevices = " " + checkedDevices + " ";
+            string newDevices;
+            //Для корректного поиска отделяем пробелами.
+            devName = " " + devName + " ";
+
+            if (oldDevices.Contains(devName))
+            {
+                newDevices = oldDevices.Replace(devName, " ");
+            }
+            else
+            {
+                newDevices = oldDevices + devName.Trim();
+            }
+
+            return newDevices;
         }
 
         private delegate void DelegateWithParameters(int param1);

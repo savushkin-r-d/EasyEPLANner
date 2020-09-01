@@ -39,6 +39,11 @@ namespace EasyEPlanner
                 "Редактирование технологических объектов", menuID, 1, 
                 false, false);
 
+            menuID = oMenu.AddMenuItem("Новый редактор объектов",
+                "ShowNewTechObjectsAction",
+                "Редактирование технологических объектов",
+                menuID, 1, false, false);
+
             menuID = oMenu.AddMenuItem("Устройства", "ShowDevicesAction",
                 "Отображение устройств", menuID, int.MaxValue, false, false);
 

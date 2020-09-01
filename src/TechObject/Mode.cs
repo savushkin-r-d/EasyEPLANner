@@ -603,14 +603,15 @@ namespace TechObject
                     bool isSetFlag = false;
                     for (int i = 0; i < devToDraw.Count; i++)
                     {
-                        if (devToDraw[i].dev.Name == dinfo.dev.Name)
+                        if (devToDraw[i].DrawingDevice.Name == 
+                            dinfo.DrawingDevice.Name)
                         {
                             isSetFlag = true;
-                            if (devToDraw[i].style != dinfo.style)
+                            if (devToDraw[i].DrawingStyle != dinfo.DrawingStyle)
                             {
                                 devToDraw.Add(new Editor.DrawInfo(Editor
                                     .DrawInfo.Style.GREEN_RED_BOX,
-                                    devToDraw[i].dev));
+                                    devToDraw[i].DrawingDevice));
                                 devToDraw.RemoveAt(i);
                             }
                         }

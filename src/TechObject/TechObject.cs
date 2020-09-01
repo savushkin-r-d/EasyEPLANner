@@ -507,7 +507,7 @@ namespace TechObject
             if (operExtraParams.Keys.Count > 0)
             {
                 var extraParams = StaticHelper.LuaHelper
-                    .ConvertLuaTableToCArray(operExtraParams);
+                    .OEditorConvertLuaTableToCArray(operExtraParams);
                 return modes.AddMode(modeName, baseOperationName, extraParams);
             }
             else
@@ -716,7 +716,7 @@ namespace TechObject
         {
             // Если не выбран базовый объект, то пустое имя
             // Если выбран, то сравниваем имена
-            if (baseTechObject.S88Level != 0)
+            if (baseTechObject.S88Level >= 0)
             {
                 string baseObjectNameEplan = baseTechObject.EplanName
                     .ToLower();

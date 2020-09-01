@@ -430,7 +430,8 @@ namespace TechObject
 
             var objects = TechObjectManager.GetInstance();
             var masterObj = objects.Objects
-                .Where(x => x.Name.Contains("Мастер")).FirstOrDefault();
+                .Where(x => x.Name.Contains("Мастер") ||
+                x.Name.Contains("Ячейка процесса")).FirstOrDefault();
             if (masterObj != null)
             {
                 res += objName + ".master = prg." + masterObj.NameEplan
