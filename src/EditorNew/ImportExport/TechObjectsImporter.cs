@@ -31,6 +31,7 @@ namespace NewEditor
         {
             importedObjects = new Dictionary<int, ITreeViewItem>();
             techObjectManager = TechObjectManager.GetInstance();
+            objectTree = new List<ITreeViewItem>();
             InitLuaScripts();
         }
 
@@ -76,6 +77,7 @@ namespace NewEditor
         public void LoadImportingObjects(string pathToFile)
         {
             importedObjects.Clear();
+            objectTree.Clear();
 
             var sr = new StreamReader(pathToFile);
             string dataFromFile = sr.ReadToEnd();
@@ -118,18 +120,105 @@ namespace NewEditor
                 null, techN, techType, nameEplan.ToUpper(), 
                 cooperParamNumber, NameBC, attachedObjects, baseTechObject);
 
-            //if (baseTechObject != null)
-            //{
-            //    AddIdentifiedObjectWhenLoadFromLua(obj);
-            //}
-            //else
-            //{
-            //    AddUnidentifiedObjectWhenLoadFromLua(obj);
-            //}
+            if (baseTechObject != null)
+            {
+                AddIdentifiedObjectWhenLoadFromLua(obj);
+            }
+            else
+            {
+                AddUnidentifiedObjectWhenLoadFromLua(obj);
+            }
 
             importedObjects.Add(globalNumber, obj);
 
             return obj;
+        }
+
+        /// <summary>
+        /// Добавить опознанный объект при загрузке из LUA
+        /// </summary>
+        /// <param name="obj">Объект</param>
+        private void AddIdentifiedObjectWhenLoadFromLua(
+            NewTechObject.TechObject obj)
+        {
+            BaseTechObject baseTechObject = obj.BaseTechObject;
+            var type = (BaseTechObjectManager.ObjectType)baseTechObject
+                .S88Level;
+            string name = BaseTechObjectManager.GetInstance()
+                        .GetS88NameFromLevel(baseTechObject.S88Level);
+            switch (type)
+            {
+                case BaseTechObjectManager.ObjectType.ProcessCell:
+                    AddProcessCellFromLua(obj);
+                    break;
+
+                case BaseTechObjectManager.ObjectType.Unit:
+
+                    AddS88ObjectFromLua(obj, name);
+                    break;
+
+                case BaseTechObjectManager.ObjectType.Aggregate:
+                    AddS88ObjectFromLua(obj, name);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Добавить ячейку процесса (мастер) из LUA
+        /// </summary>
+        /// <param name="obj">Объект</param>
+        /// <returns></returns>
+        private void AddProcessCellFromLua(NewTechObject.TechObject obj)
+        {
+            var processCellItem = objectTree.Where(x => x is ProcessCell)
+                        .FirstOrDefault() as ProcessCell;
+            if (processCellItem == null)
+            {
+                processCellItem = new ProcessCell();
+                objectTree.Add(processCellItem);
+            }
+
+            processCellItem.AddObjectWhenLoadFromLua(obj);
+        }
+
+        /// <summary>
+        /// Добавить аппарат из LUA
+        /// </summary>
+        /// <param name="obj">Объект</param>
+        /// <param name="name">Имя объекта</param>
+        /// <returns></returns>
+        private void AddS88ObjectFromLua(NewTechObject.TechObject obj,
+            string name)
+        {
+            var s88Item = objectTree
+                .Where(x => x is S88Object && x.DisplayText[0].Contains(name))
+                .FirstOrDefault() as S88Object;
+            if (s88Item == null)
+            {
+                s88Item = new S88Object(name);
+                objectTree.Add(s88Item);
+            }
+
+            s88Item.AddObjectWhenLoadFromLua(obj);
+        }
+
+        /// <summary>
+        /// Добавить неопознанный объект при добавлении из LUA
+        /// </summary>
+        /// <param name="obj">Объект</param>
+        private void AddUnidentifiedObjectWhenLoadFromLua(
+            NewTechObject.TechObject obj)
+        {
+            var unidentifiedObject = objectTree
+                .Where(x => x is Unidentified)
+                .FirstOrDefault() as Unidentified;
+            if (unidentifiedObject == null)
+            {
+                unidentifiedObject = new Unidentified();
+                objectTree.Add(unidentifiedObject);
+            }
+
+            unidentifiedObject.AddUnidentifiedObject(obj);
         }
         #endregion
 
@@ -149,39 +238,29 @@ namespace NewEditor
         /// Импортировать объекты в редактор
         /// </summary>
         /// <param name="checkedItems">Выбранные на дереве объекты</param>
-        public void Import(List<int> checkedItems)
+        public void Import(List<ITreeViewItem> checkedItems)
         {
-            foreach(var num in checkedItems)
+            foreach(var item in checkedItems)
             {
-                var importingItem = importedObjects[num] as NewTechObject
-                    .TechObject;
-                var importedItem = techObjectManager.InsertCopy(importingItem);
-                importedItem.AddParent(techObjectManager);
+                techObjectManager
+                    .ImportObject(item as NewTechObject.TechObject);
             }
+
+            (techObjectManager as ITreeViewItem).AddParent(null);
         }
 
-        /// <summary>
-        /// Список импортированных объектов
-        /// </summary>
-        public string[] ImportedObjectsNamesArray
+        public ITreeViewItem[] RootItems
         {
             get
             {
-                if (importedObjects.Count != 0)
-                {
-                    return importedObjects.Select(x => x.Value.DisplayText[0])
-                        .ToArray();
-                }
-                else
-                {
-                    return new string[0];
-                }
+                return objectTree.ToArray();
             }
-        }
+        } 
 
+        private List<ITreeViewItem> objectTree;
         private Dictionary<int, ITreeViewItem> importedObjects;
         private Lua lua;
         private static TechObjectsImporter techObjectsImporter;
-        private TechObjectManager techObjectManager;
+        private ITechObjectManager techObjectManager;
     }
 }

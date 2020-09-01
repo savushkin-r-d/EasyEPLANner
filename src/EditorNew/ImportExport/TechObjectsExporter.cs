@@ -53,7 +53,7 @@ namespace NewEditor
         {
             get
             {
-                return techObjectManager.Items;
+                return (techObjectManager as ITreeViewItem).Items;
             }
         }
 
@@ -64,7 +64,7 @@ namespace NewEditor
         {
             get
             {
-                return techObjectManager.DisplayText[0];
+                return (techObjectManager as ITreeViewItem).DisplayText[0];
             }
         }
 
@@ -160,6 +160,6 @@ namespace NewEditor
         }
 
         private static TechObjectsExporter techObjectsExporter;
-        private TechObjectManager techObjectManager;
+        private ITechObjectManager techObjectManager;
     }
 }

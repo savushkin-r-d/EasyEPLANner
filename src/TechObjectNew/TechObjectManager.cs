@@ -247,7 +247,18 @@ namespace NewTechObject
                 techType, nameEplan.ToUpper(), cooperParamNumber, NameBC,
                 attachedObjects, baseTechObject);
 
-            if (baseTechObject != null)
+            AddObject(obj);
+
+            return obj;
+        }
+
+        /// <summary>
+        /// Добавление технологического объекта.
+        /// </summary>
+        /// <param name="obj">Добавляемый объект</param>
+        private void AddObject(TechObject obj)
+        {
+            if (obj.BaseTechObject != null)
             {
                 AddIdentifiedObjectWhenLoadFromLua(obj);
             }
@@ -257,8 +268,6 @@ namespace NewTechObject
             }
 
             techObjectsList.Add(obj);
-
-            return obj;
         }
 
         /// <summary>
@@ -345,6 +354,11 @@ namespace NewTechObject
             unidentifiedObject.AddUnidentifiedObject(obj);
         }
         #endregion
+
+        public void ImportObject(TechObject importingObject)
+        {
+            AddObject(importingObject);
+        }
 
         #region реализация ITreeViewItem
         public override string[] DisplayText

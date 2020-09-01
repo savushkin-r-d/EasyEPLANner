@@ -56,5 +56,11 @@ namespace NewTechObject
         /// <param name="techObject">Объект</param>
         /// <returns></returns>
         int GetTechObjectN(object techObject);
+
+        /// <summary>
+        /// Импорт объекта в проект.
+        /// </summary>
+        /// <param name="importingObject">Объект для импорта</param>
+        void ImportObject(TechObject importingObject);
     }
 }

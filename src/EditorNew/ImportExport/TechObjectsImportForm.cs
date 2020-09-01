@@ -94,22 +94,59 @@ namespace NewEditor
         private void FillCheckedListBox()
         {
             importingObjectsTree.Model = null;
-
-            var importedObjectsNames = TechObjectsImporter.GetInstance().
-                ImportedObjectsNamesArray;
-            bool objectsIsEmpty = importedObjectsNames.Length == 0;
-            if (!objectsIsEmpty)
+            if(TechObjectsImporter.GetInstance().RootItems.Length != 0)
             {
-                //checkedListBox.Items.AddRange(TechObjectsImporter.GetInstance()
-                //   .ImportedObjectsNamesArray);
+                importingObjectsTree.BeginUpdate();
+                importingObjectsTree.Model = null;
+                importingObjectsTree.Refresh();
+                var treeModel = new TreeModel();
+
+                ITreeViewItem[] objects = TechObjectsImporter.GetInstance()
+                    .RootItems;
+                foreach (var s88Obj in objects)
+                {
+                    var root = new Node(s88Obj.DisplayText[0]);
+                    root.Tag = s88Obj;
+
+                    LoadObjectsForImport(s88Obj.Items, root);
+                    treeModel.Nodes.Add(root);
+                }
+
+                importingObjectsTree.Model = treeModel;
+                importingObjectsTree.EndUpdate();
                 importButton.Enabled = true;
             }
             else
             {
-                MessageBox.Show("Объекты для импорта не найдены", 
-                    "Предупреждение", MessageBoxButtons.OK, 
+                MessageBox.Show("Объекты для импорта не найдены",
+                    "Предупреждение", MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
                 importButton.Enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Рекурсивная загрузка объектов для экспорта
+        /// </summary>
+        /// <param name="items">Объект родитель</param>
+        /// <param name="parent">Узел родитель</param>
+        private void LoadObjectsForImport(ITreeViewItem[] items, Node parent)
+        {
+            if (items == null)
+            {
+                return;
+            }
+
+            foreach (var item in items)
+            {
+                var newNode = new Node(item.DisplayText[0]);
+                newNode.Tag = item;
+                parent.Nodes.Add(newNode);
+
+                if (!item.IsMainObject)
+                {
+                    LoadObjectsForImport(item.Items, newNode);
+                }
             }
         }
 
@@ -130,7 +167,7 @@ namespace NewEditor
         /// <param name="e"></param>
         private void importButton_Click(object sender, EventArgs e)
         {
-            var checkedItems = GetCheckedForImportItems();
+            List<ITreeViewItem> checkedItems = GetCheckedForImportItems();
 
             try
             {
@@ -152,20 +189,21 @@ namespace NewEditor
         /// Получить номера выбранных для импорта элементов.
         /// </summary>
         /// <returns></returns>
-        private List<int> GetCheckedForImportItems()
+        private List<ITreeViewItem> GetCheckedForImportItems()
         {
-            var checkedItems = new List<int>();
-            //for (int item = 0; item < checkedListBox.Items.Count; item++)
-            //{
-            //    bool itemChecked = checkedListBox.GetItemChecked(item);
-            //    if (itemChecked)
-            //    {
-            //        var checkedItem = checkedListBox.Items[item] as string;
-            //        string itemNumber = checkedItem.Split('.')[0];
-            //        int itemNum = Convert.ToInt32(itemNumber);
-            //        checkedItems.Add(itemNum);
-            //    }
-            //}
+            var checkedItems = new List<ITreeViewItem>();
+            foreach (var treeNode in importingObjectsTree.AllNodes)
+            {
+                var node = treeNode.Tag as Node;
+                if (node != null && node.CheckState == CheckState.Checked &&
+                    node.Tag is ITreeViewItem item)
+                {
+                    if (item != null && item.IsMainObject)
+                    {
+                        checkedItems.Add(item);
+                    }
+                }
+            }
 
             return checkedItems;
         }

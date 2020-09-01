@@ -518,7 +518,10 @@ namespace NewTechObject
 
             clone.getLocalNum = getLocalNum;
 
-            clone.baseTechObject = baseTechObject.Clone(clone);
+            if(baseTechObject != null)
+            {
+                clone.baseTechObject = baseTechObject.Clone(clone);
+            }
 
             clone.parameters = parameters.Clone();
 
