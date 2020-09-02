@@ -175,6 +175,7 @@ namespace EasyEPlanner
                 Editor.Editor.GetInstance().CloseEditor();
             }
 
+            ModeFrm.GetInstance().CloseEditor();
             DFrm.GetInstance().CloseEditor();
             NewEditor.NewEditor.GetInstance().CloseEditor();
         }

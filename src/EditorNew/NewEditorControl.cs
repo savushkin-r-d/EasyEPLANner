@@ -486,22 +486,7 @@ namespace NewEditor
                 {
                     case (int)PI.WM.MOVE:
                     case (int)PI.WM.SIZE:
-                        IntPtr dialogPtr = PI.GetParent(editorTView.Handle);
-
-                        PI.RECT rctDialog;
-                        PI.RECT rctPanel;
-                        PI.GetWindowRect(dialogPtr, out rctDialog);
-                        PI.GetWindowRect(panelPtr, out rctPanel);
-
-                        int w = rctDialog.Right - rctDialog.Left;
-                        int h = rctDialog.Bottom - rctDialog.Top;
-
-                        toolStrip.Location = new Point(0, 0);
-                        editorTView.Location = new Point(0, toolStrip.Height);
-
-                        toolStrip.Width = w;
-                        editorTView.Width = w;
-                        editorTView.Height = h - toolStrip.Height;
+                        ChangeUISize();
                         break;
                 }
                 return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
@@ -510,233 +495,15 @@ namespace NewEditor
             return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }
 
-        public static bool editIsShown = false; //Показано ли окно.
-        public bool IsShown = false; // Костыль, без этого не работает IsShown()
-        public static IntPtr wndEditVisiblePtr; // Дескриптор редактора.
-
         /// <summary>
-        /// Инициализация формы данными для редактирования.
-        ///
-        /// Так как данная форма отображается как внутреннее окно, то алгоритм
-        /// следующий:
-        /// 1 Поиск окна "Пространство листа" (Страница -> Навигатор комментариев).
-        /// 1.1 Поиск плавающего представления: через FindWindowByCaption ,
-        /// потом для поиска панели и диалога DlgItemId (0xE81F - базовая панель,
-        /// 0x3458 - диалог). Если окно найдено, то переходим к 4, иначе к 1.1.1.
-        /// 1.1.1 Поиск плавающего представления: иногда не отображается заголовок
-        /// из-за чего невозможно сразу определить окно, тогда проверяются потомки окон,
-        /// которые могут содержать заголовок родительского окна. Если не найдены заголовки,
-        /// то переходим к 1.2 (значит плавающего представления нет).
-        /// 1.2 Поиск закрепленного представления: через GetDlgItem для всех дочерних
-        /// окон (GetChildWindows) приложения Eplan по DlgItemId (0x3458 - диалог).
-        /// Если окно найдено, то переходим к 4, иначе к 2.
-        /// 2 Симулируем нажатие пункта меню (Страница -> Навигатор комментариев)
-        /// для его отображения.
-        /// 3 Повторяем поиск окна (1.1, 1.1.1 и 1.2). Если окно не найдено выводим
-        /// сообщение об ошибке, завершаем редактирование, иначе к 4.
-        /// 4 Скрываем панель с элементами управления Eplan'а
-        /// (GetDlgItem, 0xBC2 - родительская панель, ShowWindow).
-        /// 5. Переносим на найденное окно свои элементы (SetParent) и подгоняем
-        /// из размеры и позицию.
-        /// 6. Устанавливаем свой хук для найденного окна (для изменения размеров
-        /// своих элементов, сохранения изменений при закрытии и отключения хука).
+        /// Изменить размер UI.
         /// </summary>
-
-        public void ShowDlg()
+        private void ChangeUISize()
         {
-            //TODO: Костыль для перекрытия работы редакторов.
-            //TODO: Удалить после удаления редактора.
-            Editor.Editor.GetInstance().CloseEditor();
-
-            Process oCurrent = Process.GetCurrentProcess();
-
-            // Идентификатор команды вызова окна "Навигатор комментариев"
-            const int wndWmCommand = 35381; 
-
-            if (editIsShown == true && IsShown == true)
-            {
-                if (PI.IsWindowVisible(wndEditVisiblePtr) == false)
-                {
-                    PI.SendMessage(oCurrent.MainWindowHandle,
-                            (uint)PI.WM.COMMAND, wndWmCommand, 0);
-                    return;
-                }
-                return;
-            }
-
-            wasShown = true;
-
-            string windowName = "Комментарий";
-            IntPtr res = PI.FindWindowByCaption(
-                IntPtr.Zero, windowName);            //1.1;
-
-            if (res != IntPtr.Zero)
-            {
-                var resList = PI.GetChildWindows(res);
-                if (resList.Count > 0)
-                {
-                    dialogHandle = resList[0];
-                    wndEditVisiblePtr = dialogHandle; // Сохраняем дескриптор окна.
-                }
-            }
-            else
-            {
-                StringBuilder stringBuffer = new StringBuilder(200);                //1.1.1
-
-                List<IntPtr> mainWindowChilds = PI.GetChildWindows(PI.GetDesktopWindow());
-                foreach (IntPtr mainWindowChild in mainWindowChilds)
-                {
-                    PI.GetWindowText(mainWindowChild, stringBuffer, stringBuffer.Capacity);
-                    if (stringBuffer.ToString().Contains(windowName) == false &&
-                        stringBuffer.ToString().Contains("EPLAN") == false)
-                    {
-                        List<IntPtr> windowChilds = PI.GetChildWindows(mainWindowChild);
-                        foreach (IntPtr windowChild in windowChilds)
-                        {
-                            PI.GetWindowText(windowChild, stringBuffer, stringBuffer.Capacity);
-                            if (stringBuffer.ToString().Contains(windowName) == true)
-                            {
-                                if (PI.IsWindowVisible(windowChild) == true)
-                                {
-                                    // Если нашел в потомке название, беру родительское окно и работаю с ним
-                                    var resList = PI.GetChildWindows(mainWindowChild);
-                                    if (resList.Count > 0)
-                                    {
-                                        dialogHandle = resList[0];
-                                        res = dialogHandle;
-                                        wndEditVisiblePtr = dialogHandle; // Сохраняем дескриптор окна.
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                List<IntPtr> resW = PI.GetChildWindows(oCurrent.MainWindowHandle);    //1.2
-                foreach (IntPtr panel in resW)
-                {
-                    PI.GetWindowText(panel, stringBuffer, stringBuffer.Capacity);
-                    if (stringBuffer.ToString().Contains(windowName) == true)
-                    {
-                        if (PI.IsWindowVisible(panel) == true)
-                        {
-                            var resList = PI.GetChildWindows(panel);
-                            if (resList.Count > 0)
-                            {
-                                dialogHandle = resList[0];
-
-                                res = dialogHandle;
-                                wndEditVisiblePtr = dialogHandle; // Сохраняем дескриптор окна.
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (res == IntPtr.Zero)
-                {
-                    PI.SendMessage(oCurrent.MainWindowHandle,
-                        (uint)PI.WM.COMMAND, wndWmCommand, 0);     //2
-
-                    res = PI.FindWindowByCaption(
-                    IntPtr.Zero, windowName);                      //3
-
-                    if (res != IntPtr.Zero)
-                    {
-
-                        var resList = PI.GetChildWindows(res);
-                        if (resList.Count > 0)
-                        {
-                            dialogHandle = resList[0];
-                            wndEditVisiblePtr = dialogHandle; // Сохраняем дескриптор окна.
-                        }
-                    }
-                    else
-                    {
-                        mainWindowChilds = PI.GetChildWindows(PI.GetDesktopWindow());
-                        foreach (IntPtr mainWindowChild in mainWindowChilds)
-                        {
-                            PI.GetWindowText(mainWindowChild, stringBuffer, stringBuffer.Capacity);
-                            if (stringBuffer.ToString().Contains(windowName) == false &&
-                        stringBuffer.ToString().Contains("EPLAN") == false)
-                            {
-                                List<IntPtr> windowChilds = PI.GetChildWindows(mainWindowChild);
-                                foreach (IntPtr windowChild in windowChilds)
-                                {
-                                    PI.GetWindowText(windowChild, stringBuffer, stringBuffer.Capacity);
-                                    if (stringBuffer.ToString().Contains(windowName) == true)
-                                    {
-                                        // Если нашел в потомке название, беру родительское окно и работаю с ним
-                                        var resList = PI.GetChildWindows(mainWindowChild);
-                                        if (resList.Count > 0)
-                                        {
-                                            dialogHandle = resList[0];
-                                            wndEditVisiblePtr = dialogHandle; // Сохраняем дескриптор окна.
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        resW = PI.GetChildWindows(oCurrent.MainWindowHandle);
-                        foreach (IntPtr panel in resW)
-                        {
-
-                            PI.GetWindowText(panel, stringBuffer, stringBuffer.Capacity);
-                            if (stringBuffer.ToString().Contains(windowName) == true)
-                            {
-                                var resList = PI.GetChildWindows(panel);
-                                if (resList.Count > 0)
-                                {
-                                    dialogHandle = resList[0];
-
-                                    wndEditVisiblePtr = dialogHandle; // Сохраняем дескриптор окна.
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (dialogHandle == IntPtr.Zero)
-                        {
-                            MessageBox.Show("Не удалось найти окно!");
-                            return;
-                        }
-                    }
-                }
-            }
-
-            var panelList = PI.GetChildWindows(dialogHandle);       //4
-            if (panelList.Count > 0)
-            {
-                panelPtr = panelList[0];
-            }
-
-            if (panelPtr == IntPtr.Zero)
-            {
-                MessageBox.Show("Не удалось скрыть окно!");
-                return;
-            }
-
-            // Проверка, скрыт ли элемент управления с редактором.
-            if (PI.IsWindowVisible(dialogHandle) == false)
-            {
-                PI.ShowWindow(dialogHandle, 1);
-            }
-            PI.ShowWindow(panelPtr, 0);
-
-            this.Controls.Clear();
-
-            PI.SetParent(editorTView.Handle, dialogHandle);         //5
-            PI.SetParent(toolStrip.Handle, dialogHandle);
-
             IntPtr dialogPtr = PI.GetParent(editorTView.Handle);
 
             PI.RECT rctDialog;
-            PI.RECT rctPanel;
             PI.GetWindowRect(dialogPtr, out rctDialog);
-            PI.GetWindowRect(panelPtr, out rctPanel);
 
             int w = rctDialog.Right - rctDialog.Left;
             int h = rctDialog.Bottom - rctDialog.Top;
@@ -747,23 +514,84 @@ namespace NewEditor
             toolStrip.Width = w;
             editorTView.Width = w;
             editorTView.Height = h - toolStrip.Height;
+        }
+        
+        public static bool editIsShown = false; //Показано ли окно.
+        public bool IsShown = false; // Костыль, без этого не работает IsShown()
+        public static IntPtr wndEditVisiblePtr; // Дескриптор редактора.
 
-            uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);        //6
+        /// <summary>
+        /// Показать диалог (окно с редактором).
+        /// </summary>
+        public void ShowDlg()
+        {
+            //TODO: Костыль для перекрытия работы редакторов.
+            //TODO: Удалить после удаления редактора.
+            Editor.Editor.GetInstance().CloseEditor();
+
+            Process currentProcess = Process.GetCurrentProcess();
+
+            // Идентификатор команды вызова окна "Навигатор комментариев"
+            const int wndWmCommand = 35381;
+            string windowName = "Комментарий";
+
+            if (editIsShown == true && IsShown == true)
+            {
+                if (PI.IsWindowVisible(wndEditVisiblePtr) == false)
+                {
+                    PI.SendMessage(currentProcess.MainWindowHandle,
+                            (uint)PI.WM.COMMAND, wndWmCommand, 0);
+                    return;
+                }
+                return;
+            }
+
+            wasShown = true;
+
+            StaticHelper.GUIHelper.SearchWindowDescriptor(currentProcess,
+                windowName, wndWmCommand, ref dialogHandle,
+                ref wndEditVisiblePtr);
+            if(wndEditVisiblePtr != IntPtr.Zero)
+            {
+                StaticHelper.GUIHelper.ChangeWindowMainPanels(dialogHandle,
+                    ref panelPtr);
+
+                Controls.Clear();
+
+                // Переносим на найденное окно свои элементы (SetParent) и
+                // подгоняем их размеры и позицию.
+                PI.SetParent(editorTView.Handle, dialogHandle);
+                PI.SetParent(toolStrip.Handle, dialogHandle);
+                ChangeUISize();
+
+                // Устанавливаем свой хук для найденного окна
+                // (для изменения размеров своих элементов, сохранения
+                // изменений при закрытии и отключения хука).
+                SetUpHook();
+
+                editIsShown = true;
+                IsShown = true;
+
+                DisableNeededObjects(treeViewItemsList.ToArray());
+            }
+        }
+
+        /// <summary>
+        /// Устанавливаем хук для найденного окна.
+        /// </summary>
+        private void SetUpHook()
+        {
+            uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);
             dialogHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_CALLWNDPROC,
                 dialogCallbackDelegate, IntPtr.Zero, pid);
-
-            globalKeyboardHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_KEYBOARD_LL,
-                mainWndKeyboardCallbackDelegate, IntPtr.Zero, 0);
+            globalKeyboardHookPtr = PI.SetWindowsHookEx(
+                PI.HookType.WH_KEYBOARD_LL, mainWndKeyboardCallbackDelegate,
+                IntPtr.Zero, 0);
 
             if (globalKeyboardHookPtr == IntPtr.Zero)
             {
                 MessageBox.Show("Ошибка! Не удалось переназначить клавиши!");
             }
-
-            editIsShown = true;
-            IsShown = true;
-
-            DisableNeededObjects(treeViewItemsList.ToArray());
         }
 
         public uint pidMain = 0;

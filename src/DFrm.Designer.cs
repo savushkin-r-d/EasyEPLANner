@@ -166,6 +166,7 @@
             this.devicesTreeViewAdv.Text = "devicesTreeViewAdv";
             this.devicesTreeViewAdv.UseColumns = true;
             this.devicesTreeViewAdv.NodeMouseDoubleClick += new System.EventHandler<Aga.Controls.Tree.TreeNodeAdvMouseEventArgs>(this.treeView_DoubleClick);
+            this.devicesTreeViewAdv.SizeChanged += new System.EventHandler(this.devicesTreeViewAdv_SizeChanged);
             // 
             // DFrm
             // 

@@ -14,42 +14,17 @@ namespace NewEditor
         {
             InitializeComponent();
             exportButton.Enabled = false;
-            InitTreeViewComponents();
+
+            const string columnName = "Объекты";
+            StaticHelper.GUIHelper.SetUpAdvTreeView(exportingObjectsTree,
+                columnName, nodeTextBox_DrawText, nodeCheckBox,
+                exportingObjectsTree_ChangeCheckBoxState);
         }
 
         ///<summary>
-        ///Инициализация графических компонентов формы
+        /// Чекбокс для дерева
         ///</summary>
-        private void InitTreeViewComponents()
-        {
-            nodeColumn.Sortable = false;
-            nodeColumn.Header = "Объекты";
-            nodeColumn.Width = 300;
-
-            nodeCheckBox.DataPropertyName = "CheckState";
-            nodeCheckBox.VerticalAlign = VerticalAlignment.Center;
-            nodeCheckBox.ParentColumn = nodeColumn;
-            nodeCheckBox.EditEnabled = true;
-            nodeCheckBox.CheckStateChanged +=
-                exportingObjectsTree_ChangeCheckBoxState;
-
-            nodeTextBox.DataPropertyName = "Text";
-            nodeTextBox.VerticalAlign = VerticalAlignment.Center;
-            nodeTextBox.ParentColumn = nodeColumn;
-            nodeTextBox.DrawText += 
-                new EventHandler<DrawTextEventArgs>(nodeTextBox_DrawText);
-
-            exportingObjectsTree.Columns.Add(nodeColumn);
-            exportingObjectsTree.NodeControls.Add(nodeCheckBox);
-            exportingObjectsTree.NodeControls.Add(nodeTextBox);
-        }
-
-        ///<summary>
-        ///Компоненты TreeView для инициализации
-        ///</summary>
-        TreeColumn nodeColumn = new TreeColumn();
         NodeCheckBox nodeCheckBox = new NodeCheckBox();
-        NodeTextBox nodeTextBox = new NodeTextBox();
 
         /// <summary>
         /// Кнопка "Отмена"
@@ -236,86 +211,7 @@ namespace NewEditor
         {
             object nodeObject = e.Path.LastNode;
             Node checkedNode = nodeObject as Node;
-
-            RecursiveCheckParent(checkedNode.Parent);
-
-            RecursiveCheck(checkedNode);
-        }
-
-        /// <summary>
-        /// Функция установки состояния
-        /// отображения узла
-        /// </summary>
-        /// <param name="node">Выбранный узел</param>
-        private void RecursiveCheck(Node node)
-        {
-            if (node.Nodes.Count > 0)
-            {
-                List<Node> childNodes = node.Nodes.ToList();
-
-                foreach (Node child in childNodes)
-                {
-                    if (child.IsHidden != true)
-                    {
-                        child.CheckState = node.CheckState;
-                        RecursiveCheck(child);
-                    }
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-
-        /// <summary>
-        /// Установка состояния отображения
-        /// для родительского узла выбранного элемента
-        /// </summary>
-        /// <param name="parentNode">родительский узел</param>
-        private void RecursiveCheckParent(Node parentNode)
-        {
-            // 0 - корень (но не Root)
-            if (parentNode.Index > -1)
-            {
-                int countOfCheckedNodes = 0;
-                int countOfIndeterminateNodes = 0;
-                int countOfNodes = parentNode.Nodes.Count;
-                foreach (Node node in parentNode.Nodes)
-                {
-                    if (node.CheckState == CheckState.Checked)
-                    {
-                        countOfCheckedNodes++;
-                    }
-
-                    if (node.CheckState == CheckState.Indeterminate)
-                    {
-                        countOfIndeterminateNodes++;
-                    }
-
-                    if (node.IsHidden == true)
-                    {
-                        countOfNodes--;
-                    }
-                }
-
-                if (parentNode.CheckState != CheckState.Indeterminate)
-                {
-                    parentNode.CheckState = CheckState.Indeterminate;
-                }
-
-                if (countOfCheckedNodes == countOfNodes)
-                {
-                    parentNode.CheckState = CheckState.Checked;
-                }
-
-                if (countOfCheckedNodes == 0 && countOfIndeterminateNodes == 0)
-                {
-                    parentNode.CheckState = CheckState.Unchecked;
-                }
-
-                RecursiveCheckParent(parentNode.Parent);
-            }
+            StaticHelper.GUIHelper.CheckCheckState(checkedNode);
         }
 
         private void nodeTextBox_DrawText(object sender, DrawTextEventArgs e)

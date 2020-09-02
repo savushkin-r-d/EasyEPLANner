@@ -93,25 +93,7 @@ namespace EasyEPlanner
                 {
                     case (int)PI.WM.MOVE:
                     case (int)PI.WM.SIZE:
-                        IntPtr dialogPtr = 
-                            PI.GetParent(devicesTreeViewAdv.Handle);
-
-                        PI.RECT rctDialog;
-                        PI.RECT rctPanel;
-                        PI.GetWindowRect(dialogPtr, out rctDialog);
-                        PI.GetWindowRect(panelPtr, out rctPanel);
-
-                        int w = rctDialog.Right - rctDialog.Left;
-                        int h = rctDialog.Bottom - rctDialog.Top;
-
-                        toolStrip.Location =
-                            new Point(0, 0);
-                        devicesTreeViewAdv.Location =
-                            new Point(0, 0 + toolStrip.Height);
-                        toolStrip.Width = w;
-                        devicesTreeViewAdv.Width = w;
-                        devicesTreeViewAdv.Height = h - toolStrip.Height;
-                        devicesTreeViewAdv.AutoSizeColumn(nodeColumn);
+                        ChangeUISize();
                         break;
                 }
 
@@ -159,6 +141,27 @@ namespace EasyEPlanner
 
             return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }
+
+        /// <summary>
+        /// Изменить UI размер
+        /// </summary>
+        private void ChangeUISize()
+        {
+            IntPtr dialogPtr = PI.GetParent(devicesTreeViewAdv.Handle);
+
+            PI.RECT rctDialog;
+            PI.GetWindowRect(dialogPtr, out rctDialog);
+
+            int w = rctDialog.Right - rctDialog.Left;
+            int h = rctDialog.Bottom - rctDialog.Top;
+
+            toolStrip.Location = new Point(0, 0);
+            devicesTreeViewAdv.Location = new Point(0, 0 + toolStrip.Height);
+
+            toolStrip.Width = w;
+            devicesTreeViewAdv.Width = w;
+            devicesTreeViewAdv.Height = h - toolStrip.Height;
+        }
         #endregion
 
         #region ShowDialog
@@ -166,41 +169,16 @@ namespace EasyEPlanner
         public static bool deviceIsShown = false; // Показано ли окно.
 
         /// <summary>
-        /// Инициализация формы данными для редактирования.
-        ///
-        /// Так как данная форма отображается как внутреннее окно, то алгоритм
-        /// следующий:
-        /// 1 Поиск окна "Основные данные изделия" (меню Сервисные программы -> 
-        /// Изделие -> Навигатор основных данных изделий).
-        /// 1.1 Поиск плавающего представления: через FindWindowByCaption,         
-        /// потом для поиска панели и диалога DlgItemId (0xE81F - базовая панель,
-        /// 0x32С8 - диалог). Если окно найдено, то переходим к 4,  иначе к 1.1.1.
-        /// 1.1.1 Поиск плавающего представления: иногда не отображается заголовок
-        /// из-за чего невозможно сразу определить окно, тогда проверяются потомки окон,
-        /// которые могут содержать заголовок родительского окна. Если не найдены заголовки,
-        /// то переходим к 1.2 (значит плавающего представления нет).
-        /// 1.2 Поиск закрепленного представления: через GetDlgItem для всех дочерних
-        /// окон (GetChildWindows) приложения Eplan по DlgItemId (0x32C8 - диалог).
-        /// Если окно найдено, то переходим к 4, иначе к 2.
-        /// 2 Симулируем нажатие пункта меню (Сервисные программы -> 
-        /// Изделие -> Навигатор основных данных изделий - 35357)
-        /// для его отображения.
-        /// 3 Повторяем поиск окна (1.1, 1.1.1 и 1.2). Если окно не найдено выводим
-        /// сообщение об ошибке, завершаем редактирование, иначе к 4.
-        /// 4 Скрываем панель с элементами управления Eplan'а
-        /// (GetDlgItem, 0x3E6 - родительская панель, ShowWindow).
-        /// 5. Переносим на найденное окно свои элементы (SetParent) и подгоняем
-        /// из размеры и позицию.
-        /// 6. Устанавливаем свой хук для найденного окна (для изменения размеров
-        /// своих элементов, сохранения изменений при закрытии и отключения хука).
+        /// Показать окно в формой
         /// </summary>
-
         public void ShowDlg()
         {
             System.Diagnostics.Process oCurrent =
                 System.Diagnostics.Process.GetCurrentProcess();
 
-            const int wndWmCommand = 35357; // Идентификатор команды вызова окна "Основные данные изделия"
+            // Идентификатор команды вызова окна "Основные данные изделия"
+            const int wndWmCommand = 35357;
+            string windowName = "Основные данные изделия";
 
             if (deviceIsShown == true)
             {
@@ -213,193 +191,41 @@ namespace EasyEPlanner
                 return;
             }
 
-            string windowName = "Основные данные изделия";
-
-            IntPtr res = PI.FindWindowByCaption(
-                IntPtr.Zero, windowName);                  //1.1
-            if (res != IntPtr.Zero)
+            StaticHelper.GUIHelper.SearchWindowDescriptor(oCurrent, windowName,
+                wndWmCommand, ref dialogHandle, ref wndDevVisibilePtr);
+            if(wndDevVisibilePtr != IntPtr.Zero)
             {
-                var resList = PI.GetChildWindows(res);
-                if (resList.Count > 0)
-                {
-                    wndHandle = PI.GetParent(resList[0]);
-                    dialogHandle = resList[0];
-                    wndDevVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
-                }
+                StaticHelper.GUIHelper.ChangeWindowMainPanels(dialogHandle,
+                    ref panelPtr);
+
+                Controls.Clear();
+
+                // Переносим на найденное окно свои элементы (SetParent) и
+                // подгоняем их размеры и позицию.
+                PI.SetParent(devicesTreeViewAdv.Handle, dialogHandle);
+                PI.SetParent(toolStrip.Handle, dialogHandle);
+                ChangeUISize();
+
+                // Устанавливаем свой хук для найденного окна
+                // (для изменения размеров своих элементов, сохранения
+                // изменений при закрытии и отключения хука).
+                SetUpHook();
+
+                PI.SetWindowText(dialogHandle, caption);
+                PI.SetWindowText(wndHandle, caption);
+
+                deviceIsShown = true;
             }
-            else
-            {
-                StringBuilder stringBuffer = new StringBuilder(200);        //1.1.1
+        }
 
-                List<IntPtr> mainWindowChilds = PI.GetChildWindows(PI.GetDesktopWindow());
-                foreach (IntPtr mainWindowChild in mainWindowChilds)
-                {
-                    PI.GetWindowText(mainWindowChild, stringBuffer, stringBuffer.Capacity);
-                    if (stringBuffer.ToString().Contains(windowName) == false &&
-                        stringBuffer.ToString().Contains("EPLAN") == false)
-                    {
-                        List<IntPtr> windowChilds = PI.GetChildWindows(mainWindowChild);
-                        foreach (IntPtr windowChild in windowChilds)
-                        {
-                            PI.GetWindowText(windowChild, stringBuffer, stringBuffer.Capacity);
-                            if (stringBuffer.ToString().Contains(windowName) == true)
-                            {
-                                if (PI.IsWindowVisible(windowChild) == true)
-                                {
-                                    // Если нашел в потомке название, беру родительское окно и работаю с ним
-                                    var resList = PI.GetChildWindows(mainWindowChild);
-                                    if (resList.Count > 0)
-                                    {
-                                        dialogHandle = resList[0];
-                                        res = dialogHandle;
-                                        wndDevVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                List<IntPtr> resW = PI.GetChildWindows(oCurrent.MainWindowHandle);    //1.2
-                foreach (IntPtr panel in resW)
-                {
-                    PI.GetWindowText(panel, stringBuffer, stringBuffer.Capacity);
-                    if (stringBuffer.ToString().Contains(windowName) == true)
-                    {
-                        if (PI.IsWindowVisible(panel) == true)
-                        {
-                            var resList = PI.GetChildWindows(panel);
-                            if (resList.Count > 0)
-                            {
-                                dialogHandle = resList[0];
-                                res = dialogHandle;
-                                wndDevVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (res == IntPtr.Zero)
-                {
-                    PI.SendMessage(oCurrent.MainWindowHandle,
-                        (uint)PI.WM.COMMAND, wndWmCommand, 0);                //2
-
-                    res = PI.FindWindowByCaption(
-                        IntPtr.Zero, windowName);                              //3
-
-                    if (res != IntPtr.Zero)
-                    {
-                        var resList = PI.GetChildWindows(res);
-                        if (resList.Count > 0)
-                        {
-                            dialogHandle = resList[0];
-                            wndHandle = PI.GetParent(resList[0]);
-                            wndDevVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
-                        }
-                    }
-                    else
-                    {
-                        mainWindowChilds = PI.GetChildWindows(PI.GetDesktopWindow());
-                        foreach (IntPtr mainWindowChild in mainWindowChilds)
-                        {
-                            PI.GetWindowText(mainWindowChild, stringBuffer, stringBuffer.Capacity);
-                            if (stringBuffer.ToString().Contains(windowName) == false &&
-                                stringBuffer.ToString().Contains("EPLAN") == false)
-                            {
-                                List<IntPtr> windowChilds = PI.GetChildWindows(mainWindowChild);
-                                foreach (IntPtr windowChild in windowChilds)
-                                {
-                                    PI.GetWindowText(windowChild, stringBuffer, stringBuffer.Capacity);
-                                    if (stringBuffer.ToString().Contains(windowName) == true)
-                                    {
-                                        // Если нашел в потомке название, беру родительское окно и работаю с ним
-                                        var resList = PI.GetChildWindows(mainWindowChild);
-                                        if (resList.Count > 0)
-                                        {
-                                            dialogHandle = resList[0];
-                                            wndDevVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        resW = PI.GetChildWindows(oCurrent.MainWindowHandle);
-                        foreach (IntPtr panel in resW)
-                        {
-
-                            PI.GetWindowText(panel, stringBuffer, stringBuffer.Capacity);
-                            if (stringBuffer.ToString().Contains(windowName) == true)
-                            {
-                                var resList = PI.GetChildWindows(panel);
-                                if (resList.Count > 0)
-                                {
-                                    dialogHandle = resList[0];
-                                    wndDevVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (dialogHandle == IntPtr.Zero)
-                        {
-                            MessageBox.Show(
-                                "Не удалось найти окно!");
-                            return;
-                        }
-                    }
-                }
-            }
-
-            var panelList = PI.GetChildWindows(dialogHandle);               //4
-            if (panelList.Count > 0)
-            {
-                panelPtr = panelList[0];
-            }
-
-            if (panelPtr == IntPtr.Zero)
-            {
-                MessageBox.Show("Не удалось скрыть окно!");
-                return;
-            }
-
-            PI.ShowWindow(panelPtr, 0);
-            this.Controls.Clear();
-
-            devicesTreeViewAdv.Show();
-            PI.SetParent(devicesTreeViewAdv.Handle, dialogHandle);                //5 
-            PI.SetParent(toolStrip.Handle, dialogHandle);
-
-            IntPtr dialogPtr = PI.GetParent(devicesTreeViewAdv.Handle);
-
-            PI.RECT rctDialog;
-            PI.RECT rctPanel;
-            PI.GetWindowRect(dialogPtr, out rctDialog);
-            PI.GetWindowRect(panelPtr, out rctPanel);
-
-            int w = rctDialog.Right - rctDialog.Left;
-            int h = rctDialog.Bottom - rctDialog.Top;
-
-            toolStrip.Location =
-                new Point(0, 0);
-            devicesTreeViewAdv.Location =
-                new Point(0, 0 + toolStrip.Height);
-            toolStrip.Width = w;
-            devicesTreeViewAdv.Width = w;
-            devicesTreeViewAdv.Height = h - toolStrip.Height;
-            devicesTreeViewAdv.AutoSizeColumn(nodeColumn);
-
-            uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);        //6
+        /// <summary>
+        /// Устанавливаем хук для найденного окна.
+        /// </summary>
+        private void SetUpHook()
+        {
+            uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);
             dialogHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_CALLWNDPROC,
                 dialogCallbackDelegate, IntPtr.Zero, pid);
-
-            PI.SetWindowText(dialogHandle, caption);
-            PI.SetWindowText(wndHandle, caption);
-
-            deviceIsShown = true;
         }
         #endregion
 
@@ -407,55 +233,20 @@ namespace EasyEPlanner
         {
             InitializeComponent();
 
-            InitTreeViewComponents();
-            devicesTreeViewAdv.Columns.Add(nodeColumn);
-            devicesTreeViewAdv.NodeControls.Add(nodeTextBox);
-
-            // Событие рисования узлов дерева
-            nodeTextBox.DrawText += new EventHandler<DrawTextEventArgs>(
-                TreeViewAdv1_DrawNode);
+            const string columnName = "Устройства";
+            StaticHelper.GUIHelper.SetUpAdvTreeView(devicesTreeViewAdv,
+                columnName, devicesTreeViewAdv_DrawNode, nodeCheckBox,
+                treeItem_AfterCheck);
 
             dialogCallbackDelegate = new PI.HookProc(
                 DlgWndHookCallbackFunction);
         }
 
         ///<summary>
-        ///Инициализация графических компонентов формы
+        /// Чекбокс для дерева
         ///</summary>
-        private void InitTreeViewComponents()
-        {
-            devicesTreeViewAdv.FullRowSelect = true;
-            devicesTreeViewAdv.FullRowSelectActiveColor = Color
-                .FromArgb(192, 192, 255);
-            devicesTreeViewAdv.FullRowSelectInactiveColor = Color
-                .FromArgb(192, 255, 192);
-            devicesTreeViewAdv.GridLineStyle = GridLineStyle.Horizontal;
-            devicesTreeViewAdv.UseColumns = true;
-            devicesTreeViewAdv.ShowLines = true;
-            devicesTreeViewAdv.ShowPlusMinus = true;
-            devicesTreeViewAdv.RowHeight = 20;
-            devicesTreeViewAdv.SelectionMode = TreeSelectionMode.Single;
-
-            nodeColumn.Sortable = false;
-            nodeColumn.Header = "Устройства";
-            nodeColumn.Width = 300;
-
-            nodeCheckBox.DataPropertyName = "CheckState";
-            nodeCheckBox.VerticalAlign = VerticalAlignment.Center;
-            nodeCheckBox.ParentColumn = nodeColumn;
-            nodeCheckBox.EditEnabled = true;
-
-            nodeTextBox.DataPropertyName = "Text";
-            nodeTextBox.VerticalAlign = VerticalAlignment.Center;
-            nodeTextBox.ParentColumn = nodeColumn;
-        }
-
-        ///<summary>
-        ///Компоненты TreeView для инициализации
-        ///</summary>
-        TreeColumn nodeColumn = new TreeColumn();
         NodeCheckBox nodeCheckBox = new NodeCheckBox();
-        NodeTextBox nodeTextBox = new NodeTextBox();
+
         // Коррекция уровней дерева для нового элемента управления
         private static int correctionValue = 1;
 
@@ -514,12 +305,7 @@ namespace EasyEPlanner
                     if (checkedDev.Contains(devName))
                     {
                         subNode.CheckState = CheckState.Checked;
-
-                        // Выставляем состояние родителя
-                        RecursiveCheckParent(subNode.Parent);
-
-                        // Выставляем состояние узла
-                        RecursiveCheck(subNode);
+                        StaticHelper.GUIHelper.CheckCheckState(subNode);
                     }
                 }
                 SelectedDevices(subNode.Nodes.ToList(), checkedDev);
@@ -1403,91 +1189,7 @@ namespace EasyEPlanner
             // Нажатый узел дерева
             object nodeObject = e.Path.LastNode;
             Node checkedNode = nodeObject as Node;
-
-            // Выставляем состояние родителя
-            RecursiveCheckParent(checkedNode.Parent);
-
-            // Выставляем состояние узла
-            RecursiveCheck(checkedNode);
-        }
-
-        /// <summary>
-        /// Функция установки состояния
-        /// отображения узла
-        /// </summary>
-        /// <param name="node">Выбранный узел</param>
-        private void RecursiveCheck(Node node)
-        {
-            // Если есть потомки
-            if (node.Nodes.Count > 0)
-            {
-                List<Node> childNodes = node.Nodes.ToList();
-
-                foreach (Node child in childNodes)
-                {
-                    if (child.IsHidden != true)
-                    {
-                        // Такое же состояние child, как и у node
-                        child.CheckState = node.CheckState;
-                        RecursiveCheck(child);
-                    }
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-
-        /// <summary>
-        /// Установка состояния отображения
-        /// для родительского узла выбранного элемента
-        /// </summary>
-        /// <param name="parentNode">родительский узел</param>
-        private void RecursiveCheckParent(Node parentNode)
-        {
-            // 0 - корень (но не Root)
-            if (parentNode.Index > -1)
-            {
-                int countOfCheckedNodes = 0;
-                int countOfIndeterminateNodes = 0;
-                int countOfNodes = parentNode.Nodes.Count;
-                foreach (Node node in parentNode.Nodes)
-                {
-                    if (node.CheckState == CheckState.Checked)
-                    {
-                        countOfCheckedNodes++;
-                    }
-
-                    if (node.CheckState == CheckState.Indeterminate)
-                    {
-                        countOfIndeterminateNodes++;
-                    }
-
-                    // Т.к учитывает скрытые в nodes.count
-                    if (node.IsHidden == true)
-                    {
-                        countOfNodes--;
-                    }
-                }
-
-                if (parentNode.CheckState != CheckState.Indeterminate)
-                {
-                    parentNode.CheckState = CheckState.Indeterminate;
-                }
-
-                if (countOfCheckedNodes == countOfNodes)
-                {
-                    parentNode.CheckState = CheckState.Checked;
-                }
-
-                if (countOfCheckedNodes == 0 && countOfIndeterminateNodes == 0)
-                {
-                    parentNode.CheckState = CheckState.Unchecked;
-                }
-
-                RecursiveCheckParent(parentNode.Parent);
-            }
+            StaticHelper.GUIHelper.CheckCheckState(checkedNode);
         }
 
         /// <summary>
@@ -1529,7 +1231,7 @@ namespace EasyEPlanner
             FontStyle.Strikeout);
         private readonly Font itemFontType = new Font(fName, 8, FontStyle.Bold);
 
-        private void TreeViewAdv1_DrawNode(object sender, DrawTextEventArgs e)
+        private void devicesTreeViewAdv_DrawNode(object sender, DrawTextEventArgs e)
         {
             e.TextColor = Color.Black;
             if (e.Node.Level == 1 || e.Node.Level == 2)
@@ -1627,6 +1329,14 @@ namespace EasyEPlanner
         public TreeNodeAdv GetLastSelectedNode()
         {
             return devicesTreeViewAdv.SelectedNodes.Last();
+        }
+
+        private void devicesTreeViewAdv_SizeChanged(object sender, EventArgs e)
+        {
+            foreach(var column in devicesTreeViewAdv.Columns)
+            {
+                devicesTreeViewAdv.AutoSizeColumn(column);
+            }
         }
     }
 }
