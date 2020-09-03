@@ -37,7 +37,7 @@ namespace Editor
             get
             {
                 var items = new List<ITreeViewItem>();
-                foreach(var item in techObjectManager.Objects)
+                foreach(var item in techObjectManager.TechObjects)
                 {
                     items.Add(item);
                 }
@@ -78,7 +78,7 @@ namespace Editor
         {
             string objectsDescription = "";
             string objectsRestriction = "";
-            List<TechObject.TechObject> objects = techObjectManager.Objects;
+            List<TechObject.TechObject> objects = techObjectManager.TechObjects;
             foreach (var obj in objects)
             {
                 int globalNum = techObjectManager.GetTechObjectN(obj);

@@ -28,9 +28,9 @@ namespace TechObject
             cdbxTagView = combineTags;
 
             GenerateSystemNode(rootNode);
-            for (int num = 1; num <= techObjectManager.Objects.Count; num++)
+            for (int num = 1; num <= techObjectManager.TechObjects.Count; num++)
             {
-                TechObject item = techObjectManager.Objects[num - 1];
+                TechObject item = techObjectManager.TechObjects[num - 1];
 
                 var objNode = new TreeNode($"{item.NameBC}{item.TechNumber}");
 

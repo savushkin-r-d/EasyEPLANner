@@ -42,7 +42,7 @@ namespace TechObject
         /// <summary>
         /// Глобальный список объектов
         /// </summary>
-        List<TechObject> Objects { get; }
+        List<TechObject> TechObjects { get; }
 
         /// <summary>
         /// Получить объект по его глобальному номеру

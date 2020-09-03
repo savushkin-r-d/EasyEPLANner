@@ -89,7 +89,7 @@ namespace EasyEPlanner
 
             var res = "";
             var previouslyObjectName = "";
-            var objects = techObjectManager.Objects;
+            var objects = techObjectManager.TechObjects;
 
             for (int i = 0; i < objects.Count; i++)
             {
@@ -210,7 +210,7 @@ namespace EasyEPlanner
             string operationsParameters = "";
             string equipments = "";
             
-            var objects = techObjectManager.Objects;
+            var objects = techObjectManager.TechObjects;
             foreach (TechObject.TechObject obj in objects)
             {
                 BaseTechObject baseObj = obj.BaseTechObject;
@@ -270,7 +270,7 @@ namespace EasyEPlanner
         {
             var previouslyObjectName = "";
             var res = "";
-            var objects = techObjectManager.Objects;
+            var objects = techObjectManager.TechObjects;
 
             foreach (TechObject.TechObject obj in objects)
             {

@@ -23,7 +23,7 @@ namespace EasyEPlanner
         static public TreeView SaveTechObjectOperationsAndActionsAsTree()
         {
             var tree = new TreeView();
-            foreach (var techObj in techObjectManager.Objects)
+            foreach (var techObj in techObjectManager.TechObjects)
             {
                 string techName = techObjectManager.GetTechObjectN(techObj)
                     .ToString() + ". " + techObj.EditText[0] + " " + 
@@ -114,7 +114,7 @@ namespace EasyEPlanner
         static public TreeView SaveParamsAsTree()
         {
             var tree = new TreeView();
-            foreach (var techObj in techObjectManager.Objects)
+            foreach (var techObj in techObjectManager.TechObjects)
             {
                 string techName = techObjectManager.GetTechObjectN(techObj)
                     .ToString() + ". " + techObj.EditText[0] + " " + 
@@ -157,7 +157,7 @@ namespace EasyEPlanner
             var tree = new TreeView();
 
             bool objectTitleIsWrited = false;
-            foreach (var techObj in techObjectManager.Objects)
+            foreach (var techObj in techObjectManager.TechObjects)
             {
                 if (objectTitleIsWrited == false)
                 {

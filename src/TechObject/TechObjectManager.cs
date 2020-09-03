@@ -23,8 +23,8 @@ namespace TechObject
         {
             InitLua();
 
-            objects = new List<ITreeViewItem>();
-            techObjectsList = new List<TechObject>();
+            treeObjects = new List<ITreeViewItem>();
+            techObjects = new List<TechObject>();
             techObjectManagerChecker = new TechObjectChecker(this);
             techObjectXMLMaker = new TechObjectXMLMaker(this);
         }
@@ -89,9 +89,9 @@ namespace TechObject
          /// <returns></returns>
         public TechObject GetTObject(int i)
         {
-            if (techObjectsList != null && techObjectsList.Count >= i)
+            if (techObjects != null && techObjects.Count >= i)
             {
-                return techObjectsList[i - 1];
+                return techObjects[i - 1];
             }
             else
             {
@@ -107,7 +107,7 @@ namespace TechObject
         /// <returns>Номер заданной операции.</returns>
         public int GetTechObjectN(object techObject)
         {
-            return techObjectsList.IndexOf(techObject as TechObject) + 1;
+            return techObjects.IndexOf(techObject as TechObject) + 1;
         }
 
         /// <summary>
@@ -117,12 +117,12 @@ namespace TechObject
         /// <returns></returns>
         public int GetTechObjectN(string displayText)
         {
-            TechObject findedObject = Objects
+            TechObject findedObject = TechObjects
                 .Where(x => x.DisplayText[0] == displayText).FirstOrDefault();
 
             if(findedObject != null)
             {
-                return techObjectsList.IndexOf(findedObject) + 1;
+                return techObjects.IndexOf(findedObject) + 1;
             }
             else
             {
@@ -136,7 +136,7 @@ namespace TechObject
         /// </summary>
         public void ChangeModeNum(int objNum, int oldNum, int newNum)
         {
-            foreach (TechObject to in Objects)
+            foreach (TechObject to in TechObjects)
             {
                 to.ChangeModeNum(objNum, oldNum, newNum);
             }
@@ -150,9 +150,9 @@ namespace TechObject
         public string SaveAsLuaTable(string prefix)
         {
             string res = "";
-            foreach (TechObject obj in Objects)
+            foreach (TechObject obj in TechObjects)
             {
-                int num = Objects.IndexOf(obj) + 1;
+                int num = TechObjects.IndexOf(obj) + 1;
                 res += obj.SaveAsLuaTable(prefix + "\t\t", num);
             }
             res = res.Replace("\t", "    ");
@@ -167,9 +167,9 @@ namespace TechObject
         public string SaveRestrictionAsLua(string prefix)
         {
             var res = "";
-            foreach (TechObject obj in Objects)
+            foreach (TechObject obj in TechObjects)
             {
-                int num = Objects.IndexOf(obj) + 1;
+                int num = TechObjects.IndexOf(obj) + 1;
                 res += obj.SaveRestrictionAsLua(prefix + "\t", num);
             }
             res = res.Replace("\t", "    ");
@@ -185,8 +185,8 @@ namespace TechObject
         public void LoadDescription(string LuaStr, string projectName)
         {
             ProjectName = projectName;
-            objects.Clear();
-            techObjectsList.Clear();
+            treeObjects.Clear();
+            techObjects.Clear();
 
             //Сброс описания объектов.
             lua.DoString("init_tech_objects_modes = nil");
@@ -270,7 +270,7 @@ namespace TechObject
                 AddUnidentifiedObjectWhenLoadFromLua(obj);
             }
 
-            techObjectsList.Add(obj);
+            techObjects.Add(obj);
         }
 
         /// <summary>
@@ -308,12 +308,12 @@ namespace TechObject
         /// <returns></returns>
         private void AddProcessCellFromLua(TechObject obj)
         {
-            var masterItem = objects.Where(x => x is ProcessCell)
+            var masterItem = treeObjects.Where(x => x is ProcessCell)
                         .FirstOrDefault() as ProcessCell;
             if (masterItem == null)
             {
                 masterItem = new ProcessCell();
-                objects.Add(masterItem);
+                treeObjects.Add(masterItem);
             }
 
             masterItem.AddObjectWhenLoadFromLua(obj);
@@ -327,13 +327,13 @@ namespace TechObject
         /// <returns></returns>
         private void AddS88ObjectFromLua(TechObject obj, string name)
         {
-            var s88Item = objects
+            var s88Item = treeObjects
                 .Where(x => x is S88Object && x.DisplayText[0].Contains(name))
                 .FirstOrDefault() as S88Object;
             if (s88Item == null)
             {
                 s88Item = new S88Object(name);
-                objects.Add(s88Item);
+                treeObjects.Add(s88Item);
             }
 
             s88Item.AddObjectWhenLoadFromLua(obj);
@@ -345,13 +345,13 @@ namespace TechObject
         /// <param name="obj">Объект</param>
         private void AddUnidentifiedObjectWhenLoadFromLua(TechObject obj)
         {
-            var unidentifiedObject = objects
+            var unidentifiedObject = treeObjects
                 .Where(x => x is Unidentified)
                 .FirstOrDefault() as Unidentified;
             if (unidentifiedObject == null)
             {
                 unidentifiedObject = new Unidentified();
-                objects.Add(unidentifiedObject);
+                treeObjects.Add(unidentifiedObject);
             }
 
             unidentifiedObject.AddUnidentifiedObject(obj);
@@ -392,7 +392,7 @@ namespace TechObject
         /// <param name="array">Индексная таблица</param>
         public void Synch(int[] array)
         {
-            foreach (TechObject obj in objects)
+            foreach (TechObject obj in treeObjects)
             {
                 obj.Synch(array);
             }
@@ -404,9 +404,9 @@ namespace TechObject
             get
             {
                 string res = "\"" + ProjectName + "\"";
-                if (objects.Count > 0)
+                if (treeObjects.Count > 0)
                 {
-                    res += " (" + objects.Count + ")";
+                    res += " (" + treeObjects.Count + ")";
                 }
 
                 return new string[] { res, "" };
@@ -417,7 +417,7 @@ namespace TechObject
         {
             get
             {
-                return objects.ToArray();
+                return treeObjects.ToArray();
             }
         }
 
@@ -508,9 +508,9 @@ namespace TechObject
 
             if (innerItem != null)
             {
-                if (!objects.Contains(treeItem))
+                if (!treeObjects.Contains(treeItem))
                 {
-                    objects.Add(treeItem);
+                    treeObjects.Add(treeItem);
                 }
 
                 return treeItem;
@@ -526,7 +526,7 @@ namespace TechObject
         /// <returns></returns>
         private ITreeViewItem GetTreeItem(string selectedType)
         {
-            ITreeViewItem treeItem = objects
+            ITreeViewItem treeItem = treeObjects
                 .Where(x => x.DisplayText[0].Contains(selectedType))
                 .FirstOrDefault();
             if (treeItem == null)
@@ -549,9 +549,9 @@ namespace TechObject
         public override bool Delete(object child)
         {
             var treeViewItem = child as ITreeViewItem;
-            if(treeViewItem != null && objects.Contains(treeViewItem))
+            if(treeViewItem != null && treeObjects.Contains(treeViewItem))
             {
-                objects.Remove(child as ITreeViewItem);
+                treeObjects.Remove(child as ITreeViewItem);
                 return true;
             }
             else
@@ -568,7 +568,7 @@ namespace TechObject
         {
             get
             {
-                var masterObject = objects.Where(x => x is ProcessCell)
+                var masterObject = treeObjects.Where(x => x is ProcessCell)
                     .FirstOrDefault() as ProcessCell;
                 if (masterObject != null)
                 {
@@ -589,7 +589,7 @@ namespace TechObject
             get
             {
                 int unitS88Level = (int)BaseTechObjectManager.ObjectType.Unit;
-                var unitsCount = Objects
+                var unitsCount = TechObjects
                     .Where(x => x.BaseTechObject != null)
                     .Where(x => x.BaseTechObject.S88Level == unitS88Level)
                     .Count();
@@ -606,7 +606,7 @@ namespace TechObject
             {
                 int aggregateS88Level = (int)BaseTechObjectManager.ObjectType
                     .Aggregate;
-                var aggregatesCount = Objects
+                var aggregatesCount = TechObjects
                     .Where(x => x.BaseTechObject != null)
                     .Where(x => x.BaseTechObject.S88Level == aggregateS88Level)
                     .Count();
@@ -622,11 +622,11 @@ namespace TechObject
         /// <summary>
         /// Список всех технологических объектов в дереве.
         /// </summary>
-        public List<TechObject> Objects
+        public List<TechObject> TechObjects
         {
             get
             {
-                return techObjectsList;
+                return techObjects;
             }
         }
 
@@ -638,12 +638,12 @@ namespace TechObject
         /// <summary>
         /// Список объектов дерева.
         /// </summary>
-        private List<ITreeViewItem> objects;
+        private List<ITreeViewItem> treeObjects;
 
         /// <summary>
         /// Список всех технологических объектов в дереве.
         /// </summary>
-        private List<TechObject> techObjectsList;
+        private List<TechObject> techObjects;
 
         /// <summary>
         /// Экземпляр LUA.

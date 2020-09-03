@@ -11,7 +11,7 @@ namespace TechObject
         public Unidentified() 
         {
             localObjects = new List<TechObject>();
-            globalObjectsList = TechObjectManager.GetInstance().Objects;
+            globalObjectsList = TechObjectManager.GetInstance().TechObjects;
         }
 
         /// <summary>

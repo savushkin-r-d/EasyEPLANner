@@ -28,7 +28,7 @@ namespace TechObject
             errors += CheckTypeField();
             errors += CheckObjectMonitorField();
 
-            foreach (var obj in techObjectManager.Objects)
+            foreach (var obj in techObjectManager.TechObjects)
             {
                 errors += obj.Check();
             }
@@ -43,9 +43,9 @@ namespace TechObject
         private string CheckTypeField()
         {
             var errorsList = new List<string>();
-            foreach (var obj in techObjectManager.Objects)
+            foreach (var obj in techObjectManager.TechObjects)
             {
-                var matches = techObjectManager.Objects
+                var matches = techObjectManager.TechObjects
                     .Where(x => x.TechType == obj.TechType &&
                     x.TechNumber == obj.TechNumber)
                     .Select(x => techObjectManager.GetTechObjectN(x))
@@ -68,9 +68,9 @@ namespace TechObject
         private string CheckObjectMonitorField()
         {
             var errorsList = new List<string>();
-            foreach (var obj in techObjectManager.Objects)
+            foreach (var obj in techObjectManager.TechObjects)
             {
-                var matches = techObjectManager.Objects
+                var matches = techObjectManager.TechObjects
                     .Where(x => x.NameBC == obj.NameBC &&
                     x.TechNumber == obj.TechNumber)
                     .Select(x => techObjectManager.GetTechObjectN(x))

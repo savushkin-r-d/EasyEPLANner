@@ -790,13 +790,12 @@ namespace TechObject
         public string Check()
         {
             var errors = string.Empty;
-            var objName = this.DisplayText[0];
-            bool setBaseTechObj = this.DisplayText[1].Length > 0 ? true : false;
-
+            var objName = DisplayText[0];
+            bool setBaseTechObj = BaseTechObject != null ? true : false;
 
             if (setBaseTechObj == false)
             {
-                string msg = string.Format("Не выбран базовый объект - " +
+                string msg = string.Format("Неопознанный объект - " +
                     "\"{0}\"\n", objName);
                 errors += msg;
             }
