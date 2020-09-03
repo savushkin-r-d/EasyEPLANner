@@ -467,6 +467,7 @@ namespace TechObject
                 
                 equipment.AddItems(baseTechObject.Equipment);
                 equipment.Check();
+                SetItems();
             }
 
             // Установили новое значение, произошла смена базового объекта
