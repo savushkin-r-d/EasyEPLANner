@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.IO;
-using TechObject;
+using NewTechObject;
 
 namespace EasyEPlanner
 {
@@ -200,7 +200,7 @@ namespace EasyEPlanner
         /// </summary>
         const int percents = 100;
 
-        static TechObjectManager techObjectManager = TechObjectManager
+        static ITechObjectManager techObjectManager = TechObjectManager
             .GetInstance();
         static Device.DeviceManager deviceManager = Device.DeviceManager
             .GetInstance();

@@ -346,6 +346,8 @@
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Step.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\TechObject.cs" />
     <Compile Include="TechObjectNew\TechObjectManager.cs" />
+    <Compile Include="TechObjectNew\TechObjectChecker.cs" />
+    <Compile Include="TechObjectNew\TechObjectXMLMaker.cs" />
     <Compile Include="TechObject\Action.cs" />
     <Compile Include="TechObject\Action_AI_AO.cs" />
     <Compile Include="TechObject\Action_DI_DO.cs" />

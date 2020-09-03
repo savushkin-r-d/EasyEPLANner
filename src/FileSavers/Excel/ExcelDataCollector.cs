@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using TechObject;
+using NewTechObject;
 using Device;
 using IO;
 using System.Globalization;
@@ -211,7 +211,7 @@ namespace EasyEPlanner
         /// <param name="modesNodes">Узел с операциями объекта</param>
         /// <param name="techObject">Объект</param>
         private static void WriteObjectsOperationsInNode(
-            ref TreeNode modesNodes, TechObject.TechObject techObject)
+            ref TreeNode modesNodes, NewTechObject.TechObject techObject)
         {
             foreach (var mode in techObject.ModesManager.Modes)
             {
@@ -309,7 +309,7 @@ namespace EasyEPlanner
         /// <param name="parameters">Узел дерева параметров</param>
         /// <param name="techObject">Технологический объект</param>
         private static void WriteObjectParametersInNode(ref TreeNode parameters,
-            TechObject.TechObject techObject)
+            NewTechObject.TechObject techObject)
         {
             bool parameterTitleisWrited = false;
             for (int i = 0; i < techObject.GetParams().Items.Length; i++)
@@ -700,7 +700,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Менеджер технологических объектов.
         /// </summary>
-        static TechObjectManager techObjectManager = TechObjectManager
+        static ITechObjectManager techObjectManager = TechObjectManager
             .GetInstance();
 
         /// <summary>

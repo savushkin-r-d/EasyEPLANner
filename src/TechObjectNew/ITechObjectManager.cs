@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace NewTechObject
 {
     /// <summary>
     /// Интерфейс класса TechObjectManager
     /// </summary>
-    interface ITechObjectManager
+    public interface ITechObjectManager
     {
         /// <summary>
         /// Загрузка описания проекта из строки Lua
@@ -62,5 +63,37 @@ namespace NewTechObject
         /// </summary>
         /// <param name="importingObject">Объект для импорта</param>
         void ImportObject(TechObject importingObject);
+
+        /// <summary>
+        /// Получить описание объектов для базы каналов
+        /// </summary>
+        /// <param name="rootNode">Дерево</param>
+        /// <param name="cdbxTagView">Группировать тэги в один подтип</param>
+        /// <param name="cdbxNewNames">Использовать имена объектов вместо OBJECT
+        /// </param>
+        void GetObjectForXML(TreeNode rootNode, bool cdbxTagView,
+            bool cdbxNewNames);
+
+        /// <summary>
+        /// Количество аппаратов в проекте
+        /// </summary>
+        int UnitsCount { get; }
+
+        /// <summary>
+        /// Количество агрегатов в проекте
+        /// </summary>
+        int EquipmentModulesCount { get; }
+
+        /// <summary>
+        /// Проверка объектов
+        /// </summary>
+        /// <returns></returns>
+        string Check();
+
+        /// <summary>
+        /// Синхронизация устройств в объектах;
+        /// </summary>
+        /// <param name="indexArray">Индексная таблица</param>
+        void Synch(int[] indexArray);
     }
 }

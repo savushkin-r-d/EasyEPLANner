@@ -1,4 +1,5 @@
 ﻿using Eplan.EplApi.Base;
+using NewTechObject;
 
 namespace EasyEPlanner
 {
@@ -9,9 +10,8 @@ namespace EasyEPlanner
     {
         public DeviceSynchronizer()
         {
-            this.deviceReader = new DeviceReader();
-            this.techObjectManager = TechObject.TechObjectManager
-                .GetInstance();
+            deviceReader = new DeviceReader();
+            techObjectManager = TechObjectManager.GetInstance();
         }
 
         /// Делается слепок устройств, которые есть сейчас, затем заново
@@ -107,6 +107,6 @@ namespace EasyEPlanner
 
         private Device.IODevice[] prevDevices;
         private DeviceReader deviceReader;
-        private TechObject.TechObjectManager techObjectManager;
+        private ITechObjectManager techObjectManager;
     }
 }

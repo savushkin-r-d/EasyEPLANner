@@ -353,20 +353,20 @@ namespace EasyEPlanner
             }
         }
 
+        #region Генерация базы каналов
         /// <summary>
         /// Экспорт из проекта базы каналов.
         /// </summary>
         public void SaveAsCDBX(string projectName, bool combineTag = false,
             bool useNewNames = false, bool rewrite = false)
         {
-            techObjectManager.SetCDBXTagView(combineTag);
-            techObjectManager.SetCDBXNewNames(useNewNames);
-
             System.Threading.Thread t = new System.Threading.Thread(
                     new System.Threading.ParameterizedThreadStart(
                         SaveAsXMLThread));
 
-            t.Start(new DataForSaveAsXML(projectName, rewrite));
+            var dataForSave = new DataForSaveAsXML(projectName, rewrite,
+                combineTag, useNewNames);
+            t.Start(dataForSave);
 
         }
 
@@ -386,7 +386,8 @@ namespace EasyEPlanner
             try
             {
                 Logs.SetProgress(1);
-                XMLReporter.SaveAsXML(data.pathToFile, data.rewrite);
+                XMLReporter.SaveAsXML(data.pathToFile, data.rewrite,
+                    data.cdbxTagView, data.cdbxNewNames);
                 Logs.SetProgress(50);
                 Logs.AddMessage("Done.");
             }
@@ -409,15 +410,21 @@ namespace EasyEPlanner
         /// </summary>
         private class DataForSaveAsXML
         {
-            public DataForSaveAsXML(string path, bool rewrite)
+            public DataForSaveAsXML(string pathToFile, bool rewrite,
+                bool cdbxTagView, bool cdbxNewNames)
             {
-                this.pathToFile = path;
+                this.pathToFile = pathToFile;
                 this.rewrite = rewrite;
+                this.cdbxNewNames = cdbxNewNames;
+                this.cdbxTagView = cdbxTagView;
             }
 
             public string pathToFile;
             public bool rewrite;
+            public bool cdbxTagView;
+            public bool cdbxNewNames;
         }
+#endregion
 
         /// <summary>
         /// Получение экземпляра класса.

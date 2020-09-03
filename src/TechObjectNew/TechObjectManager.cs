@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using LuaInterface;
+using System.Windows.Forms;
 
 namespace NewTechObject
 {
@@ -24,6 +25,8 @@ namespace NewTechObject
 
             objects = new List<ITreeViewItem>();
             techObjectsList = new List<TechObject>();
+            techObjectManagerChecker = new TechObjectChecker(this);
+            techObjectXMLMaker = new TechObjectXMLMaker(this);
         }
 
         #region Инициализация LUA-скриптов
@@ -173,7 +176,7 @@ namespace NewTechObject
             return res;
         }
 
-        #region загрузка описания из LUA
+        #region Загрузка описания из LUA
         /// <summary>
         /// Загрузка описания проекта из строки
         /// </summary>
@@ -226,7 +229,7 @@ namespace NewTechObject
         }
         #endregion
 
-        #region добавление объекта из LUA
+        #region Добавление объекта из LUA
         /// <summary>
         /// Добавление технологического объекта. Вызывается из Lua.
         /// </summary>
@@ -360,7 +363,42 @@ namespace NewTechObject
             AddObject(importingObject);
         }
 
-        #region реализация ITreeViewItem
+        /// <summary>
+        /// Проверка технологического объекта на правильность ввода и др.
+        /// </summary>
+        /// <returns>Строка с ошибками</returns>
+        public string Check()
+        {
+            return techObjectManagerChecker.Check();
+        }
+
+        /// <summary>
+        /// Формирование узлов для операций, шагов и параметров объектов.
+        /// </summary>
+        /// <param name="rootNode">корневой узел</param>
+        /// <param name="combineTags">Сгруппировать тэги в один подтип</param>
+        /// <param name="useNewNames">Использовать имена объектов вместо
+        /// OBJECT</param>
+        public void GetObjectForXML(TreeNode rootNode, bool combineTags,
+            bool useNewNames)
+        {
+            techObjectXMLMaker.GetObjectForXML(rootNode, combineTags,
+                useNewNames);
+        }
+
+        /// <summary>
+        /// Синхронизация устройств в объектах
+        /// </summary>
+        /// <param name="array">Индексная таблица</param>
+        public void Synch(int[] array)
+        {
+            foreach (TechObject obj in objects)
+            {
+                obj.Synch(array);
+            }
+        }
+
+        #region Реализация ITreeViewItem
         public override string[] DisplayText
         {
             get
@@ -544,6 +582,39 @@ namespace NewTechObject
         }
 
         /// <summary>
+        /// Получить количество аппаратов в проекте
+        /// </summary>
+        public int UnitsCount
+        {
+            get
+            {
+                int unitS88Level = (int)BaseTechObjectManager.ObjectType.Unit;
+                var unitsCount = Objects
+                    .Where(x => x.BaseTechObject != null)
+                    .Where(x => x.BaseTechObject.S88Level == unitS88Level)
+                    .Count();
+                return unitsCount;
+            }
+        }
+
+        /// <summary>
+        /// Получить количество агрегатов в проекте
+        /// </summary>
+        public int EquipmentModulesCount
+        {
+            get
+            {
+                int aggregateS88Level = (int)BaseTechObjectManager.ObjectType
+                    .Aggregate;
+                var aggregatesCount = Objects
+                    .Where(x => x.BaseTechObject != null)
+                    .Where(x => x.BaseTechObject.S88Level == aggregateS88Level)
+                    .Count();
+                return aggregatesCount;
+            }
+        }
+
+        /// <summary>
         /// Имя проекта.
         /// </summary>
         private string ProjectName { get;set; }
@@ -578,5 +649,15 @@ namespace NewTechObject
         /// Экземпляр LUA.
         /// </summary>
         private Lua lua;
+
+        /// <summary>
+        /// Класс для проверки технологических объектов.
+        /// </summary>
+        private TechObjectChecker techObjectManagerChecker;
+
+        /// <summary>
+        /// Класс, генерирующий информацию для базы каналов по объектам
+        /// </summary>
+        private TechObjectXMLMaker techObjectXMLMaker;
     }
 }
