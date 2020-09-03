@@ -60,125 +60,7 @@ namespace EasyEPlanner
             }
         }
 
-        /// <summary>
-        /// Считывание описания.
-        /// </summary>
-        private int LoadDescriptionFromFile(out string LuaStr,
-            out string errStr, string projectName, string fileName)
-        {
-            LuaStr = "";
-            errStr = "";
-
-            StreamReader sr = null;
-            string path = GetPtusaProjectsPath(projectName) + projectName + 
-                fileName;
-
-            try
-            {
-                if (!File.Exists(path))
-                {
-                    errStr = "Файл описания проекта \"" + path + 
-                        "\" отсутствует! Создано пустое описание.";
-                    return 1;
-                }
-            }
-            catch (DriveNotFoundException)
-            {
-                errStr = "Укажите правильные настройки каталога!";
-                return 1;
-            }
-
-            sr = new StreamReader(path, System.Text.Encoding.GetEncoding(1251));
-            LuaStr = sr.ReadToEnd();
-            sr.Close();
-
-            return 0;
-        }
-
-        /// <summary>
-        /// Путь к файлам .lua (к проекту)
-        /// </summary>
-        /// <returns></returns>
-        public string GetPtusaProjectsPath(string projectName)
-        {
-            try
-            {
-                // Поиск пути к каталогу с надстройкой
-                string[] originalAssemblyPath = OriginalAssemblyPath
-                    .Split('\\');
-                string configFileName = StaticHelper.CommonConst.ConfigFileName;
-
-                int sourceEnd = originalAssemblyPath.Length;
-                string path = @"";
-                for (int source = 0; source < sourceEnd; source++)
-                {
-                    path += originalAssemblyPath[source].ToString() + "\\";
-                }
-                path += StaticHelper.CommonConst.ConfigFileName;
-
-                // Поиск файла .ini
-                if (!File.Exists(path))
-                {
-                    // Если не нашли - создаем новый, 
-                    // записываем дефолтные данные
-                    new PInvoke.IniFile(path);
-                    StreamWriter sr = new StreamWriter(path, true);
-                    sr.WriteLine("[path]\nfolder_path=");
-                    sr.Close();
-                    sr.Flush();
-                }
-                var iniFile = new PInvoke.IniFile(path);
-
-                // Считывание и возврат пути каталога проектов
-                string projectsFolders =
-                    iniFile.ReadString("path", "folder_path", "");
-                string[] projectsFolderArray = projectsFolders.Split(';');
-                string projectsFolder = "";
-                bool firstPathIsSaved = false;
-                string firstPath = "";
-                foreach (string pathFromArray in projectsFolderArray)
-                {
-                    if (pathFromArray != "")
-                    {
-                        if (firstPathIsSaved == false)
-                        {
-                            firstPath = pathFromArray;
-                            firstPathIsSaved = true;
-                        }
-                        projectsFolder = pathFromArray;
-                        if (projectsFolder.Last() != '\\')
-                        {
-                            projectsFolder += '\\';
-                        }
-                        string projectsPath = projectsFolder + projectName;
-                        if (Directory.Exists(projectsPath))
-                        {
-                            return projectsFolder;
-                        }
-                    }
-                }
-
-                if (firstPathIsSaved == false && firstPath == "")
-                {
-                    MessageBox.Show("Путь к каталогу с проектами не найден.\n" +
-                        "Пожалуйста, проверьте конфигурацию!", "Внимание", 
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                else
-                {
-                    return firstPath + '\\';
-                }
-            }
-            catch
-            {
-                MessageBox.Show("Файл конфигурации не найден - будет создан " +
-                    "новый со стандартным описанием. Пожалуйста, измените " +
-                    "путь к каталогу с проектами, где хранятся Lua файлы!",
-                    "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-            return "";
-        }
-
+        #region Загрузка описания проекта
         /// <summary>
         /// Считывание описания.
         /// </summary>
@@ -254,6 +136,126 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Считывание описания.
+        /// </summary>
+        private int LoadDescriptionFromFile(out string LuaStr,
+            out string errStr, string projectName, string fileName)
+        {
+            LuaStr = "";
+            errStr = "";
+
+            StreamReader sr = null;
+            string path = GetPtusaProjectsPath(projectName) + projectName +
+                fileName;
+
+            try
+            {
+                if (!File.Exists(path))
+                {
+                    errStr = "Файл описания проекта \"" + path +
+                        "\" отсутствует! Создано пустое описание.";
+                    return 1;
+                }
+            }
+            catch (DriveNotFoundException)
+            {
+                errStr = "Укажите правильные настройки каталога!";
+                return 1;
+            }
+
+            sr = new StreamReader(path, System.Text.Encoding.GetEncoding(1251));
+            LuaStr = sr.ReadToEnd();
+            sr.Close();
+
+            return 0;
+        }
+        #endregion
+
+        /// <summary>
+        /// Путь к файлам .lua (к проекту)
+        /// </summary>
+        /// <returns></returns>
+        public string GetPtusaProjectsPath(string projectName)
+        {
+            try
+            {
+                // Поиск пути к каталогу с надстройкой
+                string[] originalAssemblyPath = OriginalAssemblyPath
+                    .Split('\\');
+                string configFileName = StaticHelper.CommonConst.ConfigFileName;
+
+                int sourceEnd = originalAssemblyPath.Length;
+                string path = @"";
+                for (int source = 0; source < sourceEnd; source++)
+                {
+                    path += originalAssemblyPath[source].ToString() + "\\";
+                }
+                path += StaticHelper.CommonConst.ConfigFileName;
+
+                // Поиск файла .ini
+                if (!File.Exists(path))
+                {
+                    // Если не нашли - создаем новый, 
+                    // записываем дефолтные данные
+                    new PInvoke.IniFile(path);
+                    StreamWriter sr = new StreamWriter(path, true);
+                    sr.WriteLine("[path]\nfolder_path=");
+                    sr.Close();
+                    sr.Flush();
+                }
+                var iniFile = new PInvoke.IniFile(path);
+
+                // Считывание и возврат пути каталога проектов
+                string projectsFolders =
+                    iniFile.ReadString("path", "folder_path", "");
+                string[] projectsFolderArray = projectsFolders.Split(';');
+                string projectsFolder = "";
+                bool firstPathIsSaved = false;
+                string firstPath = "";
+                foreach (string pathFromArray in projectsFolderArray)
+                {
+                    if (pathFromArray != "")
+                    {
+                        if (firstPathIsSaved == false)
+                        {
+                            firstPath = pathFromArray;
+                            firstPathIsSaved = true;
+                        }
+                        projectsFolder = pathFromArray;
+                        if (projectsFolder.Last() != '\\')
+                        {
+                            projectsFolder += '\\';
+                        }
+                        string projectsPath = projectsFolder + projectName;
+                        if (Directory.Exists(projectsPath))
+                        {
+                            return projectsFolder;
+                        }
+                    }
+                }
+
+                if (firstPathIsSaved == false && firstPath == "")
+                {
+                    MessageBox.Show("Путь к каталогу с проектами не найден.\n" +
+                        "Пожалуйста, проверьте конфигурацию!", "Внимание",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    return firstPath + '\\';
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Файл конфигурации не найден - будет создан " +
+                    "новый со стандартным описанием. Пожалуйста, измените " +
+                    "путь к каталогу с проектами, где хранятся Lua файлы!",
+                    "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            return "";
+        }
+
+        /// <summary>
         /// Инициализация.
         /// </summary>
         public void Init()
@@ -271,6 +273,7 @@ namespace EasyEPlanner
             BaseTechObjectManager.GetInstance();
         }
 
+        #region Генерация Excel
         /// <summary>
         /// Сохранение описания в виде таблицы Excel.
         /// </summary>
@@ -317,6 +320,7 @@ namespace EasyEPlanner
                 }
             }
         }
+        #endregion
 
         /// <summary>
         /// Обновление подписей к клеммам модулей IO
@@ -461,6 +465,7 @@ namespace EasyEPlanner
                 .OpenEditor(newTechObjectManager as NewEditor.ITreeViewItem);
         }
 
+        #region Подсветка объектов на схеме
         /// <summary>
         /// Участвующие в операции устройства, подсвеченные на карте Eplan.
         /// </summary>
@@ -721,6 +726,7 @@ namespace EasyEPlanner
                 .ToStringIdentifier());
             highlightedObjects.Add(rc);
         }
+        #endregion
 
         #region OSTIS
         /// <summary>
