@@ -1,5 +1,5 @@
 ﻿using Eplan.EplApi.Base;
-using NewTechObject;
+using TechObject;
 
 namespace EasyEPlanner
 {

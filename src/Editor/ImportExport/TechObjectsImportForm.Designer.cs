@@ -31,12 +31,12 @@
             this.label1 = new System.Windows.Forms.Label();
             this.filePathTextBox = new System.Windows.Forms.TextBox();
             this.overviewButton = new System.Windows.Forms.Button();
-            this.checkedListBox = new System.Windows.Forms.CheckedListBox();
             this.importButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.selectedAllObjects = new System.Windows.Forms.LinkLabel();
             this.clearSelectedObjects = new System.Windows.Forms.LinkLabel();
+            this.importingObjectsTree = new Aga.Controls.Tree.TreeViewAdv();
             this.SuspendLayout();
             // 
             // label1
@@ -68,15 +68,6 @@
             this.overviewButton.Text = "Обзор";
             this.overviewButton.UseVisualStyleBackColor = true;
             this.overviewButton.Click += new System.EventHandler(this.overviewButton_Click);
-            // 
-            // checkedListBox
-            // 
-            this.checkedListBox.CheckOnClick = true;
-            this.checkedListBox.FormattingEnabled = true;
-            this.checkedListBox.Location = new System.Drawing.Point(12, 66);
-            this.checkedListBox.Name = "checkedListBox";
-            this.checkedListBox.Size = new System.Drawing.Size(360, 334);
-            this.checkedListBox.TabIndex = 4;
             // 
             // importButton
             // 
@@ -139,6 +130,30 @@
             this.clearSelectedObjects.VisitedLinkColor = System.Drawing.Color.Black;
             this.clearSelectedObjects.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.clearSelectedObjects_LinkClicked);
             // 
+            // importingObjectsTree
+            // 
+            this.importingObjectsTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.importingObjectsTree.BackColor = System.Drawing.SystemColors.Window;
+            this.importingObjectsTree.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.importingObjectsTree.DefaultToolTipProvider = null;
+            this.importingObjectsTree.DragDropMarkColor = System.Drawing.Color.Black;
+            this.importingObjectsTree.FullRowSelect = true;
+            this.importingObjectsTree.FullRowSelectActiveColor = System.Drawing.Color.Empty;
+            this.importingObjectsTree.FullRowSelectInactiveColor = System.Drawing.Color.Empty;
+            this.importingObjectsTree.GridLineStyle = Aga.Controls.Tree.GridLineStyle.Horizontal;
+            this.importingObjectsTree.LineColor = System.Drawing.SystemColors.ControlDark;
+            this.importingObjectsTree.Location = new System.Drawing.Point(12, 66);
+            this.importingObjectsTree.Model = null;
+            this.importingObjectsTree.Name = "importingObjectsTree";
+            this.importingObjectsTree.NodeFilter = null;
+            this.importingObjectsTree.SelectedNode = null;
+            this.importingObjectsTree.ShowNodeToolTips = true;
+            this.importingObjectsTree.Size = new System.Drawing.Size(360, 334);
+            this.importingObjectsTree.TabIndex = 100;
+            this.importingObjectsTree.Text = "exportingDevices";
+            this.importingObjectsTree.UseColumns = true;
+            // 
             // TechObjectsImportForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -148,10 +163,10 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.importButton);
             this.Controls.Add(this.cancelButton);
-            this.Controls.Add(this.checkedListBox);
             this.Controls.Add(this.overviewButton);
             this.Controls.Add(this.filePathTextBox);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.importingObjectsTree);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(400, 480);
@@ -172,11 +187,11 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox filePathTextBox;
         private System.Windows.Forms.Button overviewButton;
-        private System.Windows.Forms.CheckedListBox checkedListBox;
         private System.Windows.Forms.Button importButton;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.LinkLabel selectedAllObjects;
         private System.Windows.Forms.LinkLabel clearSelectedObjects;
+        private Aga.Controls.Tree.TreeViewAdv importingObjectsTree;
     }
 }

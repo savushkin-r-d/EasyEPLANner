@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.checkedListBox = new System.Windows.Forms.CheckedListBox();
             this.exportButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.selectAllObjectsLink = new System.Windows.Forms.LinkLabel();
             this.clearSelectedObjectsLink = new System.Windows.Forms.LinkLabel();
+            this.exportingObjectsTree = new Aga.Controls.Tree.TreeViewAdv();
             this.SuspendLayout();
             // 
             // label1
@@ -45,15 +45,6 @@
             this.label1.Size = new System.Drawing.Size(178, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Выберите объекты для экспорта:";
-            // 
-            // checkedListBox
-            // 
-            this.checkedListBox.CheckOnClick = true;
-            this.checkedListBox.FormattingEnabled = true;
-            this.checkedListBox.Location = new System.Drawing.Point(12, 40);
-            this.checkedListBox.Name = "checkedListBox";
-            this.checkedListBox.Size = new System.Drawing.Size(360, 349);
-            this.checkedListBox.TabIndex = 3;
             // 
             // exportButton
             // 
@@ -116,16 +107,40 @@
             this.clearSelectedObjectsLink.VisitedLinkColor = System.Drawing.Color.Black;
             this.clearSelectedObjectsLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.clearSelectedObjects_LinkClicked);
             // 
+            // exportingObjectsTree
+            // 
+            this.exportingObjectsTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.exportingObjectsTree.BackColor = System.Drawing.SystemColors.Window;
+            this.exportingObjectsTree.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.exportingObjectsTree.DefaultToolTipProvider = null;
+            this.exportingObjectsTree.DragDropMarkColor = System.Drawing.Color.Black;
+            this.exportingObjectsTree.FullRowSelect = true;
+            this.exportingObjectsTree.FullRowSelectActiveColor = System.Drawing.Color.Empty;
+            this.exportingObjectsTree.FullRowSelectInactiveColor = System.Drawing.Color.Empty;
+            this.exportingObjectsTree.GridLineStyle = Aga.Controls.Tree.GridLineStyle.Horizontal;
+            this.exportingObjectsTree.LineColor = System.Drawing.SystemColors.ControlDark;
+            this.exportingObjectsTree.Location = new System.Drawing.Point(12, 39);
+            this.exportingObjectsTree.Model = null;
+            this.exportingObjectsTree.Name = "exportingObjectsTree";
+            this.exportingObjectsTree.NodeFilter = null;
+            this.exportingObjectsTree.SelectedNode = null;
+            this.exportingObjectsTree.ShowNodeToolTips = true;
+            this.exportingObjectsTree.Size = new System.Drawing.Size(360, 350);
+            this.exportingObjectsTree.TabIndex = 8;
+            this.exportingObjectsTree.Text = "exportingDevices";
+            this.exportingObjectsTree.UseColumns = true;
+            // 
             // TechObjectsExportForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(384, 441);
+            this.Controls.Add(this.exportingObjectsTree);
             this.Controls.Add(this.clearSelectedObjectsLink);
             this.Controls.Add(this.selectAllObjectsLink);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.exportButton);
             this.Controls.Add(this.cancelButton);
-            this.Controls.Add(this.checkedListBox);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -146,11 +161,11 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckedListBox checkedListBox;
         private System.Windows.Forms.Button exportButton;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.LinkLabel selectAllObjectsLink;
         private System.Windows.Forms.LinkLabel clearSelectedObjectsLink;
+        private Aga.Controls.Tree.TreeViewAdv exportingObjectsTree;
     }
 }

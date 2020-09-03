@@ -1283,7 +1283,7 @@ namespace EasyEPlanner
             bool saveDescrSilentMode = false;
             EProjectManager.GetInstance().SyncAndSave(saveDescrSilentMode);
 
-            Editor.Editor.GetInstance().EForm.RefreshTree();
+            Editor.NewEditor.GetInstance().EditorForm.RefreshTree();
 
             RefreshTree();
         }

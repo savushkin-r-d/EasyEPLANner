@@ -329,8 +329,8 @@ namespace EasyEPlanner
 
         private const int numberOfDashes = 78;
 
-        private static NewTechObject.ITechObjectManager techObjectManager =
-              NewTechObject.TechObjectManager.GetInstance();
+        private static TechObject.ITechObjectManager techObjectManager =
+              TechObject.TechObjectManager.GetInstance();
         private static DeviceManager deviceManager = DeviceManager
             .GetInstance();
         private static IOManager IOManager = IOManager.GetInstance();

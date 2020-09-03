@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NewTechObject;
+using TechObject;
 using Device;
 
 namespace EasyEPlanner
@@ -211,7 +211,7 @@ namespace EasyEPlanner
             string equipments = "";
             
             var objects = techObjectManager.Objects;
-            foreach (NewTechObject.TechObject obj in objects)
+            foreach (TechObject.TechObject obj in objects)
             {
                 BaseTechObject baseObj = obj.BaseTechObject;
                 if(baseObj == null)
@@ -272,7 +272,7 @@ namespace EasyEPlanner
             var res = "";
             var objects = techObjectManager.Objects;
 
-            foreach (NewTechObject.TechObject obj in objects)
+            foreach (TechObject.TechObject obj in objects)
             {
                 string basicObj = "";
                 if(obj.BaseTechObject != null)

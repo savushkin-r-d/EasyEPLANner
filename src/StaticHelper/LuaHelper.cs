@@ -5,11 +5,11 @@ namespace StaticHelper
     public static class LuaHelper
     {
         /// <summary>
-        /// Конвертация Lua-таблицы в массив свойств, старый редактор
+        /// Конвертация Lua-таблицы в массив свойств, новый редактор
         /// </summary>
         /// <param name="table">Lua таблица</param>
         /// <returns></returns>
-        public static Editor.ObjectProperty[] OEditorConvertLuaTableToCArray(
+        public static Editor.ObjectProperty[] ConvertLuaTableToCArray(
             LuaTable table)
         {
             var Keys = new string[table.Values.Count];
@@ -22,29 +22,6 @@ namespace StaticHelper
             for (int i = 0; i < Keys.Length; i++)
             {
                 res[i] = new Editor.ObjectProperty(Keys[i], Values[i]);
-            }
-
-            return res;
-        }
-
-        /// <summary>
-        /// Конвертация Lua-таблицы в массив свойств, новый редактор
-        /// </summary>
-        /// <param name="table">Lua таблица</param>
-        /// <returns></returns>
-        public static NewEditor.ObjectProperty[] NEditorConvertLuaTableToCArray(
-            LuaTable table)
-        {
-            var Keys = new string[table.Values.Count];
-            var Values = new string[table.Values.Count];
-            var res = new NewEditor.ObjectProperty[Keys.Length];
-
-            table.Values.CopyTo(Values, 0);
-            table.Keys.CopyTo(Keys, 0);
-
-            for (int i = 0; i < Keys.Length; i++)
-            {
-                res[i] = new NewEditor.ObjectProperty(Keys[i], Values[i]);
             }
 
             return res;

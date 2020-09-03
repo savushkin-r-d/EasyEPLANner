@@ -3,7 +3,7 @@ using System.Linq;
 using System.Xml;
 using System.Windows.Forms;
 using System.IO;
-using NewTechObject;
+using TechObject;
 using Device;
 using System.Text.RegularExpressions;
 

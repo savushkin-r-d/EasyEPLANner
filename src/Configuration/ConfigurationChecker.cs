@@ -14,7 +14,7 @@ namespace EasyEPlanner
         {
             deviceManager = Device.DeviceManager.GetInstance();
             IOManager = IO.IOManager.GetInstance();
-            techObjectManager = NewTechObject.TechObjectManager.GetInstance();
+            techObjectManager = TechObject.TechObjectManager.GetInstance();
             projectHealthChecker = new ProjectHealthChecker();
         }
 
@@ -96,7 +96,7 @@ namespace EasyEPlanner
 
         Device.DeviceManager deviceManager;
         IO.IOManager IOManager;
-        NewTechObject.ITechObjectManager techObjectManager;
+        TechObject.ITechObjectManager techObjectManager;
         ProjectHealthChecker projectHealthChecker;
     }
 }

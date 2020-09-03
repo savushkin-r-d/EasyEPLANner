@@ -3,7 +3,7 @@
     /// <summary>    
     /// Класс, реализующий редактор.
     /// </summary>
-    public class Editor : IEditor, System.IDisposable
+    public class NewEditor : INewEditor, System.IDisposable
     {
         public void Dispose()
         {
@@ -14,61 +14,70 @@
         {
             if (disposing)
             {
-                frm.Dispose();
+                editorForm.Dispose();
             }
         }
 
-        private Editor() { }
+        private NewEditor() { }
 
         /// <summary>    
         /// Вызов окна редактирования технологических объектов.
-        /// </summary>        
-        public string Edit(ITreeViewItem data)
+        /// </summary>
+        /// <param name="objectTree">Дерево объектов</param>
+        public void OpenEditor(ITreeViewItem objectTree)
         {
-            if (frm.wasInit == false)
+            if (editorForm.wasInit == false)
             {
-                frm.Init(data);
-                frm.wasInit = true;
+                editorForm.Init(objectTree);
+                editorForm.wasInit = true;
             }
 
-            frm.ShowDlg();
-
-            return "";
+            editorForm.ShowDlg();
         }
 
         public bool IsShown()
         {
-            return frm.IsShown;
+            return editorForm.IsShown;
         }
 
         public void CloseEditor()
         {
-            frm.CloseEditor();
+            editorForm.CloseEditor();
         }
 
         /// <summary>
         /// Получение экземпляра класса.
         /// </summary>
         /// <returns>Единственный экземпляр класса.</returns>
-        public static Editor GetInstance()
+        public static NewEditor GetInstance()
         {
             if (null == instance)
             {
-                instance = new Editor();
-                instance.frm = new EditorCtrl();
+                instance = new NewEditor();
+                instance.editorForm = new NewEditorControl();
             }
             return instance;
         }
 
-        public EditorCtrl EForm
+        /// <summary>
+        /// Форма редактора технологических объектов.
+        /// </summary>
+        public NewEditorControl EditorForm
         {
             get
             {
-                return frm;
+                return editorForm;
             }
         }
 
-        private EditorCtrl frm;      ///Окно редактора.
-        private static Editor instance; ///Экземпляр класса.
+        /// <summary>
+        /// Форма редактора технологических объектов
+        /// </summary>
+        private NewEditorControl editorForm;
+
+        /// <summary>
+        /// Экземпляр класса редактора.
+        /// </summary>
+        private static NewEditor instance;
     }
 }

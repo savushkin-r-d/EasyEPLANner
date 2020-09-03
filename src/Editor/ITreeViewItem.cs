@@ -9,6 +9,8 @@ namespace Editor
     {
         /// <summary>
         /// Получаем индекс той части или колонки, которую можем редактировать.
+        /// -1 - не можем редактировать, 1 - можем. Индекс массива - левая или
+        /// права колонка (0 - левая, 1 - правая).
         /// </summary>
         int[] EditablePart
         {
@@ -40,7 +42,7 @@ namespace Editor
         }
 
         /// <summary>    
-        /// Удаление узла.
+        /// Удаление узла. Delete
         /// </summary>
         /// <param name="child">Удаляемый объект.</param>
         /// <returns>Удалять ли объект из дерева.</returns>
@@ -55,14 +57,14 @@ namespace Editor
         }
 
         /// <summary>    
-        /// Перемещение узла вниз.
+        /// Перемещение узла вниз. Shift + Down
         /// </summary>
         /// <param name="child">Перемещаемый объект.</param>
         /// <returns>Перемещенный вниз объект.</returns>
         ITreeViewItem MoveDown(object child);
 
         /// <summary>    
-        /// Перемещение узла вверх.
+        /// Перемещение узла вверх. Shift + Up
         /// </summary>
         /// <param name="child">Перемещаемый объект.</param>
         /// <returns>Перемещенный вверх объект.</returns>
@@ -77,7 +79,7 @@ namespace Editor
         }
 
         /// <summary>    
-        /// Замена активного узла скопированным.
+        /// Замена активного узла скопированным. Ctrl + B
         /// </summary>
         /// <param name="child">Заменяемый объект.</param>
         /// <param name="copyObject">Ранее скопированный объект.</param>
@@ -93,7 +95,7 @@ namespace Editor
         }
 
         /// <summary>    
-        /// Копирование объекта.
+        /// Копирование объекта. Ctrl + C
         /// </summary>
         /// <returns>Копия объекта для последующей вставки.</returns> 
         object Copy();
@@ -107,7 +109,7 @@ namespace Editor
         }
 
         /// <summary>    
-        /// Вставка ранее скопированного объекта.
+        /// Вставка ранее скопированного объекта. Ctrl + V
         /// </summary>
         ITreeViewItem InsertCopy(object obj);
 
@@ -133,6 +135,11 @@ namespace Editor
         ///  <param name="newValue">Новое значение после редактирования.</param>
         bool SetNewValue(string newValue);
 
+        /// <summary>
+        /// Установка нового значения для ограничений
+        /// </summary>
+        /// <param name="newDict">Словарь ограничений</param>
+        /// <returns></returns>
         bool SetNewValue(SortedDictionary<int, List<int>> newDict);
 
         /// <summary>
@@ -152,7 +159,7 @@ namespace Editor
         }
 
         /// <summary>    
-        /// Добавление элемента.
+        /// Добавление элемента. Insert
         /// </summary>
         /// <returns>Добавленный элемент. Может быть null, тогда ничего не 
         /// вставляется.</returns>
@@ -162,14 +169,6 @@ namespace Editor
         /// Признак возможности добавления устройств через список устройств.
         /// </summary>
         bool IsUseDevList
-        {
-            get;
-        }
-
-        /// <summary>    
-        /// Признак возможности добавления ограничений.
-        /// </summary>
-        bool IsUseRestriction
         {
             get;
         }
@@ -224,23 +223,6 @@ namespace Editor
         }
 
         /// <summary>
-        /// Получение списка базовых объектов для тех объектов, 
-        /// которые имеют такой функционал внутри себя.
-        /// </summary>
-        List<string> BaseObjectsList
-        {
-            get;
-        }
-
-        /// <summary>
-        /// Имеет ли объект базовые объект.
-        /// </summary>
-        bool ContainsBaseObject
-        {
-            get;
-        }
-
-        /// <summary>
         /// Является ли элемент булевым параметром.
         /// </summary>
         bool IsBoolParameter
@@ -252,14 +234,6 @@ namespace Editor
         /// Является ли этот объект главным (начальным).
         /// </summary>
         bool IsMainObject
-        {
-            get;
-        }
-
-        /// <summary>
-        /// Необходимость обновить главный объект дерева.
-        /// </summary>
-        bool NeedRebuildMainObject
         {
             get;
         }
@@ -292,8 +266,39 @@ namespace Editor
         bool IsFilled { get; }
 
         /// <summary>
+        /// Индекс картинки из формы, для вставки в элемент.
+        /// </summary>
+        ImageIndexEnum ImageIndex { get; }
+
+        /// <summary>
+        /// Содержит ли объект базовый объект/операцию/шаг
+        /// </summary>
+        bool ContainsBaseObject { get; }
+
+        /// <summary>
+        /// Список базовых объектов/операций/шагов объекта.
+        /// </summary>
+        List<string> BaseObjectsList { get; }
+
+        /// <summary>
         /// Отключено или нет свойство
         /// </summary>
         bool Disabled { get; set; }
+
+        /// <summary>
+        /// Можно ли вырезать объект/из объекта
+        /// </summary>
+        bool IsCuttable { get; }
+
+        /// <summary>
+        /// Вырезать объект
+        /// </summary>
+        /// <param name="item">Объект</param>
+        ITreeViewItem Cut(ITreeViewItem item);
+
+        /// <summary>
+        /// Помечен на вырезание
+        /// </summary>
+        bool MarkToCut { get; set; }
     }
 }

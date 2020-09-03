@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using TechObject;
 
@@ -12,7 +11,10 @@ namespace Editor
     /// </summary>
     public class TechObjectsExporter
     {
-        private TechObjectsExporter() { }
+        private TechObjectsExporter() 
+        {
+            techObjectManager = TechObjectManager.GetInstance();
+        }
 
         /// <summary>
         /// Singleton
@@ -28,15 +30,41 @@ namespace Editor
         }
 
         /// <summary>
-        /// Имена доступных для экспорта объектов.
+        /// Глобальный список объектов.
         /// </summary>
-        public string[] ExportingObjectsNames
+        public List<ITreeViewItem> Objects
         {
             get
             {
-                return TechObjectManager.GetInstance().Items
-                .Select(x => x.DisplayText[0])
-                .ToArray();
+                var items = new List<ITreeViewItem>();
+                foreach(var item in techObjectManager.Objects)
+                {
+                    items.Add(item);
+                }
+
+                return items;
+            }
+        }
+
+        /// <summary>
+        /// Список объектов корня дерева объектов в редакторе.
+        /// </summary>
+        public ITreeViewItem[] RootItems
+        {
+            get
+            {
+                return (techObjectManager as ITreeViewItem).Items;
+            }
+        }
+
+        /// <summary>
+        /// Название проекта
+        /// </summary>
+        public string ProjectName
+        {
+            get
+            {
+                return (techObjectManager as ITreeViewItem).DisplayText[0];
             }
         }
 
@@ -50,37 +78,37 @@ namespace Editor
         {
             string objectsDescription = "";
             string objectsRestriction = "";
-            var techObjManager = TechObjectManager.GetInstance();
-            var objects = techObjManager.Objects;
+            List<TechObject.TechObject> objects = techObjectManager.Objects;
             foreach (var obj in objects)
             {
-                bool needExporting = objectsNums.Contains(obj.GlobalNumber);
+                int globalNum = techObjectManager.GetTechObjectN(obj);
+                bool needExporting = objectsNums.Contains(globalNum);
                 if (needExporting)
                 {
-                    var exportingObject = obj.Clone(
-                        techObjManager.GetTechObjectN, obj.TechNumber,
-                        obj.GlobalNumber, obj.GlobalNumber);
+                    TechObject.TechObject exportingObject = obj.Clone(
+                        techObjectManager.GetTechObjectN, obj.TechNumber,
+                        globalNum, globalNum);
 
                     // Убираем привязку при экспорте.
                     exportingObject.AttachedObjects.SetValue("");
 
                     // Обходим нулевое значение т.к объект ни находится ни в
                     // каком списке объектов.
-                    string description = exportingObject.SaveAsLuaTable("\t\t");
-                    description = description.Replace("[ 0 ]", 
-                        $"[ {obj.GlobalNumber} ]");
+                    string description = exportingObject
+                        .SaveAsLuaTable("\t\t", globalNum);
+                    description = description
+                        .Replace("[ 0 ]", $"[ {globalNum} ]");
                     string restriction = exportingObject
-                        .SaveRestrictionAsLua("\t");
+                        .SaveRestrictionAsLua("\t", globalNum);
                     restriction = restriction
-                        .Replace("[ 0 ]", $"[ {obj.GlobalNumber} ]");
+                        .Replace("[ 0 ]", $"[ {globalNum} ]");
 
                     objectsDescription += description;
                     objectsRestriction += restriction;
                 }
                 else
                 {
-                    objectsDescription += 
-                        $"\t[ {obj.GlobalNumber} ] = {{0}},\n";
+                    objectsDescription += $"\t[ {globalNum} ] = {{0}},\n";
                 }
             }
 
@@ -132,5 +160,6 @@ namespace Editor
         }
 
         private static TechObjectsExporter techObjectsExporter;
+        private ITechObjectManager techObjectManager;
     }
 }

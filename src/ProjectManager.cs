@@ -1,5 +1,4 @@
 ﻿using Device;
-using Editor;
 using IO;
 using System.Collections.Generic;
 using System.IO;
@@ -106,13 +105,11 @@ namespace EasyEPlanner
                     res = LoadDescriptionFromFile(out LuaStr, out errStr, 
                         projectName, "\\main.objects.lua");
                     techObjectManager.LoadDescription(LuaStr, projectName);
-                    newTechObjectManager.LoadDescription(LuaStr, projectName);
                     errStr = "";
                     LuaStr = "";
                     res = LoadDescriptionFromFile(out LuaStr, out errStr, 
                         projectName, "\\main.restrictions.lua");
                     techObjectManager.LoadRestriction(LuaStr);
-                    newTechObjectManager.LoadRestriction(LuaStr);
                     oProgress.EndPart();
                 }
 
@@ -260,11 +257,8 @@ namespace EasyEPlanner
         /// </summary>
         public void Init()
         {
-            newEditor = NewEditor.NewEditor.GetInstance();
-            editor = Editor.Editor.GetInstance();
+            editor = Editor.NewEditor.GetInstance();
             techObjectManager = TechObjectManager.GetInstance();
-            newTechObjectManager = NewTechObject.TechObjectManager
-                .GetInstance();
             Logs.Init(new LogFrm());           
             IOManager = IOManager.GetInstance();
             DeviceManager.GetInstance();
@@ -445,24 +439,13 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Редактирование технологических объектов.
-        /// </summary>
-        /// <returns>Результат редактирования.</returns>
-        public string Edit()
-        {
-            string res = editor.Edit(techObjectManager as ITreeViewItem);
-
-            return res;
-        }
-
-        /// <summary>
         /// Редактирование технологических объектов. Новое дерево.
         /// </summary>
         /// <returns>Результат редактирования</returns>
         public void StartEdit()
         {
-            newEditor
-                .OpenEditor(newTechObjectManager as NewEditor.ITreeViewItem);
+            editor
+                .OpenEditor(techObjectManager as Editor.ITreeViewItem);
         }
 
         #region Подсветка объектов на схеме
@@ -502,65 +485,9 @@ namespace EasyEPlanner
                 return;
             }
 
-            if(objectsToDraw is List<DrawInfo> drawInfoOld)
+            if(objectsToDraw is List<Editor.DrawInfo> drawInfoNew)
             {
-                OldEditorSetHighlighting(drawInfoOld);
-            }
-            else if(objectsToDraw is List<NewEditor.DrawInfo> drawInfoNew)
-            {
-                NewEditorSetHighlighting(drawInfoNew);
-            }
-        }
-
-        /// <summary>
-        /// Подсветка из старого редактора
-        /// </summary>
-        /// <param name="objectsToDraw"></param>
-        private void OldEditorSetHighlighting(List<DrawInfo> objectsToDraw)
-        {
-            foreach (DrawInfo drawObj in objectsToDraw)
-            {
-                DrawInfo.Style howToDraw = drawObj.DrawingStyle;
-
-                if (howToDraw == DrawInfo.Style.NO_DRAW)
-                {
-                    continue;
-                }
-
-                Eplan.EplApi.DataModel.Function oF =
-                    (drawObj.DrawingDevice as IODevice).EplanObjectFunction;
-
-                if (oF == null)
-                {
-                    continue;
-                }
-
-                Eplan.EplApi.Base.PointD[] points = oF.GetBoundingBox();
-                short colour = 0;
-                switch (howToDraw)
-                {
-                    case DrawInfo.Style.GREEN_BOX:
-                        SetGreenBoxHighlight(ref colour, oF, points);
-                        break;
-
-                    case DrawInfo.Style.RED_BOX:
-                        SetRedBoxHiglight(ref colour);
-                        break;
-
-                    case DrawInfo.Style.GREEN_UPPER_BOX:
-                        SetGreenUpperBoxHighlight(ref colour, points);
-                        break;
-
-                    case DrawInfo.Style.GREEN_LOWER_BOX:
-                        SetGreenLowerBoxHighlight(ref colour, points);
-                        break;
-
-                    case DrawInfo.Style.GREEN_RED_BOX:
-                        SetGrenRedBoxHiglight(ref colour, oF, points);
-                        break;
-                }
-
-                AddBoxForHighlighting(colour, oF, points);
+                SetHighlighting(drawInfoNew);
             }
         }
 
@@ -568,14 +495,13 @@ namespace EasyEPlanner
         /// Подсветка из нового редактора
         /// </summary>
         /// <param name="objectsToDraw"></param>
-        private void NewEditorSetHighlighting(
-            List<NewEditor.DrawInfo> objectsToDraw)
+        private void SetHighlighting(List<Editor.DrawInfo> objectsToDraw)
         {
-            foreach (NewEditor.DrawInfo drawObj in objectsToDraw)
+            foreach (Editor.DrawInfo drawObj in objectsToDraw)
             {
-                NewEditor.DrawInfo.Style howToDraw = drawObj.DrawingStyle;
+                Editor.DrawInfo.Style howToDraw = drawObj.DrawingStyle;
 
-                if (howToDraw == NewEditor.DrawInfo.Style.NO_DRAW)
+                if (howToDraw == Editor.DrawInfo.Style.NO_DRAW)
                 {
                     continue;
                 }
@@ -593,24 +519,24 @@ namespace EasyEPlanner
                 short colour = 0;
                 switch (howToDraw)
                 {
-                    case NewEditor.DrawInfo.Style.GREEN_BOX:
+                    case Editor.DrawInfo.Style.GREEN_BOX:
                         SetGreenBoxHighlight(ref colour, objectFunction,
                             points);
                         break;
 
-                    case NewEditor.DrawInfo.Style.RED_BOX:
+                    case Editor.DrawInfo.Style.RED_BOX:
                         SetRedBoxHiglight(ref colour);
                         break;
 
-                    case NewEditor.DrawInfo.Style.GREEN_UPPER_BOX:
+                    case Editor.DrawInfo.Style.GREEN_UPPER_BOX:
                         SetGreenUpperBoxHighlight(ref colour, points);
                         break;
 
-                    case NewEditor.DrawInfo.Style.GREEN_LOWER_BOX:
+                    case Editor.DrawInfo.Style.GREEN_LOWER_BOX:
                         SetGreenLowerBoxHighlight(ref colour, points);
                         break;
 
-                    case NewEditor.DrawInfo.Style.GREEN_RED_BOX:
+                    case Editor.DrawInfo.Style.GREEN_RED_BOX:
                         SetGrenRedBoxHiglight(ref colour, objectFunction,
                             points);
                         break;
@@ -915,22 +841,12 @@ namespace EasyEPlanner
         /// <summary>
         /// Редактор технологических объектов.
         /// </summary>
-        private IEditor editor;
-
-        /// <summary>
-        /// Редактор технологических объектов.
-        /// </summary>
-        private NewEditor.INewEditor newEditor;
+        private Editor.INewEditor editor;
 
         /// <summary>
         /// Менеджер технологических объектов.
         /// </summary>
         private ITechObjectManager techObjectManager;
-
-        /// <summary>
-        /// Менеджер технологических объектов.
-        /// </summary>
-        private NewTechObject.ITechObjectManager newTechObjectManager;
 
         /// <summary>
         /// Менеджер модулей ввода/вывода.

@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Editor;
 
 namespace TechObject
 {
     /// <summary>
     /// Класс реализующий базовую операцию для технологического объекта
     /// </summary>
-    public class BaseOperation : Editor.TreeViewItem
+    public class BaseOperation : TreeViewItem
     {
         public BaseOperation(Mode owner)
         {
@@ -147,6 +148,7 @@ namespace TechObject
         /// <param name="mode">Операция владелец</param>
         public void Init(string baseOperName, Mode mode = null)
         {
+            const string defaultModeName = "Новая операция";
             TechObject techObject = owner.Owner.Owner;
             string baseTechObjectName = techObject.BaseTechObject.Name;
 
@@ -177,6 +179,10 @@ namespace TechObject
 
                     baseSteps = operation.Steps;
                     operation.owner = mode;
+                    if(mode.Name == defaultModeName)
+                    {
+                        mode.SetNewValue(operation.Name);
+                    }
                 }
             }
             else
@@ -253,9 +259,9 @@ namespace TechObject
         /// Установка свойств базовой операции
         /// </summary>
         /// <param name="extraParams">Свойства операции</param>
-        public void SetExtraProperties(Editor.ObjectProperty[] extraParams)
+        public void SetExtraProperties(ObjectProperty[] extraParams)
         {
-            foreach (Editor.ObjectProperty extraParam in extraParams)
+            foreach (ObjectProperty extraParam in extraParams)
             {
                 var property = Properties
                     .Where(x => x.LuaName.Equals(extraParam.DisplayText[0]))
@@ -336,18 +342,17 @@ namespace TechObject
         /// <summary>
         /// Проверка базовой операции
         /// </summary>
-        /// <returns>Ошибки</returns>
         public string Check()
         {
             string errors = "";
-            foreach(var property in Properties)
+            foreach (var property in Properties)
             {
                 if (property is MainAggregateParameter)
                 {
                     (property as MainAggregateParameter).Check();
                 }
 
-                bool emptyDisabledAggregateProperty = 
+                bool emptyDisabledAggregateProperty =
                     property.Owner is BaseTechObject &&
                     !property.Disabled &&
                     property.Value == "";
@@ -443,7 +448,7 @@ namespace TechObject
             }
         }
 
-        override public Editor.ITreeViewItem[] Items
+        override public ITreeViewItem[] Items
         {
             get
             {
@@ -485,7 +490,7 @@ namespace TechObject
             return ostisLink + "?sys_id=process_parameter";
         }
 
-        private Editor.ITreeViewItem[] items = new Editor.ITreeViewItem[0];
+        private ITreeViewItem[] items = new ITreeViewItem[0];
         
         private List<BaseParameter> baseOperationProperties;
         private string operationName;

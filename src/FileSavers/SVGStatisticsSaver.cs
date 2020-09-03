@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.IO;
-using NewTechObject;
+using TechObject;
 
 namespace EasyEPlanner
 {
