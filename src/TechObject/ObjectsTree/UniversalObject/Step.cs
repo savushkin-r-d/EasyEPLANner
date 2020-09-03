@@ -15,14 +15,15 @@ namespace TechObject
         /// </summary>
         /// <param name="name">Имя шага.</param>
         /// <param name="getN">Функция получения номера шага.</param>
-        /// <param name="isMode">Признак того, является ли шаг шагом операции.
-        /// </param>
+        /// <param name="isMainStep">Признак того, является ли шаг 
+        /// шагом операции. </param>
         /// <param name="owner">Владелец шага (Состояние)</param>
-        public Step(string name, GetN getN, State owner, bool isMode = false)
+        public Step(string name, GetN getN, State owner,
+            bool isMainStep = false)
         {
             this.name = name;
             this.getN = getN;
-            this.IsMode = isMode;
+            this.IsMainStep = isMainStep;
             this.owner = owner;
             this.baseStep = new ActiveParameter("", "");
             this.baseStep.Owner = this;
@@ -75,7 +76,7 @@ namespace TechObject
 
             items.AddRange(actions.ToArray());
 
-            if (!isMode)
+            if (!isMainStep)
             {
                 timeParam = new ObjectProperty("Время (параметр)", -1);
                 nextStepN = new ObjectProperty("Номер следующего шага", -1);
@@ -581,7 +582,7 @@ namespace TechObject
         /// <summary>
         /// Признак шага операции.
         /// </summary>
-        private bool IsMode { get; set; }
+        private bool IsMainStep { get; set; }
 
         private GetN getN;
 

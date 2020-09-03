@@ -667,6 +667,14 @@ namespace TechObject
                 return ImageIndexEnum.Mode;
             }
         }
+
+        public override bool IsMode
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         public override string GetLinkToHelpPage()

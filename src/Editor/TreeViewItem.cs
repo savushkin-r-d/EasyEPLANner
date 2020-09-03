@@ -222,6 +222,14 @@ namespace Editor
             }
         }
 
+        public virtual bool IsMode
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public virtual bool ShowWarningBeforeDelete
         {
             get

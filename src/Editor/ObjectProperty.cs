@@ -345,6 +345,14 @@ namespace Editor
             }
         }
 
+        public bool IsMode
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public bool ShowWarningBeforeDelete
         {
             get
