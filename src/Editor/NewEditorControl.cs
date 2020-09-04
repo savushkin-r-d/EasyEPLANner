@@ -652,6 +652,12 @@ namespace Editor
                 // Копирование элемента.
                 if (e.KeyCode == Keys.C && e.Control == true)
                 {
+                    var copiedItem = (copyItem as ITreeViewItem);
+                    if(copiedItem != null && copiedItem.MarkToCut)
+                    {
+                        CancelCut(copiedItem);
+                    }
+
                     CopyItem(item);
                     return;
                 }

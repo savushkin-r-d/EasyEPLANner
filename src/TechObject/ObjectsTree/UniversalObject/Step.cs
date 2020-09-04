@@ -106,7 +106,7 @@ namespace TechObject
             clone.items = new List<ITreeViewItem>();
             clone.items.AddRange(clone.actions.ToArray());
 
-            if (!IsMode)
+            if (!IsMainStep)
             {
                 clone.timeParam = timeParam.Clone();
                 clone.nextStepN = nextStepN.Clone();
