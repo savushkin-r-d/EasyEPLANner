@@ -141,10 +141,10 @@ namespace NewTechObject
         {
             get
             {
-                string res = "";
+                string res = name;
                 if (parameters.Count > 0)
                 {
-                    res += name + " (" + parameters.Count + ")";
+                    res += " (" + parameters.Count + ")";
                 }
 
                 return new string[] { res, "" };
