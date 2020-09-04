@@ -762,7 +762,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Загружены или нет данные проекта.
         /// </summary>
-        public bool ProjectDataIsLoaded { get; set; }
+        public bool ProjectDataIsLoaded { get; set; } = false;
 
         /// <summary>
         /// Путь к надстройке, к месту, из которого она подключалась к программе

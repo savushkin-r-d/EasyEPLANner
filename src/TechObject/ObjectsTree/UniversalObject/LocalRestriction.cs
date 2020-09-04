@@ -40,12 +40,15 @@ namespace TechObject
                         .Where(x => x.Name == selectedMode.Name)
                         .FirstOrDefault();
 
-                    var restrictions = mode.GetRestrictionManager()
-                        .Restrictions
-                        .Where(x => x.Name == Name)
-                        .FirstOrDefault();
+                    if(mode != null)
+                    {
+                        var restrictions = mode.GetRestrictionManager()
+                            .Restrictions
+                            .Where(x => x.Name == Name)
+                            .FirstOrDefault();
 
-                    restrictions.SetValue(newDict);
+                        restrictions.SetValue(newDict);
+                    }
                 }
             }
         }

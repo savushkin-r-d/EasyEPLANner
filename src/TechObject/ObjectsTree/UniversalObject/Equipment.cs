@@ -209,38 +209,97 @@ namespace TechObject
         private string CheckEquipmentValues(BaseParameter equipment)
         {
             var errors = "";
+            string techObjectName = owner.DisplayText[0];
             string currentValue = equipment.Value;
+            string[] devices = currentValue.Split(' ');
+            if (devices.Length > 1)
+            {
+                errors += CheckMultiValue(devices, equipment, techObjectName);
+            }
+            else
+            {
+                errors += CheckSingleValue(currentValue, equipment,
+                    techObjectName);
+            }
+
+            return errors;
+        }
+
+        /// <summary>
+        /// Проверка множественных значений в оборудовании
+        /// </summary>
+        /// <param name="devices">Устройства</param>
+        /// <param name="equipment">Оборудование</param>
+        /// <param name="techObjectName">Имя объекта</param>
+        /// <returns></returns>
+        private string CheckMultiValue(string[] devices,
+            BaseParameter equipment, string techObjectName)
+        {
+            string errors = "";
+            var unknownDevices = new List<string>();
+
+            foreach (var deviceStr in devices)
+            {
+                var device = Device.DeviceManager.GetInstance()
+                    .GetDeviceByEplanName(deviceStr);
+                if (device.Description == StaticHelper.CommonConst.Cap)
+                {
+                    unknownDevices.Add(deviceStr);
+                }
+            }
+
+            if (unknownDevices.Count > 0)
+            {
+                errors = $"Проверьте оборудование: " +
+                    $"\"{equipment.Name}\" в объекте " +
+                    $"\"{techObjectName}\". " +
+                    $"Некорректные устройства: " +
+                    $"{string.Join(",", unknownDevices)}.\n";
+            }
+
+            return errors;
+        }
+
+        /// <summary>
+        /// Проверка одиночных значений в оборудовании
+        /// </summary>
+        /// <param name="currentValue">Текущее значение</param>
+        /// <param name="equipment">Оборудование</param>
+        /// <param name="techObjectName">Имя объекта</param>
+        /// <returns></returns>
+        private string CheckSingleValue(string currentValue,
+            BaseParameter equipment, string techObjectName)
+        {
+            string errors = "";
+
             var device = Device.DeviceManager.GetInstance()
                     .GetDeviceByEplanName(currentValue);
             if (equipment.LuaName == "SET_VALUE")
             {
-               
-                bool isValid = 
+                bool isValid =
                     (device.Description != StaticHelper.CommonConst.Cap ||
                     owner.GetParams().GetParam(currentValue) != null);
                 if (!isValid)
                 {
-                    int objGlobalNumber = TechObjectManager.GetInstance()
-                        .GetTechObjectN(owner);
                     errors += $"Отсутствует задание для ПИД регулятора" +
-                        $" №{objGlobalNumber}\n";
+                        $" \"{owner.DisplayText[0]}\".\n";
                 }
             }
             else
             {
-                bool isValid = 
+                bool isValid =
                     device.Description != StaticHelper.CommonConst.Cap ||
                     currentValue == "" ||
                     currentValue == equipment.DefaultValue;
                 if (!isValid)
                 {
-                    string techObjectName = owner.DisplayText[0];
-                    errors += $"Проверьте оборудование: \"{equipment.Name}\" " +
-                        $"в объекте \"{techObjectName}\". " +
-                        $"Не найдено устройство или " +
-                        $"задано более 1 устройства.\n";
+                    errors += $"Проверьте оборудование: " +
+                        $"\"{equipment.Name}\" в объекте " +
+                        $"\"{techObjectName}\". " +
+                        $"Некорректное устройство: {currentValue}.\n";
                 }
             }
+
             return errors;
         }
 

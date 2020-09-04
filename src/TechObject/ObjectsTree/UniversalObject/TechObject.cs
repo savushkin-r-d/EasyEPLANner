@@ -831,9 +831,19 @@ namespace TechObject
         {
             get
             {
-                return new string[] {
-                    getLocalNum( this ) + ". " + name + ' ' + 
-                    techNumber.EditText[ 1 ], "" };
+                int objNum = 0;
+                if (getLocalNum == null)
+                {
+                    return new string[] {
+                        objNum + ". " + name + ' ' +
+                        techNumber.EditText[ 1 ], "" };
+                }
+                else
+                {
+                    return new string[] {
+                        getLocalNum( this ) + ". " + name + ' ' +
+                        techNumber.EditText[ 1 ], "" };
+                }
             }
         }
 
