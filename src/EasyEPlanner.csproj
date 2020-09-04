@@ -322,6 +322,7 @@
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Param.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\ParamProperty.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Params.cs" />
+    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\ParamsManager.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Restriction.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\RestrictionManager.cs" />
     <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\State.cs" />
@@ -349,6 +350,7 @@
     <Compile Include="TechObject\Param.cs" />
     <Compile Include="TechObject\ParamProperty.cs" />
     <Compile Include="TechObject\Params.cs" />
+    <Compile Include="TechObject\ParamsManager.cs" />
     <Compile Include="TechObject\Restriction.cs" />
     <Compile Include="TechObject\RestrictionManager.cs" />
     <Compile Include="TechObject\State.cs" />

@@ -59,7 +59,8 @@ namespace TechObject
         {
             var parameter = this.Parent;
             var parameters = parameter.Parent;
-            var techObject = parameters.Parent;
+            var parametersManager = parameters.Parent;
+            var techObject = parametersManager.Parent;
             var modesManager = (techObject as TechObject).ModesManager;
             var modes = modesManager.Modes;
 

@@ -216,7 +216,8 @@ namespace NewTechObject
             {
                
                 bool isValid = (device.Description != "заглушка" ||
-                    owner.GetParams().GetParam(currentValue) != null);
+                    owner.GetParamsManager().Float
+                    .GetParam(currentValue) != null);
                 if (!isValid)
                 {
                     int objGlobalNumber = TechObjectManager.GetInstance()
