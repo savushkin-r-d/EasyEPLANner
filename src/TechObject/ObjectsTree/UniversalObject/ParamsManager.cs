@@ -14,17 +14,12 @@ namespace TechObject
         /// </summary>
         public ParamsManager()
         {
+            items = new List<ITreeViewItem>();
+
             parFLoat = new Params("Параметры float", "par_float", false,
                 "S_PAR_F", true);
-            parFLoatRunTime = new Params("Рабочие параметры float",
-                "rt_par_float", true, "RT_PAR_F");
-
             parFLoat.Parent = this;
-            parFLoatRunTime.Parent = this;
-
-            items = new List<ITreeViewItem>();
             items.Add(parFLoat);
-            items.Add(parFLoatRunTime);
         }
 
         /// <summary>
@@ -48,6 +43,14 @@ namespace TechObject
                     break;
 
                 case "rt_par_float":
+                    if(parFLoatRunTime == null)
+                    {
+                        parFLoatRunTime = new Params("Рабочие параметры float",
+                            "rt_par_float", true, "RT_PAR_F");
+                        parFLoatRunTime.Parent = this;
+                        items.Add(parFLoatRunTime);
+                    }
+
                     res = parFLoatRunTime.AddParam(
                         new Param(parFLoatRunTime.GetIdx, name, true, value,
                         meter, nameLua));

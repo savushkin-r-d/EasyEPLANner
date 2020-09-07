@@ -392,7 +392,7 @@ namespace TechObject
         /// <param name="array">Индексная таблица</param>
         public void Synch(int[] array)
         {
-            foreach (TechObject obj in treeObjects)
+            foreach (TechObject obj in TechObjects)
             {
                 obj.Synch(array);
             }
