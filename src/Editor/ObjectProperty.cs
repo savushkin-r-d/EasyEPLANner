@@ -87,7 +87,7 @@ namespace Editor
                     res = 10;
                     break;
 
-                case "Params":
+                case "ParamsManager":
                     res = 12;
                     break;
 

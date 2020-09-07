@@ -264,8 +264,12 @@ namespace TechObject
                     objSingleStepsNode);
 
                 string sFl = objName + ".S_PAR_F";
-                int count = item.GetParams().Items.Length;
+                int count = item.GetParamsManager().Items[0].Items.Length;
                 GenerateParametersTags(count, objNode, objParamsNode, sFl);
+
+                string rtFl = objName + ".RT_PAR_F";
+                count = item.GetParamsManager().Items[1].Items.Length;
+                GenerateParametersTags(count, objNode, objParamsNode, rtFl);
 
                 var singleNodes = new TreeNode[] { objModesNode, 
                     objOperStateNode, objAvOperNode, objStepsNode, 

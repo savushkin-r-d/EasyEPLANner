@@ -19,7 +19,7 @@ namespace EasyEPlanner
                 Directory.CreateDirectory(pathToFiles);
             }
 
-            SaveLOC(pathToFiles,path);
+            SaveLOC(pathToFiles, path);
             SaveTagsCount(pathToFiles);
             SaveUnintsCount(pathToFiles);
             SaveEquipmentModulesCount(pathToFiles);

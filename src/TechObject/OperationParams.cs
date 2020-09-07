@@ -90,7 +90,7 @@ namespace TechObject
         {
             var clonedOperationParams = new OperationParams();
             TechObject clonedObject = clone.Owner.Owner;
-            Params objectParameters = clonedObject.GetParams();
+            Params objectParameters = clonedObject.GetParamsManager().Float;
             foreach(Editor.ITreeViewItem item in Items)
             {
                 var operationParam = item as OperationParam;
