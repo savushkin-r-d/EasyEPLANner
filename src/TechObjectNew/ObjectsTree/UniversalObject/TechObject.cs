@@ -925,18 +925,19 @@ namespace NewTechObject
         override public ITreeViewItem Replace(object child,
             object copyObject)
         {
-            var pars = child as ParamsManager;
-            var copyPars = copyObject as ParamsManager;
-            bool parsNotNull = pars != null && copyPars != null;
-            if (parsNotNull)
+            if (child is ParamsManager)
             {
-                pars.Clear();
-                foreach (ParamsManager par in copyPars.Items)
+                var pars = child as ParamsManager;
+                if (copyObject is ParamsManager && pars != null)
                 {
-                    pars.InsertCopy(par);
-                }
+                    var copyPars = copyObject as ParamsManager;
+                    for (int i = 0; i < copyPars.Items.Length; i++)
+                    {
+                        pars.Replace(pars.Items[i], copyPars.Items[i]);
+                    }
 
-                return pars;
+                    return pars;
+                }
             }
 
             var equipment = child as Equipment;

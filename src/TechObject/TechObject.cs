@@ -977,11 +977,10 @@ namespace TechObject
                 var pars = child as ParamsManager;
                 if (copyObject is ParamsManager && pars != null)
                 {
-                    pars.Clear();
                     var copyPars = copyObject as ParamsManager;
-                    foreach (ParamsManager par in copyPars.Items)
+                    for(int i = 0; i < copyPars.Items.Length; i++)
                     {
-                        pars.InsertCopy(par);
+                        pars.Replace(pars.Items[i], copyPars.Items[i]);
                     }
 
                     return pars;
