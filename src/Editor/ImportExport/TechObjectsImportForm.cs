@@ -152,11 +152,11 @@ namespace Editor
             {
                 MessageBox.Show(exception.Message, "Предупреждение",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                NewEditor.GetInstance().EditorForm.RefreshTree();
+                Editor.GetInstance().EditorForm.RefreshTree();
                 return;
             }
 
-            NewEditor.GetInstance().EditorForm.RefreshTree();
+            Editor.GetInstance().EditorForm.RefreshTree();
             Close();
         }
 

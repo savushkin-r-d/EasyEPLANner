@@ -78,8 +78,10 @@ namespace TechObject
         {
             string res = "";
 
-            res += parFLoat.SaveAsLuaTable(prefix);
-            res += parFLoatRunTime.SaveAsLuaTable(prefix);
+            foreach(Params paramsGroups in Items)
+            {
+                res += paramsGroups.SaveAsLuaTable(prefix);
+            }
 
             return res;
         }

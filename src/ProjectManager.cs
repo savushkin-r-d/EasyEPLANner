@@ -68,7 +68,7 @@ namespace EasyEPlanner
         {
             errStr = "";
             Logs.Clear();
-            ProjectDataIsLoaded = false;
+            EProjectManager.GetInstance().ProjectDataIsLoaded = false;
 
             string LuaStr;
             int res = 0;
@@ -120,13 +120,13 @@ namespace EasyEPlanner
                 oProgress.BeginPart(15, "Расчет IO-Link");
                 IOManager.CalculateIOLinkAdresses();
                 oProgress.EndPart(true);
-                ProjectDataIsLoaded = true;
+                EProjectManager.GetInstance().ProjectDataIsLoaded = true;
             }
             catch (System.Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 oProgress.EndPart(true);
-                ProjectDataIsLoaded = false;
+                EProjectManager.GetInstance().ProjectDataIsLoaded = false;
             }
 
             return res;
@@ -257,7 +257,7 @@ namespace EasyEPlanner
         /// </summary>
         public void Init()
         {
-            editor = Editor.NewEditor.GetInstance();
+            editor = Editor.Editor.GetInstance();
             techObjectManager = TechObjectManager.GetInstance();
             Logs.Init(new LogFrm());           
             IOManager = IOManager.GetInstance();
@@ -760,11 +760,6 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Загружены или нет данные проекта.
-        /// </summary>
-        public bool ProjectDataIsLoaded { get; set; } = false;
-
-        /// <summary>
         /// Путь к надстройке, к месту, из которого она подключалась к программе
         /// инженером.
         /// </summary>
@@ -841,7 +836,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Редактор технологических объектов.
         /// </summary>
-        private Editor.INewEditor editor;
+        private Editor.IEditor editor;
 
         /// <summary>
         /// Менеджер технологических объектов.

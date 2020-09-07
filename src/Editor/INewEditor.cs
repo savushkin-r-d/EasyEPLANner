@@ -3,7 +3,7 @@
     /// <summary>    
     /// Интерфейс редактора.
     /// </summary>
-    public interface INewEditor
+    public interface IEditor
     {
         /// <summary>
         /// Открыть редактор и начать редактирование

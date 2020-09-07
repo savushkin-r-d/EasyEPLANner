@@ -3,7 +3,7 @@
     /// <summary>    
     /// Класс, реализующий редактор.
     /// </summary>
-    public class NewEditor : INewEditor, System.IDisposable
+    public class Editor : IEditor, System.IDisposable
     {
         public void Dispose()
         {
@@ -18,7 +18,7 @@
             }
         }
 
-        private NewEditor() { }
+        private Editor() { }
 
         /// <summary>    
         /// Вызов окна редактирования технологических объектов.
@@ -49,11 +49,11 @@
         /// Получение экземпляра класса.
         /// </summary>
         /// <returns>Единственный экземпляр класса.</returns>
-        public static NewEditor GetInstance()
+        public static Editor GetInstance()
         {
             if (null == instance)
             {
-                instance = new NewEditor();
+                instance = new Editor();
                 instance.editorForm = new NewEditorControl();
             }
             return instance;
@@ -78,6 +78,6 @@
         /// <summary>
         /// Экземпляр класса редактора.
         /// </summary>
-        private static NewEditor instance;
+        private static Editor instance;
     }
 }

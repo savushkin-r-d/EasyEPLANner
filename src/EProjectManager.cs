@@ -126,7 +126,7 @@ namespace EasyEPlanner
 
         public void SyncAndSave(bool saveDescrSilentMode = true)
         {
-            if (currentProject != null)
+            if (currentProject != null && ProjectDataIsLoaded)
             {
                 String strAction = "LoadDescriptionAction";
                 ActionManager oAMnr = new ActionManager();
@@ -157,8 +157,8 @@ namespace EasyEPlanner
         /// </summary>
         public void SaveAndClose()
         {
-            EProjectManager.GetInstance().SyncAndSave();
-            EProjectManager.GetInstance().StopEditModes();
+            SyncAndSave();
+            StopEditModes();
 
             ExcelRepoter.AutomaticExportExcelForSCADA(currentProject);
 
@@ -170,9 +170,9 @@ namespace EasyEPlanner
             Editor.NewEditorControl.CheckShown();
             Editor.NewEditorControl.SaveCfg();
 
-            if (Editor.NewEditor.GetInstance().IsShown())
+            if (Editor.Editor.GetInstance().IsShown())
             {
-                Editor.NewEditor.GetInstance().CloseEditor();
+                Editor.Editor.GetInstance().CloseEditor();
             }
 
             ModeFrm.GetInstance().CloseEditor();
@@ -191,6 +191,11 @@ namespace EasyEPlanner
 
         private ActionManager ActMnr = new ActionManager();
         private Eplan.EplApi.ApplicationFramework.Action startInteractionAction;
+
+        /// <summary>
+        /// Загружены или нет данные проекта.
+        /// </summary>
+        public bool ProjectDataIsLoaded { get; set; } = false;
     }
 
     //-------------------------------------------------------------------------
@@ -226,7 +231,7 @@ namespace EasyEPlanner
             Function oF = SearchSelectedObjectFunction(arrSelectedObjects[0]);
             if (oF != null)
             {
-                Editor.ITreeViewItem newEditorItem = Editor.NewEditor
+                Editor.ITreeViewItem newEditorItem = Editor.Editor
                     .GetInstance().EditorForm.GetActiveItem();
                 if (newEditorItem == null)
                 {
@@ -287,7 +292,7 @@ namespace EasyEPlanner
                     string checkedDevices = newEditorItem.EditText[1];
                     string newDevices = MakeNewCheckedDevices(devName,
                         checkedDevices);
-                    Editor.NewEditor.GetInstance().EditorForm
+                    Editor.Editor.GetInstance().EditorForm
                         .SetNewVal(newDevices);
 
                     //Обновление списка устройств при его наличии.
