@@ -376,7 +376,7 @@ namespace TechObject
                 prefix + "base_tech_object = \'" + baseObjectName + "\',\n" +
                 prefix + "attached_objects = \'" + AttachedObjects.Value + "\',\n";
 
-            res += parameters.SaveAsLuaTable(prefix);
+            res += paramsManager.SaveAsLuaTable(prefix);
             res += "\n";
 
             res += modes.SaveAsLuaTable(prefix);
@@ -446,8 +446,8 @@ namespace TechObject
 
             modes = new ModesManager(this);
 
-            parameters = new Params();
-            parameters.Parent = this;
+            paramsManager = new ParamsManager();
+            paramsManager.Parent = this;
             
             equipment = new Equipment(this);
 
@@ -524,7 +524,7 @@ namespace TechObject
                 clone.baseTechObject = baseTechObject.Clone(clone);
             }
 
-            clone.parameters = parameters.Clone();
+            clone.paramsManager = paramsManager.Clone();
 
             clone.modes.ChngeOwner(clone);
             clone.modes = modes.Clone(clone);
@@ -553,7 +553,7 @@ namespace TechObject
 
             itemsList.Add(cooperParamNumber); // ??
             itemsList.Add(modes);
-            itemsList.Add(parameters);
+            itemsList.Add(paramsManager);
             itemsList.Add(equipment);
 
             items = itemsList.ToArray();
@@ -617,12 +617,12 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Получение параметров.
+        /// Получение менеджера параметров.
         /// </summary>
-        /// <returns>Параметры</returns>
-        public Params GetParams()
+        /// <returns>Менеджер параметров</returns>
+        public ParamsManager GetParamsManager()
         {
-            return parameters;
+            return paramsManager;
         }
 
         public int TechNumber
@@ -812,7 +812,7 @@ namespace TechObject
                 errors += mode.Check();
             }
 
-            errors += GetParams().Check(objName);
+            errors += GetParamsManager().Check(objName);
 
             return errors;
         }
@@ -908,7 +908,7 @@ namespace TechObject
                 }
             }
 
-            var parameters = child as Params;
+            var parameters = child as ParamsManager;
             if (parameters != null)
             {
                 parameters.Clear();
@@ -945,15 +945,14 @@ namespace TechObject
         override public ITreeViewItem Replace(object child,
             object copyObject)
         {
-            var pars = child as Params;
-            var copyPars = copyObject as Params;
+            var pars = child as ParamsManager;
+            var copyPars = copyObject as ParamsManager;
             bool parsNotNull = pars != null && copyPars != null;
             if (parsNotNull)
             {
-                pars.Clear();
-                foreach (Param par in copyPars.Items)
+                for(int i = 0; i < copyPars.Items.Length; i++)
                 {
-                    pars.InsertCopy(par);
+                    pars.Replace(pars.Items[i], copyPars.Items[i]);
                 }
 
                 return pars;
@@ -1038,7 +1037,7 @@ namespace TechObject
         private string name; /// Имя объекта.
         private ObjectProperty nameBC; /// Имя объекта в Monitor.
         private ModesManager modes; /// Операции объекта.
-        private Params parameters; /// Параметры объекта.
+        private ParamsManager paramsManager; /// Менеджер параметров объекта.
 
         private ITreeViewItem[] items; /// Параметры объекта для редактирования.
 

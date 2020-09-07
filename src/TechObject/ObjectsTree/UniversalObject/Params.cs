@@ -10,9 +10,15 @@ namespace TechObject
     /// </summary>
     public class Params : TreeViewItem
     {
-        public Params()
+        public Params(string name, string nameLua, bool isRunTimeParams,
+            string chBaseName, bool isUseOperation = false)
         {
-            nameLua = "par_float";
+            this.nameLua = nameLua;
+            this.name = name;
+            this.isRunTimeParams = isRunTimeParams;
+            this.chBaseName = chBaseName;
+            this.isUseOperation = isUseOperation;
+
             parameters = new List<Param>();
         }
 
@@ -36,12 +42,11 @@ namespace TechObject
         /// <param name="value">Значение.</param>
         /// <param name="meter">Размерность.</param>
         /// <param name="nameLua">Имя в Lua.</param>
-        public Param AddParam(string name, float value, string meter, 
-            string nameLua = "")
+        public Param AddParam(Param parameter)
         {
-            var param = new Param(GetIdx, name, value, meter, nameLua);
-            parameters.Add(param);
-            return param;
+            parameter.Parent = this;
+            parameters.Add(parameter);
+            return parameter;
         }
 
         /// <summary>
@@ -127,12 +132,25 @@ namespace TechObject
             return string.Concat(errors);
         }
 
+        public bool IsRuntimeParameters
+        {
+            get
+            {
+                return isRunTimeParams;
+            }
+        }
+
+        public string NameForChannelBase
+        {
+            get { return chBaseName; }
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {
             get
             {
-                string res = "Параметры";
+                string res = name;
                 if (parameters.Count > 0)
                 {
                     res += " (" + parameters.Count + ")";
@@ -205,16 +223,22 @@ namespace TechObject
                 string newMeter = parameters[parameters.Count - 1].GetMeter();
                 string newNameLua = parameters[parameters.Count - 1]
                     .GetNameLua();
+                bool useOperation = isUseOperation;
 
-                newParam = new Param(GetIdx, newName, newValue, newMeter,
-                    newNameLua);
+                newParam = new Param(GetIdx, newName, IsRuntimeParameters,
+                    newValue, newMeter, newNameLua, useOperation);
                 newParam.Parent = this;
-                newParam.SetOperationN(parameters[parameters.Count - 1]
-                    .GetOperationN());
+
+                if (useOperation)
+                {
+                    newParam.SetOperationN(parameters[parameters.Count - 1]
+                        .GetOperationN());
+                }
             }
             else
             {
-                newParam = new Param(GetIdx, "Название параметра", 0, "шт", "");
+                newParam = new Param(GetIdx, "Название параметра", false, 0,
+                    "шт", "");
             }
 
             parameters.Add(newParam);
@@ -256,11 +280,16 @@ namespace TechObject
                 double newValue = Convert.ToDouble(newValueStr);
                 string newMeter = newParam.GetMeter();
                 string newNameLua = newParam.GetNameLua();
+                bool useOperation = newParam.IsUseOperation();
 
-                var newPar = new Param(GetIdx, newName, newValue, newMeter,
-                    newNameLua);
+                var newPar = new Param(GetIdx, newName, IsRuntimeParameters,
+                    newValue, newMeter, newNameLua, useOperation);
                 newPar.Parent = this;
-                newPar.SetOperationN(newParam.GetOperationN());
+
+                if (useOperation)
+                {
+                    newPar.SetOperationN(newParam.GetOperationN());
+                }
 
                 parameters.Add(newPar);
                 return newPar;
@@ -320,11 +349,16 @@ namespace TechObject
                 double newValue = Convert.ToDouble(newValueStr);
                 string newMeter = (copyObject as Param).GetMeter();
                 string newNameLua = (copyObject as Param).GetNameLua();
+                bool useOperation = (copyObject as Param).IsUseOperation();
 
-                var newPar = new Param(GetIdx, newName, newValue, newMeter,
-                    newNameLua);
+                var newPar = new Param(GetIdx, newName, IsRuntimeParameters,
+                    newValue, newMeter, newNameLua, useOperation);
                 newPar.Parent = this;
-                newPar.SetOperationN((copyObject as Param).GetOperationN());
+
+                if(useOperation)
+                {
+                    newPar.SetOperationN((copyObject as Param).GetOperationN());
+                }
 
                 int index = parameters.IndexOf(par);
 
@@ -364,7 +398,7 @@ namespace TechObject
         {
             get
             {
-                return ImageIndexEnum.Params;
+                return ImageIndexEnum.NONE;
             }
         }
         #endregion
@@ -376,7 +410,11 @@ namespace TechObject
             return ostisLink + "?sys_id=process_parameter";
         }
 
+        private string name;
         private string nameLua;
+        private string chBaseName;
+        private bool isRunTimeParams;
+        private bool isUseOperation;
         private List<Param> parameters;
     }
 }

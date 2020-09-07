@@ -278,7 +278,8 @@ namespace TechObject
             {
                 bool isValid =
                     (device.Description != StaticHelper.CommonConst.Cap ||
-                    owner.GetParams().GetParam(currentValue) != null);
+                    owner.GetParamsManager().Float
+                    .GetParam(currentValue) != null);
                 if (!isValid)
                 {
                     errors += $"Отсутствует задание для ПИД регулятора" +

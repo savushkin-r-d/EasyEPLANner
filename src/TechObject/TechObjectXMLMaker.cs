@@ -57,9 +57,14 @@ namespace TechObject
                 GenerateSingleStepsTags(item, objName, objNode,
                     objSingleStepsNode);
 
-                string sFl = objName + ".S_PAR_F";
-                int count = item.GetParams().Items.Length;
-                GenerateParametersTags(count, objNode, objParamsNode, sFl);
+                foreach(Params paramsGroup in item.GetParamsManager().Items)
+                {
+                    string groupName = $"{objName}." +
+                        $"{paramsGroup.NameForChannelBase}";
+                    int count = paramsGroup.Items.Length;
+                    GenerateParametersTags(count, objNode, objParamsNode,
+                        groupName);
+                }
 
                 var singleNodes = new TreeNode[] { objModesNode,
                     objOperStateNode, objAvOperNode, objStepsNode,

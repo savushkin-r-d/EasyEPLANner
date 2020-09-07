@@ -117,30 +117,35 @@ namespace EasyEPlanner
             foreach (var techObj in techObjectManager.TechObjects)
             {
                 string techName = techObjectManager.GetTechObjectN(techObj)
-                    .ToString() + ". " + techObj.EditText[0] + " " + 
+                    .ToString() + ". " + techObj.EditText[0] + " " +
                     techObj.TechNumber.ToString();
                 var objectNode = new TreeNode(techName);
                 objectNode.Tag = techObj;
 
-                string ParamsType = "S_PAR_F";
-                var parTypeNode = new TreeNode(ParamsType);
-                parTypeNode.Tag = ParamsType;
-                objectNode.Nodes.Add(parTypeNode);
-                for (int i = 0; i < techObj.GetParams().Items.Length; i++)
+                foreach(Params paramsGroup in techObj.GetParamsManager().Items)
                 {
-                    var param = techObj.GetParams().Items[i] as Param;
-                    string parName = (i + 1).ToString() + ". " +
-                        param.EditText[0];
-                    var parNode = new TreeNode(parName);
-                    parNode.Tag = new string[]
+                    var parTypeNode = new TreeNode(paramsGroup
+                        .NameForChannelBase);
+                    parTypeNode.Tag = paramsGroup.NameForChannelBase;
+                    objectNode.Nodes.Add(parTypeNode);
+
+                    int counter = 1;
+                    foreach(Param param in paramsGroup.Items)
                     {
-                        parName,
-                        param.GetValue(),
-                        param.GetMeter(),
-                        param.Operations,
-                        param.GetNameLua(),
-                    };
-                    parTypeNode.Nodes.Add(parNode);
+                        string parName = $"{counter}. {param.EditText[0]}";
+                        var parNode = new TreeNode(parName);
+                        counter++;
+                        parNode.Tag = new string[]
+                        {
+                            parName,
+                            param.GetValue(),
+                            param.GetMeter(),
+                            param.Operations,
+                            param.GetNameLua()
+                        };
+
+                        parTypeNode.Nodes.Add(parNode);
+                    }
                 }
 
                 tree.Nodes.Add(objectNode);
@@ -195,7 +200,8 @@ namespace EasyEPlanner
                 {
                     objNode.Nodes.Add(modesNodes);
                 }
-                if (modesNodes.Nodes.Count > 0)
+
+                if (parametersNodes.Nodes.Count > 0)
                 {
                     objNode.Nodes.Add(parametersNodes);
                 }
@@ -283,8 +289,8 @@ namespace EasyEPlanner
                     var titleNode = new TreeNode();
                     titleNode.Tag = new string[]
                     {
-                                "Описание параметра",
-                                "Lua имя"
+                        "Описание параметра",
+                        "Lua имя"
                     };
                     operationParameterNodes.Nodes.Add(titleNode);
                     operationParameterTitleIsWrited = true;
@@ -312,9 +318,10 @@ namespace EasyEPlanner
             TechObject.TechObject techObject)
         {
             bool parameterTitleisWrited = false;
-            for (int i = 0; i < techObject.GetParams().Items.Length; i++)
+            var floatParameters = techObject.GetParamsManager().Float.Items;
+            for (int i = 0; i < floatParameters.Length; i++)
             {
-                var parameter = techObject.GetParams().Items[i] as Param;
+                var parameter = floatParameters[i] as Param;
                 if (parameterTitleisWrited == false)
                 {
                     var titleNode = new TreeNode();

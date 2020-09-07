@@ -24,7 +24,7 @@ namespace Editor
         ActionWashLowerSeats = 9,
         ActionWash = 11,
         ActionDIDOPairs = 10,
-        Params = 12,
+        ParamsManager = 12,
         Equipment = 13,
         NONE = 100,
     }

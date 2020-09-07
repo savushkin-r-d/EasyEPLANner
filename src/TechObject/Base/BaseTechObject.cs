@@ -678,7 +678,7 @@ namespace TechObject
                 return result;
             }
 
-            bool isParameter = obj.GetParams()
+            bool isParameter = obj.GetParamsManager()
                 .GetParam(parameterValue) != null;
             if (isParameter)
             {
