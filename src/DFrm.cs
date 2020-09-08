@@ -71,6 +71,8 @@ namespace EasyEPlanner
         /// </summary>
         public void CloseEditor()
         {
+            devicesTreeViewAdv.Model = null;
+
             PI.UnhookWindowsHookEx(dialogHookPtr);
 
             PI.SetParent(devicesTreeViewAdv.Handle, this.Handle);
@@ -156,7 +158,7 @@ namespace EasyEPlanner
             int h = rctDialog.Bottom - rctDialog.Top;
 
             toolStrip.Location = new Point(0, 0);
-            devicesTreeViewAdv.Location = new Point(0, 0 + toolStrip.Height);
+            devicesTreeViewAdv.Location = new Point(0, toolStrip.Height);
 
             toolStrip.Width = w;
             devicesTreeViewAdv.Width = w;
@@ -182,12 +184,8 @@ namespace EasyEPlanner
 
             if (deviceIsShown == true)
             {
-                if (PI.IsWindowVisible(wndDevVisibilePtr) == false)
-                {
-                    PI.SendMessage(oCurrent.MainWindowHandle,
-                        (uint)PI.WM.COMMAND, wndWmCommand, 0);
-                    return;
-                }
+                StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent, 
+                    wndDevVisibilePtr, wndWmCommand);
                 return;
             }
 
@@ -195,7 +193,9 @@ namespace EasyEPlanner
                 wndWmCommand, ref dialogHandle, ref wndDevVisibilePtr);
             if(wndDevVisibilePtr != IntPtr.Zero)
             {
-                StaticHelper.GUIHelper.ChangeWindowMainPanels(dialogHandle,
+                StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent,
+                    wndDevVisibilePtr, wndWmCommand);
+                StaticHelper.GUIHelper.ChangeWindowMainPanels(ref dialogHandle,
                     ref panelPtr);
 
                 Controls.Clear();
@@ -210,9 +210,6 @@ namespace EasyEPlanner
                 // (для изменения размеров своих элементов, сохранения
                 // изменений при закрытии и отключения хука).
                 SetUpHook();
-
-                PI.SetWindowText(dialogHandle, caption);
-                PI.SetWindowText(wndHandle, caption);
 
                 deviceIsShown = true;
             }

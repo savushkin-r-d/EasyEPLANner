@@ -533,12 +533,8 @@ namespace Editor
 
             if (editIsShown == true && IsShown == true)
             {
-                if (PI.IsWindowVisible(wndEditVisiblePtr) == false)
-                {
-                    PI.SendMessage(currentProcess.MainWindowHandle,
-                            (uint)PI.WM.COMMAND, wndWmCommand, 0);
-                    return;
-                }
+                StaticHelper.GUIHelper.ShowHiddenWindow(currentProcess,
+                    wndEditVisiblePtr, wndWmCommand);
                 return;
             }
 
@@ -549,7 +545,9 @@ namespace Editor
                 ref wndEditVisiblePtr);
             if(wndEditVisiblePtr != IntPtr.Zero)
             {
-                StaticHelper.GUIHelper.ChangeWindowMainPanels(dialogHandle,
+                StaticHelper.GUIHelper.ShowHiddenWindow(currentProcess,
+                    wndEditVisiblePtr, wndWmCommand);
+                StaticHelper.GUIHelper.ChangeWindowMainPanels(ref dialogHandle,
                     ref panelPtr);
 
                 Controls.Clear();

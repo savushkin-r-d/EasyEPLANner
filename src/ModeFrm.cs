@@ -37,6 +37,8 @@ namespace EasyEPlanner
         /// </summary>
         public void CloseEditor()
         {
+            modesTreeViewAdv.Model = null;
+
             PI.UnhookWindowsHookEx(dialogHookPtr);
 
             PI.SetParent(modesTreeViewAdv.Handle, this.Handle);
@@ -174,7 +176,7 @@ namespace EasyEPlanner
             int h = rctDialog.Bottom - rctDialog.Top;
 
             toolStrip.Location = new Point(0, 0);
-            modesTreeViewAdv.Location = new Point(0, 0 + toolStrip.Height);
+            modesTreeViewAdv.Location = new Point(0, toolStrip.Height);
 
             toolStrip.Width = w;
             modesTreeViewAdv.Width = w;
@@ -206,12 +208,8 @@ namespace EasyEPlanner
 
             if (modeIsShown == true)
             {
-                if (PI.IsWindowVisible(wndModeVisibilePtr) == false)
-                {
-                    PI.SendMessage(oCurrent.MainWindowHandle,
-                        (uint)PI.WM.COMMAND, wndWmCommand, 0);
-                    return;
-                }
+                StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent,
+                    wndModeVisibilePtr, wndWmCommand);
                 return;
             }
 
@@ -219,7 +217,9 @@ namespace EasyEPlanner
                 wndWmCommand, ref dialogHandle, ref wndModeVisibilePtr);
             if (wndModeVisibilePtr != IntPtr.Zero)
             {
-                StaticHelper.GUIHelper.ChangeWindowMainPanels(dialogHandle,
+                StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent,
+                    wndModeVisibilePtr, wndWmCommand);
+                StaticHelper.GUIHelper.ChangeWindowMainPanels(ref dialogHandle,
                    ref panelPtr);
 
                 Controls.Clear();
@@ -234,9 +234,6 @@ namespace EasyEPlanner
                 // (для изменения размеров своих элементов, сохранения
                 // изменений при закрытии и отключения хука).
                 SetUpHook();
-
-                PI.SetWindowText(dialogHandle, caption);
-                PI.SetWindowText(wndHandle, caption);
 
                 modeIsShown = true;
             }

@@ -344,7 +344,7 @@ namespace StaticHelper
         /// </summary>
         /// <param name="dialogHandle">Дескриптор нового диалога</param>
         /// <param name="panelPtr">Дескриптор старого диалога</param>
-        public static void ChangeWindowMainPanels(IntPtr dialogHandle,
+        public static void ChangeWindowMainPanels(ref IntPtr dialogHandle,
             ref IntPtr panelPtr)
         {
             var panelList = PI.GetChildWindows(dialogHandle);
@@ -366,6 +366,23 @@ namespace StaticHelper
             }
 
             PI.ShowWindow(panelPtr, 0);
+        }
+
+        /// <summary>
+        /// Показать скрытое окно
+        /// </summary>
+        /// <param name="process">Процесс</param>
+        /// <param name="windowHandle">Дескриптор окна</param>
+        /// <param name="windowWmCommand">Команда для открытия окна</param>
+        public static void ShowHiddenWindow(Process process,
+            IntPtr windowHandle, int windowWmCommand)
+        {
+            if (PI.IsWindowVisible(windowHandle) == false)
+            {
+                PI.SendMessage(process.MainWindowHandle,
+                    (uint)PI.WM.COMMAND, windowWmCommand, 0);
+                return;
+            }
         }
         #endregion
     }
