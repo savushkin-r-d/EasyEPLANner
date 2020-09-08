@@ -108,16 +108,6 @@ namespace TechObject
             return clone;
         }
 
-        /// <summary>
-        /// Изменение менеджера операций объекта-владельца операций.
-        /// </summary>
-        /// <param name="newOwner">Новый менеджер операций.</param>
-        /// <returns></returns>
-        public void ChangeOwner(ModesManager newOwner)
-        {
-            owner = newOwner;
-        }
-
         public void ModifyDevNames(int newTechObjectN, int oldTechObjectN,
             string techObjectName)
         {

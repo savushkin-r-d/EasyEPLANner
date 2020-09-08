@@ -22,7 +22,7 @@ namespace TechObject
             {
                 if (modeStep == null) //Добавляем, если его нет.
                 {
-                    modeStep = new Step("Во время операции", this.GetStepN, 
+                    modeStep = new Step(Step.MainStepName, this.GetStepN, 
                         this, isMain);
                     steps.Add(modeStep);
                 }
@@ -66,7 +66,7 @@ namespace TechObject
 
             if (needMainStep)
             {
-                modeStep = new Step("Во время операции", this.GetStepN, this, 
+                modeStep = new Step(Step.MainStepName, this.GetStepN, this, 
                     true);
                 steps.Add(modeStep);
             }
@@ -169,7 +169,7 @@ namespace TechObject
 
             if (modeStep == null)
             {
-                modeStep = new Step("Во время операции", GetStepN, this, 
+                modeStep = new Step(Step.MainStepName, GetStepN, this, 
                     isMain);
                 steps.Add(modeStep);
             }
@@ -384,13 +384,13 @@ namespace TechObject
         {
             if (modeStep == null || Items.Count() == 0)
             {
-                modeStep = new Step("Во время операции", GetStepN, this, isMain);
+                modeStep = new Step(Step.MainStepName, GetStepN, this, isMain);
                 steps.Add(modeStep);
                 modeStep.AddParent(this);
                 return modeStep;
             }
 
-            Step newStep = new Step("Новый шаг", GetStepN, this);
+            Step newStep = new Step(Step.NewStepName, GetStepN, this);
             steps.Add(newStep);
             return newStep;
         }

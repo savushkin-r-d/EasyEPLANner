@@ -170,7 +170,7 @@ namespace TechObject
                 {
                     res += prefix + "time_param_n = " + time_param_n + ",\n";
                 }
-                
+
                 string next_step_n = nextStepN.EditText[1].Trim();
                 if (next_step_n != "")
                 {
@@ -210,7 +210,7 @@ namespace TechObject
         /// <param name="devName">Имя устройства.</param>
         /// <param name="additionalParam">Дополнительный параметр 
         /// (для сложных действий).</param>
-        public bool AddDev(string actionLuaName, string devName, 
+        public bool AddDev(string actionLuaName, string devName,
             int additionalParam = 0)
         {
             int index = Device.DeviceManager.GetInstance()
@@ -364,12 +364,17 @@ namespace TechObject
 
             if (baseStep != null)
             {
-                this.baseStep = new ActiveParameter(baseStep.LuaName, 
+                this.baseStep = new ActiveParameter(baseStep.LuaName,
                     baseStep.Name);
                 this.baseStep.Owner = this;
+                if (name.Contains(NewStepName))
+                {
+                    name = baseStep.Name;
+                }
+
                 return true;
             }
-            
+
             return false;
         }
 
@@ -498,7 +503,7 @@ namespace TechObject
         {
             get
             {
-                if(items.Where(x => x.IsFilled).Count() > 0)
+                if (items.Where(x => x.IsFilled).Count() > 0)
                 {
                     return true;
                 }
@@ -576,6 +581,28 @@ namespace TechObject
                 {
                     return false;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Имя нового шага.
+        /// </summary>
+        public static string NewStepName
+        {
+            get
+            {
+                return "Новый шаг";
+            }
+        }
+
+        /// <summary>
+        /// Имя главного шага состояния.
+        /// </summary>
+        public static string MainStepName
+        {
+            get
+            {
+                return "Во время операции";
             }
         }
 

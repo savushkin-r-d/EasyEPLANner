@@ -146,7 +146,7 @@ namespace TechObject
         /// </summary>
         /// <param name="baseOperName">Имя операции</param>
         /// <param name="mode">Операция владелец</param>
-        public void Init(string baseOperName, Mode mode = null)
+        public void Init(string baseOperName, Mode mode)
         {
             const string defaultModeName = "Новая операция";
             TechObject techObject = owner.Owner.Owner;

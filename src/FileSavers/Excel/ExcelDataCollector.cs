@@ -261,7 +261,7 @@ namespace EasyEPlanner
                     }
                     foreach (var step in state.Steps)
                     {
-                        if (!step.DisplayText.Contains("Во время операции"))
+                        if (!step.DisplayText.Contains(Step.MainStepName))
                         {
                             stateNodes.Nodes.Add(step.DisplayText[0]);
                         }

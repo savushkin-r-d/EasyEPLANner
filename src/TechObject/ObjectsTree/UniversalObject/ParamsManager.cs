@@ -89,13 +89,16 @@ namespace TechObject
         public ParamsManager Clone()
         {
             ParamsManager clone = (ParamsManager)MemberwiseClone();
+            clone.items = new List<ITreeViewItem>();
 
             clone.parFLoat = parFLoat.Clone();
-            clone.parFLoatRunTime = parFLoatRunTime.Clone();
-
-            clone.items = new List<ITreeViewItem>();
             clone.items.Add(clone.parFLoat);
-            clone.items.Add(clone.parFLoatRunTime);
+
+            if (parFLoatRunTime != null)
+            {
+                clone.parFLoatRunTime = parFLoatRunTime.Clone();
+                clone.items.Add(clone.parFLoatRunTime);
+            }
 
             return clone;
         }

@@ -129,7 +129,7 @@ namespace TechObject
                 string res = "";
                 if(!isRuntime)
                 {
-                    res = $"{getN(this)}. {name} - {value.EditText[1]}" +
+                    res = $"{getN(this)}. {name} - {value.EditText[1]} " +
                         $"{meter.EditText[1]}.";
                 }
                 else

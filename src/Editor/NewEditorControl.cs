@@ -831,12 +831,15 @@ namespace Editor
         /// <param name="item">Заменяемый элемент</param>
         private void ReplaceItem(ITreeViewItem item)
         {
-            if (copyItem != null && item.IsReplaceable)
+            var copiedItem = copyItem as ITreeViewItem;
+            bool copiedItemIsCorrect = 
+                copiedItem != null && !copiedItem.MarkToCut;
+            if (copiedItemIsCorrect && item.IsReplaceable)
             {
                 ITreeViewItem parent = item.Parent;
                 if(parent != null)
                 {
-                    ITreeViewItem newItem = parent.Replace(item, copyItem);
+                    ITreeViewItem newItem = parent.Replace(item, copiedItem);
                     if (newItem != null)
                     {
                         newItem.AddParent(parent);

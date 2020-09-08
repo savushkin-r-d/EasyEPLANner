@@ -26,6 +26,8 @@ namespace TechObject
                 clone.modes.Add(mode.Clone(clone.GetModeN, clone));
             }
 
+            clone.owner = owner;
+
             return clone;
         }
 
@@ -174,17 +176,6 @@ namespace TechObject
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// Изменение технологического объекта-владельца операций.
-        /// </summary>
-        /// <param name="newOwner">Новый технологический объект-владелец 
-        /// операций.</param>
-        /// <returns></returns>
-        public void ChngeOwner(TechObject newOwner)
-        {
-            owner = newOwner;
         }
 
         public TechObject Owner

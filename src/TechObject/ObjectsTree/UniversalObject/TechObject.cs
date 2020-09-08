@@ -526,7 +526,6 @@ namespace TechObject
 
             clone.paramsManager = paramsManager.Clone();
 
-            clone.modes.ChngeOwner(clone);
             clone.modes = modes.Clone(clone);
             clone.modes.ModifyDevNames(TechNumber);
             clone.modes.ModifyRestrictObj(oldGlobalNum, newGlobalNum);
