@@ -625,9 +625,6 @@ namespace Editor
             ITreeViewItem item = GetActiveItem();
             if (item == null)
             {
-                MessageBox.Show("Действие недоступно. Элемент дерева не " +
-                    "определен.", "Внимание", MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
                 return;
             }
 
@@ -817,8 +814,8 @@ namespace Editor
 
                     newItem.AddParent(item);
                     HiglihtItems();
-                    DisableNeededObjects(new ITreeViewItem[] { newItem });
                     RefreshTree();
+                    DisableNeededObjects(new ITreeViewItem[] { newItem });
                 }
             }
         }
@@ -1286,8 +1283,8 @@ namespace Editor
                 IsCellEditing = false;
                 e.Cancel = true;
                 var parentItems = item.Parent.Items;
-                DisableNeededObjects(parentItems);
                 editorTView.RefreshObjects(parentItems);
+                DisableNeededObjects(parentItems);
                 return;
             }
             else
