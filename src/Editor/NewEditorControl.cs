@@ -815,7 +815,7 @@ namespace Editor
                     newItem.AddParent(item);
                     HiglihtItems();
                     RefreshTree();
-                    DisableNeededObjects(new ITreeViewItem[] { newItem });
+                    DisableNeededObjects(newItem.Parent.Items);
                 }
             }
         }
@@ -839,7 +839,7 @@ namespace Editor
                     {
                         newItem.AddParent(parent);
                         RefreshTree();
-                        DisableNeededObjects(new ITreeViewItem[] { newItem });
+                        DisableNeededObjects(treeViewItemsList.ToArray());
                     }
                     HiglihtItems();
                 }
@@ -1304,7 +1304,7 @@ namespace Editor
         /// <param name="items">Объекты для проверки и отключения</param>
         private void DisableNeededObjects(ITreeViewItem[] items)
         {
-            foreach(var item in items)
+            foreach (var item in items)
             {
                 if (item.IsFilled == false && hideEmptyItemsBtn.Checked)
                 {
@@ -1323,16 +1323,30 @@ namespace Editor
                 {
                     if (!item.Disabled)
                     {
-                        editorTView.DisableObject(item);
-                        item.Disabled = true;
+                        try
+                        {
+                            editorTView.DisableObject(item);
+                            item.Disabled = true;
+                        }
+                        catch
+                        {
+                            item.Disabled = true;
+                        }
                     }
                 }
                 else
                 {
                     if (item.Disabled)
                     {
-                        editorTView.EnableObject(item);
-                        item.Disabled = false;
+                        try
+                        {
+                            editorTView.EnableObject(item);
+                            item.Disabled = false;
+                        }
+                        catch
+                        {
+                            item.Disabled = false;
+                        }
                     }
                 }
             }
