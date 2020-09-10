@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Editor;
+using System.Text.RegularExpressions;
 
 namespace TechObject
 {
@@ -32,6 +33,10 @@ namespace TechObject
             public override bool SetNewValue(string newValue)
             {
                 newValue = newValue.ToUpper();
+                newValue = Regex.Replace(newValue,
+                    StaticHelper.CommonConst.RusAsEngPattern,
+                    StaticHelper.CommonConst.RusAsEnsEvaluator);
+
                 owner.ModifyDevNames(newValue);
                 base.SetNewValue(newValue);
                 owner.CompareEplanNames();
