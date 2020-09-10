@@ -335,6 +335,14 @@ namespace EasyEPlanner
             .GetInstance();
         private static IOManager IOManager = IOManager.GetInstance();
 
+        public static string MainProgramFileName
+        {
+            get
+            {
+                return mainProgramFileName;
+            }
+        }
+
         public class ParametersForSave
         {
             public string PAC_Name;

@@ -38,7 +38,7 @@ namespace EasyEPlanner
             const int maxLOCCount = 1000;
 
             folderPath += linesOfCodeMainProgramFileName;
-            locFilePath += @"\main.plua";
+            locFilePath += @"\" + ProjectDescriptionSaver.MainProgramFileName;
 
             string[] readedFile = File.ReadAllLines(locFilePath, 
                 Encoding.GetEncoding(1251));
