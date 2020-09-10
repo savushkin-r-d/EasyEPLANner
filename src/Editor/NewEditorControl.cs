@@ -892,13 +892,20 @@ namespace Editor
         /// <param name="item"></param>
         private void CutItem(ITreeViewItem item)
         {
-            if(item.Parent.IsCuttable && item.IsMainObject)
+            if (item.Parent.IsCuttable)
             {
-                copyItem = item;
-                item.MarkToCut = true;
+                var copiedItem = copyItem as ITreeViewItem;
+                if (copiedItem != null && copiedItem.MarkToCut)
+                {
+                    CancelCut(copiedItem);
+                }
 
-                item.Disabled = true;
-                editorTView.DisableObject(item);
+                if (item.IsMainObject)
+                {
+                    copyItem = item;
+                    item.MarkToCut = true;
+                    editorTView.RefreshObject(item);
+                }
             }
         }
 
@@ -911,7 +918,7 @@ namespace Editor
             if (item != null && item.MarkToCut)
             {
                 DisableCutting(treeViewItemsList.ToArray());
-                DisableNeededObjects(treeViewItemsList.ToArray());
+                editorTView.RefreshObject(item);
                 copyItem = null;
             }
         }
@@ -1213,34 +1220,78 @@ namespace Editor
         }
 
         /// <summary>
-        /// Установка необходимых шрифтов.
+        /// Жирный шрифт, 8 пикселей.
         /// </summary>
-        private void editorTView_FormatCell(object sender, FormatCellEventArgs e)
+        private Font boldFont8px = new Font("Microsoft Sans Serif", 8,
+            FontStyle.Bold);
+
+        /// <summary>
+        /// Перечеркнутый шрифт, 8 пикселей.
+        /// </summary>
+        private Font strikeoutBoldFont8px = new Font("Microsoft Sans Serif", 9,
+            FontStyle.Strikeout | FontStyle.Bold);
+
+        /// <summary>
+        /// Форматирование строк в редакторе.
+        /// </summary>
+        private void editorTView_FormatCell(object sender,
+            FormatCellEventArgs e)
         {
-            foreach (ITreeViewItem tObjectMan in treeViewItemsList)
+            FormatItemsToBold(e, treeViewItemsList.ToArray());
+            FormatActiveBoolParameters(e);
+            FormatCuttedItems(e);
+        }
+
+        /// <summary>
+        /// Форматирование элементов дерева в жирный
+        /// </summary>
+        /// <param name="level">Уровень вложенности</param>
+        /// <param name="e">Аргументы события форматирования</param>
+        /// <param name="mainItems">Элементы-потомки</param>
+        private void FormatItemsToBold(FormatCellEventArgs e,
+            ITreeViewItem[] mainItems)
+        {
+            foreach(var techObjManager in mainItems)
             {
-                foreach (ITreeViewItem tObject in tObjectMan.Items)
+                foreach(var s88Obj in techObjManager.Items)
                 {
-                    foreach(ITreeViewItem tSubObject in tObject.Items)
+                    foreach(var baseObj in s88Obj.Items)
                     {
-                        if (e.Item.RowObject == tObject ||
-                            e.Item.RowObject == tObjectMan ||
-                            e.Item.RowObject == tSubObject)
+                        if (e.Item.RowObject == techObjManager ||
+                            e.Item.RowObject == s88Obj ||
+                            e.Item.RowObject == baseObj)
                         {
-                            e.Item.Font = new Font("Microsoft Sans Serif", 8,
-                                FontStyle.Bold);
+                            e.Item.Font = boldFont8px;
                         }
                     }
                 }
             }
-
+        }
+        
+        /// <summary>
+        /// Форматирование булевских свойств в редакторе.
+        /// </summary>
+        /// <param name="e">Аргументы события форматирования</param>
+        private void FormatActiveBoolParameters(FormatCellEventArgs e)
+        {
             var boolProperty = e.Model as TechObject.ActiveBoolParameter;
-            if (boolProperty != null && 
-                e.ColumnIndex == 1 &&
+            if (boolProperty != null && e.ColumnIndex == 1 &&
                 boolProperty.DefaultValue != boolProperty.Value)
             {
-                e.SubItem.Font = new Font("Microsoft Sans Serif", 8, 
-                    FontStyle.Bold);
+                e.SubItem.Font = boldFont8px;
+            }
+        }
+
+        /// <summary>
+        /// Форматирование элемента помеченного для вырезки;
+        /// </summary>
+        /// <param name="e">Аргументы события форматирования</param>
+        private void FormatCuttedItems(FormatCellEventArgs e)
+        {
+            var item = e.Model as ITreeViewItem;
+            if(item.MarkToCut)
+            {
+                e.Item.Font = strikeoutBoldFont8px;
             }
         }
 
