@@ -267,6 +267,9 @@ namespace EasyEPlanner
             projectConfiguration = ProjectConfiguration.GetInstance();
             EProjectManager.GetInstance();
             BaseTechObjectManager.GetInstance();
+
+            CheckExcelLibs();
+            CopySystemFiles();
         }
 
         #region Генерация Excel
@@ -746,16 +749,15 @@ namespace EasyEPlanner
         /// <param name="originalSystemFilesPath">Путь к файлам Lua в месте 
         /// подключения надстройки к программе</param>
         /// </summary>
-        private void CopySystemFiles(string systemFilesPath,
-            string originalSystemFilesPath)
+        private void CopySystemFiles()
         {
-            Directory.CreateDirectory(systemFilesPath);
+            Directory.CreateDirectory(SystemFilesPath);
 
-            var systemFilesDir = new DirectoryInfo(originalSystemFilesPath);
+            var systemFilesDir = new DirectoryInfo(OriginalSystemFilesPath);
             FileInfo[] systemFiles = systemFilesDir.GetFiles();
             foreach (FileInfo systemFile in systemFiles)
             {
-                string pathToFile = Path.Combine(systemFilesPath,
+                string pathToFile = Path.Combine(SystemFilesPath,
                     systemFile.Name);
                 systemFile.CopyTo(pathToFile, true);
             }
@@ -829,11 +831,7 @@ namespace EasyEPlanner
             }
         }
 
-        private ProjectManager() 
-        {
-            CheckExcelLibs();
-            CopySystemFiles(SystemFilesPath, OriginalSystemFilesPath);
-        }
+        private ProjectManager() { }
 
         /// <summary>
         /// Редактор технологических объектов.
