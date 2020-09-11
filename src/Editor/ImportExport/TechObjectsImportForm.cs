@@ -1,8 +1,12 @@
-﻿using System;
+﻿using Aga.Controls.Tree;
+using Aga.Controls.Tree.NodeControls;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
-namespace EasyEPlanner
+namespace Editor
 {
     public partial class TechObjectsImportForm : Form
     {
@@ -10,7 +14,17 @@ namespace EasyEPlanner
         {
             InitializeComponent();
             importButton.Enabled = false;
+
+            const string columnName = "Объекты";
+            StaticHelper.GUIHelper.SetUpAdvTreeView(importingObjectsTree,
+                columnName, nodeTextBox_DrawText, nodeCheckBox,
+                importingObjectsTree_ChangeCheckBoxState);
         }
+
+        ///<summary>
+        /// Чекбокс для дерева
+        ///</summary>
+        NodeCheckBox nodeCheckBox = new NodeCheckBox();
 
         /// <summary>
         /// Кнопка "Обзор".
@@ -42,7 +56,7 @@ namespace EasyEPlanner
                 MessageBox.Show(exception.Message, "Предупреждение", 
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 importButton.Enabled = false;
-                checkedListBox.Items.Clear();
+                importingObjectsTree.Model = null;
                 return;
             }
 
@@ -54,22 +68,60 @@ namespace EasyEPlanner
         /// </summary>
         private void FillCheckedListBox()
         {
-            checkedListBox.Items.Clear();
-            var importedObjectsNames = TechObjectsImporter.GetInstance().
-                ImportedObjectsNamesArray;
-            bool objectsIsEmpty = importedObjectsNames.Length == 0;
-            if (!objectsIsEmpty)
+            importingObjectsTree.Model = null;
+            if(TechObjectsImporter.GetInstance().RootItems.Length != 0)
             {
-                checkedListBox.Items.AddRange(TechObjectsImporter.GetInstance()
-                   .ImportedObjectsNamesArray);
+                importingObjectsTree.BeginUpdate();
+                importingObjectsTree.Model = null;
+                importingObjectsTree.Refresh();
+                var treeModel = new TreeModel();
+
+                ITreeViewItem[] objects = TechObjectsImporter.GetInstance()
+                    .RootItems;
+                foreach (var s88Obj in objects)
+                {
+                    var root = new Node(s88Obj.DisplayText[0]);
+                    root.Tag = s88Obj;
+
+                    LoadObjectsForImport(s88Obj.Items, root);
+                    treeModel.Nodes.Add(root);
+                }
+
+                importingObjectsTree.Model = treeModel;
+                importingObjectsTree.EndUpdate();
                 importButton.Enabled = true;
             }
             else
             {
-                MessageBox.Show("Объекты для импорта не найдены", 
-                    "Предупреждение", MessageBoxButtons.OK, 
+                MessageBox.Show("Объекты для импорта не найдены",
+                    "Предупреждение", MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
                 importButton.Enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Рекурсивная загрузка объектов для экспорта
+        /// </summary>
+        /// <param name="items">Объект родитель</param>
+        /// <param name="parent">Узел родитель</param>
+        private void LoadObjectsForImport(ITreeViewItem[] items, Node parent)
+        {
+            if (items == null)
+            {
+                return;
+            }
+
+            foreach (var item in items)
+            {
+                var newNode = new Node(item.DisplayText[0]);
+                newNode.Tag = item;
+                parent.Nodes.Add(newNode);
+
+                if (!item.IsMainObject)
+                {
+                    LoadObjectsForImport(item.Items, newNode);
+                }
             }
         }
 
@@ -80,7 +132,7 @@ namespace EasyEPlanner
         /// <param name="e"></param>
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         /// <summary>
@@ -90,7 +142,7 @@ namespace EasyEPlanner
         /// <param name="e"></param>
         private void importButton_Click(object sender, EventArgs e)
         {
-            var checkedItems = GetCheckedForImportItems();
+            List<ITreeViewItem> checkedItems = GetCheckedForImportItems();
 
             try
             {
@@ -100,30 +152,31 @@ namespace EasyEPlanner
             {
                 MessageBox.Show(exception.Message, "Предупреждение",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                Editor.Editor.GetInstance().EForm.RefreshTree();
+                Editor.GetInstance().EditorForm.RefreshTree();
                 return;
             }
 
-            Editor.Editor.GetInstance().EForm.RefreshTree();
-            this.Close();
+            Editor.GetInstance().EditorForm.RefreshTree();
+            Close();
         }
 
         /// <summary>
         /// Получить номера выбранных для импорта элементов.
         /// </summary>
         /// <returns></returns>
-        private List<int> GetCheckedForImportItems()
+        private List<ITreeViewItem> GetCheckedForImportItems()
         {
-            var checkedItems = new List<int>();
-            for (int item = 0; item < checkedListBox.Items.Count; item++)
+            var checkedItems = new List<ITreeViewItem>();
+            foreach (var treeNode in importingObjectsTree.AllNodes)
             {
-                bool itemChecked = checkedListBox.GetItemChecked(item);
-                if (itemChecked)
+                var node = treeNode.Tag as Node;
+                if (node != null && node.CheckState == CheckState.Checked &&
+                    node.Tag is ITreeViewItem item)
                 {
-                    var checkedItem = checkedListBox.Items[item] as string;
-                    string itemNumber = checkedItem.Split('.')[0];
-                    int itemNum = Convert.ToInt32(itemNumber);
-                    checkedItems.Add(itemNum);
+                    if (item != null && item.IsMainObject)
+                    {
+                        checkedItems.Add(item);
+                    }
                 }
             }
 
@@ -138,7 +191,7 @@ namespace EasyEPlanner
         private void ImportObjectsForm_FormClosed(object sender, 
             FormClosedEventArgs e)
         {
-            this.Dispose();
+            Dispose();
         }
 
         /// <summary>
@@ -149,9 +202,13 @@ namespace EasyEPlanner
         private void clearSelectedObjects_LinkClicked(object sender, 
             LinkLabelLinkClickedEventArgs e)
         {
-            for (int item = 0; item < checkedListBox.Items.Count; item++)
+            foreach (TreeNodeAdv treeNode in importingObjectsTree.AllNodes)
             {
-                checkedListBox.SetItemChecked(item, false);
+                var node = treeNode.Tag as Node;
+                if (node != null)
+                {
+                    node.CheckState = CheckState.Unchecked;
+                }
             }
         }
 
@@ -163,10 +220,32 @@ namespace EasyEPlanner
         private void selectedAllObjects_LinkClicked(object sender, 
             LinkLabelLinkClickedEventArgs e)
         {
-            for(int item = 0; item < checkedListBox.Items.Count; item++)
+            foreach (TreeNodeAdv treeNode in importingObjectsTree.AllNodes)
             {
-                checkedListBox.SetItemChecked(item, true);
+                var node = treeNode.Tag as Node;
+                if (node != null)
+                {
+                    node.CheckState = CheckState.Checked;
+                }
             }
+        }
+
+        /// <summary>
+        /// Функция обновления состояний чекбоксов
+        /// </summary>
+        /// <param name="sender">Объект, который вызвал функцию</param>
+        /// <param name="e">Контекст переданный вызывающим кодом</param>
+        private void importingObjectsTree_ChangeCheckBoxState(object sender,
+            TreePathEventArgs e)
+        {
+            object nodeObject = e.Path.LastNode;
+            Node checkedNode = nodeObject as Node;
+            StaticHelper.GUIHelper.CheckCheckState(checkedNode);
+        }
+
+        private void nodeTextBox_DrawText(object sender, DrawTextEventArgs e)
+        {
+            e.TextColor = Color.Black;
         }
     }
 }

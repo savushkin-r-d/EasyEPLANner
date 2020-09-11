@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using TechObject;
 using Device;
 using IO;
 using System.Windows.Forms;
@@ -330,11 +329,19 @@ namespace EasyEPlanner
 
         private const int numberOfDashes = 78;
 
-        private static TechObjectManager techObjectManager = TechObjectManager
-            .GetInstance();
+        private static TechObject.ITechObjectManager techObjectManager =
+              TechObject.TechObjectManager.GetInstance();
         private static DeviceManager deviceManager = DeviceManager
             .GetInstance();
         private static IOManager IOManager = IOManager.GetInstance();
+
+        public static string MainProgramFileName
+        {
+            get
+            {
+                return mainProgramFileName;
+            }
+        }
 
         public class ParametersForSave
         {
@@ -342,7 +349,8 @@ namespace EasyEPlanner
             public string path;
             public bool silentMode;
 
-            public ParametersForSave(string PAC_Name, string path, bool silentMode)
+            public ParametersForSave(string PAC_Name, string path,
+                bool silentMode)
             {
                 this.PAC_Name = PAC_Name;
                 this.path = path;

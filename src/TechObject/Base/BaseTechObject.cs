@@ -1,6 +1,9 @@
 ﻿using EasyEPlanner;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace TechObject
 {
@@ -17,19 +20,6 @@ namespace TechObject
             BaseOperations = new List<BaseOperation>();
             BasicName = "";
             Owner = null;
-            Equipment = new List<BaseParameter>();
-            AggregateParameters = new List<BaseParameter>();
-            BindingName = "";
-        }
-
-        public BaseTechObject(TechObject owner)
-        {
-            Name = "";
-            EplanName = "";
-            S88Level = 0;
-            BaseOperations = new List<BaseOperation>();
-            BasicName = "";
-            Owner = owner;
             Equipment = new List<BaseParameter>();
             AggregateParameters = new List<BaseParameter>();
             BindingName = "";
@@ -326,17 +316,6 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Сброс базовых операций объекта
-        /// </summary>
-        public void ResetBaseOperations()
-        {
-            foreach (Mode operation in Owner.ModesManager.Modes)
-            {
-                operation.BaseOperation.Init("");
-            }
-        }
-
-        /// <summary>
         /// Является ли базовый объект привязываемым к другому объекту.
         /// </summary>
         public virtual bool IsAttachable
@@ -428,10 +407,7 @@ namespace TechObject
                 return res;
             }
 
-            var objects = TechObjectManager.GetInstance();
-            var masterObj = objects.Objects
-                .Where(x => x.Name.Contains("Мастер") ||
-                x.Name.Contains("Ячейка процесса")).FirstOrDefault();
+            var masterObj = TechObjectManager.GetInstance().ProcessCell;
             if (masterObj != null)
             {
                 res += objName + ".master = prg." + masterObj.NameEplan
@@ -545,8 +521,8 @@ namespace TechObject
         /// <param name="prefix">Отступ</param>
         /// <param name="modes">Операции объекта</param>
         /// <returns></returns>
-        public string SaveOperationsParameters(string objName, string prefix,
-            List<Mode> modes)
+        public string SaveOperationsParameters(TechObject obj, string objName,
+            string prefix, List<Mode> modes)
         {
             var res = "";
             foreach (Mode mode in modes)
@@ -568,29 +544,26 @@ namespace TechObject
                         continue;
                     }
 
-                    ParameterValueType type = GetParameterValueType(parameter);
+                    ParameterValueType type = 
+                        GetParameterValueType(obj, parameter);
                     switch (type)
                     {
                         case ParameterValueType.Boolean:
                             paramsForSave += $"{prefix}{parameter.LuaName} = " +
                                     $"{parameter.Value},\n";
                             break;
-
                         case ParameterValueType.Device:
                             paramsForSave += $"{prefix}{parameter.LuaName}" +
                                 $" = prg.control_modules.{parameter.Value},\n";
                             break;
-
                         case ParameterValueType.Number:
                             paramsForSave += GetNumberParameterStringForSave(
                                 prefix, parameter, mode);
                             break;
-
                         case ParameterValueType.Parameter:
                             paramsForSave += $"{prefix}{parameter.LuaName} = " +
                             $"{objName}.PAR_FLOAT.{parameter.Value},\n";
                             break;
-
                         case ParameterValueType.Other:
                             paramsForSave += $"{prefix}{parameter.LuaName} = " +
                                     $"{parameter.Value},\n";
@@ -620,7 +593,7 @@ namespace TechObject
         /// <param name="mainObjMode">Проверяемая операция главного объекта
         /// </param>
         /// <returns></returns>
-        private string GetNumberParameterStringForSave(string prefix, 
+        public string GetNumberParameterStringForSave(string prefix, 
             BaseParameter parameter, Mode mainObjMode)
         {
             BaseTechObject baseTechObject = null;
@@ -687,7 +660,7 @@ namespace TechObject
         /// </summary>
         /// <param name="parameter">Параметр для проверки</param>
         /// <returns></returns>
-        private ParameterValueType GetParameterValueType(
+        private ParameterValueType GetParameterValueType(TechObject obj,
             BaseParameter parameter)
         {
             var result = ParameterValueType.Other;
@@ -705,7 +678,7 @@ namespace TechObject
                 return result;
             }
 
-            bool isParameter = owner.GetParamsManager().Float
+            bool isParameter = obj.GetParamsManager()
                 .GetParam(parameterValue) != null;
             if (isParameter)
             {
@@ -723,15 +696,15 @@ namespace TechObject
             }
 
             string[] devices = parameterValue.Split(' ');
-            if(devices.Length > 1)
+            if (devices.Length > 1)
             {
                 bool haveBadDevices = false;
                 var validDevices = new List<bool>();
-                foreach(var device in devices)
+                foreach (var device in devices)
                 {
                     isDevice = deviceManager.GetDeviceByEplanName(device)
                         .Description != StaticHelper.CommonConst.Cap;
-                    if(isDevice == false)
+                    if (isDevice == false)
                     {
                         haveBadDevices = true;
                     }
@@ -739,7 +712,7 @@ namespace TechObject
                 }
 
                 validDevices = validDevices.Distinct().ToList();
-                if(validDevices.Count == 1 && haveBadDevices == false)
+                if (validDevices.Count == 1 && haveBadDevices == false)
                 {
                     result = ParameterValueType.ManyDevices;
                     return result;
@@ -754,18 +727,19 @@ namespace TechObject
         /// Сохранить оборудование технологического объекта
         /// </summary>
         /// <param name="objName">Имя для сохранения</param>
+        /// <param name="equipment">Объект</param>
         /// <returns></returns>
-        public string SaveEquipment(string objName)
+        public string SaveEquipment(TechObject obj, string objName)
         {
             var res = "";
-            var equipment = this.owner.Equipment;
+            Equipment equipment = obj.Equipment;
             foreach (var item in equipment.Items)
             {
                 var property = item as BaseParameter;
                 var value = property.Value;
                 var luaName = property.LuaName;
 
-                var parameterType = GetParameterValueType(property);
+                var parameterType = GetParameterValueType(obj, property);
                 switch (parameterType)
                 {
                     case ParameterValueType.Device:
@@ -773,7 +747,7 @@ namespace TechObject
                             $"prg.control_modules.{value}\n";
                         break;
                     case ParameterValueType.ManyDevices:
-                        res += SaveMoreThanOneDeviceInEquipment(objName, 
+                        res += SaveMoreThanOneDeviceInEquipment(objName,
                             luaName, value);
                         break;
                     case ParameterValueType.Parameter:
@@ -799,7 +773,7 @@ namespace TechObject
             string res = "";
 
             string[] devices = value.Split(' ');
-            if(devices.Length > 1)
+            if (devices.Length > 1)
             {
                 string[] modifiedDevices = devices
                     .Select(x => "prg.control_modules." + x).ToArray();

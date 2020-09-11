@@ -23,7 +23,7 @@ namespace EasyEPlanner
         static public TreeView SaveTechObjectOperationsAndActionsAsTree()
         {
             var tree = new TreeView();
-            foreach (var techObj in techObjectManager.Objects)
+            foreach (var techObj in techObjectManager.TechObjects)
             {
                 string techName = techObjectManager.GetTechObjectN(techObj)
                     .ToString() + ". " + techObj.EditText[0] + " " + 
@@ -114,38 +114,37 @@ namespace EasyEPlanner
         static public TreeView SaveParamsAsTree()
         {
             var tree = new TreeView();
-            foreach (var techObj in techObjectManager.Objects)
+            foreach (var techObj in techObjectManager.TechObjects)
             {
                 string techName = techObjectManager.GetTechObjectN(techObj)
-                    .ToString() + ". " + techObj.EditText[0] + " " + 
+                    .ToString() + ". " + techObj.EditText[0] + " " +
                     techObj.TechNumber.ToString();
                 var objectNode = new TreeNode(techName);
                 objectNode.Tag = techObj;
 
-                string[] ParamsType = { "S_PAR_F", "RT_PAR_F"};
-                for (int i = 0; i < techObj.GetParamsManager().Items.Length; i++)
+                foreach(Params paramsGroup in techObj.GetParamsManager().Items)
                 {
-                    if(techObj.GetParamsManager().Items[i].Items != null)
+                    var parTypeNode = new TreeNode(paramsGroup
+                        .NameForChannelBase);
+                    parTypeNode.Tag = paramsGroup.NameForChannelBase;
+                    objectNode.Nodes.Add(parTypeNode);
+
+                    int counter = 1;
+                    foreach(Param param in paramsGroup.Items)
                     {
-                        var parTypeNode = new TreeNode(ParamsType[i]);
-                        parTypeNode.Tag = ParamsType[i];
-                        objectNode.Nodes.Add(parTypeNode);
-                        for(int j = 0; j < techObj.GetParamsManager().Items[i].Items.Length; j++)
+                        string parName = $"{counter}. {param.EditText[0]}";
+                        var parNode = new TreeNode(parName);
+                        counter++;
+                        parNode.Tag = new string[]
                         {
-                            Param param = techObj.GetParamsManager().Items[i].Items[j] as Param;
-                            string parName = (j + 1).ToString() + ". " +
-                                param.EditText[0];
-                            var parNode = new TreeNode(parName);
-                            parNode.Tag = new string[]
-                            {
-                                parName,
-                                param.GetValue(),
-                                param.GetMeter(),
-                                param.Operations,
-                                param.GetNameLua(),
-                            };
-                            parTypeNode.Nodes.Add(parNode);
-                        }
+                            parName,
+                            param.GetValue(),
+                            param.GetMeter(),
+                            param.Operations,
+                            param.GetNameLua()
+                        };
+
+                        parTypeNode.Nodes.Add(parNode);
                     }
                 }
 
@@ -163,7 +162,7 @@ namespace EasyEPlanner
             var tree = new TreeView();
 
             bool objectTitleIsWrited = false;
-            foreach (var techObj in techObjectManager.Objects)
+            foreach (var techObj in techObjectManager.TechObjects)
             {
                 if (objectTitleIsWrited == false)
                 {
@@ -201,6 +200,7 @@ namespace EasyEPlanner
                 {
                     objNode.Nodes.Add(modesNodes);
                 }
+
                 if (parametersNodes.Nodes.Count > 0)
                 {
                     objNode.Nodes.Add(parametersNodes);
@@ -261,7 +261,7 @@ namespace EasyEPlanner
                     }
                     foreach (var step in state.Steps)
                     {
-                        if (!step.DisplayText.Contains("Во время операции"))
+                        if (!step.DisplayText.Contains(Step.MainStepName))
                         {
                             stateNodes.Nodes.Add(step.DisplayText[0]);
                         }
@@ -707,7 +707,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Менеджер технологических объектов.
         /// </summary>
-        static TechObjectManager techObjectManager = TechObjectManager
+        static ITechObjectManager techObjectManager = TechObjectManager
             .GetInstance();
 
         /// <summary>

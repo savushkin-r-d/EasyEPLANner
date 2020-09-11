@@ -845,5 +845,14 @@ return
             },
             bindingName = "tank_level_node"
         },
+        cip_module = {
+            name = "Модуль мойки",
+            s88Level = 2,
+            baseOperations = { },
+            basicName = "cip_module",
+            equipment = { },
+            aggregateParameters = { },
+            bindingName = "cip_module"
+        },
     }
 end

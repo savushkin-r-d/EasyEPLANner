@@ -96,7 +96,7 @@ namespace EasyEPlanner
 
         Device.DeviceManager deviceManager;
         IO.IOManager IOManager;
-        TechObject.TechObjectManager techObjectManager;
+        TechObject.ITechObjectManager techObjectManager;
         ProjectHealthChecker projectHealthChecker;
     }
 }

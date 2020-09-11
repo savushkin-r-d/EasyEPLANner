@@ -9,6 +9,7 @@ namespace Editor
     {
         private ITreeViewItem parent;
 
+        #region Реализация ITreeViewItem
         public ITreeViewItem Parent
         {
             get
@@ -21,19 +22,6 @@ namespace Editor
             }
         }
 
-        public int GetObjType()
-        {
-            if (this.GetType().FullName == "TechObject.TechObject")
-            {
-                return (this as TechObject.TechObject).TechType;
-            }
-            else
-            {
-                return -1;
-            }
-        }
-
-        #region Реализация ITreeViewItem
         virtual public string[] DisplayText
         {
             get
@@ -108,7 +96,14 @@ namespace Editor
 
         virtual public object Copy()
         {
-            return null;
+            if(IsCopyable)
+            {
+                return this;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         virtual public bool IsMoveable
@@ -181,14 +176,6 @@ namespace Editor
             }
         }
 
-        virtual public bool IsUseRestriction
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         virtual public bool IsLocalRestrictionUse
         {
             get
@@ -219,22 +206,6 @@ namespace Editor
             get { return false; }
         }
 
-        public virtual List<string> BaseObjectsList
-        {
-            get
-            {
-                return new List<string>();
-            }
-        }
-
-        public virtual bool ContainsBaseObject
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         public virtual bool IsBoolParameter
         {
             get
@@ -251,7 +222,7 @@ namespace Editor
             }
         }
 
-        public virtual bool NeedRebuildMainObject
+        public virtual bool IsMode
         {
             get
             {
@@ -273,10 +244,10 @@ namespace Editor
         /// <param name="parent">Родительский элемент</param>
         public void AddParent(ITreeViewItem parent)
         {
-            this.Parent = parent;
-            if (this.Items != null)
+            Parent = parent;
+            if (Items != null)
             {
-                foreach (ITreeViewItem item in this.Items)
+                foreach (ITreeViewItem item in Items)
                 {
                     item.AddParent(this);
                 }
@@ -314,10 +285,43 @@ namespace Editor
             }
         }
 
+        public virtual ImageIndexEnum ImageIndex
+        {
+            get
+            {
+                return ImageIndexEnum.NONE;
+            }
+        }
+
+        public virtual bool ContainsBaseObject
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public virtual List<string> BaseObjectsList
+        {
+            get
+            {
+                return new List<string>();
+            }
+        }
+
         /// <summary>
         /// Отключено или нет свойство
         /// </summary>
         public bool Disabled { get; set; }
+
+        public bool MarkToCut { get; set; }
+
+        public virtual ITreeViewItem Cut(ITreeViewItem item)
+        {
+            return null;
+        }
+
+        public virtual bool IsCuttable { get; } = false;
         #endregion
 
         #region реализация IHelperItem

@@ -7,99 +7,12 @@ namespace Editor
     /// </summary>
     public class ObjectProperty : ITreeViewItem, IHelperItem
     {
-        /// <summary>    
-        /// Получение индекса иконки объекта по названию. 
-        /// </summary>
-        ///  <param name="obj">Объект.</param>
-        static public int GetImageIndex(object obj)
+        public virtual ImageIndexEnum ImageIndex
         {
-            int res = 100;
-            switch (obj.GetType().Name)
+            get
             {
-                case "TechObjectManager":
-                    res = 0;
-                    break;
-
-                case "TechObject":
-                    res = 1;
-                    break;
-
-                case "ModesManager":
-                    res = 2;
-                    break;
-
-                case "Mode":
-                    res = 3;
-                    break;
-
-                case "Step":
-                    res = 4;
-                    break;
-
-                case "Action":
-                    TechObject.Action action = obj as TechObject.Action;
-                    switch (action.stepName)
-                    {
-                        case "Включать":
-                            res = 5;
-                            break;
-
-                        case "Выключать":
-                            res = 6;
-                            break;
-
-                        case "Сигналы для включения":
-                            res = 7;
-                            break;
-
-                        case "Мойка ( DI, DO, устройства)":
-                            res = 10;
-                            break;
-
-                        default:
-                            break;
-                    }
-                    break;
-
-                case "Action_WashSeats":
-                    TechObject.Action_WashSeats actionWash =
-                        obj as TechObject.Action_WashSeats;
-                    switch (actionWash.stepName)
-                    {
-                        case "Верхние седла":
-                            res = 8;
-                            break;
-
-                        case "Нижние седла":
-                            res = 9;
-                            break;
-
-                        default:
-                            break;
-                    }
-                    break;
-
-                case "ActionWash":
-                    res = 11;
-                    break;
-
-                case "Action_DI_DO":
-                    res = 10;
-                    break;
-
-                case "ParamsManager":
-                    res = 12;
-                    break;
-
-                case "Equipment":
-                    res = 13;
-                    break;
-
-                default:
-                    break;
+                return ImageIndexEnum.NONE;
             }
-
-            return res;
         }
 
         /// <param name="name">Имя свойства.</param>
@@ -111,19 +24,30 @@ namespace Editor
             this.name = name;
             this.value = value;
 
-            this.needDisable = false;
+            needDisable = false;
         }
 
+        /// <summary>
+        /// Копия объекта
+        /// </summary>
+        /// <returns></returns>
         public ObjectProperty Clone()
         {
             return (ObjectProperty)MemberwiseClone();
         }
 
+        /// <summary>
+        /// Установить значение свойства
+        /// </summary>
+        /// <param name="val">Значение</param>
         public void SetValue(object val)
         {
             value = val;
         }
 
+        /// <summary>
+        /// Значение свойства
+        /// </summary>
         public string Value
         {
             get
@@ -132,6 +56,9 @@ namespace Editor
             }
         }
 
+        /// <summary>
+        /// Имя свойства
+        /// </summary>
         public string Name
         {
             get
@@ -140,8 +67,18 @@ namespace Editor
             }
         }
 
-        #region Реализация ITreeViewItem
+        /// <summary>
+        /// Имя картинки
+        /// </summary>
+        public string ImageName
+        {
+            get
+            {
+                return "Свойство";
+            }
+        }
 
+        #region Реализация ITreeViewItem
         public ITreeViewItem Parent
         {
             get
@@ -162,27 +99,18 @@ namespace Editor
             }
         }
 
-        public string ImageName
-        {
-            get
-            {
-                return "свойство";
-            }
-        }
-
         public virtual string[] EditText
         {
             get
             {
-                if (value is System.Double)
+                if (value is double)
                 {
-                    System.Globalization.NumberFormatInfo provider =
-                        new System.Globalization.NumberFormatInfo();
+                    var provider = new System.Globalization.NumberFormatInfo();
                     provider.NumberDecimalSeparator = ".";
 
                     double v = (double)value;
-                    return new string[] { "",
-                        System.String.Format( provider, "{0:0.##}", v ) };
+                    return new string[] { "", 
+                        string.Format( provider, "{0:0.##}", v ) };
                 }
 
                 return new string[] { "", value.ToString() };
@@ -212,7 +140,14 @@ namespace Editor
 
         public virtual object Copy()
         {
-            return null;
+            if(IsCopyable)
+            {
+                return this;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public bool IsMoveable
@@ -271,7 +206,6 @@ namespace Editor
         {
             get
             {
-                //Можем редактировать содержимое второй колонки.
                 return new int[] { -1, 1 };
             }
         }
@@ -322,7 +256,8 @@ namespace Editor
             return res;
         }
 
-        public virtual bool SetNewValue(SortedDictionary<int, List<int>> newDict)
+        public virtual bool SetNewValue(SortedDictionary<int, 
+            List<int>> newDict)
         {
             bool res = false;
             return res;
@@ -394,22 +329,6 @@ namespace Editor
             get { return false; }
         }
 
-        public List<string> BaseObjectsList
-        {
-            get
-            {
-                return new List<string>();
-            }
-        }
-
-        public bool ContainsBaseObject
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         public virtual bool IsBoolParameter
         {
             get
@@ -426,7 +345,7 @@ namespace Editor
             }
         }
 
-        public virtual bool NeedRebuildMainObject
+        public bool IsMode
         {
             get
             {
@@ -448,10 +367,10 @@ namespace Editor
         /// <param name="parent">Родительский элемент</param>
         public void AddParent(ITreeViewItem parent)
         {
-            this.Parent = parent;
-            if (this.Items != null)
+            Parent = parent;
+            if (Items != null)
             {
-                foreach (ITreeViewItem item in this.Items)
+                foreach (ITreeViewItem item in Items)
                 {
                     item.AddParent(this);
                 }
@@ -487,10 +406,35 @@ namespace Editor
             }
         }
 
+        public virtual bool ContainsBaseObject
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public virtual List<string> BaseObjectsList
+        {
+            get
+            {
+                return new List<string>();
+            }
+        }
+
         /// <summary>
         /// Отключено или нет свойство
         /// </summary>
         public bool Disabled { get; set; }
+
+        public bool MarkToCut { get; set; }
+
+        public ITreeViewItem Cut(ITreeViewItem item)
+        {
+            return null;
+        }
+
+        public  bool IsCuttable { get; } = false;
         #endregion
 
         #region реализация IHelperItem

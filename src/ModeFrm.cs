@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Aga.Controls.Tree;
+using Aga.Controls.Tree.NodeControls;
+using PInvoke;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using PInvoke;
-using Aga.Controls.Tree;
-using Aga.Controls.Tree.NodeControls;
 
 namespace EasyEPlanner
 {
@@ -15,56 +15,38 @@ namespace EasyEPlanner
         private ModeFrm()
         {
             InitializeComponent();
-            InitTreeViewComponents();
 
-            nodeTextBox.DrawText += 
-                new EventHandler<DrawTextEventArgs>(modesTreeViewAdv_DrawNode);
-            dialogCallbackDelegate = 
+            const string columnName = "Операции";
+            StaticHelper.GUIHelper.SetUpAdvTreeView(modesTreeViewAdv,
+                columnName, modesTreeViewAdv_DrawNode, nodeCheckBox,
+                treeItem_AfterCheck);
+
+            dialogCallbackDelegate =
                 new PI.HookProc(DlgWndHookCallbackFunction);
         }
 
+        /// <summary>
+        /// Чекбокс для дерева
+        /// </summary>
+        NodeCheckBox nodeCheckBox = new NodeCheckBox();
+
         private static ModeFrm mFrm = null;
 
-        ///<summary>
-        ///Инициализация графических компонентов формы
-        ///</summary>
-        private void InitTreeViewComponents()
+        /// <summary>
+        /// Функция для обработки завершения работы окна устройств.
+        /// </summary>
+        public void CloseEditor()
         {
-            modesTreeViewAdv.FullRowSelect = true;
-            modesTreeViewAdv.FullRowSelectActiveColor = 
-                Color.FromArgb(192, 192, 255);
-            modesTreeViewAdv.FullRowSelectInactiveColor = 
-                Color.FromArgb(192, 255, 192);
-            modesTreeViewAdv.GridLineStyle = GridLineStyle.Horizontal;
-            modesTreeViewAdv.UseColumns = true;
-            modesTreeViewAdv.ShowLines = true;
-            modesTreeViewAdv.ShowPlusMinus = true;
-            modesTreeViewAdv.RowHeight = 20;
+            modesTreeViewAdv.Model = null;
 
-            treeColumn1.Sortable = false;
-            treeColumn1.Header = "Операции";
-            treeColumn1.Width = 300;
+            PI.UnhookWindowsHookEx(dialogHookPtr);
 
-            nodeCheckBox.DataPropertyName = "CheckState";
-            nodeCheckBox.VerticalAlign = VerticalAlignment.Center;
-            nodeCheckBox.ParentColumn = treeColumn1;
-            nodeCheckBox.EditEnabled = true;
+            PI.SetParent(modesTreeViewAdv.Handle, this.Handle);
+            PI.SetParent(toolStrip.Handle, this.Handle);
 
-            nodeTextBox.DataPropertyName = "Text";
-            nodeTextBox.VerticalAlign = VerticalAlignment.Center;
-            nodeTextBox.TrimMultiLine = true;
-            nodeTextBox.ParentColumn = treeColumn1;
-
-            modesTreeViewAdv.Columns.Add(treeColumn1);
-            modesTreeViewAdv.NodeControls.Add(nodeTextBox);
+            System.Threading.Thread.Sleep(1);
+            modeIsShown = false;
         }
-
-        ///<summary>
-        ///Компоненты TreeView для инициализации
-        ///</summary>
-        TreeColumn treeColumn1 = new TreeColumn();
-        NodeCheckBox nodeCheckBox = new NodeCheckBox();
-        NodeTextBox nodeTextBox = new NodeTextBox();
 
         public static ModeFrm GetInstance()
         {
@@ -119,7 +101,7 @@ namespace EasyEPlanner
         private IntPtr wndHandle = IntPtr.Zero;
         private IntPtr panelPtr = IntPtr.Zero;
 
-        private IntPtr DlgWndHookCallbackFunction(int code, IntPtr wParam, 
+        private IntPtr DlgWndHookCallbackFunction(int code, IntPtr wParam,
             IntPtr lParam)
         {
             PI.CWPSTRUCT msg = (PI.CWPSTRUCT)System.Runtime.InteropServices
@@ -131,24 +113,7 @@ namespace EasyEPlanner
                 {
                     case (int)PI.WM.MOVE:
                     case (int)PI.WM.SIZE:
-                        IntPtr dialogPtr = PI
-                            .GetParent(modesTreeViewAdv.Handle);
-
-                        PI.RECT rctDialog;
-                        PI.RECT rctPanel;
-                        PI.GetWindowRect(dialogPtr, out rctDialog);
-                        PI.GetWindowRect(panelPtr, out rctPanel);
-
-                        int w = rctDialog.Right - rctDialog.Left;
-                        int h = rctDialog.Bottom - rctDialog.Top;
-
-                        toolStrip.Location = new Point(0, 0);
-                        modesTreeViewAdv.Location = 
-                            new Point(0, 0 + toolStrip.Height);
-
-                        toolStrip.Width = w;
-                        modesTreeViewAdv.Width = w;
-                        modesTreeViewAdv.Height = h - toolStrip.Height;
+                        ChangeUISize();
                         break;
                 }
 
@@ -198,6 +163,27 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Изменить размер UI
+        /// </summary>
+        private void ChangeUISize()
+        {
+            IntPtr dialogPtr = PI.GetParent(modesTreeViewAdv.Handle);
+
+            PI.RECT rctDialog;
+            PI.GetWindowRect(dialogPtr, out rctDialog);
+
+            int w = rctDialog.Right - rctDialog.Left;
+            int h = rctDialog.Bottom - rctDialog.Top;
+
+            toolStrip.Location = new Point(0, 0);
+            modesTreeViewAdv.Location = new Point(0, toolStrip.Height);
+
+            toolStrip.Width = w;
+            modesTreeViewAdv.Width = w;
+            modesTreeViewAdv.Height = h - toolStrip.Height;
+        }
+
+        /// <summary>
         /// Дескриптор окна
         /// </summary>
         public static IntPtr wndModeVisibilePtr;
@@ -208,33 +194,7 @@ namespace EasyEPlanner
         public static bool modeIsShown = false;
 
         /// <summary>
-        /// Инициализация формы данными для редактирования.
-        ///
-        /// Так как данная форма отображается как внутреннее окно, то алгоритм
-        /// следующий:
-        /// 1 Поиск окна "Основные данные изделия" (меню Сервисные программы -> 
-        /// Изделие -> Навигатор основных данных изделий).
-        /// 1.1 Поиск плавающего представления: через FindWindowByCaption,         
-        /// потом для поиска панели и диалога DlgItemId (0xE81F - базовая панель,
-        /// 0x32С8 - диалог). Если окно найдено, то переходим к 4,  иначе к 1.1.1.
-        /// 1.1.1 Поиск плавающего представления: иногда не отображается заголовок
-        /// из-за чего невозможно сразу определить окно, тогда проверяются потомки окон,
-        /// которые могут содержать заголовок родительского окна. Если не найдены заголовки,
-        /// то переходим к 1.2 (значит плавающего представления нет).
-        /// 1.2 Поиск закрепленного представления: через GetDlgItem для всех дочерних
-        /// окон (GetChildWindows) приложения Eplan по DlgItemId (0x32C8 - диалог).
-        /// Если окно найдено, то переходим к 4, иначе к 2.
-        /// 2 Симулируем нажатие пункта меню (Сервисные программы -> 
-        /// Изделие -> Навигатор основных данных изделий - 35357)
-        /// для его отображения.
-        /// 3 Повторяем поиск окна (1.1, 1.1.1 и 1.2). Если окно не найдено выводим
-        /// сообщение об ошибке, завершаем редактирование, иначе к 4.
-        /// 4 Скрываем панель с элементами управления Eplan'а
-        /// (GetDlgItem, 0x3E6 - родительская панель, ShowWindow).
-        /// 5. Переносим на найденное окно свои элементы (SetParent) и подгоняем
-        /// из размеры и позицию.
-        /// 6. Устанавливаем свой хук для найденного окна (для изменения размеров
-        /// своих элементов, сохранения изменений при закрытии и отключения хука).
+        /// Показать диалог (окно с редактором).
         /// </summary>
 
         public void ShowDlg()
@@ -243,452 +203,54 @@ namespace EasyEPlanner
                 System.Diagnostics.Process.GetCurrentProcess();
 
             // Идентификатор команды вызова окна "Штекеры"
-            const int wndWmCommand = 35093; 
+            const int wndWmCommand = 35093;
+            string windowName = "Штекеры";
 
             if (modeIsShown == true)
             {
-                if (PI.IsWindowVisible(wndModeVisibilePtr) == false)
-                {
-                    PI.SendMessage(oCurrent.MainWindowHandle,
-                        (uint)PI.WM.COMMAND, wndWmCommand, 0);
-                    return;
-                }
+                StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent,
+                    wndModeVisibilePtr, wndWmCommand);
                 return;
             }
 
-            string windowName = "Штекеры";
-
-            IntPtr res = PI.FindWindowByCaption(
-                IntPtr.Zero, windowName);                  //1.1
-
-            if (res != IntPtr.Zero)
+            StaticHelper.GUIHelper.SearchWindowDescriptor(oCurrent, windowName,
+                wndWmCommand, ref dialogHandle, ref wndModeVisibilePtr);
+            if (wndModeVisibilePtr != IntPtr.Zero)
             {
-                var resList = PI.GetChildWindows(res);
-                if (resList.Count > 0)
-                {
-                    wndHandle = PI.GetParent(resList[0]);
-                    dialogHandle = resList[0];
-                    wndModeVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
-                }
+                StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent,
+                    wndModeVisibilePtr, wndWmCommand);
+                StaticHelper.GUIHelper.ChangeWindowMainPanels(ref dialogHandle,
+                   ref panelPtr);
+
+                Controls.Clear();
+
+                // Переносим на найденное окно свои элементы (SetParent) и
+                // подгоняем их размеры и позицию.
+                PI.SetParent(modesTreeViewAdv.Handle, dialogHandle);
+                PI.SetParent(toolStrip.Handle, dialogHandle);
+                ChangeUISize();
+
+                // Устанавливаем свой хук для найденного окна
+                // (для изменения размеров своих элементов, сохранения
+                // изменений при закрытии и отключения хука).
+                SetUpHook();
+
+                modeIsShown = true;
             }
-            else
-            {
-                StringBuilder stringBuffer = new StringBuilder(200);        //1.1.1
+        }
 
-                List<IntPtr> mainWindowChilds = PI.GetChildWindows(PI.GetDesktopWindow());
-                foreach (IntPtr mainWindowChild in mainWindowChilds)
-                {
-                    PI.GetWindowText(mainWindowChild, stringBuffer, stringBuffer.Capacity);
-                    if (stringBuffer.ToString().Contains(windowName) == false &&
-                        stringBuffer.ToString().Contains("EPLAN") == false)
-                    {
-                        List<IntPtr> windowChilds = PI.GetChildWindows(mainWindowChild);
-                        foreach (IntPtr windowChild in windowChilds)
-                        {
-                            PI.GetWindowText(windowChild, stringBuffer, stringBuffer.Capacity);
-                            if (stringBuffer.ToString().Contains(windowName) == true)
-                            {
-                                if (PI.IsWindowVisible(windowChild) == true)
-                                {
-                                    // Если нашел в потомке название, беру родительское окно и работаю с ним
-                                    var resList = PI.GetChildWindows(mainWindowChild);
-                                    if (resList.Count > 0)
-                                    {
-                                        dialogHandle = resList[0];
-                                        res = dialogHandle;
-                                        wndModeVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                List<IntPtr> resW = PI.GetChildWindows(oCurrent.MainWindowHandle);        //1.2
-                foreach (IntPtr panel in resW)
-                {
-                    PI.GetWindowText(panel, stringBuffer, stringBuffer.Capacity);
-                    if (stringBuffer.ToString().Contains(windowName) == true)
-                    {
-                        if (PI.IsWindowVisible(panel) == true)
-                        {
-                            var resList = PI.GetChildWindows(panel);
-                            if (resList.Count > 0)
-                            {
-                                dialogHandle = resList[0];
-                                res = dialogHandle;
-                                wndModeVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
-                                break;
-                            }
-                        }
-
-                    }
-                }
-
-                if (res == IntPtr.Zero)
-                {
-                    PI.SendMessage(oCurrent.MainWindowHandle,
-                        (uint)PI.WM.COMMAND, wndWmCommand, 0);                //2
-
-                    res = PI.FindWindowByCaption(
-                        IntPtr.Zero, windowName);          //3
-
-                    if (res != IntPtr.Zero)
-                    {
-                        var resList = PI.GetChildWindows(res);
-                        if (resList.Count > 0)
-                        {
-                            dialogHandle = resList[0];
-                            wndHandle = PI.GetParent(resList[0]);
-                            wndModeVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
-                        }
-                    }
-                    else
-                    {
-                        mainWindowChilds = PI.GetChildWindows(PI.GetDesktopWindow());
-                        foreach (IntPtr mainWindowChild in mainWindowChilds)
-                        {
-                            PI.GetWindowText(mainWindowChild, stringBuffer, stringBuffer.Capacity);
-                            if (stringBuffer.ToString().Contains(windowName) == false &&
-                        stringBuffer.ToString().Contains("EPLAN") == false)
-                            {
-                                List<IntPtr> windowChilds = PI.GetChildWindows(mainWindowChild);
-                                foreach (IntPtr windowChild in windowChilds)
-                                {
-                                    PI.GetWindowText(windowChild, stringBuffer, stringBuffer.Capacity);
-                                    if (stringBuffer.ToString().Contains(windowName) == true)
-                                    {
-                                        // Если нашел в потомке название, беру родительское окно и работаю с ним
-                                        var resList = PI.GetChildWindows(mainWindowChild);
-                                        if (resList.Count > 0)
-                                        {
-                                            dialogHandle = resList[0];
-                                            wndModeVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        resW = PI.GetChildWindows(oCurrent.MainWindowHandle);
-                        foreach (IntPtr panel in resW)
-                        {
-                            PI.GetWindowText(panel, stringBuffer, stringBuffer.Capacity);
-                            if (stringBuffer.ToString().Contains(windowName) == true)
-                            {
-                                var resList = PI.GetChildWindows(panel);
-                                if (resList.Count > 0)
-                                {
-                                    dialogHandle = resList[0];
-                                    wndModeVisibilePtr = dialogHandle; // Сохраняем дескриптор окна.
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (dialogHandle == IntPtr.Zero)
-                        {
-                            MessageBox.Show("Не удалось найти окно!");
-                            return;
-                        }
-                    }
-                }
-            }
-
-            var panelList = PI.GetChildWindows(dialogHandle);           //4
-            if (panelList.Count > 0)
-            {
-                panelPtr = panelList[0];
-            }
-
-            if (panelPtr == IntPtr.Zero)
-            {
-                MessageBox.Show("Не удалось скрыть окно!");
-                return;
-            }
-
-            PI.ShowWindow(panelPtr, 0);
-            this.Controls.Clear();
-
-            modesTreeViewAdv.Show();
-            PI.SetParent(modesTreeViewAdv.Handle, dialogHandle);         //5 
-            PI.SetParent(toolStrip.Handle, dialogHandle);
-
-            IntPtr dialogPtr = PI.GetParent(modesTreeViewAdv.Handle);
-
-            PI.RECT rctDialog;
-            PI.RECT rctPanel;
-            PI.GetWindowRect(dialogPtr, out rctDialog);
-            PI.GetWindowRect(panelPtr, out rctPanel);
-
-            int w = rctDialog.Right - rctDialog.Left;
-            int h = rctDialog.Bottom - rctDialog.Top;
-
-            toolStrip.Location = new Point(0, 0);
-            modesTreeViewAdv.Location = new Point(0, 0 + toolStrip.Height);
-
-            toolStrip.Width = w;
-            modesTreeViewAdv.Width = w;
-            modesTreeViewAdv.Height = h - toolStrip.Height;
-
-            uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);        //6
+        /// <summary>
+        /// Устанавливаем хук для найденного окна.
+        /// </summary>
+        private void SetUpHook()
+        {
+            uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);
             dialogHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_CALLWNDPROC,
                 dialogCallbackDelegate, IntPtr.Zero, pid);
-
-            PI.SetWindowText(dialogHandle, caption);
-            PI.SetWindowText(wndHandle, caption);
-
-            modeIsShown = true;
         }
 
         public delegate void OnSetNewValue(SortedDictionary<int, List<int>> dict);
         public OnSetNewValue functionAfterCheck = null;
-
-        #region Реализация под старый редактор
-        /// <summary>
-        /// Выбор операции на дереве, которые входят в ограничения.
-        /// </summary> 
-        /// <param name="checkedDev">Объект, в котором хранятся ограничения.
-        /// </param>
-        /// <param name="function">Делегат, который вызывается при последующих 
-        /// изменениях операций в ограничениях.</param>
-        public void SelectDevices(Editor.ITreeViewItem checkedDev, 
-            OnSetNewValue function)
-        {
-            modesTreeViewAdv.BeginUpdate();
-
-            foreach (TreeNodeAdv boxedNode in modesTreeViewAdv.AllNodes)
-            {
-                var node = boxedNode.Tag as Node;
-                node.CheckState = CheckState.Unchecked;
-            }
-
-            nodeCheckBox.CheckStateChanged -= 
-                new EventHandler<TreePathEventArgs>(treeItem_AfterCheck);
-
-            if (function != null)
-            {
-                functionAfterCheck = function;
-            }
-
-            var treeModel = modesTreeViewAdv.Model as TreeModel;
-            List<Node> nodes = treeModel.Nodes.ToList();
-            selectedDevices(nodes, checkedDev);
-
-            nodeCheckBox.CheckStateChanged += new 
-                EventHandler<TreePathEventArgs>(treeItem_AfterCheck);
-
-            modesTreeViewAdv.EndUpdate();
-        }
-
-        /// <summary>
-        /// Переключение состояния чекбоксов операции
-        /// </summary>
-        /// <param name="nodes">узлы</param>
-        /// <param name="checkedMode">выбранные (отмеченные) операции</param>
-        private void selectedDevices(List<Node> nodes,
-            Editor.ITreeViewItem checkedMode)
-        {
-            foreach (Node subNode in nodes)
-            {
-                if (subNode.Tag.ToString() == "TechObject.Mode")
-                {
-                    Node parentNode = subNode.Parent;
-                    var restriction = checkedMode as TechObject.Restriction;
-                    // Если не ограничения, то выходим из функции
-                    if (restriction == null)
-                    {
-                        return;
-                    }
-
-                    if (restriction.RestrictDictionary != null)
-                    {
-                        if (restriction.RestrictDictionary.ContainsKey(
-                            parentNode.Parent.Nodes.IndexOf(parentNode) + 1))
-                        {
-                            if (restriction.RestrictDictionary[
-                                parentNode.Parent.Nodes.IndexOf(parentNode) + 1]
-                                .Contains(nodes.IndexOf(subNode) + 1))
-                            {
-                                subNode.CheckState = CheckState.Checked;
-
-                                // Выставляем состояние родителя
-                                RecursiveCheckParent(subNode.Parent);
-
-                                // Выставляем состояние узла
-                                RecursiveCheck(subNode);
-                            }
-                        }
-                    }
-                }
-                selectedDevices(subNode.Nodes.ToList(), checkedMode);
-            }
-        }
-
-        /// <summary>
-        /// Построение дерева на основе определенных операций проекта.
-        /// </summary>   
-        public bool ShowModes(TechObject.TechObjectManager techManager,
-           bool showCheckBoxes, bool showOneNode, Editor.ITreeViewItem item,
-           Editor.ITreeViewItem checkedMode,
-           OnSetNewValue function, bool isRebuiltTree = false)
-        {
-            if (function != null)
-            {
-                functionAfterCheck = function;
-            }
-
-            if (showCheckBoxes)
-            {
-                modesTreeViewAdv.NodeControls.Insert(0, nodeCheckBox);
-            }
-            else
-            {
-                modesTreeViewAdv.NodeControls.Remove(nodeCheckBox);
-            }
-
-            //Проверяем на изменение типов отображаемых операций.
-            if (isRebuiltTree == false)
-            {
-                ShowDlg();
-                return true;
-            }
-
-            Refresh(techManager, checkedMode, showOneNode, item);
-
-            ShowDlg();
-            return true;
-        }
-
-        /// <summary>
-        /// Обновление дерева на основе текущих устройств проекта.
-        /// </summary>
-        /// <param name="techManager">Менеджер техустройств проекта.</param>
-        /// <param name="checkedMode">Выбранные операции.</param>
-        private void Refresh(TechObject.TechObjectManager techManager,
-            Editor.ITreeViewItem checkedMode, bool showOneNode,
-            Editor.ITreeViewItem item)
-        {
-            modesTreeViewAdv.BeginUpdate();
-
-            modesTreeViewAdv.Model = null;
-            modesTreeViewAdv.Refresh();
-            var treeModel = new TreeModel();
-
-            var root = new Node(techManager.DisplayText[0]);
-            root.Tag = techManager.GetType().FullName;
-            treeModel.Nodes.Add(root);
-
-            int toNum = 0;
-            int modeNum = 0;
-            var mainTO = item as TechObject.TechObject;
-            var restriction = checkedMode as TechObject.Restriction;
-            //Заполняем узлы дерева устройствами.
-            foreach (TechObject.TechObject to in techManager.Objects)
-            {
-                toNum++;
-
-                var parentNode = new Node(to.DisplayText[0]);
-                parentNode.Tag = to.GetType().FullName;
-                root.Nodes.Add(parentNode);
-
-                List<TechObject.Mode> modes = to.ModesManager.Modes;
-
-                foreach (TechObject.Mode mode in modes)
-                {
-                    modeNum++;
-
-                    var childNode = new Node(mode.DisplayText[0]);
-                    childNode.Tag = mode.GetType().FullName;
-                    parentNode.Nodes.Add(childNode);
-
-                    if (restriction != null)
-                    {
-                        var restrictionManager = restriction.Parent;
-                        var selectedMode = restrictionManager.Parent as
-                            TechObject.Mode;
-                        var modeManager = selectedMode.Parent;
-                        var selectedTO = modeManager.Parent as
-                            TechObject.TechObject;
-                        if (to.DisplayText[0] == selectedTO.DisplayText[0] &&
-                            mode.Name == selectedMode.Name)
-                        {
-                            childNode.IsHidden = true;
-                        }
-                    }
-
-                    string checkedStr;
-                    if (checkedMode != null)
-                    {
-                        checkedStr = checkedMode.EditText[1];
-                        if (restriction != null)
-                        {
-                            if (restriction.RestrictDictionary != null)
-                            {
-                                if (restriction.RestrictDictionary
-                                    .ContainsKey(toNum))
-                                {
-                                    if (restriction.RestrictDictionary[toNum]
-                                        .Contains(modeNum))
-                                    {
-                                        childNode.CheckState = CheckState
-                                            .Checked;
-                                    }
-                                    else
-                                    {
-                                        childNode.CheckState = CheckState
-                                            .Unchecked;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        checkedStr = "";
-                        childNode.CheckState = CheckState.Unchecked;
-                    }
-                }
-
-                if (showOneNode == true)
-                {
-                    if (to != mainTO)
-                    {
-                        parentNode.IsHidden = true;
-                        foreach (Node child in parentNode.Nodes)
-                        {
-                            child.IsHidden = true;
-                        }
-                    }
-                }
-                else
-                {
-                    if (to == mainTO)
-                    {
-                        parentNode.IsHidden = true;
-                        foreach (Node child in parentNode.Nodes)
-                        {
-                            child.IsHidden = true;
-                        }
-                    }
-                }
-
-            }
-
-            modesTreeViewAdv.Model = treeModel;
-
-            //Обновляем названия строк (добавляем количество объектов).
-            List<TreeNodeAdv> nodes = modesTreeViewAdv.AllNodes.ToList();
-            TreeNodeAdv treeNode = nodes[0];
-            OnHideOperationTree.Execute(treeNode);
-
-            modesTreeViewAdv.ExpandAll();
-            modesTreeViewAdv.Refresh();
-            modesTreeViewAdv.EndUpdate();
-        }
-        #endregion
 
         #region Реализация под новый редактор в т.ч. привязка агрегатов
         /// <summary>
@@ -698,7 +260,7 @@ namespace EasyEPlanner
         /// </param>
         /// <param name="function">Делегат, который вызывается при последующих 
         /// изменениях операций в ограничениях.</param>
-        public void SelectDevices(NewEditor.ITreeViewItem checkedDev, 
+        public void SelectDevices(Editor.ITreeViewItem checkedDev,
             OnSetNewValue function)
         {
             modesTreeViewAdv.BeginUpdate();
@@ -708,7 +270,7 @@ namespace EasyEPlanner
                 node.CheckState = CheckState.Unchecked;
             }
 
-            nodeCheckBox.CheckStateChanged -= 
+            nodeCheckBox.CheckStateChanged -=
                 new EventHandler<TreePathEventArgs>(treeItem_AfterCheck);
 
             if (function != null)
@@ -720,7 +282,7 @@ namespace EasyEPlanner
             List<Node> nodes = treeModel.Nodes.ToList();
             SelectedDevices(nodes, checkedDev);
 
-            nodeCheckBox.CheckStateChanged += new 
+            nodeCheckBox.CheckStateChanged += new
                 EventHandler<TreePathEventArgs>(treeItem_AfterCheck);
 
             modesTreeViewAdv.EndUpdate();
@@ -732,41 +294,44 @@ namespace EasyEPlanner
         /// <param name="nodes">узлы</param>
         /// <param name="checkedMode">выбранные (отмеченные) операции</param>
         private void SelectedDevices(List<Node> nodes,
-            NewEditor.ITreeViewItem checkedMode)
+            Editor.ITreeViewItem checkedMode)
         {
             foreach (Node subNode in nodes)
             {
-                switch (subNode.Tag.ToString())
+                var item = subNode.Tag as Editor.ITreeViewItem;
+                if (item != null)
                 {
-                    case "NewTechObject.Mode":
-                        SelectRestriction(nodes, subNode, checkedMode);
-                        break;
-
-                    case "NewTechObject.TechObject":
+                    if (item.IsMainObject)
+                    {
                         SelectAttachedObject(subNode, checkedMode);
-                        break;
+
+                    }
+                    else if (item.IsMode)
+                    {
+                        SelectRestriction(nodes, subNode, checkedMode);
+                    }
                 }
                 SelectedDevices(subNode.Nodes.ToList(), checkedMode);
             }
         }
-        
+
         /// <summary>
         /// Отметка ограничения в дереве
         /// </summary>
         /// <param name="nodes">Список узлов</param>
         /// <param name="subNode">Текущий узел</param>
         /// <param name="checkedMode">Выбранный элемент на дереве</param>
-        private void SelectRestriction(List<Node> nodes, Node subNode, 
-            NewEditor.ITreeViewItem checkedMode)
+        private void SelectRestriction(List<Node> nodes, Node subNode,
+            Editor.ITreeViewItem checkedMode)
         {
-            var restriction = checkedMode as NewTechObject.Restriction;
+            var restriction = checkedMode as TechObject.Restriction;
             if (restriction == null)
             {
                 return;
             }
 
             Node parentNode = subNode.Parent;
-            int objectNum = NewTechObject.TechObjectManager
+            int objectNum = TechObject.TechObjectManager
                 .GetInstance()
                 .GetTechObjectN(parentNode.Text);
             int modeNum = nodes.IndexOf(subNode) + 1;
@@ -779,8 +344,7 @@ namespace EasyEPlanner
             if (correctRestriction)
             {
                 subNode.CheckState = CheckState.Checked;
-                RecursiveCheckParent(subNode.Parent);
-                RecursiveCheck(subNode);
+                StaticHelper.GUIHelper.CheckCheckState(subNode);
             }
         }
 
@@ -790,16 +354,16 @@ namespace EasyEPlanner
         /// <param name="subNode">Текущий узел</param>
         /// <param name="checkedMode">Выбранный элемент на дереве</param>
         private void SelectAttachedObject(Node subNode,
-            NewEditor.ITreeViewItem checkedMode)
+            Editor.ITreeViewItem checkedMode)
         {
-            var attachedObjects = checkedMode as NewTechObject
+            var attachedObjects = checkedMode as TechObject
                 .TechObject.AttachedToObjects;
             if (attachedObjects == null)
             {
                 return;
             }
 
-            int objectNum = NewTechObject.TechObjectManager
+            int objectNum = TechObject.TechObjectManager
                 .GetInstance()
                 .GetTechObjectN(subNode.Text);
             bool correctObject = attachedObjects.Value
@@ -808,17 +372,16 @@ namespace EasyEPlanner
             if (correctObject)
             {
                 subNode.CheckState = CheckState.Checked;
-                RecursiveCheckParent(subNode.Parent);
-                RecursiveCheck(subNode);
+                StaticHelper.GUIHelper.CheckCheckState(subNode);
             }
         }
 
         /// <summary>
         /// Построение дерева на основе определенных операций проекта.
         /// </summary>   
-        public bool ShowModes(NewTechObject.TechObjectManager techManager,
-           bool showCheckBoxes, bool showOneNode, NewEditor.ITreeViewItem item,
-           NewEditor.ITreeViewItem checkedMode,
+        public bool ShowModes(TechObject.TechObjectManager techManager,
+           bool showCheckBoxes, bool showOneNode, Editor.ITreeViewItem item,
+           Editor.ITreeViewItem checkedMode,
            OnSetNewValue function, bool isRebuiltTree = false)
         {
             if (function != null)
@@ -849,9 +412,9 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="techManager">Менеджер техустройств проекта.</param>
         /// <param name="checkedMode">Выбранные операции.</param>
-        private void Refresh(NewTechObject.TechObjectManager techManager,
-            NewEditor.ITreeViewItem checkedMode, bool showOneNode,
-            NewEditor.ITreeViewItem item)
+        private void Refresh(TechObject.TechObjectManager techManager,
+            Editor.ITreeViewItem checkedMode, bool showOneNode,
+            Editor.ITreeViewItem item)
         {
             modesTreeViewAdv.BeginUpdate();
 
@@ -860,12 +423,12 @@ namespace EasyEPlanner
             var treeModel = new TreeModel();
 
             var root = new Node(techManager.DisplayText[0]);
-            root.Tag = techManager.GetType().FullName;
+            root.Tag = techManager;
             treeModel.Nodes.Add(root);
 
             int techObjectNumber = 0;
             int modeNumber = 0;
-            var mainTechObject = item as NewTechObject.TechObject;
+            var mainTechObject = item as TechObject.TechObject;
 
             FillTreeObjects(techManager.Items, root, mainTechObject,
                 showOneNode, ref techObjectNumber, ref modeNumber,
@@ -874,7 +437,7 @@ namespace EasyEPlanner
             SetUpTreeVisibility(root, checkedMode);
 
             modesTreeViewAdv.Model = treeModel;
-            
+
             List<TreeNodeAdv> nodes = modesTreeViewAdv.AllNodes.ToList();
             TreeNodeAdv treeNode = nodes[0];
             OnHideOperationTree.Execute(treeNode);
@@ -894,34 +457,35 @@ namespace EasyEPlanner
         /// <param name="techObjNum"></param>
         /// <param name="modeNum"></param>
         /// <param name="checkedMode"></param>
-        private void FillTreeObjects(NewEditor.ITreeViewItem[] treeItems,
-            Node root, NewTechObject.TechObject mainTechObject, 
+        private void FillTreeObjects(Editor.ITreeViewItem[] treeItems,
+            Node root, TechObject.TechObject mainTechObject,
             bool showOneNode, ref int techObjNum, ref int modeNum,
-            NewEditor.ITreeViewItem checkedMode)
+            Editor.ITreeViewItem checkedMode)
         {
-            bool notAllowedTypes = !(checkedMode is NewTechObject.Restriction ||
-                checkedMode is NewTechObject.TechObject.AttachedToObjects) ||
+            bool notShowAllOperations = checkedMode != null;
+            bool notAllowedTypes = !(checkedMode is TechObject.Restriction ||
+                checkedMode is TechObject.TechObject.AttachedToObjects) ||
                 checkedMode.IsEditable == false;
-            if (notAllowedTypes)
+            if (notAllowedTypes && notShowAllOperations)
             {
                 ShowNoModes();
                 return;
             }
 
-            foreach(var treeItem in treeItems)
+            foreach (var treeItem in treeItems)
             {
                 var parentNode = new Node(treeItem.DisplayText[0]);
-                parentNode.Tag = treeItem.GetType().FullName;
+                parentNode.Tag = treeItem;
                 root.Nodes.Add(parentNode);
 
-                if (treeItem is NewTechObject.TechObject techObject)
+                if (treeItem is TechObject.TechObject techObject)
                 {
-                    techObjNum = NewTechObject.TechObjectManager.GetInstance()
+                    techObjNum = TechObject.TechObjectManager.GetInstance()
                         .GetTechObjectN(techObject);
-                    List<NewTechObject.Mode> modes = techObject.ModesManager
+                    List<TechObject.Mode> modes = techObject.ModesManager
                         .Modes;
 
-                    if(checkedMode is NewTechObject.Restriction)
+                    if (checkedMode is TechObject.Restriction)
                     {
                         FillTreeObjectsModes(modes, parentNode, checkedMode,
                             techObject, ref techObjNum, ref modeNum);
@@ -947,28 +511,28 @@ namespace EasyEPlanner
         /// <param name="techObject">Технологический объект</param>
         /// <param name="techObjNum">Номер объекта</param>
         /// <param name="modeNum">Номер операции</param>
-        private void FillTreeObjectsModes(List<NewTechObject.Mode> modes,
-            Node parentNode, NewEditor.ITreeViewItem checkedMode,
-            NewTechObject.TechObject techObject, ref int techObjNum,
+        private void FillTreeObjectsModes(List<TechObject.Mode> modes,
+            Node parentNode, Editor.ITreeViewItem checkedMode,
+            TechObject.TechObject techObject, ref int techObjNum,
             ref int modeNum)
         {
-            var restriction = checkedMode as NewTechObject.Restriction;
+            var restriction = checkedMode as TechObject.Restriction;
             foreach (var mode in modes)
             {
                 modeNum = mode.GetModeNumber();
                 var childNode = new Node(mode.DisplayText[0]);
-                childNode.Tag = mode.GetType().FullName;
+                childNode.Tag = mode;
                 parentNode.Nodes.Add(childNode);
 
                 if (checkedMode != null)
                 {
                     var restrictionManager = checkedMode.Parent;
-                    var selectedMode = restrictionManager.Parent as 
-                        NewTechObject.Mode;
+                    var selectedMode = restrictionManager.Parent as
+                        TechObject.Mode;
                     var modeManager = selectedMode.Parent;
-                    var selectedTechObject = modeManager.Parent as 
-                        NewTechObject.TechObject;
-                    bool notSameObjects = 
+                    var selectedTechObject = modeManager.Parent as
+                        TechObject.TechObject;
+                    bool notSameObjects =
                         techObject.DisplayText[0] == selectedTechObject
                         .DisplayText[0] && mode.Name == selectedMode.Name;
                     if (notSameObjects)
@@ -1002,8 +566,8 @@ namespace EasyEPlanner
         /// <param name="mainTechObject">Выбранный технологический объект
         /// </param>
         private void SetUpTechObjectNodeVisibility(bool showOneNode,
-            Node parentNode, NewTechObject.TechObject techObject, 
-            NewTechObject.TechObject mainTechObject)
+            Node parentNode, TechObject.TechObject techObject,
+            TechObject.TechObject mainTechObject)
         {
             if (showOneNode == true)
             {
@@ -1040,14 +604,16 @@ namespace EasyEPlanner
         /// <param name="node">Узел дерева, корень</param>
         /// <param name="checkedNode">Выбранный узел</param>
         /// <returns>Нужно ли скрыть переданные</returns>
-        private bool SetUpTreeVisibility(Node node, 
-            NewEditor.ITreeViewItem checkedNode)
+        private bool SetUpTreeVisibility(Node node,
+            Editor.ITreeViewItem checkedNode)
         {
             bool withoutChildren = node.Nodes.Count == 0;
+            var item = node.Tag as Editor.ITreeViewItem;
             if (withoutChildren)
             {
-                if(checkedNode is NewTechObject.Restriction &&
-                    node.Tag.ToString() == "NewTechObject.TechObject")
+                if (item != null &&
+                    item.IsMainObject &&
+                    checkedNode is TechObject.Restriction)
                 {
                     return true;
                 }
@@ -1059,16 +625,16 @@ namespace EasyEPlanner
 
             bool allChildItemsHidden = node.Nodes
                 .Where(x => x.IsHidden).Count() == node.Nodes.Count;
-        
-            if(allChildItemsHidden)
+
+            if (allChildItemsHidden)
             {
                 return true;
             }
             else
             {
-                foreach(var childTreeNode in node.Nodes)
+                foreach (var childTreeNode in node.Nodes)
                 {
-                    bool isHidden = SetUpTreeVisibility(childTreeNode, 
+                    bool isHidden = SetUpTreeVisibility(childTreeNode,
                         checkedNode);
                     childTreeNode.IsHidden = isHidden;
                 }
@@ -1119,7 +685,7 @@ namespace EasyEPlanner
                 int correctionForTreeLevelWithNewControl = 2;
 
                 Node node = treeNode.Tag as Node;
-                if (treeNode.Level == correctionForTreeLevelWithNewControl && 
+                if (treeNode.Level == correctionForTreeLevelWithNewControl &&
                     treeNode.Children.Count < 1)
                 {
                     treeNode.IsHidden = true;
@@ -1160,24 +726,6 @@ namespace EasyEPlanner
             static SortedDictionary<int, List<int>> resDict =
                 new SortedDictionary<int, List<int>>();
 
-            /// <summary>
-            /// Допустимый тип в старом редакторе для настройки ограничений
-            /// </summary>
-            const string oldEditorRestrictionsAllowedRestrictions = 
-                "TechObject.Mode";
-
-            /// <summary>
-            /// Допустимый тип в новом редакторе для настройки ограничений
-            /// </summary>
-            const string newEditorRestrictionsAllowedType = 
-                "NewTechObject.Mode";
-
-            /// <summary>
-            /// Допустимый тип для настройки привязанных агрегатов
-            /// </summary>
-            const string newEditorAttaсhedObjectsAllowedType = 
-                "NewTechObject.TechObject";
-
             public static void ResetResStr()
             {
                 res = "";
@@ -1201,24 +749,17 @@ namespace EasyEPlanner
             public static void Execute(TreeNodeAdv treeNode)
             {
                 var node = treeNode.Tag as Node;
-                if (node.CheckState == CheckState.Checked)
+                var item = node.Tag as Editor.ITreeViewItem;
+                if (item != null &&
+                    node.CheckState == CheckState.Checked)
                 {
-                    switch(node.Tag.ToString())
+                    if (item.IsMainObject)
                     {
-                        case oldEditorRestrictionsAllowedRestrictions:
-                            ExecuteOldEditorRestrictions(node);
-                            break;
-
-                        case newEditorRestrictionsAllowedType:
-                            ExecuteNewEditorRestrictions(node);
-                            break;
-
-                        case newEditorAttaсhedObjectsAllowedType:
-                            ExecuteNewEditorAttachedObjects(node);
-                            break;
-
-                        default:
-                            break;
+                        ExecuteAttachedObjects(node);
+                    }
+                    else if (item.IsMode)
+                    {
+                        ExecuteRestrictions(node);
                     }
                 }
 
@@ -1233,26 +774,13 @@ namespace EasyEPlanner
             }
 
             /// <summary>
-            /// Обработка отметки операции в старом редакторе в ограничениях
-            /// </summary>
-            /// <param name="node">Узел дерева</param>
-            private static void ExecuteOldEditorRestrictions(Node node)
-            {
-                Node parentNode = node.Parent;
-                int objectIndex = parentNode.Parent.Nodes
-                    .IndexOf(parentNode) + 1;
-                int modeIndex = parentNode.Nodes.IndexOf(node) + 1;
-                ModifyRestriction(objectIndex, modeIndex);
-            }
-
-            /// <summary>
             /// Обработка отметки операции в новом редакторе в ограничениях
             /// </summary>
             /// <param name="node">Узел дерева</param>
-            private static void ExecuteNewEditorRestrictions(Node node)
+            private static void ExecuteRestrictions(Node node)
             {
                 Node parentNode = node.Parent;
-                int objectIndex = NewTechObject.TechObjectManager.GetInstance()
+                int objectIndex = TechObject.TechObjectManager.GetInstance()
                     .GetTechObjectN(parentNode.Text);
                 int modeIndex = parentNode.Nodes.IndexOf(node) + 1;
                 ModifyRestriction(objectIndex, modeIndex);
@@ -1285,12 +813,12 @@ namespace EasyEPlanner
             /// привязанных объектов
             /// </summary>
             /// <param name="node">Узел объекта</param>
-            private static void ExecuteNewEditorAttachedObjects(Node node)
+            private static void ExecuteAttachedObjects(Node node)
             {
-                int objectIndex = NewTechObject.TechObjectManager.GetInstance()
+                int objectIndex = TechObject.TechObjectManager.GetInstance()
                     .GetTechObjectN(node.Text);
                 // Заполняем нулями список т.к правая часть не нужна.
-                resDict.Add(objectIndex, new List<int> (0));
+                resDict.Add(objectIndex, new List<int>(0));
             }
         }
 
@@ -1336,91 +864,7 @@ namespace EasyEPlanner
             // Нажатый узел дерева
             object nodeObject = e.Path.LastNode;
             Node checkedNode = nodeObject as Node;
-
-            // Выставляем состояние родителя
-            RecursiveCheckParent(checkedNode.Parent);
-
-            // Выставляем состояние узла
-            RecursiveCheck(checkedNode);
-        }
-
-        /// <summary>
-        /// Функция установки состояния
-        /// отображения узла
-        /// </summary>
-        /// <param name="node">Выбранный узел</param>
-        private void RecursiveCheck(Node node)
-        {
-            // Если есть потомки
-            if (node.Nodes.Count > 0)
-            {
-                List<Node> childNodes = node.Nodes.ToList();
-
-                foreach (Node child in childNodes)
-                {
-                    if (child.IsHidden != true)
-                    {
-                        // Такое же состояние child, как и у node
-                        child.CheckState = node.CheckState;
-                        RecursiveCheck(child);
-                    }
-                }
-            }
-            else
-            {
-                return;
-            }
-        }
-
-        /// <summary>
-        /// Установка состояния отображения
-        /// для родительского узла выбранного элемента
-        /// </summary>
-        /// <param name="parentNode">родительский узел</param>
-        private void RecursiveCheckParent(Node parentNode)
-        {
-            // 0 - корень (но не Root)
-            if (parentNode.Index > -1)
-            {
-                int countOfCheckedNodes = 0;
-                int countOfIndeterminateNodes = 0;
-                int countOfNodes = parentNode.Nodes.Count;
-                foreach (Node node in parentNode.Nodes)
-                {
-                    if (node.CheckState == CheckState.Checked)
-                    {
-                        countOfCheckedNodes++;
-                    }
-
-                    if (node.CheckState == CheckState.Indeterminate)
-                    {
-                        countOfIndeterminateNodes++;
-                    }
-
-                    // Т.к учитывает скрытые в nodes.count
-                    if (node.IsHidden == true)
-                    {
-                        countOfNodes--;
-                    }
-                }
-
-                if (parentNode.CheckState != CheckState.Indeterminate)
-                {
-                    parentNode.CheckState = CheckState.Indeterminate;
-                }
-
-                if (countOfCheckedNodes == countOfNodes)
-                {
-                    parentNode.CheckState = CheckState.Checked;
-                }
-
-                if (countOfCheckedNodes == 0 && countOfIndeterminateNodes == 0)
-                {
-                    parentNode.CheckState = CheckState.Unchecked;
-                }
-
-                RecursiveCheckParent(parentNode.Parent);
-            }
+            StaticHelper.GUIHelper.CheckCheckState(checkedNode);
         }
 
         /// <summary>
@@ -1460,7 +904,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="sender">Объект вызвавший событие</param>
         /// <param name="e">Контекст переданный событием</param>
-        private void modesTreeViewAdv_DrawNode(object sender, 
+        private void modesTreeViewAdv_DrawNode(object sender,
             DrawTextEventArgs e)
         {
             e.TextColor = Color.Black;

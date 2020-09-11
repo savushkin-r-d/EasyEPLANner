@@ -115,32 +115,39 @@
   <ItemGroup>
     <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Device\IODevices\F.cs" />
-    <Compile Include="EditorNew\DrawInfo.cs" />
-    <Compile Include="EditorNew\Editor.cs" />
-    <Compile Include="EditorNew\IHelperItem.cs" />
-    <Compile Include="EditorNew\ImageIndexEnum.cs" />
-    <Compile Include="EditorNew\ITreeViewItem.cs" />
-    <Compile Include="EditorNew\NewEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="EditorNew\NewEditorControl.Designer.cs">
-      <DependentUpon>NewEditorControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="EditorNew\INewEditor.cs" />
-    <Compile Include="EditorNew\ObjectProperty.cs" />
-    <Compile Include="EditorNew\ObjectAdder\ObjectAdder.cs">
+    <Compile Include="Editor\DrawInfo.cs" />
+    <Compile Include="Editor\Editor.cs" />
+    <Compile Include="Editor\IHelperItem.cs" />
+    <Compile Include="Editor\ImageIndexEnum.cs" />
+    <Compile Include="Editor\ImportExport\TechObjectsExporter.cs" />
+    <Compile Include="Editor\ImportExport\TechObjectsExportForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EditorNew\ObjectAdder\ObjectAdder.Designer.cs">
+    <Compile Include="Editor\ImportExport\TechObjectsExportForm.Designer.cs">
+      <DependentUpon>TechObjectsExportForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editor\ImportExport\TechObjectsImporter.cs" />
+    <Compile Include="Editor\ImportExport\TechObjectsImportForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Editor\ImportExport\TechObjectsImportForm.Designer.cs">
+      <DependentUpon>TechObjectsImportForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editor\ITreeViewItem.cs" />
+    <Compile Include="Editor\NewEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Editor\NewEditorControl.Designer.cs">
+      <DependentUpon>NewEditorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Editor\INewEditor.cs" />
+    <Compile Include="Editor\ObjectProperty.cs" />
+    <Compile Include="Editor\ObjectAdder\ObjectAdder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Editor\ObjectAdder\ObjectAdder.Designer.cs">
       <DependentUpon>ObjectAdder.cs</DependentUpon>
     </Compile>
-    <Compile Include="EditorNew\TreeViewItem.cs" />
-    <Compile Include="Editor\DrawInfo.cs" />
-    <Compile Include="Editor\IEditor.cs" />
-    <Compile Include="Editor\IHelperItem.cs" />
-    <Compile Include="Editor\ITreeViewItem.cs" />
-    <Compile Include="Editor\ObjectProperty.cs" />
-    <Compile Include="Editor\ImportExport\TechObjectsImporter.cs" />
     <Compile Include="Editor\TreeViewItem.cs" />
     <Compile Include="InterprojectExchange\DeviceComparer.cs" />
     <Compile Include="InterprojectExchange\DeviceInfo.cs" />
@@ -180,7 +187,6 @@
     </Compile>
     <Compile Include="Main\InterprojectExchangeAction.cs" />
     <Compile Include="Configuration\ProjectHealthChecker.cs" />
-    <Compile Include="Main\ShowNewTechObjectsAction.cs" />
     <Compile Include="Device\DeviceManager.cs" />
     <Compile Include="Configuration\DeviceBindingReader.cs" />
     <Compile Include="Configuration\DeviceReader.cs" />
@@ -215,7 +221,6 @@
     <Compile Include="DFrm.Designer.cs">
       <DependentUpon>DFrm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Editor\Editor.cs" />
     <Compile Include="EProjectManager.cs" />
     <Compile Include="FileSavers\XMLReporterDialog.cs">
       <SubType>Form</SubType>
@@ -234,18 +239,6 @@
       <DependentUpon>IdleForm.cs</DependentUpon>
     </Compile>
     <Compile Include="IdleModule.cs" />
-    <Compile Include="Editor\ImportExport\TechObjectsExportForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Editor\ImportExport\TechObjectsExportForm.Designer.cs">
-      <DependentUpon>TechObjectsExportForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editor\ImportExport\TechObjectsImportForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Editor\ImportExport\TechObjectsImportForm.Designer.cs">
-      <DependentUpon>TechObjectsImportForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Configuration\IOReader.cs" />
     <Compile Include="IO\IOLinkCalculator.cs" />
     <Compile Include="IO\IOManager.cs" />
@@ -287,53 +280,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="StaticHelper.cs" />
-    <Compile Include="Editor\EditorCtrl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Editor\EditorCtrl.Designer.cs">
-      <DependentUpon>EditorCtrl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editor\ImportExport\TechObjectsExporter.cs" />
+    <Compile Include="StaticHelper\GUIHelper.cs" />
+    <Compile Include="StaticHelper\CommonConst.cs" />
+    <Compile Include="StaticHelper\IPConverter.cs" />
+    <Compile Include="StaticHelper\LuaHelper.cs" />
+    <Compile Include="StaticHelper\ApiHelper.cs" />
     <Compile Include="FileSavers\XMLReporter.cs" />
-    <Compile Include="TechObjectNew\Base\BaseObjectsManager.cs" />
-    <Compile Include="TechObjectNew\Base\BaseOperation.cs" />
-    <Compile Include="TechObjectNew\Base\BaseParameter.cs" />
-    <Compile Include="TechObjectNew\Base\BaseTechObject.cs" />
-    <Compile Include="TechObjectNew\Base\Properties\ActiveBoolParameter.cs" />
-    <Compile Include="TechObjectNew\Base\Properties\ActiveParameter.cs" />
-    <Compile Include="TechObjectNew\Base\Properties\MainAggregateParameter.cs" />
-    <Compile Include="TechObjectNew\ITechObjectManager.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\BaseObject.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\Unidentified.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\S88Object.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\ProcessCell.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Action.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Action_AI_AO.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Action_DI_DO.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Action_Wash.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Action_WashSeats.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Equipment.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\LocalRestriction.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Mode.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\ModesManager.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\OperationParam.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\OperationParams.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Param.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\ParamProperty.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Params.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\ParamsManager.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Restriction.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\RestrictionManager.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\State.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\Step.cs" />
-    <Compile Include="TechObjectNew\ObjectsTree\UniversalObject\TechObject.cs" />
-    <Compile Include="TechObjectNew\TechObjectManager.cs" />
-    <Compile Include="TechObject\Action.cs" />
-    <Compile Include="TechObject\Action_AI_AO.cs" />
-    <Compile Include="TechObject\Action_DI_DO.cs" />
-    <Compile Include="TechObject\Action_Wash.cs" />
-    <Compile Include="TechObject\Action_WashSeats.cs" />
     <Compile Include="TechObject\Base\BaseObjectsManager.cs" />
     <Compile Include="TechObject\Base\BaseOperation.cs" />
     <Compile Include="TechObject\Base\BaseParameter.cs" />
@@ -341,32 +293,50 @@
     <Compile Include="TechObject\Base\Properties\ActiveBoolParameter.cs" />
     <Compile Include="TechObject\Base\Properties\ActiveParameter.cs" />
     <Compile Include="TechObject\Base\Properties\MainAggregateParameter.cs" />
-    <Compile Include="TechObject\Equipment.cs" />
-    <Compile Include="TechObject\LocalRestriction.cs" />
-    <Compile Include="TechObject\Mode.cs" />
-    <Compile Include="TechObject\ModesManager.cs" />
-    <Compile Include="TechObject\OperationParam.cs" />
-    <Compile Include="TechObject\OperationParams.cs" />
-    <Compile Include="TechObject\Param.cs" />
-    <Compile Include="TechObject\ParamProperty.cs" />
-    <Compile Include="TechObject\Params.cs" />
-    <Compile Include="TechObject\ParamsManager.cs" />
-    <Compile Include="TechObject\Restriction.cs" />
-    <Compile Include="TechObject\RestrictionManager.cs" />
-    <Compile Include="TechObject\State.cs" />
-    <Compile Include="TechObject\Step.cs" />
-    <Compile Include="TechObject\TechObject.cs" />
+    <Compile Include="TechObject\ITechObjectManager.cs" />
+    <Compile Include="TechObject\ObjectsTree\BaseObject.cs" />
+    <Compile Include="TechObject\ObjectsTree\Unidentified.cs" />
+    <Compile Include="TechObject\ObjectsTree\S88Object.cs" />
+    <Compile Include="TechObject\ObjectsTree\ProcessCell.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Action.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Action_AI_AO.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Action_DI_DO.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Action_Wash.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Action_WashSeats.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Equipment.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\LocalRestriction.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Mode.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\ModesManager.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\OperationParam.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\OperationParams.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Param.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\ParamProperty.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Params.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\ParamsManager.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Restriction.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\RestrictionManager.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\State.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Step.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\TechObject.cs" />
     <Compile Include="TechObject\TechObjectManager.cs" />
+    <Compile Include="TechObject\TechObjectChecker.cs" />
+    <Compile Include="TechObject\TechObjectXMLMaker.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DFrm.resx">
       <DependentUpon>DFrm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="EditorNew\NewEditorControl.resx">
+    <EmbeddedResource Include="Editor\ImportExport\TechObjectsExportForm.resx">
+      <DependentUpon>TechObjectsExportForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editor\ImportExport\TechObjectsImportForm.resx">
+      <DependentUpon>TechObjectsImportForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Editor\NewEditorControl.resx">
       <DependentUpon>NewEditorControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="EditorNew\ObjectAdder\ObjectAdder.resx">
+    <EmbeddedResource Include="Editor\ObjectAdder\ObjectAdder.resx">
       <DependentUpon>ObjectAdder.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FileSavers\XMLReporterDialog.resx">
@@ -374,12 +344,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="IdleForm.resx">
       <DependentUpon>IdleForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\ImportExport\TechObjectsExportForm.resx">
-      <DependentUpon>TechObjectsExportForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\ImportExport\TechObjectsImportForm.resx">
-      <DependentUpon>TechObjectsImportForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InterprojectExchange\Forms\FilterForm.resx">
       <DependentUpon>FilterForm.cs</DependentUpon>
@@ -405,10 +369,6 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editor\EditorCtrl.resx">
-      <DependentUpon>EditorCtrl.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -487,7 +447,6 @@
     <Content Include="CMD\TestProjectScript.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Editor\DescriptionFromClass.txt" />
     <Content Include="LuaInterface\KopiLua.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -514,7 +473,6 @@
     <None Include="Resources\save.ico" />
     <None Include="Resources\To Do%27s.png" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

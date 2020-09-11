@@ -45,7 +45,6 @@
             // 
             this.toolStrip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.toolStrip.AutoSize = false;
             this.toolStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
@@ -58,8 +57,7 @@
             this.synchBtn});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Padding = new System.Windows.Forms.Padding(0);
-            this.toolStrip.Size = new System.Drawing.Size(304, 26);
+            this.toolStrip.Size = new System.Drawing.Size(193, 25);
             this.toolStrip.TabIndex = 1;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -69,7 +67,7 @@
             this.toolStripButton1.Image = global::EasyEPlanner.Properties.Resources.plus1;
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 23);
+            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton1.Tag = "0";
             this.toolStripButton1.ToolTipText = "Первый уровень";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
@@ -80,7 +78,7 @@
             this.toolStripButton2.Image = global::EasyEPlanner.Properties.Resources.plus2;
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(23, 23);
+            this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton2.Tag = "1";
             this.toolStripButton2.Text = "Второй уровень";
             this.toolStripButton2.ToolTipText = "Второй уровень";
@@ -92,7 +90,7 @@
             this.toolStripButton3.Image = global::EasyEPlanner.Properties.Resources.plus3;
             this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton3.Name = "toolStripButton3";
-            this.toolStripButton3.Size = new System.Drawing.Size(23, 23);
+            this.toolStripButton3.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton3.Tag = "2";
             this.toolStripButton3.Text = "Третий уровень";
             this.toolStripButton3.ToolTipText = "Третий уровень";
@@ -104,7 +102,7 @@
             this.toolStripButton4.Image = global::EasyEPlanner.Properties.Resources.plus4;
             this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton4.Name = "toolStripButton4";
-            this.toolStripButton4.Size = new System.Drawing.Size(23, 23);
+            this.toolStripButton4.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton4.Tag = "3";
             this.toolStripButton4.Text = "Четвертый уровень";
             this.toolStripButton4.ToolTipText = "Четвертый уровень";
@@ -113,7 +111,7 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 26);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // noAssigmentBtn
             // 
@@ -123,14 +121,14 @@
             this.noAssigmentBtn.Image = global::EasyEPlanner.Properties.Resources.toCheck;
             this.noAssigmentBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.noAssigmentBtn.Name = "noAssigmentBtn";
-            this.noAssigmentBtn.Size = new System.Drawing.Size(23, 23);
+            this.noAssigmentBtn.Size = new System.Drawing.Size(23, 22);
             this.noAssigmentBtn.Text = "Без привязки";
             this.noAssigmentBtn.Click += new System.EventHandler(this.noAssigmentBtn_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 26);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // synchBtn
             // 
@@ -138,7 +136,7 @@
             this.synchBtn.Image = global::EasyEPlanner.Properties.Resources.refresh;
             this.synchBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.synchBtn.Name = "synchBtn";
-            this.synchBtn.Size = new System.Drawing.Size(23, 23);
+            this.synchBtn.Size = new System.Drawing.Size(23, 22);
             this.synchBtn.Text = "Обновить";
             this.synchBtn.Click += new System.EventHandler(this.synchBtn_Click);
             // 
@@ -166,6 +164,7 @@
             this.devicesTreeViewAdv.Text = "devicesTreeViewAdv";
             this.devicesTreeViewAdv.UseColumns = true;
             this.devicesTreeViewAdv.NodeMouseDoubleClick += new System.EventHandler<Aga.Controls.Tree.TreeNodeAdvMouseEventArgs>(this.treeView_DoubleClick);
+            this.devicesTreeViewAdv.SizeChanged += new System.EventHandler(this.devicesTreeViewAdv_SizeChanged);
             // 
             // DFrm
             // 
@@ -183,6 +182,7 @@
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
             }
 

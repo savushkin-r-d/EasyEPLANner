@@ -17,8 +17,11 @@ namespace EasyEPlanner
         /// <returns></returns>
         public static int GetTagsCount()
         {
-            TreeNode rootNode = new TreeNode("subtypes");
-            techObjectManager.GetObjectForXML(rootNode);
+            var rootNode = new TreeNode("subtypes");
+            bool useNewNames = false;
+            bool combineTags = false;
+            techObjectManager.GetObjectForXML(rootNode, combineTags,
+                useNewNames);            
             deviceManager.GetObjectForXML(rootNode);
 
             int tagsCount = 0;
@@ -35,12 +38,17 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="path">Путь к файлу</param>
         /// <param name="rewrite">Перезаписывать или нет</param>
-        public static void SaveAsXML(string path, bool rewrite = false)
+        /// <param name="cdbxNewNames">Использовать имена объектов вместо OBJECT
+        /// </param>
+        /// <param name="cdbxTagView">Сгруппировать тэги в один подтип</param>
+        public static void SaveAsXML(string path, bool rewrite = false, 
+            bool cdbxTagView = false, bool cdbxNewNames = false)
         {
             projectConfig.SynchronizeDevices();
 
             var rootNode = new TreeNode("subtypes");
-            techObjectManager.GetObjectForXML(rootNode);
+            techObjectManager.GetObjectForXML(rootNode, cdbxTagView,
+                cdbxNewNames);
             deviceManager.GetObjectForXML(rootNode);
 
             var xmlDoc = new XmlDocument();
@@ -792,7 +800,7 @@ namespace EasyEPlanner
 
         static ProjectConfiguration projectConfig = ProjectConfiguration
             .GetInstance();
-        static TechObjectManager techObjectManager = TechObjectManager
+        static ITechObjectManager techObjectManager = TechObjectManager
             .GetInstance();
         static DeviceManager deviceManager = DeviceManager.GetInstance();
     }

@@ -1,5 +1,4 @@
 ﻿using Device;
-using Editor;
 using IO;
 using System.Collections.Generic;
 using System.IO;
@@ -60,6 +59,79 @@ namespace EasyEPlanner
             }
         }
 
+        #region Загрузка описания проекта
+        /// <summary>
+        /// Считывание описания.
+        /// </summary>
+        public int LoadDescription(out string errStr,
+            string projectName, bool loadFromLua)
+        {
+            errStr = "";
+            Logs.Clear();
+            EProjectManager.GetInstance().ProjectDataIsLoaded = false;
+
+            string LuaStr;
+            int res = 0;
+
+            var oProgress = new Eplan.EplApi.Base.Progress("EnhancedProgress");
+            oProgress.SetAllowCancel(false);
+            oProgress.SetTitle("Считывание данных проекта");
+
+            try
+            {
+                oProgress.BeginPart(15, "Считывание IO");
+                projectConfiguration.ReadIO();
+                oProgress.EndPart();
+
+                oProgress.BeginPart(15, "Считывание устройств");
+                if (projectConfiguration.DevicesIsRead == true)
+                {
+                    projectConfiguration.SynchronizeDevices();
+                }
+                else
+                {
+                    projectConfiguration.ReadDevices();
+                }
+                oProgress.EndPart();
+
+                oProgress.BeginPart(25, "Считывание привязки устройств");
+                projectConfiguration.ReadBinding();
+                oProgress.EndPart();
+
+                if (loadFromLua)
+                {
+                    oProgress.BeginPart(15, "Считывание технологических " +
+                        "объектов");
+                    res = LoadDescriptionFromFile(out LuaStr, out errStr, 
+                        projectName, "\\main.objects.lua");
+                    techObjectManager.LoadDescription(LuaStr, projectName);
+                    errStr = "";
+                    LuaStr = "";
+                    res = LoadDescriptionFromFile(out LuaStr, out errStr, 
+                        projectName, "\\main.restrictions.lua");
+                    techObjectManager.LoadRestriction(LuaStr);
+                    oProgress.EndPart();
+                }
+
+                oProgress.BeginPart(15, "Проверка данных");
+                projectConfiguration.Check();
+                oProgress.EndPart();
+
+                oProgress.BeginPart(15, "Расчет IO-Link");
+                IOManager.CalculateIOLinkAdresses();
+                oProgress.EndPart(true);
+                EProjectManager.GetInstance().ProjectDataIsLoaded = true;
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                oProgress.EndPart(true);
+                EProjectManager.GetInstance().ProjectDataIsLoaded = false;
+            }
+
+            return res;
+        }
+
         /// <summary>
         /// Считывание описания.
         /// </summary>
@@ -70,15 +142,17 @@ namespace EasyEPlanner
             errStr = "";
 
             StreamReader sr = null;
-            string path = GetPtusaProjectsPath(projectName) + projectName + 
+            string path = GetPtusaProjectsPath(projectName) + projectName +
                 fileName;
 
             try
             {
                 if (!File.Exists(path))
                 {
-                    errStr = "Файл описания проекта \"" + path + 
+                    errStr = "Файл описания проекта \"" + path +
                         "\" отсутствует! Создано пустое описание.";
+                    Directory.CreateDirectory(Path.GetDirectoryName(path));
+                    File.WriteAllText(path, string.Empty);
                     return 1;
                 }
             }
@@ -94,6 +168,7 @@ namespace EasyEPlanner
 
             return 0;
         }
+        #endregion
 
         /// <summary>
         /// Путь к файлам .lua (к проекту)
@@ -161,7 +236,7 @@ namespace EasyEPlanner
                 if (firstPathIsSaved == false && firstPath == "")
                 {
                     MessageBox.Show("Путь к каталогу с проектами не найден.\n" +
-                        "Пожалуйста, проверьте конфигурацию!", "Внимание", 
+                        "Пожалуйста, проверьте конфигурацию!", "Внимание",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
@@ -180,89 +255,12 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Считывание описания.
-        /// </summary>
-        public int LoadDescription(out string errStr,
-            string projectName, bool loadFromLua)
-        {
-            errStr = "";
-            Logs.Clear();
-            ProjectDataIsLoaded = false;
-
-            string LuaStr;
-            int res = 0;
-
-            var oProgress = new Eplan.EplApi.Base.Progress("EnhancedProgress");
-            oProgress.SetAllowCancel(false);
-            oProgress.SetTitle("Считывание данных проекта");
-
-            try
-            {
-                oProgress.BeginPart(15, "Считывание IO");
-                projectConfiguration.ReadIO();
-                oProgress.EndPart();
-
-                oProgress.BeginPart(15, "Считывание устройств");
-                if (projectConfiguration.DevicesIsRead == true)
-                {
-                    projectConfiguration.SynchronizeDevices();
-                }
-                else
-                {
-                    projectConfiguration.ReadDevices();
-                }
-                oProgress.EndPart();
-
-                oProgress.BeginPart(25, "Считывание привязки устройств");
-                projectConfiguration.ReadBinding();
-                oProgress.EndPart();
-
-                if (loadFromLua)
-                {
-                    oProgress.BeginPart(15, "Считывание технологических " +
-                        "объектов");
-                    res = LoadDescriptionFromFile(out LuaStr, out errStr, 
-                        projectName, "\\main.objects.lua");
-                    techObjectManager.LoadDescription(LuaStr, projectName);
-                    newTechObjectManager.LoadDescription(LuaStr, projectName);
-                    errStr = "";
-                    LuaStr = "";
-                    res = LoadDescriptionFromFile(out LuaStr, out errStr, 
-                        projectName, "\\main.restrictions.lua");
-                    techObjectManager.LoadRestriction(LuaStr);
-                    newTechObjectManager.LoadRestriction(LuaStr);
-                    oProgress.EndPart();
-                }
-
-                oProgress.BeginPart(15, "Проверка данных");
-                projectConfiguration.Check();
-                oProgress.EndPart();
-
-                oProgress.BeginPart(15, "Расчет IO-Link");
-                IOManager.CalculateIOLinkAdresses();
-                oProgress.EndPart(true);
-                ProjectDataIsLoaded = true;
-            }
-            catch (System.Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                oProgress.EndPart(true);
-                ProjectDataIsLoaded = false;
-            }
-
-            return res;
-        }
-
-        /// <summary>
         /// Инициализация.
         /// </summary>
         public void Init()
         {
-            newEditor = NewEditor.NewEditor.GetInstance();
             editor = Editor.Editor.GetInstance();
             techObjectManager = TechObjectManager.GetInstance();
-            newTechObjectManager = NewTechObject.TechObjectManager
-                .GetInstance();
             Logs.Init(new LogFrm());           
             IOManager = IOManager.GetInstance();
             DeviceManager.GetInstance();
@@ -271,6 +269,7 @@ namespace EasyEPlanner
             BaseTechObjectManager.GetInstance();
         }
 
+        #region Генерация Excel
         /// <summary>
         /// Сохранение описания в виде таблицы Excel.
         /// </summary>
@@ -317,6 +316,7 @@ namespace EasyEPlanner
                 }
             }
         }
+        #endregion
 
         /// <summary>
         /// Обновление подписей к клеммам модулей IO
@@ -353,20 +353,20 @@ namespace EasyEPlanner
             }
         }
 
+        #region Генерация базы каналов
         /// <summary>
         /// Экспорт из проекта базы каналов.
         /// </summary>
         public void SaveAsCDBX(string projectName, bool combineTag = false,
             bool useNewNames = false, bool rewrite = false)
         {
-            techObjectManager.SetCDBXTagView(combineTag);
-            techObjectManager.SetCDBXNewNames(useNewNames);
-
             System.Threading.Thread t = new System.Threading.Thread(
                     new System.Threading.ParameterizedThreadStart(
                         SaveAsXMLThread));
 
-            t.Start(new DataForSaveAsXML(projectName, rewrite));
+            var dataForSave = new DataForSaveAsXML(projectName, rewrite,
+                combineTag, useNewNames);
+            t.Start(dataForSave);
 
         }
 
@@ -386,7 +386,8 @@ namespace EasyEPlanner
             try
             {
                 Logs.SetProgress(1);
-                XMLReporter.SaveAsXML(data.pathToFile, data.rewrite);
+                XMLReporter.SaveAsXML(data.pathToFile, data.rewrite,
+                    data.cdbxTagView, data.cdbxNewNames);
                 Logs.SetProgress(50);
                 Logs.AddMessage("Done.");
             }
@@ -409,15 +410,21 @@ namespace EasyEPlanner
         /// </summary>
         private class DataForSaveAsXML
         {
-            public DataForSaveAsXML(string path, bool rewrite)
+            public DataForSaveAsXML(string pathToFile, bool rewrite,
+                bool cdbxTagView, bool cdbxNewNames)
             {
-                this.pathToFile = path;
+                this.pathToFile = pathToFile;
                 this.rewrite = rewrite;
+                this.cdbxNewNames = cdbxNewNames;
+                this.cdbxTagView = cdbxTagView;
             }
 
             public string pathToFile;
             public bool rewrite;
+            public bool cdbxTagView;
+            public bool cdbxNewNames;
         }
+#endregion
 
         /// <summary>
         /// Получение экземпляра класса.
@@ -434,26 +441,16 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Редактирование технологических объектов.
-        /// </summary>
-        /// <returns>Результат редактирования.</returns>
-        public string Edit()
-        {
-            string res = editor.Edit(techObjectManager as ITreeViewItem);
-
-            return res;
-        }
-
-        /// <summary>
         /// Редактирование технологических объектов. Новое дерево.
         /// </summary>
         /// <returns>Результат редактирования</returns>
         public void StartEdit()
         {
-            newEditor
-                .OpenEditor(newTechObjectManager as NewEditor.ITreeViewItem);
+            editor
+                .OpenEditor(techObjectManager as Editor.ITreeViewItem);
         }
 
+        #region Подсветка объектов на схеме
         /// <summary>
         /// Участвующие в операции устройства, подсвеченные на карте Eplan.
         /// </summary>
@@ -490,65 +487,9 @@ namespace EasyEPlanner
                 return;
             }
 
-            if(objectsToDraw is List<DrawInfo> drawInfoOld)
+            if(objectsToDraw is List<Editor.DrawInfo> drawInfoNew)
             {
-                OldEditorSetHighlighting(drawInfoOld);
-            }
-            else if(objectsToDraw is List<NewEditor.DrawInfo> drawInfoNew)
-            {
-                NewEditorSetHighlighting(drawInfoNew);
-            }
-        }
-
-        /// <summary>
-        /// Подсветка из старого редактора
-        /// </summary>
-        /// <param name="objectsToDraw"></param>
-        private void OldEditorSetHighlighting(List<DrawInfo> objectsToDraw)
-        {
-            foreach (DrawInfo drawObj in objectsToDraw)
-            {
-                DrawInfo.Style howToDraw = drawObj.DrawingStyle;
-
-                if (howToDraw == DrawInfo.Style.NO_DRAW)
-                {
-                    continue;
-                }
-
-                Eplan.EplApi.DataModel.Function oF =
-                    (drawObj.DrawingDevice as IODevice).EplanObjectFunction;
-
-                if (oF == null)
-                {
-                    continue;
-                }
-
-                Eplan.EplApi.Base.PointD[] points = oF.GetBoundingBox();
-                short colour = 0;
-                switch (howToDraw)
-                {
-                    case DrawInfo.Style.GREEN_BOX:
-                        SetGreenBoxHighlight(ref colour, oF, points);
-                        break;
-
-                    case DrawInfo.Style.RED_BOX:
-                        SetRedBoxHiglight(ref colour);
-                        break;
-
-                    case DrawInfo.Style.GREEN_UPPER_BOX:
-                        SetGreenUpperBoxHighlight(ref colour, points);
-                        break;
-
-                    case DrawInfo.Style.GREEN_LOWER_BOX:
-                        SetGreenLowerBoxHighlight(ref colour, points);
-                        break;
-
-                    case DrawInfo.Style.GREEN_RED_BOX:
-                        SetGrenRedBoxHiglight(ref colour, oF, points);
-                        break;
-                }
-
-                AddBoxForHighlighting(colour, oF, points);
+                SetHighlighting(drawInfoNew);
             }
         }
 
@@ -556,14 +497,13 @@ namespace EasyEPlanner
         /// Подсветка из нового редактора
         /// </summary>
         /// <param name="objectsToDraw"></param>
-        private void NewEditorSetHighlighting(
-            List<NewEditor.DrawInfo> objectsToDraw)
+        private void SetHighlighting(List<Editor.DrawInfo> objectsToDraw)
         {
-            foreach (NewEditor.DrawInfo drawObj in objectsToDraw)
+            foreach (Editor.DrawInfo drawObj in objectsToDraw)
             {
-                NewEditor.DrawInfo.Style howToDraw = drawObj.DrawingStyle;
+                Editor.DrawInfo.Style howToDraw = drawObj.DrawingStyle;
 
-                if (howToDraw == NewEditor.DrawInfo.Style.NO_DRAW)
+                if (howToDraw == Editor.DrawInfo.Style.NO_DRAW)
                 {
                     continue;
                 }
@@ -581,24 +521,24 @@ namespace EasyEPlanner
                 short colour = 0;
                 switch (howToDraw)
                 {
-                    case NewEditor.DrawInfo.Style.GREEN_BOX:
+                    case Editor.DrawInfo.Style.GREEN_BOX:
                         SetGreenBoxHighlight(ref colour, objectFunction,
                             points);
                         break;
 
-                    case NewEditor.DrawInfo.Style.RED_BOX:
+                    case Editor.DrawInfo.Style.RED_BOX:
                         SetRedBoxHiglight(ref colour);
                         break;
 
-                    case NewEditor.DrawInfo.Style.GREEN_UPPER_BOX:
+                    case Editor.DrawInfo.Style.GREEN_UPPER_BOX:
                         SetGreenUpperBoxHighlight(ref colour, points);
                         break;
 
-                    case NewEditor.DrawInfo.Style.GREEN_LOWER_BOX:
+                    case Editor.DrawInfo.Style.GREEN_LOWER_BOX:
                         SetGreenLowerBoxHighlight(ref colour, points);
                         break;
 
-                    case NewEditor.DrawInfo.Style.GREEN_RED_BOX:
+                    case Editor.DrawInfo.Style.GREEN_RED_BOX:
                         SetGrenRedBoxHiglight(ref colour, objectFunction,
                             points);
                         break;
@@ -714,6 +654,7 @@ namespace EasyEPlanner
                 .ToStringIdentifier());
             highlightedObjects.Add(rc);
         }
+        #endregion
 
         #region OSTIS
         /// <summary>
@@ -821,11 +762,6 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Загружены или нет данные проекта.
-        /// </summary>
-        public bool ProjectDataIsLoaded { get; set; }
-
-        /// <summary>
         /// Путь к надстройке, к месту, из которого она подключалась к программе
         /// инженером.
         /// </summary>
@@ -902,22 +838,12 @@ namespace EasyEPlanner
         /// <summary>
         /// Редактор технологических объектов.
         /// </summary>
-        private IEditor editor;
-
-        /// <summary>
-        /// Редактор технологических объектов.
-        /// </summary>
-        private NewEditor.INewEditor newEditor;
+        private Editor.IEditor editor;
 
         /// <summary>
         /// Менеджер технологических объектов.
         /// </summary>
         private ITechObjectManager techObjectManager;
-
-        /// <summary>
-        /// Менеджер технологических объектов.
-        /// </summary>
-        private NewTechObject.ITechObjectManager newTechObjectManager;
 
         /// <summary>
         /// Менеджер модулей ввода/вывода.

@@ -38,7 +38,7 @@ namespace EasyEPlanner
             const int maxLOCCount = 1000;
 
             folderPath += linesOfCodeMainProgramFileName;
-            locFilePath += @"\main.plua";
+            locFilePath += @"\" + ProjectDescriptionSaver.MainProgramFileName;
 
             string[] readedFile = File.ReadAllLines(locFilePath, 
                 Encoding.GetEncoding(1251));
@@ -200,7 +200,7 @@ namespace EasyEPlanner
         /// </summary>
         const int percents = 100;
 
-        static TechObjectManager techObjectManager = TechObjectManager
+        static ITechObjectManager techObjectManager = TechObjectManager
             .GetInstance();
         static Device.DeviceManager deviceManager = Device.DeviceManager
             .GetInstance();

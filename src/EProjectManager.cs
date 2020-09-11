@@ -126,7 +126,7 @@ namespace EasyEPlanner
 
         public void SyncAndSave(bool saveDescrSilentMode = true)
         {
-            if (currentProject != null)
+            if (currentProject != null && ProjectDataIsLoaded)
             {
                 String strAction = "LoadDescriptionAction";
                 ActionManager oAMnr = new ActionManager();
@@ -157,8 +157,8 @@ namespace EasyEPlanner
         /// </summary>
         public void SaveAndClose()
         {
-            EProjectManager.GetInstance().SyncAndSave();
-            EProjectManager.GetInstance().StopEditModes();
+            SyncAndSave();
+            StopEditModes();
 
             ExcelRepoter.AutomaticExportExcelForSCADA(currentProject);
 
@@ -167,16 +167,16 @@ namespace EasyEPlanner
             ModeFrm.SaveCfg(ModeFrm.modeIsShown);
             DFrm.CheckShown();
             DFrm.SaveCfg(DFrm.deviceIsShown);
-            Editor.EditorCtrl.CheckShown();
-            Editor.EditorCtrl.SaveCfg();
+            Editor.NewEditorControl.CheckShown();
+            Editor.NewEditorControl.SaveCfg();
 
             if (Editor.Editor.GetInstance().IsShown())
             {
                 Editor.Editor.GetInstance().CloseEditor();
             }
 
+            ModeFrm.GetInstance().CloseEditor();
             DFrm.GetInstance().CloseEditor();
-            NewEditor.NewEditor.GetInstance().CloseEditor();
         }
 
         private Project currentProject = null;
@@ -191,6 +191,11 @@ namespace EasyEPlanner
 
         private ActionManager ActMnr = new ActionManager();
         private Eplan.EplApi.ApplicationFramework.Action startInteractionAction;
+
+        /// <summary>
+        /// Загружены или нет данные проекта.
+        /// </summary>
+        public bool ProjectDataIsLoaded { get; set; } = false;
     }
 
     //-------------------------------------------------------------------------
@@ -226,23 +231,16 @@ namespace EasyEPlanner
             Function oF = SearchSelectedObjectFunction(arrSelectedObjects[0]);
             if (oF != null)
             {
-                Editor.ITreeViewItem oldEditorItem = Editor.Editor.GetInstance()
-                    .EForm.GetActiveItem();
-                NewEditor.ITreeViewItem newEditorItem = NewEditor.NewEditor
+                Editor.ITreeViewItem newEditorItem = Editor.Editor
                     .GetInstance().EditorForm.GetActiveItem();
-                if (oldEditorItem == null && newEditorItem == null)
+                if (newEditorItem == null)
                 {
                     return RequestCode.Nothing;
                 }
-                
-                if(oldEditorItem != null && newEditorItem == null)
-                {
-                    ExecuteForOldEditor(oldEditorItem, oF);
-                }
 
-                if(oldEditorItem == null && newEditorItem != null)
+                if(newEditorItem != null)
                 {
-                    ExecuteForNewEditor(newEditorItem, oF);
+                    ExecuteForEditor(newEditorItem, oF);
                 }
             }
 
@@ -276,50 +274,12 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Обработка для старого редактора
-        /// </summary>
-        /// <param name="oldEditorItem">Элемент из старого редактора</param>
-        /// <param name="oF">Функция</param>
-        private void ExecuteForOldEditor(Editor.ITreeViewItem oldEditorItem,
-            Function oF)
-        {
-            if (oldEditorItem.IsUseDevList)
-            {
-                string devName;
-                bool res = Device.DeviceManager.CheckDeviceName(oF.Name,
-                    out devName, out _, out _, out _, out _);
-
-                if (res)
-                {
-                    string checkedDevices = oldEditorItem.EditText[1];
-                    string newDevices = MakeNewCheckedDevices(devName,
-                        checkedDevices);
-                    Editor.Editor.GetInstance().EForm.SetNewVal(newDevices);
-
-                    //Обновление списка устройств при его наличии.
-                    string checkedDev = oldEditorItem.EditText[1];
-                    if (DFrm.GetInstance().IsVisible() == true)
-                    {
-                        Device.DeviceType[] devTypes;
-                        Device.DeviceSubType[] devSubTypes;
-                        oldEditorItem.GetDevTypes(out devTypes,
-                            out devSubTypes);
-
-                        DFrm.GetInstance().ShowDevices(
-                            Device.DeviceManager.GetInstance(), devTypes,
-                            devSubTypes, false, true, checkedDev, null);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Обработка для нового редактора
         /// </summary>
         /// <param name="newEditorItem">Элемент из нового редактора</param>
         /// <param name="oF">Функция</param>
-        private void ExecuteForNewEditor(
-                NewEditor.ITreeViewItem newEditorItem, Function oF)
+        private void ExecuteForEditor(Editor.ITreeViewItem newEditorItem,
+            Function oF)
         {
             if (newEditorItem.IsUseDevList)
             {
@@ -332,7 +292,7 @@ namespace EasyEPlanner
                     string checkedDevices = newEditorItem.EditText[1];
                     string newDevices = MakeNewCheckedDevices(devName,
                         checkedDevices);
-                    NewEditor.NewEditor.GetInstance().EditorForm
+                    Editor.Editor.GetInstance().EditorForm
                         .SetNewVal(newDevices);
 
                     //Обновление списка устройств при его наличии.
@@ -562,7 +522,7 @@ namespace EasyEPlanner
                     // Если проект закрыт варварски, то при новом открытия окна не открывать
                     DFrm.SaveCfg(false);
                     ModeFrm.SaveCfg(false);
-                    Editor.EditorCtrl.SaveCfg(false);
+                    Editor.NewEditorControl.SaveCfg(false);
                 }
             }
 

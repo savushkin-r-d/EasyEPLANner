@@ -22,7 +22,7 @@ namespace EasyEPlanner
             else
             {
                 //Редактирование объектов.
-                ProjectManager.GetInstance().Edit();
+                ProjectManager.GetInstance().StartEdit();
             }
 
             return true;

@@ -131,7 +131,7 @@ end
 proc_params = function( par, par_name, obj )
     if type( par ) == "table" then
         for fields, value in ipairs( par ) do
-            local param = obj:GetParamsManager():AddParam(par_name, 
+            local param = obj:GetParamsManager():AddParam(par_name,
             value.name or "Параметр", value.value or 0, value.meter or "шт.",
             value.nameLua or "" )
             if value.oper ~= nil then param:SetOperationN( value.oper ) end
