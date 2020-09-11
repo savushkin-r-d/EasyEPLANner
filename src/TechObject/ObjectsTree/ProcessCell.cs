@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace TechObject
 {
     /// <summary>
-    /// Объект ячейки производства (мастера).
+    /// Объект ячейки процесса (мастера).
     /// </summary>
     public class ProcessCell : TreeViewItem
     {
