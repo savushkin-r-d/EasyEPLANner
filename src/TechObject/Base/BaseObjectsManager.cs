@@ -193,7 +193,7 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Получить базовый объект мастера проекта.
+        /// Получить базовый объект ячейки процесса проекта.
         /// </summary>
         public BaseTechObject ProcessCell
         {
