@@ -1,4 +1,4 @@
--- Функция чтения shared.lua для текущего проекта
+-- Р¤СѓРЅРєС†РёСЏ С‡С‚РµРЅРёСЏ shared.lua РґР»СЏ С‚РµРєСѓС‰РµРіРѕ РїСЂРѕРµРєС‚Р°
 init_current_project_shared_lua = function()
     local mainModel = GetModel(GetMainProjectName())
 
@@ -11,7 +11,7 @@ init_current_project_shared_lua = function()
     end
 end
 
--- Инициализация удаленных узлов текущего
+-- РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СѓРґР°Р»РµРЅРЅС‹С… СѓР·Р»РѕРІ С‚РµРєСѓС‰РµРіРѕ
 init_remote_gateways = function(mainModel)
     for projectName, table in pairs(remote_gateways) do
         local advancedProjectModel = GetModel(projectName)
@@ -25,7 +25,7 @@ init_remote_gateways = function(mainModel)
     end
 end
 
--- Инициализация передаваемых проектом устройств
+-- РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїРµСЂРµРґР°РІР°РµРјС‹С… РїСЂРѕРµРєС‚РѕРј СѓСЃС‚СЂРѕР№СЃС‚РІ
 init_shared_devices = function(mainModel)
     for _, table in pairs(shared_devices) do
         local projectName = table.projectName or nil
@@ -43,7 +43,7 @@ init_shared_devices = function(mainModel)
     end
 end
 
--- Инициализация устройств модели для текущего проекта
+-- РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СѓСЃС‚СЂРѕР№СЃС‚РІ РјРѕРґРµР»Рё РґР»СЏ С‚РµРєСѓС‰РµРіРѕ РїСЂРѕРµРєС‚Р°
 -- receiveMode - true or false
 init_currProj_devices = function(model, table, receiveMode, projectName)
     if (table.AI) then
@@ -75,9 +75,9 @@ init_currProj_devices = function(model, table, receiveMode, projectName)
     end
 end
 
--- Инициализация данных о ПЛК, IP и ProjectName берутся из main.io.lua
+-- РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РґР°РЅРЅС‹С… Рѕ РџР›Рљ, IP Рё ProjectName Р±РµСЂСѓС‚СЃСЏ РёР· main.io.lua
 init_PLC_Data = function(model, table, projectName)
-    -- Заполняем информацию о ПЛК (после or дефолтные данные)
+    -- Р—Р°РїРѕР»РЅСЏРµРј РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ РџР›Рљ (РїРѕСЃР»Рµ or РґРµС„РѕР»С‚РЅС‹Рµ РґР°РЅРЅС‹Рµ)
     local emulationEnabled = table.emulation or false
     local cycleTime = table.cycletime or 200
     local timeout = table.timeout or 300
@@ -90,7 +90,7 @@ end
 
 -------- Init advanced project --------
 
--- Функция чтения shared.lua для альтернативного проекта
+-- Р¤СѓРЅРєС†РёСЏ С‡С‚РµРЅРёСЏ shared.lua РґР»СЏ Р°Р»СЊС‚РµСЂРЅР°С‚РёРІРЅРѕРіРѕ РїСЂРѕРµРєС‚Р°
 init_advanced_project_shared_lua = function()
     local mainProjectName = GetMainProjectName()
     if (remote_gateways) then
@@ -102,7 +102,7 @@ init_advanced_project_shared_lua = function()
     end
 end
 
--- Инициализация удаленного узла проекта для альтернативного проекта
+-- РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СѓРґР°Р»РµРЅРЅРѕРіРѕ СѓР·Р»Р° РїСЂРѕРµРєС‚Р° РґР»СЏ Р°Р»СЊС‚РµСЂРЅР°С‚РёРІРЅРѕРіРѕ РїСЂРѕРµРєС‚Р°
 init_advProj_remote_gateways = function(mainProjectName)
     for projectName, table in pairs(remote_gateways) do
         if(projectName == mainProjectName) then
@@ -113,7 +113,7 @@ init_advProj_remote_gateways = function(mainProjectName)
     end
 end
 
--- Инициализация передаваемых устройств для альтернативного проекта
+-- РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїРµСЂРµРґР°РІР°РµРјС‹С… СѓСЃС‚СЂРѕР№СЃС‚РІ РґР»СЏ Р°Р»СЊС‚РµСЂРЅР°С‚РёРІРЅРѕРіРѕ РїСЂРѕРµРєС‚Р°
 init_advProj_shared_devices = function(mainProjectName)
     for _, table in pairs(shared_devices) do
         local projectName = table.projectName or nil
@@ -128,7 +128,7 @@ init_advProj_shared_devices = function(mainProjectName)
     end
 end
 
--- Инициализация устройств для альтернативного проекта
+-- РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СѓСЃС‚СЂРѕР№СЃС‚РІ РґР»СЏ Р°Р»СЊС‚РµСЂРЅР°С‚РёРІРЅРѕРіРѕ РїСЂРѕРµРєС‚Р°
 init_advProj_devices = function(model, table, receiveMode)
     if (table.AI) then
         local type = "AO"
