@@ -92,7 +92,7 @@ namespace EasyEPlanner
         }
 
         static string caption = "Операции\0";
-        static byte[] newCapt = Encoding.GetEncoding(1251).GetBytes(caption);
+        static byte[] newCapt = EncodingDetector.Windows1251.GetBytes(caption);
 
         private PI.HookProc dialogCallbackDelegate = null;
         private IntPtr dialogHookPtr = IntPtr.Zero;

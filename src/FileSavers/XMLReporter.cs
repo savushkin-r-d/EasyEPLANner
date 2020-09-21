@@ -105,8 +105,8 @@ namespace EasyEPlanner
         private static void CreateNewChannelBase(string path, 
             XmlDocument xmlDoc, TreeNode rootNode)
         {
-            var textWritter = new XmlTextWriter(path, 
-                System.Text.Encoding.UTF8);
+            var textWritter = new XmlTextWriter(path,
+                EncodingDetector.DefaultEncoding);
             textWritter.WriteStartDocument();
             textWritter.WriteStartElement("driver");
             textWritter.WriteAttributeString("xmlns", "driver", null,

@@ -40,8 +40,8 @@ namespace EasyEPlanner
             folderPath += linesOfCodeMainProgramFileName;
             locFilePath += @"\" + ProjectDescriptionSaver.MainProgramFileName;
 
-            string[] readedFile = File.ReadAllLines(locFilePath, 
-                Encoding.GetEncoding(1251));
+            string[] readedFile = File.ReadAllLines(locFilePath,
+                EncodingDetector.DetectFileEncoding(locFilePath));
             int loc = readedFile.Length;
             string displayingText = $"{loc} строк кода";
             string result = MakeStringForWriting(loc, maxLOCCount,
@@ -180,7 +180,7 @@ namespace EasyEPlanner
         private static void WriteFile(string text, string folderPath)
         {
             var equipmentWriter = new StreamWriter(folderPath, false,
-                Encoding.UTF8);
+                EncodingDetector.DefaultEncoding);
             equipmentWriter.WriteLine(text);
             equipmentWriter.Flush();
             equipmentWriter.Close();

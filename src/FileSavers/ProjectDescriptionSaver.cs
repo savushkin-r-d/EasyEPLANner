@@ -28,7 +28,7 @@ namespace EasyEPlanner
             try
             {
                 var reader = new StreamReader(pathToMainPluaFile,
-                    Encoding.GetEncoding(1251));
+                    EncodingDetector.DetectFileEncoding(pathToMainPluaFile));
                 mainProgramFilePattern = reader.ReadToEnd();
                 reader.Close();
                 mainProgramFilePatternIsLoaded = true;
@@ -130,8 +130,8 @@ namespace EasyEPlanner
         private static void SaveIOFile(ParametersForSave par)
         {
             string fileName = par.path + @"\" + mainIOFileName;
-            var fileWriter = new StreamWriter(fileName, false, 
-                Encoding.GetEncoding(1251));
+            var fileWriter = new StreamWriter(fileName, false,
+                EncodingDetector.DetectFileEncoding(fileName));
 
             fileWriter.WriteLine("--version  = {0}", mainIOFileVersion);
             fileWriter.WriteLine(new string('-', numberOfDashes));
@@ -167,7 +167,7 @@ namespace EasyEPlanner
 
             string fileName = par.path + @"\" + mainTechObjectsFileName;
             var fileWriter = new StreamWriter(fileName, false,
-                Encoding.GetEncoding(1251));
+                EncodingDetector.DetectFileEncoding(fileName));
 
             fileWriter.Write(descriptionFileData);
             fileWriter.Flush();
@@ -182,7 +182,7 @@ namespace EasyEPlanner
         {
             string fileName = par.path + @"\" + mainTechDevicesFileName;
             var fileWriter = new StreamWriter(fileName,
-                false, Encoding.GetEncoding(1251));
+                false, EncodingDetector.DetectFileEncoding(fileName));
 
             fileWriter.WriteLine("--version  = {0}", 
                 mainTechDevicesFileVersion);
@@ -210,8 +210,8 @@ namespace EasyEPlanner
                 mainRestrictionsFileVersion, resctrictions);
 
             string fileName = par.path + @"\" + mainRestrictionsFileName;
-            var fileWriter = new StreamWriter(fileName, false, 
-                Encoding.GetEncoding(1251));
+            var fileWriter = new StreamWriter(fileName, false,
+                EncodingDetector.DetectFileEncoding(fileName));
 
             fileWriter.Write(restrictionsFileData);
             fileWriter.Flush();
@@ -229,7 +229,7 @@ namespace EasyEPlanner
             {
                 //Создаем пустое описание управляющей программы.
                 var fileWriter = new StreamWriter(fileName,
-                    false, Encoding.GetEncoding(1251));
+                    false, EncodingDetector.DetectFileEncoding(fileName));
                 string mainPluaFilePattern = mainProgramFilePattern;
                 mainPluaFilePattern = mainPluaFilePattern
                     .Replace("ProjectName", par.PAC_Name);
@@ -251,7 +251,7 @@ namespace EasyEPlanner
             {
                 //Создаем пустое описание сервера MODBUS.
                 var fileWriter = new StreamWriter(fileName,
-                    false, Encoding.GetEncoding(1251));
+                    false, EncodingDetector.DetectFileEncoding(fileName));
                 fileWriter.WriteLine("--version  = 1");
                 fileWriter.WriteLine(new string('-', numberOfDashes));
 
@@ -271,7 +271,7 @@ namespace EasyEPlanner
             {
                 //Создаем пустое описание конфигурации PROFIBUS.
                 var fileWriter = new StreamWriter(fileName,
-                    false, Encoding.GetEncoding(1251));
+                    false, EncodingDetector.DetectFileEncoding(fileName));
                 fileWriter.WriteLine("--version  = 1");
                 fileWriter.WriteLine(new string('-', numberOfDashes));
                 fileWriter.WriteLine("system = system or { }");
@@ -291,7 +291,7 @@ namespace EasyEPlanner
         {
             string fileName = par.path + @"\" + mainPRGFileName;
             var fileWriter = new StreamWriter(fileName,
-                false, Encoding.GetEncoding(1251));
+                false, EncodingDetector.DetectFileEncoding(fileName));
 
             fileWriter.WriteLine("--version  = {0}", mainPRGFileVersion);
             fileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);

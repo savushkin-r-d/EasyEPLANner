@@ -191,7 +191,7 @@ namespace EasyEPlanner
                 Path.Combine(projectManager.OriginalCMDFilesPath, fileName);
 
             string[] arguments = File.ReadAllLines(pathToFile,
-                Encoding.GetEncoding(1251));
+                EncodingDetector.DetectFileEncoding(pathToFile));
 
             return string.Join(connectCommandsChar, arguments);
         }

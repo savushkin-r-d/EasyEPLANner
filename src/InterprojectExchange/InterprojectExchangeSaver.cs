@@ -620,8 +620,8 @@ namespace InterprojectExchange
         {
             string path = Path.Combine(interprojectExchange.PathWithProjects, 
                 projectName, SharedFile);
-            using (var writer = new StreamWriter(path, false, 
-                Encoding.GetEncoding(1251)))
+            using (var writer = new StreamWriter(path, false,
+                EasyEPlanner.EncodingDetector.DetectFileEncoding(path)))
             {
                 foreach (string line in sharedFileData)
                 {

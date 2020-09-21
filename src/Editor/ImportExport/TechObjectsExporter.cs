@@ -114,7 +114,8 @@ namespace Editor
 
             try
             {
-                var fileWriter = new StreamWriter(path, false, Encoding.UTF8);
+                var fileWriter = new StreamWriter(path, false, 
+                    EasyEPlanner.EncodingDetector.DetectFileEncoding(path));
                 
                 WriteObjectsDescription(fileWriter, objectsDescription);
                 fileWriter.WriteLine("\n");
