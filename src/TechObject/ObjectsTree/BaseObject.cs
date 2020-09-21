@@ -146,6 +146,14 @@ namespace TechObject
             return false;
         }
 
+        override public bool IsDeletable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         override public ITreeViewItem MoveDown(object child)
         {
             var techObject = child as TechObject;
@@ -394,6 +402,14 @@ namespace TechObject
                 oldObjNum, newObjNum);
             globalObjectsList[newObjNum - 1] = objectFromGlobalList;
             return clonedObject;
+        }
+
+        public override bool ShowWarningBeforeDelete
+        {
+            get
+            {
+                return true;
+            }
         }
         #endregion
 

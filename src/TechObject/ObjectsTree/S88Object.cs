@@ -194,15 +194,41 @@ namespace TechObject
             var baseObject = child as BaseObject;
             if (baseObject != null)
             {
-                objects.Remove(baseObject);
+                foreach(var baseObjectItem in baseObject.Items)
+                {
+                    baseObject.Delete(baseObjectItem);
+                }
+
+                if(baseObject.Items.Count() == 0)
+                {
+                    objects.Remove(baseObject);
+                }
+
                 if (objects.Count == 0)
                 {
                     Parent.Delete(this);
                 }
+
                 return true;
             }
 
             return false;
+        }
+
+        override public bool IsDeletable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool ShowWarningBeforeDelete
+        {
+            get
+            {
+                return true;
+            }
         }
         #endregion
 
