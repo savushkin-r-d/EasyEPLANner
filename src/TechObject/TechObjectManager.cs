@@ -551,7 +551,15 @@ namespace TechObject
             var treeViewItem = child as ITreeViewItem;
             if(treeViewItem != null && treeObjects.Contains(treeViewItem))
             {
-                treeObjects.Remove(child as ITreeViewItem);
+                foreach(var item in treeViewItem.Items)
+                {
+                    treeViewItem.Delete(item);
+                }
+
+                if(treeViewItem.Items.Count() == 0)
+                {
+                    treeObjects.Remove(child as ITreeViewItem);
+                }
                 return true;
             }
             else
