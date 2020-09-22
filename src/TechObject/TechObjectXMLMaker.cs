@@ -103,7 +103,24 @@ namespace TechObject
                 "SYSTEM.P_RESTRICTIONS_MANUAL_TIME");
             systemNode.Nodes.Add("SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR",
                 "SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR");
+            GenerateIONodesEnablingTags(systemNode);
             rootNode.Nodes.Add(systemNode);
+        }
+
+        /// <summary>
+        /// Генерация тэгов для управления узлами контроллера
+        /// </summary>
+        /// <param name="node">Системный узел дерева</param>
+        private void GenerateIONodesEnablingTags(TreeNode node)
+        {
+            int nodesCount = IO.IOManager.GetInstance().IONodes.Count;
+            // Первый узел - контроллер, его опускаем.
+            int startValue = 2;
+            for(int i = startValue; i <= nodesCount; i++)
+            {
+                node.Nodes.Add($"SYSTEM.NODEENABLED[{i}]",
+                    $"SYSTEM.NODEENABLED[{i}]");
+            }
         }
 
         /// <summary>
