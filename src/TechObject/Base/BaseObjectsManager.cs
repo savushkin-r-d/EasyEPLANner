@@ -72,7 +72,7 @@ namespace TechObject
                     .ResourceManager
                     .GetString("SysBaseObjectsDescriptionPattern");
                 File.WriteAllText(pathToFile, template,
-                    EncodingDetector.DefaultEncoding);
+                    EncodingDetector.UTF8);
                 MessageBox.Show("Файл с описанием базовых объектов не найден." +
                     " Будет создан пустой файл (без описания).", "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);

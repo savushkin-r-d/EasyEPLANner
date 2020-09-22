@@ -16,18 +16,18 @@ namespace EasyEPlanner
                 long fileSize = baseFileInfo.Length;
 
                 var utf8FileReader = new StreamReader(pathToFile,
-                    DefaultEncoding);
+                    UTF8);
                 string utf8FileData = utf8FileReader.ReadToEnd();
                 utf8FileReader.Close();
                 const string utf8FileName = "testUTF8.lua";
-                File.WriteAllText(utf8FileName, utf8FileData, DefaultEncoding);
+                File.WriteAllText(utf8FileName, utf8FileData, UTF8);
                 var utf8FileInfo = new FileInfo(utf8FileName);
                 long utf8FileSize = utf8FileInfo.Length;
                 File.Delete(utf8FileName);
 
                 if(fileSize == utf8FileSize)
                 {
-                    return DefaultEncoding;
+                    return UTF8;
                 }
                 else
                 {
@@ -36,7 +36,7 @@ namespace EasyEPlanner
             }
             else
             {
-                return DefaultEncoding;
+                return UTF8;
             }
         }
 
@@ -48,11 +48,19 @@ namespace EasyEPlanner
             } 
         }
 
-        public static Encoding DefaultEncoding
+        public static Encoding UTF8
         {
             get
             {
                 return new UTF8Encoding(false);
+            }
+        }
+
+        public static Encoding UTF8Bom
+        {
+            get
+            {
+                return Encoding.UTF8;
             }
         }
     }

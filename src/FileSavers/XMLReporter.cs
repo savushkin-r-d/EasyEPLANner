@@ -106,7 +106,7 @@ namespace EasyEPlanner
             XmlDocument xmlDoc, TreeNode rootNode)
         {
             var textWritter = new XmlTextWriter(path,
-                EncodingDetector.DefaultEncoding);
+                EncodingDetector.UTF8Bom);
             textWritter.WriteStartDocument();
             textWritter.WriteStartElement("driver");
             textWritter.WriteAttributeString("xmlns", "driver", null,

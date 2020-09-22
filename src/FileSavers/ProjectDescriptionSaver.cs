@@ -210,12 +210,8 @@ namespace EasyEPlanner
                 mainRestrictionsFileVersion, resctrictions);
 
             string fileName = par.path + @"\" + mainRestrictionsFileName;
-            var fileWriter = new StreamWriter(fileName, false,
-                EncodingDetector.DetectFileEncoding(fileName));
-
-            fileWriter.Write(restrictionsFileData);
-            fileWriter.Flush();
-            fileWriter.Close();
+            File.WriteAllText(fileName, restrictionsFileData,
+                    EncodingDetector.DetectFileEncoding(fileName));
         }
 
         /// <summary>
@@ -250,13 +246,12 @@ namespace EasyEPlanner
             if (!File.Exists(fileName))
             {
                 //Создаем пустое описание сервера MODBUS.
-                var fileWriter = new StreamWriter(fileName,
-                    false, EncodingDetector.DetectFileEncoding(fileName));
-                fileWriter.WriteLine("--version  = 1");
-                fileWriter.WriteLine(new string('-', numberOfDashes));
+                string content = "--version  = 1\n";
+                content += "--Описание сервера MODBUS\n";
+                content += new string('-', numberOfDashes) + "\n";
 
-                fileWriter.Flush();
-                fileWriter.Close();
+                File.WriteAllText(fileName, content,
+                    EncodingDetector.DetectFileEncoding(fileName));
             }
         }
 
@@ -270,16 +265,15 @@ namespace EasyEPlanner
             if (!File.Exists(fileName))
             {
                 //Создаем пустое описание конфигурации PROFIBUS.
-                var fileWriter = new StreamWriter(fileName,
-                    false, EncodingDetector.DetectFileEncoding(fileName));
-                fileWriter.WriteLine("--version  = 1");
-                fileWriter.WriteLine(new string('-', numberOfDashes));
-                fileWriter.WriteLine("system = system or { }");
-                fileWriter.WriteLine("system.init_profibus = function()");
-                fileWriter.WriteLine("end");
+                string content = "--version  = 1\n";
+                content += "--Описание конфигурации PROFIBUS\n";
+                content += new string('-', numberOfDashes) + "\n";
+                content += "system = system or { }\n";
+                content += "system.init_profibus = function()\n";
+                content += "end\n";
 
-                fileWriter.Flush();
-                fileWriter.Close();
+                File.WriteAllText(fileName, content,
+                    EncodingDetector.DetectFileEncoding(fileName));
             }
         }
 

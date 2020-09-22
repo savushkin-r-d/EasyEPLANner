@@ -180,7 +180,7 @@ namespace EasyEPlanner
         private static void WriteFile(string text, string folderPath)
         {
             var equipmentWriter = new StreamWriter(folderPath, false,
-                EncodingDetector.DefaultEncoding);
+                EncodingDetector.UTF8);
             equipmentWriter.WriteLine(text);
             equipmentWriter.Flush();
             equipmentWriter.Close();
