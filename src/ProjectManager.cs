@@ -152,7 +152,6 @@ namespace EasyEPlanner
                     errStr = "Файл описания проекта \"" + path +
                         "\" отсутствует! Создано пустое описание.";
                     Directory.CreateDirectory(Path.GetDirectoryName(path));
-                    File.WriteAllText(path, string.Empty);
                     return 1;
                 }
             }
@@ -162,7 +161,8 @@ namespace EasyEPlanner
                 return 1;
             }
 
-            sr = new StreamReader(path, System.Text.Encoding.GetEncoding(1251));
+            sr = new StreamReader(path,
+                EncodingDetector.DetectFileEncoding(path));
             LuaStr = sr.ReadToEnd();
             sr.Close();
 

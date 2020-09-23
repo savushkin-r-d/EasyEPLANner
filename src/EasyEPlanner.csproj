@@ -143,6 +143,7 @@
       <DependentUpon>ObjectAdder.cs</DependentUpon>
     </Compile>
     <Compile Include="Editor\TreeViewItem.cs" />
+    <Compile Include="EncodingDetector.cs" />
     <Compile Include="InterprojectExchange\DeviceComparer.cs" />
     <Compile Include="InterprojectExchange\DeviceInfo.cs" />
     <Compile Include="InterprojectExchange\DeviceSignalsInfo.cs" />

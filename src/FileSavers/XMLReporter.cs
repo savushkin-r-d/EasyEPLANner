@@ -105,8 +105,8 @@ namespace EasyEPlanner
         private static void CreateNewChannelBase(string path, 
             XmlDocument xmlDoc, TreeNode rootNode)
         {
-            var textWritter = new XmlTextWriter(path, 
-                System.Text.Encoding.UTF8);
+            var textWritter = new XmlTextWriter(path,
+                EncodingDetector.UTF8Bom);
             textWritter.WriteStartDocument();
             textWritter.WriteStartElement("driver");
             textWritter.WriteAttributeString("xmlns", "driver", null,
@@ -394,7 +394,8 @@ namespace EasyEPlanner
                     foreach (TreeNode node in nodes)
                     {
                         TreeNode[] chanNodes = node.Nodes
-                            .Find(chan.ChildNodes[channelDescrNum].InnerText, 
+                            .Find(
+                            chan.ChildNodes[channelDescrNum].InnerText.Trim(), 
                             true);
                         if (chanNodes.Length == 0)
                         {
@@ -460,11 +461,20 @@ namespace EasyEPlanner
                 var channelsId = new List<long>();
                 foreach (TreeNode channel in subtype.Nodes)
                 {
-                    string xpathChan = xpath + 
-                        "//channels:channel[channels:descr='" + channel.Text + 
-                        "']";
+                    XmlNode tagNode = null;
+                    foreach(XmlNode node in channelsElm.ChildNodes)
+                    {
+                        if(node.InnerText.Contains(channel.Text))
+                        {
+                            tagNode = node;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
 
-                    if (channelsElm.SelectSingleNode(xpathChan, nsmgr) == null)
+                    if (tagNode == null)
                     {
                         // Нахождение адреса канала среди свободных
                         if (channelsId.Count == 0)

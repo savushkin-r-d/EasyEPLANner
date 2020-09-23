@@ -71,14 +71,15 @@ namespace TechObject
                 string template = EasyEPlanner.Properties.Resources
                     .ResourceManager
                     .GetString("SysBaseObjectsDescriptionPattern");
-                File.WriteAllText(pathToFile, template);
+                File.WriteAllText(pathToFile, template,
+                    EncodingDetector.UTF8);
                 MessageBox.Show("Файл с описанием базовых объектов не найден." +
                     " Будет создан пустой файл (без описания).", "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             var reader = new StreamReader(pathToFile,
-                Encoding.GetEncoding("UTF-8"));
+                EncodingDetector.DetectFileEncoding(pathToFile));
             string readedDescription = reader.ReadToEnd();
             return readedDescription;
         }

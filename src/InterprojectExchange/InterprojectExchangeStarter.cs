@@ -207,7 +207,8 @@ namespace InterprojectExchange
         /// <param name="path">Путь к файлу скрипта</param>
         private void LoadScript(string path)
         {
-            var reader = new StreamReader(path, Encoding.GetEncoding(1251));
+            var reader = new StreamReader(path,
+                EncodingDetector.DetectFileEncoding(path));
             string script = reader.ReadToEnd();
             reader.Close();
             lua.DoString(script);
@@ -227,7 +228,7 @@ namespace InterprojectExchange
             if (File.Exists(pathToIOFile))
             {
                 var reader = new StreamReader(pathToIOFile,
-                    Encoding.GetEncoding(1251));
+                    EncodingDetector.DetectFileEncoding(pathToIOFile));
                 string ioInfo = reader.ReadToEnd();
                 reader.Close();
                 lua.DoString(ioInfo);
@@ -255,7 +256,7 @@ namespace InterprojectExchange
             if (File.Exists(pathToDevices))
             {
                 var reader = new StreamReader(pathToDevices,
-                    Encoding.GetEncoding(1251));
+                    EncodingDetector.DetectFileEncoding(pathToDevices));
                 string devicesInfo = reader.ReadToEnd();
                 reader.Close();
                 lua.DoString(devicesInfo);
@@ -283,7 +284,7 @@ namespace InterprojectExchange
             if (File.Exists(pathToSharedFile))
             {
                 var reader = new StreamReader(pathToSharedFile,
-                    Encoding.GetEncoding(1251));
+                    EncodingDetector.DetectFileEncoding(pathToSharedFile));
                 string sharedInfo = reader.ReadToEnd();
                 reader.Close();
                 lua.DoString(sharedInfo);
@@ -307,7 +308,7 @@ namespace InterprojectExchange
             if (File.Exists(pathToSharedFile))
             {
                 var reader = new StreamReader(pathToSharedFile,
-                    Encoding.GetEncoding(1251));
+                    EncodingDetector.DetectFileEncoding(pathToSharedFile));
                 string sharedInfo = reader.ReadToEnd();
                 reader.Close();
                 lua.DoString(sharedInfo);
@@ -331,7 +332,8 @@ namespace InterprojectExchange
             if (model != null)
             {
                 model.SharedFileAsStringList = File
-                    .ReadAllLines(pathToSharedFile, Encoding.GetEncoding(1251))
+                    .ReadAllLines(pathToSharedFile,
+                    EncodingDetector.DetectFileEncoding(pathToSharedFile))
                     .ToList();
             }
         }
