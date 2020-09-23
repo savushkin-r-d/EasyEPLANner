@@ -719,6 +719,14 @@ namespace TechObject
                 }
             }
 
+            bool stub = parameter.Value.ToLower()
+                .Contains(StaticHelper.CommonConst.StubForParameters.ToLower());
+            if (stub)
+            {
+                result = ParameterValueType.Stub;
+                return result;
+            }
+
             return result;
         }
 
@@ -800,6 +808,7 @@ namespace TechObject
             Boolean,
             Parameter,
             Number,
+            Stub,
         }
 
         private string name;
