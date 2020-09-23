@@ -50,5 +50,10 @@ namespace StaticHelper
         /// Имя конфигурационного файла приложения.
         /// </summary>
         public static string ConfigFileName = "configuration.ini";
+
+        /// <summary>
+        /// Заглушка-триггер для параметров в дополнительном оборудовании.
+        /// </summary>
+        public static string StubForParameters = "Нет";
     }
 }

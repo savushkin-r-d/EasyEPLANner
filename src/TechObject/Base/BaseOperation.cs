@@ -352,22 +352,40 @@ namespace TechObject
                     (property as MainAggregateParameter).Check();
                 }
 
-                bool emptyDisabledAggregateProperty =
-                    property.Owner is BaseTechObject &&
-                    !property.Disabled &&
-                    property.Value == "";
-                if (emptyDisabledAggregateProperty)
+                bool notStub = !property.Value.ToLower()
+                    .Contains(StaticHelper.CommonConst.StubForParameters
+                    .ToLower());
+                if (notStub)
                 {
-                    string modeName = owner.DisplayText[0];
-                    string techObjName = Owner.Owner.Owner.DisplayText[0];
-                    string message = $"Свойство \"{property.Name}\" в " +
-                        $"операции \"{modeName}\", объекта \"{techObjName}\"" +
-                        $" не заполнено.\n";
-                    errors += message;
+                    CheckNotEmptyDisabledAggregateProperties(property,
+                        ref errors);
                 }
             }
 
             return errors;
+        }
+
+        /// <summary>
+        /// Проверка пустых не отключенных параметров агрегатов
+        /// </summary>
+        /// <param name="property">Свойство</param>
+        /// <param name="errors">Список ошибок</param>
+        private void CheckNotEmptyDisabledAggregateProperties(
+            BaseParameter property, ref string errors)
+        {
+            bool notEmptyDisabledAggregateProperty =
+                property.Owner is BaseTechObject &&
+                !property.Disabled &&
+                (property.Value == "");
+            if (notEmptyDisabledAggregateProperty)
+            {
+                string modeName = owner.DisplayText[0];
+                string techObjName = Owner.Owner.Owner.DisplayText[0];
+                string message = $"Свойство \"{property.Name}\" в " +
+                    $"операции \"{modeName}\", объекта \"{techObjName}\"" +
+                    $" не заполнено.\n";
+                errors += message;
+            }
         }
 
         /// <summary>

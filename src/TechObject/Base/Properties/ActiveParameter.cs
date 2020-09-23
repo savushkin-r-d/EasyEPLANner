@@ -38,6 +38,21 @@
         }
 
         #region реализация ItreeViewItem
+        public override bool SetNewValue(string newValue)
+        {
+            bool notStub = !newValue.ToLower()
+                .Contains(StaticHelper.CommonConst.StubForParameters.ToLower());
+            if (notStub)
+            {
+                return base.SetNewValue(newValue);
+            }
+            else
+            {
+                string value = StaticHelper.CommonConst.StubForParameters;
+                return base.SetNewValue(value);
+            }
+        }
+
         public override bool IsReplaceable
         {
             get
