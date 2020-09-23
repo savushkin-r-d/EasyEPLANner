@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
-using StaticHelper;
 using EasyEPlanner;
 
 namespace TechObject
@@ -72,14 +71,15 @@ namespace TechObject
                 string template = EasyEPlanner.Properties.Resources
                     .ResourceManager
                     .GetString("SysBaseObjectsDescriptionPattern");
-                File.WriteAllText(pathToFile, template);
+                File.WriteAllText(pathToFile, template,
+                    EncodingDetector.UTF8);
                 MessageBox.Show("Файл с описанием базовых объектов не найден." +
                     " Будет создан пустой файл (без описания).", "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             var reader = new StreamReader(pathToFile,
-                Encoding.GetEncoding("UTF-8"));
+                EncodingDetector.DetectFileEncoding(pathToFile));
             string readedDescription = reader.ReadToEnd();
             return readedDescription;
         }
@@ -142,12 +142,6 @@ namespace TechObject
         public BaseTechObject AddBaseObject(string name, string eplanName,
             int s88Level, string basicName, string bindingName, bool isPID)
         {
-            if (baseTechObjects.Count == 0)
-            {
-                // Пустой объект, если не должно быть выбрано никаких объектов
-                baseTechObjects.Add(BaseTechObject.EmptyBaseTechObject());
-            }
-
             var obj = BaseTechObject.EmptyBaseTechObject();
             obj.Name = name;
             obj.EplanName = eplanName;
@@ -161,16 +155,88 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Получить имя объекта S88 по его уровню
+        /// </summary>
+        /// <param name="s88Level">Уровень объекта</param>
+        /// <returns></returns>
+        public string GetS88NameFromLevel(int s88Level)
+        {
+            switch(s88Level)
+            {
+                case (int)ObjectType.ProcessCell:
+                    return "Ячейка процесса";
+
+                case (int)ObjectType.Unit:
+                    return "Аппарат";
+
+                case (int)ObjectType.Aggregate:
+                    return "Агрегат";
+
+                default:
+                    return null;
+            }
+        }
+
+        /// <summary>
         /// Базовые технологические объекты
         /// </summary>
-        public List<BaseTechObject> GetBaseTechObjects()
+        public List<BaseTechObject> Objects
         {
-            var objects = new List<BaseTechObject>();
-            foreach (var obj in baseTechObjects)
+            get
             {
-                objects.Add(obj.Clone());
+                var objects = new List<BaseTechObject>();
+                foreach (var obj in baseTechObjects)
+                {
+                    objects.Add(obj.Clone());
+                }
+                return objects;
             }
-            return objects;
+        }
+
+        /// <summary>
+        /// Получить базовый объект ячейки процесса проекта.
+        /// </summary>
+        public BaseTechObject ProcessCell
+        {
+            get
+            {
+                return Objects
+                    .Where(x => x.S88Level == (int)ObjectType.ProcessCell)
+                    .First();
+            }
+        }
+
+        /// <summary>
+        /// Получить аппараты.
+        /// </summary>
+        public List<BaseTechObject> Units
+        {
+            get
+            {
+                return Objects.
+                    Where(x => x.S88Level == (int)ObjectType.Unit)
+                    .ToList();
+            }
+        }
+
+        /// <summary>
+        /// Получить агрегаты.
+        /// </summary>
+        public List<BaseTechObject> Aggregates
+        {
+            get
+            {
+                return Objects
+                    .Where(x => x.S88Level == (int)ObjectType.Aggregate)
+                    .ToList();
+            }
+        }
+
+        public enum ObjectType
+        {
+            ProcessCell = 0,
+            Unit = 1,
+            Aggregate = 2
         }
 
         private List<BaseTechObject> baseTechObjects;

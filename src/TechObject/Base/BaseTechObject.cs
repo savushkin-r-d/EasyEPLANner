@@ -25,19 +25,6 @@ namespace TechObject
             BindingName = "";
         }
 
-        public BaseTechObject(TechObject owner)
-        {
-            Name = "";
-            EplanName = "";
-            S88Level = 0;
-            BaseOperations = new List<BaseOperation>();
-            BasicName = "";
-            Owner = owner;
-            Equipment = new List<BaseParameter>();
-            AggregateParameters = new List<BaseParameter>();
-            BindingName = "";
-        }
-
         public static BaseTechObject EmptyBaseTechObject()
         {
             return new BaseTechObject();
@@ -329,17 +316,6 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Сброс базовых операций объекта
-        /// </summary>
-        public void ResetBaseOperations()
-        {
-            foreach (Mode operation in Owner.ModesManager.Modes)
-            {
-                operation.BaseOperation.Init("");
-            }
-        }
-
-        /// <summary>
         /// Является ли базовый объект привязываемым к другому объекту.
         /// </summary>
         public virtual bool IsAttachable
@@ -431,9 +407,7 @@ namespace TechObject
                 return res;
             }
 
-            var objects = TechObjectManager.GetInstance();
-            var masterObj = objects.Objects
-                .Where(x => x.Name.Contains("Мастер")).FirstOrDefault();
+            var masterObj = TechObjectManager.GetInstance().ProcessCell;
             if (masterObj != null)
             {
                 res += objName + ".master = prg." + masterObj.NameEplan
@@ -547,8 +521,8 @@ namespace TechObject
         /// <param name="prefix">Отступ</param>
         /// <param name="modes">Операции объекта</param>
         /// <returns></returns>
-        public string SaveOperationsParameters(string objName, string prefix,
-            List<Mode> modes)
+        public string SaveOperationsParameters(TechObject obj, string objName,
+            string prefix, List<Mode> modes)
         {
             var res = "";
             foreach (Mode mode in modes)
@@ -570,7 +544,8 @@ namespace TechObject
                         continue;
                     }
 
-                    ParameterValueType type = GetParameterValueType(parameter);
+                    ParameterValueType type = 
+                        GetParameterValueType(obj, parameter);
                     switch (type)
                     {
                         case ParameterValueType.Boolean:
@@ -685,7 +660,7 @@ namespace TechObject
         /// </summary>
         /// <param name="parameter">Параметр для проверки</param>
         /// <returns></returns>
-        private ParameterValueType GetParameterValueType(
+        private ParameterValueType GetParameterValueType(TechObject obj,
             BaseParameter parameter)
         {
             var result = ParameterValueType.Other;
@@ -703,7 +678,8 @@ namespace TechObject
                 return result;
             }
 
-            bool isParameter = owner.Params.GetFParam(parameterValue) != null;
+            bool isParameter = obj.GetParamsManager()
+                .GetParam(parameterValue) != null;
             if (isParameter)
             {
                 result = ParameterValueType.Parameter;
@@ -712,10 +688,42 @@ namespace TechObject
 
             var deviceManager = Device.DeviceManager.GetInstance();
             bool isDevice = deviceManager.GetDeviceByEplanName(parameterValue)
-                .Description != "заглушка";
+                .Description != StaticHelper.CommonConst.Cap;
             if (isDevice)
             {
                 result = ParameterValueType.Device;
+                return result;
+            }
+
+            string[] devices = parameterValue.Split(' ');
+            if (devices.Length > 1)
+            {
+                bool haveBadDevices = false;
+                var validDevices = new List<bool>();
+                foreach (var device in devices)
+                {
+                    isDevice = deviceManager.GetDeviceByEplanName(device)
+                        .Description != StaticHelper.CommonConst.Cap;
+                    if (isDevice == false)
+                    {
+                        haveBadDevices = true;
+                    }
+                    validDevices.Add(isDevice);
+                }
+
+                validDevices = validDevices.Distinct().ToList();
+                if (validDevices.Count == 1 && haveBadDevices == false)
+                {
+                    result = ParameterValueType.ManyDevices;
+                    return result;
+                }
+            }
+
+            bool stub = parameter.Value.ToLower()
+                .Contains(StaticHelper.CommonConst.StubForParameters.ToLower());
+            if (stub)
+            {
+                result = ParameterValueType.Stub;
                 return result;
             }
 
@@ -727,29 +735,62 @@ namespace TechObject
         /// Сохранить оборудование технологического объекта
         /// </summary>
         /// <param name="objName">Имя для сохранения</param>
+        /// <param name="equipment">Объект</param>
         /// <returns></returns>
-        public string SaveEquipment(string objName)
+        public string SaveEquipment(TechObject obj, string objName)
         {
             var res = "";
-            var equipment = this.owner.Equipment;
+            Equipment equipment = obj.Equipment;
             foreach (var item in equipment.Items)
             {
                 var property = item as BaseParameter;
                 var value = property.Value;
                 var luaName = property.LuaName;
 
-                var parameterType = GetParameterValueType(property);
+                var parameterType = GetParameterValueType(obj, property);
                 switch (parameterType)
                 {
                     case ParameterValueType.Device:
                         res += objName + $".{luaName} = " +
                             $"prg.control_modules.{value}\n";
                         break;
+                    case ParameterValueType.ManyDevices:
+                        res += SaveMoreThanOneDeviceInEquipment(objName,
+                            luaName, value);
+                        break;
                     case ParameterValueType.Parameter:
                         res += objName + $".{luaName} = " +
                             $"{objName}.PAR_FLOAT.{value}\n";
                         break;
                 }
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить более 1 устройства в одном оборудовании.
+        /// </summary>
+        /// <param name="luaName">LUA имя оборудования</param>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="value">Значение параметра</param>
+        /// <returns></returns>
+        private string SaveMoreThanOneDeviceInEquipment(string objName,
+            string luaName, string value)
+        {
+            string res = "";
+
+            string[] devices = value.Split(' ');
+            if (devices.Length > 1)
+            {
+                string[] modifiedDevices = devices
+                    .Select(x => "prg.control_modules." + x).ToArray();
+                res = objName + $".{luaName} = " +
+                    $"{{ {string.Join(", ", modifiedDevices)} }} \n";
+            }
+            else
+            {
+                res = objName + $".{luaName} = prg.control_modules.{value}\n";
             }
 
             return res;
@@ -762,10 +803,12 @@ namespace TechObject
         enum ParameterValueType
         {
             Other,
+            ManyDevices,
             Device,
             Boolean,
             Parameter,
             Number,
+            Stub,
         }
 
         private string name;

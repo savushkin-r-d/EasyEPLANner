@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Editor;
 
 namespace TechObject
 {
     /// <summary>
     /// Класс реализующий базовую операцию для технологического объекта
     /// </summary>
-    public class BaseOperation : Editor.TreeViewItem
+    public class BaseOperation : TreeViewItem
     {
         public BaseOperation(Mode owner)
         {
@@ -148,8 +146,9 @@ namespace TechObject
         /// </summary>
         /// <param name="baseOperName">Имя операции</param>
         /// <param name="mode">Операция владелец</param>
-        public void Init(string baseOperName, Mode mode = null)
+        public void Init(string baseOperName, Mode mode)
         {
+            const string defaultModeName = "Новая операция";
             TechObject techObject = owner.Owner.Owner;
             string baseTechObjectName = techObject.BaseTechObject.Name;
 
@@ -180,6 +179,10 @@ namespace TechObject
 
                     baseSteps = operation.Steps;
                     operation.owner = mode;
+                    if(mode.Name == defaultModeName)
+                    {
+                        mode.SetNewValue(operation.Name);
+                    }
                 }
             }
             else
@@ -256,9 +259,9 @@ namespace TechObject
         /// Установка свойств базовой операции
         /// </summary>
         /// <param name="extraParams">Свойства операции</param>
-        public void SetExtraProperties(Editor.ObjectProperty[] extraParams)
+        public void SetExtraProperties(ObjectProperty[] extraParams)
         {
-            foreach (Editor.ObjectProperty extraParam in extraParams)
+            foreach (ObjectProperty extraParam in extraParams)
             {
                 var property = Properties
                     .Where(x => x.LuaName.Equals(extraParam.DisplayText[0]))
@@ -339,14 +342,49 @@ namespace TechObject
         /// <summary>
         /// Проверка базовой операции
         /// </summary>
-        public void Check()
+        public string Check()
         {
-            foreach(var property in Properties)
+            string errors = "";
+            foreach (var property in Properties)
             {
                 if (property is MainAggregateParameter)
                 {
                     (property as MainAggregateParameter).Check();
                 }
+
+                bool notStub = !property.Value.ToLower()
+                    .Contains(StaticHelper.CommonConst.StubForParameters
+                    .ToLower());
+                if (notStub)
+                {
+                    CheckNotEmptyDisabledAggregateProperties(property,
+                        ref errors);
+                }
+            }
+
+            return errors;
+        }
+
+        /// <summary>
+        /// Проверка пустых не отключенных параметров агрегатов
+        /// </summary>
+        /// <param name="property">Свойство</param>
+        /// <param name="errors">Список ошибок</param>
+        private void CheckNotEmptyDisabledAggregateProperties(
+            BaseParameter property, ref string errors)
+        {
+            bool notEmptyDisabledAggregateProperty =
+                property.Owner is BaseTechObject &&
+                !property.Disabled &&
+                (property.Value == "");
+            if (notEmptyDisabledAggregateProperty)
+            {
+                string modeName = owner.DisplayText[0];
+                string techObjName = Owner.Owner.Owner.DisplayText[0];
+                string message = $"Свойство \"{property.Name}\" в " +
+                    $"операции \"{modeName}\", объекта \"{techObjName}\"" +
+                    $" не заполнено.\n";
+                errors += message;
             }
         }
 
@@ -428,7 +466,7 @@ namespace TechObject
             }
         }
 
-        override public Editor.ITreeViewItem[] Items
+        override public ITreeViewItem[] Items
         {
             get
             {
@@ -446,6 +484,21 @@ namespace TechObject
             }
             return false;
         }
+
+        public override bool IsFilled
+        {
+            get
+            {
+                if(items.Where(x=> x.IsFilled).Count() > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
         #endregion
 
         public override string GetLinkToHelpPage()
@@ -455,7 +508,7 @@ namespace TechObject
             return ostisLink + "?sys_id=process_parameter";
         }
 
-        private Editor.ITreeViewItem[] items = new Editor.ITreeViewItem[0];
+        private ITreeViewItem[] items = new ITreeViewItem[0];
         
         private List<BaseParameter> baseOperationProperties;
         private string operationName;

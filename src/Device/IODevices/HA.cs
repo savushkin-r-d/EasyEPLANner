@@ -41,17 +41,17 @@ namespace Device
             return "";
         }
 
-        public override List<string> GetDeviceProperties(DeviceType dt,
-            DeviceSubType dst)
+        public override Dictionary<string, int> GetDeviceProperties(
+            DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
             {
                 case DeviceType.HA:
-                    return new List<string>(new string[]
+                    return new Dictionary<string, int>()
                     {
-                        "ST",
-                        "M"
-                    });
+                        {"ST", 1},
+                        {"M", 1},
+                    };
             }
             return null;
         }

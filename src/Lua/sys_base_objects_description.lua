@@ -149,8 +149,8 @@ return
             bindingName = "boiler"
         },
         master = {
-            name = "Мастер",
-            s88Level = 1,
+            name = "Ячейка процесса",
+            s88Level = 0,
             baseOperations = { },
             basicName = "master",
             equipment = { },
@@ -211,7 +211,10 @@ return
                 },
             },
             basicName = "line",
-            equipment = { },
+            equipment =
+            {
+                product_CTR = { name = "Счетчик", defaultValue = "FQT1" },
+            },
             aggregateParameters = { },
             bindingName = "line"
         },
@@ -259,7 +262,10 @@ return
                 },
             },
             basicName = "line",
-            equipment = { },
+            equipment =
+            {
+                product_CTR = { name = "Счетчик", defaultValue = "FQT1" },
+            },
             aggregateParameters = { },
             bindingName = "line_in"
         },
@@ -307,7 +313,10 @@ return
                 },
             },
             basicName = "line",
-            equipment = { },
+            equipment =
+            {
+                product_CTR = { name = "Счетчик", defaultValue = "FQT1" },
+            },
             aggregateParameters = { },
             bindingName = "line_out"
         },
@@ -415,6 +424,10 @@ return
                     name = "Томление",
                     params = 
                     {
+                        bool =
+                        {
+                            AUTO_COOLING_BEFORE_LEAVENING = { name = "Автоматический переход к охлаждению для заквашивания", defaultValue = "true" },
+                        },
                         active =
                         {
                             BAKE_TIME = { name = "Время нагрева (2-го шага)" },
@@ -444,10 +457,19 @@ return
                 },
                 COOLING_AFTER_SOURING = {
                     name = "Охлаждение после сквашивания",
+                    params =
+                        {
+                            active =
+                            {
+                                COOLING_TIME = { name = "Время охлаждения (1-го шага)" },
+                                MIXING_CHECK_TIME = { name = "Время проверки температуры (3-го шага)" },
+                            },
+                        },
                     steps =
                     {
                         COOLING = { name = "Охлаждение" },
-                        MIXING = { name = "Перемешивание" },
+                        MIXING = { name = "Охлаждение и перемешивание" },
+                        CHECKING_TEMPERATURE = { name = "Проверка заданной температуры" },
                     },
                 },
                 WORK = {
@@ -470,7 +492,6 @@ return
                 LS_down = { name = "Датчик нижнего уровня", defaultValue = "LS1" },
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
                 TE = { name = "Датчик температуры", defaultValue = "TE1" },
-                TE_water_jacket = { name = "Датчик температуры рубашки", defaultValue = "TE2" },
                 -- out_pump defaultValue пустое т.к по другому происходит
                 -- обработка ОУ. Обрабатывается не объект, а устройство.
                 out_pump = { name = "Откачивающий насос" },
@@ -725,18 +746,60 @@ return
         sterile_air_node = {
             name = "Узел стерильного воздуха",
             s88Level = 2,
-            baseOperationg = { },
+            baseOperations =
+            {
+                WORKING =
+                {
+                    name = "Работа",
+                    steps =
+                    {
+                        WORKING = { name = "Работа" },
+                        WAITING = { name = "Ожидание" },
+                    },
+                },
+                STERILIZATION =
+                {
+                    name = "Стерилизация",
+                    steps =
+                    {
+                        HEATING = { name = "Нагрев" },
+                        STERILIZATION = { name = "Стерилизация" },
+                        COOLING = { name = "Охлаждение" },
+                    },
+                    params =
+                    {
+                        active =
+                        {
+                            STERILIZATION_TEMPERATURE = { name = "Температура стерилизации" },
+                            MIN_STERILIZATION_TEMPERATURE = { name = "Минимальная температура стерилизации" },
+                            COOL_TEMPERATURE = { name = "Температура охлаждения" },
+                            MAX_OPERATION_TIME = { name = "Максимальное время операции" },
+                        },
+                    },
+                },
+            },
             basicName = "sterile_air_node",
-            equipment = { },
+            equipment =
+            {
+                TE1 = { name = "Датчик температуры", defaultValue = "TE1" },
+            },
             aggregateParameters = { },
             bindingName = "sterile_air_node",
         },
         steam_blast_node = {
             name = "Узел продувания",
             s88Level = 2,
-            baseOperationg = { },
+            baseOperations =
+            {
+                WORKING = {
+                    name = "Работа",
+                },
+            },
             basicName = "steam_blast_node",
-            equipment = { },
+            equipment =
+            {
+                GS = { name = "Датчик(и) люка", defaultValue = "GS1" },
+            },
             aggregateParameters = { },
             bindingName = "steam_blast_node",
         },
@@ -781,6 +844,15 @@ return
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
             },
             bindingName = "tank_level_node"
+        },
+        cip_module = {
+            name = "Модуль мойки",
+            s88Level = 2,
+            baseOperations = { },
+            basicName = "cip_module",
+            equipment = { },
+            aggregateParameters = { },
+            bindingName = "cip_module"
         },
     }
 end

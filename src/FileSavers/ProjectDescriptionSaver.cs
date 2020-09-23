@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using TechObject;
 using Device;
 using IO;
 using System.Windows.Forms;
@@ -29,7 +28,7 @@ namespace EasyEPlanner
             try
             {
                 var reader = new StreamReader(pathToMainPluaFile,
-                    Encoding.GetEncoding(1251));
+                    EncodingDetector.DetectFileEncoding(pathToMainPluaFile));
                 mainProgramFilePattern = reader.ReadToEnd();
                 reader.Close();
                 mainProgramFilePatternIsLoaded = true;
@@ -131,8 +130,8 @@ namespace EasyEPlanner
         private static void SaveIOFile(ParametersForSave par)
         {
             string fileName = par.path + @"\" + mainIOFileName;
-            var fileWriter = new StreamWriter(fileName, false, 
-                Encoding.GetEncoding(1251));
+            var fileWriter = new StreamWriter(fileName, false,
+                EncodingDetector.DetectFileEncoding(fileName));
 
             fileWriter.WriteLine("--version  = {0}", mainIOFileVersion);
             fileWriter.WriteLine(new string('-', numberOfDashes));
@@ -168,7 +167,7 @@ namespace EasyEPlanner
 
             string fileName = par.path + @"\" + mainTechObjectsFileName;
             var fileWriter = new StreamWriter(fileName, false,
-                Encoding.GetEncoding(1251));
+                EncodingDetector.DetectFileEncoding(fileName));
 
             fileWriter.Write(descriptionFileData);
             fileWriter.Flush();
@@ -183,7 +182,7 @@ namespace EasyEPlanner
         {
             string fileName = par.path + @"\" + mainTechDevicesFileName;
             var fileWriter = new StreamWriter(fileName,
-                false, Encoding.GetEncoding(1251));
+                false, EncodingDetector.DetectFileEncoding(fileName));
 
             fileWriter.WriteLine("--version  = {0}", 
                 mainTechDevicesFileVersion);
@@ -211,12 +210,8 @@ namespace EasyEPlanner
                 mainRestrictionsFileVersion, resctrictions);
 
             string fileName = par.path + @"\" + mainRestrictionsFileName;
-            var fileWriter = new StreamWriter(fileName, false, 
-                Encoding.GetEncoding(1251));
-
-            fileWriter.Write(restrictionsFileData);
-            fileWriter.Flush();
-            fileWriter.Close();
+            File.WriteAllText(fileName, restrictionsFileData,
+                    EncodingDetector.DetectFileEncoding(fileName));
         }
 
         /// <summary>
@@ -230,7 +225,7 @@ namespace EasyEPlanner
             {
                 //Создаем пустое описание управляющей программы.
                 var fileWriter = new StreamWriter(fileName,
-                    false, Encoding.GetEncoding(1251));
+                    false, EncodingDetector.DetectFileEncoding(fileName));
                 string mainPluaFilePattern = mainProgramFilePattern;
                 mainPluaFilePattern = mainPluaFilePattern
                     .Replace("ProjectName", par.PAC_Name);
@@ -251,13 +246,12 @@ namespace EasyEPlanner
             if (!File.Exists(fileName))
             {
                 //Создаем пустое описание сервера MODBUS.
-                var fileWriter = new StreamWriter(fileName,
-                    false, Encoding.GetEncoding(1251));
-                fileWriter.WriteLine("--version  = 1");
-                fileWriter.WriteLine(new string('-', numberOfDashes));
+                string content = "--version  = 1\n";
+                content += "--Описание сервера MODBUS\n";
+                content += new string('-', numberOfDashes) + "\n";
 
-                fileWriter.Flush();
-                fileWriter.Close();
+                File.WriteAllText(fileName, content,
+                    EncodingDetector.DetectFileEncoding(fileName));
             }
         }
 
@@ -271,16 +265,15 @@ namespace EasyEPlanner
             if (!File.Exists(fileName))
             {
                 //Создаем пустое описание конфигурации PROFIBUS.
-                var fileWriter = new StreamWriter(fileName,
-                    false, Encoding.GetEncoding(1251));
-                fileWriter.WriteLine("--version  = 1");
-                fileWriter.WriteLine(new string('-', numberOfDashes));
-                fileWriter.WriteLine("system = system or { }");
-                fileWriter.WriteLine("system.init_profibus = function()");
-                fileWriter.WriteLine("end");
+                string content = "--version  = 1\n";
+                content += "--Описание конфигурации PROFIBUS\n";
+                content += new string('-', numberOfDashes) + "\n";
+                content += "system = system or { }\n";
+                content += "system.init_profibus = function()\n";
+                content += "end\n";
 
-                fileWriter.Flush();
-                fileWriter.Close();
+                File.WriteAllText(fileName, content,
+                    EncodingDetector.DetectFileEncoding(fileName));
             }
         }
 
@@ -292,7 +285,7 @@ namespace EasyEPlanner
         {
             string fileName = par.path + @"\" + mainPRGFileName;
             var fileWriter = new StreamWriter(fileName,
-                false, Encoding.GetEncoding(1251));
+                false, EncodingDetector.DetectFileEncoding(fileName));
 
             fileWriter.WriteLine("--version  = {0}", mainPRGFileVersion);
             fileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);
@@ -330,11 +323,19 @@ namespace EasyEPlanner
 
         private const int numberOfDashes = 78;
 
-        private static TechObjectManager techObjectManager = TechObjectManager
-            .GetInstance();
+        private static TechObject.ITechObjectManager techObjectManager =
+              TechObject.TechObjectManager.GetInstance();
         private static DeviceManager deviceManager = DeviceManager
             .GetInstance();
         private static IOManager IOManager = IOManager.GetInstance();
+
+        public static string MainProgramFileName
+        {
+            get
+            {
+                return mainProgramFileName;
+            }
+        }
 
         public class ParametersForSave
         {
@@ -342,7 +343,8 @@ namespace EasyEPlanner
             public string path;
             public bool silentMode;
 
-            public ParametersForSave(string PAC_Name, string path, bool silentMode)
+            public ParametersForSave(string PAC_Name, string path,
+                bool silentMode)
             {
                 this.PAC_Name = PAC_Name;
                 this.path = path;

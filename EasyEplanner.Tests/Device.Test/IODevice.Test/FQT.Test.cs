@@ -44,8 +44,9 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
-        public void GetDevicePropertiesTest(List<string> expectedProperties,
-            string subType, Device.IODevice device)
+        public void GetDevicePropertiesTest(
+            Dictionary<string, int> expectedProperties, string subType,
+            Device.IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -165,52 +166,52 @@ namespace Tests
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForFQT = new List<string>
+            var exportForFQT = new Dictionary<string, int>()
             {
-                "ST", 
-                "M", 
-                "V", 
-                "ABS_V"
+                {"ST", 1},
+                {"M", 1},
+                {"V", 1},
+                {"ABS_V", 1},
             };
 
-            var exportForFQTF = new List<string>
+            var exportForFQTF = new Dictionary<string, int>()
             {
-                "ST", 
-                "M", 
-                "V", 
-                "P_MIN_FLOW", 
-                "P_MAX_FLOW", 
-                "P_CZ", 
-                "F", 
-                "P_DT", 
-                "ABS_V"
+                {"ST", 1},
+                {"M", 1},
+                {"V", 1},
+                {"P_MIN_FLOW", 1},
+                {"P_MAX_FLOW", 1},
+                {"P_CZ", 1},
+                {"F", 1},
+                {"P_DT", 1},
+                {"ABS_V", 1},
             };
 
-            var exportForFQTFOK = new List<string>
+            var exportForFQTFOK = new Dictionary<string, int>()
             {
-                "ST",
-                "M",
-                "V",
-                "P_MIN_FLOW",
-                "P_MAX_FLOW",
-                "P_CZ",
-                "F",
-                "P_DT",
-                "ABS_V",
-                "OK"
+                {"ST", 1},
+                {"M", 1},
+                {"V", 1},
+                {"P_MIN_FLOW", 1},
+                {"P_MAX_FLOW", 1},
+                {"P_CZ", 1},
+                {"F", 1},
+                {"P_DT", 1},
+                {"ABS_V", 1},
+                {"OK", 1},
             };
 
-            var exportForFQTVirt = new List<string>
+            var exportForFQTVirt = new Dictionary<string, int>()
             {
-                "ST",
-                "M",
-                "V",
-                "P_MIN_FLOW",
-                "P_MAX_FLOW",
-                "P_CZ",
-                "F",
-                "P_DT",
-                "ABS_V",
+                {"ST", 1},
+                {"M", 1},
+                {"V", 1},
+                {"P_MIN_FLOW", 1},
+                {"P_MAX_FLOW", 1},
+                {"P_CZ", 1},
+                {"F", 1},
+                {"P_DT", 1},
+                {"ABS_V", 1},
             };
 
             return new object[]

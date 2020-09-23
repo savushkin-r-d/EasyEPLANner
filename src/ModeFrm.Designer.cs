@@ -32,6 +32,8 @@
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
             this.modesTreeViewAdv = new Aga.Controls.Tree.TreeViewAdv();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -42,7 +44,7 @@
             this.toolStripButton1.Image = global::EasyEPlanner.Properties.Resources.plus1;
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 23);
+            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton1.Tag = "0";
             this.toolStripButton1.ToolTipText = "Первый уровень";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
@@ -53,7 +55,7 @@
             this.toolStripButton2.Image = global::EasyEPlanner.Properties.Resources.plus2;
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(23, 23);
+            this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton2.Tag = "1";
             this.toolStripButton2.Text = "Второй уровень";
             this.toolStripButton2.ToolTipText = "Второй уровень";
@@ -65,7 +67,7 @@
             this.toolStripButton3.Image = global::EasyEPlanner.Properties.Resources.plus3;
             this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton3.Name = "toolStripButton3";
-            this.toolStripButton3.Size = new System.Drawing.Size(23, 23);
+            this.toolStripButton3.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton3.Tag = "2";
             this.toolStripButton3.Text = "Третий уровень";
             this.toolStripButton3.ToolTipText = "Третий уровень";
@@ -75,18 +77,40 @@
             // 
             this.toolStrip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.toolStrip.AutoSize = false;
             this.toolStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
             this.toolStripButton2,
-            this.toolStripButton3});
+            this.toolStripButton3,
+            this.toolStripButton4,
+            this.toolStripButton5});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Padding = new System.Windows.Forms.Padding(0);
-            this.toolStrip.Size = new System.Drawing.Size(279, 26);
+            this.toolStrip.Size = new System.Drawing.Size(158, 25);
             this.toolStrip.TabIndex = 1;
             this.toolStrip.Text = "toolStrip";
+            // 
+            // toolStripButton4
+            // 
+            this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton4.Image = global::EasyEPlanner.Properties.Resources.plus4;
+            this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton4.Name = "toolStripButton4";
+            this.toolStripButton4.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton4.Tag = "3";
+            this.toolStripButton4.Text = "Четвертый уровень";
+            this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // toolStripButton5
+            // 
+            this.toolStripButton5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton5.Image = global::EasyEPlanner.Properties.Resources.plus5;
+            this.toolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton5.Name = "toolStripButton5";
+            this.toolStripButton5.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton5.Tag = "4";
+            this.toolStripButton5.Text = "Пятый уровень";
+            this.toolStripButton5.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // modesTreeViewAdv
             // 
@@ -126,6 +150,7 @@
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -135,5 +160,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
         private Aga.Controls.Tree.TreeViewAdv modesTreeViewAdv;
+        private System.Windows.Forms.ToolStripButton toolStripButton4;
+        private System.Windows.Forms.ToolStripButton toolStripButton5;
     }
 }

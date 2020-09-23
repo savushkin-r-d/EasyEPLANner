@@ -282,8 +282,8 @@ namespace Device
             return "";
         }
 
-        public override List<string> GetDeviceProperties(DeviceType dt, 
-            DeviceSubType dst)
+        public override Dictionary<string, int> GetDeviceProperties(
+            DeviceType dt, DeviceSubType dst)
         {
             switch(dt)
             {
@@ -293,24 +293,24 @@ namespace Device
                         case DeviceSubType.V_DO1:
                         case DeviceSubType.V_DO2:
                         case DeviceSubType.V_IOLINK_VTUG_DO1:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M"
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                            };
 
                         case DeviceSubType.V_DO1_DI1_FB_ON:
                         case DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON:
                         case DeviceSubType.V_DO1_DI1_FB_OFF:
                         case DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M",
-                                "P_ON_TIME",
-                                "P_FB",
-                                "FB_OFF_ST"
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                                {"P_ON_TIME", 1},
+                                {"P_FB", 1},
+                                {"FB_OFF_ST", 1},
+                            };
 
                         case DeviceSubType.V_DO1_DI2:
                         case DeviceSubType.V_DO2_DI2:
@@ -319,29 +319,29 @@ namespace Device
                         case DeviceSubType.V_AS_MIXPROOF:
                         case DeviceSubType.V_AS_DO1_DI2:
                         case DeviceSubType.V_BOTTOM_MIXPROOF:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M",
-                                "P_ON_TIME",
-                                "P_FB",
-                                "FB_OFF_ST",
-                                "FB_ON_ST"
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                                {"P_ON_TIME", 1},
+                                {"P_FB", 1},
+                                {"FB_OFF_ST", 1},
+                                {"FB_ON_ST", 1},
+                            };
 
                         case DeviceSubType.V_IOLINK_MIXPROOF:
                         case DeviceSubType.V_IOLINK_DO1_DI2:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "ST",
-                                "M",
-                                "P_ON_TIME",
-                                "P_FB",
-                                "V",
-                                "BLINK",
-                                "CS",
-                                "ERR",
-                            });
+                                {"ST", 1},
+                                {"M", 1},
+                                {"P_ON_TIME", 1},
+                                {"P_FB", 1},
+                                {"V", 1},
+                                {"BLINK", 1},
+                                {"CS", 1},
+                                {"ERR", 1},
+                            };
                     }
                     break;
             }

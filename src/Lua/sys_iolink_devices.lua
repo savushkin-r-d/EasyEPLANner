@@ -1,9 +1,9 @@
--- Здесь хранятся изделия для устройств.
+-- Р—РґРµСЃСЊ С…СЂР°РЅСЏС‚СЃСЏ РёР·РґРµР»РёСЏ РґР»СЏ СѓСЃС‚СЂРѕР№СЃС‚РІ.
 
--- Описание вводимых полей:
--- articleName - название изделия устройства.
--- sizeIn - размер входной области в словах  (WORD).
--- sizeOut - размер выходной области в словах (WORD).
+-- РћРїРёСЃР°РЅРёРµ РІРІРѕРґРёРјС‹С… РїРѕР»РµР№:
+-- articleName - РЅР°Р·РІР°РЅРёРµ РёР·РґРµР»РёСЏ СѓСЃС‚СЂРѕР№СЃС‚РІР°.
+-- sizeIn - СЂР°Р·РјРµСЂ РІС…РѕРґРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІ СЃР»РѕРІР°С…  (WORD).
+-- sizeOut - СЂР°Р·РјРµСЂ РІС‹С…РѕРґРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІ СЃР»РѕРІР°С… (WORD).
 
 local iolink_devices =
 {
@@ -44,6 +44,8 @@ local iolink_devices =
     { articleName = "FES.VTUG-10-VRLK-B1Y-G18FD-DTFD-M7SFD-16K+SCVA", sizeIn = 0, sizeOut = 2 },
     { articleName = "FES.VTUG-10-VRLK-B1Y-G18FD-DTFD-M7SFD-8K+SCVA", sizeIn = 0, sizeOut = 1 },
     { articleName = "FES.VTUG-10-VRLK-B1Y-G18FDL-DTFDL-M7SFD-4K+SCVA", sizeIn = 0, sizeOut = 1 },
+    -- F
+    { articleName = "PXC.2910411", sizeIn = 4, sizeOut = 1.5 }
 }
 
 return iolink_devices

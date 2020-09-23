@@ -126,7 +126,7 @@ namespace EasyEPlanner
 
         public void SyncAndSave(bool saveDescrSilentMode = true)
         {
-            if (currentProject != null)
+            if (currentProject != null && ProjectDataIsLoaded)
             {
                 String strAction = "LoadDescriptionAction";
                 ActionManager oAMnr = new ActionManager();
@@ -157,8 +157,8 @@ namespace EasyEPlanner
         /// </summary>
         public void SaveAndClose()
         {
-            EProjectManager.GetInstance().SyncAndSave();
-            EProjectManager.GetInstance().StopEditModes();
+            SyncAndSave();
+            StopEditModes();
 
             ExcelRepoter.AutomaticExportExcelForSCADA(currentProject);
 
@@ -167,14 +167,15 @@ namespace EasyEPlanner
             ModeFrm.SaveCfg(ModeFrm.modeIsShown);
             DFrm.CheckShown();
             DFrm.SaveCfg(DFrm.deviceIsShown);
-            Editor.EditorCtrl.CheckShown();
-            Editor.EditorCtrl.SaveCfg();
+            Editor.NewEditorControl.CheckShown();
+            Editor.NewEditorControl.SaveCfg();
 
             if (Editor.Editor.GetInstance().IsShown())
             {
                 Editor.Editor.GetInstance().CloseEditor();
             }
 
+            ModeFrm.GetInstance().CloseEditor();
             DFrm.GetInstance().CloseEditor();
         }
 
@@ -190,6 +191,11 @@ namespace EasyEPlanner
 
         private ActionManager ActMnr = new ActionManager();
         private Eplan.EplApi.ApplicationFramework.Action startInteractionAction;
+
+        /// <summary>
+        /// Загружены или нет данные проекта.
+        /// </summary>
+        public bool ProjectDataIsLoaded { get; set; } = false;
     }
 
     //-------------------------------------------------------------------------
@@ -205,7 +211,9 @@ namespace EasyEPlanner
         {
             EProjectManager.GetInstance().SetEditInteraction(this);
 
-            return RequestCode.Select | RequestCode.NoPreselect | RequestCode.NoMultiSelect;
+            return RequestCode.Select |
+                   RequestCode.NoPreselect |
+                   RequestCode.NoMultiSelect;
         }
 
         public override RequestCode OnSelect(
@@ -220,76 +228,114 @@ namespace EasyEPlanner
                 return RequestCode.Stop;
             }
 
-            Function oF = null;
-
-            if (arrSelectedObjects[0] is Rectangle)
-            {
-                string oFName =
-                    (arrSelectedObjects[0] as Rectangle).Properties.get_PROPUSER_TEST(1);
-
-                oF = Function.FromStringIdentifier(oFName) as Function;
-            }
-
-            if (arrSelectedObjects[0] is Function)
-            {
-                oF = arrSelectedObjects[0] as Function;
-            }
-
+            Function oF = SearchSelectedObjectFunction(arrSelectedObjects[0]);
             if (oF != null)
             {
-                Editor.ITreeViewItem item = Editor.Editor.GetInstance().EForm.GetActiveItem();
-
-                if (item == null)
+                Editor.ITreeViewItem newEditorItem = Editor.Editor
+                    .GetInstance().EditorForm.GetActiveItem();
+                if (newEditorItem == null)
                 {
                     return RequestCode.Nothing;
                 }
 
-                if (item.IsUseDevList)
+                if(newEditorItem != null)
                 {
-                    string devName;
-                    string objectName;
-                    int objectNumber;
-                    string deviceType;
-                    int deviceNumbe;
-
-                    bool res = Device.DeviceManager.CheckDeviceName(oF.Name,
-                        out devName, out objectName, out objectNumber, out deviceType,
-                        out deviceNumbe);
-
-                    if (res)
-                    {
-                        string oldDevices = " " + item.EditText[1] + " ";
-                        string newDevices = "";
-                        //Для корректного поиска отделяем пробелами.
-                        devName = " " + devName + " ";
-
-                        if (oldDevices.Contains(devName))
-                        {
-                            newDevices = oldDevices.Replace(devName, " ");
-                        }
-                        else
-                        {
-                            newDevices = oldDevices + devName;
-                        }
-                        Editor.Editor.GetInstance().EForm.SetNewVal(newDevices);
-
-                        //Обновление списка устройств при его наличии.
-                        if (DFrm.GetInstance().isVisible() == true)
-                        {
-                            Device.DeviceType[] devTypes;
-                            Device.DeviceSubType[] devSubTypes;
-                            item.GetDevTypes(out devTypes, out devSubTypes);
-
-                            DFrm.GetInstance().ShowDevices(
-                                Device.DeviceManager.GetInstance(),
-                                    devTypes, devSubTypes, false, true,
-                                    item.EditText[1], null);
-                        }
-                    }
+                    ExecuteForEditor(newEditorItem, oF);
                 }
             }
 
-            return RequestCode.Select | RequestCode.NoPreselect | RequestCode.NoMultiSelect;
+            return RequestCode.Select |
+                   RequestCode.NoPreselect |
+                   RequestCode.NoMultiSelect;
+        }
+
+        /// <summary>
+        /// Поиск функции выбранного объекта
+        /// </summary>
+        /// <param name="selectedObject">Выбранный объект</param>
+        /// <returns></returns>
+        private Function SearchSelectedObjectFunction(StorableObject 
+            selectedObject)
+        {
+            Function oF = null;
+            if (selectedObject is Rectangle)
+            {
+                string oFName = (selectedObject as Rectangle).Properties
+                    .get_PROPUSER_TEST(1);
+                oF = Function.FromStringIdentifier(oFName) as Function;
+            }
+
+            if (selectedObject is Function)
+            {
+                oF = selectedObject as Function;
+            }
+
+            return oF;
+        }
+
+        /// <summary>
+        /// Обработка для нового редактора
+        /// </summary>
+        /// <param name="newEditorItem">Элемент из нового редактора</param>
+        /// <param name="oF">Функция</param>
+        private void ExecuteForEditor(Editor.ITreeViewItem newEditorItem,
+            Function oF)
+        {
+            if (newEditorItem.IsUseDevList)
+            {
+                string devName;
+                bool res = Device.DeviceManager.CheckDeviceName(oF.Name,
+                    out devName, out _, out _, out _, out _);
+
+                if (res)
+                {
+                    string checkedDevices = newEditorItem.EditText[1];
+                    string newDevices = MakeNewCheckedDevices(devName,
+                        checkedDevices);
+                    Editor.Editor.GetInstance().EditorForm
+                        .SetNewVal(newDevices);
+
+                    //Обновление списка устройств при его наличии.
+                    string checkedDev = newEditorItem.EditText[1];
+                    if (DFrm.GetInstance().IsVisible() == true)
+                    {
+                        Device.DeviceType[] devTypes;
+                        Device.DeviceSubType[] devSubTypes;
+                        newEditorItem.GetDevTypes(out devTypes,
+                            out devSubTypes);
+
+                        DFrm.GetInstance().ShowDevices(
+                            Device.DeviceManager.GetInstance(), devTypes,
+                            devSubTypes, false, true, checkedDev, null);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Сгенерировать новую строку устройств
+        /// </summary>
+        /// <param name="devName">Устройство</param>
+        /// <param name="checkedDevices">Текущие устройства</param>
+        /// <returns></returns>
+        private string MakeNewCheckedDevices(string devName,
+            string checkedDevices)
+        {
+            string oldDevices = " " + checkedDevices + " ";
+            string newDevices;
+            //Для корректного поиска отделяем пробелами.
+            devName = " " + devName + " ";
+
+            if (oldDevices.Contains(devName))
+            {
+                newDevices = oldDevices.Replace(devName, " ");
+            }
+            else
+            {
+                newDevices = oldDevices + devName.Trim();
+            }
+
+            return newDevices;
         }
 
         private delegate void DelegateWithParameters(int param1);
@@ -476,7 +522,7 @@ namespace EasyEPlanner
                     // Если проект закрыт варварски, то при новом открытия окна не открывать
                     DFrm.SaveCfg(false);
                     ModeFrm.SaveCfg(false);
-                    Editor.EditorCtrl.SaveCfg(false);
+                    Editor.NewEditorControl.SaveCfg(false);
                 }
             }
 

@@ -1,145 +1,102 @@
-﻿using LuaInterface;
+﻿using EasyEPlanner;
+using Editor;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LuaInterface;
 using System.Windows.Forms;
-using EasyEPlanner;
 
 namespace TechObject
 {
-    /// <summary>
-    /// Интерфейс менеджера технологических объектов проекта.
-    /// </summary>
-    public interface ITechObjectManager
-    {
-        void LoadFromLuaStr(string LuaStr, string projectName);
-        void LoadRestriction(string LuaStr);
-        string SaveAsLuaTable(string prefixStr);
-        void GetObjectForXML(TreeNode rootNode);
-        void SetCDBXTagView(bool combineTag);
-        string SaveRestrictionAsLua(string prefixStr);
-        List<TechObject> GetTechObjects();
-        void SetCDBXNewNames(bool useNewNames);
-    }
-
     /// <summary>
     /// Получение номера объекта в списке. Нумерация начинается с 1.
     /// </summary>
     public delegate int GetN(object obj);
 
     /// <summary>
-    /// Менеджер технологических объектов проекта.
+    /// Менеджер объектов редактора.
     /// </summary>
-    public class TechObjectManager : Editor.TreeViewItem, ITechObjectManager
+    public class TechObjectManager : TreeViewItem, ITechObjectManager
     {
-
         private TechObjectManager()
         {
-            lua = new Lua();
-            lua.RegisterFunction("ADD_TECH_OBJECT", this,
-                GetType().GetMethod("AddObject"));
+            InitLua();
 
-            CheckExcelLibs();
-            InitTechObjectsLuaScript();
-
-            objects = new List<TechObject>();
-            cdbxTagView = false;
+            treeObjects = new List<ITreeViewItem>();
+            techObjects = new List<TechObject>();
+            techObjectManagerChecker = new TechObjectChecker(this);
+            techObjectXMLMaker = new TechObjectXMLMaker(this);
         }
 
-        /// <summary>
-        /// Проверить Excel библиотеки надстройки.
-        /// </summary>
-        private void CheckExcelLibs()
-        {
-            const string spireLicense = "Spire.License.dll";
-            const string spireXLS = "Spire.XLS.dll";
-            const string spirePDF = "Spire.Pdf.dll";
-
-            string SpireLicensePath = Path.Combine(
-                ProjectManager.GetInstance().AssemblyPath, spireLicense);
-            string SpireXLSPath = Path.Combine(
-                ProjectManager.GetInstance().AssemblyPath, spireXLS);
-            string SpirePDFPath = Path.Combine(
-                ProjectManager.GetInstance().AssemblyPath, spirePDF);
-
-            if (File.Exists(SpireLicensePath) == false ||
-                File.Exists(SpireXLSPath) == false ||
-                File.Exists(SpirePDFPath) == false)
-            {
-                var files = new string[] { spireLicense, spireXLS, spirePDF };
-                CopySpireXLSFiles(ProjectManager.GetInstance().AssemblyPath, files,
-                    ProjectManager.GetInstance().OriginalAssemblyPath);
-            }
-        }
-
-        /// <summary>
-        /// Копировать файлы библиотек Spire XLS
-        /// </summary>
-        /// <param name="shadowAssemblySpireFilesDir">Путь к библиотекам
-        /// в теневом хранилище Eplan</param>
-        /// <param name="files">Имена файлов для копирования</param>
-        /// <param name="originalPath">Путь к надстройке из каталога
-        /// подключения надстройки</param>
-        private void CopySpireXLSFiles(string shadowAssemblySpireFilesDir,
-            string[] files, string originalPath)
-        {
-            var libsDir = new DirectoryInfo(originalPath);
-            foreach (FileInfo file in libsDir.GetFiles())
-            {
-                if (files.Contains(file.Name))
-                {
-                    string path = Path.Combine(shadowAssemblySpireFilesDir,
-                        file.Name);
-                    file.CopyTo(path, true);
-                }
-            }
-        }
-
+        #region Инициализация LUA-скриптов
         /// <summary>
         /// Инициализировать Lua-скрипт для чтения описания объектов
         /// </summary>
-        private void InitTechObjectsLuaScript()
+        private void InitLua()
         {
-            const string fileName = "sys.lua";
+            lua = new Lua();
+            InitReadDescriptionLuaScript();
+            InitReadRestrictionsLuaScript();
+        }
+
+        /// <summary>
+        /// Загрузка скрипта для чтения описания объектов.
+        /// </summary>
+        private void InitReadDescriptionLuaScript()
+        {
+            lua.RegisterFunction("ADD_TECH_OBJECT", this,
+                GetType().GetMethod("AddObject"));
+            const string sysFileName = "sys.lua";
             string sysLuaPath = Path.Combine(ProjectManager.GetInstance()
-                .SystemFilesPath, fileName);
-            if (File.Exists(sysLuaPath) == false)
-            {
-                CopySystemFiles(ProjectManager.GetInstance().SystemFilesPath,
-                    ProjectManager.GetInstance().OriginalSystemFilesPath);
-            }
+                .SystemFilesPath, sysFileName);
             lua.DoFile(sysLuaPath);
         }
 
         /// <summary>
-        /// Копирует системные .lua файлы если они не загрузились
-        /// в теневое хранилище (Win 7 fix).
-        /// <param name="systemFilesPath">Путь к Lua файлам
-        /// в теневом хранилище Eplan</param>
-        /// <param name="originalSystemFilesPath">Путь к файлам Lua в месте 
-        /// подключения надстройки к программе</param>
+        /// Загрузка скрипта для чтения ограничений объектов.
         /// </summary>
-        private void CopySystemFiles(string systemFilesPath,
-            string originalSystemFilesPath)
+        private void InitReadRestrictionsLuaScript()
         {
-            Directory.CreateDirectory(systemFilesPath);
+            lua.RegisterFunction("Get_TECH_OBJECT", this,
+                GetType().GetMethod("GetTObject"));
+            string restrictionFileName = "sys_restriction.lua";
+            string pathToRestrictionInitializer = Path
+                .Combine(ProjectManager.GetInstance().SystemFilesPath,
+                restrictionFileName);
+            lua.DoFile(pathToRestrictionInitializer);
+        }
+        #endregion
 
-            var systemFilesDir = new DirectoryInfo(originalSystemFilesPath);
-            FileInfo[] systemFiles = systemFilesDir.GetFiles();
-            foreach (FileInfo systemFile in systemFiles)
+        /// <summary>
+        /// Получить экземпляр класса менеджера объектов
+        /// </summary>
+        /// <returns></returns>
+        public static TechObjectManager GetInstance()
+        {
+            if (instance == null)
             {
-                string pathToFile = Path.Combine(systemFilesPath,
-                    systemFile.Name);
-                systemFile.CopyTo(pathToFile, true);
+                instance = new TechObjectManager();
             }
+
+            return instance;
         }
 
-        public void ShowMessage(string msg)
+        /// <summary>
+         /// Получение объекта по номеру
+         /// </summary>
+         /// <param name="i">Номер объекта</param>
+         /// <returns></returns>
+        public TechObject GetTObject(int i)
         {
-            MessageBox.Show(msg);
+            if (techObjects != null && techObjects.Count >= i)
+            {
+                return techObjects[i - 1];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -150,7 +107,39 @@ namespace TechObject
         /// <returns>Номер заданной операции.</returns>
         public int GetTechObjectN(object techObject)
         {
-            return objects.IndexOf(techObject as TechObject) + 1;
+            return techObjects.IndexOf(techObject as TechObject) + 1;
+        }
+
+        /// <summary>
+        /// Получить номер объекта по его отображаемому имени в дереве.
+        /// </summary>
+        /// <param name="displayText">Отображаемый текст</param>
+        /// <returns></returns>
+        public int GetTechObjectN(string displayText)
+        {
+            TechObject findedObject = TechObjects
+                .Where(x => x.DisplayText[0] == displayText).FirstOrDefault();
+
+            if(findedObject != null)
+            {
+                return techObjects.IndexOf(findedObject) + 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Проверка и исправление ограничений при удалении/перемещении
+        /// операции 
+        /// </summary>
+        public void ChangeModeNum(int objNum, int oldNum, int newNum)
+        {
+            foreach (TechObject to in TechObjects)
+            {
+                to.ChangeModeNum(objNum, oldNum, newNum);
+            }
         }
 
         /// <summary>
@@ -161,9 +150,10 @@ namespace TechObject
         public string SaveAsLuaTable(string prefix)
         {
             string res = "";
-            foreach (TechObject obj in objects)
+            foreach (TechObject obj in TechObjects)
             {
-                res += obj.SaveAsLuaTable(prefix + "\t\t");
+                int num = TechObjects.IndexOf(obj) + 1;
+                res += obj.SaveAsLuaTable(prefix + "\t\t", num);
             }
             res = res.Replace("\t", "    ");
             return res;
@@ -177,453 +167,29 @@ namespace TechObject
         public string SaveRestrictionAsLua(string prefix)
         {
             var res = "";
-            foreach (TechObject obj in objects)
+            foreach (TechObject obj in TechObjects)
             {
-                res += obj.SaveRestrictionAsLua(prefix + "\t");
+                int num = TechObjects.IndexOf(obj) + 1;
+                res += obj.SaveRestrictionAsLua(prefix + "\t", num);
             }
             res = res.Replace("\t", "    ");
             return res;
         }
 
+        #region Загрузка описания из LUA
         /// <summary>
-        /// Проверка технологического объекта
-        /// на правильность ввода и др.
+        /// Загрузка описания проекта из строки
         /// </summary>
-        /// <returns>Строка с ошибками</returns>
-        public string Check()
+        /// <param name="LuaStr">Строка с описанием</param>
+        /// <param name="projectName">Имя проекта</param>
+        public void LoadDescription(string LuaStr, string projectName)
         {
-            var errors = string.Empty;
-
-            errors += CheckTypeField();
-            errors += CheckObjectMonitorField();
-
-            foreach (var obj in Objects)
-            {
-                errors += obj.Check();
-            }
-
-            return errors;
-
-        }
-
-        /// <summary>
-        /// Проверить поле тип у объекта.
-        /// </summary>
-        private string CheckTypeField()
-        {
-            var errorsList = new List<string>();
-            foreach(var obj in Objects)
-            {
-                var matches = Objects.Where(x => x.TechType == obj.TechType &&
-                x.TechNumber == obj.TechNumber)
-                    .Select(x => GetTechObjectN(x))
-                    .ToArray();
-
-                if (matches.Count() > 1)
-                {
-                    errorsList.Add($"У объектов {string.Join(",", matches)} " +
-                        $"совпадает поле \"Тип\"\n");
-                }
-            }
-
-            errorsList = errorsList.Distinct().ToList();
-            return string.Join("", errorsList);
-        }
-
-        /// <summary>
-        /// Проверить поле имени объекта Monitor у объекта.
-        /// </summary>
-        private string CheckObjectMonitorField()
-        {
-            var errorsList = new List<string>();
-            foreach(var obj in Objects)
-            {
-                var matches = Objects.Where(x => x.NameBC == obj.NameBC &&
-                x.TechNumber == obj.TechNumber)
-                    .Select(x => GetTechObjectN(x))
-                    .ToArray();
-
-                if (matches.Count() > 1)
-                {
-                    errorsList.Add($"У объектов {string.Join(",", matches)} " +
-                        $"совпадает поле \"Имя объекта Monitor\"\n");
-                }
-            }
-
-            errorsList = errorsList.Distinct().ToList();
-            return string.Join("", errorsList);
-        }
-
-        /// <summary>
-        /// Добавление технологического объекта. Вызывается из Lua.
-        /// </summary>
-        /// <returns>Добавленный технологический объект.</returns>
-        /// <param name="globalNumber">Глобальный номер объекта, используется
-        /// при импорте из файла</param>
-        public TechObject AddObject(int globalNumber, int techN, string name, 
-            int techType, string nameEplan, int cooperParamNumber, 
-            string NameBC, string baseTechObjectName, string attachedObjects)
-        {
-            // globalNumber игнорируется в этом методе, но используется при
-            // импорте описания из файла (аналогичная сигнатура, другое тело).
-            TechObject obj = new TechObject(name, GetTechObjectN, techN,
-                techType, nameEplan.ToUpper(), cooperParamNumber, NameBC, 
-                attachedObjects);
-
-            // Установка значения базового аппарата
-            obj.SetNewValue(baseTechObjectName, true);
-
-            objects.Add(obj);
-
-            return obj;
-        }
-
-        /// <summary>
-        /// Получение объекта по номеру
-        /// </summary>
-        /// <param name="i">индекс </param>
-        /// <returns></returns>
-        public TechObject GetTObject(int i)
-        {
-            if (objects != null)
-            {
-                if (objects.Count >= i)
-                {
-                    return objects[i - 1];
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Получение списка объектов
-        /// </summary>
-        /// <returns></returns>
-        public List<TechObject> GetTechObjects()
-        {
-            return Objects;
-        }
-
-        #region XML Report
-        /// <summary>
-        /// Формирование узлов для операций, шагов и параметров объектов.
-        /// </summary>
-        /// <param name="rootNode">корневой узел</param>
-        public void GetObjectForXML(TreeNode rootNode)
-        {
-            GenerateSystemNode(rootNode);      
-            for (int num = 1; num <= Objects.Count; num++)
-            {
-                TechObject item = Objects[num - 1];
-
-                var objNode = new TreeNode($"{item.NameBC}{item.TechNumber}");
-
-                var objModesNode = new TreeNode(item.NameBC + 
-                    item.TechNumber.ToString() + "_Операции");
-                var objOperStateNode = new TreeNode(item.NameBC + 
-                    item.TechNumber.ToString() + "_Состояния_Операций");
-                var objAvOperNode = new TreeNode(item.NameBC + 
-                    item.TechNumber.ToString() + "_Доступность");
-                var objStepsNode = new TreeNode(item.NameBC + 
-                    item.TechNumber.ToString() + "_Шаги");
-                var objSingleStepsNode = new TreeNode(item.NameBC +
-                    item.TechNumber.ToString() + "_Одиночные_Шаги");
-                var objParamsNode = new TreeNode(item.NameBC + 
-                    item.TechNumber.ToString() + "_Параметры");
-
-                string objName = GenerateObjectName(item, num);
-                GenerateCMDTags(objName, objNode, objModesNode);
-                GenerateSTTags(item, objName, objNode, objModesNode);
-                GenerateModesOpersAvsStepsTags(item, objName, objNode, 
-                    objModesNode, objOperStateNode, objAvOperNode, 
-                    objStepsNode);
-
-                GenerateSingleStepsTags(item, objName, objNode, 
-                    objSingleStepsNode);
-
-                string sFl = objName + ".S_PAR_F";
-                int count = item.GetParamsManager().Float.Items.Length;
-                GenerateParametersTags(count, objNode, objParamsNode, sFl);
-
-                string sUi = objName + ".S_PAR_UI";
-                count = item.GetParamsManager().Items[1].Items.Length;
-                GenerateParametersTags(count, objNode, objParamsNode, sUi);
-
-                string rtFl = objName + ".RT_PAR_F";
-                count = item.GetParamsManager().Items[2].Items.Length;
-                GenerateParametersTags(count, objNode, objParamsNode, rtFl);
-
-                string rtUi = objName + ".RT_PAR_UI";
-                count = item.GetParamsManager().Items[3].Items.Length;
-                GenerateParametersTags(count, objNode, objParamsNode, rtUi);
-
-                var singleNodes = new TreeNode[] { objModesNode, 
-                    objOperStateNode, objAvOperNode, objStepsNode, 
-                    objSingleStepsNode, objParamsNode};
-                GenerateRootNode(rootNode, objNode, singleNodes);
-
-                if(item.BaseTechObject.IsPID)
-                {
-                    GeneratePIDNode(rootNode, item.GlobalNumber);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Генерация системных тегов
-        /// </summary>
-        /// <param name="rootNode">Узловой узел</param>
-        private void GenerateSystemNode(TreeNode rootNode)
-        {
-            var systemNode = new TreeNode("SYSTEM");
-            systemNode.Nodes.Add("SYSTEM.UP_TIME", "SYSTEM.UP_TIME");
-            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_SEAT_PERIOD",
-                "SYSTEM.WASH_VALVE_SEAT_PERIOD");
-            systemNode.Nodes.Add("SYSTEM.P_V_OFF_DELAY_TIME",
-                "SYSTEM.P_V_OFF_DELAY_TIME");
-            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_UPPER_SEAT_TIME",
-                "SYSTEM.WASH_VALVE_UPPER_SEAT_TIME");
-            systemNode.Nodes.Add("SYSTEM.WASH_VALVE_LOWER_SEAT_TIME",
-                "SYSTEM.WASH_VALVE_LOWER_SEAT_TIME");
-            systemNode.Nodes.Add("SYSTEM.CMD", "SYSTEM.CMD");
-            systemNode.Nodes.Add("SYSTEM.CMD_ANSWER", "SYSTEM.CMD_ANSWER");
-            systemNode.Nodes.Add("SYSTEM.P_RESTRICTIONS_MODE",
-                "SYSTEM.P_RESTRICTIONS_MODE");
-            systemNode.Nodes.Add("SYSTEM.P_RESTRICTIONS_MANUAL_TIME",
-                "SYSTEM.P_RESTRICTIONS_MANUAL_TIME");
-            systemNode.Nodes.Add("SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR",
-                "SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR");
-            rootNode.Nodes.Add(systemNode);
-        }
-
-        /// <summary>
-        /// Генерация имени объекта
-        /// </summary>
-        /// <param name="item">Объект</param>
-        /// <param name="itemNumber">Глобальный номер</param>
-        /// <returns></returns>
-        private string GenerateObjectName(TechObject item, int itemNumber)
-        {
-            if (cdbxNewNames == true)
-            {
-                return item.NameBC.ToUpper() + item.TechNumber.ToString();
-            }
-            else
-            {
-                return "OBJECT" + itemNumber.ToString();
-            }
-        }
-
-        /// <summary>
-        /// Генерация CMD-тэгов для объекта
-        /// </summary>
-        /// <param name="obj">Имя объекта</param>
-        private void GenerateCMDTags(string obj, TreeNode objNode, 
-            TreeNode objModesNode)
-        {
-            string tagName = obj + ".CMD";
-            if (cdbxTagView == true)
-            {
-                objNode.Nodes.Add(tagName, tagName);
-            }
-            else
-            {
-                objModesNode.Nodes.Add(tagName, tagName);
-            }
-        }
-
-        /// <summary>
-        /// Генерация ST-тегов для проекта
-        /// </summary>
-        /// <param name="item">Объект</param>
-        /// <param name="objName">Имя объекта</param>
-        private void GenerateSTTags(TechObject item, string objName, 
-            TreeNode objNode, TreeNode objModesNode)
-        {
-            // 33 - Magic number
-            int stCount = item.ModesManager.Modes.Count / 33;
-            for (int i = 0; i <= stCount; i++)
-            {
-                string number = "[ " + (i + 1).ToString() + " ]";
-                string fullTagName = objName + ".ST" + number;
-                if (cdbxTagView == true)
-                {
-                    objNode.Nodes.Add(fullTagName, fullTagName);
-                }
-                else
-                {
-                    objModesNode.Nodes.Add(fullTagName, fullTagName);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Генерация тэгов по операциям, шагам, доступности, состояниям
-        /// </summary>
-        /// <param name="item">Объект</param>
-        /// <param name="itemNumber">Глобальный номер</param>
-        private void GenerateModesOpersAvsStepsTags(TechObject item, string obj,
-            TreeNode objNode, TreeNode objModesNode, TreeNode objOperStateNode,
-            TreeNode objAvOperNode, TreeNode objStepsNode)
-        {
-            string mode = obj + ".MODES";
-            string step = mode + "_STEPS";
-            string oper = obj + ".OPERATIONS";
-            string av = obj + ".AVAILABILITY";
-            for (int i = 1; i <= item.ModesManager.Modes.Count; i++)
-            {
-                string number = "[ " + i.ToString() + " ]";
-                if (cdbxTagView == true)
-                {
-                    objNode.Nodes.Add(mode + number, mode + number);
-                    objNode.Nodes.Add(oper + number, oper + number);
-                    objNode.Nodes.Add(av + number, av + number);
-                    objNode.Nodes.Add(step + number, step + number);
-                }
-                else
-                {
-                    objModesNode.Nodes.Add(mode + number, mode + number);
-                    objOperStateNode.Nodes.Add(oper + number, oper + number);
-                    objAvOperNode.Nodes.Add(av + number, av + number);
-                    objStepsNode.Nodes.Add(step + number, step + number);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Генерация одиночных шагов для объекта
-        /// </summary>
-        /// <param name="item">Объект</param>
-        /// <param name="objName">Имя объекта</param>
-        /// <param name="objSingleStepsNode"></param>
-        private void GenerateSingleStepsTags(TechObject item, string objName, 
-            TreeNode objNode, TreeNode objSingleStepsNode)
-        {
-            List<Mode> modes = item.ModesManager.Modes;
-            for(int modeNum = 1; modeNum <= modes.Count; modeNum++)
-            {
-                // Шаги "Пауза" и "Остановка" игнорируются
-                int stepsCount = modes[modeNum - 1].MainSteps.Count;
-                for (int stepNum = 1; stepNum <= stepsCount; stepNum++)
-                {
-                    string stepTag = $"{objName}.STEPS{modeNum}[ {stepNum} ]";
-                    if(cdbxTagView == true)
-                    {
-                        objNode.Nodes.Add(stepTag, stepTag);
-                    }
-                    else
-                    {
-                        objSingleStepsNode.Nodes.Add(stepTag, stepTag);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Генерация тэгов параметров объекта
-        /// </summary>
-        /// <param name="paramsCount">Количество параметров</param>
-        /// <param name="objNode"></param>
-        /// <param name="tagName">Имя тэга</param>
-        private void GenerateParametersTags(int paramsCount, TreeNode objNode,
-            TreeNode objParamsNode, string tagName)
-        {
-            for (int i = 1; i <= paramsCount; i++)
-            {
-                string number = "[ " + i.ToString() + " ]";
-                string fullTagName = tagName + number;
-                if (cdbxTagView == true)
-                {
-                    objNode.Nodes.Add(fullTagName, fullTagName);
-                }
-                else
-                {
-                    objParamsNode.Nodes.Add(fullTagName, fullTagName);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Генерация главного узла для экспорта в XML
-        /// </summary>
-        private void GenerateRootNode(TreeNode rootNode, TreeNode objNode,
-            TreeNode[] singleNodes)
-        {
-            if (cdbxTagView == true)
-            {
-                rootNode.Nodes.Add(objNode);
-            }
-            else
-            {
-                rootNode.Nodes.AddRange(singleNodes);
-            }
-        }
-
-        /// <summary>
-        /// Генерация объекта-ПИДа
-        /// </summary>
-        /// <param name="rootNode">Главный узел</param>
-        private void GeneratePIDNode(TreeNode rootNode, int num)
-        {
-            string tagName = $"PID{num}";
-            TreeNode pidNode;
-            if (cdbxTagView == true)
-            {
-                pidNode = new TreeNode($"{tagName}");
-            }
-            else
-            {
-                pidNode = new TreeNode($"{tagName}_Параметры");
-            }
-
-            const int rtParCount = 2;
-            for (int i = 1; i <= rtParCount; i++)
-            {
-                string nodeDescription = $"{tagName}.RT_PAR_F[ {i} ]";
-                pidNode.Nodes.Add(nodeDescription, nodeDescription);
-            }
-
-            const int sParCount = 14;
-            for (int i = 1; i <= sParCount; i++)
-            {
-                string nodeDescription = $"{tagName}.S_PAR_F[ {i} ]";
-                pidNode.Nodes.Add(nodeDescription, nodeDescription);
-            }
-
-            rootNode.Nodes.Add(pidNode);
-        }
-        #endregion
-
-        /// <summary>
-        /// Получение экземпляра класса.
-        /// </summary>
-        /// <returns>Единственный экземпляр класса.</returns>
-        public static TechObjectManager GetInstance()
-        {
-            if (null == instance)
-            {
-                instance = new TechObjectManager();
-            }
-
-            return instance;
-        }
-
-        public List<TechObject> Objects
-        {
-            get
-            {
-                return objects;
-            }
-        }
-
-        public void LoadFromLuaStr(string LuaStr, string projectName)
-        {
-            this.projectName = projectName;
-
-            objects.Clear(); //Очищение объектов.
+            ProjectName = projectName;
+            treeObjects.Clear();
+            techObjects.Clear();
 
             //Сброс описания объектов.
-            lua.DoString("init_tech_objects_modes = nil"); 
+            lua.DoString("init_tech_objects_modes = nil");
             try
             {
                 //Выполнения Lua скрипта с описанием объектов.
@@ -631,8 +197,10 @@ namespace TechObject
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + ". Исправьте скрипт вручную.",
-                    "Ошибка обработки Lua-скрипта");
+                string message = $"{ex.Message}. Ошибка обработки " +
+                    $"Lua-скрипта описания проекта. " +
+                    $"Данные не будут сохранены.";
+                throw new Exception(message);
             }
             try
             {
@@ -641,12 +209,12 @@ namespace TechObject
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Ошибка обработки Lua-скрипта: " +
-                    ex.Message + ".\n" +
-                    "Source: " + ex.Source);
+                string message = $"{ex.Message}. Ошибка обработки " +
+                    $"Lua-скрипта для загрузки данных проекта. " +
+                    $"Данные не будут сохранены.\n" +
+                    $"Source: {ex.Source}";
+                throw new Exception(message);
             }
-
         }
 
         /// <summary>
@@ -655,65 +223,369 @@ namespace TechObject
         /// <param name="LuaStr">Описание ограничений объектов</param>
         public void LoadRestriction(string LuaStr)
         {
-            lua.RegisterFunction("Get_TECH_OBJECT", this,
-                GetType().GetMethod("GetTObject"));
-
-            string fileName = "sys_restriction.lua";
-            string pathToRestrictionInitializer = Path.Combine(
-                ProjectManager.GetInstance().SystemFilesPath, fileName);
-            lua.DoFile(pathToRestrictionInitializer);
-
             //Выполнения Lua скрипта с описанием объектов.
             lua.DoString(LuaStr);
             lua.DoString("init_restriction()");
         }
+        #endregion
 
-        public List<TechObject> GetTechObj
+        #region Добавление объекта из LUA
+        /// <summary>
+        /// Добавление технологического объекта. Вызывается из Lua.
+        /// </summary>
+        /// <returns>Добавленный технологический объект.</returns>
+        /// <param name="globalNumber">Глобальный номер объекта, используется
+        /// при импорте из файла</param>
+        public TechObject AddObject(int globalNumber, int techN, string name,
+            int techType, string nameEplan, int cooperParamNumber,
+            string NameBC, string baseTechObjectName, string attachedObjects)
         {
-            get
+            // globalNumber игнорируется в этом методе, но используется при
+            // импорте описания из файла (аналогичная сигнатура, другое тело).
+
+            var baseTechObject = BaseTechObjectManager.GetInstance()
+                .GetTechObject(baseTechObjectName);
+            // getN - null т.к он будет другой, ниже по функциям.
+            TechObject obj = new TechObject(name, null, techN,
+                techType, nameEplan.ToUpper(), cooperParamNumber, NameBC,
+                attachedObjects, baseTechObject);
+
+            AddObject(obj);
+
+            return obj;
+        }
+
+        /// <summary>
+        /// Добавление технологического объекта.
+        /// </summary>
+        /// <param name="obj">Добавляемый объект</param>
+        private void AddObject(TechObject obj)
+        {
+            if (obj.BaseTechObject != null)
             {
-                return objects;
+                AddIdentifiedObjectWhenLoadFromLua(obj);
+            }
+            else
+            {
+                AddUnidentifiedObjectWhenLoadFromLua(obj);
+            }
+
+            techObjects.Add(obj);
+        }
+
+        /// <summary>
+        /// Добавить опознанный объект при загрузке из LUA
+        /// </summary>
+        /// <param name="obj">Объект</param>
+        private void AddIdentifiedObjectWhenLoadFromLua(TechObject obj)
+        {
+            BaseTechObject baseTechObject = obj.BaseTechObject;
+            var type = (BaseTechObjectManager.ObjectType)baseTechObject
+                .S88Level;
+            string name = BaseTechObjectManager.GetInstance()
+                        .GetS88NameFromLevel(baseTechObject.S88Level);
+            switch (type)
+            {
+                case BaseTechObjectManager.ObjectType.ProcessCell:
+                     AddProcessCellFromLua(obj);
+                    break;
+
+                case BaseTechObjectManager.ObjectType.Unit:
+                    
+                    AddS88ObjectFromLua(obj, name);
+                    break;
+
+                case BaseTechObjectManager.ObjectType.Aggregate:
+                    AddS88ObjectFromLua(obj, name);
+                    break;
             }
         }
 
+        /// <summary>
+        /// Добавить ячейку процесса (мастер) из LUA
+        /// </summary>
+        /// <param name="obj">Объект</param>
+        /// <returns></returns>
+        private void AddProcessCellFromLua(TechObject obj)
+        {
+            var masterItem = treeObjects.Where(x => x is ProcessCell)
+                        .FirstOrDefault() as ProcessCell;
+            if (masterItem == null)
+            {
+                masterItem = new ProcessCell();
+                treeObjects.Add(masterItem);
+            }
+
+            masterItem.AddObjectWhenLoadFromLua(obj);
+        }
+
+        /// <summary>
+        /// Добавить аппарат из LUA
+        /// </summary>
+        /// <param name="obj">Объект</param>
+        /// <param name="name">Имя объекта</param>
+        /// <returns></returns>
+        private void AddS88ObjectFromLua(TechObject obj, string name)
+        {
+            var s88Item = treeObjects
+                .Where(x => x is S88Object && x.DisplayText[0].Contains(name))
+                .FirstOrDefault() as S88Object;
+            if (s88Item == null)
+            {
+                s88Item = new S88Object(name);
+                treeObjects.Add(s88Item);
+            }
+
+            s88Item.AddObjectWhenLoadFromLua(obj);
+        }
+
+        /// <summary>
+        /// Добавить неопознанный объект при добавлении из LUA
+        /// </summary>
+        /// <param name="obj">Объект</param>
+        private void AddUnidentifiedObjectWhenLoadFromLua(TechObject obj)
+        {
+            var unidentifiedObject = treeObjects
+                .Where(x => x is Unidentified)
+                .FirstOrDefault() as Unidentified;
+            if (unidentifiedObject == null)
+            {
+                unidentifiedObject = new Unidentified();
+                treeObjects.Add(unidentifiedObject);
+            }
+
+            unidentifiedObject.AddUnidentifiedObject(obj);
+        }
+        #endregion
+
+        public void ImportObject(TechObject importingObject)
+        {
+            AddObject(importingObject);
+        }
+
+        /// <summary>
+        /// Проверка технологического объекта на правильность ввода и др.
+        /// </summary>
+        /// <returns>Строка с ошибками</returns>
+        public string Check()
+        {
+            return techObjectManagerChecker.Check();
+        }
+
+        /// <summary>
+        /// Формирование узлов для операций, шагов и параметров объектов.
+        /// </summary>
+        /// <param name="rootNode">корневой узел</param>
+        /// <param name="combineTags">Сгруппировать тэги в один подтип</param>
+        /// <param name="useNewNames">Использовать имена объектов вместо
+        /// OBJECT</param>
+        public void GetObjectForXML(TreeNode rootNode, bool combineTags,
+            bool useNewNames)
+        {
+            techObjectXMLMaker.GetObjectForXML(rootNode, combineTags,
+                useNewNames);
+        }
+
+        /// <summary>
+        /// Синхронизация устройств в объектах
+        /// </summary>
+        /// <param name="array">Индексная таблица</param>
         public void Synch(int[] array)
         {
-            foreach (TechObject obj in objects)
+            foreach (TechObject obj in TechObjects)
             {
                 obj.Synch(array);
             }
         }
 
-        /// <summary>
-        /// Проверка и исправление ограничений при удалении/перемещении объекта
-        /// </summary>
-        public void CheckRestriction(int prev, int curr)
+        #region Реализация ITreeViewItem
+        public override string[] DisplayText
         {
-            foreach (TechObject to in objects)
+            get
             {
-                to.CheckRestriction(prev, curr);
+                string res = "\"" + ProjectName + "\"";
+                if (treeObjects.Count > 0)
+                {
+                    res += " (" + treeObjects.Count + ")";
+                }
+
+                return new string[] { res, "" };
             }
         }
 
-        /// <summary>
-        /// Изменение номеров владельцев ограничений
-        /// </summary>
-        public void SetRestrictionOwner()
+        public override ITreeViewItem[] Items
         {
-            foreach (TechObject to in objects)
+            get
             {
-                to.SetRestrictionOwner();
+                return treeObjects.ToArray();
             }
         }
 
-        /// <summary>
-        /// Проверка и исправление ограничений при удалении/перемещении
-        /// операции </summary>
-        public void ChangeModeNum(int objNum, int prev, int curr)
+        public override ImageIndexEnum ImageIndex
         {
-            foreach (TechObject to in objects)
+            get
             {
-                to.ChangeModeNum(objNum, prev, curr);
+                return ImageIndexEnum.TechObjectManager;
+            }
+        }
+
+        public override bool IsInsertableCopy
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override ITreeViewItem InsertCopy(object obj)
+        {
+            var techObj = obj as TechObject;
+            if(techObj != null && techObj.MarkToCut)
+            {
+                ChooseObjectTypes(out string selectedType,
+                    out string selectedSubType);
+                if (selectedType != null && selectedSubType != null)
+                {
+                    ITreeViewItem insertedItem = InsertType(selectedType,
+                        techObj);
+                    return insertedItem;
+                }
+            }
+
+            return null;
+        }
+
+        public override bool IsInsertable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override ITreeViewItem Insert()
+        {
+            ChooseObjectTypes(out string selectedType,
+                out string selectedSubType);
+            if (selectedType != null && selectedSubType != null)
+            {
+                ITreeViewItem insertedItem = InsertType(selectedType);
+                return insertedItem;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Выбор типа и подтипа объекта на форме.
+        /// </summary>
+        /// <param name="selectedType">Тип</param>
+        /// <param name="selectedSubType">Подтип</param>
+        private void ChooseObjectTypes(out string selectedType,
+            out string selectedSubType)
+        {
+            var objectsAdderForm = new ObjectsAdder();
+            objectsAdderForm.ShowDialog();
+            selectedType = ObjectsAdder.LastSelectedType;
+            selectedSubType = ObjectsAdder.LastSelectedSubType;
+        }
+
+        private ITreeViewItem InsertType(string selectedType,
+            TechObject techObj = null)
+        {
+            ITreeViewItem treeItem = GetTreeItem(selectedType);
+            ITreeViewItem innerItem;
+
+            bool needInsert = techObj == null;
+            if (needInsert)
+            {
+                innerItem = treeItem.Insert();
+            }
+            else
+            {
+                innerItem = treeItem.InsertCopy(techObj);
+            }
+
+            if (innerItem != null)
+            {
+                if (!treeObjects.Contains(treeItem))
+                {
+                    treeObjects.Add(treeItem);
+                }
+
+                return treeItem;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Создать объект дерева, описывающий базу по S88.
+        /// </summary>
+        /// <param name="selectedType">Выбранный на форме тип объекта</param>
+        /// <returns></returns>
+        private ITreeViewItem GetTreeItem(string selectedType)
+        {
+            ITreeViewItem treeItem = treeObjects
+                .Where(x => x.DisplayText[0].Contains(selectedType))
+                .FirstOrDefault();
+            if (treeItem == null)
+            {
+                if (selectedType == "Ячейка процесса")
+                {
+                    return new ProcessCell();
+                }
+                else
+                {
+                    return new S88Object(selectedType);
+                }
+            }
+            else
+            {
+                return treeItem;
+            }
+        }
+
+        public override bool Delete(object child)
+        {
+            var treeViewItem = child as ITreeViewItem;
+            if(treeViewItem != null && treeObjects.Contains(treeViewItem))
+            {
+                foreach(var item in treeViewItem.Items)
+                {
+                    treeViewItem.Delete(item);
+                }
+
+                if(treeViewItem.Items.Count() == 0)
+                {
+                    treeObjects.Remove(child as ITreeViewItem);
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        #endregion
+
+        /// <summary>
+        /// Объект мастера проекта.
+        /// </summary>
+        public TechObject ProcessCell
+        {
+            get
+            {
+                var masterObject = treeObjects.Where(x => x is ProcessCell)
+                    .FirstOrDefault() as ProcessCell;
+                if (masterObject != null)
+                {
+                    return masterObject.ProcessCellObject;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -724,8 +596,12 @@ namespace TechObject
         {
             get
             {
-                var units = objects.Where(x => x.S88Level == 1).ToList();
-                return units.Count;
+                int unitS88Level = (int)BaseTechObjectManager.ObjectType.Unit;
+                var unitsCount = TechObjects
+                    .Where(x => x.BaseTechObject != null)
+                    .Where(x => x.BaseTechObject.S88Level == unitS88Level)
+                    .Count();
+                return unitsCount;
             }
         }
 
@@ -736,276 +612,60 @@ namespace TechObject
         {
             get
             {
-                var equipmentModules = objects.Where(x => x.S88Level == 2)
-                    .ToList();
-                return equipmentModules.Count;
+                int aggregateS88Level = (int)BaseTechObjectManager.ObjectType
+                    .Aggregate;
+                var aggregatesCount = TechObjects
+                    .Where(x => x.BaseTechObject != null)
+                    .Where(x => x.BaseTechObject.S88Level == aggregateS88Level)
+                    .Count();
+                return aggregatesCount;
             }
         }
 
         /// <summary>
-        /// Удалить этот агрегат из привязки к аппарату
+        /// Имя проекта.
         /// </summary>
-        /// <param name="techObject"></param>
-        private void RemoveAttachingToUnit(TechObject techObject)
+        private string ProjectName { get;set; }
+
+        /// <summary>
+        /// Список всех технологических объектов в дереве.
+        /// </summary>
+        public List<TechObject> TechObjects
         {
-            string objNum = techObject.GlobalNumber.ToString();
-            foreach(var obj in objects) 
+            get
             {
-                if (obj.AttachedObjects.Value.Contains(objNum))
-                {
-                    string currentValue = obj.AttachedObjects.Value;
-                    obj.AttachedObjects
-                        .SetNewValue(currentValue.Replace(objNum, ""));
-                }
+                return techObjects;
             }
         }
 
         /// <summary>
-        /// Изменение привязки объектов при перемещении объектов по дереву
+        /// Единственный объект менеджера объектов.
         /// </summary>
-        /// <param name="newIndex">Новый индекс объекта</param>
-        /// <param name="oldIndex">Старый индекс объекта</param>
-        private void ChangeAttachingToObject(int oldIndex, int newIndex)
-        {
-            int oldObjNum = oldIndex + 1;
-            int newObjNum = newIndex + 1;
-            foreach (var techObj in Objects)
-            {
-                string attachingObjectsStr = techObj.AttachedObjects.Value;
-                string[] attachingObjectsArr = attachingObjectsStr.Split(' ');
-                for(int index = 0; index < attachingObjectsArr.Length; index++)
-                {
-                    if(attachingObjectsArr[index] == newObjNum.ToString())
-                    {
-                        attachingObjectsArr[index] = oldObjNum.ToString();
-                    }
-                    else if (attachingObjectsArr[index] == oldObjNum.ToString())
-                    {
-                        attachingObjectsArr[index] = newObjNum.ToString();
-                    }
-                }
-                techObj.AttachedObjects
-                    .SetValue(string.Join(" ", attachingObjectsArr));
-            }
-        }
+        private static TechObjectManager instance;
 
-        #region Реализация ITreeViewItem
-        override public string[] DisplayText
-        {
-            get
-            {
-                string res = "\"" + projectName + "\"";
-                if (objects.Count > 0)
-                {
-                    res += " (" + objects.Count + ")";
-                }
+        /// <summary>
+        /// Список объектов дерева.
+        /// </summary>
+        private List<ITreeViewItem> treeObjects;
 
-                return new string[] { res, "" };
-            }
-        }
+        /// <summary>
+        /// Список всех технологических объектов в дереве.
+        /// </summary>
+        private List<TechObject> techObjects;
 
-        override public Editor.ITreeViewItem[] Items
-        {
-            get
-            {
-                return objects.ToArray();
-            }
-        }
+        /// <summary>
+        /// Экземпляр LUA.
+        /// </summary>
+        private Lua lua;
 
-        override public bool Delete(object child)
-        {
-            TechObject techObject = child as TechObject;
+        /// <summary>
+        /// Класс для проверки технологических объектов.
+        /// </summary>
+        private TechObjectChecker techObjectManagerChecker;
 
-            if (techObject != null)
-            {
-                if (techObject.BaseTechObject.IsAttachable)
-                {
-                    RemoveAttachingToUnit(techObject);
-                }
-
-                int idx = objects.IndexOf(techObject) + 1;
-                CheckRestriction(idx, -1);
-
-                objects.Remove(techObject);
-
-                SetRestrictionOwner();
-                return true;
-            }
-
-            return false;
-        }
-
-        override public Editor.ITreeViewItem MoveDown(object child)
-        {
-            TechObject techObject = child as TechObject;
-
-            if (techObject != null)
-            {
-                int index = objects.IndexOf(techObject);
-                if (index <= objects.Count - 2)
-                {
-                    CheckRestriction(index + 1, index + 2);
-
-                    objects.Remove(techObject);
-                    objects.Insert(index + 1, techObject);
-
-                    SetRestrictionOwner();
-                    ChangeAttachingToObject(index, index + 1);
-                    return objects[index];
-                }
-            }
-
-            return null;
-        }
-
-        override public Editor.ITreeViewItem MoveUp(object child)
-        {
-            TechObject techObject = child as TechObject;
-
-            if (techObject != null)
-            {
-                int index = objects.IndexOf(techObject);
-                if (index > 0)
-                {
-                    CheckRestriction(index + 1, index);
-
-                    objects.Remove(techObject);
-                    objects.Insert(index - 1, techObject);
-
-                    SetRestrictionOwner();
-                    ChangeAttachingToObject(index, index - 1);
-                    return objects[index];
-                }
-            }
-
-            return null;
-        }
-
-        override public bool IsInsertableCopy
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        override public Editor.ITreeViewItem InsertCopy(object obj)
-        {
-            if (obj is TechObject)
-            {
-                int newN = 1;
-                if (objects.Count > 0)
-                {
-                    newN = objects[objects.Count - 1].TechNumber + 1;
-                }
-
-                //Старый и новый номер объекта - для замены в ограничениях
-                int oldObjN = GetTechObjectN(obj as TechObject);
-                int newObjN = objects.Count + 1;
-
-                TechObject newObject = (obj as TechObject).Clone(
-                    GetTechObjectN, newN, oldObjN, newObjN);
-                objects.Add(newObject);
-
-                newObject.ChangeCrossRestriction();
-                newObject.Equipment.ModifyDevNames();
-
-                return newObject;
-            }
-
-            return null;
-        }
-
-        override public Editor.ITreeViewItem Replace(object child,
-            object copyObject)
-        {
-            TechObject techObject = child as TechObject;
-            if (copyObject is TechObject && techObject != null)
-            {
-                int newN = techObject.TechNumber;
-
-                //Старый и новый номер объекта - для замены в ограничениях
-                int oldObjN = GetTechObjectN(copyObject as TechObject);
-                int newObjN = GetTechObjectN(child as TechObject);
-
-                TechObject newObject = (copyObject as TechObject).Clone(
-                    GetTechObjectN, newN, oldObjN, newObjN);
-                int index = objects.IndexOf(techObject);
-                objects.Remove(techObject);
-
-                objects.Insert(index, newObject);
-
-                index = objects.IndexOf(newObject);
-
-                newObject.ChangeCrossRestriction(techObject);
-
-                return newObject;
-            }
-
-            return null;
-        }
-
-        override public bool IsInsertable
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        override public Editor.ITreeViewItem Insert()
-        {
-            TechObject newTechObject = null;
-
-            if (objects.Count > 0)
-            {
-                if (objects.Count == 1)
-                {
-                    newTechObject = new TechObject("Танк", GetTechObjectN, 1,
-                        2, "TANK", -1, "TankObj", "");
-                }
-                else
-                {
-                    newTechObject = new TechObject(
-                        objects[objects.Count - 1].EditText[0],
-                        GetTechObjectN, objects[objects.Count - 1]
-                        .TechNumber + 1,
-                        objects[objects.Count - 1].TechType,
-                        objects[objects.Count - 1].NameEplan,
-                        objects[objects.Count - 1].CooperParamNumber,
-                        objects[objects.Count - 1].NameBC,
-                        objects[objects.Count - 1].AttachedObjects.Value);
-                }
-            }
-            else
-            {
-                newTechObject =
-                    new TechObject("Мастер", GetTechObjectN, 1, 1, "MASTER", 
-                    -1, "MasterObj", "");
-            }
-
-            objects.Add(newTechObject);
-            return newTechObject;
-        }
-
-        public void SetCDBXTagView(bool combineTag)
-        {
-            cdbxTagView = combineTag;
-        }
-
-        public void SetCDBXNewNames(bool useNewNames)
-        {
-            cdbxNewNames = useNewNames;
-        }
-
-        #endregion
-
-        private bool cdbxTagView;
-        private bool cdbxNewNames;
-
-        private LuaInterface.Lua lua;              /// Экземпляр Lua.
-        private List<TechObject> objects;          /// Технологические объекты.
-        private static TechObjectManager instance; /// Единственный экземпляр.
-        private string projectName;                /// Имя проекта.
+        /// <summary>
+        /// Класс, генерирующий информацию для базы каналов по объектам
+        /// </summary>
+        private TechObjectXMLMaker techObjectXMLMaker;
     }
 }

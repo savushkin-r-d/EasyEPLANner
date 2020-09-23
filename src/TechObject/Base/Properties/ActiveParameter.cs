@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TechObject
+﻿namespace TechObject
 {
     /// <summary>
     /// Активный (отображаемый) параметр
@@ -44,17 +38,27 @@ namespace TechObject
         }
 
         #region реализация ItreeViewItem
+        public override bool SetNewValue(string newValue)
+        {
+            bool notStub = !newValue.ToLower()
+                .Contains(StaticHelper.CommonConst.StubForParameters.ToLower());
+            if (notStub)
+            {
+                return base.SetNewValue(newValue);
+            }
+            else
+            {
+                string value = StaticHelper.CommonConst.StubForParameters;
+                return base.SetNewValue(value);
+            }
+        }
+
         public override bool IsReplaceable
         {
             get
             {
                 return true;
             }
-        }
-
-        public override object Copy()
-        {
-            return this;
         }
 
         override public bool IsCopyable
@@ -70,6 +74,21 @@ namespace TechObject
             get
             {
                 return true;
+            }
+        }
+
+        public override bool IsFilled
+        {
+            get
+            {
+                if(Value == "")
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
         }
         #endregion

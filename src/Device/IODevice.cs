@@ -29,9 +29,13 @@ namespace Device
 
         /// <summary>
         /// Получение свойств устройства.
+        /// String - название тэга
+        /// Int - количество повторений (размерность). Дефолт - 1.
         /// </summary>
-        public virtual List<string> GetDeviceProperties(DeviceType dt, 
-            DeviceSubType dst)
+        /// <param name="dst">Подтип устройства</param>
+        /// <param name="dt">Тип устройства</param>
+        public virtual Dictionary<string, int> GetDeviceProperties(
+            DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
             {

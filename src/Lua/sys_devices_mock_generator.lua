@@ -1,4 +1,4 @@
--- Генератор заглушек main.devices.lua
+-- Р“РµРЅРµСЂР°С‚РѕСЂ Р·Р°РіР»СѓС€РµРє main.devices.lua
 devs = {}
 devsidx = 0
 

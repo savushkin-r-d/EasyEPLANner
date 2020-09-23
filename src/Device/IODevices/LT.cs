@@ -133,8 +133,8 @@ namespace Device
             return "";
         }
 
-        public override List<string> GetDeviceProperties(DeviceType dt,
-            DeviceSubType dst)
+        public override Dictionary<string, int> GetDeviceProperties(
+            DeviceType dt, DeviceSubType dst)
         {
             switch (dt)
             {
@@ -142,71 +142,71 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.LT:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "M",
-                                "P_CZ",
-                                "V",
-                                "P_ERR"
-                            });
+                                {"M", 1},
+                                {"P_CZ", 1},
+                                {"V", 1},
+                                {"P_ERR", 1},
+                            };
 
                         case DeviceSubType.LT_IOLINK:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "M",
-                                "P_CZ",
-                                "V",
-                                "P_H_CONE",
-                                "P_MAX_P",
-                                "P_R",
-                                "CLEVEL",
-                                "P_ERR"
-                            });
+                                {"M", 1},
+                                {"P_CZ", 1},
+                                {"V", 1},
+                                {"P_H_CONE", 1},
+                                {"P_MAX_P", 1},
+                                {"P_R", 1},
+                                {"CLEVEL", 1},
+                                {"P_ERR", 1},
+                            };
 
                         case DeviceSubType.LT_CYL:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "M",
-                                "P_CZ",
-                                "V",
-                                "P_MAX_P",
-                                "P_R",
-                                "CLEVEL",
-                                "P_ERR"
-                            });
+                                {"M", 1},
+                                {"P_CZ", 1},
+                                {"V", 1},
+                                {"P_MAX_P", 1},
+                                {"P_R", 1},
+                                {"CLEVEL", 1},
+                                {"P_ERR", 1},
+                            };
 
                         case DeviceSubType.LT_CONE:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "M",
-                                "P_CZ",
-                                "V",
-                                "P_MAX_P",
-                                "P_R",
-                                "P_H_CONE",
-                                "CLEVEL",
-                                "P_ERR"
-                            });
+                                {"M", 1},
+                                {"P_CZ", 1},
+                                {"V", 1},
+                                {"P_MAX_P", 1},
+                                {"P_R", 1},
+                                {"P_H_CONE", 1},
+                                {"CLEVEL", 1},
+                                {"P_ERR", 1},
+                            };
 
                         case DeviceSubType.LT_TRUNC:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "M",
-                                "P_CZ",
-                                "V",
-                                "P_MAX_P",
-                                "P_R",
-                                "P_H_TRUNC",
-                                "CLEVEL",
-                                "P_ERR"
-                            });
+                                {"M", 1},
+                                {"P_CZ", 1},
+                                {"V", 1},
+                                {"P_MAX_P", 1},
+                                {"P_R", 1},
+                                {"P_H_TRUNC", 1},
+                                {"CLEVEL", 1},
+                                {"P_ERR", 1},
+                            };
 
                         case DeviceSubType.LT_VIRT:
-                            return new List<string>(new string[]
+                            return new Dictionary<string, int>()
                             {
-                                "M",
-                                "V",
-                            });
+                                {"M", 1},
+                                {"V", 1},
+                            };
                     }
                     break;
             }

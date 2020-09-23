@@ -17,31 +17,68 @@ namespace Device
     /// </summary>
     public class DeviceManager
     {
+        /// <summary>
+        /// Генерация тегов устройств для экспорта в базу каналов.
+        /// </summary>
+        /// <param name="rootNode">Корневой узел</param>
         public void GetObjectForXML(TreeNode rootNode)
         {
             foreach (IODevice dev in devices)
             {
                 if (dev != null)
                 {
-                    List<string> propertiesList = dev
-                        .GetDeviceProperties(dev.DeviceType, dev.DeviceSubType);
+                    Dictionary<string, int> propertiesList = dev.GetDeviceProperties(
+                        dev.DeviceType, dev.DeviceSubType);
                     if (propertiesList != null)
                     {
-                        foreach (string strProp in propertiesList)
+                        foreach (var keyValuePair in propertiesList)
                         {
-                            string nodeName = dev.DeviceType.ToString() + "_" + strProp;
-                            if (!rootNode.Nodes.ContainsKey(nodeName))
-                            {
-                                TreeNode newNode = rootNode.Nodes.Add(nodeName, nodeName);
-                                newNode.Nodes.Add(dev.Name + "." + strProp, dev.Name + "." + strProp);
-                            }
-                            else
-                            {
-                                TreeNode newNode = rootNode.Nodes.Find(nodeName, false)[0];
-                                newNode.Nodes.Add(dev.Name + "." + strProp, dev.Name + "." + strProp);
-                            }
+                            string propName = keyValuePair.Key;
+                            int sameTagsCount = keyValuePair.Value;
+                            GenerateDeviceTag(propName, rootNode, dev, 
+                                sameTagsCount);
                         }
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Генерация тэга устройства.
+        /// </summary>
+        /// <param name="propname">Название тэга</param>
+        /// <param name="rootNode">Корневой узел</param>
+        /// <param name="dev">Устройство</param>
+        /// <param name="sameTagsCount">Количество повторяемых тэгов,
+        /// дефолт = 1</param>
+        private void GenerateDeviceTag(string propname, TreeNode rootNode, 
+            Device dev, int sameTagsCount = 1)
+        {
+            TreeNode newNode;
+            string nodeName = dev.DeviceType.ToString() + "_" + propname;
+            for(int i = 1; i <= sameTagsCount; i++)
+            {
+                if (!rootNode.Nodes.ContainsKey(nodeName))
+                {
+                    newNode = rootNode.Nodes.Add(nodeName, nodeName);
+                }
+                else
+                {
+                    bool searchChildren = false;
+                    newNode = rootNode.Nodes.Find(nodeName, searchChildren)
+                        .First();
+                }
+
+                if(sameTagsCount > 1)
+                {
+                    newNode.Nodes.Add($"{dev.Name}.{propname}[{i}]", 
+                        $"{dev.Name}.{propname}[{i}]");
+
+                }
+                else
+                {
+                    newNode.Nodes.Add($"{dev.Name}.{propname}", 
+                        $"{dev.Name}.{propname}");
                 }
             }
         }
@@ -160,7 +197,7 @@ namespace Device
             // Устройства нет, вернет состояние заглушки.
             CheckDeviceName(devName, out name, out objectName,
                 out objectNumber, out deviceType, out deviceNumber);
-            return new IODevice(name, "заглушка", deviceType,
+            return new IODevice(name, StaticHelper.CommonConst.Cap, deviceType,
                 deviceNumber, objectName, objectNumber);
         }
 
@@ -180,7 +217,7 @@ namespace Device
             CheckDeviceName(devName, out name, out objectName, out objectNumber,
                 out deviceType, out deviceNumber);
 
-            IODevice devStub = new IODevice(name, "заглушка",
+            IODevice devStub = new IODevice(name, StaticHelper.CommonConst.Cap,
                 deviceType, deviceNumber, objectName, objectNumber);
 
             int resDevN = devices.BinarySearch(devStub);
@@ -225,7 +262,7 @@ namespace Device
 
             CheckDeviceName(devName, out name, out objectName, out objectNumber,
                 out deviceType, out deviceNumber);
-            IODevice devStub = new IODevice(name, "заглушка",
+            IODevice devStub = new IODevice(name, StaticHelper.CommonConst.Cap,
                 deviceType, deviceNumber, objectName, objectNumber);
 
             int resDevN = devices.IndexOf(devStub);
@@ -299,7 +336,7 @@ namespace Device
                     case "SB":
                     case "WT":
                     case "PT":
-
+                    case "F":
                     case "Y":
                     case "DEV_VTUG": // Совместимость со старыми проектами
 
@@ -496,6 +533,10 @@ namespace Device
                         objectNumber, articleName);
                     break;
 
+                case "F":
+                    dev = new F(name, description, deviceNumber, objectName,
+                        objectNumber, articleName);
+                    break;
                 default:
                     break;
             }
@@ -952,7 +993,8 @@ namespace Device
         /// </summary>
         public const string valveTerminalPattern = @"([A-Z0-9]+\-[Y0-9]+)";
 
-        private static IODevice cap = new IODevice("Заглушка", "", 0, "", 0);
+        private static IODevice cap = 
+            new IODevice(StaticHelper.CommonConst.Cap, "", 0, "", 0);
         private List<IODevice> devices;       ///Устройства проекта.     
         private static DeviceManager instance;  ///Экземпляр класса.
 

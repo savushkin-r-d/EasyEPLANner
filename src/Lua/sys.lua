@@ -33,8 +33,6 @@ init = function()
         -- Аналогично с предыдущим циклом.
         if (#value == 0) then
             local obj = initialized_objects[fields]
-            local timers_count = value.timers or 1
-            obj:SetTimersCount( timers_count )
 
             --Оборудование
             if value.equipment ~= nil then
@@ -47,10 +45,10 @@ init = function()
             proc_params( value.par_float, "par_float", obj )
             proc_params( value.par_uint, "par_uint", obj )
             proc_params( value.rt_par_float, "rt_par_float", obj )
-            proc_params( value.rt_par_uint, "rt_par_uint", obj )
+            proc_params( value.rt_par_uint, "rt_par_uint", obj)
 
             local params_float = value.par_float
-
+            
             for fields, value in ipairs( value.modes ) do
                 local mode_name = value.name or "Операция ??"
 			    local mode_base_operation = value.base_operation or ""
@@ -64,7 +62,7 @@ init = function()
 			    end
 
                 local mode = obj:AddMode( mode_name, mode_base_operation, 
-                mode_base_operation_props)
+                    mode_base_operation_props)
 
                 local idx = fields
                 proc_oper_params( params_float, mode, idx, obj )
@@ -72,9 +70,7 @@ init = function()
                 if value.states ~= nil then
                     for fields, value in pairs( value.states ) do
                         local state_n = fields - 1
-
                         proc_operation( value, mode, state_n )
-
                     end
                 end
             end
@@ -88,13 +84,13 @@ end
 proc_operation = function( value, mode, state_n )
     proc( mode, state_n, value.opened_devices, -1, "opened_devices" )
     proc( mode, state_n, value.opened_reverse_devices, -1, 
-    "opened_reverse_devices" )
+        "opened_reverse_devices" )
     proc( mode, state_n, value.closed_devices, -1, "closed_devices" )
 
     proc_groups( mode, state_n, -1, value.opened_upper_seat_v, 
-    "opened_upper_seat_v" )
+        "opened_upper_seat_v" )
     proc_groups( mode, state_n, -1, value.opened_lower_seat_v, 
-    "opened_lower_seat_v" )
+        "opened_lower_seat_v" )
     
     proc( mode, state_n, value.required_FB,    -1, "required_FB" )
 
@@ -108,16 +104,16 @@ proc_operation = function( value, mode, state_n )
             mode:AddStep( state_n, value.name or "Шаг ??", value.baseStep or "" )
             local step_n = fields - 1
 
-            proc( mode, state_n, value.opened_devices, step_n, 
-            "opened_devices" )
+            proc( mode, state_n, value.opened_devices, step_n,
+                "opened_devices" )
             proc( mode, state_n, value.opened_reverse_devices, step_n, 
-            "opened_reverse_devices" )
+                "opened_reverse_devices" )
             proc( mode, state_n, value.closed_devices, step_n, 
-            "closed_devices" )
+                "closed_devices" )
             proc_groups( mode, state_n, step_n, value.opened_upper_seat_v,
-            "opened_upper_seat_v" )
+                "opened_upper_seat_v" )
             proc_groups( mode, state_n, step_n, value.opened_lower_seat_v,
-            "opened_lower_seat_v" )
+                "opened_lower_seat_v" )
             proc( mode, state_n, value.required_FB, step_n, "required_FB" )
 
             proc_groups(mode, state_n, step_n, value.DI_DO, "DI_DO")
@@ -138,10 +134,9 @@ end
 proc_params = function( par, par_name, obj )
     if type( par ) == "table" then
         for fields, value in ipairs( par ) do
-            local param = obj:GetParamsManager():AddParam( par_name,
-                value.name or "Параметр", value.value or 0,
-                value.meter or "шт.", value.nameLua or "" )
-
+            local param = obj:GetParamsManager():AddParam(par_name,
+            value.name or "Параметр", value.value or 0, value.meter or "шт.",
+            value.nameLua or "" )
             if value.oper ~= nil then param:SetOperationN( value.oper ) end
         end
     end
@@ -150,7 +145,7 @@ end
 proc_oper_params = function( par, operation, idx, obj )
     if type( par ) == "table" then
         for fields, value in ipairs( par ) do
-            local pr = obj:GetParamsManager():GetFParam( value.nameLua or "" )
+            local pr = obj:GetParamsManager():GetParam( value.nameLua or "" )
             if pr ~= nil then
                 if type( value.oper ) == "table" then
                     for field, operationNumber in ipairs(value.oper) do
@@ -170,9 +165,7 @@ end
 
 
 proc = function( mode, state_n, devices, step_n, action_name )
-
     if devices ~= nil then
-
         for field, value in pairs ( devices ) do
             mode[ state_n ][ step_n ]:AddDev( action_name, value )
         end
@@ -198,7 +191,7 @@ proc_wash_data = function( mode, state_n, step_n, value)
         --DI
         if value.wash_data.DI ~= nil then
             mode[ state_n ][ step_n ]:AddDev( "wash_data", 
-            value.wash_data.DI[ 1 ], 0 )
+                value.wash_data.DI[ 1 ], 0 )
         end
 
         --Control signal DO
@@ -222,7 +215,7 @@ proc_wash_data = function( mode, state_n, step_n, value)
             end
         end
 
-        --Frequency param.
+        --Frequency parameter.
         if value.wash_data.pump_freq ~= nil then
            mode[ state_n ][ step_n ]:AddParam( "wash_data", 1,
                value.wash_data.pump_freq )
