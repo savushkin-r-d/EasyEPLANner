@@ -96,6 +96,14 @@ namespace TechObject
             return false;
         }
 
+        override public bool IsDeletable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public override bool IsCuttable
         {
             get
@@ -120,6 +128,14 @@ namespace TechObject
             }
 
             return null;
+        }
+
+        public override bool ShowWarningBeforeDelete
+        {
+            get
+            {
+                return true;
+            }
         }
         #endregion
 

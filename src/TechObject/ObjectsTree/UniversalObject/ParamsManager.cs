@@ -37,26 +37,112 @@ namespace TechObject
             switch (group)
             {
                 case "par_float":
-                    res = parFLoat.AddParam(
-                        new Param(parFLoat.GetIdx, name, false, value, meter,
-                        nameLua, true));
+                    res = AddFloatParam(name, value, meter, nameLua);
                     break;
 
                 case "rt_par_float":
-                    if(parFLoatRunTime == null)
-                    {
-                        parFLoatRunTime = new Params("Рабочие параметры float",
-                            "rt_par_float", true, "RT_PAR_F");
-                        parFLoatRunTime.Parent = this;
-                        items.Add(parFLoatRunTime);
-                    }
+                    res = AddFloatRuntimeParam(name, value, meter, nameLua);
+                    break;
 
-                    res = parFLoatRunTime.AddParam(
-                        new Param(parFLoatRunTime.GetIdx, name, true, value,
-                        meter, nameLua));
+                case "par_uint":
+                    res = AddUIntParam(name, value, meter, nameLua);
+                    break;
+
+                case "rt_par_uint":
+                    res = AddUIntRuntimeParam(name, value, meter, nameLua);
                     break;
             }
 
+            return res;
+        }
+
+        /// <summary>
+        /// Добавить Float параметр.
+        /// </summary>
+        /// <param name="name">Имя</param>
+        /// <param name="value">Значение</param>
+        /// <param name="meter">Ед. измерения</param>
+        /// <param name="nameLua">Имя Lua</param>
+        /// <returns></returns>
+        private Param AddFloatParam(string name, double value, string meter,
+            string nameLua) 
+        {
+            Param res = parFLoat.AddParam(new Param(parFLoat.GetIdx, name,
+                false, value, meter, nameLua, true));
+            return res;
+        }
+
+        /// <summary>
+        /// Добавить рабочий Float параметр.
+        /// </summary>
+        /// <param name="name">Имя</param>
+        /// <param name="value">Значение</param>
+        /// <param name="meter">Ед. измерения</param>
+        /// <param name="nameLua">Имя Lua</param>
+        /// <returns></returns>
+        private Param AddFloatRuntimeParam(string name, double value,
+            string meter, string nameLua) 
+        {
+            if (parFLoatRunTime == null)
+            {
+                parFLoatRunTime = new Params("Рабочие параметры float",
+                    "rt_par_float", true, "RT_PAR_F");
+                parFLoatRunTime.Parent = this;
+                items.Add(parFLoatRunTime);
+            }
+
+            Param res = parFLoatRunTime.AddParam(
+                new Param(parFLoatRunTime.GetIdx, name, true, value, meter,
+                nameLua));
+            return res;
+        }
+
+        /// <summary>
+        /// Добавить UInt параметр.
+        /// </summary>
+        /// <param name="name">Имя</param>
+        /// <param name="value">Значение</param>
+        /// <param name="meter">Ед. измерения</param>
+        /// <param name="nameLua">Имя Lua</param>
+        /// <returns></returns>
+        private Param AddUIntParam(string name, double value, string meter,
+            string nameLua) 
+        {
+            if (parUInt == null)
+            {
+                parUInt = new Params("Параметры uint", "par_uint", false,
+                    "S_PAR_UI");
+                parUInt.Parent = this;
+                items.Add(parUInt);
+            }
+
+            Param res = parUInt.AddParam(new Param(parUInt.GetIdx, name,
+                false, value, meter, nameLua));
+            return res;
+        }
+
+        /// <summary>
+        /// Добавить рабочий UInt параметр.
+        /// </summary>
+        /// <param name="name">Имя</param>
+        /// <param name="value">Значение</param>
+        /// <param name="meter">Ед. измерения</param>
+        /// <param name="nameLua">Имя Lua</param>
+        /// <returns></returns>
+        private Param AddUIntRuntimeParam(string name, double value,
+            string meter, string nameLua) 
+        {
+            if (parUIntRunTime == null)
+            {
+                parUIntRunTime = new Params("Рабочие параметры uint",
+                    "rt_par_uint", false, "RT_PAR_UI");
+                parUIntRunTime.Parent = this;
+                items.Add(parUIntRunTime);
+            }
+
+            Param res = parUIntRunTime.AddParam(
+                new Param(parUIntRunTime.GetIdx, name, true, value,
+                meter, nameLua));
             return res;
         }
 
@@ -222,6 +308,8 @@ namespace TechObject
 
         private Params parFLoat;
         private Params parFLoatRunTime;
+        private Params parUInt;
+        private Params parUIntRunTime;
 
         private List<ITreeViewItem> items;
     }

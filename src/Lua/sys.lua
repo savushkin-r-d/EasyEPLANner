@@ -43,7 +43,10 @@ init = function()
 
             --Параметры
             proc_params( value.par_float, "par_float", obj )
+            proc_params( value.par_uint, "par_uint", obj )
             proc_params( value.rt_par_float, "rt_par_float", obj )
+            proc_params( value.rt_par_uint, "rt_par_uint", obj)
+
             local params_float = value.par_float
             
             for fields, value in ipairs( value.modes ) do

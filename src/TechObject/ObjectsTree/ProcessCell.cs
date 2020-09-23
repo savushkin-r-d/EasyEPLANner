@@ -128,6 +128,14 @@ namespace TechObject
             return false;
         }
 
+        override public bool IsDeletable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         override public bool IsInsertableCopy
         {
             get
@@ -238,6 +246,14 @@ namespace TechObject
             }
 
             return null;
+        }
+
+        public override bool ShowWarningBeforeDelete
+        {
+            get
+            {
+                return true;
+            }
         }
         #endregion
 
