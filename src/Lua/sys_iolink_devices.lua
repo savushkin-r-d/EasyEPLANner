@@ -11,6 +11,7 @@ local iolink_devices =
     { articleName = "AL.9615-4003-06", sizeIn = 2, sizeOut = 0.5 },
     { articleName = "AL.9615-4003-08", sizeIn = 2, sizeOut = 0.5 },
     { articleName = "AL.9615-4004-20", sizeIn = 2, sizeOut = 0.5 },
+    { articleName = "DEF.SORIO-1SV", sizeIn = 2, sizeOut = 0.5 }
     -- QT
     { articleName = "IFM.LDL100", sizeIn = 6, sizeOut = 0 },
     { articleName = "IFM.LDL200", sizeIn = 6, sizeOut = 0 },
