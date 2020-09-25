@@ -131,7 +131,7 @@ namespace EasyEPlanner
         {
             string fileName = par.path + @"\" + mainIOFileName;
             var fileWriter = new StreamWriter(fileName, false,
-                EncodingDetector.DetectFileEncoding(fileName));
+                EncodingDetector.MainFilesEncoding);
 
             fileWriter.WriteLine("--version  = {0}", mainIOFileVersion);
             fileWriter.WriteLine(new string('-', numberOfDashes));
@@ -165,9 +165,9 @@ namespace EasyEPlanner
             var descriptionFileData = string.Format(filePattern,
                 mainTechObjectsFileVersion, par.PAC_Name, desctiption);
 
-            string fileName = par.path + @"\" + mainTechObjectsFileName;
+            string fileName = par.path + @"\" + MainTechObjectsFileName;
             var fileWriter = new StreamWriter(fileName, false,
-                EncodingDetector.DetectFileEncoding(fileName));
+                EncodingDetector.MainFilesEncoding);
 
             fileWriter.Write(descriptionFileData);
             fileWriter.Flush();
@@ -182,7 +182,7 @@ namespace EasyEPlanner
         {
             string fileName = par.path + @"\" + mainTechDevicesFileName;
             var fileWriter = new StreamWriter(fileName,
-                false, EncodingDetector.DetectFileEncoding(fileName));
+                false, EncodingDetector.MainFilesEncoding);
 
             fileWriter.WriteLine("--version  = {0}", 
                 mainTechDevicesFileVersion);
@@ -209,9 +209,9 @@ namespace EasyEPlanner
             var restrictionsFileData = string.Format(filePattern, 
                 mainRestrictionsFileVersion, resctrictions);
 
-            string fileName = par.path + @"\" + mainRestrictionsFileName;
+            string fileName = par.path + @"\" + MainRestrictionsFileName;
             File.WriteAllText(fileName, restrictionsFileData,
-                    EncodingDetector.DetectFileEncoding(fileName));
+                    EncodingDetector.MainFilesEncoding);
         }
 
         /// <summary>
@@ -225,7 +225,7 @@ namespace EasyEPlanner
             {
                 //Создаем пустое описание управляющей программы.
                 var fileWriter = new StreamWriter(fileName,
-                    false, EncodingDetector.DetectFileEncoding(fileName));
+                    false, EncodingDetector.MainFilesEncoding);
                 string mainPluaFilePattern = mainProgramFilePattern;
                 mainPluaFilePattern = mainPluaFilePattern
                     .Replace("ProjectName", par.PAC_Name);
@@ -251,7 +251,7 @@ namespace EasyEPlanner
                 content += new string('-', numberOfDashes) + "\n";
 
                 File.WriteAllText(fileName, content,
-                    EncodingDetector.DetectFileEncoding(fileName));
+                    EncodingDetector.MainFilesEncoding);
             }
         }
 
@@ -273,7 +273,7 @@ namespace EasyEPlanner
                 content += "end\n";
 
                 File.WriteAllText(fileName, content,
-                    EncodingDetector.DetectFileEncoding(fileName));
+                    EncodingDetector.MainFilesEncoding);
             }
         }
 
@@ -285,7 +285,7 @@ namespace EasyEPlanner
         {
             string fileName = par.path + @"\" + mainPRGFileName;
             var fileWriter = new StreamWriter(fileName,
-                false, EncodingDetector.DetectFileEncoding(fileName));
+                false, EncodingDetector.MainFilesEncoding);
 
             fileWriter.WriteLine("--version  = {0}", mainPRGFileVersion);
             fileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);
@@ -311,9 +311,9 @@ namespace EasyEPlanner
 
         private const string mainIOFileName = "main.io.lua";
         private const string mainWagoFileName = "main.wago.lua";
-        private const string mainTechObjectsFileName = "main.objects.lua";
+        public const string MainTechObjectsFileName = "main.objects.lua";
         private const string mainTechDevicesFileName = "main.devices.lua";
-        private const string mainRestrictionsFileName = "main.restrictions.lua";
+        public const string MainRestrictionsFileName = "main.restrictions.lua";
         private const string mainProgramFileName = "main.plua";
         private static string mainProgramFilePattern = "";
         private static bool mainProgramFilePatternIsLoaded = false;

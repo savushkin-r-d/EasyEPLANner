@@ -100,15 +100,19 @@ namespace EasyEPlanner
 
                 if (loadFromLua)
                 {
+                    EncodingDetector.MainFilesEncoding = null;
+
                     oProgress.BeginPart(15, "Считывание технологических " +
                         "объектов");
                     res = LoadDescriptionFromFile(out LuaStr, out errStr, 
-                        projectName, "\\main.objects.lua");
+                        projectName, 
+                        $"\\{ProjectDescriptionSaver.MainTechObjectsFileName}");
                     techObjectManager.LoadDescription(LuaStr, projectName);
                     errStr = "";
                     LuaStr = "";
                     res = LoadDescriptionFromFile(out LuaStr, out errStr, 
-                        projectName, "\\main.restrictions.lua");
+                        projectName,
+                        $"\\{ProjectDescriptionSaver.MainRestrictionsFileName}");
                     techObjectManager.LoadRestriction(LuaStr);
                     oProgress.EndPart();
                 }
@@ -161,8 +165,16 @@ namespace EasyEPlanner
                 return 1;
             }
 
-            sr = new StreamReader(path,
-                EncodingDetector.DetectFileEncoding(path));
+            bool needEncoding = EncodingDetector.MainFilesEncoding == null &&
+                fileName.Contains(ProjectDescriptionSaver
+                .MainTechObjectsFileName);
+            if (needEncoding)
+            {
+                EncodingDetector.MainFilesEncoding = EncodingDetector
+                    .DetectFileEncoding(path);
+            }
+
+            sr = new StreamReader(path, EncodingDetector.MainFilesEncoding);
             LuaStr = sr.ReadToEnd();
             sr.Close();
 
