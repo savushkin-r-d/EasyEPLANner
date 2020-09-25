@@ -18,10 +18,9 @@ namespace TechObject
         public abstract new BaseParameter Clone();
 
         public BaseParameter(string luaName, string name, 
-            string defaultValue = "") : base(name, defaultValue)
+            string defaultValue = "") : base(name, defaultValue, defaultValue)
         {
             this.luaName = luaName;
-            this.defaultValue = defaultValue;
         }
 
         /// <summary>
@@ -32,14 +31,6 @@ namespace TechObject
             get
             {
                 return luaName;
-            }
-        }
-
-        public string DefaultValue
-        {
-            get
-            {
-                return defaultValue;
             }
         }
 
@@ -104,6 +95,5 @@ namespace TechObject
 
         private object owner;
         private string luaName;
-        private string defaultValue;
     }
 }

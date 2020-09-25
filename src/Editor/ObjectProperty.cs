@@ -17,12 +17,21 @@ namespace Editor
 
         /// <param name="name">Имя свойства.</param>
         /// <param name="value">Значение свойства.</param>
-        /// <param name="level">Уровень вложенности (для отображения в дереве).
-        /// </param>        
-        public ObjectProperty(string name, object value)
+        /// <param name="defaultValue">стандартное значение</param>
+        public ObjectProperty(string name, object value,
+            object defaultValue = null)
         {
             this.name = name;
             this.value = value;
+
+            if(defaultValue == null)
+            {
+                this.defaultValue = "";
+            }
+            else
+            {
+                this.defaultValue = defaultValue;
+            }
 
             needDisable = false;
         }
@@ -78,6 +87,14 @@ namespace Editor
             }
         }
 
+        public string DefaultValue
+        {
+            get
+            {
+                return defaultValue.ToString();
+            }
+        }
+
         #region Реализация ITreeViewItem
         public ITreeViewItem Parent
         {
@@ -95,7 +112,15 @@ namespace Editor
         {
             get
             {
-                return new string[] { name, value.ToString() };
+                if(value.ToString() == defaultValue.ToString())
+                {
+                    return new string[] { name, 
+                        StaticHelper.CommonConst.StubForParameters };
+                }
+                else
+                {
+                    return new string[] { name, value.ToString() };
+                }
             }
         }
 
@@ -121,12 +146,17 @@ namespace Editor
         {
             get
             {
-                return false;
+                return true;
             }
         }
 
         public virtual bool Delete(object child)
         {
+            if(value.GetType() == defaultValue.GetType())
+            {
+                return SetNewValue(DefaultValue);
+            }
+
             return false;
         }
 
@@ -233,7 +263,7 @@ namespace Editor
                 case "Int16":
                     try
                     {
-                        value = System.Convert.ToInt16(newValue);
+                        value = System.Convert.ToInt32(newValue);
                         res = true;
                     }
                     catch (System.Exception)
@@ -451,6 +481,7 @@ namespace Editor
         ITreeViewItem parent;
         private string name;  ///Имя свойства.
         private object value; ///Значение свойства.
+        private object defaultValue; ///Стандартное значение
 
         private bool needDisable;
     }
