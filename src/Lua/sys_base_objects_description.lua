@@ -646,7 +646,12 @@ return
                     {
                         active =
                         {
-                            FINISH_COLD_WATER_PUSHING_TEMPERATURE = { name = "Температура завершения вытеснения горячей воды" },
+                            FINISH_COLD_WATER_PUSHING_TEMPERATURE =
+                                { name = "Температура завершения вытеснения горячей воды" },
+                            COOL_TEMPERATURE =
+                                { name = "Температура охлаждения" },
+                            COOL_DELTA_TEMPERATURE =
+                                { name = "Дельта температуры охлаждения" },
                         },
                     },
                     steps =
