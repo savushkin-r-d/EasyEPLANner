@@ -152,7 +152,7 @@ namespace Editor
 
         public virtual bool Delete(object child)
         {
-            if(value.GetType() == defaultValue.GetType())
+            if (value.GetType() == defaultValue.GetType())
             {
                 return SetNewValue(DefaultValue);
             }
