@@ -24,7 +24,7 @@ namespace Editor
             this.name = name;
             this.value = value;
 
-            if(defaultValue == null)
+            if (defaultValue == null)
             {
                 this.defaultValue = "";
             }
