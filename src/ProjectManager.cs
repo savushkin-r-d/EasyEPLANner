@@ -271,6 +271,8 @@ namespace EasyEPlanner
         /// </summary>
         public void Init()
         {
+            CheckLibsAndFiles();
+
             editor = Editor.Editor.GetInstance();
             techObjectManager = TechObjectManager.GetInstance();
             Logs.Init(new LogFrm());           
@@ -279,7 +281,13 @@ namespace EasyEPlanner
             projectConfiguration = ProjectConfiguration.GetInstance();
             EProjectManager.GetInstance();
             BaseTechObjectManager.GetInstance();
+        }
 
+        /// <summary>
+        /// Проверка доступности библиотек и файлов для надстройки.
+        /// </summary>
+        private void CheckLibsAndFiles()
+        {
             CheckExcelLibs();
             CopySystemFiles();
         }
