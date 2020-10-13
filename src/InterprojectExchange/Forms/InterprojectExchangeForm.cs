@@ -878,7 +878,7 @@ namespace InterprojectExchange
             form.ShowDialog();
 
             string selectedModelName = advProjNameComboBox.Text;
-            if(!string.IsNullOrEmpty(selectedModelName))
+            if (!string.IsNullOrEmpty(selectedModelName))
             {
                 IProjectModel selectedModel = interprojectExchange.GetModel(
                     selectedModelName);
