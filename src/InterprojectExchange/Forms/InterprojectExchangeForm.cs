@@ -877,11 +877,11 @@ namespace InterprojectExchange
             var form = new PACSettingsForm();
             form.ShowDialog();
 
-            string selectedModelname = advProjNameComboBox.Text;
-            if(string.IsNullOrEmpty(selectedModelname))
+            string selectedModelName = advProjNameComboBox.Text;
+            if(!string.IsNullOrEmpty(selectedModelName))
             {
                 IProjectModel selectedModel = interprojectExchange.GetModel(
-                    selectedModelname);
+                    selectedModelName);
                 interprojectExchange.SelectModel(selectedModel);
             }
         }
