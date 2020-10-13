@@ -262,6 +262,7 @@ namespace TechObject
             }
         }
 
+        #region Синхронизация устройств в объекте.
         public void Synch(int[] array)
         {
             foreach (Action action in actions)
@@ -269,6 +270,7 @@ namespace TechObject
                 action.Synch(array);
             }
         }
+        #endregion
 
         public string GetStepName()
         {

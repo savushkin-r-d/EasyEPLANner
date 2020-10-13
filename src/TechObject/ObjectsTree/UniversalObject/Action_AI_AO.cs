@@ -109,6 +109,7 @@ namespace TechObject
             deviceIndex.Add(index);
         }
 
+        #region Синхронизация устройств в объекте.
         /// <summary>
         /// Синхронизация индексов устройств.
         /// </summary>
@@ -122,6 +123,7 @@ namespace TechObject
                 subAction.Synch(array);
             }
         }
+        #endregion
 
         #region Реализация ITreeViewItem
         override public string[] DisplayText

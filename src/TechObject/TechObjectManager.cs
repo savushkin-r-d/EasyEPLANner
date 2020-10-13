@@ -386,6 +386,7 @@ namespace TechObject
                 useNewNames);
         }
 
+        #region Синхронизация устройств в объектах
         /// <summary>
         /// Синхронизация устройств в объектах
         /// </summary>
@@ -397,6 +398,7 @@ namespace TechObject
                 obj.Synch(array);
             }
         }
+        #endregion
 
         #region Реализация ITreeViewItem
         public override string[] DisplayText

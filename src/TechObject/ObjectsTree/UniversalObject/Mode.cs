@@ -194,6 +194,7 @@ namespace TechObject
             }
         }
 
+        #region Синхронизация устройств в объекте.
         public void Synch(int[] array)
         {
             foreach (State stpsMngr in stepsMngr)
@@ -201,6 +202,7 @@ namespace TechObject
                 stpsMngr.Synch(array);
             }
         }
+        #endregion
 
 
         /// <summary>

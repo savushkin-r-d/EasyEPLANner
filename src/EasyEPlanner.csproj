@@ -287,6 +287,7 @@
     <Compile Include="TechObject\Base\BaseTechObject.cs" />
     <Compile Include="TechObject\Base\Properties\ActiveBoolParameter.cs" />
     <Compile Include="TechObject\Base\Properties\ActiveParameter.cs" />
+    <Compile Include="TechObject\Base\Properties\EquipmentParameter.cs" />
     <Compile Include="TechObject\Base\Properties\MainAggregateParameter.cs" />
     <Compile Include="TechObject\ITechObjectManager.cs" />
     <Compile Include="TechObject\ObjectsTree\BaseObject.cs" />

@@ -342,8 +342,8 @@ namespace TechObject
         public override ITreeViewItem Replace(object child, 
             object copyObject)
         {
-            var property = child as ActiveParameter;
-            var copiedObject = copyObject as ActiveParameter;
+            var property = child as EquipmentParameter;
+            var copiedObject = copyObject as EquipmentParameter;
             bool objectsNotNull = property != null && copiedObject != null;
             if (objectsNotNull)
             {
@@ -411,6 +411,18 @@ namespace TechObject
                 .GetOstisHelpSystemLink();
             return ostisLink + "?sys_id=control_module";
         }
+
+        #region Синхронизация устройств в объекте.
+        /// <summary>
+        /// Синхронизация индексов устройств.
+        /// </summary>
+        /// <param name="array">Массив флагов, определяющих изменение 
+        /// индексов.</param>
+        public void Synch(int[] array)
+        {
+            // TODO: Synchronize devices
+        }
+        #endregion
 
         /// <summary>
         /// Сортировка оборудования в списке по-алфавиту
