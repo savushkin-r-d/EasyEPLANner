@@ -67,15 +67,20 @@ namespace TechObject
 
             public override bool SetNewValue(string newValue)
             {
+                const int minimalNumber = 0;
                 int oldNumber = Convert.ToInt32(EditText[1]);
-
-                bool res = base.SetNewValue(newValue);
-                if (res)
+                bool validNewNum = int.TryParse(newValue, out int newNumber);
+                if (validNewNum && newNumber > minimalNumber)
                 {
-                    techObject.ModifyDevNames(oldNumber);
+                    bool res = base.SetNewValue(newValue);
+                    if (res)
+                    {
+                        techObject.ModifyDevNames(oldNumber);
+                    }
+                    return true;
                 }
 
-                return true;
+                return false;
             }
 
             public override bool NeedRebuildParent
@@ -444,7 +449,7 @@ namespace TechObject
             this.nameEplan = new NameInEplan(nameEplan, this);
             this.cooperParamNumber = new ObjectProperty(
                 "Время совместного перехода шагов (параметр)", 
-                cooperParamNumber);
+                cooperParamNumber, -1);
 
             this.attachedObjects = new AttachedToObjects(attachedObjects, 
                 this);
@@ -917,6 +922,12 @@ namespace TechObject
             {
                 parameters.Clear();
                 return true;
+            }
+
+            if (child.GetType() == typeof(ObjectProperty))
+            {
+                var objectProperty = child as ObjectProperty;
+                objectProperty.Delete(this);
             }
 
             return false;

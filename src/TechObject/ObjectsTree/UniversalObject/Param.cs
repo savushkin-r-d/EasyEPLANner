@@ -27,8 +27,8 @@ namespace TechObject
                 this.oper = new ParamProperty("Операция", -1);
                 this.oper.Parent = this;
             }
-            this.meter = new ObjectProperty("Размерность", meter);
-            this.nameLua = new ObjectProperty("Lua имя", nameLua);
+            this.meter = new ObjectProperty("Размерность", meter, "");
+            this.nameLua = new ObjectProperty("Lua имя", nameLua, "");
 
             items = new List<ITreeViewItem>();
             if(!isRuntime)
@@ -212,6 +212,18 @@ namespace TechObject
                 return true;
             }
         }
+
+        public override bool Delete(object child)
+        {
+            if (child.GetType() == typeof(ObjectProperty))
+            {
+                var objectProperty = child as ObjectProperty;
+                objectProperty.Delete(this);
+            }
+
+            return false;
+        }
+
         #endregion
 
         public string GetName()

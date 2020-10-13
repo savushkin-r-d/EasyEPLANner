@@ -78,8 +78,8 @@ namespace TechObject
 
             if (!isMainStep)
             {
-                timeParam = new ObjectProperty("Время (параметр)", -1);
-                nextStepN = new ObjectProperty("Номер следующего шага", -1);
+                timeParam = new ObjectProperty("Время (параметр)", -1, -1);
+                nextStepN = new ObjectProperty("Номер следующего шага", -1, -1);
 
                 items.Add(timeParam);
                 items.Add(nextStepN);
@@ -451,6 +451,12 @@ namespace TechObject
             if (action != null)
             {
                 action.Clear();
+            }
+
+            if (child.GetType() == typeof(ObjectProperty))
+            {
+                var objectProperty = child as ObjectProperty;
+                objectProperty.Delete(this);
             }
 
             return false;

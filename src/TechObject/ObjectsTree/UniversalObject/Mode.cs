@@ -49,7 +49,7 @@ namespace TechObject
                 true));
             for (StateName i = StateName.PAUSE; i < StateName.STATES_CNT; i++)
             {
-                stepsMngr.Add(new State(StateStr[(int)i], false, this));
+                stepsMngr.Add(new State(StateStr[(int)i], true, this));
             }
 
             operPar = new OperationParams();

@@ -49,7 +49,7 @@ namespace TechObject
                 items.Add(action);
             }
 
-            pumpFreq = new ObjectProperty("Частота насосов (параметр)", -1);
+            pumpFreq = new ObjectProperty("Частота насосов (параметр)", -1, -1);
             items.Add(pumpFreq);
         }
 
@@ -240,6 +240,25 @@ namespace TechObject
             {
                 return ImageIndexEnum.NONE;
             }
+        }
+
+        public override bool IsDeletable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool Delete(object child)
+        {
+            if (child.GetType() == typeof(ObjectProperty))
+            {
+                var objectProperty = child as ObjectProperty;
+                objectProperty.Delete(this);
+            }
+
+            return false;
         }
         #endregion
 
