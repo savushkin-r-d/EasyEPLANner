@@ -156,7 +156,7 @@ namespace EasyEPlanner
                     errStr = "Файл описания проекта \"" + path +
                         "\" отсутствует! Создано пустое описание.";
                     Directory.CreateDirectory(Path.GetDirectoryName(path));
-                    return 1;
+                    File.WriteAllText(path, string.Empty);
                 }
             }
             catch (DriveNotFoundException)
