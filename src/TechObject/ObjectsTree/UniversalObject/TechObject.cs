@@ -70,7 +70,7 @@ namespace TechObject
                 const int minimalNumber = 0;
                 int oldNumber = Convert.ToInt32(EditText[1]);
                 bool validNewNum = int.TryParse(newValue, out int newNumber);
-                if(validNewNum && newNumber > minimalNumber)
+                if (validNewNum && newNumber > minimalNumber)
                 {
                     bool res = base.SetNewValue(newValue);
                     if (res)
