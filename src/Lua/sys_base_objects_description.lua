@@ -387,7 +387,7 @@ return
                     {
                         active =
                         {
-                            OPERATION_AFTER_FILL = { name = "Номер операции после наполнения" },
+                            OPERATION_AFTER_FILL = { name = "Номер последующей операции" },
                         },
                     },
                     steps = { },
@@ -397,6 +397,14 @@ return
                 },
                 LEAVENING = {
                     name = "Заквашивание",
+                    params =
+                        {
+                        active =
+                            {
+                            MIXING_TIME = { name = "Время заквашивания" },
+                            OPERATION_AFTER = { name = "Номер последующей операции" },
+                            },
+                        },
                 },
                 SOURING = {
                     name = "Сквашивание",
