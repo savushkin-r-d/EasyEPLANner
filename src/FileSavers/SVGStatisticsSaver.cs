@@ -167,6 +167,11 @@ namespace EasyEPlanner
         /// <returns></returns>
         private static int ValueAsPercentage(int currentValue, int maxValue)
         {
+            if (maxValue == 0)
+            {
+                return 0;
+            }
+
             int result;
             result = (currentValue * percents) / maxValue;
             return result;
