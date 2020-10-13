@@ -171,6 +171,10 @@ return
                             CIP_WASH_END = { name = "Мойка завершена" },
                             CIP_WASH_REQUEST = { name = "Автоматическое включение мойки" },
                         },
+                        bool =
+                            {
+                            IGNORE_WATER_FLAG = { name = "Игнорировать наличие продукта", defaultValue = "false" },
+                            },
                     },
                     steps =
                     {
@@ -232,6 +236,10 @@ return
                             CIP_WASH_END = { name = "Мойка завершена" },
                             CIP_WASH_REQUEST = { name = "Автоматическое включение мойки" },
                         },
+                        bool =
+                            {
+                            IGNORE_WATER_FLAG = { name = "Игнорировать наличие продукта", defaultValue = "false" },
+                            },
                     },
                     steps =
                     {
@@ -283,6 +291,10 @@ return
                             CIP_WASH_END = { name = "Мойка завершена" },
                             CIP_WASH_REQUEST = { name = "Автоматическое включение мойки" },
                         },
+                        bool =
+                            {
+                            IGNORE_WATER_FLAG = { name = "Игнорировать наличие продукта", defaultValue = "false" },
+                            },
                     },
                     steps =
                     {
