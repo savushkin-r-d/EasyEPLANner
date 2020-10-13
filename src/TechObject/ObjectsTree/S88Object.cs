@@ -177,7 +177,7 @@ namespace TechObject
         private ITreeViewItem GetTreeItem(string selectedSubType)
         {
             var item = objects
-                .Where(x => x.DisplayText[0].Contains(selectedSubType))
+                .Where(x => x.EditText[0] == selectedSubType)
                 .FirstOrDefault();
             if (item != null)
             {
