@@ -112,7 +112,7 @@ namespace Editor
         {
             get
             {
-                if(value.ToString() == defaultValue.ToString())
+                if (value.ToString() == defaultValue.ToString())
                 {
                     return new string[] { name, 
                         StaticHelper.CommonConst.StubForParameters };
