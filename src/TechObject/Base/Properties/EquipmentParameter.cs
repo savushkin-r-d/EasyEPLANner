@@ -24,6 +24,24 @@ namespace TechObject
             return newProperty;
         }
 
+        #region Синхронизация устройств
+        /// <summary>
+        /// Синхронизация устройств в объекте
+        /// </summary>
+        /// <param name="array">Массив с индексами синхронизации</param>
+        public void Synch(int[] array)
+        {
+            // parameterIndexes - не синхронизируем т.к это не устройства.
+            bool noDevices = deviceIndexes.Count <= 0;
+            if(noDevices)
+            {
+                return;
+            }
+
+
+        }
+        #endregion
+
         public override bool IsEmpty
         {
             get
@@ -78,7 +96,7 @@ namespace TechObject
                 newValue == DefaultValue;
             if (emptyOrDefault)
             {
-                SetValue(newValue);
+                SetValue(newValue.Trim());
                 return true;
             }
 
@@ -168,7 +186,8 @@ namespace TechObject
             string devices = GetDevicesString();
             string parameters = GetParametersString();
 
-            return $"{devices} {parameters}";
+            string result = $"{devices} {parameters}";
+            return result.Trim();
         }
 
         /// <summary>

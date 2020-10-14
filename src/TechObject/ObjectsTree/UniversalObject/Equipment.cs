@@ -431,7 +431,15 @@ namespace TechObject
         /// индексов.</param>
         public void Synch(int[] array)
         {
-            // TODO: Synchronize devices
+            foreach(var treeViewItem in items)
+            {
+                var equipmentParameter = treeViewItem as EquipmentParameter;
+                bool validParameter = equipmentParameter != null;
+                if(validParameter)
+                {
+                    equipmentParameter.Synch(array);
+                }
+            }
         }
         #endregion
 
