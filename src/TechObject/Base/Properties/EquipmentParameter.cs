@@ -38,7 +38,35 @@ namespace TechObject
                 return;
             }
 
+            List<int> del = new List<int>();
+            for (int j = 0; j < deviceIndexes.Count; j++)
+            {
+                for (int i = 0; i < array.Length; i++)
+                {
+                    if (deviceIndexes[j] == i)
+                    {
+                        // Что бы не учитывало "-2" из array
+                        if (array[i] == -1)
+                        {
+                            del.Add(j);
+                            break;
+                        }
+                        if (array[i] >= 0)
+                        {
+                            deviceIndexes[j] = array[i];
+                            break;
+                        }
+                    }
+                }
+            }
 
+            int dx = 0;
+            foreach (int index in del)
+            {
+                deviceIndexes.RemoveAt(index - dx++);
+            }
+
+            SetValue(GetDevicesAndParametersString());
         }
         #endregion
 
@@ -111,7 +139,7 @@ namespace TechObject
             deviceIndexes.Sort();
             parameterIndexes.Sort();
 
-            SetValue(GetValuesString());
+            SetValue(GetDevicesAndParametersString());
 
             return true;
         }
@@ -181,7 +209,7 @@ namespace TechObject
         /// Получить представление значений в виде строки
         /// </summary>
         /// <returns></returns>
-        private string GetValuesString()
+        private string GetDevicesAndParametersString()
         {
             string devices = GetDevicesString();
             string parameters = GetParametersString();
