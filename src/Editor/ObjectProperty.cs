@@ -115,7 +115,7 @@ namespace Editor
                 if (value.ToString() == defaultValue.ToString())
                 {
                     return new string[] { name, 
-                        StaticHelper.CommonConst.StubForParameters };
+                        StaticHelper.CommonConst.StubForCells };
                 }
                 else
                 {

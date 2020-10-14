@@ -27,6 +27,7 @@ namespace TechObject
         {
             foreach(BaseParameter property in properties)
             {
+                property.Owner = this;
                 items.Add(property);
             }
             Sort();
@@ -54,7 +55,7 @@ namespace TechObject
                 var property = item as BaseParameter;
                 if (property.LuaName == name)
                 {
-                    property.SetValue(value);
+                    property.SetNewValue(value);
                 }
             }
         }
@@ -95,7 +96,7 @@ namespace TechObject
             string equipmentForSave = "";
             foreach (ITreeViewItem item in items)
             {
-                var property = item as BaseParameter;
+                var property = item as EquipmentParameter;
                 if (!property.IsEmpty)
                 {
                     equipmentForSave += prefix + $"\t{property.LuaName} = " +
@@ -162,6 +163,7 @@ namespace TechObject
             }
         }
 
+        #region Проверка и автоматическое заполнение оборудования
         public string Check()
         {
             var errors = "";
@@ -303,6 +305,7 @@ namespace TechObject
 
             return errors;
         }
+        #endregion
 
         #region Реализация ITreeViewItem
         public override string[] DisplayText
@@ -404,6 +407,14 @@ namespace TechObject
             }
         }
         #endregion
+
+        public TechObject Owner
+        {
+            get
+            {
+                return owner;
+            }
+        }
 
         public override string GetLinkToHelpPage()
         {

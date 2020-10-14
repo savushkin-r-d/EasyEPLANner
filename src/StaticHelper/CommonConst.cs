@@ -54,6 +54,6 @@ namespace StaticHelper
         /// <summary>
         /// Заглушка-триггер для параметров в дополнительных свойствах операции.
         /// </summary>
-        public static string StubForParameters = "Нет";
+        public static string StubForCells = "Нет";
     }
 }

@@ -38,14 +38,14 @@
         public override bool SetNewValue(string newValue)
         {
             bool notStub = !newValue.ToLower()
-                .Contains(StaticHelper.CommonConst.StubForParameters.ToLower());
+                .Contains(StaticHelper.CommonConst.StubForCells.ToLower());
             if (notStub)
             {
                 return base.SetNewValue(newValue);
             }
             else
             {
-                string value = StaticHelper.CommonConst.StubForParameters;
+                string value = StaticHelper.CommonConst.StubForCells;
                 return base.SetNewValue(value);
             }
         }

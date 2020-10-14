@@ -262,7 +262,7 @@ namespace Device
 
         #region Защищенные поля.
 
-        protected internal string name; /// Имя устройства (А1V12).
+        protected string name; /// Имя устройства (А1V12).
 
         protected int deviceNumber;     /// Номер устройства (12 в R1V12).
 
@@ -274,7 +274,7 @@ namespace Device
         protected string objectName;    /// Объект устройства (R в R1V12).
         protected int objectNumber;     /// Номер объекта (1 в R1V12)
 
-        protected internal string description;  /// Описание устройства (пример - "Отсечной клапан линии").   
+        protected string description;  /// Описание устройства (пример - "Отсечной клапан линии").   
         #endregion
     }
 }

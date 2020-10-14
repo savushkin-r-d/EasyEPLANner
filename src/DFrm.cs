@@ -811,7 +811,7 @@ namespace EasyEPlanner
             }
             else
             {
-                devNode = new Node(dev.name + "\t  " + deviceDescription);
+                devNode = new Node(dev.Name + "\t  " + deviceDescription);
             }
             devNode.Tag = dev;
 

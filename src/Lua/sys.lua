@@ -34,13 +34,6 @@ init = function()
         if (#value == 0) then
             local obj = initialized_objects[fields]
 
-            --Оборудование
-            if value.equipment ~= nil then
-                for field, value in pairs( value.equipment ) do
-                    obj:AddEquipment(field, value)
-                end
-            end
-
             --Параметры
             proc_params( value.par_float, "par_float", obj )
             proc_params( value.par_uint, "par_uint", obj )
@@ -48,6 +41,13 @@ init = function()
             proc_params( value.rt_par_uint, "rt_par_uint", obj)
 
             local params_float = value.par_float
+
+            --Оборудование (всегда после параметров)
+            if value.equipment ~= nil then
+                for field, value in pairs( value.equipment ) do
+                    obj:AddEquipment(field, value)
+                end
+            end
             
             for fields, value in ipairs( value.modes ) do
                 local mode_name = value.name or "Операция ??"

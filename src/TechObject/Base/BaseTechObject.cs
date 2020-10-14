@@ -720,7 +720,7 @@ namespace TechObject
             }
 
             bool stub = parameter.Value.ToLower()
-                .Contains(StaticHelper.CommonConst.StubForParameters.ToLower());
+                .Contains(StaticHelper.CommonConst.StubForCells.ToLower());
             if (stub)
             {
                 result = ParameterValueType.Stub;
