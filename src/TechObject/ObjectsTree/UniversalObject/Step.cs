@@ -367,7 +367,7 @@ namespace TechObject
                 this.baseStep = new ActiveParameter(baseStep.LuaName,
                     baseStep.Name);
                 this.baseStep.Owner = this;
-                if (name.Contains(NewStepName))
+                if (name.Contains(NewStepName) && baseStep.Name != "")
                 {
                     name = baseStep.Name;
                 }
