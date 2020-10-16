@@ -156,6 +156,16 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Получение параметра.
+        /// </summary>
+        /// <param name="paramIndex">Индекс параметра</param>
+        /// <returns></returns>
+        public Param GetParam(int paramIndex)
+        {
+            return parFLoat.GetParam(paramIndex);
+        }
+
+        /// <summary>
         /// Сохранение в виде таблицы Lua.
         /// </summary>
         /// <param name="prefix">Префикс (для выравнивания).</param>

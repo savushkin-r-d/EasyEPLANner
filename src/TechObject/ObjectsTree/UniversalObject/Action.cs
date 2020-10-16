@@ -213,10 +213,8 @@ namespace TechObject
         /// </summary>
         /// <param name="index">Индекс параметра.</param>
         /// <param name="val">Значение параметра.</param>
-        public virtual void AddParam(int index, int val)
-        {
-        }
-
+        public virtual void AddParam(int index, int val) { }
+            
         /// <summary>
         /// Очищение списка устройств.
         /// </summary>
@@ -225,6 +223,7 @@ namespace TechObject
             deviceIndex.Clear();
         }
 
+        #region Синхронизация устройств в объекте.
         /// <summary>
         /// Синхронизация индексов устройств.
         /// </summary>
@@ -260,6 +259,7 @@ namespace TechObject
                 deviceIndex.RemoveAt(index - dx++);
             }
         }
+        #endregion
 
         /// <summary>
         /// Получение/установка устройств.

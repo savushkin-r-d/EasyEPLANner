@@ -194,6 +194,7 @@ namespace TechObject
             }
         }
 
+        #region Синхронизация устройств в объекте.
         public void Synch(int[] array)
         {
             foreach (Mode mode in modes)
@@ -201,6 +202,7 @@ namespace TechObject
                 mode.Synch(array);
             }
         }
+        #endregion
 
         public void CheckRestriction(int prev, int curr)
         {

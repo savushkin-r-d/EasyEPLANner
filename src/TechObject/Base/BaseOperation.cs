@@ -353,7 +353,7 @@ namespace TechObject
                 }
 
                 bool notStub = !property.Value.ToLower()
-                    .Contains(StaticHelper.CommonConst.StubForParameters
+                    .Contains(StaticHelper.CommonConst.StubForCells
                     .ToLower());
                 if (notStub)
                 {

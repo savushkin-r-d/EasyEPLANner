@@ -27,6 +27,7 @@ namespace TechObject
         {
             foreach(BaseParameter property in properties)
             {
+                property.Owner = this;
                 items.Add(property);
             }
             Sort();
@@ -54,7 +55,7 @@ namespace TechObject
                 var property = item as BaseParameter;
                 if (property.LuaName == name)
                 {
-                    property.SetValue(value);
+                    property.SetNewValue(value);
                 }
             }
         }
@@ -95,7 +96,7 @@ namespace TechObject
             string equipmentForSave = "";
             foreach (ITreeViewItem item in items)
             {
-                var property = item as BaseParameter;
+                var property = item as EquipmentParameter;
                 if (!property.IsEmpty)
                 {
                     equipmentForSave += prefix + $"\t{property.LuaName} = " +
@@ -162,6 +163,7 @@ namespace TechObject
             }
         }
 
+        #region Проверка и автоматическое заполнение оборудования
         public string Check()
         {
             var errors = "";
@@ -303,6 +305,7 @@ namespace TechObject
 
             return errors;
         }
+        #endregion
 
         #region Реализация ITreeViewItem
         public override string[] DisplayText
@@ -342,8 +345,8 @@ namespace TechObject
         public override ITreeViewItem Replace(object child, 
             object copyObject)
         {
-            var property = child as ActiveParameter;
-            var copiedObject = copyObject as ActiveParameter;
+            var property = child as EquipmentParameter;
+            var copiedObject = copyObject as EquipmentParameter;
             bool objectsNotNull = property != null && copiedObject != null;
             if (objectsNotNull)
             {
@@ -405,12 +408,40 @@ namespace TechObject
         }
         #endregion
 
+        public TechObject Owner
+        {
+            get
+            {
+                return owner;
+            }
+        }
+
         public override string GetLinkToHelpPage()
         {
             string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
                 .GetOstisHelpSystemLink();
             return ostisLink + "?sys_id=control_module";
         }
+
+        #region Синхронизация устройств в объекте.
+        /// <summary>
+        /// Синхронизация индексов устройств.
+        /// </summary>
+        /// <param name="array">Массив флагов, определяющих изменение 
+        /// индексов.</param>
+        public void Synch(int[] array)
+        {
+            foreach(var treeViewItem in items)
+            {
+                var equipmentParameter = treeViewItem as EquipmentParameter;
+                bool validParameter = equipmentParameter != null;
+                if(validParameter)
+                {
+                    equipmentParameter.Synch(array);
+                }
+            }
+        }
+        #endregion
 
         /// <summary>
         /// Сортировка оборудования в списке по-алфавиту

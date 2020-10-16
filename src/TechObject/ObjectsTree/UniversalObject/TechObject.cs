@@ -719,10 +719,13 @@ namespace TechObject
             }
         }
 
+        #region Синхронизация устройств в объекте.
         public void Synch(int[] array)
         {
             modes.Synch(array);
+            equipment.Synch(array);
         }
+        #endregion
 
         public void CheckRestriction(int prev, int curr)
         {

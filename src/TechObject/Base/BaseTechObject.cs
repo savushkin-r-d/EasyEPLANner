@@ -38,7 +38,7 @@ namespace TechObject
         /// <param name="value">Значение</param>
         public void AddEquipment(string luaName, string name, string value)
         {
-            var equipment = new ActiveParameter(luaName, name, value);
+            var equipment = new EquipmentParameter(luaName, name, value);
             equipment.Owner = this;
             Equipment.Add(equipment);
         }
@@ -720,7 +720,7 @@ namespace TechObject
             }
 
             bool stub = parameter.Value.ToLower()
-                .Contains(StaticHelper.CommonConst.StubForParameters.ToLower());
+                .Contains(StaticHelper.CommonConst.StubForCells.ToLower());
             if (stub)
             {
                 result = ParameterValueType.Stub;

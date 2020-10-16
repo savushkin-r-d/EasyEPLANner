@@ -78,6 +78,23 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Получение параметра по его индексу.
+        /// </summary>
+        /// <param name="paramIndex">Индекс параметра</param>
+        /// <returns></returns>
+        public Param GetParam(int paramIndex)
+        {
+            if(paramIndex < parameters.Count)
+            {
+                return parameters[paramIndex];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Сохранение в виде таблицы Lua.
         /// </summary>
         /// <param name="prefix">Префикс (для выравнивания).</param>

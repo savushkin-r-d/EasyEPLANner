@@ -5,11 +5,8 @@
     /// </summary>
     public class ActiveParameter : BaseParameter
     {
-        public ActiveParameter(string luaName, string name)
-            : base(luaName, name) { }
-
         public ActiveParameter(string luaName, string name, 
-            string defaultValue) : base(luaName, name, defaultValue) { }
+            string defaultValue = "") : base(luaName, name, defaultValue) { }
 
         public override BaseParameter Clone()
         {
@@ -41,14 +38,14 @@
         public override bool SetNewValue(string newValue)
         {
             bool notStub = !newValue.ToLower()
-                .Contains(StaticHelper.CommonConst.StubForParameters.ToLower());
+                .Contains(StaticHelper.CommonConst.StubForCells.ToLower());
             if (notStub)
             {
                 return base.SetNewValue(newValue);
             }
             else
             {
-                string value = StaticHelper.CommonConst.StubForParameters;
+                string value = StaticHelper.CommonConst.StubForCells;
                 return base.SetNewValue(value);
             }
         }

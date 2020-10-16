@@ -276,12 +276,12 @@ namespace EasyEPlanner
         /// <summary>
         /// Обработка для нового редактора
         /// </summary>
-        /// <param name="newEditorItem">Элемент из нового редактора</param>
+        /// <param name="editorItem">Элемент из редактора</param>
         /// <param name="oF">Функция</param>
-        private void ExecuteForEditor(Editor.ITreeViewItem newEditorItem,
+        private void ExecuteForEditor(Editor.ITreeViewItem editorItem,
             Function oF)
         {
-            if (newEditorItem.IsUseDevList)
+            if (editorItem.IsUseDevList)
             {
                 string devName;
                 bool res = Device.DeviceManager.CheckDeviceName(oF.Name,
@@ -289,19 +289,19 @@ namespace EasyEPlanner
 
                 if (res)
                 {
-                    string checkedDevices = newEditorItem.EditText[1];
+                    string checkedDevices = editorItem.EditText[1];
                     string newDevices = MakeNewCheckedDevices(devName,
                         checkedDevices);
                     Editor.Editor.GetInstance().EditorForm
                         .SetNewVal(newDevices);
 
                     //Обновление списка устройств при его наличии.
-                    string checkedDev = newEditorItem.EditText[1];
+                    string checkedDev = editorItem.EditText[1];
                     if (DFrm.GetInstance().IsVisible() == true)
                     {
                         Device.DeviceType[] devTypes;
                         Device.DeviceSubType[] devSubTypes;
-                        newEditorItem.GetDevTypes(out devTypes,
+                        editorItem.GetDevTypes(out devTypes,
                             out devSubTypes);
 
                         DFrm.GetInstance().ShowDevices(
