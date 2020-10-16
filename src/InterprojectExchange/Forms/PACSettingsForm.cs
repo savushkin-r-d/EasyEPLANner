@@ -391,19 +391,40 @@ namespace InterprojectExchange
             }
         }
 
-        private void modeComboBox_SelectedValueChanged(object sender, 
-            EventArgs e)
+        /// <summary>
+        /// Получить название режима из перечисления
+        /// </summary>
+        /// <param name="editMode">Перечисление</param>
+        /// <returns></returns>
+        private string GetEditModeNameFromEnum(EditMode editMode)
         {
-            if(projectsListView.SelectedItems.Count != 0 )
+            if (editMode == EditMode.MainReceiver)
             {
-                string project = projectsListView.SelectedItems[0].Text;
-                SaveIntermediateData(project);
-                ChangeEditMode();
-                LoadProjectDataToFields(project);
+                return "Приемник";
             }
             else
             {
-                ChangeEditMode();
+                return "Источник";
+            }
+        }
+
+        private void modeComboBox_SelectedValueChanged(object sender, 
+            EventArgs e)
+        {
+            string modeName = GetEditModeNameFromEnum(editMode);
+            if (modeName != modeComboBox.SelectedItem.ToString())
+            {
+                if (projectsListView.SelectedItems.Count != 0)
+                {
+                    string project = projectsListView.SelectedItems[0].Text;
+                    SaveIntermediateData(project);
+                    ChangeEditMode();
+                    LoadProjectDataToFields(project);
+                }
+                else
+                {
+                    ChangeEditMode();
+                }
             }
         }
     }
