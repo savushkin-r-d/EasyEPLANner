@@ -189,7 +189,23 @@ namespace InterprojectExchange
             else
             {
                 SaveIntermediateData(e.Item.Text);
+                ClearDataFromForm();
             }
+        }
+
+        private void ClearDataFromForm()
+        {
+            projNameTextBox.Text = string.Empty;
+            ipAddressTextBox.Text = string.Empty;
+            emulatorIPTextBox.Text = string.Empty;
+            enableEmulationBtn.Checked = false;
+            disableEmulationBtn.Checked = false;
+            cycletimeTextBox.Text = string.Empty;
+            timeoutTextBox.Text = string.Empty;
+            portTextBox.Text = string.Empty;
+            enableGateBtn.Checked = false;
+            disableGateBtn.Checked = false;
+            stationNumberTextBox.Text = string.Empty;
         }
 
         /// <summary>
