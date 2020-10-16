@@ -398,7 +398,7 @@ namespace InterprojectExchange
         /// <returns></returns>
         private string GetEditModeNameFromEnum(EditMode editMode)
         {
-            if(editMode == EditMode.MainReceiver)
+            if (editMode == EditMode.MainReceiver)
             {
                 return "Приемник";
             }
