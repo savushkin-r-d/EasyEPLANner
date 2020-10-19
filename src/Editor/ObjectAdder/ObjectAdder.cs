@@ -15,20 +15,7 @@ namespace Editor
                 .GetInstance();
             LastSelectedType = null;
             LastSelectedSubType = null;
-        }
-
-        private void ObjectsAdder_Load(object sender, EventArgs e)
-        {
-            var s88Levels = baseTechObjectsManager.Objects
-                .Select(x => x.S88Level).Distinct().ToList();
-            var baseObjectsTypes = new List<string>();
-            foreach(var s88level in s88Levels)
-            {
-                baseObjectsTypes
-                    .Add(baseTechObjectsManager.GetS88Name(s88level));
-            }
-
-            objectTypes.Items.AddRange(baseObjectsTypes.ToArray());
+            FillObjectTypesListView();
         }
 
         /// <summary>
@@ -42,8 +29,25 @@ namespace Editor
                 .GetInstance();
             LastSelectedType = typeName;
             LastSelectedSubType = null;
-
+            FillObjectTypesListView();
             SetUpObjectTypesListView();
+        }
+        
+        /// <summary>
+        /// Заполнить список с базовыми объектами (типами объектов)
+        /// </summary>
+        private void FillObjectTypesListView()
+        {
+            var s88Levels = baseTechObjectsManager.Objects
+                .Select(x => x.S88Level).Distinct().ToList();
+            var baseObjectsTypes = new List<string>();
+            foreach (var s88level in s88Levels)
+            {
+                baseObjectsTypes
+                    .Add(baseTechObjectsManager.GetS88Name(s88level));
+            }
+
+            objectTypes.Items.AddRange(baseObjectsTypes.ToArray());
         }
 
         /// <summary>

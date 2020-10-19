@@ -115,7 +115,6 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Добавление объекта в редактор";
-            this.Load += new System.EventHandler(this.ObjectsAdder_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
