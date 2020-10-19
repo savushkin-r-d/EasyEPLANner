@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace InterprojectExchange
 {
@@ -325,23 +326,32 @@ namespace InterprojectExchange
             bool invertSignals)
         {
             var res = "";
+            var signalsList = new Dictionary<string, string>();
 
-            res += SaveDISignals(signals.DI, prefix, invertSignals);
-            res += SaveDOSignals(signals.DO, prefix, invertSignals);
-            res += SaveAISignals(signals.AI, prefix, invertSignals);
-            res += SaveAOSignals(signals.AO, prefix, invertSignals);
+            SaveDISignals(ref signalsList, signals.DI, prefix, invertSignals);
+            SaveDOSignals(ref signalsList, signals.DO, prefix, invertSignals);
+            SaveAISignals(ref signalsList, signals.AI, prefix, invertSignals);
+            SaveAOSignals(ref signalsList, signals.AO, prefix, invertSignals);
 
+            var signalsKeys = signalsList.Keys.ToList();
+            signalsKeys.Sort();
+            foreach(var key in signalsKeys)
+            {
+                res += signalsList[key];
+            }
             return res;
         }
 
         /// <summary>
         /// Сохранение DI сигналов
         /// </summary>
+        /// <param name="signalsList">Словарь сигналов для сохранения</param>
         /// <param name="signals">Сигналы</param>
         /// <param name="prefix">Префикс</param>
         /// <param name="invertSignals">Инвертировать сигналы</param>
         /// <returns></returns>
-        private string SaveDISignals(List<string> signals, string prefix,
+        private void SaveDISignals(ref Dictionary<string, string> signalsList,
+            List<string> signals, string prefix,
             bool invertSignals)
         {
             var res = "";
@@ -363,25 +373,31 @@ namespace InterprojectExchange
             {
                 if (invertSignals)
                 {
-                    res += prefix + $"DO =\n{prefix}{{\n{digIn}{prefix}}},\n";
+                    string DOSignal = "DO";
+                    res += prefix + 
+                        $"{DOSignal} =\n{prefix}{{\n{digIn}{prefix}}},\n";
+                    signalsList.Add(DOSignal, res);
                 }
                 else
                 {
-                    res += prefix + $"DI =\n{prefix}{{\n{digIn}{prefix}}},\n";
+                    string DISignal = "DI";
+                    res += prefix + 
+                        $"{DISignal} =\n{prefix}{{\n{digIn}{prefix}}},\n";
+                    signalsList.Add(DISignal, res);
                 }
             }
-
-            return res;
         }
 
         /// <summary>
         /// Сохранение DO сигналов
         /// </summary>
+        /// <param name="signalsList">Словарь сигналов для сохранения</param>
         /// <param name="signals">Сигналы</param>
         /// <param name="prefix">Префикс</param>
         /// <param name="invertSignals">Инвертировать сигналы</param>
         /// <returns></returns>
-        private string SaveDOSignals(List<string> signals, string prefix,
+        private void SaveDOSignals(ref Dictionary<string, string> signalsList, 
+            List<string> signals, string prefix,
             bool invertSignals)
         {
             var res = "";
@@ -404,25 +420,31 @@ namespace InterprojectExchange
             {
                 if (invertSignals)
                 {
-                    res += prefix + $"DI =\n{prefix}{{\n{digOut}{prefix}}},\n";
+                    string DISignal = "DI";
+                    res += prefix + 
+                        $"{DISignal} =\n{prefix}{{\n{digOut}{prefix}}},\n";
+                    signalsList.Add(DISignal, res);
                 }
                 else
                 {
-                    res += prefix + $"DO =\n{prefix}{{\n{digOut}{prefix}}},\n";
+                    string DOSignal = "DO";
+                    res += prefix + 
+                        $"{DOSignal} =\n{prefix}{{\n{digOut}{prefix}}},\n";
+                    signalsList.Add(DOSignal, res);
                 }
             }
-
-            return res;
         }
 
         /// <summary>
         /// Сохранение AI сигналов
         /// </summary>
+        /// <param name="signalsList">Словарь сигналов для сохранения</param>
         /// <param name="signals">Сигналы</param>
         /// <param name="prefix">Префикс</param>
         /// <param name="invertSignals">Инвертировать сигналы</param>
         /// <returns></returns>
-        private string SaveAISignals(List<string> signals, string prefix,
+        private void SaveAISignals(ref Dictionary<string, string> signalsList, 
+            List<string> signals, string prefix,
             bool invertSignals)
         {
             var res = "";
@@ -444,25 +466,31 @@ namespace InterprojectExchange
             {
                 if (invertSignals)
                 {
-                    res += prefix + $"AO =\n{prefix}{{\n{analogIn}{prefix}}},\n";
+                    string AOSignal = "AO";
+                    res += prefix + 
+                        $"{AOSignal} =\n{prefix}{{\n{analogIn}{prefix}}},\n";
+                    signalsList.Add(AOSignal, res);
                 }
                 else
                 {
-                    res += prefix + $"AI =\n{prefix}{{\n{analogIn}{prefix}}},\n";
+                    string AISignal = "AI";
+                    res += prefix + 
+                        $"{AISignal} =\n{prefix}{{\n{analogIn}{prefix}}},\n";
+                    signalsList.Add(AISignal, res);
                 }
             }
-
-            return res;
         }
 
         /// <summary>
         /// Сохранение AO сигналов
         /// </summary>
+        /// <param name="signalsList">Словарь сигналов для сохранения</param>
         /// <param name="signals">Сигналы</param>
         /// <param name="prefix">Префикс</param>
         /// <param name="invertSignals">Инвертировать сигналы</param>
         /// <returns></returns>
-        private string SaveAOSignals(List<string> signals, string prefix,
+        private void SaveAOSignals(ref Dictionary<string, string> signalsList, 
+            List<string> signals, string prefix,
             bool invertSignals)
         {
             var res = "";
@@ -484,17 +512,19 @@ namespace InterprojectExchange
             {
                 if (invertSignals)
                 {
-                    res += prefix + $"AI =\n{prefix}{{\n{analogOut}" +
+                    string AISignal = "AI";
+                    res += prefix + $"{AISignal} =\n{prefix}{{\n{analogOut}" +
                         $"{prefix}}},\n";
+                    signalsList.Add(AISignal, res);
                 }
                 else
                 {
-                    res += prefix + $"AO =\n{prefix}{{\n{analogOut}" +
+                    string AOSignal = "AO";
+                    res += prefix + $"{AOSignal} =\n{prefix}{{\n{analogOut}" +
                         $"{prefix}}},\n";
+                    signalsList.Add(AOSignal, res);
                 }
             }
-
-            return res;
         }
 
         /// <summary>
