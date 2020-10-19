@@ -373,14 +373,12 @@ namespace InterprojectExchange
             {
                 if (invertSignals)
                 {
-                    string DOSignal = "DO";
                     res += prefix + 
                         $"{DOSignal} =\n{prefix}{{\n{digIn}{prefix}}},\n";
                     signalsList.Add(DOSignal, res);
                 }
                 else
                 {
-                    string DISignal = "DI";
                     res += prefix + 
                         $"{DISignal} =\n{prefix}{{\n{digIn}{prefix}}},\n";
                     signalsList.Add(DISignal, res);
@@ -420,14 +418,12 @@ namespace InterprojectExchange
             {
                 if (invertSignals)
                 {
-                    string DISignal = "DI";
                     res += prefix + 
                         $"{DISignal} =\n{prefix}{{\n{digOut}{prefix}}},\n";
                     signalsList.Add(DISignal, res);
                 }
                 else
                 {
-                    string DOSignal = "DO";
                     res += prefix + 
                         $"{DOSignal} =\n{prefix}{{\n{digOut}{prefix}}},\n";
                     signalsList.Add(DOSignal, res);
@@ -466,14 +462,12 @@ namespace InterprojectExchange
             {
                 if (invertSignals)
                 {
-                    string AOSignal = "AO";
                     res += prefix + 
                         $"{AOSignal} =\n{prefix}{{\n{analogIn}{prefix}}},\n";
                     signalsList.Add(AOSignal, res);
                 }
                 else
                 {
-                    string AISignal = "AI";
                     res += prefix + 
                         $"{AISignal} =\n{prefix}{{\n{analogIn}{prefix}}},\n";
                     signalsList.Add(AISignal, res);
@@ -512,14 +506,12 @@ namespace InterprojectExchange
             {
                 if (invertSignals)
                 {
-                    string AISignal = "AI";
                     res += prefix + $"{AISignal} =\n{prefix}{{\n{analogOut}" +
                         $"{prefix}}},\n";
                     signalsList.Add(AISignal, res);
                 }
                 else
                 {
-                    string AOSignal = "AO";
                     res += prefix + $"{AOSignal} =\n{prefix}{{\n{analogOut}" +
                         $"{prefix}}},\n";
                     signalsList.Add(AOSignal, res);
@@ -685,5 +677,10 @@ namespace InterprojectExchange
         private string SharedFile { get; set; }
 
         private InterprojectExchange interprojectExchange;
+
+        private const string DISignal = "DI";
+        private const string DOSignal = "DO";
+        private const string AISignal = "AI";
+        private const string AOSignal = "AO";
     }
 }
