@@ -1,14 +1,16 @@
-﻿using Editor;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Editor;
 
 namespace TechObject
 {
-    /// <summary>
-    /// Объект ячейки процесса (мастера).
-    /// </summary>
-    public class ProcessCell : TreeViewItem
+    class UserObject : TreeViewItem
     {
-        public ProcessCell() 
+        public UserObject()
         {
             objects = new List<TechObject>();
             baseTechObject = BaseTechObjectManager.GetInstance()
@@ -53,7 +55,7 @@ namespace TechObject
         {
             get
             {
-                if(Items.Length > 0)
+                if (Items.Length > 0)
                 {
                     return new string[] { $"{Name} ({objects.Count})", "" };
                 }
@@ -74,24 +76,21 @@ namespace TechObject
 
         public override ITreeViewItem Insert()
         {
-            if(Items.Length == 0)
-            {
-                var newObject = new TechObject(Name, GetTechObjectLocalNum, 
-                    1, 1, "MASTER", -1, "MasterObj", "", baseTechObject);
+            const int techTypeNum = 2;
+            const int cooperParamNum = -1;
+            ObjectsAdder.Reset();
+            var newObject = new TechObject(baseTechObject.Name, 
+                GetTechObjectLocalNum, objects.Count + 1, techTypeNum, 
+                "USER", cooperParamNum, "UserObj", "", baseTechObject);
 
-                // Работа со списком в дереве и общим списком объектов.
-                objects.Add(newObject);
-                globalObjectsList.Add(newObject);
+            // Работа со списком в дереве и общим списком объектов.
+            objects.Add(newObject);
+            globalObjectsList.Add(newObject);
 
-                // Обозначение начального номера объекта для ограничений.
-                SetRestrictionOwner();
+            // Обозначение начального номера объекта для ограничений.
+            SetRestrictionOwner();
 
-                return newObject;
-            }
-            else
-            {
-                return null;
-            }
+            return newObject;
         }
 
         public override bool IsInsertable
@@ -118,7 +117,7 @@ namespace TechObject
                 // Обозначение начального номера объекта для ограничений.
                 SetRestrictionOwner();
 
-                if(objects.Count == 0)
+                if (objects.Count == 0)
                 {
                     Parent.Delete(this);
                 }
@@ -147,15 +146,14 @@ namespace TechObject
         override public ITreeViewItem InsertCopy(object obj)
         {
             var techObj = obj as TechObject;
-            if(techObj == null)
+            if (techObj == null)
             {
                 return null;
             }
-            
-            bool processCellNotAdd = objects.Count == 0;
+
             bool correctedBaseObject = techObj.BaseTechObject != null &&
                 techObj.BaseTechObject.Name == Name;
-            if (correctedBaseObject && processCellNotAdd)
+            if (correctedBaseObject)
             {
                 int newN = 1;
                 if (objects.Count > 0)
@@ -184,7 +182,7 @@ namespace TechObject
             else
             {
                 ObjectsAdder.Reset();
-                if (techObj.MarkToCut && processCellNotAdd)
+                if (techObj.MarkToCut)
                 {
                     return InsertCuttedCopy(techObj);
                 }
@@ -233,7 +231,7 @@ namespace TechObject
                 int localIndex = objects.IndexOf(techObject);
                 objects.Remove(techObject);
                 objects.Insert(localIndex, newObject);
-                
+
                 // Глобальный список объектов
                 int globalIndex = globalObjectsList.IndexOf(techObject);
                 globalObjectsList.Remove(techObject);
@@ -258,24 +256,6 @@ namespace TechObject
         #endregion
 
         /// <summary>
-        /// Ячейка процесса (мастер-объект) проекта.
-        /// </summary>
-        public TechObject ProcessCellObject
-        {
-            get
-            {
-                if(objects[0] != null)
-                {
-                    return objects[0];
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
-
-        /// <summary>
         /// Получить локальный номер технологического объекта
         /// </summary>
         /// <param name="searchingObject">Искомый объект</param>
@@ -287,7 +267,7 @@ namespace TechObject
             return num;
         }
 
-        public const string Name = "Ячейка процесса";
+        public const string Name = "Пользовательский объект";
 
         List<TechObject> objects;
         BaseTechObject baseTechObject;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
@@ -14,6 +15,20 @@ namespace Editor
                 .GetInstance();
             LastSelectedType = null;
             LastSelectedSubType = null;
+        }
+
+        private void ObjectsAdder_Load(object sender, EventArgs e)
+        {
+            var s88Levels = baseTechObjectsManager.Objects
+                .Select(x => x.S88Level).Distinct().ToList();
+            var baseObjectsTypes = new List<string>();
+            foreach(var s88level in s88Levels)
+            {
+                baseObjectsTypes
+                    .Add(baseTechObjectsManager.GetS88Name(s88level));
+            }
+
+            objectTypes.Items.AddRange(baseObjectsTypes.ToArray());
         }
 
         /// <summary>
@@ -79,27 +94,12 @@ namespace Editor
             }
             else
             {
-                string selectedItem = objectTypes.SelectedItem.ToString();
-                switch (selectedItem)
-                {
-                    case "Ячейка процесса":
-                        var master = baseTechObjectsManager.ProcessCell
-                            .Name;
-                        objectSubTypes.Items.Add(master);
-                        break;
-
-                    case "Аппарат":
-                        var units = baseTechObjectsManager.Units
-                            .Select(x => x.Name).ToArray();
-                        objectSubTypes.Items.AddRange(units);
-                        break;
-
-                    case "Агрегат":
-                        var aggregates = baseTechObjectsManager.Aggregates
-                            .Select(x => x.Name).ToArray();
-                        objectSubTypes.Items.AddRange(aggregates);
-                        break;
-                }
+                string selectedType = objectTypes.SelectedItem.ToString();
+                int level = baseTechObjectsManager.GetS88Level(selectedType);
+                var subTypes = baseTechObjectsManager.Objects
+                    .Where(x => x.S88Level == level)
+                    .Select(x => x.Name).ToArray();
+                objectSubTypes.Items.AddRange(subTypes);
             }
         }
 

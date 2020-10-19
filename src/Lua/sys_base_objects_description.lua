@@ -154,7 +154,7 @@ return
         },
         master = {
             name = "Ячейка процесса",
-            s88Level = 0,
+            s88Level = 0, -- Не относится к s88Level, находится выше 1 уровня.
             baseOperations = { },
             basicName = "master",
             equipment = { },
@@ -883,5 +883,11 @@ return
             aggregateParameters = { },
             bindingName = "cip_module"
         },
+        user_object = {
+            name = "Пользовательский объект",
+            s88Level = 3, -- Не относится к s88Level.
+            basicName = "user_object",
+            bindingName = "user_object",
+        }
     }
 end

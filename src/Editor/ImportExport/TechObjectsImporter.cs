@@ -97,7 +97,7 @@ namespace Editor
             }
         }
 
-        #region импорт объектов
+        #region Импорт объектов
         /// <summary>
         /// Импорт объекта, вызывается из LUA.
         /// </summary>
@@ -145,7 +145,7 @@ namespace Editor
             var type = (BaseTechObjectManager.ObjectType)baseTechObject
                 .S88Level;
             string name = BaseTechObjectManager.GetInstance()
-                        .GetS88NameFromLevel(baseTechObject.S88Level);
+                        .GetS88Name(baseTechObject.S88Level);
             switch (type)
             {
                 case BaseTechObjectManager.ObjectType.ProcessCell:
@@ -153,12 +153,15 @@ namespace Editor
                     break;
 
                 case BaseTechObjectManager.ObjectType.Unit:
-
                     AddS88ObjectFromLua(obj, name);
                     break;
 
                 case BaseTechObjectManager.ObjectType.Aggregate:
                     AddS88ObjectFromLua(obj, name);
+                    break;
+
+                case BaseTechObjectManager.ObjectType.UserObject:
+                    AddUserObject(obj);
                     break;
             }
         }
@@ -200,6 +203,23 @@ namespace Editor
             }
 
             s88Item.AddObjectWhenLoadFromLua(obj);
+        }
+
+        /// <summary>
+        /// Добавить пользовательский объект из LUA
+        /// </summary>
+        /// <param name="obj">Объект</param>
+        private void AddUserObject(TechObject.TechObject obj)
+        {
+            var userObject = objectTree.Where(x => x is UserObject)
+                .FirstOrDefault() as UserObject;
+            if (userObject == null)
+            {
+                userObject = new UserObject();
+                objectTree.Add(userObject);
+            }
+
+            userObject.AddObjectWhenLoadFromLua(obj);
         }
 
         /// <summary>
