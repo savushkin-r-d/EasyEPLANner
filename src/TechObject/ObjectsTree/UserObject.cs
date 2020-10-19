@@ -66,6 +66,14 @@ namespace TechObject
             }
         }
 
+        public override string[] EditText
+        {
+            get
+            {
+                return new string[] { Name, "" };
+            }
+        }
+
         public override ITreeViewItem[] Items
         {
             get
