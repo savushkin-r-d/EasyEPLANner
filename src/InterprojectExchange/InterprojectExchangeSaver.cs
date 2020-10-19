@@ -546,12 +546,20 @@ namespace InterprojectExchange
                     remoteGateWays);
                 res += $"remote_gateways =\n{{\n{remoteGateWaysStr}\n}}\n";
             }
+            else
+            {
+                res += $"remote_gateways =\n{{\n}}\n";
+            }
 
             if (sharedDevices.Count > 0)
             {
                 string sharedDevicesStr = string.Join(doubleNewLine,
                     sharedDevices);
                 res += $"shared_devices =\n{{\n{sharedDevicesStr}\n}}";
+            }
+            else
+            {
+                res += $"shared_devices =\n{{\n}}";
             }
 
             return res;
