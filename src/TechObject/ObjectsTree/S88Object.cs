@@ -57,6 +57,14 @@ namespace TechObject
             }
         }
 
+        public override string[] EditText
+        {
+            get
+            {
+                return new string[] { name, "" };
+            }
+        }
+
         public override bool IsInsertableCopy
         {
             get

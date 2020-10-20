@@ -283,7 +283,7 @@ namespace TechObject
             var type = (BaseTechObjectManager.ObjectType)baseTechObject
                 .S88Level;
             string name = BaseTechObjectManager.GetInstance()
-                        .GetS88NameFromLevel(baseTechObject.S88Level);
+                        .GetS88Name(baseTechObject.S88Level);
             switch (type)
             {
                 case BaseTechObjectManager.ObjectType.ProcessCell:
@@ -291,12 +291,15 @@ namespace TechObject
                     break;
 
                 case BaseTechObjectManager.ObjectType.Unit:
-                    
                     AddS88ObjectFromLua(obj, name);
                     break;
 
                 case BaseTechObjectManager.ObjectType.Aggregate:
                     AddS88ObjectFromLua(obj, name);
+                    break;
+
+                case BaseTechObjectManager.ObjectType.UserObject:
+                    AddUserObject(obj);
                     break;
             }
         }
@@ -337,6 +340,23 @@ namespace TechObject
             }
 
             s88Item.AddObjectWhenLoadFromLua(obj);
+        }
+
+        /// <summary>
+        /// Добавить пользовательский объект из LUA
+        /// </summary>
+        /// <param name="obj">Объект</param>
+        private void AddUserObject(TechObject obj)
+        {
+            var userObject = treeObjects.Where(x => x is UserObject)
+                .FirstOrDefault() as UserObject;
+            if(userObject == null)
+            {
+                userObject = new UserObject();
+                treeObjects.Add(userObject);
+            }
+
+            userObject.AddObjectWhenLoadFromLua(obj);
         }
 
         /// <summary>
@@ -533,13 +553,16 @@ namespace TechObject
                 .FirstOrDefault();
             if (treeItem == null)
             {
-                if (selectedType == "Ячейка процесса")
+                switch(selectedType)
                 {
-                    return new ProcessCell();
-                }
-                else
-                {
-                    return new S88Object(selectedType);
+                    case ProcessCell.Name:
+                        return new ProcessCell();
+
+                    case UserObject.Name:
+                        return new UserObject();
+
+                    default:
+                        return new S88Object(selectedType);
                 }
             }
             else
@@ -574,7 +597,7 @@ namespace TechObject
         /// <summary>
         /// Объект мастера проекта.
         /// </summary>
-        public TechObject ProcessCell
+        public TechObject ProcessCellObject
         {
             get
             {

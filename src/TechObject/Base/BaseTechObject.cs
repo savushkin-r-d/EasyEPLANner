@@ -407,7 +407,7 @@ namespace TechObject
                 return res;
             }
 
-            var masterObj = TechObjectManager.GetInstance().ProcessCell;
+            var masterObj = TechObjectManager.GetInstance().ProcessCellObject;
             if (masterObj != null)
             {
                 res += objName + ".master = prg." + masterObj.NameEplan

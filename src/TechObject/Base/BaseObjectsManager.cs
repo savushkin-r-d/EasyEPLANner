@@ -2,11 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Reflection;
 using EasyEPlanner;
 
 namespace TechObject
@@ -159,7 +155,7 @@ namespace TechObject
         /// </summary>
         /// <param name="s88Level">Уровень объекта</param>
         /// <returns></returns>
-        public string GetS88NameFromLevel(int s88Level)
+        public string GetS88Name(int s88Level)
         {
             switch(s88Level)
             {
@@ -172,8 +168,37 @@ namespace TechObject
                 case (int)ObjectType.Aggregate:
                     return "Агрегат";
 
+                case (int)ObjectType.UserObject:
+                    return "Пользовательский объект";
+
                 default:
                     return null;
+            }
+        }
+
+        /// <summary>
+        /// Получить S88 уровень из типа объекта
+        /// </summary>
+        /// <param name="type">Тип объекта (Аппарат, агрегат и др.)</param>
+        /// <returns></returns>
+        public int GetS88Level(string type)
+        {
+            switch (type)
+            {
+                case "Ячейка процесса":
+                    return (int)ObjectType.ProcessCell;
+
+                case "Аппарат":
+                    return (int)ObjectType.Unit;
+
+                case "Агрегат":
+                    return (int)ObjectType.Aggregate;
+
+                case "Пользовательский объект":
+                    return (int)ObjectType.UserObject;
+
+                default:
+                    return -1;
             }
         }
 
@@ -193,50 +218,12 @@ namespace TechObject
             }
         }
 
-        /// <summary>
-        /// Получить базовый объект ячейки процесса проекта.
-        /// </summary>
-        public BaseTechObject ProcessCell
-        {
-            get
-            {
-                return Objects
-                    .Where(x => x.S88Level == (int)ObjectType.ProcessCell)
-                    .First();
-            }
-        }
-
-        /// <summary>
-        /// Получить аппараты.
-        /// </summary>
-        public List<BaseTechObject> Units
-        {
-            get
-            {
-                return Objects.
-                    Where(x => x.S88Level == (int)ObjectType.Unit)
-                    .ToList();
-            }
-        }
-
-        /// <summary>
-        /// Получить агрегаты.
-        /// </summary>
-        public List<BaseTechObject> Aggregates
-        {
-            get
-            {
-                return Objects
-                    .Where(x => x.S88Level == (int)ObjectType.Aggregate)
-                    .ToList();
-            }
-        }
-
         public enum ObjectType
         {
             ProcessCell = 0,
             Unit = 1,
-            Aggregate = 2
+            Aggregate = 2,
+            UserObject = 3
         }
 
         private List<BaseTechObject> baseTechObjects;

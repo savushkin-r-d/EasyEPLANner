@@ -60,10 +60,6 @@
             // objectTypes
             // 
             this.objectTypes.FormattingEnabled = true;
-            this.objectTypes.Items.AddRange(new object[] {
-            "Ячейка процесса",
-            "Аппарат",
-            "Агрегат"});
             this.objectTypes.Location = new System.Drawing.Point(12, 28);
             this.objectTypes.Name = "objectTypes";
             this.objectTypes.Size = new System.Drawing.Size(188, 199);
