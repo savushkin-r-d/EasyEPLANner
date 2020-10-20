@@ -229,7 +229,7 @@ namespace TechObject
         /// </summary>
         protected void SetCrossRestriction()
         {
-            if(!IsLocalRestrictionUse)
+            if (LuaName != "NextModeRestriction")
             {
                 SortedDictionary<int, List<int>>.KeyCollection keyColl =
                     restrictList.Keys;
