@@ -98,6 +98,7 @@ namespace TechObject
             }
             else
             {
+                ObjectsAdder.Reset();
                 return null;
             }
         }
