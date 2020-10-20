@@ -89,6 +89,7 @@ namespace EasyEPlanner
                 SaveModbusFile(par);
                 SaveProfibusFile(par);
                 SavePrgFile(par);
+                SaveSharedFile(par);
 
                 if (par.silentMode == false)
                 {
@@ -245,12 +246,10 @@ namespace EasyEPlanner
             string fileName = par.path + @"\" + mainModbusSRVFileName;
             if (!File.Exists(fileName))
             {
-                //Создаем пустое описание сервера MODBUS.
-                string content = "--version  = 1\n";
-                content += "--Описание сервера MODBUS\n";
-                content += new string('-', numberOfDashes) + "\n";
-
-                File.WriteAllText(fileName, content,
+                //Создаем базовое описание сервера MODBUS.
+                string modBusContent = Properties.Resources.ResourceManager
+                    .GetString("modbusSRVFilePattern");
+                File.WriteAllText(fileName, modBusContent,
                     EncodingDetector.MainFilesEncoding);
             }
         }
@@ -303,6 +302,18 @@ namespace EasyEPlanner
             fileWriter.Close();
         }
 
+        private static void SaveSharedFile(ParametersForSave par)
+        {
+            string fileName = par.path + @"\" + sharedFileName;
+            if(!File.Exists(fileName))
+            {
+                string sharedContent = Properties.Resources.ResourceManager
+                    .GetString("sharedFilePattern");
+                File.WriteAllText(fileName, sharedContent,
+                    EncodingDetector.MainFilesEncoding);
+            }
+        }
+
         private const int mainIOFileVersion = 1;
         private const int mainTechObjectsFileVersion = 1;
         private const int mainTechDevicesFileVersion = 1;
@@ -320,6 +331,7 @@ namespace EasyEPlanner
         private const string mainModbusSRVFileName = "main.modbus_srv.lua";
         private const string mainProfibusFileName = "main.profibus.lua";
         private const string mainPRGFileName = "prg.lua";
+        private const string sharedFileName = "shared.lua";
 
         private const int numberOfDashes = 78;
 
