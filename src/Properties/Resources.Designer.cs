@@ -247,6 +247,23 @@ namespace EasyEPlanner.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на --version  = 1
+        ///------------------------------------------------------------------------------
+        ///function read_holding_registers( n, start_idx, count )
+        ///   return read_hr2(n, start_idx, count)
+        ///end
+        ///
+        ///function write_holding_registers( n, start_idx, count, buff )
+        ///    write_hr2(n, start_idx, count, buff)
+        ///end.
+        /// </summary>
+        public static string modbusSRVFilePattern {
+            get {
+                return ResourceManager.GetString("modbusSRVFilePattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap mode {
@@ -436,6 +453,20 @@ namespace EasyEPlanner.Properties {
             get {
                 object obj = ResourceManager.GetObject("save1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на remote_gateways =
+        ///{
+        ///}
+        ///shared_devices =
+        ///{
+        ///}.
+        /// </summary>
+        public static string sharedFilePattern {
+            get {
+                return ResourceManager.GetString("sharedFilePattern", resourceCulture);
             }
         }
         
