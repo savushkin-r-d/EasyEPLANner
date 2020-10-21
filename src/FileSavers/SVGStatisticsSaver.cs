@@ -40,9 +40,13 @@ namespace EasyEPlanner
             folderPath += linesOfCodeMainProgramFileName;
             locFilePath += @"\" + ProjectDescriptionSaver.MainProgramFileName;
 
-            string[] readedFile = File.ReadAllLines(locFilePath,
-                EncodingDetector.DetectFileEncoding(locFilePath));
-            int loc = readedFile.Length;
+            int loc = 0;
+            if(File.Exists(locFilePath))
+            {
+                string[] readedFile = File.ReadAllLines(locFilePath,
+                    EncodingDetector.DetectFileEncoding(locFilePath));
+                loc = readedFile.Length;
+            }
             string displayingText = $"{loc} строк кода";
             string result = MakeStringForWriting(loc, maxLOCCount,
                 displayingText);
@@ -193,12 +197,12 @@ namespace EasyEPlanner
 
         static string svgFilePattern;
 
-        static string linesOfCodeMainProgramFileName = "lines_total.svg";
-        static string countOfTagsFileName = "tags_total.svg";
-        static string countOfUnitsFileName = "units_total.svg";
-        static string countOfEquipmentModulesFileName = "agregates_total.svg";
-        static string countOfDevicesFileName = "devices_total.svg";
-        static string ioModulesInPercentage = "io_link_usage.svg";
+        const string linesOfCodeMainProgramFileName = "lines_total.svg";
+        const string countOfTagsFileName = "tags_total.svg";
+        const string countOfUnitsFileName = "units_total.svg";
+        const string countOfEquipmentModulesFileName = "agregates_total.svg";
+        const string countOfDevicesFileName = "devices_total.svg";
+        const string ioModulesInPercentage = "io_link_usage.svg";
 
         /// <summary>
         /// 100% длина линии SVG. 
