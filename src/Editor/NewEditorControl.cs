@@ -48,7 +48,7 @@ namespace Editor
             editorTView.CellToolTipGetter =
                 delegate (OLVColumn column, object displayingObject)
                 {
-                    if (displayingObject is TreeViewItem)
+                    if (displayingObject is ITreeViewItem)
                     {
                         var obj = displayingObject as ITreeViewItem;
                         switch (column.Index)

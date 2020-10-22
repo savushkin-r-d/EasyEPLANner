@@ -315,7 +315,39 @@ namespace TechObject
                 return res;
             }
 
+            private string GenerateAttachedObjectsString()
+            {
+                string value = Value ?? string.Empty;
+                var objectNums = value.Split(' ').Select(int.Parse);
+                var objectNames = new List<string>();
+                foreach(var objNum in objectNums)
+                {
+                    TechObject findedObject = TechObjectManager.GetInstance()
+                        .GetTObject(objNum);
+                    if(findedObject != null)
+                    {
+                        string name = $"\"{findedObject.Name} " +
+                            $"{findedObject.TechNumber}\"";
+                        objectNames.Add(name);
+                    }
+                }
+
+                return string.Join(", ", objectNames);
+            }
+
             #region реализация ITreeViewItem
+            public override string[] DisplayText
+            {
+                get
+                {
+                    return new string[] 
+                    { 
+                        Name,
+                        GenerateAttachedObjectsString() 
+                    };
+                }
+            }
+
             public override bool NeedRebuildParent 
             { 
                 get 
