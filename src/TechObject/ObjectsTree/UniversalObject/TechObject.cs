@@ -318,6 +318,11 @@ namespace TechObject
             private string GenerateAttachedObjectsString()
             {
                 string value = Value ?? string.Empty;
+                if(value == string.Empty)
+                {
+                    return value;
+                }
+
                 var objectNums = value.Split(' ').Select(int.Parse);
                 var objectNames = new List<string>();
                 foreach(var objNum in objectNums)
