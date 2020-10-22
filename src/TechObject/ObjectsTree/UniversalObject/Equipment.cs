@@ -367,13 +367,12 @@ namespace TechObject
 
         public override bool Delete(object child)
         {
-            var property = child as BaseParameter;
-            if (property != null)
+            var objEquips = Items.Select(x => x as BaseParameter).ToArray();
+            foreach (var equip in objEquips)
             {
-                property.SetNewValue("");
-                return true;
+                equip.SetNewValue("");
             }
-            return false;
+            return true;
         }
 
         public override bool IsDeletable
@@ -421,6 +420,14 @@ namespace TechObject
             string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
                 .GetOstisHelpSystemLink();
             return ostisLink + "?sys_id=control_module";
+        }
+
+        public override bool ShowWarningBeforeDelete
+        {
+            get
+            {
+                return true;
+            }
         }
 
         #region Синхронизация устройств в объекте.

@@ -222,12 +222,6 @@ namespace TechObject
             return errors;
         }
 
-        public void Clear()
-        {
-            parFLoat.Clear();
-            parFLoatRunTime.Clear();
-        }
-
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {

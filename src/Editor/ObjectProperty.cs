@@ -152,7 +152,7 @@ namespace Editor
 
         public virtual bool Delete(object child)
         {
-            if (value.GetType() == defaultValue.GetType())
+            if (value.GetType() == defaultValue.GetType() && IsDeletable)
             {
                 return SetNewValue(DefaultValue);
             }
@@ -232,7 +232,7 @@ namespace Editor
             }
         }
 
-        public int[] EditablePart
+        public virtual int[] EditablePart
         {
             get
             {
@@ -383,7 +383,7 @@ namespace Editor
             }
         }
 
-        public bool ShowWarningBeforeDelete
+        public virtual bool ShowWarningBeforeDelete
         {
             get
             {

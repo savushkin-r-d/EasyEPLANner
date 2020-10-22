@@ -65,6 +65,14 @@ namespace TechObject
                 SetValue(value);
             }
 
+            public override bool IsDeletable
+            {
+                get
+                {
+                    return false;
+                }
+            }
+
             public override bool SetNewValue(string newValue)
             {
                 const int minimalNumber = 0;
@@ -316,6 +324,14 @@ namespace TechObject
                 } 
             }
 
+            public override int[] EditablePart
+            {
+                get
+                {
+                    return new int[] { -1, -1 };
+                }
+            }
+
             override public bool IsEditable
             {
                 get
@@ -346,6 +362,28 @@ namespace TechObject
                     {
                         return false;
                     }
+                }
+            }
+
+            public override bool IsDeletable
+            {
+                get
+                {
+                    return true;
+                }
+            }
+
+            public override bool Delete(object child)
+            {
+                bool cleared = SetNewValue(string.Empty);
+                return cleared;
+            }
+
+            public override bool ShowWarningBeforeDelete
+            {
+                get
+                {
+                    return true;
                 }
             }
             #endregion
@@ -817,6 +855,11 @@ namespace TechObject
                 errors += attachedObjects.Check();
             }
 
+            if(nameEplan.Value == string.Empty)
+            {
+                errors += $"Не задано ОУ в объекте \"{objName}\"\n";
+            }
+
             ModesManager modesManager = ModesManager;
             List<Mode> modes = modesManager.Modes;
             foreach (var mode in modes)
@@ -909,28 +952,11 @@ namespace TechObject
 
         public override bool Delete(object child)
         {
-            var equipment = child as Equipment;
-            if (equipment != null)
+            ITreeViewItem item = child as ITreeViewItem;
+            if(item != null)
             {
-                var objEquips = equipment.Items
-                    .Select(x => x as BaseParameter).ToArray();
-                foreach(var equip in objEquips)
-                {
-                    equip.SetNewValue("");
-                }
-            }
-
-            var parameters = child as ParamsManager;
-            if (parameters != null)
-            {
-                parameters.Clear();
+                item.Delete(this);
                 return true;
-            }
-
-            if (child.GetType() == typeof(ObjectProperty))
-            {
-                var objectProperty = child as ObjectProperty;
-                objectProperty.Delete(this);
             }
 
             return false;
