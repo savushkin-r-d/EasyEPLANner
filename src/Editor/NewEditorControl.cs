@@ -1251,15 +1251,18 @@ namespace Editor
         private void FormatItemsToBold(FormatCellEventArgs e,
             ITreeViewItem[] mainItems)
         {
-            foreach(var techObjManager in mainItems)
+            foreach (var techObjManager in mainItems)
             {
-                foreach(var s88Obj in techObjManager.Items)
+                foreach (var s88Obj in techObjManager.Items)
                 {
-                    foreach(var baseObj in s88Obj.Items)
+                    foreach (var baseObj in s88Obj.Items)
                     {
-                        if (e.Item.RowObject == techObjManager ||
-                            e.Item.RowObject == s88Obj ||
-                            e.Item.RowObject == baseObj)
+                        if ((e.Item.RowObject == techObjManager &&
+                            !techObjManager.IsMainObject) ||
+                            (e.Item.RowObject == s88Obj &&
+                            !s88Obj.IsMainObject) ||
+                            (e.Item.RowObject == baseObj &&
+                            !baseObj.IsMainObject))
                         {
                             e.Item.Font = boldFont8px;
                         }
