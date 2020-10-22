@@ -37,7 +37,7 @@ namespace EasyEPlanner
         {
             const int maxLOCCount = 1000;
 
-            folderPath += linesOfCodeMainProgramFileName;
+            folderPath += LinesOfCodeMainProgramFileName;
             locFilePath += @"\" + ProjectDescriptionSaver.MainProgramFileName;
 
             int loc = 0;
@@ -61,7 +61,7 @@ namespace EasyEPlanner
         {
             const int maxTagsCount = 5000;
 
-            folderPath += countOfTagsFileName;
+            folderPath += CountOfTagsFileName;
             int tagsCount = XMLReporter.GetTagsCount();
             string displayingText = $"{tagsCount} тэг(ов)";
             string result = MakeStringForWriting(tagsCount, maxTagsCount,
@@ -77,7 +77,7 @@ namespace EasyEPlanner
         {
             const int maxUnitsCount = 10;
 
-            folderPath += countOfUnitsFileName;
+            folderPath += CountOfUnitsFileName;
             int unitsCount = techObjectManager.UnitsCount;
             string displayingText = $"{unitsCount} аппарат(ов)";
             string result = MakeStringForWriting(unitsCount, maxUnitsCount,
@@ -93,7 +93,7 @@ namespace EasyEPlanner
         {
             const int maxEquipCount = 50;
 
-            folderPath += countOfEquipmentModulesFileName;
+            folderPath += CountOfEquipmentModulesFileName;
             int equipCount = techObjectManager.EquipmentModulesCount;
             string displayingText = $"{equipCount} агрегат(ов)";
             string result = MakeStringForWriting(equipCount, maxEquipCount,
@@ -109,7 +109,7 @@ namespace EasyEPlanner
         {
             const int maxDevicesCount = 1000;
 
-            folderPath += countOfDevicesFileName;
+            folderPath += CountOfDevicesFileName;
             int devicesCount = deviceManager.Devices.Count;
             string displayingText = $"{devicesCount} устройств";
             string result = MakeStringForWriting(devicesCount, maxDevicesCount,
@@ -142,7 +142,7 @@ namespace EasyEPlanner
             string displayingText = $"{valueInPercents}% IO-Link";
             string result = MakeStringForWriting(ioLinkModules,
                 modulesCount, displayingText);
-            folderPath += ioModulesInPercentage;
+            folderPath += IOModulesInPercentage;
             WriteFile(result, folderPath);
         }
 
@@ -197,12 +197,12 @@ namespace EasyEPlanner
 
         static string svgFilePattern;
 
-        const string linesOfCodeMainProgramFileName = "lines_total.svg";
-        const string countOfTagsFileName = "tags_total.svg";
-        const string countOfUnitsFileName = "units_total.svg";
-        const string countOfEquipmentModulesFileName = "agregates_total.svg";
-        const string countOfDevicesFileName = "devices_total.svg";
-        const string ioModulesInPercentage = "io_link_usage.svg";
+        const string LinesOfCodeMainProgramFileName = "lines_total.svg";
+        const string CountOfTagsFileName = "tags_total.svg";
+        const string CountOfUnitsFileName = "units_total.svg";
+        const string CountOfEquipmentModulesFileName = "agregates_total.svg";
+        const string CountOfDevicesFileName = "devices_total.svg";
+        const string IOModulesInPercentage = "io_link_usage.svg";
 
         /// <summary>
         /// 100% длина линии SVG. 
