@@ -455,6 +455,11 @@ namespace Editor
             editorTView.FinishCellEdit();
             editorTView.ClearObjects();
 
+            if(Editable)
+            {
+                edit_toolStripButton_Click(this, new EventArgs());
+            }
+
             PI.UnhookWindowsHookEx(dialogHookPtr);
             PI.UnhookWindowsHookEx(globalKeyboardHookPtr);
 
