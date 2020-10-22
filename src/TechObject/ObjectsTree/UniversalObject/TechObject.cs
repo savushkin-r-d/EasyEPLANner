@@ -843,18 +843,21 @@ namespace TechObject
         {
             get
             {
-                int objNum = 0;
+                int localNum = 0;
+                int globalNum = 0;
                 if (getLocalNum == null)
                 {
                     return new string[] {
-                        objNum + ". " + name + ' ' +
-                        techNumber.EditText[ 1 ], "" };
+                        localNum + ". " + name + ' ' +
+                        techNumber.EditText[ 1 ] + $" (#{globalNum})", "" };
                 }
                 else
                 {
+                    globalNum = TechObjectManager.GetInstance()
+                        .GetTechObjectN(this);
                     return new string[] {
                         getLocalNum( this ) + ". " + name + ' ' +
-                        techNumber.EditText[ 1 ], "" };
+                        techNumber.EditText[ 1 ] + $" (#{globalNum})", "" };
                 }
             }
         }
