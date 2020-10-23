@@ -367,12 +367,27 @@ namespace TechObject
 
         public override bool Delete(object child)
         {
-            var objEquips = Items.Select(x => x as BaseParameter).ToArray();
-            foreach (var equip in objEquips)
+            var treeItem = child as ITreeViewItem;
+            if(treeItem != null)
             {
-                equip.SetNewValue("");
+                if(treeItem.IsMainObject)
+                {
+                    var objEquips = Items.Select(x => x as BaseParameter)
+                        .ToArray();
+                    foreach (var equip in objEquips)
+                    {
+                        equip.SetNewValue("");
+                    }
+                    return true;
+                }
+                else
+                {
+                    treeItem.SetNewValue("");
+                    return true;
+                }
             }
-            return true;
+
+            return false;
         }
 
         public override bool IsDeletable
