@@ -13,7 +13,7 @@
 -- 7. bindingName - имя агрегата, используемое при привязке его к аппарату (для аппаратов не обязательно).
 -- 8. isPID - является ли объект ПИД-регулятором.
 
--- Базовые операции (название таблицы - это Lua-имя операции, пишется в верхнем регистре):
+-- Базовые операции (baseOperations) (название таблицы - это Lua-имя операции, пишется в верхнем регистре):
 -- 1. name - русскоязычное название операции.
 -- 2. params - параметры операции, могут быть активными, пассивными, булевыми.
 -- 3. steps - базовые шаги операции.
@@ -23,6 +23,12 @@
 -- пишется в верхнем регистре):
 -- 1. name - русскоязычное имя параметра.
 -- 2. defaultValue - значение по-умолчанию (опционально).
+-- 3. showData - список параметров, указывающий, что будет отображаться в окне
+-- графической настройки параметра (окно "Устройства"), при настройке параметра.
+-- Таблица showData может отсутствовать.
+-- Допустимые свойства: signals - будут добавлены сигналы AO, AI, DO, DI;
+-- parameters - будут добавлены все параметры объекта.
+-- Пример: showData = { "signals", "parameters" } - будут добавлены сигналы и параметры.
 
 -- Булевые параметры (bool) - аналог активных параметров, только имеют два значения - да или нет
 -- (название таблицы - это Lua-имя параметра, пишется в верхнем регистре):
@@ -35,9 +41,13 @@
 -- 1. name - русскоязычное имя параметра.
 -- 2. defaultValue - значение по-умолчанию.
 
--- Параметр оборудования - параметр, который характерен для оборудования. Обработка схожая с действиями
+-- Параметр оборудования (equipment) - параметр для оборудования. Обработка схожая с действиями
 -- в шагах операции. Этот тип параметра создается, когда заполняется equipment в объекте.
--- Создается также, как и активный параметр, только в таблице equipment.
+-- Создается таблице equipment. Имеет общую обработку,которая характерна для
+-- всех таких параметров (название таблицы - это Lua-имя параметра,
+-- пишется в верхнем регистре):
+-- 1. name - русскоязычное имя параметра.
+-- 2. defaultValue - значение по-умолчанию (опционально).
 
 -- Базовые шаги - по аналогии с активными параметрами.
 -- Оборудование - параметр оборудования.
@@ -54,7 +64,7 @@ return
             basicName = "automat",
             equipment = { },
             aggregateParameters = { },
-            bindingName = "automat"
+            bindingName = "automat",
         },
         _tank = {
             name = "Бачок откачки лёдводы",
@@ -143,7 +153,11 @@ return
             {
                 active =
                 {
-                    HEATING_WATER_TEMPERATURE = { name = "Температура подогрева воды" },
+                    HEATING_WATER_TEMPERATURE =
+                    {
+                        name = "Температура подогрева воды",
+                        showData = { "parameters" },
+                    },
                 },
                 main =
                 {
@@ -172,8 +186,16 @@ return
                     {
                         active =
                         {
-                            CIP_WASH_END = { name = "Мойка завершена" },
-                            CIP_WASH_REQUEST = { name = "Автоматическое включение мойки" },
+                            CIP_WASH_END =
+                            {
+                                name = "Мойка завершена",
+                                showData = { "signals" },
+                            },
+                            CIP_WASH_REQUEST =
+                            {
+                                name = "Автоматическое включение мойки",
+                                showData = { "signals" },
+                            },
                         },
                         bool =
                             {
@@ -237,13 +259,20 @@ return
                     {
                         active =
                         {
-                            CIP_WASH_END = { name = "Мойка завершена" },
-                            CIP_WASH_REQUEST = { name = "Автоматическое включение мойки" },
+                            CIP_WASH_END =
+                            {
+                                name = "Мойка завершена",
+                                showData = { "signals" },
+                            },
+                            CIP_WASH_REQUEST = {
+                                name = "Автоматическое включение мойки",
+                                showData = { "signals" },
+                            },
                         },
                         bool =
-                            {
+                        {
                             IGNORE_WATER_FLAG = { name = "Игнорировать наличие продукта", defaultValue = "false" },
-                            },
+                        },
                     },
                     steps =
                     {
@@ -292,8 +321,15 @@ return
                     {
                         active =
                         {
-                            CIP_WASH_END = { name = "Мойка завершена" },
-                            CIP_WASH_REQUEST = { name = "Автоматическое включение мойки" },
+                            CIP_WASH_END =
+                            {
+                                name = "Мойка завершена",
+                                showData = { "signals" },
+                            },
+                            CIP_WASH_REQUEST = {
+                                name = "Автоматическое включение мойки",
+                                showData = { "signals" },
+                            },
                         },
                         bool =
                             {
@@ -347,8 +383,16 @@ return
                     {
                         active =
                         {
-                            CIP_WASH_END = { name = "Мойка завершена" },
-                            CIP_WASH_REQUEST = { name = "Автоматическое включение мойки" },
+                            CIP_WASH_END =
+                            {
+                                name = "Мойка завершена",
+                                showData = { "signals" },
+                            },
+                            CIP_WASH_REQUEST =
+                            {
+                                name = "Автоматическое включение мойки",
+                                showdata = { "signals" },
+                            },
                         },
                     },
                     steps =
@@ -382,10 +426,26 @@ return
                     {
                         active =
                         {
-                            CIP_WASH_END = { name = "Мойка завершена" },
-                            DI_CIP_FREE = { name = "МСА свободна" },
-                            CIP_WASH_REQUEST = { name = "Автоматическое включение мойки" },
-                            MEDIUM_CHANGE_REQUEST = { name = "Запрос смены среды" },
+                            CIP_WASH_END =
+                            {
+                                name = "Мойка завершена",
+                                showData = { "signals" },
+                            },
+                            DI_CIP_FREE =
+                            {
+                                name = "МСА свободна",
+                                showData = { "signals" },
+                            },
+                            CIP_WASH_REQUEST =
+                            {
+                                name = "Автоматическое включение мойки",
+                                showData = { "signals" },
+                            },
+                            MEDIUM_CHANGE_REQUEST =
+                            {
+                                name = "Запрос смены среды",
+                                showData = { "signals" },
+                            },
                         },
                     },
                     steps =
@@ -414,13 +474,17 @@ return
                 LEAVENING = {
                     name = "Заквашивание",
                     params =
-                        {
+                    {
                         active =
+                        {
+                            MIXING_TIME =
                             {
-                            MIXING_TIME = { name = "Время заквашивания" },
-                            OPERATION_AFTER = { name = "Номер последующей операции" },
+                                name = "Время заквашивания",
+                                showData = { "parameters" },
                             },
+                            OPERATION_AFTER = { name = "Номер последующей операции" },
                         },
+                    },
                 },
                 SOURING = {
                     name = "Сквашивание",
@@ -446,15 +510,23 @@ return
                 },
                 SLOW_HEATING = {
                     name = "Томление",
-                    params = 
+                    params =
                     {
                         bool =
                         {
-                            AUTO_COOLING_BEFORE_LEAVENING = { name = "Автоматический переход к охлаждению для заквашивания", defaultValue = "true" },
+                            AUTO_COOLING_BEFORE_LEAVENING =
+                            {
+                                name = "Автоматический переход к охлаждению для заквашивания",
+                                defaultValue = "true",
+                            },
                         },
                         active =
                         {
-                            BAKE_TIME = { name = "Время нагрева (2-го шага)" },
+                            BAKE_TIME =
+                            {
+                                name = "Время нагрева (2-го шага)",
+                                showData = { "parameters" },
+                            },
                         },
                     },
                     steps =
@@ -469,7 +541,11 @@ return
                         {
                             active =
                             {
-                                MIXING_CHECK_TIME = { name = "Время проверки температуры" },
+                                MIXING_CHECK_TIME =
+                                {
+                                    name = "Время проверки температуры",
+                                    showData = { "parameters" },
+                                },
                                 OPERATION_AFTER = { name = "Номер следующей операции" },
                             },
                         },
@@ -485,8 +561,16 @@ return
                         {
                             active =
                             {
-                                COOLING_TIME = { name = "Время охлаждения (1-го шага)" },
-                                MIXING_CHECK_TIME = { name = "Время проверки температуры (3-го шага)" },
+                                COOLING_TIME =
+                                {
+                                    name = "Время охлаждения (1-го шага)",
+                                    showData = { "parameters" },
+                                },
+                                MIXING_CHECK_TIME =
+                                {
+                                    name = "Время проверки температуры (3-го шага)",
+                                    showData = { "parameters" },
+                                },
                             },
                         },
                     steps =
@@ -534,7 +618,11 @@ return
                     {
                         active =
                         {
-                            product_request = { name = "Запрос продукта" }
+                            product_request =
+                            {
+                                name = "Запрос продукта",
+                                showData = { "signals" },
+                            }
                         },
                         bool =
                         {
@@ -587,8 +675,16 @@ return
             {
                 active =
                 {
-                    HEATING_TEMPERATURE = { name = "Температура подогрева" },
-                    HEATING_TEMPERATURE_DELTA = { name = "Дельта температуры подогрева" },
+                    HEATING_TEMPERATURE =
+                    {
+                        name = "Температура подогрева",
+                        showData = { "parameters" },
+                    },
+                    HEATING_TEMPERATURE_DELTA =
+                    {
+                        name = "Дельта температуры подогрева",
+                        showData = { "parameters" },
+                    },
                 },
                 main =
                 {
@@ -671,11 +767,20 @@ return
                         active =
                         {
                             FINISH_COLD_WATER_PUSHING_TEMPERATURE =
-                                { name = "Температура завершения вытеснения горячей воды" },
+                            {
+                                name = "Температура завершения вытеснения горячей воды",
+                                showData = { "parameters" },
+                            },
                             COOL_TEMPERATURE =
-                                { name = "Температура охлаждения" },
+                            {
+                                name = "Температура охлаждения",
+                                showData = { "parameters" },
+                            },
                             COOL_DELTA_TEMPERATURE =
-                                { name = "Дельта температуры охлаждения" },
+                            {
+                                name = "Дельта температуры охлаждения",
+                                showData = { "parameters" },
+                            },
                         },
                     },
                     steps =
@@ -696,8 +801,16 @@ return
             {
                 active =
                 {
-                    COOLING_TEMPERATURE = { name = "Температура охлаждения" },
-                    COOLING_TEMPERATURE_DELTA = { name = "Дельта температуры охлаждения" },
+                    COOLING_TEMPERATURE =
+                    {
+                        name = "Температура охлаждения",
+                        showData = { "parameters" },
+                    },
+                    COOLING_TEMPERATURE_DELTA =
+                    {
+                        name = "Дельта температуры охлаждения",
+                        showData = { "parameters" },
+                    },
                 },
                 main =
                 {
@@ -760,10 +873,26 @@ return
             {
                 active =
                 {
-                    MIX_NODE_MIX_OPERATION = { name = "Используемая операция узла перемешивания", defaultValue = 1 },
-                    MIX_NODE_MIX_ON_TIME = { name = "Время работы" },
-                    MIX_NODE_MIX_OFF_TIME = { name = "Время простоя" },
-                    MIX_NODE_MIX_SPEED = { name = "Скорость" },
+                    MIX_NODE_MIX_OPERATION =
+                    {
+                        name = "Используемая операция узла перемешивания",
+                        defaultValue = 1
+                    },
+                    MIX_NODE_MIX_ON_TIME =
+                    {
+                        name = "Время работы",
+                        showData = { "parameters" },
+                    },
+                    MIX_NODE_MIX_OFF_TIME =
+                    {
+                        name = "Время простоя",
+                        showData = { "parameters" },
+                    },
+                    MIX_NODE_MIX_SPEED =
+                    {
+                        name = "Скорость",
+                        showData = { "parameters" },
+                    },
                 },
                 main =
                 {
@@ -799,10 +928,26 @@ return
                     {
                         active =
                         {
-                            STERILIZATION_TEMPERATURE = { name = "Температура стерилизации" },
-                            MIN_STERILIZATION_TEMPERATURE = { name = "Минимальная температура стерилизации" },
-                            COOL_TEMPERATURE = { name = "Температура охлаждения" },
-                            MAX_OPERATION_TIME = { name = "Максимальное время операции" },
+                            STERILIZATION_TEMPERATURE =
+                            {
+                                name = "Температура стерилизации",
+                                showData = { "parameters" },
+                            },
+                            MIN_STERILIZATION_TEMPERATURE =
+                            {
+                                name = "Минимальная температура стерилизации",
+                                showData = { "parameters" },
+                            },
+                            COOL_TEMPERATURE =
+                            {
+                                name = "Температура охлаждения",
+                                showData = { "parameters" },
+                            },
+                            MAX_OPERATION_TIME =
+                            {
+                                name = "Максимальное время операции",
+                                showData = { "parameters" },
+                            },
                         },
                     },
                 },
