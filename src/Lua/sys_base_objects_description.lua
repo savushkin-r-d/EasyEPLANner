@@ -264,7 +264,8 @@ return
                                 name = "Мойка завершена",
                                 showData = { "signals" },
                             },
-                            CIP_WASH_REQUEST = {
+                            CIP_WASH_REQUEST =
+                            {
                                 name = "Автоматическое включение мойки",
                                 showData = { "signals" },
                             },
@@ -326,7 +327,8 @@ return
                                 name = "Мойка завершена",
                                 showData = { "signals" },
                             },
-                            CIP_WASH_REQUEST = {
+                            CIP_WASH_REQUEST =
+                            {
                                 name = "Автоматическое включение мойки",
                                 showData = { "signals" },
                             },
@@ -391,7 +393,7 @@ return
                             CIP_WASH_REQUEST =
                             {
                                 name = "Автоматическое включение мойки",
-                                showdata = { "signals" },
+                                showData = { "signals" },
                             },
                         },
                     },
