@@ -20,6 +20,12 @@ namespace TechObject
                 DefaultValue);
             newProperty.SetValue(Value);
             newProperty.NeedDisable = NeedDisable;
+            
+            foreach(var showData in ShowDatas)
+            {
+                newProperty.AddShowData(showData);
+            }
+
             return newProperty;
         }
 

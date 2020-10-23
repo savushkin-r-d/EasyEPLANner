@@ -10,10 +10,16 @@
 
         public override BaseParameter Clone()
         {
-            var newProperty = new ActiveParameter(this.LuaName, this.Name,
-                this.DefaultValue);
-            newProperty.SetNewValue(this.Value);
-            newProperty.NeedDisable = this.NeedDisable;
+            var newProperty = new ActiveParameter(LuaName, Name,
+                DefaultValue);
+            newProperty.SetNewValue(Value);
+            newProperty.NeedDisable = NeedDisable;
+
+            foreach (var showData in ShowDatas)
+            {
+                newProperty.AddShowData(showData);
+            }
+
             return newProperty;
         }
 

@@ -71,12 +71,14 @@ namespace TechObject
         /// <param name="luaName">Lua-имя</param>
         /// <param name="name">Имя</param>
         /// <param name="defaultValue">Значение по-умолчанию</param>
-        public void AddActiveParameter(string luaName, string name, 
+        /// <returns>Добавленный параметр</returns>
+        public ActiveParameter AddActiveParameter(string luaName, string name, 
             string defaultValue)
         {
             var par = new ActiveParameter(luaName, name, defaultValue);
             par.Owner = this;
             Properties.Add(par);
+            return par;
         }
         
         /// <summary>

@@ -14,9 +14,15 @@ namespace TechObject
 
         public override BaseParameter Clone()
         {
-            var newProperty = new MainAggregateParameter(this.LuaName, 
-                this.Name, this.DefaultValue);
-            newProperty.SetValue(this.Value);
+            var newProperty = new MainAggregateParameter(LuaName, 
+                Name, DefaultValue);
+            newProperty.SetValue(Value);
+
+            foreach (var showData in ShowDatas)
+            {
+                newProperty.AddShowData(showData);
+            }
+
             return newProperty;
         }
 
