@@ -570,6 +570,7 @@ namespace Editor
 
                 editIsShown = true;
                 IsShown = true;
+                cancelChanges = false;
 
                 DisableNeededObjects(treeViewItemsList.ToArray());
             }
