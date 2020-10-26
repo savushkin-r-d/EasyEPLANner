@@ -142,6 +142,27 @@ namespace TechObject
                 return new string[] { Name, Value };
             }
         }
+
+        public override void GetDevTypes(out Device.DeviceType[] devTypes, 
+            out Device.DeviceSubType[] devSubTypes)
+        {
+            if(DisplayObjects.Contains(DisplayObject.Signals))
+            {
+                devTypes = new Device.DeviceType[]
+                {
+                    Device.DeviceType.AI,
+                    Device.DeviceType.AO,
+                    Device.DeviceType.DI,
+                    Device.DeviceType.DO
+                };
+            }
+            else
+            {
+                devTypes = new Device.DeviceType[0];
+            }
+
+            devSubTypes = null;
+        }
         #endregion
 
         private object owner;
