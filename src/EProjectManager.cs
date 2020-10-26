@@ -304,8 +304,7 @@ namespace EasyEPlanner
                         editorItem.GetDevTypes(out devTypes,
                             out devSubTypes);
 
-                        DFrm.GetInstance().ShowDevices(
-                            Device.DeviceManager.GetInstance(), devTypes,
+                        DFrm.GetInstance().ShowDevices(devTypes,
                             devSubTypes, false, true, checkedDev, null);
                     }
                 }

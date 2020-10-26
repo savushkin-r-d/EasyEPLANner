@@ -1054,13 +1054,14 @@ namespace EasyEPlanner
         /// <param name="devTypes">Показывать данные типы устройств.</param>
         /// /// <param name="devSubTypes">Показывать данные подтипы устройств.
         /// </param>
-        public bool ShowDevices(Device.DeviceManager deviceManager,
-            Device.DeviceType[] devTypes, Device.DeviceSubType[] devSubTypes,
-            bool showChannels, bool showCheckboxes, string checkedDev,
-            OnSetNewValue fn, bool isRebuiltTree = false)
+        public bool ShowDevices(Device.DeviceType[] devTypes, 
+            Device.DeviceSubType[] devSubTypes, bool showChannels, 
+            bool showCheckboxes, string checkedDev, OnSetNewValue fn, 
+            bool isRebuiltTree = false)
         {
             prevShowChannels = showChannels;
             prevShowCheckboxes = showCheckboxes;
+            var deviceManager = Device.DeviceManager.GetInstance();
 
             if (fn != null)
             {
@@ -1269,8 +1270,7 @@ namespace EasyEPlanner
                     noAssigmentBtn.Checked = true;
                 }
 
-                ShowDevices(Device.DeviceManager.GetInstance(),
-                    devTypesLastSelected, devSubTypesLastSelected, 
+                ShowDevices(devTypesLastSelected, devSubTypesLastSelected, 
                     prevShowChannels, prevShowCheckboxes, "", null, true);
             }
         }

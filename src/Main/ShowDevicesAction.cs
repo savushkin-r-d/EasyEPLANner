@@ -37,9 +37,8 @@ namespace EasyEPlanner.Main
                     DFrm.OnSetNewValue OnSetNewValueFunction = null;
                     bool isRebuiltTree = true;
 
-                    DFrm.GetInstance().ShowDevices(
-                        Device.DeviceManager.GetInstance(), devTypes, 
-                        devSubTypes, showChannels, showCheckboxes, checkedDev,
+                    DFrm.GetInstance().ShowDevices(devTypes, devSubTypes,
+                        showChannels, showCheckboxes, checkedDev,
                         OnSetNewValueFunction, isRebuiltTree);
                 }
             }

@@ -1052,9 +1052,8 @@ namespace Editor
                 DFrm.CheckShown();
                 if (DFrm.GetInstance().IsVisible())
                 {
-                    DFrm.GetInstance().ShowDevices(
-                        Device.DeviceManager.GetInstance(),
-                        null, null, true, false, "", null);
+                    DFrm.GetInstance().ShowDevices(null, null, true, false,
+                        "", null);
                 }
 
                 ModeFrm.CheckShown();
@@ -1094,10 +1093,9 @@ namespace Editor
                         Device.DeviceSubType[] devSubTypes;
                         item.GetDevTypes(out devTypes, out devSubTypes);
 
-                        DFrm.GetInstance().ShowDevices(
-                            Device.DeviceManager.GetInstance(),
-                            devTypes, devSubTypes, false, true,
-                            " " + item.EditText[1] + " ", SetNewVal);
+                        DFrm.GetInstance().ShowDevices(devTypes, devSubTypes,
+                            false, true, " " + item.EditText[1] + " ",
+                            SetNewVal);
                     }
                     else
                     {
@@ -1490,10 +1488,9 @@ namespace Editor
                             Device.DeviceSubType[] devSubTypes;
                             item.GetDevTypes(out devTypes, out devSubTypes);
 
-                            DFrm.GetInstance().ShowDevices(
-                                Device.DeviceManager.GetInstance(),
-                                devTypes, devSubTypes, false, true,
-                                item.EditText[1], SetNewVal);
+                            DFrm.GetInstance().ShowDevices(devTypes,
+                                devSubTypes, false, true, item.EditText[1],
+                                SetNewVal);
 
                             DFrm.GetInstance().SelectDevices(item.EditText[1],
                                 SetNewVal);
