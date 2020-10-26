@@ -153,15 +153,19 @@ namespace Editor
         List<DrawInfo> GetObjectToDrawOnEplanPage();
 
         /// <summary>    
-        /// Получение типов и подтипов устройства, которые должны отображаться 
-        /// в списке устройств при редактировании.
+        /// Получение типов и подтипов устройств, которые должны отображаться 
+        /// в списке устройств при редактировании, а также значения флага,
+        /// указывающего на необходимость отображения в списке устройств также
+        /// и параметров объекта, в котором редактируется элемент.
         /// </summary>
         /// <param name="devTypes">Типы устройств, допустимые для 
         /// редактирования.</param>
         /// <param name="devSubTypes">Подтипы устройств, допустимые для 
         /// редактирования.</param>
-        void GetDevTypes(out Device.DeviceType[] devTypes,
-            out Device.DeviceSubType[] devSubTypes);
+        /// <param name="displayParameters">Отобразить параметры объекта
+        /// </param>
+        void GetDisplayObjects(out Device.DeviceType[] devTypes,
+            out Device.DeviceSubType[] devSubTypes, out bool displayParameters);
 
         /// <summary>    
         /// Признак необходимости обновления отображения родительского узла.

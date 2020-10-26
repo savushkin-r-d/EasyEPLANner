@@ -300,7 +300,8 @@ namespace TechObject
 
             Device.DeviceType[] validTypes;
             Device.DeviceSubType[] validSubTypes;
-            GetDevTypes(out validTypes, out validSubTypes);
+            GetDisplayObjects(out validTypes, out validSubTypes,
+                out _);
 
             if (validTypes == null)
             {
@@ -468,11 +469,12 @@ namespace TechObject
             }
         }
 
-        override public void GetDevTypes(out Device.DeviceType[] devTypes,
-            out Device.DeviceSubType[] devSubTypes)
+        override public void GetDisplayObjects(out Device.DeviceType[] devTypes,
+            out Device.DeviceSubType[] devSubTypes, out bool displayParameters)
         {
             devTypes = this.devTypes;
             devSubTypes = this.devSubTypes;
+            displayParameters = false;
         }
 
         override public bool IsDrawOnEplanPage

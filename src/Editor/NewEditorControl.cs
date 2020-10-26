@@ -1091,7 +1091,9 @@ namespace Editor
                     {
                         Device.DeviceType[] devTypes;
                         Device.DeviceSubType[] devSubTypes;
-                        item.GetDevTypes(out devTypes, out devSubTypes);
+                        bool displayParameters;
+                        item.GetDisplayObjects(out devTypes, out devSubTypes,
+                            out displayParameters);
 
                         DFrm.GetInstance().ShowDevices(devTypes, devSubTypes,
                             false, true, " " + item.EditText[1] + " ",
@@ -1486,7 +1488,9 @@ namespace Editor
                         {
                             Device.DeviceType[] devTypes;
                             Device.DeviceSubType[] devSubTypes;
-                            item.GetDevTypes(out devTypes, out devSubTypes);
+                            bool displayParameters;
+                            item.GetDisplayObjects(out devTypes, 
+                                out devSubTypes, out displayParameters);
 
                             DFrm.GetInstance().ShowDevices(devTypes,
                                 devSubTypes, false, true, item.EditText[1],

@@ -346,11 +346,12 @@ namespace Editor
             return null;
         }
 
-        public virtual void GetDevTypes(out Device.DeviceType[] devTypes,
-            out Device.DeviceSubType[] devSubTypes)
+        public virtual void GetDisplayObjects(out Device.DeviceType[] devTypes,
+            out Device.DeviceSubType[] devSubTypes, out bool displayParameters)
         {
             devTypes = null;
             devSubTypes = null;
+            displayParameters = false;
             return;
         }
 

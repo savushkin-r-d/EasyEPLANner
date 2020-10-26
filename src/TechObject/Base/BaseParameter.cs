@@ -143,9 +143,10 @@ namespace TechObject
             }
         }
 
-        public override void GetDevTypes(out Device.DeviceType[] devTypes, 
-            out Device.DeviceSubType[] devSubTypes)
+        public override void GetDisplayObjects(out Device.DeviceType[] devTypes, 
+            out Device.DeviceSubType[] devSubTypes, out bool displayParameters)
         {
+            // Проверяем на сигналы
             if(DisplayObjects.Contains(DisplayObject.Signals))
             {
                 devTypes = new Device.DeviceType[]
@@ -160,7 +161,18 @@ namespace TechObject
             {
                 devTypes = new Device.DeviceType[0];
             }
+           
+            // Проверяем на параметры
+            if(DisplayObjects.Contains(DisplayObject.Parameters))
+            {
+                displayParameters = true;
+            }
+            else
+            {
+                displayParameters = false;
+            }
 
+            // Не используется
             devSubTypes = null;
         }
         #endregion
