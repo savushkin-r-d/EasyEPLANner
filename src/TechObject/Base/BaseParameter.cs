@@ -21,9 +21,17 @@ namespace TechObject
             string defaultValue = "") : base(name, defaultValue, defaultValue)
         {
             this.luaName = luaName;
-            displayObjectsFlags = new List<DisplayObject>();
+
+            displayObjectsFlags = new List<DisplayObject>() 
+            { 
+                DisplayObject.None 
+            };
         }
 
+        /// <summary>
+        /// Добавить вид отображаемых объектов. Вызывается из LUA.
+        /// </summary>
+        /// <param name="flagValue">Строковое значение перечисления</param>
         public void AddDisplayObject(string flagValue)
         {
             bool ignoreCase = true;
@@ -31,13 +39,31 @@ namespace TechObject
                 out DisplayObject parsedEnum);
             if(parsed)
             {
-                displayObjectsFlags.Add(parsedEnum);
+                AddDisplayObject(parsedEnum);
             }
         }
 
+        /// <summary>
+        /// Добавить вид отображаемых объектов
+        /// </summary>
+        /// <param name="displayObject">Значение перечисления</param>
         public void AddDisplayObject(DisplayObject displayObject)
         {
-            displayObjectsFlags.Add(displayObject);
+            bool replaceNoneValue = 
+                displayObjectsFlags.Contains(DisplayObject.None) &&
+                displayObjectsFlags.Count == 1 &&
+                displayObject != DisplayObject.None;
+            bool setToNoneValue = displayObject == DisplayObject.None;
+            if (replaceNoneValue || setToNoneValue)
+            {
+                displayObjectsFlags.Clear();
+                displayObjectsFlags.Add(displayObject);
+            }
+
+            if (!displayObjectsFlags.Contains(displayObject))
+            {
+                displayObjectsFlags.Add(displayObject);
+            }
         }
 
         public List<DisplayObject> DisplayObjects
