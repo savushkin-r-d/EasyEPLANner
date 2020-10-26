@@ -18,9 +18,9 @@ namespace TechObject
                 Name, DefaultValue);
             newProperty.SetValue(Value);
 
-            foreach (var showData in ShowDatas)
+            foreach (var displayObject in DisplayObjects)
             {
-                newProperty.AddShowData(showData);
+                newProperty.AddDisplayObject(displayObject);
             }
 
             return newProperty;

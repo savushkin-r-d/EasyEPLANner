@@ -23,12 +23,12 @@
 -- пишется в верхнем регистре):
 -- 1. name - русскоязычное имя параметра.
 -- 2. defaultValue - значение по-умолчанию (опционально).
--- 3. showData - список параметров, указывающий, что будет отображаться в окне
+-- 3. displayObjects - список параметров, указывающий, что будет отображаться в окне
 -- графической настройки параметра (окно "Устройства"), при настройке параметра.
--- Таблица showData может отсутствовать.
+-- Таблица displayObjects может отсутствовать.
 -- Допустимые свойства: signals - будут добавлены сигналы AO, AI, DO, DI;
 -- parameters - будут добавлены все параметры объекта.
--- Пример: showData = { "signals", "parameters" } - будут добавлены сигналы и параметры.
+-- Пример: displayObjects = { "signals", "parameters" } - будут добавлены сигналы и параметры.
 
 -- Булевые параметры (bool) - аналог активных параметров, только имеют два значения - да или нет
 -- (название таблицы - это Lua-имя параметра, пишется в верхнем регистре):
@@ -156,7 +156,7 @@ return
                     HEATING_WATER_TEMPERATURE =
                     {
                         name = "Температура подогрева воды",
-                        showData = { "parameters" },
+                        displayObjects = { "parameters" },
                     },
                 },
                 main =
@@ -189,12 +189,12 @@ return
                             CIP_WASH_END =
                             {
                                 name = "Мойка завершена",
-                                showData = { "signals" },
+                                displayObjects = { "signals" },
                             },
                             CIP_WASH_REQUEST =
                             {
                                 name = "Автоматическое включение мойки",
-                                showData = { "signals" },
+                                displayObjects = { "signals" },
                             },
                         },
                         bool =
@@ -262,12 +262,12 @@ return
                             CIP_WASH_END =
                             {
                                 name = "Мойка завершена",
-                                showData = { "signals" },
+                                displayObjects = { "signals" },
                             },
                             CIP_WASH_REQUEST =
                             {
                                 name = "Автоматическое включение мойки",
-                                showData = { "signals" },
+                                displayObjects = { "signals" },
                             },
                         },
                         bool =
@@ -325,12 +325,12 @@ return
                             CIP_WASH_END =
                             {
                                 name = "Мойка завершена",
-                                showData = { "signals" },
+                                displayObjects = { "signals" },
                             },
                             CIP_WASH_REQUEST =
                             {
                                 name = "Автоматическое включение мойки",
-                                showData = { "signals" },
+                                displayObjects = { "signals" },
                             },
                         },
                         bool =
@@ -388,12 +388,12 @@ return
                             CIP_WASH_END =
                             {
                                 name = "Мойка завершена",
-                                showData = { "signals" },
+                                displayObjects = { "signals" },
                             },
                             CIP_WASH_REQUEST =
                             {
                                 name = "Автоматическое включение мойки",
-                                showData = { "signals" },
+                                displayObjects = { "signals" },
                             },
                         },
                     },
@@ -431,22 +431,22 @@ return
                             CIP_WASH_END =
                             {
                                 name = "Мойка завершена",
-                                showData = { "signals" },
+                                displayObjects = { "signals" },
                             },
                             DI_CIP_FREE =
                             {
                                 name = "МСА свободна",
-                                showData = { "signals" },
+                                displayObjects = { "signals" },
                             },
                             CIP_WASH_REQUEST =
                             {
                                 name = "Автоматическое включение мойки",
-                                showData = { "signals" },
+                                displayObjects = { "signals" },
                             },
                             MEDIUM_CHANGE_REQUEST =
                             {
                                 name = "Запрос смены среды",
-                                showData = { "signals" },
+                                displayObjects = { "signals" },
                             },
                         },
                     },
@@ -482,7 +482,7 @@ return
                             MIXING_TIME =
                             {
                                 name = "Время заквашивания",
-                                showData = { "parameters" },
+                                displayObjects = { "parameters" },
                             },
                             OPERATION_AFTER = { name = "Номер последующей операции" },
                         },
@@ -527,7 +527,7 @@ return
                             BAKE_TIME =
                             {
                                 name = "Время нагрева (2-го шага)",
-                                showData = { "parameters" },
+                                displayObjects = { "parameters" },
                             },
                         },
                     },
@@ -546,7 +546,7 @@ return
                                 MIXING_CHECK_TIME =
                                 {
                                     name = "Время проверки температуры",
-                                    showData = { "parameters" },
+                                    displayObjects = { "parameters" },
                                 },
                                 OPERATION_AFTER = { name = "Номер следующей операции" },
                             },
@@ -566,12 +566,12 @@ return
                                 COOLING_TIME =
                                 {
                                     name = "Время охлаждения (1-го шага)",
-                                    showData = { "parameters" },
+                                    displayObjects = { "parameters" },
                                 },
                                 MIXING_CHECK_TIME =
                                 {
                                     name = "Время проверки температуры (3-го шага)",
-                                    showData = { "parameters" },
+                                    displayObjects = { "parameters" },
                                 },
                             },
                         },
@@ -623,7 +623,7 @@ return
                             product_request =
                             {
                                 name = "Запрос продукта",
-                                showData = { "signals" },
+                                displayObjects = { "signals" },
                             }
                         },
                         bool =
@@ -680,12 +680,12 @@ return
                     HEATING_TEMPERATURE =
                     {
                         name = "Температура подогрева",
-                        showData = { "parameters" },
+                        displayObjects = { "parameters" },
                     },
                     HEATING_TEMPERATURE_DELTA =
                     {
                         name = "Дельта температуры подогрева",
-                        showData = { "parameters" },
+                        displayObjects = { "parameters" },
                     },
                 },
                 main =
@@ -771,17 +771,17 @@ return
                             FINISH_COLD_WATER_PUSHING_TEMPERATURE =
                             {
                                 name = "Температура завершения вытеснения горячей воды",
-                                showData = { "parameters" },
+                                displayObjects = { "parameters" },
                             },
                             COOL_TEMPERATURE =
                             {
                                 name = "Температура охлаждения",
-                                showData = { "parameters" },
+                                displayObjects = { "parameters" },
                             },
                             COOL_DELTA_TEMPERATURE =
                             {
                                 name = "Дельта температуры охлаждения",
-                                showData = { "parameters" },
+                                displayObjects = { "parameters" },
                             },
                         },
                     },
@@ -806,12 +806,12 @@ return
                     COOLING_TEMPERATURE =
                     {
                         name = "Температура охлаждения",
-                        showData = { "parameters" },
+                        displayObjects = { "parameters" },
                     },
                     COOLING_TEMPERATURE_DELTA =
                     {
                         name = "Дельта температуры охлаждения",
-                        showData = { "parameters" },
+                        displayObjects = { "parameters" },
                     },
                 },
                 main =
@@ -883,17 +883,17 @@ return
                     MIX_NODE_MIX_ON_TIME =
                     {
                         name = "Время работы",
-                        showData = { "parameters" },
+                        displayObjects = { "parameters" },
                     },
                     MIX_NODE_MIX_OFF_TIME =
                     {
                         name = "Время простоя",
-                        showData = { "parameters" },
+                        displayObjects = { "parameters" },
                     },
                     MIX_NODE_MIX_SPEED =
                     {
                         name = "Скорость",
-                        showData = { "parameters" },
+                        displayObjects = { "parameters" },
                     },
                 },
                 main =
@@ -933,22 +933,22 @@ return
                             STERILIZATION_TEMPERATURE =
                             {
                                 name = "Температура стерилизации",
-                                showData = { "parameters" },
+                                displayObjects = { "parameters" },
                             },
                             MIN_STERILIZATION_TEMPERATURE =
                             {
                                 name = "Минимальная температура стерилизации",
-                                showData = { "parameters" },
+                                displayObjects = { "parameters" },
                             },
                             COOL_TEMPERATURE =
                             {
                                 name = "Температура охлаждения",
-                                showData = { "parameters" },
+                                displayObjects = { "parameters" },
                             },
                             MAX_OPERATION_TIME =
                             {
                                 name = "Максимальное время операции",
-                                showData = { "parameters" },
+                                displayObjects = { "parameters" },
                             },
                         },
                     },

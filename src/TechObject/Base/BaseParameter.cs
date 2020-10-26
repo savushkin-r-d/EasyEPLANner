@@ -21,30 +21,30 @@ namespace TechObject
             string defaultValue = "") : base(name, defaultValue, defaultValue)
         {
             this.luaName = luaName;
-            showDataFlags = new List<ShowData>();
+            displayObjectsFlags = new List<DisplayObject>();
         }
 
-        public void AddShowData(string flagValue)
+        public void AddDisplayObject(string flagValue)
         {
             bool ignoreCase = true;
             var parsed = Enum.TryParse(flagValue, ignoreCase,
-                out ShowData parsedEnum);
+                out DisplayObject parsedEnum);
             if(parsed)
             {
-                showDataFlags.Add(parsedEnum);
+                displayObjectsFlags.Add(parsedEnum);
             }
         }
 
-        public void AddShowData(ShowData showData)
+        public void AddDisplayObject(DisplayObject displayObject)
         {
-            showDataFlags.Add(showData);
+            displayObjectsFlags.Add(displayObject);
         }
 
-        public List<ShowData> ShowDatas
+        public List<DisplayObject> DisplayObjects
         {
             get
             {
-                return showDataFlags;
+                return displayObjectsFlags;
             }
         }
 
@@ -120,9 +120,9 @@ namespace TechObject
 
         private object owner;
         private string luaName;
-        private List<ShowData> showDataFlags;
+        private List<DisplayObject> displayObjectsFlags;
 
-        public enum ShowData
+        public enum DisplayObject
         {
             None = 1,
             Signals,

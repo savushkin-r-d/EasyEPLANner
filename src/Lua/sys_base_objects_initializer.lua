@@ -95,13 +95,13 @@ init_active_parameters = function(object, activeParameters)
         -- Данные для добавления параметра
         local name = value.name or ""
         local defaultValue = value.defaultValue or ""
-        local showData = value.showData or { }
+        local displayObjects = value.displayObjects or { }
 
         -- Добавить активный параметр
         local parameter = object:AddActiveParameter(luaName, name, defaultValue)
 
-        for showProperty, value in pairs(showData) do
-            parameter:AddShowData(value)
+        for showProperty, value in pairs(displayObjects) do
+            parameter:AddDisplayObject(value)
         end
 
     end

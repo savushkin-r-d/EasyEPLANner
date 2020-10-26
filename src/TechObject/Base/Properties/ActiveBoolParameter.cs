@@ -21,9 +21,9 @@ namespace TechObject
             newProperty.SetValue(Value);
             newProperty.NeedDisable = NeedDisable;
             
-            foreach(var showData in ShowDatas)
+            foreach(var displayObject in DisplayObjects)
             {
-                newProperty.AddShowData(showData);
+                newProperty.AddDisplayObject(displayObject);
             }
 
             return newProperty;
