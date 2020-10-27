@@ -314,7 +314,7 @@ namespace EasyEPlanner
                             techObjectIndex = techObjectManager
                                 .TechObjects
                                 .IndexOf(
-                                mainObject as TechObject.TechObject) + 1;
+                                mainObject as TechObject.TechObject);
                         }
 
                         DFrm.GetInstance().ShowDevices(devTypes,

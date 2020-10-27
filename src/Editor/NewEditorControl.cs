@@ -1101,7 +1101,7 @@ namespace Editor
                                 .GetInstance();
                             techObjectIndex = techObjectManager
                                 .TechObjects
-                                .IndexOf(mainItem as TechObject.TechObject) + 1;
+                                .IndexOf(mainItem as TechObject.TechObject);
                         }
 
                         DFrm.GetInstance().ShowDevices(devTypes, devSubTypes,
@@ -1509,14 +1509,14 @@ namespace Editor
                                 techObjectIndex = techObjectManager
                                     .TechObjects
                                     .IndexOf(
-                                    mainItem as TechObject.TechObject) + 1;
+                                    mainItem as TechObject.TechObject);
                             }
 
                             DFrm.GetInstance().ShowDevices(devTypes, 
                                 devSubTypes, displayParameters, techObjectIndex,
                                 false, true, item.EditText[1], SetNewVal);
 
-                            DFrm.GetInstance().SelectDevices(item.EditText[1],
+                            DFrm.GetInstance().SelectDisplayObjects(item.EditText[1],
                                 SetNewVal);
 
                             editorTView.RefreshObjects(treeViewItemsList);
