@@ -9,20 +9,14 @@ namespace TechObject
     public class MainAggregateParameter : ActiveBoolParameter
     {
         public MainAggregateParameter(string luaName, string name,
-            string defaultValue) : base(luaName, name, defaultValue)
-        { }
+            string defaultValue, List<DisplayObject> displayObjects = null)
+            : base(luaName, name, defaultValue, displayObjects) { }
 
         public override BaseParameter Clone()
         {
             var newProperty = new MainAggregateParameter(LuaName, 
-                Name, DefaultValue);
+                Name, DefaultValue, DisplayObjects);
             newProperty.SetValue(Value);
-
-            foreach (var displayObject in DisplayObjects)
-            {
-                newProperty.AddDisplayObject(displayObject);
-            }
-
             return newProperty;
         }
 

@@ -18,14 +18,24 @@ namespace TechObject
         public abstract new BaseParameter Clone();
 
         public BaseParameter(string luaName, string name, 
-            string defaultValue = "") : base(name, defaultValue, defaultValue)
+            string defaultValue = "", List<DisplayObject> displayObjects = null)
+            : base(name, defaultValue, defaultValue)
         {
             this.luaName = luaName;
 
-            displayObjectsFlags = new List<DisplayObject>() 
-            { 
-                DisplayObject.None 
-            };
+            if(displayObjects != null)
+            {
+                displayObjectsFlags = new List<DisplayObject>();
+                foreach(var displayObject in displayObjects)
+                {
+                    displayObjectsFlags.Add(displayObject);
+                }
+            }
+            else
+            {
+                displayObjectsFlags = new List<DisplayObject>() 
+                { DisplayObject.None };
+            }
         }
 
         /// <summary>
@@ -39,30 +49,21 @@ namespace TechObject
                 out DisplayObject parsedEnum);
             if(parsed)
             {
-                AddDisplayObject(parsedEnum);
-            }
-        }
+                bool replaceNoneValue =
+                    displayObjectsFlags.Contains(DisplayObject.None) &&
+                    displayObjectsFlags.Count == 1 &&
+                    parsedEnum != DisplayObject.None;
+                bool setToNoneValue = parsedEnum == DisplayObject.None;
+                if (replaceNoneValue || setToNoneValue)
+                {
+                    displayObjectsFlags.Clear();
+                    displayObjectsFlags.Add(parsedEnum);
+                }
 
-        /// <summary>
-        /// Добавить вид отображаемых объектов
-        /// </summary>
-        /// <param name="displayObject">Значение перечисления</param>
-        public void AddDisplayObject(DisplayObject displayObject)
-        {
-            bool replaceNoneValue = 
-                displayObjectsFlags.Contains(DisplayObject.None) &&
-                displayObjectsFlags.Count == 1 &&
-                displayObject != DisplayObject.None;
-            bool setToNoneValue = displayObject == DisplayObject.None;
-            if (replaceNoneValue || setToNoneValue)
-            {
-                displayObjectsFlags.Clear();
-                displayObjectsFlags.Add(displayObject);
-            }
-
-            if (!displayObjectsFlags.Contains(displayObject))
-            {
-                displayObjectsFlags.Add(displayObject);
+                if (!displayObjectsFlags.Contains(parsedEnum))
+                {
+                    displayObjectsFlags.Add(parsedEnum);
+                }
             }
         }
 

@@ -12,20 +12,15 @@ namespace TechObject
     public class ActiveBoolParameter : BaseParameter
     {
         public ActiveBoolParameter(string luaName, string name, 
-            string defaultValue) : base(luaName, name, defaultValue) { }
+            string defaultValue, List<DisplayObject> displayObjects = null)
+            : base(luaName, name, defaultValue, displayObjects) { }
 
         public override BaseParameter Clone()
         {
             var newProperty = new ActiveBoolParameter(LuaName, Name,
-                DefaultValue);
+                DefaultValue, DisplayObjects);
             newProperty.SetValue(Value);
             newProperty.NeedDisable = NeedDisable;
-            
-            foreach(var displayObject in DisplayObjects)
-            {
-                newProperty.AddDisplayObject(displayObject);
-            }
-
             return newProperty;
         }
 
