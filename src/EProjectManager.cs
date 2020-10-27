@@ -306,7 +306,8 @@ namespace EasyEPlanner
                             out devSubTypes, out displayParameters);
 
                         DFrm.GetInstance().ShowDevices(devTypes,
-                            devSubTypes, false, true, checkedDev, null);
+                            devSubTypes, displayParameters, false, true,
+                            checkedDev, null);
                     }
                 }
             }

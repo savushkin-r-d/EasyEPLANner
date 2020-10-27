@@ -333,6 +333,7 @@ namespace EasyEPlanner
 
         private Device.DeviceType[] devTypesLastSelected = null;
         private Device.DeviceSubType[] devSubTypesLastSelected = null;
+        private bool displayParametersLastSelected = false;
         private bool prevShowChannels = false;
         private bool prevShowCheckboxes = false;
 
@@ -1055,12 +1056,13 @@ namespace EasyEPlanner
         /// /// <param name="devSubTypes">Показывать данные подтипы устройств.
         /// </param>
         public bool ShowDevices(Device.DeviceType[] devTypes, 
-            Device.DeviceSubType[] devSubTypes, bool showChannels, 
-            bool showCheckboxes, string checkedDev, OnSetNewValue fn, 
-            bool isRebuiltTree = false)
+            Device.DeviceSubType[] devSubTypes, bool displayParameters,
+            bool showChannels, bool showCheckboxes, string checkedDev, 
+            OnSetNewValue fn, bool isRebuiltTree = false)
         {
             prevShowChannels = showChannels;
             prevShowCheckboxes = showCheckboxes;
+
             var deviceManager = Device.DeviceManager.GetInstance();
 
             if (fn != null)
@@ -1088,6 +1090,7 @@ namespace EasyEPlanner
 
             devTypesLastSelected = devTypes;
             devSubTypesLastSelected = devSubTypes;
+            displayParametersLastSelected = displayParameters;
 
             Refresh(deviceManager, checkedDev);
 
@@ -1271,7 +1274,8 @@ namespace EasyEPlanner
                 }
 
                 ShowDevices(devTypesLastSelected, devSubTypesLastSelected, 
-                    prevShowChannels, prevShowCheckboxes, "", null, true);
+                    prevShowChannels, displayParametersLastSelected,
+                    prevShowCheckboxes, "", null, true);
             }
         }
 
