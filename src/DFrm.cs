@@ -508,10 +508,8 @@ namespace EasyEPlanner
         /// <summary>
         /// Обновление дерева на основе текущих устройств проекта.
         /// </summary>
-        /// <param name="deviceManager">Менеджер устройств проекта.</param>
-        /// <param name="checkedDev">Выбранные устройства.</param>
-        private void Refresh(Device.DeviceManager deviceManager,
-            string checkedDev)
+        /// <param name="checkedObjects">Выбранные объекты.</param>
+        private void Refresh(string checkedObjects)
         {
             devicesTreeViewAdv.BeginUpdate();
 
@@ -519,8 +517,34 @@ namespace EasyEPlanner
             devicesTreeViewAdv.Refresh();
             var treeModel = new TreeModel();
 
-            string mainNodeName = "Устройства проекта";
-            var root = new Node(mainNodeName);
+            FillDevicesNode(ref treeModel, checkedObjects);
+            if(displayParametersLastSelected)
+            {
+                FillParametersNode(ref treeModel, checkedObjects);
+            }
+
+            SortTreeView(treeModel); // Update to new feature
+
+            devicesTreeViewAdv.Model = treeModel;
+
+            List<TreeNodeAdv> nodes = devicesTreeViewAdv.AllNodes.ToList();
+            TreeNodeAdv treeNode = nodes[0];
+            OnHideOperationTree.Execute(treeNode); // Update to new feature
+
+            devicesTreeViewAdv.ExpandAll();
+            devicesTreeViewAdv.Refresh();
+            devicesTreeViewAdv.EndUpdate();
+        }
+
+        /// <summary>
+        /// Заполнить дерево устройствами/сигналами проекта
+        /// </summary>
+        /// <param name="treeModel">Корень модели</param>
+        /// <param name="checkedDev">Уже выбранные устройства</param>
+        private void FillDevicesNode(ref TreeModel treeModel, string checkedDev)
+        {
+            string nodeName = "Устройства проекта";
+            var root = new Node(nodeName);
             treeModel.Nodes.Add(root);
 
             // Подтипы, которые отдельно записываем в устройства
@@ -537,6 +561,7 @@ namespace EasyEPlanner
 
             Dictionary<string, int> countDev = MakeDevicesCounterDictionary(
                 root.Nodes);
+            var deviceManager = Device.DeviceManager.GetInstance();
             foreach (Device.IODevice dev in deviceManager.Devices)
             {
                 string deviceDescription = GenerateDeviceDescription(dev);
@@ -554,17 +579,20 @@ namespace EasyEPlanner
             }
 
             UpdateDevicesCountInHeaders(devicesArray, root, countDev);
-            SortTreeView(treeModel);
+        }
 
-            devicesTreeViewAdv.Model = treeModel;
-
-            List<TreeNodeAdv> nodes = devicesTreeViewAdv.AllNodes.ToList();
-            TreeNodeAdv treeNode = nodes[0];
-            OnHideOperationTree.Execute(treeNode);
-
-            devicesTreeViewAdv.ExpandAll();
-            devicesTreeViewAdv.Refresh();
-            devicesTreeViewAdv.EndUpdate();
+        /// <summary>
+        /// Заполнить узел с параметрами
+        /// </summary>
+        /// <param name="treeModel">Корень модели</param>
+        /// <param name="checkedObjects">Выбранные объекты</param>
+        private void FillParametersNode(ref TreeModel treeModel,
+            string checkedObjects)
+        {
+            //TODO: Fill params.
+            string nodeName = "Устройства проекта";
+            var root = new Node(nodeName);
+            treeModel.Nodes.Add(root);
         }
 
         /// <summary>
@@ -1055,14 +1083,20 @@ namespace EasyEPlanner
         /// <param name="devTypes">Показывать данные типы устройств.</param>
         /// /// <param name="devSubTypes">Показывать данные подтипы устройств.
         /// </param>
+        /// <param name="checkedObjects">Выбранные объекты</param>
+        /// <param name="displayParameters">Показывать параметры</param>
+        /// <param name="fn">Делегат для установки нового значения в поле
+        /// </param>
+        /// <param name="isRebuiltTree">Нужно ли перестраивать дерево</param>
+        /// <param name="showChannels">Показать каналы</param>
+        /// <param name="showCheckboxes">Показать чек-боксы</param>
         public bool ShowDevices(Device.DeviceType[] devTypes, 
             Device.DeviceSubType[] devSubTypes, bool displayParameters,
-            bool showChannels, bool showCheckboxes, string checkedDev, 
+            bool showChannels, bool showCheckboxes, string checkedObjects, 
             OnSetNewValue fn, bool isRebuiltTree = false)
         {
             prevShowChannels = showChannels;
             prevShowCheckboxes = showCheckboxes;
-            var deviceManager = Device.DeviceManager.GetInstance();
 
             if (fn != null)
             {
@@ -1091,7 +1125,7 @@ namespace EasyEPlanner
             devSubTypesLastSelected = devSubTypes;
             displayParametersLastSelected = displayParameters;
 
-            Refresh(deviceManager, checkedDev);
+            Refresh(checkedObjects);
 
             ShowDlg();
             return true;
@@ -1293,7 +1327,7 @@ namespace EasyEPlanner
         /// </summary>
         public void RefreshTree()
         {
-            Refresh(Device.DeviceManager.GetInstance(), "");
+            Refresh("");
         }
 
         /// <summary>
