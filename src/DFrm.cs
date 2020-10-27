@@ -1062,7 +1062,6 @@ namespace EasyEPlanner
         {
             prevShowChannels = showChannels;
             prevShowCheckboxes = showCheckboxes;
-
             var deviceManager = Device.DeviceManager.GetInstance();
 
             if (fn != null)
