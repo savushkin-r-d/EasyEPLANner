@@ -1101,7 +1101,7 @@ namespace Editor
                                 .GetInstance();
                             techObjectIndex = techObjectManager
                                 .TechObjects
-                                .IndexOf(mainItem as TechObject.TechObject + 1);
+                                .IndexOf(mainItem as TechObject.TechObject) + 1;
                         }
 
                         DFrm.GetInstance().ShowDevices(devTypes, devSubTypes,
