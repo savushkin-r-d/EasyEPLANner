@@ -147,34 +147,29 @@ namespace TechObject
         public override void GetDisplayObjects(out Device.DeviceType[] devTypes, 
             out Device.DeviceSubType[] devSubTypes, out bool displayParameters)
         {
-            // Проверяем на сигналы
-            if(DisplayObjects.Contains(DisplayObject.Signals))
-            {
-                devTypes = new Device.DeviceType[]
-                {
-                    Device.DeviceType.AI,
-                    Device.DeviceType.AO,
-                    Device.DeviceType.DI,
-                    Device.DeviceType.DO
-                };
-            }
-            else
-            {
-                devTypes = new Device.DeviceType[0];
-            }
-           
-            // Проверяем на параметры
-            if(DisplayObjects.Contains(DisplayObject.Parameters))
-            {
-                displayParameters = true;
-            }
-            else
-            {
-                displayParameters = false;
-            }
+            devSubTypes = null; // Not used;
+            devTypes = new Device.DeviceType[0];
+            displayParameters = false;
 
-            // Не используется
-            devSubTypes = null;
+            foreach (var displayObject in DisplayObjects)
+            {
+                switch (displayObject)
+                {
+                    case DisplayObject.Parameters:
+                        displayParameters = true;
+                        break;
+
+                    case DisplayObject.Signals:
+                        devTypes = new Device.DeviceType[]
+                        {
+                            Device.DeviceType.AI,
+                            Device.DeviceType.AO,
+                            Device.DeviceType.DI,
+                            Device.DeviceType.DO
+                        };
+                        break;
+                }
+            }
         }
         #endregion
 
