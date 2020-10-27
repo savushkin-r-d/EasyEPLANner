@@ -1516,8 +1516,8 @@ namespace Editor
                                 devSubTypes, displayParameters, techObjectIndex,
                                 false, true, item.EditText[1], SetNewVal);
 
-                            DFrm.GetInstance().SelectDisplayObjects(item.EditText[1],
-                                SetNewVal);
+                            DFrm.GetInstance().SelectDisplayObjects(
+                                item.EditText[1], SetNewVal);
 
                             editorTView.RefreshObjects(treeViewItemsList);
                             HiglihtItems();
