@@ -334,6 +334,7 @@ namespace EasyEPlanner
         private Device.DeviceType[] devTypesLastSelected = null;
         private Device.DeviceSubType[] devSubTypesLastSelected = null;
         private bool displayParametersLastSelected = false;
+        private int techObjectIndexLastSelected = -1;
         private bool prevShowChannels = false;
         private bool prevShowCheckboxes = false;
 
@@ -509,7 +510,9 @@ namespace EasyEPlanner
         /// Обновление дерева на основе текущих устройств проекта.
         /// </summary>
         /// <param name="checkedObjects">Выбранные объекты.</param>
-        private void Refresh(string checkedObjects)
+        /// <param name="techObjectIndex">Индекс технологического объекта
+        /// </param>
+        private void Refresh(string checkedObjects, int techObjectIndex)
         {
             devicesTreeViewAdv.BeginUpdate();
 
@@ -520,7 +523,8 @@ namespace EasyEPlanner
             FillDevicesNode(ref treeModel, checkedObjects);
             if(displayParametersLastSelected)
             {
-                FillParametersNode(ref treeModel, checkedObjects);
+                FillParametersNode(ref treeModel, checkedObjects,
+                    techObjectIndex);
             }
 
             SortTreeView(treeModel); // Update to new feature
@@ -586,11 +590,13 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="treeModel">Корень модели</param>
         /// <param name="checkedObjects">Выбранные объекты</param>
+        /// <param name="techObjectIndex">Индекс выбранного технологического
+        /// объекта</param>
         private void FillParametersNode(ref TreeModel treeModel,
-            string checkedObjects)
+            string checkedObjects, int techObjectIndex)
         {
             //TODO: Fill params.
-            string nodeName = "Устройства проекта";
+            string nodeName = "Параметры объекта";
             var root = new Node(nodeName);
             treeModel.Nodes.Add(root);
         }
@@ -1085,6 +1091,8 @@ namespace EasyEPlanner
         /// </param>
         /// <param name="checkedObjects">Выбранные объекты</param>
         /// <param name="displayParameters">Показывать параметры</param>
+        /// <param name="techObjectIndex">Индекс технологического объекта
+        /// </param>
         /// <param name="fn">Делегат для установки нового значения в поле
         /// </param>
         /// <param name="isRebuiltTree">Нужно ли перестраивать дерево</param>
@@ -1092,8 +1100,9 @@ namespace EasyEPlanner
         /// <param name="showCheckboxes">Показать чек-боксы</param>
         public bool ShowDevices(Device.DeviceType[] devTypes, 
             Device.DeviceSubType[] devSubTypes, bool displayParameters,
-            bool showChannels, bool showCheckboxes, string checkedObjects, 
-            OnSetNewValue fn, bool isRebuiltTree = false)
+            int techObjectIndex, bool showChannels, bool showCheckboxes,
+            string checkedObjects, OnSetNewValue fn,
+            bool isRebuiltTree = false)
         {
             prevShowChannels = showChannels;
             prevShowCheckboxes = showCheckboxes;
@@ -1124,8 +1133,9 @@ namespace EasyEPlanner
             devTypesLastSelected = devTypes;
             devSubTypesLastSelected = devSubTypes;
             displayParametersLastSelected = displayParameters;
+            techObjectIndexLastSelected = techObjectIndex;
 
-            Refresh(checkedObjects);
+            Refresh(checkedObjects, techObjectIndexLastSelected);
 
             ShowDlg();
             return true;
@@ -1307,8 +1317,8 @@ namespace EasyEPlanner
                 }
 
                 ShowDevices(devTypesLastSelected, devSubTypesLastSelected, 
-                    prevShowChannels, displayParametersLastSelected,
-                    prevShowCheckboxes, "", null, true);
+                    displayParametersLastSelected, techObjectIndexLastSelected,
+                    prevShowChannels, prevShowCheckboxes, "", null, true);
             }
         }
 
@@ -1327,7 +1337,7 @@ namespace EasyEPlanner
         /// </summary>
         public void RefreshTree()
         {
-            Refresh("");
+            Refresh("", -1);
         }
 
         /// <summary>

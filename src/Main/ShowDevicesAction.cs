@@ -31,6 +31,7 @@ namespace EasyEPlanner.Main
                     Device.DeviceType[] devTypes = null;            // All.
                     Device.DeviceSubType[] devSubTypes = null;      // All.
                     bool displayParameters = false;
+                    int techObjectIndex = -1;
                     bool showChannels = true;
                     bool showCheckboxes = false;
                     string checkedDev = "";
@@ -38,8 +39,9 @@ namespace EasyEPlanner.Main
                     bool isRebuiltTree = true;
 
                     DFrm.GetInstance().ShowDevices(devTypes, devSubTypes,
-                        displayParameters, showChannels, showCheckboxes,
-                        checkedDev, OnSetNewValueFunction, isRebuiltTree);
+                        displayParameters, techObjectIndex, showChannels,
+                        showCheckboxes, checkedDev, OnSetNewValueFunction,
+                        isRebuiltTree);
                 }
             }
             catch (Exception ex)

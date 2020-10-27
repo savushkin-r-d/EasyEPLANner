@@ -299,15 +299,27 @@ namespace EasyEPlanner
                     string checkedDev = editorItem.EditText[1];
                     if (DFrm.GetInstance().IsVisible() == true)
                     {
-                        Device.DeviceType[] devTypes;
-                        Device.DeviceSubType[] devSubTypes;
-                        bool displayParameters;
-                        editorItem.GetDisplayObjects(out devTypes,
-                            out devSubTypes, out displayParameters);
+                        editorItem.GetDisplayObjects(
+                            out Device.DeviceType[] devTypes,
+                            out Device.DeviceSubType[] devSubTypes,
+                            out bool displayParameters);
+
+                        int techObjectIndex = -1;
+                        var mainObject = Editor.Editor.GetInstance()
+                            .EditorForm.GetParentBranch(editorItem);
+                        if(mainObject != null)
+                        {
+                            var techObjectManager = TechObject.TechObjectManager
+                                .GetInstance();
+                            techObjectIndex = techObjectManager
+                                .TechObjects
+                                .IndexOf(
+                                mainObject as TechObject.TechObject) + 1;
+                        }
 
                         DFrm.GetInstance().ShowDevices(devTypes,
-                            devSubTypes, displayParameters, false, true,
-                            checkedDev, null);
+                            devSubTypes, displayParameters, techObjectIndex,
+                            false, true, checkedDev, null);
                     }
                 }
             }

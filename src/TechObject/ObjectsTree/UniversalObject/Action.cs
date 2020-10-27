@@ -298,10 +298,8 @@ namespace TechObject
             Device.DeviceType deviceType = device.DeviceType;
             Device.DeviceSubType deviceSubType = device.DeviceSubType;
 
-            Device.DeviceType[] validTypes;
-            Device.DeviceSubType[] validSubTypes;
-            GetDisplayObjects(out validTypes, out validSubTypes,
-                out _);
+            GetDisplayObjects(out Device.DeviceType[] validTypes,
+                out Device.DeviceSubType[] validSubTypes, out _);
 
             if (validTypes == null)
             {

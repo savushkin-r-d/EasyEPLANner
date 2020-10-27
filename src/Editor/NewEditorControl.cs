@@ -1052,7 +1052,7 @@ namespace Editor
                 DFrm.CheckShown();
                 if (DFrm.GetInstance().IsVisible())
                 {
-                    DFrm.GetInstance().ShowDevices(null, null, false, true,
+                    DFrm.GetInstance().ShowDevices(null, null, false, -1, true,
                         false, "", null);
                 }
 
@@ -1089,14 +1089,23 @@ namespace Editor
                     ITreeViewItem item = GetActiveItem();
                     if (item != null)
                     {
-                        Device.DeviceType[] devTypes;
-                        Device.DeviceSubType[] devSubTypes;
-                        bool displayParameters;
-                        item.GetDisplayObjects(out devTypes, out devSubTypes,
-                            out displayParameters);
+                        item.GetDisplayObjects(out Device.DeviceType[] devTypes,
+                            out Device.DeviceSubType[] devSubTypes,
+                            out bool displayParameters);
+
+                        int techObjectIndex = -1;
+                        ITreeViewItem mainItem = GetParentBranch(item);
+                        if (mainItem != null)
+                        {
+                            var techObjectManager = TechObject.TechObjectManager
+                                .GetInstance();
+                            techObjectIndex = techObjectManager
+                                .TechObjects
+                                .IndexOf(mainItem as TechObject.TechObject + 1);
+                        }
 
                         DFrm.GetInstance().ShowDevices(devTypes, devSubTypes,
-                            displayParameters, false, true,
+                            displayParameters, techObjectIndex, false, true,
                             " " + item.EditText[1] + " ", SetNewVal);
                     }
                     else
@@ -1486,15 +1495,26 @@ namespace Editor
                         DFrm.CheckShown();
                         if (DFrm.GetInstance().IsVisible())
                         {
-                            Device.DeviceType[] devTypes;
-                            Device.DeviceSubType[] devSubTypes;
-                            bool displayParameters;
-                            item.GetDisplayObjects(out devTypes, 
-                                out devSubTypes, out displayParameters);
+                            item.GetDisplayObjects(
+                                out Device.DeviceType[] devTypes, 
+                                out Device.DeviceSubType[] devSubTypes,
+                                out bool displayParameters);
+
+                            int techObjectIndex = -1;
+                            ITreeViewItem mainItem = GetParentBranch(item);
+                            if (mainItem != null)
+                            {
+                                var techObjectManager = TechObject
+                                    .TechObjectManager.GetInstance();
+                                techObjectIndex = techObjectManager
+                                    .TechObjects
+                                    .IndexOf(
+                                    mainItem as TechObject.TechObject) + 1;
+                            }
 
                             DFrm.GetInstance().ShowDevices(devTypes, 
-                                devSubTypes, displayParameters, false, true,
-                                item.EditText[1], SetNewVal);
+                                devSubTypes, displayParameters, techObjectIndex,
+                                false, true, item.EditText[1], SetNewVal);
 
                             DFrm.GetInstance().SelectDevices(item.EditText[1],
                                 SetNewVal);
