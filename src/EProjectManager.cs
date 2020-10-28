@@ -308,7 +308,7 @@ namespace EasyEPlanner
                     if (DFrm.GetInstance().IsVisible() == true)
                     {                        
                         DFrm.OnSetNewValue onSetNewValue = null;
-                        DFrm.GetInstance().ShowDevices(editorItem, 
+                        DFrm.GetInstance().ShowDisplayObjects(editorItem, 
                             onSetNewValue);
                     }
                 }

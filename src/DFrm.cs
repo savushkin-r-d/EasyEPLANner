@@ -1114,7 +1114,7 @@ namespace EasyEPlanner
         /// <param name="fn">Делегат для установки нового значения в поле
         /// </param>
         /// <param name="isRebuiltTree">Нужно ли перестраивать дерево</param>
-        public bool ShowDevices(Editor.ITreeViewItem selectedItem,
+        public bool ShowDisplayObjects(Editor.ITreeViewItem selectedItem,
             OnSetNewValue fn, bool isRebuiltTree = false)
         {
             bool enabledEdit = EProjectManager.GetInstance().EnabledEditMode;
@@ -1399,7 +1399,7 @@ namespace EasyEPlanner
 
                 OnSetNewValue onSetNewValue = null;
                 bool isRebuiltTree = true;
-                ShowDevices(treeViewItemLastSelected, onSetNewValue, 
+                ShowDisplayObjects(treeViewItemLastSelected, onSetNewValue, 
                     isRebuiltTree);
             }
         }

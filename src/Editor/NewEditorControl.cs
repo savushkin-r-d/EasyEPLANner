@@ -1056,7 +1056,7 @@ namespace Editor
                 {
                     ITreeViewItem item = null;
                     DFrm.OnSetNewValue onSetNewValue = null;
-                    DFrm.GetInstance().ShowDevices(item, onSetNewValue);
+                    DFrm.GetInstance().ShowDisplayObjects(item, onSetNewValue);
                 }
 
                 ModeFrm.CheckShown();
@@ -1093,7 +1093,7 @@ namespace Editor
                     ITreeViewItem item = GetActiveItem();
                     if (item != null)
                     {
-                        DFrm.GetInstance().ShowDevices(item, SetNewVal);
+                        DFrm.GetInstance().ShowDisplayObjects(item, SetNewVal);
                     }
                     else
                     {
@@ -1479,7 +1479,7 @@ namespace Editor
                         DFrm.CheckShown();
                         if (DFrm.GetInstance().IsVisible())
                         {
-                            DFrm.GetInstance().ShowDevices(item, SetNewVal);
+                            DFrm.GetInstance().ShowDisplayObjects(item, SetNewVal);
                             editorTView.RefreshObjects(treeViewItemsList);
                             HiglihtItems();
                         }

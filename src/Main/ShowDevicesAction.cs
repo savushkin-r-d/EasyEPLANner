@@ -31,7 +31,7 @@ namespace EasyEPlanner.Main
                     Editor.ITreeViewItem treeViewItem = null;
                     DFrm.OnSetNewValue OnSetNewValueFunction = null;
                     bool isRebuiltTree = true;
-                    DFrm.GetInstance().ShowDevices(treeViewItem,
+                    DFrm.GetInstance().ShowDisplayObjects(treeViewItem,
                         OnSetNewValueFunction, isRebuiltTree);
                 }
             }
