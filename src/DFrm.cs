@@ -531,7 +531,7 @@ namespace EasyEPlanner
 
         #region Refresh
         /// <summary>
-        /// Обновление дерева на основе текущих устройств проекта.
+        /// Обновление дерева на основе текущих объектов проекта.
         /// </summary>
         /// <param name="checkedObjects">Выбранные объекты.</param>
         /// <param name="techObjectIndex">Индекс технологического объекта
@@ -1101,16 +1101,9 @@ namespace EasyEPlanner
         #endregion
 
         /// <summary>
-        /// Построение дерева на основе определенных устройств проекта.
+        /// Построение дерева на основе определенных объектов проекта.
         /// </summary>
-        /// <param name="deviceManager">Менеджер устройств проекта.</param>
-        /// <param name="devTypes">Показывать данные типы устройств.</param>
-        /// /// <param name="devSubTypes">Показывать данные подтипы устройств.
-        /// </param>
-        /// <param name="checkedObjects">Выбранные объекты</param>
-        /// <param name="displayParameters">Показывать параметры</param>
-        /// <param name="techObjectIndex">Индекс технологического объекта
-        /// </param>
+        /// <param name="selectedItem">Выбранный элемент в редакторе</param>
         /// <param name="fn">Делегат для установки нового значения в поле
         /// </param>
         /// <param name="isRebuiltTree">Нужно ли перестраивать дерево</param>
