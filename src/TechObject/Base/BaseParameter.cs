@@ -36,6 +36,36 @@ namespace TechObject
                 displayObjectsFlags = new List<DisplayObject>() 
                 { DisplayObject.None };
             }
+
+            SetUpDisplayObjects();
+        }
+
+        /// <summary>
+        /// Настройка отображаемых объектов
+        /// </summary>
+        private void SetUpDisplayObjects()
+        {
+            deviceTypes = new Device.DeviceType[0];
+            displayParameters = false;
+            foreach (var displayObject in DisplayObjects)
+            {
+                switch (displayObject)
+                {
+                    case DisplayObject.Parameters:
+                        displayParameters = true;
+                        break;
+
+                    case DisplayObject.Signals:
+                        deviceTypes = new Device.DeviceType[]
+                        {
+                            Device.DeviceType.AI,
+                            Device.DeviceType.AO,
+                            Device.DeviceType.DI,
+                            Device.DeviceType.DO
+                        };
+                        break;
+                }
+            }
         }
 
         /// <summary>
@@ -148,34 +178,17 @@ namespace TechObject
             out Device.DeviceSubType[] devSubTypes, out bool displayParameters)
         {
             devSubTypes = null; // Not used;
-            devTypes = new Device.DeviceType[0];
-            displayParameters = false;
-
-            foreach (var displayObject in DisplayObjects)
-            {
-                switch (displayObject)
-                {
-                    case DisplayObject.Parameters:
-                        displayParameters = true;
-                        break;
-
-                    case DisplayObject.Signals:
-                        devTypes = new Device.DeviceType[]
-                        {
-                            Device.DeviceType.AI,
-                            Device.DeviceType.AO,
-                            Device.DeviceType.DI,
-                            Device.DeviceType.DO
-                        };
-                        break;
-                }
-            }
+            devTypes = deviceTypes;
+            displayParameters = this.displayParameters;
         }
         #endregion
 
         private object owner;
         private string luaName;
         private List<DisplayObject> displayObjectsFlags;
+
+        private Device.DeviceType[] deviceTypes;
+        private bool displayParameters;
 
         public enum DisplayObject
         {

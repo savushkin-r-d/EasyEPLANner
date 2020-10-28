@@ -1049,11 +1049,14 @@ namespace Editor
                     column.IsEditable = Editable;
                 }
 
+                EProjectManager.GetInstance().StopEditModes();
+
                 DFrm.CheckShown();
                 if (DFrm.GetInstance().IsVisible())
                 {
-                    DFrm.GetInstance().ShowDevices(null, null, false, -1, true,
-                        false, "", null);
+                    ITreeViewItem item = null;
+                    DFrm.OnSetNewValue onSetNewValue = null;
+                    DFrm.GetInstance().ShowDevices(item, onSetNewValue);
                 }
 
                 ModeFrm.CheckShown();
@@ -1063,8 +1066,6 @@ namespace Editor
                        TechObject.TechObjectManager.GetInstance(),
                        false, false, null, null, null, true);
                 }
-
-                EProjectManager.GetInstance().StopEditModes();
             }
             else
             {
@@ -1083,30 +1084,16 @@ namespace Editor
                     column.IsEditable = Editable;
                 }
 
+                //Редактирование устройств (запуск).
+                EProjectManager.GetInstance().StartEditModesWithDelay();
+
                 DFrm.CheckShown();
                 if (DFrm.GetInstance().IsVisible())
                 {
                     ITreeViewItem item = GetActiveItem();
                     if (item != null)
                     {
-                        item.GetDisplayObjects(out Device.DeviceType[] devTypes,
-                            out Device.DeviceSubType[] devSubTypes,
-                            out bool displayParameters);
-
-                        int techObjectIndex = -1;
-                        ITreeViewItem mainItem = GetParentBranch(item);
-                        if (mainItem != null)
-                        {
-                            var techObjectManager = TechObject.TechObjectManager
-                                .GetInstance();
-                            techObjectIndex = techObjectManager
-                                .TechObjects
-                                .IndexOf(mainItem as TechObject.TechObject);
-                        }
-
-                        DFrm.GetInstance().ShowDevices(devTypes, devSubTypes,
-                            displayParameters, techObjectIndex, false, true,
-                            " " + item.EditText[1] + " ", SetNewVal);
+                        DFrm.GetInstance().ShowDevices(item, SetNewVal);
                     }
                     else
                     {
@@ -1139,9 +1126,6 @@ namespace Editor
                         ModeFrm.GetInstance().ShowNoModes();
                     }
                 }
-
-                //Редактирование устройств (запуск).
-                EProjectManager.GetInstance().StartEditModesWithDelay();
             }
         }
 
@@ -1495,30 +1479,7 @@ namespace Editor
                         DFrm.CheckShown();
                         if (DFrm.GetInstance().IsVisible())
                         {
-                            item.GetDisplayObjects(
-                                out Device.DeviceType[] devTypes, 
-                                out Device.DeviceSubType[] devSubTypes,
-                                out bool displayParameters);
-
-                            int techObjectIndex = -1;
-                            ITreeViewItem mainItem = GetParentBranch(item);
-                            if (mainItem != null)
-                            {
-                                var techObjectManager = TechObject
-                                    .TechObjectManager.GetInstance();
-                                techObjectIndex = techObjectManager
-                                    .TechObjects
-                                    .IndexOf(
-                                    mainItem as TechObject.TechObject);
-                            }
-
-                            DFrm.GetInstance().ShowDevices(devTypes, 
-                                devSubTypes, displayParameters, techObjectIndex,
-                                false, true, item.EditText[1], SetNewVal);
-
-                            DFrm.GetInstance().SelectDisplayObjects(
-                                item.EditText[1], SetNewVal);
-
+                            DFrm.GetInstance().ShowDevices(item, SetNewVal);
                             editorTView.RefreshObjects(treeViewItemsList);
                             HiglihtItems();
                         }

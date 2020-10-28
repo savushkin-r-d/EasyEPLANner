@@ -354,6 +354,7 @@ namespace EasyEPlanner
             return true;
         }
 
+        private Editor.ITreeViewItem treeViewItemLastSelected = null;
         private Device.DeviceType[] devTypesLastSelected = null;
         private Device.DeviceSubType[] devSubTypesLastSelected = null;
         private bool displayParametersLastSelected = false;
@@ -543,7 +544,7 @@ namespace EasyEPlanner
             devicesTreeViewAdv.Refresh();
             var treeModel = new TreeModel();
 
-            FillDevicesNode(ref treeModel, checkedObjects);
+            FillDevicesNode(ref treeModel);
 
             bool showParameters = displayParametersLastSelected &&
                 techObjectIndex >= 0;
@@ -553,8 +554,7 @@ namespace EasyEPlanner
                     .GetInstance().TechObjects[techObjectIndex];
                 TechObject.Params parameters = techObject.GetParamsManager()
                     .Float;
-                FillParametersNode(ref treeModel, checkedObjects,
-                    parameters);
+                FillParametersNode(ref treeModel, parameters);
             }
 
             SortTreeView(treeModel);
@@ -568,14 +568,15 @@ namespace EasyEPlanner
             devicesTreeViewAdv.ExpandAll();
             devicesTreeViewAdv.Refresh();
             devicesTreeViewAdv.EndUpdate();
+
+            SelectDisplayObjects(checkedObjects, functionAfterCheck);
         }
 
         /// <summary>
         /// Заполнить дерево устройствами/сигналами проекта
         /// </summary>
         /// <param name="treeModel">Корень модели</param>
-        /// <param name="checkedDev">Уже выбранные устройства</param>
-        private void FillDevicesNode(ref TreeModel treeModel, string checkedDev)
+        private void FillDevicesNode(ref TreeModel treeModel)
         {
             string nodeName = "Устройства проекта";
             var root = new Node(nodeName);
@@ -607,8 +608,7 @@ namespace EasyEPlanner
                 }
                 else
                 {
-                    FillTypeNode(dev, root, deviceDescription, countDev,
-                        checkedDev);
+                    FillTypeNode(dev, root, deviceDescription, countDev);
                 }
             }
 
@@ -619,10 +619,9 @@ namespace EasyEPlanner
         /// Заполнить узел с параметрами
         /// </summary>
         /// <param name="treeModel">Корень модели</param>
-        /// <param name="checkedObjects">Выбранные объекты</param>
         /// <param name="parameters">Параметры объекта</param>
         private void FillParametersNode(ref TreeModel treeModel,
-            string checkedObjects, TechObject.Params parameters)
+            TechObject.Params parameters)
         {
             var root = new Node();
             treeModel.Nodes.Add(root);
@@ -638,7 +637,6 @@ namespace EasyEPlanner
                 var newNode = new Node(name);
                 newNode.Tag = parameters.GetParam(name);
                 root.Nodes.Add(newNode);
-                ChangeDisplayObjectCheckState(newNode, checkedObjects, name);
             }
 
             string nodeName = "Параметры объекта";
@@ -724,10 +722,8 @@ namespace EasyEPlanner
         /// <param name="root">Главный узел</param>
         /// <param name="deviceDescription">Описание устройства</param>
         /// <param name="countDev">Словарь для подсчета количества</param>
-        /// <param name="checkedDev">Выбранные устройств в действии</param>
         private void FillTypeNode(Device.IODevice dev, Node root,
-            string deviceDescription, Dictionary<string, int> countDev,
-            string checkedDev)
+            string deviceDescription, Dictionary<string, int> countDev)
         {
             Node devTypeNode = FindDevTypeNode(root, dev);
             if (devTypeNode == null)
@@ -739,7 +735,6 @@ namespace EasyEPlanner
                 dev.ObjectNumber, devTypeNode);
             Node devNode = MakeDeviceNode(devTypeNode, devObjectNode,
                 dev, deviceDescription);
-            ChangeDisplayObjectCheckState(devNode, checkedDev, dev.Name);
             bool isDevVisible = AddDevChannels(devNode, dev);
             HideIncorrectDeviceTypeSubType(devNode, isDevVisible, countDev, 
                 dev);
@@ -904,27 +899,6 @@ namespace EasyEPlanner
             }
 
             return devNode;
-        }
-
-        /// <summary>
-        /// Изменение состояния CheckBox
-        /// </summary>
-        /// <param name="dev">Устройство</param>
-        /// <param name="checkedObjs">Выбранные объекты</param>
-        /// <param name="node">Узел для проверки</param>
-        private void ChangeDisplayObjectCheckState(Node node,
-            string checkedObjs, string objName)
-        {
-            checkedObjs = ' ' + checkedObjs + ' ';
-            if (checkedObjs != "  " &&
-                checkedObjs.Contains(' ' + objName + ' '))
-            {
-                node.CheckState = CheckState.Checked;
-            }
-            else
-            {
-                node.CheckState = CheckState.Unchecked;
-            }
         }
 
         /// <summary>
@@ -1140,23 +1114,27 @@ namespace EasyEPlanner
         /// <param name="fn">Делегат для установки нового значения в поле
         /// </param>
         /// <param name="isRebuiltTree">Нужно ли перестраивать дерево</param>
-        /// <param name="showChannels">Показать каналы</param>
-        /// <param name="showCheckboxes">Показать чек-боксы</param>
-        public bool ShowDevices(Device.DeviceType[] devTypes, 
-            Device.DeviceSubType[] devSubTypes, bool displayParameters,
-            int techObjectIndex, bool showChannels, bool showCheckboxes,
-            string checkedObjects, OnSetNewValue fn,
-            bool isRebuiltTree = false)
+        public bool ShowDevices(Editor.ITreeViewItem selectedItem,
+            OnSetNewValue fn, bool isRebuiltTree = false)
         {
-            prevShowChannels = showChannels;
-            prevShowCheckboxes = showCheckboxes;
+            bool enabledEdit = EProjectManager.GetInstance().EnabledEditMode;
+            prevShowChannels = !enabledEdit;
+            prevShowCheckboxes = enabledEdit;
+            treeViewItemLastSelected = selectedItem;
+
+            GetItemDataForShowObjects(treeViewItemLastSelected,
+                out Device.DeviceType[] devTypes,
+                out Device.DeviceSubType[] devSubTypes,
+                out bool displayParameters, 
+                out int techObjectIndex,
+                out string checkedObjects);
 
             if (fn != null)
             {
                 functionAfterCheck = fn;
             }
 
-            if (showCheckboxes)
+            if (prevShowCheckboxes)
             {
                 devicesTreeViewAdv.NodeControls.Insert(0, nodeCheckBox);
             }
@@ -1180,9 +1158,53 @@ namespace EasyEPlanner
             techObjectIndexLastSelected = techObjectIndex;
 
             Refresh(checkedObjects, techObjectIndexLastSelected);
-
             ShowDlg();
             return true;
+        }
+
+        /// <summary>
+        /// Получить информацию из элемента для отображения объектов
+        /// </summary>
+        /// <param name="item">Элемент из редактора</param>
+        /// <param name="devTypes">Отображаемые типы устройств</param>
+        /// <param name="devSubTypes">Отображаемые подтипы устройств</param>
+        /// <param name="displayParameters">Отображать параметры объекта</param>
+        /// <param name="techObjectIndex">Индекс технологического объекта
+        /// </param>
+        /// <param name="checkedObjects">Выбранные объекты в поле</param>
+        private void GetItemDataForShowObjects(
+            Editor.ITreeViewItem item, out Device.DeviceType[] devTypes,
+                out Device.DeviceSubType[] devSubTypes, 
+                out bool displayParameters, out int techObjectIndex,
+                out string checkedObjects)
+        {
+            if(item != null)
+            {
+                item.GetDisplayObjects(out devTypes, out devSubTypes,
+                    out displayParameters);
+                checkedObjects = item.EditText[1];
+
+                techObjectIndex = -1;
+                var mainObject = Editor.Editor.GetInstance()
+                    .EditorForm.GetParentBranch(item);
+                if (mainObject != null)
+                {
+                    var techObjectManager = TechObject.TechObjectManager
+                        .GetInstance();
+                    techObjectIndex = techObjectManager
+                        .TechObjects
+                        .IndexOf(
+                        mainObject as TechObject.TechObject);
+                }
+            }
+            else
+            {
+                devTypes = null; // Отобразить все типы
+                devSubTypes = null; // Отобразить все подтипы
+                displayParameters = false;
+                checkedObjects = string.Empty;
+                techObjectIndex = -1;
+            }
         }
 
         /// <summary>
@@ -1375,9 +1397,10 @@ namespace EasyEPlanner
                     noAssigmentBtn.Checked = true;
                 }
 
-                ShowDevices(devTypesLastSelected, devSubTypesLastSelected, 
-                    displayParametersLastSelected, techObjectIndexLastSelected,
-                    prevShowChannels, prevShowCheckboxes, "", null, true);
+                OnSetNewValue onSetNewValue = null;
+                bool isRebuiltTree = true;
+                ShowDevices(treeViewItemLastSelected, onSetNewValue, 
+                    isRebuiltTree);
             }
         }
 

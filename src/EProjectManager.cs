@@ -38,6 +38,8 @@ namespace EasyEPlanner
 
                 bool res = startInteractionAction.Execute(oContext);
             }
+
+            EnabledEditMode = true;
         }
 
         public void StopEditModes()
@@ -48,6 +50,8 @@ namespace EasyEPlanner
 
                 selectInteractionWhileEditModes = null;
             }
+
+            EnabledEditMode = false;
         }
 
         public void SetEditInteraction(SelectInteractionWhileEditModes inter)
@@ -179,6 +183,11 @@ namespace EasyEPlanner
             DFrm.GetInstance().CloseEditor();
         }
 
+        /// <summary>
+        /// Включен ли режим редактирования объектов
+        /// </summary>
+        public bool EnabledEditMode { get; set; }
+
         private Project currentProject = null;
         private static EProjectManager instance = new EProjectManager();
         private SelectInteractionWhileEditModes selectInteractionWhileEditModes =
@@ -296,30 +305,11 @@ namespace EasyEPlanner
                         .SetNewVal(newDevices);
 
                     //Обновление списка устройств при его наличии.
-                    string checkedDev = editorItem.EditText[1];
                     if (DFrm.GetInstance().IsVisible() == true)
-                    {
-                        editorItem.GetDisplayObjects(
-                            out Device.DeviceType[] devTypes,
-                            out Device.DeviceSubType[] devSubTypes,
-                            out bool displayParameters);
-
-                        int techObjectIndex = -1;
-                        var mainObject = Editor.Editor.GetInstance()
-                            .EditorForm.GetParentBranch(editorItem);
-                        if(mainObject != null)
-                        {
-                            var techObjectManager = TechObject.TechObjectManager
-                                .GetInstance();
-                            techObjectIndex = techObjectManager
-                                .TechObjects
-                                .IndexOf(
-                                mainObject as TechObject.TechObject);
-                        }
-
-                        DFrm.GetInstance().ShowDevices(devTypes,
-                            devSubTypes, displayParameters, techObjectIndex,
-                            false, true, checkedDev, null);
+                    {                        
+                        DFrm.OnSetNewValue onSetNewValue = null;
+                        DFrm.GetInstance().ShowDevices(editorItem, 
+                            onSetNewValue);
                     }
                 }
             }
