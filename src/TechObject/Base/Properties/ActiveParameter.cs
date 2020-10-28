@@ -1,4 +1,6 @@
-﻿namespace TechObject
+﻿using System.Collections.Generic;
+
+namespace TechObject
 {
     /// <summary>
     /// Активный (отображаемый) параметр
@@ -6,14 +8,15 @@
     public class ActiveParameter : BaseParameter
     {
         public ActiveParameter(string luaName, string name, 
-            string defaultValue = "") : base(luaName, name, defaultValue) { }
+            string defaultValue = "", List<DisplayObject> displayObjects = null)
+            : base(luaName, name, defaultValue, displayObjects) { }
 
         public override BaseParameter Clone()
         {
-            var newProperty = new ActiveParameter(this.LuaName, this.Name,
-                this.DefaultValue);
-            newProperty.SetNewValue(this.Value);
-            newProperty.NeedDisable = this.NeedDisable;
+            var newProperty = new ActiveParameter(LuaName, Name,
+                DefaultValue, DisplayObjects);
+            newProperty.SetNewValue(Value);
+            newProperty.NeedDisable = NeedDisable;
             return newProperty;
         }
 

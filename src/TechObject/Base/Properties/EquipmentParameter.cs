@@ -9,7 +9,8 @@ namespace TechObject
     public class EquipmentParameter : BaseParameter
     {
         public EquipmentParameter(string luaName, string name,
-            string defaultValue = "") : base(luaName, name, defaultValue) 
+            string defaultValue = "", List<DisplayObject> displayObjects = null)
+            : base(luaName, name, defaultValue, displayObjects) 
         {
             deviceIndexes = new List<int>();
             parameterIndexes = new List<int>();
@@ -18,7 +19,7 @@ namespace TechObject
         public override BaseParameter Clone()
         {
             var newProperty = new EquipmentParameter(LuaName, Name,
-                DefaultValue);
+                DefaultValue, DisplayObjects);
             newProperty.SetNewValue(Value);
             newProperty.NeedDisable = NeedDisable;
             return newProperty;

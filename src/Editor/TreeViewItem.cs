@@ -194,11 +194,12 @@ namespace Editor
             return null;
         }
 
-        virtual public void GetDevTypes(out Device.DeviceType[] devTypes,
-            out Device.DeviceSubType[] devSubTypes)
+        virtual public void GetDisplayObjects(out Device.DeviceType[] devTypes,
+            out Device.DeviceSubType[] devSubTypes, out bool displayParameters)
         {
             devTypes = null;
             devSubTypes = null;
+            displayParameters = false;
         }
 
         public virtual bool NeedRebuildParent

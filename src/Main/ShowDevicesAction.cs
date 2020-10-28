@@ -28,18 +28,10 @@ namespace EasyEPlanner.Main
                 }
                 else
                 {
-                    Device.DeviceType[] devTypes = null;            // All.
-                    Device.DeviceSubType[] devSubTypes = null;      // All.
-
-                    bool showChannels = true;
-                    bool showCheckboxes = false;
-                    string checkedDev = "";
+                    Editor.ITreeViewItem treeViewItem = null;
                     DFrm.OnSetNewValue OnSetNewValueFunction = null;
                     bool isRebuiltTree = true;
-
-                    DFrm.GetInstance().ShowDevices(
-                        Device.DeviceManager.GetInstance(), devTypes, 
-                        devSubTypes, showChannels, showCheckboxes, checkedDev,
+                    DFrm.GetInstance().ShowDisplayObjects(treeViewItem,
                         OnSetNewValueFunction, isRebuiltTree);
                 }
             }

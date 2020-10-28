@@ -298,9 +298,8 @@ namespace TechObject
             Device.DeviceType deviceType = device.DeviceType;
             Device.DeviceSubType deviceSubType = device.DeviceSubType;
 
-            Device.DeviceType[] validTypes;
-            Device.DeviceSubType[] validSubTypes;
-            GetDevTypes(out validTypes, out validSubTypes);
+            GetDisplayObjects(out Device.DeviceType[] validTypes,
+                out Device.DeviceSubType[] validSubTypes, out _);
 
             if (validTypes == null)
             {
@@ -468,11 +467,12 @@ namespace TechObject
             }
         }
 
-        override public void GetDevTypes(out Device.DeviceType[] devTypes,
-            out Device.DeviceSubType[] devSubTypes)
+        override public void GetDisplayObjects(out Device.DeviceType[] devTypes,
+            out Device.DeviceSubType[] devSubTypes, out bool displayParameters)
         {
             devTypes = this.devTypes;
             devSubTypes = this.devSubTypes;
+            displayParameters = false;
         }
 
         override public bool IsDrawOnEplanPage

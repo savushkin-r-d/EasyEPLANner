@@ -12,31 +12,39 @@ namespace TechObject
     public class ActiveBoolParameter : BaseParameter
     {
         public ActiveBoolParameter(string luaName, string name, 
-            string defaultValue) : base(luaName, name, defaultValue) { }
+            string defaultValue, List<DisplayObject> displayObjects = null)
+            : base(luaName, name, defaultValue, displayObjects) { }
 
         public override BaseParameter Clone()
         {
-            var newProperty = new ActiveBoolParameter(this.LuaName, this.Name,
-                this.DefaultValue);
-            newProperty.SetValue(this.Value);
-            newProperty.NeedDisable = this.NeedDisable;
+            var newProperty = new ActiveBoolParameter(LuaName, Name,
+                DefaultValue, DisplayObjects);
+            newProperty.SetValue(Value);
+            newProperty.NeedDisable = NeedDisable;
             return newProperty;
         }
 
         #region реализация ItreeViewItem
         public override bool SetNewValue(string newValue)
         {
-            var value = newValue == "Да" ? "false" : "true";
+            var value = newValue ==
+                trueDisplayValue ? trueLogicValue : falseLogicValue;
             base.SetValue(value);
             return true;
+        }
+
+        public override bool SetNewValue(string newValue, bool isExtraValue)
+        {
+            return SetNewValue(newValue);
         }
 
         public override string[] DisplayText
         {
             get
             {
-                string value = Value == "true" ? "Да" : "Нет";
-                return new string[] { this.Name, value };
+                string value = Value ==
+                    trueLogicValue ? trueDisplayValue : falseDisplayValue;
+                return new string[] { Name, value };
             }
         }
 
@@ -79,6 +87,31 @@ namespace TechObject
                 return true;
             }
         }
+
+        public override List<string> BaseObjectsList
+        {
+            get
+            {
+                return new List<string>() 
+                { 
+                    trueDisplayValue, 
+                    falseDisplayValue 
+                };
+            }
+        }
+
+        public override bool NeedRebuildParent
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
+
+        const string trueDisplayValue = "Да";
+        const string falseDisplayValue = "Нет";
+        const string trueLogicValue = "true";
+        const string falseLogicValue = "false";
     }
 }

@@ -570,6 +570,7 @@ namespace Editor
 
                 editIsShown = true;
                 IsShown = true;
+                cancelChanges = false;
 
                 DisableNeededObjects(treeViewItemsList.ToArray());
             }
@@ -1048,12 +1049,14 @@ namespace Editor
                     column.IsEditable = Editable;
                 }
 
+                EProjectManager.GetInstance().StopEditModes();
+
                 DFrm.CheckShown();
                 if (DFrm.GetInstance().IsVisible())
                 {
-                    DFrm.GetInstance().ShowDevices(
-                        Device.DeviceManager.GetInstance(),
-                        null, null, true, false, "", null);
+                    ITreeViewItem item = null;
+                    DFrm.OnSetNewValue onSetNewValue = null;
+                    DFrm.GetInstance().ShowDisplayObjects(item, onSetNewValue);
                 }
 
                 ModeFrm.CheckShown();
@@ -1063,8 +1066,6 @@ namespace Editor
                        TechObject.TechObjectManager.GetInstance(),
                        false, false, null, null, null, true);
                 }
-
-                EProjectManager.GetInstance().StopEditModes();
             }
             else
             {
@@ -1083,20 +1084,16 @@ namespace Editor
                     column.IsEditable = Editable;
                 }
 
+                //Редактирование устройств (запуск).
+                EProjectManager.GetInstance().StartEditModesWithDelay();
+
                 DFrm.CheckShown();
                 if (DFrm.GetInstance().IsVisible())
                 {
                     ITreeViewItem item = GetActiveItem();
                     if (item != null)
                     {
-                        Device.DeviceType[] devTypes;
-                        Device.DeviceSubType[] devSubTypes;
-                        item.GetDevTypes(out devTypes, out devSubTypes);
-
-                        DFrm.GetInstance().ShowDevices(
-                            Device.DeviceManager.GetInstance(),
-                            devTypes, devSubTypes, false, true,
-                            " " + item.EditText[1] + " ", SetNewVal);
+                        DFrm.GetInstance().ShowDisplayObjects(item, SetNewVal);
                     }
                     else
                     {
@@ -1129,9 +1126,6 @@ namespace Editor
                         ModeFrm.GetInstance().ShowNoModes();
                     }
                 }
-
-                //Редактирование устройств (запуск).
-                EProjectManager.GetInstance().StartEditModesWithDelay();
             }
         }
 
@@ -1327,7 +1321,8 @@ namespace Editor
 
             // Проверяем колонку, и какой объект редактируется и вызываем
             // соответствующий редактор для ячейки.
-            if (e.Column.Index == 1 && item.ContainsBaseObject)
+            if (e.Column.Index == 1 &&
+                (item.ContainsBaseObject || item.IsBoolParameter))
             {
                 InitComboBoxCellEditor(item.BaseObjectsList);
                 comboBoxCellEditor.Text = e.Value.ToString();
@@ -1335,16 +1330,6 @@ namespace Editor
                 e.Control = comboBoxCellEditor;
                 comboBoxCellEditor.Focus();
                 editorTView.Freeze();
-            }
-            else if (e.Column.Index == 1 && item.IsBoolParameter)
-            {
-                item.SetNewValue(e.Value.ToString());
-                IsCellEditing = false;
-                e.Cancel = true;
-                var parentItems = item.Parent.Items;
-                editorTView.RefreshObjects(parentItems);
-                DisableNeededObjects(parentItems);
-                return;
             }
             else
             {
@@ -1420,10 +1405,10 @@ namespace Editor
             IsCellEditing = false;
             bool isModified = false;
             editorTView.LabelEdit = false;
-            var selectedItem = editorTView.SelectedObject as ITreeViewItem;
+            var item = editorTView.SelectedObject as ITreeViewItem;
 
             ////При нажатии Esc отменяются все изменения.
-            if (cancelChanges || selectedItem == null)
+            if (cancelChanges || item == null)
             {
                 e.Cancel = true;
                 cancelChanges = false;
@@ -1432,27 +1417,28 @@ namespace Editor
             }
 
             // Если редактируются базовые операции/объекты/шаги
-            if (e.Column.Index == 1 && selectedItem.ContainsBaseObject)
+            if (e.Column.Index == 1 &&
+                (item.ContainsBaseObject || item.IsBoolParameter))
             {
                 e.NewValue = comboBoxCellEditor.Text;
                 editorTView.Controls.Remove(comboBoxCellEditor);
                 // true (IsExtraBool) - флаг работы с "экстра" полями
-                isModified = selectedItem.SetNewValue(e.NewValue.ToString(),
+                isModified = item.SetNewValue(e.NewValue.ToString(),
                     true);
             }
             else
             {
                 editorTView.Controls.Remove(textBoxCellEditor);
-                isModified = selectedItem.SetNewValue(e.NewValue.ToString());
+                isModified = item.SetNewValue(e.NewValue.ToString());
             }
 
             if (isModified)
             {
                 RefreshTree();
                 //Обновляем также и узел родителя при его наличии.
-                if (selectedItem.NeedRebuildParent)
+                if (item.NeedRebuildParent)
                 {
-                    DisableNeededObjects(selectedItem.Parent.Items);
+                    DisableNeededObjects(item.Parent.Items);
                 }
                 HiglihtItems();
             }
@@ -1493,18 +1479,7 @@ namespace Editor
                         DFrm.CheckShown();
                         if (DFrm.GetInstance().IsVisible())
                         {
-                            Device.DeviceType[] devTypes;
-                            Device.DeviceSubType[] devSubTypes;
-                            item.GetDevTypes(out devTypes, out devSubTypes);
-
-                            DFrm.GetInstance().ShowDevices(
-                                Device.DeviceManager.GetInstance(),
-                                devTypes, devSubTypes, false, true,
-                                item.EditText[1], SetNewVal);
-
-                            DFrm.GetInstance().SelectDevices(item.EditText[1],
-                                SetNewVal);
-
+                            DFrm.GetInstance().ShowDisplayObjects(item, SetNewVal);
                             editorTView.RefreshObjects(treeViewItemsList);
                             HiglihtItems();
                         }

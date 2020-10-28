@@ -38,6 +38,8 @@ namespace EasyEPlanner
 
                 bool res = startInteractionAction.Execute(oContext);
             }
+
+            EnabledEditMode = true;
         }
 
         public void StopEditModes()
@@ -48,6 +50,8 @@ namespace EasyEPlanner
 
                 selectInteractionWhileEditModes = null;
             }
+
+            EnabledEditMode = false;
         }
 
         public void SetEditInteraction(SelectInteractionWhileEditModes inter)
@@ -179,6 +183,11 @@ namespace EasyEPlanner
             DFrm.GetInstance().CloseEditor();
         }
 
+        /// <summary>
+        /// Включен ли режим редактирования объектов
+        /// </summary>
+        public bool EnabledEditMode { get; set; }
+
         private Project currentProject = null;
         private static EProjectManager instance = new EProjectManager();
         private SelectInteractionWhileEditModes selectInteractionWhileEditModes =
@@ -296,17 +305,11 @@ namespace EasyEPlanner
                         .SetNewVal(newDevices);
 
                     //Обновление списка устройств при его наличии.
-                    string checkedDev = editorItem.EditText[1];
                     if (DFrm.GetInstance().IsVisible() == true)
-                    {
-                        Device.DeviceType[] devTypes;
-                        Device.DeviceSubType[] devSubTypes;
-                        editorItem.GetDevTypes(out devTypes,
-                            out devSubTypes);
-
-                        DFrm.GetInstance().ShowDevices(
-                            Device.DeviceManager.GetInstance(), devTypes,
-                            devSubTypes, false, true, checkedDev, null);
+                    {                        
+                        DFrm.OnSetNewValue onSetNewValue = null;
+                        DFrm.GetInstance().ShowDisplayObjects(editorItem, 
+                            onSetNewValue);
                     }
                 }
             }
