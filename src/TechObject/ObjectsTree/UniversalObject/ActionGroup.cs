@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Editor;
 
 namespace TechObject
 {
-    public class Action_WashSeats : Action
+    /// <summary>
+    /// Действие с возможностью группировки объектов
+    /// </summary>
+    public class ActionGroup : Action
     {
         /// <summary>
         /// Создание нового действия.
@@ -16,33 +16,26 @@ namespace TechObject
         /// <param name="luaName">Имя действия - как оно будет называться 
         /// в таблице Lua.</param>
         /// <param name="owner">Владелец действия (Шаг)</param>
-        public Action_WashSeats(string name, Step owner, string luaName)
+        /// <param name="devSubTypes">Допустимые подтипы устройств</param>
+        /// <param name="devTypes">Допустимые типы устройств</param>
+        public ActionGroup(string name, Step owner, string luaName,
+            Device.DeviceType[] devTypes = null,
+            Device.DeviceSubType[] devSubTypes = null)
             : base(name, owner, luaName)
         {
-            subAction_WashGroupSeats = new List<Action>();
-            subAction_WashGroupSeats.Add(new Action(GroupDefaultName, owner,
-                string.Empty,
-                new Device.DeviceType[]
-                { 
-                    Device.DeviceType.V
-                },
-                new Device.DeviceSubType[] 
-                {
-                    Device.DeviceSubType.V_MIXPROOF,
-                    Device.DeviceSubType.V_AS_MIXPROOF,
-                    Device.DeviceSubType.V_IOLINK_MIXPROOF
-                }));
+            subActions = new List<Action>();
+            var newAction = new Action(GroupDefaultName, owner, string.Empty,
+                devTypes, devSubTypes);
+            subActions.Add(newAction);
         }
 
         public override Action Clone()
         {
-            Action_WashSeats clone = (Action_WashSeats)base.Clone();
-
-            clone.subAction_WashGroupSeats = new List<Action>();
-
-            foreach (Action action in subAction_WashGroupSeats)
+            var clone = (ActionGroup)base.Clone();
+            clone.subActions = new List<Action>();
+            foreach (Action action in subActions)
             {
-                clone.subAction_WashGroupSeats.Add(action.Clone());
+                clone.subActions.Add(action.Clone());
             }
 
             return clone;
@@ -51,7 +44,7 @@ namespace TechObject
         override public void ModifyDevNames(int newTechObjectN, 
             int oldTechObjectN, string techObjectName)
         {
-            foreach (Action subAction in subAction_WashGroupSeats)
+            foreach (Action subAction in subActions)
             {
                 subAction.ModifyDevNames(newTechObjectN, oldTechObjectN, 
                     techObjectName);
@@ -62,7 +55,7 @@ namespace TechObject
             int newTechObjectNumber, string oldTechObjectName,
             int oldTechObjectNumber)
         {
-            foreach (Action subAction in subAction_WashGroupSeats)
+            foreach (Action subAction in subActions)
             {
                 subAction.ModifyDevNames(newTechObjectName, 
                     newTechObjectNumber, oldTechObjectName, 
@@ -77,20 +70,20 @@ namespace TechObject
         /// <param name="groupNumber">Дополнительный параметр.</param>
         public override void AddDev(int index, int groupNumber)
         {
-            while (subAction_WashGroupSeats.Count <= groupNumber)
+            while (subActions.Count <= groupNumber)
             {
                 Device.DeviceType[] devTypes = null;
                 Device.DeviceSubType[] devSubTypes = null;
-                subAction_WashGroupSeats.First()?
+                subActions.First()?
                     .GetDisplayObjects(out devTypes, out devSubTypes, out _);
 
                 var newAction = new Action(GroupDefaultName, owner, string.Empty,
                     devTypes, devSubTypes);
                 newAction.DrawStyle = DrawStyle;
-                subAction_WashGroupSeats.Add(newAction);
+                subActions.Add(newAction);
             }
 
-            subAction_WashGroupSeats[groupNumber].AddDev(index, 0);
+            subActions[groupNumber].AddDev(index, 0);
 
             deviceIndex.Add(index);
         }
@@ -104,7 +97,7 @@ namespace TechObject
         override public void Synch(int[] array)
         {
             base.Synch(array);
-            foreach (Action subAction in subAction_WashGroupSeats)
+            foreach (Action subAction in subActions)
             {
                 subAction.Synch(array);
             }
@@ -118,16 +111,19 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         override public string SaveAsLuaTable(string prefix)
         {
-            if (subAction_WashGroupSeats.Count == 0) return "";
+            if (subActions.Count == 0)
+            {
+                return string.Empty;
+            }
 
-            string res = "";
+            string res = string.Empty;
 
-            foreach (Action group in subAction_WashGroupSeats)
+            foreach (Action group in subActions)
             {
                 res += group.SaveAsLuaTable(prefix + "\t");
             }
 
-            if (res != "")
+            if (res != string.Empty)
             {
                 res = prefix + luaName + " = --" + name + "\n" +
                     prefix + "\t{\n" +
@@ -139,16 +135,15 @@ namespace TechObject
         }
 
         #region Реализация ITreeViewItem
-
         override public string[] DisplayText
         {
             get
             {
-                Device.DeviceManager deviceManager = Device.DeviceManager
+                var deviceManager = Device.DeviceManager
                     .GetInstance();
-                string res = "";
+                string res = string.Empty;
 
-                foreach (Action group in subAction_WashGroupSeats)
+                foreach (Action group in subActions)
                 {
                     res += "{";
 
@@ -174,7 +169,7 @@ namespace TechObject
         {
             get
             {
-                return subAction_WashGroupSeats.ToArray();
+                return subActions.ToArray();
             }
         }
 
@@ -192,9 +187,9 @@ namespace TechObject
             if (subAction != null)
             {
                 int minCount = 1;
-                if(subAction_WashGroupSeats.Count > minCount)
+                if(subActions.Count > minCount)
                 {
-                    subAction_WashGroupSeats.Remove(subAction);
+                    subActions.Remove(subAction);
                     return true;
                 }
             }
@@ -214,19 +209,19 @@ namespace TechObject
         {
             Device.DeviceType[] devTypes = null;
             Device.DeviceSubType[] devSubTypes = null;
-            subAction_WashGroupSeats.First()?
+            subActions.First()?
                 .GetDisplayObjects(out devTypes, out devSubTypes, out _);
 
             var newAction = new Action(GroupDefaultName, owner, string.Empty,
                 devTypes, devSubTypes);
             newAction.DrawStyle = DrawStyle;
-            subAction_WashGroupSeats.Add(newAction);
+            subActions.Add(newAction);
             return newAction;
         }
 
         override public void Clear()
         {
-            foreach (Action subAction in subAction_WashGroupSeats)
+            foreach (Action subAction in subActions)
             {
                 subAction.Clear();
             }
@@ -249,9 +244,12 @@ namespace TechObject
             set
             {
                 base.DrawStyle = value;
-                if (subAction_WashGroupSeats != null)
+                if (subActions != null)
                 {
-                    subAction_WashGroupSeats[0].DrawStyle = DrawStyle;
+                    foreach(var subAction in subActions)
+                    {
+                        subAction.DrawStyle = DrawStyle;
+                    }
                 }
             }
         }
@@ -260,13 +258,17 @@ namespace TechObject
         {
             get
             {
-                switch(name)
+                switch(luaName)
                 {
-                    case "Верхние седла":
+                    case "opened_upper_seat_v":
                         return ImageIndexEnum.ActionWashUpperSeats;
 
-                    case "Нижние седла":
+                    case "opened_lower_seat_v":
                         return ImageIndexEnum.ActionWashLowerSeats;
+
+                    case "DI_DO":
+                    case "AI_AO":
+                        return ImageIndexEnum.ActionDIDOPairs;
 
                     default:
                         return ImageIndexEnum.NONE;
@@ -275,6 +277,6 @@ namespace TechObject
         }
         #endregion
 
-        private List<Action> subAction_WashGroupSeats;
+        private List<Action> subActions;
     }
 }

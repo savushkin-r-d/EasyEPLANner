@@ -25,7 +25,7 @@ namespace TechObject
             this.getN = getN;
             this.IsMainStep = isMainStep;
             this.owner = owner;
-            this.baseStep = new ActiveParameter("", "");
+            this.baseStep = new ActiveParameter(string.Empty, string.Empty);
             this.baseStep.Owner = this;
 
             items = new List<ITreeViewItem>();
@@ -62,12 +62,32 @@ namespace TechObject
                 }));
             actions[2].DrawStyle = DrawInfo.Style.RED_BOX;
 
-            actions.Add(new Action_WashSeats("Верхние седла", this,
-                "opened_upper_seat_v"));
+            actions.Add(new ActionGroup("Верхние седла", this,
+                "opened_upper_seat_v",
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.V
+                },
+                new Device.DeviceSubType[]
+                {
+                    Device.DeviceSubType.V_MIXPROOF,
+                    Device.DeviceSubType.V_AS_MIXPROOF,
+                    Device.DeviceSubType.V_IOLINK_MIXPROOF
+                }));
             actions[3].DrawStyle = DrawInfo.Style.GREEN_UPPER_BOX;
 
-            actions.Add(new Action_WashSeats("Нижние седла", this,
-                "opened_lower_seat_v"));
+            actions.Add(new ActionGroup("Нижние седла", this,
+                "opened_lower_seat_v",
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.V
+                },
+                new Device.DeviceSubType[]
+                {
+                    Device.DeviceSubType.V_MIXPROOF,
+                    Device.DeviceSubType.V_AS_MIXPROOF,
+                    Device.DeviceSubType.V_IOLINK_MIXPROOF
+                }));
             actions[4].DrawStyle = DrawInfo.Style.GREEN_LOWER_BOX;
 
             actions.Add(new Action("Сигналы для включения", this,
@@ -80,11 +100,27 @@ namespace TechObject
 
             actions.Add(new Action_Wash("Устройства", this, "wash_data"));
 
-            actions.Add(new Action_DI_DO("Группы DI -> DO DO ...", this,
-                "DI_DO"));
+            // Специальное действие - выдача дискретных сигналов 
+            // при наличии входного дискретного сигнала.
+            actions.Add(new ActionGroup("Группы DI -> DO DO ...", this,
+                "DI_DO",
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.DI,
+                    Device.DeviceType.SB,
+                    Device.DeviceType.DO
+                }));
 
-            actions.Add(new Action_AI_AO("Группы AI -> AO AO ...", this,
-                "AI_AO"));
+            // Специальное действие - выдача аналоговых сигналов при
+            // наличии входного  аналогового сигнала.
+            actions.Add(new ActionGroup("Группы AI -> AO AO ...", this,
+                "AI_AO",
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.AI,
+                    Device.DeviceType.AO,
+                    Device.DeviceType.M
+                }));
 
             items.AddRange(actions.ToArray());
 
