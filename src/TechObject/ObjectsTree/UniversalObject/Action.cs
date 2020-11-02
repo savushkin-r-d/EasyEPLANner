@@ -572,5 +572,7 @@ namespace TechObject
         protected Device.DeviceSubType[] devSubTypes;
 
         protected Step owner; // Владелец элемента
+
+        protected private const string GroupDefaultName = "Группа";
     }
 }

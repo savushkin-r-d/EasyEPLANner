@@ -60,16 +60,16 @@ namespace TechObject
                     Device.DeviceType.DO, 
                     Device.DeviceType.M
                 }));
-
             actions[2].DrawStyle = DrawInfo.Style.RED_BOX;
+
             actions.Add(new Action_WashSeats("Верхние седла", this,
                 "opened_upper_seat_v"));
-
             actions[3].DrawStyle = DrawInfo.Style.GREEN_UPPER_BOX;
+
             actions.Add(new Action_WashSeats("Нижние седла", this,
                 "opened_lower_seat_v"));
-
             actions[4].DrawStyle = DrawInfo.Style.GREEN_LOWER_BOX;
+
             actions.Add(new Action("Сигналы для включения", this,
                 "required_FB",
                 new Device.DeviceType[]
@@ -96,7 +96,6 @@ namespace TechObject
                 items.Add(timeParam);
                 items.Add(nextStepN);
             }
-
         }
 
         public Step Clone(GetN getN, string name = "")

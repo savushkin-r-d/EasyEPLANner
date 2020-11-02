@@ -20,13 +20,18 @@ namespace TechObject
             : base(name, owner, luaName)
         {
             subAction_WashGroupSeats = new List<Action>();
-            subAction_WashGroupSeats.Add(
-                new Action("Группа", owner, "",
-                new Device.DeviceType[] { Device.DeviceType.V },
-                new Device.DeviceSubType[] {
-                Device.DeviceSubType.V_MIXPROOF,
-                Device.DeviceSubType.V_AS_MIXPROOF,
-                Device.DeviceSubType.V_IOLINK_MIXPROOF }));
+            subAction_WashGroupSeats.Add(new Action(GroupDefaultName, owner,
+                string.Empty,
+                new Device.DeviceType[]
+                { 
+                    Device.DeviceType.V
+                },
+                new Device.DeviceSubType[] 
+                {
+                    Device.DeviceSubType.V_MIXPROOF,
+                    Device.DeviceSubType.V_AS_MIXPROOF,
+                    Device.DeviceSubType.V_IOLINK_MIXPROOF
+                }));
         }
 
         public override Action Clone()
@@ -74,16 +79,15 @@ namespace TechObject
         {
             while (subAction_WashGroupSeats.Count <= groupNumber)
             {
-                subAction_WashGroupSeats.Add(
-                    new Action("Группа", owner, "",
-                    new Device.DeviceType[] { Device.DeviceType.V },
-                    new Device.DeviceSubType[] {
-                        Device.DeviceSubType.V_MIXPROOF,
-                        Device.DeviceSubType.V_AS_MIXPROOF,
-                        Device.DeviceSubType.V_IOLINK_MIXPROOF }));
+                Device.DeviceType[] devTypes = null;
+                Device.DeviceSubType[] devSubTypes = null;
+                subAction_WashGroupSeats.First()?
+                    .GetDisplayObjects(out devTypes, out devSubTypes, out _);
 
-                subAction_WashGroupSeats[
-                    subAction_WashGroupSeats.Count - 1].DrawStyle = DrawStyle;
+                var newAction = new Action(GroupDefaultName, owner, string.Empty,
+                    devTypes, devSubTypes);
+                newAction.DrawStyle = DrawStyle;
+                subAction_WashGroupSeats.Add(newAction);
             }
 
             subAction_WashGroupSeats[groupNumber].AddDev(index, 0);
@@ -208,7 +212,13 @@ namespace TechObject
 
         override public ITreeViewItem Insert()
         {
-            var newAction = new Action("Группа", owner);
+            Device.DeviceType[] devTypes = null;
+            Device.DeviceSubType[] devSubTypes = null;
+            subAction_WashGroupSeats.First()?
+                .GetDisplayObjects(out devTypes, out devSubTypes, out _);
+
+            var newAction = new Action(GroupDefaultName, owner, string.Empty,
+                devTypes, devSubTypes);
             newAction.DrawStyle = DrawStyle;
             subAction_WashGroupSeats.Add(newAction);
             return newAction;

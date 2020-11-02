@@ -24,11 +24,14 @@ namespace TechObject
             : base(name, owner, luaName)
         {
             subAction_DI_DO_Group = new List<Action>();
-            subAction_DI_DO_Group.Add(new Action("Группа", owner, "",
-                new Device.DeviceType[] { 
+            subAction_DI_DO_Group.Add(new Action(GroupDefaultName, owner,
+                string.Empty,
+                new Device.DeviceType[]
+                { 
                     Device.DeviceType.DI, 
                     Device.DeviceType.SB, 
-                    Device.DeviceType.DO }));
+                    Device.DeviceType.DO
+                }));
         }
 
         override public Action Clone()
@@ -102,7 +105,14 @@ namespace TechObject
         {
             while (subAction_DI_DO_Group.Count <= groupNumber)
             {
-                subAction_DI_DO_Group.Add(new Action("Группа", owner));
+                Device.DeviceType[] devTypes = null;
+                Device.DeviceSubType[] devSubTypes = null;
+                subAction_DI_DO_Group.First()?.GetDisplayObjects(out devTypes,
+                    out devSubTypes, out _);
+
+                var newAction = new Action(GroupDefaultName, owner,
+                    string.Empty, devTypes, devSubTypes);
+                subAction_DI_DO_Group.Add(newAction);
             }
 
             subAction_DI_DO_Group[groupNumber].AddDev(index, 0);
@@ -199,7 +209,13 @@ namespace TechObject
 
         override public ITreeViewItem Insert()
         {
-            var newAction = new Action("Группа", owner);
+            Device.DeviceType[] devTypes = null;
+            Device.DeviceSubType[] devSubTypes = null;
+            subAction_DI_DO_Group.First()?
+                .GetDisplayObjects(out devTypes, out devSubTypes, out _);
+
+            var newAction = new Action(GroupDefaultName, owner, string.Empty,
+                devTypes, devSubTypes);
             subAction_DI_DO_Group.Add(newAction);
             return newAction;
         }
