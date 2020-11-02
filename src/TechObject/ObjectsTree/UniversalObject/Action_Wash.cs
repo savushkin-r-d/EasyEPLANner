@@ -25,23 +25,48 @@ namespace TechObject
         {
             vGroups = new List<Action>();
             vGroups.Add(new Action("DI", owner, "DI",
-                new Device.DeviceType[2] { 
+                new Device.DeviceType[]
+                { 
                     Device.DeviceType.DI,
-                    Device.DeviceType.SB }));
+                    Device.DeviceType.SB
+                }));
             vGroups.Add(new Action("DO", owner, "DO",
-                new Device.DeviceType[1] { 
-                    Device.DeviceType.DO }));
+                new Device.DeviceType[]
+                { 
+                    Device.DeviceType.DO
+                }));
 
             vGroups.Add(new Action("Устройства", owner, "devices",
-                new Device.DeviceType[3] { 
+                new Device.DeviceType[] 
+                { 
                     Device.DeviceType.M,
-                    Device.DeviceType.V, 
-                    Device.DeviceType.DO }));
+                    Device.DeviceType.V,
+                    Device.DeviceType.DO,
+                    Device.DeviceType.AO,
+                    Device.DeviceType.VC
+                },
+                new Device.DeviceSubType[]
+                {
+                    Device.DeviceSubType.M_FREQ,
+                    Device.DeviceSubType.M_REV_FREQ,
+                    Device.DeviceSubType.M_REV_FREQ_2,
+                    Device.DeviceSubType.M_REV_FREQ_2_ERROR,
+                    Device.DeviceSubType.M_ATV
+                }));
 
-            vGroups.Add(new Action("Реверсные устройства", owner, "rev_devices",
-                new Device.DeviceType[] { 
-                    Device.DeviceType.M, 
-                    Device.DeviceType.V }));
+            vGroups.Add(new Action("Реверсивные устройства", owner,
+                "rev_devices", new Device.DeviceType[]
+                { 
+                    Device.DeviceType.M
+                },
+                new Device.DeviceSubType[] 
+                {
+                    Device.DeviceSubType.M_FREQ,
+                    Device.DeviceSubType.M_REV_FREQ,
+                    Device.DeviceSubType.M_REV_FREQ_2,
+                    Device.DeviceSubType.M_REV_FREQ_2_ERROR,
+                    Device.DeviceSubType.M_ATV
+                }));
 
             items = new List<ITreeViewItem>();
             foreach (Action action in vGroups)

@@ -31,24 +31,35 @@ namespace TechObject
             items = new List<ITreeViewItem>();
 
             actions = new List<Action>();
-            actions.Add(new Action("Включать", this, 
-                "opened_devices",
-                new Device.DeviceType[3] { 
+            actions.Add(new Action("Включать", this, "opened_devices",
+                new Device.DeviceType[]
+                { 
                     Device.DeviceType.V, 
                     Device.DeviceType.DO, 
-                    Device.DeviceType.M }));
+                    Device.DeviceType.M
+                }));
 
             actions.Add(new Action("Включать реверс", this, 
                 "opened_reverse_devices",
-                new Device.DeviceType[1] { 
-                    Device.DeviceType.M }));
+                new Device.DeviceType[]
+                { 
+                    Device.DeviceType.M
+                },
+                new Device.DeviceSubType[]
+                {
+                    Device.DeviceSubType.M_REV_FREQ,
+                    Device.DeviceSubType.M_REV_FREQ_2,
+                    Device.DeviceSubType.M_REV_FREQ_2_ERROR,
+                    Device.DeviceSubType.M_ATV
+                }));
 
-            actions.Add(new Action("Выключать", this, 
-                "closed_devices",
-                new Device.DeviceType[3] { 
+            actions.Add(new Action("Выключать", this, "closed_devices",
+                new Device.DeviceType[]
+                { 
                     Device.DeviceType.V, 
                     Device.DeviceType.DO, 
-                    Device.DeviceType.M }));
+                    Device.DeviceType.M
+                }));
 
             actions[2].DrawStyle = DrawInfo.Style.RED_BOX;
             actions.Add(new Action_WashSeats("Верхние седла", this,
@@ -61,12 +72,13 @@ namespace TechObject
             actions[4].DrawStyle = DrawInfo.Style.GREEN_LOWER_BOX;
             actions.Add(new Action("Сигналы для включения", this,
                 "required_FB",
-                new Device.DeviceType[2] {
+                new Device.DeviceType[]
+                {
                     Device.DeviceType.DI,
-                    Device.DeviceType.GS }));
+                    Device.DeviceType.GS
+                }));
 
-            actions.Add(new Action_Wash("Мойка( DI, DO, устройства)", this,
-                "wash_data"));
+            actions.Add(new Action_Wash("Устройства", this, "wash_data"));
 
             actions.Add(new Action_DI_DO("Группы DI -> DO DO ...", this,
                 "DI_DO"));

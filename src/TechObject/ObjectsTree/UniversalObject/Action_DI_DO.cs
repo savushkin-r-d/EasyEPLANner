@@ -25,7 +25,7 @@ namespace TechObject
         {
             subAction_DI_DO_Group = new List<Action>();
             subAction_DI_DO_Group.Add(new Action("Группа", owner, "",
-                new Device.DeviceType[3] { 
+                new Device.DeviceType[] { 
                     Device.DeviceType.DI, 
                     Device.DeviceType.SB, 
                     Device.DeviceType.DO }));
@@ -178,8 +178,12 @@ namespace TechObject
             var subAction = child as Action;
             if (subAction != null)
             {
-                subAction_DI_DO_Group.Remove(subAction);
-                return true;
+                int minCount = 1;
+                if(subAction_DI_DO_Group.Count > minCount)
+                {
+                    subAction_DI_DO_Group.Remove(subAction);
+                    return true;
+                }
             }
 
             return false;

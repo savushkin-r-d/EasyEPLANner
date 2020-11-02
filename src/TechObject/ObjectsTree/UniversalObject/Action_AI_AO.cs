@@ -24,7 +24,7 @@ namespace TechObject
         {
             subAction_AI_AO_Group = new List<Action>();
             subAction_AI_AO_Group.Add(new Action("Группа", owner, "",
-                new Device.DeviceType[3] { 
+                new Device.DeviceType[] { 
                     Device.DeviceType.AI, 
                     Device.DeviceType.AO, 
                     Device.DeviceType.M }));
@@ -176,8 +176,12 @@ namespace TechObject
             var subAction = child as Action;
             if (subAction != null)
             {
-                subAction_AI_AO_Group.Remove(subAction);
-                return true;
+                int minCount = 1;
+                if(subAction_AI_AO_Group.Count > minCount)
+                {
+                    subAction_AI_AO_Group.Remove(subAction);
+                    return true;
+                }
             }
 
             return false;

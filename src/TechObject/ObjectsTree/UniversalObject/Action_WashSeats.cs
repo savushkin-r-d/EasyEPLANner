@@ -22,8 +22,8 @@ namespace TechObject
             subAction_WashGroupSeats = new List<Action>();
             subAction_WashGroupSeats.Add(
                 new Action("Группа", owner, "",
-                new Device.DeviceType[1] { Device.DeviceType.V },
-                new Device.DeviceSubType[3] {
+                new Device.DeviceType[] { Device.DeviceType.V },
+                new Device.DeviceSubType[] {
                 Device.DeviceSubType.V_MIXPROOF,
                 Device.DeviceSubType.V_AS_MIXPROOF,
                 Device.DeviceSubType.V_IOLINK_MIXPROOF }));
@@ -76,8 +76,8 @@ namespace TechObject
             {
                 subAction_WashGroupSeats.Add(
                     new Action("Группа", owner, "",
-                    new Device.DeviceType[1] { Device.DeviceType.V },
-                    new Device.DeviceSubType[3] {
+                    new Device.DeviceType[] { Device.DeviceType.V },
+                    new Device.DeviceSubType[] {
                         Device.DeviceSubType.V_MIXPROOF,
                         Device.DeviceSubType.V_AS_MIXPROOF,
                         Device.DeviceSubType.V_IOLINK_MIXPROOF }));
@@ -187,8 +187,12 @@ namespace TechObject
             var subAction = child as Action;
             if (subAction != null)
             {
-                subAction_WashGroupSeats.Remove(subAction);
-                return true;
+                int minCount = 1;
+                if(subAction_WashGroupSeats.Count > minCount)
+                {
+                    subAction_WashGroupSeats.Remove(subAction);
+                    return true;
+                }
             }
 
             return false;
