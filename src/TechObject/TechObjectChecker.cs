@@ -28,6 +28,7 @@ namespace TechObject
             errors += CheckTypeField();
             errors += CheckObjectMonitorField();
             errors += CheckEplanNameField();
+
             foreach (var obj in techObjectManager.TechObjects)
             {
                 errors += obj.Check();
