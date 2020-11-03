@@ -74,7 +74,7 @@ namespace TechObject
                 items.Add(action);
             }
 
-            pumpFreq = new ObjectProperty("Частота насосов (параметр)", -1, -1);
+            pumpFreq = new ObjectProperty("Производительность", -1, -1);
             items.Add(pumpFreq);
         }
 
