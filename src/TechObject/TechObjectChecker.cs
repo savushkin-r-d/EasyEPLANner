@@ -27,7 +27,7 @@ namespace TechObject
 
             errors += CheckTypeField();
             errors += CheckObjectMonitorField();
-
+            errors += CheckEplanNameField();
             foreach (var obj in techObjectManager.TechObjects)
             {
                 errors += obj.Check();
@@ -80,6 +80,34 @@ namespace TechObject
                 {
                     errorsList.Add($"У объектов {string.Join(",", matches)} " +
                         $"совпадает поле \"Имя объекта Monitor\"\n");
+                }
+            }
+
+            errorsList = errorsList.Distinct().ToList();
+            return string.Join("", errorsList);
+        }
+
+        /// <summary>
+        /// Проверка на совпадение у ОУ у объектов с 
+        /// одинаковым базовым объектом.
+        /// </summary>
+        /// <returns></returns>
+        private string CheckEplanNameField()
+        {
+            var errorsList = new List<string>();
+            foreach (var obj in techObjectManager.TechObjects)
+            {
+                var matches = techObjectManager.TechObjects
+                    .Where(x => x.NameEplan == obj.NameEplan &&
+                    x.TechNumber == obj.TechNumber &&
+                    x.BaseTechObject?.EplanName == obj.BaseTechObject?.EplanName)
+                    .Select(x => techObjectManager.GetTechObjectN(x))
+                    .ToArray();
+
+                if (matches.Count() > 1)
+                {
+                    errorsList.Add($"У объектов {string.Join(",", matches)} " +
+                        $"совпадает поле \"ОУ\"\n");
                 }
             }
 
