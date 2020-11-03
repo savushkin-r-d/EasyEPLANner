@@ -255,10 +255,10 @@ namespace TechObject
         /// </summary>
         /// <param name="actionLuaName">Имя действия в Lua.</param>
         /// <param name="devName">Имя устройства.</param>
-        /// <param name="additionalParam">Дополнительный параметр 
-        /// (для сложных действий).</param>
+        /// <param name="groupNumber">Номер группы.</param>
+        /// <param name="innerActionIndex">Индекс внутреннего действия.</param>
         public bool AddDev(string actionLuaName, string devName,
-            int additionalParam = 0)
+            int groupNumber = 0, int innerActionIndex = 0)
         {
             int index = Device.DeviceManager.GetInstance()
                 .GetDeviceIndex(devName);
@@ -271,7 +271,7 @@ namespace TechObject
             {
                 if (act.LuaName == actionLuaName)
                 {
-                    act.AddDev(index, additionalParam);
+                    act.AddDev(index, groupNumber, innerActionIndex);
                     return true;
                 }
             }

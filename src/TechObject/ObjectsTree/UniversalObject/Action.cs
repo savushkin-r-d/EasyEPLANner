@@ -196,9 +196,11 @@ namespace TechObject
         /// <summary>
         /// Добавление устройства к действию.
         /// </summary>
-        /// <param name="device">Устройство.</param>
-        /// <param name="additionalParam">Дополнительный параметр.</param>
-        public virtual void AddDev(int index, int additionalParam)
+        /// <param name="groupNumber">Номер группы в действии.</param>
+        /// <param name="index">Индекс устройства</param>
+        /// <param name="innerActionIndex">Индекс внутреннего действия</param>
+        public virtual void AddDev(int index, int groupNumber = 0,
+            int innerActionIndex = 0)
         {
             var device = Device.DeviceManager.GetInstance()
                 .GetDeviceByIndex(index);

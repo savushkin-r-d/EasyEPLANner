@@ -66,9 +66,11 @@ namespace TechObject
         /// <summary>
         /// Добавление устройства к действию.
         /// </summary>
-        /// <param name="device">Устройство.</param>
+        /// <param name="index">Индекс устройства.</param>
         /// <param name="groupNumber">Дополнительный параметр.</param>
-        public override void AddDev(int index, int groupNumber)
+        /// <param name="innerActionIndex">Индекс внутреннего действия</param>
+        public override void AddDev(int index, int groupNumber,
+            int innerActionIndex = 0)
         {
             while (subActions.Count <= groupNumber)
             {

@@ -24,19 +24,19 @@ namespace TechObject
             : base(name, owner, luaName)
         {
             vGroups = new List<Action>();
-            vGroups.Add(new Action("DI", owner, "DI",
+            vGroups.Add(new ActionGroup("DI", owner, "DI",
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.DI,
                     Device.DeviceType.SB
                 }));
-            vGroups.Add(new Action("DO", owner, "DO",
+            vGroups.Add(new ActionGroup("DO", owner, "DO",
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.DO
                 }));
 
-            vGroups.Add(new Action("Устройства", owner, "devices",
+            vGroups.Add(new ActionGroup("Устройства", owner, "devices",
                 new Device.DeviceType[] 
                 { 
                     Device.DeviceType.M,
@@ -54,7 +54,7 @@ namespace TechObject
                     Device.DeviceSubType.M_ATV
                 }));
 
-            vGroups.Add(new Action("Реверсивные устройства", owner,
+            vGroups.Add(new ActionGroup("Реверсивные устройства", owner,
                 "rev_devices", new Device.DeviceType[]
                 { 
                     Device.DeviceType.M
@@ -159,13 +159,15 @@ namespace TechObject
         /// <summary>
         /// Добавление устройства к действию.
         /// </summary>
-        /// <param name="device">Устройство.</param>
-        /// <param name="additionalParam">Дополнительный параметр.</param>
-        public override void AddDev(int index, int additionalParam)
+        /// <param name="index">Индекс устройства.</param>
+        /// <param name="innerActionIndex">Индекс внутреннего действия.</param>
+        /// <param name="groupNumber">Номер группы</param>
+        public override void AddDev(int index, int groupNumber,
+            int innerActionIndex)
         {
-            if (additionalParam < vGroups.Count /*Количество групп*/ )
+            if (innerActionIndex < vGroups.Count /*Количество групп*/ )
             {
-                (vGroups[additionalParam] as Action).AddDev(index, 0);
+                vGroups[innerActionIndex].AddDev(index, groupNumber);
             }
 
             deviceIndex.Add(index);
