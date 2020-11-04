@@ -98,7 +98,7 @@ namespace TechObject
                     Device.DeviceType.GS
                 }));
 
-            actions.Add(new Action_Wash("Устройства", this, "wash_data"));
+            actions.Add(new ActionGroupWash("Устройства", this, "wash_data"));
 
             // Специальное действие - выдача дискретных сигналов 
             // при наличии входного дискретного сигнала.

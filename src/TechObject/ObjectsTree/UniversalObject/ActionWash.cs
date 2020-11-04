@@ -10,9 +10,8 @@ namespace TechObject
     /// <summary>
     /// Специальное действие - обработка сигналов во время мойки.
     /// </summary>
-    public class Action_Wash : Action
+    public class ActionWash : Action
     {
-
         /// <summary>
         /// Создание нового действия.
         /// </summary>
@@ -20,7 +19,7 @@ namespace TechObject
         /// <param name="luaName">Имя действия - как оно будет называться в 
         /// таблице Lua.</param>
         /// <param name="owner">Владелец действия (Шаг)</param>
-        public Action_Wash(string name, Step owner, string luaName)
+        public ActionWash(string name, Step owner, string luaName)
             : base(name, owner, luaName)
         {
             vGroups = new List<Action>();
@@ -83,7 +82,7 @@ namespace TechObject
 
         override public Action Clone()
         {
-            Action_Wash clone = (Action_Wash)base.Clone();
+            ActionWash clone = (ActionWash)base.Clone();
 
             clone.vGroups = new List<Action>();
             foreach (Action action in vGroups)
@@ -132,26 +131,25 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public override string SaveAsLuaTable(string prefix)
         {
-            if (vGroups.Count == 0) return "";
+            string res = string.Empty;
+            if (vGroups.Count == 0)
+            {
+                return res;
+            }
 
-            string res = "";
-
+            string groupData = string.Empty;
             foreach (Action group in vGroups)
             {
-                string tmp = group.SaveAsLuaTable(prefix + "\t");
-                if (tmp != "")
-                {
-                    res += tmp;
-                }
+                groupData += group.SaveAsLuaTable(prefix + "\t");
             }
 
             string pumpFreqVal = pumpFreq.EditText[1].Trim();
             bool isParamNum = int.TryParse(pumpFreqVal, out int paramNum);
 
-            if (res != "")
+            if (groupData != "")
             {
                 string saveFreqVal;
-                if(isParamNum)
+                if (isParamNum)
                 {
                     saveFreqVal = $"{prefix}\tpump_freq = {paramNum},\n";
                 }
@@ -161,8 +159,12 @@ namespace TechObject
                         $"{prefix}\tpump_freq = '{pumpFreqVal}',\n";
                 }
 
-                res = prefix + luaName + " = --" + name + "\n" +
-                    prefix + "\t{\n" + res + 
+                res += prefix;
+                if (luaName != string.Empty)
+                {
+                    res += luaName + " =";
+                }
+                res += " --" + name + "\n" + prefix + "\t{\n" + groupData + 
                     (pumpFreqVal == string.Empty ? string.Empty : saveFreqVal) +
                     prefix + "\t},\n";
             }
@@ -218,25 +220,11 @@ namespace TechObject
         {
             get
             {
-                var deviceManager = Device.DeviceManager.GetInstance();
                 string res = "";
 
                 foreach (Action group in vGroups)
                 {
-                    res += "{";
-
-                    foreach (int index in group.DeviceIndex)
-                    {
-                        res += deviceManager.GetDeviceByIndex(index).Name + 
-                            " ";
-                    }
-
-                    if (group.DeviceIndex.Count > 0)
-                    {
-                        res = res.Remove(res.Length - 1);
-                    }
-
-                    res += "} ";
+                    res += $"{{ {group.DisplayText[1]} }} ";
                 }
 
                 res += "{" + pumpFreq.DisplayText[1] + "}";
