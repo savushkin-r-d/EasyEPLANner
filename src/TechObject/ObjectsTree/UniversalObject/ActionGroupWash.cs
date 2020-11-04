@@ -120,14 +120,8 @@ namespace TechObject
 
             if (groupData != string.Empty)
             {
-                res += prefix;
-                if (luaName != string.Empty)
-                {
-                    res += luaName + " =";
-                }
-
-                res += " --" + name + "\n" + prefix + "\t{\n" +
-                    groupData + prefix + "\t},\n";
+                res += prefix + luaName + " = --" + name + "\n" + prefix +
+                    "\t{\n" + groupData + prefix + "\t},\n";
             }
 
             return res;
