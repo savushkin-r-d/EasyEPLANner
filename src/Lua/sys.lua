@@ -163,24 +163,25 @@ proc_oper_params = function( par, operation, idx, obj )
     end
 end
 
-
-proc = function( mode, state_n, devices, step_n, action_name, inner_action_index )
+proc = function( mode, state_n, devices, step_n, action_name, wash_group_index,
+    inner_action_index )
     if devices ~= nil then
-        local group_n = 0; -- awlays 0 in simple action.
+        local group_n = 0 -- awlays 0 in simple action.
         if inner_action_index == nil then
             inner_action_index = 0 -- default value in simple action.
         end
 
         -- inner_action_index use for find correct inner action in parent action.
+        -- wash_group_index use for find correct wash group in parent action.
         for _, value in pairs ( devices ) do
             mode[ state_n ][ step_n ]:AddDev( action_name, value,
-                group_n, inner_action_index )
+                group_n, wash_group_index, inner_action_index )
         end
     end
 end
 
 proc_groups = function( mode, state_n, step_n, groups, action_name,
-    inner_action_index )
+    wash_group_index, inner_action_index )
     --Группа устройств
     if groups ~= nil then
         local group_n = 0
@@ -190,64 +191,85 @@ proc_groups = function( mode, state_n, step_n, groups, action_name,
 
         for _, group in pairs( groups ) do
             for _, v in pairs( group ) do
-                -- inner_action_index use for the same reason like in proc method.
+                -- inner_action_index, wash_group_index use for the same
+                -- reason like in proc method.
                 mode[ state_n ][ step_n ]:AddDev( action_name, v, group_n,
-                    inner_action_index )
+                    wash_group_index, inner_action_index )
             end
             group_n = group_n + 1
         end
     end
 end
 
-proc_wash_data = function( mode, state_n, step_n, value)
+proc_wash_data = function( mode, state_n, step_n, value )
     --Группа устройств, управляемых по ОС с выдачей сигнала
     if value.wash_data ~= nil then
-        local parent_action = "wash_data"
-        --DI
-        if value.wash_data.DI ~= nil then
-            local DI_action_index = 0
-            proc_wash_data_groups(mode, state_n, step_n, value.wash_data.DI,
-                parent_action, DI_action_index)
-        end
+        local wash_data = value.wash_data
+        if ( wash_data.DI ~= nil or
+             wash_data.DO ~= nil or
+             wash_data.devices ~= nil or
+             wash_data.rev_devices ~= nil or
+             wash_data.pump_freq ~= nil ) then
 
-        --Control signal DO
-        if value.wash_data.DO ~= nil then
-            local DO_action_index = 1
-            proc_wash_data_groups(mode, state_n, step_n, value.wash_data.DO,
-                parent_action, DO_action_index)
-        end
-
-        --On devices.
-        if value.wash_data.devices ~= nil then
-            local devices_action_index = 2
-            proc_wash_data_groups(mode, state_n, step_n, value.wash_data.devices,
-                parent_action, devices_action_index)
-        end
-
-        --On reverse devices.
-        if value.wash_data.rev_devices ~= nil then
-            local rev_devices_action_index = 3
-            proc_wash_data_groups(mode, state_n, step_n, value.wash_data.rev_devices,
-                parent_action, rev_devices_action_index)
-        end
-
-        --Frequency parameter.
-        if value.wash_data.pump_freq ~= nil then
-           mode[ state_n ][ step_n ]:AddParam( parent_action, 1,
-               value.wash_data.pump_freq )
+            local wash_group_index = 0
+            proc_wash_group_data( mode, state_n, step_n, wash_data, wash_group_index )
+        else -- Process new version
+            local wash_group_index = 0
+            for _, wash_group in pairs( wash_data ) do
+                proc_wash_group_data( mode, state_n, step_n, wash_group, wash_group_index )
+                wash_group_index = wash_group_index + 1
+            end
         end
     end
 end
 
-proc_wash_data_groups = function(mode, state_n, step_n, value, parent_action,
-        inner_action_index)
+proc_wash_group_data = function ( mode, state_n, step_n, wash_data, wash_group_index )
+    local parent_action = "wash_data"
+
+    --DI
+    if wash_data.DI ~= nil then
+        local DI_action_index = 0
+        proc_wash_data_groups( mode, state_n, step_n, wash_data.DI,
+            parent_action, wash_group_index, DI_action_index )
+    end
+
+    --Control signal DO
+    if wash_data.DO ~= nil then
+        local DO_action_index = 1
+        proc_wash_data_groups( mode, state_n, step_n, wash_data.DO,
+            parent_action, wash_group_index, DO_action_index )
+    end
+
+    --On devices.
+    if wash_data.devices ~= nil then
+        local devices_action_index = 2
+        proc_wash_data_groups( mode, state_n, step_n, wash_data.devices,
+            parent_action, wash_group_index,devices_action_index )
+    end
+
+    --On reverse devices.
+    if wash_data.rev_devices ~= nil then
+        local rev_devices_action_index = 3
+        proc_wash_data_groups( mode, state_n, step_n, wash_data.rev_devices,
+            parent_action, wash_group_index, rev_devices_action_index )
+    end
+
+    --Frequency parameter.
+    if wash_data.pump_freq ~= nil then
+        mode[ state_n ][ step_n ]:AddParam( parent_action, wash_data.pump_freq,
+            wash_group_index )
+    end
+end
+
+proc_wash_data_groups = function( mode, state_n, step_n, value, parent_action,
+        wash_group_index, inner_action_index )
     if value ~= nil then
         if type( value[ 1 ] ) == "table" then
             proc_groups( mode, state_n, step_n, value, parent_action,
-                inner_action_index)
+                wash_group_index, inner_action_index )
         else -- string
             proc( mode, state_n, value, step_n, parent_action,
-                inner_action_index)
+                wash_group_index, inner_action_index )
         end
     end
 end

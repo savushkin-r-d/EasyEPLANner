@@ -198,9 +198,11 @@ namespace TechObject
         /// </summary>
         /// <param name="groupNumber">Номер группы в действии.</param>
         /// <param name="index">Индекс устройства</param>
+        /// <param name="washGroupIndex">Индекс группы в действии мойка 
+        /// (устройства)</param>
         /// <param name="innerActionIndex">Индекс внутреннего действия</param>
         public virtual void AddDev(int index, int groupNumber = 0,
-            int innerActionIndex = 0)
+            int washGroupIndex = 0, int innerActionIndex = 0)
         {
             var device = Device.DeviceManager.GetInstance()
                 .GetDeviceByIndex(index);
@@ -213,9 +215,10 @@ namespace TechObject
         /// <summary>
         /// Добавление параметра к действию.
         /// </summary>
-        /// <param name="index">Индекс параметра.</param>
         /// <param name="val">Значение параметра.</param>
-        public virtual void AddParam(int index, object val) { }
+        /// <param name="washGroupIndex">Индекс группы мойки в действии
+        /// (устройства)</param>
+        public virtual void AddParam(object val, int washGroupIndex = 0) { }
             
         /// <summary>
         /// Очищение списка устройств.

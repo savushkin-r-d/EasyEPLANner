@@ -63,14 +63,8 @@ namespace TechObject
             }
         }
 
-        /// <summary>
-        /// Добавление устройства к действию.
-        /// </summary>
-        /// <param name="index">Индекс устройства.</param>
-        /// <param name="groupNumber">Дополнительный параметр.</param>
-        /// <param name="innerActionIndex">Индекс внутреннего действия</param>
         public override void AddDev(int index, int groupNumber,
-            int innerActionIndex = 0)
+            int washGroupIndex = 0, int innerActionIndex = 0)
         {
             while (subActions.Count <= groupNumber)
             {
@@ -86,8 +80,6 @@ namespace TechObject
             }
 
             subActions[groupNumber].AddDev(index, 0);
-
-            deviceIndex.Add(index);
         }
 
         #region Синхронизация устройств в объекте.

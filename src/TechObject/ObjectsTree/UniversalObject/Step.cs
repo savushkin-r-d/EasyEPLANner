@@ -256,9 +256,12 @@ namespace TechObject
         /// <param name="actionLuaName">Имя действия в Lua.</param>
         /// <param name="devName">Имя устройства.</param>
         /// <param name="groupNumber">Номер группы.</param>
+        /// <param name="washGroupIndex">Номер группы для действия 
+        /// мойки (устройства)</param>
         /// <param name="innerActionIndex">Индекс внутреннего действия.</param>
         public bool AddDev(string actionLuaName, string devName,
-            int groupNumber = 0, int innerActionIndex = 0)
+            int groupNumber = 0, int washGroupIndex = 0,
+            int innerActionIndex = 0)
         {
             int index = Device.DeviceManager.GetInstance()
                 .GetDeviceIndex(devName);
@@ -271,7 +274,8 @@ namespace TechObject
             {
                 if (act.LuaName == actionLuaName)
                 {
-                    act.AddDev(index, groupNumber, innerActionIndex);
+                    act.AddDev(index, groupNumber, washGroupIndex,
+                        innerActionIndex);
                     return true;
                 }
             }
@@ -285,15 +289,17 @@ namespace TechObject
         /// Вызывается из Lua-скрипта sys.lua.
         /// </summary>
         /// <param name="actionLuaName">Имя действия в Lua.</param>
-        /// <param name="parIdx">Индекс параметра.</param>
         /// <param name="val">Значение параметра.</param>
-        public bool AddParam(string actionLuaName, int parIdx, object val)
+        /// <param name="washGroupIndex">Индекс группы в действии
+        /// мойки (устройства)</param>
+        public bool AddParam(string actionLuaName, object val,
+            int washGroupIndex = 0)
         {
             foreach (Action act in actions)
             {
                 if (act.LuaName == actionLuaName)
                 {
-                    act.AddParam(parIdx, val);
+                    act.AddParam(val, washGroupIndex);
                     return true;
                 }
             }

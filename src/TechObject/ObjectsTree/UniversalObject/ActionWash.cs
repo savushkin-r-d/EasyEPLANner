@@ -174,30 +174,17 @@ namespace TechObject
             return res;
         }
 
-        /// <summary>
-        /// Добавление устройства к действию.
-        /// </summary>
-        /// <param name="index">Индекс устройства.</param>
-        /// <param name="innerActionIndex">Индекс внутреннего действия.</param>
-        /// <param name="groupNumber">Номер группы</param>
         public override void AddDev(int index, int groupNumber,
-            int innerActionIndex)
+            int washGroupIndex, int innerActionIndex)
         {
             if (innerActionIndex < vGroups.Count /*Количество групп*/ )
             {
                 vGroups[innerActionIndex].AddDev(index, groupNumber);
             }
-
-            deviceIndex.Add(index);
         }
 
-        /// <summary>
-        /// Добавление параметра к действию.
-        /// </summary>
-        /// <param name="index">Индекс параметра.</param>
-        /// <param name="val">Значение параметра.</param>
-        public override void AddParam(int index, object val)
-        {
+        public override void AddParam(object val, int washGroupIndex = 0)
+        {           
             pumpFreq.SetNewValue(val.ToString());
         }
 
