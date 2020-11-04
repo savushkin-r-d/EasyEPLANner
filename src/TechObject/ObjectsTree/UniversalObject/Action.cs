@@ -215,7 +215,7 @@ namespace TechObject
         /// </summary>
         /// <param name="index">Индекс параметра.</param>
         /// <param name="val">Значение параметра.</param>
-        public virtual void AddParam(int index, int val) { }
+        public virtual void AddParam(int index, object val) { }
             
         /// <summary>
         /// Очищение списка устройств.

@@ -74,7 +74,10 @@ namespace TechObject
                 items.Add(action);
             }
 
-            pumpFreq = new ObjectProperty("Производительность", -1, -1);
+            pumpFreq = new ActiveParameter("frequency", "Производительность");
+            pumpFreq.AddDisplayObject(
+                BaseParameter.DisplayObject.Signals.ToString());
+
             items.Add(pumpFreq);
         }
 
@@ -143,14 +146,25 @@ namespace TechObject
             }
 
             string pumpFreqVal = pumpFreq.EditText[1].Trim();
+            bool isParamNum = int.TryParse(pumpFreqVal, out int paramNum);
 
             if (res != "")
             {
+                string saveFreqVal;
+                if(isParamNum)
+                {
+                    saveFreqVal = $"{prefix}\tpump_freq = {paramNum},\n";
+                }
+                else
+                {
+                    saveFreqVal = 
+                        $"{prefix}\tpump_freq = '{pumpFreqVal}',\n";
+                }
+
                 res = prefix + luaName + " = --" + name + "\n" +
-                    prefix + "\t{\n" +
-                    res +
-                    (pumpFreqVal == "-1" ? "" : prefix + "\tpump_freq = " + 
-                    pumpFreqVal + ",\n") + prefix + "\t},\n";
+                    prefix + "\t{\n" + res + 
+                    (pumpFreqVal == string.Empty ? string.Empty : saveFreqVal) +
+                    prefix + "\t},\n";
             }
 
             return res;
@@ -178,9 +192,9 @@ namespace TechObject
         /// </summary>
         /// <param name="index">Индекс параметра.</param>
         /// <param name="val">Значение параметра.</param>
-        public override void AddParam(int index, int val)
+        public override void AddParam(int index, object val)
         {
-            pumpFreq.SetValue(val);
+            pumpFreq.SetNewValue(val.ToString());
         }
 
         #region Синхронизация устройств в объекте.
@@ -292,7 +306,7 @@ namespace TechObject
         #endregion
 
         List<Action> vGroups;
-        private ObjectProperty pumpFreq; ///< Частота насоса, параметр.
+        private BaseParameter pumpFreq; ///< Частота насоса, параметр.
 
         List<ITreeViewItem> items;
     }

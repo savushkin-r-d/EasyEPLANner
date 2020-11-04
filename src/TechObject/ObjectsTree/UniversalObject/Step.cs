@@ -287,7 +287,7 @@ namespace TechObject
         /// <param name="actionLuaName">Имя действия в Lua.</param>
         /// <param name="parIdx">Индекс параметра.</param>
         /// <param name="val">Значение параметра.</param>
-        public bool AddParam(string actionLuaName, int parIdx, int val)
+        public bool AddParam(string actionLuaName, int parIdx, object val)
         {
             foreach (Action act in actions)
             {

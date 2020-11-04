@@ -79,8 +79,8 @@ namespace TechObject
                 subActions.First()?
                     .GetDisplayObjects(out devTypes, out devSubTypes, out _);
 
-                var newAction = new Action(GroupDefaultName, owner, string.Empty,
-                    devTypes, devSubTypes);
+                var newAction = new Action(GroupDefaultName, owner,
+                    string.Empty, devTypes, devSubTypes);
                 newAction.DrawStyle = DrawStyle;
                 subActions.Add(newAction);
             }
