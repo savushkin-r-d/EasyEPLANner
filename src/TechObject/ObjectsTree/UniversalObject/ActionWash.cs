@@ -73,10 +73,12 @@ namespace TechObject
                 items.Add(action);
             }
 
-            pumpFreq = new ActiveParameter("frequency", "Производительность");
-            pumpFreq.AddDisplayObject(
-                BaseParameter.DisplayObject.Signals.ToString());
-
+            var pumpFreqParam = new ActiveParameter("frequency",
+                "Производительность");
+            pumpFreqParam.OneValueOnly = true;
+            pumpFreqParam.AddDisplayObject(BaseParameter.DisplayObject
+                .Signals.ToString());
+            pumpFreq = pumpFreqParam;
             items.Add(pumpFreq);
         }
 
