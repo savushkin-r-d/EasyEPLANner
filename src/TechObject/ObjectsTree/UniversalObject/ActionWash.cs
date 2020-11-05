@@ -84,17 +84,17 @@ namespace TechObject
 
         override public Action Clone()
         {
-            ActionWash clone = (ActionWash)base.Clone();
+            var clone = new ActionWash(name, owner, luaName);
 
             clone.vGroups = new List<Action>();
-            foreach (Action action in vGroups)
+            foreach (var action in vGroups)
             {
                 clone.vGroups.Add(action.Clone());
             }
 
             clone.items.Clear();
             clone.items = new List<ITreeViewItem>();
-            foreach (Action action in clone.vGroups)
+            foreach (var action in clone.vGroups)
             {
                 clone.items.Add(action);
             }
