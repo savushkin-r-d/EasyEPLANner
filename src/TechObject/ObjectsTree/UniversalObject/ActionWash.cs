@@ -270,10 +270,10 @@ namespace TechObject
 
         public override bool Delete(object child)
         {
-            if (child.GetType() == typeof(ObjectProperty))
+            if (child is BaseParameter parameter)
             {
-                var objectProperty = child as ObjectProperty;
-                objectProperty.Delete(this);
+                parameter.Delete(this);
+                return true;
             }
 
             return false;

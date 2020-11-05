@@ -97,7 +97,7 @@ proc_operation = function( value, mode, state_n )
     proc_groups(mode, state_n, -1, value.DI_DO, "DI_DO")
     proc_groups(mode, state_n, -1, value.AI_AO, "AI_AO")
 
-    proc_wash_data(mode, state_n, -1, value)
+    proc_wash_data(mode, state_n, -1, value.wash_data)
 
     if value.steps ~= nil then
         for fields, value in ipairs( value.steps ) do
@@ -119,7 +119,7 @@ proc_operation = function( value, mode, state_n )
             proc_groups(mode, state_n, step_n, value.DI_DO, "DI_DO")
             proc_groups(mode, state_n, step_n, value.AI_AO, "AI_AO")
 
-            proc_wash_data(mode, state_n, step_n, value)
+            proc_wash_data(mode, state_n, step_n, value.wash_data)
 
             local time_param_n = value.time_param_n or 0
             local next_step_n = value.next_step_n or 0
@@ -170,6 +170,9 @@ proc = function( mode, state_n, devices, step_n, action_name, wash_group_index,
         if inner_action_index == nil then
             inner_action_index = 0 -- default value in simple action.
         end
+        if wash_group_index == nil then
+            wash_group_index = 0 -- default value in simple action.
+        end
 
         -- inner_action_index use for find correct inner action in parent action.
         -- wash_group_index use for find correct wash group in parent action.
@@ -186,7 +189,10 @@ proc_groups = function( mode, state_n, step_n, groups, action_name,
     if groups ~= nil then
         local group_n = 0
         if inner_action_index == nil then
-            inner_action_index = 0 -- default value in simple groups withour child.
+            inner_action_index = 0 -- default value in simple groups without child.
+        end
+        if wash_group_index == nil then
+            wash_group_index = 0 -- defaullt value in simple groups.
         end
 
         for _, group in pairs( groups ) do
@@ -201,10 +207,9 @@ proc_groups = function( mode, state_n, step_n, groups, action_name,
     end
 end
 
-proc_wash_data = function( mode, state_n, step_n, value )
+proc_wash_data = function( mode, state_n, step_n, wash_data )
     --Группа устройств, управляемых по ОС с выдачей сигнала
-    if value.wash_data ~= nil then
-        local wash_data = value.wash_data
+    if wash_data ~= nil then
         if ( wash_data.DI ~= nil or
              wash_data.DO ~= nil or
              wash_data.devices ~= nil or

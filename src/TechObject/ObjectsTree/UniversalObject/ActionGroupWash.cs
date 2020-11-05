@@ -224,6 +224,14 @@ namespace TechObject
                 }
             }
         }
+
+        public override bool ShowWarningBeforeDelete
+        {
+            get
+            {
+                return true;
+            }
+        }
         #endregion
 
         private List<Action> subActions;
