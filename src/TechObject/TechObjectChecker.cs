@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TechObject.CheckStrategy;
 
 namespace TechObject
 {
@@ -25,8 +23,9 @@ namespace TechObject
         {
             var errors = string.Empty;
 
-            errors += CheckTypeField();
-            errors += CheckObjectMonitorField();
+            errors += ObjectsFieldEquality(new TypeFieldEqualStrategy());
+            errors += ObjectsFieldEquality(new MonitorFieldEqualStrategy());
+            errors += ObjectsFieldEquality(new EplanNameFieldEqualStrategy());
 
             foreach (var obj in techObjectManager.TechObjects)
             {
@@ -38,48 +37,21 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Проверить поле тип у объекта.
+        /// Проверить поля объектов на совпадение согласно стратегии
         /// </summary>
-        private string CheckTypeField()
+        /// <param name="strategy">Стратегия проверки</param>
+        /// <returns></returns>
+        private string ObjectsFieldEquality(IFieldEqualityStrategy strategy)
         {
             var errorsList = new List<string>();
             foreach (var obj in techObjectManager.TechObjects)
             {
-                var matches = techObjectManager.TechObjects
-                    .Where(x => x.TechType == obj.TechType &&
-                    x.TechNumber == obj.TechNumber)
-                    .Select(x => techObjectManager.GetTechObjectN(x))
-                    .ToArray();
+                int[] matches = strategy.FindEqual(obj, techObjectManager);
 
                 if (matches.Count() > 1)
                 {
                     errorsList.Add($"У объектов {string.Join(",", matches)} " +
-                        $"совпадает поле \"Тип\"\n");
-                }
-            }
-
-            errorsList = errorsList.Distinct().ToList();
-            return string.Join("", errorsList);
-        }
-
-        /// <summary>
-        /// Проверить поле имени объекта Monitor у объекта.
-        /// </summary>
-        private string CheckObjectMonitorField()
-        {
-            var errorsList = new List<string>();
-            foreach (var obj in techObjectManager.TechObjects)
-            {
-                var matches = techObjectManager.TechObjects
-                    .Where(x => x.NameBC == obj.NameBC &&
-                    x.TechNumber == obj.TechNumber)
-                    .Select(x => techObjectManager.GetTechObjectN(x))
-                    .ToArray();
-
-                if (matches.Count() > 1)
-                {
-                    errorsList.Add($"У объектов {string.Join(",", matches)} " +
-                        $"совпадает поле \"Имя объекта Monitor\"\n");
+                        $"совпадает поле \"{strategy.FieldName}\"\n");
                 }
             }
 
