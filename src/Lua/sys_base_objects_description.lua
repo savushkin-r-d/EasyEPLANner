@@ -843,7 +843,13 @@ return
                 VC = { name = "Регулирующий клапан", defaultValue = "VC1" },
                 SET_VALUE = { name = "Задание"},
             },
-            aggregateParameters = { },
+            aggregateParameters =
+            {
+                main =
+                {
+                    NEED_COOLING = { name = "Использовать узел охлаждения ПИД", defaultValue = "false" },
+                },
+            },
             bindingName = "cooler_node",
             isPID = true
         },
