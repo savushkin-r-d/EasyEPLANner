@@ -23,19 +23,19 @@ namespace TechObject
             : base(name, owner, luaName)
         {
             vGroups = new List<Action>();
-            vGroups.Add(new ActionGroup("DI", owner, "DI",
+            vGroups.Add(new Action("DI", owner, "DI",
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.DI,
                     Device.DeviceType.SB
                 }));
-            vGroups.Add(new ActionGroup("DO", owner, "DO",
+            vGroups.Add(new Action("DO", owner, "DO",
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.DO
                 }));
 
-            vGroups.Add(new ActionGroup("Устройства", owner, "devices",
+            vGroups.Add(new Action("Устройства", owner, "devices",
                 new Device.DeviceType[] 
                 { 
                     Device.DeviceType.M,
@@ -53,7 +53,7 @@ namespace TechObject
                     Device.DeviceSubType.M_ATV
                 }));
 
-            vGroups.Add(new ActionGroup("Реверсивные устройства", owner,
+            vGroups.Add(new Action("Реверсивные устройства", owner,
                 "rev_devices", new Device.DeviceType[]
                 { 
                     Device.DeviceType.M
@@ -173,11 +173,11 @@ namespace TechObject
         }
 
         public override void AddDev(int index, int groupNumber,
-            int washGroupIndex, int innerActionIndex)
+            int washGroupIndex = 0)
         {
-            if (innerActionIndex < vGroups.Count /*Количество групп*/ )
+            if (groupNumber < vGroups.Count /*Количество групп*/ )
             {
-                vGroups[innerActionIndex].AddDev(index, groupNumber);
+                vGroups[groupNumber].AddDev(index, 0);
             }
         }
 
@@ -209,9 +209,9 @@ namespace TechObject
             {
                 string res = "";
 
-                foreach (Action group in vGroups)
+                foreach (Action action in vGroups)
                 {
-                    res += $"{{ {group.DisplayText[1]} }} ";
+                    res += $"{{ {action.DisplayText[1]} }} ";
                 }
 
                 res += "{" + pumpFreq.DisplayText[1] + "}";

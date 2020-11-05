@@ -200,9 +200,8 @@ namespace TechObject
         /// <param name="index">Индекс устройства</param>
         /// <param name="washGroupIndex">Индекс группы в действии мойка 
         /// (устройства)</param>
-        /// <param name="innerActionIndex">Индекс внутреннего действия</param>
         public virtual void AddDev(int index, int groupNumber = 0,
-            int washGroupIndex = 0, int innerActionIndex = 0)
+            int washGroupIndex = 0)
         {
             var device = Device.DeviceManager.GetInstance()
                 .GetDeviceByIndex(index);

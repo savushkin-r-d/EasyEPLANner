@@ -64,7 +64,7 @@ namespace TechObject
         }
 
         public override void AddDev(int index, int groupNumber,
-            int washGroupIndex = 0, int innerActionIndex = 0)
+            int washGroupIndex = 0)
         {
             while (subActions.Count <= groupNumber)
             {

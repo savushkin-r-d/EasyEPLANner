@@ -260,8 +260,7 @@ namespace TechObject
         /// мойки (устройства)</param>
         /// <param name="innerActionIndex">Индекс внутреннего действия.</param>
         public bool AddDev(string actionLuaName, string devName,
-            int groupNumber = 0, int washGroupIndex = 0,
-            int innerActionIndex = 0)
+            int groupNumber = 0, int washGroupIndex = 0)
         {
             int index = Device.DeviceManager.GetInstance()
                 .GetDeviceIndex(devName);
@@ -274,8 +273,7 @@ namespace TechObject
             {
                 if (act.LuaName == actionLuaName)
                 {
-                    act.AddDev(index, groupNumber, washGroupIndex,
-                        innerActionIndex);
+                    act.AddDev(index, groupNumber, washGroupIndex);
                     return true;
                 }
             }

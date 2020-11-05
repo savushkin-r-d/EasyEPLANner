@@ -62,7 +62,7 @@ namespace TechObject
         }
 
         public override void AddDev(int index, int groupNumber,
-            int washGroupIndex, int innerActionIndex = 0)
+            int washGroupIndex)
         {
             while (subActions.Count <= washGroupIndex)
             {
@@ -72,8 +72,7 @@ namespace TechObject
                 subActions.Add(newAction);
             }
 
-            subActions[washGroupIndex].AddDev(index, groupNumber, 0,
-                innerActionIndex);
+            subActions[washGroupIndex].AddDev(index, groupNumber, 0);
         }
 
         public override void AddParam(object val, int washGroupIndex)
