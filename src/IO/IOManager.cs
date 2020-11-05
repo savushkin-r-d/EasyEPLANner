@@ -206,9 +206,8 @@ namespace IO
 
                     if (node.IP == node2.IP && node.IP != "")
                     {
-                        str += "\"A" + 100 * node.N + 
-                            "\" : IP адрес совпадает с \"A" +
-                            100 * node2.N + "\" - " + node.IP + ".\n";
+                        str += $"\"{node.Name}\": IP адрес совпадает с " +
+                            $"\"{node2.Name}\" - {node.IP}.\n";
                     }
                 }
             }
