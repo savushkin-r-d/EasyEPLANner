@@ -231,6 +231,21 @@ namespace TechObject
                 return true;
             }
         }
+
+        public override ImageIndexEnum ImageIndex
+        {
+            get
+            {
+                switch (luaName)
+                {
+                    case "wash_data":
+                        return ImageIndexEnum.ActionWash;
+
+                    default:
+                        return ImageIndexEnum.NONE;
+                }
+            }
+        }
         #endregion
 
         private List<Action> subActions;
