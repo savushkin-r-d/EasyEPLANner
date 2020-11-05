@@ -241,6 +241,17 @@ namespace IO
         }
 
         /// <summary>
+        /// Название узла ввода-вывода.
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+        }
+
+        /// <summary>
         /// IP-адрес.
         /// </summary>
         public string IP
