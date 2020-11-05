@@ -315,7 +315,7 @@ namespace EasyEPlanner
         }
 
         private const int mainIOFileVersion = 1;
-        private const int mainTechObjectsFileVersion = 1;
+        private const int mainTechObjectsFileVersion = 2;
         private const int mainTechDevicesFileVersion = 1;
         private const int mainRestrictionsFileVersion = 1;
         private const int mainPRGFileVersion = 1;
