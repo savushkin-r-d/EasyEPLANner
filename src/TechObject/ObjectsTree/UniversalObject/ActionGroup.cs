@@ -155,6 +155,8 @@ namespace TechObject
                     res += "} ";
                 }
 
+                res = res.Remove(res.Length - 1);
+
                 return new string[] { name, res };
             }
         }

@@ -76,8 +76,6 @@ namespace TechObject
             var pumpFreqParam = new ActiveParameter("frequency",
                 "Производительность");
             pumpFreqParam.OneValueOnly = true;
-            pumpFreqParam.AddDisplayObject(BaseParameter.DisplayObject
-                .Signals.ToString());
             pumpFreq = pumpFreqParam;
             items.Add(pumpFreq);
         }

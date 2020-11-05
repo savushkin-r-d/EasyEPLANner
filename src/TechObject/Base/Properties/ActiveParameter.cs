@@ -53,8 +53,8 @@ namespace TechObject
             {
                 if (OneValueOnly)
                 {
-                    string[] values = newValue.Split(' ');
-                    return base.SetNewValue(values.First());
+                    string[] values = newValue.Trim().Split(' ');
+                    return base.SetNewValue(values.Last());
                 }
                 else
                 {
