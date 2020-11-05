@@ -50,7 +50,8 @@ namespace TechObject
                     Device.DeviceSubType.M_REV_FREQ,
                     Device.DeviceSubType.M_REV_FREQ_2,
                     Device.DeviceSubType.M_REV_FREQ_2_ERROR,
-                    Device.DeviceSubType.M_ATV
+                    Device.DeviceSubType.M_ATV,
+                    Device.DeviceSubType.M
                 }));
 
             actions.Add(new Action("Выключать", this, "closed_devices",
