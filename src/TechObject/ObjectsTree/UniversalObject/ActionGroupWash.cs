@@ -17,8 +17,6 @@ namespace TechObject
         /// <param name="luaName">Имя действия - как оно будет называться 
         /// в таблице Lua.</param>
         /// <param name="owner">Владелец действия (Шаг)</param>
-        /// <param name="devSubTypes">Допустимые подтипы устройств</param>
-        /// <param name="devTypes">Допустимые типы устройств</param>
         public ActionGroupWash(string name, Step owner, string luaName)
             : base(name, owner, luaName)
         {
