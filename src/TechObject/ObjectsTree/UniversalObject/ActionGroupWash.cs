@@ -121,7 +121,7 @@ namespace TechObject
             {
                 res += $"{prefix}{SingleGroupAction} = --{name}." +
                     $" {oldVersionCompatibility}\n" + 
-                    $"{prefix}\t{{\n{singleGroupData}{prefix}\t}},\n";
+                    $"{singleGroupData}";
             }
 
             if (multiGroupData != string.Empty)
@@ -142,7 +142,7 @@ namespace TechObject
         {
             string res = string.Empty;
             var firstGroup = subActions.First();
-            res += firstGroup?.SaveAsLuaTable(prefix + "\t");
+            res += firstGroup?.SaveAsLuaTable(prefix);
             return res;
         }
 
