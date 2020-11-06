@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Editor;
 
 namespace TechObject
@@ -23,19 +19,19 @@ namespace TechObject
             : base(name, owner, luaName)
         {
             vGroups = new List<Action>();
-            vGroups.Add(new Action("DI", owner, "DI",
+            vGroups.Add(new Action(DI, owner, DI,
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.DI,
                     Device.DeviceType.SB
                 }));
-            vGroups.Add(new Action("DO", owner, "DO",
+            vGroups.Add(new Action(DO, owner, DO,
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.DO
                 }));
 
-            vGroups.Add(new Action("Устройства", owner, "devices",
+            vGroups.Add(new Action("Устройства", owner, Devices,
                 new Device.DeviceType[] 
                 { 
                     Device.DeviceType.M,
@@ -55,7 +51,8 @@ namespace TechObject
                 }));
 
             vGroups.Add(new Action("Реверсивные устройства", owner,
-                "rev_devices", new Device.DeviceType[]
+                ReverseDevices,
+                new Device.DeviceType[]
                 { 
                     Device.DeviceType.M
                 },

@@ -31,7 +31,7 @@ namespace TechObject
             items = new List<ITreeViewItem>();
 
             actions = new List<Action>();
-            actions.Add(new Action("Включать", this, "opened_devices",
+            actions.Add(new Action("Включать", this, Action.OpenDevices,
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.V, 
@@ -40,7 +40,7 @@ namespace TechObject
                 }));
 
             actions.Add(new Action("Включать реверс", this, 
-                "opened_reverse_devices",
+                Action.OpenReverseDevices,
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.M
@@ -54,7 +54,7 @@ namespace TechObject
                     Device.DeviceSubType.M
                 }));
 
-            actions.Add(new Action("Выключать", this, "closed_devices",
+            actions.Add(new Action("Выключать", this, Action.CloseDevices,
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.V, 
@@ -64,7 +64,7 @@ namespace TechObject
             actions[2].DrawStyle = DrawInfo.Style.RED_BOX;
 
             actions.Add(new ActionGroup("Верхние седла", this,
-                "opened_upper_seat_v",
+                ActionGroup.OpenedUpperSeats,
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.V
@@ -78,7 +78,7 @@ namespace TechObject
             actions[3].DrawStyle = DrawInfo.Style.GREEN_UPPER_BOX;
 
             actions.Add(new ActionGroup("Нижние седла", this,
-                "opened_lower_seat_v",
+                ActionGroup.OpenedLowerSeats,
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.V
@@ -92,19 +92,20 @@ namespace TechObject
             actions[4].DrawStyle = DrawInfo.Style.GREEN_LOWER_BOX;
 
             actions.Add(new Action("Сигналы для включения", this,
-                "required_FB",
+                Action.RequiredFB,
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.DI,
                     Device.DeviceType.GS
                 }));
 
-            actions.Add(new ActionGroupWash("Устройства", this, "wash_data"));
+            actions.Add(new ActionGroupWash("Устройства", this,
+                ActionGroupWash.SingleGroupActionName));
 
             // Специальное действие - выдача дискретных сигналов 
             // при наличии входного дискретного сигнала.
             actions.Add(new ActionGroup("Группы DI -> DO DO ...", this,
-                "DI_DO",
+                ActionGroup.DIDO,
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.DI,
@@ -115,7 +116,7 @@ namespace TechObject
             // Специальное действие - выдача аналоговых сигналов при
             // наличии входного  аналогового сигнала.
             actions.Add(new ActionGroup("Группы AI -> AO AO ...", this,
-                "AI_AO",
+                ActionGroup.AIAO,
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.AI,

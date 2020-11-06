@@ -527,15 +527,15 @@ namespace TechObject
         {
             get
             {
-                switch(name)
+                switch(luaName)
                 {
-                    case "Включать":
+                    case OpenDevices:
                         return ImageIndexEnum.ActionON;
 
-                    case "Выключать":
+                    case CloseDevices:
                         return ImageIndexEnum.ActionOFF;
 
-                    case "Сигналы для включения":
+                    case RequiredFB:
                         return ImageIndexEnum.ActionSignals;
 
                     default:
@@ -568,15 +568,26 @@ namespace TechObject
             }
         }
 
-        protected string luaName;               /// Имя действия в таблице Lua.
-        protected string name;                  /// Имя действия.
-        protected List<int> deviceIndex;  /// Список устройств.
+        protected string luaName; // Имя действия в таблице Lua.
+        protected string name; // Имя действия.
+        protected List<int> deviceIndex; // Список устройств.
 
-        protected Device.DeviceType[] devTypes;
-        protected Device.DeviceSubType[] devSubTypes;
+        protected Device.DeviceType[] devTypes; // Отображаемые типы
+        protected Device.DeviceSubType[] devSubTypes; // Отображаемые подтипы.
 
-        protected Step owner; // Владелец элемента
+        protected Step owner; // Владелец элемента.
 
         protected private const string GroupDefaultName = "Группа";
+
+        public const string OpenDevices = "opened_devices";
+        public const string CloseDevices = "closed_devices";
+        public const string OpenReverseDevices = "opened_reverse_devices";
+        public const string RequiredFB = "required_FB";
+
+        protected private const string DO = "DO";
+        protected private const string DI = "DI";
+        protected private const string Devices = "devices";
+        protected private const string ReverseDevices = "rev_devices";
+
     }
 }

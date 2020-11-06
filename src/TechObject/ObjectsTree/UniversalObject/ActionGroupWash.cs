@@ -238,7 +238,7 @@ namespace TechObject
             {
                 switch (luaName)
                 {
-                    case "wash_data":
+                    case SingleGroupActionName:
                         return ImageIndexEnum.ActionWash;
 
                     default:
@@ -249,5 +249,16 @@ namespace TechObject
         #endregion
 
         private List<Action> subActions;
+
+        /// <summary>
+        /// Название действия, для сохранения всех групп.
+        /// </summary>
+        private const string MultiGroupsActionName = "devices_data";
+
+        /// <summary>
+        /// Название действия, для сохранения первой группы.
+        /// Старая функциональность.
+        /// </summary>
+        public const string SingleGroupActionName = "wash_data";
     }
 }

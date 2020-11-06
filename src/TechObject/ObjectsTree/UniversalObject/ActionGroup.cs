@@ -256,14 +256,14 @@ namespace TechObject
             {
                 switch(luaName)
                 {
-                    case "opened_upper_seat_v":
+                    case OpenedUpperSeats:
                         return ImageIndexEnum.ActionWashUpperSeats;
 
-                    case "opened_lower_seat_v":
+                    case OpenedLowerSeats:
                         return ImageIndexEnum.ActionWashLowerSeats;
 
-                    case "DI_DO":
-                    case "AI_AO":
+                    case DIDO:
+                    case AIAO:
                         return ImageIndexEnum.ActionDIDOPairs;
 
                     default:
@@ -274,5 +274,10 @@ namespace TechObject
         #endregion
 
         private List<Action> subActions;
+
+        public const string AIAO = "AI_AO";
+        public const string DIDO = "DI_DO";
+        public const string OpenedLowerSeats = "opened_lower_seat_v";
+        public const string OpenedUpperSeats = "opened_upper_seat_v";
     }
 }
