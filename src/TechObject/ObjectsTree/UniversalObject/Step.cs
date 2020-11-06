@@ -100,7 +100,7 @@ namespace TechObject
                 }));
 
             actions.Add(new ActionGroupWash("Устройства", this,
-                ActionGroupWash.SingleGroupActionName));
+                ActionGroupWash.SingleGroupAction));
 
             // Специальное действие - выдача дискретных сигналов 
             // при наличии входного дискретного сигнала.

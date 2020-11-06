@@ -97,7 +97,7 @@ proc_operation = function( value, mode, state_n )
     proc_groups(mode, state_n, -1, value.DI_DO, "DI_DO")
     proc_groups(mode, state_n, -1, value.AI_AO, "AI_AO")
 
-    proc_wash_data(mode, state_n, -1, value.wash_data)
+    proc_wash_data(mode, state_n, -1, value)
 
     if value.steps ~= nil then
         for fields, value in ipairs( value.steps ) do
@@ -119,7 +119,7 @@ proc_operation = function( value, mode, state_n )
             proc_groups(mode, state_n, step_n, value.DI_DO, "DI_DO")
             proc_groups(mode, state_n, step_n, value.AI_AO, "AI_AO")
 
-            proc_wash_data(mode, state_n, step_n, value.wash_data)
+            proc_wash_data(mode, state_n, step_n, value)
 
             local time_param_n = value.time_param_n or 0
             local next_step_n = value.next_step_n or 0
@@ -173,8 +173,6 @@ proc = function( mode, state_n, devices, step_n, action_name, inner_action_index
             wash_group_index = 0 -- default value in simple action.
         end
 
-        -- inner_action_index use for find correct inner action in parent action.
-        -- wash_group_index use for find correct wash group in parent action.
         for _, value in pairs ( devices ) do
             mode[ state_n ][ step_n ]:AddDev( action_name, value,
             inner_action_index, wash_group_index )
@@ -198,7 +196,14 @@ proc_groups = function( mode, state_n, step_n, groups, action_name )
     end
 end
 
-proc_wash_data = function( mode, state_n, step_n, wash_data )
+proc_wash_data = function( mode, state_n, step_n, value )
+    local devices_data = value.devices_data -- Новая функциональность.
+    local wash_data = value.wash_data -- Старая функциональность.
+
+    if devices_data ~= nil then
+        wash_data = devices_data
+    end
+
     --Группа устройств, управляемых по ОС с выдачей сигнала
     if wash_data ~= nil then
         if ( wash_data.DI ~= nil or

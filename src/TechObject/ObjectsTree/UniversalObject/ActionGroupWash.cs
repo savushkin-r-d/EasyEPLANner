@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Editor;
 
 namespace TechObject
@@ -109,18 +110,54 @@ namespace TechObject
                 return res;
             }
 
-            string groupData = string.Empty;
+            string singleGroupData = string.Empty;
+            string multiGroupData = string.Empty;
+            singleGroupData += SaveSingleGroup(prefix);
+            multiGroupData += SaveMultiGroup(prefix);
+
+            string oldVersionCompatibility = 
+                "Совместимость со старой версией";
+            if (singleGroupData != string.Empty)
+            {
+                res += $"{prefix}{SingleGroupAction} = --{name}." +
+                    $" {oldVersionCompatibility}\n" + 
+                    $"{prefix}\t{{\n{singleGroupData}{prefix}\t}},\n";
+            }
+
+            if (multiGroupData != string.Empty)
+            {
+                res += $"{prefix}{MultiGroupAction} = --{name}\n" +
+                    $"{prefix}\t{{\n{multiGroupData}{prefix}\t}},\n";
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить первую группу мойки. Старая функциональность
+        /// </summary>
+        /// <param name="prefix">Префикс</param>
+        /// <returns></returns>
+        private string SaveSingleGroup(string prefix)
+        {
+            string res = string.Empty;
+            var firstGroup = subActions.First();
+            res += firstGroup?.SaveAsLuaTable(prefix + "\t");
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить все группы мойки
+        /// </summary>
+        /// <param name="prefix">Префикс</param>
+        /// <returns></returns>
+        private string SaveMultiGroup(string prefix)
+        {
+            string res = string.Empty;
             foreach (ActionWash group in subActions)
             {
-                groupData += group.SaveAsLuaTable(prefix + "\t");
+                res += group.SaveAsLuaTable(prefix + "\t");
             }
-
-            if (groupData != string.Empty)
-            {
-                res += prefix + luaName + " = --" + name + "\n" + prefix +
-                    "\t{\n" + groupData + prefix + "\t},\n";
-            }
-
             return res;
         }
 
@@ -238,7 +275,7 @@ namespace TechObject
             {
                 switch (luaName)
                 {
-                    case SingleGroupActionName:
+                    case SingleGroupAction:
                         return ImageIndexEnum.ActionWash;
 
                     default:
@@ -253,12 +290,12 @@ namespace TechObject
         /// <summary>
         /// Название действия, для сохранения всех групп.
         /// </summary>
-        private const string MultiGroupsActionName = "devices_data";
+        private const string MultiGroupAction = "devices_data";
 
         /// <summary>
         /// Название действия, для сохранения первой группы.
         /// Старая функциональность.
         /// </summary>
-        public const string SingleGroupActionName = "wash_data";
+        public const string SingleGroupAction = "wash_data";
     }
 }
