@@ -142,21 +142,15 @@ namespace TechObject
                 groupData += group.SaveAsLuaTable(prefix + "\t");
             }
 
-            string pumpFreqVal = pumpFreq.EditText[1].Trim();
-            bool isParamNum = int.TryParse(pumpFreqVal, out int paramNum);
+
 
             if (groupData != "")
             {
-                string saveFreqVal;
-                if (isParamNum)
-                {
-                    saveFreqVal = $"{prefix}\tpump_freq = {paramNum},\n";
-                }
-                else
-                {
-                    saveFreqVal = 
-                        $"{prefix}\tpump_freq = '{pumpFreqVal}',\n";
-                }
+                string pumpFreqVal = pumpFreq.EditText[1].Trim();
+                bool isParamNum = int.TryParse(pumpFreqVal, out int paramNum);
+                string paramValue = 
+                    isParamNum ? $"{paramNum}" : $"'{pumpFreqVal}'";
+                string saveFreqVal = $"{prefix}\tpump_freq = {paramValue},\n";
 
                 res += prefix;
                 if (luaName != string.Empty)
