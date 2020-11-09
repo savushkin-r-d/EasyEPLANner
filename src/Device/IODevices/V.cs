@@ -39,7 +39,8 @@ namespace Device
 
             if ((dSubType == DeviceSubType.V_IOLINK_VTUG_DO1 ||
                     dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF ||
-                    dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON) &&
+                    dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON ||
+                    dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_DI2) &&
                 AO[0].Node >= 0 && AO[0].Module > 0)
             {
                 // DEV_VTUG - поддержка старых проектов
