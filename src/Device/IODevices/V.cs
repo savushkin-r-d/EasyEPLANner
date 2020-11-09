@@ -222,6 +222,18 @@ namespace Device
                     parameters.Add("P_FB", 1);
                     break;
 
+                case "V_IOLINK_VTUG_DO1_DI2":
+                    rtParameters.Add("R_VTUG_NUMBER", null);
+                    rtParameters.Add("R_VTUG_SIZE", 1);
+
+                    AO.Add(new IOChannel("AO", -1, -1, -1, ""));
+                    DI.Add(new IOChannel("DI", -1, -1, -1, "Открыт"));
+                    DI.Add(new IOChannel("DI", -1, -1, -1, "Закрыт"));
+
+                    parameters.Add("P_ON_TIME", null);
+                    parameters.Add("R_VTUG_SIZE", 1);
+                    break;
+
                 case "":
                     errStr = string.Format(
                         "\"{0}\" - не задан тип (V_DO1, V_DO2, ...).\n", name);
