@@ -39,7 +39,8 @@ namespace Device
 
             if ((dSubType == DeviceSubType.V_IOLINK_VTUG_DO1 ||
                     dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF ||
-                    dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON) &&
+                    dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON ||
+                    dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_DI2) &&
                 AO[0].Node >= 0 && AO[0].Module > 0)
             {
                 // DEV_VTUG - поддержка старых проектов
@@ -222,6 +223,18 @@ namespace Device
                     parameters.Add("P_FB", 1);
                     break;
 
+                case "V_IOLINK_VTUG_DO1_DI2":
+                    rtParameters.Add("R_VTUG_NUMBER", null);
+                    rtParameters.Add("R_VTUG_SIZE", 1);
+
+                    AO.Add(new IOChannel("AO", -1, -1, -1, ""));
+                    DI.Add(new IOChannel("DI", -1, -1, -1, "Открыт"));
+                    DI.Add(new IOChannel("DI", -1, -1, -1, "Закрыт"));
+
+                    parameters.Add("P_ON_TIME", null);
+                    parameters.Add("P_FB", 1);
+                    break;
+
                 case "":
                     errStr = string.Format(
                         "\"{0}\" - не задан тип (V_DO1, V_DO2, ...).\n", name);
@@ -276,6 +289,8 @@ namespace Device
                             return "V_IOLINK_VTUG_DO1_FB_OFF";
                         case DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON:
                             return "V_IOLINK_VTUG_DO1_FB_ON";
+                        case DeviceSubType.V_IOLINK_VTUG_DO1_DI2:
+                            return "V_IOLINK_VTUG_DO1_DI2";
                     }
                     break;
             }
@@ -319,6 +334,7 @@ namespace Device
                         case DeviceSubType.V_AS_MIXPROOF:
                         case DeviceSubType.V_AS_DO1_DI2:
                         case DeviceSubType.V_BOTTOM_MIXPROOF:
+                        case DeviceSubType.V_IOLINK_VTUG_DO1_DI2:
                             return new Dictionary<string, int>()
                             {
                                 {"ST", 1},
