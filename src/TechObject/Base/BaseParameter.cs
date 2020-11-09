@@ -94,6 +94,8 @@ namespace TechObject
                 {
                     displayObjectsFlags.Add(parsedEnum);
                 }
+
+                SetUpDisplayObjects();
             }
         }
 

@@ -25,54 +25,104 @@ namespace TechObject
             this.getN = getN;
             this.IsMainStep = isMainStep;
             this.owner = owner;
-            this.baseStep = new ActiveParameter("", "");
+            this.baseStep = new ActiveParameter(string.Empty, string.Empty);
             this.baseStep.Owner = this;
 
             items = new List<ITreeViewItem>();
 
             actions = new List<Action>();
-            actions.Add(new Action("Включать", this, 
-                "opened_devices",
-                new Device.DeviceType[3] { 
+            actions.Add(new Action("Включать", this, Action.OpenDevices,
+                new Device.DeviceType[]
+                { 
                     Device.DeviceType.V, 
                     Device.DeviceType.DO, 
-                    Device.DeviceType.M }));
+                    Device.DeviceType.M
+                }));
 
             actions.Add(new Action("Включать реверс", this, 
-                "opened_reverse_devices",
-                new Device.DeviceType[1] { 
-                    Device.DeviceType.M }));
+                Action.OpenReverseDevices,
+                new Device.DeviceType[]
+                { 
+                    Device.DeviceType.M
+                },
+                new Device.DeviceSubType[]
+                {
+                    Device.DeviceSubType.M_REV_FREQ,
+                    Device.DeviceSubType.M_REV_FREQ_2,
+                    Device.DeviceSubType.M_REV_FREQ_2_ERROR,
+                    Device.DeviceSubType.M_ATV,
+                    Device.DeviceSubType.M
+                }));
 
-            actions.Add(new Action("Выключать", this, 
-                "closed_devices",
-                new Device.DeviceType[3] { 
+            actions.Add(new Action("Выключать", this, Action.CloseDevices,
+                new Device.DeviceType[]
+                { 
                     Device.DeviceType.V, 
                     Device.DeviceType.DO, 
-                    Device.DeviceType.M }));
-
+                    Device.DeviceType.M
+                }));
             actions[2].DrawStyle = DrawInfo.Style.RED_BOX;
-            actions.Add(new Action_WashSeats("Верхние седла", this,
-                "opened_upper_seat_v"));
 
+            actions.Add(new ActionGroup("Верхние седла", this,
+                ActionGroup.OpenedUpperSeats,
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.V
+                },
+                new Device.DeviceSubType[]
+                {
+                    Device.DeviceSubType.V_MIXPROOF,
+                    Device.DeviceSubType.V_AS_MIXPROOF,
+                    Device.DeviceSubType.V_IOLINK_MIXPROOF
+                }));
             actions[3].DrawStyle = DrawInfo.Style.GREEN_UPPER_BOX;
-            actions.Add(new Action_WashSeats("Нижние седла", this,
-                "opened_lower_seat_v"));
 
+            actions.Add(new ActionGroup("Нижние седла", this,
+                ActionGroup.OpenedLowerSeats,
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.V
+                },
+                new Device.DeviceSubType[]
+                {
+                    Device.DeviceSubType.V_MIXPROOF,
+                    Device.DeviceSubType.V_AS_MIXPROOF,
+                    Device.DeviceSubType.V_IOLINK_MIXPROOF
+                }));
             actions[4].DrawStyle = DrawInfo.Style.GREEN_LOWER_BOX;
+
             actions.Add(new Action("Сигналы для включения", this,
-                "required_FB",
-                new Device.DeviceType[2] {
+                Action.RequiredFB,
+                new Device.DeviceType[]
+                {
                     Device.DeviceType.DI,
-                    Device.DeviceType.GS }));
+                    Device.DeviceType.GS
+                }));
 
-            actions.Add(new Action_Wash("Мойка( DI, DO, устройства)", this,
-                "wash_data"));
+            actions.Add(new ActionGroupWash("Устройства", this,
+                ActionGroupWash.SingleGroupAction));
 
-            actions.Add(new Action_DI_DO("Группы DI -> DO DO ...", this,
-                "DI_DO"));
+            // Специальное действие - выдача дискретных сигналов 
+            // при наличии входного дискретного сигнала.
+            actions.Add(new ActionGroup("Группы DI -> DO DO ...", this,
+                ActionGroup.DIDO,
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.DI,
+                    Device.DeviceType.SB,
+                    Device.DeviceType.DO
+                }));
 
-            actions.Add(new Action_AI_AO("Группы AI -> AO AO ...", this,
-                "AI_AO"));
+            // Специальное действие - выдача аналоговых сигналов при
+            // наличии входного  аналогового сигнала.
+            actions.Add(new ActionGroup("Группы AI -> AO AO ...", this,
+                ActionGroup.AIAO,
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.AI,
+                    Device.DeviceType.AO,
+                    Device.DeviceType.M
+                }));
 
             items.AddRange(actions.ToArray());
 
@@ -84,7 +134,6 @@ namespace TechObject
                 items.Add(timeParam);
                 items.Add(nextStepN);
             }
-
         }
 
         public Step Clone(GetN getN, string name = "")
@@ -208,10 +257,12 @@ namespace TechObject
         /// </summary>
         /// <param name="actionLuaName">Имя действия в Lua.</param>
         /// <param name="devName">Имя устройства.</param>
-        /// <param name="additionalParam">Дополнительный параметр 
-        /// (для сложных действий).</param>
+        /// <param name="groupNumber">Номер группы.</param>
+        /// <param name="washGroupIndex">Номер группы для действия 
+        /// мойки (устройства)</param>
+        /// <param name="innerActionIndex">Индекс внутреннего действия.</param>
         public bool AddDev(string actionLuaName, string devName,
-            int additionalParam = 0)
+            int groupNumber = 0, int washGroupIndex = 0)
         {
             int index = Device.DeviceManager.GetInstance()
                 .GetDeviceIndex(devName);
@@ -224,7 +275,7 @@ namespace TechObject
             {
                 if (act.LuaName == actionLuaName)
                 {
-                    act.AddDev(index, additionalParam);
+                    act.AddDev(index, groupNumber, washGroupIndex);
                     return true;
                 }
             }
@@ -238,15 +289,17 @@ namespace TechObject
         /// Вызывается из Lua-скрипта sys.lua.
         /// </summary>
         /// <param name="actionLuaName">Имя действия в Lua.</param>
-        /// <param name="parIdx">Индекс параметра.</param>
         /// <param name="val">Значение параметра.</param>
-        public bool AddParam(string actionLuaName, int parIdx, int val)
+        /// <param name="washGroupIndex">Индекс группы в действии
+        /// мойки (устройства)</param>
+        public bool AddParam(string actionLuaName, object val,
+            int washGroupIndex = 0)
         {
             foreach (Action act in actions)
             {
                 if (act.LuaName == actionLuaName)
                 {
-                    act.AddParam(parIdx, val);
+                    act.AddParam(val, washGroupIndex);
                     return true;
                 }
             }

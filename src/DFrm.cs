@@ -1141,6 +1141,7 @@ namespace EasyEPlanner
                 Equals(devSubTypes, devSubTypesLastSelected) &&
                 isRebuiltTree == false)
             {
+                SelectDisplayObjects(checkedObjects, fn);
                 ShowDlg();
                 return true;
             }

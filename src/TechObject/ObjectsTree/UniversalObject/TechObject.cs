@@ -551,7 +551,6 @@ namespace TechObject
                 this.baseTechObject = baseTechObject.Clone(this);
                 
                 equipment.AddItems(baseTechObject.Equipment);
-                equipment.Check();
                 SetItems();
             }
 

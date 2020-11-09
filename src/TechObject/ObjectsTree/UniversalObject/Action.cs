@@ -196,9 +196,12 @@ namespace TechObject
         /// <summary>
         /// Добавление устройства к действию.
         /// </summary>
-        /// <param name="device">Устройство.</param>
-        /// <param name="additionalParam">Дополнительный параметр.</param>
-        public virtual void AddDev(int index, int additionalParam)
+        /// <param name="groupNumber">Номер группы в действии.</param>
+        /// <param name="index">Индекс устройства</param>
+        /// <param name="washGroupIndex">Индекс группы в действии мойка 
+        /// (устройства)</param>
+        public virtual void AddDev(int index, int groupNumber = 0,
+            int washGroupIndex = 0)
         {
             var device = Device.DeviceManager.GetInstance()
                 .GetDeviceByIndex(index);
@@ -211,9 +214,10 @@ namespace TechObject
         /// <summary>
         /// Добавление параметра к действию.
         /// </summary>
-        /// <param name="index">Индекс параметра.</param>
         /// <param name="val">Значение параметра.</param>
-        public virtual void AddParam(int index, int val) { }
+        /// <param name="washGroupIndex">Индекс группы мойки в действии
+        /// (устройства)</param>
+        public virtual void AddParam(object val, int washGroupIndex = 0) { }
             
         /// <summary>
         /// Очищение списка устройств.
@@ -523,15 +527,15 @@ namespace TechObject
         {
             get
             {
-                switch(name)
+                switch(luaName)
                 {
-                    case "Включать":
+                    case OpenDevices:
                         return ImageIndexEnum.ActionON;
 
-                    case "Выключать":
+                    case CloseDevices:
                         return ImageIndexEnum.ActionOFF;
 
-                    case "Сигналы для включения":
+                    case RequiredFB:
                         return ImageIndexEnum.ActionSignals;
 
                     default:
@@ -564,13 +568,26 @@ namespace TechObject
             }
         }
 
-        protected string luaName;               /// Имя действия в таблице Lua.
-        protected string name;                  /// Имя действия.
-        protected List<int> deviceIndex;  /// Список устройств.
+        protected string luaName; // Имя действия в таблице Lua.
+        protected string name; // Имя действия.
+        protected List<int> deviceIndex; // Список устройств.
 
-        protected Device.DeviceType[] devTypes;
-        protected Device.DeviceSubType[] devSubTypes;
+        protected Device.DeviceType[] devTypes; // Отображаемые типы
+        protected Device.DeviceSubType[] devSubTypes; // Отображаемые подтипы.
 
-        protected Step owner; // Владелец элемента
+        protected Step owner; // Владелец элемента.
+
+        protected private const string GroupDefaultName = "Группа";
+
+        public const string OpenDevices = "opened_devices";
+        public const string CloseDevices = "closed_devices";
+        public const string OpenReverseDevices = "opened_reverse_devices";
+        public const string RequiredFB = "required_FB";
+
+        protected private const string DO = "DO";
+        protected private const string DI = "DI";
+        protected private const string Devices = "devices";
+        protected private const string ReverseDevices = "rev_devices";
+
     }
 }

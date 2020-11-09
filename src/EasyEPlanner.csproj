@@ -295,10 +295,9 @@
     <Compile Include="TechObject\ObjectsTree\S88Object.cs" />
     <Compile Include="TechObject\ObjectsTree\ProcessCell.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Action.cs" />
-    <Compile Include="TechObject\ObjectsTree\UniversalObject\Action_AI_AO.cs" />
-    <Compile Include="TechObject\ObjectsTree\UniversalObject\Action_DI_DO.cs" />
-    <Compile Include="TechObject\ObjectsTree\UniversalObject\Action_Wash.cs" />
-    <Compile Include="TechObject\ObjectsTree\UniversalObject\Action_WashSeats.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\ActionGroupWash.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\ActionWash.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\ActionGroup.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Equipment.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\LocalRestriction.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Mode.cs" />

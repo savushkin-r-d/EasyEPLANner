@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Editor;
 
 namespace TechObject
@@ -10,9 +6,8 @@ namespace TechObject
     /// <summary>
     /// Специальное действие - обработка сигналов во время мойки.
     /// </summary>
-    public class Action_Wash : Action
+    public class ActionWash : Action
     {
-
         /// <summary>
         /// Создание нового действия.
         /// </summary>
@@ -20,28 +15,56 @@ namespace TechObject
         /// <param name="luaName">Имя действия - как оно будет называться в 
         /// таблице Lua.</param>
         /// <param name="owner">Владелец действия (Шаг)</param>
-        public Action_Wash(string name, Step owner, string luaName)
+        public ActionWash(string name, Step owner, string luaName)
             : base(name, owner, luaName)
         {
             vGroups = new List<Action>();
-            vGroups.Add(new Action("DI", owner, "DI",
-                new Device.DeviceType[2] { 
+            vGroups.Add(new Action(DI, owner, DI,
+                new Device.DeviceType[]
+                { 
                     Device.DeviceType.DI,
-                    Device.DeviceType.SB }));
-            vGroups.Add(new Action("DO", owner, "DO",
-                new Device.DeviceType[1] { 
-                    Device.DeviceType.DO }));
+                    Device.DeviceType.SB
+                }));
+            vGroups.Add(new Action(DO, owner, DO,
+                new Device.DeviceType[]
+                { 
+                    Device.DeviceType.DO
+                }));
 
-            vGroups.Add(new Action("Устройства", owner, "devices",
-                new Device.DeviceType[3] { 
+            vGroups.Add(new Action("Устройства", owner, Devices,
+                new Device.DeviceType[] 
+                { 
                     Device.DeviceType.M,
-                    Device.DeviceType.V, 
-                    Device.DeviceType.DO }));
+                    Device.DeviceType.V,
+                    Device.DeviceType.DO,
+                    Device.DeviceType.AO,
+                    Device.DeviceType.VC
+                },
+                new Device.DeviceSubType[]
+                {
+                    Device.DeviceSubType.M_FREQ,
+                    Device.DeviceSubType.M_REV_FREQ,
+                    Device.DeviceSubType.M_REV_FREQ_2,
+                    Device.DeviceSubType.M_REV_FREQ_2_ERROR,
+                    Device.DeviceSubType.M_ATV,
+                    Device.DeviceSubType.M
+                }));
 
-            vGroups.Add(new Action("Реверсные устройства", owner, "rev_devices",
-                new Device.DeviceType[] { 
-                    Device.DeviceType.M, 
-                    Device.DeviceType.V }));
+            vGroups.Add(new Action("Реверсивные устройства", owner,
+                ReverseDevices,
+                new Device.DeviceType[]
+                { 
+                    Device.DeviceType.M
+                },
+                new Device.DeviceSubType[] 
+                {
+                    Device.DeviceSubType.M_FREQ,
+                    Device.DeviceSubType.M_REV_FREQ,
+                    Device.DeviceSubType.M_REV_FREQ_2,
+                    Device.DeviceSubType.M_REV_FREQ_2_ERROR,
+                    Device.DeviceSubType.M_ATV,
+                    Device.DeviceSubType.M
+                }));
 
             items = new List<ITreeViewItem>();
             foreach (Action action in vGroups)
@@ -49,23 +72,26 @@ namespace TechObject
                 items.Add(action);
             }
 
-            pumpFreq = new ObjectProperty("Частота насосов (параметр)", -1, -1);
+            var pumpFreqParam = new ActiveParameter("frequency",
+                "Производительность");
+            pumpFreqParam.OneValueOnly = true;
+            pumpFreq = pumpFreqParam;
             items.Add(pumpFreq);
         }
 
         override public Action Clone()
         {
-            Action_Wash clone = (Action_Wash)base.Clone();
+            var clone = new ActionWash(name, owner, luaName);
 
             clone.vGroups = new List<Action>();
-            foreach (Action action in vGroups)
+            foreach (var action in vGroups)
             {
                 clone.vGroups.Add(action.Clone());
             }
 
             clone.items.Clear();
             clone.items = new List<ITreeViewItem>();
-            foreach (Action action in clone.vGroups)
+            foreach (var action in clone.vGroups)
             {
                 clone.items.Add(action);
             }
@@ -104,56 +130,53 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public override string SaveAsLuaTable(string prefix)
         {
-            if (vGroups.Count == 0) return "";
-
-            string res = "";
-
-            foreach (Action group in vGroups)
+            string res = string.Empty;
+            if (vGroups.Count == 0)
             {
-                string tmp = group.SaveAsLuaTable(prefix + "\t");
-                if (tmp != "")
-                {
-                    res += tmp;
-                }
+                return res;
             }
 
-            string pumpFreqVal = pumpFreq.EditText[1].Trim();
-
-            if (res != "")
+            string groupData = string.Empty;
+            foreach (Action group in vGroups)
             {
-                res = prefix + luaName + " = --" + name + "\n" +
-                    prefix + "\t{\n" +
-                    res +
-                    (pumpFreqVal == "-1" ? "" : prefix + "\tpump_freq = " + 
-                    pumpFreqVal + ",\n") + prefix + "\t},\n";
+                groupData += group.SaveAsLuaTable(prefix + "\t");
+            }
+
+
+
+            if (groupData != "")
+            {
+                string pumpFreqVal = pumpFreq.EditText[1].Trim();
+                bool isParamNum = int.TryParse(pumpFreqVal, out int paramNum);
+                string paramValue = 
+                    isParamNum ? $"{paramNum}" : $"'{pumpFreqVal}'";
+                string saveFreqVal = $"{prefix}\tpump_freq = {paramValue},\n";
+
+                res += prefix;
+                if (luaName != string.Empty)
+                {
+                    res += luaName + " =";
+                }
+                res += " --" + name + "\n" + prefix + "\t{\n" + groupData + 
+                    (pumpFreqVal == string.Empty ? string.Empty : saveFreqVal) +
+                    prefix + "\t},\n";
             }
 
             return res;
         }
 
-        /// <summary>
-        /// Добавление устройства к действию.
-        /// </summary>
-        /// <param name="device">Устройство.</param>
-        /// <param name="additionalParam">Дополнительный параметр.</param>
-        public override void AddDev(int index, int additionalParam)
+        public override void AddDev(int index, int groupNumber,
+            int washGroupIndex = 0)
         {
-            if (additionalParam < vGroups.Count /*Количество групп*/ )
+            if (groupNumber < vGroups.Count /*Количество групп*/ )
             {
-                (vGroups[additionalParam] as Action).AddDev(index, 0);
+                vGroups[groupNumber].AddDev(index, 0);
             }
-
-            deviceIndex.Add(index);
         }
 
-        /// <summary>
-        /// Добавление параметра к действию.
-        /// </summary>
-        /// <param name="index">Индекс параметра.</param>
-        /// <param name="val">Значение параметра.</param>
-        public override void AddParam(int index, int val)
-        {
-            pumpFreq.SetValue(val);
+        public override void AddParam(object val, int washGroupIndex = 0)
+        {           
+            pumpFreq.SetNewValue(val.ToString());
         }
 
         #region Синхронизация устройств в объекте.
@@ -177,25 +200,11 @@ namespace TechObject
         {
             get
             {
-                var deviceManager = Device.DeviceManager.GetInstance();
                 string res = "";
 
-                foreach (Action group in vGroups)
+                foreach (Action action in vGroups)
                 {
-                    res += "{";
-
-                    foreach (int index in group.DeviceIndex)
-                    {
-                        res += deviceManager.GetDeviceByIndex(index).Name + 
-                            " ";
-                    }
-
-                    if (group.DeviceIndex.Count > 0)
-                    {
-                        res = res.Remove(res.Length - 1);
-                    }
-
-                    res += "} ";
+                    res += $"{{ {action.DisplayText[1]} }} ";
                 }
 
                 res += "{" + pumpFreq.DisplayText[1] + "}";
@@ -254,10 +263,10 @@ namespace TechObject
 
         public override bool Delete(object child)
         {
-            if (child.GetType() == typeof(ObjectProperty))
+            if (child is BaseParameter parameter)
             {
-                var objectProperty = child as ObjectProperty;
-                objectProperty.Delete(this);
+                parameter.Delete(this);
+                return true;
             }
 
             return false;
@@ -265,7 +274,7 @@ namespace TechObject
         #endregion
 
         List<Action> vGroups;
-        private ObjectProperty pumpFreq; ///< Частота насоса, параметр.
+        private BaseParameter pumpFreq; ///< Частота насоса, параметр.
 
         List<ITreeViewItem> items;
     }

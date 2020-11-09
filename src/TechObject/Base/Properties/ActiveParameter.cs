@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace TechObject
 {
@@ -15,8 +16,9 @@ namespace TechObject
         {
             var newProperty = new ActiveParameter(LuaName, Name,
                 DefaultValue, DisplayObjects);
-            newProperty.SetNewValue(Value);
             newProperty.NeedDisable = NeedDisable;
+            newProperty.OneValueOnly = OneValueOnly;
+            newProperty.SetNewValue(Value);
             return newProperty;
         }
 
@@ -37,6 +39,11 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Записывается только одно значение, которое может быть перезаписано.
+        /// </summary>
+        public bool OneValueOnly { get; set; }
+
         #region реализация ItreeViewItem
         public override bool SetNewValue(string newValue)
         {
@@ -44,7 +51,15 @@ namespace TechObject
                 .Contains(StaticHelper.CommonConst.StubForCells.ToLower());
             if (notStub)
             {
-                return base.SetNewValue(newValue);
+                if (OneValueOnly)
+                {
+                    string[] values = newValue.Trim().Split(' ');
+                    return base.SetNewValue(values.Last());
+                }
+                else
+                {
+                    return base.SetNewValue(newValue);
+                }
             }
             else
             {
