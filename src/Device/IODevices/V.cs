@@ -231,7 +231,7 @@ namespace Device
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Закрыт"));
 
                     parameters.Add("P_ON_TIME", null);
-                    parameters.Add("R_VTUG_SIZE", 1);
+                    parameters.Add("P_FB", 1);
                     break;
 
                 case "":
@@ -288,6 +288,8 @@ namespace Device
                             return "V_IOLINK_VTUG_DO1_FB_OFF";
                         case DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON:
                             return "V_IOLINK_VTUG_DO1_FB_ON";
+                        case DeviceSubType.V_IOLINK_VTUG_DO1_DI2:
+                            return "V_IOLINK_VTUG_DO1_DI2";
                     }
                     break;
             }
@@ -331,6 +333,7 @@ namespace Device
                         case DeviceSubType.V_AS_MIXPROOF:
                         case DeviceSubType.V_AS_DO1_DI2:
                         case DeviceSubType.V_BOTTOM_MIXPROOF:
+                        case DeviceSubType.V_IOLINK_VTUG_DO1_DI2:
                             return new Dictionary<string, int>()
                             {
                                 {"ST", 1},

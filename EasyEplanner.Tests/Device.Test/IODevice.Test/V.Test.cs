@@ -138,6 +138,8 @@ namespace Tests
                     "V_IOLINK_VTUG_DO1_FB_OFF", GetRandomVDevice() },
                 new object[] { Device.DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON,
                     "V_IOLINK_VTUG_DO1_FB_ON", GetRandomVDevice() },
+                new object[] {Device.DeviceSubType.V_IOLINK_VTUG_DO1_DI2,
+                    "V_IOLINK_VTUG_DO1_DI2", GetRandomVDevice() },
                 new object[] { Device.DeviceSubType.NONE, "Incorrect", 
                     GetRandomVDevice() },
                 new object[] { Device.DeviceSubType.NONE, "",
@@ -182,6 +184,8 @@ namespace Tests
                     "V_IOLINK_VTUG_DO1_FB_OFF", GetRandomVDevice() },
                 new object[] { "V_IOLINK_VTUG_DO1_FB_ON",
                     "V_IOLINK_VTUG_DO1_FB_ON", GetRandomVDevice() },
+                new object[] { "V_IOLINK_VTUG_DO1_DI2",
+                    "V_IOLINK_VTUG_DO1_DI2", GetRandomVDevice() },
                 new object[] { "", "Incorrect", GetRandomVDevice() },
                 new object[] { "", "", GetRandomVDevice() },
             };
@@ -257,6 +261,8 @@ namespace Tests
                     GetRandomVDevice()},
                 new object[] {exportForVFBOn, "V_MIXPROOF", GetRandomVDevice()},
                 new object[] {exportForVFBOn, "V_BOTTOM_MIXPROOF", 
+                    GetRandomVDevice()},
+                new object[] {exportForVFBOn, "V_IOLINK_VTUG_DO1_DI2",
                     GetRandomVDevice()},
                 new object[] {exportForVIOLinkMixproof, "V_IOLINK_MIXPROOF", 
                     GetRandomVDevice()},
@@ -365,6 +371,12 @@ namespace Tests
                 {
                     new string[] { "P_ON_TIME", "P_FB" },
                     "V_IOLINK_VTUG_DO1_FB_ON",
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[] { "P_ON_TIME", "P_FB" },
+                    "V_IOLINK_VTUG_DO1_DI2",
                     GetRandomVDevice()
                 },
                 new object[]
@@ -571,6 +583,18 @@ namespace Tests
                         { "DO", 0 },
                     },
                     "V_IOLINK_VTUG_DO1_FB_ON",
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 1 },
+                        { "DI", 2 },
+                        { "DO", 0 },
+                    },
+                    "V_IOLINK_VTUG_DO1_DI2",
                     GetRandomVDevice()
                 },
                 new object[]
