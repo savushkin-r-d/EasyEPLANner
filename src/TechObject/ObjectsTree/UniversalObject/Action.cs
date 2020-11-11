@@ -583,11 +583,11 @@ namespace TechObject
         public const string CloseDevices = "closed_devices";
         public const string OpenReverseDevices = "opened_reverse_devices";
         public const string RequiredFB = "required_FB";
+        public const string CheckedDevices = "checked_devices";
 
         protected private const string DO = "DO";
         protected private const string DI = "DI";
         protected private const string Devices = "devices";
         protected private const string ReverseDevices = "rev_devices";
-
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Editor;
 
@@ -133,6 +134,16 @@ namespace TechObject
 
                 items.Add(timeParam);
                 items.Add(nextStepN);
+            }
+            else
+            {
+                var allEnumValues = Enum.GetValues(typeof(Device.DeviceType))
+                    .Cast<Device.DeviceType>().ToArray();
+                var checkedDev = new Action("Проверить устройства", this,
+                    Action.CheckedDevices, allEnumValues, null);
+
+                actions.Insert(0, checkedDev);
+                items.Insert(0, checkedDev);
             }
         }
 
