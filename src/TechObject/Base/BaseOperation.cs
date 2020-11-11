@@ -298,6 +298,11 @@ namespace TechObject
                 return owner;
             }
         }
+
+        /// <summary>
+        /// Является ли операция операцией по-умолчанию для объекта.
+        /// </summary>
+        public bool IsDefault { get; set; } = false;
        
         /// <summary>
         /// Добавить свойства базовой операции.

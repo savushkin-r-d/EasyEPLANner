@@ -85,6 +85,7 @@ return
                         WAITING_HI_LS = { name = "Ожидание появления ВУ" },
                         WAITING_LOW_LS = { name = "Ожидание пропадания НУ" },
                     },
+                    isDefault = true,
                 },
             },
             basicName = "ice_water_pump_tank",
@@ -116,6 +117,7 @@ return
                         WAITING_HI_LS = { name = "Ожидание появления ВУ" },
                         WAITING_LOW_LS = { name = "Ожидание пропадания НУ" },
                     },
+                    isDefault = true,
                 },
             },
             basicName = "ice_water_pump_tank_PID",
@@ -145,6 +147,7 @@ return
                         WATER_2_LOW_LS = { name = "Наполнение до нижнего уровня" },
                         WATER_2_HI_LS = { name = "Наполнение до верхнего уровня" },
                     },
+                    isDefault = true,
                 },
             },
             basicName = "boiler",
@@ -206,6 +209,7 @@ return
                     {
                         DRAINAGE = { name = "Дренаж" },
                     },
+                    isDefault = true,
                 },
                 FILL = {
                     name = "Наполнение",
@@ -216,6 +220,7 @@ return
                         IN_TANK = { name = "В приемник" },
                         WAITING_KEY = { name = "Ожидание" },
                     },
+                    isDefault = true,
                 },
                 OUT = {
                     name = "Выдача",
@@ -226,6 +231,7 @@ return
                         OUT_TANK = { name = "Из источника" },
                         WAITING_KEY = { name = "Ожидание" },
                     },
+                    isDefault = true,
                 },
                 WORK = {
                     name = "Работа",
@@ -279,6 +285,7 @@ return
                     {
                         DRAINAGE = { name = "Дренаж" },
                     },
+                    isDefault = true,
                 },
                 FILL = {
                     name = "Наполнение",
@@ -289,6 +296,7 @@ return
                         IN_TANK = { name = "В приемник" },
                         WAITING_KEY = { name = "Ожидание" },
                     },
+                    isDefault = true,
                 },
                 WORK = {
                     name = "Работа",
@@ -342,6 +350,7 @@ return
                     {
                         DRAINAGE = { name = "Дренаж" },
                     },
+                    isDefault = true,
                 },
                 OUT = {
                     name = "Выдача",
@@ -352,6 +361,7 @@ return
                         OUT_TANK = { name = "Из источника" },
                         WAITING_KEY = { name = "Ожидание" },
                     },
+                    isDefault = true,
                 },
                 WORK = {
                     name = "Работа",
@@ -401,6 +411,7 @@ return
                     {
                         DRAINAGE = { name = "Дренаж" },
                     },
+                    isDefault = true,
                 },
             },
             basicName = "pasteurizator",
@@ -455,6 +466,7 @@ return
                         DRAINAGE = { name = "Дренаж" },
                         MEDIUM_CHANGE = { name = "Смена среды" },
                     },
+                    isDefault = true,
                 },
                 EMPTY_TANK_HEATING = {
                     name = "Нагрев пустого танка",
@@ -469,6 +481,7 @@ return
                         },
                     },
                     steps = { },
+                    isDefault = true,
                 },
                 ADDITION_OF_STARTER = {
                     name = "Внесение закваски",
@@ -498,6 +511,7 @@ return
                     name = "Хранение",
                     params = { },
                     steps = { },
+                    isDefault = true,
                 },
                 OUT = {
                     name = "Выдача",
@@ -509,6 +523,7 @@ return
                         },
                     },
                     steps = { },
+                    isDefault = true,
                 },
                 SLOW_HEATING = {
                     name = "Томление",
@@ -633,6 +648,7 @@ return
                         },
                     },
                     steps = { },
+                    isDefault = true,
                 },
             },
             basicName = "pressure_node_PID",
@@ -666,6 +682,7 @@ return
                         WORKING = { name = "Работа" },
                         WAITING = { name = "Ожидание" },
                     },
+                    isDefault = true,
                 },
             },
             basicName = "heater_node",
@@ -709,6 +726,7 @@ return
                         WORKING = { name = "Работа" },
                         WAITING = { name = "Ожидание" },
                     },
+                    isDefault = true,
                 },
             },
             basicName = "heater_node_PID",
@@ -738,6 +756,7 @@ return
                     name = "Работа",
                     params = { },
                     steps = { },
+                    isDefault = true,
                 },
             },
             basicName = "flow_node_PID",
@@ -791,6 +810,7 @@ return
                         WORKING = { name = "Работа" },
                         WAITING = { name = "Ожидание" },
                     },
+                    isDefault = true,
                 },
             },
             basicName = "cooler_node",
@@ -834,6 +854,7 @@ return
                         WORKING = { name = "Работа" },
                         WAITING = { name = "Ожидание" },
                     },
+                    isDefault = true,
                 },
             },
             basicName = "cooler_node_PID",
@@ -860,6 +881,7 @@ return
             {
                 MIXING = {
                     name = "Перемешивание",
+                    isDefault = true,
                 },
                 MIXING_LEFT = {
                     name = "Перемешивание влево",
@@ -922,6 +944,7 @@ return
                         WORKING = { name = "Работа" },
                         WAITING = { name = "Ожидание" },
                     },
+                    isDefault = true,
                 },
                 STERILIZATION =
                 {
@@ -958,6 +981,7 @@ return
                             },
                         },
                     },
+                    isDefault = true,
                 },
             },
             basicName = "sterile_air_node",
@@ -975,6 +999,7 @@ return
             {
                 WORKING = {
                     name = "Работа",
+                    isDefault = true,
                 },
             },
             basicName = "steam_blast_node",
@@ -992,6 +1017,7 @@ return
             {
                 WORKING = {
                     name = "Работа",
+                    isDefault = true,
                 },
             },
             basicName = "tank_level_node_PID",
@@ -1016,6 +1042,7 @@ return
                         WAITING_LOW_LS = { name = "Ожидание пропадания нижнего уровня" },
                         FEEDING_HI_LS = { name = "Пополнение до появления верхнего уровня" },
                     },
+                    isDefault = true,
                 },
             },
             basicName = "tank_level_node",

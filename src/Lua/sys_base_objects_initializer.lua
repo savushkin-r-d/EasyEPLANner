@@ -63,9 +63,10 @@ init_base_operations = function(object, operations)
     for luaName, value in pairs(operations) do
         -- Данные для минимальной инициализации операции
         local name = value.name or ""
+        local isDefault = value.isDefault or false
 
         -- Добавить базовую операцию
-        local operation = object:AddBaseOperation(luaName, name)
+        local operation = object:AddBaseOperation(luaName, name, isDefault)
 
         -- Добавить параметры базовой операции
         local params = value.params or { }
