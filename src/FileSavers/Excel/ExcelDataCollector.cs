@@ -68,6 +68,12 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Заполнение информации о состоянии операции
+        /// (шаг - Во время операции).
+        /// </summary>
+        /// <param name="state">Состояние операции</param>
+        /// <param name="modeNode">узел дерева операции</param>
         private static void FillState(State state, ref TreeNode modeNode)
         {
             Step commonStep;
@@ -93,24 +99,31 @@ namespace EasyEPlanner
                 var devicesAction = commonStep.GetActions[WashDevices];
                 var rowWithState = new string[]
                 {
-                        state.DisplayText.First(),
-                        commonStep.GetActions[CheckedDevices].EditText.Last(),
-                        commonStep.GetActions[OpenedDevices].EditText.Last(),
-                        commonStep.GetActions[ClosedDevices].EditText.Last(),
-                        commonStep.GetActions[UpperSeats].EditText.Last(),
-                        commonStep.GetActions[LowerSeats].EditText.Last(),
-                        commonStep.GetActions[RequiredFB].EditText.Last(),
-                        GenerateGroupWashActionText(devicesAction, DevicesDI),
-                        GenerateGroupWashActionText(devicesAction, DevicesDO),
-                        GenerateGroupWashActionText(devicesAction, Devices),
-                        commonStep.GetActions[DIDOGroup].EditText.Last(),
-                        commonStep.GetActions[AIAOGroup].EditText.Last(),
+                    state.DisplayText.First(),
+                    commonStep.GetActions[CheckedDevices].EditText.Last(),
+                    commonStep.GetActions[OpenedDevices].EditText.Last(),
+                    commonStep.GetActions[ClosedDevices].EditText.Last(),
+                    commonStep.GetActions[UpperSeats].EditText.Last(),
+                    commonStep.GetActions[LowerSeats].EditText.Last(),
+                    commonStep.GetActions[RequiredFB].EditText.Last(),
+                    GenerateGroupWashActionText(devicesAction, DevicesDI),
+                    GenerateGroupWashActionText(devicesAction, DevicesDO),
+                    GenerateGroupWashActionText(devicesAction, Devices),
+                    commonStep.GetActions[DIDOGroup].EditText.Last(),
+                    commonStep.GetActions[AIAOGroup].EditText.Last(),
                 };
                 stateNode.Tag = rowWithState;
                 modeNode.Nodes.Add(stateNode);
             }
         }
 
+        /// <summary>
+        /// Генерация описания групп действия "Устройства" (старая мойка).
+        /// </summary>
+        /// <param name="devicesAction">Действие</param>
+        /// <param name="subGroupNum">Номер подгруппы действия внутри группы
+        /// </param>
+        /// <returns></returns>
         private static string GenerateGroupWashActionText(
             TechObject.Action devicesAction, int subGroupNum)
         {
@@ -132,6 +145,11 @@ namespace EasyEPlanner
             return res;
         }
 
+        /// <summary>
+        /// Заполнение шагов операции (кроме шага "Во время операции").
+        /// </summary>
+        /// <param name="state">Состояние операции</param>
+        /// <param name="modeNode">Узел дерева операции</param>
         private static void FillSteps(State state, ref TreeNode modeNode)
         {
             for (int i = 1; i < state.Steps.Count; i++)
@@ -148,13 +166,13 @@ namespace EasyEPlanner
                 stepName = i.ToString() + ". " + commonStep.EditText.First();
                 var resStep = new string[]
                 {
-                        stepName,
-                        "",
-                        commonStep.GetActions[OpenedDevices].EditText.Last(),
-                        commonStep.GetActions[ClosedDevices].EditText.Last(),
-                        commonStep.GetActions[UpperSeats].EditText.Last(),
-                        commonStep.GetActions[LowerSeats].EditText.Last(),
-                        "", "", "", "", "", ""
+                    stepName,
+                    "",
+                    commonStep.GetActions[OpenedDevices].EditText.Last(),
+                    commonStep.GetActions[ClosedDevices].EditText.Last(),
+                    commonStep.GetActions[UpperSeats].EditText.Last(),
+                    commonStep.GetActions[LowerSeats].EditText.Last(),
+                    "", "", "", "", "", ""
                 };
                 stepNode.Tag = resStep;
                 modeNode.Nodes.Add(stepNode);
