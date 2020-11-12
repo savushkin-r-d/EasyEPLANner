@@ -341,19 +341,21 @@ namespace EasyEPlanner
             excelCells.Merge();
             excelCells.Value = "Технологические объекты";
             var header = new string[] 
-            { 
+            {
+                "Проверить устройства",
                 "Вкл.устройства", 
                 "Выкл. устройства",
                 "Верхние седла", 
                 "Нижние седла" , 
                 "Сигналы для включения", 
-                "Мойка (DI)",
-                "Мойка (DO)", 
-                "Мойка (Устройства)", 
-                "Группы DI-->DO"
+                "Устройства (DI)",
+                "Устройства (DO)", 
+                "Устройства", 
+                "Группы DI-->DO",
+                "Группы AI-->AO",
             };
             workSheet.InsertArray(header, 1, 4, false);
-            workSheet.Range["A1:L1"].EntireColumn.AutoFitColumns();
+            workSheet.Range["A1:N1"].EntireColumn.AutoFitColumns();
 
             //Заполнение страницы данными
             TreeView tree = ExcelDataCollector
