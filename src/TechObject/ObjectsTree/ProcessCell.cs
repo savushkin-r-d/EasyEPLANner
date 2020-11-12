@@ -94,6 +94,8 @@ namespace TechObject
                 // Обозначение начального номера объекта для ограничений.
                 SetRestrictionOwner();
 
+                newObject.SetUpFromBaseTechObject();
+
                 return newObject;
             }
             else
