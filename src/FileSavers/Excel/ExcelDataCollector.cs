@@ -57,7 +57,7 @@ namespace EasyEPlanner
             var res = new string[]
             {
                 modeName,
-                "", "", "", "", "", "", "", "", "", ""
+                "", "", "", "", "", "", "", "", "", "", ""
             };
             modeNode.Tag = res;
 
@@ -72,14 +72,15 @@ namespace EasyEPlanner
                     {
                         state.DisplayText[0],
                         commonStep.GetActions[ 0 ].EditText[ 1 ],
-                        commonStep.GetActions[ 2 ].EditText[ 1 ],
+                        commonStep.GetActions[ 1 ].EditText[ 1 ],
                         commonStep.GetActions[ 3 ].EditText[ 1 ],
                         commonStep.GetActions[ 4 ].EditText[ 1 ],
                         commonStep.GetActions[ 5 ].EditText[ 1 ],
-                        commonStep.GetActions[ 6 ].Items[ 0 ].EditText[ 1 ],
-                        commonStep.GetActions[ 6 ].Items[ 1 ].EditText[ 1 ],
-                        commonStep.GetActions[ 6 ].Items[ 2 ].EditText[ 1 ],
-                        commonStep.GetActions[ 7 ].EditText[ 1 ]
+                        commonStep.GetActions[ 6 ].EditText[ 1 ],
+                        commonStep.GetActions[ 7 ].Items[ 0 ].EditText[ 1 ],
+                        commonStep.GetActions[ 7 ].Items[ 1 ].EditText[ 1 ],
+                        commonStep.GetActions[ 7 ].Items[ 2 ].EditText[ 1 ],
+                        commonStep.GetActions[ 8 ].EditText[ 1 ]
                     };
                     stateNode.Tag = rowWithState;
                     modeNode.Nodes.Add(stateNode);
@@ -96,9 +97,10 @@ namespace EasyEPlanner
                     {
                         stepName,
                         commonStep.GetActions[ 0 ].EditText[ 1 ],
-                        commonStep.GetActions[ 2 ].EditText[ 1 ],
+                        commonStep.GetActions[ 1 ].EditText[ 1 ],
                         commonStep.GetActions[ 3 ].EditText[ 1 ],
                         commonStep.GetActions[ 4 ].EditText[ 1 ],
+                        commonStep.GetActions[ 5 ].EditText[ 1 ],
                         "", "", "", "", ""
                     };
                     stepNode.Tag = resStep;
