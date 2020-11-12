@@ -63,49 +63,101 @@ namespace EasyEPlanner
 
             foreach (var state in mode.stepsMngr)
             {
-                Step commonStep;
-                if (state.Empty == false)
+                FillState(state, ref modeNode);
+                FillSteps(state, ref modeNode);
+            }
+        }
+
+        private static void FillState(State state, ref TreeNode modeNode)
+        {
+            Step commonStep;
+            if (state.Empty == false)
+            {
+                commonStep = state.Steps.First();
+                var stateNode = new TreeNode();
+
+                const int CheckedDevices = 0;
+                const int OpenedDevices = 1;
+                const int ClosedDevices = 3;
+                const int UpperSeats = 4;
+                const int LowerSeats = 5;
+                const int RequiredFB = 6;
+                const int WashDevices = 7;
+                const int DIDOGroup = 8;
+                const int AIAOGroup = 9;
+
+                const int DevicesDI = 0;
+                const int DevicesDO = 1;
+                const int Devices = 2;
+
+                var devicesAction = commonStep.GetActions[WashDevices];
+                var rowWithState = new string[]
                 {
-                    commonStep = state.Steps[0];
-                    var stateNode = new TreeNode();
-                    var rowWithState = new string[]
-                    {
-                        state.DisplayText[0],
-                        commonStep.GetActions[ 0 ].EditText[ 1 ],
-                        commonStep.GetActions[ 1 ].EditText[ 1 ],
-                        commonStep.GetActions[ 3 ].EditText[ 1 ],
-                        commonStep.GetActions[ 4 ].EditText[ 1 ],
-                        commonStep.GetActions[ 5 ].EditText[ 1 ],
-                        commonStep.GetActions[ 6 ].EditText[ 1 ],
-                        commonStep.GetActions[ 7 ].Items[ 0 ].EditText[ 1 ],
-                        commonStep.GetActions[ 7 ].Items[ 1 ].EditText[ 1 ],
-                        commonStep.GetActions[ 7 ].Items[ 2 ].EditText[ 1 ],
-                        commonStep.GetActions[ 8 ].EditText[ 1 ]
-                    };
-                    stateNode.Tag = rowWithState;
-                    modeNode.Nodes.Add(stateNode);
+                        state.DisplayText.First(),
+                        commonStep.GetActions[CheckedDevices].EditText.Last(),
+                        commonStep.GetActions[OpenedDevices].EditText.Last(),
+                        commonStep.GetActions[ClosedDevices].EditText.Last(),
+                        commonStep.GetActions[UpperSeats].EditText.Last(),
+                        commonStep.GetActions[LowerSeats].EditText.Last(),
+                        commonStep.GetActions[RequiredFB].EditText.Last(),
+                        GenerateGroupWashActionText(devicesAction, DevicesDI),
+                        GenerateGroupWashActionText(devicesAction, DevicesDO),
+                        GenerateGroupWashActionText(devicesAction, Devices),
+                        commonStep.GetActions[DIDOGroup].EditText.Last(),
+                        commonStep.GetActions[AIAOGroup].EditText.Last(),
+                };
+                stateNode.Tag = rowWithState;
+                modeNode.Nodes.Add(stateNode);
+            }
+        }
+
+        private static string GenerateGroupWashActionText(
+            TechObject.Action devicesAction, int subGroupNum)
+        {
+            string res = "";
+
+            for (int i = 0; i < devicesAction.Items.Length; i++)
+            {
+                int groupNum = i + 1;
+                var group = devicesAction.Items[i];
+
+                string groupText = group.Items[subGroupNum].EditText.Last();
+                bool notEmptyGroup = groupText != string.Empty;
+                if (notEmptyGroup)
+                {
+                    res += $"Группа {groupNum}: {groupText}.\n";
                 }
+            }
 
-                for (int i = 1; i < state.Steps.Count; i++)
+            return res;
+        }
+
+        private static void FillSteps(State state, ref TreeNode modeNode)
+        {
+            for (int i = 1; i < state.Steps.Count; i++)
+            {
+                var stepNode = new TreeNode();
+                Step commonStep = state.Steps[i];
+                string stepName;
+
+                const int OpenedDevices = 0;
+                const int ClosedDevices = 2;
+                const int UpperSeats = 3;
+                const int LowerSeats = 4;
+
+                stepName = i.ToString() + ". " + commonStep.EditText.First();
+                var resStep = new string[]
                 {
-                    var stepNode = new TreeNode();
-                    commonStep = state.Steps[i];
-                    string stepName;
-
-                    stepName = i.ToString() + ". " + commonStep.EditText[0];
-                    var resStep = new string[]
-                    {
                         stepName,
-                        commonStep.GetActions[ 0 ].EditText[ 1 ],
-                        commonStep.GetActions[ 1 ].EditText[ 1 ],
-                        commonStep.GetActions[ 3 ].EditText[ 1 ],
-                        commonStep.GetActions[ 4 ].EditText[ 1 ],
-                        commonStep.GetActions[ 5 ].EditText[ 1 ],
-                        "", "", "", "", ""
-                    };
-                    stepNode.Tag = resStep;
-                    modeNode.Nodes.Add(stepNode);
-                }
+                        "",
+                        commonStep.GetActions[OpenedDevices].EditText.Last(),
+                        commonStep.GetActions[ClosedDevices].EditText.Last(),
+                        commonStep.GetActions[UpperSeats].EditText.Last(),
+                        commonStep.GetActions[LowerSeats].EditText.Last(),
+                        "", "", "", "", "", ""
+                };
+                stepNode.Tag = resStep;
+                modeNode.Nodes.Add(stepNode);
             }
         }
 
