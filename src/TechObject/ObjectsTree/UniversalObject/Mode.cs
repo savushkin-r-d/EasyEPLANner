@@ -676,6 +676,21 @@ namespace TechObject
             return ostisLink + "?sys_id=operation";
         }
 
+        public void SetUpFromBaseTechObject(BaseOperation baseOperation)
+        {
+            bool setBaseOperation = true;
+            SetNewValue(baseOperation.Name, setBaseOperation);
+
+            var filteredSteps = baseOperation.Steps
+                .Where(x => x.Name != string.Empty);
+            const int mainStepsIndex = 0;
+            foreach(var baseStep in filteredSteps)
+            {
+                Step newStep = (Step)stepsMngr[mainStepsIndex].Insert();
+                newStep.SetUpFromBaseTechObject(baseStep);
+            }
+        }
+
         public enum StateName
         {
             RUN = 0,// Выполнение
@@ -704,5 +719,7 @@ namespace TechObject
         private ModesManager owner;
 
         private BaseOperation baseOperation; /// Базовая операция
+
+        public const string DefaultModeName = "Новая операция";
     }
 }

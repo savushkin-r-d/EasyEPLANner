@@ -630,6 +630,12 @@ namespace TechObject
             return ostisLink + "?sys_id=phase";
         }
 
+        public void SetUpFromBaseTechObject(BaseParameter baseStep)
+        {
+            bool setBaseStep = true;
+            SetNewValue(baseStep.Name, setBaseStep);
+        }
+
         public bool Empty
         {
             get

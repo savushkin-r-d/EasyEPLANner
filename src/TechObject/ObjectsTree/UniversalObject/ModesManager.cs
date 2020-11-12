@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Editor;
+using System.Collections.Generic;
 using System.Linq;
-using Editor;
 
 namespace TechObject
 {
@@ -35,7 +35,7 @@ namespace TechObject
         {
             foreach (Mode mode in modes)
             {
-                mode.ModifyDevNames(owner.TechNumber, oldTechObjectN, 
+                mode.ModifyDevNames(owner.TechNumber, oldTechObjectN,
                     owner.NameEplan);
             }
         }
@@ -89,7 +89,7 @@ namespace TechObject
                 tmp += mode.SaveRestrictionAsLua(prefix + "\t\t");
                 if (tmp != "")
                 {
-                    tmp2 += prefix + "\t[ " + i.ToString() + " ] =" + 
+                    tmp2 += prefix + "\t[ " + i.ToString() + " ] =" +
                         comment + "\n" + tmp;
                 }
                 i++;
@@ -141,7 +141,7 @@ namespace TechObject
         /// <param name="extraParams">Значения параметров базовой операции
         /// </param>
         /// <returns>Добавленная операция.</returns>
-        public Mode AddMode(string modeName, string baseOperationName, 
+        public Mode AddMode(string modeName, string baseOperationName,
             ObjectProperty[] extraParams)
         {
             Mode newMode = new Mode(modeName, GetModeN, this);
@@ -149,7 +149,7 @@ namespace TechObject
 
             // Установка имени базовой операции в Mode
             newMode.SetNewValue(baseOperationName, true);
-            
+
             // Установка параметров базовой операции
             newMode.SetBaseOperExtraParams(extraParams);
 
@@ -216,7 +216,7 @@ namespace TechObject
         {
             for (int i = 0; i < modes.Count; i++)
             {
-                if ((oldModesMngr != null) && 
+                if ((oldModesMngr != null) &&
                     (i < oldModesMngr.Modes.Count))
                 {
                     modes[i].ChangeCrossRestriction(oldModesMngr.Modes[i]);
@@ -230,7 +230,7 @@ namespace TechObject
             {
                 if (oldModesMngr.Modes.Count > modes.Count)
                 {
-                    for (int i = modes.Count; i < oldModesMngr.Modes.Count; 
+                    for (int i = modes.Count; i < oldModesMngr.Modes.Count;
                         i++)
                     {
                         int tobjNum = TechObjectManager.GetInstance()
@@ -284,7 +284,7 @@ namespace TechObject
         /// </summary>
         public void ClearBaseOperations()
         {
-            foreach (Mode m in Modes) 
+            foreach (Mode m in Modes)
             {
                 m.ClearBaseOperation();
             }
@@ -392,7 +392,7 @@ namespace TechObject
             return null;
         }
 
-        override public ITreeViewItem Replace(object child, 
+        override public ITreeViewItem Replace(object child,
             object copyObject)
         {
             var mode = child as Mode;
@@ -412,12 +412,12 @@ namespace TechObject
                 int copyObjTechObjNumber = copyMode.Owner.Owner.TechNumber;
                 if (modeTechObjName == copyObjTechObjName)
                 {
-                    newMode.ModifyDevNames(owner.TechNumber, -1, 
+                    newMode.ModifyDevNames(owner.TechNumber, -1,
                         owner.NameEplan);
                 }
                 else
                 {
-                    newMode.ModifyDevNames(modeTechObjName, modeTechObjNumber, 
+                    newMode.ModifyDevNames(modeTechObjName, modeTechObjNumber,
                         copyObjTechObjName, copyObjTechObjNumber);
                 }
 
@@ -449,7 +449,7 @@ namespace TechObject
                 int objMobeTechObjectNumber = objMode.Owner.Owner.TechNumber;
                 if (owner.NameEplan == objModeTechObjectName)
                 {
-                    newMode.ModifyDevNames(owner.TechNumber, -1, 
+                    newMode.ModifyDevNames(owner.TechNumber, -1,
                         owner.NameEplan);
                 }
                 else
@@ -477,7 +477,7 @@ namespace TechObject
 
         override public ITreeViewItem Insert()
         {
-            Mode newMode = new Mode("Новая операция", GetModeN, this);
+            Mode newMode = new Mode(Mode.DefaultModeName, GetModeN, this);
             modes.Add(newMode);
 
             ChangeRestrictionModeOwner(newMode);
@@ -497,7 +497,7 @@ namespace TechObject
         {
             get
             {
-                if(modes.Where(x => x.IsFilled).Count() > 0)
+                if (modes.Where(x => x.IsFilled).Count() > 0)
                 {
                     return true;
                 }
@@ -522,6 +522,25 @@ namespace TechObject
             string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
                 .GetOstisHelpSystemLink();
             return ostisLink + "?sys_id=operation";
+        }
+
+        public void SetUpFromBaseTechObject(BaseTechObject baseTechObject)
+        {
+            var baseOperations = baseTechObject.BaseOperations;
+            if (baseOperations.Count < 0)
+            {
+                return;
+            }
+
+            var filteredOperations = baseOperations
+                .Where(x => x.Name != string.Empty &&
+                x.IsDefault == true);
+
+            foreach (var baseOperation in filteredOperations)
+            {
+                Mode insertedMode = (Mode)Insert();
+                insertedMode.SetUpFromBaseTechObject(baseOperation);
+            }
         }
 
         private List<Mode> modes; /// Список операций.

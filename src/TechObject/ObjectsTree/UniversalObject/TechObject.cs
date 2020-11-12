@@ -570,7 +570,7 @@ namespace TechObject
                 return;
             }
 
-            //TODO: Init operations and steps
+            ModesManager.SetUpFromBaseTechObject(BaseTechObject);
         }
 
         /// <summary>
