@@ -50,8 +50,12 @@ namespace TechObject
         /// </summary>
         /// <param name="luaName">Lua-имя</param>
         /// <param name="name">Имя</param>
-        public void AddStep(string luaName, string name)
+        /// <param name="defaultPosition">Стандартная позиция шага в 
+        /// базовой операции.</param>
+        public void AddStep(string luaName, string name, int defaultPosition)
         {
+            // TODO: Заменить ActiveParameter на BaseStep.
+            // TODO: Обработать defaultPosition.
             if (Steps.Count == 0)
             {
                 var emptyPar = new ActiveParameter("", "");
@@ -299,9 +303,9 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Является ли операция операцией по-умолчанию для объекта.
+        /// Номер операции в списке операций объекта. Если 0 - не задано.
         /// </summary>
-        public bool IsDefault { get; set; } = false;
+        public int DefaultPosition { get; set; } = 0;
        
         /// <summary>
         /// Добавить свойства базовой операции.
@@ -447,7 +451,7 @@ namespace TechObject
             operation.Properties = properties;
             operation.Steps = steps;
             operation.owner = this.Owner;
-            operation.IsDefault = IsDefault;
+            operation.DefaultPosition = DefaultPosition;
 
             operation.SetItems();
 

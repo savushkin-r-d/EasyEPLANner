@@ -683,9 +683,11 @@ namespace TechObject
 
             var filteredSteps = baseOperation.Steps
                 .Where(x => x.Name != string.Empty);
+            // TODO: Проверка defaultPosition, сортировка.
             const int mainStepsIndex = 0;
             foreach(var baseStep in filteredSteps)
             {
+                // TODO: Создание пустых шагов если надо.
                 Step newStep = (Step)stepsMngr[mainStepsIndex].Insert();
                 newStep.SetUpFromBaseTechObject(baseStep);
             }

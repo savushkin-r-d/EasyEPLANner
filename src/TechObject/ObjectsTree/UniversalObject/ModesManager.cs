@@ -534,10 +534,12 @@ namespace TechObject
 
             var filteredOperations = baseOperations
                 .Where(x => x.Name != string.Empty &&
-                x.IsDefault == true);
+                x.DefaultPosition > 0)
+                .OrderBy(x => x.DefaultPosition);
 
             foreach (var baseOperation in filteredOperations)
             {
+                //TODO: Создание пустых операций, если надо
                 Mode insertedMode = (Mode)Insert();
                 insertedMode.SetUpFromBaseTechObject(baseOperation);
             }
