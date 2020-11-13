@@ -539,7 +539,11 @@ namespace TechObject
 
             foreach (var baseOperation in filteredOperations)
             {
-                //TODO: Создание пустых операций, если надо
+                while(modes.Count < baseOperation.DefaultPosition - 1)
+                {
+                    Insert();
+                }
+
                 Mode insertedMode = (Mode)Insert();
                 insertedMode.SetUpFromBaseTechObject(baseOperation);
             }
