@@ -80,6 +80,7 @@ namespace TechObject
             }
 
             subActions[groupNumber].AddDev(index, 0);
+            deviceIndex.Add(index);
         }
 
         #region Синхронизация устройств в объекте.

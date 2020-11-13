@@ -72,6 +72,7 @@ namespace TechObject
             }
 
             subActions[washGroupIndex].AddDev(index, groupNumber, 0);
+            deviceIndex.Add(index);
         }
 
         public override void AddParam(object val, int washGroupIndex)

@@ -172,6 +172,8 @@ namespace TechObject
             {
                 vGroups[groupNumber].AddDev(index, 0);
             }
+
+            deviceIndex.Add(index);
         }
 
         public override void AddParam(object val, int washGroupIndex = 0)
