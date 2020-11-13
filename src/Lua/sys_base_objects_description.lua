@@ -17,6 +17,15 @@
 -- 1. name - русскоязычное название операции.
 -- 2. params - параметры операции, могут быть активными, пассивными, булевыми.
 -- 3. steps - базовые шаги операции.
+-- 4. defaultPosition - позиция операции при автоматической настройке, когда осуществляется вставка
+-- объекта. Если поле отсутствует - операция не будет настраиваться автоматически.
+-- Значения этого поля должны быть от 1. (опционально).
+
+-- Базовые шаги - шаг базовой операции (steps). Название таблицы - LUA-имя базового шага, в верхнем регистре.
+-- Внутри таблицы указываются следующие поля:
+-- 1. name = строковое обозначение имени шага.
+-- 2. defaultPosition - по аналогии с defaultPosition в базовой операции, только относится
+-- к базовому шагу (опционально).
 
 -- Активные параметры (active) - параметры, которые отображаются и сохраняются, имеют общую обработку,
 -- которая характерна для всех таких параметров (название таблицы - это Lua-имя параметра,
@@ -49,7 +58,6 @@
 -- 1. name - русскоязычное имя параметра.
 -- 2. defaultValue - значение по-умолчанию (опционально).
 
--- Базовые шаги - по аналогии с активными параметрами.
 -- Оборудование - параметр оборудования.
 -- Параметры объекта, как агрегата - по аналогии с активными и булевскими параметрами и
 -- главным параметром агрегата, он является обязательным для агрегата. main-параметр задается только один!
@@ -82,10 +90,16 @@ return
                     },
                     steps =
                     {
-                        WAITING_HI_LS = { name = "Ожидание появления ВУ" },
-                        WAITING_LOW_LS = { name = "Ожидание пропадания НУ" },
+                        WAITING_HI_LS = {
+                            name = "Ожидание появления ВУ",
+                            defaultPosition = 1,
+                        },
+                        WAITING_LOW_LS = {
+                            name = "Ожидание пропадания НУ",
+                            defaultPosition = 2,
+                        },
                     },
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
             },
             basicName = "ice_water_pump_tank",
@@ -114,10 +128,16 @@ return
                     },
                     steps =
                     {
-                        WAITING_HI_LS = { name = "Ожидание появления ВУ" },
-                        WAITING_LOW_LS = { name = "Ожидание пропадания НУ" },
+                        WAITING_HI_LS = {
+                            name = "Ожидание появления ВУ",
+                            defaultPosition = 1,
+                        },
+                        WAITING_LOW_LS = {
+                            name = "Ожидание пропадания НУ",
+                            defaultPosition = 2,
+                        },
                     },
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
             },
             basicName = "ice_water_pump_tank_PID",
@@ -143,11 +163,20 @@ return
                     params = { },
                     steps =
                     {
-                        WAITING_LOW_LS = { name = "Ожидание пропадания нижнего уровня" },
-                        WATER_2_LOW_LS = { name = "Наполнение до нижнего уровня" },
-                        WATER_2_HI_LS = { name = "Наполнение до верхнего уровня" },
+                        WAITING_LOW_LS = {
+                            name = "Ожидание пропадания нижнего уровня",
+                            defaultPosition = 1,
+                        },
+                        WATER_2_LOW_LS = {
+                            name = "Наполнение до нижнего уровня",
+                            defaultPosition = 2,
+                        },
+                        WATER_2_HI_LS = {
+                            name = "Наполнение до верхнего уровня",
+                            defaultPosition = 3,
+                        },
                     },
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
             },
             basicName = "boiler",
@@ -207,31 +236,52 @@ return
                     },
                     steps =
                     {
-                        DRAINAGE = { name = "Дренаж" },
+                        DRAINAGE = {
+                            name = "Дренаж",
+                            defaultPosition = 2,
+                        },
                     },
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
                 FILL = {
                     name = "Наполнение",
                     params = { },
                     steps =
                     {
-                        IN_DRAINAGE = { name = "В дренаж" },
-                        IN_TANK = { name = "В приемник" },
-                        WAITING_KEY = { name = "Ожидание" },
+                        IN_DRAINAGE = {
+                            name = "В дренаж",
+                            defaultPosition = 2,
+                        },
+                        IN_TANK = {
+                            name = "В приемник",
+                            defaultPosition = 3,
+                        },
+                        WAITING_KEY = {
+                            name = "Ожидание",
+                            defaultPosition = 1,
+                        },
                     },
-                    isDefault = true,
+                    defaultPosition = 2,
                 },
                 OUT = {
                     name = "Выдача",
                     params = { },
                     steps =
                     {
-                        OUT_WATER = { name = "Проталкивание" },
-                        OUT_TANK = { name = "Из источника" },
-                        WAITING_KEY = { name = "Ожидание" },
+                        OUT_WATER = {
+                            name = "Проталкивание",
+                            defaultPosition = 2,
+                        },
+                        OUT_TANK = {
+                            name = "Из источника",
+                            defaultPosition = 3,
+                        },
+                        WAITING_KEY = {
+                            name = "Ожидание",
+                            defaultPosition = 1,
+                        },
                     },
-                    isDefault = true,
+                    defaultPosition = 3,
                 },
                 WORK = {
                     name = "Работа",
@@ -283,20 +333,33 @@ return
                     },
                     steps =
                     {
-                        DRAINAGE = { name = "Дренаж" },
+                        DRAINAGE =
+                        {
+                            name = "Дренаж",
+                            defaultPosition = 2,
+                        },
                     },
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
                 FILL = {
                     name = "Наполнение",
                     params = { },
                     steps =
                     {
-                        IN_DRAINAGE = { name = "В дренаж" },
-                        IN_TANK = { name = "В приемник" },
-                        WAITING_KEY = { name = "Ожидание" },
+                        IN_DRAINAGE = {
+                            name = "В дренаж",
+                            defaultPosition = 2,
+                        },
+                        IN_TANK = {
+                            name = "В приемник",
+                            defaultPosition = 3,
+                        },
+                        WAITING_KEY = {
+                            name = "Ожидание",
+                            defaultPosition = 1,
+                        },
                     },
-                    isDefault = true,
+                    defaultPosition = 2,
                 },
                 WORK = {
                     name = "Работа",
@@ -348,20 +411,32 @@ return
                     },
                     steps =
                     {
-                        DRAINAGE = { name = "Дренаж" },
+                        DRAINAGE = {
+                            name = "Дренаж",
+                            defaultPosition = 2,
+                        },
                     },
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
                 OUT = {
                     name = "Выдача",
                     params = { },
                     steps =
                     {
-                        OUT_WATER = { name = "Проталкивание" },
-                        OUT_TANK = { name = "Из источника" },
-                        WAITING_KEY = { name = "Ожидание" },
+                        OUT_WATER = {
+                            name = "Проталкивание",
+                            defaultPosition = 2,
+                        },
+                        OUT_TANK = {
+                            name = "Из источника",
+                            defaultPosition = 3,
+                        },
+                        WAITING_KEY = {
+                            name = "Ожидание",
+                            defaultPosition = 1,
+                        },
                     },
-                    isDefault = true,
+                    defaultPosition = 2,
                 },
                 WORK = {
                     name = "Работа",
@@ -409,9 +484,12 @@ return
                     },
                     steps =
                     {
-                        DRAINAGE = { name = "Дренаж" },
+                        DRAINAGE = {
+                            name = "Дренаж",
+                            defaultPosition = 1,
+                        },
                     },
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
             },
             basicName = "pasteurizator",
@@ -463,10 +541,13 @@ return
                     },
                     steps =
                     {
-                        DRAINAGE = { name = "Дренаж" },
+                        DRAINAGE = {
+                            name = "Дренаж",
+                            defaultPosition = 3,
+                        },
                         MEDIUM_CHANGE = { name = "Смена среды" },
                     },
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
                 EMPTY_TANK_HEATING = {
                     name = "Нагрев пустого танка",
@@ -481,7 +562,7 @@ return
                         },
                     },
                     steps = { },
-                    isDefault = true,
+                    defaultPosition = 2,
                 },
                 ADDITION_OF_STARTER = {
                     name = "Внесение закваски",
@@ -511,7 +592,7 @@ return
                     name = "Хранение",
                     params = { },
                     steps = { },
-                    isDefault = true,
+                    defaultPosition = 3,
                 },
                 OUT = {
                     name = "Выдача",
@@ -523,7 +604,7 @@ return
                         },
                     },
                     steps = { },
-                    isDefault = true,
+                    defaultPosition = 4,
                 },
                 SLOW_HEATING = {
                     name = "Томление",
@@ -648,7 +729,7 @@ return
                         },
                     },
                     steps = { },
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
             },
             basicName = "pressure_node_PID",
@@ -679,10 +760,16 @@ return
                     params = { },
                     steps =
                     {
-                        WORKING = { name = "Работа" },
-                        WAITING = { name = "Ожидание" },
+                        WORKING = {
+                            name = "Работа",
+                            defaultPosition = 1,
+                        },
+                        WAITING = {
+                            name = "Ожидание",
+                            defaultPosition = 2,
+                        },
                     },
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
             },
             basicName = "heater_node",
@@ -723,10 +810,16 @@ return
                     params = { },
                     steps =
                     {
-                        WORKING = { name = "Работа" },
-                        WAITING = { name = "Ожидание" },
+                        WORKING = {
+                            name = "Работа",
+                            defaultPosition = 1,
+                        },
+                        WAITING = {
+                            name = "Ожидание",
+                            defaultPosition = 2,
+                        },
                     },
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
             },
             basicName = "heater_node_PID",
@@ -756,7 +849,7 @@ return
                     name = "Работа",
                     params = { },
                     steps = { },
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
             },
             basicName = "flow_node_PID",
@@ -806,11 +899,20 @@ return
                     },
                     steps =
                     {
-                        HOT_WATER_PUSHING = { name = "Вытеснение горячей воды" },
-                        WORKING = { name = "Работа" },
-                        WAITING = { name = "Ожидание" },
+                        HOT_WATER_PUSHING = {
+                            name = "Вытеснение горячей воды",
+                            defaultPosition = 1,
+                        },
+                        WORKING = {
+                            name = "Работа",
+                            defaultPosition = 2,
+                        },
+                        WAITING = {
+                            name = "Ожидание",
+                            defaultPosition = 3,
+                        },
                     },
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
             },
             basicName = "cooler_node",
@@ -851,10 +953,16 @@ return
                     params = { },
                     steps =
                     {
-                        WORKING = { name = "Работа" },
-                        WAITING = { name = "Ожидание" },
+                        WORKING = {
+                            name = "Работа",
+                            defaultPosition = 1,
+                        },
+                        WAITING = {
+                            name = "Ожидание",
+                            defaultPosition = 2,
+                        },
                     },
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
             },
             basicName = "cooler_node_PID",
@@ -881,7 +989,7 @@ return
             {
                 MIXING = {
                     name = "Перемешивание",
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
                 MIXING_LEFT = {
                     name = "Перемешивание влево",
@@ -941,19 +1049,34 @@ return
                     name = "Работа",
                     steps =
                     {
-                        WORKING = { name = "Работа" },
-                        WAITING = { name = "Ожидание" },
+                        WORKING = {
+                            name = "Работа",
+                            defaultPosition = 1,
+                        },
+                        WAITING = {
+                            name = "Ожидание",
+                            defaultPosition = 2,
+                        },
                     },
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
                 STERILIZATION =
                 {
                     name = "Стерилизация",
                     steps =
                     {
-                        HEATING = { name = "Нагрев" },
-                        STERILIZATION = { name = "Стерилизация" },
-                        COOLING = { name = "Охлаждение" },
+                        HEATING = {
+                            name = "Нагрев",
+                            defaultPosition = 1,
+                        },
+                        STERILIZATION = {
+                            name = "Стерилизация",
+                            defaultPosition = 2,
+                        },
+                        COOLING = {
+                            name = "Охлаждение",
+                            defaultPosition = 3,
+                        },
                     },
                     params =
                     {
@@ -981,7 +1104,7 @@ return
                             },
                         },
                     },
-                    isDefault = true,
+                    defaultPosition = 2,
                 },
             },
             basicName = "sterile_air_node",
@@ -999,7 +1122,7 @@ return
             {
                 WORKING = {
                     name = "Работа",
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
             },
             basicName = "steam_blast_node",
@@ -1017,7 +1140,7 @@ return
             {
                 WORKING = {
                     name = "Работа",
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
             },
             basicName = "tank_level_node_PID",
@@ -1039,10 +1162,10 @@ return
                     name = "Работа",
                     steps =
                     {
-                        WAITING_LOW_LS = { name = "Ожидание пропадания нижнего уровня" },
-                        FEEDING_HI_LS = { name = "Пополнение до появления верхнего уровня" },
+                        WAITING_LOW_LS = { name = "Ожидание пропадания нижнего уровня" },--1
+                        FEEDING_HI_LS = { name = "Пополнение до появления верхнего уровня" },--2
                     },
-                    isDefault = true,
+                    defaultPosition = 1,
                 },
             },
             basicName = "tank_level_node",
