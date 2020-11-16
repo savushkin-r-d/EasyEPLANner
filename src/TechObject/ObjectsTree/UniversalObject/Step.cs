@@ -25,7 +25,7 @@ namespace TechObject
             this.getN = getN;
             this.IsMainStep = isMainStep;
             this.owner = owner;
-            this.baseStep = new ActiveParameter(string.Empty, string.Empty);
+            this.baseStep = new BaseStep(string.Empty, string.Empty);
             this.baseStep.Owner = this;
 
             items = new List<ITreeViewItem>();
@@ -403,13 +403,13 @@ namespace TechObject
                     .FirstOrDefault();
             }
 
-            if (equalStep != null && newVal != "")
+            if (equalStep != null && newVal != string.Empty)
             {
                 return false;
             }
 
             Mode mode = state.Owner;
-            BaseParameter baseStep = mode.BaseOperation.Steps
+            BaseStep baseStep = mode.BaseOperation.Steps
                 .Where(x => x.LuaName == newVal).FirstOrDefault();
             if (baseStep == null)
             {
@@ -419,10 +419,10 @@ namespace TechObject
 
             if (baseStep != null)
             {
-                this.baseStep = new ActiveParameter(baseStep.LuaName,
-                    baseStep.Name);
+                this.baseStep = new BaseStep(baseStep.Name, baseStep.LuaName,
+                    baseStep.DefaultPosition);
                 this.baseStep.Owner = this;
-                if (name.Contains(NewStepName) && baseStep.Name != "")
+                if (name.Contains(NewStepName) && baseStep.Name != string.Empty)
                 {
                     name = baseStep.Name;
                 }
@@ -630,7 +630,7 @@ namespace TechObject
             return ostisLink + "?sys_id=phase";
         }
 
-        public void SetUpFromBaseTechObject(BaseParameter baseStep)
+        public void SetUpFromBaseTechObject(BaseStep baseStep)
         {
             bool setBaseStep = true;
             SetNewValue(baseStep.Name, setBaseStep);
@@ -688,6 +688,6 @@ namespace TechObject
         internal List<Action> actions; ///< Список действий шага.
         private State owner;           ///< Владелей элемента
 
-        private BaseParameter baseStep;
+        private BaseStep baseStep;
     }
 }

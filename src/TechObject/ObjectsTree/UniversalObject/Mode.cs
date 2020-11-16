@@ -682,12 +682,16 @@ namespace TechObject
             SetNewValue(baseOperation.Name, setBaseOperation);
 
             var filteredSteps = baseOperation.Steps
-                .Where(x => x.Name != string.Empty);
-            // TODO: Проверка defaultPosition, сортировка.
+                .Where(x => x.Name != string.Empty && x.DefaultPosition > 0)
+                .OrderBy(x => x.DefaultPosition);
             const int mainStepsIndex = 0;
             foreach(var baseStep in filteredSteps)
             {
-                // TODO: Создание пустых шагов если надо.
+                while (stepsMngr[mainStepsIndex].Steps.Count < baseStep.DefaultPosition)
+                {
+                    stepsMngr[mainStepsIndex].Insert();
+                }
+
                 Step newStep = (Step)stepsMngr[mainStepsIndex].Insert();
                 newStep.SetUpFromBaseTechObject(baseStep);
             }

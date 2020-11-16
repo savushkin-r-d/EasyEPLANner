@@ -14,7 +14,7 @@ namespace TechObject
             Name = "";
             LuaName = "";
             Properties = new List<BaseParameter>();
-            Steps = new List<BaseParameter>();
+            Steps = new List<BaseStep>();
             this.owner = owner;
         }
 
@@ -25,7 +25,7 @@ namespace TechObject
         public static BaseOperation EmptyOperation()
         {
             return new BaseOperation("", "", new List<BaseParameter>(), 
-                new List<BaseParameter>());
+                new List<BaseStep>());
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace TechObject
         /// <param name="baseSteps">Базовые шаги операции</param>
         public BaseOperation(string name, string luaName, 
             List<BaseParameter> baseOperationProperties, 
-            List<BaseParameter> baseSteps)
+            List<BaseStep> baseSteps)
         {
             Name = name;
             LuaName = luaName;
@@ -54,19 +54,17 @@ namespace TechObject
         /// базовой операции.</param>
         public void AddStep(string luaName, string name, int defaultPosition)
         {
-            // TODO: Заменить ActiveParameter на BaseStep.
-            // TODO: Обработать defaultPosition.
             if (Steps.Count == 0)
             {
-                var emptyPar = new ActiveParameter("", "");
-                emptyPar.Owner = this;
+                var emptyStep = new BaseStep("", "");
+                emptyStep.Owner = this;
                 // Пустой объект, если не должно быть выбрано никаких объектов
-                Steps.Add(emptyPar);
+                Steps.Add(emptyStep);
             }
 
-            var par = new ActiveParameter(luaName, name);
-            par.Owner = this;
-            Steps.Add(par);
+            var step = new BaseStep(name, luaName, defaultPosition);
+            step.Owner = this;
+            Steps.Add(step);
         }
 
         /// <summary>
@@ -135,7 +133,7 @@ namespace TechObject
         /// <summary>
         /// Шаги операции.
         /// </summary>
-        public List<BaseParameter> Steps
+        public List<BaseStep> Steps
         {
             get
             {
@@ -195,7 +193,7 @@ namespace TechObject
                 Name = "";
                 LuaName = "";
                 baseOperationProperties = new List<BaseParameter>();
-                baseSteps = new List<BaseParameter>();
+                baseSteps = new List<BaseStep>();
             }
 
             techObject.AttachedObjects.Check();
@@ -438,7 +436,7 @@ namespace TechObject
                 properties.Add(newProperty);
             }
 
-            var steps = new List<BaseParameter>();
+            var steps = new List<BaseStep>();
             for (int i = 0; i < Steps.Count; i++)
             {
                 var newStep = Steps[i].Clone();
@@ -524,7 +522,7 @@ namespace TechObject
         private List<BaseParameter> baseOperationProperties;
         private string operationName;
         private string luaOperationName;
-        private List<BaseParameter> baseSteps;
+        private List<BaseStep> baseSteps;
 
         private Mode owner;
     }

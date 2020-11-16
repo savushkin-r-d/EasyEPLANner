@@ -284,6 +284,7 @@
     <Compile Include="TechObject\Base\BaseObjectsManager.cs" />
     <Compile Include="TechObject\Base\BaseOperation.cs" />
     <Compile Include="TechObject\Base\BaseParameter.cs" />
+    <Compile Include="TechObject\Base\BaseStep.cs" />
     <Compile Include="TechObject\Base\BaseTechObject.cs" />
     <Compile Include="TechObject\Base\Properties\ActiveBoolParameter.cs" />
     <Compile Include="TechObject\Base\Properties\ActiveParameter.cs" />
