@@ -102,13 +102,15 @@ namespace TechObject
             var newObject = new TechObject(baseTechObject.Name, 
                 GetTechObjectLocalNum, localObjects.Count + 1, techTypeNum, 
                 "TANK", cooperParamNum, "TankObj", "", baseTechObject);
-            
+
             // Работа со списком в дереве и общим списком объектов.
             localObjects.Add(newObject);
             globalObjectsList.Add(newObject);
 
             // Обозначение начального номера объекта для ограничений.
             SetRestrictionOwner();
+
+            newObject.SetUpFromBaseTechObject();
 
             return newObject;
         }

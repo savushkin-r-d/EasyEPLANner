@@ -93,8 +93,11 @@ namespace TechObject
         /// </summary>
         /// <param name="luaName">Lua-имя</param>
         /// <param name="name">Имя</param>
+        /// <param name="defaultPosition">Стандартная позиция операции при
+        /// автоматической настройке</param>
         /// <returns></returns>
-        public BaseOperation AddBaseOperation(string luaName, string name)
+        public BaseOperation AddBaseOperation(string luaName, string name,
+            int defaultPosition)
         {
             if (BaseOperations.Count == 0)
             {
@@ -105,6 +108,7 @@ namespace TechObject
             var operation = BaseOperation.EmptyOperation();
             operation.LuaName = luaName;
             operation.Name = name;
+            operation.DefaultPosition = defaultPosition;
             BaseOperations.Add(operation);
 
             return operation;

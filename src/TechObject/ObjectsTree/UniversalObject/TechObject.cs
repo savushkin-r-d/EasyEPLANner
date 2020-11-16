@@ -560,6 +560,20 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Автоматическая настройка технологического объекта на основе его 
+        /// базового объекта.
+        /// </summary>
+        public void SetUpFromBaseTechObject()
+        {
+            if(BaseTechObject == null)
+            {
+                return;
+            }
+
+            ModesManager.SetUpFromBaseTechObject(BaseTechObject);
+        }
+
+        /// <summary>
         /// Сравнение имен Eplan базового тех. объекта с текущим.
         /// </summary>
         /// <param name="baseTechObject">Базовый объект</param>

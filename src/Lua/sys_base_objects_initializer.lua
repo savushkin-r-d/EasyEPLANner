@@ -63,9 +63,10 @@ init_base_operations = function(object, operations)
     for luaName, value in pairs(operations) do
         -- Данные для минимальной инициализации операции
         local name = value.name or ""
+        local defaultPosition = value.defaultPosition or 0
 
         -- Добавить базовую операцию
-        local operation = object:AddBaseOperation(luaName, name)
+        local operation = object:AddBaseOperation(luaName, name, defaultPosition)
 
         -- Добавить параметры базовой операции
         local params = value.params or { }
@@ -134,8 +135,9 @@ init_operation_steps = function(operation, steps)
     for luaName, value in pairs(steps) do
         -- Данные для добавления базового шага
         local name = value.name or ""
+        local defaultPosition = value.defaultPosition or 0
 
         -- Добавить базовый шаг для операции
-        operation:AddStep(luaName, name)
+        operation:AddStep(luaName, name, defaultPosition)
     end
 end
