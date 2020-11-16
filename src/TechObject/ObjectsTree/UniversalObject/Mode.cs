@@ -685,14 +685,15 @@ namespace TechObject
                 .Where(x => x.Name != string.Empty && x.DefaultPosition > 0)
                 .OrderBy(x => x.DefaultPosition);
             const int mainStepsIndex = 0;
+            State mainState = stepsMngr[mainStepsIndex];
             foreach(var baseStep in filteredSteps)
             {
-                while (stepsMngr[mainStepsIndex].Steps.Count < baseStep.DefaultPosition)
+                while (mainState.Steps.Count < baseStep.DefaultPosition)
                 {
-                    stepsMngr[mainStepsIndex].Insert();
+                    mainState.Insert();
                 }
 
-                Step newStep = (Step)stepsMngr[mainStepsIndex].Insert();
+                Step newStep = (Step)mainState.Insert();
                 newStep.SetUpFromBaseTechObject(baseStep);
             }
         }
