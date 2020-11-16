@@ -355,7 +355,7 @@ namespace EasyEPlanner
 
             IOModule module = IOManager.GetInstance()
                 .GetModuleByPhysicalNumber(IOModuleNumber);
-            isIOLink = module.isIOLink();
+            isIOLink = module.IsIOLink();
 
             return isIOLink;
         }

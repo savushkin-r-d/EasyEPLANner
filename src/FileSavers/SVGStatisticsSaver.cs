@@ -131,7 +131,7 @@ namespace EasyEPlanner
                 modulesCount += node.IOModules.Count;
                 foreach(var module in node.IOModules)
                 {
-                    if(module.isIOLink())
+                    if(module.IsIOLink())
                     {
                         ioLinkModules++;
                     }

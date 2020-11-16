@@ -165,7 +165,7 @@ namespace IO
                 IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI);
             if (isASInterfaceOrIOLink)
             {
-                if (isIOLink())
+                if (IsIOLink())
                 {
                     var dev = devices[clamp][0];
                     var devChannel = devicesChannels[clamp][0];
@@ -278,6 +278,13 @@ namespace IO
                 errors += $"В узле {nodeName} не опознан или " +
                     $"отсутствует модуль {moduleIndex + 1}.\n";
             }
+            else
+            {
+                if(IsIOLink())
+                {
+
+                }
+            }
 
             return errors;
         }
@@ -341,7 +348,7 @@ namespace IO
         /// Является ли модуль IO-Link 
         /// </summary>
         /// <returns></returns>
-        public bool isIOLink()
+        public bool IsIOLink()
         {
             bool isIOLink = false;
 
