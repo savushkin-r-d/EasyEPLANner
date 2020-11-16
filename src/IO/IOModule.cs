@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace IO
 {
@@ -282,9 +283,37 @@ namespace IO
             {
                 if(IsIOLink())
                 {
-
+                    errors += CheckIOLinkSize(this);
                 }
             }
+
+            return errors;
+        }
+
+        private string CheckIOLinkSize(IOModule module)
+        {
+            string errors = string.Empty;
+            int moduleNum = module.PhysicalNumber;
+            var filteredClampDevices = module.devices
+                .Where(x => x?.Count > 0);
+
+            int devicesSize = 0;
+            foreach(var clampDevices in filteredClampDevices)
+            {
+                var sortedClamp = clampDevices.Distinct().ToArray();
+                if(sortedClamp[0].DeviceType == Device.DeviceType.Y ||
+                    sortedClamp[0].DeviceType == Device.DeviceType.DEV_VTUG)
+                {
+                    devicesSize += sortedClamp[0].IOLinkProperties
+                        .GetMaxIOLinkSize();
+                    continue;
+                }
+                else
+                {
+                    // TODO: Calculate for other devices
+                }
+            }
+
 
             return errors;
         }
