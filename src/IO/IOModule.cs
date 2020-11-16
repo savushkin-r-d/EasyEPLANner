@@ -338,9 +338,9 @@ namespace IO
             int phoenixContactSmart = (int)IOManager.IOLinkModules
                 .PhoenixContactSmart;
 
-            if (Info.Number == wago ||
-                Info.Number == phoenixContactStandard ||
-                Info.Number == phoenixContactSmart)
+            if (Info?.Number == wago ||
+                Info?.Number == phoenixContactStandard ||
+                Info?.Number == phoenixContactSmart)
             {
                 isIOLink = true;
             }

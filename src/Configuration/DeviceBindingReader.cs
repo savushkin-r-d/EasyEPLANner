@@ -57,6 +57,11 @@ namespace EasyEPlanner
             {
                 foreach (var module in node.IOModules)
                 {
+                    if (module.Function == null)
+                    {
+                        continue;
+                    }
+
                     foreach (var function in module.Function.SubFunctions)
                     {
                         ReadModuleClampBinding(node, module, function);

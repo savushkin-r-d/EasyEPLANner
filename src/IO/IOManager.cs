@@ -200,37 +200,59 @@ namespace IO
                 }
                 idx += 100;
 
-                foreach (IONode node2 in iONodes)
-                {
-                    if (node == node2) continue;
+                str += CheckNodeIPEquality(node);
 
-                    if (node.IP == node2.IP && node.IP != "")
+                for(int i = 0; i < node.IOModules.Count; i++)
+                {
+                    if(node.IOModules[i].Info == null)
                     {
-                        str += $"\"{node.Name}\": IP адрес совпадает с " +
-                            $"\"{node2.Name}\" - {node.IP}.\n";
+                        str += $"В узле {node.Name} не опознан или " +
+                            $"отсутствует модуль {i + 1}.\n";
                     }
                 }
             }
 
-            long startingIP = EasyEPlanner.ProjectConfiguration
+            long startingIP = ProjectConfiguration
                 .GetInstance().StartingIPInterval;
-            long endingIP = EasyEPlanner.ProjectConfiguration.GetInstance()
+            long endingIP = ProjectConfiguration.GetInstance()
                 .EndingIPInterval;
             if (startingIP != 0 && endingIP != 0)
             {
-                str += CheckIONodesIP(startingIP, endingIP);
+                str += CheckIONodesIPRange(startingIP, endingIP);
             }
 
             return str;
         }
 
         /// <summary>
-        /// Проверка IP-адресов узлов ввода-вывода
+        /// Проверка совпадения IP-адресов в узлах ввода-вывода.
+        /// </summary>
+        /// <param name="node">Узел ввода вывода</param>
+        /// <returns></returns>
+        private string CheckNodeIPEquality(IONode node)
+        {
+            string str = string.Empty;
+            foreach (IONode node2 in iONodes)
+            {
+                if (node == node2) continue;
+
+                if (node.IP == node2.IP && node.IP != "")
+                {
+                    str += $"\"{node.Name}\": IP адрес совпадает с " +
+                        $"\"{node2.Name}\" - {node.IP}.\n";
+                }
+            }
+
+            return str;
+        }
+
+        /// <summary>
+        /// Проверка попадания в диапазон IP-адресов узлов ввода-вывода
         /// </summary>
         /// <param name="endingIP">Конец интервала адресов</param>
         /// <param name="startingIP">Начало интервала адресов</param>
         /// <returns>Ошибки</returns>
-        private string CheckIONodesIP(long startingIP, long endingIP)
+        private string CheckIONodesIPRange(long startingIP, long endingIP)
         {
             string errors = "";
             var plcWithIP = IONodes;
@@ -265,6 +287,11 @@ namespace IO
             {
                 foreach (IOModule module in node.IOModules)
                 {
+                    if(module.Info == null)
+                    {
+                        continue;
+                    }
+
                     module.CalculateIOLinkAdresses();
                 }
             }
