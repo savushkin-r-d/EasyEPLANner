@@ -269,6 +269,19 @@ namespace IO
             calculator.Calculate();
         }
 
+        public string Check(int moduleIndex, string nodeName)
+        {
+            string errors = string.Empty;
+
+            if (Info == null)
+            {
+                errors += $"В узле {nodeName} не опознан или " +
+                    $"отсутствует модуль {moduleIndex + 1}.\n";
+            }
+
+            return errors;
+        }
+
         /// <summary>
         /// Описание модуля.
         /// </summary>
