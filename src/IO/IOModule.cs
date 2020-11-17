@@ -290,20 +290,25 @@ namespace IO
             return errors;
         }
 
+        /// <summary>
+        /// Проверка выхода за предел размерности области ввода-вывода для
+        /// модуля.
+        /// </summary>
+        /// <returns>Сообщение об ошибке</returns>
         private string CheckIOLinkSize()
         {
             string errors = string.Empty;
 
             int devicesSize = 0;
-            int moduleClamps = devices.Length;
-            for (int moduleClamp = 0; moduleClamp < moduleClamps; moduleClamp++)
+            int clampsCount = devices.Length;
+            for (int moduleClamp = 0; moduleClamp < clampsCount; moduleClamp++)
             {
-                if(devices[moduleClamp] == null)
+                var devicesOnClamp = devices[moduleClamp];
+                if (devicesOnClamp == null)
                 {
                     continue;
                 }
 
-                var devicesOnClamp = devices[moduleClamp];
                 if(devicesOnClamp[0].DeviceType == Device.DeviceType.Y ||
                     devicesOnClamp[0].DeviceType == Device.DeviceType.DEV_VTUG)
                 {
@@ -312,13 +317,13 @@ namespace IO
                 }
                 else
                 {
-                    int devicesInClamp = devicesChannels[moduleClamp].Count;
-                    for (int devClamp = 0; devClamp < devicesInClamp; devClamp++)
+                    for (int dev = 0; dev < devicesOnClamp.Count; dev++)
                     {
-                        if(devicesChannels[moduleClamp][devClamp].FullModule == PhysicalNumber &&
-                            devicesChannels[moduleClamp][devClamp].Name == "AI")
+                        var channel = devicesChannels[moduleClamp][dev];
+                        if(channel.FullModule == PhysicalNumber &&
+                            channel.Name == "AI")
                         {
-                            devicesSize += devices[moduleClamp][devClamp]
+                            devicesSize += devicesOnClamp[dev]
                                 .IOLinkProperties.GetMaxIOLinkSize();
                         }
                     }
