@@ -954,7 +954,7 @@ namespace Device
                     .Info.ChannelAddressesIn.Length)
                 {
                     IOModule md = IOManager.GetInstance()[node][module - 1];
-                    if (md.isIOLink() == true)
+                    if (md.IsIOLink() == true)
                     {
                         offset = 0;
                     }
@@ -982,7 +982,7 @@ namespace Device
                     .Info.ChannelAddressesOut.Length)
                 {
                     IOModule md = IOManager.GetInstance()[node][module - 1];
-                    if (md.isIOLink() == true)
+                    if (md.IsIOLink() == true)
                     {
                         offset = 0;
                     }

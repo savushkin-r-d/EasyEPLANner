@@ -204,11 +204,7 @@ namespace IO
 
                 for(int i = 0; i < node.IOModules.Count; i++)
                 {
-                    if(node.IOModules[i].Info == null)
-                    {
-                        str += $"В узле {node.Name} не опознан или " +
-                            $"отсутствует модуль {i + 1}.\n";
-                    }
+                    str += node.IOModules[i].Check(i, node.Name);
                 }
             }
 

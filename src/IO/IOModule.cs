@@ -165,7 +165,7 @@ namespace IO
                 IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI);
             if (isASInterfaceOrIOLink)
             {
-                if (isIOLink())
+                if (IsIOLink())
                 {
                     var dev = devices[clamp][0];
                     var devChannel = devicesChannels[clamp][0];
@@ -269,6 +269,95 @@ namespace IO
             calculator.Calculate();
         }
 
+        public string Check(int moduleIndex, string nodeName)
+        {
+            string errors = string.Empty;
+
+            if (Info == null)
+            {
+                errors += $"В узле {nodeName} не опознан или " +
+                    $"отсутствует модуль {moduleIndex + 1}.\n";
+            }
+            else
+            {
+                if(IsIOLink())
+                {
+                    errors += CheckIOLinkSize();
+                }
+            }
+
+            return errors;
+        }
+
+        /// <summary>
+        /// Проверка выхода за предел размерности области ввода-вывода для
+        /// модуля.
+        /// </summary>
+        /// <returns>Сообщение об ошибке</returns>
+        private string CheckIOLinkSize()
+        {
+            string errors = string.Empty;
+
+            int devicesSize = 0;
+            int clampsCount = devices.Length;
+            for (int clamp = 0; clamp < clampsCount; clamp++)
+            {
+                var devicesOnClamp = devices[clamp];
+                if (devicesOnClamp == null)
+                {
+                    continue;
+                }
+
+                if(devicesOnClamp[0].DeviceType == Device.DeviceType.Y ||
+                    devicesOnClamp[0].DeviceType == Device.DeviceType.DEV_VTUG)
+                {
+                    devicesSize += devicesOnClamp[0].IOLinkProperties
+                        .GetMaxIOLinkSize();
+                }
+                else
+                {
+                    devicesSize += CalculateDevicesSize(clamp,
+                        devicesOnClamp);
+                }
+            }
+
+            if(devicesSize > AllowedMaxIOLinkSize)
+            {
+                int differene = devicesSize - AllowedMaxIOLinkSize;
+                errors += $"На модуле ввода-вывода A{PhysicalNumber} " +
+                    $"превышен размер области ввода-вывода на " +
+                    $"{differene} слов(-о/-а).\n";
+            }
+
+            return errors;
+        }
+
+        /// <summary>
+        /// Расчет размерности устройств ввода-вывода на клемме
+        /// модуля ввода-вывода.
+        /// </summary>
+        /// <param name="moduleClamp">Номер клеммы</param>
+        /// <param name="devicesOnClamp">Устройства на клемме</param>
+        /// <returns></returns>
+        private int CalculateDevicesSize(int moduleClamp, 
+            List<Device.IODevice> devicesOnClamp)
+        {
+            int size = 0;
+            for (int dev = 0; dev < devicesOnClamp.Count; dev++)
+            {
+                // AI достаточно для определения размера IO-Link.
+                var channel = devicesChannels[moduleClamp][dev];
+                if (channel.FullModule == PhysicalNumber &&
+                    channel.Name == "AI")
+                {
+                    size += devicesOnClamp[dev]
+                        .IOLinkProperties.GetMaxIOLinkSize();
+                }
+            }
+
+            return size;
+        }
+
         /// <summary>
         /// Описание модуля.
         /// </summary>
@@ -328,7 +417,7 @@ namespace IO
         /// Является ли модуль IO-Link 
         /// </summary>
         /// <returns></returns>
-        public bool isIOLink()
+        public bool IsIOLink()
         {
             bool isIOLink = false;
 
@@ -346,6 +435,34 @@ namespace IO
             }
 
             return isIOLink;
+        }
+
+        /// <summary>
+        /// Доступный максимальный размер IO-Link области в словах.
+        /// </summary>
+        /// <returns></returns>
+        public int AllowedMaxIOLinkSize
+        {
+            get
+            {
+                if (!IsIOLink())
+                {
+                    return 0;
+                }
+
+                switch (Info?.Number)
+                {
+                    case (int)IOManager.IOLinkModules.Wago:
+                        return Info.AI_count;
+
+                    case (int)IOManager.IOLinkModules.PhoenixContactSmart:
+                    case (int)IOManager.IOLinkModules.PhoenixContactStandard:
+                        return Info.AI_count - IOLinkCalculator.MasterDataPXC;
+
+                    default:
+                        return 0;
+                }
+            }
         }
 
         /// Привязанные устройства.
