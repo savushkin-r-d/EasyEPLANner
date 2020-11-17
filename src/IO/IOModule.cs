@@ -301,9 +301,9 @@ namespace IO
 
             int devicesSize = 0;
             int clampsCount = devices.Length;
-            for (int moduleClamp = 0; moduleClamp < clampsCount; moduleClamp++)
+            for (int clamp = 0; clamp < clampsCount; clamp++)
             {
-                var devicesOnClamp = devices[moduleClamp];
+                var devicesOnClamp = devices[clamp];
                 if (devicesOnClamp == null)
                 {
                     continue;
@@ -317,7 +317,7 @@ namespace IO
                 }
                 else
                 {
-                    devicesSize += CalculateDevicesSize(moduleClamp,
+                    devicesSize += CalculateDevicesSize(clamp,
                         devicesOnClamp);
                 }
             }
@@ -346,6 +346,7 @@ namespace IO
             int size = 0;
             for (int dev = 0; dev < devicesOnClamp.Count; dev++)
             {
+                // AI достаточно для определения размера IO-Link.
                 var channel = devicesChannels[moduleClamp][dev];
                 if (channel.FullModule == PhysicalNumber &&
                     channel.Name == "AI")
