@@ -154,6 +154,8 @@ namespace TechObject
                 string[] numbersAsStringArray = inputString.Split(' ')
                     .ToArray();
 
+                var objects = new List<TechObject>();
+
                 foreach (var numAsString in numbersAsStringArray)
                 {
                     int number;
@@ -167,8 +169,13 @@ namespace TechObject
                         .GetTObject(number);
                     bool correctBaseObject = obj.BaseTechObject != null &&
                         obj.BaseTechObject.IsAttachable;
-                    if (obj != null && correctBaseObject)
+                    bool haveNoTheSameObjects = objects
+                        .Where(x => x.BaseTechObject?.Name == 
+                        obj.BaseTechObject?.Name)
+                        .Count() == 0;
+                    if (correctBaseObject && haveNoTheSameObjects)
                     {
+                        objects.Add(obj);
                         numbers.Add(number);
                     }
                 }
