@@ -294,26 +294,34 @@ namespace IO
         {
             string errors = string.Empty;
             int moduleNum = module.PhysicalNumber;
-            var filteredClampDevices = module.devices
-                .Where(x => x?.Count > 0);
 
             int devicesSize = 0;
-            foreach(var clampDevices in filteredClampDevices)
+            for (int clampNum = 0; clampNum < module.devices.Length; clampNum++)
             {
-                var sortedClamp = clampDevices.Distinct().ToArray();
-                if(sortedClamp[0].DeviceType == Device.DeviceType.Y ||
-                    sortedClamp[0].DeviceType == Device.DeviceType.DEV_VTUG)
+                if(devices[clampNum] == null)
                 {
-                    devicesSize += sortedClamp[0].IOLinkProperties
-                        .GetMaxIOLinkSize();
                     continue;
+                }
+
+                var devicesOnClamp = devices[clampNum];
+                if(devicesOnClamp[0].DeviceType == Device.DeviceType.Y ||
+                    devicesOnClamp[0].DeviceType == Device.DeviceType.DEV_VTUG)
+                {
+                    devicesSize += devicesOnClamp[0].IOLinkProperties
+                        .GetMaxIOLinkSize();
                 }
                 else
                 {
-                    // TODO: Calculate for other devices
+
                 }
             }
 
+            if(devicesSize > AllowedMaxIOLinkSize)
+            {
+                int differene = devicesSize - AllowedMaxIOLinkSize;
+                errors += $"На модуле A{PhysicalNumber} превышен размер" +
+                    $" области ввода-вывода на {differene} слов.\n";
+            }
 
             return errors;
         }
@@ -401,11 +409,16 @@ namespace IO
         /// Доступный максимальный размер IO-Link области в словах.
         /// </summary>
         /// <returns></returns>
-        public int AllowedMaxIOLinkSize()
+        public int AllowedMaxIOLinkSize
         {
-            if(IsIOLink())
+            get
             {
-                switch(Info?.Number)
+                if (!IsIOLink())
+                {
+                    return 0;
+                }
+
+                switch (Info?.Number)
                 {
                     case (int)IOManager.IOLinkModules.Wago:
                         return Info.AI_count;
@@ -417,10 +430,6 @@ namespace IO
                     default:
                         return 0;
                 }
-            }
-            else
-            {
-                return 0;
             }
         }
 
