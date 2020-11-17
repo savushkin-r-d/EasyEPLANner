@@ -317,16 +317,8 @@ namespace IO
                 }
                 else
                 {
-                    for (int dev = 0; dev < devicesOnClamp.Count; dev++)
-                    {
-                        var channel = devicesChannels[moduleClamp][dev];
-                        if(channel.FullModule == PhysicalNumber &&
-                            channel.Name == "AI")
-                        {
-                            devicesSize += devicesOnClamp[dev]
-                                .IOLinkProperties.GetMaxIOLinkSize();
-                        }
-                    }
+                    devicesSize += CalculateDevicesSize(moduleClamp,
+                        devicesOnClamp);
                 }
             }
 
@@ -339,6 +331,31 @@ namespace IO
             }
 
             return errors;
+        }
+
+        /// <summary>
+        /// Расчет размерности устройств ввода-вывода на клемме
+        /// модуля ввода-вывода.
+        /// </summary>
+        /// <param name="moduleClamp">Номер клеммы</param>
+        /// <param name="devicesOnClamp">Устройства на клемме</param>
+        /// <returns></returns>
+        private int CalculateDevicesSize(int moduleClamp, 
+            List<Device.IODevice> devicesOnClamp)
+        {
+            int size = 0;
+            for (int dev = 0; dev < devicesOnClamp.Count; dev++)
+            {
+                var channel = devicesChannels[moduleClamp][dev];
+                if (channel.FullModule == PhysicalNumber &&
+                    channel.Name == "AI")
+                {
+                    size += devicesOnClamp[dev]
+                        .IOLinkProperties.GetMaxIOLinkSize();
+                }
+            }
+
+            return size;
         }
 
         /// <summary>
