@@ -283,27 +283,27 @@ namespace IO
             {
                 if(IsIOLink())
                 {
-                    errors += CheckIOLinkSize(this);
+                    errors += CheckIOLinkSize();
                 }
             }
 
             return errors;
         }
 
-        private string CheckIOLinkSize(IOModule module)
+        private string CheckIOLinkSize()
         {
             string errors = string.Empty;
-            int moduleNum = module.PhysicalNumber;
 
             int devicesSize = 0;
-            for (int clampNum = 0; clampNum < module.devices.Length; clampNum++)
+            int moduleClamps = devices.Length;
+            for (int moduleClamp = 0; moduleClamp < moduleClamps; moduleClamp++)
             {
-                if(devices[clampNum] == null)
+                if(devices[moduleClamp] == null)
                 {
                     continue;
                 }
 
-                var devicesOnClamp = devices[clampNum];
+                var devicesOnClamp = devices[moduleClamp];
                 if(devicesOnClamp[0].DeviceType == Device.DeviceType.Y ||
                     devicesOnClamp[0].DeviceType == Device.DeviceType.DEV_VTUG)
                 {
@@ -312,15 +312,25 @@ namespace IO
                 }
                 else
                 {
-
+                    int devicesInClamp = devicesChannels[moduleClamp].Count;
+                    for (int devClamp = 0; devClamp < devicesInClamp; devClamp++)
+                    {
+                        if(devicesChannels[moduleClamp][devClamp].FullModule == PhysicalNumber &&
+                            devicesChannels[moduleClamp][devClamp].Name == "AI")
+                        {
+                            devicesSize += devices[moduleClamp][devClamp]
+                                .IOLinkProperties.GetMaxIOLinkSize();
+                        }
+                    }
                 }
             }
 
             if(devicesSize > AllowedMaxIOLinkSize)
             {
                 int differene = devicesSize - AllowedMaxIOLinkSize;
-                errors += $"На модуле A{PhysicalNumber} превышен размер" +
-                    $" области ввода-вывода на {differene} слов.\n";
+                errors += $"На модуле ввода-вывода A{PhysicalNumber} " +
+                    $"превышен размер области ввода-вывода на " +
+                    $"{differene} слов(-о/-а).\n";
             }
 
             return errors;
