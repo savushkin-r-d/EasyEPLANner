@@ -397,6 +397,33 @@ namespace IO
             return isIOLink;
         }
 
+        /// <summary>
+        /// Доступный максимальный размер IO-Link области в словах.
+        /// </summary>
+        /// <returns></returns>
+        public int AllowedMaxIOLinkSize()
+        {
+            if(IsIOLink())
+            {
+                switch(Info?.Number)
+                {
+                    case (int)IOManager.IOLinkModules.Wago:
+                        return Info.AI_count;
+
+                    case (int)IOManager.IOLinkModules.PhoenixContactSmart:
+                    case (int)IOManager.IOLinkModules.PhoenixContactStandard:
+                        return Info.AI_count - IOLinkCalculator.MasterDataPXC;
+
+                    default:
+                        return 0;
+                }
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
         /// Привязанные устройства.
         public List<Device.IODevice>[] devices;
         /// Привязанные каналы.

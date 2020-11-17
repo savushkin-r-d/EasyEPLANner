@@ -125,5 +125,7 @@ namespace IO
         // Сервисные слова.
         int offsetIn = 3;
         int offsetOut = 3;
+
+        public const int MasterDataPXC = 3;
     }
 }
