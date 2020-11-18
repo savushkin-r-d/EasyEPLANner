@@ -685,7 +685,7 @@ namespace InterprojectExchange
         {
             var folderBrowserDialog = new FolderBrowserDialog();
             folderBrowserDialog.SelectedPath = interprojectExchange
-                .PathWithProjects;
+                .DefaultPathWithProjects;
             DialogResult result = folderBrowserDialog.ShowDialog();
             if (result != DialogResult.OK)
             {
