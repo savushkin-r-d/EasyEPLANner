@@ -648,7 +648,8 @@ namespace InterprojectExchange
         private void WriteSharedFile(string projectName,
             List<string> sharedFileData)
         {
-            string path = Path.Combine(interprojectExchange.PathWithProjects, 
+            var model = interprojectExchange.GetModel(projectName);
+            string path = Path.Combine(model.PathToProject, 
                 projectName, SharedFile);
             using (var writer = new StreamWriter(path, false,
                 EasyEPlanner.EncodingDetector.DetectFileEncoding(path)))
@@ -666,7 +667,8 @@ namespace InterprojectExchange
         /// <param name="projectName">Имя проекта</param>
         public void DeleteSharedFile(string projectName)
         {
-            string path = Path.Combine(interprojectExchange.PathWithProjects, 
+            var model = interprojectExchange.GetModel(projectName);
+            string path = Path.Combine(model.PathToProject, 
                 projectName, SharedFile);
             File.Delete(path);
         }

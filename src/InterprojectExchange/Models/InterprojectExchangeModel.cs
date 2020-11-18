@@ -42,6 +42,8 @@ namespace InterprojectExchange
         /// </summary>
         public List<DeviceInfo> Devices { get; set; }
 
+        public string PathToProject { get; set; }
+
         private DeviceComparer deviceComparer;
     }
 }

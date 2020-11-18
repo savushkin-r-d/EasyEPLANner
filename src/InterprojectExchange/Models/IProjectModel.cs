@@ -83,5 +83,11 @@ namespace InterprojectExchange
         void AddPLCData(bool emulationEnabled, int cycleTime,
             int timeout, int port, bool gateEnabled, int station, 
             string projectName);
+
+        /// <summary>
+        /// Путь к файлам проекта.
+        /// </summary>
+        /// <returns></returns>
+        string PathToProject { get; set; }
     }
 }

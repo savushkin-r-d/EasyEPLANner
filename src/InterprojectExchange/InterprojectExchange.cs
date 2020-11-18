@@ -389,7 +389,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Получить путь к папке с проектами
         /// </summary>
-        public string PathWithProjects
+        public string DefaultPathWithProjects
         {
             get
             {
