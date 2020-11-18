@@ -131,7 +131,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Загрузить данные проекта при загрузке системы
         /// </summary>
-        /// <param name="pathToProjectDir">Путь к папке с проектами</param>
+        /// <param name="pathToProjectDir">Путь к папке с проектом</param>
         /// <param name="projName">Имя проекта</param>
         /// <returns></returns>
         public bool LoadProjectData(string pathToProjectDir, 
@@ -143,37 +143,45 @@ namespace InterprojectExchange
             LoadDevicesFile(pathToProjectDir, projName);
             LoadAdvancedProjectSharedLuaData(pathToProjectDir, projName);
             SetIPFromMainModel(projName);
+            interprojectExchange.GetModel(projName)
+                .PathToProject = pathToProjectDir;
             return true;
         }
 
         /// <summary>
         /// Загрузить данные проекта
         /// </summary>
-        /// <param name="pathToProjectDir">Путь к папке с проектами</param>
+        /// <param name="pathToMainProject">Путь к папке с главным проектом
+        /// </param>
         /// <param name="projName">Имя проекта</param>
         /// <returns></returns>
-        public void LoadProjectsData(string pathToProjectDir, 
+        public void LoadProjectsData(string pathToMainProject, 
             string projName = "")
         {
             InitLuaInstance();
             LoadScripts();
-            LoadMainIOData(pathToProjectDir, projName);
-            LoadDevicesFile(pathToProjectDir, projName);
-            LoadCurrentProjectSharedLuaData(pathToProjectDir, projName);
+            LoadMainIOData(pathToMainProject, projName);
+            LoadDevicesFile(pathToMainProject, projName);
+            LoadCurrentProjectSharedLuaData(pathToMainProject, projName);
+            interprojectExchange.MainModel.PathToProject = pathToMainProject;
 
             foreach (var model in interprojectExchange.Models)
             {
-                if (model.ProjectName != projName)
+                string alternativeProject = model.ProjectName;
+                if (alternativeProject != projName)
                 {
+                    string pathToProject = ProjectManager.GetInstance()
+                        .GetPtusaProjectsPath(alternativeProject);
                     InitLuaInstance();
                     LoadScripts();
                     model.Selected = true;
-                    LoadMainIOData(pathToProjectDir, model.ProjectName);
-                    LoadDevicesFile(pathToProjectDir, model.ProjectName);
-                    LoadAdvancedProjectSharedLuaData(pathToProjectDir,
-                        model.ProjectName);
+                    LoadMainIOData(pathToProject, alternativeProject);
+                    LoadDevicesFile(pathToProject, alternativeProject);
+                    LoadAdvancedProjectSharedLuaData(pathToProject,
+                        alternativeProject);
                     model.Selected = false;
-                    SetIPFromMainModel(model.ProjectName);
+                    SetIPFromMainModel(alternativeProject);
+                    model.PathToProject = pathToProject;
                 }
             }
         }
