@@ -32,6 +32,8 @@ namespace EasyEPlanner
 
         private static ModeFrm mFrm = null;
 
+        public EditType SelectedTreeItem { get; private set; }
+
         /// <summary>
         /// Функция для обработки завершения работы окна устройств.
         /// </summary>
@@ -908,6 +910,13 @@ namespace EasyEPlanner
             DrawTextEventArgs e)
         {
             e.TextColor = Color.Black;
+        }
+
+        public enum EditType
+        {
+            None,
+            Restriction,
+            AttachObject
         }
     }
 }
