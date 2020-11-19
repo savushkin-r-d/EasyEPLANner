@@ -306,7 +306,6 @@ namespace EasyEPlanner
                     if (item.IsMainObject)
                     {
                         SelectAttachedObject(subNode, checkedMode);
-
                     }
                     else if (item.IsMode)
                     {
@@ -400,6 +399,8 @@ namespace EasyEPlanner
                 modesTreeViewAdv.NodeControls.Remove(nodeCheckBox);
             }
 
+            SetEditMode(checkedMode);
+
             if (isRebuiltTree == true)
             {
                 Refresh(techManager, checkedMode, showOneNode, item);
@@ -407,6 +408,24 @@ namespace EasyEPlanner
 
             ShowDlg();
             return true;
+        }
+
+        private void SetEditMode(Editor.ITreeViewItem mode)
+        {
+            switch(mode)
+            {
+                case TechObject.TechObject.AttachedToObjects _:
+                    SelectedTreeItem = EditType.AttachObject;
+                    break;
+
+                case TechObject.Restriction _:
+                    SelectedTreeItem = EditType.Restriction;
+                    break;
+
+                default:
+                    SelectedTreeItem = EditType.None;
+                    break;
+            }
         }
 
         /// <summary>
@@ -465,8 +484,8 @@ namespace EasyEPlanner
             Editor.ITreeViewItem checkedMode)
         {
             bool notShowAllOperations = checkedMode != null;
-            bool notAllowedTypes = !(checkedMode is TechObject.Restriction ||
-                checkedMode is TechObject.TechObject.AttachedToObjects) ||
+            bool notAllowedTypes = !(SelectedTreeItem == EditType.Restriction ||
+                SelectedTreeItem == EditType.AttachObject) ||
                 checkedMode.IsEditable == false;
             if (notAllowedTypes && notShowAllOperations)
             {
@@ -487,7 +506,7 @@ namespace EasyEPlanner
                     List<TechObject.Mode> modes = techObject.ModesManager
                         .Modes;
 
-                    if (checkedMode is TechObject.Restriction)
+                    if (SelectedTreeItem == EditType.Restriction)
                     {
                         FillTreeObjectsModes(modes, parentNode, checkedMode,
                             techObject, ref techObjNum, ref modeNum);
@@ -615,7 +634,7 @@ namespace EasyEPlanner
             {
                 if (item != null &&
                     item.IsMainObject &&
-                    checkedNode is TechObject.Restriction)
+                    SelectedTreeItem == EditType.Restriction)
                 {
                     return true;
                 }
