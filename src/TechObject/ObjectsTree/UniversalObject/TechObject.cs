@@ -114,13 +114,11 @@ namespace TechObject
 
             public override bool SetNewValue(string newValue)
             {
-                List<TechObject> oldObjects;
-                GetValidTechObjNums(Value, out oldObjects);
                 string oldValue = Value;
+                GetValidTechObjNums(oldValue, out List<TechObject> oldObjects);
 
-                List<TechObject> newObjects;
-                List<int> newNumbers = GetValidTechObjNums(newValue, 
-                    out newObjects);
+                List<int> newNumbers = GetValidTechObjNums(newValue,
+                    out List<TechObject> newObjects);
                 newValue = string.Join(" ", newNumbers);
 
                 base.SetNewValue(newValue);
@@ -230,15 +228,14 @@ namespace TechObject
 
                 foreach(var objects in replacedObjects)
                 {
-                    var oldObject = objects.Key;
-                    var newObject = objects.Value;
+                    TechObject oldObject = objects.Key;
+                    TechObject newObject = objects.Value;
 
                     foreach(var mode in techObject.ModesManager.Modes)
                     {
                         mode.BaseOperation.ChangePropertiesOwner(
                             oldObject.BaseTechObject, newObject.BaseTechObject);
                     }
-
                 }
             }
 
