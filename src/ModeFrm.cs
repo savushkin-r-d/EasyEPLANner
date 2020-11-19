@@ -18,8 +18,7 @@ namespace EasyEPlanner
 
             const string columnName = "Операции";
             StaticHelper.GUIHelper.SetUpAdvTreeView(modesTreeViewAdv,
-                columnName, modesTreeViewAdv_DrawNode, nodeCheckBox,
-                treeItem_AfterCheck);
+                columnName, modesTreeViewAdv_DrawNode, nodeCheckBox);
 
             dialogCallbackDelegate =
                 new PI.HookProc(DlgWndHookCallbackFunction);
@@ -272,8 +271,7 @@ namespace EasyEPlanner
                 node.CheckState = CheckState.Unchecked;
             }
 
-            nodeCheckBox.CheckStateChanged -=
-                new EventHandler<TreePathEventArgs>(treeItem_AfterCheck);
+            nodeCheckBox.CheckStateChanged -= treeItem_AfterCheck;
 
             if (function != null)
             {
@@ -284,8 +282,7 @@ namespace EasyEPlanner
             List<Node> nodes = treeModel.Nodes.ToList();
             SelectedDevices(nodes, checkedDev);
 
-            nodeCheckBox.CheckStateChanged += new
-                EventHandler<TreePathEventArgs>(treeItem_AfterCheck);
+            nodeCheckBox.CheckStateChanged += treeItem_AfterCheck;
 
             modesTreeViewAdv.EndUpdate();
         }
@@ -885,7 +882,33 @@ namespace EasyEPlanner
             // Нажатый узел дерева
             object nodeObject = e.Path.LastNode;
             Node checkedNode = nodeObject as Node;
+            
+            if (SelectedTreeItem == EditType.AttachObject)
+            {
+                UnselectIncorrectValues(e, checkedNode.Text);
+            }
+
             StaticHelper.GUIHelper.CheckCheckState(checkedNode);
+        }
+
+        private void UnselectIncorrectValues(TreePathEventArgs e,
+            string selectedNodeText)
+        {
+            var lastNode = e.Path.LastNode as Node;
+            var fullPathLength = e.Path.FullPath.Length;
+            if (lastNode.Nodes.Count == 0 && fullPathLength > 1)
+            {
+                int preLastIndexOffset = 2;
+                int preLastNodeIndex = fullPathLength - preLastIndexOffset;
+                var preLastNode = e.Path.FullPath[preLastNodeIndex] as Node;
+                foreach(var node in preLastNode.Nodes)
+                {
+                    if(node.Text != selectedNodeText)
+                    {
+                        node.CheckState = CheckState.Unchecked;
+                    }
+                }
+            }
         }
 
         /// <summary>

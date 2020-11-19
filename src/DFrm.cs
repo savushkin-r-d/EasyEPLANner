@@ -232,8 +232,7 @@ namespace EasyEPlanner
 
             const string columnName = "Устройства";
             StaticHelper.GUIHelper.SetUpAdvTreeView(devicesTreeViewAdv,
-                columnName, devicesTreeViewAdv_DrawNode, nodeCheckBox,
-                treeItem_AfterCheck);
+                columnName, devicesTreeViewAdv_DrawNode, nodeCheckBox);
 
             dialogCallbackDelegate = new PI.HookProc(
                 DlgWndHookCallbackFunction);
