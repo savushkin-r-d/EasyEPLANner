@@ -407,9 +407,14 @@ namespace EasyEPlanner
             return true;
         }
 
-        private void SetEditMode(Editor.ITreeViewItem mode)
+        /// <summary>
+        /// Установить режим редактирования в зависимости от выбранного элемента
+        /// на дереве объектов.
+        /// </summary>
+        /// <param name="checkedItem">Выбранный элемент</param>
+        private void SetEditMode(Editor.ITreeViewItem checkedItem)
         {
-            switch(mode)
+            switch(checkedItem)
             {
                 case TechObject.TechObject.AttachedToObjects _:
                     SelectedTreeItem = EditType.AttachObject;
@@ -891,6 +896,11 @@ namespace EasyEPlanner
             StaticHelper.GUIHelper.CheckCheckState(checkedNode);
         }
 
+        /// <summary>
+        /// Снять выделение с некорректных значений внутри узла.
+        /// </summary>
+        /// <param name="e">Контекст переданный вызывающим кодом</param>
+        /// <param name="selectedNodeText">Выбранное значение</param>
         private void UnselectIncorrectValues(TreePathEventArgs e,
             string selectedNodeText)
         {
@@ -958,6 +968,9 @@ namespace EasyEPlanner
             e.TextColor = Color.Black;
         }
 
+        /// <summary>
+        /// Тип редактируемого элемента
+        /// </summary>
         public enum EditType
         {
             None,
