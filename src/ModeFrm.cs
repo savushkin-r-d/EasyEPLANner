@@ -31,6 +31,9 @@ namespace EasyEPlanner
 
         private static ModeFrm mFrm = null;
 
+        /// <summary>
+        /// Выбранный элемент в редакторе объектов.
+        /// </summary>
         public EditType SelectedTreeItem { get; private set; }
 
         /// <summary>
