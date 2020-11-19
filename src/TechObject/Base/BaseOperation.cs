@@ -348,6 +348,23 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Изменить владельца свойств агрегата в аппарате.
+        /// </summary>
+        /// <param name="oldOwner">Старый базовый объект</param>
+        /// <param name="newOwner">Новый базовый объект</param>
+        public void ChangePropertiesOwner(BaseTechObject oldOwner,
+            BaseTechObject newOwner)
+        {
+            foreach(var property in Properties)
+            {
+                if (property.Owner == oldOwner)
+                {
+                    property.Owner = newOwner;
+                }
+            }
+        }
+
+        /// <summary>
         /// Проверка базовой операции
         /// </summary>
         public string Check()

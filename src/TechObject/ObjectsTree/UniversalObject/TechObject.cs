@@ -114,18 +114,26 @@ namespace TechObject
 
             public override bool SetNewValue(string newValue)
             {
-                string oldValue = this.Value;
+                List<TechObject> oldObjects;
+                GetValidTechObjNums(Value, out oldObjects);
+                string oldValue = Value;
 
-                List<int> numbers = GetValidTechObjNums(newValue);
-                newValue = string.Join(" ", numbers);
+                List<TechObject> newObjects;
+                List<int> newNumbers = GetValidTechObjNums(newValue, 
+                    out newObjects);
+                newValue = string.Join(" ", newNumbers);
 
                 base.SetNewValue(newValue);
 
+                Dictionary<TechObject, TechObject> replacedObjects =
+                    CheckReplacedObjects(oldObjects, newObjects);
+                ChangeOwnerInReplacedObjectsProperties(replacedObjects);
+
                 List<int> deletedAgregatesNumbers = FindDeletedAgregates(
-                    oldValue, newValue);
+                    oldValue, newValue, replacedObjects);
                 RemoveDeletedAgregates(deletedAgregatesNumbers);
 
-                InitAttachedAgregates(numbers);
+                InitAttachedAgregates(newNumbers);
                 return true;
             }
 
@@ -148,11 +156,13 @@ namespace TechObject
             /// </summary>
             /// <param name="inputString">Входная строка</param>
             /// <returns></returns>
-            private List<int> GetValidTechObjNums(string inputString)
+            private List<int> GetValidTechObjNums(string inputString,
+                out List<TechObject> validObjects)
             {
                 var numbers = new List<int>();
                 string[] numbersAsStringArray = inputString.Split(' ')
                     .ToArray();
+                validObjects = new List<TechObject>();
 
                 foreach (var numAsString in numbersAsStringArray)
                 {
@@ -169,12 +179,57 @@ namespace TechObject
                         obj.BaseTechObject.IsAttachable;
                     if (correctBaseObject)
                     {
+                        validObjects.Add(obj);
                         numbers.Add(number);
                     }
                 }
 
                 numbers = numbers.Distinct().ToList();
+                validObjects = validObjects.Distinct().ToList();
                 return numbers;
+            }
+
+            private Dictionary<TechObject, TechObject> CheckReplacedObjects(
+                List<TechObject> oldObjects, List<TechObject> newObjects)
+            {
+                var replacedObjects = new Dictionary<TechObject, TechObject>();
+
+                foreach(var newObj in newObjects)
+                {
+                    var replacedObject = oldObjects
+                        .Where(x => x.BaseTechObject.Name == 
+                        newObj.BaseTechObject.Name &&
+                        x.getLocalNum(x) != newObj.getLocalNum(newObj))
+                        .FirstOrDefault();
+                    if(replacedObject != null)
+                    {
+                        replacedObjects.Add(replacedObject, newObj);
+                    }
+                }
+
+                return replacedObjects;
+            }
+
+            private void ChangeOwnerInReplacedObjectsProperties(
+                Dictionary<TechObject,TechObject> replacedObjects)
+            {
+                if(replacedObjects.Count == 0)
+                {
+                    return;
+                }
+
+                foreach(var objects in replacedObjects)
+                {
+                    var oldObject = objects.Key;
+                    var newObject = objects.Value;
+
+                    foreach(var mode in techObject.ModesManager.Modes)
+                    {
+                        mode.BaseOperation.ChangePropertiesOwner(
+                            oldObject.BaseTechObject, newObject.BaseTechObject);
+                    }
+
+                }
             }
 
             /// <summary>
@@ -182,17 +237,20 @@ namespace TechObject
             /// </summary>
             /// <param name="oldValue">Старое значение поля</param>
             /// <param name="newValue">Новое значение поля</param>
+            /// <param name="replacedObjects">Словарь замененных объектов.
+            /// Ключ - старый объект, значение - новый объект.</param>
             /// <returns></returns>
             private List<int> FindDeletedAgregates(string oldValue, 
-                string newValue)
+                string newValue,
+                Dictionary<TechObject,TechObject> replacedObjects)
             {
                 var oldNumbers = new List<int>();
                 var newNumbers = new List<int>();
-                if (oldValue != null && oldValue != "")
+                if (oldValue != null && oldValue != string.Empty)
                 {
                     oldNumbers = oldValue.Split(' ').Select(int.Parse).ToList();
                 }
-                if (newValue != null && newValue != "")
+                if (newValue != null && newValue != string.Empty)
                 {
                     newNumbers = newValue.Split(' ').Select(int.Parse).ToList();
                 }
@@ -202,6 +260,16 @@ namespace TechObject
                     if (oldNumbers.Contains(newNum))
                     {
                         oldNumbers.Remove(newNum);
+                    }
+                }
+
+                foreach(var replacedObj in replacedObjects.Keys)
+                {
+                    var replacedObjNum = TechObjectManager.GetInstance()
+                        .GetTechObjectN(replacedObj);
+                    if(oldNumbers.Contains(replacedObjNum))
+                    {
+                        oldNumbers.Remove(replacedObjNum);
                     }
                 }
 
@@ -298,9 +366,9 @@ namespace TechObject
             public string Check()
             {
                 var res = "";
-                List<int> numbers = GetValidTechObjNums(this.Value);
+                List<int> numbers = GetValidTechObjNums(Value, out _);
                 string checkedValue = string.Join(" ", numbers);
-                if (checkedValue != this.Value)
+                if (checkedValue != Value)
                 {
                     int objGlobalNumber = TechObjectManager.GetInstance()
                         .GetTechObjectN(techObject);
