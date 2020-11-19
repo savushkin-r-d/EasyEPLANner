@@ -189,6 +189,12 @@ namespace TechObject
                 return numbers;
             }
 
+            /// <summary>
+            /// Проверить и найти замененные объекты
+            /// </summary>
+            /// <param name="oldObjects">Старый список объектов</param>
+            /// <param name="newObjects">Новый список объектов</param>
+            /// <returns></returns>
             private Dictionary<TechObject, TechObject> CheckReplacedObjects(
                 List<TechObject> oldObjects, List<TechObject> newObjects)
             {
@@ -210,6 +216,10 @@ namespace TechObject
                 return replacedObjects;
             }
 
+            /// <summary>
+            /// Заменить владельца в замененных объектах
+            /// </summary>
+            /// <param name="replacedObjects">Замененные объекты</param>
             private void ChangeOwnerInReplacedObjectsProperties(
                 Dictionary<TechObject,TechObject> replacedObjects)
             {

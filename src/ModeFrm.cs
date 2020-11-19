@@ -908,7 +908,7 @@ namespace EasyEPlanner
             string selectedNodeText)
         {
             var lastNode = e.Path.LastNode as Node;
-            var fullPathLength = e.Path.FullPath.Length;
+            int fullPathLength = e.Path.FullPath.Length;
             if (lastNode.Nodes.Count == 0 && fullPathLength > 1)
             {
                 int preLastIndexOffset = 2;
