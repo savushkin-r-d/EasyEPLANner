@@ -909,6 +909,10 @@ namespace EasyEPlanner
                     }
                 }
             }
+            else
+            {
+                lastNode.CheckState = CheckState.Unchecked;
+            }
         }
 
         /// <summary>
