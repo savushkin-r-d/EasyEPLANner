@@ -372,6 +372,10 @@ namespace InterprojectExchange
         /// </summary>
         private void bindedSignalsList_KeyDown(object sender, KeyEventArgs e)
         {
+            SelectedListViewItemCollection selectedItems =
+                    bindedSignalsList.SelectedItems;
+            ListViewItem selectedItem = selectedItems[0];
+
             bool endEdit = e.KeyCode == Keys.Escape ||
                 e.KeyCode == Keys.Enter;
             if (endEdit)
@@ -380,12 +384,9 @@ namespace InterprojectExchange
                 e.Handled = true;
             }
             else if (e.KeyCode == Keys.Delete)
-            {
-                SelectedListViewItemCollection selectedItems = 
-                    bindedSignalsList.SelectedItems;
+            {        
                 if(selectedItems != null && selectedItems.Count > 0)
                 {
-                    ListViewItem selectedItem = selectedItems[0];
                     DeleteItemFromBindedSignals(selectedItem);                                   
                 }
 
@@ -395,6 +396,65 @@ namespace InterprojectExchange
                 }
                 e.Handled = true;
             }
+            else if (e.KeyCode == Keys.Up && e.Shift)
+            {
+                MoveInGroup(selectedItem, MoveDirection.UP);
+                e.Handled = true;
+            }
+            else if (e.KeyCode == Keys.Down && e.Shift)
+            {
+                MoveInGroup(selectedItem, MoveDirection.DOWN);
+                e.Handled = true;
+            }
+        }
+
+        public void MoveInGroup(ListViewItem item, MoveDirection direction)
+        {
+            string currProjSignal = item.SubItems[0].Text;
+            string advProjSignal = item.SubItems[1].Text;
+            string signalType = item.Group.Name;
+
+            bool successMove = false;
+            switch(direction)
+            {
+                case MoveDirection.UP:
+                    successMove = interprojectExchange.MoveSignalsBind(
+                    signalType, currProjSignal, advProjSignal, (int)direction);
+                    break;
+
+                case MoveDirection.DOWN:
+                    successMove = interprojectExchange.MoveSignalsBind(
+                    signalType, currProjSignal, advProjSignal, (int)direction);
+                    break;
+            }
+
+            if (successMove)
+            {
+                ListViewGroup group = item.Group;
+                int itemIndex = group.Items.IndexOf(item);
+                SwapListViewItems(itemIndex, itemIndex + (int)direction,
+                    group.Items);
+            }
+        }
+
+        public void SwapListViewItems(int oldId, int newId, 
+            ListViewItemCollection items)
+        {
+            string cache;
+            for (int i = 0; i < items[oldId].SubItems.Count; i++)
+            {
+                cache = items[newId].SubItems[i].Text;
+                items[newId].SubItems[i].Text =
+                  items[oldId].SubItems[i].Text;
+                items[oldId].SubItems[i].Text = cache;
+            }
+            items[newId].Selected = true;
+        }
+
+        public enum MoveDirection
+        {
+            UP = -1,
+            DOWN = 1,
         }
 
         /// <summary>

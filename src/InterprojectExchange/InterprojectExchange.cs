@@ -216,6 +216,38 @@ namespace InterprojectExchange
             return true;
         }
 
+        public bool MoveSignalsBind(string signalType, string currProjSignal,
+            string advProjSignal, int move)
+        {
+            List<string> currentProjSignals = GetCurrentProjectSignals(
+                signalType);
+            List<string> advancedProjSignals = GetAdvancedProjectSignals(
+                signalType);
+
+            int currSignalIndex = currentProjSignals.IndexOf(currProjSignal);
+            int advSignalindex = advancedProjSignals.IndexOf(advProjSignal);
+
+            bool blockMoveUp = 
+                (currSignalIndex == 0 || advSignalindex == 0) &&
+                move == -1;
+            bool blockMoveDown =
+                (currSignalIndex == currentProjSignals.Count - 1 ||
+                advSignalindex == advancedProjSignals.Count - 1) &&
+                move == 1;
+            if(blockMoveDown || blockMoveUp)
+            {
+                return false;
+            }
+
+            currentProjSignals.Remove(currProjSignal);
+            currentProjSignals.Insert(currSignalIndex + move, currProjSignal);
+
+            advancedProjSignals.Remove(advProjSignal);
+            advancedProjSignals.Insert(advSignalindex + move, advProjSignal);
+
+            return true;
+        }
+
         /// <summary>
         /// Изменение устройства в связи текущего проекта
         /// </summary>
