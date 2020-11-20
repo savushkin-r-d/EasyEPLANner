@@ -408,6 +408,11 @@ namespace InterprojectExchange
             }
         }
 
+        /// <summary>
+        /// Двигать элемент в группе
+        /// </summary>
+        /// <param name="item">Элемент</param>
+        /// <param name="direction">Направление</param>
         public void MoveInGroup(ListViewItem item, MoveDirection direction)
         {
             string currProjSignal = item.SubItems[0].Text;
@@ -437,6 +442,12 @@ namespace InterprojectExchange
             }
         }
 
+        /// <summary>
+        /// Поменять местами объекты ListViewItem.
+        /// </summary>
+        /// <param name="oldId">Старый индекс</param>
+        /// <param name="newId">Новый индекс</param>
+        /// <param name="items">Коллекция объектов</param>
         public void SwapListViewItems(int oldId, int newId, 
             ListViewItemCollection items)
         {
