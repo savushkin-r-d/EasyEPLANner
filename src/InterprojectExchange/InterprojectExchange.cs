@@ -216,6 +216,16 @@ namespace InterprojectExchange
             return true;
         }
 
+        /// <summary>
+        /// Подвинуть уже привязанные сигналы
+        /// </summary>
+        /// <param name="signalType">Группа (тип сигналов)</param>
+        /// <param name="currProjSignal">Выбранный сигнал текущего проекта
+        /// </param>
+        /// <param name="advProjSignal">Выбранный сигнал альтернативного проекта
+        /// </param>
+        /// <param name="move">Индекс сдвига (1 - вниз, -1 - вверх)</param>
+        /// <returns></returns>
         public bool MoveSignalsBind(string signalType, string currProjSignal,
             string advProjSignal, int move)
         {
