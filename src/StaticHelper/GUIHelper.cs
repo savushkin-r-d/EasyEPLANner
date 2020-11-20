@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace StaticHelper
@@ -37,7 +36,7 @@ namespace StaticHelper
         public static void SetUpAdvTreeView(TreeViewAdv customizingView,
             string columnName, DrawEventHandler drawNodeDelegate,
             NodeCheckBox customizingCheckBox,
-            CheckStateChangedEventHandler checkStateChangedDelegate)
+            CheckStateChangedEventHandler checkStateChangedDelegate = null)
         {
             customizingView.FullRowSelect = true;
             customizingView.FullRowSelectActiveColor = Color
@@ -83,14 +82,17 @@ namespace StaticHelper
         /// состояния чекбокса</param>
         private static void SetUpNodeCheckBox(TreeViewAdv customizingView,
             TreeColumn column, NodeCheckBox customizingCheckBox,
-            CheckStateChangedEventHandler checkStateChanged)
+            CheckStateChangedEventHandler checkStateChanged = null)
         {
             customizingCheckBox.DataPropertyName = "CheckState";
             customizingCheckBox.VerticalAlign = VerticalAlignment.Center;
             customizingCheckBox.ParentColumn = column;
             customizingCheckBox.EditEnabled = true;
-            customizingCheckBox.CheckStateChanged +=
-                new EventHandler<TreePathEventArgs>(checkStateChanged);
+            if(checkStateChanged != null)
+            {
+                customizingCheckBox.CheckStateChanged +=
+                    new EventHandler<TreePathEventArgs>(checkStateChanged);
+            }
 
             customizingView.NodeControls.Add(customizingCheckBox);
         }
