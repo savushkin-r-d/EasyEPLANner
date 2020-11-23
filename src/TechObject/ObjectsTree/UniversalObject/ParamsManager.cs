@@ -270,6 +270,23 @@ namespace TechObject
         override public ITreeViewItem Replace(object child,
             object copyObject)
         {
+            var parsManager = child as ParamsManager;
+            if (copyObject is ParamsManager && parsManager != null)
+            {
+                var copyPars = copyObject as ParamsManager;
+                foreach (Params parGroup in copyPars.Items)
+                {
+                    foreach (Param par in parGroup.Items)
+                    {
+                        AddParam(parGroup.LuaName, par.GetName(),
+                            float.Parse(par.GetValue()), par.GetMeter(),
+                            par.GetNameLua());
+                    }
+                }
+
+                return parsManager;
+            }
+
             Params pars = child as Params;
             if (copyObject is Params && pars != null)
             {
