@@ -1122,11 +1122,7 @@ namespace TechObject
             bool parsNotNull = pars != null && copyPars != null;
             if (parsNotNull)
             {
-                for(int i = 0; i < copyPars.Items.Length; i++)
-                {
-                    pars.Replace(pars.Items[i], copyPars.Items[i]);
-                }
-
+                pars.Replace(pars, copyPars);
                 return pars;
             }
 

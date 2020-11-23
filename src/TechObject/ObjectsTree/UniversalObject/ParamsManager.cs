@@ -196,6 +196,18 @@ namespace TechObject
                 clone.items.Add(clone.parFLoatRunTime);
             }
 
+            if (parUInt != null)
+            {
+                clone.parUInt = parUInt.Clone();
+                clone.items.Add(clone.parUInt);
+            }
+
+            if (parUIntRunTime != null)
+            {
+                clone.parUIntRunTime = parUIntRunTime.Clone();
+                clone.items.Add(clone.parUIntRunTime);
+            }
+
             return clone;
         }
 
@@ -270,6 +282,24 @@ namespace TechObject
         override public ITreeViewItem Replace(object child,
             object copyObject)
         {
+            var parsManager = child as ParamsManager;
+            if (copyObject is ParamsManager && parsManager != null)
+            {
+                Clear();
+                var copyPars = copyObject as ParamsManager;
+                foreach (Params parGroup in copyPars.Items)
+                {
+                    foreach (Param par in parGroup.Items)
+                    {
+                        AddParam(parGroup.LuaName, par.GetName(),
+                            float.Parse(par.GetValue()), par.GetMeter(),
+                            par.GetNameLua());
+                    }
+                }
+
+                return parsManager;
+            }
+
             Params pars = child as Params;
             if (copyObject is Params && pars != null)
             {
@@ -302,6 +332,14 @@ namespace TechObject
             }
         }
         #endregion
+
+        public void Clear()
+        {
+            parFLoat?.Clear();
+            parFLoatRunTime?.Clear();
+            parUInt?.Clear();
+            parUIntRunTime?.Clear();
+        }
 
         public override string GetLinkToHelpPage()
         {

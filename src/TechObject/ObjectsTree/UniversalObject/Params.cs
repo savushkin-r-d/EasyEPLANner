@@ -162,6 +162,14 @@ namespace TechObject
             get { return chBaseName; }
         }
 
+        public string LuaName
+        {
+            get
+            {
+                return nameLua;
+            }
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {
