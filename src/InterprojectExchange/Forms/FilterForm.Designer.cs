@@ -40,7 +40,7 @@
             this.cancelButton = new System.Windows.Forms.Button();
             this.clearButton = new System.Windows.Forms.Button();
             this.hideBindedSignalsCheckBox = new System.Windows.Forms.CheckBox();
-            this.DisableCheckSignalsPairsCheckBox = new System.Windows.Forms.CheckBox();
+            this.disableCheckSignalsPairsCheckBox = new System.Windows.Forms.CheckBox();
             this.currProjGoupBox.SuspendLayout();
             this.bindedSignalsList.SuspendLayout();
             this.advProjGroupBox.SuspendLayout();
@@ -78,7 +78,7 @@
             // 
             // bindedSignalsList
             // 
-            this.bindedSignalsList.Controls.Add(this.DisableCheckSignalsPairsCheckBox);
+            this.bindedSignalsList.Controls.Add(this.disableCheckSignalsPairsCheckBox);
             this.bindedSignalsList.Controls.Add(this.hideBindedSignalsCheckBox);
             this.bindedSignalsList.Controls.Add(this.groupAsPairsCheckBox);
             this.bindedSignalsList.Location = new System.Drawing.Point(241, 12);
@@ -169,15 +169,15 @@
             this.hideBindedSignalsCheckBox.Text = "Скрывать уже связанные сигналы";
             this.hideBindedSignalsCheckBox.UseVisualStyleBackColor = true;
             // 
-            // DisableCheckSignalsPairsCheckBox
+            // disableCheckSignalsPairsCheckBox
             // 
-            this.DisableCheckSignalsPairsCheckBox.AutoSize = true;
-            this.DisableCheckSignalsPairsCheckBox.Location = new System.Drawing.Point(9, 80);
-            this.DisableCheckSignalsPairsCheckBox.Name = "DisableCheckSignalsPairsCheckBox";
-            this.DisableCheckSignalsPairsCheckBox.Size = new System.Drawing.Size(202, 17);
-            this.DisableCheckSignalsPairsCheckBox.TabIndex = 7;
-            this.DisableCheckSignalsPairsCheckBox.Text = "Отключить контроль пар сигналов";
-            this.DisableCheckSignalsPairsCheckBox.UseVisualStyleBackColor = true;
+            this.disableCheckSignalsPairsCheckBox.AutoSize = true;
+            this.disableCheckSignalsPairsCheckBox.Location = new System.Drawing.Point(9, 80);
+            this.disableCheckSignalsPairsCheckBox.Name = "disableCheckSignalsPairsCheckBox";
+            this.disableCheckSignalsPairsCheckBox.Size = new System.Drawing.Size(202, 17);
+            this.disableCheckSignalsPairsCheckBox.TabIndex = 7;
+            this.disableCheckSignalsPairsCheckBox.Text = "Отключить контроль пар сигналов";
+            this.disableCheckSignalsPairsCheckBox.UseVisualStyleBackColor = true;
             // 
             // FilterForm
             // 
@@ -223,7 +223,7 @@
         private System.Windows.Forms.CheckedListBox currProjDevList;
         private System.Windows.Forms.CheckBox groupAsPairsCheckBox;
         private System.Windows.Forms.CheckedListBox advProjDevList;
-        private System.Windows.Forms.CheckBox DisableCheckSignalsPairsCheckBox;
+        private System.Windows.Forms.CheckBox disableCheckSignalsPairsCheckBox;
         private System.Windows.Forms.CheckBox hideBindedSignalsCheckBox;
     }
 }

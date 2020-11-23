@@ -168,6 +168,10 @@ namespace InterprojectExchange
             
             // Строковые названия - названия UI-элементов на форме
             bindedSignalsParameters.Add("groupAsPairsCheckBox", defaultValue);
+            bindedSignalsParameters
+                .Add("hideBindedSignalsCheckBox", defaultValue);
+            bindedSignalsParameters
+                .Add("disableCheckSignalsPairsCheckBox", defaultValue);
             
             FilterParameters.Add("currProjDevList", currProjParameters);
             FilterParameters.Add("advProjDevList", advProjParameters);
@@ -258,6 +262,30 @@ namespace InterprojectExchange
             {
                 return FilterParameters["bindedSignalsList"]
                     ["groupAsPairsCheckBox"];
+            }
+        }
+
+        /// <summary>
+        /// Игнорировать проверку пар сигналов (DI > DO и др.)
+        /// </summary>
+        public bool DisableCheckSignalsPairs
+        {
+            get
+            {
+                return FilterParameters["bindedSignalsList"]
+                    ["disableCheckSignalsPairsCheckBox"];
+            }
+        }
+
+        /// <summary>
+        /// Скрывать уже привязанные сигналы из списка сигналов в проектах.
+        /// </summary>
+        public bool HideBindedSignals
+        {
+            get
+            {
+                return FilterParameters["bindedSignalsList"]
+                    ["hideBindedSignalsCheckBox"];
             }
         }
 
