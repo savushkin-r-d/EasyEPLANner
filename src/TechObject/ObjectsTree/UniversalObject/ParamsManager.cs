@@ -196,6 +196,18 @@ namespace TechObject
                 clone.items.Add(clone.parFLoatRunTime);
             }
 
+            if (parUInt != null)
+            {
+                clone.parUInt = parUInt.Clone();
+                clone.items.Add(clone.parUInt);
+            }
+
+            if (parUIntRunTime != null)
+            {
+                clone.parUIntRunTime = parUIntRunTime.Clone();
+                clone.items.Add(clone.parUIntRunTime);
+            }
+
             return clone;
         }
 
