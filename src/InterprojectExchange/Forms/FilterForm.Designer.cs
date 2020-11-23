@@ -168,6 +168,7 @@
             this.hideBindedSignalsCheckBox.TabIndex = 6;
             this.hideBindedSignalsCheckBox.Text = "Скрывать уже связанные сигналы";
             this.hideBindedSignalsCheckBox.UseVisualStyleBackColor = true;
+            this.hideBindedSignalsCheckBox.CheckStateChanged += new System.EventHandler(this.hideBindedSignalsCheckBox_CheckStateChanged);
             // 
             // disableCheckSignalsPairsCheckBox
             // 
@@ -178,6 +179,7 @@
             this.disableCheckSignalsPairsCheckBox.TabIndex = 7;
             this.disableCheckSignalsPairsCheckBox.Text = "Отключить контроль пар сигналов";
             this.disableCheckSignalsPairsCheckBox.UseVisualStyleBackColor = true;
+            this.disableCheckSignalsPairsCheckBox.CheckStateChanged += new System.EventHandler(this.disableCheckSignalsPairsCheckBox_CheckStateChanged);
             // 
             // FilterForm
             // 
