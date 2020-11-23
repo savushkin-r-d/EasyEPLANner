@@ -40,8 +40,6 @@ namespace Editor
             lua = new Lua();
             lua.RegisterFunction("ADD_TECH_OBJECT", this,
                 GetType().GetMethod("LoadObjects"));
-            lua.RegisterFunction("Get_TECH_OBJECT", this,
-                GetType().GetMethod("GetImportedObjectImportRestrictions"));
             try
             {
                 LoadScriptsForImport();
@@ -62,12 +60,6 @@ namespace Editor
                 .Combine(ProjectManager.GetInstance().SystemFilesPath, 
                 descriptionFileName);
             lua.DoFile(sysLuaPath);
-
-            string restrictionsFileName = "sys_restriction.lua";
-            string pathToRestrictionInitializer = Path
-                .Combine(ProjectManager.GetInstance().SystemFilesPath, 
-                restrictionsFileName);
-            lua.DoFile(pathToRestrictionInitializer);
         }
 
         /// <summary>
@@ -87,7 +79,6 @@ namespace Editor
             {
                 lua.DoString(dataFromFile);
                 lua.DoString("if init ~= nil then init() end");
-                lua.DoString("init_restriction()");
             }
             catch
             {
@@ -241,18 +232,6 @@ namespace Editor
             unidentifiedObject.AddUnidentifiedObject(obj);
         }
         #endregion
-
-
-        /// <summary>
-        /// Получить импортированный объект для импорта ограничений,
-        /// вызывается из LUA.
-        /// </summary>
-        /// <returns></returns>
-        public TechObject.TechObject GetImportedObjectImportRestrictions(
-            int objectN)
-        {
-            return importedObjects[objectN] as TechObject.TechObject;
-        }
 
         /// <summary>
         /// Импортировать объекты в редактор
