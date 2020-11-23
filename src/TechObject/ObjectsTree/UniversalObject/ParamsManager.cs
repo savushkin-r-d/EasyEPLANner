@@ -273,6 +273,7 @@ namespace TechObject
             var parsManager = child as ParamsManager;
             if (copyObject is ParamsManager && parsManager != null)
             {
+                Clear();
                 var copyPars = copyObject as ParamsManager;
                 foreach (Params parGroup in copyPars.Items)
                 {
@@ -319,6 +320,14 @@ namespace TechObject
             }
         }
         #endregion
+
+        public void Clear()
+        {
+            parFLoat?.Clear();
+            parFLoatRunTime?.Clear();
+            parUInt?.Clear();
+            parUIntRunTime?.Clear();
+        }
 
         public override string GetLinkToHelpPage()
         {
