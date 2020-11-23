@@ -18,8 +18,7 @@ namespace EasyEPlanner
 
             const string columnName = "Операции";
             StaticHelper.GUIHelper.SetUpAdvTreeView(modesTreeViewAdv,
-                columnName, modesTreeViewAdv_DrawNode, nodeCheckBox,
-                treeItem_AfterCheck);
+                columnName, modesTreeViewAdv_DrawNode, nodeCheckBox);
 
             dialogCallbackDelegate =
                 new PI.HookProc(DlgWndHookCallbackFunction);
@@ -31,6 +30,11 @@ namespace EasyEPlanner
         NodeCheckBox nodeCheckBox = new NodeCheckBox();
 
         private static ModeFrm mFrm = null;
+
+        /// <summary>
+        /// Выбранный элемент в редакторе объектов.
+        /// </summary>
+        public EditType SelectedTreeItem { get; private set; }
 
         /// <summary>
         /// Функция для обработки завершения работы окна устройств.
@@ -270,8 +274,7 @@ namespace EasyEPlanner
                 node.CheckState = CheckState.Unchecked;
             }
 
-            nodeCheckBox.CheckStateChanged -=
-                new EventHandler<TreePathEventArgs>(treeItem_AfterCheck);
+            nodeCheckBox.CheckStateChanged -= treeItem_AfterCheck;
 
             if (function != null)
             {
@@ -282,8 +285,7 @@ namespace EasyEPlanner
             List<Node> nodes = treeModel.Nodes.ToList();
             SelectedDevices(nodes, checkedDev);
 
-            nodeCheckBox.CheckStateChanged += new
-                EventHandler<TreePathEventArgs>(treeItem_AfterCheck);
+            nodeCheckBox.CheckStateChanged += treeItem_AfterCheck;
 
             modesTreeViewAdv.EndUpdate();
         }
@@ -304,7 +306,6 @@ namespace EasyEPlanner
                     if (item.IsMainObject)
                     {
                         SelectAttachedObject(subNode, checkedMode);
-
                     }
                     else if (item.IsMode)
                     {
@@ -398,6 +399,8 @@ namespace EasyEPlanner
                 modesTreeViewAdv.NodeControls.Remove(nodeCheckBox);
             }
 
+            SetEditMode(checkedMode);
+
             if (isRebuiltTree == true)
             {
                 Refresh(techManager, checkedMode, showOneNode, item);
@@ -405,6 +408,29 @@ namespace EasyEPlanner
 
             ShowDlg();
             return true;
+        }
+
+        /// <summary>
+        /// Установить режим редактирования в зависимости от выбранного элемента
+        /// на дереве объектов.
+        /// </summary>
+        /// <param name="checkedItem">Выбранный элемент</param>
+        private void SetEditMode(Editor.ITreeViewItem checkedItem)
+        {
+            switch(checkedItem)
+            {
+                case TechObject.TechObject.AttachedToObjects _:
+                    SelectedTreeItem = EditType.AttachObject;
+                    break;
+
+                case TechObject.Restriction _:
+                    SelectedTreeItem = EditType.Restriction;
+                    break;
+
+                default:
+                    SelectedTreeItem = EditType.None;
+                    break;
+            }
         }
 
         /// <summary>
@@ -463,8 +489,8 @@ namespace EasyEPlanner
             Editor.ITreeViewItem checkedMode)
         {
             bool notShowAllOperations = checkedMode != null;
-            bool notAllowedTypes = !(checkedMode is TechObject.Restriction ||
-                checkedMode is TechObject.TechObject.AttachedToObjects) ||
+            bool notAllowedTypes = !(SelectedTreeItem == EditType.Restriction ||
+                SelectedTreeItem == EditType.AttachObject) ||
                 checkedMode.IsEditable == false;
             if (notAllowedTypes && notShowAllOperations)
             {
@@ -485,7 +511,7 @@ namespace EasyEPlanner
                     List<TechObject.Mode> modes = techObject.ModesManager
                         .Modes;
 
-                    if (checkedMode is TechObject.Restriction)
+                    if (SelectedTreeItem == EditType.Restriction)
                     {
                         FillTreeObjectsModes(modes, parentNode, checkedMode,
                             techObject, ref techObjNum, ref modeNum);
@@ -613,7 +639,7 @@ namespace EasyEPlanner
             {
                 if (item != null &&
                     item.IsMainObject &&
-                    checkedNode is TechObject.Restriction)
+                    SelectedTreeItem == EditType.Restriction)
                 {
                     return true;
                 }
@@ -864,7 +890,42 @@ namespace EasyEPlanner
             // Нажатый узел дерева
             object nodeObject = e.Path.LastNode;
             Node checkedNode = nodeObject as Node;
+            
+            if (SelectedTreeItem == EditType.AttachObject)
+            {
+                UnselectIncorrectValues(e, checkedNode.Text);
+            }
+
             StaticHelper.GUIHelper.CheckCheckState(checkedNode);
+        }
+
+        /// <summary>
+        /// Снять выделение с некорректных значений внутри узла.
+        /// </summary>
+        /// <param name="e">Контекст переданный вызывающим кодом</param>
+        /// <param name="selectedNodeText">Выбранное значение</param>
+        private void UnselectIncorrectValues(TreePathEventArgs e,
+            string selectedNodeText)
+        {
+            var lastNode = e.Path.LastNode as Node;
+            int fullPathLength = e.Path.FullPath.Length;
+            if (lastNode.Nodes.Count == 0 && fullPathLength > 1)
+            {
+                int preLastIndexOffset = 2;
+                int preLastNodeIndex = fullPathLength - preLastIndexOffset;
+                var preLastNode = e.Path.FullPath[preLastNodeIndex] as Node;
+                foreach(var node in preLastNode.Nodes)
+                {
+                    if(node.Text != selectedNodeText)
+                    {
+                        node.CheckState = CheckState.Unchecked;
+                    }
+                }
+            }
+            else
+            {
+                lastNode.CheckState = CheckState.Unchecked;
+            }
         }
 
         /// <summary>
@@ -908,6 +969,16 @@ namespace EasyEPlanner
             DrawTextEventArgs e)
         {
             e.TextColor = Color.Black;
+        }
+
+        /// <summary>
+        /// Тип редактируемого элемента
+        /// </summary>
+        public enum EditType
+        {
+            None,
+            Restriction,
+            AttachObject
         }
     }
 }
