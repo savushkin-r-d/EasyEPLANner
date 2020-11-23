@@ -77,7 +77,6 @@ namespace Editor
         public void Export(string path, List<int> objectsNums)
         {
             string objectsDescription = "";
-            string objectsRestriction = "";
             List<TechObject.TechObject> objects = techObjectManager.TechObjects;
             foreach (var obj in objects)
             {
@@ -98,13 +97,7 @@ namespace Editor
                         .SaveAsLuaTable("\t\t", globalNum);
                     description = description
                         .Replace("[ 0 ]", $"[ {globalNum} ]");
-                    string restriction = exportingObject
-                        .SaveRestrictionAsLua("\t", globalNum);
-                    restriction = restriction
-                        .Replace("[ 0 ]", $"[ {globalNum} ]");
-
                     objectsDescription += description;
-                    objectsRestriction += restriction;
                 }
                 else
                 {
@@ -118,8 +111,6 @@ namespace Editor
                     EasyEPlanner.EncodingDetector.DetectFileEncoding(path));
                 
                 WriteObjectsDescription(fileWriter, objectsDescription);
-                fileWriter.WriteLine("\n");
-                WriteObjectsRestriction(fileWriter, objectsRestriction);
                 
                 fileWriter.Flush();
                 fileWriter.Close();
@@ -143,21 +134,6 @@ namespace Editor
             string descriptionFileData = string.Format(filePattern, "not used",
                 "not used", description);
             fileWriter.Write(descriptionFileData);
-        }
-
-        /// <summary>
-        /// Записать ограничения.
-        /// </summary>
-        /// <param name="fileWriter">Поток для записи</param>
-        /// <param name="restrictions">Ограничения</param>
-        private void WriteObjectsRestriction(StreamWriter fileWriter, 
-            string restrictions)
-        {
-            string filePattern = EasyEPlanner.Properties.Resources
-                .ResourceManager.GetString("mainRestrictionsPattern");
-            string restrictionsFileData = string.Format(filePattern, "not used", 
-                restrictions);
-            fileWriter.Write(restrictionsFileData);
         }
 
         private static TechObjectsExporter techObjectsExporter;
