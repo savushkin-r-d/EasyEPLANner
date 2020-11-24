@@ -401,8 +401,13 @@ namespace TechObject
             if (objectsNotNull)
             {
                 Mode newMode = copyMode.Clone(GetModeN, this, copyMode.Name);
+                if (!mode.BaseObjectsList.Contains(copyMode.BaseOperation.Name))
+                {
+                    bool editBaseOperation = true;
+                    newMode.SetNewValue(string.Empty, editBaseOperation);
+                }
+                
                 int index = modes.IndexOf(mode);
-
                 modes.Remove(mode);
                 modes.Insert(index, newMode);
 
