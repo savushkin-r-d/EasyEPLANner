@@ -604,8 +604,7 @@ namespace TechObject
         {
             get
             {
-                //TODO: Скорее всего будет ошибка.
-                ModesManager modesManager = this.Owner;
+                ModesManager modesManager = Owner;
                 TechObject techObject = modesManager.Owner;
                 BaseTechObject baseTechObject = techObject.BaseTechObject;
                 List<string> baseModesList = baseTechObject.BaseOperationsList;

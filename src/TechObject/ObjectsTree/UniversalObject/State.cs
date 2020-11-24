@@ -355,6 +355,12 @@ namespace TechObject
             if (objectsNotNull)
             {
                 Step newStep = copy.Clone(GetStepN);
+                if (!step.BaseObjectsList.Contains(newStep.GetBaseStepName()))
+                {
+                    bool editBaseStep = true;
+                    newStep.SetNewValue(string.Empty, editBaseStep);
+                }
+
                 int index = steps.IndexOf(step);
                 steps.Remove(step);
                 steps.Insert(index, newStep);
