@@ -447,7 +447,7 @@ namespace TechObject
             var objMode = obj as Mode;
             if (objMode != null)
             {
-                Mode newMode = objMode.Clone(GetModeN, this);             
+                Mode newMode = objMode.Clone(GetModeN, this);
                 modes.Add(newMode);
 
                 string objModeTechObjectName = objMode.Owner.Owner.NameEplan;
