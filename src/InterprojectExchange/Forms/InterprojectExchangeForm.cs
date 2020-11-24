@@ -164,6 +164,8 @@ namespace InterprojectExchange
                     if (success)
                     {
                         selectedRow.SubItems[1].Text = advancedProjectDevice;
+
+                        advProjSearchBox_TextChanged(this, e);
                     }
                     else
                     {
@@ -216,6 +218,8 @@ namespace InterprojectExchange
                     if(success)
                     {
                         selectedRow.SubItems[0].Text = currentProjectDevice;
+
+                        currProjSearchBox_TextChanged(this, e);
                     }
                     else
                     {
@@ -273,6 +277,8 @@ namespace InterprojectExchange
                     if (success)
                     {
                         bindedSignalsList.Items.Add(item);
+
+                        RefilterListViews();
                     }
                     else
                     {
@@ -499,6 +505,8 @@ namespace InterprojectExchange
                         var newSelectedItem = bindedSignalsList
                             .Items[selectedItemIndex - 1];
                         newSelectedItem.Selected = true;
+
+                        RefilterListViews();
                     }
                 }
             } 
@@ -935,6 +943,8 @@ namespace InterprojectExchange
             {
                 ReloadListViewWithSignals();
                 ClearAllListViewsSelection();
+                currProjSearchBox_TextChanged(this, e);
+                advProjSearchBox_TextChanged(this, e);
             }
         }
 

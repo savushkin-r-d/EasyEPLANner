@@ -87,27 +87,36 @@ namespace InterprojectExchange
             FilterList filterList)
         {
             var filteredList = new List<ListViewItem>();
-            var allowedDevices = new string[0];
-
-            if (filterList == FilterList.CurrentProject)
-            {
-                allowedDevices = CurrentProjectSelectedDevices;
-            }
-            else
-            {
-                allowedDevices = AdvancedProjectSelectedDevices;
-            }
-
+            
+            string[] allowedDevices = GetProjectDevices(filterList);
             if(allowedDevices.Length != 0)
             {
                 filteredList = items
                     .Where(x => allowedDevices.Contains(x.Tag.ToString()))
                     .ToList();
-                return filteredList.ToArray();
             }
             else
             {
-                return items.ToArray();
+                filteredList = items.ToList();
+            }
+
+            if (HideBindedSignals)
+            {
+                filteredList = FilterBindedSignals(filteredList, filterList);
+            }
+
+            return filteredList.ToArray();
+        }
+
+        private string[] GetProjectDevices(FilterList filteringProject)
+        {
+            if (filteringProject == FilterList.CurrentProject)
+            {
+                return CurrentProjectSelectedDevices;
+            }
+            else
+            {
+                return AdvancedProjectSelectedDevices;
             }
         }
 
