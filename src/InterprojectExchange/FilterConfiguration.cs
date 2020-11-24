@@ -102,12 +102,17 @@ namespace InterprojectExchange
 
             if (HideBindedSignals)
             {
-                filteredList = FilterBindedSignals(filteredList, filterList);
+                filteredList = RemoveBindedSignals(filteredList, filterList);
             }
 
             return filteredList.ToArray();
         }
 
+        /// <summary>
+        /// Получить устройства проекта
+        /// </summary>
+        /// <param name="filteringProject">Какой проект нужно получить</param>
+        /// <returns></returns>
         private string[] GetProjectDevices(FilterList filteringProject)
         {
             if (filteringProject == FilterList.CurrentProject)
@@ -118,6 +123,37 @@ namespace InterprojectExchange
             {
                 return AdvancedProjectSelectedDevices;
             }
+        }
+
+        /// <summary>
+        /// Удаление уже привязанных сигналов из списка сигналов
+        /// </summary>
+        /// <param name="items">Пары уже связанных сигналов</param>
+        /// <param name="filterList">Какой проект проверяется</param>
+        /// <returns></returns>
+        private List<ListViewItem> RemoveBindedSignals(List<ListViewItem> items,
+            FilterList filterList)
+        {
+            var filteredSignals = new List<ListViewItem>();
+            Dictionary<string, List<string[]>> allSignals =
+                InterprojectExchange.GetInstance().GetBindedSignals();
+
+            var projectSignals = new List<string>();
+            foreach (var signalGroup in allSignals.Keys)
+            {
+                foreach (var signalPair in allSignals[signalGroup])
+                {
+                    var signal = signalPair[(int)filterList];
+                    projectSignals.Add(signal);
+                }
+            }
+
+            filteredSignals = items
+                .Where(x => projectSignals
+                .Contains(x.SubItems[(int)filterList].Text) == false)
+                .ToList();
+
+            return filteredSignals;
         }
 
         /// <summary>

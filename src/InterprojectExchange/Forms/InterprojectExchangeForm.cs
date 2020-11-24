@@ -244,11 +244,14 @@ namespace InterprojectExchange
             string currentProjectDevice, string advancedProjectDeviceType, 
             string advancedProjectDevice)
         {
+            bool ignoreEqualSignalGroups = filterConfiguration
+                .DisableCheckSignalsPairs;
             // Если сигналы равны и содержатся в списке сигналов (AI, AO, DI,DO)
             bool devicesInvalid = 
                 (currentProjectDeviceType == advancedProjectDeviceType &&
                 interprojectExchange.DeviceChannelsNames
-                .Contains(currentProjectDeviceType));
+                .Contains(currentProjectDeviceType) &&
+                ignoreEqualSignalGroups == false);
             if (devicesInvalid)
             {
                 ShowWarningMessage("Устройства имеют одинаковый тип сигнала", 
