@@ -441,20 +441,8 @@ namespace InterprojectExchange
             string advProjSignal = item.SubItems[1].Text;
             string signalType = item.Group.Name;
 
-            bool successMove = false;
-            switch(direction)
-            {
-                case MoveDirection.UP:
-                    successMove = interprojectExchange.MoveSignalsBind(
-                    signalType, currProjSignal, advProjSignal, (int)direction);
-                    break;
-
-                case MoveDirection.DOWN:
-                    successMove = interprojectExchange.MoveSignalsBind(
-                    signalType, currProjSignal, advProjSignal, (int)direction);
-                    break;
-            }
-
+            bool successMove = interprojectExchange.MoveSignalsBind(signalType,
+                currProjSignal, advProjSignal, (int)direction);
             if (successMove)
             {
                 ListViewGroup group = item.Group;
