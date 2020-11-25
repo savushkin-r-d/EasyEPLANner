@@ -147,17 +147,7 @@ namespace InterprojectExchange
             }
 
             var filteredSignals = new List<ListViewItem>();
-
-            int subItemIndex;
-            if (filterList == FilterList.CurrentProject)
-            {
-                subItemIndex = 1;
-            }
-            else
-            {
-                subItemIndex = 0;
-            }
-            
+            int subItemIndex = filterList == FilterList.CurrentProject ? 1 : 0;         
             foreach(var item in items)
             {
                 string itemName = item.SubItems[subItemIndex].Text;
