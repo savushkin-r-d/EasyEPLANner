@@ -94,6 +94,10 @@ namespace InterprojectExchange
             advProjDevList.ItemCheck -= advProjDevList_ItemCheck;
             groupAsPairsCheckBox.CheckStateChanged -= 
                 groupAsPairsCheckBox_CheckStateChanged;
+            hideBindedSignalsCheckBox.CheckStateChanged -=
+                hideBindedSignalsCheckBox_CheckStateChanged;
+            disableCheckSignalsPairsCheckBox.CheckStateChanged -=
+                disableCheckSignalsPairsCheckBox_CheckStateChanged;
 
             string[] currentProjectSelectedDevices = filterConfiguration
                 .CurrentProjectSelectedDevices;
@@ -114,12 +118,15 @@ namespace InterprojectExchange
             isChecked = filterConfiguration.HideBindedSignals;
             hideBindedSignalsCheckBox.Checked = isChecked;
 
-
             // Включили обработчики изменений состояний чекбоксов
             currProjDevList.ItemCheck += currProjDevList_ItemCheck;
             advProjDevList.ItemCheck += advProjDevList_ItemCheck;
             groupAsPairsCheckBox.CheckStateChanged +=
                 groupAsPairsCheckBox_CheckStateChanged;
+            disableCheckSignalsPairsCheckBox.CheckStateChanged +=
+                disableCheckSignalsPairsCheckBox_CheckStateChanged;
+            hideBindedSignalsCheckBox.CheckStateChanged +=
+                hideBindedSignalsCheckBox_CheckStateChanged;
         }
 
         /// <summary>

@@ -20,6 +20,8 @@ namespace InterprojectExchange
             // Получение основных экземпляров классов, подписка на событие
             // обновления списков через фильтр
             interprojectExchange = InterprojectExchange.GetInstance();
+
+            FilterConfiguration.ResetFilter();
             filterConfiguration = FilterConfiguration.GetInstance();
             filterConfiguration.SignalsFilterChanged += RefilterListViews;
 
@@ -154,7 +156,8 @@ namespace InterprojectExchange
             else
             {
                 ListViewItem selectedRow = bindedSignalsList.SelectedItems[0];
-                if (selectedRow != null)
+                bool notIgnoreEdit = !filterConfiguration.HideBindedSignals;
+                if (selectedRow != null && notIgnoreEdit)
                 {
                     bool mainProject = false;
                     string groupName = selectedRow.Group.Name;
@@ -164,8 +167,6 @@ namespace InterprojectExchange
                     if (success)
                     {
                         selectedRow.SubItems[1].Text = advancedProjectDevice;
-
-                        advProjSearchBox_TextChanged(this, e);
                     }
                     else
                     {
@@ -208,7 +209,8 @@ namespace InterprojectExchange
             else
             {
                 var selectedRow = bindedSignalsList.SelectedItems[0];
-                if (selectedRow != null)
+                bool notIgnoreEdit = !filterConfiguration.HideBindedSignals;
+                if (selectedRow != null && notIgnoreEdit)
                 {
                     bool mainProject = true;
                     string groupName = selectedRow.Group.Name;
@@ -218,8 +220,6 @@ namespace InterprojectExchange
                     if(success)
                     {
                         selectedRow.SubItems[0].Text = currentProjectDevice;
-
-                        currProjSearchBox_TextChanged(this, e);
                     }
                     else
                     {
@@ -496,6 +496,8 @@ namespace InterprojectExchange
 
                 if (selectedItemIndex >= 0 && bindedSignalsList.Items.Count > 0)
                 {
+                    RefilterListViews();
+
                     if (bindedSignalsList.Items.Count > selectedItemIndex)
                     {
                         var newSelectedItem = bindedSignalsList
@@ -508,8 +510,6 @@ namespace InterprojectExchange
                         var newSelectedItem = bindedSignalsList
                             .Items[selectedItemIndex - 1];
                         newSelectedItem.Selected = true;
-
-                        RefilterListViews();
                     }
                 }
             } 
@@ -592,6 +592,11 @@ namespace InterprojectExchange
                     advProjItem.Selected = true;
                     advProjItem.EnsureVisible();
                 }
+                else
+                {
+                    currentProjSignalsList.SelectedIndices.Clear();
+                    advancedProjSignalsList.SelectedIndices.Clear();
+                }
             }
             catch
             {
@@ -665,10 +670,16 @@ namespace InterprojectExchange
         /// </summary>
         private void currProjSearchBox_TextChanged(object sender, EventArgs e)
         {
+            currentProjSignalsList.ItemSelectionChanged -=
+                currentProjSignalsList_ItemSelectionChanged;
+
             ListViewItem[] filteredThroughType = filterConfiguration.FilterOut(
                 currProjItems, FilterConfiguration.FilterList.CurrentProject);
             SearchSubstringInListView(currentProjSignalsList,
                 currProjSearchBox.Text, filteredThroughType);
+
+            currentProjSignalsList.ItemSelectionChanged +=
+                currentProjSignalsList_ItemSelectionChanged;
         }
 
         /// <summary>
@@ -677,10 +688,16 @@ namespace InterprojectExchange
         /// </summary>
         private void advProjSearchBox_TextChanged(object sender, EventArgs e)
         {
+            advancedProjSignalsList.ItemSelectionChanged -=
+                advancedProjSignalsList_ItemSelectionChanged;
+
             ListViewItem[] filteredThroughType = filterConfiguration.FilterOut(
                 advProjItems, FilterConfiguration.FilterList.AdvancedProject);
             SearchSubstringInListView(advancedProjSignalsList,
                 advProjSearchBox.Text, filteredThroughType);
+
+            advancedProjSignalsList.ItemSelectionChanged +=
+                advancedProjSignalsList_ItemSelectionChanged;
         }
 
         /// <summary>

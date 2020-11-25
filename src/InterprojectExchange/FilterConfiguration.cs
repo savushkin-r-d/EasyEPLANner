@@ -86,18 +86,17 @@ namespace InterprojectExchange
         public ListViewItem[] FilterOut(List<ListViewItem> items, 
             FilterList filterList)
         {
-            var filteredList = new List<ListViewItem>();
-            
+            IEnumerable<ListViewItem> filteredList;
+
             string[] allowedDevices = GetProjectDevices(filterList);
             if(allowedDevices.Length != 0)
             {
                 filteredList = items
-                    .Where(x => allowedDevices.Contains(x.Tag.ToString()))
-                    .ToList();
+                    .Where(x => allowedDevices.Contains(x.Tag.ToString()));
             }
             else
             {
-                filteredList = items.ToList();
+                filteredList = items;
             }
 
             if (HideBindedSignals)
@@ -131,10 +130,9 @@ namespace InterprojectExchange
         /// <param name="items">Пары уже связанных сигналов</param>
         /// <param name="filterList">Какой проект проверяется</param>
         /// <returns></returns>
-        private List<ListViewItem> RemoveBindedSignals(List<ListViewItem> items,
-            FilterList filterList)
+        private IEnumerable<ListViewItem> RemoveBindedSignals(
+            IEnumerable<ListViewItem> items, FilterList filterList)
         {
-            var filteredSignals = new List<ListViewItem>();
             Dictionary<string, List<string[]>> allSignals =
                 InterprojectExchange.GetInstance().GetBindedSignals();
 
@@ -148,10 +146,26 @@ namespace InterprojectExchange
                 }
             }
 
-            filteredSignals = items
-                .Where(x => projectSignals
-                .Contains(x.SubItems[(int)filterList].Text) == false)
-                .ToList();
+            var filteredSignals = new List<ListViewItem>();
+
+            int subItemIndex;
+            if (filterList == FilterList.CurrentProject)
+            {
+                subItemIndex = 1;
+            }
+            else
+            {
+                subItemIndex = 0;
+            }
+            
+            foreach(var item in items)
+            {
+                string itemName = item.SubItems[subItemIndex].Text;
+                if (!projectSignals.Contains(itemName))
+                {
+                    filteredSignals.Add(item);
+                }
+            }
 
             return filteredSignals;
         }
@@ -189,6 +203,14 @@ namespace InterprojectExchange
             }
 
             return filterConfiguration;
+        }
+
+        /// <summary>
+        /// Сбросить фильтр (null).
+        /// </summary>
+        public static void ResetFilter()
+        {
+            filterConfiguration = null;
         }
 
         /// <summary>
@@ -242,7 +264,7 @@ namespace InterprojectExchange
         /// </summary>
         public void Dispose()
         {
-            if(filterForm != null && !filterForm.IsDisposed)
+            if (filterForm != null && !filterForm.IsDisposed)
             {
                 filterForm.Close();
                 filterForm.Dispose();
@@ -352,7 +374,7 @@ namespace InterprojectExchange
         /// </summary>
         public enum FilterList
         {
-            CurrentProject,
+            CurrentProject = 0,
             AdvancedProject,
         }
 
