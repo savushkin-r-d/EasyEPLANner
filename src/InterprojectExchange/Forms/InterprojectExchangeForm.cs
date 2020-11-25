@@ -367,6 +367,19 @@ namespace InterprojectExchange
                 return itemGroup;
             }
 
+            if (filterConfiguration.DisableCheckSignalsPairs)
+            {
+                bool allowedToBind =
+                    (currProjDevType == "AI" && advProjDevType == "AI") ||
+                    (currProjDevType == "AO" && advProjDevType == "AO") ||
+                    (currProjDevType == "DI" && advProjDevType == "DI") ||
+                    (currProjDevType == "DO" && advProjDevType == "DO");
+                if(allowedToBind)
+                {
+                    return currProjDevType;
+                }
+            }
+
             // Оба сигнала неизвестны
             var form = new UnknownDevTypeForm();
             form.ShowDialog();
