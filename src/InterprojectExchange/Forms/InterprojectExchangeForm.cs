@@ -131,13 +131,12 @@ namespace InterprojectExchange
         private void advancedProjSignalsList_ItemSelectionChanged(object sender,
             ListViewItemSelectionChangedEventArgs e)
         {
-            string advancedProjectDevice = e.Item.Text;
-            SelectedListViewItemCollection currentProjectDevices =
+            string advProjDev = e.Item.SubItems[0].Text;
+            SelectedListViewItemCollection currProjDevs =
                 currentProjSignalsList.SelectedItems;
 
-            bool needChange = (advancedProjectDevice != null &&
-                currentProjectDevices.Count != 0 &&
-                e.IsSelected);
+            bool needChange = (advProjDev != null &&
+                currProjDevs.Count != 0 && e.IsSelected);
             if (!needChange)
             {
                 return;
@@ -146,12 +145,11 @@ namespace InterprojectExchange
             bool needAddNewElement = bindedSignalsList.SelectedItems.Count == 0;
             if (needAddNewElement)
             {
-                var currentProjectDevice = currentProjectDevices[0].SubItems[1];
-                string currentProjectDeviceType = currentProjectDevices[0]
-                    .Tag.ToString();
-                AddToBindedSignals(currentProjectDeviceType,
-                    currentProjectDevice.Text, e.Item.Tag.ToString(),
-                    advancedProjectDevice);
+                string currProjDev = currProjDevs[0].SubItems[1].Text;
+                string currProjDevType = currProjDevs[0].Tag.ToString();
+                string advProjDevType = e.Item.Tag.ToString();
+                AddToBindedSignals(currProjDevType, currProjDev, advProjDevType,
+                    advProjDev);
             }
             else
             {
@@ -163,10 +161,10 @@ namespace InterprojectExchange
                     string groupName = selectedRow.Group.Name;
                     bool success = interprojectExchange.UpdateProjectBinding(
                         groupName, selectedRow.SubItems[1].Text,
-                        advancedProjectDevice, mainProject);
+                        advProjDev, mainProject);
                     if (success)
                     {
-                        selectedRow.SubItems[1].Text = advancedProjectDevice;
+                        selectedRow.SubItems[1].Text = advProjDev;
                     }
                     else
                     {
@@ -183,28 +181,25 @@ namespace InterprojectExchange
         private void currentProjSignalsList_ItemSelectionChanged(object sender,
             ListViewItemSelectionChangedEventArgs e)
         {
-            string currentProjectDevice = e.Item.SubItems[1].Text;
-            SelectedListViewItemCollection advancedProjectDevices =
+            string currProjDev = e.Item.SubItems[1].Text;
+            SelectedListViewItemCollection advProjDevs =
                 advancedProjSignalsList.SelectedItems;
 
-            bool needChange = (currentProjectDevice != null &&
-                advancedProjectDevices.Count != 0 &&
-                e.IsSelected);
+            bool needChange = (currProjDev != null &&
+                advProjDevs.Count != 0 && e.IsSelected);
             if (!needChange)
             {
                 return;
             }
 
-            bool needAddNewElement = bindedSignalsList.SelectedItems
-                .Count == 0;
+            bool needAddNewElement = bindedSignalsList.SelectedItems.Count == 0;
             if (needAddNewElement)
             {
-                ListViewItem advancedProjectDevice =
-                    advancedProjectDevices[0];
-                AddToBindedSignals(e.Item.Tag.ToString(),
-                    currentProjectDevice,
-                    advancedProjectDevice.Tag.ToString(),
-                    advancedProjectDevice.Text);
+                string currProjDevType = e.Item.Tag.ToString();
+                string advProjDev = advProjDevs[0].SubItems[0].Text;
+                string advProjDevType = advProjDevs[0].Tag.ToString();
+                AddToBindedSignals(currProjDevType, currProjDev, advProjDevType,
+                    advProjDev);
             }
             else
             {
@@ -215,11 +210,11 @@ namespace InterprojectExchange
                     bool mainProject = true;
                     string groupName = selectedRow.Group.Name;
                     bool success = interprojectExchange.UpdateProjectBinding(
-                        groupName, selectedRow.SubItems[0].Text, 
-                        currentProjectDevice, mainProject);
+                        groupName, selectedRow.SubItems[0].Text, currProjDev,
+                        mainProject);
                     if(success)
                     {
-                        selectedRow.SubItems[0].Text = currentProjectDevice;
+                        selectedRow.SubItems[0].Text = currProjDev;
                     }
                     else
                     {
