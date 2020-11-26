@@ -187,6 +187,12 @@ namespace InterprojectExchange
             List<string> advancedProjSignals = GetAdvancedProjectSignals(
                 signalType);
 
+            if (currentProjSignals.Contains(currentProjectDevice) ||
+                advancedProjSignals.Contains(advancedProjectDevice))
+            {
+                return false;
+            }
+
             currentProjSignals.Add(currentProjectDevice);
             advancedProjSignals.Add(advancedProjectDevice);
 

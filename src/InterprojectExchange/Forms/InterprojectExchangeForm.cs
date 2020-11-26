@@ -280,7 +280,9 @@ namespace InterprojectExchange
                     }
                     else
                     {
-                        ShowErrorMessage("Не удалось связать сигналы");
+                        string message = "Ошибка связки сигналов. " +
+                            "Попытка связать уже связанный(-е) сигнал(-ы).";
+                        ShowErrorMessage(message);
                     }
 
                 }
