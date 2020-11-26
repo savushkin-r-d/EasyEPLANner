@@ -408,6 +408,7 @@ namespace InterprojectExchange
             if (endEdit)
             {
                 ClearAllListViewsSelection();
+                e.Handled = true;
             }
             else if (e.KeyCode == Keys.Delete)
             {
@@ -416,18 +417,19 @@ namespace InterprojectExchange
                 if (bindedSignalsList.Items.Count == 0)
                 {
                     ClearAllListViewsSelection();
+                    e.Handled = true;
                 }
             }
             else if (e.KeyCode == Keys.Up && e.Shift)
             {
                 MoveInGroup(selectedItem, MoveDirection.UP);
+                e.Handled = true;
             }
             else if (e.KeyCode == Keys.Down && e.Shift)
             {
                 MoveInGroup(selectedItem, MoveDirection.DOWN);
+                e.Handled = true;
             }
-
-            e.Handled = true;
         }
 
         /// <summary>
