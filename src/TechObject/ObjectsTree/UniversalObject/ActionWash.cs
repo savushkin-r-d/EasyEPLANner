@@ -47,7 +47,29 @@ namespace TechObject
                     Device.DeviceSubType.M_REV_FREQ_2,
                     Device.DeviceSubType.M_REV_FREQ_2_ERROR,
                     Device.DeviceSubType.M_ATV,
-                    Device.DeviceSubType.M
+                    Device.DeviceSubType.M,
+                    Device.DeviceSubType.V_AS_DO1_DI2,
+                    Device.DeviceSubType.V_AS_MIXPROOF,
+                    Device.DeviceSubType.V_BOTTOM_MIXPROOF,
+                    Device.DeviceSubType.V_DO1,
+                    Device.DeviceSubType.V_DO1_DI1_FB_OFF,
+                    Device.DeviceSubType.V_DO1_DI1_FB_ON,
+                    Device.DeviceSubType.V_DO1_DI2,
+                    Device.DeviceSubType.V_DO2,
+                    Device.DeviceSubType.V_DO2_DI2,
+                    Device.DeviceSubType.V_DO2_DI2_BISTABLE,
+                    Device.DeviceSubType.V_IOLINK_DO1_DI2,
+                    Device.DeviceSubType.V_IOLINK_MIXPROOF,
+                    Device.DeviceSubType.V_IOLINK_VTUG_DO1,
+                    Device.DeviceSubType.V_IOLINK_VTUG_DO1_DI2,
+                    Device.DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF,
+                    Device.DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON,
+                    Device.DeviceSubType.V_MIXPROOF,
+                    Device.DeviceSubType.AO,
+                    Device.DeviceSubType.AO_VIRT,
+                    Device.DeviceSubType.DO,
+                    Device.DeviceSubType.DO_VIRT
+                    //TODO: Заменить ValidTypes
                 }));
 
             vGroups.Add(new Action("Реверсивные устройства", owner,
