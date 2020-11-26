@@ -160,8 +160,8 @@ namespace InterprojectExchange
                     bool mainProject = false;
                     string groupName = selectedRow.Group.Name;
                     bool success = interprojectExchange.UpdateProjectBinding(
-                        groupName, selectedRow.SubItems[1].Text,
-                        advProjDev, mainProject);
+                        groupName, selectedRow.SubItems[1].Text, advProjDev,
+                        mainProject);
                     if (success)
                     {
                         selectedRow.SubItems[1].Text = advProjDev;
@@ -579,6 +579,11 @@ namespace InterprojectExchange
         {
             try
             {
+                currentProjSignalsList.ItemSelectionChanged -=
+                    currentProjSignalsList_ItemSelectionChanged;
+                advancedProjSignalsList.ItemSelectionChanged -=
+                    advancedProjSignalsList_ItemSelectionChanged;
+
                 string currProjDevText = selectedItem.SubItems[0].Text;
                 string advProjDevText = selectedItem.SubItems[1].Text;
 
@@ -598,6 +603,11 @@ namespace InterprojectExchange
                     currentProjSignalsList.SelectedIndices.Clear();
                     advancedProjSignalsList.SelectedIndices.Clear();
                 }
+
+                currentProjSignalsList.ItemSelectionChanged +=
+                    currentProjSignalsList_ItemSelectionChanged;
+                advancedProjSignalsList.ItemSelectionChanged +=
+                    advancedProjSignalsList_ItemSelectionChanged;
             }
             catch
             {
