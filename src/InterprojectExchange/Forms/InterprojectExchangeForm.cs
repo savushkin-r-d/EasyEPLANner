@@ -396,38 +396,41 @@ namespace InterprojectExchange
         {
             SelectedListViewItemCollection selectedItems =
                     bindedSignalsList.SelectedItems;
-            ListViewItem selectedItem = selectedItems[0];
+            ListViewItem selectedItem;
+            if (selectedItems?.Count > 0)
+            {
+                selectedItem = selectedItems[0];
+            }
+            else
+            {
+                return;
+            }
 
             bool endEdit = e.KeyCode == Keys.Escape ||
                 e.KeyCode == Keys.Enter;
             if (endEdit)
             {
                 ClearAllListViewsSelection();
-                e.Handled = true;
             }
             else if (e.KeyCode == Keys.Delete)
-            {        
-                if(selectedItems != null && selectedItems.Count > 0)
-                {
-                    DeleteItemFromBindedSignals(selectedItem);                                   
-                }
+            {
+                DeleteItemFromBindedSignals(selectedItem);
 
                 if (bindedSignalsList.Items.Count == 0)
                 {
                     ClearAllListViewsSelection();
                 }
-                e.Handled = true;
             }
             else if (e.KeyCode == Keys.Up && e.Shift)
             {
                 MoveInGroup(selectedItem, MoveDirection.UP);
-                e.Handled = true;
             }
             else if (e.KeyCode == Keys.Down && e.Shift)
             {
                 MoveInGroup(selectedItem, MoveDirection.DOWN);
-                e.Handled = true;
             }
+
+            e.Handled = true;
         }
 
         /// <summary>
