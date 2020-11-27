@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Editor
@@ -68,6 +69,9 @@ namespace Editor
                     return;
                 }
                 string fileName = sfd.FileName;
+
+                Thread.CurrentThread.CurrentCulture = StaticHelper.CommonConst
+                    .CultureWithDotInsteadComma;
 
                 TechObjectsExporter.GetInstance()
                     .Export(fileName, checkedItems);
