@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using TechObject;
+using System.Threading;
 
 namespace EasyEPlanner
 {
@@ -53,8 +54,9 @@ namespace EasyEPlanner
             }
             else
             {
-                var t = new System.Threading.Thread(new System.Threading
-                    .ParameterizedThreadStart(ProjectDescriptionSaver.Save));
+                var t = new Thread(new ParameterizedThreadStart(
+                    ProjectDescriptionSaver.Save));
+                t.CurrentCulture = Thread.CurrentThread.CurrentCulture;
                 t.Start(param);
             }
         }
@@ -193,7 +195,6 @@ namespace EasyEPlanner
                 // Поиск пути к каталогу с надстройкой
                 string[] originalAssemblyPath = OriginalAssemblyPath
                     .Split('\\');
-                string configFileName = StaticHelper.CommonConst.ConfigFileName;
 
                 int sourceEnd = originalAssemblyPath.Length;
                 string path = @"";

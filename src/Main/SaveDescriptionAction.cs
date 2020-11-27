@@ -35,6 +35,10 @@ namespace EasyEPlanner
                 }
                 else
                 {
+                    var currentThread = System.Threading.Thread.CurrentThread;
+                    currentThread.CurrentCulture = StaticHelper.CommonConst
+                        .CultureWithDotInsteadComma;
+
                     string projectName = EProjectManager.GetInstance()
                         .GetCurrentProjectName();
                     EProjectManager.GetInstance()

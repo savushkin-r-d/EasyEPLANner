@@ -28,6 +28,10 @@ namespace EasyEPlanner
 
             string errStr;
 
+            var currentThread = System.Threading.Thread.CurrentThread;
+            currentThread.CurrentCulture = StaticHelper.CommonConst
+                .CultureWithDotInsteadComma;
+
             string projectName = EProjectManager.GetInstance()
                 .GetCurrentProjectName();
             EProjectManager.GetInstance().CheckProjectName(ref projectName);
