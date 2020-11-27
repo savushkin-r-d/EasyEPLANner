@@ -65,9 +65,18 @@ namespace InterprojectExchange
             CurrentProjectModel mainModel = interprojectExchange.MainModel;
             bool invertSignals = false;
 
-            foreach (var modelName in loadedAdvancedModelsNames)
+            var advancedModels = new List<IProjectModel>();
+            for(int i = 0; i < loadedAdvancedModelsNames.Length; i ++)
             {
-                IProjectModel model = interprojectExchange.GetModel(modelName);
+                IProjectModel advancedModel = interprojectExchange
+                    .GetModel(loadedAdvancedModelsNames[i]);
+                advancedModels.Add(advancedModel);
+            }
+            advancedModels = advancedModels.OrderBy(x => x.PacInfo.Station)
+                .ToList();
+
+            foreach (var model in advancedModels)
+            {
                 string projectName = model.ProjectName;
                 // SelectModel - с каким проектом работаем,
                 // влияет на список сигналов с mainModel

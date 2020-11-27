@@ -187,6 +187,12 @@ namespace InterprojectExchange
             List<string> advancedProjSignals = GetAdvancedProjectSignals(
                 signalType);
 
+            if (currentProjSignals.Contains(currentProjectDevice) ||
+                advancedProjSignals.Contains(advancedProjectDevice))
+            {
+                return false;
+            }
+
             currentProjSignals.Add(currentProjectDevice);
             advancedProjSignals.Add(advancedProjectDevice);
 
@@ -212,6 +218,48 @@ namespace InterprojectExchange
 
             currentProjSignals.Remove(currentProjectDevice);
             advancedProjSignals.Remove(advancedProjectDevice);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Подвинуть уже привязанные сигналы
+        /// </summary>
+        /// <param name="signalType">Группа (тип сигналов)</param>
+        /// <param name="currProjSignal">Выбранный сигнал текущего проекта
+        /// </param>
+        /// <param name="advProjSignal">Выбранный сигнал альтернативного проекта
+        /// </param>
+        /// <param name="move">Индекс сдвига (1 - вниз, -1 - вверх)</param>
+        /// <returns></returns>
+        public bool MoveSignalsBind(string signalType, string currProjSignal,
+            string advProjSignal, int move)
+        {
+            List<string> currentProjSignals = GetCurrentProjectSignals(
+                signalType);
+            List<string> advancedProjSignals = GetAdvancedProjectSignals(
+                signalType);
+
+            int currSignalIndex = currentProjSignals.IndexOf(currProjSignal);
+            int advSignalindex = advancedProjSignals.IndexOf(advProjSignal);
+
+            bool blockMoveUp = 
+                (currSignalIndex == 0 || advSignalindex == 0) &&
+                move == -1;
+            bool blockMoveDown =
+                (currSignalIndex == currentProjSignals.Count - 1 ||
+                advSignalindex == advancedProjSignals.Count - 1) &&
+                move == 1;
+            if(blockMoveDown || blockMoveUp)
+            {
+                return false;
+            }
+
+            currentProjSignals.Remove(currProjSignal);
+            currentProjSignals.Insert(currSignalIndex + move, currProjSignal);
+
+            advancedProjSignals.Remove(advProjSignal);
+            advancedProjSignals.Insert(advSignalindex + move, advProjSignal);
 
             return true;
         }

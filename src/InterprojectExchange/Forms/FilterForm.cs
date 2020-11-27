@@ -73,6 +73,8 @@ namespace InterprojectExchange
             }
 
             groupAsPairsCheckBox.Checked = false;
+            hideBindedSignalsCheckBox.Checked = false;
+            disableCheckSignalsPairsCheckBox.Checked = false;
         }
 
         /// <summary>
@@ -92,6 +94,10 @@ namespace InterprojectExchange
             advProjDevList.ItemCheck -= advProjDevList_ItemCheck;
             groupAsPairsCheckBox.CheckStateChanged -= 
                 groupAsPairsCheckBox_CheckStateChanged;
+            hideBindedSignalsCheckBox.CheckStateChanged -=
+                hideBindedSignalsCheckBox_CheckStateChanged;
+            disableCheckSignalsPairsCheckBox.CheckStateChanged -=
+                disableCheckSignalsPairsCheckBox_CheckStateChanged;
 
             string[] currentProjectSelectedDevices = filterConfiguration
                 .CurrentProjectSelectedDevices;
@@ -106,11 +112,21 @@ namespace InterprojectExchange
             bool isChecked = filterConfiguration.UseDeviceGroups;
             groupAsPairsCheckBox.Checked = isChecked;
 
+            isChecked = filterConfiguration.DisableCheckSignalsPairs;
+            disableCheckSignalsPairsCheckBox.Checked = isChecked;
+
+            isChecked = filterConfiguration.HideBindedSignals;
+            hideBindedSignalsCheckBox.Checked = isChecked;
+
             // Включили обработчики изменений состояний чекбоксов
             currProjDevList.ItemCheck += currProjDevList_ItemCheck;
             advProjDevList.ItemCheck += advProjDevList_ItemCheck;
             groupAsPairsCheckBox.CheckStateChanged +=
                 groupAsPairsCheckBox_CheckStateChanged;
+            disableCheckSignalsPairsCheckBox.CheckStateChanged +=
+                disableCheckSignalsPairsCheckBox_CheckStateChanged;
+            hideBindedSignalsCheckBox.CheckStateChanged +=
+                hideBindedSignalsCheckBox_CheckStateChanged;
         }
 
         /// <summary>
@@ -158,6 +174,22 @@ namespace InterprojectExchange
             bool isChecked = e.NewValue == CheckState.Checked ? true : false;
             filterConfiguration.SetFilterParameter(advProjDevList.Name, 
                 itemName, isChecked);
+        }
+
+        private void hideBindedSignalsCheckBox_CheckStateChanged(object sender,
+            EventArgs e)
+        {
+            filterConfiguration.SetFilterParameter(bindedSignalsList.Name,
+                hideBindedSignalsCheckBox.Name,
+                hideBindedSignalsCheckBox.Checked);
+        }
+
+        private void disableCheckSignalsPairsCheckBox_CheckStateChanged(
+            object sender, EventArgs e)
+        {
+            filterConfiguration.SetFilterParameter(bindedSignalsList.Name,
+                disableCheckSignalsPairsCheckBox.Name,
+                disableCheckSignalsPairsCheckBox.Checked);
         }
     }
 }

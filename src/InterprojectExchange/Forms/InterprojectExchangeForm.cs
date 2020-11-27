@@ -20,6 +20,8 @@ namespace InterprojectExchange
             // Получение основных экземпляров классов, подписка на событие
             // обновления списков через фильтр
             interprojectExchange = InterprojectExchange.GetInstance();
+
+            FilterConfiguration.ResetFilter();
             filterConfiguration = FilterConfiguration.GetInstance();
             filterConfiguration.SignalsFilterChanged += RefilterListViews;
 
@@ -129,13 +131,12 @@ namespace InterprojectExchange
         private void advancedProjSignalsList_ItemSelectionChanged(object sender,
             ListViewItemSelectionChangedEventArgs e)
         {
-            string advancedProjectDevice = e.Item.Text;
-            SelectedListViewItemCollection currentProjectDevices =
+            string advProjDev = e.Item.SubItems[0].Text;
+            SelectedListViewItemCollection currProjDevs =
                 currentProjSignalsList.SelectedItems;
 
-            bool needChange = (advancedProjectDevice != null &&
-                currentProjectDevices.Count != 0 &&
-                e.IsSelected);
+            bool needChange = (advProjDev != null &&
+                currProjDevs.Count != 0 && e.IsSelected);
             if (!needChange)
             {
                 return;
@@ -144,26 +145,26 @@ namespace InterprojectExchange
             bool needAddNewElement = bindedSignalsList.SelectedItems.Count == 0;
             if (needAddNewElement)
             {
-                var currentProjectDevice = currentProjectDevices[0].SubItems[1];
-                string currentProjectDeviceType = currentProjectDevices[0]
-                    .Tag.ToString();
-                AddToBindedSignals(currentProjectDeviceType,
-                    currentProjectDevice.Text, e.Item.Tag.ToString(),
-                    advancedProjectDevice);
+                string currProjDev = currProjDevs[0].SubItems[1].Text;
+                string currProjDevType = currProjDevs[0].Tag.ToString();
+                string advProjDevType = e.Item.Tag.ToString();
+                AddToBindedSignals(currProjDevType, currProjDev, advProjDevType,
+                    advProjDev);
             }
             else
             {
                 ListViewItem selectedRow = bindedSignalsList.SelectedItems[0];
-                if (selectedRow != null)
+                bool notIgnoreEdit = !filterConfiguration.HideBindedSignals;
+                if (selectedRow != null && notIgnoreEdit)
                 {
                     bool mainProject = false;
                     string groupName = selectedRow.Group.Name;
                     bool success = interprojectExchange.UpdateProjectBinding(
-                        groupName, selectedRow.SubItems[1].Text,
-                        advancedProjectDevice, mainProject);
+                        groupName, selectedRow.SubItems[1].Text, advProjDev,
+                        mainProject);
                     if (success)
                     {
-                        selectedRow.SubItems[1].Text = advancedProjectDevice;
+                        selectedRow.SubItems[1].Text = advProjDev;
                     }
                     else
                     {
@@ -180,42 +181,40 @@ namespace InterprojectExchange
         private void currentProjSignalsList_ItemSelectionChanged(object sender,
             ListViewItemSelectionChangedEventArgs e)
         {
-            string currentProjectDevice = e.Item.SubItems[1].Text;
-            SelectedListViewItemCollection advancedProjectDevices =
+            string currProjDev = e.Item.SubItems[1].Text;
+            SelectedListViewItemCollection advProjDevs =
                 advancedProjSignalsList.SelectedItems;
 
-            bool needChange = (currentProjectDevice != null &&
-                advancedProjectDevices.Count != 0 &&
-                e.IsSelected);
+            bool needChange = (currProjDev != null &&
+                advProjDevs.Count != 0 && e.IsSelected);
             if (!needChange)
             {
                 return;
             }
 
-            bool needAddNewElement = bindedSignalsList.SelectedItems
-                .Count == 0;
+            bool needAddNewElement = bindedSignalsList.SelectedItems.Count == 0;
             if (needAddNewElement)
             {
-                ListViewItem advancedProjectDevice =
-                    advancedProjectDevices[0];
-                AddToBindedSignals(e.Item.Tag.ToString(),
-                    currentProjectDevice,
-                    advancedProjectDevice.Tag.ToString(),
-                    advancedProjectDevice.Text);
+                string currProjDevType = e.Item.Tag.ToString();
+                string advProjDev = advProjDevs[0].SubItems[0].Text;
+                string advProjDevType = advProjDevs[0].Tag.ToString();
+                AddToBindedSignals(currProjDevType, currProjDev, advProjDevType,
+                    advProjDev);
             }
             else
             {
                 var selectedRow = bindedSignalsList.SelectedItems[0];
-                if (selectedRow != null)
+                bool notIgnoreEdit = !filterConfiguration.HideBindedSignals;
+                if (selectedRow != null && notIgnoreEdit)
                 {
                     bool mainProject = true;
                     string groupName = selectedRow.Group.Name;
                     bool success = interprojectExchange.UpdateProjectBinding(
-                        groupName, selectedRow.SubItems[0].Text, 
-                        currentProjectDevice, mainProject);
+                        groupName, selectedRow.SubItems[0].Text, currProjDev,
+                        mainProject);
                     if(success)
                     {
-                        selectedRow.SubItems[0].Text = currentProjectDevice;
+                        selectedRow.SubItems[0].Text = currProjDev;
                     }
                     else
                     {
@@ -240,11 +239,14 @@ namespace InterprojectExchange
             string currentProjectDevice, string advancedProjectDeviceType, 
             string advancedProjectDevice)
         {
+            bool ignoreEqualSignalGroups = filterConfiguration
+                .DisableCheckSignalsPairs;
             // Если сигналы равны и содержатся в списке сигналов (AI, AO, DI,DO)
             bool devicesInvalid = 
                 (currentProjectDeviceType == advancedProjectDeviceType &&
                 interprojectExchange.DeviceChannelsNames
-                .Contains(currentProjectDeviceType));
+                .Contains(currentProjectDeviceType) &&
+                ignoreEqualSignalGroups == false);
             if (devicesInvalid)
             {
                 ShowWarningMessage("Устройства имеют одинаковый тип сигнала", 
@@ -273,10 +275,14 @@ namespace InterprojectExchange
                     if (success)
                     {
                         bindedSignalsList.Items.Add(item);
+
+                        RefilterListViews();
                     }
                     else
                     {
-                        ShowErrorMessage("Не удалось связать сигналы");
+                        string message = "Ошибка связки сигналов. " +
+                            "Попытка связать уже связанный(-е) сигнал(-ы).";
+                        ShowErrorMessage(message);
                     }
 
                 }
@@ -358,6 +364,19 @@ namespace InterprojectExchange
                 return itemGroup;
             }
 
+            if (filterConfiguration.DisableCheckSignalsPairs)
+            {
+                bool allowedToBind =
+                    (currProjDevType == "AI" && advProjDevType == "AI") ||
+                    (currProjDevType == "AO" && advProjDevType == "AO") ||
+                    (currProjDevType == "DI" && advProjDevType == "DI") ||
+                    (currProjDevType == "DO" && advProjDevType == "DO");
+                if(allowedToBind)
+                {
+                    return currProjDevType;
+                }
+            }
+
             // Оба сигнала неизвестны
             var form = new UnknownDevTypeForm();
             form.ShowDialog();
@@ -372,6 +391,18 @@ namespace InterprojectExchange
         /// </summary>
         private void bindedSignalsList_KeyDown(object sender, KeyEventArgs e)
         {
+            SelectedListViewItemCollection selectedItems =
+                    bindedSignalsList.SelectedItems;
+            ListViewItem selectedItem;
+            if (selectedItems?.Count > 0)
+            {
+                selectedItem = selectedItems[0];
+            }
+            else
+            {
+                return;
+            }
+
             bool endEdit = e.KeyCode == Keys.Escape ||
                 e.KeyCode == Keys.Enter;
             if (endEdit)
@@ -381,20 +412,72 @@ namespace InterprojectExchange
             }
             else if (e.KeyCode == Keys.Delete)
             {
-                SelectedListViewItemCollection selectedItems = 
-                    bindedSignalsList.SelectedItems;
-                if(selectedItems != null && selectedItems.Count > 0)
-                {
-                    ListViewItem selectedItem = selectedItems[0];
-                    DeleteItemFromBindedSignals(selectedItem);                                   
-                }
+                DeleteItemFromBindedSignals(selectedItem);
 
                 if (bindedSignalsList.Items.Count == 0)
                 {
                     ClearAllListViewsSelection();
+                    e.Handled = true;
                 }
+            }
+            else if (e.KeyCode == Keys.Up && e.Shift)
+            {
+                MoveInGroup(selectedItem, MoveDirection.UP);
                 e.Handled = true;
             }
+            else if (e.KeyCode == Keys.Down && e.Shift)
+            {
+                MoveInGroup(selectedItem, MoveDirection.DOWN);
+                e.Handled = true;
+            }
+        }
+
+        /// <summary>
+        /// Двигать элемент в группе
+        /// </summary>
+        /// <param name="item">Элемент</param>
+        /// <param name="direction">Направление</param>
+        public void MoveInGroup(ListViewItem item, MoveDirection direction)
+        {
+            string currProjSignal = item.SubItems[0].Text;
+            string advProjSignal = item.SubItems[1].Text;
+            string signalType = item.Group.Name;
+
+            bool successMove = interprojectExchange.MoveSignalsBind(signalType,
+                currProjSignal, advProjSignal, (int)direction);
+            if (successMove)
+            {
+                ListViewGroup group = item.Group;
+                int itemIndex = group.Items.IndexOf(item);
+                SwapListViewItems(itemIndex, itemIndex + (int)direction,
+                    group.Items);
+            }
+        }
+
+        /// <summary>
+        /// Поменять местами объекты ListViewItem.
+        /// </summary>
+        /// <param name="oldId">Старый индекс</param>
+        /// <param name="newId">Новый индекс</param>
+        /// <param name="items">Коллекция объектов</param>
+        public void SwapListViewItems(int oldId, int newId, 
+            ListViewItemCollection items)
+        {
+            string cache;
+            for (int i = 0; i < items[oldId].SubItems.Count; i++)
+            {
+                cache = items[newId].SubItems[i].Text;
+                items[newId].SubItems[i].Text =
+                  items[oldId].SubItems[i].Text;
+                items[oldId].SubItems[i].Text = cache;
+            }
+            items[newId].Selected = true;
+        }
+
+        public enum MoveDirection
+        {
+            UP = -1,
+            DOWN = 1,
         }
 
         /// <summary>
@@ -416,6 +499,8 @@ namespace InterprojectExchange
 
                 if (selectedItemIndex >= 0 && bindedSignalsList.Items.Count > 0)
                 {
+                    RefilterListViews();
+
                     if (bindedSignalsList.Items.Count > selectedItemIndex)
                     {
                         var newSelectedItem = bindedSignalsList
@@ -496,6 +581,11 @@ namespace InterprojectExchange
         {
             try
             {
+                currentProjSignalsList.ItemSelectionChanged -=
+                    currentProjSignalsList_ItemSelectionChanged;
+                advancedProjSignalsList.ItemSelectionChanged -=
+                    advancedProjSignalsList_ItemSelectionChanged;
+
                 string currProjDevText = selectedItem.SubItems[0].Text;
                 string advProjDevText = selectedItem.SubItems[1].Text;
 
@@ -510,6 +600,16 @@ namespace InterprojectExchange
                     advProjItem.Selected = true;
                     advProjItem.EnsureVisible();
                 }
+                else
+                {
+                    currentProjSignalsList.SelectedIndices.Clear();
+                    advancedProjSignalsList.SelectedIndices.Clear();
+                }
+
+                currentProjSignalsList.ItemSelectionChanged +=
+                    currentProjSignalsList_ItemSelectionChanged;
+                advancedProjSignalsList.ItemSelectionChanged +=
+                    advancedProjSignalsList_ItemSelectionChanged;
             }
             catch
             {
@@ -583,10 +683,16 @@ namespace InterprojectExchange
         /// </summary>
         private void currProjSearchBox_TextChanged(object sender, EventArgs e)
         {
+            currentProjSignalsList.ItemSelectionChanged -=
+                currentProjSignalsList_ItemSelectionChanged;
+
             ListViewItem[] filteredThroughType = filterConfiguration.FilterOut(
                 currProjItems, FilterConfiguration.FilterList.CurrentProject);
             SearchSubstringInListView(currentProjSignalsList,
                 currProjSearchBox.Text, filteredThroughType);
+
+            currentProjSignalsList.ItemSelectionChanged +=
+                currentProjSignalsList_ItemSelectionChanged;
         }
 
         /// <summary>
@@ -595,10 +701,16 @@ namespace InterprojectExchange
         /// </summary>
         private void advProjSearchBox_TextChanged(object sender, EventArgs e)
         {
+            advancedProjSignalsList.ItemSelectionChanged -=
+                advancedProjSignalsList_ItemSelectionChanged;
+
             ListViewItem[] filteredThroughType = filterConfiguration.FilterOut(
                 advProjItems, FilterConfiguration.FilterList.AdvancedProject);
             SearchSubstringInListView(advancedProjSignalsList,
                 advProjSearchBox.Text, filteredThroughType);
+
+            advancedProjSignalsList.ItemSelectionChanged +=
+                advancedProjSignalsList_ItemSelectionChanged;
         }
 
         /// <summary>
@@ -864,6 +976,8 @@ namespace InterprojectExchange
             {
                 ReloadListViewWithSignals();
                 ClearAllListViewsSelection();
+                currProjSearchBox_TextChanged(this, e);
+                advProjSearchBox_TextChanged(this, e);
             }
         }
 

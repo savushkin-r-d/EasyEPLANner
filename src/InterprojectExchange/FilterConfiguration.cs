@@ -86,29 +86,78 @@ namespace InterprojectExchange
         public ListViewItem[] FilterOut(List<ListViewItem> items, 
             FilterList filterList)
         {
-            var filteredList = new List<ListViewItem>();
-            var allowedDevices = new string[0];
+            IEnumerable<ListViewItem> filteredList;
 
-            if (filterList == FilterList.CurrentProject)
-            {
-                allowedDevices = CurrentProjectSelectedDevices;
-            }
-            else
-            {
-                allowedDevices = AdvancedProjectSelectedDevices;
-            }
-
+            string[] allowedDevices = GetProjectDevices(filterList);
             if(allowedDevices.Length != 0)
             {
                 filteredList = items
-                    .Where(x => allowedDevices.Contains(x.Tag.ToString()))
-                    .ToList();
-                return filteredList.ToArray();
+                    .Where(x => allowedDevices.Contains(x.Tag.ToString()));
             }
             else
             {
-                return items.ToArray();
+                filteredList = items;
             }
+
+            if (HideBindedSignals)
+            {
+                filteredList = RemoveBindedSignals(filteredList, filterList);
+            }
+
+            return filteredList.ToArray();
+        }
+
+        /// <summary>
+        /// Получить устройства проекта
+        /// </summary>
+        /// <param name="filteringProject">Какой проект нужно получить</param>
+        /// <returns></returns>
+        private string[] GetProjectDevices(FilterList filteringProject)
+        {
+            if (filteringProject == FilterList.CurrentProject)
+            {
+                return CurrentProjectSelectedDevices;
+            }
+            else
+            {
+                return AdvancedProjectSelectedDevices;
+            }
+        }
+
+        /// <summary>
+        /// Удаление уже привязанных сигналов из списка сигналов
+        /// </summary>
+        /// <param name="items">Пары уже связанных сигналов</param>
+        /// <param name="filterList">Какой проект проверяется</param>
+        /// <returns></returns>
+        private IEnumerable<ListViewItem> RemoveBindedSignals(
+            IEnumerable<ListViewItem> items, FilterList filterList)
+        {
+            Dictionary<string, List<string[]>> allSignals =
+                InterprojectExchange.GetInstance().GetBindedSignals();
+
+            var projectSignals = new List<string>();
+            foreach (var signalGroup in allSignals.Keys)
+            {
+                foreach (var signalPair in allSignals[signalGroup])
+                {
+                    var signal = signalPair[(int)filterList];
+                    projectSignals.Add(signal);
+                }
+            }
+
+            var filteredSignals = new List<ListViewItem>();
+            int subItemIndex = filterList == FilterList.CurrentProject ? 1 : 0;         
+            foreach(var item in items)
+            {
+                string itemName = item.SubItems[subItemIndex].Text;
+                if (!projectSignals.Contains(itemName))
+                {
+                    filteredSignals.Add(item);
+                }
+            }
+
+            return filteredSignals;
         }
 
         /// <summary>
@@ -147,6 +196,14 @@ namespace InterprojectExchange
         }
 
         /// <summary>
+        /// Сбросить фильтр (null).
+        /// </summary>
+        public static void ResetFilter()
+        {
+            filterConfiguration = null;
+        }
+
+        /// <summary>
         /// Первоначальная настройка фильтра
         /// </summary>
         private void SetUpFilterParameters()
@@ -168,6 +225,10 @@ namespace InterprojectExchange
             
             // Строковые названия - названия UI-элементов на форме
             bindedSignalsParameters.Add("groupAsPairsCheckBox", defaultValue);
+            bindedSignalsParameters
+                .Add("hideBindedSignalsCheckBox", defaultValue);
+            bindedSignalsParameters
+                .Add("disableCheckSignalsPairsCheckBox", defaultValue);
             
             FilterParameters.Add("currProjDevList", currProjParameters);
             FilterParameters.Add("advProjDevList", advProjParameters);
@@ -193,7 +254,7 @@ namespace InterprojectExchange
         /// </summary>
         public void Dispose()
         {
-            if(filterForm != null && !filterForm.IsDisposed)
+            if (filterForm != null && !filterForm.IsDisposed)
             {
                 filterForm.Close();
                 filterForm.Dispose();
@@ -262,6 +323,30 @@ namespace InterprojectExchange
         }
 
         /// <summary>
+        /// Игнорировать проверку пар сигналов (DI > DO и др.)
+        /// </summary>
+        public bool DisableCheckSignalsPairs
+        {
+            get
+            {
+                return FilterParameters["bindedSignalsList"]
+                    ["disableCheckSignalsPairsCheckBox"];
+            }
+        }
+
+        /// <summary>
+        /// Скрывать уже привязанные сигналы из списка сигналов в проектах.
+        /// </summary>
+        public bool HideBindedSignals
+        {
+            get
+            {
+                return FilterParameters["bindedSignalsList"]
+                    ["hideBindedSignalsCheckBox"];
+            }
+        }
+
+        /// <summary>
         /// Закрытый конструктор
         /// </summary>
         private FilterConfiguration()
@@ -279,7 +364,7 @@ namespace InterprojectExchange
         /// </summary>
         public enum FilterList
         {
-            CurrentProject,
+            CurrentProject = 0,
             AdvancedProject,
         }
 

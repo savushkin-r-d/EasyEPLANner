@@ -39,6 +39,8 @@
             this.acceptButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.clearButton = new System.Windows.Forms.Button();
+            this.hideBindedSignalsCheckBox = new System.Windows.Forms.CheckBox();
+            this.disableCheckSignalsPairsCheckBox = new System.Windows.Forms.CheckBox();
             this.currProjGoupBox.SuspendLayout();
             this.bindedSignalsList.SuspendLayout();
             this.advProjGroupBox.SuspendLayout();
@@ -76,18 +78,20 @@
             // 
             // bindedSignalsList
             // 
+            this.bindedSignalsList.Controls.Add(this.disableCheckSignalsPairsCheckBox);
+            this.bindedSignalsList.Controls.Add(this.hideBindedSignalsCheckBox);
             this.bindedSignalsList.Controls.Add(this.groupAsPairsCheckBox);
             this.bindedSignalsList.Location = new System.Drawing.Point(241, 12);
             this.bindedSignalsList.Name = "bindedSignalsList";
             this.bindedSignalsList.Size = new System.Drawing.Size(223, 375);
             this.bindedSignalsList.TabIndex = 1;
             this.bindedSignalsList.TabStop = false;
-            this.bindedSignalsList.Text = "Сводная таблица";
+            this.bindedSignalsList.Text = "Общие настройки";
             // 
             // groupAsPairsCheckBox
             // 
             this.groupAsPairsCheckBox.AutoSize = true;
-            this.groupAsPairsCheckBox.Location = new System.Drawing.Point(23, 36);
+            this.groupAsPairsCheckBox.Location = new System.Drawing.Point(9, 34);
             this.groupAsPairsCheckBox.Name = "groupAsPairsCheckBox";
             this.groupAsPairsCheckBox.Size = new System.Drawing.Size(141, 17);
             this.groupAsPairsCheckBox.TabIndex = 5;
@@ -155,6 +159,28 @@
             this.clearButton.UseVisualStyleBackColor = true;
             this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
             // 
+            // hideBindedSignalsCheckBox
+            // 
+            this.hideBindedSignalsCheckBox.AutoSize = true;
+            this.hideBindedSignalsCheckBox.Location = new System.Drawing.Point(9, 57);
+            this.hideBindedSignalsCheckBox.Name = "hideBindedSignalsCheckBox";
+            this.hideBindedSignalsCheckBox.Size = new System.Drawing.Size(203, 17);
+            this.hideBindedSignalsCheckBox.TabIndex = 6;
+            this.hideBindedSignalsCheckBox.Text = "Скрывать уже связанные сигналы";
+            this.hideBindedSignalsCheckBox.UseVisualStyleBackColor = true;
+            this.hideBindedSignalsCheckBox.CheckStateChanged += new System.EventHandler(this.hideBindedSignalsCheckBox_CheckStateChanged);
+            // 
+            // disableCheckSignalsPairsCheckBox
+            // 
+            this.disableCheckSignalsPairsCheckBox.AutoSize = true;
+            this.disableCheckSignalsPairsCheckBox.Location = new System.Drawing.Point(9, 80);
+            this.disableCheckSignalsPairsCheckBox.Name = "disableCheckSignalsPairsCheckBox";
+            this.disableCheckSignalsPairsCheckBox.Size = new System.Drawing.Size(202, 17);
+            this.disableCheckSignalsPairsCheckBox.TabIndex = 7;
+            this.disableCheckSignalsPairsCheckBox.Text = "Отключить контроль пар сигналов";
+            this.disableCheckSignalsPairsCheckBox.UseVisualStyleBackColor = true;
+            this.disableCheckSignalsPairsCheckBox.CheckStateChanged += new System.EventHandler(this.disableCheckSignalsPairsCheckBox_CheckStateChanged);
+            // 
             // FilterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -199,5 +225,7 @@
         private System.Windows.Forms.CheckedListBox currProjDevList;
         private System.Windows.Forms.CheckBox groupAsPairsCheckBox;
         private System.Windows.Forms.CheckedListBox advProjDevList;
+        private System.Windows.Forms.CheckBox disableCheckSignalsPairsCheckBox;
+        private System.Windows.Forms.CheckBox hideBindedSignalsCheckBox;
     }
 }
