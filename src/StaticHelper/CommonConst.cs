@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace StaticHelper
 {
@@ -7,6 +9,26 @@ namespace StaticHelper
     /// </summary>
     public static class CommonConst
     {
+        static CommonConst()
+        {
+            CultureWithDotInsteadComma = (CultureInfo)Thread.CurrentThread
+               .CurrentCulture.Clone();
+            CultureWithDotInsteadComma.NumberFormat
+                .NumberDecimalSeparator = Comma;
+            CultureWithDotInsteadComma.NumberFormat
+                .NumberGroupSeparator = Comma;
+        }
+
+        /// <summary>
+        /// Информация о культуре с точкой вместо запятой.
+        /// </summary>
+        public static CultureInfo CultureWithDotInsteadComma;
+
+        /// <summary>
+        /// Константа точки для настройки культуры.
+        /// </summary>
+        private const string Comma = ".";
+
         /// <summary>
         /// Evaluator для замены заглавных русских букв на английские.
         /// </summary>
@@ -49,11 +71,11 @@ namespace StaticHelper
         /// <summary>
         /// Имя конфигурационного файла приложения.
         /// </summary>
-        public static string ConfigFileName = "configuration.ini";
+        public const string ConfigFileName = "configuration.ini";
 
         /// <summary>
         /// Заглушка-триггер для параметров в дополнительных свойствах операции.
         /// </summary>
-        public static string StubForCells = "Нет";
+        public const string StubForCells = "Нет";
     }
 }

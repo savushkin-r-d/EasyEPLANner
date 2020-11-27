@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Editor
@@ -143,6 +144,8 @@ namespace Editor
         private void importButton_Click(object sender, EventArgs e)
         {
             List<ITreeViewItem> checkedItems = GetCheckedForImportItems();
+            Thread.CurrentThread.CurrentCulture = StaticHelper.CommonConst
+                .CultureWithDotInsteadComma;
 
             try
             {
