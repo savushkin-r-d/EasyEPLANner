@@ -688,6 +688,24 @@ return
                         OUT_TANK = { name = "Из танка" },
                     },
                 },
+                MIXING_AFTER_SOURING = {
+                    name = "Перемешивание после сквашивания",
+                    params = 
+                    {
+                        active =
+                        {
+                            OPERATION_AFTER =
+                            {
+                                name = "Номер следующей операции",
+                            },
+                            MIXING_AFTER_SOURING_TIME =
+                            {
+                                name = "Время операции",
+                                displayObjects = { "parameters" },
+                            }
+                        }
+                    }
+                },
             },
             basicName = "tank",
             equipment =
