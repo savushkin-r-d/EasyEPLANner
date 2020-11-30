@@ -177,11 +177,17 @@ namespace TechObject
                         .ToList();
                     foreach(var property in Properties)
                     {
-                        property.Owner = operation;
+                        property.Owner = this;
+                        property.Parent = this;
                     }
 
                     baseSteps = operation.Steps;
-                    operation.owner = mode;
+                    foreach(var step in baseSteps)
+                    {
+                        step.Owner = this;
+                    }
+
+                    owner = mode;
                     if(mode.Name == Mode.DefaultModeName)
                     {
                         mode.SetNewValue(operation.Name);

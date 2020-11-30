@@ -419,8 +419,7 @@ namespace TechObject
 
             if (baseStep != null)
             {
-                this.baseStep = new BaseStep(baseStep.Name, baseStep.LuaName,
-                    baseStep.DefaultPosition);
+                this.baseStep = baseStep.Clone();
                 this.baseStep.Owner = this;
                 if (name.Contains(NewStepName) && baseStep.Name != string.Empty)
                 {
