@@ -267,21 +267,20 @@ namespace EasyEPlanner
                     continue;
                 }
 
-                string clampNumberAsString = key.Remove(0, key.
-                    IndexOf(ChannelPostfix) + ChannelPostfixSize);
                 string bindedDevices = deviceConnections[key];
-                var errors = "";
+                var errors = string.Empty;
                 bool? isASInterface = Device.DeviceManager.GetInstance().
                     IsASInterfaceDevices(bindedDevices, out errors);
                 errorMessage += errors;
                 bool deletingComments = NeedDeletingComments(bindedDevices);
-
                 if (deletingComments == true)
                 {
                     bindedDevices = SortDevices(bindedDevices);
                     bindedDevices = DeleteDevicesComments(bindedDevices);
-                    bindedDevices = DeleteRepeatedDevices(bindedDevices);
                 }
+
+                bindedDevices = DeleteRepeatedDevices(bindedDevices,
+                    deletingComments);
 
                 if (isASInterface == true)
                 {
@@ -290,7 +289,9 @@ namespace EasyEPlanner
                     errorMessage += errors;
                     if (isValidASNumbers == true)
                     {
-                        bindedDevices = DeleteRepeatedDevices(bindedDevices);
+                        bool withoutComments = true;
+                        bindedDevices = DeleteRepeatedDevices(bindedDevices,
+                            withoutComments);
                         bindedDevices = SortASInterfaceDevices(bindedDevices);
                     }
                     else
@@ -305,6 +306,8 @@ namespace EasyEPlanner
                     continue;
                 }
 
+                string clampNumberAsString = key.Remove(0, key.
+                    IndexOf(ChannelPostfix) + ChannelPostfixSize);
                 var clamp = Convert.ToInt32(clampNumberAsString);
                 SynchronizeIOModule(synchronizingDevice, clamp, bindedDevices,
                     isASInterface);
@@ -500,14 +503,23 @@ namespace EasyEPlanner
                 {
                     Device.IODevice device = Device.DeviceManager.
                         GetInstance().GetDevice(deviceMatches[i].Value);
-                    if (device.DeviceSubType == Device.DeviceSubType.
-                        V_AS_DO1_DI2 ||
-                        device.DeviceSubType == Device.DeviceSubType.
-                        V_AS_MIXPROOF)
+
+                    bool needSaveComments = 
+                        device.DeviceSubType == Device.DeviceSubType
+                        .V_AS_DO1_DI2 ||
+                        device.DeviceSubType == Device.DeviceSubType
+                        .V_AS_MIXPROOF ||
+                        device.DeviceSubType == Device.DeviceSubType
+                        .V_IOLINK_MIXPROOF ||
+                        device.DeviceSubType == Device.DeviceSubType
+                        .V_IOLINK_DO1_DI2;
+
+                    if (needSaveComments)
                     {
                         return false;
                     }
                 }
+
                 return true;
             }
             else
@@ -544,26 +556,42 @@ namespace EasyEPlanner
         /// <summary>
         /// Удаляет повторяющиеся привязанные устройства.
         /// </summary>
-        /// <param name="devicesWithoutComments">Устройства без комментариев
-        /// </param>
+        /// <param name="devicesString">Устройства</param>
+        /// <param name="withoutComments">С комментариями или без</param>
         /// <returns></returns>
-        private string DeleteRepeatedDevices(string devicesWithoutComments)
+        private string DeleteRepeatedDevices(string devicesString,
+            bool withoutComments)
         {
             var devicesList = new List<string>();
+            var devicesWithoutRepeating = string.Empty;
 
-            var devicesMatches = Regex.Matches(devicesWithoutComments,
-                Device.DeviceManager.DeviceNamePattern);
-            foreach (Match match in devicesMatches)
+            if (withoutComments)
             {
-                devicesList.Add(match.Value);
+                var devicesMatches = Regex.Matches(devicesString,
+                    Device.DeviceManager.DeviceNamePattern);
+                foreach (Match match in devicesMatches)
+                {
+                    devicesList.Add(match.Value);
+                }
+
+                devicesList = devicesList.Distinct().ToList();
+
+                if (devicesList.Count > 0)
+                {
+                    devicesWithoutRepeating = devicesList
+                        .Aggregate((a, b) => a + WhiteSpace + b);
+                }
             }
-
-            devicesList = devicesList.Distinct().ToList();
-
-            var devicesWithoutRepeating = "";
-            foreach (string device in devicesList)
+            else
             {
-                devicesWithoutRepeating += device + WhiteSpace;
+                var devices = devicesString.Split(PlusSymbol)
+                    .Where(x => x.Length > 0)
+                    .Select(x => $"{PlusSymbol}{x}");
+                if (devices.Count() > 0)
+                {
+                    devicesWithoutRepeating = devices.Distinct()
+                        .Aggregate((a, b) => $"{a}\n{b}");
+                }
             }
 
             return devicesWithoutRepeating;
