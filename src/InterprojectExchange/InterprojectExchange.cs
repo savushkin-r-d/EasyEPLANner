@@ -270,23 +270,45 @@ namespace InterprojectExchange
         /// <param name="signalType">Тип сигнала</param>
         /// <param name="oldValue">Старое значение</param>
         /// <param name="newValue">Новое значение</param>
+        /// <param name="mainProject">Редактируется главный проект или нет
+        /// </param>
+        /// <param name="needSwap">Нужно ли поменять старые и новые значения
+        /// местами</param>
         /// <returns></returns>
         public bool UpdateProjectBinding(string signalType, 
-            string oldValue, string newValue, bool mainProject)
+            string oldValue, string newValue, bool mainProject,
+            out bool needSwap)
         {
-            List<string> signals;
-            if (mainProject)
+            needSwap = false;
+
+            if(oldValue == newValue)
             {
-                signals = GetCurrentProjectSignals(signalType);
+                return false;
             }
-            else
+
+            List<string> signals = mainProject ? 
+                GetCurrentProjectSignals(signalType) : 
+                GetAdvancedProjectSignals(signalType);
+
+            void RemoveAndInsert<T>(List<T> collection, int index, T value)
             {
-                signals = GetAdvancedProjectSignals(signalType);
+                collection.RemoveAt(index);
+                collection.Insert(index, value);
             }
 
             int oldValueIndex = signals.IndexOf(oldValue);
-            signals.RemoveAt(oldValueIndex);
-            signals.Insert(oldValueIndex, newValue);
+            int newValueIndex = signals.IndexOf(newValue);
+            if(newValueIndex >= 0)
+            {
+                RemoveAndInsert(signals, oldValueIndex, newValue);
+                RemoveAndInsert(signals, newValueIndex, oldValue);
+
+                needSwap = true;
+            }
+            else
+            {
+                RemoveAndInsert(signals, oldValueIndex, newValue);
+            }
 
             return true;
         }

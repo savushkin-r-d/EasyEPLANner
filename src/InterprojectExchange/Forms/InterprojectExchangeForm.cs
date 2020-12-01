@@ -161,10 +161,10 @@ namespace InterprojectExchange
                     string groupName = selectedRow.Group.Name;
                     bool success = interprojectExchange.UpdateProjectBinding(
                         groupName, selectedRow.SubItems[1].Text, advProjDev,
-                        mainProject);
+                        mainProject, out bool needSwap);
                     if (success)
                     {
-                        selectedRow.SubItems[1].Text = advProjDev;
+                        ReplaceSignal(needSwap, advProjDev, selectedRow, 1);
                     }
                     else
                     {
@@ -211,10 +211,10 @@ namespace InterprojectExchange
                     string groupName = selectedRow.Group.Name;
                     bool success = interprojectExchange.UpdateProjectBinding(
                         groupName, selectedRow.SubItems[0].Text, currProjDev,
-                        mainProject);
+                        mainProject, out bool needSwap);
                     if(success)
                     {
-                        selectedRow.SubItems[0].Text = currProjDev;
+                        ReplaceSignal(needSwap, currProjDev, selectedRow, 0);
                     }
                     else
                     {
@@ -222,6 +222,32 @@ namespace InterprojectExchange
                     }
                 }
             }
+        }
+        
+        /// <summary>
+        /// Замена сигнала при редактировании пар сигналов в графическом
+        /// отображении
+        /// </summary>
+        /// <param name="needSwap">Надо поменять местами со старым</param>
+        /// <param name="newDev">Новый сигнал</param>
+        /// <param name="selectedRow">Нажатая строка в списке пар</param>
+        /// <param name="subItemIndex">Индекс подэлемента для замены</param>
+        private void ReplaceSignal(bool needSwap, string newDev, 
+            ListViewItem selectedRow, int subItemIndex)
+        {
+            if (needSwap)
+            {
+                foreach (ListViewItem item in bindedSignalsList.Items)
+                {
+                    if (item.SubItems[subItemIndex].Text == newDev)
+                    {
+                        item.SubItems[subItemIndex].Text = selectedRow
+                            .SubItems[subItemIndex].Text;
+                    }
+                }
+            }
+
+            selectedRow.SubItems[subItemIndex].Text = newDev;
         }
 
         /// <summary>
