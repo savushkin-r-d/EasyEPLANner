@@ -270,9 +270,14 @@ namespace InterprojectExchange
         /// <param name="signalType">Тип сигнала</param>
         /// <param name="oldValue">Старое значение</param>
         /// <param name="newValue">Новое значение</param>
+        /// <param name="mainProject">Редактируется главный проект или нет
+        /// </param>
+        /// <param name="needSwap">Нужно ли поменять старые и новые значения
+        /// местами</param>
         /// <returns></returns>
         public bool UpdateProjectBinding(string signalType, 
-            string oldValue, string newValue, bool mainProject, out bool needSwap)
+            string oldValue, string newValue, bool mainProject,
+            out bool needSwap)
         {
             needSwap = false;
 
@@ -281,31 +286,28 @@ namespace InterprojectExchange
                 return false;
             }
 
-            List<string> signals;
-            if (mainProject)
+            List<string> signals = mainProject ? 
+                GetCurrentProjectSignals(signalType) : 
+                GetAdvancedProjectSignals(signalType);
+
+            void RemoveAndInsert<T>(List<T> collection, int index, T value)
             {
-                signals = GetCurrentProjectSignals(signalType);
-            }
-            else
-            {
-                signals = GetAdvancedProjectSignals(signalType);
+                collection.RemoveAt(index);
+                collection.Insert(index, value);
             }
 
             int oldValueIndex = signals.IndexOf(oldValue);
             int newValueIndex = signals.IndexOf(newValue);
             if(newValueIndex >= 0)
             {
-                signals.RemoveAt(oldValueIndex);
-                signals.Insert(oldValueIndex, newValue);
-                signals.RemoveAt(newValueIndex);
-                signals.Insert(newValueIndex, oldValue);
+                RemoveAndInsert(signals, oldValueIndex, newValue);
+                RemoveAndInsert(signals, newValueIndex, oldValue);
 
                 needSwap = true;
             }
             else
             {
-                signals.RemoveAt(oldValueIndex);
-                signals.Insert(oldValueIndex, newValue);
+                RemoveAndInsert(signals, oldValueIndex, newValue);
             }
 
             return true;
