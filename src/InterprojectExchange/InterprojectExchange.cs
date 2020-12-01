@@ -272,8 +272,15 @@ namespace InterprojectExchange
         /// <param name="newValue">Новое значение</param>
         /// <returns></returns>
         public bool UpdateProjectBinding(string signalType, 
-            string oldValue, string newValue, bool mainProject)
+            string oldValue, string newValue, bool mainProject, out bool needSwap)
         {
+            needSwap = false;
+
+            if(oldValue == newValue)
+            {
+                return false;
+            }
+
             List<string> signals;
             if (mainProject)
             {
@@ -285,8 +292,21 @@ namespace InterprojectExchange
             }
 
             int oldValueIndex = signals.IndexOf(oldValue);
-            signals.RemoveAt(oldValueIndex);
-            signals.Insert(oldValueIndex, newValue);
+            int newValueIndex = signals.IndexOf(newValue);
+            if(newValueIndex >= 0)
+            {
+                signals.RemoveAt(oldValueIndex);
+                signals.Insert(oldValueIndex, newValue);
+                signals.RemoveAt(newValueIndex);
+                signals.Insert(newValueIndex, oldValue);
+
+                needSwap = true;
+            }
+            else
+            {
+                signals.RemoveAt(oldValueIndex);
+                signals.Insert(oldValueIndex, newValue);
+            }
 
             return true;
         }

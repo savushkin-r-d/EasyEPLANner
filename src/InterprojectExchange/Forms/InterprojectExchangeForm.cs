@@ -161,9 +161,20 @@ namespace InterprojectExchange
                     string groupName = selectedRow.Group.Name;
                     bool success = interprojectExchange.UpdateProjectBinding(
                         groupName, selectedRow.SubItems[1].Text, advProjDev,
-                        mainProject);
+                        mainProject, out bool needSwap);
                     if (success)
                     {
+                        if(needSwap)
+                        {
+                            foreach(ListViewItem item in bindedSignalsList.Items)
+                            {
+                                if (item.SubItems[1].Text == advProjDev)
+                                {
+                                    item.SubItems[1].Text = selectedRow.SubItems[1].Text;
+                                }
+                            }
+                        }
+
                         selectedRow.SubItems[1].Text = advProjDev;
                     }
                     else
@@ -211,9 +222,20 @@ namespace InterprojectExchange
                     string groupName = selectedRow.Group.Name;
                     bool success = interprojectExchange.UpdateProjectBinding(
                         groupName, selectedRow.SubItems[0].Text, currProjDev,
-                        mainProject);
+                        mainProject, out bool needSwap);
                     if(success)
                     {
+                        if(needSwap)
+                        {
+                            foreach (ListViewItem item in bindedSignalsList.Items)
+                            {
+                                if (item.SubItems[0].Text == currProjDev)
+                                {
+                                    item.SubItems[0].Text = selectedRow.SubItems[0].Text;
+                                }
+                            }
+                        }
+
                         selectedRow.SubItems[0].Text = currProjDev;
                     }
                     else
