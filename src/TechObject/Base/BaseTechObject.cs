@@ -318,7 +318,7 @@ namespace TechObject
             cloned.S88Level = S88Level;
             cloned.BindingName = BindingName;
             cloned.IsPID = IsPID;
-            cloned.IsLine = IsLine;
+            cloned.UseGroups = UseGroups;
             return cloned;
         }
 
@@ -400,9 +400,9 @@ namespace TechObject
         public bool IsPID { get; set; } = default;
 
         /// <summary>
-        /// Является ли объект линией
+        /// Использовать ли группы объектов
         /// </summary>
-        public bool IsLine { get; set; } = default;
+        public bool UseGroups { get; set; } = default;
 
         #region Сохранение в prg.lua
         /// <summary>
