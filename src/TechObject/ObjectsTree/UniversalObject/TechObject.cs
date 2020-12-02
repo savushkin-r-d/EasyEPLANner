@@ -718,7 +718,7 @@ namespace TechObject
             itemsList.Add(nameEplan);
             itemsList.Add(nameBC);
             
-            if(attachedObjects.IsEditable)
+            if (attachedObjects.IsEditable == true)
             {
                 itemsList.Add(attachedObjects);
             }
@@ -727,6 +727,11 @@ namespace TechObject
             itemsList.Add(modes);
             itemsList.Add(paramsManager);
             itemsList.Add(equipment);
+
+            if (baseTechObject?.UseGroups == true)
+            {
+                itemsList.Add(baseTechObject.ObjectGroup);
+            }
 
             items = itemsList.ToArray();
         }

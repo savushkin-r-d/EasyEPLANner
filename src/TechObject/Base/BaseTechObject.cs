@@ -23,6 +23,7 @@ namespace TechObject
             Equipment = new List<BaseParameter>();
             AggregateParameters = new List<BaseParameter>();
             BindingName = string.Empty;
+            objectGroup = new TechObject.AttachedToObjects("", null);
         }
 
         public static BaseTechObject EmptyBaseTechObject()
@@ -167,9 +168,9 @@ namespace TechObject
         /// </summary>
         public List<BaseOperation> BaseOperations
         {
-            get 
-            { 
-                return objectOperations; 
+            get
+            {
+                return objectOperations;
             }
 
             set
@@ -183,7 +184,7 @@ namespace TechObject
         /// </summary>
         public string BasicName
         {
-            get 
+            get
             {
                 return basicName;
             }
@@ -219,7 +220,7 @@ namespace TechObject
             {
                 return equipment;
             }
-            
+
             set
             {
                 equipment = value;
@@ -285,19 +286,19 @@ namespace TechObject
             cloned.Owner = Owner;
 
             var aggregateParameters = new List<BaseParameter>();
-            foreach(var aggrPar in AggregateParameters)
+            foreach (var aggrPar in AggregateParameters)
             {
                 aggregateParameters.Add(aggrPar.Clone());
             }
             cloned.AggregateParameters = aggregateParameters;
             if (MainAggregateParameter != null)
             {
-                cloned.MainAggregateParameter = MainAggregateParameter.Clone() 
+                cloned.MainAggregateParameter = MainAggregateParameter.Clone()
                     as MainAggregateParameter;
             }
 
             var baseOperations = new List<BaseOperation>();
-            foreach(var baseOperation in BaseOperations)
+            foreach (var baseOperation in BaseOperations)
             {
                 baseOperations.Add(baseOperation.Clone());
             }
@@ -307,7 +308,7 @@ namespace TechObject
             cloned.EplanName = EplanName;
 
             var equipment = new List<BaseParameter>();
-            foreach(var equip in Equipment)
+            foreach (var equip in Equipment)
             {
                 var newEquip = equip.Clone();
                 newEquip.Owner = this;
@@ -403,6 +404,14 @@ namespace TechObject
         /// Использовать ли группы объектов
         /// </summary>
         public bool UseGroups { get; set; } = default;
+
+        /// <summary>
+        /// Группа объектов
+        /// </summary>
+        public TechObject.AttachedToObjects ObjectGroup 
+        {
+            get => objectGroup; 
+        }
 
         #region Сохранение в prg.lua
         /// <summary>
@@ -834,5 +843,6 @@ namespace TechObject
         private List<BaseParameter> equipment;
         private List<BaseParameter> aggregateProperties;
         private MainAggregateParameter aggregateMainParameter;
+        private TechObject.AttachedToObjects objectGroup;
     }
 }
