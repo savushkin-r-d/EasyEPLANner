@@ -14,15 +14,15 @@ namespace TechObject
     {
         private BaseTechObject()
         {
-            Name = "";
-            EplanName = "";
+            Name = string.Empty;
+            EplanName = string.Empty;
             S88Level = 0;
             BaseOperations = new List<BaseOperation>();
-            BasicName = "";
+            BasicName = string.Empty;
             Owner = null;
             Equipment = new List<BaseParameter>();
             AggregateParameters = new List<BaseParameter>();
-            BindingName = "";
+            BindingName = string.Empty;
         }
 
         public static BaseTechObject EmptyBaseTechObject()
@@ -396,7 +396,12 @@ namespace TechObject
         /// <summary>
         /// Является ли объект ПИД-регулятором
         /// </summary>
-        public bool IsPID { get; set; }
+        public bool IsPID { get; set; } = default;
+
+        /// <summary>
+        /// Является ли объект линией
+        /// </summary>
+        public bool IsLine { get; set; } = default;
 
         #region Сохранение в prg.lua
         /// <summary>
