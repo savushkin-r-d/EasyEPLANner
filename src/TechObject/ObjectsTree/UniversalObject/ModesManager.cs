@@ -427,6 +427,12 @@ namespace TechObject
                 }
 
                 ChangeRestrictionModeOwner(newMode);
+                int newN = TechObjectManager.GetInstance()
+                    .GetTechObjectN(Owner);
+                int oldN = TechObjectManager.GetInstance()
+                    .GetTechObjectN(copyMode.Owner.Owner);
+                newMode.ModifyRestrictObj(oldN, newN);
+
                 newMode.ChangeCrossRestriction(mode);
                 return newMode;
             }
