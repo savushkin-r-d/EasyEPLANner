@@ -318,6 +318,7 @@ namespace TechObject
             cloned.S88Level = S88Level;
             cloned.BindingName = BindingName;
             cloned.IsPID = IsPID;
+            cloned.IsLine = IsLine;
             return cloned;
         }
 

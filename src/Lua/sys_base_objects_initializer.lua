@@ -12,10 +12,11 @@ init_base_objects = function()
         local basicName = value.basicName or ""
         local bindingName = value.bindingName or ""
         local isPid = value.isPID or false
+        local isLine = value.isLine or false
 
         -- Добавить базовый объект
         local baseObject = AddBaseObject(name, eplanName, s88Level,
-            basicName, bindingName, isPid)
+            basicName, bindingName, isPid, isLine)
 
         -- Добавить базовые операции (параметры, шаги)
         local baseOperations = value.baseOperations or { }
