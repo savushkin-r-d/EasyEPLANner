@@ -331,14 +331,9 @@ namespace TechObject
         {
             get
             {
-                if (S88Level == 2)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                bool isAttachable = UseGroups ||
+                    S88Level == (int)BaseTechObjectManager.ObjectType.Unit;
+                return isAttachable;
             }
         }
 

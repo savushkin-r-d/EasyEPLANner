@@ -25,26 +25,33 @@ namespace TechObject
         public override bool SetNewValue(string newValue)
         {
             string oldValue = Value;
-            List<TechObject> oldObjects = GetValidTechObjNums(oldValue)
-                .Select(x => TechObjectManager.GetInstance().GetTObject(x))
-                .ToList();
-
-            List<int> newNumbers = GetValidTechObjNums(newValue);
-            List<TechObject> newObjects = newNumbers
-                .Select(x => TechObjectManager.GetInstance().GetTObject(x))
-                .ToList();
+            List<int> newNumbers = strategy.GetValidTechObjNums(newValue);
+            
             newValue = string.Join(" ", newNumbers);
-
             base.SetNewValue(newValue);
 
-            Dictionary<TechObject, TechObject> replacedObjects =
-                CheckReplacedObjects(oldObjects, newObjects);
-            ChangeOwnerInReplacedObjectsProperties(replacedObjects);
-            List<int> deletedAgregatesNumbers = FindDeletedObjects(
-                oldValue, newValue, replacedObjects);
-            RemoveDeletedObjects(deletedAgregatesNumbers);
+            if (strategy.UseInitialization)
+            {
+                var replacedObjects = new Dictionary<TechObject, TechObject>();
 
-            InitAttachedObjects(newNumbers);
+                List<TechObject> newObjects = newNumbers
+                    .Select(x => TechObjectManager.GetInstance().GetTObject(x))
+                    .ToList();
+                List<TechObject> oldObjects = strategy
+                    .GetValidTechObjNums(oldValue)
+                    .Select(x => TechObjectManager.GetInstance().GetTObject(x))
+                    .ToList();
+                replacedObjects = FindReplacedObjects(oldObjects,
+                    newObjects);
+                ChangeOwnerInReplacedObjectsProperties(replacedObjects);
+
+                List<int> deletedAgregatesNumbers = FindDeletedObjects(
+                    oldValue, newValue, replacedObjects);
+                RemoveDeletedObjects(deletedAgregatesNumbers);
+
+                InitAttachedObjects(newNumbers);
+            }
+
             return true;
         }
 
@@ -62,47 +69,12 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Получить корректные номера технологических объектов из
-        /// входной строки
-        /// </summary>
-        /// <param name="inputString">Входная строка</param>
-        /// <returns></returns>
-        private List<int> GetValidTechObjNums(string inputString)
-        {
-            var numbers = new List<int>();
-            string[] numbersAsStringArray = inputString.Split(' ')
-                .ToArray();
-
-            foreach (var numAsString in numbersAsStringArray)
-            {
-                int number;
-                int.TryParse(numAsString, out number);
-                if (number == 0)
-                {
-                    continue;
-                }
-
-                TechObject obj = TechObjectManager.GetInstance()
-                    .GetTObject(number);
-                bool correctBaseObject = obj.BaseTechObject != null &&
-                    obj.BaseTechObject.IsAttachable;
-                if (correctBaseObject)
-                {
-                    numbers.Add(number);
-                }
-            }
-
-            numbers = numbers.Distinct().ToList();
-            return numbers;
-        }
-
-        /// <summary>
         /// Проверить и найти замененные объекты
         /// </summary>
         /// <param name="oldObjects">Старый список объектов</param>
         /// <param name="newObjects">Новый список объектов</param>
         /// <returns></returns>
-        private Dictionary<TechObject, TechObject> CheckReplacedObjects(
+        private Dictionary<TechObject, TechObject> FindReplacedObjects(
             List<TechObject> oldObjects, List<TechObject> newObjects)
         {
             var replacedObjects = new Dictionary<TechObject, TechObject>();
@@ -179,7 +151,7 @@ namespace TechObject
                 }
             }
 
-            foreach (var replacedObj in replacedObjects.Keys)
+            foreach (var replacedObj in replacedObjects?.Keys)
             {
                 var replacedObjNum = TechObjectManager.GetInstance()
                     .GetTechObjectN(replacedObj);
@@ -263,7 +235,7 @@ namespace TechObject
                 List<Mode> modes = thisThechObject.ModesManager.Modes;
                 foreach (var mode in modes)
                 {
-                    if (mode.BaseOperation.Name == "")
+                    if (mode.BaseOperation.Name == string.Empty)
                     {
                         continue;
                     }
@@ -282,7 +254,7 @@ namespace TechObject
         public string Check()
         {
             var res = "";
-            List<int> numbers = GetValidTechObjNums(Value);
+            List<int> numbers = strategy.GetValidTechObjNums(Value);
             string checkedValue = string.Join(" ", numbers);
             if (checkedValue != Value)
             {
@@ -357,17 +329,10 @@ namespace TechObject
         {
             get
             {
-                bool baseObjectIsExist = owner.BaseTechObject != null;
-                if (baseObjectIsExist)
-                {
-                    string baseObjectName = owner.BaseTechObject.Name;
-                    if (allowedBaseObjects.Contains(baseObjectName))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                BaseTechObject baseTechObject = owner?.BaseTechObject;
+                bool editable = baseTechObject != null &&
+                    baseTechObject.IsAttachable;
+                return editable;
             }
         }
 
@@ -375,14 +340,7 @@ namespace TechObject
         {
             get
             {
-                if (Value != "")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return Value != string.Empty;
             }
         }
 
@@ -421,14 +379,6 @@ namespace TechObject
             }
         }
 
-        private string[] allowedBaseObjects = new string[]
-        {
-                "Танк",
-                "Линия",
-                "Линия приемки",
-                "Линия выдачи"
-        };
-
         public IAttachedObjectsStrategy WorkStrategy 
         { 
             get => strategy; 
@@ -440,28 +390,139 @@ namespace TechObject
 
     namespace AttachedObjectStrategy
     {
+        /// <summary>
+        /// Интерфейс стратегии фильтрации привязываемых объектов
+        /// </summary>
         public interface IAttachedObjectsStrategy
         {
+            /// <summary>
+            /// Название поля
+            /// </summary>
             string Name { get; }
+
+            /// <summary>
+            /// Получить корректные номера технологических объектов из
+            /// входной строки
+            /// </summary>
+            /// <param name="value">Входная строка</param>
+            /// <returns></returns>
+            List<int> GetValidTechObjNums(string value);
+
+            /// <summary>
+            /// Нужно ли инициализировать привязанные объекты
+            /// </summary>
+            bool UseInitialization { get; }
         }
 
-        public class AttachedAggregatesStrategy : IAttachedObjectsStrategy
+        /// <summary>
+        /// Стратегия для привязки агрегатов
+        /// </summary>
+        public class AttachedAggregatesStrategy : BaseStrategy,
+            IAttachedObjectsStrategy
         {
-            public AttachedAggregatesStrategy() { }
+            public AttachedAggregatesStrategy() : base() { }
+
+            public List<int> GetValidTechObjNums(string value)
+            {
+                return GetValidTechObjNums(value, allowedObjects);
+            }
 
             public string Name
             {
                 get => "Привязанные агрегаты";
             }
+
+            public bool UseInitialization
+            {
+                get
+                {
+                    return true;
+                }
+            }
+
+            private List<BaseTechObjectManager.ObjectType> allowedObjects =
+                new List<BaseTechObjectManager.ObjectType>() 
+                {
+                    BaseTechObjectManager.ObjectType.Aggregate
+                };
         }
 
-        public class AttachedTanksStrategy : IAttachedObjectsStrategy
+        /// <summary>
+        /// Стратегия для привязки танков
+        /// </summary>
+        public class AttachedTanksStrategy : BaseStrategy,
+            IAttachedObjectsStrategy
         {
-            public AttachedTanksStrategy() { }
+            public AttachedTanksStrategy() : base() { }
+
+            public List<int> GetValidTechObjNums(string value)
+            {
+                return GetValidTechObjNums(value, allowedObjects);
+            }
 
             public string Name
             {
                 get => "Группа танков";
+            }
+
+            public bool UseInitialization
+            {
+                get
+                {
+                    return false;
+                }
+            }
+
+            private List<BaseTechObjectManager.ObjectType> allowedObjects =
+                new List<BaseTechObjectManager.ObjectType>()
+                {
+                    BaseTechObjectManager.ObjectType.Unit
+                };
+        }
+
+        /// <summary>
+        /// Базовая стратегия проверки разрешенных объектов при привязке 
+        /// объектов
+        /// </summary>
+        public abstract class BaseStrategy
+        {
+            public BaseStrategy() { }
+
+            /// <summary>
+            /// Получить корректные номера технологических объектов из
+            /// входной строки
+            /// </summary>
+            /// <param name="value">Входная строка</param>
+            /// <param name="allowedObjects">Разрешенные объекты по S88</param>
+            /// <returns></returns>
+            protected List<int> GetValidTechObjNums(string value,
+                List<BaseTechObjectManager.ObjectType> allowedObjects)
+            {
+                var numbers = new List<int>();
+                string[] numbersAsStringArray = value.Split(' ').ToArray();
+
+                List<int> allowedObjectsNums = allowedObjects?
+                    .Select(x => (int)x).ToList();
+                foreach (var numAsString in numbersAsStringArray)
+                {
+                    int.TryParse(numAsString, out int number);
+                    if (number == 0)
+                    {
+                        continue;
+                    }
+
+                    TechObject obj = TechObjectManager.GetInstance()
+                        .GetTObject(number);
+                    bool correctBaseObject = allowedObjectsNums
+                        .Contains(obj.BaseTechObject.S88Level);
+                    if (correctBaseObject)
+                    {
+                        numbers.Add(number);
+                    }
+                }
+
+                numbers = numbers.Distinct().ToList();
+                return numbers;
             }
         }
     }
