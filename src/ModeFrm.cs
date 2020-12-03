@@ -357,8 +357,7 @@ namespace EasyEPlanner
         private void SelectAttachedObject(Node subNode,
             Editor.ITreeViewItem checkedMode)
         {
-            var attachedObjects = checkedMode as TechObject
-                .TechObject.AttachedToObjects;
+            var attachedObjects = checkedMode as TechObject.AttachedObjects;
             if (attachedObjects == null)
             {
                 return;
@@ -419,7 +418,7 @@ namespace EasyEPlanner
         {
             switch(checkedItem)
             {
-                case TechObject.TechObject.AttachedToObjects _:
+                case TechObject.AttachedObjects _:
                     SelectedTreeItem = EditType.AttachObject;
                     break;
 

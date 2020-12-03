@@ -140,7 +140,7 @@ namespace TechObject
             int s88Level, string basicName, string bindingName, bool isPID,
             bool useGroups)
         {
-            var obj = BaseTechObject.EmptyBaseTechObject();
+            var obj = new BaseTechObject();
             obj.Name = name;
             obj.EplanName = eplanName;
             obj.S88Level = s88Level;

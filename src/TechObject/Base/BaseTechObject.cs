@@ -12,23 +12,21 @@ namespace TechObject
     /// </summary>
     public class BaseTechObject
     {
-        private BaseTechObject()
+        public BaseTechObject(TechObject owner = null)
         {
             Name = string.Empty;
             EplanName = string.Empty;
             S88Level = 0;
             BaseOperations = new List<BaseOperation>();
             BasicName = string.Empty;
-            Owner = null;
+            Owner = owner;
             Equipment = new List<BaseParameter>();
             AggregateParameters = new List<BaseParameter>();
             BindingName = string.Empty;
-            objectGroup = new TechObject.AttachedToObjects("", null);
-        }
 
-        public static BaseTechObject EmptyBaseTechObject()
-        {
-            return new BaseTechObject();
+            string tankGroupName = "Группы танков";
+            objectGroup = new AttachedObjects(string.Empty, owner, 
+                tankGroupName);
         }
 
         /// <summary>
@@ -272,6 +270,7 @@ namespace TechObject
         {
             var cloned = Clone();
             cloned.Owner = techObject;
+            cloned.ObjectGroup.Owner = techObject;
             return cloned;
         }
 
@@ -281,9 +280,8 @@ namespace TechObject
         /// <returns></returns>
         public BaseTechObject Clone()
         {
-            var cloned = EmptyBaseTechObject();
+            var cloned = new BaseTechObject(Owner);
             cloned.Name = Name;
-            cloned.Owner = Owner;
 
             var aggregateParameters = new List<BaseParameter>();
             foreach (var aggrPar in AggregateParameters)
@@ -320,6 +318,10 @@ namespace TechObject
             cloned.BindingName = BindingName;
             cloned.IsPID = IsPID;
             cloned.UseGroups = UseGroups;
+
+            cloned.objectGroup = new AttachedObjects(objectGroup.Value, Owner,
+                objectGroup.Name);
+
             return cloned;
         }
 
@@ -408,7 +410,7 @@ namespace TechObject
         /// <summary>
         /// Группа объектов
         /// </summary>
-        public TechObject.AttachedToObjects ObjectGroup 
+        public AttachedObjects ObjectGroup 
         {
             get => objectGroup; 
         }
@@ -843,6 +845,6 @@ namespace TechObject
         private List<BaseParameter> equipment;
         private List<BaseParameter> aggregateProperties;
         private MainAggregateParameter aggregateMainParameter;
-        private TechObject.AttachedToObjects objectGroup;
+        private AttachedObjects objectGroup;
     }
 }
