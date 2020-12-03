@@ -419,7 +419,7 @@ namespace TechObject
         public string SaveObjectInfoToPrgLua(string objName, string prefix)
         {
             var res = "";
-            if (EplanName.ToLower() != "tank")
+            if (S88Level == (int)BaseTechObjectManager.ObjectType.Unit)
             {
                 return res;
             }
@@ -429,6 +429,16 @@ namespace TechObject
             {
                 res += objName + ".master = prg." + masterObj.NameEplan
                     .ToLower() + masterObj.TechNumber + "\n";
+            }
+
+            if (ObjectGroup.Value != string.Empty)
+            {
+                string objectNames = ObjectGroup.GetAttachedObjectsName()
+                    .Aggregate((x, y) => $"prg.{x},\n" + $"prg.{y},\n");
+                res += $"{objName}.tanks =\n";
+                res += $"{prefix}{{";
+                res += $"{prefix}{objectNames}";
+                res += $"{prefix}}}";
             }
 
             // Параметры сбрасываемые до мойки.

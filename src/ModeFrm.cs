@@ -418,8 +418,15 @@ namespace EasyEPlanner
         {
             switch(checkedItem)
             {
-                case TechObject.AttachedObjects _:
-                    SelectedTreeItem = EditType.AttachObject;
+                case TechObject.AttachedObjects item:
+                    if (item.Owner.BaseTechObject?.UseGroups == true)
+                    {
+                        SelectedTreeItem = EditType.AttachedUnits;
+                    }
+                    else
+                    {
+                        SelectedTreeItem = EditType.AttachedAgregates;
+                    }
                     break;
 
                 case TechObject.Restriction _:
@@ -489,7 +496,7 @@ namespace EasyEPlanner
         {
             bool notShowAllOperations = checkedMode != null;
             bool notAllowedTypes = !(SelectedTreeItem == EditType.Restriction ||
-                SelectedTreeItem == EditType.AttachObject) ||
+                SelectedTreeItem == EditType.AttachedAgregates) ||
                 checkedMode.IsEditable == false;
             if (notAllowedTypes && notShowAllOperations)
             {
@@ -890,7 +897,7 @@ namespace EasyEPlanner
             object nodeObject = e.Path.LastNode;
             Node checkedNode = nodeObject as Node;
             
-            if (SelectedTreeItem == EditType.AttachObject)
+            if (SelectedTreeItem == EditType.AttachedAgregates)
             {
                 UnselectIncorrectValues(e, checkedNode.Text);
             }
@@ -977,7 +984,8 @@ namespace EasyEPlanner
         {
             None,
             Restriction,
-            AttachObject
+            AttachedAgregates,
+            AttachedUnits
         }
     }
 }

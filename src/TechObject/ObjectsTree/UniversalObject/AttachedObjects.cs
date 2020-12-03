@@ -296,6 +296,30 @@ namespace TechObject
             return string.Join(", ", objectNames);
         }
 
+        public List<string> GetAttachedObjectsName()
+        {
+            var objectNames = new List<string>();
+            if (Value == string.Empty)
+            {
+                return objectNames;
+            }
+
+            string[] nums = Value.Split(' ');
+            foreach (var num in nums)
+            {
+                bool converted = int.TryParse(num, out int objNum);
+                if(converted)
+                {
+                    var obj = TechObjectManager.GetInstance()
+                        .GetTObject(objNum);
+                    string objName = obj.NameEplanForFile + obj.TechNumber;
+                    objectNames.Add(objName);
+                }
+            }
+
+            return objectNames;
+        }
+
         #region реализация ITreeViewItem
         public override string[] DisplayText
         {

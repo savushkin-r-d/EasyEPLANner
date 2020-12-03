@@ -113,7 +113,7 @@ namespace TechObject
                 baseObjectName = baseTechObject.EplanName;
             }
 
-            string res = "\t[ " + globalNum + " ] =\n"+
+            string res = "\t[ " + globalNum + " ] =\n" +
                 prefix + "{\n" +
                 prefix + "n          = " + TechNumber + ",\n" +
                 prefix + "tech_type  = " + TechType + ",\n" +
@@ -122,7 +122,8 @@ namespace TechObject
                 prefix + "name_BC    = \'" + NameBC + "\',\n" +
                 prefix + "cooper_param_number = " + CooperParamNumber + ",\n" +
                 prefix + "base_tech_object = \'" + baseObjectName + "\',\n" +
-                prefix + "attached_objects = \'" + AttachedObjects.Value + "\',\n";
+                prefix + "attached_objects = \'" + AttachedObjects.Value + "\',\n" +
+                prefix + "tank_groups = \'" + BaseTechObject.ObjectGroup.Value + "\',\n";
 
             res += paramsManager.SaveAsLuaTable(prefix);
             res += "\n";
@@ -354,6 +355,18 @@ namespace TechObject
         public void AddEquipment(string equipmentName, string value)
         {
             equipment.SetEquipmentValue(equipmentName, value);
+        }
+
+        /// <summary>
+        /// Добавить объекты группы танков
+        /// </summary>
+        /// <param name="value"></param>
+        public void AddGroupTanks(string value)
+        {
+            if (baseTechObject?.UseGroups == true)
+            {
+                baseTechObject.ObjectGroup.SetValue(value);
+            }
         }
 
         // Получение операции. 

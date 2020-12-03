@@ -49,6 +49,10 @@ init = function()
                 end
             end
 
+            if value.tank_groups ~= nil then
+                obj:AddGroupTanks(value.tank_groups)
+            end
+
             for fields, value in ipairs( value.modes ) do
                 local mode_name = value.name or "Операция ??"
 			    local mode_base_operation = value.base_operation or ""
