@@ -189,9 +189,8 @@ namespace TechObject
                 "Время совместного перехода шагов (параметр)", 
                 cooperParamNumber, -1);
 
-            string attachedAggregatesName = "Привязанные агрегаты";
             this.attachedObjects = new AttachedObjects(attachedObjects, 
-                this, attachedAggregatesName);
+                this, new AttachedObjectStrategy.AttachedAggregatesStrategy());
 
             modes = new ModesManager(this);
 
@@ -277,7 +276,7 @@ namespace TechObject
             clone.nameBC = new ObjectProperty("Имя объекта Monitor", NameBC);
             clone.nameEplan = new NameInEplan(NameEplan, clone);
             clone.attachedObjects = new AttachedObjects(AttachedObjects.Value, 
-                clone, clone.attachedObjects.Name);
+                clone, AttachedObjects.WorkStrategy);
 
             clone.getLocalNum = getLocalNum;
 

@@ -24,9 +24,8 @@ namespace TechObject
             AggregateParameters = new List<BaseParameter>();
             BindingName = string.Empty;
 
-            string tankGroupName = "Группы танков";
             objectGroup = new AttachedObjects(string.Empty, owner, 
-                tankGroupName);
+                new AttachedObjectStrategy.AttachedTanksStrategy());
         }
 
         /// <summary>
@@ -320,7 +319,7 @@ namespace TechObject
             cloned.UseGroups = UseGroups;
 
             cloned.objectGroup = new AttachedObjects(objectGroup.Value, Owner,
-                objectGroup.Name);
+                objectGroup.WorkStrategy);
 
             return cloned;
         }

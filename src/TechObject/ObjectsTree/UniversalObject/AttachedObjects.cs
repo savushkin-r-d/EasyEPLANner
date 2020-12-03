@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechObject.AttachedObjectStrategy;
 
 namespace TechObject
 {
@@ -12,20 +13,26 @@ namespace TechObject
     /// </summary>
     public class AttachedObjects : ObjectProperty
     {
-        public AttachedObjects(string attachedObjects, TechObject techObject,
-            string name) : base(name, attachedObjects)
+        public AttachedObjects(string attachedObjects, TechObject owner,
+            IAttachedObjectsStrategy strategy) :
+            base(strategy.Name, attachedObjects)
         {
-            this.techObject = techObject;
+            this.owner = owner;
+            this.strategy = strategy;
             SetValue(attachedObjects);
         }
 
         public override bool SetNewValue(string newValue)
         {
             string oldValue = Value;
-            GetValidTechObjNums(oldValue, out List<TechObject> oldObjects);
+            List<TechObject> oldObjects = GetValidTechObjNums(oldValue)
+                .Select(x => TechObjectManager.GetInstance().GetTObject(x))
+                .ToList();
 
-            List<int> newNumbers = GetValidTechObjNums(newValue,
-                out List<TechObject> newObjects);
+            List<int> newNumbers = GetValidTechObjNums(newValue);
+            List<TechObject> newObjects = newNumbers
+                .Select(x => TechObjectManager.GetInstance().GetTObject(x))
+                .ToList();
             newValue = string.Join(" ", newNumbers);
 
             base.SetNewValue(newValue);
@@ -33,10 +40,9 @@ namespace TechObject
             Dictionary<TechObject, TechObject> replacedObjects =
                 CheckReplacedObjects(oldObjects, newObjects);
             ChangeOwnerInReplacedObjectsProperties(replacedObjects);
-
             List<int> deletedAgregatesNumbers = FindDeletedObjects(
                 oldValue, newValue, replacedObjects);
-            RemoveDeletedAgregates(deletedAgregatesNumbers);
+            RemoveDeletedObjects(deletedAgregatesNumbers);
 
             InitAttachedObjects(newNumbers);
             return true;
@@ -61,13 +67,11 @@ namespace TechObject
         /// </summary>
         /// <param name="inputString">Входная строка</param>
         /// <returns></returns>
-        private List<int> GetValidTechObjNums(string inputString,
-            out List<TechObject> validObjects)
+        private List<int> GetValidTechObjNums(string inputString)
         {
             var numbers = new List<int>();
             string[] numbersAsStringArray = inputString.Split(' ')
                 .ToArray();
-            validObjects = new List<TechObject>();
 
             foreach (var numAsString in numbersAsStringArray)
             {
@@ -84,13 +88,11 @@ namespace TechObject
                     obj.BaseTechObject.IsAttachable;
                 if (correctBaseObject)
                 {
-                    validObjects.Add(obj);
                     numbers.Add(number);
                 }
             }
 
             numbers = numbers.Distinct().ToList();
-            validObjects = validObjects.Distinct().ToList();
             return numbers;
         }
 
@@ -138,7 +140,7 @@ namespace TechObject
                 TechObject oldObject = objects.Key;
                 TechObject newObject = objects.Value;
 
-                foreach (var mode in techObject.ModesManager.Modes)
+                foreach (var mode in owner.ModesManager.Modes)
                 {
                     mode.BaseOperation.ChangePropertiesOwner(
                         oldObject.BaseTechObject, newObject.BaseTechObject);
@@ -194,7 +196,7 @@ namespace TechObject
         /// Удалить привязку объекта к объекту.
         /// </summary>
         /// <param name="objectNumbers">Список объектов</param>
-        private void RemoveDeletedAgregates(List<int> objectNumbers)
+        private void RemoveDeletedObjects(List<int> objectNumbers)
         {
             if (objectNumbers.Count == 0)
             {
@@ -221,7 +223,7 @@ namespace TechObject
                     deletingProperties.Add(removingBaseTechObject
                         .MainAggregateParameter);
                 }
-                TechObject thisTechObject = techObject;
+                TechObject thisTechObject = owner;
                 List<Mode> modes = thisTechObject.ModesManager.Modes;
                 foreach (var mode in modes)
                 {
@@ -257,7 +259,7 @@ namespace TechObject
                     addingProperties.Add(attachedBaseTechObject
                         .MainAggregateParameter);
                 }
-                TechObject thisThechObject = techObject;
+                TechObject thisThechObject = owner;
                 List<Mode> modes = thisThechObject.ModesManager.Modes;
                 foreach (var mode in modes)
                 {
@@ -280,15 +282,15 @@ namespace TechObject
         public string Check()
         {
             var res = "";
-            List<int> numbers = GetValidTechObjNums(Value, out _);
+            List<int> numbers = GetValidTechObjNums(Value);
             string checkedValue = string.Join(" ", numbers);
             if (checkedValue != Value)
             {
                 int objGlobalNumber = TechObjectManager.GetInstance()
-                    .GetTechObjectN(techObject);
+                    .GetTechObjectN(owner);
                 res += $"Проверьте {Name.ToLower()} в объекте: " +
                     $"{objGlobalNumber}." +
-                    $"{techObject.Name + techObject.TechNumber}. " +
+                    $"{owner.Name + owner.TechNumber}. " +
                     $"В поле присутствуют агрегаты, которые нельзя " +
                     $"привязывать.\n";
             }
@@ -355,10 +357,10 @@ namespace TechObject
         {
             get
             {
-                bool baseObjectIsExist = techObject.BaseTechObject != null;
+                bool baseObjectIsExist = owner.BaseTechObject != null;
                 if (baseObjectIsExist)
                 {
-                    string baseObjectName = techObject.BaseTechObject.Name;
+                    string baseObjectName = owner.BaseTechObject.Name;
                     if (allowedBaseObjects.Contains(baseObjectName))
                     {
                         return true;
@@ -411,11 +413,11 @@ namespace TechObject
         {
             get
             {
-                return techObject;
+                return owner;
             }
             set
             {
-                techObject = value;
+                owner = value;
             }
         }
 
@@ -427,6 +429,40 @@ namespace TechObject
                 "Линия выдачи"
         };
 
-        private TechObject techObject;
+        public IAttachedObjectsStrategy WorkStrategy 
+        { 
+            get => strategy; 
+        }
+
+        private TechObject owner;
+        private IAttachedObjectsStrategy strategy;
+    }
+
+    namespace AttachedObjectStrategy
+    {
+        public interface IAttachedObjectsStrategy
+        {
+            string Name { get; }
+        }
+
+        public class AttachedAggregatesStrategy : IAttachedObjectsStrategy
+        {
+            public AttachedAggregatesStrategy() { }
+
+            public string Name
+            {
+                get => "Привязанные агрегаты";
+            }
+        }
+
+        public class AttachedTanksStrategy : IAttachedObjectsStrategy
+        {
+            public AttachedTanksStrategy() { }
+
+            public string Name
+            {
+                get => "Группа танков";
+            }
+        }
     }
 }
