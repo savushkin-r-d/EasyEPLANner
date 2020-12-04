@@ -751,8 +751,9 @@ namespace EasyEPlanner
             }
         }
 
+        #region OnCheckOperationTree
         /// <summary>
-        /// Выбор устройств, участвующих в операции.
+        /// Выбор устройств, участвующих в операции/ограничении/привязке.
         /// </summary>         
         static class OnCheckOperationTree
         {
@@ -956,6 +957,7 @@ namespace EasyEPlanner
                 }
             }
         }
+        #endregion
 
         /// <summary>
         /// Обработка выбора операции для добавления в ограничение.
