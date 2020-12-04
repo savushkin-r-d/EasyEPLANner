@@ -55,8 +55,7 @@ namespace TechObject
             return true;
         }
 
-        public override bool SetNewValue(
-            SortedDictionary<int, List<int>> newDict)
+        public override bool SetNewValue(IDictionary<int, List<int>> newDict)
         {
             var objectsList = new List<int>();
             foreach (var objectNumber in newDict.Keys)

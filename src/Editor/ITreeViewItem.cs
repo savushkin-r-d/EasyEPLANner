@@ -110,7 +110,7 @@ namespace Editor
         /// </summary>
         /// <param name="newDict">Словарь ограничений</param>
         /// <returns></returns>
-        bool SetNewValue(SortedDictionary<int, List<int>> newDict);
+        bool SetNewValue(IDictionary<int, List<int>> newDict);
 
         /// <summary>
         /// Установка нового значения после редактирования

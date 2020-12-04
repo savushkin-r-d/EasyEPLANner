@@ -118,7 +118,7 @@ namespace TechObject
             return res;
         }
 
-        public virtual void SetValue(SortedDictionary<int, List<int>> dict)
+        public virtual void SetValue(IDictionary<int, List<int>> dict)
         {
             // Затычка для LocalRestriction.
         }
@@ -128,7 +128,7 @@ namespace TechObject
         /// </summary>
         /// <param name="dict">Новый словарь с ограничениями</param>
         /// <returns></returns>
-        override public bool SetNewValue(SortedDictionary<int, List<int>> dict)
+        override public bool SetNewValue(IDictionary<int, List<int>> dict)
         {
             var oldRestriction =
                 new SortedDictionary<int, List<int>>(restrictList);

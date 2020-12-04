@@ -253,7 +253,7 @@ namespace EasyEPlanner
                 dialogCallbackDelegate, IntPtr.Zero, pid);
         }
 
-        public delegate void OnSetNewValue(SortedDictionary<int, List<int>> dict);
+        public delegate void OnSetNewValue(IDictionary<int, List<int>> dict);
         public OnSetNewValue functionAfterCheck = null;
 
         #region Реализация под новый редактор в т.ч. привязка агрегатов
