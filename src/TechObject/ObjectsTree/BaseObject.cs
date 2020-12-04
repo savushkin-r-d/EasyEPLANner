@@ -469,6 +469,11 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Изменение привязки объекта при удалении объекта из дерева 
+        /// </summary>
+        /// <param name="attachedObjects">Элемент для обработки</param>
+        /// <param name="deletedObjectNum">Номер удаленного объекта</param>
         private void ChangeAttachedObjectAfterDelete(
             AttachedObjects attachedObjects, int deletedObjectNum)
         {
@@ -507,6 +512,12 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Изменение привязки объекта при перемещении объекта по дереву
+        /// </summary>
+        /// <param name="attachedObjects">Элемент с объектами</param>
+        /// <param name="oldNum">Старый номер объекта</param>
+        /// <param name="newNum">Новый номер объекта</param>
         private void ChangeAttachedObjectAfterMove(
             AttachedObjects attachedObjects, int oldNum, int newNum)
         {
