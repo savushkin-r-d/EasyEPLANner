@@ -288,6 +288,9 @@ namespace EasyEPlanner
             nodeCheckBox.CheckStateChanged += treeItem_AfterCheck;
 
             modesTreeViewAdv.EndUpdate();
+
+            var root = (Node)modesTreeViewAdv.AllNodes.First()?.Tag;
+            OnCheckOperationTree.RefreshDict(root);
         }
 
         /// <summary>
@@ -753,53 +756,113 @@ namespace EasyEPlanner
         /// </summary>         
         static class OnCheckOperationTree
         {
-            static string res = "";
-            static SortedDictionary<int, List<int>> resDict =
-                new SortedDictionary<int, List<int>>();
+            static Dictionary<int, List<int>> resDict =
+                new Dictionary<int, List<int>>();
 
-            public static void ResetResStr()
-            {
-                res = "";
-            }
+            /// <summary>
+            /// Нужно ли использовать родительский узел выбранного узла
+            /// </summary>
+            public static bool UseParentNode { get; set; } = false;
 
-            public static void ResetResDict()
+            /// <summary>
+            /// Обновить словарь выбранных объектов
+            /// </summary>
+            /// <param name="root">Узел дерева с отмеченными объектами</param>
+            public static void RefreshDict(Node root)
             {
                 resDict.Clear();
+                MakeResDictFromRootNode(root);
             }
 
-            public static string GetResStr()
+            /// <summary>
+            /// Сделать словарь отмеченных объектов из корневого узла.
+            /// Рекурсивный метод.
+            /// </summary>
+            /// <param name="node">Корневой узел</param>
+            private static void MakeResDictFromRootNode(Node node)
             {
-                return res;
+                if (node.IsHidden ||
+                    node.CheckState == CheckState.Unchecked)
+                {
+                    return;
+                }
+
+                if (node.Tag is Editor.TreeViewItem item)
+                {
+                    if (item.IsMainObject)
+                    {
+                        int objectIndex = TechObject.TechObjectManager
+                            .GetInstance().GetTechObjectN(node.Text);
+                        AddToResDict(objectIndex);
+                    }
+                    else if (item.IsMode)
+                    {
+                        int objectIndex = TechObject.TechObjectManager
+                            .GetInstance().GetTechObjectN(node.Parent.Text);
+                        int modeIndex = node.Parent.Nodes.IndexOf(node) + 1;
+                        AddToResDict(objectIndex, modeIndex);
+                    }
+                }
+
+                foreach(var child in node.Nodes)
+                {
+                    MakeResDictFromRootNode(child);
+                }
             }
 
-            public static SortedDictionary<int, List<int>> GetResDict()
+            /// <summary>
+            /// Добавить отмеченный объект в словарь
+            /// </summary>
+            /// <param name="objIndex">Индекс объекта</param>
+            /// <param name="modeIndex">Индекс операции (опционально)</param>
+            private static void AddToResDict(int objIndex, int modeIndex = 0)
+            {
+                if (resDict.ContainsKey(objIndex))
+                {
+                    resDict[objIndex].Add(modeIndex);
+                }
+                else
+                {
+                    resDict.Add(objIndex, new List<int>());
+                }
+            }
+
+            public static IDictionary<int, List<int>> GetResDict()
             {
                 return resDict;
             }
 
-            public static void Execute(TreeNodeAdv treeNode)
+            public static void Execute(Node node, EditType selectedEditType)
             {
-                var node = treeNode.Tag as Node;
-                var item = node.Tag as Editor.ITreeViewItem;
-                if (item != null &&
-                    node.CheckState == CheckState.Checked)
+                if (node.IsHidden)
                 {
-                    if (item.IsMainObject)
+                    return;
+                }
+
+                var item = node.Tag as Editor.ITreeViewItem;
+                if (item != null)
+                {
+                    bool attachToObjEdit = item.IsMainObject &&
+                    (selectedEditType == EditType.AttachedAgregates ||
+                    selectedEditType == EditType.AttachedUnits);
+                    bool restrictionEdit = item.IsMode &&
+                        selectedEditType == EditType.Restriction;
+                    if (attachToObjEdit)
                     {
-                        ExecuteAttachedObjects(node);
+                        ExecuteAttachedObjects(node, node.CheckState);
                     }
-                    else if (item.IsMode)
+                    else if (restrictionEdit)
                     {
-                        ExecuteRestrictions(node);
+                        ExecuteRestrictions(node, node.CheckState);
                     }
                 }
 
-                if (treeNode.Children.Count > 0)
+                if (node.Nodes.Count > 0)
                 {
-                    List<TreeNodeAdv> childs = treeNode.Children.ToList();
-                    foreach (TreeNodeAdv child in childs)
+                    List<Node> childs = node.Nodes.ToList();
+                    foreach (var child in childs)
                     {
-                        Execute(child);
+                        Execute(child, selectedEditType);
                     }
                 }
             }
@@ -808,28 +871,38 @@ namespace EasyEPlanner
             /// Обработка отметки операции в новом редакторе в ограничениях
             /// </summary>
             /// <param name="node">Узел дерева</param>
-            private static void ExecuteRestrictions(Node node)
+            private static void ExecuteRestrictions(Node node,
+                CheckState checkState)
             {
                 Node parentNode = node.Parent;
                 int objectIndex = TechObject.TechObjectManager.GetInstance()
                     .GetTechObjectN(parentNode.Text);
                 int modeIndex = parentNode.Nodes.IndexOf(node) + 1;
-                ModifyRestriction(objectIndex, modeIndex);
+
+                switch(checkState)
+                {
+                    case CheckState.Checked:
+                        AddRestriction(objectIndex, modeIndex);
+                        break;
+
+                    case CheckState.Unchecked:
+                        DeleteRestriction(objectIndex, modeIndex);
+                        break;
+                }
             }
 
             /// <summary>
-            /// Добавление ограничений в словари.
+            /// Добавление ограничений в словаре.
             /// </summary>
             /// <param name="objectIndex">Индекс объекта</param>
             /// <param name="modeIndex">Индекс операции</param>
-            private static void ModifyRestriction(int objectIndex,
+            private static void AddRestriction(int objectIndex,
                 int modeIndex)
             {
-                res += $"{{ {objectIndex}, {modeIndex} }} ";
-
                 if (resDict.ContainsKey(objectIndex))
                 {
                     resDict[objectIndex].Add(modeIndex);
+                    resDict[objectIndex].Sort();
                 }
                 else
                 {
@@ -840,16 +913,47 @@ namespace EasyEPlanner
             }
 
             /// <summary>
+            /// Удаление ограничений из словаря.
+            /// </summary>
+            /// <param name="objectIndex">Индекс объекта</param>
+            /// <param name="modeIndex">Индекс операции</param>
+            private static void DeleteRestriction(int objectIndex,
+                int modeIndex)
+            {
+                if(resDict.Count > 0 &&
+                    resDict[objectIndex].Contains(modeIndex))
+                {
+                    resDict[objectIndex].Remove(modeIndex);
+
+                    if(resDict[objectIndex].Count == 0)
+                    {
+                        resDict.Remove(objectIndex);
+                    }
+                }
+            }
+
+            /// <summary>
             /// Обработка отметки объекта в новом редакторе при настройке
             /// привязанных объектов
             /// </summary>
             /// <param name="node">Узел объекта</param>
-            private static void ExecuteAttachedObjects(Node node)
+            private static void ExecuteAttachedObjects(Node node,
+                CheckState checkState)
             {
                 int objectIndex = TechObject.TechObjectManager.GetInstance()
                     .GetTechObjectN(node.Text);
+
                 // Заполняем нулями список т.к правая часть не нужна.
-                resDict.Add(objectIndex, new List<int>(0));
+                switch (checkState)
+                {
+                    case CheckState.Checked:
+                        resDict.Add(objectIndex, new List<int>(0));
+                        break;
+
+                    case CheckState.Unchecked:
+                        resDict.Remove(objectIndex);
+                        break;
+                }
             }
         }
 
@@ -862,24 +966,16 @@ namespace EasyEPlanner
         {
             if (functionAfterCheck != null)
             {
-                OnCheckOperationTree.ResetResStr();
-                OnCheckOperationTree.ResetResDict();
-
-                string res = "";
-                var resDict = new SortedDictionary<int, List<int>>();
-
                 treeItem_ChangeCheckBoxState(sender, e);
 
-                List<TreeNodeAdv> treeNodes = modesTreeViewAdv.AllNodes
-                    .ToList();
-                TreeNodeAdv treeNode = treeNodes[0];
-                OnCheckOperationTree.Execute(treeNode);
+                Node selectedNode = GetSelectedNodeForCheckOperationTree(e);
+                OnCheckOperationTree.Execute(selectedNode, SelectedTreeItem);
 
-                res = OnCheckOperationTree.GetResStr();
+                IDictionary<int, List<int>> resDict;
                 resDict = OnCheckOperationTree.GetResDict();
-
+                
                 modesTreeViewAdv.Refresh();
-
+                
                 functionAfterCheck(resDict);
             }
         }
@@ -924,6 +1020,7 @@ namespace EasyEPlanner
                     if(node.Text != selectedNodeText)
                     {
                         node.CheckState = CheckState.Unchecked;
+                        OnCheckOperationTree.UseParentNode = true;
                     }
                 }
             }
@@ -931,6 +1028,38 @@ namespace EasyEPlanner
             {
                 lastNode.CheckState = CheckState.Unchecked;
             }
+        }
+
+        /// <summary>
+        /// Получить выбранный узел для выбора устройств записываемых в поле.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        private Node GetSelectedNodeForCheckOperationTree(TreePathEventArgs e)
+        {
+            Node selectedNode;
+            if (!OnCheckOperationTree.UseParentNode)
+            {
+                selectedNode = (Node)e.Path.LastNode;
+            }
+            else
+            {
+                var path = e.Path.FullPath;
+                int pathLength = path.Length;
+                if (pathLength > 1)
+                {
+                    var lastNode = (Node)path.Last();
+                    selectedNode =  lastNode.Parent;
+                }
+                else
+                {
+                    selectedNode = (Node)path.First();
+                }
+
+                OnCheckOperationTree.UseParentNode = false;
+            }
+
+            return selectedNode;
         }
 
         /// <summary>
