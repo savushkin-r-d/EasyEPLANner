@@ -122,8 +122,13 @@ namespace TechObject
                 prefix + "name_BC    = \'" + NameBC + "\',\n" +
                 prefix + "cooper_param_number = " + CooperParamNumber + ",\n" +
                 prefix + "base_tech_object = \'" + baseObjectName + "\',\n" +
-                prefix + "attached_objects = \'" + AttachedObjects.Value + "\',\n" +
-                prefix + "tank_groups = \'" + BaseTechObject.ObjectGroup.Value + "\',\n";
+                prefix + "attached_objects = \'" + AttachedObjects.Value + "\',\n";
+
+            if (baseTechObject?.ObjectGroup.Value != string.Empty)
+            {
+                res += prefix + "tank_groups = \'" + 
+                    BaseTechObject.ObjectGroup.Value + "\',\n";
+            }
 
             res += paramsManager.SaveAsLuaTable(prefix);
             res += "\n";

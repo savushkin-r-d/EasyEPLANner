@@ -419,13 +419,13 @@ namespace EasyEPlanner
             switch(checkedItem)
             {
                 case TechObject.AttachedObjects item:
-                    if (item.Owner.BaseTechObject?.UseGroups == true)
+                    if (item.WorkStrategy.UseInitialization == true)
                     {
-                        SelectedTreeItem = EditType.AttachedUnits;
+                        SelectedTreeItem = EditType.AttachedAgregates;
                     }
                     else
                     {
-                        SelectedTreeItem = EditType.AttachedAgregates;
+                        SelectedTreeItem = EditType.AttachedUnits;
                     }
                     break;
 
@@ -495,8 +495,7 @@ namespace EasyEPlanner
             Editor.ITreeViewItem checkedMode)
         {
             bool notShowAllOperations = checkedMode != null;
-            bool notAllowedTypes = !(SelectedTreeItem == EditType.Restriction ||
-                SelectedTreeItem == EditType.AttachedAgregates) ||
+            bool notAllowedTypes = SelectedTreeItem == EditType.None ||
                 checkedMode.IsEditable == false;
             if (notAllowedTypes && notShowAllOperations)
             {

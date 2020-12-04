@@ -312,7 +312,8 @@ namespace TechObject
                 {
                     var obj = TechObjectManager.GetInstance()
                         .GetTObject(objNum);
-                    string objName = obj.NameEplanForFile + obj.TechNumber;
+                    string objName = obj.NameEplanForFile.ToLower() + 
+                        obj.TechNumber;
                     objectNames.Add(objName);
                 }
             }

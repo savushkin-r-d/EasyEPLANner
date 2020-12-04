@@ -421,33 +421,33 @@ namespace TechObject
             var res = "";
             if (S88Level == (int)BaseTechObjectManager.ObjectType.Unit)
             {
-                return res;
+                var masterObj = TechObjectManager.GetInstance()
+                    .ProcessCellObject;
+                if (masterObj != null)
+                {
+                    res += objName + ".master = prg." + masterObj.NameEplan
+                        .ToLower() + masterObj.TechNumber + "\n";
+                }
+
+                // Параметры сбрасываемые до мойки.
+                res += objName + ".reset_before_wash =\n" +
+                    prefix + "{\n" +
+                    prefix + objName + ".PAR_FLOAT.V_ACCEPTING_CURRENT,\n" +
+                    prefix + objName + ".PAR_FLOAT.PRODUCT_TYPE,\n" +
+                    prefix + objName + ".PAR_FLOAT.V_ACCEPTING_SET\n" +
+                    prefix + "}\n";
             }
 
-            var masterObj = TechObjectManager.GetInstance().ProcessCellObject;
-            if (masterObj != null)
-            {
-                res += objName + ".master = prg." + masterObj.NameEplan
-                    .ToLower() + masterObj.TechNumber + "\n";
-            }
-
-            if (ObjectGroup.Value != string.Empty)
+            if (UseGroups && ObjectGroup.Value != string.Empty)
             {
                 string objectNames = ObjectGroup.GetAttachedObjectsName()
-                    .Aggregate((x, y) => $"prg.{x},\n" + $"prg.{y},\n");
+                    .Select(x => $"{prefix}prg.{x},\n")
+                    .Aggregate((x, y) => x + y);
                 res += $"{objName}.tanks =\n";
-                res += $"{prefix}{{";
-                res += $"{prefix}{objectNames}";
-                res += $"{prefix}}}";
+                res += $"{prefix}{{\n";
+                res += $"{objectNames}";
+                res += $"{prefix}}}\n";
             }
-
-            // Параметры сбрасываемые до мойки.
-            res += objName + ".reset_before_wash =\n" +
-                prefix + "{\n" +
-                prefix + objName + ".PAR_FLOAT.V_ACCEPTING_CURRENT,\n" +
-                prefix + objName + ".PAR_FLOAT.PRODUCT_TYPE,\n" +
-                prefix + objName + ".PAR_FLOAT.V_ACCEPTING_SET\n" +
-                prefix + "}\n";
 
             return res;
         }
