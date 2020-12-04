@@ -58,13 +58,7 @@ namespace TechObject
         public override bool SetNewValue(IDictionary<int, List<int>> newDict)
         {
             var objectsList = new List<int>();
-            foreach (var objectNumber in newDict.Keys)
-            {
-                objectsList.Add(objectNumber);
-            }
-            objectsList.Sort();
-
-            return SetNewValue(string.Join(" ", objectsList));
+            return SetNewValue(string.Join(" ", newDict.Keys));
         }
 
         /// <summary>
