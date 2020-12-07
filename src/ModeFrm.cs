@@ -922,7 +922,8 @@ namespace EasyEPlanner
                 int modeIndex)
             {
                 if(resDict.Count > 0 &&
-                    resDict[objectIndex].Contains(modeIndex))
+                    resDict.ContainsKey(objectIndex) &&
+                    resDict[objectIndex].Contains(modeIndex) == true)
                 {
                     resDict[objectIndex].Remove(modeIndex);
 
