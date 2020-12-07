@@ -139,7 +139,7 @@ namespace EasyEPlanner
             }
             int valueInPercents = ValueAsPercentage(ioLinkModules,
                 modulesCount);
-            string displayingText = $"{valueInPercents}% IO-Link";
+            string displayingText = $"{valueInPercents}% IO-Link I/O";
             string result = MakeStringForWriting(ioLinkModules,
                 modulesCount, displayingText);
             folderPath += IOModulesInPercentage;
