@@ -299,6 +299,7 @@
     <Compile Include="TechObject\ObjectsTree\UniversalObject\ActionGroupWash.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\ActionWash.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\ActionGroup.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\AttachedObjects.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Equipment.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\LocalRestriction.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Mode.cs" />

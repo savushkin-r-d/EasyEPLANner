@@ -12,22 +12,20 @@ namespace TechObject
     /// </summary>
     public class BaseTechObject
     {
-        private BaseTechObject()
+        public BaseTechObject(TechObject owner = null)
         {
-            Name = "";
-            EplanName = "";
+            Name = string.Empty;
+            EplanName = string.Empty;
             S88Level = 0;
             BaseOperations = new List<BaseOperation>();
-            BasicName = "";
-            Owner = null;
+            BasicName = string.Empty;
+            Owner = owner;
             Equipment = new List<BaseParameter>();
             AggregateParameters = new List<BaseParameter>();
-            BindingName = "";
-        }
+            BindingName = string.Empty;
 
-        public static BaseTechObject EmptyBaseTechObject()
-        {
-            return new BaseTechObject();
+            objectGroup = new AttachedObjects(string.Empty, owner, 
+                new AttachedObjectStrategy.AttachedTanksStrategy());
         }
 
         /// <summary>
@@ -167,9 +165,9 @@ namespace TechObject
         /// </summary>
         public List<BaseOperation> BaseOperations
         {
-            get 
-            { 
-                return objectOperations; 
+            get
+            {
+                return objectOperations;
             }
 
             set
@@ -183,7 +181,7 @@ namespace TechObject
         /// </summary>
         public string BasicName
         {
-            get 
+            get
             {
                 return basicName;
             }
@@ -219,7 +217,7 @@ namespace TechObject
             {
                 return equipment;
             }
-            
+
             set
             {
                 equipment = value;
@@ -271,6 +269,7 @@ namespace TechObject
         {
             var cloned = Clone();
             cloned.Owner = techObject;
+            cloned.ObjectGroup.Owner = techObject;
             return cloned;
         }
 
@@ -280,24 +279,23 @@ namespace TechObject
         /// <returns></returns>
         public BaseTechObject Clone()
         {
-            var cloned = EmptyBaseTechObject();
+            var cloned = new BaseTechObject(Owner);
             cloned.Name = Name;
-            cloned.Owner = Owner;
 
             var aggregateParameters = new List<BaseParameter>();
-            foreach(var aggrPar in AggregateParameters)
+            foreach (var aggrPar in AggregateParameters)
             {
                 aggregateParameters.Add(aggrPar.Clone());
             }
             cloned.AggregateParameters = aggregateParameters;
             if (MainAggregateParameter != null)
             {
-                cloned.MainAggregateParameter = MainAggregateParameter.Clone() 
+                cloned.MainAggregateParameter = MainAggregateParameter.Clone()
                     as MainAggregateParameter;
             }
 
             var baseOperations = new List<BaseOperation>();
-            foreach(var baseOperation in BaseOperations)
+            foreach (var baseOperation in BaseOperations)
             {
                 baseOperations.Add(baseOperation.Clone());
             }
@@ -307,7 +305,7 @@ namespace TechObject
             cloned.EplanName = EplanName;
 
             var equipment = new List<BaseParameter>();
-            foreach(var equip in Equipment)
+            foreach (var equip in Equipment)
             {
                 var newEquip = equip.Clone();
                 newEquip.Owner = this;
@@ -318,6 +316,11 @@ namespace TechObject
             cloned.S88Level = S88Level;
             cloned.BindingName = BindingName;
             cloned.IsPID = IsPID;
+            cloned.UseGroups = UseGroups;
+
+            cloned.objectGroup = new AttachedObjects(objectGroup.Value, Owner,
+                objectGroup.WorkStrategy);
+
             return cloned;
         }
 
@@ -328,14 +331,9 @@ namespace TechObject
         {
             get
             {
-                if (S88Level == 2)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                bool isAttachable = UseGroups ||
+                    S88Level == (int)BaseTechObjectManager.ObjectType.Unit;
+                return isAttachable;
             }
         }
 
@@ -396,7 +394,20 @@ namespace TechObject
         /// <summary>
         /// Является ли объект ПИД-регулятором
         /// </summary>
-        public bool IsPID { get; set; }
+        public bool IsPID { get; set; } = default;
+
+        /// <summary>
+        /// Использовать ли группы объектов
+        /// </summary>
+        public bool UseGroups { get; set; } = default;
+
+        /// <summary>
+        /// Группа объектов
+        /// </summary>
+        public AttachedObjects ObjectGroup 
+        {
+            get => objectGroup; 
+        }
 
         #region Сохранение в prg.lua
         /// <summary>
@@ -408,25 +419,35 @@ namespace TechObject
         public string SaveObjectInfoToPrgLua(string objName, string prefix)
         {
             var res = "";
-            if (EplanName.ToLower() != "tank")
+            if (S88Level == (int)BaseTechObjectManager.ObjectType.Unit)
             {
-                return res;
+                var masterObj = TechObjectManager.GetInstance()
+                    .ProcessCellObject;
+                if (masterObj != null)
+                {
+                    res += objName + ".master = prg." + masterObj.NameEplan
+                        .ToLower() + masterObj.TechNumber + "\n";
+                }
+
+                // Параметры сбрасываемые до мойки.
+                res += objName + ".reset_before_wash =\n" +
+                    prefix + "{\n" +
+                    prefix + objName + ".PAR_FLOAT.V_ACCEPTING_CURRENT,\n" +
+                    prefix + objName + ".PAR_FLOAT.PRODUCT_TYPE,\n" +
+                    prefix + objName + ".PAR_FLOAT.V_ACCEPTING_SET\n" +
+                    prefix + "}\n";
             }
 
-            var masterObj = TechObjectManager.GetInstance().ProcessCellObject;
-            if (masterObj != null)
+            if (UseGroups && ObjectGroup.Value != string.Empty)
             {
-                res += objName + ".master = prg." + masterObj.NameEplan
-                    .ToLower() + masterObj.TechNumber + "\n";
+                string objectNames = ObjectGroup.GetAttachedObjectsName()
+                    .Select(x => $"{prefix}prg.{x},\n")
+                    .Aggregate((x, y) => x + y);
+                res += $"{objName}.tanks =\n";
+                res += $"{prefix}{{\n";
+                res += $"{objectNames}";
+                res += $"{prefix}}}\n";
             }
-
-            // Параметры сбрасываемые до мойки.
-            res += objName + ".reset_before_wash =\n" +
-                prefix + "{\n" +
-                prefix + objName + ".PAR_FLOAT.V_ACCEPTING_CURRENT,\n" +
-                prefix + objName + ".PAR_FLOAT.PRODUCT_TYPE,\n" +
-                prefix + objName + ".PAR_FLOAT.V_ACCEPTING_SET\n" +
-                prefix + "}\n";
 
             return res;
         }
@@ -828,5 +849,6 @@ namespace TechObject
         private List<BaseParameter> equipment;
         private List<BaseParameter> aggregateProperties;
         private MainAggregateParameter aggregateMainParameter;
+        private AttachedObjects objectGroup;
     }
 }

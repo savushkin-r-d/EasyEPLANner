@@ -12,6 +12,7 @@
 -- в аппарат, при привязке агрегата к аппарату).
 -- 7. bindingName - имя агрегата, используемое при привязке его к аппарату (для аппаратов не обязательно).
 -- 8. isPID - является ли объект ПИД-регулятором.
+-- 9. useGroups - используются ли группы.
 
 -- Базовые операции (baseOperations) (название таблицы - это Lua-имя операции, пишется в верхнем регистре):
 -- 1. name - русскоязычное название операции.
@@ -302,7 +303,8 @@ return
                 product_CTR = { name = "Счетчик", defaultValue = "FQT1" },
             },
             aggregateParameters = { },
-            bindingName = "line"
+            bindingName = "line",
+            useGroups = true
         },
         line_in = {
             name = "Линия приемки",
@@ -380,7 +382,8 @@ return
                 product_CTR = { name = "Счетчик", defaultValue = "FQT1" },
             },
             aggregateParameters = { },
-            bindingName = "line_in"
+            bindingName = "line_in",
+            useGroups = true
         },
         line_out = {
             name = "Линия выдачи",
@@ -457,7 +460,8 @@ return
                 product_CTR = { name = "Счетчик", defaultValue = "FQT1" },
             },
             aggregateParameters = { },
-            bindingName = "line_out"
+            bindingName = "line_out",
+            useGroups = true,
         },
         pasteurizator = {
             name = "Пастеризатор",

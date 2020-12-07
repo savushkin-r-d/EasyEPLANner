@@ -20,7 +20,7 @@ namespace TechObject
         /// <param name="dict">Словарь ограничений объекта, вызвавшего
         /// обновление</param>
         private void SetNewValueAtTheSameObjects(
-            SortedDictionary<int, List<int>> dict)
+            IDictionary<int, List<int>> dict)
         {
             var selectedLocalRestriction = this;
             var selectedRestrictionManager = selectedLocalRestriction.Parent;
@@ -63,7 +63,7 @@ namespace TechObject
         /// </param>
         /// <returns></returns>
         private SortedDictionary<int, List<int>> MakeSimilarObjectDictionary(
-            SortedDictionary<int, List<int>> oldDict, TechObject techObject)
+            IDictionary<int, List<int>> oldDict, TechObject techObject)
         {
             var newDict = new SortedDictionary<int, List<int>>();
             var newOperations = new List<int>();
@@ -87,8 +87,7 @@ namespace TechObject
         /// Установка значений для ограничения
         /// </summary>
         /// <param name="dictionary">Словарь ограничений для установки</param>
-        public override void SetValue(SortedDictionary<int, List<int>> 
-            dictionary)
+        public override void SetValue(IDictionary<int, List<int>> dictionary)
         {
             var oldRestriction = new SortedDictionary<int, List<int>>(
                 restrictList);
@@ -107,7 +106,7 @@ namespace TechObject
         /// </summary>
         /// <param name="dict">Новый словарь с ограничениями</param>
         /// <returns></returns>
-        override public bool SetNewValue(SortedDictionary<int, List<int>> dict)
+        override public bool SetNewValue(IDictionary<int, List<int>> dict)
         {
             base.SetNewValue(dict);
             SetNewValueAtTheSameObjects(dict);

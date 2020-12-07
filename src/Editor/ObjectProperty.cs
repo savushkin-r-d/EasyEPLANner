@@ -286,8 +286,7 @@ namespace Editor
             return res;
         }
 
-        public virtual bool SetNewValue(SortedDictionary<int, 
-            List<int>> newDict)
+        public virtual bool SetNewValue(IDictionary<int, List<int>> newDict)
         {
             bool res = false;
             return res;

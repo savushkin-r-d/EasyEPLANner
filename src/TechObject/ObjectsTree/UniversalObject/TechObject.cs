@@ -100,418 +100,6 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Класс привязки агрегатов к аппарату
-        /// </summary>
-        public class AttachedToObjects : ObjectProperty
-        {
-            public AttachedToObjects(string attachedObjects, 
-                TechObject techObject) : base("Привязанные агрегаты", 
-                    attachedObjects)
-            {
-                this.techObject = techObject;
-                SetValue(attachedObjects);
-            }
-
-            public override bool SetNewValue(string newValue)
-            {
-                string oldValue = Value;
-                GetValidTechObjNums(oldValue, out List<TechObject> oldObjects);
-
-                List<int> newNumbers = GetValidTechObjNums(newValue,
-                    out List<TechObject> newObjects);
-                newValue = string.Join(" ", newNumbers);
-
-                base.SetNewValue(newValue);
-
-                Dictionary<TechObject, TechObject> replacedObjects =
-                    CheckReplacedObjects(oldObjects, newObjects);
-                ChangeOwnerInReplacedObjectsProperties(replacedObjects);
-
-                List<int> deletedAgregatesNumbers = FindDeletedAgregates(
-                    oldValue, newValue, replacedObjects);
-                RemoveDeletedAgregates(deletedAgregatesNumbers);
-
-                InitAttachedAgregates(newNumbers);
-                return true;
-            }
-
-            public override bool SetNewValue(
-                SortedDictionary<int, List<int>> newDict)
-            {
-                var objectsList = new List<int>();
-                foreach(var objectNumber in newDict.Keys)
-                {
-                    objectsList.Add(objectNumber);
-                }
-                objectsList.Sort();
-
-                return SetNewValue(string.Join(" ", objectsList));
-            }
-
-            /// <summary>
-            /// Получить корректные номера технологических объектов из
-            /// входной строки
-            /// </summary>
-            /// <param name="inputString">Входная строка</param>
-            /// <returns></returns>
-            private List<int> GetValidTechObjNums(string inputString,
-                out List<TechObject> validObjects)
-            {
-                var numbers = new List<int>();
-                string[] numbersAsStringArray = inputString.Split(' ')
-                    .ToArray();
-                validObjects = new List<TechObject>();
-
-                foreach (var numAsString in numbersAsStringArray)
-                {
-                    int number;
-                    int.TryParse(numAsString, out number);
-                    if (number == 0)
-                    {
-                        continue;
-                    }
-
-                    TechObject obj = TechObjectManager.GetInstance()
-                        .GetTObject(number);
-                    bool correctBaseObject = obj.BaseTechObject != null &&
-                        obj.BaseTechObject.IsAttachable;
-                    if (correctBaseObject)
-                    {
-                        validObjects.Add(obj);
-                        numbers.Add(number);
-                    }
-                }
-
-                numbers = numbers.Distinct().ToList();
-                validObjects = validObjects.Distinct().ToList();
-                return numbers;
-            }
-
-            /// <summary>
-            /// Проверить и найти замененные объекты
-            /// </summary>
-            /// <param name="oldObjects">Старый список объектов</param>
-            /// <param name="newObjects">Новый список объектов</param>
-            /// <returns></returns>
-            private Dictionary<TechObject, TechObject> CheckReplacedObjects(
-                List<TechObject> oldObjects, List<TechObject> newObjects)
-            {
-                var replacedObjects = new Dictionary<TechObject, TechObject>();
-
-                foreach(var newObj in newObjects)
-                {
-                    var replacedObject = oldObjects
-                        .Where(x => x.BaseTechObject.Name == 
-                        newObj.BaseTechObject.Name &&
-                        x.getLocalNum(x) != newObj.getLocalNum(newObj))
-                        .FirstOrDefault();
-                    if(replacedObject != null)
-                    {
-                        replacedObjects.Add(replacedObject, newObj);
-                    }
-                }
-
-                return replacedObjects;
-            }
-
-            /// <summary>
-            /// Заменить владельца в замененных объектах
-            /// </summary>
-            /// <param name="replacedObjects">Замененные объекты</param>
-            private void ChangeOwnerInReplacedObjectsProperties(
-                Dictionary<TechObject,TechObject> replacedObjects)
-            {
-                if(replacedObjects.Count == 0)
-                {
-                    return;
-                }
-
-                foreach(var objects in replacedObjects)
-                {
-                    TechObject oldObject = objects.Key;
-                    TechObject newObject = objects.Value;
-
-                    foreach(var mode in techObject.ModesManager.Modes)
-                    {
-                        mode.BaseOperation.ChangePropertiesOwner(
-                            oldObject.BaseTechObject, newObject.BaseTechObject);
-                    }
-                }
-            }
-
-            /// <summary>
-            /// Найти удаленные агрегаты
-            /// </summary>
-            /// <param name="oldValue">Старое значение поля</param>
-            /// <param name="newValue">Новое значение поля</param>
-            /// <param name="replacedObjects">Словарь замененных объектов.
-            /// Ключ - старый объект, значение - новый объект.</param>
-            /// <returns></returns>
-            private List<int> FindDeletedAgregates(string oldValue, 
-                string newValue,
-                Dictionary<TechObject,TechObject> replacedObjects)
-            {
-                var oldNumbers = new List<int>();
-                var newNumbers = new List<int>();
-                if (oldValue != null && oldValue != string.Empty)
-                {
-                    oldNumbers = oldValue.Split(' ').Select(int.Parse).ToList();
-                }
-                if (newValue != null && newValue != string.Empty)
-                {
-                    newNumbers = newValue.Split(' ').Select(int.Parse).ToList();
-                }
-
-                foreach(var newNum in newNumbers)
-                {
-                    if (oldNumbers.Contains(newNum))
-                    {
-                        oldNumbers.Remove(newNum);
-                    }
-                }
-
-                foreach(var replacedObj in replacedObjects.Keys)
-                {
-                    var replacedObjNum = TechObjectManager.GetInstance()
-                        .GetTechObjectN(replacedObj);
-                    if(oldNumbers.Contains(replacedObjNum))
-                    {
-                        oldNumbers.Remove(replacedObjNum);
-                    }
-                }
-
-                return oldNumbers;
-            }
-
-            /// <summary>
-            /// Удалить привязку агрегатов из аппарата.
-            /// </summary>
-            /// <param name="aggregatesNumbers">Список агрегатов</param>
-            private void RemoveDeletedAgregates(List<int> aggregatesNumbers)
-            {
-                if (aggregatesNumbers.Count == 0)
-                {
-                    return;
-                }
-
-                foreach(var number in aggregatesNumbers)
-                {
-                    TechObject removingAgregate = TechObjectManager
-                        .GetInstance().GetTObject(number);
-                    BaseTechObject removingBaseTechObject = removingAgregate
-                        .BaseTechObject;
-                    List<BaseParameter> properties = removingBaseTechObject
-                        .AggregateParameters;
-
-                    var deletingProperties = new List<BaseParameter>();
-                    if (properties.Count != 0)
-                    {
-                        deletingProperties.AddRange(properties);
-                    }
-
-                    if (removingBaseTechObject.MainAggregateParameter != null)
-                    {
-                        deletingProperties.Add(removingBaseTechObject
-                            .MainAggregateParameter);
-                    }
-                    TechObject thisTechObject = techObject;
-                    List<Mode> modes = thisTechObject.ModesManager.Modes;
-                    foreach (var mode in modes)
-                    {
-                        mode.BaseOperation.RemoveProperties(deletingProperties);
-                    }
-                }
-            }
-
-            /// <summary>
-            /// Инициализация данных 
-            /// </summary>
-            /// <param name="objectsNumbrers">Список корректных номеров
-            /// привязанных агрегатов</param>
-            private void InitAttachedAgregates(List<int> objectsNumbrers)
-            {
-                foreach(var number in objectsNumbrers)
-                {
-                    TechObject attachedAggregate = TechObjectManager
-                        .GetInstance().GetTObject(number);
-                    BaseTechObject attachedBaseTechObject = attachedAggregate
-                        .BaseTechObject;
-                    List<BaseParameter> properties = attachedBaseTechObject
-                        .AggregateParameters;
-
-                    var addingProperties = new List<BaseParameter>();
-                    if (properties.Count != 0 )
-                    {
-                        addingProperties.AddRange(properties);
-                    }
-
-                    if (attachedBaseTechObject.MainAggregateParameter != null)
-                    {
-                        addingProperties.Add(attachedBaseTechObject
-                            .MainAggregateParameter);
-                    }
-                    TechObject thisThechObject = techObject;
-                    List<Mode> modes = thisThechObject.ModesManager.Modes;
-                    foreach(var mode in modes)
-                    {
-                        if (mode.BaseOperation.Name == "")
-                        {
-                            continue;
-                        }
-
-                        mode.BaseOperation.AddProperties(addingProperties,
-                            attachedBaseTechObject);
-                        mode.BaseOperation.Check();
-                    }
-                }
-            }
-
-            /// <summary>
-            /// Проверить привязанные объекты на инициализацию и 
-            /// инициализировать, если не инициализировано.
-            /// </summary>
-            public string Check()
-            {
-                var res = "";
-                List<int> numbers = GetValidTechObjNums(Value, out _);
-                string checkedValue = string.Join(" ", numbers);
-                if (checkedValue != Value)
-                {
-                    int objGlobalNumber = TechObjectManager.GetInstance()
-                        .GetTechObjectN(techObject);
-                    res += $"Проверьте привязанные агрегаты в объекте: " +
-                        $"{objGlobalNumber}." +
-                        $"{techObject.Name + techObject.TechNumber}. " +
-                        $"В поле присутствуют агрегаты, которые нельзя " +
-                        $"привязывать.\n";
-                }
-
-                InitAttachedAgregates(numbers);
-                return res;
-            }
-
-            private string GenerateAttachedObjectsString()
-            {
-                string value = Value ?? string.Empty;
-                if(value == string.Empty)
-                {
-                    return value;
-                }
-
-                var objectNums = value.Split(' ').Select(int.Parse);
-                var objectNames = new List<string>();
-                foreach(var objNum in objectNums)
-                {
-                    TechObject findedObject = TechObjectManager.GetInstance()
-                        .GetTObject(objNum);
-                    if(findedObject != null)
-                    {
-                        string name = $"\"{findedObject.Name} " +
-                            $"{findedObject.TechNumber}\"";
-                        objectNames.Add(name);
-                    }
-                }
-
-                return string.Join(", ", objectNames);
-            }
-
-            #region реализация ITreeViewItem
-            public override string[] DisplayText
-            {
-                get
-                {
-                    return new string[] 
-                    { 
-                        Name,
-                        GenerateAttachedObjectsString() 
-                    };
-                }
-            }
-
-            public override bool NeedRebuildParent 
-            { 
-                get 
-                { 
-                    return true; 
-                } 
-            }
-
-            public override int[] EditablePart
-            {
-                get
-                {
-                    return new int[] { -1, -1 };
-                }
-            }
-
-            override public bool IsEditable
-            {
-                get
-                {
-                    bool baseObjectIsExist = techObject.BaseTechObject != null;
-                    if(baseObjectIsExist)
-                    {
-                        string baseObjectName = techObject.BaseTechObject.Name;
-                        if (allowedBaseObjects.Contains(baseObjectName))
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                }
-            }
-
-            public override bool IsFilled
-            {
-                get
-                {
-                    if(Value != "")
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            public override bool IsDeletable
-            {
-                get
-                {
-                    return true;
-                }
-            }
-
-            public override bool Delete(object child)
-            {
-                bool cleared = SetNewValue(string.Empty);
-                return cleared;
-            }
-
-            public override bool ShowWarningBeforeDelete
-            {
-                get
-                {
-                    return true;
-                }
-            }
-            #endregion
-
-            private string[] allowedBaseObjects = new string[]
-            {
-                "Танк",
-                "Линия",
-                "Линия приемки",
-                "Линия выдачи"
-            };
-
-            private TechObject techObject;
-        }
-
-        /// <summary>
         /// Сохранение в виде таблицы Lua.
         /// </summary>
         /// <param name="prefix">Префикс (для выравнивания).</param>
@@ -525,7 +113,7 @@ namespace TechObject
                 baseObjectName = baseTechObject.EplanName;
             }
 
-            string res = "\t[ " + globalNum + " ] =\n"+
+            string res = "\t[ " + globalNum + " ] =\n" +
                 prefix + "{\n" +
                 prefix + "n          = " + TechNumber + ",\n" +
                 prefix + "tech_type  = " + TechType + ",\n" +
@@ -535,6 +123,12 @@ namespace TechObject
                 prefix + "cooper_param_number = " + CooperParamNumber + ",\n" +
                 prefix + "base_tech_object = \'" + baseObjectName + "\',\n" +
                 prefix + "attached_objects = \'" + AttachedObjects.Value + "\',\n";
+
+            if (baseTechObject?.ObjectGroup.Value != string.Empty)
+            {
+                res += prefix + "tank_groups = \'" + 
+                    BaseTechObject.ObjectGroup.Value + "\',\n";
+            }
 
             res += paramsManager.SaveAsLuaTable(prefix);
             res += "\n";
@@ -601,8 +195,8 @@ namespace TechObject
                 "Время совместного перехода шагов (параметр)", 
                 cooperParamNumber, -1);
 
-            this.attachedObjects = new AttachedToObjects(attachedObjects, 
-                this);
+            this.attachedObjects = new AttachedObjects(attachedObjects, 
+                this, new AttachedObjectStrategy.AttachedAggregatesStrategy());
 
             modes = new ModesManager(this);
 
@@ -624,7 +218,7 @@ namespace TechObject
             if (baseTechObject != null)
             {
                 this.baseTechObject = baseTechObject.Clone(this);
-                
+
                 equipment.AddItems(baseTechObject.Equipment);
                 SetItems();
             }
@@ -687,8 +281,8 @@ namespace TechObject
             clone.techType = new ObjectProperty("Тип", TechType);
             clone.nameBC = new ObjectProperty("Имя объекта Monitor", NameBC);
             clone.nameEplan = new NameInEplan(NameEplan, clone);
-            clone.attachedObjects = new AttachedToObjects(AttachedObjects.Value, 
-                clone);
+            clone.attachedObjects = new AttachedObjects(AttachedObjects.Value, 
+                clone, AttachedObjects.WorkStrategy);
 
             clone.getLocalNum = getLocalNum;
 
@@ -718,7 +312,7 @@ namespace TechObject
             itemsList.Add(nameEplan);
             itemsList.Add(nameBC);
             
-            if(attachedObjects.IsEditable)
+            if (attachedObjects.IsEditable == true)
             {
                 itemsList.Add(attachedObjects);
             }
@@ -727,6 +321,11 @@ namespace TechObject
             itemsList.Add(modes);
             itemsList.Add(paramsManager);
             itemsList.Add(equipment);
+
+            if (baseTechObject?.UseGroups == true)
+            {
+                itemsList.Add(baseTechObject.ObjectGroup);
+            }
 
             items = itemsList.ToArray();
         }
@@ -761,6 +360,18 @@ namespace TechObject
         public void AddEquipment(string equipmentName, string value)
         {
             equipment.SetEquipmentValue(equipmentName, value);
+        }
+
+        /// <summary>
+        /// Добавить объекты группы танков
+        /// </summary>
+        /// <param name="value"></param>
+        public void AddGroupTanks(string value)
+        {
+            if (baseTechObject?.UseGroups == true)
+            {
+                baseTechObject.ObjectGroup.SetValue(value);
+            }
         }
 
         // Получение операции. 
@@ -833,7 +444,7 @@ namespace TechObject
         /// <summary>
         /// Привязанные к аппарату агрегаты.
         /// </summary>
-        public AttachedToObjects AttachedObjects
+        public AttachedObjects AttachedObjects
         {
             get
             {
@@ -1199,6 +810,14 @@ namespace TechObject
             }
         }
 
+        public int GetLocalNum
+        {
+            get
+            {
+                return getLocalNum(this);
+            }
+        }
+
         private TechObjectN techNumber; /// Номер объекта технологический.
         private ObjectProperty techType; /// Тип объекта технологический.
 
@@ -1213,7 +832,7 @@ namespace TechObject
 
         /// Базовый аппарат (технологический объект)
         private BaseTechObject baseTechObject; 
-        private AttachedToObjects attachedObjects; // Привязанные агрегаты
+        private AttachedObjects attachedObjects; // Привязанные агрегаты
         private Equipment equipment; // Оборудование объекта
     }
 }

@@ -987,7 +987,7 @@ namespace Editor
         /// Ограничения передаются в виде словаря.
         /// </summary>
         /// <param name="dict">Словарь ограничений</param>
-        internal void SetNewVal(SortedDictionary<int, List<int>> dict)
+        internal void SetNewVal(IDictionary<int, List<int>> dict)
         {
             bool isModified = (editorTView.SelectedObject as ITreeViewItem)
                 .SetNewValue(dict);
