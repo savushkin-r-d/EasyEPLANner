@@ -430,7 +430,7 @@ return
                         {
                             USE_VOLUME =
                             {
-                                name = "Выдача линии заданного объема",
+                                name = "Выдача линией заданного объема",
                                 defaultValue = "false",
                             },
                             NEED_PAUSE_AFTER_EMPTY_LAST_TANK =
