@@ -347,8 +347,7 @@ namespace TechObject
             get
             {
                 BaseTechObject baseTechObject = owner?.BaseTechObject;
-                bool editable = baseTechObject != null &&
-                    baseTechObject.IsAttachable;
+                bool editable = baseTechObject?.IsAttachable == true;
                 return editable;
             }
         }
