@@ -23,10 +23,10 @@ namespace TechObject
         {
             this.name = name;
             this.getN = getN;
-            this.IsMainStep = isMainStep;
-            this.owner = owner;
-            this.baseStep = new BaseStep(string.Empty, string.Empty);
-            this.baseStep.Owner = this;
+            IsMainStep = isMainStep;
+            Owner = owner;
+            baseStep = new BaseStep(string.Empty, string.Empty);
+            baseStep.Owner = this;
 
             items = new List<ITreeViewItem>();
 
@@ -335,13 +335,7 @@ namespace TechObject
             return getN(this);
         }
 
-        public State Owner
-        {
-            get
-            {
-                return owner;
-            }
-        }
+        public State Owner { get; set; }
 
         /// <summary>
         /// Lua-имя базового шага
@@ -391,7 +385,7 @@ namespace TechObject
 
         public override bool SetNewValue(string newVal, bool isExtraValue)
         {
-            State state = this.Owner;
+            State state = Owner;
 
             Step equalStep = state.Steps
                 .Where(x => x.GetBaseStepName() == newVal)
@@ -685,7 +679,6 @@ namespace TechObject
 
         private string name;           ///< Имя шага.
         internal List<Action> actions; ///< Список действий шага.
-        private State owner;           ///< Владелей элемента
 
         private BaseStep baseStep;
     }
