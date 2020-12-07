@@ -405,9 +405,13 @@ return
                             },
                         },
                         bool =
-                            {
-                            IGNORE_WATER_FLAG = { name = "Игнорировать наличие продукта", defaultValue = "false" },
+                        {
+                            IGNORE_WATER_FLAG = 
+                            { 
+                                name = "Игнорировать наличие продукта",
+                                defaultValue = "false" 
                             },
+                        },
                     },
                     steps =
                     {
@@ -420,7 +424,22 @@ return
                 },
                 OUT = {
                     name = "Выдача",
-                    params = { },
+                    params = 
+                    {
+                        bool =
+                        {
+                            USE_VOLUME =
+                            {
+                                name = "Выдача линии заданного объема",
+                                defaultValue = "false",
+                            },
+                            NEED_PAUSE_AFTER_EMPTY_LAST_TANK =
+                            {
+                                name = "Пауза после опустошения крайнего танка в очереди",
+                                defaultValue = "false",
+                            },
+                        }
+                    },
                     steps =
                     {
                         OUT_WATER = {
@@ -455,6 +474,8 @@ return
             equipment =
             {
                 product_CTR = { name = "Счетчик", defaultValue = "FQT1" },
+                water_v = { name = "Клапан(-а) подачи воды" },
+                QT = { name = "Концентратомер", defaultValue = "QT1" },
             },
             aggregateParameters = { },
             bindingName = "line_out"
