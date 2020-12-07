@@ -435,6 +435,12 @@ return
                             name = "Ожидание",
                             defaultPosition = 1,
                         },
+                        IN_DRAINAGE = {
+                            name = "В дренаж",
+                        },
+                        IN_DESTINATION = {
+                            name = "В приемник",
+                        },
                     },
                     defaultPosition = 2,
                 },
