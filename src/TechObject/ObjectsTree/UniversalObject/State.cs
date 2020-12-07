@@ -364,6 +364,8 @@ namespace TechObject
                 int index = steps.IndexOf(step);
                 steps.Remove(step);
                 steps.Insert(index, newStep);
+                newStep.Owner = this;
+               
                 index = steps.IndexOf(newStep);
 
                 return newStep;
