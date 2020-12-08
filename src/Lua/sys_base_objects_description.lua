@@ -446,12 +446,12 @@ return
                         {
                             product_request =
                             {
-                                name = "Запрос продукта",
+                                name = "Запрос продукта от приемника",
                                 displayObjects = { "signals" },
                             },
                             water_request =
                             {
-                                name = "Запрос воды",
+                                name = "Запрос воды от приемника",
                                 displayObjects = { "signals" },
                             }
                         }
