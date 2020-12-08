@@ -441,6 +441,19 @@ return
                                 name = "Пауза после опустошения крайнего танка в очереди",
                                 defaultValue = "false",
                             },
+                        },
+                        active =
+                        {
+                            product_request =
+                            {
+                                name = "Запрос продукта от приемника",
+                                displayObjects = { "signals" },
+                            },
+                            water_request =
+                            {
+                                name = "Запрос воды от приемника",
+                                displayObjects = { "signals" },
+                            }
                         }
                     },
                     steps =
