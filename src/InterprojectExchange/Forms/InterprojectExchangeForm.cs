@@ -98,15 +98,16 @@ namespace InterprojectExchange
                 currProjItems.Add(item);
             }
 
-            RefilterListViews(null, null, true);
+            bool hardRefilter = true;
+            RefilterListViews(hardRefilter);
         }
 
         /// <summary>
         /// Обновить списки под фильтр
         /// </summary>
-        private void RefilterListViews(string selectedCurrProjDev = null,
-            string selectedAdvProjDev = null,
-            bool hardRefilter = false)
+        private void RefilterListViews(bool hardRefilter = false,
+            string selectedCurrProjDev = null,
+            string selectedAdvProjDev = null)
         {
             void Refilter()
             {
@@ -330,7 +331,8 @@ namespace InterprojectExchange
                     {
                         bindedSignalsList.Items.Add(item);
 
-                        RefilterListViews(currentProjectDevice,
+                        bool hardRefilter = false;
+                        RefilterListViews(hardRefilter, currentProjectDevice,
                             advancedProjectDevice);
                     }
                     else
@@ -956,7 +958,8 @@ namespace InterprojectExchange
                 interprojectExchange.SelectModel(model);
 
                 ReloadListViewWithSignals();
-                RefilterListViews(null, null, true);
+                bool hardRefilter = true;
+                RefilterListViews(hardRefilter);
             }         
         }
 
