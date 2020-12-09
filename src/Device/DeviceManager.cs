@@ -277,10 +277,10 @@ namespace Device
         /// "+KOAG5-V2"
         /// </summary>
         public static readonly string BINDING_DEVICES_DESCRIPTION_PATTERN =
-            @"(?<name>([+-])(?<object_main>([A-Z_]*?)(\d*?))(?<object>[A-Z_]*?)(?<object_n>\d*)(-*)(?<type>[A-Z_]+)(?<n>\d+))(\s+|$)";
+            @"(?<name>([+-])(?<object_main>([A-Z_]*?)(\d*?))(?<object>[A-Z_]*?)(?<object_n>\d*)(-+)(?<type>[A-Z_]+)(?<n>\d+))(\s+|$)";
 
         /// <summary>
-        ///Шаблоны для разбора имени в остальных случаях: 
+        /// Шаблоны для разбора имени в остальных случаях: 
         /// "==BR2=HUT1+KOAG5-V2"
         /// "+KOAG5-V2"
         /// "KOAG5V2"
