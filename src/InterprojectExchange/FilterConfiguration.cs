@@ -16,7 +16,9 @@ namespace InterprojectExchange
         /// <summary>
         /// Делегат для события изменения фильтра.
         /// </summary>
-        public delegate void SignalsListFilterChanged();
+        public delegate void SignalsListFilterChanged(
+            string selectedCurrProjDev, string selectedAdvProjDev,
+            bool hardRefilter);
 
         /// <summary>
         /// Событие изменение фильтра.
@@ -28,7 +30,7 @@ namespace InterprojectExchange
         /// </summary>
         public void Save() 
         {
-            SignalsFilterChanged.Invoke();
+            SignalsFilterChanged.Invoke(null, null, true);
 
             var iniFile = new IniFile(pathToConfig);
             foreach(var section in FilterParameters.Keys)

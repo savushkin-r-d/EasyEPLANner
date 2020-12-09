@@ -98,22 +98,50 @@ namespace InterprojectExchange
                 currProjItems.Add(item);
             }
 
-            RefilterListViews();
+            RefilterListViews(null, null, true);
         }
 
         /// <summary>
         /// Обновить списки под фильтр
         /// </summary>
-        private void RefilterListViews()
+        private void RefilterListViews(string selectedCurrProjDev = null,
+            string selectedAdvProjDev = null,
+            bool hardRefilter = false)
         {
-            currentProjSignalsList.Items.Clear();
-            advancedProjSignalsList.Items.Clear();
+            void Refilter()
+            {
+                advProjSearchBox_TextChanged(this, new EventArgs());
+                currProjSearchBox_TextChanged(this, new EventArgs());
 
-            advProjSearchBox_TextChanged(this, new EventArgs());
-            currProjSearchBox_TextChanged(this, new EventArgs());
+                bool useGroupsFilter = filterConfiguration.UseDeviceGroups;
+                bindedSignalsList.ShowGroups = useGroupsFilter;
+            }
 
-            bool useGroupsFilter = filterConfiguration.UseDeviceGroups;
-            bindedSignalsList.ShowGroups = useGroupsFilter;
+            if (hardRefilter)
+            {
+                Refilter();
+                return;
+            }
+
+            bool addSignals = selectedCurrProjDev != null &&
+                selectedAdvProjDev != null;
+            if (addSignals)
+            {
+                if (filterConfiguration.HideBindedSignals)
+                {
+                    currentProjSignalsList
+                        .FindItemWithText(selectedCurrProjDev)?.Remove();
+                    advancedProjSignalsList
+                        .FindItemWithText(selectedAdvProjDev)?.Remove();
+                }
+            }
+            else
+            {
+                if (filterConfiguration.HideBindedSignals)
+                {
+                    Refilter();
+                }
+            }
         }
 
         /// <summary>
@@ -302,7 +330,8 @@ namespace InterprojectExchange
                     {
                         bindedSignalsList.Items.Add(item);
 
-                        RefilterListViews();
+                        RefilterListViews(currentProjectDevice,
+                            advancedProjectDevice);
                     }
                     else
                     {
@@ -310,7 +339,6 @@ namespace InterprojectExchange
                             "Попытка связать уже связанный(-е) сигнал(-ы).";
                         ShowErrorMessage(message);
                     }
-
                 }
 
                 ClearAllListViewsSelection();
@@ -928,7 +956,7 @@ namespace InterprojectExchange
                 interprojectExchange.SelectModel(model);
 
                 ReloadListViewWithSignals();
-                RefilterListViews();
+                RefilterListViews(null, null, true);
             }         
         }
 
