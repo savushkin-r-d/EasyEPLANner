@@ -105,6 +105,11 @@ namespace InterprojectExchange
         /// <summary>
         /// Обновить списки под фильтр
         /// </summary>
+        /// <param name="selectedCurrProjDev">Выбранное устройство в основном
+        /// проекте</param>
+        /// <param name="selectedAdvProjDev">Выбранное устройства в
+        /// альтернативном проекте</param>
+        /// <param name="hardRefilter">Принудительная фильтрация</param>
         private void RefilterListViews(bool hardRefilter = false,
             string selectedCurrProjDev = null,
             string selectedAdvProjDev = null)
