@@ -98,22 +98,56 @@ namespace InterprojectExchange
                 currProjItems.Add(item);
             }
 
-            RefilterListViews();
+            bool hardRefilter = true;
+            RefilterListViews(hardRefilter);
         }
 
         /// <summary>
         /// Обновить списки под фильтр
         /// </summary>
-        private void RefilterListViews()
+        /// <param name="selectedCurrProjDev">Выбранное устройство в основном
+        /// проекте</param>
+        /// <param name="selectedAdvProjDev">Выбранное устройства в
+        /// альтернативном проекте</param>
+        /// <param name="hardRefilter">Принудительная фильтрация</param>
+        private void RefilterListViews(bool hardRefilter = false,
+            string selectedCurrProjDev = null,
+            string selectedAdvProjDev = null)
         {
-            currentProjSignalsList.Items.Clear();
-            advancedProjSignalsList.Items.Clear();
+            void Refilter()
+            {
+                advProjSearchBox_TextChanged(this, new EventArgs());
+                currProjSearchBox_TextChanged(this, new EventArgs());
 
-            advProjSearchBox_TextChanged(this, new EventArgs());
-            currProjSearchBox_TextChanged(this, new EventArgs());
+                bool useGroupsFilter = filterConfiguration.UseDeviceGroups;
+                bindedSignalsList.ShowGroups = useGroupsFilter;
+            }
 
-            bool useGroupsFilter = filterConfiguration.UseDeviceGroups;
-            bindedSignalsList.ShowGroups = useGroupsFilter;
+            if (hardRefilter)
+            {
+                Refilter();
+                return;
+            }
+
+            bool addSignals = selectedCurrProjDev != null &&
+                selectedAdvProjDev != null;
+            if (addSignals)
+            {
+                if (filterConfiguration.HideBindedSignals)
+                {
+                    currentProjSignalsList
+                        .FindItemWithText(selectedCurrProjDev)?.Remove();
+                    advancedProjSignalsList
+                        .FindItemWithText(selectedAdvProjDev)?.Remove();
+                }
+            }
+            else
+            {
+                if (filterConfiguration.HideBindedSignals)
+                {
+                    Refilter();
+                }
+            }
         }
 
         /// <summary>
@@ -302,7 +336,9 @@ namespace InterprojectExchange
                     {
                         bindedSignalsList.Items.Add(item);
 
-                        RefilterListViews();
+                        bool hardRefilter = false;
+                        RefilterListViews(hardRefilter, currentProjectDevice,
+                            advancedProjectDevice);
                     }
                     else
                     {
@@ -310,7 +346,6 @@ namespace InterprojectExchange
                             "Попытка связать уже связанный(-е) сигнал(-ы).";
                         ShowErrorMessage(message);
                     }
-
                 }
 
                 ClearAllListViewsSelection();
@@ -928,7 +963,8 @@ namespace InterprojectExchange
                 interprojectExchange.SelectModel(model);
 
                 ReloadListViewWithSignals();
-                RefilterListViews();
+                bool hardRefilter = true;
+                RefilterListViews(hardRefilter);
             }         
         }
 
