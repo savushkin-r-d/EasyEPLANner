@@ -89,7 +89,7 @@ void DescriptiveName(type descriptiveName)
 int SetDevCnt(uint2 newCloseDevCnt,
     uint2 newOpenDevCnt);
 ```
-5. Должно использоваться форматирование кода согласно стандартных настроек редактора кода C#. *Пример:*
+5. Должно использоваться форматирование кода согласно стандартных настроек Microsoft Visual Studio для C#. *Пример:*
 ```C#
 int x;  // Описание что делает x.
 unsigned long int (*pfi)(); // Описание что делает pfi.
