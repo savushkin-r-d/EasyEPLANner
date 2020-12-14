@@ -124,7 +124,8 @@ namespace TechObject
                 prefix + "base_tech_object = \'" + baseObjectName + "\',\n" +
                 prefix + "attached_objects = \'" + AttachedObjects.Value + "\',\n";
 
-            if (baseTechObject?.ObjectGroup.Value != string.Empty)
+            if (baseTechObject != null &&
+                baseTechObject.ObjectGroup.Value != string.Empty)
             {
                 res += prefix + "tank_groups = \'" + 
                     BaseTechObject.ObjectGroup.Value + "\',\n";
