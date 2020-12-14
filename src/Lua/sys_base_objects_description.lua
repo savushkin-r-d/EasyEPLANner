@@ -345,7 +345,22 @@ return
                 },
                 FILL = {
                     name = "Наполнение",
-                    params = { },
+                    params = 
+                    {
+                        active =
+                        {
+                            CONCENTRATION =
+                            { 
+                                name = "Концентрация продукта", 
+                                displayObjects = { "parameters" },
+                            },
+                            DELTA_CONCENTRATION =
+                            { 
+                                name = "Дельта концентрации продукта",
+                                displayObjects = { "parameters" },
+                            },
+                        },
+                    },
                     steps =
                     {
                         IN_DRAINAGE = {
