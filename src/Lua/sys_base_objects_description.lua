@@ -301,6 +301,7 @@ return
             equipment =
             {
                 product_CTR = { name = "Счетчик", defaultValue = "FQT1" },
+                QT = { name = "Концентратомер", defaultValue = "QT1" },
             },
             aggregateParameters = { },
             bindingName = "line",
@@ -395,6 +396,7 @@ return
             equipment =
             {
                 product_CTR = { name = "Счетчик", defaultValue = "FQT1" },
+                QT = { name = "Концентратомер", defaultValue = "QT1" },
             },
             aggregateParameters = { },
             bindingName = "line_in",
@@ -512,7 +514,6 @@ return
             {
                 product_CTR = { name = "Счетчик", defaultValue = "FQT1" },
                 water_v = { name = "Клапан(-а) подачи воды" },
-                QT = { name = "Концентратомер", defaultValue = "QT1" },
             },
             aggregateParameters = { },
             bindingName = "line_out",
