@@ -134,11 +134,9 @@ namespace TechObject
         /// <param name="basicName">Базовое имя для функциональности</param>
         /// <param name="bindingName">Имя для привязки к объекту</param>
         /// <param name="isPID">Является ли объект ПИД-регулятором</param>
-        /// <param name="useGroups">Используются ли группы объектов</param>
         /// <returns></returns>
         public BaseTechObject AddBaseObject(string name, string eplanName,
-            int s88Level, string basicName, string bindingName, bool isPID,
-            bool useGroups)
+            int s88Level, string basicName, string bindingName, bool isPID)
         {
             var obj = new BaseTechObject();
             obj.Name = name;
@@ -147,7 +145,6 @@ namespace TechObject
             obj.BasicName = basicName;
             obj.BindingName = bindingName;
             obj.IsPID = isPID;
-            obj.UseGroups = useGroups;
 
             baseTechObjects.Add(obj);
             return obj;

@@ -50,7 +50,9 @@ init = function()
             end
 
             if value.tank_groups ~= nil then
-                obj:AddGroupTanks(value.tank_groups)
+                for luaName, value in pairs(value.tank_groups) do
+                    obj:AddGroupTanks(luaName, value)
+                end
             end
 
             for fields, value in ipairs( value.modes ) do

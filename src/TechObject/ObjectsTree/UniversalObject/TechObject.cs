@@ -122,13 +122,32 @@ namespace TechObject
                 prefix + "name_BC    = \'" + NameBC + "\',\n" +
                 prefix + "cooper_param_number = " + CooperParamNumber + ",\n" +
                 prefix + "base_tech_object = \'" + baseObjectName + "\',\n" +
-                prefix + "attached_objects = \'" + AttachedObjects.Value + "\',\n";
+                prefix + AttachedObjects.WorkStrategy.LuaName + " = \'" + 
+                AttachedObjects.Value + "\',\n";
 
             if (baseTechObject != null &&
-                baseTechObject.ObjectGroup.Value != string.Empty)
+                baseTechObject.TankGroupsList.Count > 0)
             {
-                res += prefix + "tank_groups = \'" + 
-                    BaseTechObject.ObjectGroup.Value + "\',\n";
+                string tankGroups = string.Empty;
+                foreach(var tankGroup in baseTechObject.TankGroupsList)
+                {
+                    if (tankGroup.Value == string.Empty)
+                    {
+                        continue;
+                    }
+
+                    tankGroups += prefix + prefix +
+                        tankGroup.WorkStrategy.LuaName + " = \'" +
+                        tankGroup.Value + "\',\n";
+                }
+
+                if (tankGroups != string.Empty)
+                {
+                    res += prefix + "tank_groups =\n";
+                    res += prefix + "\t{\n";
+                    res += tankGroups;
+                    res += prefix + "\t},\n";
+                }
             }
 
             res += paramsManager.SaveAsLuaTable(prefix);
@@ -325,7 +344,7 @@ namespace TechObject
 
             if (baseTechObject?.UseGroups == true)
             {
-                itemsList.Add(baseTechObject.ObjectGroup);
+                itemsList.AddRange(baseTechObject.TankGroupsList);
             }
 
             items = itemsList.ToArray();
@@ -366,12 +385,19 @@ namespace TechObject
         /// <summary>
         /// Добавить объекты группы танков
         /// </summary>
-        /// <param name="value"></param>
-        public void AddGroupTanks(string value)
+        /// <param name="luaName">Lua-имя группы</param>
+        /// <param name="value">Значение</param>
+        public void AddGroupTanks(string luaName, string value)
         {
             if (baseTechObject?.UseGroups == true)
             {
-                baseTechObject.ObjectGroup.SetValue(value);
+                var foundGroup = baseTechObject.TankGroupsList
+                    .Where(x => x.WorkStrategy.LuaName == luaName)
+                    .FirstOrDefault();
+                if (foundGroup != null)
+                {
+                    foundGroup.SetValue(value);
+                }
             }
         }
 

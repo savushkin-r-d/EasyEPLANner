@@ -24,8 +24,7 @@ namespace TechObject
             AggregateParameters = new List<BaseParameter>();
             BindingName = string.Empty;
 
-            objectGroup = new AttachedObjects(string.Empty, owner, 
-                new AttachedObjectStrategy.AttachedTanksStrategy());
+            tankGroups = new List<AttachedObjects>();
         }
 
         /// <summary>
@@ -110,6 +109,19 @@ namespace TechObject
             BaseOperations.Add(operation);
 
             return operation;
+        }
+
+        /// <summary>
+        /// Добавить группу танков в объект
+        /// </summary>
+        /// <param name="luaName">Lua-имя группы</param>
+        /// <param name="name">Отображаемое имя группы</param>
+        public void AddTankGroup(string luaName, string name)
+        {
+            var newGroup = new AttachedObjects(string.Empty, null, 
+                new AttachedObjectStrategy.AttachedTanksStrategy(name,
+                luaName));
+            tankGroups.Add(newGroup);
         }
 
         /// <summary>
@@ -269,7 +281,10 @@ namespace TechObject
         {
             var cloned = Clone();
             cloned.Owner = techObject;
-            cloned.ObjectGroup.Owner = techObject;
+            foreach(var clonedTankGroup in cloned.tankGroups)
+            {
+                clonedTankGroup.Owner = techObject;
+            }
             return cloned;
         }
 
@@ -316,10 +331,17 @@ namespace TechObject
             cloned.S88Level = S88Level;
             cloned.BindingName = BindingName;
             cloned.IsPID = IsPID;
-            cloned.UseGroups = UseGroups;
 
-            cloned.objectGroup = new AttachedObjects(objectGroup.Value, Owner,
-                objectGroup.WorkStrategy);
+            cloned.tankGroups = new List<AttachedObjects>();
+            foreach(var tankGroup in tankGroups)
+            {
+                var clonedStrategy = new AttachedObjectStrategy
+                    .AttachedTanksStrategy(tankGroup.WorkStrategy.Name,
+                    tankGroup.WorkStrategy.LuaName);
+                var clonedGroup = new AttachedObjects(tankGroup.Value,
+                    tankGroup.Owner, clonedStrategy);
+                cloned.tankGroups.Add(clonedGroup);
+            }
 
             return cloned;
         }
@@ -399,14 +421,20 @@ namespace TechObject
         /// <summary>
         /// Использовать ли группы объектов
         /// </summary>
-        public bool UseGroups { get; set; } = default;
+        public bool UseGroups
+        {
+            get
+            {
+                return TankGroupsList.Count > 0;
+            }
+        }
 
         /// <summary>
         /// Группа объектов
         /// </summary>
-        public AttachedObjects ObjectGroup 
+        public List<AttachedObjects> TankGroupsList 
         {
-            get => objectGroup; 
+            get => tankGroups; 
         }
 
         #region Сохранение в prg.lua
@@ -438,15 +466,23 @@ namespace TechObject
                     prefix + "}\n";
             }
 
-            if (UseGroups && ObjectGroup.Value != string.Empty)
+            if (UseGroups && tankGroups.Count > 0)
             {
-                string objectNames = ObjectGroup.GetAttachedObjectsName()
-                    .Select(x => $"{prefix}prg.{x},\n")
-                    .Aggregate((x, y) => x + y);
-                res += $"{objName}.tanks =\n";
-                res += $"{prefix}{{\n";
-                res += $"{objectNames}";
-                res += $"{prefix}}}\n";
+                foreach(var tankGroup in tankGroups)
+                {
+                    if (tankGroup.Value == string.Empty)
+                    {
+                        continue;
+                    } 
+
+                    string objectNames = tankGroup.GetAttachedObjectsName()
+                        .Select(x => $"{prefix}prg.{x},\n")
+                        .Aggregate((x, y) => x + y);
+                    res += $"{objName}.{tankGroup.WorkStrategy.LuaName} =\n";
+                    res += $"{prefix}{{\n";
+                    res += $"{objectNames}";
+                    res += $"{prefix}}}\n";
+                }
             }
 
             return res;
@@ -849,6 +885,6 @@ namespace TechObject
         private List<BaseParameter> equipment;
         private List<BaseParameter> aggregateProperties;
         private MainAggregateParameter aggregateMainParameter;
-        private AttachedObjects objectGroup;
+        private List<AttachedObjects> tankGroups;
     }
 }

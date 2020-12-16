@@ -12,7 +12,7 @@
 -- в аппарат, при привязке агрегата к аппарату).
 -- 7. bindingName - имя агрегата, используемое при привязке его к аппарату (для аппаратов не обязательно).
 -- 8. isPID - является ли объект ПИД-регулятором.
--- 9. useGroups - используются ли группы.
+-- 9. tankGroups - группы танков.
 
 -- Базовые операции (baseOperations) (название таблицы - это Lua-имя операции, пишется в верхнем регистре):
 -- 1. name - русскоязычное название операции.
@@ -58,6 +58,11 @@
 -- пишется в верхнем регистре):
 -- 1. name - русскоязычное имя параметра.
 -- 2. defaultValue - значение по-умолчанию (опционально).
+
+-- Группы танков (tankGroups) - группы танков (в основном для линий). Внутри этой переменной
+-- указываются группы танков, которые нужны в объекте.
+-- Название таблицы - Lua-имя группы, пишется в любом регистре:
+-- 1. name - русскоязычное название группы.
 
 -- Оборудование - параметр оборудования.
 -- Параметры объекта, как агрегата - по аналогии с активными и булевскими параметрами и
@@ -305,7 +310,10 @@ return
             },
             aggregateParameters = { },
             bindingName = "line",
-            useGroups = true
+            tankGroups =
+            {
+                tanks = { name = "Группа танков" },
+            }
         },
         line_in = {
             name = "Линия приемки",
@@ -400,7 +408,10 @@ return
             },
             aggregateParameters = { },
             bindingName = "line_in",
-            useGroups = true
+            tankGroups =
+            {
+                tanks = { name = "Группа танков" },
+            }
         },
         line_out = {
             name = "Линия выдачи",
@@ -517,7 +528,10 @@ return
             },
             aggregateParameters = { },
             bindingName = "line_out",
-            useGroups = true,
+            tankGroups =
+            {
+                tanks = { name = "Группа танков" },
+            }
         },
         pasteurizator = {
             name = "Пастеризатор",
@@ -1303,6 +1317,17 @@ return
             s88Level = 3, -- Не относится к s88Level.
             basicName = "user_object",
             bindingName = "user_object",
+        },
+        line_perekach = {
+            name = "Линия перекачки",
+            s88Level = 2,
+            basicName = "line_perekach",
+            bindingName = "line_perekach",
+            tankGroups =
+            {
+                src_tanks = { name = "Танки источники" },
+                dst_tanks = { name = "Танки приемники" },
+            }
         }
     }
 end
