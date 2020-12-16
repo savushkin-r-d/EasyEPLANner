@@ -1032,12 +1032,12 @@ return
                     {
                         active =
                         {
-                            COOLING_TEMPERATURE =
+                            COOL_TEMPERATURE =
                             {
                                 name = "Температура охлаждения",
                                 displayObjects = { "parameters" },
                             },
-                            COOLING_TEMPERATURE_DELTA =
+                            COOL_TEMPERATURE_DELTA =
                             {
                                 name = "Дельта температуры охлаждения",
                                 displayObjects = { "parameters" },
@@ -1067,6 +1067,19 @@ return
             },
             aggregateParameters =
             {
+                active =
+                {
+                    COOLING_TEMPERATURE =
+                    {
+                        name = "Температура охлаждения",
+                        displayObjects = { "parameters" },
+                    },
+                    COOLING_TEMPERATURE_DELTA =
+                    {
+                        name = "Дельта температуры охлаждения",
+                        displayObjects = { "parameters" },
+                    },
+                },
                 main =
                 {
                     NEED_COOLING = { name = "Использовать узел охлаждения ПИД", defaultValue = "false" },
