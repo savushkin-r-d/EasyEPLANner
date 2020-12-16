@@ -1028,7 +1028,22 @@ return
             {
                 COOLING = {
                     name = "Охлаждение",
-                    params = { },
+                    params =
+                    {
+                        active =
+                        {
+                            COOLING_TEMPERATURE =
+                            {
+                                name = "Температура охлаждения",
+                                displayObjects = { "parameters" },
+                            },
+                            COOLING_TEMPERATURE_DELTA =
+                            {
+                                name = "Дельта температуры охлаждения",
+                                displayObjects = { "parameters" },
+                            },
+                        },
+                    },
                     steps =
                     {
                         WORKING = {
