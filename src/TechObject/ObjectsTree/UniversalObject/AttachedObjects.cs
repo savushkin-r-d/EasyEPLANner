@@ -414,7 +414,12 @@ namespace TechObject
             /// <summary>
             /// Название поля
             /// </summary>
-            string Name { get; }
+            string Name { get; set; }
+
+            /// <summary>
+            /// Lua-имя стратегии
+            /// </summary>
+            string LuaName { get; set; }
 
             /// <summary>
             /// Получить корректные номера технологических объектов из
@@ -436,16 +441,15 @@ namespace TechObject
         public class AttachedAggregatesStrategy : BaseStrategy,
             IAttachedObjectsStrategy
         {
-            public AttachedAggregatesStrategy() : base() { }
+            public AttachedAggregatesStrategy() : base() 
+            {
+                Name = "Привязанные агрегаты";
+                LuaName = "attached_objects";
+            }
 
             public List<int> GetValidTechObjNums(string value)
             {
                 return GetValidTechObjNums(value, allowedObjects);
-            }
-
-            public string Name
-            {
-                get => "Привязанные агрегаты";
             }
 
             public bool UseInitialization
@@ -469,16 +473,16 @@ namespace TechObject
         public class AttachedTanksStrategy : BaseStrategy,
             IAttachedObjectsStrategy
         {
-            public AttachedTanksStrategy() : base() { }
+            public AttachedTanksStrategy(string name = "", 
+                string luaName = "") : base()
+            {
+                Name = name == string.Empty ? "Группа танков" : name;
+                LuaName = luaName == string.Empty ? "tanks" : luaName;
+            }
 
             public List<int> GetValidTechObjNums(string value)
             {
                 return GetValidTechObjNums(value, allowedObjects);
-            }
-
-            public string Name
-            {
-                get => "Группа танков";
             }
 
             public bool UseInitialization
@@ -540,6 +544,16 @@ namespace TechObject
                 numbers = numbers.Distinct().ToList();
                 return numbers;
             }
+
+            /// <summary>
+            /// Отображаемое имя группы
+            /// </summary>
+            public string Name { get; set; }
+
+            /// <summary>
+            /// Lua-имя группы
+            /// </summary>
+            public string LuaName { get; set; }
         }
     }
 }

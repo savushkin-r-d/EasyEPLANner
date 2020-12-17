@@ -12,11 +12,14 @@ init_base_objects = function()
         local basicName = value.basicName or ""
         local bindingName = value.bindingName or ""
         local isPid = value.isPID or false
-        local useGroups = value.useGroups or false
 
         -- Добавить базовый объект
         local baseObject = AddBaseObject(name, eplanName, s88Level,
-            basicName, bindingName, isPid, useGroups)
+            basicName, bindingName, isPid)
+
+        -- Добавить группы танков
+        local tankGroups = value.tankGroups or { }
+        init_tankGroups(baseObject, tankGroups)
 
         -- Добавить базовые операции (параметры, шаги)
         local baseOperations = value.baseOperations or { }
@@ -140,5 +143,14 @@ init_operation_steps = function(operation, steps)
 
         -- Добавить базовый шаг для операции
         operation:AddStep(luaName, name, defaultPosition)
+    end
+end
+
+-- Инициализация групп танков базового объекта
+init_tankGroups = function(object, tankGroups)
+    for luaName, value in pairs(tankGroups) do
+        local name = value.name or ""
+        
+        object:AddTankGroup(luaName, name)
     end
 end
