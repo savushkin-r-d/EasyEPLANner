@@ -604,12 +604,12 @@ return
                     {
                         active =
                         {
-                            PUMPING_SOURCE =
+                            SRC =
                             {
                                 name = "Параметр источника",
                                 displayObjects = { "parameters" },
                             },
-                            PUMPING_DESTINATION =
+                            DST =
                             {
                                 name = "Параметр приемника",
                                 displayObjects = { "parameters" },
