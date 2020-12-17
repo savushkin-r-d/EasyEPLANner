@@ -1318,16 +1318,5 @@ return
             basicName = "user_object",
             bindingName = "user_object",
         },
-        line_perekach = {
-            name = "Линия перекачки",
-            s88Level = 2,
-            basicName = "line_perekach",
-            bindingName = "line_perekach",
-            tankGroups =
-            {
-                src_tanks = { name = "Танки источники" },
-                dst_tanks = { name = "Танки приемники" },
-            }
-        }
     }
 end
