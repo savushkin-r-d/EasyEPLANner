@@ -80,6 +80,7 @@ namespace EasyEPlanner
 
             System.Threading.Thread.Sleep(1);
             deviceIsShown = false;
+            isLoaded = false;
         }
 
         #region Dialog window hook
@@ -132,6 +133,7 @@ namespace EasyEPlanner
                         devicesTreeViewAdv.Hide();
                         System.Threading.Thread.Sleep(1);
                         deviceIsShown = false;
+                        isLoaded = false;
                         break;
 
                     case (int)PI.WM.GETTEXT:
@@ -167,8 +169,21 @@ namespace EasyEPlanner
         #endregion
 
         #region ShowDialog
-        public static IntPtr wndDevVisibilePtr; // Дескриптор окна устройств
-        public static bool deviceIsShown = false; // Показано ли окно.
+
+        /// <summary>
+        /// Дескриптор окна устройств
+        /// </summary>
+        public static IntPtr wndDevVisibilePtr;
+
+        /// <summary>
+        /// Показано ли окно
+        /// </summary>
+        public static bool deviceIsShown = false;
+
+        /// <summary>
+        /// Загружено ли окно
+        /// </summary>
+        public static bool isLoaded = false;
 
         /// <summary>
         /// Показать окно в формой
@@ -182,7 +197,7 @@ namespace EasyEPlanner
             const int wndWmCommand = 35357;
             string windowName = "Основные данные изделия";
 
-            if (deviceIsShown == true)
+            if (isLoaded == true)
             {
                 StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent, 
                     wndDevVisibilePtr, wndWmCommand);
@@ -195,23 +210,28 @@ namespace EasyEPlanner
             {
                 StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent,
                     wndDevVisibilePtr, wndWmCommand);
-                StaticHelper.GUIHelper.ChangeWindowMainPanels(ref dialogHandle,
-                    ref panelPtr);
+                
+                if (isLoaded == false)
+                {
+                    StaticHelper.GUIHelper.ChangeWindowMainPanels(
+                        ref dialogHandle, ref panelPtr);
 
-                Controls.Clear();
+                    Controls.Clear();
 
-                // Переносим на найденное окно свои элементы (SetParent) и
-                // подгоняем их размеры и позицию.
-                PI.SetParent(devicesTreeViewAdv.Handle, dialogHandle);
-                PI.SetParent(toolStrip.Handle, dialogHandle);
-                ChangeUISize();
+                    // Переносим на найденное окно свои элементы (SetParent) и
+                    // подгоняем их размеры и позицию.
+                    PI.SetParent(devicesTreeViewAdv.Handle, dialogHandle);
+                    PI.SetParent(toolStrip.Handle, dialogHandle);
+                    ChangeUISize();
 
-                // Устанавливаем свой хук для найденного окна
-                // (для изменения размеров своих элементов, сохранения
-                // изменений при закрытии и отключения хука).
-                SetUpHook();
+                    // Устанавливаем свой хук для найденного окна
+                    // (для изменения размеров своих элементов, сохранения
+                    // изменений при закрытии и отключения хука).
+                    SetUpHook();
 
-                deviceIsShown = true;
+                    deviceIsShown = true;
+                    isLoaded = true;
+                }           
             }
         }
 

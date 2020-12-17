@@ -50,6 +50,7 @@ namespace EasyEPlanner
 
             System.Threading.Thread.Sleep(1);
             modeIsShown = false;
+            isLoaded = false;
         }
 
         public static ModeFrm GetInstance()
@@ -154,6 +155,7 @@ namespace EasyEPlanner
                         modesTreeViewAdv.Hide();
                         System.Threading.Thread.Sleep(1);
                         modeIsShown = false;
+                        isLoaded = false;
                         break;
 
                     case (int)PI.WM.GETTEXT:
@@ -198,6 +200,11 @@ namespace EasyEPlanner
         public static bool modeIsShown = false;
 
         /// <summary>
+        /// Загружена ли форма
+        /// </summary>
+        public static bool isLoaded = false;
+
+        /// <summary>
         /// Показать диалог (окно с редактором).
         /// </summary>
 
@@ -210,7 +217,7 @@ namespace EasyEPlanner
             const int wndWmCommand = 35093;
             string windowName = "Штекеры";
 
-            if (modeIsShown == true)
+            if (isLoaded == true)
             {
                 StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent,
                     wndModeVisibilePtr, wndWmCommand);
@@ -223,23 +230,27 @@ namespace EasyEPlanner
             {
                 StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent,
                     wndModeVisibilePtr, wndWmCommand);
-                StaticHelper.GUIHelper.ChangeWindowMainPanels(ref dialogHandle,
-                   ref panelPtr);
+                if (isLoaded == false)
+                {
+                    StaticHelper.GUIHelper.ChangeWindowMainPanels(
+                        ref dialogHandle, ref panelPtr);
 
-                Controls.Clear();
+                    Controls.Clear();
 
-                // Переносим на найденное окно свои элементы (SetParent) и
-                // подгоняем их размеры и позицию.
-                PI.SetParent(modesTreeViewAdv.Handle, dialogHandle);
-                PI.SetParent(toolStrip.Handle, dialogHandle);
-                ChangeUISize();
+                    // Переносим на найденное окно свои элементы (SetParent) и
+                    // подгоняем их размеры и позицию.
+                    PI.SetParent(modesTreeViewAdv.Handle, dialogHandle);
+                    PI.SetParent(toolStrip.Handle, dialogHandle);
+                    ChangeUISize();
 
-                // Устанавливаем свой хук для найденного окна
-                // (для изменения размеров своих элементов, сохранения
-                // изменений при закрытии и отключения хука).
-                SetUpHook();
+                    // Устанавливаем свой хук для найденного окна
+                    // (для изменения размеров своих элементов, сохранения
+                    // изменений при закрытии и отключения хука).
+                    SetUpHook();
 
-                modeIsShown = true;
+                    modeIsShown = true;
+                    isLoaded = true;
+                }           
             }
         }
 
