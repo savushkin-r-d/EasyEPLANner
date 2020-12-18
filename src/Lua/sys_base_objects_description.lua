@@ -354,17 +354,17 @@ return
                 },
                 FILL = {
                     name = "Наполнение",
-                    params = 
+                    params =
                     {
                         active =
                         {
                             CONCENTRATION =
-                            { 
-                                name = "Концентрация продукта", 
+                            {
+                                name = "Концентрация продукта",
                                 displayObjects = { "parameters" },
                             },
                             DELTA_CONCENTRATION =
-                            { 
+                            {
                                 name = "Дельта концентрации продукта",
                                 displayObjects = { "parameters" },
                             },
@@ -437,10 +437,10 @@ return
                         },
                         bool =
                         {
-                            IGNORE_WATER_FLAG = 
-                            { 
+                            IGNORE_WATER_FLAG =
+                            {
                                 name = "Игнорировать наличие продукта",
-                                defaultValue = "false" 
+                                defaultValue = "false"
                             },
                         },
                     },
@@ -455,7 +455,7 @@ return
                 },
                 OUT = {
                     name = "Выдача",
-                    params = 
+                    params =
                     {
                         bool =
                         {
@@ -532,6 +532,104 @@ return
             {
                 tanks = { name = "Группа танков" },
             }
+        },
+        line_pumping = {
+            name = "Линия перекачки",
+            s88Level = 2,
+            baseOperations =
+            {
+                WASHING_CIP =
+                {
+                    name = "Мойка",
+                    steps =
+                    {
+                        DRAINAGE = {
+                            name = "Дренаж",
+                            defaultPosition = 6
+                        },
+                    },
+                    params =
+                    {
+                        active =
+                        {
+                            CIP_WASH_END =
+                            {
+                                name = "Мойка завершена",
+                                displayObjects = { "signals" },
+                            },
+                            CIP_WASH_REQUEST =
+                            {
+                                name = "Автоматическое включение мойки",
+                                displayObjects = { "signals" },
+                            },
+                        },
+                        bool =
+                        {
+                            IGNORE_WATER_FLAG =
+                            {
+                                name = "Игнорировать наличие продукта",
+                                defaultValue = "false"
+                            },
+                        },
+                    },
+                    defaultPosition = 1,
+                },
+                PUMPING =
+                {
+                    name = "Перекачивание",
+                    steps =
+                    {
+                        WAITING = {
+                            name = "Ожидание",
+                            defaultPosition = 1,
+                        },
+                        OUT_WATER = {
+                            name = "Проталкивание",
+                            defaultPosition = 2,
+                        },
+                        OUT_TANK = {
+                            name = "Из источника",
+                            defaultPosition = 3,
+                        },
+                        IN_DRAINAGE = {
+                            name = "В дренаж",
+                            defaultPosition = 4,
+                        },
+                        IN_TANK = {
+                            name = "В приеник",
+                            defaultPosition = 5,
+                        },
+                    },
+                    params =
+                    {
+                        active =
+                        {
+                            SRC =
+                            {
+                                name = "Параметр источника",
+                                displayObjects = { "parameters" },
+                            },
+                            DST =
+                            {
+                                name = "Параметр приемника",
+                                displayObjects = { "parameters" },
+                            },
+                        },
+                    },
+                    defaultPosition = 2,
+                },
+            },
+            basicName = "line",
+            equipment =
+            {
+                product_CTR = { name = "Счетчик", defaultValue = "FQT1" },
+            },
+            bindingName = "line_pumping",
+            tankGroups =
+            {
+                src_tanks = { name = "Источники" },
+                dst_tanks = { name = "Приемники" },
+            },
         },
         pasteurizator = {
             name = "Пастеризатор",
@@ -764,7 +862,7 @@ return
                 },
                 MIXING_AFTER_SOURING = {
                     name = "Перемешивание после сквашивания",
-                    params = 
+                    params =
                     {
                         active =
                         {
