@@ -1233,6 +1233,59 @@ return
                             },
                         }
                     },
+                },
+                MIXING_REVOL = {
+                    name = "Перемешивание по оборотам",
+                    steps =
+                    {
+                        INIT = {
+                            name = "Определение положения",
+                            defaultPosition = 1,
+                        },
+                        FROM_SENSOR = {
+                            name = "Соскальзывание с датчика верхнего положения",
+                            defaultPosition = 2,
+                        },
+                        TO_SENSOR = {
+                            name = "Движение до верхнего положения",
+                            defaultPosition = 3,
+                        },
+                    },
+                    params = 
+                    {   active =
+                        {
+                            DIRECTION =
+                            {
+                                name = "Направление вращения (влево/вправо)",
+                                displayObjects = { "parameters" },
+                            },
+                            MIX_SPEED_RPM =
+                            {
+                                name = "Заданная скорость (об/мин)",
+                                displayObjects = { "parameters" },
+                            },
+                            MAX_STEP_TIME =
+                            {
+                                name = "Максимальное время работы мешалки",
+                                displayObjects = { "parameters" },
+                            },
+                            SET_CNT =
+                            {
+                                name = "Задано оборотов",
+                                displayObjects = { "parameters" },
+                            },
+                            DONE_CNT =
+                            {
+                                name = "Сделано оборотов",
+                                displayObjects = { "parameters" },
+                            },
+                            REVOLS_100 =
+                            {
+                                name = "Об/мин при максимальной скорости (100%)",
+                                displayObjects = { "parameters" },
+                            },
+                        }
+                    },
                 }
             },
             basicName = "mix_node",
@@ -1243,6 +1296,9 @@ return
                 hatch = { name = "Датчик крышки люка", defaultValue = "GS1" },
                 hatch2 = { name = "Датчик крышки люка 2" },
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
+                high_mix_lvl = { name = "Датчик верхнего положения мешалки" },
+                left_mix_lvl = { name = "Датчик левого положения мешалки" },
+                right_mix_lvl = { name = "Датчик правого положения мешалки" },
             },
             aggregateParameters =
             {
