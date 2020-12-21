@@ -1215,6 +1215,25 @@ return
                 MIXING_RIGHT = {
                     name = "Перемешивание вправо",
                 },
+                POSITION_MIX = {
+                    name = "Позиционирование мешалки",
+                    params =
+                    {
+                        active =
+                        {
+                            MAX_TIME =
+                            {
+                                name = "Максимальное время позиционирования (мин)",
+                                displayObjects = { "parameters" },
+                            },
+                            MIX_SPEED_RPM =
+                            {
+                                name = "Скорость позиционирования (об/мин)",
+                                displayObjects = { "parameters" },
+                            },
+                        }
+                    },
+                }
             },
             basicName = "mix_node",
             equipment =
