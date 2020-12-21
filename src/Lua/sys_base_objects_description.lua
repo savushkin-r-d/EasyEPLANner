@@ -1223,12 +1223,12 @@ return
                         {
                             MAX_TIME =
                             {
-                                name = "Максимальное время позиционирования мешалки",
+                                name = "Максимальное время позиционирования",
                                 displayObjects = { "parameters" },
                             },
-                            MIX_SPEED =
+                            MIX_SPEED_RPM =
                             {
-                                name = "Скорость позиционирования мешалки",
+                                name = "Скорость позиционирования (об/мин)",
                                 displayObjects = { "parameters" },
                             },
                         }
