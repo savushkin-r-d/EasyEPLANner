@@ -1223,7 +1223,7 @@ return
                         {
                             MAX_TIME =
                             {
-                                name = "Максимальное время позиционирования",
+                                name = "Максимальное время позиционирования (мин)",
                                 displayObjects = { "parameters" },
                             },
                             MIX_SPEED_RPM =
