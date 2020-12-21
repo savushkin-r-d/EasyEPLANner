@@ -1240,15 +1240,12 @@ return
                     {
                         INIT = {
                             name = "Определение положения",
-                            defaultPosition = 1,
                         },
                         FROM_SENSOR = {
                             name = "Соскальзывание с датчика верхнего положения",
-                            defaultPosition = 2,
                         },
                         TO_SENSOR = {
                             name = "Движение до верхнего положения",
-                            defaultPosition = 3,
                         },
                     },
                     params = 
