@@ -1289,7 +1289,32 @@ return
                             },
                         }
                     },
-                }
+                },
+                MIXING_AUTO = {
+                    name = "Перемешивание авто",
+                    steps =
+                    {
+                        INIT = { name = "Определение положения" },
+                        FROM_LEFT_SENSOR = { name = "Движение от левого положения" },
+                        TO_RIGHT_SENSOR = { name = "Движение к правому положению" },
+                        FROM_RIGHT_SENSOR = { name = "Движение от правого положения" },
+                        TO_LEFT_SENSOR = { name = "Движение к левому положению" },
+                    },
+                    params =
+                    {
+                        active =
+                        {
+                            MIX_SPEED_RPM = {
+                                name = "Заданная скорость (об/мин)",
+                                displayObjects = { "parameters" }
+                            },
+                            MAX_TIME = {
+                                name = "Максимальное время перемешивания (мин)",
+                                displayObjects = { "parameters" },
+                            },
+                        },
+                    },
+                },
             },
             basicName = "mix_node",
             equipment =
