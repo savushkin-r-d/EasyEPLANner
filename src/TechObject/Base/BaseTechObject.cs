@@ -354,7 +354,8 @@ namespace TechObject
             get
             {
                 bool isAttachable = UseGroups ||
-                    S88Level == (int)BaseTechObjectManager.ObjectType.Unit;
+                    S88Level == (int)BaseTechObjectManager.ObjectType.Unit ||
+                    S88Level == (int)BaseTechObjectManager.ObjectType.Aggregate;
                 return isAttachable;
             }
         }
