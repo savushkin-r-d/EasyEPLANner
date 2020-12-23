@@ -25,8 +25,11 @@ namespace TechObject
         public override bool SetNewValue(string newValue)
         {
             string oldValue = Value;
-            List<int> newNumbers = strategy.GetValidTechObjNums(newValue);
-            
+            var thisObjNum = TechObjectManager.GetInstance()
+                .GetTechObjectN(Owner);
+            List<int> newNumbers = strategy.GetValidTechObjNums(newValue,
+                thisObjNum);
+
             newValue = string.Join(" ", newNumbers);
             base.SetNewValue(newValue);
 
@@ -38,7 +41,7 @@ namespace TechObject
                     .Select(x => TechObjectManager.GetInstance().GetTObject(x))
                     .ToList();
                 List<TechObject> oldObjects = strategy
-                    .GetValidTechObjNums(oldValue)
+                    .GetValidTechObjNums(oldValue, thisObjNum)
                     .Select(x => TechObjectManager.GetInstance().GetTObject(x))
                     .ToList();
                 replacedObjects = FindReplacedObjects(oldObjects,
@@ -246,7 +249,8 @@ namespace TechObject
         public string Check()
         {
             var res = "";
-            List<int> numbers = strategy.GetValidTechObjNums(Value);
+            var objNum = TechObjectManager.GetInstance().GetTechObjectN(Owner);
+            List<int> numbers = strategy.GetValidTechObjNums(Value, objNum);
             string checkedValue = string.Join(" ", numbers);
             if (checkedValue != Value)
             {
@@ -426,8 +430,9 @@ namespace TechObject
             /// входной строки
             /// </summary>
             /// <param name="value">Входная строка</param>
+            /// <param name="objNum">Номер редактируемого объекта</param>
             /// <returns></returns>
-            List<int> GetValidTechObjNums(string value);
+            List<int> GetValidTechObjNums(string value, int objNum);
 
             /// <summary>
             /// Нужно ли инициализировать привязанные объекты
@@ -447,9 +452,9 @@ namespace TechObject
                 LuaName = "attached_objects";
             }
 
-            public List<int> GetValidTechObjNums(string value)
+            public List<int> GetValidTechObjNums(string value, int objNum)
             {
-                return GetValidTechObjNums(value, allowedObjects);
+                return GetValidTechObjNums(value, objNum, allowedObjects);
             }
 
             public bool UseInitialization
@@ -480,9 +485,9 @@ namespace TechObject
                 LuaName = luaName == string.Empty ? "tanks" : luaName;
             }
 
-            public List<int> GetValidTechObjNums(string value)
+            public List<int> GetValidTechObjNums(string value, int objNum)
             {
-                return GetValidTechObjNums(value, allowedObjects);
+                return GetValidTechObjNums(value, objNum, allowedObjects);
             }
 
             public bool UseInitialization
@@ -513,9 +518,11 @@ namespace TechObject
             /// входной строки
             /// </summary>
             /// <param name="value">Входная строка</param>
+            /// <param name="selectedObjNum">Номер редактируемого объекта
             /// <param name="allowedObjects">Разрешенные объекты по S88</param>
             /// <returns></returns>
             protected List<int> GetValidTechObjNums(string value,
+                int selectedObjNum,
                 List<BaseTechObjectManager.ObjectType> allowedObjects)
             {
                 var numbers = new List<int>();
@@ -526,13 +533,21 @@ namespace TechObject
                 foreach (var numAsString in numbersAsStringArray)
                 {
                     int.TryParse(numAsString, out int number);
-                    if (number == 0)
+                    if (number <= 0)
                     {
                         continue;
                     }
 
                     TechObject obj = TechObjectManager.GetInstance()
                         .GetTObject(number);
+                    var objValues = obj?.AttachedObjects.Value.Split(' ')
+                        .Where(x => int.TryParse(x, out _))
+                        .Select(x => int.Parse(x)).ToList();
+                    if (objValues?.Contains(selectedObjNum) == true)
+                    {
+                        continue;
+                    }
+
                     bool correctBaseObject = allowedObjectsNums
                         .Contains(obj.BaseTechObject.S88Level);
                     if (correctBaseObject)
