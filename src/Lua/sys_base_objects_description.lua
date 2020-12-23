@@ -1282,12 +1282,7 @@ return
                                 name = "Сделано оборотов",
                                 displayObjects = { "parameters" },
                             },
-                            REVOLS_100 =
-                            {
-                                name = "Об/мин при максимальной скорости (100%)",
-                                displayObjects = { "parameters" },
-                            },
-                        }
+                        },
                     },
                 },
                 MIXING_AUTO = {
