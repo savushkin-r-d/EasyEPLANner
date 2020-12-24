@@ -384,14 +384,14 @@ namespace EasyEPlanner
         public void SaveAsCDBX(string projectName, bool combineTag = false,
             bool useNewNames = false, bool rewrite = false)
         {
-            System.Threading.Thread t = new System.Threading.Thread(
-                    new System.Threading.ParameterizedThreadStart(
-                        SaveAsXMLThread));
+            Thread t = new Thread(
+                new ParameterizedThreadStart(SaveAsXMLThread));
 
             var dataForSave = new DataForSaveAsXML(projectName, rewrite,
                 combineTag, useNewNames);
+            t.CurrentCulture = StaticHelper.CommonConst
+                .CultureWithDotInsteadComma;
             t.Start(dataForSave);
-
         }
 
         /// <summary>

@@ -14,9 +14,9 @@ namespace StaticHelper
             CultureWithDotInsteadComma = (CultureInfo)Thread.CurrentThread
                .CurrentCulture.Clone();
             CultureWithDotInsteadComma.NumberFormat
-                .NumberDecimalSeparator = Comma;
+                .NumberDecimalSeparator = Dot;
             CultureWithDotInsteadComma.NumberFormat
-                .NumberGroupSeparator = Comma;
+                .NumberGroupSeparator = Dot;
         }
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace StaticHelper
         /// <summary>
         /// Константа точки для настройки культуры.
         /// </summary>
-        private const string Comma = ".";
+        private const string Dot = ".";
 
         /// <summary>
         /// Evaluator для замены заглавных русских букв на английские.

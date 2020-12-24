@@ -562,12 +562,12 @@ namespace Device
                             if (paramsMatch.Groups["p_value"].Value.EndsWith("."))
                             {
                                 string str = paramsMatch.Groups["p_value"].Value.Remove(paramsMatch.Groups["p_value"].Value.Length - 1);
-                                res = dev.SetParameter(paramsMatch.Groups["p_name"].Value, Convert.ToDouble(str));
+                                res = dev.SetParameter(paramsMatch.Groups["p_name"].Value, double.Parse(str));
                             }
                             else
                             {
                                 res = dev.SetParameter(paramsMatch.Groups["p_name"].Value,
-                                   Convert.ToDouble(paramsMatch.Groups["p_value"].Value));
+                                   double.Parse(paramsMatch.Groups["p_value"].Value));
                             }
                             if (res != "")
                             {
@@ -591,12 +591,12 @@ namespace Device
                             if (paramsMatch.Groups["p_value"].Value.EndsWith("."))
                             {
                                 string str = paramsMatch.Groups["p_value"].Value.Remove(paramsMatch.Groups["p_value"].Value.Length - 1);
-                                res = dev.SetRuntimeParameter(paramsMatch.Groups["p_name"].Value, Convert.ToDouble(str));
+                                res = dev.SetRuntimeParameter(paramsMatch.Groups["p_name"].Value, double.Parse(str));
                             }
                             else
                             {
                                 res = dev.SetRuntimeParameter(paramsMatch.Groups["p_name"].Value,
-                                   Convert.ToDouble(paramsMatch.Groups["p_value"].Value));
+                                   double.Parse(paramsMatch.Groups["p_value"].Value));
                             }
                             if (res != "")
                             {
