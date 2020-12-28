@@ -11,14 +11,8 @@ namespace Tests.IO
         [TestCaseSource(nameof(TestSetTypeSource))]
         public void TestSetGetType(string typeStr, IONode.TYPES expectedType)
         {
-            // Arrange
-            string strStub = string.Empty;
-            const int intStub = 0;
+            var testNode = new IONode(typeStr, IntStub, StrStub, StrStub);
 
-            // Act
-            var testNode = new IONode(typeStr, intStub, strStub, strStub);
-
-            // Assert
             Assert.AreEqual(expectedType, testNode.Type);
         }
 
@@ -78,5 +72,8 @@ namespace Tests.IO
         {
             // TODO: Test FullN getter and setter
         }
+
+        const string StrStub = "";
+        const int IntStub = 0;
     }
 }
