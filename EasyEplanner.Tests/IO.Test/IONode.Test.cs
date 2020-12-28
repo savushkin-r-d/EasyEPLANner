@@ -9,7 +9,7 @@ namespace Tests.IO
     class IONodeTest
     {
         [TestCaseSource(nameof(TestSetTypeSource))]
-        public void TestSetType(string typeStr, IONode.TYPES expectedType)
+        public void TestSetGetType(string typeStr, IONode.TYPES expectedType)
         {
             // Arrange
             string strStub = string.Empty;
@@ -52,6 +52,31 @@ namespace Tests.IO
             testData.Add(new object[] { "Wrong type", emptyType });
 
             return testData.ToArray();
+        }
+
+        public void TestSetGetNodeName()
+        {
+            // TODO: Test name getter and setter
+        }
+
+        public void TestSetGetIP()
+        {
+            // TODO: Test IP getter and setter
+        }
+
+        public void TestSetGetTypeStr()
+        {
+            // TODO: Test typeStr getter and setter
+        }
+
+        public void TestSetGetN()
+        {
+            // TODO: Test N getter and setter
+        }
+
+        public void TestSetGetFullN()
+        {
+            // TODO: Test FullN getter and setter
         }
     }
 }
