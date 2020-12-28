@@ -54,27 +54,27 @@ namespace Tests.IO
             return testData.ToArray();
         }
 
-        public void TestSetGetNodeName()
+        public void TestSetGetNodeName(string expected, string actual)
         {
             // TODO: Test name getter and setter
         }
 
-        public void TestSetGetIP()
+        public void TestSetGetIP(string expected, string actual)
         {
             // TODO: Test IP getter and setter
         }
 
-        public void TestSetGetTypeStr()
+        public void TestSetGetTypeStr(string expected, string actual)
         {
             // TODO: Test typeStr getter and setter
         }
 
-        public void TestSetGetN()
+        public void TestSetGetN(int expected, int actual)
         {
             // TODO: Test N getter and setter
         }
 
-        public void TestSetGetFullN()
+        public void TestSetGetFullN(int expected, int actual)
         {
             // TODO: Test FullN getter and setter
         }
