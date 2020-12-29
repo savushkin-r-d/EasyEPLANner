@@ -98,6 +98,25 @@ namespace Tests.IO
             Assert.AreEqual(expected, testNode.FullN);
         }
 
+        [TestCase(0,0)]
+        [TestCase(4,4)]
+        public void TestSetGetChannelsCount(int expected, int actual)
+        {
+            var testNode = new IONode(StrStub, IntStub, StrStub, StrStub);
+            testNode.AI_count += actual;
+            testNode.AO_count += actual;
+            testNode.DI_count += actual;
+            testNode.DO_count += actual;
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expected, testNode.AI_count);
+                Assert.AreEqual(expected, testNode.AO_count);
+                Assert.AreEqual(expected, testNode.DI_count);
+                Assert.AreEqual(expected, testNode.DO_count);
+            });
+        }
+
         const string StrStub = "";
         const int IntStub = 0;
     }
