@@ -290,10 +290,10 @@ namespace EasyEPlanner
                     IO.IOModule nodeModule = new IO.IOModule(inOffset,
                         outOffset, moduleInfo, moduleNumber, function);
 
-                    node.DI_count += moduleInfo.DI_count;
-                    node.DO_count += moduleInfo.DO_count;
-                    node.AI_count += moduleInfo.AI_count;
-                    node.AO_count += moduleInfo.AO_count;
+                    node.DI_count += moduleInfo.DICount;
+                    node.DO_count += moduleInfo.DOCount;
+                    node.AI_count += moduleInfo.AICount;
+                    node.AO_count += moduleInfo.AOCount;
 
                     bool moduleNotExist = node[shortModuleNumber - 1] == null;
                     if(moduleNotExist)

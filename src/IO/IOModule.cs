@@ -453,11 +453,11 @@ namespace IO
                 switch (Info?.Number)
                 {
                     case (int)IOManager.IOLinkModules.Wago:
-                        return Info.AI_count;
+                        return Info.AICount;
 
                     case (int)IOManager.IOLinkModules.PhoenixContactSmart:
                     case (int)IOManager.IOLinkModules.PhoenixContactStandard:
-                        return Info.AI_count - IOLinkCalculator.MasterDataPXC;
+                        return Info.AICount - IOLinkCalculator.MasterDataPXC;
 
                     default:
                         return 0;

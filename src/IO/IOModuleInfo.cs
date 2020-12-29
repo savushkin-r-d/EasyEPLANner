@@ -63,7 +63,7 @@ namespace IO
             }
 
             isStub = true;
-            return stub;
+            return Stub;
         }
 
         /// <summary>
@@ -102,10 +102,10 @@ namespace IO
             ChannelAddressesIn = channelAddressesIn;
             ChannelAddressesOut = channelAddressesOut;
 
-            DO_count = DOCount;
-            DI_count = DICount;
-            AO_count = AOCount;
-            AI_count = AICount;
+            this.DOCount = DOCount;
+            this.DICount = DICount;
+            this.AOCount = AOCount;
+            this.AICount = AICount;
 
             ModuleColor = color;
         }
@@ -118,8 +118,8 @@ namespace IO
 
             return new IOModuleInfo(Number, Name, Description,
                 AddressSpaceType, TypeName, GroupName, channelClamps,
-                channelAddressesIn, channelAddressesOut, DO_count, DI_count,
-                AO_count, AI_count, ModuleColor);
+                channelAddressesIn, channelAddressesOut, DOCount, DICount,
+                AOCount, AICount, ModuleColor);
         }
 
         /// <summary>
@@ -160,22 +160,22 @@ namespace IO
         /// <summary>
         /// Количество дискретных выходов. 
         /// </summary>
-        public int DO_count { get; set; }
+        public int DOCount { get; set; }
 
         /// <summary>
         /// Количество дискретных входов. 
         /// </summary>
-        public int DI_count { get; set; }
+        public int DICount { get; set; }
 
         /// <summary>
         /// Количество аналоговых выходов. 
         /// </summary>
-        public int AO_count { get; set; }
+        public int AOCount { get; set; }
 
         /// <summary>
         /// Количество аналоговых входов. 
         /// </summary>
-        public int AI_count { get; set; }
+        public int AICount { get; set; }
 
         /// <summary>
         /// Имя типа (дискретный выход, аналоговый выход, ...).
@@ -215,7 +215,7 @@ namespace IO
         /// <summary>
         /// Заглушка, для возврата в случае поиска неописанных модулей. 
         /// </summary>
-        private static IOModuleInfo stub = new IOModuleInfo(0,
+        public static IOModuleInfo Stub = new IOModuleInfo(0,
             "не определен", "", ADDRESS_SPACE_TYPE.NONE, "", "", new int[0],
             new int[0], new int[0], 0, 0, 0, 0, Color.LightGray);
     }
