@@ -22,24 +22,24 @@ namespace IO
         /// <param name="channelClamps">Клеммы каналов ввода-вывода</param>
         /// <param name="channelAddressesIn">Адреса каналов ввода</param>
         /// <param name="channelAddressesOut">Адреса каналов вывода</param>
-        /// <param name="DO_count">Количество дискретных выходов</param>
-        /// <param name="DI_count">Количество дискретных входов</param>
-        /// <param name="AO_count">Количество аналоговых выходов</param>
-        /// <param name="AI_count">Количество аналоговых входов</param>
-        /// <param name="colorAsStr">Физический цвет модуля</param>
+        /// <param name="DOCount">Количество дискретных выходов</param>
+        /// <param name="DICount">Количество дискретных входов</param>
+        /// <param name="AOCount">Количество аналоговых выходов</param>
+        /// <param name="AICount">Количество аналоговых входов</param>
+        /// <param name="colorAsString">Физический цвет модуля</param>
         public static void AddModuleInfo(int number, string name,
             string description, int addressSpaceTypeNum, string typeName,
             string groupName, int[] channelClamps, int[] channelAddressesIn,
-            int[] channelAddressesOut, int DO_count, int DI_count,
-            int AO_count, int AI_count, string colorAsStr)
+            int[] channelAddressesOut, int DOCount, int DICount,
+            int AOCount, int AICount, string colorAsString)
         {
             var addressSpaceType = (ADDRESS_SPACE_TYPE)addressSpaceTypeNum;
-            Color color = Color.FromName(colorAsStr);
+            Color color = Color.FromName(colorAsString);
 
             var moduleInfo = new IOModuleInfo(number, name, description,
                  addressSpaceType, typeName, groupName, channelClamps,
-                 channelAddressesIn, channelAddressesOut, DO_count, DI_count,
-                 AO_count, AI_count, color);
+                 channelAddressesIn, channelAddressesOut, DOCount, DICount,
+                 AOCount, AICount, color);
 
             if (modules.Where(x => x.Name == moduleInfo.Name).Count() == 0)
             {
@@ -70,198 +70,127 @@ namespace IO
         /// Закрытый конструктор. Используется для создания списка применяемых
         /// модулей.
         /// </summary>
-        private IOModuleInfo(int n, string name, string descr,
+        /// <param name="n">Номер модуля ввода-вывода IO </param>
+        /// <param name="name">Имя модуля ввода-вывода IO</param>
+        /// <param name="description">Описание модуля ввода-вывода IO</param>
+        /// <param name="addressSpaceType">Тип адресного пространства</param>
+        /// <param name="typeName">Имя типа (дискретный выход и др.)</param>
+        /// <param name="groupName">Имя серии (прим., 750-800)</param>
+        /// <param name="channelClamps">Клеммы каналов ввода-вывода</param>
+        /// <param name="channelAddressesIn">Адреса каналов ввода</param>
+        /// <param name="channelAddressesOut">Адреса каналов вывода</param>
+        /// <param name="DOCount">Количество дискретных выходов</param>
+        /// <param name="DICount">Количество дискретных входов</param>
+        /// <param name="AOCount">Количество аналоговых выходов</param>
+        /// <param name="AICount">Количество аналоговых входов</param>
+        /// <param name="color">Физический цвет модуля</param>
+        private IOModuleInfo(int n, string name, string description,
             ADDRESS_SPACE_TYPE addressSpaceType, string typeName,
-            string groupName, int[] channelClamps, int[] clampsAddressIn,
-            int[] clampsAddressOut, int DO_count, int DI_count, int AO_count,
-            int AI_count, Color color)
+            string groupName, int[] channelClamps, int[] channelAddressesIn,
+            int[] channelAddressesOut, int DOCount, int DICount, int AOCount,
+            int AICount, Color color)
         {
-            this.n = n;
-            this.name = name;
-            this.description = descr;
+            Number = n;
+            Name = name;
+            Description = description;
 
-            this.addressSpaceType = addressSpaceType;
-            this.typeName = typeName;
-            this.groupName = groupName;
+            AddressSpaceType = addressSpaceType;
+            TypeName = typeName;
+            GroupName = groupName;
 
-            this.channelClamps = channelClamps;
-            this.channelAddressesIn = clampsAddressIn;
-            this.channelAddressesOut = clampsAddressOut;
+            ChannelClamps = channelClamps;
+            ChannelAddressesIn = channelAddressesIn;
+            ChannelAddressesOut = channelAddressesOut;
 
-            this.DO_cnt = DO_count;
-            this.DI_cnt = DI_count;
-            this.AO_cnt = AO_count;
-            this.AI_cnt = AI_count;
+            DO_count = DOCount;
+            DI_count = DICount;
+            AO_count = AOCount;
+            AI_count = AICount;
 
-            this.moduleColor = color;
+            ModuleColor = color;
         }
 
         public object Clone()
         {
-            var channelClamps = this.ChannelClamps.Clone() as int[];
-            var channelAddressesIn = this.ChannelAddressesIn.Clone() as int[];
-            var channelAddressesOut = this.ChannelAddressesOut.Clone() as int[];
+            var channelClamps = ChannelClamps.Clone() as int[];
+            var channelAddressesIn = ChannelAddressesIn.Clone() as int[];
+            var channelAddressesOut = ChannelAddressesOut.Clone() as int[];
 
-            return new IOModuleInfo(this.Number, this.Name, this.Description,
-                this.AddressSpaceType, this.TypeName, this.GroupName,
-                channelClamps, channelAddressesIn, channelAddressesOut,
-                this.DO_count, this.DI_count, this.AO_count, this.AI_count,
-                this.ModuleColor);
+            return new IOModuleInfo(Number, Name, Description,
+                AddressSpaceType, TypeName, GroupName, channelClamps,
+                channelAddressesIn, channelAddressesOut, DO_count, DI_count,
+                AO_count, AI_count, ModuleColor);
         }
 
         /// <summary>
         /// Имя модуля ввода-вывода IO (серия-номер, например: 750-860).
         /// </summary>        
-        public string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// Номер модуля ввода-вывода IO (например: 860).
         /// </summary>  
-        public int Number
-        {
-            get
-            {
-                return n;
-            }
-        }
+        public int Number { get; set; }
 
         /// <summary>
         /// Описание модуля ввода-вывода IO.
         /// </summary>  
-        public string Description
-        {
-            get
-            {
-                return description;
-            }
-        }
+        public string Description { get; set; }
 
         /// <summary>
         /// Тип адресного пространства модуля ввода-вывода IO.
         /// </summary>
-        public ADDRESS_SPACE_TYPE AddressSpaceType
-        {
-            get
-            {
-                return addressSpaceType;
-            }
-        }
+        public ADDRESS_SPACE_TYPE AddressSpaceType { get; set; }
 
         /// <summary>
         /// Клеммы каналов ввода-вывода.
         /// </summary>
-        public int[] ChannelClamps
-        {
-            get
-            {
-                return channelClamps;
-            }
-        }
+        public int[] ChannelClamps { get; set; }
 
         /// <summary>
         /// Адреса каналов ввода.
         /// </summary>
-        public int[] ChannelAddressesIn
-        {
-            get
-            {
-                return channelAddressesIn;
-            }
-        }
+        public int[] ChannelAddressesIn { get; set; }
 
         /// <summary>
         /// Адреса каналов вывода.
         /// </summary>
-        public int[] ChannelAddressesOut
-        {
-            get
-            {
-                return channelAddressesOut;
-            }
-        }
+        public int[] ChannelAddressesOut { get; set; }
 
         /// <summary>
         /// Количество дискретных выходов. 
         /// </summary>
-        public int DO_count
-        {
-            get
-            {
-                return DO_cnt;
-            }
-        }
+        public int DO_count { get; set; }
 
         /// <summary>
         /// Количество дискретных входов. 
         /// </summary>
-        public int DI_count
-        {
-            get
-            {
-                return DI_cnt;
-            }
-        }
+        public int DI_count { get; set; }
 
         /// <summary>
         /// Количество аналоговых выходов. 
         /// </summary>
-        public int AO_count
-        {
-            get
-            {
-                return AO_cnt;
-            }
-        }
+        public int AO_count { get; set; }
 
         /// <summary>
         /// Количество аналоговых входов. 
         /// </summary>
-        public int AI_count
-        {
-            get
-            {
-                return AI_cnt;
-            }
-        }
+        public int AI_count { get; set; }
 
         /// <summary>
         /// Имя типа (дискретный выход, аналоговый выход, ...).
         /// </summary>
-        public string TypeName
-        {
-            get
-            {
-                return typeName;
-            }
-        }
+        public string TypeName { get; set; }
 
         /// <summary>
         /// Физический цвет модуля
         /// </summary>
-        public Color ModuleColor
-        {
-            get
-            {
-                return moduleColor;
-            }
-        }
+        public Color ModuleColor { get; set; }
 
         /// <summary>
         /// Имя серии модуля ввода-вывода IO (например 750-800).
         /// </summary>        
-        public string GroupName
-        {
-            get
-            {
-                return groupName;
-            }
-        }
+        public string GroupName { get; set; }
 
         /// <summary>
         /// Тип адресного пространства модуля
@@ -277,78 +206,6 @@ namespace IO
             DODI,
             AOAIDODI,
         };
-
-        #region Закрытые поля.
-        /// <summary>
-        /// Номер.
-        /// </summary>
-        private int n;
-
-        /// <summary>
-        /// Имя.
-        /// </summary>
-        private string name;
-
-        /// <summary>
-        /// Имя типа (дискретный выход, аналоговый выход, ...).
-        /// </summary>
-        private string typeName;
-
-        /// <summary>
-        /// Серия модуля (750-800, 750-1500, ...).
-        /// </summary>
-        private string groupName;
-
-        /// <summary>
-        /// Описание.
-        /// </summary>
-        private string description;
-
-        /// <summary>
-        /// Тип адресного пространства ( DO, DI, AO, AI ).
-        /// </summary>
-        private ADDRESS_SPACE_TYPE addressSpaceType;
-
-        /// <summary>
-        /// Клеммы каналов ввода/вывода.
-        /// </summary>
-        private int[] channelClamps;
-
-        /// <summary>
-        /// Адреса каналов вывода.
-        /// </summary>
-        private int[] channelAddressesOut;
-
-        /// <summary>
-        /// Адреса каналов ввода.
-        /// </summary>
-        private int[] channelAddressesIn;
-
-        /// <summary>
-        /// Количество дискретных выходов. 
-        /// </summary>
-        private int DO_cnt;
-
-        /// <summary>
-        /// Количество дискретных входов.
-        /// </summary>
-        private int DI_cnt;
-
-        /// <summary>
-        /// Количество аналоговых выходов. 
-        /// </summary>
-        private int AO_cnt;
-
-        /// <summary>
-        /// Количество аналоговых входов. 
-        /// </summary>
-        private int AI_cnt;
-
-        /// <summary>
-        /// Цвет.
-        /// </summary>
-        private Color moduleColor;
-        #endregion
 
         /// <summary>
         /// Список модулей ввода-вывода.
