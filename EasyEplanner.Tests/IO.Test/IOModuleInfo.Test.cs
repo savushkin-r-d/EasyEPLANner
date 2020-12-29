@@ -11,7 +11,19 @@ namespace Tests.IO
     {
         // TODO: Add module info test
 
-        // TODO: Get module info test
+        public void TestGetModuleInfo(string expectedModuleName)
+        {
+            // TODO: Arrange modules info
+
+            var moduleInfo = IOModuleInfo
+                .GetModuleInfo(expectedModuleName, out bool isStub);
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedModuleName, moduleInfo.Name);
+                Assert.IsFalse(isStub);
+            });
+        }
 
         public void TestClone(IOModuleInfo testModule)
         {
