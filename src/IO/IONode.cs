@@ -62,31 +62,6 @@ namespace IO
         }
 
         /// <summary>
-        /// Получение списка модулей по имени.
-        /// </summary>
-        public Dictionary<IOModule, int> GetModulesList(string name)
-        {
-            var modulesList = new Dictionary<IOModule, int>();
-            for (int i = 0; i < IOModules.Count; i++)
-            {
-                if (IOModules[i].Info.Name == name)
-                {
-                    modulesList.Add(IOModules[i], i);
-                }
-            }
-            return modulesList;
-        }
-
-        /// <summary>
-        /// Добавление модуль.
-        /// </summary>
-        /// <param name="iOModule">Добавляемый модуль.</param>
-        private void AddModule(IOModule iOModule)
-        {
-            iOModules.Add(iOModule);
-        }
-
-        /// <summary>
         /// Добавление модуля в узел в заданную позицию.
         /// </summary>
         /// <param name="iOModule">Вставляемый модуль.</param>
@@ -102,24 +77,6 @@ namespace IO
             }
 
             iOModules[position - 1] = iOModule;
-        }
-
-        /// <summary>
-        /// Добавление модуля в узел в заданную позицию.
-        /// </summary>
-        /// <param name="iOModule">Вставляемый модуль.</param>
-        /// <param name="position">Позиция модуля, начиная с 1.</param>
-        public void InsertModule(IOModule iOModule, int position)
-        {
-            if (iOModules.Count < position)
-            {
-                for (int i = iOModules.Count; i < position; i++)
-                {
-                    iOModules.Add(new IOModule(0, 0, null));
-                }
-            }
-
-            iOModules.Insert(position, iOModule);
         }
 
         /// <summary>
@@ -196,17 +153,12 @@ namespace IO
         /// </summary>
         public enum TYPES
         {
-            T_EMPTY = -1,            /// Не определен.
-
-            T_INTERNAL_750_86x,      /// Модули в управляющем контроллере 750-863.
-
-            T_INTERNAL_750_820x = 2, /// Модули в управляющем контроллере PFC200.
-
-            T_ETHERNET = 100,        /// Удаленный Ethernet узел.             
-
-            T_PHOENIX_CONTACT = 200, /// Модули Phoenix Contact.
-
-            T_PHOENIX_CONTACT_MAIN = 201, /// Модуль Phoenix Contact с управляющей программой.
+            T_EMPTY = -1, /// Не определен.
+            T_INTERNAL_750_86x, /// Модули в контроллере 750-863.
+            T_INTERNAL_750_820x = 2, /// Модули в контроллере PFC200.
+            T_ETHERNET = 100, /// Удаленный Ethernet узел.             
+            T_PHOENIX_CONTACT = 200, /// Модули в контроллере Phoenix Contact.
+            T_PHOENIX_CONTACT_MAIN = 201, /// Контроллер Phoenix Contact
         };
 
         /// <summary>
