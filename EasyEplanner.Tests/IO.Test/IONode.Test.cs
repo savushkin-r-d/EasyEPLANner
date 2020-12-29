@@ -8,7 +8,7 @@ namespace Tests.IO
 {
     class IONodeTest
     {
-        [TestCaseSource(nameof(TestSetTypeSource))]
+        [TestCaseSource(nameof(TestSetGetTypeSource))]
         public void TestSetGetType(string typeStr, IONode.TYPES expectedType)
         {
             var testNode = new IONode(typeStr, IntStub, StrStub, StrStub);
@@ -16,7 +16,7 @@ namespace Tests.IO
             Assert.AreEqual(expectedType, testNode.Type);
         }
 
-        private static object[] TestSetTypeSource()
+        private static object[] TestSetGetTypeSource()
         {
             var testData = new List<object[]>();
 
@@ -48,29 +48,54 @@ namespace Tests.IO
             return testData.ToArray();
         }
 
+        [TestCase("NodeName","NodeName")]
+        [TestCase(null, null)]
+        [TestCase("", "")]
+        [TestCase("Имя узла", "Имя узла")]
         public void TestSetGetNodeName(string expected, string actual)
         {
-            // TODO: Test name getter and setter
+            var testNode = new IONode(StrStub, IntStub, StrStub, actual);
+            Assert.AreEqual(expected, testNode.Name);
         }
 
+        [TestCase("", "")]
+        [TestCase(null, null)]
+        [TestCase("255.0.0.0", "255.0.0.0")]
+        [TestCase("12.12.12.12", "12.12.12.12")]
         public void TestSetGetIP(string expected, string actual)
         {
-            // TODO: Test IP getter and setter
+            var testNode = new IONode(StrStub, IntStub, actual, StrStub);
+            Assert.AreEqual(expected, testNode.IP);
         }
 
+        [TestCase("TypeStrSetted", "TypeStrSetted")]
+        [TestCase(null, null)]
+        [TestCase("", "")]
+        [TestCase("Строковый тип", "Строковый тип")]
         public void TestSetGetTypeStr(string expected, string actual)
         {
-            // TODO: Test typeStr getter and setter
+            var testNode = new IONode(actual, IntStub, StrStub, StrStub);
+            Assert.AreEqual(expected, testNode.TypeStr);
         }
 
+        [TestCase(0, 0)]
+        [TestCase(1, 1)]
+        [TestCase(2, 2)]
+        [TestCase(10, 10)]
         public void TestSetGetN(int expected, int actual)
         {
-            // TODO: Test N getter and setter
+            var testNode = new IONode(StrStub, actual, StrStub, StrStub);
+            Assert.AreEqual(expected, testNode.N);
         }
 
+        [TestCase(0, 0)]
+        [TestCase(1, 1)]
+        [TestCase(200, 2)]
+        [TestCase(1000, 10)]
         public void TestSetGetFullN(int expected, int actual)
         {
-            // TODO: Test FullN getter and setter
+            var testNode = new IONode(StrStub, actual, StrStub, StrStub);
+            Assert.AreEqual(expected, testNode.FullN);
         }
 
         const string StrStub = "";
