@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using IO;
@@ -8,10 +9,18 @@ namespace Tests.IO
 {
     public class IOModuleInfoTest
     {
+        [SetUp]
+        public void SetUpBeforeEachTest()
+        {
+            IOModuleInfo.Modules.Clear();
+        }
+
         [TestCase(10, 3)]
         [TestCase(5, 0)]
         [TestCase(0, 0)]
         [TestCase(10, 10)]
+        [TestCase(10, 0)]
+        [TestCase(20, 10)]
         public void TestAddModuleInfo(int count, int repeatableCount)
         {
             int defaultCount = 0;
@@ -19,7 +28,7 @@ namespace Tests.IO
 
             FillRandomModulesInfo(count, repeatableCount);
 
-            int skippedInfo = repeatableCount == 0 ? 0 : repeatableCount + 1;
+            int skippedInfo = repeatableCount == 0 ? 0 : repeatableCount - 1;
             int expectedCountAfterAdd = count - skippedInfo;
             int actualCountAfterAdd = IOModuleInfo.Count;
             Assert.Multiple(() =>
@@ -235,16 +244,45 @@ namespace Tests.IO
         {
             int currentCount = count;
             int currentRepeatableCount = repeatableCount;
-            while(currentCount > 0)
+            int enumSize = Enum
+                .GetValues(typeof(IOModuleInfo.ADDRESS_SPACE_TYPE)).Length;
+            List<KnownColor> colors = Enum.GetValues(typeof(KnownColor))
+                    .Cast<KnownColor>()
+                    .ToList();
+
+            while (currentCount > 0)
             {
-                while(currentRepeatableCount > 0)
+                int n = GetRandomIntNumber();
+                string name = GetRandomString(5);
+                string description = GetRandomString(10);
+                int addressSpaceTypeNum = new Random().Next(0, enumSize);
+                string typeName = GetRandomString(10);
+                string groupName = GetRandomString(7);
+                int[] channelClamps = GetRandomIntArr();
+                int[] channelAddressesIn = GetRandomIntArr();
+                int[] channelAddressesOut = GetRandomIntArr();
+                int DOCount = GetRandomIntNumber();
+                int DICount = GetRandomIntNumber();
+                int AOCount = GetRandomIntNumber();
+                int AICount = GetRandomIntNumber();
+                string color = colors[new Random().Next(0, colors.Count - 1)]
+                    .ToString();
+
+                while (currentRepeatableCount > 1)
                 {
-                    //TODO: Add the same module info
+                    IOModuleInfo.AddModuleInfo(n, name, description,
+                        addressSpaceTypeNum, typeName, groupName,
+                        channelClamps, channelAddressesIn, channelAddressesOut,
+                        DOCount, DICount, AOCount, AICount, color);
 
                     currentRepeatableCount--;
+                    currentCount--;
                 }
 
-                // TODO: Add random module info
+                IOModuleInfo.AddModuleInfo(n, name, description,
+                        addressSpaceTypeNum, typeName, groupName,
+                        channelClamps, channelAddressesIn, channelAddressesOut,
+                        DOCount, DICount, AOCount, AICount, color);
 
                 currentCount--;
             }

@@ -193,9 +193,14 @@ namespace IO
         public string GroupName { get; set; }
 
         /// <summary>
-        /// Количество модулей ввода-вывода
+        /// Количество модулей ввода-вывода.
         /// </summary>
-        public static int Count { get => modules.Count; }
+        public static int Count => modules.Count;
+
+        /// <summary>
+        /// Модули ввода-вывода.
+        /// </summary>
+        public static List<IOModuleInfo> Modules => modules;
 
         /// <summary>
         /// Тип адресного пространства модуля
