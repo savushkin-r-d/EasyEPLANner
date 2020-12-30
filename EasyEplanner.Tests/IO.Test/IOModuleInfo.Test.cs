@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using IO;
 using NUnit.Framework;
 
@@ -10,29 +8,49 @@ namespace Tests.IO
 {
     public class IOModuleInfoTest
     {
-        // TODO: Add module info test
-        public void TestAddModuleInfo(int count, bool repeatable)
+        [TestCase(10, 3)]
+        [TestCase(5, 0)]
+        [TestCase(0, 0)]
+        [TestCase(10, 10)]
+        public void TestAddModuleInfo(int count, int repeatableCount)
         {
+            int defaultCount = 0;
+            int actualCountBeforeAdd = IOModuleInfo.Count;
 
+            FillRandomModulesInfo(count, repeatableCount);
+
+            int skippedInfo = repeatableCount == 0 ? 0 : repeatableCount + 1;
+            int expectedCountAfterAdd = count - skippedInfo;
+            int actualCountAfterAdd = IOModuleInfo.Count;
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(defaultCount, actualCountBeforeAdd);
+                Assert.AreEqual(expectedCountAfterAdd, actualCountAfterAdd);
+            });
         }
 
-        public void TestGetModuleInfo(string expectedModuleName)
+        [TestCase("Name", "Name")]
+        [TestCase("не определен", "")]
+        [TestCase("не определен", null)]
+        [TestCase("Название", "Название")]
+        public void TestGetModuleInfo(string expectedModuleInfoName,
+            string actualModuleInfoName)
         {
             const int countOfModulesInfoForTest = 5;
             FillRandomModulesInfo(countOfModulesInfoForTest);
-            if (!string.IsNullOrEmpty(expectedModuleName))
+            if (!string.IsNullOrEmpty(actualModuleInfoName))
             {
-                GetModuleInfoForTest(expectedModuleName);
+                GetModuleInfoForTest(actualModuleInfoName);
             }
 
             var moduleInfo = IOModuleInfo
-                .GetModuleInfo(expectedModuleName, out bool isStub);
+                .GetModuleInfo(actualModuleInfoName, out bool isStub);
 
             if(moduleInfo != IOModuleInfo.Stub)
             {
                 Assert.Multiple(() =>
                 {
-                    Assert.AreEqual(expectedModuleName, moduleInfo.Name);
+                    Assert.AreEqual(expectedModuleInfoName, moduleInfo.Name);
                     Assert.IsFalse(isStub);
                 });
             }
@@ -58,9 +76,12 @@ namespace Tests.IO
                 actualModuleInfo.AOCount == cloned.AOCount &&
                 actualModuleInfo.DICount == cloned.DICount &&
                 actualModuleInfo.DOCount == cloned.DOCount &&
-                actualModuleInfo.ChannelAddressesIn.SequenceEqual(cloned.ChannelAddressesIn) &&
-                actualModuleInfo.ChannelAddressesOut.SequenceEqual(cloned.ChannelAddressesOut) &&
-                actualModuleInfo.ChannelClamps.SequenceEqual(cloned.ChannelClamps) &&
+                actualModuleInfo.ChannelAddressesIn
+                .SequenceEqual(cloned.ChannelAddressesIn) &&
+                actualModuleInfo.ChannelAddressesOut
+                .SequenceEqual(cloned.ChannelAddressesOut) &&
+                actualModuleInfo.ChannelClamps
+                .SequenceEqual(cloned.ChannelClamps) &&
                 actualModuleInfo.Description == cloned.Description &&
                 actualModuleInfo.GroupName == cloned.GroupName &&
                 actualModuleInfo.ModuleColor == actualModuleInfo.ModuleColor &&
@@ -209,9 +230,48 @@ namespace Tests.IO
             Assert.AreEqual(expected, testModule.GroupName);
         }
 
-        private static void FillRandomModulesInfo(int count = 0)
+        private static void FillRandomModulesInfo(int count,
+            int repeatableCount = 0)
         {
+            int currentCount = count;
+            int currentRepeatableCount = repeatableCount;
+            while(currentCount > 0)
+            {
+                while(currentRepeatableCount > 0)
+                {
+                    //TODO: Add the same module info
 
+                    currentRepeatableCount--;
+                }
+
+                // TODO: Add random module info
+
+                currentCount--;
+            }
+        }
+
+        private static string GetRandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[new Random().Next(s.Length)]).ToArray());
+        }
+        
+        private static int GetRandomIntNumber()
+        {
+            return new Random().Next(0, 9);
+        }
+
+        private static int[] GetRandomIntArr()
+        {
+            const int maxIntArrSize = 50;
+            const int minNum = -1;
+            var randNum = new Random();
+            int min = 0;
+            int max = randNum.Next(0, maxIntArrSize);
+            return Enumerable.Repeat(min, max)
+                .Select(i => randNum.Next(minNum, max))
+                .ToArray();
         }
 
         private static IOModuleInfo GetModuleInfoForTest(

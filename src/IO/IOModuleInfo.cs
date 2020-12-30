@@ -193,6 +193,11 @@ namespace IO
         public string GroupName { get; set; }
 
         /// <summary>
+        /// Количество модулей ввода-вывода
+        /// </summary>
+        public static int Count { get => modules.Count; }
+
+        /// <summary>
         /// Тип адресного пространства модуля
         /// </summary>
         public enum ADDRESS_SPACE_TYPE
