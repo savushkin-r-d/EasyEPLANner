@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using IO;
 using NUnit.Framework;
@@ -10,143 +11,223 @@ namespace Tests.IO
     public class IOModuleInfoTest
     {
         // TODO: Add module info test
+        public void TestAddModuleInfo(int count, bool repeatable)
+        {
+
+        }
 
         public void TestGetModuleInfo(string expectedModuleName)
         {
-            // TODO: Arrange modules info
+            const int countOfModulesInfoForTest = 5;
+            FillRandomModulesInfo(countOfModulesInfoForTest);
+            if (!string.IsNullOrEmpty(expectedModuleName))
+            {
+                GetModuleInfoForTest(expectedModuleName);
+            }
 
             var moduleInfo = IOModuleInfo
                 .GetModuleInfo(expectedModuleName, out bool isStub);
 
-            Assert.Multiple(() =>
+            if(moduleInfo != IOModuleInfo.Stub)
             {
-                Assert.AreEqual(expectedModuleName, moduleInfo.Name);
-                Assert.IsFalse(isStub);
-            });
+                Assert.Multiple(() =>
+                {
+                    Assert.AreEqual(expectedModuleName, moduleInfo.Name);
+                    Assert.IsFalse(isStub);
+                });
+            }
+            else
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.AreEqual(IOModuleInfo.Stub.Name, moduleInfo.Name);
+                    Assert.IsTrue(isStub);
+                });
+            }
         }
 
-        public void TestClone(IOModuleInfo testModule)
+        [Test]
+        public void TestClone()
         {
-            var cloned = (IOModuleInfo)testModule.Clone();
+            IOModuleInfo actualModuleInfo = GetModuleInfoForTest();
+            var cloned = (IOModuleInfo)actualModuleInfo.Clone();
 
             bool isEqual =
-                testModule.AddressSpaceType == cloned.AddressSpaceType &&
-                testModule.AICount == cloned.AICount &&
-                testModule.AOCount == cloned.AOCount &&
-                testModule.DICount == cloned.DICount &&
-                testModule.DOCount == cloned.DOCount &&
-                testModule.ChannelAddressesIn == cloned.ChannelAddressesIn &&
-                testModule.ChannelAddressesOut == cloned.ChannelAddressesOut &&
-                testModule.ChannelClamps == cloned.ChannelClamps &&
-                testModule.Description == cloned.Description &&
-                testModule.GroupName == cloned.GroupName &&
-                testModule.ModuleColor == testModule.ModuleColor &&
-                testModule.Name == cloned.Name &&
-                testModule.Number == cloned.Number &&
-                testModule.TypeName == cloned.TypeName;
+                actualModuleInfo.AddressSpaceType == cloned.AddressSpaceType &&
+                actualModuleInfo.AICount == cloned.AICount &&
+                actualModuleInfo.AOCount == cloned.AOCount &&
+                actualModuleInfo.DICount == cloned.DICount &&
+                actualModuleInfo.DOCount == cloned.DOCount &&
+                actualModuleInfo.ChannelAddressesIn.SequenceEqual(cloned.ChannelAddressesIn) &&
+                actualModuleInfo.ChannelAddressesOut.SequenceEqual(cloned.ChannelAddressesOut) &&
+                actualModuleInfo.ChannelClamps.SequenceEqual(cloned.ChannelClamps) &&
+                actualModuleInfo.Description == cloned.Description &&
+                actualModuleInfo.GroupName == cloned.GroupName &&
+                actualModuleInfo.ModuleColor == actualModuleInfo.ModuleColor &&
+                actualModuleInfo.Name == cloned.Name &&
+                actualModuleInfo.Number == cloned.Number &&
+                actualModuleInfo.TypeName == cloned.TypeName;
 
             Assert.IsTrue(isEqual);
         }
 
-        public void TestSetGetName(IOModuleInfo testModule, string expected,
-            string actual)
+        [TestCase("", null)]
+        [TestCase("Name", "Name")]
+        [TestCase("", "")]
+        public void TestSetGetName(string expected, string actual)
         {
-            testModule.Name = actual;
+            IOModuleInfo testModule = GetModuleInfoForTest(actual);
             Assert.AreEqual(expected, testModule.Name);
         }
 
-        public void TestSetGetNumber(IOModuleInfo testModule, int expected,
-            int actual)
+        [TestCase(0, 0)]
+        [TestCase(2, 2)]
+        [TestCase(4, 4)]
+        public void TestSetGetNumber(int expected, int actual)
         {
+            IOModuleInfo testModule = GetModuleInfoForTest();
             testModule.Number = actual;
             Assert.AreEqual(expected, testModule.Number);
         }
 
-        public void TestSetGetDescription(IOModuleInfo testModule,
-            string expected, string actual)
+        [TestCase(null, null)]
+        [TestCase("Description", "Description")]
+        [TestCase("", "")]
+        public void TestSetGetDescription(string expected, string actual)
         {
+            IOModuleInfo testModule = GetModuleInfoForTest();
             testModule.Description = actual;
             Assert.AreEqual(expected, testModule.Description);
         }
 
-        public void TestSetGetAddressSpaceType(IOModuleInfo testModule,
+        public void TestSetGetAddressSpaceType(
             IOModuleInfo.ADDRESS_SPACE_TYPE expected,
             IOModuleInfo.ADDRESS_SPACE_TYPE actual)
         {
+            IOModuleInfo testModule = GetModuleInfoForTest();
             testModule.AddressSpaceType = actual;
             Assert.AreEqual(expected, testModule.AddressSpaceType);
         }
 
-        public void TestSetGetChannelClamps(IOModuleInfo testModule,
-            int[] expected, int[] actual)
+        [TestCase(null, null)]
+        [TestCase(new int[0], new int[0])]
+        [TestCase(new int[] { -1, -1, 0, 1, 2 }, new int[] { -1, -1, 0, 1, 2 })]
+        public void TestSetGetChannelClamps(int[] expected, int[] actual)
         {
+            IOModuleInfo testModule = GetModuleInfoForTest();
             testModule.ChannelClamps = actual;
             Assert.AreEqual(expected, testModule.ChannelClamps);
         }
 
-        public void TestSetGetChannelAddressesOut(IOModuleInfo testModule,
-            int[] expected, int[] actual)
+        [TestCase(null, null)]
+        [TestCase(new int[0], new int[0])]
+        [TestCase(new int[] { -1, 0, 1, 2, -1 }, new int[] { -1, 0, 1, 2, -1 })]
+        public void TestSetGetChannelAddressesOut(int[] expected, int[] actual)
         {
+            IOModuleInfo testModule = GetModuleInfoForTest();
             testModule.ChannelAddressesOut = actual;
             Assert.AreEqual(expected, testModule.ChannelAddressesOut);
         }
 
-        public void TestSetGetChannelAddressesIn(IOModuleInfo testModule,
-            int[] expected, int[] actual)
+        [TestCase(null, null)]
+        [TestCase(new int[0], new int[0])]
+        [TestCase(new int[] { -1, 0, 1, 2, -1 }, new int[] { -1, 0, 1, 2, -1 })]
+        public void TestSetGetChannelAddressesIn(int[] expected, int[] actual)
         {
+            IOModuleInfo testModule = GetModuleInfoForTest();
             testModule.ChannelAddressesIn = actual;
             Assert.AreEqual(expected, testModule.ChannelAddressesIn);
         }
 
-        public void TestSetGetAICount(IOModuleInfo testModule,
-            int expected, int actual)
+        [TestCase(0, 0)]
+        [TestCase(2, 2)]
+        [TestCase(4, 4)]
+        public void TestSetGetAICount(int expected, int actual)
         {
+            IOModuleInfo testModule = GetModuleInfoForTest();
             testModule.AICount = actual;
-            Assert.AreEqual(expected, testModule.DOCount);
+            Assert.AreEqual(expected, testModule.AICount);
         }
 
-        public void TestSetGetAOCount(IOModuleInfo testModule,
-            int expected, int actual)
+        [TestCase(0, 0)]
+        [TestCase(2, 2)]
+        [TestCase(4, 4)]
+        public void TestSetGetAOCount(int expected, int actual)
         {
+            IOModuleInfo testModule = GetModuleInfoForTest();
             testModule.AOCount = actual;
-            Assert.AreEqual(expected, testModule.DOCount);
+            Assert.AreEqual(expected, testModule.AOCount);
         }
 
-        public void TestSetGetDICount(IOModuleInfo testModule,
-            int expected, int actual)
+        [TestCase(0, 0)]
+        [TestCase(2, 2)]
+        [TestCase(4, 4)]
+        public void TestSetGetDICount(int expected, int actual)
         {
+            IOModuleInfo testModule = GetModuleInfoForTest();
             testModule.DICount = actual;
-            Assert.AreEqual(expected, testModule.DOCount);
+            Assert.AreEqual(expected, testModule.DICount);
         }
 
-        public void TestSetGetDOCount(IOModuleInfo testModule,
-            int expected, int actual)
+        [TestCase(0, 0)]
+        [TestCase(2, 2)]
+        [TestCase(4, 4)]
+        public void TestSetGetDOCount(int expected, int actual)
         {
+            IOModuleInfo testModule = GetModuleInfoForTest();
             testModule.DOCount = actual;
             Assert.AreEqual(expected, testModule.DOCount);
         }
 
-        public void TestSetGetTypeName(IOModuleInfo testModule,
-            string expected, string actual)
+        [TestCase("TypeName", "TypeName")]
+        [TestCase(null, null)]
+        [TestCase("", "")]
+        public void TestSetGetTypeName(string expected, string actual)
         {
+            IOModuleInfo testModule = GetModuleInfoForTest();
             testModule.TypeName = actual;
             Assert.AreEqual(expected, testModule.TypeName);
         }
 
-        public void TestSetGetModuleColor(IOModuleInfo testModule,
-            Color expected, Color actual)
+
+        [TestCase("Black", "Black")]
+        [TestCase("Empty", "Empty")]
+        public void TestSetGetModuleColor(string expected, string actual)
         {
-            testModule.ModuleColor = actual;
-            Assert.AreEqual(expected, testModule.ModuleColor);
+            IOModuleInfo testModule = GetModuleInfoForTest();
+            testModule.ModuleColor = Color.FromName(actual);
+            Assert.AreEqual(Color.FromName(expected), testModule.ModuleColor);
         }
 
-        public void TestSetGetGroupName(IOModuleInfo testModule,
-            string expected, string actual)
+        [TestCase("GroupName","GroupName")]
+        [TestCase(null, null)]
+        [TestCase("", "")]
+        public void TestSetGetGroupName(string expected, string actual)
         {
+            IOModuleInfo testModule = GetModuleInfoForTest();
             testModule.GroupName = actual;
             Assert.AreEqual(expected, testModule.GroupName);
         }
 
-        // TODO: Write getter for simple IOModule for test getters and setters
+        private static void FillRandomModulesInfo(int count = 0)
+        {
+
+        }
+
+        private static IOModuleInfo GetModuleInfoForTest(
+            string expectedName = null)
+        {
+            const int IntStub = 0;
+            const string StrStub = "";
+            const string ColorStub = "White";
+
+            string name = expectedName ?? string.Empty;
+
+            IOModuleInfo.AddModuleInfo(IntStub, name, StrStub, IntStub,
+                StrStub, StrStub, new int[0], new int[0], new int[0], IntStub,
+                IntStub, IntStub, IntStub, ColorStub);
+
+            return IOModuleInfo.GetModuleInfo(name, out _);
+        }
     }
 }
