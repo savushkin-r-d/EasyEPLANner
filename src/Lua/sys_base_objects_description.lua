@@ -896,12 +896,12 @@ return
                             },
                             MAX_TIME =
                             {
-                                name = "Температура подогрева",
+                                name = "Максимальное время операции",
                                 displayObjects = { "parameters" },
                             },
                             BOILER_WATER_TEMPERATURE =
                             {
-                                name = "Температура подогрева",
+                                name = "Температура нагрева воды бойлера",
                                 displayObjects = { "parameters" },
                             },
                         }
