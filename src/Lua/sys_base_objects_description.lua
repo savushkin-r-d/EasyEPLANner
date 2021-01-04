@@ -878,6 +878,35 @@ return
                         }
                     }
                 },
+                HEATING = {
+                    name = "Подогрев основы",
+                    steps =
+                    {
+                        HEATING = { name = "Нагрев" },
+                        CHECKING_TEMPERATURE = { name = "Проверка температуры" },
+                    },
+                    params =
+                    {
+                        active =
+                        {
+                            HEATING_TEMPERATURE =
+                            {
+                                name = "Температура подогрева",
+                                displayObjects = { "parameters" },
+                            },
+                            MAX_TIME =
+                            {
+                                name = "Температура подогрева",
+                                displayObjects = { "parameters" },
+                            },
+                            BOILER_WATER_TEMPERATURE =
+                            {
+                                name = "Температура подогрева",
+                                displayObjects = { "parameters" },
+                            },
+                        }
+                    }
+                },
             },
             basicName = "tank",
             equipment =
