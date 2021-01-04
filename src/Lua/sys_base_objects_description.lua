@@ -596,7 +596,7 @@ return
                             defaultPosition = 4,
                         },
                         IN_TANK = {
-                            name = "В приеник",
+                            name = "В приемник",
                             defaultPosition = 5,
                         },
                     },
