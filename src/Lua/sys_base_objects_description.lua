@@ -736,6 +736,17 @@ return
                     steps = { },
                     defaultPosition = 2,
                 },
+                FILL2 = {
+                    name = "Наполнение 2",
+                    params =
+                    {
+                        active =
+                        {
+                            OPERATION_AFTER_FILL = { name = "Номер последующей операции" },
+                        },
+                    },
+                    steps = { },
+                },
                 ADDITION_OF_STARTER = {
                     name = "Внесение закваски",
                 },
