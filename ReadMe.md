@@ -11,8 +11,8 @@ We are working on the project and solving various issues related to the developm
 
 <img src="docs/user_manual/images/EasyEplannerPreview.png">
 
-The EasyEPLANner is being developed as an Add-In to EPLAN 2.9 version. The add-in is using for EPLAN projects and helps you to reduce the work of an Automation engineer and a Software engineer as well. 
-Software engineer creates code in Lua programming language for the project. EasyEPLANner helps to describe technological objects(Tank, Boiler, etc.), operations of these objects, steps of operations, restrictions for operations, and many other properties. Eventually, EasyEPLANner generates LUA files that are going to be uploaded to a controller. We support controllers from the following manufacturers:
+The EasyEPLANner is being developed as an Add-In to EPLAN 2.9 version. The add-in is being used for EPLAN projects and helps you to reduce the work of an Automation engineer and a Software engineer as well. 
+Software engineer creates code in Lua programming language for the project. EasyEPLANner helps you to describe technological objects(Tank, Boiler, etc.), operations of these objects, steps of operations, restrictions for operations, and many other properties. Eventually, EasyEPLANner generates LUA files that are going to be uploaded to a controller. We support controllers from the following manufacturers:
 
 1. [Phoenix Contact - PLCNext](https://github.com/plcnext);
 2. [WAGO - PFC200](https://github.com/WAGO).
