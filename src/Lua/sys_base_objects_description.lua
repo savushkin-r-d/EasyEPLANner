@@ -736,7 +736,7 @@ return
                     steps = { },
                     defaultPosition = 2,
                 },
-                FILL2 = {
+                FILL_2 = {
                     name = "Наполнение 2",
                     params =
                     {
