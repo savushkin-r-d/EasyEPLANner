@@ -596,7 +596,7 @@ return
                             defaultPosition = 4,
                         },
                         IN_TANK = {
-                            name = "В приеник",
+                            name = "В приемник",
                             defaultPosition = 5,
                         },
                     },
@@ -735,6 +735,17 @@ return
                     },
                     steps = { },
                     defaultPosition = 2,
+                },
+                FILL_2 = {
+                    name = "Наполнение 2",
+                    params =
+                    {
+                        active =
+                        {
+                            OPERATION_AFTER_FILL = { name = "Номер последующей операции" },
+                        },
+                    },
+                    steps = { },
                 },
                 ADDITION_OF_STARTER = {
                     name = "Внесение закваски",
