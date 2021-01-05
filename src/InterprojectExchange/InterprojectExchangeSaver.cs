@@ -125,9 +125,7 @@ namespace InterprojectExchange
         /// <param name="model">Модель</param>
         private void WriteAdvancedModel(IProjectModel model)
         {
-            bool deleteModel = (model.ReceiverSignals.Count == 0 &&
-                model.SourceSignals.Count == 0) ||
-                model.MarkedForDelete;
+            bool deleteModel = model.MarkedForDelete;
             if (deleteModel)
             {
                 DeleteSharedFile(model.ProjectName);
