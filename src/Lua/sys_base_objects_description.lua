@@ -889,19 +889,9 @@ return
                     {
                         active =
                         {
-                            HEATING_TEMPERATURE =
-                            {
-                                name = "Температура подогрева",
-                                displayObjects = { "parameters" },
-                            },
                             MAX_TIME =
                             {
                                 name = "Максимальное время операции",
-                                displayObjects = { "parameters" },
-                            },
-                            BOILER_WATER_TEMPERATURE =
-                            {
-                                name = "Температура нагрева воды бойлера",
                                 displayObjects = { "parameters" },
                             },
                         }
