@@ -878,6 +878,25 @@ return
                         }
                     }
                 },
+                HEATING = {
+                    name = "Подогрев основы",
+                    steps =
+                    {
+                        HEATING = { name = "Нагрев" },
+                        CHECKING_TEMPERATURE = { name = "Проверка температуры" },
+                    },
+                    params =
+                    {
+                        active =
+                        {
+                            MAX_TIME =
+                            {
+                                name = "Максимальное время операции",
+                                displayObjects = { "parameters" },
+                            },
+                        }
+                    }
+                },
             },
             basicName = "tank",
             equipment =
