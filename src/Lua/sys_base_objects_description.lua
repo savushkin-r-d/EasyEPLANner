@@ -905,8 +905,13 @@ return
                                 name = "Максимальное время операции",
                                 displayObjects = { "parameters" },
                             },
-                        }
-                    }
+                            TEMPERATURE_VERIFICATION_TIME =
+                            {
+                                name = "Время стабилизации температуры",
+                                displayObjects = { "parameters" },
+                            },
+                        },
+                    },
                 },
             },
             basicName = "tank",
