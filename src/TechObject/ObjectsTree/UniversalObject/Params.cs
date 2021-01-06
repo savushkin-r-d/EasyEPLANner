@@ -387,6 +387,7 @@ namespace TechObject
 
                 int index = parameters.IndexOf(par);
 
+                par.ClearOperationsBinding();
                 parameters.Remove(par);
                 parameters.Insert(index, newPar);
 
