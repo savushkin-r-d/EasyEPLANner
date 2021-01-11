@@ -150,7 +150,8 @@ end
 init_objectGroups = function(object, objectGroups)
     for luaName, value in pairs(objectGroups) do
         local name = value.name or ""
+        local allowedObjects = value.allowedObjects or ""
         
-        object:AddObjectGroup(luaName, name)
+        object:AddObjectGroup(luaName, name, allowedObjects)
     end
 end

@@ -215,8 +215,13 @@ namespace TechObject
                 "Время совместного перехода шагов (параметр)", 
                 cooperParamNumber, -1);
 
+            var allowedObjects = new List<BaseTechObjectManager.ObjectType>()
+            {
+                BaseTechObjectManager.ObjectType.Aggregate
+            };
             this.attachedObjects = new AttachedObjects(attachedObjects, 
-                this, new AttachedObjectStrategy.AttachedAggregatesStrategy());
+                this, new AttachedObjectStrategy.AttachedWithInitStrategy(
+                    string.Empty, string.Empty, allowedObjects));
 
             modes = new ModesManager(this);
 

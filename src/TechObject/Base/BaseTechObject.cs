@@ -116,12 +116,70 @@ namespace TechObject
         /// </summary>
         /// <param name="luaName">Lua-имя группы</param>
         /// <param name="name">Отображаемое имя группы</param>
-        public void AddObjectGroup(string luaName, string name)
+        /// <param name="allowedObjects">Разрешенные типы объектов для
+        /// добавления в группу</param>
+        public void AddObjectGroup(string luaName, string name,
+            string allowedObjects)
         {
-            var newGroup = new AttachedObjects(string.Empty, null, 
-                new AttachedObjectStrategy.AttachedTanksStrategy(name,
-                luaName));
-            objectGroups.Add(newGroup);
+            AttachedObjects newGroup;
+            List<BaseTechObjectManager.ObjectType> allowedObjectsList;
+            switch(allowedObjects)
+            {
+                case "all":
+                    allowedObjectsList = 
+                        new List<BaseTechObjectManager.ObjectType>() 
+                        { 
+                            BaseTechObjectManager.ObjectType.Aggregate,
+                            BaseTechObjectManager.ObjectType.Unit
+                        };
+
+                    newGroup = new AttachedObjects(string.Empty, null,
+                        new AttachedObjectStrategy.AttachedWithoutInitStrategy(
+                            name, luaName, allowedObjectsList));
+                    break;
+
+                case "units":
+                    allowedObjectsList =
+                        new List<BaseTechObjectManager.ObjectType>()
+                        {
+                            BaseTechObjectManager.ObjectType.Unit
+                        };
+
+                    newGroup = new AttachedObjects(string.Empty, null,
+                        new AttachedObjectStrategy.AttachedWithoutInitStrategy(
+                            name, luaName, allowedObjectsList));
+                    break;
+
+                case "aggregates":
+                    allowedObjectsList =
+                        new List<BaseTechObjectManager.ObjectType>()
+                        {
+                            BaseTechObjectManager.ObjectType.Aggregate,
+                            BaseTechObjectManager.ObjectType.Unit
+                        };
+
+                    newGroup = new AttachedObjects(string.Empty, null,
+                        new AttachedObjectStrategy.AttachedWithoutInitStrategy(
+                            name, luaName, allowedObjectsList));
+                    break;
+
+                default:
+                    // Defaul value - aggregate.
+                    allowedObjectsList =
+                        new List<BaseTechObjectManager.ObjectType>()
+                        {
+                            BaseTechObjectManager.ObjectType.Aggregate,
+                        };
+                    newGroup = new AttachedObjects(string.Empty, null,
+                        new AttachedObjectStrategy.AttachedWithoutInitStrategy(
+                            name, luaName, allowedObjectsList));
+                    break;
+            }
+            
+            if (newGroup != null)
+            {
+                objectGroups.Add(newGroup);
+            }
         }
 
         /// <summary>
@@ -333,13 +391,15 @@ namespace TechObject
             cloned.IsPID = IsPID;
 
             cloned.objectGroups = new List<AttachedObjects>();
-            foreach(var tankGroup in objectGroups)
+            foreach(var objectGroup in objectGroups)
             {
                 var clonedStrategy = new AttachedObjectStrategy
-                    .AttachedTanksStrategy(tankGroup.WorkStrategy.Name,
-                    tankGroup.WorkStrategy.LuaName);
-                var clonedGroup = new AttachedObjects(tankGroup.Value,
-                    tankGroup.Owner, clonedStrategy);
+                    .AttachedWithoutInitStrategy(
+                    objectGroup.WorkStrategy.Name,
+                    objectGroup.WorkStrategy.LuaName,
+                    objectGroup.WorkStrategy.AllowedObjects);
+                var clonedGroup = new AttachedObjects(objectGroup.Value,
+                    objectGroup.Owner, clonedStrategy);
                 cloned.objectGroups.Add(clonedGroup);
             }
 

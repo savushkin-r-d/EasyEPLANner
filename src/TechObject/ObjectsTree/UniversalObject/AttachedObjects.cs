@@ -1,9 +1,6 @@
 ﻿using Editor;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TechObject.AttachedObjectStrategy;
 
 namespace TechObject
@@ -438,23 +435,27 @@ namespace TechObject
             /// Нужно ли инициализировать привязанные объекты
             /// </summary>
             bool UseInitialization { get; }
+
+            List<BaseTechObjectManager.ObjectType> AllowedObjects { get; set; }
         }
 
         /// <summary>
-        /// Стратегия для привязки агрегатов
+        /// Стратегия для привязки объектов с их инициализацией в объекте.
         /// </summary>
-        public class AttachedAggregatesStrategy : BaseStrategy,
+        public class AttachedWithInitStrategy : BaseStrategy,
             IAttachedObjectsStrategy
         {
-            public AttachedAggregatesStrategy() : base() 
+            public AttachedWithInitStrategy(string name, string luaName,
+                List<BaseTechObjectManager.ObjectType> allowedObjects) : base() 
             {
-                Name = "Привязанные агрегаты";
-                LuaName = "attached_objects";
+                Name = name == string.Empty ? "Привязанные агрегаты" : name;
+                LuaName = luaName == string.Empty ? "attached_objects" : luaName;
+                AllowedObjects = allowedObjects == null ? new List<BaseTechObjectManager.ObjectType>() : allowedObjects;
             }
 
             public List<int> GetValidTechObjNums(string value, int objNum)
             {
-                return GetValidTechObjNums(value, objNum, allowedObjects);
+                return GetValidTechObjNums(value, objNum, AllowedObjects);
             }
 
             public bool UseInitialization
@@ -464,30 +465,25 @@ namespace TechObject
                     return true;
                 }
             }
-
-            private List<BaseTechObjectManager.ObjectType> allowedObjects =
-                new List<BaseTechObjectManager.ObjectType>() 
-                {
-                    BaseTechObjectManager.ObjectType.Aggregate
-                };
         }
 
         /// <summary>
-        /// Стратегия для привязки танков
+        /// Стратегия для привязки объектов без их инициализации в объекте.
         /// </summary>
-        public class AttachedTanksStrategy : BaseStrategy,
+        public class AttachedWithoutInitStrategy : BaseStrategy,
             IAttachedObjectsStrategy
         {
-            public AttachedTanksStrategy(string name = "", 
-                string luaName = "") : base()
+            public AttachedWithoutInitStrategy(string name, string luaName,
+                List<BaseTechObjectManager.ObjectType> allowedObjects) : base()
             {
                 Name = name == string.Empty ? "Группа танков" : name;
                 LuaName = luaName == string.Empty ? "tanks" : luaName;
+                AllowedObjects = allowedObjects == null ? new List<BaseTechObjectManager.ObjectType>() : allowedObjects;
             }
 
             public List<int> GetValidTechObjNums(string value, int objNum)
             {
-                return GetValidTechObjNums(value, objNum, allowedObjects);
+                return GetValidTechObjNums(value, objNum, AllowedObjects);
             }
 
             public bool UseInitialization
@@ -497,12 +493,6 @@ namespace TechObject
                     return false;
                 }
             }
-
-            private List<BaseTechObjectManager.ObjectType> allowedObjects =
-                new List<BaseTechObjectManager.ObjectType>()
-                {
-                    BaseTechObjectManager.ObjectType.Unit
-                };
         }
 
         /// <summary>
@@ -569,6 +559,11 @@ namespace TechObject
             /// Lua-имя группы
             /// </summary>
             public string LuaName { get; set; }
+
+            /// <summary>
+            /// Разрешенные для добавления в группу объекты
+            /// </summary>
+            public List<BaseTechObjectManager.ObjectType> AllowedObjects { get; set; }
         }
     }
 }
