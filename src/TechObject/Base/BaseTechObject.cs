@@ -121,22 +121,39 @@ namespace TechObject
         public void AddObjectGroup(string luaName, string name,
             string allowedObjects)
         {
-            AttachedObjects newGroup;
+            AttachedObjects newGroup = MakeObjectGroup(luaName, name,
+                allowedObjects);
+            if (newGroup != null)
+            {
+                objectGroups.Add(newGroup);
+            }
+        }
+
+        /// <summary>
+        /// Создать объект группы объектов.
+        /// </summary>
+        /// <param name="luaName">Lua-имя группы</param>
+        /// <param name="name">Отображаемое имя группы</param>
+        /// <param name="allowedObjects">Разрешенные типы объектов
+        /// для добавления в группу</param>
+        /// <returns></returns>
+        private AttachedObjects MakeObjectGroup(string luaName, string name,
+            string allowedObjects)
+        {
             List<BaseTechObjectManager.ObjectType> allowedObjectsList;
-            switch(allowedObjects)
+            switch (allowedObjects)
             {
                 case "all":
-                    allowedObjectsList = 
-                        new List<BaseTechObjectManager.ObjectType>() 
-                        { 
+                    allowedObjectsList =
+                        new List<BaseTechObjectManager.ObjectType>()
+                        {
                             BaseTechObjectManager.ObjectType.Aggregate,
                             BaseTechObjectManager.ObjectType.Unit
                         };
 
-                    newGroup = new AttachedObjects(string.Empty, null,
+                    return new AttachedObjects(string.Empty, null,
                         new AttachedObjectStrategy.AttachedWithoutInitStrategy(
                             name, luaName, allowedObjectsList));
-                    break;
 
                 case "units":
                     allowedObjectsList =
@@ -145,23 +162,20 @@ namespace TechObject
                             BaseTechObjectManager.ObjectType.Unit
                         };
 
-                    newGroup = new AttachedObjects(string.Empty, null,
+                    return new AttachedObjects(string.Empty, null,
                         new AttachedObjectStrategy.AttachedWithoutInitStrategy(
                             name, luaName, allowedObjectsList));
-                    break;
 
                 case "aggregates":
                     allowedObjectsList =
                         new List<BaseTechObjectManager.ObjectType>()
                         {
                             BaseTechObjectManager.ObjectType.Aggregate,
-                            BaseTechObjectManager.ObjectType.Unit
                         };
 
-                    newGroup = new AttachedObjects(string.Empty, null,
+                    return new AttachedObjects(string.Empty, null,
                         new AttachedObjectStrategy.AttachedWithoutInitStrategy(
                             name, luaName, allowedObjectsList));
-                    break;
 
                 default:
                     // Default value - aggregate.
@@ -170,15 +184,9 @@ namespace TechObject
                         {
                             BaseTechObjectManager.ObjectType.Aggregate,
                         };
-                    newGroup = new AttachedObjects(string.Empty, null,
+                    return new AttachedObjects(string.Empty, null,
                         new AttachedObjectStrategy.AttachedWithoutInitStrategy(
                             name, luaName, allowedObjectsList));
-                    break;
-            }
-            
-            if (newGroup != null)
-            {
-                objectGroups.Add(newGroup);
             }
         }
 
