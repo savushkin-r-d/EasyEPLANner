@@ -18,8 +18,8 @@ init_base_objects = function()
             basicName, bindingName, isPid)
 
         -- Добавить группы танков
-        local tankGroups = value.tankGroups or { }
-        init_tankGroups(baseObject, tankGroups)
+        local objectGroups = value.objectGroups or { }
+        init_objectGroups(baseObject, objectGroups)
 
         -- Добавить базовые операции (параметры, шаги)
         local baseOperations = value.baseOperations or { }
@@ -147,10 +147,10 @@ init_operation_steps = function(operation, steps)
 end
 
 -- Инициализация групп танков базового объекта
-init_tankGroups = function(object, tankGroups)
-    for luaName, value in pairs(tankGroups) do
+init_objectGroups = function(object, objectGroups)
+    for luaName, value in pairs(objectGroups) do
         local name = value.name or ""
         
-        object:AddTankGroup(luaName, name)
+        object:AddObjectGroup(luaName, name)
     end
 end

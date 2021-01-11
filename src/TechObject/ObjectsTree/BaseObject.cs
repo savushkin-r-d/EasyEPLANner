@@ -427,7 +427,7 @@ namespace TechObject
             {
                 RemoveAttachingToUnit(obj.AttachedObjects, objNum);
 
-                foreach(var tankGroup in obj.BaseTechObject?.TankGroupsList)
+                foreach(var tankGroup in obj.BaseTechObject?.ObjectGroupsList)
                 {
                     RemoveAttachingToUnit(tankGroup, objNum);
                 }
@@ -469,7 +469,7 @@ namespace TechObject
                 ChangeAttachedObjectAfterDelete(techObj.AttachedObjects,
                     deletedObjectNum);
 
-                foreach(var tankGroup in techObj.BaseTechObject?.TankGroupsList)
+                foreach(var tankGroup in techObj.BaseTechObject?.ObjectGroupsList)
                 {
                     ChangeAttachedObjectAfterDelete(tankGroup,
                         deletedObjectNum);
@@ -516,7 +516,7 @@ namespace TechObject
                 ChangeAttachedObjectAfterMove(techObj.AttachedObjects, oldNum,
                     newNum);
 
-                foreach(var tankGroup in techObj.BaseTechObject?.TankGroupsList)
+                foreach(var tankGroup in techObj.BaseTechObject?.ObjectGroupsList)
                 {
                     ChangeAttachedObjectAfterMove(tankGroup, oldNum, newNum);
                 }
