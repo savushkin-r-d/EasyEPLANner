@@ -446,17 +446,9 @@ namespace TechObject
             IAttachedObjectsStrategy
         {
             public AttachedWithInitStrategy(string name, string luaName,
-                List<BaseTechObjectManager.ObjectType> allowedObjects) : base() 
-            {
-                Name = name == string.Empty ? "Привязанные агрегаты" : name;
-                LuaName = luaName == string.Empty ? "attached_objects" : luaName;
-                AllowedObjects = allowedObjects == null ? new List<BaseTechObjectManager.ObjectType>() : allowedObjects;
-            }
-
-            public List<int> GetValidTechObjNums(string value, int objNum)
-            {
-                return GetValidTechObjNums(value, objNum, AllowedObjects);
-            }
+                List<BaseTechObjectManager.ObjectType> allowedObjects)
+                : base(name, luaName, allowedObjects)
+            { }
 
             public bool UseInitialization
             {
@@ -474,17 +466,9 @@ namespace TechObject
             IAttachedObjectsStrategy
         {
             public AttachedWithoutInitStrategy(string name, string luaName,
-                List<BaseTechObjectManager.ObjectType> allowedObjects) : base()
-            {
-                Name = name == string.Empty ? "Группа танков" : name;
-                LuaName = luaName == string.Empty ? "tanks" : luaName;
-                AllowedObjects = allowedObjects == null ? new List<BaseTechObjectManager.ObjectType>() : allowedObjects;
-            }
-
-            public List<int> GetValidTechObjNums(string value, int objNum)
-            {
-                return GetValidTechObjNums(value, objNum, AllowedObjects);
-            }
+                List<BaseTechObjectManager.ObjectType> allowedObjects)
+                : base(name, luaName, allowedObjects)
+            { }
 
             public bool UseInitialization
             {
@@ -501,7 +485,13 @@ namespace TechObject
         /// </summary>
         public abstract class BaseStrategy
         {
-            public BaseStrategy() { }
+            public BaseStrategy(string name, string luaName,
+                List<BaseTechObjectManager.ObjectType> allowedObjects)
+            {
+                Name = name;
+                LuaName = luaName;
+                AllowedObjects = allowedObjects;
+            }
 
             /// <summary>
             /// Получить корректные номера технологических объектов из
@@ -509,16 +499,14 @@ namespace TechObject
             /// </summary>
             /// <param name="value">Входная строка</param>
             /// <param name="selectedObjNum">Номер редактируемого объекта
-            /// <param name="allowedObjects">Разрешенные объекты по S88</param>
             /// <returns></returns>
-            protected List<int> GetValidTechObjNums(string value,
-                int selectedObjNum,
-                List<BaseTechObjectManager.ObjectType> allowedObjects)
+            public List<int> GetValidTechObjNums(string value,
+                int selectedObjNum)
             {
                 var numbers = new List<int>();
                 string[] numbersAsStringArray = value.Split(' ').ToArray();
 
-                List<int> allowedObjectsNums = allowedObjects?
+                List<int> allowedObjectsNums = AllowedObjects?
                     .Select(x => (int)x).ToList();
                 foreach (var numAsString in numbersAsStringArray)
                 {

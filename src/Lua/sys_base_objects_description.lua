@@ -1544,10 +1544,6 @@ return
             equipment = { },
             aggregateParameters = { },
             bindingName = "cip_module",
-            objectGroups =
-            {
-                washing_objects = { name = "Моющиеся объекты", allowedObjects = "all" },
-            },
         },
         user_object = {
             name = "Пользовательский объект",

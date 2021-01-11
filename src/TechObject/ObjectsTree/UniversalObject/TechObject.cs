@@ -219,9 +219,11 @@ namespace TechObject
             {
                 BaseTechObjectManager.ObjectType.Aggregate
             };
+            string attachObjectsName = "Привязанные агрегаты";
+            string attachObjectsLuaName = "attached_objects";
             this.attachedObjects = new AttachedObjects(attachedObjects, 
                 this, new AttachedObjectStrategy.AttachedWithInitStrategy(
-                    string.Empty, string.Empty, allowedObjects));
+                    attachObjectsName, attachObjectsLuaName, allowedObjects));
 
             modes = new ModesManager(this);
 
