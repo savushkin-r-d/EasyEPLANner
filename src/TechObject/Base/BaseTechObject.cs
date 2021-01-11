@@ -529,17 +529,17 @@ namespace TechObject
 
             if (UseGroups && objectGroups.Count > 0)
             {
-                foreach(var tankGroup in objectGroups)
+                foreach(var objectGroup in objectGroups)
                 {
-                    if (tankGroup.Value == string.Empty)
+                    if (objectGroup.Value == string.Empty)
                     {
                         continue;
                     } 
 
-                    string objectNames = tankGroup.GetAttachedObjectsName()
+                    string objectNames = objectGroup.GetAttachedObjectsName()
                         .Select(x => $"{prefix}prg.{x},\n")
                         .Aggregate((x, y) => x + y);
-                    res += $"{objName}.{tankGroup.WorkStrategy.LuaName} =\n";
+                    res += $"{objName}.{objectGroup.WorkStrategy.LuaName} =\n";
                     res += $"{prefix}{{\n";
                     res += $"{objectNames}";
                     res += $"{prefix}}}\n";
