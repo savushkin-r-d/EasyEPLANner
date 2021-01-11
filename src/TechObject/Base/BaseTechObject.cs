@@ -164,7 +164,7 @@ namespace TechObject
                     break;
 
                 default:
-                    // Defaul value - aggregate.
+                    // Default value - aggregate.
                     allowedObjectsList =
                         new List<BaseTechObjectManager.ObjectType>()
                         {
