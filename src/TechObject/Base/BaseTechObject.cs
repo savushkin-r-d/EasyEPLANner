@@ -347,9 +347,9 @@ namespace TechObject
         {
             var cloned = Clone();
             cloned.Owner = techObject;
-            foreach(var clonedTankGroup in cloned.objectGroups)
+            foreach(var clonedObjectGroup in cloned.objectGroups)
             {
-                clonedTankGroup.Owner = techObject;
+                clonedObjectGroup.Owner = techObject;
             }
             return cloned;
         }
