@@ -1551,5 +1551,23 @@ return
             basicName = "user_object",
             bindingName = "user_object",
         },
+        CIP_node = {
+            name = "Узел мойки",
+            s88Level = 2,
+            basicName = "CIP_node",
+            bindingName = "CIP_node",
+            baseOperations =
+            {
+                WASHING_CIP =
+                {
+                    name = "Мойка",
+                    defaultPosition = 1,
+                }
+            },
+            objectGroups =
+            {
+                washing_objects = { name = "Моющиеся объекты", allowedObjects = "all" },
+            }
+        }
     }
 end
