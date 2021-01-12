@@ -1566,7 +1566,7 @@ return
             },
             objectGroups =
             {
-                washing_objects = { name = "Моющиеся объекты", allowedObjects = "all" },
+                cip_objects = { name = "Моющиеся объекты", allowedObjects = "all" },
             }
         }
     }
