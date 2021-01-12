@@ -1562,6 +1562,17 @@ return
                 {
                     name = "Мойка",
                     defaultPosition = 1,
+                    params =
+                    {
+                        active =
+                        {
+                            CIP_WASH_REQUEST =
+                            {
+                                name = "Автоматическое включение мойки",
+                                displayObjects = { "signals" },
+                            },
+                        },
+                    },
                 }
             },
             objectGroups =
