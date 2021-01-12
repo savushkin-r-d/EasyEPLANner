@@ -1,9 +1,6 @@
 ﻿using Editor;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TechObject.AttachedObjectStrategy;
 
 namespace TechObject
@@ -438,24 +435,20 @@ namespace TechObject
             /// Нужно ли инициализировать привязанные объекты
             /// </summary>
             bool UseInitialization { get; }
+
+            List<BaseTechObjectManager.ObjectType> AllowedObjects { get; set; }
         }
 
         /// <summary>
-        /// Стратегия для привязки агрегатов
+        /// Стратегия для привязки объектов с их инициализацией в объекте.
         /// </summary>
-        public class AttachedAggregatesStrategy : BaseStrategy,
+        public class AttachedWithInitStrategy : BaseStrategy,
             IAttachedObjectsStrategy
         {
-            public AttachedAggregatesStrategy() : base() 
-            {
-                Name = "Привязанные агрегаты";
-                LuaName = "attached_objects";
-            }
-
-            public List<int> GetValidTechObjNums(string value, int objNum)
-            {
-                return GetValidTechObjNums(value, objNum, allowedObjects);
-            }
+            public AttachedWithInitStrategy(string name, string luaName,
+                List<BaseTechObjectManager.ObjectType> allowedObjects)
+                : base(name, luaName, allowedObjects)
+            { }
 
             public bool UseInitialization
             {
@@ -464,31 +457,18 @@ namespace TechObject
                     return true;
                 }
             }
-
-            private List<BaseTechObjectManager.ObjectType> allowedObjects =
-                new List<BaseTechObjectManager.ObjectType>() 
-                {
-                    BaseTechObjectManager.ObjectType.Aggregate
-                };
         }
 
         /// <summary>
-        /// Стратегия для привязки танков
+        /// Стратегия для привязки объектов без их инициализации в объекте.
         /// </summary>
-        public class AttachedTanksStrategy : BaseStrategy,
+        public class AttachedWithoutInitStrategy : BaseStrategy,
             IAttachedObjectsStrategy
         {
-            public AttachedTanksStrategy(string name = "", 
-                string luaName = "") : base()
-            {
-                Name = name == string.Empty ? "Группа танков" : name;
-                LuaName = luaName == string.Empty ? "tanks" : luaName;
-            }
-
-            public List<int> GetValidTechObjNums(string value, int objNum)
-            {
-                return GetValidTechObjNums(value, objNum, allowedObjects);
-            }
+            public AttachedWithoutInitStrategy(string name, string luaName,
+                List<BaseTechObjectManager.ObjectType> allowedObjects)
+                : base(name, luaName, allowedObjects)
+            { }
 
             public bool UseInitialization
             {
@@ -497,12 +477,6 @@ namespace TechObject
                     return false;
                 }
             }
-
-            private List<BaseTechObjectManager.ObjectType> allowedObjects =
-                new List<BaseTechObjectManager.ObjectType>()
-                {
-                    BaseTechObjectManager.ObjectType.Unit
-                };
         }
 
         /// <summary>
@@ -511,7 +485,13 @@ namespace TechObject
         /// </summary>
         public abstract class BaseStrategy
         {
-            public BaseStrategy() { }
+            public BaseStrategy(string name, string luaName,
+                List<BaseTechObjectManager.ObjectType> allowedObjects)
+            {
+                Name = name;
+                LuaName = luaName;
+                AllowedObjects = allowedObjects;
+            }
 
             /// <summary>
             /// Получить корректные номера технологических объектов из
@@ -519,16 +499,14 @@ namespace TechObject
             /// </summary>
             /// <param name="value">Входная строка</param>
             /// <param name="selectedObjNum">Номер редактируемого объекта
-            /// <param name="allowedObjects">Разрешенные объекты по S88</param>
             /// <returns></returns>
-            protected List<int> GetValidTechObjNums(string value,
-                int selectedObjNum,
-                List<BaseTechObjectManager.ObjectType> allowedObjects)
+            public List<int> GetValidTechObjNums(string value,
+                int selectedObjNum)
             {
                 var numbers = new List<int>();
                 string[] numbersAsStringArray = value.Split(' ').ToArray();
 
-                List<int> allowedObjectsNums = allowedObjects?
+                List<int> allowedObjectsNums = AllowedObjects?
                     .Select(x => (int)x).ToList();
                 foreach (var numAsString in numbersAsStringArray)
                 {
@@ -569,6 +547,11 @@ namespace TechObject
             /// Lua-имя группы
             /// </summary>
             public string LuaName { get; set; }
+
+            /// <summary>
+            /// Разрешенные для добавления в группу объекты
+            /// </summary>
+            public List<BaseTechObjectManager.ObjectType> AllowedObjects { get; set; }
         }
     }
 }

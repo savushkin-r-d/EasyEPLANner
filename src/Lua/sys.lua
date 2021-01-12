@@ -51,7 +51,7 @@ init = function()
 
             if value.tank_groups ~= nil then
                 for luaName, value in pairs(value.tank_groups) do
-                    obj:AddGroupTanks(luaName, value)
+                    obj:AddGroupObjects(luaName, value)
                 end
             end
 

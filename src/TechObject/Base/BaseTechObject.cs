@@ -24,7 +24,7 @@ namespace TechObject
             AggregateParameters = new List<BaseParameter>();
             BindingName = string.Empty;
 
-            tankGroups = new List<AttachedObjects>();
+            objectGroups = new List<AttachedObjects>();
         }
 
         /// <summary>
@@ -112,16 +112,82 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Добавить группу танков в объект
+        /// Добавить группу объектов в объект
         /// </summary>
         /// <param name="luaName">Lua-имя группы</param>
         /// <param name="name">Отображаемое имя группы</param>
-        public void AddTankGroup(string luaName, string name)
+        /// <param name="allowedObjects">Разрешенные типы объектов для
+        /// добавления в группу</param>
+        public void AddObjectGroup(string luaName, string name,
+            string allowedObjects)
         {
-            var newGroup = new AttachedObjects(string.Empty, null, 
-                new AttachedObjectStrategy.AttachedTanksStrategy(name,
-                luaName));
-            tankGroups.Add(newGroup);
+            AttachedObjects newGroup = MakeObjectGroup(luaName, name,
+                allowedObjects);
+            if (newGroup != null)
+            {
+                objectGroups.Add(newGroup);
+            }
+        }
+
+        /// <summary>
+        /// Создать объект группы объектов.
+        /// </summary>
+        /// <param name="luaName">Lua-имя группы</param>
+        /// <param name="name">Отображаемое имя группы</param>
+        /// <param name="allowedObjects">Разрешенные типы объектов
+        /// для добавления в группу</param>
+        /// <returns></returns>
+        private AttachedObjects MakeObjectGroup(string luaName, string name,
+            string allowedObjects)
+        {
+            List<BaseTechObjectManager.ObjectType> allowedObjectsList;
+            switch (allowedObjects)
+            {
+                case "all":
+                    allowedObjectsList =
+                        new List<BaseTechObjectManager.ObjectType>()
+                        {
+                            BaseTechObjectManager.ObjectType.Aggregate,
+                            BaseTechObjectManager.ObjectType.Unit
+                        };
+
+                    return new AttachedObjects(string.Empty, null,
+                        new AttachedObjectStrategy.AttachedWithoutInitStrategy(
+                            name, luaName, allowedObjectsList));
+
+                case "units":
+                    allowedObjectsList =
+                        new List<BaseTechObjectManager.ObjectType>()
+                        {
+                            BaseTechObjectManager.ObjectType.Unit
+                        };
+
+                    return new AttachedObjects(string.Empty, null,
+                        new AttachedObjectStrategy.AttachedWithoutInitStrategy(
+                            name, luaName, allowedObjectsList));
+
+                case "aggregates":
+                    allowedObjectsList =
+                        new List<BaseTechObjectManager.ObjectType>()
+                        {
+                            BaseTechObjectManager.ObjectType.Aggregate,
+                        };
+
+                    return new AttachedObjects(string.Empty, null,
+                        new AttachedObjectStrategy.AttachedWithoutInitStrategy(
+                            name, luaName, allowedObjectsList));
+
+                default:
+                    // Default value - aggregate.
+                    allowedObjectsList =
+                        new List<BaseTechObjectManager.ObjectType>()
+                        {
+                            BaseTechObjectManager.ObjectType.Aggregate,
+                        };
+                    return new AttachedObjects(string.Empty, null,
+                        new AttachedObjectStrategy.AttachedWithoutInitStrategy(
+                            name, luaName, allowedObjectsList));
+            }
         }
 
         /// <summary>
@@ -281,9 +347,9 @@ namespace TechObject
         {
             var cloned = Clone();
             cloned.Owner = techObject;
-            foreach(var clonedTankGroup in cloned.tankGroups)
+            foreach(var clonedObjectGroup in cloned.objectGroups)
             {
-                clonedTankGroup.Owner = techObject;
+                clonedObjectGroup.Owner = techObject;
             }
             return cloned;
         }
@@ -332,15 +398,17 @@ namespace TechObject
             cloned.BindingName = BindingName;
             cloned.IsPID = IsPID;
 
-            cloned.tankGroups = new List<AttachedObjects>();
-            foreach(var tankGroup in tankGroups)
+            cloned.objectGroups = new List<AttachedObjects>();
+            foreach(var objectGroup in objectGroups)
             {
                 var clonedStrategy = new AttachedObjectStrategy
-                    .AttachedTanksStrategy(tankGroup.WorkStrategy.Name,
-                    tankGroup.WorkStrategy.LuaName);
-                var clonedGroup = new AttachedObjects(tankGroup.Value,
-                    tankGroup.Owner, clonedStrategy);
-                cloned.tankGroups.Add(clonedGroup);
+                    .AttachedWithoutInitStrategy(
+                    objectGroup.WorkStrategy.Name,
+                    objectGroup.WorkStrategy.LuaName,
+                    objectGroup.WorkStrategy.AllowedObjects);
+                var clonedGroup = new AttachedObjects(objectGroup.Value,
+                    objectGroup.Owner, clonedStrategy);
+                cloned.objectGroups.Add(clonedGroup);
             }
 
             return cloned;
@@ -426,16 +494,16 @@ namespace TechObject
         {
             get
             {
-                return TankGroupsList.Count > 0;
+                return ObjectGroupsList.Count > 0;
             }
         }
 
         /// <summary>
         /// Группа объектов
         /// </summary>
-        public List<AttachedObjects> TankGroupsList 
+        public List<AttachedObjects> ObjectGroupsList 
         {
-            get => tankGroups; 
+            get => objectGroups; 
         }
 
         #region Сохранение в prg.lua
@@ -467,19 +535,19 @@ namespace TechObject
                     prefix + "}\n";
             }
 
-            if (UseGroups && tankGroups.Count > 0)
+            if (UseGroups && objectGroups.Count > 0)
             {
-                foreach(var tankGroup in tankGroups)
+                foreach(var objectGroup in objectGroups)
                 {
-                    if (tankGroup.Value == string.Empty)
+                    if (objectGroup.Value == string.Empty)
                     {
                         continue;
                     } 
 
-                    string objectNames = tankGroup.GetAttachedObjectsName()
+                    string objectNames = objectGroup.GetAttachedObjectsName()
                         .Select(x => $"{prefix}prg.{x},\n")
                         .Aggregate((x, y) => x + y);
-                    res += $"{objName}.{tankGroup.WorkStrategy.LuaName} =\n";
+                    res += $"{objName}.{objectGroup.WorkStrategy.LuaName} =\n";
                     res += $"{prefix}{{\n";
                     res += $"{objectNames}";
                     res += $"{prefix}}}\n";
@@ -886,6 +954,6 @@ namespace TechObject
         private List<BaseParameter> equipment;
         private List<BaseParameter> aggregateProperties;
         private MainAggregateParameter aggregateMainParameter;
-        private List<AttachedObjects> tankGroups;
+        private List<AttachedObjects> objectGroups;
     }
 }

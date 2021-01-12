@@ -12,7 +12,7 @@
 -- в аппарат, при привязке агрегата к аппарату).
 -- 7. bindingName - имя агрегата, используемое при привязке его к аппарату (для аппаратов не обязательно).
 -- 8. isPID - является ли объект ПИД-регулятором.
--- 9. tankGroups - группы танков.
+-- 9. objectGroups - группы объектов (танки, линии и др).
 
 -- Базовые операции (baseOperations) (название таблицы - это Lua-имя операции, пишется в верхнем регистре):
 -- 1. name - русскоязычное название операции.
@@ -59,10 +59,12 @@
 -- 1. name - русскоязычное имя параметра.
 -- 2. defaultValue - значение по-умолчанию (опционально).
 
--- Группы танков (tankGroups) - группы танков (в основном для линий). Внутри этой переменной
--- указываются группы танков, которые нужны в объекте.
+-- Группы объектов (objectGroups) - группы объектов (в основном для линий). Внутри этой переменной
+-- указываются группы объектов, которые нужны в объекте.
 -- Название таблицы - Lua-имя группы, пишется в любом регистре:
 -- 1. name - русскоязычное название группы.
+-- 2. allowedObjects - указываются через запятую доступные объекты (units, aggregates, all).
+-- Стандартное значение - aggregates, оно будет использоваться, если не указать это поле.
 
 -- Оборудование - параметр оборудования.
 -- Параметры объекта, как агрегата - по аналогии с активными и булевскими параметрами и
@@ -310,9 +312,9 @@ return
             },
             aggregateParameters = { },
             bindingName = "line",
-            tankGroups =
+            objectGroups =
             {
-                tanks = { name = "Группа танков" },
+                tanks = { name = "Группа танков", allowedObjects = "units" },
             }
         },
         line_in = {
@@ -408,9 +410,9 @@ return
             },
             aggregateParameters = { },
             bindingName = "line_in",
-            tankGroups =
+            objectGroups =
             {
-                tanks = { name = "Группа танков" },
+                tanks = { name = "Группа танков", allowedObjects = "units" },
             }
         },
         line_out = {
@@ -528,9 +530,9 @@ return
             },
             aggregateParameters = { },
             bindingName = "line_out",
-            tankGroups =
+            objectGroups =
             {
-                tanks = { name = "Группа танков" },
+                tanks = { name = "Группа танков", allowedObjects = "units" },
             }
         },
         line_pumping = {
@@ -625,10 +627,10 @@ return
                 product_CTR = { name = "Счетчик", defaultValue = "FQT1" },
             },
             bindingName = "line_pumping",
-            tankGroups =
+            objectGroups =
             {
-                src_tanks = { name = "Источники" },
-                dst_tanks = { name = "Приемники" },
+                src_tanks = { name = "Источники", allowedObjects = "units" },
+                dst_tanks = { name = "Приемники", allowedObjects = "units" },
             },
         },
         pasteurizator = {
@@ -1541,7 +1543,7 @@ return
             basicName = "cip_module",
             equipment = { },
             aggregateParameters = { },
-            bindingName = "cip_module"
+            bindingName = "cip_module",
         },
         user_object = {
             name = "Пользовательский объект",
