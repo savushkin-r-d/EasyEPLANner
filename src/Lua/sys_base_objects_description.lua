@@ -1566,7 +1566,7 @@ return
             },
             objectGroups =
             {
-                cip_objects = { name = "Моющиеся объекты", allowedObjects = "all" },
+                CIP_objects = { name = "Моющиеся объекты", allowedObjects = "all" },
             }
         }
     }
