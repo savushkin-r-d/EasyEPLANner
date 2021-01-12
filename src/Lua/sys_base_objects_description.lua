@@ -1552,10 +1552,10 @@ return
             bindingName = "user_object",
         },
         CIP_node = {
-            name = "Узел мойки",
+            name = "Линия мойки",
             s88Level = 2,
-            basicName = "CIP_node",
-            bindingName = "CIP_node",
+            basicName = "line",
+            bindingName = "CIP_line",
             baseOperations =
             {
                 WASHING_CIP =
