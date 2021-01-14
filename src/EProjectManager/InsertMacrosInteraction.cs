@@ -1,7 +1,6 @@
 ﻿using Eplan.EplApi.Base;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.EServices.Ged;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace EasyEPlanner
@@ -18,22 +17,31 @@ namespace EasyEPlanner
         {
             base.OnSuccess(result);
 
-            string baseObjectLuaName = FindBaseObjectLuaNameInMacroses();
+            string baseObjectLuaName = FindBaseObjectLuaNameInGeneralSymbol();
             if (!string.IsNullOrEmpty(baseObjectLuaName))
             {
                 InsertNewObject(baseObjectLuaName);
             }
         }
 
-        private string FindBaseObjectLuaNameInMacroses()
+        private string FindBaseObjectLuaNameInGeneralSymbol()
         {
-            IEnumerable<Function> macrosFunctions = InsertedItems
+            if (InsertedItems?.Length <= 0)
+            {
+                return string.Empty;
+            }
+
+            var functionsInStorableObjects = InsertedItems
                 .Where(x => x is Function func &&
                 func.IsMainFunction == true &&
-                func.Category == Function.Enums.Category.FunctionalFunction)
-                .ToArray()
-                .Cast<Function>();
-            foreach (var function in macrosFunctions)
+                func.Category == Function.Enums.Category.FunctionalFunction);
+            if(functionsInStorableObjects?.Count() < 0)
+            {
+                return string.Empty;
+            }
+
+            var castedFunctions = functionsInStorableObjects.Cast<Function>();
+            foreach (var function in castedFunctions)
             {
                 string symbolDescription = function.Properties.FUNC_SYMB_DESC
                     .ToString(ISOCode.Language.L___, string.Empty);
@@ -51,6 +59,7 @@ namespace EasyEPlanner
         private void InsertNewObject(string baseObjectLuaName)
         {
             // TODO: Insert object mechanism.
+            System.Windows.Forms.MessageBox.Show("Tylko jedno w glowie mam");
         }
 
         const string DefinedMacrosName = "Macros definition";
