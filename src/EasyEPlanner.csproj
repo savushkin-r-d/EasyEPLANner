@@ -144,6 +144,9 @@
     </Compile>
     <Compile Include="Editor\TreeViewItem.cs" />
     <Compile Include="EncodingDetector.cs" />
+    <Compile Include="EProjectManager\EplanEventListener.cs" />
+    <Compile Include="EProjectManager\InsertMacrosInteraction.cs" />
+    <Compile Include="EProjectManager\SelectInteractionWhileEditModes.cs" />
     <Compile Include="InterprojectExchange\DeviceComparer.cs" />
     <Compile Include="InterprojectExchange\DeviceInfo.cs" />
     <Compile Include="InterprojectExchange\DeviceSignalsInfo.cs" />
@@ -216,7 +219,7 @@
     <Compile Include="DFrm.Designer.cs">
       <DependentUpon>DFrm.cs</DependentUpon>
     </Compile>
-    <Compile Include="EProjectManager.cs" />
+    <Compile Include="EProjectManager\EProjectManager.cs" />
     <Compile Include="FileSavers\XMLReporterDialog.cs">
       <SubType>Form</SubType>
     </Compile>
