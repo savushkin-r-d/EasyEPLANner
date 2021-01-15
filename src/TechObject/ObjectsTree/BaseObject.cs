@@ -271,6 +271,7 @@ namespace TechObject
                 newObject.ChangeCrossRestriction();
                 newObject.Equipment.ModifyDevNames();
 
+                newObject.AddParent(this);
                 return newObject;
             }
             else

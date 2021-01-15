@@ -186,6 +186,7 @@ namespace TechObject
 
                 newObject.Equipment.ModifyDevNames();
 
+                newObject.AddParent(this);
                 return newObject;
             }
             else

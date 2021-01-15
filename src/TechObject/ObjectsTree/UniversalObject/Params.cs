@@ -319,6 +319,8 @@ namespace TechObject
                 }
 
                 parameters.Add(newPar);
+
+                newPar.AddParent(this);
                 return newPar;
             }
             else

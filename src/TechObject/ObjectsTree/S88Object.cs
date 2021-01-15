@@ -86,6 +86,8 @@ namespace TechObject
             {
                 ITreeViewItem insertedItem = InsertSubType(selectedSubType,
                     techObject);
+
+                insertedItem.AddParent(this);
                 return insertedItem;
             }
 

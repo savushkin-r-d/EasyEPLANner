@@ -472,6 +472,7 @@ namespace TechObject
                 ChangeRestrictionModeOwner(newMode);
                 newMode.ChangeCrossRestriction();
 
+                newMode.AddParent(this);
                 return newMode;
             }
 
