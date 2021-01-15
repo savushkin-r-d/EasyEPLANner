@@ -17,14 +17,14 @@ namespace EasyEPlanner
         {
             base.OnSuccess(result);
 
-            string baseObjectLuaName = FindBaseObjectLuaNameInGeneralSymbol();
+            string baseObjectLuaName = FindBaseObjectLuaNameInMainSymbol();
             if (!string.IsNullOrEmpty(baseObjectLuaName))
             {
                 InsertNewObject(baseObjectLuaName);
             }
         }
 
-        private string FindBaseObjectLuaNameInGeneralSymbol()
+        private string FindBaseObjectLuaNameInMainSymbol()
         {
             if (InsertedItems?.Length <= 0)
             {
