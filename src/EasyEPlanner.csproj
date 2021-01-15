@@ -134,7 +134,7 @@
     <Compile Include="Editor\NewEditorControl.Designer.cs">
       <DependentUpon>NewEditorControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Editor\INewEditor.cs" />
+    <Compile Include="Editor\IEditor.cs" />
     <Compile Include="Editor\ObjectProperty.cs" />
     <Compile Include="Editor\ObjectAdder\ObjectAdder.cs">
       <SubType>Form</SubType>

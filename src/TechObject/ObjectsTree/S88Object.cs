@@ -112,6 +112,11 @@ namespace TechObject
             return null;
         }
 
+        public ITreeViewItem Insert(string objectSubType)
+        {
+            return InsertSubType(objectSubType);
+        }
+
         /// <summary>
         /// Получить имя базового объекта (подтип S88)
         /// </summary>

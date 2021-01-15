@@ -22,5 +22,10 @@
         /// Закрыть редактор и прекратить редактирование
         /// </summary>
         void CloseEditor();
+
+        /// <summary>
+        /// Обновить редактор
+        /// </summary>
+        void RefreshEditor();
     }
 }

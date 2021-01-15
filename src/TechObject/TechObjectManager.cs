@@ -606,7 +606,14 @@ namespace TechObject
                 var treeItem = GetTreeItem(baseObjectTypeName);
                 if (treeItem != null)
                 {
-                    // TODO: Create item from foundObject.Name in treeItem
+                    if (treeItem is S88Object s88Obj)
+                    {
+                        s88Obj.Insert(foundBaseObject.Name);
+                    }
+                    else
+                    {
+                        treeItem.Insert();
+                    }
                 }
             }
         }

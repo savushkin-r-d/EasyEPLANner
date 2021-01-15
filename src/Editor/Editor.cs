@@ -45,6 +45,11 @@
             editorForm.CloseEditor();
         }
 
+        public void RefreshEditor()
+        {
+            editorForm.RefreshTree();
+        }
+
         /// <summary>
         /// Получение экземпляра класса.
         /// </summary>
