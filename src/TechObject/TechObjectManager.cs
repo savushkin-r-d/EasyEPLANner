@@ -596,7 +596,13 @@ namespace TechObject
 
         public void InsertBaseObject(string luaName)
         {
-            // TODO: Insert new base object to editor
+            var baseObjectManager = BaseTechObjectManager.GetInstance();
+            BaseTechObject foundBaseObject = baseObjectManager
+                .GetTechObject(luaName);
+            if (foundBaseObject != null)
+            {
+                // TODO: Insert object
+            }
         }
 
         /// <summary>
