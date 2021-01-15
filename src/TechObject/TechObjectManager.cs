@@ -601,7 +601,13 @@ namespace TechObject
                 .GetTechObject(luaName);
             if (foundBaseObject != null)
             {
-                // TODO: Insert object
+                string baseObjectTypeName = baseObjectManager
+                    .GetS88Name(foundBaseObject.S88Level);
+                var treeItem = GetTreeItem(baseObjectTypeName);
+                if (treeItem != null)
+                {
+                    // TODO: Create item from foundObject.Name in treeItem
+                }
             }
         }
 
