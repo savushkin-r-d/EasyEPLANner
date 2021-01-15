@@ -255,6 +255,7 @@ namespace TechObject
                 // Для корректного копирования ограничений
                 newObject.ChangeCrossRestriction(techObject);
 
+                newObject.AddParent(this);
                 return newObject;
             }
 

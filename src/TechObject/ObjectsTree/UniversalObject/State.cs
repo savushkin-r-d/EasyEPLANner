@@ -368,6 +368,7 @@ namespace TechObject
                
                 index = steps.IndexOf(newStep);
 
+                newStep.AddParent(this);
                 return newStep;
             }
 

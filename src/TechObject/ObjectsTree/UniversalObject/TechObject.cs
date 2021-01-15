@@ -768,6 +768,8 @@ namespace TechObject
             if (parsNotNull)
             {
                 pars.Replace(pars, copyPars);
+
+                pars.AddParent(this);
                 return pars;
             }
 
@@ -791,8 +793,11 @@ namespace TechObject
                     }
                 }
                 equipment.ModifyDevNames(NameEplan, TechNumber);
-                return child as ITreeViewItem;
+
+                equipment.AddParent(this);
+                return equipment;
             }
+
             return null;
         }
 

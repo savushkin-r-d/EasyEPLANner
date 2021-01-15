@@ -434,6 +434,8 @@ namespace TechObject
                 newMode.ModifyRestrictObj(oldN, newN);
 
                 newMode.ChangeCrossRestriction(mode);
+
+                newMode.AddParent(this);
                 return newMode;
             }
 

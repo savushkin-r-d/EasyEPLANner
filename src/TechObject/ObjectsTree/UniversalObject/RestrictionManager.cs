@@ -157,6 +157,8 @@ namespace TechObject
             if (objectsNotNull)
             {
                 restriction.SetNewValue(copy.EditText[1]);
+
+                restriction.AddParent(this);
                 return restriction;
             }
             return null;

@@ -395,6 +395,7 @@ namespace TechObject
                 parameters.Remove(par);
                 parameters.Insert(index, newPar);
 
+                newPar.AddParent(this);
                 return newPar;
             }
 
