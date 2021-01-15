@@ -6,7 +6,7 @@ using System.Linq;
 namespace EasyEPlanner
 {
     [Interaction(Name = "XMIaInsertMacro", NameOfBaseInteraction = "XMIaInsertMacro", Ordinal = 51, Prio = 21)]
-    public class XMIaInsertMacroDerived : InsertInteraction
+    public class InsertMacroInteraction : InsertInteraction
     {
         public override RequestCode OnStart(InteractionContext oContext)
         {
