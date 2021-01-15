@@ -267,6 +267,8 @@ namespace TechObject
             }
 
             parameters.Add(newParam);
+
+            newParam.AddParent(this);
             return newParam;
         }
 

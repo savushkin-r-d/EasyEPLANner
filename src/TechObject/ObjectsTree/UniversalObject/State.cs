@@ -396,12 +396,15 @@ namespace TechObject
             {
                 modeStep = new Step(Step.MainStepName, GetStepN, this, isMain);
                 steps.Add(modeStep);
+
                 modeStep.AddParent(this);
                 return modeStep;
             }
 
             Step newStep = new Step(Step.NewStepName, GetStepN, this);
             steps.Add(newStep);
+
+            newStep.AddParent(this);
             return newStep;
         }
 

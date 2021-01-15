@@ -98,6 +98,7 @@ namespace TechObject
             // Обозначение начального номера объекта для ограничений.
             SetRestrictionOwner();
 
+            newObject.AddParent(this);
             return newObject;
         }
 

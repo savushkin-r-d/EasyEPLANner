@@ -492,6 +492,8 @@ namespace TechObject
             if (selectedType != null && selectedSubType != null)
             {
                 ITreeViewItem insertedItem = InsertType(selectedType);
+
+                insertedItem.AddParent(this);
                 return insertedItem;
             }
 
@@ -614,6 +616,8 @@ namespace TechObject
                     {
                         treeItem.Insert();
                     }
+
+                    Editor.Editor.GetInstance().RefreshEditor();
                 }
             }
         }

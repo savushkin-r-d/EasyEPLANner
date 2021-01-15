@@ -197,7 +197,6 @@ namespace Editor
             editorTView.BeginUpdate();
             treeViewItemsList = new List<ITreeViewItem>();
             treeViewItemsList.Add(data);
-            data.AddParent(null);
             editorTView.Roots = treeViewItemsList;
             editorTView.Columns[0]
                 .AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -748,7 +747,6 @@ namespace Editor
                 ITreeViewItem newItem = item.Insert();
                 if(newItem != null)
                 {
-                    newItem.AddParent(item);
                     editorTView.RefreshObjects(item.Items);
                     editorTView.RefreshObject(item);
                     if (item.NeedRebuildParent && item.Parent != null)
@@ -818,7 +816,6 @@ namespace Editor
                         copyItem = null;
                     }
 
-                    newItem.AddParent(item);
                     HiglihtItems();
                     RefreshTree();
                     DisableNeededObjects(newItem.Parent.Items);
@@ -843,7 +840,6 @@ namespace Editor
                     ITreeViewItem newItem = parent.Replace(item, copiedItem);
                     if (newItem != null)
                     {
-                        newItem.AddParent(parent);
                         RefreshTree();
                         DisableNeededObjects(treeViewItemsList.ToArray());
                     }
@@ -864,7 +860,6 @@ namespace Editor
                 ITreeViewItem isMove = itemParent.MoveUp(item);
                 if (isMove != null) // Если перемещенный объект не null
                 {
-                    item.AddParent(itemParent);
                     editorTView.RefreshObjects(itemParent.Items);
                     editorTView.SelectedIndex--;
                 }
@@ -884,7 +879,6 @@ namespace Editor
                 ITreeViewItem isMove = itemParent.MoveDown(item);
                 if (isMove != null) // Если перемещенный объект не null
                 {
-                    item.AddParent(itemParent);
                     editorTView.RefreshObjects(itemParent.Items);
                     editorTView.SelectedIndex++;
                 }

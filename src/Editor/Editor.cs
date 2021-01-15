@@ -29,6 +29,7 @@
             if (editorForm.wasInit == false)
             {
                 editorForm.Init(objectTree);
+                objectTree.AddParent(null);
                 editorForm.wasInit = true;
             }
 

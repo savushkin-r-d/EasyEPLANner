@@ -96,6 +96,7 @@ namespace TechObject
 
                 newObject.SetUpFromBaseTechObject();
 
+                newObject.AddParent(this);
                 return newObject;
             }
             else

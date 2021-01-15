@@ -493,6 +493,7 @@ namespace TechObject
 
             ChangeRestrictionModeOwner(newMode);
 
+            newMode.AddParent(this);
             return newMode;
         }
 
