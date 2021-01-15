@@ -2,6 +2,7 @@
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.EServices.Ged;
 using System.Linq;
+using TechObject;
 
 namespace EasyEPlanner
 {
@@ -58,8 +59,9 @@ namespace EasyEPlanner
 
         private void InsertNewObject(string baseObjectLuaName)
         {
-            // TODO: Insert object mechanism.
-            System.Windows.Forms.MessageBox.Show("Tylko jedno w glowie mam");
+            ITechObjectManager techObjectManager = TechObjectManager
+                .GetInstance();
+            techObjectManager.InsertBaseObject(baseObjectLuaName);
         }
 
         const string DefinedMacrosName = "Macros definition";

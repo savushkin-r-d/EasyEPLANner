@@ -594,6 +594,11 @@ namespace TechObject
         }
         #endregion
 
+        public void InsertBaseObject(string luaName)
+        {
+            // TODO: Insert new base object to editor
+        }
+
         /// <summary>
         /// Объект мастера проекта.
         /// </summary>

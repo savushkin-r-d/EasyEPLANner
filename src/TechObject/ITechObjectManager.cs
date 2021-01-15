@@ -75,6 +75,12 @@ namespace TechObject
             bool cdbxNewNames);
 
         /// <summary>
+        /// Вставить базовый объект в редактор
+        /// </summary>
+        /// <param name="luaName">Lua-имя объекта</param>
+        void InsertBaseObject(string luaName);
+
+        /// <summary>
         /// Количество аппаратов в проекте
         /// </summary>
         int UnitsCount { get; }
