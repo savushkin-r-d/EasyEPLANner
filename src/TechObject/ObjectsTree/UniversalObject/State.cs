@@ -323,6 +323,8 @@ namespace TechObject
                 {
                     steps.Remove(step);
                     steps.Insert(index - 1, step);
+
+                    steps[index].AddParent(this);
                     return steps[index];
                 }
             }
@@ -340,6 +342,8 @@ namespace TechObject
                 {
                     steps.Remove(step);
                     steps.Insert(index + 1, step);
+
+                    steps[index].AddParent(this);
                     return steps[index];
                 }
             }

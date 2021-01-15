@@ -356,6 +356,7 @@ namespace TechObject
                         ChangeRestrictionModeOwner(newMode);
                     }
 
+                    modes[index].AddParent(this);
                     return modes[index];
                 }
             }
@@ -385,6 +386,7 @@ namespace TechObject
                         ChangeRestrictionModeOwner(newMode);
                     }
 
+                    modes[index].AddParent(this);
                     return modes[index];
                 }
             }

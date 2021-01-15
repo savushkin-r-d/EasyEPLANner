@@ -189,6 +189,8 @@ namespace TechObject
 
                     ChangeAttachedObjectsAfterMove(oldGlobalIndex + 1,
                         newGlobalIndex + 1);
+
+                    localObjects[newLocalIndex].AddParent(this);
                     return localObjects[newLocalIndex];
                 }
             }
@@ -227,6 +229,8 @@ namespace TechObject
 
                     ChangeAttachedObjectsAfterMove(oldGlobalIndex + 1,
                         newGlobalIndex + 1);
+
+                    localObjects[newLocalIndex].AddParent(this);
                     return localObjects[newLocalIndex];
                 }
             }
