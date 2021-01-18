@@ -470,6 +470,8 @@ namespace TechObject
                 {
                     ITreeViewItem insertedItem = InsertType(selectedType,
                         techObj);
+
+                    insertedItem.AddParent(this);
                     return insertedItem;
                 }
             }
@@ -492,6 +494,8 @@ namespace TechObject
             if (selectedType != null && selectedSubType != null)
             {
                 ITreeViewItem insertedItem = InsertType(selectedType);
+
+                insertedItem.AddParent(this);
                 return insertedItem;
             }
 
@@ -593,6 +597,32 @@ namespace TechObject
             }
         }
         #endregion
+
+        public void InsertBaseObject(string luaName)
+        {
+            var baseObjectManager = BaseTechObjectManager.GetInstance();
+            BaseTechObject foundBaseObject = baseObjectManager
+                .GetTechObject(luaName);
+            if (foundBaseObject != null)
+            {
+                string baseObjectTypeName = baseObjectManager
+                    .GetS88Name(foundBaseObject.S88Level);
+                var treeItem = GetTreeItem(baseObjectTypeName);
+                if (treeItem != null)
+                {
+                    if (treeItem is S88Object s88Obj)
+                    {
+                        s88Obj.Insert(foundBaseObject.Name);
+                    }
+                    else
+                    {
+                        treeItem.Insert();
+                    }
+
+                    Editor.Editor.GetInstance().RefreshEditor();
+                }
+            }
+        }
 
         /// <summary>
         /// Объект мастера проекта.

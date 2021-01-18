@@ -213,6 +213,8 @@ namespace TechObject
                 devTypes, devSubTypes);
             newAction.DrawStyle = DrawStyle;
             subActions.Add(newAction);
+
+            newAction.AddParent(this);
             return newAction;
         }
 

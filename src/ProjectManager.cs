@@ -470,8 +470,7 @@ namespace EasyEPlanner
         /// <returns>Результат редактирования</returns>
         public void StartEdit()
         {
-            editor
-                .OpenEditor(techObjectManager as Editor.ITreeViewItem);
+            editor.OpenEditor(techObjectManager as Editor.ITreeViewItem);
         }
 
         #region Подсветка объектов на схеме

@@ -356,6 +356,7 @@ namespace TechObject
                         ChangeRestrictionModeOwner(newMode);
                     }
 
+                    modes[index].AddParent(this);
                     return modes[index];
                 }
             }
@@ -385,6 +386,7 @@ namespace TechObject
                         ChangeRestrictionModeOwner(newMode);
                     }
 
+                    modes[index].AddParent(this);
                     return modes[index];
                 }
             }
@@ -434,6 +436,8 @@ namespace TechObject
                 newMode.ModifyRestrictObj(oldN, newN);
 
                 newMode.ChangeCrossRestriction(mode);
+
+                newMode.AddParent(this);
                 return newMode;
             }
 
@@ -472,6 +476,7 @@ namespace TechObject
                 ChangeRestrictionModeOwner(newMode);
                 newMode.ChangeCrossRestriction();
 
+                newMode.AddParent(this);
                 return newMode;
             }
 
@@ -493,6 +498,7 @@ namespace TechObject
 
             ChangeRestrictionModeOwner(newMode);
 
+            newMode.AddParent(this);
             return newMode;
         }
 

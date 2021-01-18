@@ -297,6 +297,7 @@ namespace TechObject
                     }
                 }
 
+                // AddParent не нужен т.к он вызывается выше по стеку функций.
                 return parsManager;
             }
 
@@ -310,6 +311,7 @@ namespace TechObject
                     pars.InsertCopy(par);
                 }
 
+                pars.AddParent(this);
                 return pars;
             }
 

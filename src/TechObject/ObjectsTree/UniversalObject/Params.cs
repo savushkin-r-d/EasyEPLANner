@@ -267,6 +267,8 @@ namespace TechObject
             }
 
             parameters.Add(newParam);
+
+            newParam.AddParent(this);
             return newParam;
         }
 
@@ -317,6 +319,8 @@ namespace TechObject
                 }
 
                 parameters.Add(newPar);
+
+                newPar.AddParent(this);
                 return newPar;
             }
             else
@@ -336,6 +340,7 @@ namespace TechObject
                     parameters.Remove(par);
                     parameters.Insert(index + 1, par);
 
+                    parameters[index].AddParent(this);
                     return parameters[index];
                 }
             }
@@ -354,6 +359,7 @@ namespace TechObject
                     parameters.Remove(par);
                     parameters.Insert(index - 1, par);
 
+                    parameters[index].AddParent(this);
                     return parameters[index];
                 }
             }
@@ -391,6 +397,7 @@ namespace TechObject
                 parameters.Remove(par);
                 parameters.Insert(index, newPar);
 
+                newPar.AddParent(this);
                 return newPar;
             }
 

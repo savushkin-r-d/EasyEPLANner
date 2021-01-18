@@ -29,6 +29,7 @@
             if (editorForm.wasInit == false)
             {
                 editorForm.Init(objectTree);
+                objectTree.AddParent(null);
                 editorForm.wasInit = true;
             }
 
@@ -43,6 +44,11 @@
         public void CloseEditor()
         {
             editorForm.CloseEditor();
+        }
+
+        public void RefreshEditor()
+        {
+            editorForm.RefreshTree();
         }
 
         /// <summary>

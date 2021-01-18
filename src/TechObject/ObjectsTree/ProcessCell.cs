@@ -96,6 +96,7 @@ namespace TechObject
 
                 newObject.SetUpFromBaseTechObject();
 
+                newObject.AddParent(this);
                 return newObject;
             }
             else
@@ -190,6 +191,7 @@ namespace TechObject
 
                 newObject.Equipment.ModifyDevNames();
 
+                newObject.AddParent(this);
                 return newObject;
             }
             else
@@ -253,6 +255,7 @@ namespace TechObject
                 // Для корректного копирования ограничений
                 newObject.ChangeCrossRestriction(techObject);
 
+                newObject.AddParent(this);
                 return newObject;
             }
 

@@ -323,6 +323,8 @@ namespace TechObject
                 {
                     steps.Remove(step);
                     steps.Insert(index - 1, step);
+
+                    steps[index].AddParent(this);
                     return steps[index];
                 }
             }
@@ -340,6 +342,8 @@ namespace TechObject
                 {
                     steps.Remove(step);
                     steps.Insert(index + 1, step);
+
+                    steps[index].AddParent(this);
                     return steps[index];
                 }
             }
@@ -368,6 +372,7 @@ namespace TechObject
                
                 index = steps.IndexOf(newStep);
 
+                newStep.AddParent(this);
                 return newStep;
             }
 
@@ -396,12 +401,15 @@ namespace TechObject
             {
                 modeStep = new Step(Step.MainStepName, GetStepN, this, isMain);
                 steps.Add(modeStep);
+
                 modeStep.AddParent(this);
                 return modeStep;
             }
 
             Step newStep = new Step(Step.NewStepName, GetStepN, this);
             steps.Add(newStep);
+
+            newStep.AddParent(this);
             return newStep;
         }
 

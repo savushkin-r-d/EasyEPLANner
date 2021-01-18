@@ -222,6 +222,8 @@ namespace TechObject
                 string.Empty);
             newAction.DrawStyle = DrawStyle;
             subActions.Add(newAction);
+
+            newAction.AddParent(this);
             return newAction;
         }
 

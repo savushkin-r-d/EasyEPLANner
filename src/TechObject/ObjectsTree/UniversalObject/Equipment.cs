@@ -352,6 +352,8 @@ namespace TechObject
             {
                 property.SetNewValue(copiedObject.Value);
                 ModifyDevNames(owner.NameEplan, owner.TechNumber);
+
+                property.AddParent(this);
                 return property;
             }
             return null;

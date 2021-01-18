@@ -519,6 +519,7 @@ namespace TechObject
                 stepsMngr.Insert(index, newState);
                 SetItems();
 
+                newState.AddParent(this);
                 return newState;
             }
 
@@ -542,6 +543,8 @@ namespace TechObject
                 {
                     restrict.SetRestrictionOwner(objNum, modeNum);
                 }
+
+                selectesRestrMan.AddParent(this);
                 return selectesRestrMan;
             }
 

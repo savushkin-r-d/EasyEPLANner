@@ -86,6 +86,8 @@ namespace TechObject
             {
                 ITreeViewItem insertedItem = InsertSubType(selectedSubType,
                     techObject);
+
+                insertedItem.AddParent(this);
                 return insertedItem;
             }
 
@@ -106,10 +108,19 @@ namespace TechObject
             if (selectedSubType != null)
             {
                 ITreeViewItem insertedItem = InsertSubType(selectedSubType);
+
+                insertedItem.AddParent(this);
                 return insertedItem;
             }
 
             return null;
+        }
+
+        public ITreeViewItem Insert(string objectSubType)
+        {
+            ITreeViewItem insertedItem = InsertSubType(objectSubType);
+            insertedItem.AddParent(this);
+            return insertedItem;
         }
 
         /// <summary>
