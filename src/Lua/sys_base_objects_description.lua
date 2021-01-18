@@ -758,9 +758,9 @@ return
                     {
                         active =
                         {
-                            MIXING_TIME =
+                            LEAVENING_TIME =
                             {
-                                name = "Время заквашивания",
+                                name = "Время заквашивания (мин)",
                                 displayObjects = { "parameters" },
                             },
                             OPERATION_AFTER = { name = "Номер последующей операции" },
