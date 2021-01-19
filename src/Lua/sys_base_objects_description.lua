@@ -665,6 +665,9 @@ return
                     },
                     defaultPosition = 1,
                 },
+                WORK = {
+                    name = "Работа",
+                },
             },
             basicName = "pasteurizator",
             equipment = { },
@@ -1465,7 +1468,17 @@ return
             {
                 TE1 = { name = "Датчик температуры", defaultValue = "TE1" },
             },
-            aggregateParameters = { },
+            aggregateParameters =
+            {
+                main =
+                {
+                    NEED_STERILE_AIR_NODE =
+                    { 
+                        name = "Использовать узел стерильного воздуха",
+                        defaultValue = "false"
+                    },
+                },
+            },
             bindingName = "sterile_air_node",
         },
         steam_blast_node = {
@@ -1483,7 +1496,17 @@ return
             {
                 GS = { name = "Датчик(и) люка", defaultValue = "GS1" },
             },
-            aggregateParameters = { },
+            aggregateParameters =
+            {
+                main =
+                {
+                    NEED_STEAM_BLAST_NODE =
+                    { 
+                        name = "Использовать узел продувания",
+                        defaultValue = "false"
+                    },
+                },
+            },
             bindingName = "steam_blast_node",
         },
         tank_level_node_PID = {
@@ -1504,7 +1527,18 @@ return
                 SET_VALUE = { name = "Задание" },
             },
             bindingName = "tank_level_node_PID",
-            isPID = true
+            isPID = true,
+            aggregateParameters =
+            {
+                main =
+                {
+                    NEED_TANK_LEVEL_NODE_PID =
+                    { 
+                        name = "Использовать узел текущего уровня ПИД",
+                        defaultValue = "false"
+                    },
+                },
+            },
         },
         tank_level_node = {
             name = "Узел текущего уровня",
@@ -1534,7 +1568,18 @@ return
                 LS_down = { name = "Датчик нижнего уровня", defaultValue = "LS1" },
                 LT = { name = "Датчик текущего уровня", defaultValue = "LT1" },
             },
-            bindingName = "tank_level_node"
+            bindingName = "tank_level_node",
+            aggregateParameters =
+            {
+                main =
+                {
+                    NEED_TANK_LEVEL_NODE =
+                    { 
+                        name = "Использовать узел текущего уровня",
+                        defaultValue = "false"
+                    },
+                },
+            },
         },
         cip_module = {
             name = "Модуль мойки",
