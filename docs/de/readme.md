@@ -1,16 +1,16 @@
-﻿# EasyEplanner - Open Source
+﻿# EasyEPLANner - Open Source
 
 ### Repository
 
-Dieses Repository ist ein Open-Source Projekt - EasyEplanner.
+Dieses Repository ist ein Open-Source Projekt - EasyEPLANner.
 Wir arbeiten an dem Projekt und lösen verschiedene Probleme im Zusammenhang mit der Entwicklung.
 
-### EasyEplanner
-![](../user_manual/images/EasyEplannerPreview.png)
+### EasyEPLANner
+![](../user_manual/images/EasyEPLANnerPreview.png)
 
-Der EasyEplanner wurde als Add-In zur EPLAN 2.9-Version entwickelt. Das Add-In wird für EPLAN-Projekte verwendet und hilft Ihnen, die Arbeit eines Automatisierungsingenieurs und eines Softwareentwicklers zu reduzieren. Der Softwareentwickler erstellt Code in der Programmiersprache Lua für das Projekt.
+Der EasyEPLANner wurde als Add-In zur EPLAN 2.9-Version entwickelt. Das Add-In wird für EPLAN-Projekte verwendet und hilft Ihnen, die Arbeit eines Automatisierungsingenieurs und eines Softwareentwicklers zu reduzieren. Der Softwareentwickler erstellt Code in der Programmiersprache Lua für das Projekt.
 
-EasyEPlanner hilft bei der Beschreibung von technologischen Objekten (Tank, Kessel usw.), Operationen dieser Objekte, Arbeitsschritten, Betriebsbeschränkungen und vielen anderen Eigenschaften. Schließlich generiert EasyEplanner LUA-Dateien, die auf einen Controller hochgeladen werden. Wir unterstützen Steuerungen folgender Hersteller:
+EasyEPLANner hilft bei der Beschreibung von technologischen Objekten (Tank, Kessel usw.), Operationen dieser Objekte, Arbeitsschritten, Betriebsbeschränkungen und vielen anderen Eigenschaften. Schließlich generiert EasyEPLANner LUA-Dateien, die auf einen Controller hochgeladen werden. Wir unterstützen Steuerungen folgender Hersteller:
 
 1. [Phoenix Contact - PLCNext](https://github.com/plcnext);
 2. [WAGO - PFC200](https://github.com/WAGO).
@@ -25,8 +25,8 @@ Wenn Sie zur Entwicklung unseres Projekts beitragen möchten, lesen Sie vor dem 
 
 ### Feedback
 Kontaktieren Sie uns über Slack oder die Google-Gruppe:
-* [Google Gruppe](https://groups.google.com/forum/#!forum/easyeplanner);
-* Kanal in [Slack](https://slack.com) - easyeplanner.slack.com.
+* [Google Gruppe](https://groups.google.com/forum/#!forum/EasyEPLANner);
+* Kanal in [Slack](https://slack.com) - EasyEPLANner.slack.com.
 
 
 ### Verhaltensregeln
