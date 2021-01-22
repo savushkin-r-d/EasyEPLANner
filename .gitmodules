@@ -4,3 +4,6 @@
 [submodule "submodule/ObjectListview"]
 	path = submodule/ObjectListview
 	url = https://github.com/savushkin-r-d/ObjectListView.git
+[submodule "submodule/EplanIdleTimeModule"]
+	path = submodule/EplanIdleTimeModule
+	url = https://github.com/savushkin-r-d/EplanIdleTimeModule.git
