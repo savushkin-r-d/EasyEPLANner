@@ -1,5 +1,7 @@
 ﻿using Eplan.EplApi.ApplicationFramework;
 using System;
+using IdleTimeModule;
+using IdleTimeModule.EplanAPIHelper;
 
 namespace EasyEPlanner
 {
@@ -40,6 +42,12 @@ namespace EasyEPlanner
             onNotifyPageChanged.SetEvent("NotifyPageOpened");
             onNotifyPageChanged.EplanEvent +=
                 new EventHandlerFunction(OnNotifyPageChanged);
+
+            IEplanHelper eplanHelper = new EplanHelper();
+            IModuleConfiguration moduleConfiguration =
+                new ModuleConfiguration();
+            idleTimeModule = new IdleTimeModule
+                .IdleTimeModule(eplanHelper, moduleConfiguration);
         }
 
         private void OnNotifyPageChanged(IEventParameter eventParameter)
@@ -175,12 +183,16 @@ namespace EasyEPlanner
                 }
             }
 
-            IdleModule.Stop();
+            idleTimeModule.Stop();
         }
 
         private void OnMainStart(IEventParameter iEventParameter)
         {
-            IdleModule.Start();
+            idleTimeModule.BeforeClosingProject += 
+                EProjectManager.GetInstance().SyncAndSave;
+            idleTimeModule.Start(AddInModule.OriginalAssemblyPath);
         }
+
+        private IIdleTimeModule idleTimeModule;
     }
 }

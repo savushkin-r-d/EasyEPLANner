@@ -230,13 +230,6 @@
     <Compile Include="FileSavers\Excel\ExcelRepoter.cs" />
     <Compile Include="DeviceBindFromForm.cs" />
     <Compile Include="FileSavers\SVGStatisticsSaver.cs" />
-    <Compile Include="IdleForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="IdleForm.Designer.cs">
-      <DependentUpon>IdleForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="IdleModule.cs" />
     <Compile Include="Configuration\IOReader.cs" />
     <Compile Include="IO\IOLinkCalculator.cs" />
     <Compile Include="IO\IOManager.cs" />
@@ -343,9 +336,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FileSavers\XMLReporterDialog.resx">
       <DependentUpon>XMLReporterDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="IdleForm.resx">
-      <DependentUpon>IdleForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InterprojectExchange\Forms\FilterForm.resx">
       <DependentUpon>FilterForm.cs</DependentUpon>
@@ -474,6 +464,12 @@
     <None Include="Resources\plus1.ico" />
     <None Include="Resources\save.ico" />
     <None Include="Resources\To Do%27s.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\submodule\EplanIdleTimeModule\EplanIdleTimeModule\EplanIdleTimeModule.csproj">
+      <Project>{ed4a8f8d-0288-4a79-b63b-416264778a72}</Project>
+      <Name>EplanIdleTimeModule</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
