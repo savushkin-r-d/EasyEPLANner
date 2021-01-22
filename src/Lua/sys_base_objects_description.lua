@@ -987,7 +987,17 @@ return
             {
                 HEATING = {
                     name = "Нагрев",
-                    params = { },
+                    params =
+                    {
+                        active =
+                        {
+                            WORK_REQUEST =
+                            {
+                                name = "Сигнал включения шага \"Работа\"",
+                                displayObjects = { "signals" }
+                            },
+                        },
+                    },
                     steps =
                     {
                         WORKING = {
@@ -997,6 +1007,9 @@ return
                         WAITING = {
                             name = "Ожидание",
                             defaultPosition = 2,
+                        },
+                        WAITING_TO_WORK_REQUEST = {
+                            name = "Ожидание запроса работы"
                         },
                     },
                     defaultPosition = 1,
@@ -1037,7 +1050,17 @@ return
                 HEATING = {
                     name = "Нагрев",
                     luaName = "",
-                    params = { },
+                    params =
+                    {
+                        active =
+                        {
+                            WORK_REQUEST =
+                            {
+                                name = "Сигнал включения шага \"Работа\"",
+                                displayObjects = { "signals" }
+                            },
+                        },
+                    },
                     steps =
                     {
                         WORKING = {
@@ -1047,6 +1070,9 @@ return
                         WAITING = {
                             name = "Ожидание",
                             defaultPosition = 2,
+                        },
+                        WAITING_TO_WORK_REQUEST = {
+                            name = "Ожидание запроса работы"
                         },
                     },
                     defaultPosition = 1,
@@ -1125,6 +1151,11 @@ return
                                 name = "Дельта температуры охлаждения",
                                 displayObjects = { "parameters" },
                             },
+                            WORK_REQUEST =
+                            {
+                                name = "Сигнал включения шага \"Работа\"",
+                                displayObjects = { "signals" }
+                            },
                         },
                     },
                     steps =
@@ -1140,6 +1171,9 @@ return
                         WAITING = {
                             name = "Ожидание",
                             defaultPosition = 3,
+                        },
+                        WAITING_TO_WORK_REQUEST = {
+                            name = "Ожидание запроса работы"
                         },
                     },
                     defaultPosition = 1,
@@ -1194,6 +1228,11 @@ return
                                 name = "Дельта температуры охлаждения",
                                 displayObjects = { "parameters" },
                             },
+                            WORK_REQUEST =
+                            {
+                                name = "Сигнал включения шага \"Работа\"",
+                                displayObjects = { "signals" }
+                            },
                         },
                     },
                     steps =
@@ -1205,6 +1244,9 @@ return
                         WAITING = {
                             name = "Ожидание",
                             defaultPosition = 2,
+                        },
+                        WAITING_TO_WORK_REQUEST = {
+                            name = "Ожидание запроса работы"
                         },
                     },
                     defaultPosition = 1,
