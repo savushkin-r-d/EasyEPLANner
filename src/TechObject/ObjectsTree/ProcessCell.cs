@@ -265,33 +265,6 @@ namespace TechObject
         #endregion
 
         /// <summary>
-        /// Изменение привязки объекта при удалении объекта из дерева 
-        /// </summary>
-        /// <param name="attachedObjects">Элемент для обработки</param>
-        /// <param name="deletedObjectNum">Номер удаленного объекта</param>
-        private void ChangeAttachedObjectAfterDelete(
-            AttachedObjects attachedObjects, int deletedObjectNum)
-        {
-            if (attachedObjects?.Value == string.Empty)
-            {
-                return;
-            }
-
-            string attachingObjectsStr = attachedObjects.Value;
-            int[] attachingObjectsArr = attachingObjectsStr.Split(' ')
-                .Select(int.Parse).ToArray();
-            for (int index = 0; index < attachingObjectsArr.Length; index++)
-            {
-                int attachedObjectNum = attachingObjectsArr[index];
-                if (attachedObjectNum > deletedObjectNum)
-                {
-                    attachingObjectsArr[index] = attachedObjectNum - 1;
-                }
-            }
-            attachedObjects.SetValue(string.Join(" ", attachingObjectsArr));
-        }
-
-        /// <summary>
         /// Ячейка процесса (мастер-объект) проекта.
         /// </summary>
         public TechObject ProcessCellObject
