@@ -720,7 +720,7 @@ namespace TechObject
                 if (getLocalNum == null)
                 {
                     return new string[] {
-                        localNum + ". " + name + ' ' +
+                        localNum + ". " + name + " №" +
                         techNumber.EditText[ 1 ] + $" (#{globalNum})", "" };
                 }
                 else
@@ -728,7 +728,7 @@ namespace TechObject
                     globalNum = TechObjectManager.GetInstance()
                         .GetTechObjectN(this);
                     return new string[] {
-                        getLocalNum( this ) + ". " + name + ' ' +
+                        getLocalNum( this ) + ". " + name + " №" +
                         techNumber.EditText[ 1 ] + $" (#{globalNum})", "" };
                 }
             }
