@@ -610,7 +610,48 @@ namespace TechObject
         public string Check()
         {
             var errors = string.Empty;
-            var objName = DisplayText[0];
+            string fullobjName = DisplayText[0];
+            string shortObjName = EditText[0];
+
+            errors += CheckObjectName(shortObjName, fullobjName);
+            errors += CheckBaseTechObject(fullobjName);
+            errors += CheckNameEplan(fullobjName);
+            errors += CheckModes();
+            errors += GetParamsManager().Check(fullobjName);
+
+            return errors;
+        }
+
+        /// <summary>
+        /// Проверка имени объекта
+        /// </summary>
+        /// <param name="shortName">Имя объекта без номера и доп. информации
+        /// </param>
+        /// <param name="fullName">Полное название с номером и доп. информацией
+        /// </param>
+        /// <returns></returns>
+        private string CheckObjectName(string shortName, string fullName)
+        {
+            const int maxSize = 50;
+            int objNameLength = shortName.Length;
+            if (objNameLength > maxSize)
+            {
+                return $"Имя объекта \"{fullName}\" превышает " +
+                    $"максимальный размер в {maxSize} символов. " +
+                    $"Размер: {objNameLength}.\n";
+            }
+
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Проверить базовый технологический объект и его зависимости.
+        /// </summary>
+        /// <param name="objName">Полное название объекта</param>
+        /// <returns></returns>
+        private string CheckBaseTechObject(string objName)
+        {
+            string errors = string.Empty;
             bool setBaseTechObj = BaseTechObject != null ? true : false;
 
             if (setBaseTechObj == false)
@@ -625,19 +666,37 @@ namespace TechObject
                 errors += attachedObjects.Check();
             }
 
-            if(nameEplan.Value == string.Empty)
+            return errors;
+        }
+
+        /// <summary>
+        /// Проверить ОУ объекта
+        /// </summary>
+        /// <param name="objName">Полное название объекта</param>
+        /// <returns></returns>
+        private string CheckNameEplan(string objName)
+        {
+            if (nameEplan.Value == string.Empty)
             {
-                errors += $"Не задано ОУ в объекте \"{objName}\"\n";
+                return $"Не задано ОУ в объекте \"{objName}\"\n";
             }
 
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Проверить операции объекта
+        /// </summary>
+        /// <returns></returns>
+        private string CheckModes()
+        {
+            string errors = string.Empty;
             ModesManager modesManager = ModesManager;
             List<Mode> modes = modesManager.Modes;
             foreach (var mode in modes)
             {
                 errors += mode.Check();
             }
-
-            errors += GetParamsManager().Check(objName);
 
             return errors;
         }
