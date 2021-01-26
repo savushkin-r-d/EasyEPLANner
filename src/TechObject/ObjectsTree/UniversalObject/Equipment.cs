@@ -107,7 +107,7 @@ namespace TechObject
             bool needSaveQuipment = equipmentForSave != "";
             if (needSaveQuipment)
             {
-                res += prefix + "equipment = \n" +
+                res += prefix + "equipment =\n" +
                     prefix + "\t{\n";
                 res += equipmentForSave;
                 res += prefix + "\t},\n";
