@@ -14,18 +14,8 @@ namespace TechObject
             localObjects = new List<TechObject>();
             baseTechObject = BaseTechObjectManager.GetInstance()
                 .GetTechObject(baseTechObjectName);
-            globalObjectsList = TechObjectManager.GetInstance().TechObjects;
-        }
-
-        /// <summary>
-        /// Проверка и исправление ограничений при удалении/перемещении объекта
-        /// </summary>
-        public void CheckRestriction(int oldNum, int newNum)
-        {
-            foreach (TechObject techObject in globalObjectsList)
-            {
-                techObject.CheckRestriction(oldNum, newNum);
-            }
+            techObjectManager = TechObjectManager.GetInstance();
+            globalObjectsList = techObjectManager.TechObjects;
         }
 
         /// <summary>
@@ -124,11 +114,11 @@ namespace TechObject
             {
                 if (techObject.BaseTechObject.IsAttachable)
                 {
-                    RemoveAttachingToUnits(techObject);
+                    techObjectManager.RemoveAttachingToUnits(techObject);
                 }
 
                 int globalNum = globalObjectsList.IndexOf(techObject) + 1;
-                CheckRestriction(globalNum, markAsDelete);
+                techObjectManager.CheckRestriction(globalNum, markAsDelete);
 
                 // Работа со списком в дереве и общим списком объектов.
                 localObjects.Remove(techObject);
@@ -137,7 +127,7 @@ namespace TechObject
                 // Обозначение начального номера объекта для ограничений.
                 SetRestrictionOwner();
 
-                ChangeAttachedObjectsAfterDelete(globalNum);
+                techObjectManager.ChangeAttachedObjectsAfterDelete(globalNum);
 
                 if (localObjects.Count == 0)
                 {
@@ -172,7 +162,8 @@ namespace TechObject
                     int newGlobalIndex = globalObjectsList
                         .IndexOf(localObjects[newLocalIndex]);
 
-                    CheckRestriction(oldGlobalIndex + 1, newGlobalIndex + 1);
+                    techObjectManager.CheckRestriction(
+                        oldGlobalIndex + 1, newGlobalIndex + 1);
 
                     // Работа со списком в дереве
                     localObjects.Remove(techObject);
@@ -187,8 +178,8 @@ namespace TechObject
                     // Обозначение начального номера объекта для ограничений.
                     SetRestrictionOwner();
 
-                    ChangeAttachedObjectsAfterMove(oldGlobalIndex + 1,
-                        newGlobalIndex + 1);
+                    techObjectManager.ChangeAttachedObjectsAfterMove(
+                        oldGlobalIndex + 1, newGlobalIndex + 1);
 
                     localObjects[newLocalIndex].AddParent(this);
                     return localObjects[newLocalIndex];
@@ -212,7 +203,8 @@ namespace TechObject
                     int newGlobalIndex = globalObjectsList
                         .IndexOf(localObjects[newLocalIndex]);
 
-                    CheckRestriction(oldGlobalIndex + 1, newGlobalIndex + 1);
+                    techObjectManager.CheckRestriction(
+                        oldGlobalIndex + 1, newGlobalIndex + 1);
 
                     // Работа со списком в дереве
                     localObjects.Remove(techObject);
@@ -227,8 +219,8 @@ namespace TechObject
                     // Обозначение начального номера объекта для ограничений.
                     SetRestrictionOwner();
 
-                    ChangeAttachedObjectsAfterMove(oldGlobalIndex + 1,
-                        newGlobalIndex + 1);
+                    techObjectManager.ChangeAttachedObjectsAfterMove(
+                        oldGlobalIndex + 1, newGlobalIndex + 1);
 
                     localObjects[newLocalIndex].AddParent(this);
                     return localObjects[newLocalIndex];
@@ -423,139 +415,6 @@ namespace TechObject
         #endregion
 
         /// <summary>
-        /// Удалить этот объект из привязки объектов
-        /// </summary>
-        /// <param name="techObject">Агрегат</param>
-        private void RemoveAttachingToUnits(TechObject techObject)
-        {
-            int objNum = TechObjectManager.GetInstance()
-                .GetTechObjectN(techObject);
-            foreach (var obj in globalObjectsList)
-            {
-                RemoveAttachingToUnit(obj.AttachedObjects, objNum);
-
-                foreach(var objectGroup in obj.BaseTechObject?.ObjectGroupsList)
-                {
-                    RemoveAttachingToUnit(objectGroup, objNum);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Удалить объект из привязки объекта
-        /// </summary>
-        /// <param name="attachedObjects">Элемент с привязанными объектами
-        /// </param>
-        /// <param name="objNum">Номер удаляемого объекта</param>
-        private void RemoveAttachingToUnit(AttachedObjects attachedObjects,
-            int objNum)
-        {
-            if (attachedObjects?.Value == string.Empty)
-            {
-                return;
-            }
-
-            List<int> attachedObjectsNums = attachedObjects.Value.Split(' ')
-                .Select(int.Parse).ToList();
-            if (attachedObjectsNums.Contains(objNum))
-            {
-                attachedObjectsNums.Remove(objNum);
-                attachedObjects
-                    .SetNewValue(string.Join(" ", attachedObjectsNums));
-            }
-        }
-
-        /// <summary>
-        /// Изменение привязки объектов при удалении объекта из дерева
-        /// </summary>
-        /// <param name="deletedObjectNum">Номер удаленного объекта</param>
-        private void ChangeAttachedObjectsAfterDelete(int deletedObjectNum)
-        {
-            foreach (var techObj in globalObjectsList)
-            {
-                ChangeAttachedObjectAfterDelete(techObj.AttachedObjects,
-                    deletedObjectNum);
-
-                foreach(var objectGroup in techObj.BaseTechObject?.ObjectGroupsList)
-                {
-                    ChangeAttachedObjectAfterDelete(objectGroup,
-                        deletedObjectNum);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Изменение привязки объекта при удалении объекта из дерева 
-        /// </summary>
-        /// <param name="attachedObjects">Элемент для обработки</param>
-        /// <param name="deletedObjectNum">Номер удаленного объекта</param>
-        private void ChangeAttachedObjectAfterDelete(
-            AttachedObjects attachedObjects, int deletedObjectNum)
-        {
-            if (attachedObjects?.Value == string.Empty)
-            {
-                return;
-            }
-
-            string attachingObjectsStr = attachedObjects.Value;
-            int[] attachingObjectsArr = attachingObjectsStr.Split(' ')
-                .Select(int.Parse).ToArray();
-            for (int index = 0; index < attachingObjectsArr.Length; index++)
-            {
-                int attachedObjectNum = attachingObjectsArr[index];
-                if (attachedObjectNum > deletedObjectNum)
-                {
-                    attachingObjectsArr[index] = attachedObjectNum - 1;
-                }
-            }
-            attachedObjects.SetValue(string.Join(" ", attachingObjectsArr));
-        } 
-
-        /// <summary>
-        /// Изменение привязки объектов при перемещении объекта по дереву
-        /// </summary>
-        /// <param name="newNum">Новый глобальный номер объекта</param>
-        /// <param name="oldNum">Старый глобальный номер объекта</param>
-        private void ChangeAttachedObjectsAfterMove(int oldNum, int newNum)
-        {
-            foreach (var techObj in globalObjectsList)
-            {
-                ChangeAttachedObjectAfterMove(techObj.AttachedObjects, oldNum,
-                    newNum);
-
-                foreach(var objectGroup in techObj.BaseTechObject?.ObjectGroupsList)
-                {
-                    ChangeAttachedObjectAfterMove(objectGroup, oldNum, newNum);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Изменение привязки объекта при перемещении объекта по дереву
-        /// </summary>
-        /// <param name="attachedObjects">Элемент с объектами</param>
-        /// <param name="oldNum">Старый номер объекта</param>
-        /// <param name="newNum">Новый номер объекта</param>
-        private void ChangeAttachedObjectAfterMove(
-            AttachedObjects attachedObjects, int oldNum, int newNum)
-        {
-            string attachingObjectsStr = attachedObjects.Value;
-            string[] attachingObjectsArr = attachingObjectsStr.Split(' ');
-            for (int index = 0; index < attachingObjectsArr.Length; index++)
-            {
-                if (attachingObjectsArr[index] == newNum.ToString())
-                {
-                    attachingObjectsArr[index] = oldNum.ToString();
-                }
-                else if (attachingObjectsArr[index] == oldNum.ToString())
-                {
-                    attachingObjectsArr[index] = newNum.ToString();
-                }
-            }
-            attachedObjects.SetValue(string.Join(" ", attachingObjectsArr));
-        }
-
-        /// <summary>
         /// Получить локальный номер технологического объекта
         /// </summary>
         /// <param name="searchingObject">Искомый объект</param>
@@ -570,5 +429,6 @@ namespace TechObject
         List<TechObject> localObjects;
         BaseTechObject baseTechObject;
         List<TechObject> globalObjectsList;
+        ITechObjectManager techObjectManager;
     }
 }

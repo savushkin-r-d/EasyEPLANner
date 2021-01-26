@@ -578,14 +578,14 @@ namespace TechObject
         public override bool Delete(object child)
         {
             var treeViewItem = child as ITreeViewItem;
-            if(treeViewItem != null && treeObjects.Contains(treeViewItem))
+            if (treeViewItem != null && treeObjects.Contains(treeViewItem))
             {
-                foreach(var item in treeViewItem.Items)
+                foreach (var item in treeViewItem.Items)
                 {
                     treeViewItem.Delete(item);
                 }
 
-                if(treeViewItem.Items.Count() == 0)
+                if (treeViewItem.Items.Count() == 0)
                 {
                     treeObjects.Remove(child as ITreeViewItem);
                 }
@@ -594,6 +594,136 @@ namespace TechObject
             else
             {
                 return false;
+            }
+        }
+        #endregion
+
+        #region Корректировка объектов при их удалении или перемещении
+        public void CheckRestriction(int oldNum, int newNum)
+        {
+            foreach (TechObject techObject in TechObjects)
+            {
+                techObject.CheckRestriction(oldNum, newNum);
+            }
+        }
+
+        public void ChangeAttachedObjectsAfterDelete(int deletedObjectNum)
+        {
+            foreach (var techObj in TechObjects)
+            {
+                ChangeAttachedObjectAfterDelete(techObj.AttachedObjects,
+                    deletedObjectNum);
+
+                foreach (var objectGroup in techObj.BaseTechObject?.ObjectGroupsList)
+                {
+                    ChangeAttachedObjectAfterDelete(objectGroup,
+                        deletedObjectNum);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Изменение привязки объекта при удалении объекта из дерева 
+        /// </summary>
+        /// <param name="attachedObjects">Элемент для обработки</param>
+        /// <param name="deletedObjectNum">Номер удаленного объекта</param>
+        private void ChangeAttachedObjectAfterDelete(
+            AttachedObjects attachedObjects, int deletedObjectNum)
+        {
+            if (attachedObjects?.Value == string.Empty)
+            {
+                return;
+            }
+
+            string attachingObjectsStr = attachedObjects.Value;
+            int[] attachingObjectsArr = attachingObjectsStr.Split(' ')
+                .Select(int.Parse).ToArray();
+            for (int index = 0; index < attachingObjectsArr.Length; index++)
+            {
+                int attachedObjectNum = attachingObjectsArr[index];
+                if (attachedObjectNum > deletedObjectNum)
+                {
+                    attachingObjectsArr[index] = attachedObjectNum - 1;
+                }
+            }
+            attachedObjects.SetValue(string.Join(" ", attachingObjectsArr));
+        }
+
+        public void ChangeAttachedObjectsAfterMove(int oldNum, int newNum)
+        {
+            foreach (var techObj in TechObjects)
+            {
+                ChangeAttachedObjectAfterMove(techObj.AttachedObjects, oldNum,
+                    newNum);
+
+                foreach (var objectGroup in techObj.BaseTechObject?.ObjectGroupsList)
+                {
+                    ChangeAttachedObjectAfterMove(objectGroup, oldNum, newNum);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Изменение привязки объекта при перемещении объекта по дереву
+        /// </summary>
+        /// <param name="attachedObjects">Элемент с объектами</param>
+        /// <param name="oldNum">Старый номер объекта</param>
+        /// <param name="newNum">Новый номер объекта</param>
+        private void ChangeAttachedObjectAfterMove(
+            AttachedObjects attachedObjects, int oldNum, int newNum)
+        {
+            string attachingObjectsStr = attachedObjects.Value;
+            string[] attachingObjectsArr = attachingObjectsStr.Split(' ');
+            for (int index = 0; index < attachingObjectsArr.Length; index++)
+            {
+                if (attachingObjectsArr[index] == newNum.ToString())
+                {
+                    attachingObjectsArr[index] = oldNum.ToString();
+                }
+                else if (attachingObjectsArr[index] == oldNum.ToString())
+                {
+                    attachingObjectsArr[index] = newNum.ToString();
+                }
+            }
+            attachedObjects.SetValue(string.Join(" ", attachingObjectsArr));
+        }
+
+        public void RemoveAttachingToUnits(TechObject techObject)
+        {
+            int objNum = TechObjectManager.GetInstance()
+                .GetTechObjectN(techObject);
+            foreach (var obj in TechObjects)
+            {
+                RemoveAttachingToUnit(obj.AttachedObjects, objNum);
+
+                foreach (var objectGroup in obj.BaseTechObject?.ObjectGroupsList)
+                {
+                    RemoveAttachingToUnit(objectGroup, objNum);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Удалить объект из привязки объекта
+        /// </summary>
+        /// <param name="attachedObjects">Элемент с привязанными объектами
+        /// </param>
+        /// <param name="objNum">Номер удаляемого объекта</param>
+        private void RemoveAttachingToUnit(AttachedObjects attachedObjects,
+            int objNum)
+        {
+            if (attachedObjects?.Value == string.Empty)
+            {
+                return;
+            }
+
+            List<int> attachedObjectsNums = attachedObjects.Value.Split(' ')
+                .Select(int.Parse).ToList();
+            if (attachedObjectsNums.Contains(objNum))
+            {
+                attachedObjectsNums.Remove(objNum);
+                attachedObjects
+                    .SetNewValue(string.Join(" ", attachedObjectsNums));
             }
         }
         #endregion

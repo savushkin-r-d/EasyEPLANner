@@ -101,5 +101,29 @@ namespace TechObject
         /// </summary>
         /// <param name="indexArray">Индексная таблица</param>
         void Synch(int[] indexArray);
+
+        /// <summary>
+        /// Проверка и исправление ограничений при удалении/перемещении объекта
+        /// </summary>
+        void CheckRestriction(int oldNum, int newNum);
+
+        /// <summary>
+        /// Изменение привязки объектов при удалении объекта из дерева
+        /// </summary>
+        /// <param name="deletedObjectNum">Номер удаленного объекта</param>
+        void ChangeAttachedObjectsAfterDelete(int deletedObjectNum);
+
+        /// <summary>
+        /// Изменение привязки объектов при перемещении объекта по дереву
+        /// </summary>
+        /// <param name="newNum">Новый глобальный номер объекта</param>
+        /// <param name="oldNum">Старый глобальный номер объекта</param>
+        void ChangeAttachedObjectsAfterMove(int oldNum, int newNum);
+
+        /// <summary>
+        /// Удалить этот объект из привязки объектов
+        /// </summary>
+        /// <param name="techObject">Агрегат</param>
+        void RemoveAttachingToUnits(TechObject techObject);
     }
 }
