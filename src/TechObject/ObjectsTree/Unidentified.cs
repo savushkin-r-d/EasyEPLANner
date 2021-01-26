@@ -1,5 +1,6 @@
 ﻿using Editor;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TechObject
 {
@@ -11,18 +12,8 @@ namespace TechObject
         public Unidentified() 
         {
             localObjects = new List<TechObject>();
-            globalObjectsList = TechObjectManager.GetInstance().TechObjects;
-        }
-
-        /// <summary>
-        /// Проверка и исправление ограничений при удалении/перемещении объекта
-        /// </summary>
-        public void CheckRestriction(int oldNum, int newNum)
-        {
-            foreach (TechObject techObject in globalObjectsList)
-            {
-                techObject.CheckRestriction(oldNum, newNum);
-            }
+            techObjectManager = TechObjectManager.GetInstance();
+            globalObjectsList = techObjectManager.TechObjects;
         }
 
         /// <summary>
@@ -85,7 +76,7 @@ namespace TechObject
             if (techObject != null)
             {
                 int globalIndex = globalObjectsList.IndexOf(techObject) + 1;
-                CheckRestriction(globalIndex, markAsDelete);
+                techObjectManager.CheckRestriction(globalIndex, markAsDelete);
 
                 // Работа со списком в дереве и общим списком объектов.
                 localObjects.Remove(techObject);
@@ -94,7 +85,9 @@ namespace TechObject
                 // Обозначение начального номера объекта для ограничений.
                 SetRestrictionOwner();
 
-                if(localObjects.Count == 0)
+                techObjectManager.ChangeAttachedObjectsAfterDelete(globalIndex);
+
+                if (localObjects.Count == 0)
                 {
                     Parent.Delete(this);
                 }
@@ -162,5 +155,6 @@ namespace TechObject
         string name = "Неопознанные объекты";
         List<TechObject> localObjects;
         List<TechObject> globalObjectsList;
+        ITechObjectManager techObjectManager;
     }
 }

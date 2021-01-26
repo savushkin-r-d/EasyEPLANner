@@ -1,5 +1,6 @@
 ﻿using Editor;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TechObject
 {
@@ -13,18 +14,8 @@ namespace TechObject
             objects = new List<TechObject>();
             baseTechObject = BaseTechObjectManager.GetInstance()
                 .GetTechObject(Name);
-            globalObjectsList = TechObjectManager.GetInstance().TechObjects;
-        }
-
-        /// <summary>
-        /// Проверка и исправление ограничений при удалении/перемещении объекта
-        /// </summary>
-        public void CheckRestriction(int oldNum, int newNum)
-        {
-            foreach (TechObject techObject in globalObjectsList)
-            {
-                techObject.CheckRestriction(oldNum, newNum);
-            }
+            techObjectManager = TechObjectManager.GetInstance();
+            globalObjectsList = techObjectManager.TechObjects;
         }
 
         /// <summary>
@@ -121,7 +112,7 @@ namespace TechObject
             if (techObject != null)
             {
                 int globalIndex = globalObjectsList.IndexOf(techObject) + 1;
-                CheckRestriction(globalIndex, markAsDelete);
+                techObjectManager.CheckRestriction(globalIndex, markAsDelete);
 
                 // Работа со списком в дереве и общим списком объектов.
                 objects.Remove(techObject);
@@ -130,7 +121,9 @@ namespace TechObject
                 // Обозначение начального номера объекта для ограничений.
                 SetRestrictionOwner();
 
-                if(objects.Count == 0)
+                techObjectManager.ChangeAttachedObjectsAfterDelete(globalIndex);
+
+                if (objects.Count == 0)
                 {
                     Parent.Delete(this);
                 }
@@ -306,5 +299,6 @@ namespace TechObject
         List<TechObject> objects;
         BaseTechObject baseTechObject;
         List<TechObject> globalObjectsList;
+        ITechObjectManager techObjectManager;
     }
 }
