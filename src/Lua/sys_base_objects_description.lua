@@ -253,7 +253,17 @@ return
                 },
                 FILL = {
                     name = "Наполнение",
-                    params = { },
+                    params =
+                    {
+                        active =
+                        {
+                            TOTAL_VOLUME_AI =
+                            {
+                                name = "Объем линии",
+                                displayObjects = { "signals" },
+                            }
+                        }
+                    },
                     steps =
                     {
                         IN_DRAINAGE = {
@@ -370,6 +380,11 @@ return
                                 name = "Дельта концентрации продукта",
                                 displayObjects = { "parameters" },
                             },
+                            TOTAL_VOLUME_AI =
+                            {
+                                name = "Объем линии",
+                                displayObjects = { "signals" },
+                            }
                         },
                     },
                     steps =
