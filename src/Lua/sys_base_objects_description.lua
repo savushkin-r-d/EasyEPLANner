@@ -253,7 +253,17 @@ return
                 },
                 FILL = {
                     name = "Наполнение",
-                    params = { },
+                    params =
+                    {
+                        active =
+                        {
+                            TOTAL_VOLUME_AI =
+                            {
+                                name = "Объем линии",
+                                displayObjects = { "signals" },
+                            }
+                        }
+                    },
                     steps =
                     {
                         IN_DRAINAGE = {
@@ -268,6 +278,9 @@ return
                             name = "Ожидание",
                             defaultPosition = 1,
                         },
+                        PRODUCT_PUSH = {
+                            name = "Проталкивание продукта",
+                        }
                     },
                     defaultPosition = 2,
                 },
@@ -370,6 +383,11 @@ return
                                 name = "Дельта концентрации продукта",
                                 displayObjects = { "parameters" },
                             },
+                            TOTAL_VOLUME_AI =
+                            {
+                                name = "Объем линии",
+                                displayObjects = { "signals" },
+                            }
                         },
                     },
                     steps =
@@ -386,6 +404,9 @@ return
                             name = "Ожидание",
                             defaultPosition = 1,
                         },
+                        PRODUCT_PUSH = {
+                            name = "Проталкивание продукта",
+                        }
                     },
                     defaultPosition = 2,
                 },
