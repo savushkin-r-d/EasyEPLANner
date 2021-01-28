@@ -160,6 +160,7 @@ init_objectGroups = function(object, objectGroups)
     end
 end
 
+-- Инициализация системных параметров базового объекта
 init_system_parameters = function(object, systemParameters)
     for luaName, parameter in pairs(systemParameters) do
         local name = parameter.name or ""
