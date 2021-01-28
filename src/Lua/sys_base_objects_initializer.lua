@@ -32,6 +32,10 @@ init_base_objects = function()
         -- Добавить параметры объекта как агрегата
         local aggregateParameters = value.aggregateParameters or { }
         init_aggregate_parameters(baseObject, aggregateParameters)
+
+        -- Добавить системные параметры объекта
+        local systemParameters = value.systemParams or { }
+        init_system_parameters(baseObject, systemParameters)
     end
 
     return 0
@@ -154,4 +158,15 @@ init_objectGroups = function(object, objectGroups)
         
         object:AddObjectGroup(luaName, name, allowedObjects)
     end
+end
+
+init_system_parameters = function(object, systemParameters)
+    for luaName, parameter in pairs(systemParameters) do
+        local name = parameter.name or ""
+        local defaultValue = parameter.value or 0
+        local meter = parameter.meter or "шт"
+
+        object:AddSystemParameter(luaName, name, defaultValue, meter)
+    end
+
 end
