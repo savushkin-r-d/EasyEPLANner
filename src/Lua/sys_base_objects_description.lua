@@ -278,6 +278,9 @@ return
                             name = "Ожидание",
                             defaultPosition = 1,
                         },
+                        PRODUCT_PUSH = {
+                            name = "Проталкивание продукта",
+                        }
                     },
                     defaultPosition = 2,
                 },
@@ -401,6 +404,9 @@ return
                             name = "Ожидание",
                             defaultPosition = 1,
                         },
+                        PRODUCT_PUSH = {
+                            name = "Проталкивание продукта",
+                        }
                     },
                     defaultPosition = 2,
                 },
