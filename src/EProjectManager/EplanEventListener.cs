@@ -2,6 +2,7 @@
 using System;
 using IdleTimeModule;
 using IdleTimeModule.EplanAPIHelper;
+using System.Diagnostics;
 
 namespace EasyEPlanner
 {
@@ -46,8 +47,10 @@ namespace EasyEPlanner
             IEplanHelper eplanHelper = new EplanHelper();
             IModuleConfiguration moduleConfiguration =
                 new ModuleConfiguration();
-            idleTimeModule = new IdleTimeModule
-                .IdleTimeModule(eplanHelper, moduleConfiguration);
+            IRunningProcess runningProcess =
+                new RunningProcess(Process.GetCurrentProcess());
+            idleTimeModule = new IdleTimeModule.IdleTimeModule(
+                eplanHelper, moduleConfiguration, runningProcess);
         }
 
         private void OnNotifyPageChanged(IEventParameter eventParameter)
