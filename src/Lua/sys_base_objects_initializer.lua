@@ -168,5 +168,4 @@ init_system_parameters = function(object, systemParameters)
 
         object:AddSystemParameter(luaName, name, defaultValue, meter)
     end
-
 end
