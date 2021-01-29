@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Editor;
 
 namespace TechObject
@@ -20,15 +18,15 @@ namespace TechObject
             this.getN = getN;
             if(!isRuntime)
             {
-                this.value = new ObjectProperty("Значение", value);
+                this.value = new ParamProperty("Значение", value, 0);
             }
             if(isUseOperation)
             {
-                this.oper = new ParamProperty("Операция", -1);
+                this.oper = new ParamOperationsProperty("Операция", -1, -1);
                 this.oper.Parent = this;
             }
-            this.meter = new ObjectProperty("Размерность", meter, "");
-            this.nameLua = new ObjectProperty("Lua имя", nameLua, "");
+            this.meter = new ParamProperty("Размерность", meter, string.Empty);
+            this.nameLua = new ParamProperty("Lua имя", nameLua, string.Empty);
 
             items = new List<ITreeViewItem>();
             if(!isRuntime)
@@ -301,13 +299,13 @@ namespace TechObject
 
         private GetN getN;
 
-        private bool isRuntime;             /// Рабочий параметр или нет.
+        private bool isRuntime;               /// Рабочий параметр или нет.
         private string name;
-        private List<ITreeViewItem> items;  ///Данные для редактирования.
-        private ObjectProperty nameLua;     ///Имя в Lua.
-        private ObjectProperty value;       ///Значение.
-        private ObjectProperty meter;       ///Размерность.
+        private List<ITreeViewItem> items;    ///Данные для редактирования.
+        private ParamProperty nameLua;        ///Имя в Lua.
+        private ParamProperty value;          ///Значение.
+        private ParamProperty meter;          ///Размерность.
 
-        private ObjectProperty oper;        ///Номер связанной операции.
+        private ParamOperationsProperty oper; ///Номер связанной операции.
     }
 }
