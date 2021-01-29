@@ -222,21 +222,6 @@ return
             equipment = { },
             aggregateParameters = { },
             bindingName = "master",
-            systemParams =
-            {
-                PARAM1 =
-                {
-                    name = "Параметр 1",
-                    value = 20000,
-                    meter = "шт.",
-                },
-                PARAM2 =
-                {
-                    name = "Параметр 2",
-                    value = 10000,
-                    meter = "ед.",
-                },
-            }
         },
         line = {
             name = "Линия",
