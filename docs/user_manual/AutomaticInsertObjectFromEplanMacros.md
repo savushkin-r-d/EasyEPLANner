@@ -83,7 +83,7 @@
  Узел охлаждения | cooler_node
  Узел охлаждения ПИД | cooler_node_PID
  Узел перемешивания | mix_node
- Узел стерильного возраста | sterile_air_node
+ Узел стерильного воздуха | sterile_air_node
  Узел продувания | steam_blast_node
  Узел текущего уровня ПИД | tank_level_node_PID
  Узел текущего уровня | tank_level_node
