@@ -37,5 +37,33 @@ namespace EasyEplanner.TechObject.Tests
             Assert.AreEqual(expectedValue.ToString(), property.Value);
         }
 
+        [TestCase(true, true)]
+        [TestCase(false, false)]
+        public void IsEditable_NewObject_TheSameValue(bool actualValue,
+            bool expectedValue)
+        {
+            object value = 0;
+            string name = "Name";
+            object defaultValue = null;
+
+            property =
+                new ParamProperty(name, value, defaultValue, actualValue);
+
+            Assert.AreEqual(expectedValue, property.IsEditable);
+        }
+
+        [TestCase(true, new int[] { -1, 1 })]
+        [TestCase(false, new int[] { -1, -1 })]
+        public void EditablePart_NewObject_TheSameValue(bool editable,
+            int[] expectedValue)
+        {
+            object value = 0;
+            string name = "Name";
+            object defaultValue = null;
+
+            property = new ParamProperty(name, value, defaultValue, editable);
+
+            Assert.AreEqual(expectedValue, property.EditablePart);
+        }
     }
 }
