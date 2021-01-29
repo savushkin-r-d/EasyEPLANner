@@ -38,7 +38,7 @@ namespace TechObject
 
                 SetOperationParameters(numbers);
 
-                SetNewValue(newValue);
+                SetValue(newValue);
                 return true;
             }
             catch

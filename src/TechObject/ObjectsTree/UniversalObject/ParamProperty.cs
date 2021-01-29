@@ -8,7 +8,7 @@ namespace TechObject
     /// <summary>
     /// Свойство, операции в которых участвует параметр
     /// </summary>
-    class ParamProperty : ObjectProperty
+    public class ParamProperty : ObjectProperty
     {
         public ParamProperty(string name, object value,
             object defaultValue = null, bool editable = true)

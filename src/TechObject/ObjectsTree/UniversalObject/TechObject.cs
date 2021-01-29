@@ -151,6 +151,7 @@ namespace TechObject
             }
 
             res += paramsManager.SaveAsLuaTable(prefix);
+            res += systemParams.SaveAsLuaTable(prefix);
             res += "\n";
 
             res += modes.SaveAsLuaTable(prefix);
@@ -229,6 +230,11 @@ namespace TechObject
 
             paramsManager = new ParamsManager();
             paramsManager.Parent = this;
+
+            string sysParName = "Системные параметры";
+            string sysParLuName = "system_parameters";
+            systemParams = new SystemParams(sysParName, sysParLuName);
+            systemParams.Parent = this;
             
             equipment = new Equipment(this);
 
@@ -246,6 +252,8 @@ namespace TechObject
             {
                 this.baseTechObject = baseTechObject.Clone(this);
 
+                systemParams
+                    .SetUpFromBaseTechObject(baseTechObject.SystemParams);
                 equipment.AddItems(baseTechObject.Equipment);
                 SetItems();
             }
@@ -266,6 +274,7 @@ namespace TechObject
                 return;
             }
 
+            systemParams.SetUpFromBaseTechObject(BaseTechObject.SystemParams);
             ModesManager.SetUpFromBaseTechObject(BaseTechObject);
         }
 
@@ -320,6 +329,8 @@ namespace TechObject
 
             clone.paramsManager = paramsManager.Clone();
 
+            clone.systemParams = systemParams.Clone();
+
             clone.modes = modes.Clone(clone);
             clone.modes.ModifyDevNames(TechNumber);
             clone.modes.ModifyRestrictObj(oldGlobalNum, newGlobalNum);
@@ -347,6 +358,12 @@ namespace TechObject
             itemsList.Add(cooperParamNumber); // ??
             itemsList.Add(modes);
             itemsList.Add(paramsManager);
+
+            if (baseTechObject?.SystemParams.Count > 0)
+            {
+                itemsList.Add(systemParams);
+            }
+
             itemsList.Add(equipment);
 
             if (baseTechObject?.UseGroups == true)
@@ -405,6 +422,15 @@ namespace TechObject
                 {
                     foundGroup.SetValue(value);
                 }
+            }
+        }
+
+        public void AddSystemParameters(string luaName, string value)
+        {
+            if (baseTechObject?.SystemParams.Count > 0)
+            {
+                var foundParam = systemParams.GetParam(luaName);
+                foundParam.Value.SetNewValue(value);
             }
         }
 
@@ -603,6 +629,7 @@ namespace TechObject
             }
         }
 
+        #region Проверки внутри объекта
         /// <summary>
         /// Проверка операций технологического объекта
         /// </summary>
@@ -700,6 +727,7 @@ namespace TechObject
 
             return errors;
         }
+        #endregion
 
         /// <summary>
         /// Установить делегат для поиска локального номера объекта;
@@ -923,6 +951,7 @@ namespace TechObject
         private ObjectProperty nameBC; /// Имя объекта в Monitor.
         private ModesManager modes; /// Операции объекта.
         private ParamsManager paramsManager; /// Менеджер параметров объекта.
+        private SystemParams systemParams; /// Системные параметры объекта.
 
         private ITreeViewItem[] items; /// Параметры объекта для редактирования.
 
