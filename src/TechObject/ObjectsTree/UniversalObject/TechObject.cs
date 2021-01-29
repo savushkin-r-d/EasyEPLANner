@@ -374,6 +374,7 @@ namespace TechObject
             items = itemsList.ToArray();
         }
 
+        #region Установить свойства объектов и добавить их по необходимости
         /// <summary>
         /// Добавление операции.
         /// </summary>
@@ -425,6 +426,11 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Установить значение системных параметров
+        /// </summary>
+        /// <param name="luaName">Lua-имя параметра</param>
+        /// <param name="value">Значение параметра</param>
         public void AddSystemParameters(string luaName, string value)
         {
             if (baseTechObject?.SystemParams.Count > 0)
@@ -433,6 +439,7 @@ namespace TechObject
                 foundParam.Value.SetNewValue(value);
             }
         }
+        #endregion
 
         // Получение операции. 
         public Mode GetMode(int i)

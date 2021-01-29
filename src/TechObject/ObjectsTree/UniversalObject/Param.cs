@@ -18,7 +18,7 @@ namespace TechObject
             this.getN = getN;
             if(!isRuntime)
             {
-                this.value = new ParamProperty("Значение", value, 0);
+                this.value = new ParamProperty("Значение", value);
             }
             if(isUseOperation)
             {
