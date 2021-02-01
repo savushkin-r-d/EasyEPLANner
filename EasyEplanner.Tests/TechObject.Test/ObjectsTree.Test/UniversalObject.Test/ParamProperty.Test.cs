@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using TechObject;
 
-namespace EasyEplanner.TechObject.Tests
+namespace Tests.TechObject
 {
     class ParamPropertyTest
     {
@@ -16,7 +16,7 @@ namespace EasyEplanner.TechObject.Tests
         [TestCase("", "", "")]
         [TestCase("Один два три", "Два один четыре", "Два один четыре")]
         [TestCase("4.0", "4.5", "4.5")]
-        [TestCase(4.0, 5.0, 5.0)]
+        [TestCase(4.0, 5.3, 5.3)]
         [TestCase(0, "строка", 0)]
         [TestCase("строка", 1, 1)]
         [TestCase(5.0, "строка", 5.0)]
