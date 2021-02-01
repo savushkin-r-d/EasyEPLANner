@@ -8,7 +8,7 @@ namespace TechObject
     /// <summary>
     /// Свойство, операции в которых участвует параметр
     /// </summary>
-    class ParamOperationsProperty : ObjectProperty
+    public class ParamOperationsProperty : ObjectProperty
     {
         public ParamOperationsProperty(string name, object value,
             object defaultValue) : base(name, value, defaultValue) { }
