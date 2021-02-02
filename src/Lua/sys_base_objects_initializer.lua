@@ -164,7 +164,7 @@ end
 init_system_parameters = function(object, systemParameters)
     for luaName, parameter in pairs(systemParameters) do
         local name = parameter.name or ""
-        local defaultValue = parameter.value or 0
+        local defaultValue = parameter.defaultValue or 0
         local meter = parameter.meter or "шт"
 
         object:AddSystemParameter(luaName, name, defaultValue, meter)
