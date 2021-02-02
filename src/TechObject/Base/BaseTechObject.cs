@@ -515,7 +515,24 @@ namespace TechObject
         /// <returns></returns>
         public string SaveObjectInfoToPrgLua(string objName, string prefix)
         {
-            var res = "";
+            var res = string.Empty;
+
+            res += SaveTankAdditionalParameters(objName, prefix);
+            res += SaveLineAdditionalParameters(objName, prefix);
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить доп. информацию о танке
+        /// </summary>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        private string SaveTankAdditionalParameters(string objName,
+            string prefix)
+        {
+            var res = string.Empty;
             if (S88Level == (int)BaseTechObjectManager.ObjectType.Unit)
             {
                 var masterObj = TechObjectManager.GetInstance()
@@ -535,14 +552,28 @@ namespace TechObject
                     prefix + "}\n";
             }
 
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить доп. информацию о линии
+        /// </summary>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        private string SaveLineAdditionalParameters(string objName,
+            string prefix)
+        {
+            var res = string.Empty;
+
             if (UseGroups && objectGroups.Count > 0)
             {
-                foreach(var objectGroup in objectGroups)
+                foreach (var objectGroup in objectGroups)
                 {
                     if (objectGroup.Value == string.Empty)
                     {
                         continue;
-                    } 
+                    }
 
                     string objectNames = objectGroup.GetAttachedObjectsName()
                         .Select(x => $"{prefix}prg.{x},\n")
@@ -552,6 +583,17 @@ namespace TechObject
                     res += $"{objectNames}";
                     res += $"{prefix}}}\n";
                 }
+            }
+
+            bool containsFillOrPumping = BaseOperations
+                .Any(x => x.LuaName == "FILL" || x.LuaName == "PUMPING");
+            if (UseGroups && containsFillOrPumping)
+            {
+                res += $"{objName}.reset_before_wash =\n" +
+                    prefix + "{\n" +
+                    prefix + $"{objName}.PAR_FLOAT.PROD_V,\n" +
+                    prefix + $"{objName}.PAR_FLOAT.WATER_V,\n" +
+                    prefix + "}\n";
             }
 
             return res;
