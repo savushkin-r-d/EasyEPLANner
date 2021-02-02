@@ -72,7 +72,7 @@
 -- главным параметром агрегата, он является обязательным для агрегата. main-параметр задается только один!
 
 -- Системные параметры объекта (systemParams) - системные параметры объекта, которые используются
--- в контроллере. Доступны только для чтения, можно менять только значение. 
+-- в контроллере. Доступны только для чтения, можно менять только значение.
 -- Название таблицы - Lua-имя параметра, пишется в любом регистре.
 -- 1. name - русскоязычное название параметра
 -- 2. meter - единица измерения параметра
@@ -167,7 +167,24 @@ return
             },
             aggregateParameters = { },
             bindingName = "ice_water_pump_tank",
-            isPID = true
+            isPID = true,
+            systemParams =
+            {
+                P_k = { name = "Параметр k", meter = "", defaultValue = 1, },
+                P_Ti = { name = "Параметр Ti", meter = "", defaultValue = 15, },
+                P_Td = { name = "Параметр Td", meter = "", defaultValue = 0.01, },
+                P_dt = { name = "Интервал расчёта", meter = "сек", defaultValue = 1000, },
+                P_max = { name = "Максимальное значение входной величины", meter = "%", defaultValue = 100, },
+                P_min = { name = "Минимальное значение входной величины", meter = "%", defaultValue = 0, },
+                P_acceleration_time = { name = "Время выхода на режим регулирования", meter = "сек", defaultValue = 30, },
+                P_is_manual_mode = { name = "Ручной режим", meter = "№ режима", defaultValue = 0, },
+                P_U_manual = { name = "Заданное ручное значение выходного сигнала", meter = "%", defaultValue = 65, },
+                P_k2 = { name = "Параметр k2", meter = "", defaultValue = 0, },
+                P_Ti2 = { name = "Параметр Ti2", meter = "", defaultValue = 0, },
+                P_Td2 = { name = "Параметр Td2", meter = "", defaultValue = 0, },
+                P_out_max = { name = "Максимальное значение выходной величины", meter = "%", defaultValue = 100, },
+                P_out_min = { name = "Минимальное значение выходной величины", meter = "%", defaultValue = 0, },
+            },
         },
         boil = {
             name = "Бойлер",
@@ -212,7 +229,7 @@ return
                     NEED_BOILER = { name = "Использовать бойлер", defaultValue = "false" },
                 },
             },
-            bindingName = "boiler"
+            bindingName = "boiler",
         },
         master = {
             name = "Ячейка процесса",
@@ -1073,7 +1090,24 @@ return
                 },
             },
             bindingName = "pressure_node",
-            isPID = true
+            isPID = true,
+            systemParams =
+            {
+                P_k = { name = "Параметр k", meter = "", defaultValue = 1, },
+                P_Ti = { name = "Параметр Ti", meter = "", defaultValue = 15, },
+                P_Td = { name = "Параметр Td", meter = "", defaultValue = 0.01, },
+                P_dt = { name = "Интервал расчёта", meter = "сек", defaultValue = 1000, },
+                P_max = { name = "Максимальное значение входной величины", meter = "бар", defaultValue = 100, },
+                P_min = { name = "Минимальное значение входной величины", meter = "бар", defaultValue = 0, },
+                P_acceleration_time = { name = "Время выхода на режим регулирования", meter = "сек", defaultValue = 30, },
+                P_is_manual_mode = { name = "Ручной режим", meter = "№ режима", defaultValue = 0, },
+                P_U_manual = { name = "Заданное ручное значение выходного сигнала", meter = "бар", defaultValue = 65, },
+                P_k2 = { name = "Параметр k2", meter = "", defaultValue = 0, },
+                P_Ti2 = { name = "Параметр Ti2", meter = "", defaultValue = 0, },
+                P_Td2 = { name = "Параметр Td2", meter = "", defaultValue = 0, },
+                P_out_max = { name = "Максимальное значение выходной величины", meter = "бар", defaultValue = 100, },
+                P_out_min = { name = "Минимальное значение выходной величины", meter = "бар", defaultValue = 0, },
+            },
         },
         heater_node = {
             name = "Узел подогрева",
@@ -1189,7 +1223,24 @@ return
                 },
             },
             bindingName = "heater_node",
-            isPID = true
+            isPID = true,
+            systemParams =
+            {
+                P_k = { name = "Параметр k", meter = "", defaultValue = 1, },
+                P_Ti = { name = "Параметр Ti", meter = "", defaultValue = 15, },
+                P_Td = { name = "Параметр Td", meter = "", defaultValue = 0.01, },
+                P_dt = { name = "Интервал расчёта", meter = "сек", defaultValue = 1000, },
+                P_max = { name = "Максимальное значение входной величины", meter = "°C", defaultValue = 100, },
+                P_min = { name = "Минимальное значение входной величины", meter = "°C", defaultValue = 0, },
+                P_acceleration_time = { name = "Время выхода на режим регулирования", meter = "сек", defaultValue = 30, },
+                P_is_manual_mode = { name = "Ручной режим", meter = "№ режима", defaultValue = 0, },
+                P_U_manual = { name = "Заданное ручное значение выходного сигнала", meter = "°C", defaultValue = 65, },
+                P_k2 = { name = "Параметр k2", meter = "", defaultValue = 0, },
+                P_Ti2 = { name = "Параметр Ti2", meter = "", defaultValue = 0, },
+                P_Td2 = { name = "Параметр Td2", meter = "", defaultValue = 0, },
+                P_out_max = { name = "Максимальное значение выходной величины", meter = "°C", defaultValue = 100, },
+                P_out_min = { name = "Минимальное значение выходной величины", meter = "°C", defaultValue = 0, },
+            },
         },
         flow_node_PID = {
             name = "Узел расхода ПИД",
@@ -1218,7 +1269,24 @@ return
                 },
             },
             bindingName = "flow_node",
-            isPID = true
+            isPID = true,
+            systemParams =
+            {
+                P_k = { name = "Параметр k", meter = "", defaultValue = 1, },
+                P_Ti = { name = "Параметр Ti", meter = "", defaultValue = 15, },
+                P_Td = { name = "Параметр Td", meter = "", defaultValue = 0.01, },
+                P_dt = { name = "Интервал расчёта", meter = "сек", defaultValue = 1000, },
+                P_max = { name = "Максимальное значение входной величины", meter = "м3/ч", defaultValue = 100, },
+                P_min = { name = "Минимальное значение входной величины", meter = "м3/ч", defaultValue = 0, },
+                P_acceleration_time = { name = "Время выхода на режим регулирования", meter = "сек", defaultValue = 30, },
+                P_is_manual_mode = { name = "Ручной режим", meter = "№ режима", defaultValue = 0, },
+                P_U_manual = { name = "Заданное ручное значение выходного сигнала", meter = "м3/ч", defaultValue = 65, },
+                P_k2 = { name = "Параметр k2", meter = "", defaultValue = 0, },
+                P_Ti2 = { name = "Параметр Ti2", meter = "", defaultValue = 0, },
+                P_Td2 = { name = "Параметр Td2", meter = "", defaultValue = 0, },
+                P_out_max = { name = "Максимальное значение выходной величины", meter = "м3/ч", defaultValue = 100, },
+                P_out_min = { name = "Минимальное значение выходной величины", meter = "м3/ч", defaultValue = 0, },
+            },
         },
         cooler_node = {
             name = "Узел охлаждения",
@@ -1375,7 +1443,24 @@ return
                 },
             },
             bindingName = "cooler_node",
-            isPID = true
+            isPID = true,
+            systemParams =
+            {
+                P_k = { name = "Параметр k", meter = "", defaultValue = 1, },
+                P_Ti = { name = "Параметр Ti", meter = "", defaultValue = 15, },
+                P_Td = { name = "Параметр Td", meter = "", defaultValue = 0.01, },
+                P_dt = { name = "Интервал расчёта", meter = "сек", defaultValue = 1000, },
+                P_max = { name = "Максимальное значение входной величины", meter = "°C", defaultValue = 100, },
+                P_min = { name = "Минимальное значение входной величины", meter = "°C", defaultValue = 0, },
+                P_acceleration_time = { name = "Время выхода на режим регулирования", meter = "сек", defaultValue = 30, },
+                P_is_manual_mode = { name = "Ручной режим", meter = "№ режима", defaultValue = 0, },
+                P_U_manual = { name = "Заданное ручное значение выходного сигнала", meter = "°C", defaultValue = 65, },
+                P_k2 = { name = "Параметр k2", meter = "", defaultValue = 0, },
+                P_Ti2 = { name = "Параметр Ti2", meter = "", defaultValue = 0, },
+                P_Td2 = { name = "Параметр Td2", meter = "", defaultValue = 0, },
+                P_out_max = { name = "Максимальное значение выходной величины", meter = "°C", defaultValue = 100, },
+                P_out_min = { name = "Минимальное значение выходной величины", meter = "°C", defaultValue = 0, },
+            },
         },
         mix_node = {
             name = "Узел перемешивания",
@@ -1431,7 +1516,7 @@ return
                             name = "Движение вправо до верхнего положения",
                         },
                     },
-                    params = 
+                    params =
                     {   active =
                         {
                             DIRECTION =
@@ -1610,7 +1695,7 @@ return
                 main =
                 {
                     NEED_STERILE_AIR_NODE =
-                    { 
+                    {
                         name = "Использовать узел стерильного воздуха",
                         defaultValue = "false"
                     },
@@ -1638,7 +1723,7 @@ return
                 main =
                 {
                     NEED_STEAM_BLAST_NODE =
-                    { 
+                    {
                         name = "Использовать узел продувания",
                         defaultValue = "false"
                     },
@@ -1665,12 +1750,29 @@ return
             },
             bindingName = "tank_level_node_PID",
             isPID = true,
+            systemParams =
+            {
+                P_k = { name = "Параметр k", meter = "", defaultValue = 1, },
+                P_Ti = { name = "Параметр Ti", meter = "", defaultValue = 15, },
+                P_Td = { name = "Параметр Td", meter = "", defaultValue = 0.01, },
+                P_dt = { name = "Интервал расчёта", meter = "сек", defaultValue = 1000, },
+                P_max = { name = "Максимальное значение входной величины", meter = "%", defaultValue = 100, },
+                P_min = { name = "Минимальное значение входной величины", meter = "%", defaultValue = 0, },
+                P_acceleration_time = { name = "Время выхода на режим регулирования", meter = "сек", defaultValue = 30, },
+                P_is_manual_mode = { name = "Ручной режим", meter = "№ режима", defaultValue = 0, },
+                P_U_manual = { name = "Заданное ручное значение выходного сигнала", meter = "%", defaultValue = 65, },
+                P_k2 = { name = "Параметр k2", meter = "", defaultValue = 0, },
+                P_Ti2 = { name = "Параметр Ti2", meter = "", defaultValue = 0, },
+                P_Td2 = { name = "Параметр Td2", meter = "", defaultValue = 0, },
+                P_out_max = { name = "Максимальное значение выходной величины", meter = "%", defaultValue = 100, },
+                P_out_min = { name = "Минимальное значение выходной величины", meter = "%", defaultValue = 0, },
+            },
             aggregateParameters =
             {
                 main =
                 {
                     NEED_TANK_LEVEL_NODE_PID =
-                    { 
+                    {
                         name = "Использовать узел текущего уровня ПИД",
                         defaultValue = "false"
                     },
@@ -1711,7 +1813,7 @@ return
                 main =
                 {
                     NEED_TANK_LEVEL_NODE =
-                    { 
+                    {
                         name = "Использовать узел текущего уровня",
                         defaultValue = "false"
                     },
