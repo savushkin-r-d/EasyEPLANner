@@ -222,6 +222,72 @@ return
             equipment = { },
             aggregateParameters = { },
             bindingName = "master",
+            systemParams =
+            {
+                P_MIX_FLIP_PERIOD =
+                {
+                    name = "Интервал промывки седел клапанов",
+                    meter = "сек",
+                    defaultValue = 180,
+                },
+                P_MIX_FLIP_UPPER_TIME =
+                {
+                    name = "Время промывки верхних седел клапанов",
+                    meter = "мсек",
+                    defaultValue = 2000,
+                },
+                P_MIX_FLIP_LOWER_TIME =
+                {
+                    name = "Время промывки нижних седел клапанов",
+                    meter = "мсек",
+                    defaultValue = 1000,
+                },
+                P_V_OFF_DELAY_TIME =
+                {
+                    name = "Время задержки закрытия клапанов",
+                    meter = "мсек",
+                    defaultValue = 1000,
+                },
+                P_V_BOTTOM_OFF_DELAY_TIME =
+                {
+                    name = "Время задержки закрытия донных клапанов",
+                    meter = "мсек",
+                    defaultValue = 1200,
+                },
+                P_WAGO_TCP_NODE_WARN_ANSWER_AVG_TIME =
+                {
+                    name = "Среднее время задержки получения ответа от узла I/O",
+                    meter = "мсек",
+                    defaultValue = 50,
+                },
+                P_MAIN_CYCLE_WARN_ANSWER_AVG_TIME =
+                {
+                    name = "Среднее время цикла программы",
+                    meter = "мсек",
+                    defaultValue = 300,
+                },
+                P_RESTRICTIONS_MODE =
+                {
+                    name = "Работа модуля ограничений",
+                    meter = "№ режима",
+                    defaultValue = 0,
+                    -- 0 - авто, 1 - ручной, 2 - полуавтоматический (через
+                    -- время @P_RESTRICTIONS_MANUAL_TIME вернется в
+                    -- автоматический режим).
+                },
+                P_RESTRICTIONS_MANUAL_TIME =
+                {
+                    name = "Работа модуля ограничений в ручном режиме заданное время",
+                    meter = "мсек",
+                    defaultValue = 120000, -- 2 * 60 * 1000 мсек
+                },
+                P_AUTO_PAUSE_OPER_ON_DEV_ERR =
+                {
+                    name = "Переход на паузу операции при ошибке устройств",
+                    meter = "№ режима",
+                    defaultValue = 0, -- 0 - авто (есть), 1 - ручной (нет).
+                },
+            }
         },
         line = {
             name = "Линия",
