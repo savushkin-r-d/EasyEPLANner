@@ -40,6 +40,9 @@ init = function()
             proc_params( value.rt_par_float, "rt_par_float", obj )
             proc_params( value.rt_par_uint, "rt_par_uint", obj)
 
+            -- Системные параметры
+            proc_system_params( value.system_parameters, obj)
+
             local params_float = value.par_float
 
             --Оборудование (всегда после параметров)
@@ -144,6 +147,15 @@ proc_params = function( par, par_name, obj )
             value.name or "Параметр", value.value or 0, value.meter or "шт.",
             value.nameLua or "" )
             if value.oper ~= nil then param:SetOperationN( value.oper ) end
+        end
+    end
+end
+
+proc_system_params = function( par, obj )
+    if type ( par ) == "table" then
+        for luaName, param in pairs( par ) do
+            local parValue = param.value
+            obj:AddSystemParameters(luaName, parValue)
         end
     end
 end

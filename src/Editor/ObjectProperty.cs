@@ -22,7 +22,7 @@ namespace Editor
             object defaultValue = null)
         {
             this.name = name;
-            this.value = value;
+            this.value = value == null ? string.Empty : value;
 
             if (defaultValue == null)
             {

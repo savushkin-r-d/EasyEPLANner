@@ -1,9 +1,6 @@
 ﻿using EasyEPlanner;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TechObject
 {
@@ -23,6 +20,7 @@ namespace TechObject
             Equipment = new List<BaseParameter>();
             AggregateParameters = new List<BaseParameter>();
             BindingName = string.Empty;
+            SystemParams = new SystemParams();
 
             objectGroups = new List<AttachedObjects>();
         }
@@ -127,6 +125,14 @@ namespace TechObject
             {
                 objectGroups.Add(newGroup);
             }
+        }
+
+        public void AddSystemParameter(string luaName, string name,
+            double value, string meter)
+        {
+            var param = new SystemParam(systemParams.GetIdx, name, value,
+                meter, luaName);
+            systemParams.AddParam(param);
         }
 
         /// <summary>
@@ -411,6 +417,8 @@ namespace TechObject
                 cloned.objectGroups.Add(clonedGroup);
             }
 
+            cloned.SystemParams = systemParams.Clone();
+
             return cloned;
         }
 
@@ -504,6 +512,18 @@ namespace TechObject
         public List<AttachedObjects> ObjectGroupsList 
         {
             get => objectGroups; 
+        }
+
+        public SystemParams SystemParams
+        {
+            get
+            {
+                return systemParams;
+            }
+            set 
+            {
+                systemParams = value;
+            }
         }
 
         #region Сохранение в prg.lua
@@ -997,5 +1017,6 @@ namespace TechObject
         private List<BaseParameter> aggregateProperties;
         private MainAggregateParameter aggregateMainParameter;
         private List<AttachedObjects> objectGroups;
+        private SystemParams systemParams;
     }
 }
