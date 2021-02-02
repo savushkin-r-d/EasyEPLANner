@@ -609,15 +609,18 @@ namespace TechObject
 
         public void ChangeAttachedObjectsAfterDelete(int deletedObjectNum)
         {
-            foreach (var techObj in TechObjects)
+            foreach (var obj in TechObjects)
             {
-                ChangeAttachedObjectAfterDelete(techObj.AttachedObjects,
+                ChangeAttachedObjectAfterDelete(obj.AttachedObjects,
                     deletedObjectNum);
 
-                foreach (var objectGroup in techObj.BaseTechObject?.ObjectGroupsList)
+                if (obj.BaseTechObject?.ObjectGroupsList != null)
                 {
-                    ChangeAttachedObjectAfterDelete(objectGroup,
-                        deletedObjectNum);
+                    foreach (var group in obj.BaseTechObject.ObjectGroupsList)
+                    {
+                        ChangeAttachedObjectAfterDelete(group,
+                            deletedObjectNum);
+                    }
                 }
             }
         }
@@ -651,14 +654,17 @@ namespace TechObject
 
         public void ChangeAttachedObjectsAfterMove(int oldNum, int newNum)
         {
-            foreach (var techObj in TechObjects)
+            foreach (var obj in TechObjects)
             {
-                ChangeAttachedObjectAfterMove(techObj.AttachedObjects, oldNum,
+                ChangeAttachedObjectAfterMove(obj.AttachedObjects, oldNum,
                     newNum);
 
-                foreach (var objectGroup in techObj.BaseTechObject?.ObjectGroupsList)
+                if (obj.BaseTechObject?.ObjectGroupsList != null)
                 {
-                    ChangeAttachedObjectAfterMove(objectGroup, oldNum, newNum);
+                    foreach (var group in obj.BaseTechObject.ObjectGroupsList)
+                    {
+                        ChangeAttachedObjectAfterMove(group, oldNum, newNum);
+                    }
                 }
             }
         }
@@ -696,9 +702,12 @@ namespace TechObject
             {
                 RemoveAttachingToUnit(obj.AttachedObjects, objNum);
 
-                foreach (var objectGroup in obj.BaseTechObject?.ObjectGroupsList)
+                if (obj.BaseTechObject?.ObjectGroupsList != null)
                 {
-                    RemoveAttachingToUnit(objectGroup, objNum);
+                    foreach (var group in obj.BaseTechObject.ObjectGroupsList)
+                    {
+                        RemoveAttachingToUnit(group, objNum);
+                    }
                 }
             }
         }
