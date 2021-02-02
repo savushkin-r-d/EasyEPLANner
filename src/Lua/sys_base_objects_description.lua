@@ -177,6 +177,7 @@ return
                 P_max = { name = "Максимальное значение входной величины", meter = "%", defaultValue = 100, },
                 P_min = { name = "Минимальное значение входной величины", meter = "%", defaultValue = 0, },
                 P_acceleration_time = { name = "Время выхода на режим регулирования", meter = "сек", defaultValue = 30, },
+                -- Ручной режим, 0 - авто, 1 - ручной
                 P_is_manual_mode = { name = "Ручной режим", meter = "№ режима", defaultValue = 0, },
                 P_U_manual = { name = "Заданное ручное значение выходного сигнала", meter = "%", defaultValue = 65, },
                 P_k2 = { name = "Параметр k2", meter = "", defaultValue = 0, },
@@ -1100,6 +1101,7 @@ return
                 P_max = { name = "Максимальное значение входной величины", meter = "бар", defaultValue = 100, },
                 P_min = { name = "Минимальное значение входной величины", meter = "бар", defaultValue = 0, },
                 P_acceleration_time = { name = "Время выхода на режим регулирования", meter = "сек", defaultValue = 30, },
+                -- Ручной режим, 0 - авто, 1 - ручной
                 P_is_manual_mode = { name = "Ручной режим", meter = "№ режима", defaultValue = 0, },
                 P_U_manual = { name = "Заданное ручное значение выходного сигнала", meter = "бар", defaultValue = 65, },
                 P_k2 = { name = "Параметр k2", meter = "", defaultValue = 0, },
@@ -1233,6 +1235,7 @@ return
                 P_max = { name = "Максимальное значение входной величины", meter = "°C", defaultValue = 100, },
                 P_min = { name = "Минимальное значение входной величины", meter = "°C", defaultValue = 0, },
                 P_acceleration_time = { name = "Время выхода на режим регулирования", meter = "сек", defaultValue = 30, },
+                -- Ручной режим, 0 - авто, 1 - ручной
                 P_is_manual_mode = { name = "Ручной режим", meter = "№ режима", defaultValue = 0, },
                 P_U_manual = { name = "Заданное ручное значение выходного сигнала", meter = "°C", defaultValue = 65, },
                 P_k2 = { name = "Параметр k2", meter = "", defaultValue = 0, },
@@ -1279,6 +1282,7 @@ return
                 P_max = { name = "Максимальное значение входной величины", meter = "м3/ч", defaultValue = 100, },
                 P_min = { name = "Минимальное значение входной величины", meter = "м3/ч", defaultValue = 0, },
                 P_acceleration_time = { name = "Время выхода на режим регулирования", meter = "сек", defaultValue = 30, },
+                -- Ручной режим, 0 - авто, 1 - ручной
                 P_is_manual_mode = { name = "Ручной режим", meter = "№ режима", defaultValue = 0, },
                 P_U_manual = { name = "Заданное ручное значение выходного сигнала", meter = "м3/ч", defaultValue = 65, },
                 P_k2 = { name = "Параметр k2", meter = "", defaultValue = 0, },
@@ -1453,6 +1457,7 @@ return
                 P_max = { name = "Максимальное значение входной величины", meter = "°C", defaultValue = 100, },
                 P_min = { name = "Минимальное значение входной величины", meter = "°C", defaultValue = 0, },
                 P_acceleration_time = { name = "Время выхода на режим регулирования", meter = "сек", defaultValue = 30, },
+                -- Ручной режим, 0 - авто, 1 - ручной
                 P_is_manual_mode = { name = "Ручной режим", meter = "№ режима", defaultValue = 0, },
                 P_U_manual = { name = "Заданное ручное значение выходного сигнала", meter = "°C", defaultValue = 65, },
                 P_k2 = { name = "Параметр k2", meter = "", defaultValue = 0, },
@@ -1759,6 +1764,7 @@ return
                 P_max = { name = "Максимальное значение входной величины", meter = "%", defaultValue = 100, },
                 P_min = { name = "Минимальное значение входной величины", meter = "%", defaultValue = 0, },
                 P_acceleration_time = { name = "Время выхода на режим регулирования", meter = "сек", defaultValue = 30, },
+                -- Ручной режим, 0 - авто, 1 - ручной
                 P_is_manual_mode = { name = "Ручной режим", meter = "№ режима", defaultValue = 0, },
                 P_U_manual = { name = "Заданное ручное значение выходного сигнала", meter = "%", defaultValue = 65, },
                 P_k2 = { name = "Параметр k2", meter = "", defaultValue = 0, },
