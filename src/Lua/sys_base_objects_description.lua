@@ -230,7 +230,7 @@ return
                     NEED_BOILER = { name = "Использовать бойлер", defaultValue = "false" },
                 },
             },
-            bindingName = "boiler",
+            bindingName = "boiler"
         },
         master = {
             name = "Ячейка процесса",
