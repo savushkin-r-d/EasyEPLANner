@@ -897,7 +897,17 @@ return
                 },
                 WORK = {
                     name = "Работа",
-                    params = { },
+                    params =
+                    {
+                        active =
+                        {
+                            AUTO_DI =
+                            {
+                                name = "Сигнал автоматического включения/выключения",
+                                displayObjects = { "signals" },
+                            },
+                        }
+                    },
                     steps =
                     {
                         WAIT = { name = "Ожидание" },
