@@ -345,15 +345,17 @@ namespace EasyEPlanner
             IO.IOModule module, IO.IONode node, Function clampFunction, 
             string comment)
         {
-            int clamp = Convert.ToInt32(clampFunction.Properties
-                .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString());
+            string clampStr = clampFunction.Properties
+                .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
+            int.TryParse(clampStr, out int clamp);
             
             var descriptionMatches = Regex.Matches(description,
                 DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
             int devicesCount = descriptionMatches.Count;
             if (devicesCount < 1 && !description.Equals(CommonConst.Reserve))
             {
-                Logs.AddMessage($"\"{module.Function.VisibleName}:{clamp}\"" +
+                Logs.AddMessage(
+                    $"\"{module.Function.VisibleName}:{clampStr}\"" +
                     $" - неверное имя привязанного устройства - " +
                     $"\"{description}\".");
             }
@@ -375,7 +377,7 @@ namespace EasyEPlanner
                     }
                 }
 
-                var error = "";
+                string error;
                 string channelName = "IO-Link";
                 int logicalPort = Array
                     .IndexOf(module.Info.ChannelClamps, clamp) + 1;
@@ -409,7 +411,7 @@ namespace EasyEPlanner
                 if (error != "")
                 {
                     error = string.Format("\"{0}:{1}\" : {2}",
-                        module.Function.VisibleName , clamp, error);
+                        module.Function.VisibleName , clampStr, error);
                     Logs.AddMessage(error);
                 }
             }
