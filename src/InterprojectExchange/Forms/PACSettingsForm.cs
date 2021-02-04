@@ -7,8 +7,9 @@ namespace InterprojectExchange
 {
     public partial class PACSettingsForm : Form
     {
-        public PACSettingsForm()
+        public PACSettingsForm(EditMode editMode)
         {
+            this.editMode = editMode;
             InitializeComponent();
         }
 
@@ -104,14 +105,6 @@ namespace InterprojectExchange
 
         private void PACSettingsForm_Load(object sender, EventArgs e)
         {
-            // Установка стандартного значения режима
-            modeComboBox.SelectedValueChanged -= 
-                modeComboBox_SelectedValueChanged;
-            modeComboBox.SelectedIndex = 0;
-            editMode = EditMode.MainSource;
-            modeComboBox.SelectedValueChanged += 
-                modeComboBox_SelectedValueChanged;
-
             interprojectExchange = InterprojectExchange.GetInstance();
             mainModel = interprojectExchange.MainModel;
             projectsSendingFromMain = new Dictionary<string, PacInfo>();
@@ -215,7 +208,7 @@ namespace InterprojectExchange
         private void LoadProjectDataToFields(string projectName)
         {
             PacInfo pacInfo;
-            if(editMode == EditMode.MainSource)
+            if(editMode == EditMode.SourceReciever)
             {
                 pacInfo = projectsSendingFromMain[projectName];
             }
@@ -262,7 +255,7 @@ namespace InterprojectExchange
             try
             {
                 PacInfo pacInfo;
-                if (editMode == EditMode.MainSource)
+                if (editMode == EditMode.SourceReciever)
                 {
                     pacInfo = projectsSendingFromMain[projectName];
                 }
@@ -364,67 +357,6 @@ namespace InterprojectExchange
             else
             {
                 return false;
-            }
-        }
-
-        /// <summary>
-        /// Режим редактирования главного проекта
-        /// </summary>
-        public enum EditMode
-        {
-            MainSource,
-            MainReceiver,
-        }
-
-        /// <summary>
-        /// Изменить режим редактирования
-        /// </summary>
-        public void ChangeEditMode()
-        {
-            if(editMode == EditMode.MainSource)
-            {
-                editMode = EditMode.MainReceiver;
-            }
-            else
-            {
-                editMode = EditMode.MainSource;
-            }
-        }
-
-        /// <summary>
-        /// Получить название режима из перечисления
-        /// </summary>
-        /// <param name="editMode">Перечисление</param>
-        /// <returns></returns>
-        private string GetEditModeNameFromEnum(EditMode editMode)
-        {
-            if (editMode == EditMode.MainReceiver)
-            {
-                return "Приемник";
-            }
-            else
-            {
-                return "Источник";
-            }
-        }
-
-        private void modeComboBox_SelectedValueChanged(object sender, 
-            EventArgs e)
-        {
-            string modeName = GetEditModeNameFromEnum(editMode);
-            if (modeName != modeComboBox.SelectedItem.ToString())
-            {
-                if (projectsListView.SelectedItems.Count != 0)
-                {
-                    string project = projectsListView.SelectedItems[0].Text;
-                    SaveIntermediateData(project);
-                    ChangeEditMode();
-                    LoadProjectDataToFields(project);
-                }
-                else
-                {
-                    ChangeEditMode();
-                }
             }
         }
     }

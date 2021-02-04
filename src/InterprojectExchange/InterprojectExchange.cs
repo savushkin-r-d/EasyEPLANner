@@ -116,7 +116,7 @@ namespace InterprojectExchange
         /// </summary>
         public void ChangeEditMode(int selectedModeIndex)
         {
-            editMode = (EditModeEnum)selectedModeIndex;
+            editMode = (EditMode)selectedModeIndex;
         }
 
         /// <summary>
@@ -322,7 +322,7 @@ namespace InterprojectExchange
         {
             IProjectModel currentProjectModel = MainModel;
             DeviceSignalsInfo currentProjectSignals;
-            if (editMode == EditModeEnum.SourceReciever)
+            if (editMode == EditMode.SourceReciever)
             {
                 currentProjectSignals = currentProjectModel.SourceSignals;
             }
@@ -358,7 +358,7 @@ namespace InterprojectExchange
         {
             IProjectModel advancedProjectModel = SelectedModel;
             DeviceSignalsInfo advancedProjectSignals;
-            if (editMode == EditModeEnum.SourceReciever)
+            if (editMode == EditMode.SourceReciever)
             {
                 advancedProjectSignals = advancedProjectModel.ReceiverSignals;
             }
@@ -516,6 +516,11 @@ namespace InterprojectExchange
         }
 
         /// <summary>
+        /// Режим редактирования
+        /// </summary>
+        public EditMode EditMode => editMode;
+
+        /// <summary>
         /// Получить экземпляр класса. Singleton
         /// </summary>
         /// <returns></returns>
@@ -529,18 +534,18 @@ namespace InterprojectExchange
             return interprojectExchange;
         }
 
-        /// <summary>
-        /// Режим редактирования связей
-        /// </summary>
-        enum EditModeEnum
-        {
-            SourceReciever, // Источник >> Приемник
-            RecieverSource  // Приемник >> Источник
-        }
-
-        private EditModeEnum editMode;
+        private EditMode editMode;
         private InterprojectExchangeStarter interprojectExchangeStarter;
         private static InterprojectExchange interprojectExchange;
         private List<IProjectModel> interprojectExchangeModels;
+    }
+
+    /// <summary>
+    /// Режим редактирования связей
+    /// </summary>
+    public enum EditMode
+    {
+        SourceReciever, // Источник >> Приемник
+        RecieverSource  // Приемник >> Источник
     }
 }
