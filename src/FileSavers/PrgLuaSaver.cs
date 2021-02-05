@@ -235,7 +235,7 @@ namespace EasyEPlanner
                     operationsSteps += baseObj.SaveOperationsSteps(
                         objName, prefix, modes);
                     operationsParameters += baseObj.SaveOperationsParameters(
-                        obj, objName, prefix, modes);
+                        objName, prefix, modes);
                 }
 
                 equipments += obj.BaseTechObject.SaveEquipment(obj, objName);

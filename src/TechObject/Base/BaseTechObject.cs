@@ -711,11 +711,10 @@ namespace TechObject
         /// <summary>
         /// Сохранить параметры операций базового объекта танк.
         /// </summary>
-        /// <param name="objName">Имя объекта для записи</param>
         /// <param name="prefix">Отступ</param>
         /// <param name="modes">Операции объекта</param>
         /// <returns></returns>
-        public string SaveOperationsParameters(TechObject obj, string objName,
+        public string SaveOperationsParameters(string objName,
             string prefix, List<Mode> modes)
         {
             var res = "";
@@ -738,31 +737,7 @@ namespace TechObject
                         continue;
                     }
 
-                    ParameterValueType type = 
-                        GetParameterValueType(obj, parameter);
-                    switch (type)
-                    {
-                        case ParameterValueType.Boolean:
-                            paramsForSave += $"{prefix}{parameter.LuaName} = " +
-                                    $"{parameter.Value},\n";
-                            break;
-                        case ParameterValueType.Device:
-                            paramsForSave += $"{prefix}{parameter.LuaName}" +
-                                $" = prg.control_modules.{parameter.Value},\n";
-                            break;
-                        case ParameterValueType.Number:
-                            paramsForSave += GetNumberParameterStringForSave(
-                                prefix, parameter, mode);
-                            break;
-                        case ParameterValueType.Parameter:
-                            paramsForSave += $"{prefix}{parameter.LuaName} = " +
-                            $"{objName}.PAR_FLOAT.{parameter.Value},\n";
-                            break;
-                        case ParameterValueType.Other:
-                            paramsForSave += $"{prefix}{parameter.LuaName} = " +
-                                    $"{parameter.Value},\n";
-                            break;
-                    }
+                    paramsForSave += parameter.SaveAsLuaTable(prefix);
                 }
 
                 bool needSaveParameters = paramsForSave != "";
@@ -779,157 +754,10 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Получение строки для сохранения в зависимости от того, кто
-        /// владеет параметром. Сам юнит или это параметр агрегата.
-        /// </summary>
-        /// <param name="parameter">Параметр для обработки</param>
-        /// <param name="prefix">Отступ</param>
-        /// <param name="mainObjMode">Проверяемая операция главного объекта
-        /// </param>
-        /// <returns></returns>
-        public string GetNumberParameterStringForSave(string prefix, 
-            BaseParameter parameter, Mode mainObjMode)
-        {
-            BaseTechObject baseTechObject = null;
-            List<Mode> modes = new List<Mode>();
-            string mainObjName = "";
-
-            if (parameter.Owner is BaseTechObject)
-            {
-                baseTechObject = parameter.Owner as BaseTechObject;
-                mainObjName = $"{baseTechObject.Owner.DisplayText[0]}";
-                modes = baseTechObject.Owner.ModesManager.Modes;
-            }
-
-            if (parameter.Owner is BaseOperation)
-            {
-                var operation = parameter.Owner as BaseOperation;
-                baseTechObject = operation.Owner.Owner.Owner.BaseTechObject;
-                mainObjName = $"{baseTechObject.Owner.DisplayText[0]}";
-                modes = operation.Owner.Owner.Modes;
-            }
-
-            string parameterValue = parameter.Value;
-            var mode = modes
-                .Where(x => x.GetModeNumber().ToString() == parameterValue)
-                .FirstOrDefault();
-            var res = "";
-            if (mode != null)
-            {
-                if (mode.BaseOperation.Name != "")
-                {
-                    parameterValue = mode.BaseOperation.LuaName.ToUpper();
-                    TechObject obj = baseTechObject.Owner;
-                    string objName = "prg." + obj.NameEplanForFile.ToLower() +
-                        obj.TechNumber.ToString();
-                    res = $"{prefix}{parameter.LuaName} = " +
-                        $"{objName}.operations." + parameterValue + ",\n";
-                }
-                else
-                {
-                    string message = $"Ошибка обработки параметра " +
-                        $"\"{parameter.Name}\"." +
-                        $" Не задана базовая операция в операции" +
-                        $" \"{mode.DisplayText[0]}\", объекта " +
-                        $"\"{mainObjName}\".\n";
-                    Logs.AddMessage(message);
-                }
-            }
-            else
-            {
-                string message = $"Ошибка обработки параметра " +
-                        $"\"{parameter.Name}\"." +
-                        $" Указан несуществующий номер операции в операции " +
-                        $"\"{mainObjMode.DisplayText[0]}\" объекта " +
-                        $"\"{mainObjName}\".\n";
-                Logs.AddMessage(message);
-            }
-            
-
-            return res;
-        }
-
-        /// <summary>
-        /// Получить тип параметра в зависимости от введенного значения в поле
-        /// </summary>
-        /// <param name="parameter">Параметр для проверки</param>
-        /// <returns></returns>
-        private ParameterValueType GetParameterValueType(TechObject obj,
-            BaseParameter parameter)
-        {
-            var result = ParameterValueType.Other;
-            var parameterValue = parameter.Value;
-
-            if (parameter.IsBoolParameter)
-            {
-                result = ParameterValueType.Boolean;
-                return result;
-            }
-
-            if (int.TryParse(parameterValue, out _))
-            {
-                result = ParameterValueType.Number;
-                return result;
-            }
-
-            bool isParameter = obj.GetParamsManager()
-                .GetParam(parameterValue) != null;
-            if (isParameter)
-            {
-                result = ParameterValueType.Parameter;
-                return result;
-            }
-
-            var deviceManager = Device.DeviceManager.GetInstance();
-            bool isDevice = deviceManager.GetDeviceByEplanName(parameterValue)
-                .Description != StaticHelper.CommonConst.Cap;
-            if (isDevice)
-            {
-                result = ParameterValueType.Device;
-                return result;
-            }
-
-            string[] devices = parameterValue.Split(' ');
-            if (devices.Length > 1)
-            {
-                bool haveBadDevices = false;
-                var validDevices = new List<bool>();
-                foreach (var device in devices)
-                {
-                    isDevice = deviceManager.GetDeviceByEplanName(device)
-                        .Description != StaticHelper.CommonConst.Cap;
-                    if (isDevice == false)
-                    {
-                        haveBadDevices = true;
-                    }
-                    validDevices.Add(isDevice);
-                }
-
-                validDevices = validDevices.Distinct().ToList();
-                if (validDevices.Count == 1 && haveBadDevices == false)
-                {
-                    result = ParameterValueType.ManyDevices;
-                    return result;
-                }
-            }
-
-            bool stub = parameter.Value.ToLower()
-                .Contains(StaticHelper.CommonConst.StubForCells.ToLower());
-            if (stub)
-            {
-                result = ParameterValueType.Stub;
-                return result;
-            }
-
-            return result;
-        }
-
-
-        /// <summary>
         /// Сохранить оборудование технологического объекта
         /// </summary>
         /// <param name="objName">Имя для сохранения</param>
-        /// <param name="equipment">Объект</param>
+        /// <param name="obj">Объект с параметрами</param>
         /// <returns></returns>
         public string SaveEquipment(TechObject obj, string objName)
         {
@@ -938,72 +766,19 @@ namespace TechObject
             foreach (var item in equipment.Items)
             {
                 var property = item as BaseParameter;
-                var value = property.Value;
-                var luaName = property.LuaName;
-
-                var parameterType = GetParameterValueType(obj, property);
-                switch (parameterType)
+                
+                string propertySaveText = property.SaveAsLuaTable(string.Empty);
+                if (string.IsNullOrEmpty(propertySaveText))
                 {
-                    case ParameterValueType.Device:
-                        res += objName + $".{luaName} = " +
-                            $"prg.control_modules.{value}\n";
-                        break;
-                    case ParameterValueType.ManyDevices:
-                        res += SaveMoreThanOneDeviceInEquipment(objName,
-                            luaName, value);
-                        break;
-                    case ParameterValueType.Parameter:
-                        res += objName + $".{luaName} = " +
-                            $"{objName}.PAR_FLOAT.{value}\n";
-                        break;
+                    continue;
                 }
-            }
 
-            return res;
-        }
-
-        /// <summary>
-        /// Сохранить более 1 устройства в одном оборудовании.
-        /// </summary>
-        /// <param name="luaName">LUA имя оборудования</param>
-        /// <param name="objName">Имя объекта</param>
-        /// <param name="value">Значение параметра</param>
-        /// <returns></returns>
-        private string SaveMoreThanOneDeviceInEquipment(string objName,
-            string luaName, string value)
-        {
-            string res = "";
-
-            string[] devices = value.Split(' ');
-            if (devices.Length > 1)
-            {
-                string[] modifiedDevices = devices
-                    .Select(x => "prg.control_modules." + x).ToArray();
-                res = objName + $".{luaName} = " +
-                    $"{{ {string.Join(", ", modifiedDevices)} }} \n";
-            }
-            else
-            {
-                res = objName + $".{luaName} = prg.control_modules.{value}\n";
+                res += $"{objName}.{propertySaveText}";
             }
 
             return res;
         }
         #endregion
-
-        /// <summary>
-        /// Возможные типы значений полей параметров объекта
-        /// </summary>
-        enum ParameterValueType
-        {
-            Other,
-            ManyDevices,
-            Device,
-            Boolean,
-            Parameter,
-            Number,
-            Stub,
-        }
 
         private string name;
         private string eplanName;

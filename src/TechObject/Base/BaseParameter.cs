@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using EasyEPlanner;
 
 namespace TechObject
 {
@@ -22,6 +21,7 @@ namespace TechObject
             : base(name, defaultValue, defaultValue)
         {
             this.luaName = luaName;
+            currentValueType = ValueType.None;
 
             if(displayObjects != null)
             {
@@ -157,6 +157,9 @@ namespace TechObject
         {
             newValue = newValue.Trim();
             base.SetNewValue(newValue);
+
+            currentValueType = GetParameterValueType(null);
+
             return true;
         }
 
@@ -185,12 +188,200 @@ namespace TechObject
         }
         #endregion
 
-        private object owner;
-        private string luaName;
-        private List<DisplayObject> displayObjectsFlags;
+        /// <summary>
+        /// Получить тип параметра в зависимости от введенного значения в поле
+        /// </summary>
+        /// <param name="obj">Объект для проверки</param>
+        /// <returns></returns>
+        private ValueType GetParameterValueType(TechObject obj)
+        {
+            var result = ValueType.Other;
 
-        private Device.DeviceType[] deviceTypes;
-        private bool displayParameters;
+            if (string.IsNullOrEmpty(Value))
+            {
+                return ValueType.None;
+            }
+
+            if (IsBoolParameter)
+            {
+                return ValueType.Boolean;
+            }
+
+            if (int.TryParse(Value, out _))
+            {
+                return ValueType.Number;
+            }
+
+            bool isParameter = obj.GetParamsManager()
+                .GetParam(Value) != null;
+            if (isParameter)
+            {
+                return ValueType.Parameter;
+            }
+
+            var deviceManager = Device.DeviceManager.GetInstance();
+            bool isDevice = deviceManager.GetDeviceByEplanName(Value)
+                .Description != StaticHelper.CommonConst.Cap;
+            if (isDevice)
+            {
+                return ValueType.Device;
+            }
+
+            string[] devices = Value.Split(' ');
+            if (devices.Length > 1)
+            {
+                bool haveBadDevices = false;
+                var validDevices = new List<bool>();
+                foreach (var device in devices)
+                {
+                    isDevice = deviceManager.GetDeviceByEplanName(device)
+                        .Description != StaticHelper.CommonConst.Cap;
+                    if (isDevice == false)
+                    {
+                        haveBadDevices = true;
+                    }
+                    validDevices.Add(isDevice);
+                }
+
+                validDevices = validDevices.Distinct().ToList();
+                if (validDevices.Count == 1 && haveBadDevices == false)
+                {
+                    return ValueType.ManyDevices;
+                }
+            }
+
+            bool stub = Value.ToLower()
+                .Contains(StaticHelper.CommonConst.StubForCells.ToLower());
+            if (stub)
+            {
+                return ValueType.Stub;
+            }
+
+            return result;
+        }
+
+        public string SaveAsLuaTable(string prefix)
+        {
+            switch (CurrentValueType)
+            {
+                case ValueType.Boolean:
+                case ValueType.Other:
+                    return $"{prefix}{LuaName} = {Value},\n";
+
+                case ValueType.Device:
+                    return $"{prefix}{LuaName}" +
+                        $" = prg.control_modules.{Value},\n";
+
+                case ValueType.Number:
+                    return GetNumberParameterStringForSave(prefix);
+
+                case ValueType.Parameter:
+                    return $"{prefix}{LuaName} = " +
+                        $"{objName}.PAR_FLOAT.{Value},\n";
+
+                case ValueType.ManyDevices:
+                    return SaveMoreThanOneDevice(LuaName, Value);
+
+                case ValueType.None:
+                default:
+                    return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Получение строки для сохранения в зависимости от того, кто
+        /// владеет параметром. Сам юнит или это параметр агрегата.
+        /// </summary>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        public string GetNumberParameterStringForSave(string prefix)
+        {
+            BaseTechObject baseTechObject = null;
+            var modes = new List<Mode>();
+            string mainObjName = "";
+
+            if (Owner is BaseTechObject)
+            {
+                baseTechObject = Owner as BaseTechObject;
+                mainObjName = $"{baseTechObject.Owner.DisplayText[0]}";
+                modes = baseTechObject.Owner.ModesManager.Modes;
+            }
+
+            if (Owner is BaseOperation)
+            {
+                var operation = Owner as BaseOperation;
+                baseTechObject = operation.Owner.Owner.Owner.BaseTechObject;
+                mainObjName = $"{baseTechObject.Owner.DisplayText[0]}";
+                modes = operation.Owner.Owner.Modes;
+            }
+
+            Mode mode = modes
+                .Where(x => x.GetModeNumber().ToString() == Value)
+                .FirstOrDefault();
+            var res = "";
+            if (mode != null)
+            {
+                if (mode.BaseOperation.Name != "")
+                {
+                    string operationLuaName = mode.BaseOperation.LuaName
+                        .ToUpper();
+                    TechObject obj = baseTechObject.Owner;
+                    string objName = "prg." + obj.NameEplanForFile.ToLower() +
+                        obj.TechNumber.ToString();
+                    res = $"{prefix}{LuaName} = " +
+                        $"{objName}.operations." + operationLuaName + ",\n";
+                }
+                else
+                {
+                    string message = $"Ошибка обработки параметра " +
+                        $"\"{Name}\"." +
+                        $" Не задана базовая операция в операции" +
+                        $" \"{mode.DisplayText[0]}\", объекта " +
+                        $"\"{mainObjName}\".\n";
+                    Logs.AddMessage(message);
+                }
+            }
+            else
+            {
+                string message = $"Ошибка обработки параметра " +
+                        $"\"{Name}\"." +
+                        $" Указан несуществующий номер операции в операции " +
+                        $"\"{mode.DisplayText[0]}\" объекта " +
+                        $"\"{mainObjName}\".\n";
+                Logs.AddMessage(message);
+            }
+
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить более 1 устройства в параметре.
+        /// </summary>
+        /// <param name="objName">Имя объекта</param>
+        /// <param name="value">Значение параметра</param>
+        /// <returns></returns>
+        private string SaveMoreThanOneDevice(string luaName, string value)
+        {
+            string res = "";
+
+            string[] devices = value.Split(' ');
+            if (devices.Length > 1)
+            {
+                string[] modifiedDevices = devices
+                    .Select(x => "prg.control_modules." + x).ToArray();
+                res = $".{luaName} = " +
+                    $"{{ {string.Join(", ", modifiedDevices)} }} \n";
+            }
+            else
+            {
+                res = $"{luaName} = prg.control_modules.{value}\n";
+            }
+
+            return res;
+        }
+
+        public ValueType CurrentValueType => currentValueType;
 
         public enum DisplayObject
         {
@@ -198,5 +389,28 @@ namespace TechObject
             Signals,
             Parameters,
         }
+
+        /// <summary>
+        /// Возможные типы значений полей параметров объекта
+        /// </summary>
+        public enum ValueType
+        {
+            None,
+            Other,
+            ManyDevices,
+            Device,
+            Boolean,
+            Parameter,
+            Number,
+            Stub,
+        }
+
+        private object owner;
+        private string luaName;
+        private List<DisplayObject> displayObjectsFlags;
+        private ValueType currentValueType;
+
+        private Device.DeviceType[] deviceTypes;
+        private bool displayParameters;
     }
 }
