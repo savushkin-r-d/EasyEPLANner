@@ -771,13 +771,13 @@ namespace TechObject
             {
                 var property = item as BaseParameter;
                 
-                string propertySaveText = property.SaveAsLuaTable(string.Empty);
-                if (string.IsNullOrEmpty(propertySaveText))
+                string equipmentCode = property.SaveAsLuaTable(string.Empty);
+                if (string.IsNullOrEmpty(equipmentCode))
                 {
                     continue;
                 }
 
-                res += $"{objName}.{propertySaveText}\n";
+                res += $"{objName}.{equipmentCode}\n";
             }
 
             return res;
