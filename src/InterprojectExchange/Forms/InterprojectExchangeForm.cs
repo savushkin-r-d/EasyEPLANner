@@ -1050,7 +1050,8 @@ namespace InterprojectExchange
         /// <param name="e"></param>
         private void pacSetUpBtn_Click(object sender, EventArgs e)
         {
-            var form = new PACSettingsForm();
+            var form =new PACSettingsForm(InterprojectExchange.GetInstance()
+                .EditMode);
             form.ShowDialog();
 
             string selectedModelName = advProjNameComboBox.Text;
