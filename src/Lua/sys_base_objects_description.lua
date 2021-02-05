@@ -72,11 +72,12 @@
 -- главным параметром агрегата, он является обязательным для агрегата. main-параметр задается только один!
 
 -- Системные параметры объекта (systemParams) - системные параметры объекта, которые используются
--- в контроллере. Доступны только для чтения, можно менять только значение. 
--- Название таблицы - Lua-имя параметра, пишется в любом регистре.
+-- в контроллере. Доступны только для чтения, можно менять только значение.
+-- Индекс таблицы - указывает его номер в списке параметров.
 -- 1. name - русскоязычное название параметра
 -- 2. meter - единица измерения параметра
 -- 3. defaultValue - стандартное значение параметра
+-- 4. nameLua - LUA-имя параметра
 
 base_tech_objects = function()
 return
@@ -167,7 +168,88 @@ return
             },
             aggregateParameters = { },
             bindingName = "ice_water_pump_tank",
-            isPID = true
+            isPID = true,
+            systemParams =
+            {
+                [ 1 ] = {
+                    name = "Параметр k",
+                    defaultValue = 1,
+                    nameLua = "P_k",
+                },
+                [ 2 ] = {
+                    name = "Параметр Ti",
+                    defaultValue = 15,
+                    nameLua = "P_Ti",
+                },
+                [ 3 ] = {
+                    name = "Параметр Td",
+                    defaultValue = 0.01,
+                    nameLua = "P_Td",
+                },
+                [ 4 ] = {
+                    name = "Интервал расчёта",
+                    meter = "сек",
+                    defaultValue = 1000,
+                    nameLua = "P_dt",
+                },
+                [ 5 ] = {
+                    name = "Максимальное значение входной величины",
+                    meter = "%",
+                    defaultValue = 100,
+                    nameLua = "P_max",
+                },
+                [ 6 ] = {
+                    name = "Минимальное значение входной величины",
+                    meter = "%",
+                    defaultValue = 0,
+                    nameLua = "P_min",
+                },
+                [ 7 ] = {
+                    name = "Время выхода на режим регулирования",
+                    meter = "сек",
+                    defaultValue = 30,
+                    nameLua = "P_acceleration_time",
+                },
+                [ 8 ] = {
+                    name = "Ручной режим",
+                    meter = "№ режима",
+                    defaultValue = 0, -- Ручной режим, 0 - авто, 1 - ручной
+                    nameLua = "P_is_manual_mode",
+                },
+                [ 9 ] = {
+                    name = "Заданное ручное значение выходного сигнала",
+                    meter = "%",
+                    defaultValue = 65,
+                    nameLua = "P_U_manual",
+                },
+                [ 10 ] = {
+                    name = "Параметр k2",
+                    defaultValue = 0,
+                    nameLua = "P_k2",
+                },
+                [ 11 ] = {
+                    name = "Параметр Ti2",
+                    defaultValue = 0,
+                    nameLua = "P_Ti2",
+                },
+                [ 12 ] = {
+                    name = "Параметр Td2",
+                    defaultValue = 0,
+                    nameLua = "P_Td2",
+                },
+                [ 13 ] = {
+                    name = "Максимальное значение выходной величины",
+                    meter = "%",
+                    defaultValue = 100,
+                    nameLua = "P_out_max",
+                },
+                [ 14 ] = {
+                    name = "Минимальное значение выходной величины",
+                    meter = "%",
+                    defaultValue = 0,
+                    nameLua = "P_out_min",
+                },
+            },
         },
         boil = {
             name = "Бойлер",
@@ -222,6 +304,72 @@ return
             equipment = { },
             aggregateParameters = { },
             bindingName = "master",
+            systemParams =
+            {
+                [ 1 ] = {
+                    name = "Интервал промывки седел клапанов",
+                    meter = "сек",
+                    defaultValue = 180,
+                    nameLua = "P_MIX_FLIP_PERIOD",
+                },
+                [ 2 ] = {
+                    name = "Время промывки верхних седел клапанов",
+                    meter = "мсек",
+                    defaultValue = 2000,
+                    nameLua = "P_MIX_FLIP_UPPER_TIME",
+                },
+                [ 3 ] = {
+                    name = "Время промывки нижних седел клапанов",
+                    meter = "мсек",
+                    defaultValue = 1000,
+                    nameLua = "P_MIX_FLIP_LOWER_TIME",
+                },
+                [ 4 ] = {
+                    name = "Время задержки закрытия клапанов",
+                    meter = "мсек",
+                    defaultValue = 1000,
+                    nameLua = "P_V_OFF_DELAY_TIME",
+                },
+                [ 5 ] = {
+                    name = "Время задержки закрытия донных клапанов",
+                    meter = "мсек",
+                    defaultValue = 1200,
+                    nameLua = "P_V_BOTTOM_OFF_DELAY_TIME",
+                },
+                [ 6 ] = {
+                    name = "Среднее время задержки получения ответа от узла I/O",
+                    meter = "мсек",
+                    defaultValue = 50,
+                    nameLua = "P_WAGO_TCP_NODE_WARN_ANSWER_AVG_TIME",
+                },
+                [ 7 ] = {
+                    name = "Среднее время цикла программы",
+                    meter = "мсек",
+                    defaultValue = 300,
+                    nameLua = "P_MAIN_CYCLE_WARN_ANSWER_AVG_TIME",
+                },
+                [ 8 ] = {
+                    name = "Работа модуля ограничений",
+                    meter = "№ режима",
+                    defaultValue = 0,
+                    -- 0 - авто, 1 - ручной, 2 - полуавтоматический (через
+                    -- время @P_RESTRICTIONS_MANUAL_TIME вернется в
+                    -- автоматический режим).
+                    nameLua = "P_RESTRICTIONS_MODE",
+                },
+                [ 9 ] = {
+                    name = "Работа модуля ограничений в ручном режиме заданное время",
+                    meter = "мсек",
+                    defaultValue = 120000, -- 2 * 60 * 1000 мсек
+                    nameLua = "P_RESTRICTIONS_MANUAL_TIME",
+                },
+                [ 10 ] = {
+                    name = "Переход на паузу операции при ошибке устройств",
+                    meter = "№ режима",
+                    defaultValue = 0, -- 0 - авто (есть), 1 - ручной (нет).
+                    nameLua = "P_AUTO_PAUSE_OPER_ON_DEV_ERR",
+                },
+            }
         },
         line = {
             name = "Линия",
@@ -1017,7 +1165,88 @@ return
                 },
             },
             bindingName = "pressure_node",
-            isPID = true
+            isPID = true,
+            systemParams =
+            {
+                [ 1 ] = {
+                    name = "Параметр k",
+                    defaultValue = 1,
+                    nameLua = "P_k",
+                },
+                [ 2 ] = {
+                    name = "Параметр Ti",
+                    defaultValue = 15,
+                    nameLua = "P_Ti",
+                },
+                [ 3 ] = {
+                    name = "Параметр Td",
+                    defaultValue = 0.01,
+                    nameLua = "P_Td",
+                },
+                [ 4 ] = {
+                    name = "Интервал расчёта",
+                    meter = "сек",
+                    defaultValue = 1000,
+                    nameLua = "P_dt",
+                },
+                [ 5 ] = {
+                    name = "Максимальное значение входной величины",
+                    meter = "бар",
+                    defaultValue = 100,
+                    nameLua = "P_max",
+                },
+                [ 6 ] = {
+                    name = "Минимальное значение входной величины",
+                    meter = "бар",
+                    defaultValue = 0,
+                    nameLua = "P_min",
+                },
+                [ 7 ] = {
+                    name = "Время выхода на режим регулирования",
+                    meter = "сек",
+                    defaultValue = 30,
+                    nameLua = "P_acceleration_time",
+                },
+                [ 8 ] = {
+                    name = "Ручной режим",
+                    meter = "№ режима",
+                    defaultValue = 0, -- Ручной режим, 0 - авто, 1 - ручной
+                    nameLua = "P_is_manual_mode",
+                },
+                [ 9 ] = {
+                    name = "Заданное ручное значение выходного сигнала",
+                    meter = "бар",
+                    defaultValue = 65,
+                    nameLua = "P_U_manual",
+                },
+                [ 10 ] = {
+                    name = "Параметр k2",
+                    defaultValue = 0,
+                    nameLua = "P_k2",
+                },
+                [ 11 ] = {
+                    name = "Параметр Ti2",
+                    defaultValue = 0,
+                    nameLua = "P_Ti2",
+                },
+                [ 12 ] = {
+                    name = "Параметр Td2",
+                    defaultValue = 0,
+                    nameLua = "P_Td2",
+                },
+                [ 13 ] = {
+                    name = "Максимальное значение выходной величины",
+                    meter = "бар",
+                    defaultValue = 100,
+                    nameLua = "P_out_max",
+                },
+                [ 14 ] = {
+                    name = "Минимальное значение выходной величины",
+                    meter = "бар",
+                    defaultValue = 0,
+                    nameLua = "P_out_min",
+                },
+            },
         },
         heater_node = {
             name = "Узел подогрева",
@@ -1133,7 +1362,88 @@ return
                 },
             },
             bindingName = "heater_node",
-            isPID = true
+            isPID = true,
+            systemParams =
+            {
+                [ 1 ] = {
+                    name = "Параметр k",
+                    defaultValue = 1,
+                    nameLua = "P_k",
+                },
+                [ 2 ] = {
+                    name = "Параметр Ti",
+                    defaultValue = 15,
+                    nameLua = "P_Ti",
+                },
+                [ 3 ] = {
+                    name = "Параметр Td",
+                    defaultValue = 0.01,
+                    nameLua = "P_Td",
+                },
+                [ 4 ] = {
+                    name = "Интервал расчёта",
+                    meter = "сек",
+                    defaultValue = 1000,
+                    nameLua = "P_dt",
+                },
+                [ 5 ] = {
+                    name = "Максимальное значение входной величины",
+                    meter = "°C",
+                    defaultValue = 100,
+                    nameLua = "P_max",
+                },
+                [ 6 ] = {
+                    name = "Минимальное значение входной величины",
+                    meter = "°C",
+                    defaultValue = 0,
+                    nameLua = "P_min",
+                },
+                [ 7 ] = {
+                    name = "Время выхода на режим регулирования",
+                    meter = "сек",
+                    defaultValue = 30,
+                    nameLua = "P_acceleration_time",
+                },
+                [ 8 ] = {
+                    name = "Ручной режим",
+                    meter = "№ режима",
+                    defaultValue = 0, -- Ручной режим, 0 - авто, 1 - ручной
+                    nameLua = "P_is_manual_mode",
+                },
+                [ 9 ] = {
+                    name = "Заданное ручное значение выходного сигнала",
+                    meter = "°C",
+                    defaultValue = 65,
+                    nameLua = "P_U_manual",
+                },
+                [ 10 ] = {
+                    name = "Параметр k2",
+                    defaultValue = 0,
+                    nameLua = "P_k2",
+                },
+                [ 11 ] = {
+                    name = "Параметр Ti2",
+                    defaultValue = 0,
+                    nameLua = "P_Ti2",
+                },
+                [ 12 ] = {
+                    name = "Параметр Td2",
+                    defaultValue = 0,
+                    nameLua = "P_Td2",
+                },
+                [ 13 ] = {
+                    name = "Максимальное значение выходной величины",
+                    meter = "°C",
+                    defaultValue = 100,
+                    nameLua = "P_out_max",
+                },
+                [ 14 ] = {
+                    name = "Минимальное значение выходной величины",
+                    meter = "°C",
+                    defaultValue = 0,
+                    nameLua = "P_out_min",
+                },
+            },
         },
         flow_node_PID = {
             name = "Узел расхода ПИД",
@@ -1162,7 +1472,88 @@ return
                 },
             },
             bindingName = "flow_node",
-            isPID = true
+            isPID = true,
+            systemParams =
+            {
+                [ 1 ] = {
+                    name = "Параметр k",
+                    defaultValue = 1,
+                    nameLua = "P_k",
+                },
+                [ 2 ] = {
+                    name = "Параметр Ti",
+                    defaultValue = 15,
+                    nameLua = "P_Ti",
+                },
+                [ 3 ] = {
+                    name = "Параметр Td",
+                    defaultValue = 0.01,
+                    nameLua = "P_Td",
+                },
+                [ 4 ] = {
+                    name = "Интервал расчёта",
+                    meter = "сек",
+                    defaultValue = 1000,
+                    nameLua = "P_dt",
+                },
+                [ 5 ] = {
+                    name = "Максимальное значение входной величины",
+                    meter = "м3/ч",
+                    defaultValue = 100,
+                    nameLua = "P_max",
+                },
+                [ 6 ] = {
+                    name = "Минимальное значение входной величины",
+                    meter = "м3/ч",
+                    defaultValue = 0,
+                    nameLua = "P_min",
+                },
+                [ 7 ] = {
+                    name = "Время выхода на режим регулирования",
+                    meter = "сек",
+                    defaultValue = 30,
+                    nameLua = "P_acceleration_time",
+                },
+                [ 8 ] = {
+                    name = "Ручной режим",
+                    meter = "№ режима",
+                    defaultValue = 0, -- Ручной режим, 0 - авто, 1 - ручной
+                    nameLua = "P_is_manual_mode",
+                },
+                [ 9 ] = {
+                    name = "Заданное ручное значение выходного сигнала",
+                    meter = "м3/ч",
+                    defaultValue = 65,
+                    nameLua = "P_U_manual",
+                },
+                [ 10 ] = {
+                    name = "Параметр k2",
+                    defaultValue = 0,
+                    nameLua = "P_k2",
+                },
+                [ 11 ] = {
+                    name = "Параметр Ti2",
+                    defaultValue = 0,
+                    nameLua = "P_Ti2",
+                },
+                [ 12 ] = {
+                    name = "Параметр Td2",
+                    defaultValue = 0,
+                    nameLua = "P_Td2",
+                },
+                [ 13 ] = {
+                    name = "Максимальное значение выходной величины",
+                    meter = "м3/ч",
+                    defaultValue = 100,
+                    nameLua = "P_out_max",
+                },
+                [ 14 ] = {
+                    name = "Минимальное значение выходной величины",
+                    meter = "м3/ч",
+                    defaultValue = 0,
+                    nameLua = "P_out_min",
+                },
+            },
         },
         cooler_node = {
             name = "Узел охлаждения",
@@ -1319,7 +1710,88 @@ return
                 },
             },
             bindingName = "cooler_node",
-            isPID = true
+            isPID = true,
+            systemParams =
+            {
+                [ 1 ] = {
+                    name = "Параметр k",
+                    defaultValue = 1,
+                    nameLua = "P_k",
+                },
+                [ 2 ] = {
+                    name = "Параметр Ti",
+                    defaultValue = 15,
+                    nameLua = "P_Ti",
+                },
+                [ 3 ] = {
+                    name = "Параметр Td",
+                    defaultValue = 0.01,
+                    nameLua = "P_Td",
+                },
+                [ 4 ] = {
+                    name = "Интервал расчёта",
+                    meter = "сек",
+                    defaultValue = 1000,
+                    nameLua = "P_dt",
+                },
+                [ 5 ] = {
+                    name = "Максимальное значение входной величины",
+                    meter = "°C",
+                    defaultValue = 100,
+                    nameLua = "P_max",
+                },
+                [ 6 ] = {
+                    name = "Минимальное значение входной величины",
+                    meter = "°C",
+                    defaultValue = 0,
+                    nameLua = "P_min",
+                },
+                [ 7 ] = {
+                    name = "Время выхода на режим регулирования",
+                    meter = "сек",
+                    defaultValue = 30,
+                    nameLua = "P_acceleration_time",
+                },
+                [ 8 ] = {
+                    name = "Ручной режим",
+                    meter = "№ режима",
+                    defaultValue = 0, -- Ручной режим, 0 - авто, 1 - ручной
+                    nameLua = "P_is_manual_mode",
+                },
+                [ 9 ] = {
+                    name = "Заданное ручное значение выходного сигнала",
+                    meter = "°C",
+                    defaultValue = 65,
+                    nameLua = "P_U_manual",
+                },
+                [ 10 ] = {
+                    name = "Параметр k2",
+                    defaultValue = 0,
+                    nameLua = "P_k2",
+                },
+                [ 11 ] = {
+                    name = "Параметр Ti2",
+                    defaultValue = 0,
+                    nameLua = "P_Ti2",
+                },
+                [ 12 ] = {
+                    name = "Параметр Td2",
+                    defaultValue = 0,
+                    nameLua = "P_Td2",
+                },
+                [ 13 ] = {
+                    name = "Максимальное значение выходной величины",
+                    meter = "°C",
+                    defaultValue = 100,
+                    nameLua = "P_out_max",
+                },
+                [ 14 ] = {
+                    name = "Минимальное значение выходной величины",
+                    meter = "°C",
+                    defaultValue = 0,
+                    nameLua = "P_out_min",
+                },
+            },
         },
         mix_node = {
             name = "Узел перемешивания",
@@ -1375,7 +1847,7 @@ return
                             name = "Движение вправо до верхнего положения",
                         },
                     },
-                    params = 
+                    params =
                     {   active =
                         {
                             DIRECTION =
@@ -1554,7 +2026,7 @@ return
                 main =
                 {
                     NEED_STERILE_AIR_NODE =
-                    { 
+                    {
                         name = "Использовать узел стерильного воздуха",
                         defaultValue = "false"
                     },
@@ -1582,7 +2054,7 @@ return
                 main =
                 {
                     NEED_STEAM_BLAST_NODE =
-                    { 
+                    {
                         name = "Использовать узел продувания",
                         defaultValue = "false"
                     },
@@ -1609,12 +2081,93 @@ return
             },
             bindingName = "tank_level_node_PID",
             isPID = true,
+            systemParams =
+            {
+                [ 1 ] = {
+                    name = "Параметр k",
+                    defaultValue = 1,
+                    nameLua = "P_k",
+                },
+                [ 2 ] = {
+                    name = "Параметр Ti",
+                    defaultValue = 15,
+                    nameLua = "P_Ti",
+                },
+                [ 3 ] = {
+                    name = "Параметр Td",
+                    defaultValue = 0.01,
+                    nameLua = "P_Td",
+                },
+                [ 4 ] = {
+                    name = "Интервал расчёта",
+                    meter = "сек",
+                    defaultValue = 1000,
+                    nameLua = "P_dt",
+                },
+                [ 5 ] = {
+                    name = "Максимальное значение входной величины",
+                    meter = "%",
+                    defaultValue = 100,
+                    nameLua = "P_max",
+                },
+                [ 6 ] = {
+                    name = "Минимальное значение входной величины",
+                    meter = "%",
+                    defaultValue = 0,
+                    nameLua = "P_min",
+                },
+                [ 7 ] = {
+                    name = "Время выхода на режим регулирования",
+                    meter = "сек",
+                    defaultValue = 30,
+                    nameLua = "P_acceleration_time",
+                },
+                [ 8 ] = {
+                    name = "Ручной режим",
+                    meter = "№ режима",
+                    defaultValue = 0, -- Ручной режим, 0 - авто, 1 - ручной
+                    nameLua = "P_is_manual_mode",
+                },
+                [ 9 ] = {
+                    name = "Заданное ручное значение выходного сигнала",
+                    meter = "%",
+                    defaultValue = 65,
+                    nameLua = "P_U_manual",
+                },
+                [ 10 ] = {
+                    name = "Параметр k2",
+                    defaultValue = 0,
+                    nameLua = "P_k2",
+                },
+                [ 11 ] = {
+                    name = "Параметр Ti2",
+                    defaultValue = 0,
+                    nameLua = "P_Ti2",
+                },
+                [ 12 ] = {
+                    name = "Параметр Td2",
+                    defaultValue = 0,
+                    nameLua = "P_Td2",
+                },
+                [ 13 ] = {
+                    name = "Максимальное значение выходной величины",
+                    meter = "%",
+                    defaultValue = 100,
+                    nameLua = "P_out_max",
+                },
+                [ 14 ] = {
+                    name = "Минимальное значение выходной величины",
+                    meter = "%",
+                    defaultValue = 0,
+                    nameLua = "P_out_min",
+                },
+            },
             aggregateParameters =
             {
                 main =
                 {
                     NEED_TANK_LEVEL_NODE_PID =
-                    { 
+                    {
                         name = "Использовать узел текущего уровня ПИД",
                         defaultValue = "false"
                     },
@@ -1655,7 +2208,7 @@ return
                 main =
                 {
                     NEED_TANK_LEVEL_NODE =
-                    { 
+                    {
                         name = "Использовать узел текущего уровня",
                         defaultValue = "false"
                     },

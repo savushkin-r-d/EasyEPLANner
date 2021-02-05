@@ -162,11 +162,12 @@ end
 
 -- Инициализация системных параметров базового объекта
 init_system_parameters = function(object, systemParameters)
-    for luaName, parameter in pairs(systemParameters) do
+    for index, parameter in ipairs(systemParameters) do
         local name = parameter.name or ""
         local defaultValue = parameter.defaultValue or 0
-        local meter = parameter.meter or "шт"
+        local meter = parameter.meter or ""
+        local nameLua = parameter.nameLua or ""
 
-        object:AddSystemParameter(luaName, name, defaultValue, meter)
+        object:AddSystemParameter(nameLua, name, defaultValue, meter)
     end
 end
