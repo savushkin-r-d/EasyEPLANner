@@ -737,7 +737,11 @@ namespace TechObject
                         continue;
                     }
 
-                    paramsForSave += parameter.SaveAsLuaTable(prefix);
+                    string paramCode = parameter.SaveAsLuaTable(prefix);
+                    if (!string.IsNullOrEmpty(paramCode))
+                    {
+                        paramsForSave += $"{paramCode},\n";
+                    }
                 }
 
                 bool needSaveParameters = paramsForSave != "";
@@ -773,7 +777,7 @@ namespace TechObject
                     continue;
                 }
 
-                res += $"{objName}.{propertySaveText}";
+                res += $"{objName}.{propertySaveText}\n";
             }
 
             return res;

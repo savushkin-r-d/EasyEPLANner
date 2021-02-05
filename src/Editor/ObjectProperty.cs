@@ -49,7 +49,7 @@ namespace Editor
         /// Установить значение свойства
         /// </summary>
         /// <param name="val">Значение</param>
-        public void SetValue(object val)
+        public virtual void SetValue(object val)
         {
             value = val;
         }

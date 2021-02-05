@@ -157,10 +157,14 @@ namespace TechObject
         {
             newValue = newValue.Trim();
             base.SetNewValue(newValue);
-
-            currentValueType = GetParameterValueType(null);
-
+            currentValueType = GetParameterValueType(newValue);
             return true;
+        }
+
+        public override void SetValue(object val)
+        {
+            currentValueType = GetParameterValueType(val.ToString());
+            base.SetValue(val);
         }
 
         override public string[] EditText
@@ -191,13 +195,13 @@ namespace TechObject
         /// <summary>
         /// Получить тип параметра в зависимости от введенного значения в поле
         /// </summary>
-        /// <param name="obj">Объект для проверки</param>
+        /// <param name="value">Значение свойства</param>
         /// <returns></returns>
-        private ValueType GetParameterValueType(TechObject obj)
+        private ValueType GetParameterValueType(string value)
         {
             var result = ValueType.Other;
 
-            if (string.IsNullOrEmpty(Value))
+            if (string.IsNullOrEmpty(value))
             {
                 return ValueType.None;
             }
@@ -207,27 +211,27 @@ namespace TechObject
                 return ValueType.Boolean;
             }
 
-            if (int.TryParse(Value, out _))
+            if (int.TryParse(value, out _))
             {
                 return ValueType.Number;
             }
 
-            bool isParameter = obj.GetParamsManager()
-                .GetParam(Value) != null;
+            bool isParameter = GetTechObject()?.GetParamsManager()
+                .GetParam(value) != null;
             if (isParameter)
             {
                 return ValueType.Parameter;
             }
 
             var deviceManager = Device.DeviceManager.GetInstance();
-            bool isDevice = deviceManager.GetDeviceByEplanName(Value)
+            bool isDevice = deviceManager.GetDeviceByEplanName(value)
                 .Description != StaticHelper.CommonConst.Cap;
             if (isDevice)
             {
                 return ValueType.Device;
             }
 
-            string[] devices = Value.Split(' ');
+            string[] devices = value.Split(' ');
             if (devices.Length > 1)
             {
                 bool haveBadDevices = false;
@@ -250,7 +254,7 @@ namespace TechObject
                 }
             }
 
-            bool stub = Value.ToLower()
+            bool stub = value.ToLower()
                 .Contains(StaticHelper.CommonConst.StubForCells.ToLower());
             if (stub)
             {
@@ -262,22 +266,30 @@ namespace TechObject
 
         public string SaveAsLuaTable(string prefix)
         {
+            TechObject obj = GetTechObject();
+            var objName = string.Empty;
+            if (obj != null)
+            {
+                objName = "prg." + obj.NameEplanForFile.ToLower() +
+                    obj.TechNumber.ToString();
+            }
+
             switch (CurrentValueType)
             {
                 case ValueType.Boolean:
                 case ValueType.Other:
-                    return $"{prefix}{LuaName} = {Value},\n";
+                    return $"{prefix}{LuaName} = {Value}";
 
                 case ValueType.Device:
                     return $"{prefix}{LuaName}" +
-                        $" = prg.control_modules.{Value},\n";
+                        $" = prg.control_modules.{Value}";
 
                 case ValueType.Number:
                     return GetNumberParameterStringForSave(prefix);
 
                 case ValueType.Parameter:
                     return $"{prefix}{LuaName} = " +
-                        $"{objName}.PAR_FLOAT.{Value},\n";
+                        $"{objName}.PAR_FLOAT.{Value}";
 
                 case ValueType.ManyDevices:
                     return SaveMoreThanOneDevice(LuaName, Value);
@@ -297,6 +309,7 @@ namespace TechObject
         public string GetNumberParameterStringForSave(string prefix)
         {
             BaseTechObject baseTechObject = null;
+            Mode baseMode = null;
             var modes = new List<Mode>();
             string mainObjName = "";
 
@@ -305,6 +318,8 @@ namespace TechObject
                 baseTechObject = Owner as BaseTechObject;
                 mainObjName = $"{baseTechObject.Owner.DisplayText[0]}";
                 modes = baseTechObject.Owner.ModesManager.Modes;
+                var operation = Parent as BaseOperation;
+                baseMode = operation.Owner;
             }
 
             if (Owner is BaseOperation)
@@ -312,7 +327,8 @@ namespace TechObject
                 var operation = Owner as BaseOperation;
                 baseTechObject = operation.Owner.Owner.Owner.BaseTechObject;
                 mainObjName = $"{baseTechObject.Owner.DisplayText[0]}";
-                modes = operation.Owner.Owner.Modes;
+                baseMode = operation.Owner;
+                modes = baseMode.Owner.Modes;
             }
 
             Mode mode = modes
@@ -329,7 +345,7 @@ namespace TechObject
                     string objName = "prg." + obj.NameEplanForFile.ToLower() +
                         obj.TechNumber.ToString();
                     res = $"{prefix}{LuaName} = " +
-                        $"{objName}.operations." + operationLuaName + ",\n";
+                        $"{objName}.operations.{operationLuaName}";
                 }
                 else
                 {
@@ -346,7 +362,7 @@ namespace TechObject
                 string message = $"Ошибка обработки параметра " +
                         $"\"{Name}\"." +
                         $" Указан несуществующий номер операции в операции " +
-                        $"\"{mode.DisplayText[0]}\" объекта " +
+                        $"\"{baseMode.DisplayText[0]}\" объекта " +
                         $"\"{mainObjName}\".\n";
                 Logs.AddMessage(message);
             }
@@ -371,14 +387,33 @@ namespace TechObject
                 string[] modifiedDevices = devices
                     .Select(x => "prg.control_modules." + x).ToArray();
                 res = $".{luaName} = " +
-                    $"{{ {string.Join(", ", modifiedDevices)} }} \n";
+                    $"{{ {string.Join(", ", modifiedDevices)} }}";
             }
             else
             {
-                res = $"{luaName} = prg.control_modules.{value}\n";
+                res = $"{luaName} = prg.control_modules.{value}";
             }
 
             return res;
+        }
+
+        private TechObject GetTechObject()
+        {
+            if (Owner is BaseTechObject)
+            {
+                var operation = Parent as BaseOperation;
+                return operation.Owner.Owner.Owner;
+            }
+            else if (Owner is BaseOperation operation)
+            {
+                return operation.Owner.Owner.Owner;
+            }
+            else if (Owner is Equipment equipment)
+            {
+                return equipment.Owner;
+            }
+
+            return null;
         }
 
         public ValueType CurrentValueType => currentValueType;
