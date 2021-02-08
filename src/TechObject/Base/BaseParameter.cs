@@ -201,13 +201,8 @@ namespace TechObject
             newValue = newValue.Trim();
             currentValueType = GetParameterValueType(newValue);
 
-            devicesIndexes.Clear();
-            if (OnlyDevicesInParameter)
-            {
-                ProcessDevices(newValue);
-                base.SetValue(GetDevicesString());
-            }
-            else
+            bool isProcessed = ProcessDevicesAndSetValue(newValue);
+            if (!isProcessed)
             {
                 base.SetNewValue(newValue);
             }
@@ -219,24 +214,26 @@ namespace TechObject
         {
             currentValueType = GetParameterValueType(val.ToString());
 
-            devicesIndexes.Clear();
-            if (OnlyDevicesInParameter)
-            {
-                ProcessDevices(val);
-                base.SetValue(GetDevicesString());
-            }
-            else
+            bool isProcessed = ProcessDevicesAndSetValue(val);
+            if (!isProcessed)
             {
                 base.SetValue(val);
             }
         }
 
-        private void ProcessDevices(object value)
+        private bool ProcessDevicesAndSetValue(object value)
         {
+            devicesIndexes.Clear();
+            if (OnlyDevicesInParameter)
+            {
+                string devicesStr = value.ToString();
+                List<string> splittedDevices = devicesStr.Split(' ').ToList();
+                devicesIndexes.AddRange(GetDevicesIndexes(splittedDevices));
+                base.SetValue(GetDevicesString());
+                return true;
+            }
 
-            string devicesStr = value.ToString();
-            List<string> splittedDevices = devicesStr.Split(' ').ToList();
-            devicesIndexes.AddRange(GetDevicesIndexes(splittedDevices));
+            return false;
         }
 
         /// <summary>
