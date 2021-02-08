@@ -737,7 +737,7 @@ namespace TechObject
                         continue;
                     }
 
-                    string paramCode = parameter.SaveAsLuaTable(prefix);
+                    string paramCode = parameter.SaveToPrgLua(prefix);
                     if (!string.IsNullOrEmpty(paramCode))
                     {
                         paramsForSave += $"{paramCode},\n";
@@ -771,7 +771,7 @@ namespace TechObject
             {
                 var property = item as BaseParameter;
                 
-                string equipmentCode = property.SaveAsLuaTable(string.Empty);
+                string equipmentCode = property.SaveToPrgLua(string.Empty);
                 if (string.IsNullOrEmpty(equipmentCode))
                 {
                     continue;

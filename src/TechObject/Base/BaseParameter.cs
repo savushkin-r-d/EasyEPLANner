@@ -216,7 +216,7 @@ namespace TechObject
                 return ValueType.Number;
             }
 
-            bool isParameter = GetTechObject()?.GetParamsManager()
+            bool isParameter = GetCurrentTechObject()?.GetParamsManager()
                 .GetParam(value) != null;
             if (isParameter)
             {
@@ -264,9 +264,9 @@ namespace TechObject
             return result;
         }
 
-        public string SaveAsLuaTable(string prefix)
+        public string SaveToPrgLua(string prefix)
         {
-            TechObject obj = GetTechObject();
+            TechObject obj = GetCurrentTechObject();
             var objName = string.Empty;
             if (obj != null)
             {
@@ -309,51 +309,51 @@ namespace TechObject
         public string GetNumberParameterStringForSave(string prefix)
         {
             BaseTechObject baseTechObject = null;
-            Mode baseMode = null;
+            Mode mainMode = null;
             var modes = new List<Mode>();
-            string mainObjName = "";
+            string mainObjDisplayName = "";
 
-            if (Owner is BaseTechObject)
+            if (Owner is BaseTechObject aggregateBaseTechObject)
             {
-                baseTechObject = Owner as BaseTechObject;
-                mainObjName = $"{baseTechObject.Owner.DisplayText[0]}";
+                baseTechObject = aggregateBaseTechObject;
                 modes = baseTechObject.Owner.ModesManager.Modes;
-                var operation = Parent as BaseOperation;
-                baseMode = operation.Owner;
+                
+                var baseOperation = Parent as BaseOperation;
+                mainMode = baseOperation.Owner;
             }
-
-            if (Owner is BaseOperation)
+            else if (Owner is BaseOperation baseOperation)
             {
-                var operation = Owner as BaseOperation;
-                baseTechObject = operation.Owner.Owner.Owner.BaseTechObject;
-                mainObjName = $"{baseTechObject.Owner.DisplayText[0]}";
-                baseMode = operation.Owner;
-                modes = baseMode.Owner.Modes;
+                baseTechObject = baseOperation.Owner.Owner.Owner.BaseTechObject;
+                mainMode = baseOperation.Owner;
+                modes = mainMode.Owner.Modes;
             }
 
-            Mode mode = modes
+            mainObjDisplayName = $"{baseTechObject.Owner.DisplayText[0]}";
+
+            Mode modeInParameter = modes
                 .Where(x => x.GetModeNumber().ToString() == Value)
                 .FirstOrDefault();
-            var res = "";
-            if (mode != null)
+            var res = string.Empty;
+            if (modeInParameter != null)
             {
-                if (mode.BaseOperation.Name != "")
+                if (modeInParameter.BaseOperation.Name != string.Empty)
                 {
-                    string operationLuaName = mode.BaseOperation.LuaName
-                        .ToUpper();
+                    string operationLuaName = modeInParameter.BaseOperation
+                        .LuaName.ToUpper();
                     TechObject obj = baseTechObject.Owner;
-                    string objName = "prg." + obj.NameEplanForFile.ToLower() +
-                        obj.TechNumber.ToString();
+                    string objVarName =
+                        $"prg.{obj.NameEplanForFile.ToLower()}" +
+                        $"{obj.TechNumber}";
                     res = $"{prefix}{LuaName} = " +
-                        $"{objName}.operations.{operationLuaName}";
+                        $"{objVarName}.operations.{operationLuaName}";
                 }
                 else
                 {
                     string message = $"Ошибка обработки параметра " +
                         $"\"{Name}\"." +
                         $" Не задана базовая операция в операции" +
-                        $" \"{mode.DisplayText[0]}\", объекта " +
-                        $"\"{mainObjName}\".\n";
+                        $" \"{modeInParameter.DisplayText[0]}\", объекта " +
+                        $"\"{mainObjDisplayName}\".\n";
                     Logs.AddMessage(message);
                 }
             }
@@ -362,11 +362,10 @@ namespace TechObject
                 string message = $"Ошибка обработки параметра " +
                         $"\"{Name}\"." +
                         $" Указан несуществующий номер операции в операции " +
-                        $"\"{baseMode.DisplayText[0]}\" объекта " +
-                        $"\"{mainObjName}\".\n";
+                        $"\"{mainMode.DisplayText[0]}\" объекта " +
+                        $"\"{mainObjDisplayName}\".\n";
                 Logs.AddMessage(message);
             }
-
 
             return res;
         }
@@ -397,7 +396,11 @@ namespace TechObject
             return res;
         }
 
-        private TechObject GetTechObject()
+        /// <summary>
+        /// Получить технологический объект, в котором находится параметр.
+        /// </summary>
+        /// <returns></returns>
+        private TechObject GetCurrentTechObject()
         {
             if (Owner is BaseTechObject)
             {
