@@ -210,17 +210,15 @@ namespace TechObject
         /// </summary>
         /// <param name="values">Список значений</param>
         /// <returns></returns>
-        private List<int> GetDevicesIndexes(List<string> values)
+        protected List<int> GetDevicesIndexes(List<string> values)
         {
             Device.DeviceManager deviceManager = Device.DeviceManager
                 .GetInstance();
             var indexes = new List<int>();
-            var copiedValues = new string[values.Count];
-            values.CopyTo(copiedValues);
 
-            foreach (var copiedValue in copiedValues)
+            foreach (var value in values)
             {
-                int index = deviceManager.GetDeviceIndex(copiedValue);
+                int index = deviceManager.GetDeviceIndex(value);
                 if (index >= 0)
                 {
                     indexes.Add(index);
@@ -257,7 +255,7 @@ namespace TechObject
         /// Получить строку с устройствами
         /// </summary>
         /// <returns></returns>
-        private string GetDevicesString()
+        protected string GetDevicesString()
         {
             var devices = new List<string>();
             var deviceManager = Device.DeviceManager.GetInstance();
@@ -543,7 +541,7 @@ namespace TechObject
         private string luaName;
         private List<DisplayObject> displayObjectsFlags;
         private ValueType currentValueType;
-        private List<int> devicesIndexes;
+        protected List<int> devicesIndexes;
 
         private Device.DeviceType[] deviceTypes;
         private bool displayParameters;

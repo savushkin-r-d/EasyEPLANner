@@ -13,7 +13,6 @@ namespace TechObject
             string defaultValue = "", List<DisplayObject> displayObjects = null)
             : base(luaName, name, defaultValue, displayObjects) 
         {
-            deviceIndexes = new List<int>();
             parameterIndexes = new List<int>();
         }
 
@@ -36,7 +35,7 @@ namespace TechObject
             // parameterIndexes - не синхронизируем т.к это не устройства.
             ISynchronizeService synchronizer = DeviceSynchronizer
                 .GetSynchronizeService();
-            synchronizer.SynchronizeDevices(array, ref deviceIndexes);
+            synchronizer.SynchronizeDevices(array, ref devicesIndexes);
 
             SetValue(GetDevicesAndParametersString());
         }
@@ -89,7 +88,7 @@ namespace TechObject
 
         public override bool SetNewValue(string newValue)
         {
-            deviceIndexes.Clear();
+            devicesIndexes.Clear();
             parameterIndexes.Clear();
 
             bool emptyOrDefault = newValue == string.Empty ||
@@ -102,13 +101,13 @@ namespace TechObject
 
             List<string> values = newValue.Split(' ').ToList();
 
-            List<int> devices = GetDevicesIndexes(ref values);
-            List<int> parameters = GetParametersIndexes(ref values);
+            List<int> devices = GetDevicesIndexes(values);
+            List<int> parameters = GetParametersIndexes(values);
 
-            deviceIndexes.AddRange(devices);
+            devicesIndexes.AddRange(devices);
             parameterIndexes.AddRange(parameters);
 
-            deviceIndexes.Sort();
+            devicesIndexes.Sort();
             parameterIndexes.Sort();
 
             SetValue(GetDevicesAndParametersString());
@@ -117,37 +116,11 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Получить индексы устройств
-        /// </summary>
-        /// <param name="values">Список значений</param>
-        /// <returns></returns>
-        private List<int> GetDevicesIndexes(ref List<string> values)
-        {
-            Device.DeviceManager deviceManager = Device.DeviceManager
-                .GetInstance();
-            var indexes = new List<int>();
-            var copiedValues = new string[values.Count];
-            values.CopyTo(copiedValues);
-
-            foreach(var copiedValue in copiedValues) 
-            {
-                int index = deviceManager.GetDeviceIndex(copiedValue);
-                if(index >= 0)
-                {
-                    indexes.Add(index);
-                    values.Remove(copiedValue);
-                }
-            }
-
-            return indexes;
-        }
-
-        /// <summary>
         /// Получить индексы параметров
         /// </summary>
         /// <param name="values">Список значений</param>
         /// <returns></returns>
-        private List<int> GetParametersIndexes(ref List<string> values)
+        private List<int> GetParametersIndexes(List<string> values)
         {
             var indexes = new List<int>();
             var equipment = Owner as Equipment;
@@ -156,20 +129,16 @@ namespace TechObject
                 TechObject techObject = equipment.Owner;
                 if(techObject != null)
                 {
-                    var copiedValues = new string[values.Count];
-                    values.CopyTo(copiedValues);
-
-                    foreach(var copiedValue in copiedValues)
+                    foreach(var value in values)
                     {
                         Param param = techObject.GetParamsManager()
-                            .GetParam(copiedValue);
+                            .GetParam(value);
                         if(param == null)
                         {
                             continue;
                         }
 
                         indexes.Add(param.GetParameterNumber - 1);
-                        values.Remove(copiedValue);
                     }
                 }
             }
@@ -188,27 +157,6 @@ namespace TechObject
 
             string result = $"{devices} {parameters}";
             return result.Trim();
-        }
-
-        /// <summary>
-        /// Получить строку с устройствами
-        /// </summary>
-        /// <returns></returns>
-        private string GetDevicesString()
-        {
-            var devices = new List<string>();
-            var deviceManager = Device.DeviceManager.GetInstance();
-            foreach (var devIndex in deviceIndexes)
-            {
-                Device.Device dev = deviceManager.GetDeviceByIndex(devIndex);
-                if (dev.Name != StaticHelper.CommonConst.Cap)
-                {
-                    devices.Add(dev.Name);
-                }
-            }
-
-            devices = devices.Distinct().ToList();
-            return string.Join(" ", devices);
         }
 
         /// <summary>
@@ -275,11 +223,6 @@ namespace TechObject
             }
         }
         #endregion
-
-        /// <summary>
-        /// Индексы устройств
-        /// </summary>
-        private List<int> deviceIndexes;
 
         /// <summary>
         /// Индексы параметров
