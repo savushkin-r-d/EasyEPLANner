@@ -201,6 +201,8 @@ namespace TechObject
             {
                 stpsMngr.Synch(array);
             }
+
+            baseOperation.Synch(array);
         }
         #endregion
 

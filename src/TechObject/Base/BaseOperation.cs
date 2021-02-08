@@ -479,6 +479,14 @@ namespace TechObject
             return operation;
         }
 
+        public void Synch(int[] array)
+        {
+            foreach(var property in baseOperationProperties)
+            {
+                property.Synch(array);
+            }
+        }
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {

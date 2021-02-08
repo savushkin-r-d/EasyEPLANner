@@ -22,6 +22,7 @@ namespace TechObject
         {
             this.luaName = luaName;
             currentValueType = ValueType.None;
+            devicesIndexes = new List<int>();
 
             if(displayObjects != null)
             {
@@ -152,19 +153,115 @@ namespace TechObject
             }
         }
 
+        public virtual void Synch(int[] array)
+        {
+            if (OnlyDevicesInParameter)
+            {
+                bool noDevices = devicesIndexes.Count <= 0;
+                if (noDevices)
+                {
+                    return;
+                }
+
+                List<int> del = new List<int>();
+                for (int j = 0; j < devicesIndexes.Count; j++)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        if (devicesIndexes[j] == i)
+                        {
+                            // Что бы не учитывало "-2" из array
+                            if (array[i] == -1)
+                            {
+                                del.Add(j);
+                                break;
+                            }
+                            if (array[i] >= 0)
+                            {
+                                devicesIndexes[j] = array[i];
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                int dx = 0;
+                foreach (int index in del)
+                {
+                    devicesIndexes.RemoveAt(index - dx++);
+                }
+
+                SetValue(GetDevicesString());
+            }
+        }
+
         #region реализация ITreeView
         public override bool SetNewValue(string newValue)
         {
             newValue = newValue.Trim();
-            base.SetNewValue(newValue);
             currentValueType = GetParameterValueType(newValue);
+
+            devicesIndexes.Clear();
+            if (OnlyDevicesInParameter)
+            {
+                ProcessDevices(newValue);
+                base.SetValue(GetDevicesString());
+            }
+            else
+            {
+                base.SetNewValue(newValue);
+            }
+
             return true;
         }
 
         public override void SetValue(object val)
         {
             currentValueType = GetParameterValueType(val.ToString());
-            base.SetValue(val);
+
+            devicesIndexes.Clear();
+            if (OnlyDevicesInParameter)
+            {
+                ProcessDevices(val);
+                base.SetValue(GetDevicesString());
+            }
+            else
+            {
+                base.SetValue(val);
+            }
+        }
+
+        private void ProcessDevices(object value)
+        {
+
+            string devicesStr = value.ToString();
+            List<string> splittedDevices = devicesStr.Split(' ').ToList();
+            devicesIndexes.AddRange(GetDevicesIndexes(splittedDevices));
+        }
+
+        /// <summary>
+        /// Получить индексы устройств
+        /// </summary>
+        /// <param name="values">Список значений</param>
+        /// <returns></returns>
+        private List<int> GetDevicesIndexes(List<string> values)
+        {
+            Device.DeviceManager deviceManager = Device.DeviceManager
+                .GetInstance();
+            var indexes = new List<int>();
+            var copiedValues = new string[values.Count];
+            values.CopyTo(copiedValues);
+
+            foreach (var copiedValue in copiedValues)
+            {
+                int index = deviceManager.GetDeviceIndex(copiedValue);
+                if (index >= 0)
+                {
+                    indexes.Add(index);
+                }
+            }
+
+            return indexes;
         }
 
         override public string[] EditText
@@ -179,8 +276,36 @@ namespace TechObject
         {
             get
             {
-                return new string[] { Name, Value };
+                if (OnlyDevicesInParameter)
+                {
+                    return new string[] { Name, GetDevicesString() };
+                }
+                else
+                {
+                    return new string[] { Name, Value };
+                }
             }
+        }
+
+        /// <summary>
+        /// Получить строку с устройствами
+        /// </summary>
+        /// <returns></returns>
+        private string GetDevicesString()
+        {
+            var devices = new List<string>();
+            var deviceManager = Device.DeviceManager.GetInstance();
+            foreach (var devIndex in devicesIndexes)
+            {
+                Device.Device dev = deviceManager.GetDeviceByIndex(devIndex);
+                if (dev.Name != StaticHelper.CommonConst.Cap)
+                {
+                    devices.Add(dev.Name);
+                }
+            }
+
+            devices = devices.Distinct().ToList();
+            return string.Join(" ", devices);
         }
 
         public override void GetDisplayObjects(out Device.DeviceType[] devTypes, 
@@ -292,7 +417,8 @@ namespace TechObject
                         $"{objName}.PAR_FLOAT.{Value}";
 
                 case ValueType.ManyDevices:
-                    return SaveMoreThanOneDevice(LuaName, Value);
+                    string paramCode = SaveMoreThanOneDevice(LuaName, Value);
+                    return $"{prefix}{paramCode}";
 
                 case ValueType.None:
                 default:
@@ -373,8 +499,8 @@ namespace TechObject
         /// <summary>
         /// Сохранить более 1 устройства в параметре.
         /// </summary>
-        /// <param name="objName">Имя объекта</param>
         /// <param name="value">Значение параметра</param>
+        /// <param name="luaName">lua-имя параметра</param>
         /// <returns></returns>
         private string SaveMoreThanOneDevice(string luaName, string value)
         {
@@ -385,7 +511,7 @@ namespace TechObject
             {
                 string[] modifiedDevices = devices
                     .Select(x => "prg.control_modules." + x).ToArray();
-                res = $".{luaName} = " +
+                res = $"{luaName} = " +
                     $"{{ {string.Join(", ", modifiedDevices)} }}";
             }
             else
@@ -421,6 +547,10 @@ namespace TechObject
 
         public ValueType CurrentValueType => currentValueType;
 
+        private bool OnlyDevicesInParameter =>
+            CurrentValueType == ValueType.Device ||
+            CurrentValueType == ValueType.ManyDevices;
+
         public enum DisplayObject
         {
             None = 1,
@@ -447,6 +577,7 @@ namespace TechObject
         private string luaName;
         private List<DisplayObject> displayObjectsFlags;
         private ValueType currentValueType;
+        private List<int> devicesIndexes;
 
         private Device.DeviceType[] deviceTypes;
         private bool displayParameters;

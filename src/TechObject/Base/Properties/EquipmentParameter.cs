@@ -30,7 +30,7 @@ namespace TechObject
         /// Синхронизация устройств в объекте
         /// </summary>
         /// <param name="array">Массив с индексами синхронизации</param>
-        public void Synch(int[] array)
+        public override void Synch(int[] array)
         {
             // parameterIndexes - не синхронизируем т.к это не устройства.
             bool noDevices = deviceIndexes.Count <= 0;
