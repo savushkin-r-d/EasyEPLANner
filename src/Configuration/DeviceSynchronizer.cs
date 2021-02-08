@@ -111,6 +111,10 @@ namespace EasyEPlanner
             }
         }
 
+        /// <summary>
+        /// Получить сервис синхронизации устройств
+        /// </summary>
+        /// <returns></returns>
         public static ISynchronizeService GetSynchronizeService()
         {
             return synchronizeService;
