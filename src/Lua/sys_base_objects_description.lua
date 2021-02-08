@@ -418,7 +418,15 @@ return
                                 name = "Объем линии",
                                 displayObjects = { "signals" },
                             }
-                        }
+                        },
+                        bool =
+                        {
+                            IS_END_ON_FULL_TANK =
+                            {
+                                name = "Автоматическое выключение по наполнению крайнего танка",
+                                defaultValue = "false",
+                            },
+                        },
                     },
                     steps =
                     {
@@ -544,6 +552,14 @@ return
                                 name = "Объем линии",
                                 displayObjects = { "signals" },
                             }
+                        },
+                        bool =
+                        {
+                            IS_END_ON_FULL_TANK =
+                            {
+                                name = "Автоматическое выключение по наполнению крайнего танка",
+                                defaultValue = "false",
+                            },
                         },
                     },
                     steps =
