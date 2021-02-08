@@ -1,4 +1,5 @@
 ﻿using Eplan.EplApi.Base;
+using System.Collections.Generic;
 using TechObject;
 
 namespace EasyEPlanner
@@ -8,6 +9,11 @@ namespace EasyEPlanner
     /// </summary>
     class DeviceSynchronizer
     {
+        static DeviceSynchronizer()
+        {
+            synchronizeService = new SynchronizeService();
+        }
+
         public DeviceSynchronizer()
         {
             deviceReader = new DeviceReader();
@@ -105,8 +111,73 @@ namespace EasyEPlanner
             }
         }
 
+        public static ISynchronizeService GetSynchronizeService()
+        {
+            return synchronizeService;
+        }
+
+        private static ISynchronizeService synchronizeService;
         private Device.IODevice[] prevDevices;
         private DeviceReader deviceReader;
         private ITechObjectManager techObjectManager;
     }
+
+    /// <summary>
+    /// Интерфейс сервиса синхронизации устройств
+    /// </summary>
+    public interface ISynchronizeService
+    {
+        /// <summary>
+        /// Синхронизировать устройства
+        /// </summary>
+        /// <param name="array">Массив изменений в индексах устройств</param>
+        /// <param name="devicesIndexes">Массив индексов устройств в элементе
+        /// </param>
+        void SynchronizeDevices(int[] array, ref List<int> devicesIndexes);
+    }
+
+    /// <summary>
+    /// Сервис синхронизации устройств
+    /// </summary>
+    public class SynchronizeService : ISynchronizeService
+    {
+        public void SynchronizeDevices(int[] array,
+            ref List<int> devicesIndexes)
+        {
+            bool noDevices = devicesIndexes.Count <= 0;
+            if (noDevices)
+            {
+                return;
+            }
+
+            var del = new List<int>();
+            for (int j = 0; j < devicesIndexes.Count; j++)
+            {
+                for (int i = 0; i < array.Length; i++)
+                {
+                    if (devicesIndexes[j] == i)
+                    {
+                        // Что бы не учитывало "-2" из array
+                        if (array[i] == -1)
+                        {
+                            del.Add(j);
+                            break;
+                        }
+                        if (array[i] >= 0)
+                        {
+                            devicesIndexes[j] = array[i];
+                            break;
+                        }
+                    }
+                }
+            }
+
+            int dx = 0;
+            foreach (int index in del)
+            {
+                devicesIndexes.RemoveAt(index - dx++);
+            }
+        }
+    }
+
 }

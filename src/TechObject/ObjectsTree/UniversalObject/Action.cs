@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using EasyEPlanner;
 using Editor;
 
 namespace TechObject
@@ -235,33 +236,9 @@ namespace TechObject
         /// индексов.</param>
         virtual public void Synch(int[] array)
         {
-            List<int> del = new List<int>();
-            for (int j = 0; j < deviceIndex.Count; j++)
-            {
-                for (int i = 0; i < array.Length; i++)
-                {
-                    if (deviceIndex[j] == i)
-                    {
-                        // Что бы не учитывало "-2" из array
-                        if (array[i] == -1)
-                        {
-                            del.Add(j);
-                            break;
-                        }
-                        if (array[i] >= 0)
-                        {
-                            deviceIndex[j] = array[i];
-                            break;
-                        }
-                    }
-                }
-            }
-
-            int dx = 0;
-            foreach (int index in del)
-            {
-                deviceIndex.RemoveAt(index - dx++);
-            }
+            ISynchronizeService synchronizer = DeviceSynchronizer
+                .GetSynchronizeService();
+            synchronizer.SynchronizeDevices(array, ref deviceIndex);
         }
         #endregion
 
