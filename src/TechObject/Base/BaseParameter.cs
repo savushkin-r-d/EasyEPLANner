@@ -158,7 +158,7 @@ namespace TechObject
         {
             if (OnlyDevicesInParameter)
             {
-                ISynchronizeService synchronizer = DeviceSynchronizer
+                IDeviceSynchronizeService synchronizer = DeviceSynchronizer
                     .GetSynchronizeService();
                 synchronizer.SynchronizeDevices(array, ref devicesIndexes);
                 SetValue(GetDevicesString());

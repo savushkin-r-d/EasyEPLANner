@@ -236,7 +236,7 @@ namespace TechObject
         /// индексов.</param>
         virtual public void Synch(int[] array)
         {
-            ISynchronizeService synchronizer = DeviceSynchronizer
+            IDeviceSynchronizeService synchronizer = DeviceSynchronizer
                 .GetSynchronizeService();
             synchronizer.SynchronizeDevices(array, ref deviceIndex);
         }

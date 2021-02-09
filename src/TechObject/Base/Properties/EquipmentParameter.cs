@@ -33,7 +33,7 @@ namespace TechObject
         public override void Synch(int[] array)
         {
             // parameterIndexes - не синхронизируем т.к это не устройства.
-            ISynchronizeService synchronizer = DeviceSynchronizer
+            IDeviceSynchronizeService synchronizer = DeviceSynchronizer
                 .GetSynchronizeService();
             synchronizer.SynchronizeDevices(array, ref devicesIndexes);
 
