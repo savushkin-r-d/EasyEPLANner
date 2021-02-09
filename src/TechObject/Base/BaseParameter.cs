@@ -406,7 +406,7 @@ namespace TechObject
         /// </summary>
         /// <param name="prefix">Отступ</param>
         /// <returns></returns>
-        public string GetNumberParameterStringForSave(string prefix)
+        private string GetNumberParameterStringForSave(string prefix)
         {
             BaseTechObject baseTechObject = null;
             Mode mainMode = null;

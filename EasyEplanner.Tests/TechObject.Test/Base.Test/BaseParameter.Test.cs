@@ -70,6 +70,32 @@ namespace EasyEplanner.Tests
             });
         }
 
+        [Test]
+        public void Clone_EmptyObject_ReturnsTheSameButWithAnotherHash()
+        {
+            string name = "Name";
+            string luaName = "LuaName";
+            string defaultValue = "defaultValue";
+            var displayObjects = new List<BaseParameter.DisplayObject>
+            {
+                BaseParameter.DisplayObject.Parameters
+            };
+            var obj = new BaseParameterImplementation(luaName, name,
+                defaultValue, displayObjects);
+
+            var cloned = obj.Clone();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreNotEqual(cloned.GetHashCode(), obj.GetHashCode());
+                Assert.AreEqual(cloned.Name, obj.Name);
+                Assert.AreEqual(cloned.LuaName, obj.LuaName);
+                Assert.AreEqual(cloned.DefaultValue, obj.DefaultValue);
+                Assert.AreEqual(cloned.DisplayObjects, obj.DisplayObjects);
+                Assert.AreEqual(cloned.CurrentValueType, obj.CurrentValueType);
+            });
+        }
+
         string stub = string.Empty;
     }
 }
