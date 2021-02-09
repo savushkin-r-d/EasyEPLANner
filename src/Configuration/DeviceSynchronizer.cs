@@ -6,7 +6,7 @@ namespace EasyEPlanner
     /// <summary>
     /// Синхронизатор устройств
     /// </summary>
-    class DeviceSynchronizer
+    public class DeviceSynchronizer
     {
         static DeviceSynchronizer()
         {

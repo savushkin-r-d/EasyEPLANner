@@ -20,8 +20,4 @@
     <ProjectReference Include="..\src\EasyEPlanner.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Configuration.Test\" />
-  </ItemGroup>
-
 </Project>
