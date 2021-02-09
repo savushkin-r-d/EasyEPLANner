@@ -168,10 +168,13 @@ namespace TechObject
         public override bool SetNewValue(string newValue)
         {
             newValue = newValue.Trim();
-            currentValueType = GetParameterValueType(newValue);
+            ProcessValue(newValue);
 
-            bool isProcessed = ProcessDevicesAndSetValue(newValue);
-            if (!isProcessed)
+            if (OnlyDevicesInParameter)
+            {
+                base.SetNewValue(GetDevicesString());
+            }
+            else
             {
                 base.SetNewValue(newValue);
             }
@@ -181,28 +184,28 @@ namespace TechObject
 
         public override void SetValue(object val)
         {
-            currentValueType = GetParameterValueType(val.ToString());
-
-            bool isProcessed = ProcessDevicesAndSetValue(val);
-            if (!isProcessed)
+            ProcessValue(val);
+            
+            if (OnlyDevicesInParameter)
+            {
+                base.SetValue(GetDevicesString());
+            }
+            else
             {
                 base.SetValue(val);
             }
         }
 
-        private bool ProcessDevicesAndSetValue(object value)
+        private void ProcessValue(object value)
         {
+            string valueStr = value.ToString();
+            currentValueType = GetParameterValueType(valueStr);
             devicesIndexes.Clear();
             if (OnlyDevicesInParameter)
             {
-                string devicesStr = value.ToString();
-                List<string> splittedDevices = devicesStr.Split(' ').ToList();
+                List<string> splittedDevices = valueStr.Split(' ').ToList();
                 devicesIndexes.AddRange(GetDevicesIndexes(splittedDevices));
-                base.SetValue(GetDevicesString());
-                return true;
             }
-
-            return false;
         }
 
         /// <summary>
