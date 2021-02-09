@@ -153,6 +153,7 @@ namespace TechObject
             }
         }
 
+        #region синхронизация устройств
         public virtual void Synch(int[] array)
         {
             if (OnlyDevicesInParameter)
@@ -163,6 +164,7 @@ namespace TechObject
                 SetValue(GetDevicesString());
             }
         }
+        #endregion
 
         #region реализация ITreeView
         public override bool SetNewValue(string newValue)
@@ -196,6 +198,10 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Обработать входящее значение
+        /// </summary>
+        /// <param name="value">Входящее значение</param>
         private void ProcessValue(object value)
         {
             string valueStr = value.ToString();
@@ -356,6 +362,7 @@ namespace TechObject
             return result;
         }
 
+        #region сохранение prg.lua
         public string SaveToPrgLua(string prefix)
         {
             TechObject obj = GetCurrentTechObject();
@@ -488,6 +495,7 @@ namespace TechObject
 
             return res;
         }
+        #endregion
 
         /// <summary>
         /// Получить технологический объект, в котором находится параметр.
@@ -512,8 +520,14 @@ namespace TechObject
             return null;
         }
 
+        /// <summary>
+        /// Текущий тип значений, принимаемый параметром
+        /// </summary>
         public ValueType CurrentValueType => currentValueType;
 
+        /// <summary>
+        /// Флаг, указывающий что в параметр записаны только устройства
+        /// </summary>
         private bool OnlyDevicesInParameter =>
             CurrentValueType == ValueType.Device ||
             CurrentValueType == ValueType.ManyDevices;
