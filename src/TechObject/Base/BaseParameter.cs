@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using EasyEPlanner;
+using Device;
 
 namespace TechObject
 {
@@ -16,13 +17,16 @@ namespace TechObject
         /// <returns></returns>
         public abstract new BaseParameter Clone();
 
-        public BaseParameter(string luaName, string name, 
-            string defaultValue = "", List<DisplayObject> displayObjects = null)
-            : base(name, defaultValue, defaultValue)
+        public BaseParameter(string luaName, string name,
+            string defaultValue = "", List<DisplayObject> displayObjects = null,
+            IDeviceManager deviceManager = null) : base(name, defaultValue,
+                defaultValue)
         {
             this.luaName = luaName;
             currentValueType = ValueType.None;
             devicesIndexes = new List<int>();
+            this.deviceManager = deviceManager != null ?
+                deviceManager : DeviceManager.GetInstance();
 
             if(displayObjects != null)
             {
@@ -46,7 +50,7 @@ namespace TechObject
         /// </summary>
         private void SetUpDisplayObjects()
         {
-            deviceTypes = new Device.DeviceType[0];
+            deviceTypes = new DeviceType[0];
             displayParameters = false;
             foreach (var displayObject in DisplayObjects)
             {
@@ -57,12 +61,12 @@ namespace TechObject
                         break;
 
                     case DisplayObject.Signals:
-                        deviceTypes = new Device.DeviceType[]
+                        deviceTypes = new DeviceType[]
                         {
-                            Device.DeviceType.AI,
-                            Device.DeviceType.AO,
-                            Device.DeviceType.DI,
-                            Device.DeviceType.DO
+                            DeviceType.AI,
+                            DeviceType.AO,
+                            DeviceType.DI,
+                            DeviceType.DO
                         };
                         break;
                 }
@@ -221,8 +225,6 @@ namespace TechObject
         /// <returns></returns>
         protected List<int> GetDevicesIndexes(List<string> values)
         {
-            Device.DeviceManager deviceManager = Device.DeviceManager
-                .GetInstance();
             var indexes = new List<int>();
 
             foreach (var value in values)
@@ -267,10 +269,9 @@ namespace TechObject
         protected string GetDevicesString()
         {
             var devices = new List<string>();
-            var deviceManager = Device.DeviceManager.GetInstance();
             foreach (var devIndex in devicesIndexes)
             {
-                Device.Device dev = deviceManager.GetDeviceByIndex(devIndex);
+                IDevice dev = deviceManager.GetDeviceByIndex(devIndex);
                 if (dev.Name != StaticHelper.CommonConst.Cap)
                 {
                     devices.Add(dev.Name);
@@ -281,8 +282,8 @@ namespace TechObject
             return string.Join(" ", devices);
         }
 
-        public override void GetDisplayObjects(out Device.DeviceType[] devTypes, 
-            out Device.DeviceSubType[] devSubTypes, out bool displayParameters)
+        public override void GetDisplayObjects(out DeviceType[] devTypes, 
+            out DeviceSubType[] devSubTypes, out bool displayParameters)
         {
             devSubTypes = null; // Not used;
             devTypes = deviceTypes;
@@ -321,7 +322,6 @@ namespace TechObject
                 return ValueType.Parameter;
             }
 
-            var deviceManager = Device.DeviceManager.GetInstance();
             bool isDevice = deviceManager.GetDeviceByEplanName(value)
                 .Description != StaticHelper.CommonConst.Cap;
             if (isDevice)
@@ -554,13 +554,15 @@ namespace TechObject
             Stub,
         }
 
+        private IDeviceManager deviceManager;
+
         private object owner;
         private string luaName;
         private List<DisplayObject> displayObjectsFlags;
         private ValueType currentValueType;
         protected List<int> devicesIndexes;
 
-        private Device.DeviceType[] deviceTypes;
+        private DeviceType[] deviceTypes;
         private bool displayParameters;
     }
 }

@@ -4,18 +4,41 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using System.IO;
-using System.Reflection;
 using EasyEPlanner;
 
 /// <summary>
 /// Пространство имен технологических устройств проекта (клапана, насосы...).
 /// </summary>
 namespace Device
-{    
+{
+    public interface IDeviceManager
+    {
+        /// <summary>
+        /// Получить индекс устройства по его имени из общего пула устройств.
+        /// </summary>
+        /// <param name="devName">Имя устройства</param>
+        /// <returns></returns>
+        int GetDeviceIndex(string devName);
+
+        /// <summary>
+        /// Возвращает устройство по его имени в Eplan
+        /// </summary>
+        /// <param name="devName">Имя устройств в Eplan</param>
+        /// <returns></returns>
+        IDevice GetDeviceByEplanName(string devName);
+
+        /// <summary>
+        /// Получить устройство по индексу
+        /// </summary>
+        /// <param name="index">Индекс устройства</param>
+        /// <returns></returns>
+        IDevice GetDeviceByIndex(int index);
+    }
+
     /// <summary>
     /// Менеджер описания устройств для проекта.
     /// </summary>
-    public class DeviceManager
+    public class DeviceManager : IDeviceManager
     {
         /// <summary>
         /// Генерация тегов устройств для экспорта в базу каналов.
@@ -172,12 +195,7 @@ namespace Device
             devices.Sort();
         }
 
-        /// <summary>
-        /// Возвращает устройство по его имени в Eplan
-        /// </summary>
-        /// <param name="devName">Имя устройств в Eplan</param>
-        /// <returns></returns>
-        public IODevice GetDeviceByEplanName(string devName)
+        public IDevice GetDeviceByEplanName(string devName)
         {
             foreach (IODevice device in devices)
             {
@@ -230,12 +248,7 @@ namespace Device
             return devStub;
         }
 
-        /// <summary>
-        /// Получить устройство по индексу
-        /// </summary>
-        /// <param name="index">Индекс устройства</param>
-        /// <returns></returns>
-        public IODevice GetDeviceByIndex(int index)
+        public IDevice GetDeviceByIndex(int index)
         {
             if (index >= 0)
             {
@@ -247,11 +260,6 @@ namespace Device
             }
         }
 
-        /// <summary>
-        /// Получить индекс устройства по его имени из общего пула устройств.
-        /// </summary>
-        /// <param name="devName">Имя устройства</param>
-        /// <returns></returns>
         public int GetDeviceIndex(string devName)
         {
             string name;

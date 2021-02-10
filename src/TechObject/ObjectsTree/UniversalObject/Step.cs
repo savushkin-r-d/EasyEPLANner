@@ -604,7 +604,7 @@ namespace TechObject
                 Mode mode = state.Owner;
                 ModesManager modesManager = mode.Owner;
                 TechObject techObject = modesManager.Owner;
-                Device.IODevice device = Device.DeviceManager.GetInstance()
+                Device.IDevice device = Device.DeviceManager.GetInstance()
                     .GetDeviceByIndex(i);
                 string msg = $"Неправильно заданы устройства в шаге " +
                     $"\"{GetStepName()}\", операции \"{mode.Name}\"," +

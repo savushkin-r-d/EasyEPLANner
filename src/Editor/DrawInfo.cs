@@ -10,7 +10,7 @@
         /// </summary>
         /// <param name="style">Стиль отображения</param>
         /// <param name="dev">Устройство</param>
-        public DrawInfo(Style style, Device.Device dev)
+        public DrawInfo(Style style, Device.IDevice dev)
         {
             this.style = style;
             this.dev = dev;
@@ -19,7 +19,7 @@
         /// <summary>
         /// Отрисовываемое устройство
         /// </summary>
-        public Device.Device DrawingDevice
+        public Device.IDevice DrawingDevice
         {
             get
             {
@@ -60,7 +60,7 @@
             GREEN_RED_BOX,
         }
 
-        private Device.Device dev;
+        private Device.IDevice dev;
         private Style style;
     };
 }

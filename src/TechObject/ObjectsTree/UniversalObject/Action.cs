@@ -57,12 +57,12 @@ namespace TechObject
                 tmpIndex.Add(index);
             }
 
-            Device.DeviceManager deviceManager = Device.DeviceManager
+            Device.IDeviceManager deviceManager = Device.DeviceManager
                 .GetInstance();
             foreach (int index in deviceIndex)
             {
                 var newDevName = string.Empty;
-                Device.IODevice device = deviceManager.GetDeviceByIndex(index);
+                Device.IDevice device = deviceManager.GetDeviceByIndex(index);
                 int objNum = device.ObjectNumber;
                 string objName = device.ObjectName;
 
@@ -115,12 +115,12 @@ namespace TechObject
                 tmpIndex.Add(index);
             }
 
-            Device.DeviceManager deviceManager = Device.DeviceManager
+            Device.IDeviceManager deviceManager = Device.DeviceManager
                 .GetInstance();
             foreach (int index in deviceIndex)
             {
                 string newDevName = string.Empty;
-                Device.IODevice device = deviceManager.GetDeviceByIndex(index);
+                Device.IDevice device = deviceManager.GetDeviceByIndex(index);
                 int objNum = newTechObjectNumber;
                 string objName = device.ObjectName;
 
@@ -274,7 +274,7 @@ namespace TechObject
         {
             bool isValidType = false;
 
-            Device.Device device = Device.DeviceManager.GetInstance().
+            Device.IDevice device = Device.DeviceManager.GetInstance().
                 GetDeviceByEplanName(deviceName);
             Device.DeviceType deviceType = device.DeviceType;
             Device.DeviceSubType deviceSubType = device.DeviceSubType;
@@ -415,7 +415,7 @@ namespace TechObject
         {
             get
             {
-                Device.DeviceManager deviceManager = Device.DeviceManager
+                Device.IDeviceManager deviceManager = Device.DeviceManager
                     .GetInstance();
                 string res = "";
                 foreach (int index in deviceIndex)
@@ -468,7 +468,8 @@ namespace TechObject
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
         {
-            var deviceManager = Device.DeviceManager.GetInstance();
+            Device.IDeviceManager deviceManager = Device.DeviceManager
+                .GetInstance();
 
             var devToDraw = new List<DrawInfo>();
             foreach (int index in deviceIndex)
