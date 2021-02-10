@@ -324,6 +324,8 @@ namespace EasyEplanner.Tests
         [TestCase("STUB1DEV1", BaseParameter.ValueType.Other)]
         // Can't be tested yet, have to make DI
         //[TestCase("Param_Name", BaseParameter.ValueType.Parameter)]
+        // Can be tested only for Bool parameters (this one is not bool)
+        //[TestCase(true, BaseParameter.ValueType.Boolean)]
         public void CurrentValueType_NewObjectSetNewValue(string setValue,
             BaseParameter.ValueType expectedValueType)
         {
