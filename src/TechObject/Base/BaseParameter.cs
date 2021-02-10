@@ -255,6 +255,14 @@ namespace TechObject
                 {
                     return new string[] { Name, GetDevicesString() };
                 }
+                else if (Value == DefaultValue)
+                {
+                    return new string[]
+                    {
+                        Name,
+                        StaticHelper.CommonConst.StubForCells
+                    };
+                }
                 else
                 {
                     return new string[] { Name, Value };
@@ -554,7 +562,7 @@ namespace TechObject
             Stub,
         }
 
-        private IDeviceManager deviceManager;
+        protected IDeviceManager deviceManager;
 
         private object owner;
         private string luaName;
