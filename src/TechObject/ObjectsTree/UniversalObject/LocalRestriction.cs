@@ -89,10 +89,8 @@ namespace TechObject
         /// <param name="dictionary">Словарь ограничений для установки</param>
         public override void SetValue(IDictionary<int, List<int>> dictionary)
         {
-            var oldRestriction = new SortedDictionary<int, List<int>>(
-                restrictList);
-            restrictList = null;
-            restrictList = new SortedDictionary<int, List<int>>(dictionary);
+            var oldRestriction = CreateCopyOfRestrictList(restrictList);
+            restrictList = CreateCopyOfRestrictList(dictionary);
             ChangeRestrictStr();
 
             SortedDictionary<int, List<int>> deletedRestriction =
