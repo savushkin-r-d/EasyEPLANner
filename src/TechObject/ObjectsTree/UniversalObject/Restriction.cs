@@ -134,6 +134,7 @@ namespace TechObject
                 new SortedDictionary<int, List<int>>(restrictList);
             restrictList = null;
             restrictList = new SortedDictionary<int, List<int>>(dict);
+            
             //Генерируем строку для отображения
             ChangeRestrictStr();
 

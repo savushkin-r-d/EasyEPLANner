@@ -188,7 +188,7 @@ return
                 },
                 [ 4 ] = {
                     name = "Интервал расчёта",
-                    meter = "сек",
+                    meter = "мсек",
                     defaultValue = 1000,
                     nameLua = "P_dt",
                 },
@@ -1201,7 +1201,7 @@ return
                 },
                 [ 4 ] = {
                     name = "Интервал расчёта",
-                    meter = "сек",
+                    meter = "мсек",
                     defaultValue = 1000,
                     nameLua = "P_dt",
                 },
@@ -1231,7 +1231,7 @@ return
                 },
                 [ 9 ] = {
                     name = "Заданное ручное значение выходного сигнала",
-                    meter = "бар",
+                    meter = "%",
                     defaultValue = 65,
                     nameLua = "P_U_manual",
                 },
@@ -1252,13 +1252,13 @@ return
                 },
                 [ 13 ] = {
                     name = "Максимальное значение выходной величины",
-                    meter = "бар",
+                    meter = "%",
                     defaultValue = 100,
                     nameLua = "P_out_max",
                 },
                 [ 14 ] = {
                     name = "Минимальное значение выходной величины",
-                    meter = "бар",
+                    meter = "%",
                     defaultValue = 0,
                     nameLua = "P_out_min",
                 },
@@ -1398,7 +1398,7 @@ return
                 },
                 [ 4 ] = {
                     name = "Интервал расчёта",
-                    meter = "сек",
+                    meter = "мсек",
                     defaultValue = 1000,
                     nameLua = "P_dt",
                 },
@@ -1428,7 +1428,7 @@ return
                 },
                 [ 9 ] = {
                     name = "Заданное ручное значение выходного сигнала",
-                    meter = "°C",
+                    meter = "%",
                     defaultValue = 65,
                     nameLua = "P_U_manual",
                 },
@@ -1449,13 +1449,13 @@ return
                 },
                 [ 13 ] = {
                     name = "Максимальное значение выходной величины",
-                    meter = "°C",
+                    meter = "%",
                     defaultValue = 100,
                     nameLua = "P_out_max",
                 },
                 [ 14 ] = {
                     name = "Минимальное значение выходной величины",
-                    meter = "°C",
+                    meter = "%",
                     defaultValue = 0,
                     nameLua = "P_out_min",
                 },
@@ -1508,7 +1508,7 @@ return
                 },
                 [ 4 ] = {
                     name = "Интервал расчёта",
-                    meter = "сек",
+                    meter = "мсек",
                     defaultValue = 1000,
                     nameLua = "P_dt",
                 },
@@ -1538,7 +1538,7 @@ return
                 },
                 [ 9 ] = {
                     name = "Заданное ручное значение выходного сигнала",
-                    meter = "м3/ч",
+                    meter = "%",
                     defaultValue = 65,
                     nameLua = "P_U_manual",
                 },
@@ -1559,13 +1559,13 @@ return
                 },
                 [ 13 ] = {
                     name = "Максимальное значение выходной величины",
-                    meter = "м3/ч",
+                    meter = "%",
                     defaultValue = 100,
                     nameLua = "P_out_max",
                 },
                 [ 14 ] = {
                     name = "Минимальное значение выходной величины",
-                    meter = "м3/ч",
+                    meter = "%",
                     defaultValue = 0,
                     nameLua = "P_out_min",
                 },
@@ -1746,7 +1746,7 @@ return
                 },
                 [ 4 ] = {
                     name = "Интервал расчёта",
-                    meter = "сек",
+                    meter = "мсек",
                     defaultValue = 1000,
                     nameLua = "P_dt",
                 },
@@ -1776,7 +1776,7 @@ return
                 },
                 [ 9 ] = {
                     name = "Заданное ручное значение выходного сигнала",
-                    meter = "°C",
+                    meter = "%",
                     defaultValue = 65,
                     nameLua = "P_U_manual",
                 },
@@ -1797,13 +1797,13 @@ return
                 },
                 [ 13 ] = {
                     name = "Максимальное значение выходной величины",
-                    meter = "°C",
+                    meter = "%",
                     defaultValue = 100,
                     nameLua = "P_out_max",
                 },
                 [ 14 ] = {
                     name = "Минимальное значение выходной величины",
-                    meter = "°C",
+                    meter = "%",
                     defaultValue = 0,
                     nameLua = "P_out_min",
                 },
@@ -2116,7 +2116,7 @@ return
                 },
                 [ 4 ] = {
                     name = "Интервал расчёта",
-                    meter = "сек",
+                    meter = "мсек",
                     defaultValue = 1000,
                     nameLua = "P_dt",
                 },
