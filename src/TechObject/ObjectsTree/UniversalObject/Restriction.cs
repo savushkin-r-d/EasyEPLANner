@@ -27,28 +27,7 @@ namespace TechObject
         public Restriction Clone()
         {
             var clone = (Restriction)MemberwiseClone();
-            clone.restrictList = new SortedDictionary<int, List<int>>();
-            SortedDictionary<int, List<int>>.KeyCollection keyColl =
-                    restrictList.Keys;
-            foreach (int key in keyColl)
-            {
-                List<int> valueColl = restrictList[key];
-                foreach (int val in valueColl)
-                {
-                    if (clone.restrictList.ContainsKey(key))
-                    {
-                        clone.restrictList[key].Add(val);
-                    }
-                    else
-                    {
-                        var restrictMode = new List<int>();
-                        restrictMode.Add(val);
-                        clone.restrictList.Add(key, restrictMode);
-                    }
-
-                }
-            }
-
+            clone.restrictList = CreateCopyOfRestrictList(restrictList);
             clone.ChangeRestrictStr();
             return clone;
         }
@@ -130,10 +109,8 @@ namespace TechObject
         /// <returns></returns>
         override public bool SetNewValue(IDictionary<int, List<int>> dict)
         {
-            var oldRestriction =
-                new SortedDictionary<int, List<int>>(restrictList);
-            restrictList = null;
-            restrictList = new SortedDictionary<int, List<int>>(dict);
+            var oldRestriction = CreateCopyOfRestrictList(restrictList);
+            restrictList = CreateCopyOfRestrictList(dict);
             //Генерируем строку для отображения
             ChangeRestrictStr();
 
@@ -151,8 +128,7 @@ namespace TechObject
         /// <returns></returns>
         public override bool SetNewValue(string newRestriction)
         {
-            var oldRestriction =
-                new SortedDictionary<int, List<int>>(restrictList);
+            var oldRestriction = CreateCopyOfRestrictList(restrictList);
             restrictStr = newRestriction;
             ChangeRestrictList();
 
@@ -161,6 +137,29 @@ namespace TechObject
             ClearCrossRestriction(deletedRestriction);
             SetCrossRestriction();
             return true;
+        }
+
+        protected SortedDictionary<int, List<int>> CreateCopyOfRestrictList(
+            IDictionary<int, List<int>> copyingRestrictList)
+        {
+            var dict = new SortedDictionary<int, List<int>>();
+
+            foreach(var objIndex in copyingRestrictList.Keys)
+            {
+                foreach(var modeIndex in copyingRestrictList[objIndex])
+                {
+                    if (dict.ContainsKey(objIndex))
+                    {
+                        dict[objIndex].Add(modeIndex);
+                    }
+                    else
+                    {
+                        dict.Add(objIndex, new List<int>() { modeIndex });
+                    }
+                }
+            }
+
+            return dict;
         }
 
         public void ChangeCrossRestriction(SortedDictionary<int, 
