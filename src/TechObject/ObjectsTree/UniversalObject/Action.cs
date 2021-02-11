@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using EasyEPlanner;
 using Editor;
 
 namespace TechObject
@@ -56,12 +57,12 @@ namespace TechObject
                 tmpIndex.Add(index);
             }
 
-            Device.DeviceManager deviceManager = Device.DeviceManager
+            Device.IDeviceManager deviceManager = Device.DeviceManager
                 .GetInstance();
             foreach (int index in deviceIndex)
             {
                 var newDevName = string.Empty;
-                Device.IODevice device = deviceManager.GetDeviceByIndex(index);
+                Device.IDevice device = deviceManager.GetDeviceByIndex(index);
                 int objNum = device.ObjectNumber;
                 string objName = device.ObjectName;
 
@@ -114,12 +115,12 @@ namespace TechObject
                 tmpIndex.Add(index);
             }
 
-            Device.DeviceManager deviceManager = Device.DeviceManager
+            Device.IDeviceManager deviceManager = Device.DeviceManager
                 .GetInstance();
             foreach (int index in deviceIndex)
             {
                 string newDevName = string.Empty;
-                Device.IODevice device = deviceManager.GetDeviceByIndex(index);
+                Device.IDevice device = deviceManager.GetDeviceByIndex(index);
                 int objNum = newTechObjectNumber;
                 string objName = device.ObjectName;
 
@@ -235,33 +236,9 @@ namespace TechObject
         /// индексов.</param>
         virtual public void Synch(int[] array)
         {
-            List<int> del = new List<int>();
-            for (int j = 0; j < deviceIndex.Count; j++)
-            {
-                for (int i = 0; i < array.Length; i++)
-                {
-                    if (deviceIndex[j] == i)
-                    {
-                        // Что бы не учитывало "-2" из array
-                        if (array[i] == -1)
-                        {
-                            del.Add(j);
-                            break;
-                        }
-                        if (array[i] >= 0)
-                        {
-                            deviceIndex[j] = array[i];
-                            break;
-                        }
-                    }
-                }
-            }
-
-            int dx = 0;
-            foreach (int index in del)
-            {
-                deviceIndex.RemoveAt(index - dx++);
-            }
+            IDeviceSynchronizeService synchronizer = DeviceSynchronizer
+                .GetSynchronizeService();
+            synchronizer.SynchronizeDevices(array, ref deviceIndex);
         }
         #endregion
 
@@ -297,7 +274,7 @@ namespace TechObject
         {
             bool isValidType = false;
 
-            Device.Device device = Device.DeviceManager.GetInstance().
+            Device.IDevice device = Device.DeviceManager.GetInstance().
                 GetDeviceByEplanName(deviceName);
             Device.DeviceType deviceType = device.DeviceType;
             Device.DeviceSubType deviceSubType = device.DeviceSubType;
@@ -438,7 +415,7 @@ namespace TechObject
         {
             get
             {
-                Device.DeviceManager deviceManager = Device.DeviceManager
+                Device.IDeviceManager deviceManager = Device.DeviceManager
                     .GetInstance();
                 string res = "";
                 foreach (int index in deviceIndex)
@@ -491,7 +468,8 @@ namespace TechObject
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
         {
-            var deviceManager = Device.DeviceManager.GetInstance();
+            Device.IDeviceManager deviceManager = Device.DeviceManager
+                .GetInstance();
 
             var devToDraw = new List<DrawInfo>();
             foreach (int index in deviceIndex)

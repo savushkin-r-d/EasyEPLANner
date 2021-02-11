@@ -2,10 +2,48 @@
 
 namespace Device
 {
+    public interface IDevice
+    {
+        /// <summary>
+        /// Имя устройства (например - А1V12).
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        /// Описание устройства.
+        /// </summary>
+        string Description { get; }
+
+        /// <summary>
+        /// Номер объекта устройства.
+        /// </summary>
+        int ObjectNumber { get; }
+
+        /// <summary>
+        /// Объект устройства.
+        /// </summary>
+        string ObjectName { get; }
+
+        /// <summary>
+        /// Номер устройства.
+        /// </summary>
+        long DeviceNumber { get; }
+
+        /// <summary>
+        /// Тип устройства.
+        /// </summary>
+        DeviceType DeviceType { get; }
+
+        /// <summary>
+        /// Подтип устройства.
+        /// </summary>
+        DeviceSubType DeviceSubType { get; }
+    }
+
     /// <summary>
     /// Устройство - клапан, насос и т.д.
     /// </summary>
-    public class Device : IComparable, IEquatable<Device>
+    public class Device : IComparable, IEquatable<Device>, IDevice
     {
 
         public static int Compare(Device dx, Device dy)
@@ -162,9 +200,6 @@ namespace Device
         }
         #endregion
 
-        /// <summary>
-        /// Имя устройства (например - А1V12).
-        /// </summary>
         public string Name
         {
             get
@@ -197,9 +232,6 @@ namespace Device
             }
         }
 
-        /// <summary>
-        /// Тип устройства.
-        /// </summary>
         public DeviceType DeviceType
         {
             get
@@ -208,9 +240,6 @@ namespace Device
             }
         }
 
-        /// <summary>
-        /// Тип устройства.
-        /// </summary>
         public DeviceSubType DeviceSubType
         {
             get
@@ -219,9 +248,6 @@ namespace Device
             }
         }
 
-        /// <summary>
-        /// Описание устройства.
-        /// </summary>
         public string Description
         {
             get
@@ -230,9 +256,6 @@ namespace Device
             }
         }
 
-        /// <summary>
-        /// Объект устройство.
-        /// </summary>
         public string ObjectName
         {
             get
@@ -241,9 +264,6 @@ namespace Device
             }
         }
 
-        /// <summary>
-        /// Номер объекта устройства.
-        /// </summary>
         public int ObjectNumber
         {
             get

@@ -479,6 +479,16 @@ namespace TechObject
             return operation;
         }
 
+        #region синхронизация устройств
+        public void Synch(int[] array)
+        {
+            foreach(var property in baseOperationProperties)
+            {
+                property.Synch(array);
+            }
+        }
+        #endregion
+
         #region Реализация ITreeViewItem
         override public string[] DisplayText
         {
