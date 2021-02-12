@@ -452,6 +452,7 @@
     <None Include="Resources\copy.png" />
     <None Include="Resources\create.png" />
     <None Include="Resources\delete.png" />
+    <None Include="Resources\changeObj.png" />
     <Content Include="Resources\edit.ico" />
     <None Include="Resources\edit1.png" />
     <None Include="Resources\export.png" />
