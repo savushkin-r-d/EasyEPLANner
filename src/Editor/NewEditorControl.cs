@@ -1131,6 +1131,11 @@ namespace Editor
         public ITreeViewItem GetParentBranch(ITreeViewItem item)
         {
             ITreeViewItem needItem = null;
+            if (item == null)
+            {
+                return needItem;
+            }
+
             if (item.IsMainObject)
             {
                 return item;
@@ -1642,11 +1647,6 @@ namespace Editor
         private void changeBasesObjBtn_Click(object sender, EventArgs e)
         {
             ITreeViewItem activeItem = GetActiveItem();
-            if (activeItem == null)
-            {
-                return;
-            }
-
             ITreeViewItem mainObject = GetParentBranch(activeItem);
             if (mainObject == null)
             {
