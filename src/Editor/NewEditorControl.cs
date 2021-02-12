@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using EasyEPlanner;
 using PInvoke;
@@ -1637,6 +1636,31 @@ namespace Editor
             else
             {
                 editorTView.UseFiltering = false;
+            }
+        }
+
+        private void changeBasesObjBtn_Click(object sender, EventArgs e)
+        {
+            ITreeViewItem activeItem = GetActiveItem();
+            if (activeItem == null)
+            {
+                return;
+            }
+
+            ITreeViewItem mainObject = GetParentBranch(activeItem);
+            if (mainObject == null)
+            {
+                return;
+            }
+
+            string messageForUser = $"Сбросить базовый объект " +
+                $"\"{mainObject.DisplayText[0]}\"?";
+            DialogResult result = MessageBox.Show(messageForUser,
+                "Внимание", MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+            if (result == DialogResult.Yes)
+            {
+                // TODO. Reset base tech object
             }
         }
     }
