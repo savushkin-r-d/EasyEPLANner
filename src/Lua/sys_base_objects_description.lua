@@ -1121,6 +1121,20 @@ return
                         },
                     },
                 },
+                WHEY_SEPARATION_TURNOVER = {
+                    name = "Отделение сыворотки по оборотам",
+                    params =
+                    {
+                        active =
+                        {
+                            MAX_TIME =
+                            {
+                                name = "Максимальное время операции",
+                                displayObjects = { "parameters" },
+                            },
+                        },
+                    },
+                },
             },
             basicName = "tank",
             equipment =
