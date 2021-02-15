@@ -938,6 +938,7 @@ namespace TechObject
             equipment.Clear();
             attachedObjects.SetNewValue(string.Empty);
             baseTechObject = null;
+            CompareEplanNames();
         }
 
         public override string GetLinkToHelpPage()
