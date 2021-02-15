@@ -3,7 +3,7 @@ using Editor;
 
 namespace TechObject
 {
-    class UserObject : TreeViewItem
+    class UserObject : TreeViewItem, IBaseObjChangeable
     {
         public UserObject(ITechObjectManager techObjectManager)
         {
@@ -263,6 +263,20 @@ namespace TechObject
             var techObject = searchingObject as TechObject;
             int num = objects.IndexOf(techObject) + 1;
             return num;
+        }
+
+        public void ChangeBaseObj(ITreeViewItem treeItem)
+        {
+            var techObject = treeItem as TechObject;
+            bool success = techObjectManager.ChangeBaseObject(techObject);
+            if (success)
+            {
+                objects.Remove(techObject);
+                if (objects.Count == 0)
+                {
+                    Parent.Delete(this);
+                }
+            }
         }
 
         public const string Name = "Пользовательский объект";

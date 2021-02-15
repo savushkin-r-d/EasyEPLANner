@@ -112,6 +112,7 @@
     <Compile Include="Device\IODevices\F.cs" />
     <Compile Include="Editor\DrawInfo.cs" />
     <Compile Include="Editor\Editor.cs" />
+    <Compile Include="Editor\IBaseObjChangeable.cs" />
     <Compile Include="Editor\IHelperItem.cs" />
     <Compile Include="Editor\ImageIndexEnum.cs" />
     <Compile Include="Editor\ImportExport\TechObjectsExporter.cs" />

@@ -125,5 +125,13 @@ namespace TechObject
         /// </summary>
         /// <param name="techObject">Агрегат</param>
         void RemoveAttachingToUnits(TechObject techObject);
+
+        /// <summary>
+        /// Изменить базовый объект (первая реализация - сбросить)
+        /// </summary>
+        /// <param name="techObject">Базовый объект который надо изменить
+        /// </param>
+        /// <returns>Результат изменения, true - успех, false - нет</returns>
+        bool ChangeBaseObject(TechObject techObject);
     }
 }

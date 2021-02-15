@@ -1654,6 +1654,13 @@ namespace Editor
             ITreeViewItem activeItem = GetActiveItem();
             if (activeItem != null && activeItem.IsMainObject)
             {
+                ITreeViewItem mainObjectParent = activeItem.Parent;
+                var baseObjChanger = mainObjectParent as IBaseObjChangeable;
+                if (baseObjChanger == null)
+                {
+                    return;
+                }
+
                 string messageForUser = $"Сбросить базовый объект " +
                     $"\"{activeItem.DisplayText[0]}\"?";
                 DialogResult result = MessageBox.Show(messageForUser,
@@ -1661,10 +1668,7 @@ namespace Editor
                     MessageBoxIcon.Warning);
                 if (result == DialogResult.Yes)
                 {
-                    // 1. Удалить из S88Obj/ProcessCell/UserObject
-                    // 2. Если надо, удалить S88Obj/UserObject/ProcessCell
-                    // 3. Сбросить базовый объект
-                    // 4. Вставить в Unidentified
+                    baseObjChanger.ChangeBaseObj(activeItem);
                 }
             }
         }

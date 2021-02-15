@@ -768,6 +768,23 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Изменить базовый объект у объекта
+        /// </summary>
+        /// <param name="techObject"></param>
+        public bool ChangeBaseObject(TechObject techObject)
+        {
+            return false;
+
+            // 1. Удалить из S88Obj/ProcessCell/UserObject
+            // 2. Если надо, удалить S88Obj/UserObject/ProcessCell
+            // 3. Сбросить базовый объект
+            // 4. Вставить в Unidentified
+
+            // TODO: Создать форму, которая поможет изменить базовый объект
+            // указывая различия
+        }
+
+        /// <summary>
         /// Объект мастера проекта.
         /// </summary>
         public TechObject ProcessCellObject

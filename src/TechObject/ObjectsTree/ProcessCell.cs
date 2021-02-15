@@ -6,7 +6,7 @@ namespace TechObject
     /// <summary>
     /// Объект ячейки процесса (мастера).
     /// </summary>
-    public class ProcessCell : TreeViewItem
+    public class ProcessCell : TreeViewItem, IBaseObjChangeable
     {
         public ProcessCell(ITechObjectManager techObjectManager) 
         {
@@ -291,6 +291,20 @@ namespace TechObject
             var techObject = searchingObject as TechObject;
             int num = objects.IndexOf(techObject) + 1;
             return num;
+        }
+
+        public void ChangeBaseObj(ITreeViewItem treeItem)
+        {
+            var techObject = treeItem as TechObject;
+            bool success = techObjectManager.ChangeBaseObject(techObject);
+            if (success)
+            {
+                objects.Remove(techObject);
+                if (objects.Count == 0)
+                {
+                    Parent.Delete(this);
+                }
+            }
         }
 
         public const string Name = "Ячейка процесса";
