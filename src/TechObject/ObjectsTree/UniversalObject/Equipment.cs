@@ -478,6 +478,8 @@ namespace TechObject
             });
         }
 
+        public void Clear() => items.Clear();
+
         private TechObject owner;
         private List<ITreeViewItem> items;
     }

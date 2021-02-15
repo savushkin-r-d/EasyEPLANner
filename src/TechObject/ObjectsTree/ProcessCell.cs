@@ -211,7 +211,7 @@ namespace TechObject
             objects.Add(techObj);
             techObj.SetGetLocalN(GetTechObjectLocalNum);
             techObj.InitBaseTechObject(baseTechObject);
-
+            techObj.AddParent(this);
             return techObj;
         }
 

@@ -34,6 +34,7 @@ namespace TechObject
         {
             obj.SetGetLocalN(GetTechObjectLocalNum);
             localObjects.Add(obj);
+            obj.AddParent(this);
         }
 
         #region реализация ITreeViewItem

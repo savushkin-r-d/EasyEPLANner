@@ -174,6 +174,8 @@ namespace TechObject
             return ostisLink + "?sys_id=process_parameter";
         }
 
+        public void Clear() => parameters.Clear();
+
         public int Count => parameters.Count;
 
         private string name;

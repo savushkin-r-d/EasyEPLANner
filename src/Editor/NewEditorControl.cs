@@ -1669,6 +1669,7 @@ namespace Editor
                 if (result == DialogResult.Yes)
                 {
                     baseObjChanger.ChangeBaseObj(activeItem);
+                    editorTView.RefreshObjects(treeViewItemsList);
                 }
             }
         }

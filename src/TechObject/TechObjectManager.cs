@@ -371,6 +371,7 @@ namespace TechObject
             if (unidentifiedObject == null)
             {
                 unidentifiedObject = new Unidentified(instance);
+                unidentifiedObject.AddParent(instance);
                 treeObjects.Add(unidentifiedObject);
             }
 
@@ -773,12 +774,16 @@ namespace TechObject
         /// <param name="techObject"></param>
         public bool ChangeBaseObject(TechObject techObject)
         {
-            return false;
-
-            // 1. Удалить из S88Obj/ProcessCell/UserObject
-            // 2. Если надо, удалить S88Obj/UserObject/ProcessCell
-            // 3. Сбросить базовый объект
-            // 4. Вставить в Unidentified
+            try
+            {
+                techObject.ResetBaseTechObject();
+                AddUnidentifiedObject(techObject);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
 
             // TODO: Создать форму, которая поможет изменить базовый объект
             // указывая различия
