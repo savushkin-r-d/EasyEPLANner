@@ -1,6 +1,5 @@
 ﻿using Editor;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace TechObject
 {
@@ -9,13 +8,13 @@ namespace TechObject
     /// </summary>
     public class ProcessCell : TreeViewItem
     {
-        public ProcessCell() 
+        public ProcessCell(ITechObjectManager techObjectManager) 
         {
             objects = new List<TechObject>();
             baseTechObject = BaseTechObjectManager.GetInstance()
                 .GetTechObject(Name);
-            techObjectManager = TechObjectManager.GetInstance();
-            globalObjectsList = techObjectManager.TechObjects;
+            this.techObjectManager = techObjectManager;
+            globalObjectsList = this.techObjectManager.TechObjects;
         }
 
         /// <summary>

@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Editor;
 
 namespace TechObject
 {
     class BaseObject : TreeViewItem
     {
-        public BaseObject(string baseTechObjectName)
+        public BaseObject(string baseTechObjectName,
+            ITechObjectManager techObjectManager)
         {
             localObjects = new List<TechObject>();
             baseTechObject = BaseTechObjectManager.GetInstance()
                 .GetTechObject(baseTechObjectName);
-            techObjectManager = TechObjectManager.GetInstance();
-            globalObjectsList = techObjectManager.TechObjects;
+            this.techObjectManager = techObjectManager;
+            globalObjectsList = this.techObjectManager.TechObjects;
         }
 
         /// <summary>

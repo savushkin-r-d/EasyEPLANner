@@ -1661,7 +1661,10 @@ namespace Editor
                     MessageBoxIcon.Warning);
                 if (result == DialogResult.Yes)
                 {
-                    // TODO. Reset base tech object
+                    // 1. Удалить из S88Obj/ProcessCell/UserObject
+                    // 2. Если надо, удалить S88Obj/UserObject/ProcessCell
+                    // 3. Сбросить базовый объект
+                    // 4. Вставить в Unidentified
                 }
             }
         }
