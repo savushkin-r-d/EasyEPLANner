@@ -1646,21 +1646,23 @@ namespace Editor
 
         private void changeBasesObjBtn_Click(object sender, EventArgs e)
         {
-            ITreeViewItem activeItem = GetActiveItem();
-            ITreeViewItem mainObject = GetParentBranch(activeItem);
-            if (mainObject == null)
+            if (!Editable)
             {
                 return;
             }
 
-            string messageForUser = $"Сбросить базовый объект " +
-                $"\"{mainObject.DisplayText[0]}\"?";
-            DialogResult result = MessageBox.Show(messageForUser,
-                "Внимание", MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
-            if (result == DialogResult.Yes)
+            ITreeViewItem activeItem = GetActiveItem();
+            if (activeItem != null && activeItem.IsMainObject)
             {
-                // TODO. Reset base tech object
+                string messageForUser = $"Сбросить базовый объект " +
+                    $"\"{activeItem.DisplayText[0]}\"?";
+                DialogResult result = MessageBox.Show(messageForUser,
+                    "Внимание", MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+                if (result == DialogResult.Yes)
+                {
+                    // TODO. Reset base tech object
+                }
             }
         }
     }
