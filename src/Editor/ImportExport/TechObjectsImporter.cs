@@ -168,7 +168,7 @@ namespace Editor
                         .FirstOrDefault() as ProcessCell;
             if (processCellItem == null)
             {
-                processCellItem = new ProcessCell();
+                processCellItem = new ProcessCell(techObjectManager);
                 objectTree.Add(processCellItem);
             }
 
@@ -189,7 +189,7 @@ namespace Editor
                 .FirstOrDefault() as S88Object;
             if (s88Item == null)
             {
-                s88Item = new S88Object(name);
+                s88Item = new S88Object(name, techObjectManager);
                 objectTree.Add(s88Item);
             }
 
@@ -206,7 +206,7 @@ namespace Editor
                 .FirstOrDefault() as UserObject;
             if (userObject == null)
             {
-                userObject = new UserObject();
+                userObject = new UserObject(techObjectManager);
                 objectTree.Add(userObject);
             }
 
@@ -225,7 +225,7 @@ namespace Editor
                 .FirstOrDefault() as Unidentified;
             if (unidentifiedObject == null)
             {
-                unidentifiedObject = new Unidentified();
+                unidentifiedObject = new Unidentified(techObjectManager);
                 objectTree.Add(unidentifiedObject);
             }
 

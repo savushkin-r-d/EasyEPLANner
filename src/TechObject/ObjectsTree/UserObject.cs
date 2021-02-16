@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Collections.Generic;
 using Editor;
 
 namespace TechObject
 {
-    class UserObject : TreeViewItem
+    class UserObject : TreeViewItem, IBaseObjChangeable
     {
-        public UserObject()
+        public UserObject(ITechObjectManager techObjectManager)
         {
             objects = new List<TechObject>();
             baseTechObject = BaseTechObjectManager.GetInstance()
                 .GetTechObject(Name);
-            techObjectManager = TechObjectManager.GetInstance();
-            globalObjectsList = techObjectManager.TechObjects;
+            this.techObjectManager = techObjectManager;
+            globalObjectsList = this.techObjectManager.TechObjects;
         }
 
         /// <summary>
@@ -268,6 +263,20 @@ namespace TechObject
             var techObject = searchingObject as TechObject;
             int num = objects.IndexOf(techObject) + 1;
             return num;
+        }
+
+        public void ChangeBaseObj(ITreeViewItem treeItem)
+        {
+            var techObject = treeItem as TechObject;
+            bool success = techObjectManager.ChangeBaseObject(techObject);
+            if (success)
+            {
+                objects.Remove(techObject);
+                if (objects.Count == 0)
+                {
+                    Parent.Delete(this);
+                }
+            }
         }
 
         public const string Name = "Пользовательский объект";

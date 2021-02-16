@@ -263,11 +263,11 @@ namespace TechObject
         {
             if (obj.BaseTechObject != null)
             {
-                AddIdentifiedObjectWhenLoadFromLua(obj);
+                AddIdentifiedObject(obj);
             }
             else
             {
-                AddUnidentifiedObjectWhenLoadFromLua(obj);
+                AddUnidentifiedObject(obj);
             }
 
             techObjects.Add(obj);
@@ -277,7 +277,7 @@ namespace TechObject
         /// Добавить опознанный объект при загрузке из LUA
         /// </summary>
         /// <param name="obj">Объект</param>
-        private void AddIdentifiedObjectWhenLoadFromLua(TechObject obj)
+        private void AddIdentifiedObject(TechObject obj)
         {
             BaseTechObject baseTechObject = obj.BaseTechObject;
             var type = (BaseTechObjectManager.ObjectType)baseTechObject
@@ -287,15 +287,15 @@ namespace TechObject
             switch (type)
             {
                 case BaseTechObjectManager.ObjectType.ProcessCell:
-                     AddProcessCellFromLua(obj);
+                     AddProcessCell(obj);
                     break;
 
                 case BaseTechObjectManager.ObjectType.Unit:
-                    AddS88ObjectFromLua(obj, name);
+                    AddS88Object(obj, name);
                     break;
 
                 case BaseTechObjectManager.ObjectType.Aggregate:
-                    AddS88ObjectFromLua(obj, name);
+                    AddS88Object(obj, name);
                     break;
 
                 case BaseTechObjectManager.ObjectType.UserObject:
@@ -309,13 +309,13 @@ namespace TechObject
         /// </summary>
         /// <param name="obj">Объект</param>
         /// <returns></returns>
-        private void AddProcessCellFromLua(TechObject obj)
+        private void AddProcessCell(TechObject obj)
         {
             var masterItem = treeObjects.Where(x => x is ProcessCell)
                         .FirstOrDefault() as ProcessCell;
             if (masterItem == null)
             {
-                masterItem = new ProcessCell();
+                masterItem = new ProcessCell(instance);
                 treeObjects.Add(masterItem);
             }
 
@@ -328,14 +328,14 @@ namespace TechObject
         /// <param name="obj">Объект</param>
         /// <param name="name">Имя объекта</param>
         /// <returns></returns>
-        private void AddS88ObjectFromLua(TechObject obj, string name)
+        private void AddS88Object(TechObject obj, string name)
         {
             var s88Item = treeObjects
                 .Where(x => x is S88Object && x.DisplayText[0].Contains(name))
                 .FirstOrDefault() as S88Object;
             if (s88Item == null)
             {
-                s88Item = new S88Object(name);
+                s88Item = new S88Object(name, instance);
                 treeObjects.Add(s88Item);
             }
 
@@ -352,7 +352,7 @@ namespace TechObject
                 .FirstOrDefault() as UserObject;
             if(userObject == null)
             {
-                userObject = new UserObject();
+                userObject = new UserObject(instance);
                 treeObjects.Add(userObject);
             }
 
@@ -363,14 +363,15 @@ namespace TechObject
         /// Добавить неопознанный объект при добавлении из LUA
         /// </summary>
         /// <param name="obj">Объект</param>
-        private void AddUnidentifiedObjectWhenLoadFromLua(TechObject obj)
+        private void AddUnidentifiedObject(TechObject obj)
         {
             var unidentifiedObject = treeObjects
                 .Where(x => x is Unidentified)
                 .FirstOrDefault() as Unidentified;
             if (unidentifiedObject == null)
             {
-                unidentifiedObject = new Unidentified();
+                unidentifiedObject = new Unidentified(instance);
+                unidentifiedObject.AddParent(instance);
                 treeObjects.Add(unidentifiedObject);
             }
 
@@ -560,13 +561,13 @@ namespace TechObject
                 switch(selectedType)
                 {
                     case ProcessCell.Name:
-                        return new ProcessCell();
+                        return new ProcessCell(instance);
 
                     case UserObject.Name:
-                        return new UserObject();
+                        return new UserObject(instance);
 
                     default:
-                        return new S88Object(selectedType);
+                        return new S88Object(selectedType, instance);
                 }
             }
             else
@@ -737,6 +738,10 @@ namespace TechObject
         }
         #endregion
 
+        /// <summary>
+        /// Вставка базового объекта в редактор по LUA-имени базового объекта
+        /// </summary>
+        /// <param name="luaName"></param>
         public void InsertBaseObject(string luaName)
         {
             var baseObjectManager = BaseTechObjectManager.GetInstance();
@@ -761,6 +766,27 @@ namespace TechObject
                     Editor.Editor.GetInstance().RefreshEditor();
                 }
             }
+        }
+
+        /// <summary>
+        /// Изменить базовый объект у объекта
+        /// </summary>
+        /// <param name="techObject"></param>
+        public bool ChangeBaseObject(TechObject techObject)
+        {
+            try
+            {
+                techObject.ResetBaseTechObject();
+                AddUnidentifiedObject(techObject);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+            // TODO: Создать форму, которая поможет изменить базовый объект
+            // указывая различия
         }
 
         /// <summary>

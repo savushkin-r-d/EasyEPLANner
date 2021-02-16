@@ -1,6 +1,5 @@
 ﻿using Editor;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace TechObject
 {
@@ -9,11 +8,11 @@ namespace TechObject
     /// </summary>
     public class Unidentified : TreeViewItem
     {
-        public Unidentified() 
+        public Unidentified(ITechObjectManager techObjectManager) 
         {
             localObjects = new List<TechObject>();
-            techObjectManager = TechObjectManager.GetInstance();
-            globalObjectsList = techObjectManager.TechObjects;
+            this.techObjectManager = techObjectManager;
+            globalObjectsList = this.techObjectManager.TechObjects;
         }
 
         /// <summary>
@@ -35,6 +34,7 @@ namespace TechObject
         {
             obj.SetGetLocalN(GetTechObjectLocalNum);
             localObjects.Add(obj);
+            obj.AddParent(this);
         }
 
         #region реализация ITreeViewItem

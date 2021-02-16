@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using EasyEPlanner;
 using PInvoke;
@@ -1132,6 +1131,11 @@ namespace Editor
         public ITreeViewItem GetParentBranch(ITreeViewItem item)
         {
             ITreeViewItem needItem = null;
+            if (item == null)
+            {
+                return needItem;
+            }
+
             if (item.IsMainObject)
             {
                 return item;
@@ -1637,6 +1641,36 @@ namespace Editor
             else
             {
                 editorTView.UseFiltering = false;
+            }
+        }
+
+        private void changeBasesObjBtn_Click(object sender, EventArgs e)
+        {
+            if (!Editable)
+            {
+                return;
+            }
+
+            ITreeViewItem activeItem = GetActiveItem();
+            if (activeItem != null && activeItem.IsMainObject)
+            {
+                ITreeViewItem mainObjectParent = activeItem.Parent;
+                var baseObjChanger = mainObjectParent as IBaseObjChangeable;
+                if (baseObjChanger == null)
+                {
+                    return;
+                }
+
+                string messageForUser = $"Сбросить базовый объект " +
+                    $"\"{activeItem.DisplayText[0]}\"?";
+                DialogResult result = MessageBox.Show(messageForUser,
+                    "Внимание", MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+                if (result == DialogResult.Yes)
+                {
+                    baseObjChanger.ChangeBaseObj(activeItem);
+                    editorTView.RefreshObjects(treeViewItemsList);
+                }
             }
         }
     }

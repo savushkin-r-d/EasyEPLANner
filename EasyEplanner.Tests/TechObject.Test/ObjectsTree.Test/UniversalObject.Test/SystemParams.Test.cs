@@ -203,6 +203,22 @@ namespace Tests.TechObject
             Assert.AreEqual(3, systemParamsWith3Params.Count);
         }
 
+        [Test]
+        public void Clear_ThreeAnyParameters_DeleteAllParams()
+        {
+            var parameters = GetDefaultWith3Params();
+            int beforeDeleteCount = parameters.Count;
+            parameters.Clear();
+            int afterDeleteCount = parameters.Count;
+            int expectedCountAfterDelete = 0;
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedCountAfterDelete, afterDeleteCount);
+                Assert.AreNotEqual(afterDeleteCount, beforeDeleteCount);
+            });
+        }
+
         private SystemParams GetDefaultWith3Params()
         {
             var systemParams = new SystemParams();

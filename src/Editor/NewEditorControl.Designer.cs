@@ -51,6 +51,7 @@
             this.importButton = new System.Windows.Forms.ToolStripButton();
             this.exportButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.changeBasesObjBtn = new System.Windows.Forms.ToolStripButton();
             this.hideEmptyItemsBtn = new System.Windows.Forms.ToolStripButton();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.editorTView = new BrightIdeasSoftware.TreeListView();
@@ -85,6 +86,7 @@
             this.importButton,
             this.exportButton,
             this.toolStripSeparator4,
+            this.changeBasesObjBtn,
             this.hideEmptyItemsBtn});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
@@ -284,6 +286,17 @@
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(6, 27);
             // 
+            // changeBasesObjBtn
+            // 
+            this.changeBasesObjBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.changeBasesObjBtn.Image = global::EasyEPlanner.Properties.Resources.changeObj;
+            this.changeBasesObjBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.changeBasesObjBtn.Name = "changeBasesObjBtn";
+            this.changeBasesObjBtn.Size = new System.Drawing.Size(24, 24);
+            this.changeBasesObjBtn.Text = "changeBaseObj";
+            this.changeBasesObjBtn.ToolTipText = "Изменить базовый объект";
+            this.changeBasesObjBtn.Click += new System.EventHandler(this.changeBasesObjBtn_Click);
+            // 
             // hideEmptyItemsBtn
             // 
             this.hideEmptyItemsBtn.CheckOnClick = true;
@@ -401,5 +414,6 @@
         private System.Windows.Forms.ToolStripButton exportButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton hideEmptyItemsBtn;
+        private System.Windows.Forms.ToolStripButton changeBasesObjBtn;
     }
     }

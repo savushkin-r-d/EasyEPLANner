@@ -1,21 +1,20 @@
 ﻿using Editor;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace TechObject
 {
     /// <summary>
     /// Объект ячейки процесса (мастера).
     /// </summary>
-    public class ProcessCell : TreeViewItem
+    public class ProcessCell : TreeViewItem, IBaseObjChangeable
     {
-        public ProcessCell() 
+        public ProcessCell(ITechObjectManager techObjectManager) 
         {
             objects = new List<TechObject>();
             baseTechObject = BaseTechObjectManager.GetInstance()
                 .GetTechObject(Name);
-            techObjectManager = TechObjectManager.GetInstance();
-            globalObjectsList = techObjectManager.TechObjects;
+            this.techObjectManager = techObjectManager;
+            globalObjectsList = this.techObjectManager.TechObjects;
         }
 
         /// <summary>
@@ -212,7 +211,7 @@ namespace TechObject
             objects.Add(techObj);
             techObj.SetGetLocalN(GetTechObjectLocalNum);
             techObj.InitBaseTechObject(baseTechObject);
-
+            techObj.AddParent(this);
             return techObj;
         }
 
@@ -292,6 +291,20 @@ namespace TechObject
             var techObject = searchingObject as TechObject;
             int num = objects.IndexOf(techObject) + 1;
             return num;
+        }
+
+        public void ChangeBaseObj(ITreeViewItem treeItem)
+        {
+            var techObject = treeItem as TechObject;
+            bool success = techObjectManager.ChangeBaseObject(techObject);
+            if (success)
+            {
+                objects.Remove(techObject);
+                if (objects.Count == 0)
+                {
+                    Parent.Delete(this);
+                }
+            }
         }
 
         public const string Name = "Ячейка процесса";

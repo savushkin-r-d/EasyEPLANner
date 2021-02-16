@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Editor;
 
 namespace TechObject
 {
-    class BaseObject : TreeViewItem
+    class BaseObject : TreeViewItem, IBaseObjChangeable
     {
-        public BaseObject(string baseTechObjectName)
+        public BaseObject(string baseTechObjectName,
+            ITechObjectManager techObjectManager)
         {
             localObjects = new List<TechObject>();
             baseTechObject = BaseTechObjectManager.GetInstance()
                 .GetTechObject(baseTechObjectName);
-            techObjectManager = TechObjectManager.GetInstance();
-            globalObjectsList = techObjectManager.TechObjects;
+            this.techObjectManager = techObjectManager;
+            globalObjectsList = this.techObjectManager.TechObjects;
         }
 
         /// <summary>
@@ -295,7 +292,7 @@ namespace TechObject
             localObjects.Add(techObj);
             techObj.SetGetLocalN(GetTechObjectLocalNum);
             techObj.InitBaseTechObject(baseTechObject);
-
+            techObj.AddParent(this);
             return techObj;
         }
 
@@ -424,6 +421,20 @@ namespace TechObject
             var techObject = searchingObject as TechObject;
             int num = localObjects.IndexOf(techObject) + 1;
             return num;
+        }
+
+        public void ChangeBaseObj(ITreeViewItem treeItem)
+        {
+            var techObject = treeItem as TechObject;
+            bool success = techObjectManager.ChangeBaseObject(techObject);
+            if (success)
+            {
+                localObjects.Remove(techObject);
+                if (localObjects.Count == 0)
+                {
+                    Parent.Delete(this);
+                }
+            }
         }
 
         List<TechObject> localObjects;

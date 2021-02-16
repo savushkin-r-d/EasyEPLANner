@@ -928,6 +928,19 @@ namespace TechObject
         }
         #endregion
 
+        /// <summary>
+        /// Сброс базового объекта
+        /// </summary>
+        public void ResetBaseTechObject()
+        {
+            ModesManager.ClearBaseOperations();
+            systemParams.Clear();
+            equipment.Clear();
+            attachedObjects.SetNewValue(string.Empty);
+            baseTechObject = null;
+            CompareEplanNames();
+        }
+
         public override string GetLinkToHelpPage()
         {
             string ostisLink = EasyEPlanner.ProjectManager.GetInstance()

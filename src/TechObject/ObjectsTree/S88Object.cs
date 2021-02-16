@@ -9,10 +9,11 @@ namespace TechObject
     /// </summary>
     public class S88Object : TreeViewItem
     {
-        public S88Object(string name)
+        public S88Object(string name, ITechObjectManager techObjectManager)
         {
             this.name = name;
             objects = new List<ITreeViewItem>();
+            this.techObjectManager = techObjectManager;
         }
 
         /// <summary>
@@ -26,7 +27,8 @@ namespace TechObject
                 .FirstOrDefault() as BaseObject;
             if (findedBaseObject == null)
             {
-                findedBaseObject = new BaseObject(obj.BaseTechObject.Name);
+                findedBaseObject = new BaseObject(obj.BaseTechObject.Name,
+                    techObjectManager);
                 objects.Add(findedBaseObject);
             }
 
@@ -204,7 +206,7 @@ namespace TechObject
             }
             else
             {
-                return new BaseObject(selectedSubType);
+                return new BaseObject(selectedSubType, techObjectManager);
             }
         }
 
@@ -253,5 +255,6 @@ namespace TechObject
 
         string name;
         List<ITreeViewItem> objects;
+        ITechObjectManager techObjectManager;
     }
 }
