@@ -317,6 +317,7 @@ namespace TechObject
             {
                 masterItem = new ProcessCell(instance);
                 treeObjects.Add(masterItem);
+                SortTreeObjectsByCustomComparer();
             }
 
             masterItem.AddObjectWhenLoadFromLua(obj);
@@ -337,6 +338,7 @@ namespace TechObject
             {
                 s88Item = new S88Object(name, instance);
                 treeObjects.Add(s88Item);
+                SortTreeObjectsByCustomComparer();
             }
 
             s88Item.AddObjectWhenLoadFromLua(obj);
@@ -354,6 +356,7 @@ namespace TechObject
             {
                 userObject = new UserObject(instance);
                 treeObjects.Add(userObject);
+                SortTreeObjectsByCustomComparer();
             }
 
             userObject.AddObjectWhenLoadFromLua(obj);
@@ -373,6 +376,7 @@ namespace TechObject
                 unidentifiedObject = new Unidentified(instance);
                 unidentifiedObject.AddParent(instance);
                 treeObjects.Add(unidentifiedObject);
+                SortTreeObjectsByCustomComparer();
             }
 
             unidentifiedObject.AddUnidentifiedObject(obj);
@@ -405,6 +409,23 @@ namespace TechObject
         {
             techObjectXMLMaker.GetObjectForXML(rootNode, combineTags,
                 useNewNames);
+        }
+
+        private void SortTreeObjectsByCustomComparer()
+        {
+            string firstS88LevelName = BaseTechObjectManager.GetInstance()
+                .GetS88Name((int)BaseTechObjectManager.ObjectType.Unit);
+            string secondS88LevelName = BaseTechObjectManager.GetInstance()
+                .GetS88Name((int)BaseTechObjectManager.ObjectType.Aggregate);
+
+            treeObjects = treeObjects.OrderByDescending(i => i is ProcessCell)
+                .ThenByDescending(i => i is S88Object && i.DisplayText[0]
+                .Contains(firstS88LevelName))
+                .ThenByDescending(i => i is S88Object && i.DisplayText[0]
+                .Contains(secondS88LevelName))
+                .ThenByDescending(i => i is UserObject)
+                .ThenByDescending(i => i is Unidentified)
+                .ToList();
         }
 
         #region Синхронизация устройств в объектах
@@ -497,6 +518,7 @@ namespace TechObject
                 ITreeViewItem insertedItem = InsertType(selectedType);
 
                 insertedItem.AddParent(this);
+                SortTreeObjectsByCustomComparer();
                 return insertedItem;
             }
 
@@ -535,11 +557,6 @@ namespace TechObject
 
             if (innerItem != null)
             {
-                if (!treeObjects.Contains(treeItem))
-                {
-                    treeObjects.Add(treeItem);
-                }
-
                 return treeItem;
             }
 
@@ -558,17 +575,27 @@ namespace TechObject
                 .FirstOrDefault();
             if (treeItem == null)
             {
+                ITreeViewItem newTreeItem;
                 switch(selectedType)
                 {
                     case ProcessCell.Name:
-                        return new ProcessCell(instance);
+                        newTreeItem = new ProcessCell(instance);
+                        break;
 
                     case UserObject.Name:
-                        return new UserObject(instance);
+                        newTreeItem = new UserObject(instance);
+                        break;
 
                     default:
-                        return new S88Object(selectedType, instance);
+                        newTreeItem = new S88Object(selectedType, instance);
+                        break;
                 }
+
+                treeObjects.Add(newTreeItem);
+                SortTreeObjectsByCustomComparer();
+                newTreeItem.AddParent(instance);
+
+                return newTreeItem;
             }
             else
             {
