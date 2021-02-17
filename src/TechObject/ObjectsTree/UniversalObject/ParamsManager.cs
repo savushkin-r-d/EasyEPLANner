@@ -348,7 +348,10 @@ namespace TechObject
 
         public void SetUpFromBaseTechObject(List<Param> parameters)
         {
-            //TODO: Insert parameters
+            foreach (var parameter in parameters)
+            {
+                parFLoat.AddParam(parameter);
+            }
         }
 
         private Params parFLoat;

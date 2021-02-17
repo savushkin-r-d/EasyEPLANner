@@ -20,7 +20,7 @@ namespace TechObject
             AggregateParameters = new List<BaseParameter>();
             BindingName = string.Empty;
             SystemParams = new SystemParams();
-            //TODO: Parameters = new Parameters();
+            Parameters = new List<Param>();
 
             objectGroups = new List<AttachedObjects>();
         }
@@ -152,7 +152,9 @@ namespace TechObject
         public void AddParameter(string luaName, string name, double value,
             string meter)
         {
-            //TODO: добавление параметра объекта.
+            var param = new Param(null, name, false, value, meter,
+                luaName, true);
+            Parameters.Add(param);
         }
 
         /// <summary>
@@ -547,7 +549,17 @@ namespace TechObject
             }
         }
 
-        // TODO: getter and setter for parameters
+        public List<Param> Parameters
+        {
+            get
+            {
+                return parameters;
+            }
+            set
+            {
+                parameters = value;
+            }
+        }
 
         #region Сохранение в prg.lua
         /// <summary>
@@ -820,6 +832,6 @@ namespace TechObject
         private MainAggregateParameter aggregateMainParameter;
         private List<AttachedObjects> objectGroups;
         private SystemParams systemParams;
-        //TODO parameters List
+        private List<Param> parameters;
     }
 }
