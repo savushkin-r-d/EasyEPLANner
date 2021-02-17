@@ -346,9 +346,9 @@ namespace TechObject
             return ostisLink + "?sys_id=process_parameter";
         }
 
-        public void SetUpFromBaseTechObject(List<Param> parameters)
+        public void SetUpFromBaseTechObject(Params parameters)
         {
-            foreach (var parameter in parameters)
+            foreach (Param parameter in parameters.Items)
             {
                 parFLoat.AddParam(parameter);
             }

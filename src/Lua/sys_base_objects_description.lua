@@ -95,6 +95,7 @@ return
             equipment = { },
             aggregateParameters = { },
             bindingName = "automat",
+            parameters = { object_parameters.ParLuaName1 }
         },
         _tank = {
             name = "Бачок откачки лёдводы",

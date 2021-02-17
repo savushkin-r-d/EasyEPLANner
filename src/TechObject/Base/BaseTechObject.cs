@@ -20,7 +20,8 @@ namespace TechObject
             AggregateParameters = new List<BaseParameter>();
             BindingName = string.Empty;
             SystemParams = new SystemParams();
-            Parameters = new List<Param>();
+            Parameters =
+                new Params(string.Empty, string.Empty, false, string.Empty);
 
             objectGroups = new List<AttachedObjects>();
         }
@@ -152,9 +153,9 @@ namespace TechObject
         public void AddParameter(string luaName, string name, double value,
             string meter)
         {
-            var param = new Param(null, name, false, value, meter,
-                luaName, true);
-            Parameters.Add(param);
+            var parameter = new Param(Parameters.GetIdx, name, false, value,
+                meter, luaName, true);
+            Parameters.InsertCopy(parameter);
         }
 
         /// <summary>
@@ -440,7 +441,7 @@ namespace TechObject
             }
 
             cloned.SystemParams = systemParams.Clone();
-            //TODO: cloned.Parameters = parameters.Clone();
+            cloned.Parameters = parameters.Clone();
 
             return cloned;
         }
@@ -549,7 +550,7 @@ namespace TechObject
             }
         }
 
-        public List<Param> Parameters
+        public Params Parameters
         {
             get
             {
@@ -832,6 +833,6 @@ namespace TechObject
         private MainAggregateParameter aggregateMainParameter;
         private List<AttachedObjects> objectGroups;
         private SystemParams systemParams;
-        private List<Param> parameters;
+        private Params parameters;
     }
 }
