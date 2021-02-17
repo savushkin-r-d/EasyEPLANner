@@ -2310,7 +2310,7 @@ object_parameters =
     -- Пример правильного заполнения, удалить при заполнении
     -- удалить при заполнении реальными данными.
     ParLuaName1 = {
-        luaName = "ParLuaName1"
+        luaName = "ParLuaName1",
         name = "Название параметра",
         value = 20,
         meter = "сек",

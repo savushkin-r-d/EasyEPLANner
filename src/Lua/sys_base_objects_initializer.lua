@@ -178,7 +178,7 @@ end
 
 -- Инициализация параметров базового объекта
 init_parameters = function(object, parameters)
-    for key, parameter in ipairs(parameters)
+    for key, parameter in ipairs(parameters) do
         local name = parameter.name or ""
         local luaName = parameter.luaName or ""
         local meter = parameter.meter or ""
