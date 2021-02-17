@@ -20,6 +20,7 @@ namespace TechObject
             AggregateParameters = new List<BaseParameter>();
             BindingName = string.Empty;
             SystemParams = new SystemParams();
+            //TODO: Parameters = new Parameters();
 
             objectGroups = new List<AttachedObjects>();
         }
@@ -126,12 +127,32 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Добавить системный параметр объекта
+        /// </summary>
+        /// <param name="luaName">Lua-имя</param>
+        /// <param name="name">Отображаемое название</param>
+        /// <param name="value">Значение</param>
+        /// <param name="meter">Единица измерения</param>
         public void AddSystemParameter(string luaName, string name,
             double value, string meter)
         {
             var param = new SystemParam(systemParams.GetIdx, name, value,
                 meter, luaName);
             systemParams.AddParam(param);
+        }
+
+        /// <summary>
+        /// Добавить параметр объекта
+        /// </summary>
+        /// <param name="luaName">Lua-имя</param>
+        /// <param name="name">Отображаемое название</param>
+        /// <param name="value">Значение</param>
+        /// <param name="meter">Единица измерения</param>
+        public void AddParameter(string luaName, string name, double value,
+            string meter)
+        {
+            //TODO: добавление параметра объекта.
         }
 
         /// <summary>
@@ -417,6 +438,7 @@ namespace TechObject
             }
 
             cloned.SystemParams = systemParams.Clone();
+            //TODO: cloned.Parameters = parameters.Clone();
 
             return cloned;
         }
@@ -524,6 +546,8 @@ namespace TechObject
                 systemParams = value;
             }
         }
+
+        // TODO: getter and setter for parameters
 
         #region Сохранение в prg.lua
         /// <summary>
@@ -796,5 +820,6 @@ namespace TechObject
         private MainAggregateParameter aggregateMainParameter;
         private List<AttachedObjects> objectGroups;
         private SystemParams systemParams;
+        //TODO parameters List
     }
 }

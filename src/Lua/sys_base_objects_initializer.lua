@@ -36,6 +36,10 @@ init_base_objects = function()
         -- Добавить системные параметры объекта
         local systemParameters = value.systemParams or { }
         init_system_parameters(baseObject, systemParameters)
+
+        -- Добавить параметры объекта
+        local parameters = value.parameters or { }
+        init_parameters(baseObject, parameters)
     end
 
     return 0
@@ -169,5 +173,17 @@ init_system_parameters = function(object, systemParameters)
         local nameLua = parameter.nameLua or ""
 
         object:AddSystemParameter(nameLua, name, defaultValue, meter)
+    end
+end
+
+-- Инициализация параметров базового объекта
+init_parameters = function(object, parameters)
+    for key, parameter in ipairs(parameters)
+        local name = parameter.name or ""
+        local luaName = parameter.luaName or ""
+        local meter = parameter.meter or ""
+        local value = parameter.value or 0
+
+        object:AddParameter(luaName, name, value, meter)
     end
 end
