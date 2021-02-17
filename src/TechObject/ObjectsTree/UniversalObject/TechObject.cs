@@ -276,6 +276,7 @@ namespace TechObject
 
             systemParams.SetUpFromBaseTechObject(BaseTechObject.SystemParams);
             ModesManager.SetUpFromBaseTechObject(BaseTechObject);
+            //TODO: paramsManager.SetUpFromBaseTechObject(BaseTechObject.Parameters);
         }
 
         /// <summary>

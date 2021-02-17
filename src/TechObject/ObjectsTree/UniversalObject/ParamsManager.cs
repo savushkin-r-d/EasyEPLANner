@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Editor;
 
 namespace TechObject
@@ -348,6 +344,11 @@ namespace TechObject
             string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
                 .GetOstisHelpSystemLink();
             return ostisLink + "?sys_id=process_parameter";
+        }
+
+        public void SetUpFromBaseTechObject(List<Param> parameters)
+        {
+            //TODO: Insert parameters
         }
 
         private Params parFLoat;
