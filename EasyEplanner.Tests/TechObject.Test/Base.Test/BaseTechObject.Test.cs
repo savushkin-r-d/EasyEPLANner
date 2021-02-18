@@ -385,6 +385,9 @@ namespace Tests.TechObject
             });
         }
 
+        // Methods which generate LUA code isn't testable because they have too
+        // much size and there are lots of dependencies too.
+
         private BaseTechObject GetEmpty()
         {
             return new BaseTechObject();
