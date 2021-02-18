@@ -269,14 +269,45 @@ namespace Tests.TechObject
             //TODO: Write test
         }
 
-        public void IsAttachable_BaseObject_ReturnsValueDependsOnBaseObject()
+        [Test]
+        public void IsAttachable_HaveObjGorups_ReturnsTrueValue()
         {
-            //TODO: Write test
+            var obj = GetEmpty();
+
+            obj.AddObjectGroup(paramLuaName, paramName, string.Empty);
+        
+            Assert.IsTrue(obj.IsAttachable);
         }
 
-        public void UseGroups_BaseObject_ReturnsValueDependsOnObjectGroups()
+        [TestCase(1, true)]
+        [TestCase(2, true)]
+        [TestCase(0, false)]
+        [TestCase(4, false)]
+        public void IsAttachable_SetRightS88Level_ReturnsValueDependsOnS88level(
+            int s88Level, bool expectedValue)
         {
-            //TODO: Write test
+            var obj = GetEmpty();
+
+            obj.S88Level = s88Level;
+
+            Assert.AreEqual(expectedValue, obj.IsAttachable);
+            Assert.AreEqual(s88Level, obj.S88Level);
+        }
+
+        [TestCase(1, true)]
+        [TestCase(0, false)]
+        [TestCase(4, true)]
+        public void UseGroups_BaseObject_ReturnsValueDependsOnObjectGroups(
+            int countOfGroups, bool expectedValue)
+        {
+            var obj = GetEmpty();
+
+            for(int i = 0; i < countOfGroups; i++)
+            {
+                obj.AddObjectGroup(paramLuaName, paramName, string.Empty);
+            }
+            
+            Assert.AreEqual(expectedValue, obj.UseGroups);
         }
 
         //Save methods?
