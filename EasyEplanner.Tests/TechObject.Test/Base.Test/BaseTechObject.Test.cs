@@ -259,14 +259,43 @@ namespace Tests.TechObject
             };
         }
 
+        [Test]
         public void CloneWithArgument_NormalBaseObject_ReturnsFullCopy()
         {
-            //TODO: Write test
-        }
+            // We can test only data which are existing in BaseTechObject entity.
+            // Clone() always called in Clone(args), we haven't to test Clone().
+            // Clone() contains a lot of dependencies which have to replace to
+            // interfaces but we can't do it now. So, the unit-test will test
+            // all except dependencies.
 
-        public void CloneNoArgument_NormalBaseObject_ReturnsFullCopyWithNullOwners()
-        {
-            //TODO: Write test
+            string expectedName = "Name";
+            string expectedBasicName = "BasicName";
+            string expectedEplanName = "EplanName";
+            int expectedS88Level = 2;
+            string expectedBindingName = "BindingName";
+            bool expectedIsPID = true;
+
+            var obj = new BaseTechObject();
+            obj.Name = expectedName;
+            obj.BasicName = expectedBasicName;
+            obj.EplanName = expectedEplanName;
+            obj.S88Level = expectedS88Level;
+            obj.BindingName = expectedBindingName;
+            obj.IsPID = expectedIsPID;
+
+            // null - is Owner, dependency
+            var clonedObj = obj.Clone(null);
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreNotEqual(obj.GetHashCode(), clonedObj.GetHashCode());
+                Assert.AreEqual(expectedName, clonedObj.Name);
+                Assert.AreEqual(expectedBasicName, clonedObj.BasicName);
+                Assert.AreEqual(expectedEplanName, clonedObj.EplanName);
+                Assert.AreEqual(expectedS88Level, clonedObj.S88Level);
+                Assert.AreEqual(expectedBindingName, clonedObj.BindingName);
+                Assert.AreEqual(expectedIsPID, clonedObj.IsPID);
+            });
         }
 
         [Test]
@@ -309,8 +338,6 @@ namespace Tests.TechObject
             
             Assert.AreEqual(expectedValue, obj.UseGroups);
         }
-
-        //Save methods?
 
         [TestCase(1)]
         [TestCase(100)]
