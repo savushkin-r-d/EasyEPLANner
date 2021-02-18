@@ -350,7 +350,7 @@ namespace TechObject
         {
             foreach (Param parameter in parameters.Items)
             {
-                parFLoat.AddParam(parameter);
+                parFLoat.InsertCopy(parameter);
             }
         }
 

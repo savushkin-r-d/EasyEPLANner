@@ -81,7 +81,7 @@ namespace TechObject
         {
             var par = new MainAggregateParameter(luaName, name, defaultValue);
             par.Owner = this;
-            aggregateMainParameter = par;
+            MainAggregateParameter = par;
         }
 
         /// <summary>
@@ -138,9 +138,9 @@ namespace TechObject
         public void AddSystemParameter(string luaName, string name,
             double value, string meter)
         {
-            var param = new SystemParam(systemParams.GetIdx, name, value,
+            var param = new SystemParam(SystemParams.GetIdx, name, value,
                 meter, luaName);
-            systemParams.AddParam(param);
+            SystemParams.AddParam(param);
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace TechObject
         {
             var parameter = new Param(Parameters.GetIdx, name, false, value,
                 meter, luaName, true);
-            Parameters.InsertCopy(parameter);
+            Parameters.AddParam(parameter);
         }
 
         /// <summary>
@@ -222,114 +222,37 @@ namespace TechObject
         /// <summary>
         /// Имя базового объекта.
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return name;
-            }
-
-            set
-            {
-                name = value;
-            }
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// ОУ базового объекта
         /// </summary>
-        public string EplanName
-        {
-            get
-            {
-                return eplanName;
-            }
-
-            set
-            {
-                eplanName = value;
-            }
-        }
+        public string EplanName { get; set; }
 
         /// <summary>
         /// Уровень по S88 иерархии
         /// </summary>
-        public int S88Level
-        {
-            get
-            {
-                return s88Level;
-            }
-
-            set
-            {
-                s88Level = value;
-            }
-        }
+        public int S88Level { get; set; }
 
         /// <summary>
         /// Базовые операции объекта
         /// </summary>
-        public List<BaseOperation> BaseOperations
-        {
-            get
-            {
-                return objectOperations;
-            }
-
-            set
-            {
-                objectOperations = value;
-            }
-        }
+        public List<BaseOperation> BaseOperations { get; set; }
 
         /// <summary>
         /// Имя объекта для базовой функциональности
         /// </summary>
-        public string BasicName
-        {
-            get
-            {
-                return basicName;
-            }
-
-            set
-            {
-                basicName = value;
-            }
-        }
+        public string BasicName { get; set; }
 
         /// <summary>
         /// Владелец объекта.
         /// </summary>
-        public TechObject Owner
-        {
-            get
-            {
-                return owner;
-            }
-
-            set
-            {
-                owner = value;
-            }
-        }
+        public TechObject Owner { get; set; }
 
         /// <summary>
         /// Оборудование базового объекта
         /// </summary>
-        public List<BaseParameter> Equipment
-        {
-            get
-            {
-                return equipment;
-            }
-
-            set
-            {
-                equipment = value;
-            }
-        }
+        public List<BaseParameter> Equipment { get; set; }
 
         /// <summary>
         /// Получить базовую операцию по имени.
@@ -440,8 +363,8 @@ namespace TechObject
                 cloned.objectGroups.Add(clonedGroup);
             }
 
-            cloned.SystemParams = systemParams.Clone();
-            cloned.Parameters = parameters.Clone();
+            cloned.SystemParams = SystemParams.Clone();
+            cloned.Parameters = Parameters.Clone();
 
             return cloned;
         }
@@ -486,33 +409,12 @@ namespace TechObject
         /// <summary>
         /// Имя агрегата при его привязке к аппарату.
         /// </summary>
-        public string BindingName
-        {
-            get
-            {
-                return bindingName;
-            }
-
-            set
-            {
-                bindingName = value;
-            }
-        }
+        public string BindingName { get; set; }
 
         /// <summary>
         /// Главный параметр агрегата
         /// </summary>
-        public MainAggregateParameter MainAggregateParameter
-        {
-            get
-            {
-                return aggregateMainParameter;
-            }
-            set
-            {
-                aggregateMainParameter = value;
-            }
-        }
+        public MainAggregateParameter MainAggregateParameter { get; set; }
 
         /// <summary>
         /// Является ли объект ПИД-регулятором
@@ -538,29 +440,15 @@ namespace TechObject
             get => objectGroups; 
         }
 
-        public SystemParams SystemParams
-        {
-            get
-            {
-                return systemParams;
-            }
-            set 
-            {
-                systemParams = value;
-            }
-        }
+        /// <summary>
+        /// Системные параметры объекта
+        /// </summary>
+        public SystemParams SystemParams { get; set; }
 
-        public Params Parameters
-        {
-            get
-            {
-                return parameters;
-            }
-            set
-            {
-                parameters = value;
-            }
-        }
+        /// <summary>
+        /// Параметры объекта
+        /// </summary>
+        public Params Parameters { get; set; }
 
         #region Сохранение в prg.lua
         /// <summary>
@@ -820,19 +708,7 @@ namespace TechObject
         }
         #endregion
 
-        private string name;
-        private string eplanName;
-        private int s88Level;
-        private string basicName;
-        private TechObject owner;
-        private string bindingName;
-
-        private List<BaseOperation> objectOperations;
-        private List<BaseParameter> equipment;
         private List<BaseParameter> aggregateProperties;
-        private MainAggregateParameter aggregateMainParameter;
         private List<AttachedObjects> objectGroups;
-        private SystemParams systemParams;
-        private Params parameters;
     }
 }
