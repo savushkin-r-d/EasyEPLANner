@@ -31,10 +31,11 @@ namespace TechObject
         /// </summary>
         /// <param name="luaName">Lua-имя</param>
         /// <param name="name">Имя</param>
-        /// <param name="value">Значение</param>
-        public void AddEquipment(string luaName, string name, string value)
+        /// <param name="defaultValue">Значение по-умолчанию</param>
+        public void AddEquipment(string luaName, string name,
+            string defaultValue)
         {
-            var equipment = new EquipmentParameter(luaName, name, value);
+            var equipment = new EquipmentParameter(luaName, name, defaultValue);
             equipment.Owner = this;
             Equipment.Add(equipment);
         }

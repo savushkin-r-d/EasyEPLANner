@@ -1,5 +1,7 @@
 ﻿using TechObject;
 using NUnit.Framework;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Tests.TechObject
 {
@@ -9,6 +11,7 @@ namespace Tests.TechObject
         public void Constructor_CreatingNewObject_ReturnsObjectWithDefaultData()
         {
             const int zeroValue = 0;
+            
             var obj = new BaseTechObject();
 
             Assert.Multiple(() =>
@@ -32,6 +35,251 @@ namespace Tests.TechObject
                 Assert.AreEqual(zeroValue, obj.AggregateParameters.Count);
             });
         }
+
+        [TestCase(1)]
+        [TestCase(100)]
+        public void AddEquipment_EmptyEquipment_AddToList(int parametersCount)
+        {
+            var obj = GetEmpty();
+            string paramValueStr = paramValue.ToString();
+            
+            for (int i = 0; i < parametersCount; i++)
+            {
+                obj.AddEquipment(paramLuaName, paramName,
+                    paramValueStr);
+            }
+
+            Assert.AreEqual(parametersCount, obj.Equipment.Count);
+        }
+
+        [TestCase(1)]
+        [TestCase(100)]
+        public void AddActiveParameter_EmptyList_AddToList(int parametersCount)
+        {
+            var obj = GetEmpty();
+            string paramValueStr = paramValue.ToString();
+            
+            for (int i = 0; i < parametersCount; i++)
+            {
+                obj.AddActiveParameter(paramLuaName, paramName,
+                    paramValueStr);
+            }
+
+            Assert.AreEqual(parametersCount, obj.AggregateParameters.Count);
+        }
+
+        [TestCase(1)]
+        [TestCase(100)]
+        public void AddActiveBoolParameter_EmptyList_AddToList(
+            int parametersCount)
+        {
+            string defaultValue = "false";
+            var obj = GetEmpty();
+
+            for (int i = 0; i < parametersCount; i++)
+            {
+                obj.AddActiveBoolParameter(paramLuaName, paramName,
+                    defaultValue);
+            }
+
+            Assert.AreEqual(parametersCount, obj.AggregateParameters.Count);
+        }
+
+        [Test]
+        public void AddMainAggregateParameter_NullParameter_AddNewParameter()
+        {
+            var obj = GetEmpty();
+            string defaultValue = paramValue.ToString();
+            
+            obj.AddMainAggregateParameter(paramLuaName, paramName,
+                defaultValue);
+
+            var mainParam = obj.MainAggregateParameter;
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(paramLuaName, mainParam.LuaName);
+                Assert.AreEqual(paramName, mainParam.Name);
+                Assert.AreEqual(defaultValue, mainParam.Value);
+                Assert.AreEqual(defaultValue, mainParam.DefaultValue);
+            });
+        }
+
+        [TestCase(2, 1)]
+        [TestCase(101, 100)]
+        public void AddBaseOperation_EmptyList_AddBaseOperationToList(
+            int expectedOperationsCount, int operationsCount)
+        {
+            var obj = GetEmpty();
+
+            for (int i = 0; i < operationsCount; i++)
+            {
+                obj.AddBaseOperation(paramName, paramName, i + 1);
+            }
+            int baseOperationsCount = obj.BaseOperations.Count;
+
+            Assert.AreEqual(expectedOperationsCount, baseOperationsCount);
+        }
+
+        [TestCaseSource(nameof(TestCaseSourceForAddObjectGroup))]
+        public void AddObjectGroup_EmptyList_AddObjectGroupToList(
+            int groupsCount, string allowedObjects,
+            List<BaseTechObjectManager.ObjectType> expectedAllowedObjects)
+        {
+            var obj = GetEmpty();
+
+            for (int i = 0; i < groupsCount; i++)
+            {
+                obj.AddObjectGroup(paramLuaName, paramName, allowedObjects);
+            }
+
+            var group = obj.ObjectGroupsList.First();
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(groupsCount, obj.ObjectGroupsList.Count);
+                Assert.AreEqual(expectedAllowedObjects, group.WorkStrategy.AllowedObjects);
+            });
+        }
+
+        private static object[] TestCaseSourceForAddObjectGroup()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    1, 
+                    "all", 
+                    new List<BaseTechObjectManager.ObjectType>
+                    { 
+                        BaseTechObjectManager.ObjectType.Aggregate,
+                        BaseTechObjectManager.ObjectType.Unit
+                    },
+                },
+                new object[]
+                {
+                    5,
+                    "aggregates",
+                    new List<BaseTechObjectManager.ObjectType>
+                    {
+                        BaseTechObjectManager.ObjectType.Aggregate,
+                    },
+                },
+                new object[]
+                {
+                    3,
+                    "units",
+                    new List<BaseTechObjectManager.ObjectType>
+                    {
+                        BaseTechObjectManager.ObjectType.Unit
+                    },
+                },
+                new object[]
+                {
+                    2,
+                    "",
+                    new List<BaseTechObjectManager.ObjectType>
+                    {
+                        BaseTechObjectManager.ObjectType.Aggregate,
+                    },
+                },
+            };
+        }
+
+        [TestCase("Операция 1", false)]
+        [TestCase("Операция 3", false)]
+        [TestCase("Операция 5", true)]
+        [TestCase("", false)]
+        [TestCase(null, true)]
+        public void GetBaseOperationByName_ListOperations_ReturnsBaseOperationOrNull(
+            string expectedName, bool isOperationNull)
+        {
+            var obj = GetEmpty();
+            var operations = TestCaseSourceForGetBaseOperation();
+            foreach (var operation in operations)
+            {
+                obj.AddBaseOperation(operation.LuaName, operation.Name,
+                    operation.DefaultPosition);
+            }
+
+            var baseOperation = obj.GetBaseOperationByName(expectedName);
+            if (baseOperation == null)
+            {
+                Assert.IsTrue(isOperationNull);
+            }
+            else
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.IsFalse(isOperationNull);
+                    Assert.AreEqual(expectedName, baseOperation.Name);
+                });
+            }
+        }
+
+        [TestCase("OPERATION1", false)]
+        [TestCase("OPERATION3", false)]
+        [TestCase("OPERATION5", true)]
+        [TestCase("", false)]
+        [TestCase(null, true)]
+        public void GetBaseOperationByLuaName_ListOperations_ReturnsBaseOperationOrNull(
+            string expectedLuaName, bool isOperationNull)
+        {
+            var obj = GetEmpty();
+            var operations = TestCaseSourceForGetBaseOperation();
+            foreach (var operation in operations)
+            {
+                obj.AddBaseOperation(operation.LuaName, operation.Name,
+                    operation.DefaultPosition);
+            }
+
+            var baseOperation = obj.GetBaseOperationByLuaName(expectedLuaName);
+            if (baseOperation == null)
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.IsTrue(isOperationNull);
+                });
+            }
+            else
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.IsFalse(isOperationNull);
+                    Assert.AreEqual(expectedLuaName, baseOperation.LuaName);
+                });
+            }
+        }
+
+        private List<BaseOperation> TestCaseSourceForGetBaseOperation()
+        {
+            return new List<BaseOperation>
+            {
+                new BaseOperation("Операция 1", "OPERATION1", null, null),
+                new BaseOperation("Операция 2", "OPERATION2", null, null),
+                new BaseOperation("Операция 3", "OPERATION3", null, null),
+            };
+        }
+
+        public void CloneWithArgument_NormalBaseObject_ReturnsFullCopy()
+        {
+            //TODO: Write test
+        }
+
+        public void CloneNoArgument_NormalBaseObject_ReturnsFullCopyWithNullOwners()
+        {
+            //TODO: Write test
+        }
+
+        public void IsAttachable_BaseObject_ReturnsValueDependsOnBaseObject()
+        {
+            //TODO: Write test
+        }
+
+        public void UseGroups_BaseObject_ReturnsValueDependsOnObjectGroups()
+        {
+            //TODO: Write test
+        }
+
+        //Save methods?
 
         [TestCase(1)]
         [TestCase(100)]
