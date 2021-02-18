@@ -95,7 +95,7 @@ return
             equipment = { },
             aggregateParameters = { },
             bindingName = "automat",
-            parameters = { object_parameters.ParLuaName1 }
+            parameters = { --[[object_parameters.ParLuaName1--]] }
         },
         _tank = {
             name = "Бачок откачки лёдводы",
@@ -2310,6 +2310,7 @@ object_parameters =
 {
     -- Пример правильного заполнения, удалить при заполнении
     -- удалить при заполнении реальными данными.
+    -- Удалить упоминание этого параметра в объекте automat (Автомат)
     ParLuaName1 = {
         luaName = "ParLuaName1",
         name = "Название параметра",
