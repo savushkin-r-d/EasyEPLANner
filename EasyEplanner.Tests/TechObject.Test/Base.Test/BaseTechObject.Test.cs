@@ -1,13 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TechObject;
+﻿using TechObject;
 using NUnit.Framework;
 
 namespace Tests.TechObject
 {
     class BaseTechObjectTest
     {
+        [Test]
+        public void Constructor_CreatingNewObject_ReturnsObjectWithDefaultData()
+        {
+            const int zeroValue = 0;
+            var obj = new BaseTechObject();
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsFalse(obj.UseGroups);
+                Assert.AreEqual(zeroValue, obj.SystemParams.Count);
+                Assert.AreEqual(zeroValue, obj.S88Level);
+                Assert.AreEqual(zeroValue, obj.Parameters.Items.Length);
+                Assert.IsNull(obj.Owner);
+                Assert.AreEqual(zeroValue, obj.ObjectGroupsList.Count);
+                Assert.IsEmpty(obj.Name);
+                Assert.IsNull(obj.MainAggregateParameter);
+                Assert.IsFalse(obj.IsPID);
+                Assert.IsFalse(obj.IsAttachable);
+                Assert.AreEqual(zeroValue, obj.Equipment.Count);
+                Assert.IsEmpty(obj.EplanName);
+                Assert.IsEmpty(obj.BindingName);
+                Assert.IsEmpty(obj.BasicName);
+                Assert.AreEqual(zeroValue, obj.BaseOperationsList.Count);
+                Assert.AreEqual(zeroValue, obj.BaseOperations.Count);
+                Assert.AreEqual(zeroValue, obj.AggregateParameters.Count);
+            });
+        }
+
         [TestCase(1)]
         [TestCase(100)]
         public void AddSystemParameter_EmptyBaseTechObject_AddParametersToList(
