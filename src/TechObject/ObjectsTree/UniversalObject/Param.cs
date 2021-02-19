@@ -288,7 +288,10 @@ namespace TechObject
             }
             set
             {
-                oper.EditText[1] = value;
+                if (oper != null)
+                {
+                    oper.EditText[1] = value;
+                }
             }
         }
 

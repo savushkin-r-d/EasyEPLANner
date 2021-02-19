@@ -281,7 +281,7 @@ namespace EasyEplanner.Tests
         [TestCase("200", "200")]
         [TestCase("-300", "-300")]
         [TestCase("EDCBSSWE", "EDCBSSWE")]
-        [TestCase("", "Нет")] // Default value - ""
+        [TestCase("", "")] // Default value - ""
         [TestCase("0", "0")]
         [TestCase("Два один четыре", "Два один четыре")]
         [TestCase("4.5", "4.5")]
