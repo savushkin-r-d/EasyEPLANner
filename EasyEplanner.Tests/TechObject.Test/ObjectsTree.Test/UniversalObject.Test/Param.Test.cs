@@ -9,9 +9,6 @@ namespace Tests.TechObject
         // these methods delegate his work to dependencies and we have not to
         // test dependencies.
 
-        // GetParameterNumber works with delegate which we have to mock and
-        // return only delegate value, we can skip testing this property.
-
         // SetOperationN, GetOpeartionN, ClearOperationsBinding we have not to
         // test because in the methods activity delegate to dependency.
 
@@ -265,6 +262,36 @@ namespace Tests.TechObject
             }
 
             Assert.AreEqual(expectedDisplayText, param.DisplayText);
+        }
+
+        [TestCase(true, true, "")]
+        [TestCase(true, false, "")]
+        [TestCase(false, false, "")]
+        [TestCase(false, true, "")]
+        [TestCase(false, true, "/t")]
+        public void SaveAsLuaTable(bool isRuntime, bool isUseOperation,
+            string prefix)
+        {
+            var param = new Param(stubGetN, "Name", isRuntime, 10, "шт",
+                "NameLua", isUseOperation);
+
+            string res = $"{prefix}[ {param.GetParameterNumber} ] =\n";
+            res += $"{prefix}\t{{\n";
+            res += $"{prefix}\tname = \'{param.GetName()}\',\n";
+            if (!isRuntime)
+            {
+                res += $"{prefix}\tvalue = {param.GetValue()},\n";
+            }
+            res += $"{prefix}\tmeter = \'{param.GetMeter()}\',\n";
+            if (isUseOperation)
+            {
+                var operations = param.Operations.Trim().Replace(' ', ',');
+                res += $"{prefix}\toper = {{ {operations} }},\n";
+            }
+            res += $"{prefix}\tnameLua = \'{param.GetNameLua()}\'\n";
+            res += $"{prefix}\t}},\n";
+
+            Assert.AreEqual(res, param.SaveAsLuaTable(prefix));
         }
 
         private Param GetEmptyWithGetNReturns0(bool isRuntime,
