@@ -12,6 +12,9 @@ namespace Tests.TechObject
         // GetParameterNumber works with delegate which we have to mock and
         // return only delegate value, we can skip testing this property.
 
+        // SetOperationN, GetOpeartionN, ClearOperationsBinding we have not to
+        // test because in the methods activity delegate to dependency.
+
         [TestCase(true, true)]
         [TestCase(false, false)]
         public void IsUseOperation_DefaultParameter_ReturnsTrueOrFalse(
@@ -232,6 +235,37 @@ namespace Tests.TechObject
             });
         }
 
+        [TestCase(true, "Name", 20, "шт")]
+        [TestCase(true, "", 0, "")]
+        [TestCase(true, "Название", -20, "ед")]
+        [TestCase(false, "Name", 20, "шт")]
+        [TestCase(false, "", 0, "")]
+        [TestCase(false, "Название", -20, "ед")]
+        public void DisplayText_EmptyParam_ReturnsArrWithDisplayText(
+            bool isRuntimeParam, string name, double value, string meter)
+        {
+            var param = new Param(stubGetN, name, isRuntimeParam, value, meter);
+
+            string[] expectedDisplayText;
+            if (isRuntimeParam)
+            {
+                expectedDisplayText = new string[]
+                { 
+                    $"0. {name}, {param.GetMeter()}.",
+                    string.Empty
+                };
+            }
+            else
+            {
+                expectedDisplayText = new string[]
+                {
+                    $"0. {name} - {param.GetValue()} {param.GetMeter()}.",
+                    string.Empty
+                };
+            }
+
+            Assert.AreEqual(expectedDisplayText, param.DisplayText);
+        }
 
         private Param GetEmptyWithGetNReturns0(bool isRuntime,
             bool isUseOperation)
