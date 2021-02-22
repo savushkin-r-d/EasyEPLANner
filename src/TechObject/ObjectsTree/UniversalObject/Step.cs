@@ -586,13 +586,23 @@ namespace TechObject
         /// <returns>Строка с ошибками</returns>
         public string Check()
         {
-            var errors = string.Empty;         
-            errors += CheckOpenAndCloseActions();
-            errors += CheckActionGroupRightDeviceSequence();
+            var errors = string.Empty;
+
+            State state = Owner;
+            Mode mode = state.Owner;
+            ModesManager modesManager = mode.Owner;
+            TechObject techObject = modesManager.Owner;
+            string techObjName = techObject.DisplayText[0];
+            string modeName = mode.Name;
+
+            errors += CheckOpenAndCloseActions(techObjName, modeName);
+            errors += CheckActionGroupRightDeviceSequence(techObjName,
+                modeName);
             return errors;
         }
 
-        private string CheckOpenAndCloseActions()
+        private string CheckOpenAndCloseActions(string techObjName,
+            string modeName)
         {
             var errors = string.Empty;
             var devicesInAction = new List<int>();
@@ -611,25 +621,22 @@ namespace TechObject
 
             foreach (int i in FindEqual)
             {
-                State state = Owner;
-                Mode mode = state.Owner;
-                ModesManager modesManager = mode.Owner;
-                TechObject techObject = modesManager.Owner;
                 Device.IDevice device = Device.DeviceManager.GetInstance()
                     .GetDeviceByIndex(i);
                 string msg = $"Неправильно задано устройство {device.Name} " +
                     $"в действиях \"{openDevicesActionName}\" и " +
                     $"\"{closeDevicesActionName}\", в шаге " +
-                    $"\"{GetStepName()}\", операции \"{mode.Name}\"," +
+                    $"\"{GetStepName()}\", операции \"{modeName}\"," +
                     $"технологического объекта " +
-                    $"\"{techObject.DisplayText[0]}\"\n";
+                    $"\"{techObjName}\"\n";
                 errors += msg;
             }
 
             return errors;
         }
 
-        private string CheckActionGroupRightDeviceSequence()
+        private string CheckActionGroupRightDeviceSequence(string techObjName,
+            string modeName)
         {
             var errors = string.Empty;
 
@@ -648,7 +655,7 @@ namespace TechObject
                         int devIndex = action.DeviceIndex.First();
                         Device.IDevice dev = Device.DeviceManager.GetInstance()
                             .GetDeviceByIndex(devIndex);
-                        if (dev.DeviceType != Device.DeviceType.AI ||
+                        if (dev.DeviceType != Device.DeviceType.AI &&
                             dev.DeviceType != Device.DeviceType.DI)
                         {
                             hasError = true;
@@ -658,17 +665,12 @@ namespace TechObject
 
                 if (hasError)
                 {
-                    State state = Owner;
-                    Mode mode = state.Owner;
-                    ModesManager modesManager = mode.Owner;
-                    TechObject techObject = modesManager.Owner;
-
-                    errors += $"Неправильная последовательность устройств в " +
+                    errors += $"Неправильная последовательность сигналов в " +
                         $"действии \"{group.Name}\", " +
                         $"шаге \"{GetStepName()}\", " +
-                        $"операции \"{mode.Name}\", " +
+                        $"операции \"{modeName}\", " +
                         $"технологического объекта " +
-                        $"\"{techObject.Name}\"\n";
+                        $"\"{techObjName}\"\n";
 
                     hasError = false;
                 }
@@ -745,7 +747,7 @@ namespace TechObject
         private string openDevicesActionName = "Включать";
         private string closeDevicesActionName = "Выключать";
         private string groupDIDOActionName = "Группы DI -> DO DO...";
-        private string groupAIAOActionName = "Группы AI -> AO ...";
+        private string groupAIAOActionName = "Группы AI -> AO AO...";
 
         private BaseStep baseStep;
     }
