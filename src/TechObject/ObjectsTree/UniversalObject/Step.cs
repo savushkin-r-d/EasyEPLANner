@@ -31,7 +31,8 @@ namespace TechObject
             items = new List<ITreeViewItem>();
 
             actions = new List<Action>();
-            actions.Add(new Action("Включать", this, Action.OpenDevices,
+            actions.Add(new Action(openDevicesActionName, this,
+                Action.OpenDevices,
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.V, 
@@ -54,7 +55,8 @@ namespace TechObject
                     Device.DeviceSubType.M
                 }));
 
-            actions.Add(new Action("Выключать", this, Action.CloseDevices,
+            actions.Add(new Action(closeDevicesActionName, this,
+                Action.CloseDevices,
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.V, 
@@ -104,7 +106,7 @@ namespace TechObject
 
             // Специальное действие - выдача дискретных сигналов 
             // при наличии входного дискретного сигнала.
-            actions.Add(new ActionGroup("Группы DI -> DO DO ...", this,
+            actions.Add(new ActionGroup(groupDIDOActionName, this,
                 ActionGroup.DIDO,
                 new Device.DeviceType[]
                 {
@@ -115,7 +117,7 @@ namespace TechObject
 
             // Специальное действие - выдача аналоговых сигналов при
             // наличии входного  аналогового сигнала.
-            actions.Add(new ActionGroup("Группы AI -> AO AO ...", this,
+            actions.Add(new ActionGroup(groupAIAOActionName, this,
                 ActionGroup.AIAO,
                 new Device.DeviceType[]
                 {
@@ -577,6 +579,7 @@ namespace TechObject
         }
         #endregion
 
+        #region Проверка действий на ошибки
         /// <summary>
         /// Проверка действий в шаге
         /// </summary>
@@ -584,15 +587,33 @@ namespace TechObject
         public string Check()
         {
             var errors = string.Empty;
-            List<int> devicesInAction = new List<int>();
-            foreach (Action a in actions)
+
+            State state = Owner;
+            Mode mode = state.Owner;
+            ModesManager modesManager = mode.Owner;
+            TechObject techObject = modesManager.Owner;
+            string techObjName = techObject.DisplayText[0];
+            string modeName = mode.Name;
+
+            errors += CheckOpenAndCloseActions(techObjName, modeName);
+            errors += CheckActionGroupRightDeviceSequence(techObjName,
+                modeName);
+            return errors;
+        }
+
+        private string CheckOpenAndCloseActions(string techObjName,
+            string modeName)
+        {
+            var errors = string.Empty;
+            var devicesInAction = new List<int>();
+
+            var checkingActionsDevs = actions
+                .Where(x => x.Name == openDevicesActionName ||
+                x.Name == closeDevicesActionName)
+                .Select(y => y.DeviceIndex);
+            foreach(var devList in checkingActionsDevs)
             {
-                if (a.GetType().Name == "Action" &&
-                    (a.DisplayText[0].Contains("Включать") ||
-                    a.DisplayText[0].Contains("Выключать")))
-                {
-                    devicesInAction.AddRange(a.DeviceIndex);
-                }
+                devicesInAction.AddRange(devList);
             }
 
             List<int> FindEqual = devicesInAction.GroupBy(x => x)
@@ -600,21 +621,64 @@ namespace TechObject
 
             foreach (int i in FindEqual)
             {
-                State state = Owner;
-                Mode mode = state.Owner;
-                ModesManager modesManager = mode.Owner;
-                TechObject techObject = modesManager.Owner;
                 Device.IDevice device = Device.DeviceManager.GetInstance()
                     .GetDeviceByIndex(i);
-                string msg = $"Неправильно заданы устройства в шаге " +
-                    $"\"{GetStepName()}\", операции \"{mode.Name}\"," +
+                string msg = $"Неправильно задано устройство {device.Name} " +
+                    $"в действиях \"{openDevicesActionName}\" и " +
+                    $"\"{closeDevicesActionName}\", в шаге " +
+                    $"\"{GetStepName()}\", операции \"{modeName}\"," +
                     $"технологического объекта " +
-                    $"\"{techObject.DisplayText[0]}\"\n";
+                    $"\"{techObjName}\"\n";
                 errors += msg;
             }
 
             return errors;
         }
+
+        private string CheckActionGroupRightDeviceSequence(string techObjName,
+            string modeName)
+        {
+            var errors = string.Empty;
+
+            var checkingGroup = actions
+                .Where(x => x.Name == groupAIAOActionName ||
+                x.Name == groupDIDOActionName);
+            foreach(var group in checkingGroup)
+            {
+                bool hasError = false;
+                var groupItems = group.Items;
+                foreach(var groupItem in groupItems)
+                {
+                    var action = groupItem as Action;
+                    if(!action.Empty)
+                    {
+                        int devIndex = action.DeviceIndex.First();
+                        Device.IDevice dev = Device.DeviceManager.GetInstance()
+                            .GetDeviceByIndex(devIndex);
+                        if (dev.DeviceType != Device.DeviceType.AI &&
+                            dev.DeviceType != Device.DeviceType.DI)
+                        {
+                            hasError = true;
+                        }
+                    }
+                }
+
+                if (hasError)
+                {
+                    errors += $"Неправильная последовательность сигналов в " +
+                        $"действии \"{group.Name}\", " +
+                        $"шаге \"{GetStepName()}\", " +
+                        $"операции \"{modeName}\", " +
+                        $"технологического объекта " +
+                        $"\"{techObjName}\"\n";
+
+                    hasError = false;
+                }
+            }
+
+            return errors;
+        }
+        #endregion
 
         public override string GetLinkToHelpPage()
         {
@@ -679,6 +743,11 @@ namespace TechObject
 
         private string name;           ///< Имя шага.
         internal List<Action> actions; ///< Список действий шага.
+
+        private string openDevicesActionName = "Включать";
+        private string closeDevicesActionName = "Выключать";
+        private string groupDIDOActionName = "Группы DI -> DO DO...";
+        private string groupAIAOActionName = "Группы AI -> AO AO...";
 
         private BaseStep baseStep;
     }

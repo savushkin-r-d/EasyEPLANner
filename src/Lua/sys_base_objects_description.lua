@@ -1925,9 +1925,9 @@ return
                                 name = "Заданная скорость (об/мин)",
                                 displayObjects = { "parameters" },
                             },
-                            MAX_STEP_TIME =
+                            MAX_TIME =
                             {
-                                name = "Максимальное время работы мешалки",
+                                name = "Максимальное время перемешивания",
                                 displayObjects = { "parameters" },
                             },
                             SET_CNT =
