@@ -1137,6 +1137,36 @@ return
                                 name = "Максимальное время операции",
                                 displayObjects = { "parameters" },
                             },
+                            CURRENT_STEP =
+                            {
+                                name = "Текущий шаг",
+                                displayObjects = { "parameters" },
+                            },
+                            STEP1_SPEED =
+                            {
+                                name = "Скорость перемешивания для шага 1 (об/мин)",
+                                displayObjects = { "parameters" },
+                            },
+                            STEP1_DIRECTION =
+                            {
+                                name = "Направление перемешивания для 1 шага",
+                                displayObjects = { "parameters" },
+                            },
+                            STEP1_COUNT =
+                            {
+                                name = "Количество оборотов для шага 1",
+                                displayObjects = { "parameters" },
+                            },
+                            STEP1_WAIT =
+                            {
+                                name = "Время ожидания после перемешивания (мин)",
+                                displayObjects = { "parameters" },
+                            },
+                            HEAT_TEMPERATURE =
+                            {
+                                name = "Температура подогрева",
+                                displayObjects = { "parameters" },
+                            },
                         },
                     },
                 },
