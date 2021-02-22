@@ -68,7 +68,8 @@ namespace TechObject
                     Device.DeviceSubType.AO,
                     Device.DeviceSubType.AO_VIRT,
                     Device.DeviceSubType.DO,
-                    Device.DeviceSubType.DO_VIRT
+                    Device.DeviceSubType.DO_VIRT,
+                    Device.DeviceSubType.NONE
                 }));
 
             vGroups.Add(new Action("Реверсивные устройства", owner,
