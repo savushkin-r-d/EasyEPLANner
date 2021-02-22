@@ -523,7 +523,7 @@ namespace TechObject
         }
         #endregion
 
-        public string stepName
+        public string Name
         {
             get
             {

@@ -577,22 +577,34 @@ namespace TechObject
         }
         #endregion
 
+        #region проверка действий на ошибки
         /// <summary>
         /// Проверка действий в шаге
         /// </summary>
         /// <returns>Строка с ошибками</returns>
         public string Check()
         {
+            var errors = string.Empty;         
+            errors += CheckOpenAndCloseActions();
+            errors += CheckActionGroupRightDeviceSequence();
+            return errors;
+        }
+
+        private string CheckOpenAndCloseActions()
+        {
             var errors = string.Empty;
-            List<int> devicesInAction = new List<int>();
-            foreach (Action a in actions)
+            var devicesInAction = new List<int>();
+
+            string openAction = "Включать";
+            string closeAction = "Выключать";
+
+            var checkingActionsDevs = actions
+                .Where(x => x.Name == openAction ||
+                x.Name == closeAction)
+                .Select(y => y.DeviceIndex);
+            foreach(var devList in checkingActionsDevs)
             {
-                if (a.GetType().Name == "Action" &&
-                    (a.DisplayText[0].Contains("Включать") ||
-                    a.DisplayText[0].Contains("Выключать")))
-                {
-                    devicesInAction.AddRange(a.DeviceIndex);
-                }
+                devicesInAction.AddRange(devList);
             }
 
             List<int> FindEqual = devicesInAction.GroupBy(x => x)
@@ -615,6 +627,14 @@ namespace TechObject
 
             return errors;
         }
+
+        private string CheckActionGroupRightDeviceSequence()
+        {
+            var errors = string.Empty;
+
+            return errors;
+        }
+        #endregion
 
         public override string GetLinkToHelpPage()
         {
