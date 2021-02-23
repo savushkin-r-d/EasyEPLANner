@@ -596,8 +596,6 @@ namespace TechObject
             string modeName = mode.Name;
 
             errors += CheckOpenAndCloseActions(techObjName, modeName);
-            errors += CheckActionGroupRightDeviceSequence(techObjName,
-                modeName);
             return errors;
         }
 
@@ -630,50 +628,6 @@ namespace TechObject
                     $"технологического объекта " +
                     $"\"{techObjName}\"\n";
                 errors += msg;
-            }
-
-            return errors;
-        }
-
-        private string CheckActionGroupRightDeviceSequence(string techObjName,
-            string modeName)
-        {
-            var errors = string.Empty;
-
-            var checkingGroup = actions
-                .Where(x => x.Name == groupAIAOActionName ||
-                x.Name == groupDIDOActionName);
-            foreach(var group in checkingGroup)
-            {
-                bool hasError = false;
-                var groupItems = group.Items;
-                foreach(var groupItem in groupItems)
-                {
-                    var action = groupItem as Action;
-                    if(!action.Empty)
-                    {
-                        int devIndex = action.DeviceIndex.First();
-                        Device.IDevice dev = Device.DeviceManager.GetInstance()
-                            .GetDeviceByIndex(devIndex);
-                        if (dev.DeviceType != Device.DeviceType.AI &&
-                            dev.DeviceType != Device.DeviceType.DI)
-                        {
-                            hasError = true;
-                        }
-                    }
-                }
-
-                if (hasError)
-                {
-                    errors += $"Неправильная последовательность сигналов в " +
-                        $"действии \"{group.Name}\", " +
-                        $"шаге \"{GetStepName()}\", " +
-                        $"операции \"{modeName}\", " +
-                        $"технологического объекта " +
-                        $"\"{techObjName}\"\n";
-
-                    hasError = false;
-                }
             }
 
             return errors;

@@ -33,6 +33,8 @@ namespace TechObject
             this.owner = owner;
 
             DrawStyle = DrawInfo.Style.GREEN_BOX;
+
+            actionProcessorStrategy = new DefaultActionProcessorStrategy(this);
         }
 
         public virtual Action Clone()
@@ -265,67 +267,6 @@ namespace TechObject
             }
         }
 
-        /// <summary>
-        /// Функция проверки добавляемого устройства
-        /// </summary>
-        /// <param name="deviceName">Имя устройства</param>
-        /// <returns></returns>
-        private bool ValidateDevice(string deviceName)
-        {
-            bool isValidType = false;
-
-            Device.IDevice device = Device.DeviceManager.GetInstance().
-                GetDeviceByEplanName(deviceName);
-            Device.DeviceType deviceType = device.DeviceType;
-            Device.DeviceSubType deviceSubType = device.DeviceSubType;
-
-            GetDisplayObjects(out Device.DeviceType[] validTypes,
-                out Device.DeviceSubType[] validSubTypes, out _);
-
-            if (validTypes == null)
-            {
-                return true;
-            }
-            else
-            {
-                foreach (Device.DeviceType type in validTypes)
-                {
-                    if (type == deviceType)
-                    {
-                        isValidType = true;
-                        break;
-                    }
-                    else
-                    {
-                        isValidType = false;
-                    }
-                }
-
-                if (validSubTypes != null)
-                {
-                    bool isValidSubType = false;
-                    foreach (Device.DeviceSubType subType in validSubTypes)
-                    {
-                        if ((subType == deviceSubType) && isValidType)
-                        {
-                            isValidSubType = true;
-                        }
-                    }
-
-                    if (isValidSubType && isValidSubType)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return isValidType;
-        }
-
         #region Реализация ITreeViewItem
 
         override public string[] DisplayText
@@ -368,30 +309,9 @@ namespace TechObject
                 return false;
             }
 
-            Match match = Regex.Match(newName,
-                Device.DeviceManager.DESCRIPTION_PATTERN, RegexOptions.
-                IgnoreCase);
-            deviceIndex.Clear();
-            while (match.Success)
-            {
-                string str = match.Groups["name"].Value;
+            bool result = actionProcessorStrategy.ProcessDevices(newName);
 
-                // Если устройство нельзя вставлять сюда - пропускаем его.
-                bool isValid = ValidateDevice(str);
-                if (isValid != false)
-                {
-                    int tmpDeviceIndex = Device.DeviceManager.GetInstance().
-                        GetDeviceIndex(str);
-                    if (tmpDeviceIndex >= 0)
-                    {
-                        deviceIndex.Add(tmpDeviceIndex);
-                    }
-                }
-
-                match = match.NextMatch();
-            }
-
-            return true;
+            return result;
         }
 
         override public bool IsEditable
@@ -567,5 +487,110 @@ namespace TechObject
         protected private const string Devices = "devices";
         protected private const string ReverseDevices = "rev_devices";
 
+        IActionProcessorStrategy actionProcessorStrategy;
+    }
+
+    interface IActionProcessorStrategy
+    {
+        bool ProcessDevices(string devicesStr);
+    }
+
+    public class DefaultActionProcessorStrategy : IActionProcessorStrategy
+    {
+        public DefaultActionProcessorStrategy(Action action)
+        {
+            this.action = action;
+        }
+
+        public bool ProcessDevices(string devicesStr)
+        {
+            Match match = Regex.Match(devicesStr,
+                Device.DeviceManager.DESCRIPTION_PATTERN, RegexOptions.
+                IgnoreCase);
+            action.DeviceIndex.Clear();
+            while (match.Success)
+            {
+                string str = match.Groups["name"].Value;
+
+                // Если устройство нельзя вставлять сюда - пропускаем его.
+                bool isValid = ValidateDevice(str);
+                if (isValid != false)
+                {
+                    int tmpDeviceIndex = Device.DeviceManager.GetInstance().
+                        GetDeviceIndex(str);
+                    if (tmpDeviceIndex >= 0)
+                    {
+                        action.DeviceIndex.Add(tmpDeviceIndex);
+                    }
+                }
+
+                match = match.NextMatch();
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Функция проверки добавляемого устройства
+        /// </summary>
+        /// <param name="deviceName">Имя устройства</param>
+        /// <returns></returns>
+        private bool ValidateDevice(string deviceName)
+        {
+            bool isValidType = false;
+
+            Device.IDevice device = Device.DeviceManager.GetInstance().
+                GetDeviceByEplanName(deviceName);
+            Device.DeviceType deviceType = device.DeviceType;
+            Device.DeviceSubType deviceSubType = device.DeviceSubType;
+
+            action.GetDisplayObjects(out Device.DeviceType[] validTypes,
+                out Device.DeviceSubType[] validSubTypes, out _);
+
+            if (validTypes == null)
+            {
+                return true;
+            }
+            else
+            {
+                foreach (Device.DeviceType type in validTypes)
+                {
+                    if (type == deviceType)
+                    {
+                        isValidType = true;
+                        break;
+                    }
+                    else
+                    {
+                        isValidType = false;
+                    }
+                }
+
+                if (validSubTypes != null)
+                {
+                    bool isValidSubType = false;
+                    foreach (Device.DeviceSubType subType in validSubTypes)
+                    {
+                        if ((subType == deviceSubType) && isValidType)
+                        {
+                            isValidSubType = true;
+                        }
+                    }
+
+                    if (isValidSubType && isValidSubType)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return isValidType;
+        }
+
+        protected Action action;
     }
 }
