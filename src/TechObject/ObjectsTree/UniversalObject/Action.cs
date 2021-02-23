@@ -309,9 +309,11 @@ namespace TechObject
                 return false;
             }
 
-            bool result = actionProcessorStrategy.ProcessDevices(newName);
+            DeviceIndex.Clear();
+            IList<int> allowedDevices = actionProcessorStrategy.ProcessDevices(newName);
+            deviceIndex.AddRange(allowedDevices);
 
-            return result;
+            return true;
         }
 
         override public bool IsEditable
@@ -492,7 +494,7 @@ namespace TechObject
 
     interface IActionProcessorStrategy
     {
-        bool ProcessDevices(string devicesStr);
+        IList<int> ProcessDevices(string devicesStr);
     }
 
     public class DefaultActionProcessorStrategy : IActionProcessorStrategy
@@ -502,32 +504,31 @@ namespace TechObject
             this.action = action;
         }
 
-        public bool ProcessDevices(string devicesStr)
+        public virtual IList<int> ProcessDevices(string devicesStr)
         {
             Match match = Regex.Match(devicesStr,
                 Device.DeviceManager.DESCRIPTION_PATTERN, RegexOptions.
                 IgnoreCase);
-            action.DeviceIndex.Clear();
+
+            var validDevices = new List<int>();
             while (match.Success)
             {
                 string str = match.Groups["name"].Value;
-
-                // Если устройство нельзя вставлять сюда - пропускаем его.
                 bool isValid = ValidateDevice(str);
-                if (isValid != false)
+                if (isValid)
                 {
                     int tmpDeviceIndex = Device.DeviceManager.GetInstance().
                         GetDeviceIndex(str);
                     if (tmpDeviceIndex >= 0)
                     {
-                        action.DeviceIndex.Add(tmpDeviceIndex);
+                        validDevices.Add(tmpDeviceIndex);
                     }
                 }
 
                 match = match.NextMatch();
             }
 
-            return true;
+            return validDevices;
         }
 
         /// <summary>
