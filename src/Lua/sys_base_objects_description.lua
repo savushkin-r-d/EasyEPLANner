@@ -1170,6 +1170,16 @@ return
                         },
                     },
                 },
+                WHEY_PUMPDOWN =
+                {
+                    name = "Откачка сыворотки",
+                    steps =
+                    {
+                        UPPER_STEP = { name = "Откачка из верхней части" },
+                        MIDDLE_STEP = { name = "Откачка из средней части" },
+                        LOWER_STEP = { name = "Откачка из нижней части" },
+                    },
+                },
             },
             basicName = "tank",
             equipment =
