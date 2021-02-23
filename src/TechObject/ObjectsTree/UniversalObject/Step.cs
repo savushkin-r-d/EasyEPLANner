@@ -746,8 +746,8 @@ namespace TechObject
 
         private string openDevicesActionName = "Включать";
         private string closeDevicesActionName = "Выключать";
-        private string groupDIDOActionName = "Группы DI -> DO DO...";
-        private string groupAIAOActionName = "Группы AI -> AO AO...";
+        private string groupDIDOActionName = "Группы DI -> DO DO ...";
+        private string groupAIAOActionName = "Группы AI -> AO AO ...";
 
         private BaseStep baseStep;
     }
