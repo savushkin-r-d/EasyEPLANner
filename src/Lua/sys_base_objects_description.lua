@@ -1170,6 +1170,37 @@ return
                         },
                     },
                 },
+                WHEY_PUMPDOWN =
+                {
+                    name = "Откачка сыворотки",
+                    params =
+                    {
+                        active =
+                        {
+                            UPPER_BUTTON =
+                            {
+                                name = "Кнопка откачки из верхней части",
+                                displayObjects = { "parameters" },
+                            },
+                            MIDDLE_BUTTON =
+                            {
+                                name = "Кнопка откачки из средней части",
+                                displayObjects = { "parameters" },
+                            },
+                            LOWER_BUTTON =
+                            {
+                                name = "Кнопка откачки из нижней части",
+                                displayObjects = { "parameters" },
+                            },
+                        },
+                    },
+                    steps =
+                    {
+                        UPPER_STEP = { name = "Откачка из верхней части" },
+                        MIDDLE_STEP = { name = "Откачка из средней части" },
+                        LOWER_STEP = { name = "Откачка из нижней части" },
+                    },
+                }
             },
             basicName = "tank",
             equipment =
