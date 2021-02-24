@@ -368,6 +368,12 @@ namespace TechObject
                 int index = steps.IndexOf(step);
                 steps.Remove(step);
                 steps.Insert(index, newStep);
+                bool isModeStep = index == 0;
+                if (isModeStep)
+                {
+                    modeStep = newStep;
+                }
+
                 newStep.Owner = this;
                
                 index = steps.IndexOf(newStep);
