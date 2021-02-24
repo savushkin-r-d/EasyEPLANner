@@ -80,7 +80,7 @@ namespace TechObject
                 {
                     firstSubAction.GetDisplayObjects(
                         out devTypes, out devSubTypes, out _);
-                    strategy = firstSubAction.DeviceProcessingStrategy;
+                    strategy = firstSubAction.GetActionProcessingStrategy();
                 }                   
 
                 var newAction = new Action(GroupDefaultName, owner,
@@ -222,7 +222,7 @@ namespace TechObject
             {
                 firstSubAction.GetDisplayObjects(
                     out devTypes, out devSubTypes, out _);
-                strategy = firstSubAction.DeviceProcessingStrategy;
+                strategy = firstSubAction.GetActionProcessingStrategy();
             }
 
             var newAction = new Action(GroupDefaultName, owner, string.Empty,

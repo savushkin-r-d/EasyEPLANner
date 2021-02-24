@@ -39,21 +39,13 @@ namespace TechObject
 
             DrawStyle = DrawInfo.Style.GREEN_BOX;
 
-            if (actionProcessorStrategy != null)
-            {
-                DeviceProcessingStrategy = actionProcessorStrategy;
-            }
-            else
-            {
-                DeviceProcessingStrategy =
-                    new DefaultActionProcessorStrategy();
-            }
-            DeviceProcessingStrategy.Action = this;
+            SetActionProcessingStrategy(actionProcessorStrategy);
         }
 
         public virtual Action Clone()
         {
             Action clone = (Action)MemberwiseClone();
+            clone.SetActionProcessingStrategy(actionProcessorStrategy);
 
             clone.deviceIndex = new List<int>();
             foreach (int index in deviceIndex)
@@ -323,9 +315,9 @@ namespace TechObject
                 return false;
             }
 
-            DeviceIndex.Clear();
             IList<int> allowedDevicesId =
-                DeviceProcessingStrategy.ProcessDevices(newName);
+                actionProcessorStrategy.ProcessDevices(newName);
+            DeviceIndex.Clear();
             deviceIndex.AddRange(allowedDevicesId);
 
             return true;
@@ -483,7 +475,23 @@ namespace TechObject
             }
         }
 
-        public IActionProcessorStrategy DeviceProcessingStrategy { get; set; }
+        public void SetActionProcessingStrategy(
+            IActionProcessorStrategy strategy)
+        {
+            if (strategy == null)
+            {
+                actionProcessorStrategy = new DefaultActionProcessorStrategy();
+            }
+            else
+            {
+                actionProcessorStrategy = strategy;
+            }
+
+            actionProcessorStrategy.Action = this;
+        }
+
+        public IActionProcessorStrategy GetActionProcessingStrategy()
+            => actionProcessorStrategy;
 
 
         protected string luaName; // Имя действия в таблице Lua.
@@ -506,6 +514,8 @@ namespace TechObject
         protected private const string DI = "DI";
         protected private const string Devices = "devices";
         protected private const string ReverseDevices = "rev_devices";
+
+        IActionProcessorStrategy actionProcessorStrategy;
     }
 
     namespace ActionProcessingStrategy
@@ -630,6 +640,22 @@ namespace TechObject
                     var dev = Device.DeviceManager.GetInstance()
                         .GetDeviceByIndex(devId);
                     idDevDict.Add(devId, dev);
+                }
+
+                var newInputDevs = idDevDict
+                    .Where(x => x.Value.DeviceType == Device.DeviceType.AI ||
+                    x.Value.DeviceType == Device.DeviceType.DI)
+                    .ToList();
+                if (newInputDevs.Count > 1)
+                {
+                    foreach (var newInputDevPair in newInputDevs)
+                    {
+                        var newInputDevId = newInputDevPair.Key;
+                        if (Action.DeviceIndex.Contains(newInputDevId))
+                        {
+                            idDevDict.Remove(newInputDevId);
+                        }
+                    }
                 }
 
                 var devList = idDevDict
