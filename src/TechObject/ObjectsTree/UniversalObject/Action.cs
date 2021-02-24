@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using EasyEPlanner;
 using Editor;
+using TechObject.ActionProcessingStrategy;
 
 namespace TechObject
 {
@@ -21,9 +23,12 @@ namespace TechObject
         /// <param name="devSubTypes">Подтипы устройств, допустимые 
         /// для редактирования.</param>
         /// <param name="owner">Владелец действия (Шаг)</param>
+        /// <param name="actionProcessorStrategy">Стратегия обработки
+        /// устройств в действии</param>
         public Action(string name, Step owner, string luaName = "",
             Device.DeviceType[] devTypes = null,
-            Device.DeviceSubType[] devSubTypes = null)
+            Device.DeviceSubType[] devSubTypes = null,
+            IActionProcessorStrategy actionProcessorStrategy = null)
         {
             this.name = name;
             this.luaName = luaName;
@@ -34,7 +39,16 @@ namespace TechObject
 
             DrawStyle = DrawInfo.Style.GREEN_BOX;
 
-            actionProcessorStrategy = new DefaultActionProcessorStrategy(this);
+            if (actionProcessorStrategy != null)
+            {
+                DeviceProcessingStrategy = actionProcessorStrategy;
+            }
+            else
+            {
+                DeviceProcessingStrategy =
+                    new DefaultActionProcessorStrategy();
+            }
+            DeviceProcessingStrategy.Action = this;
         }
 
         public virtual Action Clone()
@@ -310,8 +324,9 @@ namespace TechObject
             }
 
             DeviceIndex.Clear();
-            IList<int> allowedDevices = actionProcessorStrategy.ProcessDevices(newName);
-            deviceIndex.AddRange(allowedDevices);
+            IList<int> allowedDevicesId =
+                DeviceProcessingStrategy.ProcessDevices(newName);
+            deviceIndex.AddRange(allowedDevicesId);
 
             return true;
         }
@@ -468,6 +483,9 @@ namespace TechObject
             }
         }
 
+        public IActionProcessorStrategy DeviceProcessingStrategy { get; set; }
+
+
         protected string luaName; // Имя действия в таблице Lua.
         protected string name; // Имя действия.
         protected List<int> deviceIndex; // Список устройств.
@@ -488,110 +506,139 @@ namespace TechObject
         protected private const string DI = "DI";
         protected private const string Devices = "devices";
         protected private const string ReverseDevices = "rev_devices";
-
-        IActionProcessorStrategy actionProcessorStrategy;
     }
 
-    interface IActionProcessorStrategy
+    namespace ActionProcessingStrategy
     {
-        IList<int> ProcessDevices(string devicesStr);
-    }
-
-    public class DefaultActionProcessorStrategy : IActionProcessorStrategy
-    {
-        public DefaultActionProcessorStrategy(Action action)
+        public interface IActionProcessorStrategy
         {
-            this.action = action;
+            IList<int> ProcessDevices(string devicesStr);
+
+            Action Action { get; set; }
         }
 
-        public virtual IList<int> ProcessDevices(string devicesStr)
+        class DefaultActionProcessorStrategy : IActionProcessorStrategy
         {
-            Match match = Regex.Match(devicesStr,
-                Device.DeviceManager.DESCRIPTION_PATTERN, RegexOptions.
-                IgnoreCase);
+            public DefaultActionProcessorStrategy() { }
 
-            var validDevices = new List<int>();
-            while (match.Success)
+            public virtual IList<int> ProcessDevices(
+                string devicesStr)
             {
-                string str = match.Groups["name"].Value;
-                bool isValid = ValidateDevice(str);
-                if (isValid)
+                Match match = Regex.Match(devicesStr,
+                    Device.DeviceManager.DESCRIPTION_PATTERN, RegexOptions.
+                    IgnoreCase);
+
+                var validDevices = new List<int>();
+                while (match.Success)
                 {
-                    int tmpDeviceIndex = Device.DeviceManager.GetInstance().
-                        GetDeviceIndex(str);
-                    if (tmpDeviceIndex >= 0)
+                    string str = match.Groups["name"].Value;
+                    bool isValid = ValidateDevice(str);
+                    if (isValid)
                     {
-                        validDevices.Add(tmpDeviceIndex);
-                    }
-                }
-
-                match = match.NextMatch();
-            }
-
-            return validDevices;
-        }
-
-        /// <summary>
-        /// Функция проверки добавляемого устройства
-        /// </summary>
-        /// <param name="deviceName">Имя устройства</param>
-        /// <returns></returns>
-        private bool ValidateDevice(string deviceName)
-        {
-            bool isValidType = false;
-
-            Device.IDevice device = Device.DeviceManager.GetInstance().
-                GetDeviceByEplanName(deviceName);
-            Device.DeviceType deviceType = device.DeviceType;
-            Device.DeviceSubType deviceSubType = device.DeviceSubType;
-
-            action.GetDisplayObjects(out Device.DeviceType[] validTypes,
-                out Device.DeviceSubType[] validSubTypes, out _);
-
-            if (validTypes == null)
-            {
-                return true;
-            }
-            else
-            {
-                foreach (Device.DeviceType type in validTypes)
-                {
-                    if (type == deviceType)
-                    {
-                        isValidType = true;
-                        break;
-                    }
-                    else
-                    {
-                        isValidType = false;
-                    }
-                }
-
-                if (validSubTypes != null)
-                {
-                    bool isValidSubType = false;
-                    foreach (Device.DeviceSubType subType in validSubTypes)
-                    {
-                        if ((subType == deviceSubType) && isValidType)
+                        int tmpDeviceIndex = Device.DeviceManager.GetInstance().
+                            GetDeviceIndex(str);
+                        if (tmpDeviceIndex >= 0 &&
+                            !validDevices.Contains(tmpDeviceIndex))
                         {
-                            isValidSubType = true;
+                            validDevices.Add(tmpDeviceIndex);
                         }
                     }
 
-                    if (isValidSubType && isValidSubType)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    match = match.NextMatch();
                 }
+
+                return validDevices;
             }
 
-            return isValidType;
+            /// <summary>
+            /// Функция проверки добавляемого устройства
+            /// </summary>
+            /// <param name="deviceName">Имя устройства</param>
+            /// <returns></returns>
+            private bool ValidateDevice(string deviceName)
+            {
+                bool isValidType = false;
+
+                Device.IDevice device = Device.DeviceManager.GetInstance().
+                    GetDeviceByEplanName(deviceName);
+                Device.DeviceType deviceType = device.DeviceType;
+                Device.DeviceSubType deviceSubType = device.DeviceSubType;
+
+                Action.GetDisplayObjects(out Device.DeviceType[] validTypes,
+                    out Device.DeviceSubType[] validSubTypes, out _);
+
+                if (validTypes == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    foreach (Device.DeviceType type in validTypes)
+                    {
+                        if (type == deviceType)
+                        {
+                            isValidType = true;
+                            break;
+                        }
+                        else
+                        {
+                            isValidType = false;
+                        }
+                    }
+
+                    if (validSubTypes != null)
+                    {
+                        bool isValidSubType = false;
+                        foreach (Device.DeviceSubType subType in validSubTypes)
+                        {
+                            if ((subType == deviceSubType) && isValidType)
+                            {
+                                isValidSubType = true;
+                            }
+                        }
+
+                        if (isValidSubType && isValidSubType)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                return isValidType;
+            }
+
+            public Action Action { get; set; }
         }
 
-        protected Action action;
+        class OneInManyOutActionProcessingStrategy :
+            DefaultActionProcessorStrategy
+        {
+            public OneInManyOutActionProcessingStrategy() : base() { }
+
+            public override IList<int> ProcessDevices(string devicesStr)
+            {
+                IList<int> validatedDevicesId =
+                    base.ProcessDevices(devicesStr);
+
+                var idDevDict = new Dictionary<int, Device.IDevice>();
+                foreach(var devId in validatedDevicesId)
+                {
+                    var dev = Device.DeviceManager.GetInstance()
+                        .GetDeviceByIndex(devId);
+                    idDevDict.Add(devId, dev);
+                }
+
+                var devList = idDevDict
+                    .ToList()
+                    .OrderBy(x => x.Value.DeviceType.ToString())
+                    .Select(x => x.Key)
+                    .ToList();
+                return devList;
+            }
+        }
     }
 }

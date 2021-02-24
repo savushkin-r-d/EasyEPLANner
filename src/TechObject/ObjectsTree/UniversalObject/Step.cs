@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Editor;
+using TechObject.ActionProcessingStrategy;
 
 namespace TechObject
 {
@@ -113,7 +114,9 @@ namespace TechObject
                     Device.DeviceType.DI,
                     Device.DeviceType.SB,
                     Device.DeviceType.DO
-                }));
+                },
+                null,
+                new OneInManyOutActionProcessingStrategy()));
 
             // Специальное действие - выдача аналоговых сигналов при
             // наличии входного  аналогового сигнала.
@@ -124,7 +127,9 @@ namespace TechObject
                     Device.DeviceType.AI,
                     Device.DeviceType.AO,
                     Device.DeviceType.M
-                }));
+                },
+                null,
+                new OneInManyOutActionProcessingStrategy()));
 
             items.AddRange(actions.ToArray());
 
