@@ -601,6 +601,7 @@ namespace TechObject
             string modeName = mode.Name;
 
             errors += CheckOpenAndCloseActions(techObjName, modeName);
+            errors += CheckInOutGroupActions(techObjName, modeName);
             return errors;
         }
 
@@ -633,6 +634,67 @@ namespace TechObject
                     $"технологического объекта " +
                     $"\"{techObjName}\"\n";
                 errors += msg;
+            }
+
+            return errors;
+        }
+
+        private string CheckInOutGroupActions(string techObjName,
+            string modeName)
+        {
+            var errors = string.Empty;
+
+            var checkingActionsGroups = actions
+                .Where(x => x.Name == groupAIAOActionName ||
+                x.Name == groupDIDOActionName);
+
+            foreach(var group in checkingActionsGroups)
+            {
+                bool hasError = false;
+                var groupActions = group.Items;
+                foreach(Action groupAction in groupActions)
+                {
+                    if(groupAction.Empty)
+                    {
+                        continue;
+                    }
+
+                    int devsCount = groupAction.DeviceIndex.Count;
+                    if (devsCount == 1)
+                    {
+                        hasError = true;
+                    }
+
+                    var devices = new List<Device.IDevice>();
+                    foreach(var devId in groupAction.DeviceIndex)
+                    {
+                        devices.Add(Device.DeviceManager.GetInstance()
+                            .GetDeviceByIndex(devId));
+                    }
+
+                    bool hasInput = devices
+                        .Any(x => x.DeviceType == Device.DeviceType.DI ||
+                        x.DeviceType == Device.DeviceType.AI);
+                    bool hasOutput = devices
+                        .Any(x => x.DeviceType == Device.DeviceType.DO ||
+                        x.DeviceType == Device.DeviceType.AO);
+                    if (!hasInput || !hasOutput)
+                    {
+                        hasError = true;
+                    }
+                }
+
+                if (hasError)
+                {
+                    errors += $"Неправильно заполнены сигналы в " +
+                        $"действии \"{group.Name}\", " +
+                        $"шаге \"{GetStepName()}\", " +
+                        $"операции \"{modeName}\", " +
+                        $"технологического объекта " +
+                        $"\"{techObjName}\"\n";
+
+                    hasError = false;
+                }
             }
 
             return errors;
