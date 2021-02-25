@@ -178,11 +178,12 @@ namespace TechObject
             int devicesCounter = 0;
             foreach (int index in deviceIndex)
             {
-                if (deviceManager.GetDeviceByIndex(index).Name !=
-                    StaticHelper.CommonConst.Cap)
+                var device = deviceManager.GetDeviceByIndex(index);
+                string devName = device.Name;
+                if (devName != StaticHelper.CommonConst.Cap)
                 {
                     devicesCounter++;
-                    res += $"'{deviceManager.GetDeviceByIndex(index).Name}', ";
+                    res += $"'{devName}', ";
                 }
             }
 
