@@ -34,17 +34,20 @@ namespace TechObject
             this.luaName = luaName;
             this.devTypes = devTypes;
             this.devSubTypes = devSubTypes;
-            this.deviceIndex = new List<int>();
+            deviceIndex = new List<int>();
             this.owner = owner;
 
             DrawStyle = DrawInfo.Style.GREEN_BOX;
 
             SetActionProcessingStrategy(actionProcessorStrategy);
+
+            // TODO: Dependency injection
+            deviceManager = Device.DeviceManager.GetInstance();
         }
 
         public virtual Action Clone()
         {
-            Action clone = (Action)MemberwiseClone();
+            var clone = (Action)MemberwiseClone();
             clone.SetActionProcessingStrategy(actionProcessorStrategy);
 
             clone.deviceIndex = new List<int>();
@@ -65,8 +68,6 @@ namespace TechObject
                 tmpIndex.Add(index);
             }
 
-            Device.IDeviceManager deviceManager = Device.DeviceManager
-                .GetInstance();
             foreach (int index in deviceIndex)
             {
                 var newDevName = string.Empty;
@@ -101,8 +102,7 @@ namespace TechObject
                 {
                     int indexOfDeletingElement = tmpIndex.IndexOf(index);
                     tmpIndex.Remove(index);
-                    int tmpDevInd = Device.DeviceManager.GetInstance()
-                        .GetDeviceIndex(newDevName);
+                    int tmpDevInd = deviceManager.GetDeviceIndex(newDevName);
                     if (tmpDevInd >= 0)
                     {
                         tmpIndex.Insert(indexOfDeletingElement, tmpDevInd);
@@ -123,11 +123,9 @@ namespace TechObject
                 tmpIndex.Add(index);
             }
 
-            Device.IDeviceManager deviceManager = Device.DeviceManager
-                .GetInstance();
             foreach (int index in deviceIndex)
             {
-                string newDevName = string.Empty;
+                var newDevName = string.Empty;
                 Device.IDevice device = deviceManager.GetDeviceByIndex(index);
                 int objNum = newTechObjectNumber;
                 string objName = device.ObjectName;
@@ -143,8 +141,7 @@ namespace TechObject
                 {
                     int indexOfDeletingElement = tmpIndex.IndexOf(index);
                     tmpIndex.Remove(index);
-                    int tmpDevInd = Device.DeviceManager.GetInstance()
-                        .GetDeviceIndex(newDevName);
+                    int tmpDevInd = deviceManager.GetDeviceIndex(newDevName);
                     if (tmpDevInd >= 0)
                     {
                         tmpIndex.Insert(indexOfDeletingElement, tmpDevInd);
@@ -164,20 +161,18 @@ namespace TechObject
         {
             if (deviceIndex.Count == 0)
             {
-                return "";
+                return string.Empty;
             }
 
             string res = prefix;
-            if (LuaName != "")
+            if (LuaName != string.Empty)
             {
-                res += LuaName + " = ";
+                res += $"{LuaName} = ";
             }
 
-            res += "--" + name + "\n" + prefix + "\t{\n";
+            res += $"--{name}\n{prefix}\t{{\n";
+            res += $"{prefix}\t";
 
-            res += prefix + "\t";
-            Device.DeviceManager deviceManager = Device.DeviceManager.
-                GetInstance();
             int devicesCounter = 0;
             foreach (int index in deviceIndex)
             {
@@ -185,20 +180,19 @@ namespace TechObject
                     StaticHelper.CommonConst.Cap)
                 {
                     devicesCounter++;
-                    res += "'" + deviceManager.GetDeviceByIndex(index).Name +
-                        "', ";
+                    res += $"'{deviceManager.GetDeviceByIndex(index).Name}', ";
                 }
             }
 
             if (devicesCounter == 0)
             {
-                return "";
+                return string.Empty;
             }
 
             res = res.Remove(res.Length - 2, 2);
             res += "\n";
 
-            res += prefix + "\t},\n";
+            res += $"{prefix}\t}},\n";
             return res;
         }
 
@@ -212,8 +206,7 @@ namespace TechObject
         public virtual void AddDev(int index, int groupNumber = 0,
             int washGroupIndex = 0)
         {
-            var device = Device.DeviceManager.GetInstance()
-                .GetDeviceByIndex(index);
+            var device = deviceManager.GetDeviceByIndex(index);
             if (device.Description != StaticHelper.CommonConst.Cap)
             {
                 deviceIndex.Add(index);
@@ -279,16 +272,14 @@ namespace TechObject
         {
             get
             {
-                Device.DeviceManager deviceManager = Device.DeviceManager
-                    .GetInstance();
-                string res = "";
+                var res = string.Empty;
 
                 foreach (int index in deviceIndex)
                 {
-                    res += deviceManager.GetDeviceByIndex(index).Name +
-                        " ";
+                    res += $"{deviceManager.GetDeviceByIndex(index).Name} ";
                 }
-                if (res != "")
+
+                if (res != string.Empty)
                 {
                     res = res.Remove(res.Length - 1);
                 }
@@ -301,7 +292,7 @@ namespace TechObject
         {
             newName = newName.Trim();
 
-            if (newName == "")
+            if (newName == string.Empty)
             {
                 Clear();
                 return true;
@@ -316,7 +307,7 @@ namespace TechObject
             }
 
             IList<int> allowedDevicesId =
-                actionProcessorStrategy.ProcessDevices(newName);
+                actionProcessorStrategy.ProcessDevices(newName, deviceManager);
             DeviceIndex.Clear();
             deviceIndex.AddRange(allowedDevicesId);
 
@@ -344,20 +335,18 @@ namespace TechObject
         {
             get
             {
-                Device.IDeviceManager deviceManager = Device.DeviceManager
-                    .GetInstance();
-                string res = "";
+                string res = string.Empty;
                 foreach (int index in deviceIndex)
                 {
-                    res += deviceManager.GetDeviceByIndex(index).Name + " ";
+                    res += $"{deviceManager.GetDeviceByIndex(index).Name} ";
                 }
 
-                if (res != "")
+                if (res != string.Empty)
                 {
                     res = res.Remove(res.Length - 1);
                 }
 
-                return new string[] { "", res };
+                return new string[] { string.Empty, res };
             }
         }
 
@@ -397,9 +386,6 @@ namespace TechObject
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
         {
-            Device.IDeviceManager deviceManager = Device.DeviceManager
-                .GetInstance();
-
             var devToDraw = new List<DrawInfo>();
             foreach (int index in deviceIndex)
             {
@@ -408,11 +394,6 @@ namespace TechObject
             }
 
             return devToDraw;
-        }
-
-        public virtual Device.DeviceSubType[] GetDevSubTypes()
-        {
-            return devSubTypes;
         }
 
         public override bool IsFilled
@@ -516,13 +497,15 @@ namespace TechObject
         protected private const string ReverseDevices = "rev_devices";
 
         IActionProcessorStrategy actionProcessorStrategy;
+        Device.IDeviceManager deviceManager;
     }
 
     namespace ActionProcessingStrategy
     {
         public interface IActionProcessorStrategy
         {
-            IList<int> ProcessDevices(string devicesStr);
+            IList<int> ProcessDevices(string devicesStr,
+                Device.IDeviceManager deviceManager);
 
             Action Action { get; set; }
         }
@@ -532,7 +515,7 @@ namespace TechObject
             public DefaultActionProcessorStrategy() { }
 
             public virtual IList<int> ProcessDevices(
-                string devicesStr)
+                string devicesStr, Device.IDeviceManager deviceManager)
             {
                 Match match = Regex.Match(devicesStr,
                     Device.DeviceManager.DESCRIPTION_PATTERN, RegexOptions.
@@ -542,11 +525,12 @@ namespace TechObject
                 while (match.Success)
                 {
                     string str = match.Groups["name"].Value;
-                    bool isValid = ValidateDevice(str);
+                    Device.IDevice device = deviceManager
+                        .GetDeviceByEplanName(str);
+                    bool isValid = ValidateDevice(device);
                     if (isValid)
                     {
-                        int tmpDeviceIndex = Device.DeviceManager.GetInstance().
-                            GetDeviceIndex(str);
+                        int tmpDeviceIndex = deviceManager.GetDeviceIndex(str);
                         if (tmpDeviceIndex >= 0 &&
                             !validDevices.Contains(tmpDeviceIndex))
                         {
@@ -563,14 +547,11 @@ namespace TechObject
             /// <summary>
             /// Функция проверки добавляемого устройства
             /// </summary>
-            /// <param name="deviceName">Имя устройства</param>
+            /// <param name="device">Устройство</param>
             /// <returns></returns>
-            private bool ValidateDevice(string deviceName)
+            private bool ValidateDevice(Device.IDevice device)
             {
                 bool isValidType = false;
-
-                Device.IDevice device = Device.DeviceManager.GetInstance().
-                    GetDeviceByEplanName(deviceName);
                 Device.DeviceType deviceType = device.DeviceType;
                 Device.DeviceSubType deviceSubType = device.DeviceSubType;
 
@@ -629,16 +610,16 @@ namespace TechObject
         {
             public OneInManyOutActionProcessingStrategy() : base() { }
 
-            public override IList<int> ProcessDevices(string devicesStr)
+            public override IList<int> ProcessDevices(string devicesStr,
+                Device.IDeviceManager deviceManager)
             {
                 IList<int> validatedDevicesId =
-                    base.ProcessDevices(devicesStr);
+                    base.ProcessDevices(devicesStr, deviceManager);
 
                 var idDevDict = new Dictionary<int, Device.IDevice>();
                 foreach(var devId in validatedDevicesId)
                 {
-                    var dev = Device.DeviceManager.GetInstance()
-                        .GetDeviceByIndex(devId);
+                    var dev = deviceManager.GetDeviceByIndex(devId);
                     idDevDict.Add(devId, dev);
                 }
 
