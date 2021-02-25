@@ -41,8 +41,8 @@ namespace TechObject
 
             DrawStyle = DrawInfo.Style.GREEN_BOX;
 
-            this.deviceManager = deviceManager == null ? Device.DeviceManager
-                .GetInstance() : deviceManager;
+            this.deviceManager = deviceManager ?? Device.DeviceManager
+                .GetInstance();
 
             SetActionProcessingStrategy(actionProcessorStrategy);
         }
