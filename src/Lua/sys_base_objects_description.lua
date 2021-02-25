@@ -1167,6 +1167,11 @@ return
                                 name = "Температура подогрева",
                                 displayObjects = { "parameters" },
                             },
+                            MAX_STEP =
+                            {
+                                name = "Максимальный шаг",
+                                displayObjects = { "parameters" },
+                            },
                         },
                     },
                 },
