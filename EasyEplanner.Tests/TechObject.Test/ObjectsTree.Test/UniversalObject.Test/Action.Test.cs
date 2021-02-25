@@ -161,7 +161,7 @@ namespace Tests.TechObject
 
             //Devices mocks:
             //DeviceType
-            //DeviceSubTypes
+            //DeviceSubType
             //Description
             //Name
             //DeviceNumber
@@ -169,6 +169,23 @@ namespace Tests.TechObject
 
             //Action mock:
             //GetDisplayObjects
+
+            /* Devices for mocking:
+             * TANK1V1 Type: V, SubType: V_IOLINK_MIXPROOF
+             * TANK1V2 Type: V, SubType: V_IOLINK_MIXPROOF
+             * KOAG1V1 Type: V, SubType: V_IOLINK_MIXPROOF
+             * KOAG2V1 Type: V, SubType: V_IOLINK_MIXPROOF
+             * 
+             * TANK2V1 Type: V, SubType: V_IOLINK_MIXPROOF
+             * TANK2V2 Type: V, SubType: V_IOLINK_MIXPROOF
+             * KOAG2V1 Type: V, SubType: V_IOLINK_MIXPROOF
+             * KOAG2V2 Type: V, SubType: V_IOLINK_MIXPROOF
+             * 
+             * TANK1VC1 Type: VC, SubType: NONE
+             * 
+             * TANK1LS1 Type: LS, SubType: LS_IOLINK_MIN
+             * TANK1LS2 Type: LS, SubType: LS_IOLINK_MAX
+             */
         }
 
         public static Device.IDeviceManager DeviceManager
