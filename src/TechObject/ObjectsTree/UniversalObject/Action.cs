@@ -25,10 +25,12 @@ namespace TechObject
         /// <param name="owner">Владелец действия (Шаг)</param>
         /// <param name="actionProcessorStrategy">Стратегия обработки
         /// устройств в действии</param>
+        /// <param name="deviceManager">Менеджер устройств</param>
         public Action(string name, Step owner, string luaName = "",
             Device.DeviceType[] devTypes = null,
             Device.DeviceSubType[] devSubTypes = null,
-            IActionProcessorStrategy actionProcessorStrategy = null)
+            IActionProcessorStrategy actionProcessorStrategy = null,
+            Device.IDeviceManager deviceManager = null)
         {
             this.name = name;
             this.luaName = luaName;
@@ -39,10 +41,10 @@ namespace TechObject
 
             DrawStyle = DrawInfo.Style.GREEN_BOX;
 
-            SetActionProcessingStrategy(actionProcessorStrategy);
+            this.deviceManager = deviceManager == null ? Device.DeviceManager
+                .GetInstance() : deviceManager;
 
-            // TODO: Dependency injection
-            deviceManager = Device.DeviceManager.GetInstance();
+            SetActionProcessingStrategy(actionProcessorStrategy);
         }
 
         public virtual Action Clone()
