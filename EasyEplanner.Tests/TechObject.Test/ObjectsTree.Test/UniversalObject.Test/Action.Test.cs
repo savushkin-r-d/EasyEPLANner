@@ -551,6 +551,7 @@ namespace Tests.TechObject
 
         [TestCase(new int[] { 1, 2, 3, 4 }, new int[] { 5, 6, 3, 4 }, 2, 1, "TANK")]
         [TestCase(new int[] { 5, 4, 6, 3 }, new int[] { 1, 4, 2, 3 }, 2, 1, "TANK")]
+        [TestCase(new int[] { 1, 2, 3, 4, 8 }, new int[] { 5, 6, 3, 4, 7 }, 2, -1, "TANK")]
         public void ModifyDevNames(int[] devIds, int[] expectedDevIds,
             int newTechObjectN, int oldTechObjectN, string techObjectName)
         {
@@ -618,12 +619,31 @@ namespace Tests.TechObject
             dev6Mock.SetupGet(x => x.DeviceNumber).Returns(2);
             Device.IDevice dev6 = dev6Mock.Object;
 
+            //TANK2V3
+            var dev7Mock = new Mock<Device.IDevice>();
+            dev7Mock.SetupGet(x => x.ObjectName).Returns("TANK");
+            dev7Mock.SetupGet(x => x.ObjectNumber).Returns(2);
+            dev7Mock.SetupGet(x => x.DeviceType).Returns(Device.DeviceType.V);
+            dev7Mock.SetupGet(x => x.DeviceNumber).Returns(3);
+            Device.IDevice dev7 = dev7Mock.Object;
+
+
+            //TANK3V3
+            var dev8Mock = new Mock<Device.IDevice>();
+            dev8Mock.SetupGet(x => x.ObjectName).Returns("TANK");
+            dev8Mock.SetupGet(x => x.ObjectNumber).Returns(3);
+            dev8Mock.SetupGet(x => x.DeviceType).Returns(Device.DeviceType.V);
+            dev8Mock.SetupGet(x => x.DeviceNumber).Returns(3);
+            Device.IDevice dev8 = dev7Mock.Object;
+
             devManagerMock.Setup(x => x.GetDeviceByIndex(1)).Returns(dev1);
             devManagerMock.Setup(x => x.GetDeviceByIndex(2)).Returns(dev2);
             devManagerMock.Setup(x => x.GetDeviceByIndex(3)).Returns(dev3);
             devManagerMock.Setup(x => x.GetDeviceByIndex(4)).Returns(dev4);
             devManagerMock.Setup(x => x.GetDeviceByIndex(5)).Returns(dev5);
             devManagerMock.Setup(x => x.GetDeviceByIndex(6)).Returns(dev6);
+            devManagerMock.Setup(x => x.GetDeviceByIndex(7)).Returns(dev7);
+            devManagerMock.Setup(x => x.GetDeviceByIndex(8)).Returns(dev8);
 
             devManagerMock.Setup(x => x.GetDeviceIndex(It.IsAny<string>()))
                 .Returns(-1);
@@ -633,6 +653,8 @@ namespace Tests.TechObject
             devManagerMock.Setup(x => x.GetDeviceIndex("KOAG1M2")).Returns(4);
             devManagerMock.Setup(x => x.GetDeviceIndex("TANK2V1")).Returns(5);
             devManagerMock.Setup(x => x.GetDeviceIndex("TANK2V2")).Returns(6);
+            devManagerMock.Setup(x => x.GetDeviceIndex("TANK2V3")).Returns(7);
+            devManagerMock.Setup(x => x.GetDeviceIndex("TANK3V3")).Returns(8);
 
             return devManagerMock.Object;
         }
