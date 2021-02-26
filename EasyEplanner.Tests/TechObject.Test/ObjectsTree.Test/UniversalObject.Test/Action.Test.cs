@@ -420,6 +420,112 @@ namespace Tests.TechObject
                 Assert.AreEqual(expectedDevsCount, action.DeviceIndex.Count);
             });
         }
+
+        [TestCase(new int[0], 0)]
+        [TestCase(new int[] { 1, 2, 3, 4, 5, 6, 7, 8}, 4)]
+        [Description("If devId mod 2 == 0 -> Valid device, else - invalid (skip)")]
+        public void AddDev_NewAction_AddOrSkipDev(int[] devIds,
+            int expectedDevCount)
+        {
+            var validDevMock = new Mock<Device.IDevice>();
+            validDevMock.SetupGet(x => x.Description).Returns("Name");
+            var invalidDevMock = new Mock<Device.IDevice>();
+            invalidDevMock.SetupGet(x => x.Description)
+                .Returns(StaticHelper.CommonConst.Cap);
+            var deviceManagerMock = new Mock<Device.IDeviceManager>();
+            deviceManagerMock
+                .Setup(x => x.GetDeviceByIndex(It.Is<int>(x => x % 2 == 0)))
+                .Returns(validDevMock.Object);
+            deviceManagerMock
+                .Setup(x => x.GetDeviceByIndex(It.Is<int>(x => x % 2 != 0)))
+                .Returns(invalidDevMock.Object);
+            var action = new Action(string.Empty, null, string.Empty, null,
+                null, null, deviceManagerMock.Object);
+
+            foreach(var devId in devIds)
+            {
+                // Another arguments were skipped because they are useless.
+                action.AddDev(devId);
+            }
+
+            Assert.AreEqual(expectedDevCount, action.DeviceIndex.Count);
+        }
+
+        [Description("If devId mod 2 == 0 -> Valid device," +
+            "else - device name returns cap")]
+        [TestCaseSource(nameof(SaveAsLuaTableTestCaseSource))]
+        public void SaveAsLuaTable_NewAction_ReturnsCodeTextToSave(
+            string actionName, string devNameInMock, string prefix,
+            int[] devIds, string luaName, string expectedCode)
+        {
+            var validDevMock = new Mock<Device.IDevice>();
+            validDevMock.SetupGet(x => x.Name).Returns(devNameInMock);
+            var invalidDevMock = new Mock<Device.IDevice>();
+            invalidDevMock.SetupGet(x => x.Name)
+                .Returns(StaticHelper.CommonConst.Cap);
+            var deviceManagerMock = new Mock<Device.IDeviceManager>();
+            deviceManagerMock
+                .Setup(x => x.GetDeviceByIndex(It.Is<int>(x => x % 2 == 0)))
+                .Returns(validDevMock.Object);
+            deviceManagerMock
+                .Setup(x => x.GetDeviceByIndex(It.Is<int>(x => x % 2 != 0)))
+                .Returns(invalidDevMock.Object);
+            var action = new Action(actionName, null, luaName, null, null,
+                null, deviceManagerMock.Object);
+            action.DeviceIndex.AddRange(devIds);
+
+            var actualCode = action.SaveAsLuaTable(prefix);
+
+            Assert.AreEqual(expectedCode, actualCode);
+        }
+
+        private static object[] SaveAsLuaTableTestCaseSource()
+        {
+            string prefix = "\t";
+            string devName = "Name";
+            string name = "Имя действия";
+            string luaName = "ActionLuaName";
+
+            var emptyCodeBecauseNoDevs = new object[]
+            {
+                name, devName, prefix, new int[0], string.Empty, string.Empty,
+            };
+
+            var emptyCodeBecauseInvalidDevs = new object[]
+            {
+                name, devName, prefix, new int[] { 1, 3, 5 }, string.Empty,
+                string.Empty
+            };
+
+            var okCodeNoLua = new object[]
+            {
+                name, devName, prefix, new int[] { 2, 4, 6 }, string.Empty,
+                $"{prefix}--{name}\n{prefix}\t{{\n" +
+                $"{prefix}\t" +
+                $"'{devName}', " + $"'{devName}', " + $"'{devName}'" +
+                "\n" +
+                $"{prefix}\t}},\n"
+            };
+
+            var okCodeWithSkippedDevs = new object[]
+            {
+                name, devName, prefix, new int[] { 1, 2, 3, 4, 5, 6 }, luaName,
+                $"{prefix}{luaName} = " +
+                $"--{name}\n{prefix}\t{{\n" +
+                $"{prefix}\t" +
+                $"'{devName}', " + $"'{devName}', " + $"'{devName}'" +
+                "\n" +
+                $"{prefix}\t}},\n"
+            };
+
+            return new object[]
+            {
+                emptyCodeBecauseNoDevs,
+                emptyCodeBecauseInvalidDevs,
+                okCodeNoLua,
+                okCodeWithSkippedDevs
+            };
+        }
     }
 
     class DefaultActionProcessingStrategyTest
