@@ -3,6 +3,7 @@ using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using TechObject;
+using TechObject.ActionProcessingStrategy;
 
 namespace Tests.TechObject
 {
@@ -130,6 +131,213 @@ namespace Tests.TechObject
 
             Assert.AreEqual(expectedDevsCount, action.DeviceIndex.Count);
         }
+
+        [Test]
+        public void SetActionStrategy_NewActionMockStrategy_SetNewStrategy()
+        {
+            var action = new Action(string.Empty, null);
+            var strategyMock = new Mock<IActionProcessorStrategy>();
+            strategyMock.SetupProperty(x => x.Action);
+
+            action.SetActionProcessingStrategy(strategyMock.Object);
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(strategyMock.Object.GetHashCode(),
+                    action.GetActionProcessingStrategy().GetHashCode());
+                Assert.AreEqual(action, strategyMock.Object.Action);
+            });
+        }
+
+        [Test]
+        public void SetActionStrategy_NewActionNullStrategy_SetDefaultStrategy()
+        {
+            var action = new Action(string.Empty, null);
+
+            action.SetActionProcessingStrategy(null);
+
+            IActionProcessorStrategy strategy = action
+                .GetActionProcessingStrategy();
+            Assert.Multiple(() =>
+            {
+                Assert.IsNotNull(strategy);
+                Assert.IsTrue(strategy is DefaultActionProcessorStrategy);
+            });
+        }
+
+        [TestCaseSource(nameof(EmptyPropertyTestCaseSource))]
+        public void Empty_NewActionWithOrNoDevs_ReturnsTrueOrFalse(
+            List<int> devicesIds, bool expectedResult)
+        {
+            var action = new Action(string.Empty, null);
+
+            foreach (var devId in devicesIds)
+            {
+                action.DeviceIndex.Add(devId);
+            }
+
+            Assert.AreEqual(action.Empty, expectedResult);
+        }
+
+        private static object[] EmptyPropertyTestCaseSource()
+        {
+            return new object[]
+            {
+                new object[] { new List<int> { 1, 2, 3 }, false },
+                new object[] { new List<int> { }, true },
+            };
+        }
+
+        [TestCaseSource(nameof(IsFilledPropertyTestCaseSource))]
+        public void IsFilled_NewACtionWithOrNoDevs_ReturnsTrueOrFalse(
+            List<int> devicesIds, bool expectedResult)
+        {
+            var action = new Action(string.Empty, null);
+
+            foreach (var devId in devicesIds)
+            {
+                action.DeviceIndex.Add(devId);
+            }
+
+            Assert.AreEqual(action.IsFilled, expectedResult);
+        }
+
+        private static object[] IsFilledPropertyTestCaseSource()
+        {
+            return new object[]
+            {
+                new object[] { new List<int> { 1, 2, 3 }, true },
+                new object[] { new List<int> { }, false },
+            };
+        }
+
+        [TestCaseSource(nameof(GetObjectToDrawOnEplanPageTestCaseSource))]
+        public void GetObjectToDrawOnEplanPage_NewAction_ReturnsDrawInfoList(
+            int expectedCount, DrawInfo.Style drawStyle, List<int> devIds)
+        {
+            var deviceManagerMock = new Mock<Device.IDeviceManager>();
+            deviceManagerMock.Setup(x => x.GetDeviceByIndex(It.IsAny<int>()))
+                .Returns(new Mock<Device.IDevice>().Object);
+            var action = new Action(string.Empty, null, string.Empty, null,
+                null, null, deviceManagerMock.Object);
+            action.DrawStyle = drawStyle;
+            action.DeviceIndex.AddRange(devIds);
+
+            List<DrawInfo> drawObjs = action.GetObjectToDrawOnEplanPage();
+
+            Assert.Multiple(() =>
+            {
+                foreach (var drawObj in drawObjs)
+                {
+                    Assert.AreEqual(action.DrawStyle, drawObj.DrawingStyle);
+                }
+
+                Assert.AreEqual(expectedCount, drawObjs.Count);
+            });
+        }
+
+        private static object[] GetObjectToDrawOnEplanPageTestCaseSource()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    0,
+                    DrawInfo.Style.GREEN_BOX,
+                    new List<int>()
+                },
+                new object[]
+                {
+                    5,
+                    DrawInfo.Style.GREEN_LOWER_BOX,
+                    new List<int>() { 8, 6, 4, 2, 7 }
+                },
+                new object[]
+                {
+                    3,
+                    DrawInfo.Style.GREEN_RED_BOX,
+                    new List<int>() { 3, 6, 9 }
+                },
+                new object[]
+                {
+                    2,
+                    DrawInfo.Style.GREEN_UPPER_BOX,
+                    new List<int>() { 8, 3 }
+                },
+                new object[]
+                {
+                    4,
+                    DrawInfo.Style.NO_DRAW,
+                    new List<int>() { 4, 66, 33, 22 }
+                },
+                new object[]
+                {
+                    0,
+                    DrawInfo.Style.RED_BOX,
+                    new List<int>()
+                },
+            };
+        }
+
+        [TestCaseSource(nameof(GetDisplayObjectsTestCaseSource))]
+        public void GetDisplayObjects_NewAction_ReturnsExpectedValues(
+            Device.DeviceType[] expectedTypes,
+            Device.DeviceSubType[] expectedDeviceSubTypes)
+        {
+            var action = new Action(string.Empty, null, string.Empty,
+                expectedTypes, expectedDeviceSubTypes);
+
+            action.GetDisplayObjects(out Device.DeviceType[] actualDevTypes,
+                out Device.DeviceSubType[] actualDevSubTypes,
+                out bool displayParameters);
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedTypes, actualDevTypes);
+                Assert.AreEqual(expectedDeviceSubTypes, actualDevSubTypes);
+                Assert.IsFalse(displayParameters);
+            });
+        }
+
+        private static object[] GetDisplayObjectsTestCaseSource()
+        {
+            return new object[]
+            {
+                new object[] { null, null },
+                new object[]
+                {
+                    new Device.DeviceType[]
+                    {
+                        Device.DeviceType.DI,
+                        Device.DeviceType.DO
+                    },
+                    new Device.DeviceSubType[]
+                    {
+                        Device.DeviceSubType.DI,
+                        Device.DeviceSubType.DI_VIRT,
+                        Device.DeviceSubType.DO,
+                        Device.DeviceSubType.DO_VIRT,
+                    }
+                },
+                new object[]
+                {
+                    new Device.DeviceType[]
+                    {
+                        Device.DeviceType.V,
+                        Device.DeviceType.VC
+                    },
+                    null
+                },
+                new object[]
+                {
+                    null,
+                    new Device.DeviceSubType[]
+                    {
+                        Device.DeviceSubType.NONE
+                    }
+                },
+            };
+        } 
     }
 
     class DefaultActionProcessingStrategyTest

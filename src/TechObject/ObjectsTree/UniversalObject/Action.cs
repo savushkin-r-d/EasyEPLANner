@@ -513,7 +513,7 @@ namespace TechObject
             Action Action { get; set; }
         }
 
-        class DefaultActionProcessorStrategy : IActionProcessorStrategy
+        public class DefaultActionProcessorStrategy : IActionProcessorStrategy
         {
             public DefaultActionProcessorStrategy() { }
 
@@ -608,7 +608,7 @@ namespace TechObject
             public Action Action { get; set; }
         }
 
-        class OneInManyOutActionProcessingStrategy :
+        public class OneInManyOutActionProcessingStrategy :
             DefaultActionProcessorStrategy
         {
             public OneInManyOutActionProcessingStrategy() : base() { }
