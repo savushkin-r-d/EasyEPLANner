@@ -346,8 +346,8 @@ namespace Tests.TechObject
         {
             const string devName = "Name";
             var deviceMock = new Mock<Device.IDevice>();
-                deviceMock.SetupGet(x => x.Name)
-                .Returns(devName);
+            deviceMock.SetupGet(x => x.Name)
+            .Returns(devName);
             var deviceManagerMock = new Mock<Device.IDeviceManager>();
             deviceManagerMock.Setup(x => x.GetDeviceByIndex(It.IsAny<int>()))
                 .Returns(deviceMock.Object);
@@ -355,7 +355,7 @@ namespace Tests.TechObject
                 null, null, deviceManagerMock.Object);
             action.DeviceIndex.AddRange(devIds);
             var preExpectedText = new string[devIds.Length];
-            for(int i = 0; i < preExpectedText.Length; i++)
+            for (int i = 0; i < preExpectedText.Length; i++)
             {
                 preExpectedText[i] = devName;
             }
@@ -398,7 +398,7 @@ namespace Tests.TechObject
             Assert.AreEqual(expectedDisplayText, actualDisplayText);
         }
 
-        [TestCase("TANK1V1 TANK2V2 TT4W ЫЫЫЫ", 2, true )]
+        [TestCase("TANK1V1 TANK2V2 TT4W ЫЫЫЫ", 2, true)]
         [TestCase("", 0, true)]
         [TestCase("##$$$ %% ABW АБВГДЕ ТАНК1", 0, false)]
         public void SetNewvalue_NewAction_ReturnsExpectedValues(
@@ -422,7 +422,7 @@ namespace Tests.TechObject
         }
 
         [TestCase(new int[0], 0)]
-        [TestCase(new int[] { 1, 2, 3, 4, 5, 6, 7, 8}, 4)]
+        [TestCase(new int[] { 1, 2, 3, 4, 5, 6, 7, 8 }, 4)]
         [Description("If devId mod 2 == 0 -> Valid device, else - invalid (skip)")]
         public void AddDev_NewAction_AddOrSkipDev(int[] devIds,
             int expectedDevCount)
@@ -442,7 +442,7 @@ namespace Tests.TechObject
             var action = new Action(string.Empty, null, string.Empty, null,
                 null, null, deviceManagerMock.Object);
 
-            foreach(var devId in devIds)
+            foreach (var devId in devIds)
             {
                 // Another arguments were skipped because they are useless.
                 action.AddDev(devId);
@@ -525,6 +525,154 @@ namespace Tests.TechObject
                 okCodeNoLua,
                 okCodeWithSkippedDevs
             };
+        }
+
+        [TestCase(new int[] { 1, 2, 4, 5, 6 },
+            new int[] { 3, 4, 5, 6 }, "KOAG", "1", "TANK", "1")]
+        [TestCase(new int[] { 1, 2, 3, 4 },
+            new int[] { 5, 6, 3, 4 }, "TANK", "2", "TANK", "1")]
+        [TestCase(new int[] { 1, 2, 3, 4 },
+            new int[] { 1, 2, 5 }, "TANK", "2", "KOAG", "1")]
+        public void ModifyDevNames(int[] devIds, int[] expectedDevIds,
+            string newTechObjectName, int newTechObjectNumber,
+            string oldTechObjectName, int oldTechObjNumber)
+        {
+            Device.IDeviceManager deviceManager =
+                GetDeviceManagerTestModifyDevNames();
+            var action = new Action(string.Empty, null, string.Empty, null,
+                null, null, deviceManager);
+            action.DeviceIndex.AddRange(devIds);
+
+            action.ModifyDevNames(newTechObjectName, newTechObjectNumber,
+                oldTechObjectName, oldTechObjNumber);
+
+            Assert.AreEqual(expectedDevIds, action.DeviceIndex);
+        }
+
+        [TestCase(new int[] { 1, 2, 3, 4 }, new int[] { 5, 6, 3, 4 }, 2, 1, "TANK")]
+        [TestCase(new int[] { 5, 4, 6, 3 }, new int[] { 1, 4, 2, 3 }, 2, 1, "TANK")]
+        public void ModifyDevNames(int[] devIds, int[] expectedDevIds,
+            int newTechObjectN, int oldTechObjectN, string techObjectName)
+        {
+            Device.IDeviceManager deviceManager =
+                GetDeviceManagerTestModifyDevNames();
+            var action = new Action(string.Empty, null, string.Empty, null,
+                null, null, deviceManager);
+            action.DeviceIndex.AddRange(devIds);
+
+            action.ModifyDevNames(newTechObjectN, oldTechObjectN,
+                techObjectName);
+
+            Assert.AreEqual(expectedDevIds, action.DeviceIndex);
+        }
+
+        private Device.IDeviceManager GetDeviceManagerTestModifyDevNames()
+        {
+            var devManagerMock = new Mock<Device.IDeviceManager>();
+
+            //TANK1V1
+            var dev1Mock = new Mock<Device.IDevice>();
+            dev1Mock.SetupGet(x => x.ObjectName).Returns("TANK");
+            dev1Mock.SetupGet(x => x.ObjectNumber).Returns(1);
+            dev1Mock.SetupGet(x => x.DeviceType).Returns(Device.DeviceType.V);
+            dev1Mock.SetupGet(x => x.DeviceNumber).Returns(1);
+            Device.IDevice dev1 = dev1Mock.Object;
+
+            //TANK1V2
+            var dev2Mock = new Mock<Device.IDevice>();
+            dev2Mock.SetupGet(x => x.ObjectName).Returns("TANK");
+            dev2Mock.SetupGet(x => x.ObjectNumber).Returns(1);
+            dev2Mock.SetupGet(x => x.DeviceType).Returns(Device.DeviceType.V);
+            dev2Mock.SetupGet(x => x.DeviceNumber).Returns(2);
+            Device.IDevice dev2 = dev2Mock.Object;
+
+            //KOAG1V1
+            var dev3Mock = new Mock<Device.IDevice>();
+            dev3Mock.SetupGet(x => x.ObjectName).Returns("KOAG");
+            dev3Mock.SetupGet(x => x.ObjectNumber).Returns(1);
+            dev3Mock.SetupGet(x => x.DeviceType).Returns(Device.DeviceType.V);
+            dev3Mock.SetupGet(x => x.DeviceNumber).Returns(1);
+            Device.IDevice dev3 = dev3Mock.Object;
+
+            //KOAG1M2
+            var dev4Mock = new Mock<Device.IDevice>();
+            dev4Mock.SetupGet(x => x.ObjectName).Returns("KOAG");
+            dev4Mock.SetupGet(x => x.ObjectNumber).Returns(1);
+            dev4Mock.SetupGet(x => x.DeviceType).Returns(Device.DeviceType.M);
+            dev4Mock.SetupGet(x => x.DeviceNumber).Returns(2);
+            Device.IDevice dev4 = dev4Mock.Object;
+
+            //TANK2V1
+            var dev5Mock = new Mock<Device.IDevice>();
+            dev5Mock.SetupGet(x => x.ObjectName).Returns("TANK");
+            dev5Mock.SetupGet(x => x.ObjectNumber).Returns(2);
+            dev5Mock.SetupGet(x => x.DeviceType).Returns(Device.DeviceType.V);
+            dev5Mock.SetupGet(x => x.DeviceNumber).Returns(1);
+            Device.IDevice dev5 = dev5Mock.Object;
+
+            //TANK2V2
+            var dev6Mock = new Mock<Device.IDevice>();
+            dev6Mock.SetupGet(x => x.ObjectName).Returns("TANK");
+            dev6Mock.SetupGet(x => x.ObjectNumber).Returns(2);
+            dev6Mock.SetupGet(x => x.DeviceType).Returns(Device.DeviceType.V);
+            dev6Mock.SetupGet(x => x.DeviceNumber).Returns(2);
+            Device.IDevice dev6 = dev6Mock.Object;
+
+            devManagerMock.Setup(x => x.GetDeviceByIndex(1)).Returns(dev1);
+            devManagerMock.Setup(x => x.GetDeviceByIndex(2)).Returns(dev2);
+            devManagerMock.Setup(x => x.GetDeviceByIndex(3)).Returns(dev3);
+            devManagerMock.Setup(x => x.GetDeviceByIndex(4)).Returns(dev4);
+            devManagerMock.Setup(x => x.GetDeviceByIndex(5)).Returns(dev5);
+            devManagerMock.Setup(x => x.GetDeviceByIndex(6)).Returns(dev6);
+
+            devManagerMock.Setup(x => x.GetDeviceIndex(It.IsAny<string>()))
+                .Returns(-1);
+            devManagerMock.Setup(x => x.GetDeviceIndex("TANK1V1")).Returns(1);
+            devManagerMock.Setup(x => x.GetDeviceIndex("TANK1V2")).Returns(2);
+            devManagerMock.Setup(x => x.GetDeviceIndex("KOAG1V1")).Returns(3);
+            devManagerMock.Setup(x => x.GetDeviceIndex("KOAG1M2")).Returns(4);
+            devManagerMock.Setup(x => x.GetDeviceIndex("TANK2V1")).Returns(5);
+            devManagerMock.Setup(x => x.GetDeviceIndex("TANK2V2")).Returns(6);
+
+            return devManagerMock.Object;
+        }
+
+        [TestCase(new int[] { 1, 3, 5, 7, 9 })]
+        [TestCase(new int[0])]
+        public void Clone_NewAction_ReturnsCopy(int[] devIds)
+        {
+            var action = new Action(string.Empty, null);
+            action.DeviceIndex.AddRange(devIds);
+
+            var cloned = action.Clone();
+
+            int actionStrategyHashCode = action.GetActionProcessingStrategy()
+                .GetHashCode();
+            int clonedStrategyHashCode = cloned.GetActionProcessingStrategy()
+                .GetHashCode();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreNotEqual(action.GetHashCode(), cloned.GetHashCode());
+                Assert.AreEqual(action.DeviceIndex.Count,
+                    cloned.DeviceIndex.Count);
+                Assert.AreEqual(actionStrategyHashCode,
+                    clonedStrategyHashCode);
+                for (int i = 0; i < action.DeviceIndex.Count; i++)
+                {
+                    Assert.AreEqual(action.DeviceIndex[i],
+                        cloned.DeviceIndex[i]);
+                }
+            });
+
+        }
+
+        [Test]
+        public void Constructor_NewAction_CheckDefaultDrawStyle()
+        {
+            var action = new Action(string.Empty, null);
+
+            Assert.AreEqual(DrawInfo.Style.GREEN_BOX, action.DrawStyle);
         }
     }
 
