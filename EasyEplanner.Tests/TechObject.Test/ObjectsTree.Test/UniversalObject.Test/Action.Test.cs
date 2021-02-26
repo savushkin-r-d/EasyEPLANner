@@ -2,6 +2,7 @@
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 using TechObject;
 using TechObject.ActionProcessingStrategy;
 
@@ -337,7 +338,88 @@ namespace Tests.TechObject
                     }
                 },
             };
-        } 
+        }
+
+        [TestCase(new int[] { 2, 5, 3 })]
+        [TestCase(new int[0])]
+        public void EditText_NewAction_ReturnsCorrectEditTextArr(int[] devIds)
+        {
+            const string devName = "Name";
+            var deviceMock = new Mock<Device.IDevice>();
+                deviceMock.SetupGet(x => x.Name)
+                .Returns(devName);
+            var deviceManagerMock = new Mock<Device.IDeviceManager>();
+            deviceManagerMock.Setup(x => x.GetDeviceByIndex(It.IsAny<int>()))
+                .Returns(deviceMock.Object);
+            var action = new Action(string.Empty, null, string.Empty, null,
+                null, null, deviceManagerMock.Object);
+            action.DeviceIndex.AddRange(devIds);
+            var preExpectedText = new string[devIds.Length];
+            for(int i = 0; i < preExpectedText.Length; i++)
+            {
+                preExpectedText[i] = devName;
+            }
+            var expectedEditText = new string[]
+            {
+                string.Empty, string.Join(" ", preExpectedText)
+            };
+
+            string[] actualEditText = action.EditText;
+
+            Assert.AreEqual(expectedEditText, actualEditText);
+        }
+
+        [TestCase(new int[] { 2, 5, 3 })]
+        [TestCase(new int[0])]
+        public void DisplayText_NewAction_ReturnsCorrectEditTextArr(int[] devIds)
+        {
+            const string devName = "Name";
+            var deviceMock = new Mock<Device.IDevice>();
+            deviceMock.SetupGet(x => x.Name)
+            .Returns(devName);
+            var deviceManagerMock = new Mock<Device.IDeviceManager>();
+            deviceManagerMock.Setup(x => x.GetDeviceByIndex(It.IsAny<int>()))
+                .Returns(deviceMock.Object);
+            var action = new Action(string.Empty, null, string.Empty, null,
+                null, null, deviceManagerMock.Object);
+            action.DeviceIndex.AddRange(devIds);
+            var preExpectedText = new string[devIds.Length];
+            for (int i = 0; i < preExpectedText.Length; i++)
+            {
+                preExpectedText[i] = devName;
+            }
+            var expectedDisplayText = new string[]
+            {
+                string.Empty, string.Join(" ", preExpectedText)
+            };
+
+            string[] actualDisplayText = action.DisplayText;
+
+            Assert.AreEqual(expectedDisplayText, actualDisplayText);
+        }
+
+        [TestCase("TANK1V1 TANK2V2 TT4W ЫЫЫЫ", 2, true )]
+        [TestCase("", 0, true)]
+        [TestCase("##$$$ %% ABW АБВГДЕ ТАНК1", 0, false)]
+        public void SetNewvalue_NewAction_ReturnsExpectedValues(
+            string newDevs, int expectedDevsCount, bool expectedResult)
+        {
+            var strategyMock = new Mock<IActionProcessorStrategy>();
+            strategyMock.Setup(x => x.ProcessDevices(It.IsAny<string>(),
+                It.IsAny<Device.IDeviceManager>()))
+                .Returns(Enumerable.Range(1, expectedDevsCount).ToList());
+
+            var action = new Action(string.Empty, null, string.Empty,
+                null, null, strategyMock.Object);
+
+            bool result = action.SetNewValue(newDevs);
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedResult, result);
+                Assert.AreEqual(expectedDevsCount, action.DeviceIndex.Count);
+            });
+        }
     }
 
     class DefaultActionProcessingStrategyTest
