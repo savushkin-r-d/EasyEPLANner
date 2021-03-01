@@ -594,7 +594,6 @@ namespace Tests.TechObject
                         cloned.DeviceIndex[i]);
                 }
             });
-
         }
 
         [Test]
@@ -612,10 +611,10 @@ namespace Tests.TechObject
         public void ProcessDevices_DataFromTestCaseSource_ReturnsDevsIdsList(
             string devicesStr, Device.DeviceType[] allowedDevTypes,
             Device.DeviceSubType[] allowedDevSubTypes,
-            List<int> actionDevsDefaultIds, IList<int> expectedDevsIds)
+            IList<int> expectedDevsIds)
         {
-            Action action = ActionMock.GetAction(allowedDevTypes,
-                allowedDevSubTypes, actionDevsDefaultIds);
+            IAction action = IActionMock.GetAction(allowedDevTypes,
+                allowedDevSubTypes, new List<int>());
             var strategy = new OneInManyOutActionProcessingStrategy();
             strategy.Action = action;
             var deviceManager = DeviceManagerMock.DeviceManager;
@@ -626,9 +625,67 @@ namespace Tests.TechObject
             Assert.AreEqual(expectedDevsIds, actualDevsIds);
         }
 
-        private object[] ProcessDevicesTestCaseSource()
+        private static object[] ProcessDevicesTestCaseSource()
         {
-            return new object[0]; // TODO: cases
+            var allowValveMixproofIOLink = new object[]
+            {
+                "TANK1V2 TANK2V3 KOAG1M2 KOAG1V1 TANK2LS2 TANK3VC1",
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.V
+                },
+                new Device.DeviceSubType[]
+                {
+                    Device.DeviceSubType.V_IOLINK_MIXPROOF,
+                },
+                new List<int> { 2, 7, 3}
+            };
+
+            var allowValeMixproofIOLinkAndGetEmptyList = new object[]
+            {
+                "KOAG1M2 TANK1LS1 TANK2LS2 TANK3VC1",
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.V
+                },
+                new Device.DeviceSubType[]
+                {
+                    Device.DeviceSubType.V_IOLINK_MIXPROOF,
+                },
+                new List<int> { }
+            };
+
+            var allowVCAndLSIOLinkMin = new object[]
+            {
+                "TANK1V1 TANK3VC1 KOAG1M2 TANK2LS2 TANK1LS1",
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.VC,
+                    Device.DeviceType.LS
+                },
+                new Device.DeviceSubType[]
+                {
+                    Device.DeviceSubType.LS_IOLINK_MIN,
+                    Device.DeviceSubType.NONE
+                },
+                new List<int> { 9, 11 }
+            };
+
+            var discardVCWhenAllowedInDevType = new object[]
+            {
+                "TANK3VC1",
+                new Device.DeviceType[] { Device.DeviceType.VC },
+                new Device.DeviceSubType[] { },
+                new List<int> { }
+            };
+
+            return new object[]
+            {
+                allowValveMixproofIOLink,
+                allowValeMixproofIOLinkAndGetEmptyList,
+                allowVCAndLSIOLinkMin,
+                discardVCWhenAllowedInDevType
+            };
         }
     }
 
@@ -640,7 +697,7 @@ namespace Tests.TechObject
             Device.DeviceSubType[] allowedDevSubTypes,
             List<int> actionDevsDefaultIds, IList<int> expectedDevsIds)
         {
-            Action action = ActionMock.GetAction(allowedDevTypes,
+            IAction action = IActionMock.GetAction(allowedDevTypes,
                 allowedDevSubTypes, actionDevsDefaultIds);
             var strategy = new OneInManyOutActionProcessingStrategy();
             strategy.Action = action;
@@ -652,28 +709,27 @@ namespace Tests.TechObject
             Assert.AreEqual(expectedDevsIds, actualDevsIds);
         }
 
-        private object[] ProcessDevicesTestCaseSource()
+        private static object[] ProcessDevicesTestCaseSource()
         {
             return new object[0]; // TODO: cases
         }
     }
 
-    static class ActionMock
+    static class IActionMock
     {
-        public static Action GetAction(Device.DeviceType[] allowedDevTypes,
-            Device.DeviceSubType[] allowedDevSubTypes,
-            List<int> actionDevsDefaultIds)
+        public static IAction GetAction(Device.DeviceType[] allowedDevTypes,
+            Device.DeviceSubType[] allowedDevSubTypes, 
+            List<int> expectedDevsIds)
         {
             bool displayParameters = false;
-            var actionMock = new Mock<Action>();
+            var actionMock = new Mock<IAction>();
             actionMock.Setup(x => x.GetDisplayObjects(out allowedDevTypes,
                 out allowedDevSubTypes, out displayParameters));
-            actionMock.SetupGet(x => x.DeviceIndex)
-                .Returns(actionDevsDefaultIds);
+            actionMock.Setup(x => x.DeviceIndex).Returns(expectedDevsIds);
 
             return actionMock.Object;
         }
-     }
+    }
 
     static class DeviceManagerMock
     {

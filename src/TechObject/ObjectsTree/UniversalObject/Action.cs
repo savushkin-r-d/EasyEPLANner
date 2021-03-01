@@ -7,10 +7,19 @@ using TechObject.ActionProcessingStrategy;
 
 namespace TechObject
 {
+    public interface IAction
+    {
+        void GetDisplayObjects(out Device.DeviceType[] validTypes,
+                    out Device.DeviceSubType[] validSubTypes,
+                    out bool displayParameter);
+
+        List<int> DeviceIndex { get; set; }
+    }
+
     /// <summary>
     /// Действие над устройствами (включение, выключение и т.д.).
     /// </summary>
-    public class Action : TreeViewItem
+    public class Action : TreeViewItem, IAction
     {
         /// <summary>
         /// Создание нового действия.
@@ -510,7 +519,7 @@ namespace TechObject
             IList<int> ProcessDevices(string devicesStr,
                 Device.IDeviceManager deviceManager);
 
-            Action Action { get; set; }
+            IAction Action { get; set; }
         }
 
         public class DefaultActionProcessorStrategy : IActionProcessorStrategy
@@ -603,7 +612,7 @@ namespace TechObject
                 return isValidType;
             }
 
-            public Action Action { get; set; }
+            public IAction Action { get; set; }
         }
 
         public class OneInManyOutActionProcessingStrategy :
