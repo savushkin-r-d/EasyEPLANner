@@ -515,8 +515,6 @@ namespace TechObject
 
         public class DefaultActionProcessorStrategy : IActionProcessorStrategy
         {
-            public DefaultActionProcessorStrategy() { }
-
             public virtual IList<int> ProcessDevices(
                 string devicesStr, Device.IDeviceManager deviceManager)
             {
@@ -611,8 +609,6 @@ namespace TechObject
         public class OneInManyOutActionProcessingStrategy :
             DefaultActionProcessorStrategy
         {
-            public OneInManyOutActionProcessingStrategy() : base() { }
-
             public override IList<int> ProcessDevices(string devicesStr,
                 Device.IDeviceManager deviceManager)
             {

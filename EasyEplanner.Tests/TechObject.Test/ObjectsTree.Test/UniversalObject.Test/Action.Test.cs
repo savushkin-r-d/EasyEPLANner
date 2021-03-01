@@ -608,12 +608,30 @@ namespace Tests.TechObject
 
     class DefaultActionProcessingStrategyTest
     {
-        
+        [TestCaseSource(nameof(ProcessDevicesTestCaseSource))]
+        public void ProcessDevices_DataFromTestCaseSource_ReturnsDevsIdsList()
+        {
+            //TODO: test methods
+        }
+
+        private object[] ProcessDevicesTestCaseSource()
+        {
+            return new object[0];
+        }
     }
 
     class OneInManyOutActionProcessingStrategyTest
     {
-        
+        [TestCaseSource(nameof(ProcessDevicesTestCaseSource))]
+        public void ProcessDevices_DataFromTestCaseSource_ReturnsDevsIdsList()
+        {
+            //TODO: test methods
+        }
+
+        private object[] ProcessDevicesTestCaseSource()
+        {
+            return new object[0];
+        }
     }
 
     static class DeviceManagerMock
