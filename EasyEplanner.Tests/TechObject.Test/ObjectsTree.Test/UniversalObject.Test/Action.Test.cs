@@ -800,7 +800,7 @@ namespace Tests.TechObject
     static class IActionMock
     {
         public static IAction GetAction(Device.DeviceType[] allowedDevTypes,
-            Device.DeviceSubType[] allowedDevSubTypes, 
+            Device.DeviceSubType[] allowedDevSubTypes,
             List<int> expectedDevsIds)
         {
             bool displayParameters = false;
