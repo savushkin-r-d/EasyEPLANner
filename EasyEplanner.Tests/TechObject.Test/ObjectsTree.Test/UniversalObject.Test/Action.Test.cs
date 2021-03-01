@@ -849,9 +849,9 @@ namespace Tests.TechObject
                 Device.DeviceType.V, 3, Device.DeviceSubType.V_IOLINK_MIXPROOF);
             Device.IDevice tank1LS1Dev = MakeMockedDevice(TANK, 1,
                 Device.DeviceType.LS, 1, Device.DeviceSubType.LS_IOLINK_MIN);
-            Device.IDevice tank1LS2Dev = MakeMockedDevice(TANK, 2,
+            Device.IDevice tank2LS2Dev = MakeMockedDevice(TANK, 2,
                 Device.DeviceType.LS, 2, Device.DeviceSubType.LS_IOLINK_MAX);
-            Device.IDevice tank1VC1Dev = MakeMockedDevice(TANK, 3,
+            Device.IDevice tank3VC1Dev = MakeMockedDevice(TANK, 3,
                 Device.DeviceType.VC, 1, Device.DeviceSubType.NONE);
             Device.IDevice tank1DI1Dev = MakeMockedDevice(TANK, 1,
                 Device.DeviceType.DI, 1, Device.DeviceSubType.DI);
@@ -870,149 +870,45 @@ namespace Tests.TechObject
             Device.IDevice tank1AO2Dev = MakeMockedDevice(TANK, 1,
                 Device.DeviceType.AO, 2, Device.DeviceSubType.AO_VIRT);
 
+            var devicesDescription = new[]
+            {
+                new { Id = 1, Name = "TANK1V1", Dev = tank1V1Dev },
+                new { Id = 2, Name = "TANK1V2", Dev = tank1V2Dev },
+                new { Id = 3, Name = "KOAG1V1", Dev = koag1V1Dev },
+                new { Id = 4, Name = "KOAG1M2", Dev = koag1M2Dev },
+                new { Id = 5, Name = "TANK2V1", Dev = tank2V1Dev },
+                new { Id = 6, Name = "TANK2V2", Dev = tank2V2Dev },
+                new { Id = 7, Name = "TANK2V3", Dev = tank2V3Dev },
+                new { Id = 8, Name = "TANK3V3", Dev = tank3V3Dev },
+                new { Id = 9, Name = "TANK1LS1", Dev = tank1LS1Dev },
+                new { Id = 10, Name = "TANK2LS2", Dev = tank2LS2Dev },
+                new { Id = 11, Name = "TANK3VC1", Dev = tank3VC1Dev },
+                new { Id = 12, Name = "TANK1DI1", Dev = tank1DI1Dev },
+                new { Id = 13, Name = "TANK2DI2", Dev = tank2DI2Dev },
+                new { Id = 14, Name = "TANK1DO1", Dev = tank1DO1Dev },
+                new { Id = 15, Name = "TANK1DO2", Dev = tank1DO2Dev },
+                new { Id = 16, Name = "TANK1AI1", Dev = tank1AI1Dev },
+                new { Id = 17, Name = "TANK2AI2", Dev = tank2AI2Dev },
+                new { Id = 18, Name = "TANK1AO1", Dev = tank1AO1Dev },
+                new { Id = 19, Name = "TANK1AO2", Dev = tank1AO2Dev },
+            };
+
             devManagerMock.Setup(x => x.GetDeviceByIndex(It.IsAny<int>()))
                 .Returns(stubDev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(1))
-                .Returns(tank1V1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(2))
-                .Returns(tank1V2Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(3))
-                .Returns(koag1V1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(4))
-                .Returns(koag1M2Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(5))
-                .Returns(tank2V1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(6))
-                .Returns(tank2V2Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(7))
-                .Returns(tank2V3Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(8))
-                .Returns(tank3V3Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(9))
-                .Returns(tank1LS1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(10))
-                .Returns(tank1LS2Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(11))
-                .Returns(tank1VC1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(12))
-                .Returns(tank1DI1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(13))
-                .Returns(tank2DI2Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(14))
-                .Returns(tank1DO1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(15))
-                .Returns(tank1DO2Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(16))
-                .Returns(tank1AI1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(17))
-                .Returns(tank2AI2Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(18))
-                .Returns(tank1AO1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByIndex(19))
-                .Returns(tank1AO2Dev);
-
-            const string TANK1V1 = "TANK1V1";
-            const string TANK1V2 = "TANK1V2";
-            const string KOAG1V1 = "KOAG1V1";
-            const string KOAG1M2 = "KOAG1M2";
-            const string TANK2V1 = "TANK2V1";
-            const string TANK2V2 = "TANK2V2";
-            const string TANK2V3 = "TANK2V3";
-            const string TANK3V3 = "TANK3V3";
-            const string TANK1LS1 = "TANK1LS1";
-            const string TANK2LS2 = "TANK2LS2";
-            const string TANK3VC1 = "TANK3VC1";
-            const string TANK1DI1 = "TANK1DI1";
-            const string TANK2DI2 = "TANK2DI2";
-            const string TANK1DO1 = "TANK1DO1";
-            const string TANK1DO2 = "TANK1DO2";
-            const string TANK1AI1 = "TANK1AI1";
-            const string TANK2AI2 = "TANK2AI2";
-            const string TANK1AO1 = "TANK1AO1";
-            const string TANK1AO2 = "TANK1AO2";
-
             devManagerMock.Setup(x => x.GetDeviceIndex(It.IsAny<string>()))
                 .Returns(-1);
-            devManagerMock.Setup(x => x.GetDeviceIndex(TANK1V1))
-                .Returns(1);
-            devManagerMock.Setup(x => x.GetDeviceIndex(TANK1V2))
-                .Returns(2);
-            devManagerMock.Setup(x => x.GetDeviceIndex(KOAG1V1))
-                .Returns(3);
-            devManagerMock.Setup(x => x.GetDeviceIndex(KOAG1M2))
-                .Returns(4);
-            devManagerMock.Setup(x => x.GetDeviceIndex(TANK2V1))
-                .Returns(5);
-            devManagerMock.Setup(x => x.GetDeviceIndex(TANK2V2))
-                .Returns(6);
-            devManagerMock.Setup(x => x.GetDeviceIndex(TANK2V3))
-                .Returns(7);
-            devManagerMock.Setup(x => x.GetDeviceIndex(TANK3V3))
-                .Returns(8);
-            devManagerMock.Setup(x => x.GetDeviceIndex(TANK1LS1))
-                .Returns(9);
-            devManagerMock.Setup(x => x.GetDeviceIndex(TANK2LS2))
-                .Returns(10);
-            devManagerMock.Setup(x => x.GetDeviceIndex(TANK3VC1))
-                .Returns(11);
-            devManagerMock.Setup(x => x.GetDeviceIndex(TANK1DI1))
-                .Returns(12);
-            devManagerMock.Setup(x => x.GetDeviceIndex(TANK2DI2))
-                .Returns(13);
-            devManagerMock.Setup(x => x.GetDeviceIndex(TANK1DO1))
-                .Returns(14);
-            devManagerMock.Setup(x => x.GetDeviceIndex(TANK1DO2))
-                .Returns(15);
-            devManagerMock.Setup(x => x.GetDeviceIndex(TANK1AI1))
-                .Returns(16);
-            devManagerMock.Setup(x => x.GetDeviceIndex(TANK2AI2))
-                .Returns(17);
-            devManagerMock.Setup(x => x.GetDeviceIndex(TANK1AO1))
-                .Returns(18);
-            devManagerMock.Setup(x => x.GetDeviceIndex(TANK1AO2))
-                .Returns(19);
-
             devManagerMock
                 .Setup(x => x.GetDeviceByEplanName(It.IsAny<string>()))
                 .Returns(stubDev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(TANK1V1))
-                .Returns(tank1V1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(TANK1V2))
-                .Returns(tank1V2Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(KOAG1V1))
-                .Returns(koag1V1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(KOAG1M2))
-                .Returns(koag1M2Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(TANK2V1))
-                .Returns(tank2V1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(TANK2V2))
-                .Returns(tank2V2Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(TANK2V3))
-                .Returns(tank2V3Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(TANK3V3))
-                .Returns(tank3V3Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(TANK1LS1))
-                .Returns(tank1LS1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(TANK2LS2))
-                .Returns(tank1LS2Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(TANK3VC1))
-                .Returns(tank1VC1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(TANK1DI1))
-                .Returns(tank1DI1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(TANK2DI2))
-                .Returns(tank2DI2Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(TANK1DO1))
-                .Returns(tank1DO1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(TANK1DO2))
-                .Returns(tank1DO2Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(TANK1AI1))
-                .Returns(tank1AI1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(TANK2AI2))
-                .Returns(tank2AI2Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(TANK1AO1))
-                .Returns(tank1AO1Dev);
-            devManagerMock.Setup(x => x.GetDeviceByEplanName(TANK1AO2))
-                .Returns(tank1AO2Dev);
+            foreach (var devDescr in devicesDescription)
+            {
+                devManagerMock.Setup(x => x.GetDeviceByIndex(devDescr.Id))
+                    .Returns(devDescr.Dev);
+                devManagerMock.Setup(x => x.GetDeviceIndex(devDescr.Name))
+                    .Returns(devDescr.Id);
+                devManagerMock.Setup(x => x.GetDeviceByEplanName(devDescr.Name))
+                    .Returns(devDescr.Dev);
+            }
         }
 
         private static Device.IDevice MakeMockedDevice(string objName, int objNum,
