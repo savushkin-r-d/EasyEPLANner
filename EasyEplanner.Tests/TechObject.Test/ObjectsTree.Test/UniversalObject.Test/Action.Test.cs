@@ -609,30 +609,71 @@ namespace Tests.TechObject
     class DefaultActionProcessingStrategyTest
     {
         [TestCaseSource(nameof(ProcessDevicesTestCaseSource))]
-        public void ProcessDevices_DataFromTestCaseSource_ReturnsDevsIdsList()
+        public void ProcessDevices_DataFromTestCaseSource_ReturnsDevsIdsList(
+            string devicesStr, Device.DeviceType[] allowedDevTypes,
+            Device.DeviceSubType[] allowedDevSubTypes,
+            List<int> actionDevsDefaultIds, IList<int> expectedDevsIds)
         {
-            //TODO: test methods
+            Action action = ActionMock.GetAction(allowedDevTypes,
+                allowedDevSubTypes, actionDevsDefaultIds);
+            var strategy = new OneInManyOutActionProcessingStrategy();
+            strategy.Action = action;
+            var deviceManager = DeviceManagerMock.DeviceManager;
+
+            IList<int> actualDevsIds = strategy.ProcessDevices(devicesStr,
+                deviceManager);
+
+            Assert.AreEqual(expectedDevsIds, actualDevsIds);
         }
 
         private object[] ProcessDevicesTestCaseSource()
         {
-            return new object[0];
+            return new object[0]; // TODO: cases
         }
     }
 
     class OneInManyOutActionProcessingStrategyTest
     {
         [TestCaseSource(nameof(ProcessDevicesTestCaseSource))]
-        public void ProcessDevices_DataFromTestCaseSource_ReturnsDevsIdsList()
+        public void ProcessDevices_DataFromTestCaseSource_ReturnsDevsIdsList(
+            string devicesStr, Device.DeviceType[] allowedDevTypes,
+            Device.DeviceSubType[] allowedDevSubTypes,
+            List<int> actionDevsDefaultIds, IList<int> expectedDevsIds)
         {
-            //TODO: test methods
+            Action action = ActionMock.GetAction(allowedDevTypes,
+                allowedDevSubTypes, actionDevsDefaultIds);
+            var strategy = new OneInManyOutActionProcessingStrategy();
+            strategy.Action = action;
+            var deviceManager = DeviceManagerMock.DeviceManager;
+
+            IList<int> actualDevsIds = strategy.ProcessDevices(devicesStr,
+                deviceManager);
+
+            Assert.AreEqual(expectedDevsIds, actualDevsIds);
         }
 
         private object[] ProcessDevicesTestCaseSource()
         {
-            return new object[0];
+            return new object[0]; // TODO: cases
         }
     }
+
+    static class ActionMock
+    {
+        public static Action GetAction(Device.DeviceType[] allowedDevTypes,
+            Device.DeviceSubType[] allowedDevSubTypes,
+            List<int> actionDevsDefaultIds)
+        {
+            bool displayParameters = false;
+            var actionMock = new Mock<Action>();
+            actionMock.Setup(x => x.GetDisplayObjects(out allowedDevTypes,
+                out allowedDevSubTypes, out displayParameters));
+            actionMock.SetupGet(x => x.DeviceIndex)
+                .Returns(actionDevsDefaultIds);
+
+            return actionMock.Object;
+        }
+     }
 
     static class DeviceManagerMock
     {
