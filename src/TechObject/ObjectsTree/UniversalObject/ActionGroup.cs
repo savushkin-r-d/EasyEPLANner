@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Editor;
+using TechObject.ActionProcessingStrategy;
 
 namespace TechObject
 {
@@ -18,15 +19,17 @@ namespace TechObject
         /// <param name="owner">Владелец действия (Шаг)</param>
         /// <param name="devSubTypes">Допустимые подтипы устройств</param>
         /// <param name="devTypes">Допустимые типы устройств</param>
+        /// <param name="actionProcessorStrategy">Стратегия обработки
+        /// устройств в группе действий</param>
         public ActionGroup(string name, Step owner, string luaName,
             Device.DeviceType[] devTypes = null,
-            Device.DeviceSubType[] devSubTypes = null)
+            Device.DeviceSubType[] devSubTypes = null,
+            IActionProcessorStrategy actionProcessorStrategy = null)
             : base(name, owner, luaName)
         {
             subActions = new List<Action>();
-            var newAction = new Action(GroupDefaultName, owner, string.Empty,
-                devTypes, devSubTypes);
-            subActions.Add(newAction);
+            AddNewAction(owner, devTypes, devSubTypes,
+                actionProcessorStrategy);
         }
 
         public override Action Clone()
@@ -68,15 +71,7 @@ namespace TechObject
         {
             while (subActions.Count <= groupNumber)
             {
-                Device.DeviceType[] devTypes = null;
-                Device.DeviceSubType[] devSubTypes = null;
-                subActions.First()?
-                    .GetDisplayObjects(out devTypes, out devSubTypes, out _);
-
-                var newAction = new Action(GroupDefaultName, owner,
-                    string.Empty, devTypes, devSubTypes);
-                newAction.DrawStyle = DrawStyle;
-                subActions.Add(newAction);
+                InsertNewAction();
             }
 
             subActions[groupNumber].AddDev(index, 0);
@@ -204,16 +199,7 @@ namespace TechObject
 
         override public ITreeViewItem Insert()
         {
-            Device.DeviceType[] devTypes = null;
-            Device.DeviceSubType[] devSubTypes = null;
-            subActions.First()?
-                .GetDisplayObjects(out devTypes, out devSubTypes, out _);
-
-            var newAction = new Action(GroupDefaultName, owner, string.Empty,
-                devTypes, devSubTypes);
-            newAction.DrawStyle = DrawStyle;
-            subActions.Add(newAction);
-
+            Action newAction = InsertNewAction();
             newAction.AddParent(this);
             return newAction;
         }
@@ -275,6 +261,32 @@ namespace TechObject
             }
         }
         #endregion
+
+        private Action AddNewAction(Step owner, Device.DeviceType[] devTypes,
+            Device.DeviceSubType[] devSubTypes,
+            IActionProcessorStrategy strategy)
+        {
+            var newAction = new Action(GroupDefaultName, owner,
+                string.Empty, devTypes, devSubTypes, strategy);
+            newAction.DrawStyle = DrawStyle;
+            subActions.Add(newAction);
+
+            return newAction;
+        }
+
+        private Action InsertNewAction()
+        {
+            Action firstSubAction = subActions.First();
+            firstSubAction.GetDisplayObjects(out Device.DeviceType[] devTypes,
+                out Device.DeviceSubType[] devSubTypes, out _);
+            IActionProcessorStrategy strategy = firstSubAction
+                .GetActionProcessingStrategy();
+
+            Action newAction = AddNewAction(owner, devTypes, devSubTypes,
+                strategy);
+
+            return newAction;
+        }
 
         private List<Action> subActions;
 

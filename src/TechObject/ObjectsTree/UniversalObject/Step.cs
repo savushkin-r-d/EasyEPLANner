@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Editor;
+using TechObject.ActionProcessingStrategy;
 
 namespace TechObject
 {
@@ -113,7 +114,9 @@ namespace TechObject
                     Device.DeviceType.DI,
                     Device.DeviceType.SB,
                     Device.DeviceType.DO
-                }));
+                },
+                null,
+                new OneInManyOutActionProcessingStrategy()));
 
             // Специальное действие - выдача аналоговых сигналов при
             // наличии входного  аналогового сигнала.
@@ -124,7 +127,9 @@ namespace TechObject
                     Device.DeviceType.AI,
                     Device.DeviceType.AO,
                     Device.DeviceType.M
-                }));
+                },
+                null,
+                new OneInManyOutActionProcessingStrategy()));
 
             items.AddRange(actions.ToArray());
 
@@ -596,8 +601,7 @@ namespace TechObject
             string modeName = mode.Name;
 
             errors += CheckOpenAndCloseActions(techObjName, modeName);
-            errors += CheckActionGroupRightDeviceSequence(techObjName,
-                modeName);
+            errors += CheckInOutGroupActions(techObjName, modeName);
             return errors;
         }
 
@@ -635,37 +639,54 @@ namespace TechObject
             return errors;
         }
 
-        private string CheckActionGroupRightDeviceSequence(string techObjName,
+        private string CheckInOutGroupActions(string techObjName,
             string modeName)
         {
             var errors = string.Empty;
 
-            var checkingGroup = actions
+            var checkingActionsGroups = actions
                 .Where(x => x.Name == groupAIAOActionName ||
                 x.Name == groupDIDOActionName);
-            foreach(var group in checkingGroup)
+
+            foreach(var group in checkingActionsGroups)
             {
                 bool hasError = false;
-                var groupItems = group.Items;
-                foreach(var groupItem in groupItems)
+                var groupActions = group.Items;
+                foreach(Action groupAction in groupActions)
                 {
-                    var action = groupItem as Action;
-                    if(!action.Empty)
+                    if(groupAction.Empty)
                     {
-                        int devIndex = action.DeviceIndex.First();
-                        Device.IDevice dev = Device.DeviceManager.GetInstance()
-                            .GetDeviceByIndex(devIndex);
-                        if (dev.DeviceType != Device.DeviceType.AI &&
-                            dev.DeviceType != Device.DeviceType.DI)
-                        {
-                            hasError = true;
-                        }
+                        continue;
+                    }
+
+                    int devsCount = groupAction.DeviceIndex.Count;
+                    if (devsCount == 1)
+                    {
+                        hasError = true;
+                    }
+
+                    var devices = new List<Device.IDevice>();
+                    foreach(var devId in groupAction.DeviceIndex)
+                    {
+                        devices.Add(Device.DeviceManager.GetInstance()
+                            .GetDeviceByIndex(devId));
+                    }
+
+                    bool hasInput = devices
+                        .Any(x => x.DeviceType == Device.DeviceType.DI ||
+                        x.DeviceType == Device.DeviceType.AI);
+                    bool hasOutput = devices
+                        .Any(x => x.DeviceType == Device.DeviceType.DO ||
+                        x.DeviceType == Device.DeviceType.AO);
+                    if (!hasInput || !hasOutput)
+                    {
+                        hasError = true;
                     }
                 }
 
                 if (hasError)
                 {
-                    errors += $"Неправильная последовательность сигналов в " +
+                    errors += $"Неправильно заполнены сигналы в " +
                         $"действии \"{group.Name}\", " +
                         $"шаге \"{GetStepName()}\", " +
                         $"операции \"{modeName}\", " +
