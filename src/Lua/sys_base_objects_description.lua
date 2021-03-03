@@ -431,6 +431,11 @@ return
                                 name = "Автоматическое выключение по наполнению крайнего танка",
                                 defaultValue = "false",
                             },
+                            CONTINUE_PRODUCT_PUSH =
+                            {
+                                name = "Продолжать проталкивание при появлении воды",
+                                defaultValue = "false",
+                            },
                         },
                     },
                     steps =
@@ -563,6 +568,11 @@ return
                             IS_END_ON_FULL_TANK =
                             {
                                 name = "Автоматическое выключение по наполнению крайнего танка",
+                                defaultValue = "false",
+                            },
+                            CONTINUE_PRODUCT_PUSH =
+                            {
+                                name = "Продолжать проталкивание при появлении воды",
                                 defaultValue = "false",
                             },
                         },
