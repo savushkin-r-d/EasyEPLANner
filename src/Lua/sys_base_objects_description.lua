@@ -452,6 +452,9 @@ return
                             name = "Ожидание",
                             defaultPosition = 1,
                         },
+                        IN_LINE = {
+                            name = "В линию",
+                        },
                         PRODUCT_PUSH = {
                             name = "Проталкивание продукта",
                         }
@@ -590,6 +593,9 @@ return
                         WAITING_KEY = {
                             name = "Ожидание",
                             defaultPosition = 1,
+                        },
+                        IN_LINE = {
+                            name = "В линию",
                         },
                         PRODUCT_PUSH = {
                             name = "Проталкивание продукта",
