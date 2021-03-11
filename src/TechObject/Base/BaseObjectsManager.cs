@@ -45,21 +45,20 @@ namespace TechObject
         /// </summary>
         private void LoadBaseTechObjectsFromDescription()
         {
-            string systemFilesPath = ProjectManager.GetInstance()
+            string sysFilesPath = ProjectManager.GetInstance()
                 .SystemFilesPath;
-            InitBaseTechObjectsInitializer(systemFilesPath);
+            InitBaseTechObjectsInitializer(sysFilesPath);
 
-            string catalogWithDescriptionPath = Path.Combine(
-                systemFilesPath, defaultCatalogWithDescription);
-            IList<string> fileNames =
-                GetDescriptionFilesNamesFromDefaultCatalog(
-                    catalogWithDescriptionPath);
+            string pathToDir = Path.Combine(sysFilesPath,
+                defaultDirectoryWithDescription);
+            IList<string> fileNames = 
+                GetDescriptionFilesNamesFromDefaultDirectory(pathToDir);
             if (fileNames.Count > 0)
             {
                 foreach(var fileName in fileNames)
                 {
-                    string descriptionFilePath = Path.Combine(
-                        catalogWithDescriptionPath, fileName);
+                    string descriptionFilePath = Path
+                        .Combine(pathToDir, fileName);
                     string description = LoadBaseTechObjectsDescription(
                         descriptionFilePath);
                     InitBaseObjectsFromLua(description);
@@ -67,18 +66,29 @@ namespace TechObject
             }
             else
             {
-                string templateDescriptionFilePath = Path.Combine(
-                    catalogWithDescriptionPath, defaultDescriptionFileName);
-                string template = EasyEPlanner.Properties.Resources
-                    .ResourceManager
-                    .GetString("SysBaseObjectsDescriptionPattern");
-                File.WriteAllText(templateDescriptionFilePath, template,
-                    EncodingDetector.UTF8);
-                MessageBox.Show("Файлы с описанием базовых объектов не " +
-                    "найдены. Будет создан пустой файл с шаблоном описания. " +
-                    $"Путь: {templateDescriptionFilePath}", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                WriteDefaultTemplateAndShowError(pathToDir);
             }
+        }
+
+        /// <summary>
+        /// Показать ошибку о том, что не найдены файлы описания и записать
+        /// стандартный файл описания.
+        /// </summary>
+        /// <param name="pathToDirectory">Путь к каталогу, где хранятся
+        /// файлы описания</param>
+        private void WriteDefaultTemplateAndShowError(string pathToDirectory)
+        {
+            string templateDescriptionFilePath = Path.Combine(
+                    pathToDirectory, defaultDescriptionFileName);
+            string template = EasyEPlanner.Properties.Resources
+                .ResourceManager
+                .GetString("SysBaseObjectsDescriptionPattern");
+            File.WriteAllText(templateDescriptionFilePath, template,
+                EncodingDetector.UTF8);
+            MessageBox.Show("Файлы с описанием базовых объектов не " +
+                "найдены. Будет создан пустой файл с шаблоном описания. " +
+                $"Путь: {templateDescriptionFilePath}", "Ошибка",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         /// <summary>
@@ -96,7 +106,7 @@ namespace TechObject
         /// </summary>
         /// <param name="pathToCatalog">Путь к каталогу с файлами</param>
         /// <returns></returns>
-        private string[] GetDescriptionFilesNamesFromDefaultCatalog(
+        private string[] GetDescriptionFilesNamesFromDefaultDirectory(
             string pathToCatalog)
         {
             if (Directory.Exists(pathToCatalog))
@@ -269,7 +279,7 @@ namespace TechObject
         }
 
         const string defaultDescriptionFileName = "DescriptionTemplate.lua";
-        const string defaultCatalogWithDescription = "BaseObjectsDescriptionFiles";
+        const string defaultDirectoryWithDescription = "BaseObjectsDescriptionFiles";
         private List<BaseTechObject> baseTechObjects;
         private static BaseTechObjectManager baseTechObjectManager;
         private Lua lua;
