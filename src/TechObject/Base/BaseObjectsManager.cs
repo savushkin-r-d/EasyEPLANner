@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using EasyEPlanner;
+using System.Linq;
 
 namespace TechObject
 {
@@ -32,11 +33,11 @@ namespace TechObject
 
         private BaseTechObjectManager()
         {
-            string addBaseObjMethod = "AddBaseObject";
+            string addObjectMethodName = "AddBaseObject";
             baseTechObjects = new List<BaseTechObject>();
             lua = new Lua();
-            lua.RegisterFunction(addBaseObjMethod, this,
-                GetType().GetMethod(addBaseObjMethod));
+            lua.RegisterFunction(addObjectMethodName, this,
+                GetType().GetMethod(addObjectMethodName));
 
             LoadBaseTechObjectsFromDescription();
         }
@@ -196,7 +197,13 @@ namespace TechObject
             obj.BindingName = bindingName;
             obj.IsPID = isPID;
 
-            baseTechObjects.Add(obj);
+            bool noEquals = baseTechObjects.Where(x => x.Name == obj.Name ||
+                x.EplanName == obj.EplanName).Count() == 0;
+            if (noEquals)
+            {
+                baseTechObjects.Add(obj);
+            }
+
             return obj;
         }
 
