@@ -34,8 +34,8 @@ namespace TechObject
         {
             baseTechObjects = new List<BaseTechObject>();
             lua = new Lua();
-            lua.RegisterFunction("AddBaseObject", this, GetType()
-                .GetMethod("AddBaseObject"));
+            lua.RegisterFunction("AddBaseObject", this,
+                GetType().GetMethod("AddBaseObject"));
 
             LoadBaseTechObjectsFromDescription();
         }
@@ -51,8 +51,7 @@ namespace TechObject
 
             string pathToDir = Path.Combine(sysFilesPath,
                 defaultDirectoryWithDescription);
-            IList<string> fileNames = 
-                GetDescriptionFilesNamesFromDefaultDirectory(pathToDir);
+            IList<string> fileNames = GetDescriptionFilesNames(pathToDir);
             if (fileNames.Count > 0)
             {
                 foreach(var fileName in fileNames)
@@ -66,17 +65,21 @@ namespace TechObject
             }
             else
             {
-                WriteDefaultTemplateAndShowError(pathToDir);
+                WriteDefaultObjectsDescriptionTemplate(pathToDir);
+                MessageBox.Show("Файлы с описанием базовых объектов не " +
+                    "найдены. Будет создан пустой файл с шаблоном описания. " +
+                    $"Путь к каталогу: {pathToDir}", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         /// <summary>
-        /// Показать ошибку о том, что не найдены файлы описания и записать
-        /// стандартный файл описания.
+        /// записать стандартный файл описания.
         /// </summary>
         /// <param name="pathToDirectory">Путь к каталогу, где хранятся
         /// файлы описания</param>
-        private void WriteDefaultTemplateAndShowError(string pathToDirectory)
+        private void WriteDefaultObjectsDescriptionTemplate(
+            string pathToDirectory)
         {
             string templateDescriptionFilePath = Path.Combine(
                     pathToDirectory, defaultDescriptionFileName);
@@ -85,10 +88,6 @@ namespace TechObject
                 .GetString("SysBaseObjectsDescriptionPattern");
             File.WriteAllText(templateDescriptionFilePath, template,
                 EncodingDetector.UTF8);
-            MessageBox.Show("Файлы с описанием базовых объектов не " +
-                "найдены. Будет создан пустой файл с шаблоном описания. " +
-                $"Путь: {templateDescriptionFilePath}", "Ошибка",
-                MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         /// <summary>
@@ -106,8 +105,7 @@ namespace TechObject
         /// </summary>
         /// <param name="pathToCatalog">Путь к каталогу с файлами</param>
         /// <returns></returns>
-        private string[] GetDescriptionFilesNamesFromDefaultDirectory(
-            string pathToCatalog)
+        private string[] GetDescriptionFilesNames(string pathToCatalog)
         {
             if (Directory.Exists(pathToCatalog))
             {
