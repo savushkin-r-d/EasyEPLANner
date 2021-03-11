@@ -47,7 +47,7 @@ namespace TechObject
         private void LoadBaseTechObjectsFromDescription()
         {
             string sysFilesPath = ProjectManager.GetInstance()
-                .SystemFilesPath;
+                .OriginalSystemFilesPath;
             InitBaseTechObjectsInitializer(sysFilesPath);
 
             string pathToDir = Path.Combine(sysFilesPath, defaultDirName);
