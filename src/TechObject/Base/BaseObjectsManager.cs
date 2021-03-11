@@ -78,8 +78,7 @@ namespace TechObject
         /// </summary>
         /// <param name="pathToDir">Путь к каталогу, где хранятся
         /// файлы описания</param>
-        private void WriteDefaultObjectsDescriptionTemplate(
-            string pathToDir)
+        private void WriteDefaultObjectsDescriptionTemplate(string pathToDir)
         {
             string templateDescriptionFilePath = Path.Combine(pathToDir,
                 defaultFileName);
@@ -137,6 +136,7 @@ namespace TechObject
         private void InitBaseObjectsFromLua(string luaString)
         {
             lua.DoString("base_tech_objects = nil");
+
             try
             {
                 lua.DoString(luaString);
@@ -147,6 +147,7 @@ namespace TechObject
                     "Ошибка обработки Lua-скрипта с описанием " +
                     "базовых объектов.");
             }
+
             try
             {
                 string script = "if init_base_objects ~= nil " +
@@ -159,7 +160,6 @@ namespace TechObject
                     " инициализацией базовых объектов: " + ex.Message + ".\n" +
                     "Source: " + ex.Source);
             }
-
         }
 
         /// <summary>
