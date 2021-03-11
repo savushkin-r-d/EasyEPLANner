@@ -37,43 +37,85 @@ namespace TechObject
             lua.RegisterFunction("AddBaseObject", this, GetType()
                 .GetMethod("AddBaseObject"));
 
-            InitBaseTechObjectsInitializer();
-            string description = LoadBaseTechObjectsDescription();
-            InitBaseObjectsFromLua(description);
+            LoadBaseTechObjectsFromDescription();
+        }
+
+        /// <summary>
+        /// Загрузка базовых объектов из их файлов описания
+        /// </summary>
+        private void LoadBaseTechObjectsFromDescription()
+        {
+            string systemFilesPath = ProjectManager.GetInstance()
+                .SystemFilesPath;
+            InitBaseTechObjectsInitializer(systemFilesPath);
+
+            string catalogWithDescriptionPath = Path.Combine(
+                systemFilesPath, defaultCatalogWithDescription);
+            IList<string> fileNames =
+                GetDescriptionFilesNamesFromDefaultCatalog(
+                    catalogWithDescriptionPath);
+            if (fileNames.Count > 0)
+            {
+                foreach(var fileName in fileNames)
+                {
+                    string descriptionFilePath = Path.Combine(
+                        catalogWithDescriptionPath, fileName);
+                    string description = LoadBaseTechObjectsDescription(
+                        descriptionFilePath);
+                    InitBaseObjectsFromLua(description);
+                }
+            }
+            else
+            {
+                string templateDescriptionFilePath = Path.Combine(
+                    catalogWithDescriptionPath, defaultDescriptionFileName);
+                string template = EasyEPlanner.Properties.Resources
+                    .ResourceManager
+                    .GetString("SysBaseObjectsDescriptionPattern");
+                File.WriteAllText(templateDescriptionFilePath, template,
+                    EncodingDetector.UTF8);
+                MessageBox.Show("Файлы с описанием базовых объектов не " +
+                    "найдены. Будет создан пустой файл с шаблоном описания. " +
+                    $"Путь: {templateDescriptionFilePath}", "Ошибка",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         /// <summary>
         /// Инициализация читателя базовых объектов.
         /// </summary>
-        private void InitBaseTechObjectsInitializer()
+        private void InitBaseTechObjectsInitializer(string pathToSystemFiles)
         {
             string fileName = "sys_base_objects_initializer.lua";
-            string pathToFile = Path.Combine(
-                ProjectManager.GetInstance().SystemFilesPath, fileName);
+            string pathToFile = Path.Combine(pathToSystemFiles, fileName);
             lua.DoFile(pathToFile);
+        }
+
+        /// <summary>
+        /// Получить имена файлов с описанием объектов
+        /// </summary>
+        /// <param name="pathToCatalog">Путь к каталогу с файлами</param>
+        /// <returns></returns>
+        private string[] GetDescriptionFilesNamesFromDefaultCatalog(
+            string pathToCatalog)
+        {
+            if (Directory.Exists(pathToCatalog))
+            {
+                return Directory.GetFiles(pathToCatalog);
+            }
+            else
+            {
+                Directory.CreateDirectory(pathToCatalog);
+                return new string[0];
+            }
         }
 
         /// <summary>
         /// Загрузка описание базовых объектов
         /// </summary>
         /// <returns>Описание</returns>
-        private string LoadBaseTechObjectsDescription()
+        private string LoadBaseTechObjectsDescription(string pathToFile)
         {
-            var fileName = "sys_base_objects_description.lua";
-            var pathToFile = Path.Combine(
-                ProjectManager.GetInstance().SystemFilesPath, fileName);
-            if (!File.Exists(pathToFile))
-            {
-                string template = EasyEPlanner.Properties.Resources
-                    .ResourceManager
-                    .GetString("SysBaseObjectsDescriptionPattern");
-                File.WriteAllText(pathToFile, template,
-                    EncodingDetector.UTF8);
-                MessageBox.Show("Файл с описанием базовых объектов не найден." +
-                    " Будет создан пустой файл (без описания).", "Ошибка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
             var reader = new StreamReader(pathToFile,
                 EncodingDetector.DetectFileEncoding(pathToFile));
             string readedDescription = reader.ReadToEnd();
@@ -226,6 +268,8 @@ namespace TechObject
             UserObject = 3
         }
 
+        const string defaultDescriptionFileName = "DescriptionTemplate.lua";
+        const string defaultCatalogWithDescription = "BaseObjectsDescriptionFiles";
         private List<BaseTechObject> baseTechObjects;
         private static BaseTechObjectManager baseTechObjectManager;
         private Lua lua;
