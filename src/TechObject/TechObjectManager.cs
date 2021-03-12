@@ -244,7 +244,7 @@ namespace TechObject
             // импорте описания из файла (аналогичная сигнатура, другое тело).
 
             var baseTechObject = BaseTechObjectManager.GetInstance()
-                .GetTechObject(baseTechObjectName);
+                .GetTechObjectCopy(baseTechObjectName);
             // getN - null т.к он будет другой, ниже по функциям.
             TechObject obj = new TechObject(name, null, techN,
                 techType, nameEplan.ToUpper(), cooperParamNumber, NameBC,
@@ -773,7 +773,7 @@ namespace TechObject
         {
             var baseObjectManager = BaseTechObjectManager.GetInstance();
             BaseTechObject foundBaseObject = baseObjectManager
-                .GetTechObject(luaName);
+                .GetTechObjectCopy(luaName);
             if (foundBaseObject != null)
             {
                 string baseObjectTypeName = baseObjectManager

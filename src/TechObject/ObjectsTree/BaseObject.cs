@@ -10,7 +10,7 @@ namespace TechObject
         {
             localObjects = new List<TechObject>();
             baseTechObject = BaseTechObjectManager.GetInstance()
-                .GetTechObject(baseTechObjectName);
+                .GetTechObjectCopy(baseTechObjectName);
             this.techObjectManager = techObjectManager;
             globalObjectsList = this.techObjectManager.TechObjects;
         }

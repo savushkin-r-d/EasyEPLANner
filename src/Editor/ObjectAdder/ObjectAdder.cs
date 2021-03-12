@@ -126,6 +126,6 @@ namespace Editor
         /// </summary>
         public static string LastSelectedSubType { get; set; }
 
-        TechObject.BaseTechObjectManager baseTechObjectsManager;
+        TechObject.IBaseTechObjectManager baseTechObjectsManager;
     }
 }
