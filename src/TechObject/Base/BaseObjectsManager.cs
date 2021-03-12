@@ -61,7 +61,7 @@ namespace TechObject
                         fileName);
                     string description = LoadBaseTechObjectsDescription(
                         descriptionFilePath);
-                    InitBaseObjectsFromLua(description);
+                    InitBaseObjectsFromLuaScript(description);
                 }
             }
             else
@@ -72,22 +72,6 @@ namespace TechObject
                     $"Путь к каталогу: {pathToDir}", "Ошибка",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        /// <summary>
-        /// записать стандартный файл описания.
-        /// </summary>
-        /// <param name="pathToDir">Путь к каталогу, где хранятся
-        /// файлы описания</param>
-        private void WriteDefaultObjectsDescriptionTemplate(string pathToDir)
-        {
-            string templateDescriptionFilePath = Path.Combine(pathToDir,
-                defaultFileName);
-            string template = EasyEPlanner.Properties.Resources
-                .ResourceManager
-                .GetString("SysBaseObjectsDescriptionPattern");
-            File.WriteAllText(templateDescriptionFilePath, template,
-                EncodingDetector.UTF8);
         }
 
         /// <summary>
@@ -134,21 +118,34 @@ namespace TechObject
         /// Загрузка базовых объектов из описания LUA.
         /// </summary>
         /// <param name="luaString">Скрипт с описанием</param>
-        private void InitBaseObjectsFromLua(string luaString)
+        private void InitBaseObjectsFromLuaScript(string luaString)
         {
             lua.DoString("base_tech_objects = nil");
+            bool scriptLoaded = LoadBaseObjectsDescriptionToLua(luaString);
+            if (scriptLoaded)
+            {
+                InitBaseObjectsDescription();
+            }
+        }
 
+        private bool LoadBaseObjectsDescriptionToLua(string descriptionScript)
+        {
             try
             {
-                lua.DoString(luaString);
+                lua.DoString(descriptionScript);
+                return true;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + ". Исправьте скрипт вручную.",
                     "Ошибка обработки Lua-скрипта с описанием " +
                     "базовых объектов.");
+                return false;
             }
+        }
 
+        private void InitBaseObjectsDescription()
+        {
             try
             {
                 string script = "if init_base_objects ~= nil " +
@@ -161,6 +158,22 @@ namespace TechObject
                     " инициализацией базовых объектов: " + ex.Message + ".\n" +
                     "Source: " + ex.Source);
             }
+        }
+
+        /// <summary>
+        /// записать стандартный файл описания.
+        /// </summary>
+        /// <param name="pathToDir">Путь к каталогу, где хранятся
+        /// файлы описания</param>
+        private void WriteDefaultObjectsDescriptionTemplate(string pathToDir)
+        {
+            string templateDescriptionFilePath = Path.Combine(pathToDir,
+                defaultFileName);
+            string template = EasyEPlanner.Properties.Resources
+                .ResourceManager
+                .GetString("SysBaseObjectsDescriptionPattern");
+            File.WriteAllText(templateDescriptionFilePath, template,
+                EncodingDetector.UTF8);
         }
 
         /// <summary>
