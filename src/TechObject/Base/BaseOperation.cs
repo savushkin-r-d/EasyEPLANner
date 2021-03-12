@@ -153,7 +153,8 @@ namespace TechObject
         public void Init(string baseOperName, Mode mode)
         {
             TechObject techObject = owner.Owner.Owner;
-            string baseTechObjectName = techObject.BaseTechObject.Name;
+            BaseTechObject baseTechObject = techObject.BaseTechObject;
+            string baseTechObjectName = baseTechObject?.Name ?? string.Empty;
 
             ResetOperationSteps();
 
