@@ -103,8 +103,9 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Загрузка описание базовых объектов
+        /// Загрузить описание базовых объектов из файла
         /// </summary>
+        /// <param name="pathToFile">Путь к файлу с базовыми объектами</param>
         /// <returns>Описание</returns>
         private string LoadBaseTechObjectsDescription(string pathToFile)
         {
@@ -115,7 +116,7 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Загрузка базовых объектов из описания LUA.
+        /// Инициализация загруженных базовых объектов через Lua
         /// </summary>
         /// <param name="luaString">Скрипт с описанием</param>
         private void InitBaseObjectsFromLuaScript(string luaString)
@@ -128,6 +129,11 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Загрузка скрипта с базовыми объектами с экземпляр Lua
+        /// </summary>
+        /// <param name="descriptionScript">Скрипт с описанием</param>
+        /// <returns></returns>
         private bool LoadBaseObjectsDescriptionToLua(string descriptionScript)
         {
             try
@@ -144,6 +150,9 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Инициализация загруженных базовых объектов из Lua
+        /// </summary>
         private void InitBaseObjectsDescription()
         {
             try
@@ -161,7 +170,7 @@ namespace TechObject
         }
 
         /// <summary>
-        /// записать стандартный файл описания.
+        /// Записать стандартный файл описания.
         /// </summary>
         /// <param name="pathToDir">Путь к каталогу, где хранятся
         /// файлы описания</param>
