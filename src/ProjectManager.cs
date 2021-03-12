@@ -281,7 +281,7 @@ namespace EasyEPlanner
             DeviceManager.GetInstance();
             projectConfiguration = ProjectConfiguration.GetInstance();
             EProjectManager.GetInstance();
-            BaseTechObjectManager.GetInstance();
+            LoadBaseTechObjectsFromFiles();
         }
 
         /// <summary>
@@ -291,6 +291,19 @@ namespace EasyEPlanner
         {
             CheckExcelLibs();
             CopySystemFiles();
+        }
+
+        /// <summary>
+        /// Загрузка базовых объектов в редактор из файлов описания
+        /// </summary>
+        private void LoadBaseTechObjectsFromFiles()
+        {
+            IBaseTechObjectManager baseTechObjectManager =
+                BaseTechObjectManager.GetInstance();
+            IBaseTechObjectsLoader baseTechObjectsLoader = 
+                new BaseTechObjectLoader();
+
+            baseTechObjectsLoader.LoadTo(baseTechObjectManager);
         }
 
         #region Генерация Excel
