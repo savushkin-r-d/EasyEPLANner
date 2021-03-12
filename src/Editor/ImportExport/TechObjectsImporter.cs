@@ -105,7 +105,7 @@ namespace Editor
             string NameBC, string baseTechObjectName, string attachedObjects)
         {
             var baseTechObject = BaseTechObjectManager.GetInstance()
-                .GetTechObject(baseTechObjectName);
+                .GetTechObjectCopy(baseTechObjectName);
 
             TechObject.TechObject obj = new TechObject.TechObject(name, 
                 null, techN, techType, nameEplan.ToUpper(), 

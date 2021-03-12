@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace TechObject
@@ -10,7 +8,7 @@ namespace TechObject
         BaseTechObject AddBaseObject(string name, string eplanName,
             int s88Level, string basicName, string bindingName, bool isPID);
 
-        BaseTechObject GetTechObject(string name);
+        BaseTechObject GetTechObjectCopy(string name);
 
         string GetS88Name(int s88Level);
 
@@ -25,20 +23,22 @@ namespace TechObject
     public class BaseTechObjectManager : IBaseTechObjectManager
     {
         /// <summary>
-        /// Получить базовый технологический объект по обычному названию.
+        /// Получить копию базового технологического объекта
+        /// по обычному названию или ОУ.
         /// </summary>
-        /// <param name="name">Название объекта</param>
+        /// <param name="nameOrEplanName">Название или ОУ объекта</param>
         /// <returns></returns>
-        public BaseTechObject GetTechObject(string name)
+        public BaseTechObject GetTechObjectCopy(string nameOrEplanName)
         {
             foreach (var baseTechObject in baseTechObjects)
             {
-                if (name == baseTechObject.Name ||
-                    name == baseTechObject.EplanName)
+                if (nameOrEplanName == baseTechObject.Name ||
+                    nameOrEplanName == baseTechObject.EplanName)
                 {
                     return baseTechObject.Clone();
                 }
             }
+
             return null;
         }
 
@@ -81,9 +81,12 @@ namespace TechObject
             obj.BindingName = bindingName;
             obj.IsPID = isPID;
 
+            bool correctName = name != null && name.Trim() != string.Empty;
+            bool correctEplanName = eplanName != null &&
+                eplanName.Trim() != string.Empty;
             bool noEquals = baseTechObjects.Where(x => x.Name == obj.Name ||
                 x.EplanName == obj.EplanName).Count() == 0;
-            if (noEquals)
+            if (correctName && correctEplanName && noEquals)
             {
                 baseTechObjects.Add(obj);
             }
@@ -150,12 +153,7 @@ namespace TechObject
         {
             get
             {
-                var objects = new List<BaseTechObject>();
-                foreach (var obj in baseTechObjects)
-                {
-                    objects.Add(obj.Clone());
-                }
-                return objects;
+                return baseTechObjects;
             }
         }
 
