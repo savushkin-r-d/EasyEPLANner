@@ -44,6 +44,8 @@ namespace Device
                     break;
 
                 case "QT_IOLINK":
+                    parameters.Add("P_ERR", null);
+
                     SetIOLinkSizes(ArticleName);
                     break;
 
@@ -159,6 +161,7 @@ namespace Device
                                 {"V", 1},
                                 {"P_CZ", 1},
                                 {"T", 1},
+                                {"P_ERR", 1},
                             };
                     }
                     break;

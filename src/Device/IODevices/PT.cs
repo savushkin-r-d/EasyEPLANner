@@ -36,10 +36,14 @@ namespace Device
                     break;
 
                 case "PT_IOLINK":
+                    parameters.Add("P_ERR", null);
+
                     SetIOLinkSizes(ArticleName);
                     break;
 
                 case "DEV_SPAE":
+                    parameters.Add("P_ERR", null);
+
                     SetIOLinkSizes(ArticleName);
                     break;
 
@@ -128,6 +132,7 @@ namespace Device
                                 {"V", 1},
                                 {"P_MIN_V", 1},
                                 {"P_MAX_V", 1},
+                                {"P_ERR", 1},
                             };
 
                         case DeviceSubType.DEV_SPAE:
@@ -135,6 +140,7 @@ namespace Device
                             {
                                 {"M", 1},
                                 {"V", 1},
+                                {"P_ERR", 1},
                             };
                     }
                     break;

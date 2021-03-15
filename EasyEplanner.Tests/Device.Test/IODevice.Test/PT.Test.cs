@@ -179,12 +179,14 @@ namespace Tests
                 {"V", 1},
                 {"P_MIN_V", 1},
                 {"P_MAX_V", 1},
+                {"P_ERR", 1},
             };
 
             var exportForDevSpae = new Dictionary<string, int>()
             {
                 {"M", 1},
                 {"V", 1},
+                {"P_ERR", 1},
             };
 
             return new object[]
@@ -240,13 +242,13 @@ namespace Tests
                 },
                 new object[]
                 {
-                    new string[0],
+                    new string[] { "P_ERR" },
                     "PT_IOLINK",
                     GetRandomPTDevice()
                 },
                 new object[]
                 {
-                    new string[0],
+                    new string[] { "P_ERR" },
                     "DEV_SPAE",
                     GetRandomPTDevice()
                 },

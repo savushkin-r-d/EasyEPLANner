@@ -172,6 +172,7 @@ namespace Tests
                 {"ST", 1},
                 {"M", 1},
                 {"V", 1},
+                {"P_ERR", 1},
             };
 
             var exportForLS = new Dictionary<string, int>()
@@ -245,13 +246,13 @@ namespace Tests
                 },
                 new object[]
                 {
-                    new string[] { "P_DT" },
+                    new string[] { "P_DT", "P_ERR" },
                     "LS_IOLINK_MIN",
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_DT" },
+                    new string[] { "P_DT", "P_ERR" },
                     "LS_IOLINK_MAX",
                     GetRandomLSDevice()
                 },
