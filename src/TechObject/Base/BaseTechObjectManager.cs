@@ -5,8 +5,20 @@ namespace TechObject
 {
     public interface IBaseTechObjectManager
     {
+        /// <summary>
+        /// Добавить базовый объект
+        /// </summary>
+        /// <param name="name">Имя</param>
+        /// <param name="eplanName">Имя в eplan</param>
+        /// <param name="s88Level">Уровень по ISA88</param>
+        /// <param name="basicName">Базовое имя для функциональности</param>
+        /// <param name="bindingName">Имя для привязки к объекту</param>
+        /// <param name="isPID">Является ли объект ПИД-регулятором</param>
+        /// <param name="luaModuleName">Имя модуля Lua для объекта</param>
+        /// <returns>Базовый объект</returns>
         BaseTechObject AddBaseObject(string name, string eplanName,
-            int s88Level, string basicName, string bindingName, bool isPID);
+            int s88Level, string basicName, string bindingName, bool isPID,
+            string luaModuleName);
 
         BaseTechObject GetTechObjectCopy(string name);
 
@@ -60,18 +72,9 @@ namespace TechObject
             return baseTechObjectManager;
         }
 
-        /// <summary>
-        /// Добавить базовый объект
-        /// </summary>
-        /// <param name="name">Имя</param>
-        /// <param name="eplanName">Имя в eplan</param>
-        /// <param name="s88Level">Уровень по ISA88</param>
-        /// <param name="basicName">Базовое имя для функциональности</param>
-        /// <param name="bindingName">Имя для привязки к объекту</param>
-        /// <param name="isPID">Является ли объект ПИД-регулятором</param>
-        /// <returns></returns>
         public BaseTechObject AddBaseObject(string name, string eplanName,
-            int s88Level, string basicName, string bindingName, bool isPID)
+            int s88Level, string basicName, string bindingName, bool isPID,
+            string luaModuleName)
         {
             var obj = new BaseTechObject();
             obj.Name = name;
@@ -80,6 +83,7 @@ namespace TechObject
             obj.BasicName = basicName;
             obj.BindingName = bindingName;
             obj.IsPID = isPID;
+            obj.LuaModuleName = luaModuleName;
 
             bool correctName = name != null && name.Trim() != string.Empty;
             bool correctEplanName = eplanName != null &&
