@@ -384,29 +384,6 @@ namespace EasyEPlanner.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на --Базовая функциональность
-        ///require( &quot;tank&quot; )
-        ///require( &quot;mixer&quot; )
-        ///require( &quot;line&quot; )
-        ///require( &quot;master&quot; )
-        ///require( &quot;cooler&quot; )
-        ///require( &quot;boiler&quot; )
-        ///require( &quot;pasteurizator&quot; )
-        ///require( &quot;water_tank&quot; )
-        ///require( &quot;pressure&quot; )
-        ///require( &quot;flow&quot; )
-        ///require( &quot;steam_blast_node&quot; )
-        ///require( &quot;sterile_air&quot; )
-        ///require( &quot;tank_level_node&quot; )
-        ///.
-        /// </summary>
-        public static string prgLuaRequireModules {
-            get {
-                return ResourceManager.GetString("prgLuaRequireModules", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap refresh {

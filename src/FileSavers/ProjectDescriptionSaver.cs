@@ -290,12 +290,6 @@ namespace EasyEPlanner
             fileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);
             fileWriter.WriteLine(new string('-', numberOfDashes));
             fileWriter.WriteLine(new string('-', numberOfDashes));
-            string requireModules = Properties.Resources.ResourceManager
-            .GetString("prgLuaRequireModules");
-            fileWriter.WriteLine(requireModules);
-            fileWriter.WriteLine("-- Основные объекты проекта (объекты, " +
-                "описанные в Eplan).");
-
             fileWriter.WriteLine(PrgLuaSaver.Save("\t"));
 
             fileWriter.Flush();
