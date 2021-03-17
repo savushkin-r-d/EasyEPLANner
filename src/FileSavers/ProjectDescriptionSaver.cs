@@ -35,7 +35,7 @@ namespace EasyEPlanner
             }
             catch
             {
-                MessageBox.Show($"Не найден шаблон {mainProgramFileName}", 
+                MessageBox.Show($"Не найден шаблон {mainProgramFileName}",
                     "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
@@ -185,7 +185,7 @@ namespace EasyEPlanner
             var fileWriter = new StreamWriter(fileName,
                 false, EncodingDetector.MainFilesEncoding);
 
-            fileWriter.WriteLine("--version  = {0}", 
+            fileWriter.WriteLine("--version  = {0}",
                 mainTechDevicesFileVersion);
             fileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);
             fileWriter.WriteLine(new string('-', numberOfDashes));
