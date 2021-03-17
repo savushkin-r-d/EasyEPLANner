@@ -207,7 +207,7 @@ namespace EasyEPlanner
                 .GetString("mainRestrictionsPattern");
             string resctrictions = techObjectManager
                 .SaveRestrictionAsLua("");
-            var restrictionsFileData = string.Format(filePattern, 
+            var restrictionsFileData = string.Format(filePattern,
                 mainRestrictionsFileVersion, resctrictions);
 
             string fileName = par.path + @"\" + MainRestrictionsFileName;
@@ -234,7 +234,7 @@ namespace EasyEPlanner
 
                 fileWriter.Flush();
                 fileWriter.Close();
-            }          
+            }
         }
 
         /// <summary>

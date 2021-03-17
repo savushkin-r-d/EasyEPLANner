@@ -234,7 +234,7 @@ namespace EasyEPlanner
             string operationsSteps = "";
             string operationsParameters = "";
             string equipments = "";
-            
+
             var objects = techObjectManager.TechObjects;
             foreach (TechObject.TechObject obj in objects)
             {
