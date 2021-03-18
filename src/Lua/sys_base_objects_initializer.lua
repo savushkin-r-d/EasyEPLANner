@@ -12,10 +12,11 @@ init_base_objects = function()
         local basicName = value.basicName or ""
         local bindingName = value.bindingName or ""
         local isPid = value.isPID or false
+        local luaModuleName = value.luaModuleName or ""
 
         -- Добавить базовый объект
         local baseObject = AddBaseObject(name, eplanName, s88Level,
-            basicName, bindingName, isPid)
+            basicName, bindingName, isPid, luaModuleName)
 
         -- Добавить группы танков
         local objectGroups = value.objectGroups or { }

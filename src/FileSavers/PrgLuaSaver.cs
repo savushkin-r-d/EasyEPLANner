@@ -21,7 +21,10 @@ namespace EasyEPlanner
             deviceManager = DeviceManager.GetInstance();
             techObjectManager = TechObjectManager.GetInstance();
 
-            var res = "";
+            string res = GenerateRequireModules();
+            res += "\n";
+            res += "-- Основные объекты проекта " +
+                "(объекты, описанные в Eplan).\n";
             res += "local prg =\n\t{\n";
             res += SaveDevicesToPrgLua(prefix);
             res += SaveVariablesToPrgLua(prefix, out attachedObjects);
@@ -38,6 +41,28 @@ namespace EasyEPlanner
             res = res.Replace("\t", "    ");
 
             return res;
+        }
+
+        /// <summary>
+        /// Генерация строк описания require модулей Lua
+        /// </summary>
+        /// <returns></returns>
+        private static string GenerateRequireModules()
+        {
+            List<TechObject.TechObject> objects = techObjectManager.TechObjects;
+            List<string> requireModules = objects
+                .Where(x => x.BaseTechObject != null &&
+                x.BaseTechObject.LuaModuleName != string.Empty)
+                .Select(x =>
+                    $"require( \"{x.BaseTechObject.LuaModuleName}\" )\n")
+                .Distinct()
+                .OrderBy(x => x)
+                .ToList();
+
+            string description = "--Базовая функциональность\n";
+            requireModules.Insert(0, description);
+
+            return string.Join(string.Empty, requireModules);
         }
 
         /// <summary>
@@ -209,7 +234,7 @@ namespace EasyEPlanner
             string operationsSteps = "";
             string operationsParameters = "";
             string equipments = "";
-            
+
             var objects = techObjectManager.TechObjects;
             foreach (TechObject.TechObject obj in objects)
             {
@@ -223,7 +248,7 @@ namespace EasyEPlanner
                     obj.TechNumber.ToString();
 
                 objectsInfo += baseObj.SaveObjectInfoToPrgLua(objName, prefix);
-                
+
                 var modesManager = obj.ModesManager;
                 var modes = modesManager.Modes;
                 bool haveBaseOperations = modes
@@ -241,12 +266,12 @@ namespace EasyEPlanner
                 equipments += obj.BaseTechObject.SaveEquipment(obj, objName);
             }
 
-            var accumulatedData = new string[] 
+            var accumulatedData = new string[]
             {
-                objectsInfo, 
-                operations, 
-                operationsSteps,                
-                operationsParameters, 
+                objectsInfo,
+                operations,
+                operationsSteps,
+                operationsParameters,
                 equipments
             };
 

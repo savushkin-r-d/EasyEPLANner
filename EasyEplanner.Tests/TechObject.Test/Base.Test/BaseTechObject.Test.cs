@@ -11,7 +11,7 @@ namespace Tests.TechObject
         public void Constructor_CreatingNewObject_ReturnsObjectWithDefaultData()
         {
             const int zeroValue = 0;
-            
+
             var obj = new BaseTechObject();
 
             Assert.Multiple(() =>
@@ -33,6 +33,7 @@ namespace Tests.TechObject
                 Assert.AreEqual(zeroValue, obj.BaseOperationsList.Count);
                 Assert.AreEqual(zeroValue, obj.BaseOperations.Count);
                 Assert.AreEqual(zeroValue, obj.AggregateParameters.Count);
+                Assert.IsEmpty(obj.LuaModuleName);
             });
         }
 
@@ -42,7 +43,7 @@ namespace Tests.TechObject
         {
             var obj = GetEmpty();
             string paramValueStr = paramValue.ToString();
-            
+
             for (int i = 0; i < parametersCount; i++)
             {
                 obj.AddEquipment(paramLuaName, paramName,
@@ -58,7 +59,7 @@ namespace Tests.TechObject
         {
             var obj = GetEmpty();
             string paramValueStr = paramValue.ToString();
-            
+
             for (int i = 0; i < parametersCount; i++)
             {
                 obj.AddActiveParameter(paramLuaName, paramName,
@@ -90,7 +91,7 @@ namespace Tests.TechObject
         {
             var obj = GetEmpty();
             string defaultValue = paramValue.ToString();
-            
+
             obj.AddMainAggregateParameter(paramLuaName, paramName,
                 defaultValue);
 
@@ -146,10 +147,10 @@ namespace Tests.TechObject
             {
                 new object[]
                 {
-                    1, 
-                    "all", 
+                    1,
+                    "all",
                     new List<BaseTechObjectManager.ObjectType>
-                    { 
+                    {
                         BaseTechObjectManager.ObjectType.Aggregate,
                         BaseTechObjectManager.ObjectType.Unit
                     },
@@ -274,6 +275,7 @@ namespace Tests.TechObject
             int expectedS88Level = 2;
             string expectedBindingName = "BindingName";
             bool expectedIsPID = true;
+            string expectedLuaModuleName = "LuaModuleName";
 
             var obj = new BaseTechObject();
             obj.Name = expectedName;
@@ -282,6 +284,7 @@ namespace Tests.TechObject
             obj.S88Level = expectedS88Level;
             obj.BindingName = expectedBindingName;
             obj.IsPID = expectedIsPID;
+            obj.LuaModuleName = expectedLuaModuleName;
 
             // null - is Owner, dependency
             var clonedObj = obj.Clone(null);
@@ -295,6 +298,7 @@ namespace Tests.TechObject
                 Assert.AreEqual(expectedS88Level, clonedObj.S88Level);
                 Assert.AreEqual(expectedBindingName, clonedObj.BindingName);
                 Assert.AreEqual(expectedIsPID, clonedObj.IsPID);
+                Assert.AreEqual(expectedLuaModuleName, clonedObj.LuaModuleName);
             });
         }
 
@@ -304,7 +308,7 @@ namespace Tests.TechObject
             var obj = GetEmpty();
 
             obj.AddObjectGroup(paramLuaName, paramName, string.Empty);
-        
+
             Assert.IsTrue(obj.IsAttachable);
         }
 
@@ -335,7 +339,7 @@ namespace Tests.TechObject
             {
                 obj.AddObjectGroup(paramLuaName, paramName, string.Empty);
             }
-            
+
             Assert.AreEqual(expectedValue, obj.UseGroups);
         }
 

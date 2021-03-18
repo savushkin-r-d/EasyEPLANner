@@ -25,7 +25,7 @@ namespace Tests.TechObject
                 searchingNameOrEplanName == obj.EplanName);
             Assert.AreEqual(successSearch, isSearchedOk);
         }
-        
+
         private static object[] GetTechObjectCopyCaseSource()
         {
             var objectsList = new List<BaseTechObject>()
@@ -90,7 +90,8 @@ namespace Tests.TechObject
             foreach (var obj in objectsToAdd)
             {
                 manager.AddBaseObject(obj.Name, obj.EplanName, obj.S88Level,
-                    obj.BasicName, obj.BindingName, obj.IsPID);
+                    obj.BasicName, obj.BindingName, obj.IsPID,
+                    obj.LuaModuleName);
 
                 BaseTechObject addedObj = manager.Objects
                     .Where(x => x.Name == obj.Name ||
@@ -103,7 +104,8 @@ namespace Tests.TechObject
                         addedObj.S88Level == obj.S88Level &&
                         addedObj.BasicName == obj.BasicName &&
                         addedObj.BindingName == obj.BindingName &&
-                        addedObj.IsPID == obj.IsPID;
+                        addedObj.IsPID == obj.IsPID &&
+                        addedObj.LuaModuleName == obj.LuaModuleName;
                 }
             }
 
@@ -128,6 +130,7 @@ namespace Tests.TechObject
                         BasicName = "base_object_one",
                         BindingName = "base_Object_one",
                         IsPID = true,
+                        LuaModuleName = "LuaModuleNameOne",
                     },
                     new BaseTechObject()
                     {
@@ -137,6 +140,7 @@ namespace Tests.TechObject
                         BasicName = "base_object_two",
                         BindingName = "base_Object_two",
                         IsPID = false,
+                        LuaModuleName = "SecondModule",
                     },
                 },
                 2,
@@ -155,6 +159,7 @@ namespace Tests.TechObject
                         BasicName = "base_object_one",
                         BindingName = "base_Object_one",
                         IsPID = true,
+                        LuaModuleName = "ModuleOne",
                     },
                     new BaseTechObject()
                     {
@@ -164,6 +169,7 @@ namespace Tests.TechObject
                         BasicName = "process_cell_obj",
                         BindingName = "Process_cell_Obj",
                         IsPID = false,
+                        LuaModuleName = "ModuleSecond"
                     },
                     new BaseTechObject()
                     {
@@ -173,6 +179,7 @@ namespace Tests.TechObject
                         BasicName = "base_object_one",
                         BindingName = "base_Object_one",
                         IsPID = true,
+                        LuaModuleName = "ModuleOne",
                     },
                     new BaseTechObject()
                     {
@@ -182,6 +189,7 @@ namespace Tests.TechObject
                         BasicName = "third_BASE_obj",
                         BindingName = "The_third_base_Obj",
                         IsPID = false,
+                        LuaModuleName = "ThirdModule",
                     },
                 },
                 3,
@@ -200,6 +208,7 @@ namespace Tests.TechObject
                         BasicName = "process_cell_obj",
                         BindingName = "Process_cell_Obj",
                         IsPID = false,
+                        LuaModuleName = "FirstModule",
                     },
                     new BaseTechObject()
                     {
@@ -209,6 +218,7 @@ namespace Tests.TechObject
                         BasicName = "base_object_one",
                         BindingName = "base_Object_one",
                         IsPID = true,
+                        LuaModuleName = "InvalidModule",
                     },
                     new BaseTechObject()
                     {
@@ -218,6 +228,7 @@ namespace Tests.TechObject
                         BasicName = "third_BASE_obj",
                         BindingName = "The_third_base_Obj",
                         IsPID = false,
+                        LuaModuleName = "ThirdModule",
                     },
                 },
                 1,
@@ -236,6 +247,7 @@ namespace Tests.TechObject
                         BasicName = "base_object_one",
                         BindingName = "base_Object_one",
                         IsPID = true,
+                        LuaModuleName = "FirstModule",
                     },
                     new BaseTechObject()
                     {
@@ -245,6 +257,7 @@ namespace Tests.TechObject
                         BasicName = "third_BASE_obj",
                         BindingName = "The_third_base_Obj",
                         IsPID = false,
+                        LuaModuleName = "SecondModule",
                     },
                 },
                 0,

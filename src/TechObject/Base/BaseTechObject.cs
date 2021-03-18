@@ -22,6 +22,7 @@ namespace TechObject
             SystemParams = new SystemParams();
             Parameters =
                 new Params(string.Empty, string.Empty, false, string.Empty);
+            LuaModuleName = string.Empty;
 
             objectGroups = new List<AttachedObjects>();
         }
@@ -366,6 +367,7 @@ namespace TechObject
 
             cloned.SystemParams = SystemParams.Clone();
             cloned.Parameters = Parameters.Clone();
+            cloned.LuaModuleName = LuaModuleName;
 
             return cloned;
         }
@@ -436,9 +438,9 @@ namespace TechObject
         /// <summary>
         /// Группа объектов
         /// </summary>
-        public List<AttachedObjects> ObjectGroupsList 
+        public List<AttachedObjects> ObjectGroupsList
         {
-            get => objectGroups; 
+            get => objectGroups;
         }
 
         /// <summary>
@@ -450,6 +452,11 @@ namespace TechObject
         /// Параметры объекта
         /// </summary>
         public Params Parameters { get; set; }
+
+        /// <summary>
+        /// Lua-имя модуля в котором содержится описание логики объекта
+        /// </summary>
+        public string LuaModuleName { get; set; }
 
         #region Сохранение в prg.lua
         /// <summary>
@@ -551,7 +558,7 @@ namespace TechObject
         /// <param name="prefix">Отступ</param>
         /// <param name="modes">Операции объекта</param>
         /// <returns></returns>
-        public string SaveOperations(string objName, string prefix, 
+        public string SaveOperations(string objName, string prefix,
             List<Mode> modes)
         {
             var res = "";
@@ -654,7 +661,7 @@ namespace TechObject
                 string paramsForSave = "";
                 foreach (var parameter in baseOperation.Properties)
                 {
-                    bool isEmpty = parameter.IsEmpty || 
+                    bool isEmpty = parameter.IsEmpty ||
                         parameter.Value == "" ||
                         parameter.NeedDisable;
                     if (isEmpty)
@@ -695,7 +702,7 @@ namespace TechObject
             foreach (var item in equipment.Items)
             {
                 var property = item as BaseParameter;
-                
+
                 string equipmentCode = property.SaveToPrgLua(string.Empty);
                 if (string.IsNullOrEmpty(equipmentCode))
                 {
