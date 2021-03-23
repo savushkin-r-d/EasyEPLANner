@@ -39,6 +39,7 @@ namespace Device
 
                 case "LS_IOLINK_MIN":
                     parameters.Add("P_DT", null);
+                    parameters.Add("P_ERR", null);
 
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     SetIOLinkSizes(ArticleName);
@@ -46,6 +47,7 @@ namespace Device
 
                 case "LS_IOLINK_MAX":
                     parameters.Add("P_DT", null);
+                    parameters.Add("P_ERR", null);
 
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     SetIOLinkSizes(ArticleName);
@@ -73,7 +75,7 @@ namespace Device
 
         public override string GetConnectionType()
         {
-            string connectionType = "";
+            string connectionType;
             switch (dSubType)
             {
                 case DeviceSubType.LS_MIN:
@@ -155,6 +157,7 @@ namespace Device
                                 {"ST", 1},
                                 {"M", 1},
                                 {"V", 1},
+                                {"P_ERR", 1},
                             };
                     }
                     break;

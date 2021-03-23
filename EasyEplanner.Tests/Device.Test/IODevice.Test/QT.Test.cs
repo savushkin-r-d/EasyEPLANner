@@ -180,6 +180,7 @@ namespace Tests
                 {"V", 1},
                 {"P_CZ", 1},
                 {"T", 1},
+                {"P_ERR", 1}
             };
 
             var exportForQTOk = new Dictionary<string, int>()
@@ -252,7 +253,7 @@ namespace Tests
                 },
                 new object[]
                 {
-                    new string[0],
+                    new string[] { "P_ERR" },
                     "QT_IOLINK",
                     GetRandomQTDevice()
                 },
