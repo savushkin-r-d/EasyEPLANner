@@ -45,11 +45,12 @@ namespace TechObject
 
             stepsMngr = new List<State>();
 
-            stepsMngr.Add(new State(StateStr[(int)StateName.RUN], true, this, 
-                true));
+            stepsMngr.Add(new State(StateStr[(int)StateName.RUN],
+                StateName.RUN.ToString(), true, this, true));
             for (StateName i = StateName.PAUSE; i < StateName.STATES_CNT; i++)
             {
-                stepsMngr.Add(new State(StateStr[(int)i], true, this));
+                stepsMngr.Add(new State(StateStr[(int)i],
+                    i.ToString(), true, this));
             }
 
             operPar = new OperationParams();
@@ -712,11 +713,11 @@ namespace TechObject
         }
 
         public string[] StateStr =
-            {
+        {
             "Выполнение",
             "Пауза",
             "Остановка",
-            };
+        };
 
         private GetN getN;
 

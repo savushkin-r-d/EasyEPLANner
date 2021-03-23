@@ -53,13 +53,15 @@ namespace TechObject
         /// Создание нового состояния.
         /// </summary>
         /// <param name="name">Имя состояния.</param>
+        /// <param name="luaName">Lua-имя</param>
         /// <param name="isMain">Надо ли дополнительные действия.</param>
-        /// <param name="needModeStep">Надо ли основной шаг.</param>
+        /// <param name="needMainStep">Надо ли основной шаг.</param>
         /// <param name="owner">Владелец состояния (Операция)</param>
-        public State(string name, bool isMain, Mode owner, 
+        public State(string name, string luaName, bool isMain, Mode owner, 
             bool needMainStep = false)
         {
             this.name = name;
+            this.luaName = luaName;
             this.isMain = isMain;
             this.owner = owner;
             steps = new List<Step>();
@@ -75,6 +77,7 @@ namespace TechObject
         public State Clone(string name = "")
         {
             State clone = (State)MemberwiseClone();
+            clone.luaName = luaName;
 
             if (name != "")
             {
@@ -501,6 +504,7 @@ namespace TechObject
             }
         }
 
+        private string luaName;      ///< Lua-имя
         private string name;        ///< Имя.
         internal List<Step> steps;  ///< Список шагов.
         private Step modeStep;      ///< Шаг.
