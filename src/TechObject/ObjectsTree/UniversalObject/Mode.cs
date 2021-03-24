@@ -46,11 +46,11 @@ namespace TechObject
             stepsMngr = new List<State>();
 
             stepsMngr.Add(new State(StateStr[(int)StateName.RUN],
-                StateName.RUN.ToString(), true, this, true));
+                StateName.RUN.ToString(), this, true));
             for (StateName i = StateName.PAUSE; i < StateName.STATES_CNT; i++)
             {
                 stepsMngr.Add(new State(StateStr[(int)i],
-                    i.ToString(), true, this));
+                    i.ToString(), this));
             }
 
             operPar = new OperationParams();
