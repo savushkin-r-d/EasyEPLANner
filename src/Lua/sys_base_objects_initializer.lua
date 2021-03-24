@@ -85,9 +85,9 @@ init_base_operations = function(object, operations)
         local params = value.params or { }
         init_operation_parameters(operation, params)
 
-        -- Добавить шаги базовой операции
-        local steps = value.steps or { }
-        init_operation_steps(operation, steps)
+        -- Добавить состояния и их шаги
+        local states = value.state or { }
+        init_operation_states(operation, states)
     end
 end
 
@@ -143,15 +143,26 @@ init_main_aggregate_parameter = function(object, tableWithParameter)
     end
 end
 
--- Инициализация шагов базовой операции
-init_operation_steps = function(operation, steps)
+-- Инициализация состояний базовой операции
+init_operation_states = function(operation, states)
+    for stateLuaName, state in pairs(states) do
+        -- Базовые шаги состояния
+        local steps = state.steps or { }
+
+        -- Инициализировать базовые шаги состояния
+        init_operation_steps(operation, steps, stateLuaName)
+    end
+end
+
+-- Инициализация шагов базовой операции в состоянии
+init_operation_steps = function(operation, steps, stateLuaName)
     for luaName, value in pairs(steps) do
         -- Данные для добавления базового шага
         local name = value.name or ""
         local defaultPosition = value.defaultPosition or 0
 
         -- Добавить базовый шаг для операции
-        operation:AddStep(luaName, name, defaultPosition)
+        operation:AddStep(stateLuaName, luaName, name, defaultPosition)
     end
 end
 

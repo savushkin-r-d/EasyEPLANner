@@ -546,7 +546,7 @@ namespace TechObject
             get
             {
                 // TODO: Depends on state
-                State state = this.Owner;
+                State state = Owner;
                 Mode mode = state.Owner;
                 var stepsNames = mode.BaseOperation.Steps
                     .Select(x => x.Name).ToList();
