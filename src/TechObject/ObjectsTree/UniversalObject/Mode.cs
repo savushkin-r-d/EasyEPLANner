@@ -45,11 +45,11 @@ namespace TechObject
 
             stepsMngr = new List<State>();
 
-            stepsMngr.Add(new State(StateStr[(int)StateName.RUN],
+            stepsMngr.Add(new State(stateStr[(int)StateName.RUN],
                 StateName.RUN.ToString(), this, true));
             for (StateName i = StateName.PAUSE; i < StateName.STATES_CNT; i++)
             {
-                stepsMngr.Add(new State(StateStr[(int)i],
+                stepsMngr.Add(new State(stateStr[(int)i],
                     i.ToString(), this));
             }
 
@@ -388,6 +388,14 @@ namespace TechObject
             get { return name; }
         }
 
+        public List<State> States
+        {
+            get
+            {
+                return stepsMngr;
+            }
+        }
+
         /// <summary>
         /// Проверка состояний состоящих из шагов
         /// </summary>
@@ -686,33 +694,34 @@ namespace TechObject
             bool setBaseOperation = true;
             SetNewValue(baseOperation.Name, setBaseOperation);
 
-            var filteredSteps = baseOperation.Steps
-                .Where(x => x.Name != string.Empty && x.DefaultPosition > 0)
-                .OrderBy(x => x.DefaultPosition);
-            const int mainStepsIndex = 0;
-            State mainState = stepsMngr[mainStepsIndex];
-            foreach(var baseStep in filteredSteps)
+            foreach(var state in States)
             {
-                while (mainState.Steps.Count < baseStep.DefaultPosition)
+                var stateSteps = baseOperation
+                    .GetStateBaseSteps(state.LuaName)
+                    .OrderBy(x => x.DefaultPosition);
+                foreach(var baseStep in stateSteps)
                 {
-                    mainState.Insert();
-                }
+                    while(state.Steps.Count < baseStep.DefaultPosition)
+                    {
+                        state.Insert();
+                    }
 
-                Step newStep = (Step)mainState.Insert();
-                newStep.SetUpFromBaseTechObject(baseStep);
+                    var newStep = (Step)state.Insert();
+                    newStep.SetUpFromBaseTechObject(baseStep);
+                }
             }
         }
 
         public enum StateName
         {
-            RUN = 0,// Выполнение
-            PAUSE,  // Пауза
-            STOP,   // Остановка
+            RUN = 0,    // Выполнение
+            PAUSE,      // Пауза
+            STOP,       // Остановка
 
             STATES_CNT = 3,
         }
 
-        public string[] StateStr =
+        private string[] stateStr =
         {
             "Выполнение",
             "Пауза",
@@ -722,7 +731,7 @@ namespace TechObject
         private GetN getN;
 
         private string name;           /// Имя операции.
-        internal List<State> stepsMngr;/// Список шагов операции для состояний.
+        private List<State> stepsMngr;/// Список шагов операции для состояний.
         private RestrictionManager restrictionMngr;
         private ITreeViewItem[] items;
 

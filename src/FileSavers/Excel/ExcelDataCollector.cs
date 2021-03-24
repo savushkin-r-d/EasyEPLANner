@@ -61,7 +61,7 @@ namespace EasyEPlanner
             };
             modeNode.Tag = res;
 
-            foreach (var state in mode.stepsMngr)
+            foreach (var state in mode.States)
             {
                 FillState(state, ref modeNode);
                 FillSteps(state, ref modeNode);
@@ -315,7 +315,7 @@ namespace EasyEPlanner
         private static void WriteObjectOperationStepsInNode(
             ref TreeNode modeNode, Mode mode)
         {
-            foreach (var state in mode.stepsMngr)
+            foreach (var state in mode.States)
             {
                 var stateNodes = new TreeNode(state.DisplayText[0]);
                 stateNodes.Tag = state;

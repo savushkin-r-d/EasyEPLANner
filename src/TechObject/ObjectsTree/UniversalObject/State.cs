@@ -520,9 +520,17 @@ namespace TechObject
             }
         }
 
+        public string LuaName
+        {
+            get
+            {
+                return luaName;
+            }
+        }
+
         private string luaName;      ///< Lua-имя
         private string name;        ///< Имя.
-        internal List<Step> steps;  ///< Список шагов.
+        private List<Step> steps;  ///< Список шагов.
         private Step modeStep;      ///< Шаг.
         private Mode owner;         ///< Владелец элемента
     }

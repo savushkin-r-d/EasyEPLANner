@@ -231,6 +231,7 @@ namespace TechObject
             {
                 // Шаги "Пауза" и "Остановка" игнорируются
                 int stepsCount = modes[modeNum - 1].MainSteps.Count;
+                // TODO: Ask about states in channel base
                 for (int stepNum = 1; stepNum <= stepsCount; stepNum++)
                 {
                     string stepTag = $"{objName}.STEPS{modeNum}[ {stepNum} ]";

@@ -610,6 +610,7 @@ namespace TechObject
                 string stepString = "";
                 foreach (var step in mode.MainSteps)
                 {
+                    // TODO: Make changes for all states, not only RUN
                     if (step.GetBaseStepName() == "")
                     {
                         continue;

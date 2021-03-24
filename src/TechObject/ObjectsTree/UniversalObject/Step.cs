@@ -410,11 +410,13 @@ namespace TechObject
             }
 
             Mode mode = state.Owner;
-            BaseStep baseStep = mode.BaseOperation.Steps
+            BaseStep baseStep = mode.BaseOperation
+                .GetStateBaseSteps(state.LuaName)
                 .Where(x => x.LuaName == newVal).FirstOrDefault();
             if (baseStep == null)
             {
-                baseStep = mode.BaseOperation.Steps
+                baseStep = mode.BaseOperation
+                    .GetStateBaseSteps(state.LuaName)
                     .Where(x => x.Name == newVal).FirstOrDefault();
             }
 
@@ -545,11 +547,10 @@ namespace TechObject
         {
             get
             {
-                // TODO: Depends on state
                 State state = Owner;
                 Mode mode = state.Owner;
-                var stepsNames = mode.BaseOperation.Steps
-                    .Select(x => x.Name).ToList();
+                List<string> stepsNames = mode.BaseOperation
+                    .GetStateStepsNames(state.LuaName);
                 return stepsNames;
             }
         }
