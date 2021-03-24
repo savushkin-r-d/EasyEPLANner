@@ -451,17 +451,9 @@ namespace TechObject
         override public int[] EditablePart
         {
             get
-            {         
-                if (IsMainStep)
-                {
-                    // Можем редактировать содержимое левой колонки.
-                    return new int[] { 0, -1 };
-                }
-                else
-                {
-                    // Можем редактировать содержимое обоих колонок.
-                    return new int[] { 0, 1 };
-                }
+            {
+                // Можем редактировать содержимое левой колонки, или обе.
+                return IsMainStep ? new int[] { 0, -1 } : new int[] { 0, 1 };
             }
         }
 
