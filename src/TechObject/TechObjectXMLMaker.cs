@@ -220,15 +220,15 @@ namespace TechObject
         /// <summary>
         /// Генерация одиночных шагов для объекта
         /// </summary>
-        /// <param name="item">Объект</param>
+        /// <param name="techObject">Объект</param>
         /// <param name="objName">Имя объекта</param>
         /// <param name="objNode">Дерево объекта (пишется либо сюда)</param>
         /// <param name="objSingleStepsNode">Дерево для одиночных шагов 
         /// (либо сюда)</param>
-        private void GenerateSingleStepsTags(TechObject item, string objName,
-            TreeNode objNode, TreeNode objSingleStepsNode)
+        private void GenerateSingleStepsTags(TechObject techObject,
+            string objName, TreeNode objNode, TreeNode objSingleStepsNode)
         {
-            List<Mode> modes = item.ModesManager.Modes;
+            List<Mode> modes = techObject.ModesManager.Modes;
             for (int modeNum = 1; modeNum <= modes.Count; modeNum++)
             {
                 foreach(var state in modes[modeNum - 1].States)
