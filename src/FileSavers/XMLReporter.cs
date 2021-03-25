@@ -392,7 +392,7 @@ namespace EasyEPlanner
                 firstChannel.ChildNodes[channelDescrNum];
             bool hasTags = nodes.Length > 0;
             if (firstChannelDescr != null &&
-                firstChannelDescr.InnerText.Contains(DefaultObjectName) &&
+                firstChannelDescr.InnerText.Contains(DefaultNodeName) &&
                 hasTags)
             {
                 string newNodeName = nodes.First().FirstNode.Text;
@@ -410,7 +410,7 @@ namespace EasyEPlanner
                         channel.ChildNodes[channelDescrNum].InnerText =
                             Regex.Replace(channel.ChildNodes[channelDescrNum]
                             .InnerText, searchPattern,
-                            $"{DefaultObjectName}{newNum}");
+                            $"{DefaultNodeName}{newNum}");
                     }
                 }
             }
@@ -772,7 +772,7 @@ namespace EasyEPlanner
             TreeNode node)
         {
             if (Protocol.Contains(tagName) ||
-                node.Text.Contains(DefaultObjectName) &&
+                node.Text.Contains(DefaultNodeName) &&
                 (node.Text.Contains("ST") || 
                 node.Text.Contains("MODES") ||
                 node.Text.Contains("OPERATIONS") || 
@@ -806,7 +806,7 @@ namespace EasyEPlanner
 
         }
 
-        private const string DefaultObjectName = "OBJECT";
+        private const string DefaultNodeName = "OBJECT";
 
         /// <summary>
         /// Узлы, в которых устанавливается протоколирование элементов.
