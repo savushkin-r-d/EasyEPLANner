@@ -377,8 +377,11 @@ namespace EasyEPlanner
                 firstChannelDescr.InnerText.Contains("OBJECT") &&
                 nodes.Length == 1)
             {
-                RewriteSubType(subTypeChannels, nodes.First());
+                RewriteOldNumToNewInSubType(subTypeChannels,
+                    nodes.First().FirstNode.Text, channelDescrNum);
             }
+
+            ReplaceStepsToRunSteps(subTypeChannels, channelDescrNum);
 
             if (nodes.Length == 0)
             {
@@ -415,14 +418,13 @@ namespace EasyEPlanner
         /// Перезаписать номера каналов подтипа (в OBJECT).
         /// </summary>
         /// <param name="channels">Список каналов</param>
-        /// <param name="node">Подтип для перезаписи</param>
-        private static void RewriteSubType(XmlNodeList channels,
-            TreeNode node)
+        /// <param name="newNodeName">Новое имя узла</param>
+        /// <param name="channelDescrNum">Номер ячейки описания канала</param>
+        private static void RewriteOldNumToNewInSubType(XmlNodeList channels,
+            string newNodeName, int channelDescrNum)
         {
-            string searchPattern = @"(?<name>OBJECT)(?<n>[0-9]+)+";
-            const int channelDescrNum = 4;
+            const string searchPattern = @"(?<name>OBJECT)(?<n>[0-9]+)+";
 
-            string newNodeName = node.FirstNode.Text;
             string newNum = Regex.Match(newNodeName, searchPattern).Groups["n"]
                 .Value;
 
@@ -439,6 +441,25 @@ namespace EasyEPlanner
                     channel.ChildNodes[channelDescrNum].InnerText =
                         Regex.Replace(channel.ChildNodes[channelDescrNum]
                         .InnerText, searchPattern, "OBJECT" + newNum);
+                }
+            }
+        }
+
+        private static void ReplaceStepsToRunSteps(XmlNodeList channels,
+            int channelDescrNum)
+        {
+            const string searchOldStepsPattern = "\\.STEPS[1-9]\\[";
+
+            foreach (XmlElement channel in channels)
+            {
+                var channelDescription = channel.ChildNodes[channelDescrNum]
+                    .InnerText;
+                Match oldStepsRegex = Regex
+                .Match(channelDescription, searchOldStepsPattern);
+                if(oldStepsRegex.Success)
+                {
+                    channel.ChildNodes[channelDescrNum].InnerText =
+                        channelDescription.Replace(".STEPS", ".RUN_STEPS");
                 }
             }
         }
