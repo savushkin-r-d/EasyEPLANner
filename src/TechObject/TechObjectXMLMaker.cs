@@ -237,7 +237,7 @@ namespace TechObject
                     string stateLuaName = state.LuaName;
                     for (int stepNum = 1; stepNum <= stepsCount; stepNum++)
                     {
-                        string stepTag =$"{objName}." +
+                        string stepTag = $"{objName}." +
                             $"{stateLuaName}_STEPS{modeNum}[ {stepNum} ]";
                         if (cdbxTagView == true)
                         {
