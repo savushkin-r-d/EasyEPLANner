@@ -187,14 +187,6 @@ namespace TechObject
             }
         }
 
-        public List<Step> MainSteps
-        {
-            get
-            {
-                return stepsMngr[0].Steps;
-            }
-        }
-
         #region Синхронизация устройств в объекте.
         public void Synch(int[] array)
         {

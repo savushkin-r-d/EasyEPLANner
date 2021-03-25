@@ -596,49 +596,82 @@ namespace TechObject
         public string SaveOperationsSteps(string objName, string prefix,
             List<Mode> modes)
         {
-            var res = "";
+            var res = string.Empty;
 
-            string steps = "";
+            string operation = string.Empty;
             foreach (Mode mode in modes)
             {
                 var baseOperation = mode.BaseOperation;
-                if (baseOperation.Name == "")
+                if (baseOperation.Name == string.Empty)
                 {
                     continue;
                 }
 
-                string stepString = "";
-                foreach (var step in mode.MainSteps)
-                {
-                    // TODO: Make changes for all states, not only RUN
-                    if (step.GetBaseStepName() == "")
-                    {
-                        continue;
-                    }
-                    stepString += prefix + prefix + step.GetBaseStepLuaName() +
-                        " = " + step.GetStepNumber() + ",\n";
-                }
+                string statesString = MakeStatesWithStepsString(mode, prefix);
 
-                bool stepIsEmpty = stepString == "";
-                if (!stepIsEmpty)
+                bool statesIsEmpty = statesString == string.Empty;
+                if (!statesIsEmpty)
                 {
-                    steps += prefix + baseOperation.LuaName.ToUpper() + " =\n";
-                    steps += prefix + prefix + "{\n";
-                    steps += stepString;
-                    steps += prefix + prefix + "},\n";
+                    operation +=
+                        $"{prefix}{baseOperation.LuaName.ToUpper()} =\n";
+                    operation += $"{prefix}{prefix}{{\n";
+                    operation += statesString;
+                    operation += $"{prefix}{prefix}}},\n";
                 }
             }
 
-            bool stepsIsEmpty = steps == "";
-            if(!stepsIsEmpty)
+            bool operationIsEmpty = operation == string.Empty;
+            if(!operationIsEmpty)
             {
-                res += objName + ".steps = \t\t--Шаги операций.\n";
-                res += prefix + "{\n";
-                res += steps;
-                res += prefix + "}\n";
+                res += $"{objName}.steps = \t\t--Шаги операций.\n";
+                res += $"{prefix}{{\n";
+                res += operation;
+                res += $"{prefix}}}\n";
             }
 
             return res;
+        }
+
+        /// <summary>
+        /// Генерация строки с состояниями и шагами операции
+        /// </summary>
+        /// <param name="mode">Операция</param>
+        /// <param name="prefix">Отступ</param>
+        /// <returns></returns>
+        private string MakeStatesWithStepsString(Mode mode, string prefix)
+        {
+            const int stepPrefixLength = 3;
+            const int statePrefixLength = 2;
+            string stepPrefix = string
+                .Concat(Enumerable.Repeat(prefix, stepPrefixLength));
+            string statePrefix = string
+                .Concat(Enumerable.Repeat(prefix, statePrefixLength));
+
+            string statesDescription = string.Empty;
+            foreach (State state in mode.States)
+            {
+                string steps = string.Empty;
+                foreach(Step step in state.Steps)
+                {
+                    if (step.GetBaseStepName() == string.Empty)
+                    {
+                        continue;
+                    }
+
+                    steps += $"{stepPrefix}{step.GetBaseStepLuaName()} =" +
+                        $" {step.GetStepNumber()},\n";
+                }
+
+                if (steps != string.Empty)
+                {
+                    statesDescription += $"{statePrefix}{state.LuaName} =\n";
+                    statesDescription += $"{stepPrefix}{{\n";
+                    statesDescription += steps;
+                    statesDescription += $"{stepPrefix}}},\n";
+                }
+            }
+
+            return statesDescription;
         }
 
         /// <summary>

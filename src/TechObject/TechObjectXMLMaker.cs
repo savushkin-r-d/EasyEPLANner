@@ -230,20 +230,20 @@ namespace TechObject
             for (int modeNum = 1; modeNum <= modes.Count; modeNum++)
             {
                 // Шаги "Пауза" и "Остановка" игнорируются
-                int stepsCount = modes[modeNum - 1].MainSteps.Count;
+                //int stepsCount = modes[modeNum - 1].MainSteps.Count;
                 // TODO: Ask about states in channel base
-                for (int stepNum = 1; stepNum <= stepsCount; stepNum++)
-                {
-                    string stepTag = $"{objName}.STEPS{modeNum}[ {stepNum} ]";
-                    if (cdbxTagView == true)
-                    {
-                        objNode.Nodes.Add(stepTag, stepTag);
-                    }
-                    else
-                    {
-                        objSingleStepsNode.Nodes.Add(stepTag, stepTag);
-                    }
-                }
+                //for (int stepNum = 1; stepNum <= stepsCount; stepNum++)
+                //{
+                //    string stepTag = $"{objName}.STEPS{modeNum}[ {stepNum} ]";
+                //    if (cdbxTagView == true)
+                //    {
+                //        objNode.Nodes.Add(stepTag, stepTag);
+                //    }
+                //    else
+                //    {
+                //        objSingleStepsNode.Nodes.Add(stepTag, stepTag);
+                //    }
+                //}
             }
         }
 
