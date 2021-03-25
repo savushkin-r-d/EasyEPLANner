@@ -236,7 +236,8 @@ namespace EasyEPlanner
             string equipments = string.Empty;
 
             var objects = techObjectManager.TechObjects;
-            var baseTechObjectSaver = new BaseTechObjectSaver();
+            IBaseTechObjectSaver baseTechObjectSaver =
+                new BaseTechObjectSaver();
             foreach (TechObject.TechObject obj in objects)
             {
                 BaseTechObject baseObj = obj.BaseTechObject;

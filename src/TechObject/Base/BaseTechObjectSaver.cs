@@ -3,14 +3,8 @@ using System.Linq;
 
 namespace TechObject
 {
-    public class BaseTechObjectSaver
+    public interface IBaseTechObjectSaver
     {
-        public BaseTechObjectSaver()
-        {
-
-        }
-
-        #region Сохранение в prg.lua
         /// <summary>
         /// Сохранить информацию об объекте в prg.lua
         /// </summary>
@@ -18,6 +12,48 @@ namespace TechObject
         /// <param name="objName">Уникальное имя объекта</param>
         /// <param name="prefix">Отступ</param>
         /// <returns></returns>
+        string SaveObjectInfoToPrgLua(BaseTechObject obj, string objName,
+            string prefix);
+
+        /// <summary>
+        /// Сохранить операции объекта
+        /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
+        /// <param name="prefix">Отступ</param>
+        /// <param name="modes">Операции объекта</param>
+        /// <returns></returns>
+        string SaveOperations(string objName, string prefix, List<Mode> modes);
+
+        /// <summary>
+        /// Сохранить номера шагов операций объекта.
+        /// </summary>
+        /// <param name="objName">Имя объекта для записи</param>
+        /// <param name="prefix">Отступ</param>
+        /// <param name="modes">Операции объекта</param>
+        /// <returns></returns>
+        string SaveOperationsSteps(string objName, string prefix,
+            List<Mode> modes);
+
+        /// <summary>
+        /// Сохранить параметры операций базового объекта танк.
+        /// </summary>
+        /// <param name="prefix">Отступ</param>
+        /// <param name="modes">Операции объекта</param>
+        /// <returns></returns>
+        string SaveOperationsParameters(string objName, string prefix,
+            List<Mode> modes);
+
+        /// <summary>
+        /// Сохранить оборудование технологического объекта
+        /// </summary>
+        /// <param name="objName">Имя для сохранения</param>
+        /// <param name="obj">Объект с параметрами</param>
+        /// <returns></returns>
+        string SaveEquipment(TechObject obj, string objName);
+    }
+
+    public class BaseTechObjectSaver : IBaseTechObjectSaver
+    {
         public string SaveObjectInfoToPrgLua(BaseTechObject obj, 
             string objName, string prefix)
         {
@@ -107,13 +143,6 @@ namespace TechObject
             return res;
         }
 
-        /// <summary>
-        /// Сохранить операции объекта
-        /// </summary>
-        /// <param name="objName">Имя объекта для записи</param>
-        /// <param name="prefix">Отступ</param>
-        /// <param name="modes">Операции объекта</param>
-        /// <returns></returns>
         public string SaveOperations(string objName, string prefix,
             List<Mode> modes)
         {
@@ -142,13 +171,6 @@ namespace TechObject
             return res;
         }
 
-        /// <summary>
-        /// Сохранить номера шагов операций объекта.
-        /// </summary>
-        /// <param name="objName">Имя объекта для записи</param>
-        /// <param name="prefix">Отступ</param>
-        /// <param name="modes">Операции объекта</param>
-        /// <returns></returns>
         public string SaveOperationsSteps(string objName, string prefix,
             List<Mode> modes)
         {
@@ -230,14 +252,8 @@ namespace TechObject
             return statesDescription;
         }
 
-        /// <summary>
-        /// Сохранить параметры операций базового объекта танк.
-        /// </summary>
-        /// <param name="prefix">Отступ</param>
-        /// <param name="modes">Операции объекта</param>
-        /// <returns></returns>
-        public string SaveOperationsParameters(string objName,
-            string prefix, List<Mode> modes)
+        public string SaveOperationsParameters(string objName, string prefix,
+            List<Mode> modes)
         {
             var res = "";
             foreach (Mode mode in modes)
@@ -279,12 +295,6 @@ namespace TechObject
             return res;
         }
 
-        /// <summary>
-        /// Сохранить оборудование технологического объекта
-        /// </summary>
-        /// <param name="objName">Имя для сохранения</param>
-        /// <param name="obj">Объект с параметрами</param>
-        /// <returns></returns>
         public string SaveEquipment(TechObject obj, string objName)
         {
             var res = "";
@@ -304,6 +314,5 @@ namespace TechObject
 
             return res;
         }
-        #endregion
     }
 }
