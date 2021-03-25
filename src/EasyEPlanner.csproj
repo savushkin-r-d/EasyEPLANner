@@ -279,6 +279,7 @@
     <Compile Include="StaticHelper\LuaHelper.cs" />
     <Compile Include="StaticHelper\ApiHelper.cs" />
     <Compile Include="FileSavers\XMLReporter.cs" />
+    <Compile Include="TechObject\Base\BaseTechObjectSaver.cs" />
     <Compile Include="TechObject\Base\BaseTechObjectLoader.cs" />
     <Compile Include="TechObject\Base\BaseTechObjectManager.cs" />
     <Compile Include="TechObject\Base\BaseOperation.cs" />
