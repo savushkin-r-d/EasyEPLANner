@@ -242,7 +242,7 @@ namespace TechObject
 
                 if (steps != string.Empty)
                 {
-                    statesDescription += $"{statePrefix}{state.LuaName} =\n";
+                    statesDescription += $"{statePrefix}{state.StateType} =\n";
                     statesDescription += $"{stepPrefix}{{\n";
                     statesDescription += steps;
                     statesDescription += $"{stepPrefix}}},\n";

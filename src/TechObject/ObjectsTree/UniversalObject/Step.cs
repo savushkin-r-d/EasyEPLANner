@@ -411,12 +411,12 @@ namespace TechObject
 
             Mode mode = state.Owner;
             BaseStep baseStep = mode.BaseOperation
-                .GetStateBaseSteps(state.LuaName)
+                .GetStateBaseSteps(state.StateType)
                 .Where(x => x.LuaName == newVal).FirstOrDefault();
             if (baseStep == null)
             {
                 baseStep = mode.BaseOperation
-                    .GetStateBaseSteps(state.LuaName)
+                    .GetStateBaseSteps(state.StateType)
                     .Where(x => x.Name == newVal).FirstOrDefault();
             }
 
@@ -542,7 +542,7 @@ namespace TechObject
                 State state = Owner;
                 Mode mode = state.Owner;
                 List<string> stepsNames = mode.BaseOperation
-                    .GetStateStepsNames(state.LuaName);
+                    .GetStateStepsNames(state.StateType);
                 return stepsNames;
             }
         }

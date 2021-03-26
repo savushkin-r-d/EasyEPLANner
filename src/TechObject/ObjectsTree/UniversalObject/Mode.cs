@@ -46,11 +46,10 @@ namespace TechObject
             stepsMngr = new List<State>();
 
             stepsMngr.Add(new State(stateStr[(int)StateName.RUN],
-                StateName.RUN.ToString(), this, true));
+                StateName.RUN, this, true));
             for (StateName i = StateName.PAUSE; i < StateName.STATES_CNT; i++)
             {
-                stepsMngr.Add(new State(stateStr[(int)i],
-                    i.ToString(), this));
+                stepsMngr.Add(new State(stateStr[(int)i], i, this));
             }
 
             operPar = new OperationParams();
@@ -689,7 +688,7 @@ namespace TechObject
             foreach(var state in States)
             {
                 var stateSteps = baseOperation
-                    .GetStateBaseSteps(state.LuaName)
+                    .GetStateBaseSteps(state.StateType)
                     .OrderBy(x => x.DefaultPosition);
                 foreach(var baseStep in stateSteps)
                 {

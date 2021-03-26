@@ -234,11 +234,10 @@ namespace TechObject
                 foreach(var state in modes[modeNum - 1].States)
                 {
                     int stepsCount = state.Steps.Count;
-                    string stateLuaName = state.LuaName;
                     for (int stepNum = 1; stepNum <= stepsCount; stepNum++)
                     {
                         string stepTag = $"{objName}." +
-                            $"{stateLuaName}_STEPS{modeNum}[ {stepNum} ]";
+                            $"{state.StateType}_STEPS{modeNum}[ {stepNum} ]";
                         if (cdbxTagView == true)
                         {
                             objNode.Nodes.Add(stepTag, stepTag);

@@ -52,14 +52,14 @@ namespace TechObject
         /// Создание нового состояния.
         /// </summary>
         /// <param name="name">Имя состояния.</param>
-        /// <param name="luaName">Lua-имя</param>
+        /// <param name="stateType">Тип состояния</param>
         /// <param name="needMainStep">Надо ли основной шаг.</param>
         /// <param name="owner">Владелец состояния (Операция)</param>
-        public State(string name, string luaName, Mode owner, 
+        public State(string name, Mode.StateName stateType, Mode owner, 
             bool needMainStep = false)
         {
             this.name = name;
-            this.luaName = luaName;
+            StateType = stateType;
             this.owner = owner;
             steps = new List<Step>();
 
@@ -73,7 +73,7 @@ namespace TechObject
         public State Clone(string name = "")
         {
             State clone = (State)MemberwiseClone();
-            clone.luaName = luaName;
+            clone.StateType = StateType;
 
             if (name != "")
             {
@@ -302,11 +302,10 @@ namespace TechObject
             var step = child as Step;
             if (step != null)
             {
-                const string ignoreStateName = "Выполнение";
-                if (steps.IndexOf(step) == 0 &&
-                    steps[0].Owner.name == ignoreStateName)
+                bool ignoreDeleting = steps.IndexOf(step) == 0 &&
+                    steps.First().Owner.StateType == Mode.StateName.RUN;
+                if (ignoreDeleting)
                 {
-                    // Не удаляем шаг операции.
                     return false;
                 }
 
@@ -520,17 +519,13 @@ namespace TechObject
             }
         }
 
-        public string LuaName
-        {
-            get
-            {
-                return luaName;
-            }
-        }
+        /// <summary>
+        /// Тип состояния
+        /// </summary>
+        public Mode.StateName StateType { get; private set; }
 
-        private string luaName;      ///< Lua-имя
         private string name;        ///< Имя.
-        private List<Step> steps;  ///< Список шагов.
+        private List<Step> steps;   ///< Список шагов.
         private Step modeStep;      ///< Шаг.
         private Mode owner;         ///< Владелец элемента
     }

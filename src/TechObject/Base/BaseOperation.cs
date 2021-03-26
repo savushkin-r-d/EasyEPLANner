@@ -147,28 +147,33 @@ namespace TechObject
             }
         }
 
-        public List<BaseStep> GetStateBaseSteps(string stateLuaName)
+        public List<BaseStep> GetStateBaseSteps(Mode.StateName stateType)
         {
-            bool existState = states.ContainsKey(stateLuaName);
             var steps = new List<BaseStep>();
-            if (existState)
+            if (StateExist(stateType))
             {
-                steps = states[stateLuaName];
+                steps = states[$"{stateType}"];
             }
 
             return steps;
         }
 
-        public List<string> GetStateStepsNames(string stateLuaName)
+        public List<string> GetStateStepsNames(Mode.StateName stateType)
         {
-            bool existState = states.ContainsKey(stateLuaName);
             var stepsNames = new List<string>();
-            if (existState)
+            if (StateExist(stateType))
             {
-                stepsNames = states[stateLuaName].Select(x => x.Name).ToList();
+                stepsNames = states[$"{stateType}"]
+                    .Select(x => x.Name).ToList();
             }
 
             return stepsNames;
+        }
+
+        private bool StateExist(Mode.StateName stateType)
+        {
+            string stateTypeStr = stateType.ToString();
+            return states.ContainsKey(stateTypeStr);
         }
 
         /// <summary>
