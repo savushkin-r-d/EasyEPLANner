@@ -51,15 +51,13 @@ namespace TechObject
         /// <summary>
         /// Создание нового состояния.
         /// </summary>
-        /// <param name="name">Имя состояния.</param>
         /// <param name="stateType">Тип состояния</param>
         /// <param name="needMainStep">Надо ли основной шаг.</param>
         /// <param name="owner">Владелец состояния (Операция)</param>
-        public State(string name, Mode.StateName stateType, Mode owner, 
-            bool needMainStep = false)
+        public State(StateType stateType, Mode owner, bool needMainStep = false)
         {
-            this.name = name;
-            StateType = stateType;
+            name = stateStr[(int)stateType];
+            Type = stateType;
             this.owner = owner;
             steps = new List<Step>();
 
@@ -73,7 +71,7 @@ namespace TechObject
         public State Clone(string name = "")
         {
             State clone = (State)MemberwiseClone();
-            clone.StateType = StateType;
+            clone.Type = Type;
 
             if (name != string.Empty)
             {
@@ -304,7 +302,7 @@ namespace TechObject
             if (step != null)
             {
                 bool ignoreDeleting = steps.IndexOf(step) == 0 &&
-                    steps.First().Owner.StateType == Mode.StateName.RUN;
+                    steps.First().Owner.Type == StateType.RUN;
                 if (ignoreDeleting)
                 {
                     return false;
@@ -523,7 +521,23 @@ namespace TechObject
         /// <summary>
         /// Тип состояния
         /// </summary>
-        public Mode.StateName StateType { get; private set; }
+        public StateType Type { get; private set; }
+
+        public enum StateType
+        {
+            RUN = 0,    // Выполнение
+            PAUSE,      // Пауза
+            STOP,       // Остановка
+
+            STATES_CNT = 3,
+        }
+
+        private readonly string[] stateStr =
+        {
+            "Выполнение",
+            "Пауза",
+            "Остановка",
+        };
 
         private string name;        ///< Имя.
         private List<Step> steps;   ///< Список шагов.

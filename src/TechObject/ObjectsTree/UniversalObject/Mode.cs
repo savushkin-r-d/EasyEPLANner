@@ -19,7 +19,8 @@ namespace TechObject
         {
             get
             {
-                if (idy < (int)StateName.STATES_CNT)
+                int statesCount = (int)State.StateType.STATES_CNT;
+                if (idy < statesCount)
                 {
                     return stepsMngr[idy];
                 }
@@ -45,11 +46,12 @@ namespace TechObject
 
             stepsMngr = new List<State>();
 
-            stepsMngr.Add(new State(stateStr[(int)StateName.RUN],
-                StateName.RUN, this, true));
-            for (StateName i = StateName.PAUSE; i < StateName.STATES_CNT; i++)
+            var lastState = State.StateType.STATES_CNT;
+            var secondState = State.StateType.PAUSE;
+            stepsMngr.Add(new State(State.StateType.RUN, this, true));
+            for (var state = secondState; state < lastState; state++)
             {
-                stepsMngr.Add(new State(stateStr[(int)i], i, this));
+                stepsMngr.Add(new State(state, this));
             }
 
             operPar = new OperationParams();
@@ -180,7 +182,8 @@ namespace TechObject
         public void AddStep(int stateN, string stepName, 
             string baseStepLuaName = "")
         {
-            if (stateN >= 0 && stateN < (int)StateName.STATES_CNT)
+            int statesCount = (int)State.StateType.STATES_CNT;
+            if (stateN >= 0 && stateN < statesCount)
             {
                 stepsMngr[stateN].AddStep(stepName, baseStepLuaName);
             }
@@ -688,7 +691,7 @@ namespace TechObject
             foreach(var state in States)
             {
                 var stateSteps = baseOperation
-                    .GetStateBaseSteps(state.StateType)
+                    .GetStateBaseSteps(state.Type)
                     .OrderBy(x => x.DefaultPosition);
                 foreach(var baseStep in stateSteps)
                 {
@@ -702,22 +705,6 @@ namespace TechObject
                 }
             }
         }
-
-        public enum StateName
-        {
-            RUN = 0,    // Выполнение
-            PAUSE,      // Пауза
-            STOP,       // Остановка
-
-            STATES_CNT = 3,
-        }
-
-        private string[] stateStr =
-        {
-            "Выполнение",
-            "Пауза",
-            "Остановка",
-        };
 
         private GetN getN;
 

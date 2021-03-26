@@ -151,7 +151,7 @@ namespace TechObject
             }
         }
 
-        public List<BaseStep> GetStateBaseSteps(Mode.StateName stateType)
+        public List<BaseStep> GetStateBaseSteps(State.StateType stateType)
         {
             var steps = new List<BaseStep>();
             if (StateExist(stateType))
@@ -162,7 +162,7 @@ namespace TechObject
             return steps;
         }
 
-        public List<string> GetStateStepsNames(Mode.StateName stateType)
+        public List<string> GetStateStepsNames(State.StateType stateType)
         {
             var stepsNames = new List<string>();
             if (StateExist(stateType))
@@ -174,7 +174,7 @@ namespace TechObject
             return stepsNames;
         }
 
-        private bool StateExist(Mode.StateName stateType)
+        private bool StateExist(State.StateType stateType)
         {
             string stateTypeStr = stateType.ToString();
             return states.ContainsKey(stateTypeStr);

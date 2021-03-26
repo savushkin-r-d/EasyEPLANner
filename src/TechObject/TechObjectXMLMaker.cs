@@ -237,7 +237,7 @@ namespace TechObject
                     for (int stepNum = 1; stepNum <= stepsCount; stepNum++)
                     {
                         string stepTag = $"{objName}." +
-                            $"{state.StateType}_STEPS{modeNum}[ {stepNum} ]";
+                            $"{state.Type}_STEPS{modeNum}[ {stepNum} ]";
                         if (cdbxTagView == true)
                         {
                             objNode.Nodes.Add(stepTag, stepTag);
