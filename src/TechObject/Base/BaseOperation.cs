@@ -49,32 +49,31 @@ namespace TechObject
         /// <summary>
         /// Добавить базовый шаг
         /// </summary>
-        /// <param name="stateLuaName">Lua-имя состояния</param>
+        /// <param name="stateTypeStr">Тип состояния</param>
         /// <param name="luaName">Lua-имя</param>
         /// <param name="name">Имя</param>
         /// <param name="defaultPosition">Стандартная позиция шага в 
         /// базовой операции.</param>
-        public void AddStep(string stateLuaName, string luaName, string name,
+        public void AddStep(string stateTypeStr, string luaName, string name,
             int defaultPosition)
         {
             var step = new BaseStep(name, luaName, defaultPosition);
             step.Owner = this;
 
-            if (states.ContainsKey(stateLuaName))
+            if (states.ContainsKey(stateTypeStr))
             {
-                states[stateLuaName].Add(step);
+                states[stateTypeStr].Add(step);
             }
             else
             {
-                var stepsList = new List<BaseStep>();
-                
                 var emptyStep = new BaseStep(string.Empty, string.Empty);
                 emptyStep.Owner = this;
-                stepsList.Add(emptyStep);
                 
+                var stepsList = new List<BaseStep>();
+                stepsList.Add(emptyStep);
                 stepsList.Add(step);
 
-                states.Add(stateLuaName, stepsList);
+                states.Add(stateTypeStr, stepsList);
             }
         }
 
@@ -139,6 +138,11 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Состояния базовой операции.
+        /// Ключ - Lua-имя состояния (из перечисления).
+        /// Значение - базовые шаги.
+        /// </summary>
         public Dictionary<string, List<BaseStep>> States
         {
             get
