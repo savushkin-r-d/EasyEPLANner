@@ -286,7 +286,7 @@ namespace TechObject
                 return res;
             }
 
-            string paramsForSave = "";
+            string paramsForSave = string.Empty;
             foreach (var operParam in Properties)
             {
                 if(!operParam.NeedDisable && !operParam.IsEmpty)
@@ -417,7 +417,7 @@ namespace TechObject
         /// </summary>
         public string Check()
         {
-            string errors = "";
+            string errors = string.Empty;
             foreach (var property in Properties)
             {
                 if (property is MainAggregateParameter)
@@ -479,9 +479,32 @@ namespace TechObject
         /// <returns></returns>
         public BaseOperation Clone()
         {
-            var properties = new List<BaseParameter>(
-                baseOperationProperties.Count);
             var operation = EmptyOperation();
+            List<BaseParameter> properties = CloneProperties(operation);
+            Dictionary<string, List<BaseStep>> clonedStates =
+                CloneStates(operation);
+
+            operation.Name = operationName;
+            operation.LuaName = luaOperationName;
+            operation.Properties = properties;
+            operation.states = clonedStates;
+            operation.owner = Owner;
+            operation.DefaultPosition = DefaultPosition;
+
+            operation.SetItems();
+
+            return operation;
+        }
+
+        /// <summary>
+        /// Копирование доп. свойств базовой операции
+        /// </summary>
+        /// <param name="newOwner">Новая базовая операция-владелец</param>
+        /// <returns></returns>
+        private List<BaseParameter> CloneProperties(BaseOperation newOwner)
+        {
+            var properties = new List<BaseParameter>();
+
             for (int i = 0; i < baseOperationProperties.Count; i++)
             {
                 BaseParameter oldProperty = baseOperationProperties[i];
@@ -496,36 +519,38 @@ namespace TechObject
                 }
                 else
                 {
-                    newProperty.Owner = operation;
+                    newProperty.Owner = newOwner;
                 }
                 properties.Add(newProperty);
             }
 
+            return properties;
+        }
+
+        /// <summary>
+        /// Копирование состояний и базовых шагов
+        /// </summary>
+        /// <param name="newOwner">Новая операция-владелец</param>
+        /// <returns></returns>
+        private Dictionary<string, List<BaseStep>> CloneStates(
+            BaseOperation newOwner)
+        {
             var clonedStates = new Dictionary<string, List<BaseStep>>();
-            foreach(var state in States)
+            foreach (var state in States)
             {
                 var clonedSteps = new List<BaseStep>();
                 List<BaseStep> steps = state.Value;
-                foreach(var step in steps)
+                foreach (var step in steps)
                 {
                     BaseStep clonedStep = step.Clone();
-                    clonedStep.Owner = operation;
+                    clonedStep.Owner = newOwner;
                     clonedSteps.Add(clonedStep);
                 }
 
                 clonedStates.Add(state.Key, clonedSteps);
             }
 
-            operation.Name = operationName;
-            operation.LuaName = luaOperationName;
-            operation.Properties = properties;
-            operation.states = clonedStates;
-            operation.owner = Owner;
-            operation.DefaultPosition = DefaultPosition;
-
-            operation.SetItems();
-
-            return operation;
+            return clonedStates;
         }
 
         #region синхронизация устройств
@@ -547,12 +572,12 @@ namespace TechObject
                 {
                     string res = string.Format("Доп. свойства ({0})", 
                         items.Count());
-                    return new string[] { res, "" };
+                    return new string[] { res, string.Empty };
                 }
                 else
                 {
                     string res = string.Format("Доп. свойства");
-                    return new string[] { res, "" };
+                    return new string[] { res, string.Empty };
                 }
             }
         }
@@ -570,7 +595,7 @@ namespace TechObject
             if (child is ActiveParameter)
             {
                 var property = child as ActiveParameter;
-                property.SetNewValue("");
+                property.SetNewValue(string.Empty);
                 return true;
             }
             return false;

@@ -75,7 +75,7 @@ namespace TechObject
             State clone = (State)MemberwiseClone();
             clone.StateType = StateType;
 
-            if (name != "")
+            if (name != string.Empty)
             {
                 clone.name = name;
             }
@@ -124,9 +124,9 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix)
         {
-            if (steps.Count == 0) return "";
+            if (steps.Count == 0) return string.Empty;
 
-            string res = "";
+            string res = string.Empty;
 
             if (modeStep != null)
             {
@@ -148,7 +148,7 @@ namespace TechObject
                 res += prefix + "\t},\n";
             }
 
-            if (res != "")
+            if (res != string.Empty)
             {
                 res = prefix + "--\'" + name + "\'\n" + res;
             }
@@ -247,7 +247,8 @@ namespace TechObject
         /// <param name="isMain">Главный шаг или нет (первый)</param>
         /// <param name="stepName">Имя шага (дефолт, если пустое)</param>
         /// <returns>Добавленный шаг</returns>
-        private Step AddNewStepToItems(bool isMain = false, string stepName = "")
+        private Step AddNewStepToItems(bool isMain = false,
+            string stepName = "")
         {
             Step step;
             if (isMain)
@@ -277,7 +278,7 @@ namespace TechObject
                     res += " (" + (steps.Count - 1) + ")";
                 }
 
-                return new string[] { res, "" };
+                return new string[] { res, string.Empty };
             }
         }
 
