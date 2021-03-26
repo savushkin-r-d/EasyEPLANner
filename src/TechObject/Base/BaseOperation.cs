@@ -481,13 +481,12 @@ namespace TechObject
         {
             var operation = EmptyOperation();
             List<BaseParameter> properties = CloneProperties(operation);
-            Dictionary<string, List<BaseStep>> clonedStates =
-                CloneStates(operation);
+            Dictionary<string, List<BaseStep>> states = CloneStates(operation);
 
             operation.Name = operationName;
             operation.LuaName = luaOperationName;
             operation.Properties = properties;
-            operation.states = clonedStates;
+            operation.states = states;
             operation.owner = Owner;
             operation.DefaultPosition = DefaultPosition;
 
