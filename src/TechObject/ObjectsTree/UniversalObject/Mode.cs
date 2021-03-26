@@ -89,7 +89,7 @@ namespace TechObject
             clone.owner = newOwner;
             clone.baseOperation = baseOperation.Clone(clone);
 
-            if (name != "")
+            if (name != string.Empty)
             {
                 clone.name = name;
             }
@@ -145,12 +145,12 @@ namespace TechObject
             res += baseOperation.SaveAsLuaTable(prefix);
 
             string tmp;
-            string tmp_2 = "";
+            string tmp_2 = string.Empty;
 
             for (int j = 0; j < stepsMngr.Count; j++)
             {
                 tmp = stepsMngr[j].SaveAsLuaTable(prefix + "\t\t");
-                if (tmp != "")
+                if (tmp != string.Empty)
                 {
                     tmp_2 += prefix + "\t[ " + (j + 1) + " ] =\n";
                     tmp_2 += prefix + "\t\t{\n";
@@ -158,7 +158,7 @@ namespace TechObject
                     tmp_2 += prefix + "\t\t},\n";
                 }
             }
-            if (tmp_2 != "")
+            if (tmp_2 != string.Empty)
             {
                 res += prefix + "states =\n" +
                     prefix + "\t{\n";
@@ -206,10 +206,10 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveRestrictionAsLua(string prefix)
         {
-            string res = "";
-            string tmp = "";
+            string res = string.Empty;
+            string tmp = string.Empty;
             tmp += restrictionMngr.SaveRestrictionAsLua(prefix);
-            if (tmp != "")
+            if (tmp != string.Empty)
             {
                 res += prefix + "{\n" + tmp + prefix + "},\n";
             }
@@ -334,7 +334,7 @@ namespace TechObject
             {
                 if ((mode.BaseOperation.Name == baseOperationName ||
                     mode.BaseOperation.LuaName == baseOperationName) &&
-                    baseOperationName != "")
+                    baseOperationName != string.Empty)
                 {
                     objectAlreadyContainsThisOperation = true;
                 }
@@ -411,7 +411,7 @@ namespace TechObject
         /// </summary>
         public void ClearBaseOperation()
         {
-            this.SetNewValue("", true);
+            this.SetNewValue(string.Empty, true);
         }
 
         #region Реализация ITreeViewItem

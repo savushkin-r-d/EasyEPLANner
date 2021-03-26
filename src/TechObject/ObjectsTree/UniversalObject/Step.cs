@@ -148,7 +148,7 @@ namespace TechObject
             Step clone = (Step)MemberwiseClone();
             clone.getN = getN;
 
-            if (name != "")
+            if (name != string.Empty)
             {
                 clone.name = name.Substring(3);
             }
@@ -207,7 +207,7 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix, bool isShortForm = false)
         {
-            string res = "";
+            string res = string.Empty;
 
             if (isShortForm)
             {
@@ -222,13 +222,13 @@ namespace TechObject
                 res += prefix + "name = \'" + name + "\',\n";
 
                 string time_param_n = timeParam.EditText[1].Trim();
-                if (time_param_n != "")
+                if (time_param_n != string.Empty)
                 {
                     res += prefix + "time_param_n = " + time_param_n + ",\n";
                 }
 
                 string next_step_n = nextStepN.EditText[1].Trim();
-                if (next_step_n != "")
+                if (next_step_n != string.Empty)
                 {
                     res += prefix + "next_step_n = " + next_step_n + ",\n";
                 }
@@ -369,7 +369,7 @@ namespace TechObject
             {
                 if (getN(this) == 0)
                 {
-                    return new string[] { name, "" };
+                    return new string[] { name, string.Empty };
                 }
 
                 return new string[] { getN(this) + ". " + name, baseStep.Name };
