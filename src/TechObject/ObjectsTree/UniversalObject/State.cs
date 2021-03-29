@@ -169,7 +169,11 @@ namespace TechObject
 
             Step newStep = AddNewStepToItems(false, stepName);
             newStep.AddParent(this);
-            newStep.SetNewValue(baseStepLuaName, true);
+
+            if (!string.IsNullOrEmpty(baseStepLuaName))
+            {
+                newStep.SetNewValue(baseStepLuaName, true);
+            }
         }
 
         public List<Step> Steps
