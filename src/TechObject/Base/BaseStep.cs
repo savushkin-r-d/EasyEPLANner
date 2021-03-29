@@ -8,11 +8,13 @@ namespace TechObject
 {
     public class BaseStep
     {
-        public BaseStep(string name, string luaName, int defaultPosition = 0)
+        public BaseStep(string name, string luaName, int defaultPosition = 0,
+            object owner = null)
         {
             Name = name;
             LuaName = luaName;
             DefaultPosition = defaultPosition;
+            Owner = owner;
         }
 
         public BaseStep Clone()
