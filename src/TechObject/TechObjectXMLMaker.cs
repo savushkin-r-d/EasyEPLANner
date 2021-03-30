@@ -220,27 +220,32 @@ namespace TechObject
         /// <summary>
         /// Генерация одиночных шагов для объекта
         /// </summary>
-        /// <param name="item">Объект</param>
+        /// <param name="techObject">Объект</param>
         /// <param name="objName">Имя объекта</param>
-        /// <param name="objSingleStepsNode"></param>
-        private void GenerateSingleStepsTags(TechObject item, string objName,
-            TreeNode objNode, TreeNode objSingleStepsNode)
+        /// <param name="objNode">Дерево объекта (пишется либо сюда)</param>
+        /// <param name="objSingleStepsNode">Дерево для одиночных шагов 
+        /// (либо сюда)</param>
+        private void GenerateSingleStepsTags(TechObject techObject,
+            string objName, TreeNode objNode, TreeNode objSingleStepsNode)
         {
-            List<Mode> modes = item.ModesManager.Modes;
+            List<Mode> modes = techObject.ModesManager.Modes;
             for (int modeNum = 1; modeNum <= modes.Count; modeNum++)
             {
-                // Шаги "Пауза" и "Остановка" игнорируются
-                int stepsCount = modes[modeNum - 1].MainSteps.Count;
-                for (int stepNum = 1; stepNum <= stepsCount; stepNum++)
+                foreach(var state in modes[modeNum - 1].States)
                 {
-                    string stepTag = $"{objName}.STEPS{modeNum}[ {stepNum} ]";
-                    if (cdbxTagView == true)
+                    int stepsCount = state.Steps.Count;
+                    for (int stepNum = 1; stepNum <= stepsCount; stepNum++)
                     {
-                        objNode.Nodes.Add(stepTag, stepTag);
-                    }
-                    else
-                    {
-                        objSingleStepsNode.Nodes.Add(stepTag, stepTag);
+                        string stepTag = $"{objName}." +
+                            $"{state.Type}_STEPS{modeNum}[ {stepNum} ]";
+                        if (cdbxTagView)
+                        {
+                            objNode.Nodes.Add(stepTag, stepTag);
+                        }
+                        else
+                        {
+                            objSingleStepsNode.Nodes.Add(stepTag, stepTag);
+                        }
                     }
                 }
             }

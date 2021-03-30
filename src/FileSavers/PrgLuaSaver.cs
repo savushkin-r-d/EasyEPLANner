@@ -229,13 +229,15 @@ namespace EasyEPlanner
         /// <returns></returns>
         private static string SaveObjectsInformationToPrgLua(string prefix)
         {
-            string objectsInfo = "";
-            string operations = "";
-            string operationsSteps = "";
-            string operationsParameters = "";
-            string equipments = "";
+            string objectsInfo = string.Empty;
+            string operations = string.Empty;
+            string operationsSteps = string.Empty;
+            string operationsParameters = string.Empty;
+            string equipments = string.Empty;
 
             var objects = techObjectManager.TechObjects;
+            IBaseTechObjectSaver baseTechObjectSaver =
+                new BaseTechObjectSaver();
             foreach (TechObject.TechObject obj in objects)
             {
                 BaseTechObject baseObj = obj.BaseTechObject;
@@ -247,23 +249,24 @@ namespace EasyEPlanner
                 var objName = "prg." + obj.NameEplanForFile.ToLower() +
                     obj.TechNumber.ToString();
 
-                objectsInfo += baseObj.SaveObjectInfoToPrgLua(objName, prefix);
+                objectsInfo += baseTechObjectSaver.
+                    SaveObjectInfoToPrgLua(baseObj, objName, prefix);
 
                 var modesManager = obj.ModesManager;
                 var modes = modesManager.Modes;
                 bool haveBaseOperations = modes
-                    .Where(x => x.DisplayText[1] != "").Count() != 0;
+                    .Where(x => x.DisplayText[1] != string.Empty).Count() != 0;
                 if (haveBaseOperations)
                 {
-                    operations += baseObj.SaveOperations(
-                        objName, prefix, modes);
-                    operationsSteps += baseObj.SaveOperationsSteps(
-                        objName, prefix, modes);
-                    operationsParameters += baseObj.SaveOperationsParameters(
-                        objName, prefix, modes);
+                    operations += baseTechObjectSaver
+                        .SaveOperations(objName, prefix, modes);
+                    operationsSteps += baseTechObjectSaver
+                        .SaveOperationsSteps(objName, prefix, modes);
+                    operationsParameters += baseTechObjectSaver
+                        .SaveOperationsParameters(objName, prefix, modes);
                 }
 
-                equipments += obj.BaseTechObject.SaveEquipment(obj, objName);
+                equipments += baseTechObjectSaver.SaveEquipment(obj, objName);
             }
 
             var accumulatedData = new string[]
@@ -275,10 +278,10 @@ namespace EasyEPlanner
                 equipments
             };
 
-            var result = "";
+            var result = string.Empty;
             foreach (var stringsForSave in accumulatedData)
             {
-                if (stringsForSave != "")
+                if (stringsForSave != string.Empty)
                 {
                     result += stringsForSave + "\n";
                 }

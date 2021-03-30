@@ -362,83 +362,126 @@ namespace EasyEPlanner
         /// <summary>
         /// Настройка узла базы каналов
         /// </summary>
-        /// <param name="nodes">Узел базы каналов</param>
+        /// <param name="nodes">Редактируемые узлы базы каналов</param>
         /// <param name="item">Узел в XML</param>
         /// <param name="subTypeChannels">Тэги узла в XML</param>
         private static void SetUpChannelBaseObject(TreeNode[] nodes, 
             XmlElement item, XmlNodeList subTypeChannels)
         {
             const int channelDescrNum = 4;
-            const int channelEnabledId = 3;
 
-            XmlNode firstChannelDescr = subTypeChannels[0]
-                .ChildNodes[channelDescrNum];
+            ReplaceObjectNumber(subTypeChannels, nodes, channelDescrNum);
+            ReplaceStepsToRunSteps(subTypeChannels, channelDescrNum);
+            OnOffNodesDependOnTheirState(nodes, item, subTypeChannels,
+                channelDescrNum);
+        }
+
+        /// <summary>
+        /// Перезаписать номера каналов подтипа (в OBJECT).
+        /// </summary>
+        /// <param name="subTypeChannels">Список каналов</param>
+        /// <param name="nodes">Редактируемые узлы</param>
+        /// <param name="channelDescrNum">Номер ячейки описания канала</param>
+        private static void ReplaceObjectNumber(XmlNodeList subTypeChannels,
+            TreeNode[] nodes, int channelDescrNum)
+        {
+            const string searchPattern = @"(?<name>OBJECT)(?<n>[0-9]+)+";
+
+            XmlNode firstChannel = subTypeChannels[0];
+            XmlNode firstChannelDescr =
+                firstChannel.ChildNodes[channelDescrNum];
+            bool hasTags = nodes.Length > 0;
             if (firstChannelDescr != null &&
-                firstChannelDescr.InnerText.Contains("OBJECT") &&
-                nodes.Length == 1)
+                firstChannelDescr.InnerText.Contains(DefaultNodeName) &&
+                hasTags)
             {
-                RewriteSubType(subTypeChannels, nodes.First());
-            }
+                string newNodeName = nodes.First().FirstNode.Text;
+                string newNum = Regex.Match(newNodeName, searchPattern)
+                    .Groups["n"].Value;
 
-            if (nodes.Length == 0)
-            {
-                // Комментирование удаленных узлов.
-                item.ChildNodes[channelEnabledId].InnerText = "0";
-            }
-            else
-            {
-                item.ChildNodes[channelEnabledId].InnerText = "-1";
+                string oldNodeName = firstChannelDescr.InnerText;
+                string oldNum = Regex.Match(oldNodeName, searchPattern)
+                    .Groups["n"].Value;
 
-                foreach (XmlElement chan in subTypeChannels)
+                if (newNum != oldNum)
                 {
-                    foreach (TreeNode node in nodes)
+                    foreach (XmlElement channel in subTypeChannels)
                     {
-                        TreeNode[] chanNodes = node.Nodes
-                            .Find(
-                            chan.ChildNodes[channelDescrNum].InnerText.Trim(), 
-                            true);
-                        if (chanNodes.Length == 0)
-                        {
-                            chan.ChildNodes[channelEnabledId].InnerText = "0";
-                            break;
-                        }
-                        else
-                        {
-                            chan.ChildNodes[channelEnabledId].InnerText = "-1";
-                        }
+                        channel.ChildNodes[channelDescrNum].InnerText =
+                            Regex.Replace(channel.ChildNodes[channelDescrNum]
+                            .InnerText, searchPattern,
+                            $"{DefaultNodeName}{newNum}");
                     }
                 }
             }
         }
 
         /// <summary>
-        /// Перезаписать номера каналов подтипа (в OBJECT).
+        /// Замена устаревшего описания .STEPS на .RUN_STEPS
         /// </summary>
-        /// <param name="channels">Список каналов</param>
-        /// <param name="node">Подтип для перезаписи</param>
-        private static void RewriteSubType(XmlNodeList channels,
-            TreeNode node)
+        /// <param name="channels">Список каналов </param>
+        /// <param name="channelDescrNum">Номер ячейки описания канала</param>
+        private static void ReplaceStepsToRunSteps(XmlNodeList channels,
+            int channelDescrNum)
         {
-            string searchPattern = @"(?<name>OBJECT)(?<n>[0-9]+)+";
-            const int channelDescrNum = 4;
+            const string searchOldStepsPattern = "\\.STEPS[1-9]\\[";
 
-            string newNodeName = node.FirstNode.Text;
-            string newNum = Regex.Match(newNodeName, searchPattern).Groups["n"]
-                .Value;
-
-            XmlNode firstChannel = channels[0];
-            string oldNodeName = firstChannel.ChildNodes[channelDescrNum]
-                .InnerText;
-            string oldNum = Regex.Match(oldNodeName, searchPattern).Groups["n"]
-                .Value;
-
-            if (newNum != oldNum)
+            foreach (XmlElement channel in channels)
             {
-                foreach (XmlElement channel in channels)
+                var channelDescription = channel.ChildNodes[channelDescrNum]
+                    .InnerText;
+                Match oldStepsRegex = Regex
+                    .Match(channelDescription, searchOldStepsPattern);
+                if(oldStepsRegex.Success)
                 {
                     channel.ChildNodes[channelDescrNum].InnerText =
-                        Regex.Replace(channel.ChildNodes[channelDescrNum]
-                        .InnerText, searchPattern, "OBJECT" + newNum);
+                        channelDescription.Replace(".STEPS", ".RUN_STEPS");
+                }
+            }
+        }
+
+        ///<summary>
+        /// Отключение и включение узлов и их тэгов в зависимости от их
+        /// нового состояния (если удалены -> отключаются).
+        ///</summary>
+        /// <param name="nodes">Узел базы каналов</param>
+        /// <param name="item">Узел в XML</param>
+        /// <param name="subTypeChannels">Тэги узла в XML</param>
+        /// <param name="channelDescrNum">Номер ячейки описания канала</param>
+        private static void OnOffNodesDependOnTheirState(TreeNode[] nodes,
+            XmlElement item, XmlNodeList subTypeChannels, int channelDescrNum)
+        {
+            const int channelEnabledId = 3;
+            const string disable = "0";
+            const string enable = "-1";
+
+            bool deletedNode = nodes.Length == 0;
+            if (deletedNode)
+            {
+                // Комментирование удаленных узлов.
+                item.ChildNodes[channelEnabledId].InnerText = disable;
+            }
+            else
+            {
+                item.ChildNodes[channelEnabledId].InnerText = enable;
+
+                foreach (XmlElement chan in subTypeChannels)
+                {
+                    foreach (TreeNode node in nodes)
+                    {
+                        TreeNode[] chanNodes = node.Nodes.Find(
+                            chan.ChildNodes[channelDescrNum].InnerText.Trim(),
+                            true);
+                        if (chanNodes.Length == 0)
+                        {
+                            chan.ChildNodes[channelEnabledId].InnerText = disable;
+                            break;
+                        }
+                        else
+                        {
+                            chan.ChildNodes[channelEnabledId].InnerText = enable;
+                        }
+                    }
                 }
             }
         }
@@ -728,7 +771,8 @@ namespace EasyEPlanner
         private static bool GetNeedProtocolCondition(string tagName, 
             TreeNode node)
         {
-            if (Protocol.Contains(tagName) || node.Text.Contains("OBJECT") &&
+            if (Protocol.Contains(tagName) ||
+                node.Text.Contains(DefaultNodeName) &&
                 (node.Text.Contains("ST") || 
                 node.Text.Contains("MODES") ||
                 node.Text.Contains("OPERATIONS") || 
@@ -761,6 +805,8 @@ namespace EasyEPlanner
             parametersElm.AppendChild(parElm);
 
         }
+
+        private const string DefaultNodeName = "OBJECT";
 
         /// <summary>
         /// Узлы, в которых устанавливается протоколирование элементов.

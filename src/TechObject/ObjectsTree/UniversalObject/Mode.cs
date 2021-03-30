@@ -19,7 +19,8 @@ namespace TechObject
         {
             get
             {
-                if (idy < (int)StateName.STATES_CNT)
+                int statesCount = (int)State.StateType.STATES_CNT;
+                if (idy < statesCount)
                 {
                     return stepsMngr[idy];
                 }
@@ -45,11 +46,12 @@ namespace TechObject
 
             stepsMngr = new List<State>();
 
-            stepsMngr.Add(new State(StateStr[(int)StateName.RUN], true, this, 
-                true));
-            for (StateName i = StateName.PAUSE; i < StateName.STATES_CNT; i++)
+            var lastState = State.StateType.STATES_CNT;
+            var secondState = State.StateType.PAUSE;
+            stepsMngr.Add(new State(State.StateType.RUN, this, true));
+            for (var state = secondState; state < lastState; state++)
             {
-                stepsMngr.Add(new State(StateStr[(int)i], true, this));
+                stepsMngr.Add(new State(state, this));
             }
 
             operPar = new OperationParams();
@@ -89,7 +91,7 @@ namespace TechObject
             clone.owner = newOwner;
             clone.baseOperation = baseOperation.Clone(clone);
 
-            if (name != "")
+            if (name != string.Empty)
             {
                 clone.name = name;
             }
@@ -145,12 +147,12 @@ namespace TechObject
             res += baseOperation.SaveAsLuaTable(prefix);
 
             string tmp;
-            string tmp_2 = "";
+            string tmp_2 = string.Empty;
 
             for (int j = 0; j < stepsMngr.Count; j++)
             {
                 tmp = stepsMngr[j].SaveAsLuaTable(prefix + "\t\t");
-                if (tmp != "")
+                if (tmp != string.Empty)
                 {
                     tmp_2 += prefix + "\t[ " + (j + 1) + " ] =\n";
                     tmp_2 += prefix + "\t\t{\n";
@@ -158,7 +160,7 @@ namespace TechObject
                     tmp_2 += prefix + "\t\t},\n";
                 }
             }
-            if (tmp_2 != "")
+            if (tmp_2 != string.Empty)
             {
                 res += prefix + "states =\n" +
                     prefix + "\t{\n";
@@ -180,17 +182,10 @@ namespace TechObject
         public void AddStep(int stateN, string stepName, 
             string baseStepLuaName = "")
         {
-            if (stateN >= 0 && stateN < (int)StateName.STATES_CNT)
+            int statesCount = (int)State.StateType.STATES_CNT;
+            if (stateN >= 0 && stateN < statesCount)
             {
                 stepsMngr[stateN].AddStep(stepName, baseStepLuaName);
-            }
-        }
-
-        public List<Step> MainSteps
-        {
-            get
-            {
-                return stepsMngr[0].Steps;
             }
         }
 
@@ -214,10 +209,10 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveRestrictionAsLua(string prefix)
         {
-            string res = "";
-            string tmp = "";
+            string res = string.Empty;
+            string tmp = string.Empty;
             tmp += restrictionMngr.SaveRestrictionAsLua(prefix);
-            if (tmp != "")
+            if (tmp != string.Empty)
             {
                 res += prefix + "{\n" + tmp + prefix + "},\n";
             }
@@ -342,7 +337,7 @@ namespace TechObject
             {
                 if ((mode.BaseOperation.Name == baseOperationName ||
                     mode.BaseOperation.LuaName == baseOperationName) &&
-                    baseOperationName != "")
+                    baseOperationName != string.Empty)
                 {
                     objectAlreadyContainsThisOperation = true;
                 }
@@ -387,6 +382,14 @@ namespace TechObject
             get { return name; }
         }
 
+        public List<State> States
+        {
+            get
+            {
+                return stepsMngr;
+            }
+        }
+
         /// <summary>
         /// Проверка состояний состоящих из шагов
         /// </summary>
@@ -411,7 +414,7 @@ namespace TechObject
         /// </summary>
         public void ClearBaseOperation()
         {
-            this.SetNewValue("", true);
+            this.SetNewValue(string.Empty, true);
         }
 
         #region Реализация ITreeViewItem
@@ -685,43 +688,28 @@ namespace TechObject
             bool setBaseOperation = true;
             SetNewValue(baseOperation.Name, setBaseOperation);
 
-            var filteredSteps = baseOperation.Steps
-                .Where(x => x.Name != string.Empty && x.DefaultPosition > 0)
-                .OrderBy(x => x.DefaultPosition);
-            const int mainStepsIndex = 0;
-            State mainState = stepsMngr[mainStepsIndex];
-            foreach(var baseStep in filteredSteps)
+            foreach(var state in States)
             {
-                while (mainState.Steps.Count < baseStep.DefaultPosition)
+                var stateSteps = baseOperation
+                    .GetStateBaseSteps(state.Type)
+                    .OrderBy(x => x.DefaultPosition);
+                foreach(var baseStep in stateSteps)
                 {
-                    mainState.Insert();
-                }
+                    while(state.Steps.Count < baseStep.DefaultPosition)
+                    {
+                        state.Insert();
+                    }
 
-                Step newStep = (Step)mainState.Insert();
-                newStep.SetUpFromBaseTechObject(baseStep);
+                    var newStep = (Step)state.Insert();
+                    newStep.SetUpFromBaseTechObject(baseStep);
+                }
             }
         }
-
-        public enum StateName
-        {
-            RUN = 0,// Выполнение
-            PAUSE,  // Пауза
-            STOP,   // Остановка
-
-            STATES_CNT = 3,
-        }
-
-        public string[] StateStr =
-            {
-            "Выполнение",
-            "Пауза",
-            "Остановка",
-            };
 
         private GetN getN;
 
         private string name;           /// Имя операции.
-        internal List<State> stepsMngr;/// Список шагов операции для состояний.
+        private List<State> stepsMngr;/// Список шагов операции для состояний.
         private RestrictionManager restrictionMngr;
         private ITreeViewItem[] items;
 

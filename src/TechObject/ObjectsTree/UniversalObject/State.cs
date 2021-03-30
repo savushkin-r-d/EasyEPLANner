@@ -20,11 +20,10 @@ namespace TechObject
         {
             get
             {
-                if (modeStep == null) //Добавляем, если его нет.
+                if (NeedMainStep)
                 {
-                    modeStep = new Step(Step.MainStepName, this.GetStepN, 
-                        this, isMain);
-                    steps.Add(modeStep);
+                   modeStep = AddNewStepToItems(true);
+                   modeStep.AddParent(this);
                 }
 
                 if (steps.Count > 0)
@@ -52,31 +51,29 @@ namespace TechObject
         /// <summary>
         /// Создание нового состояния.
         /// </summary>
-        /// <param name="name">Имя состояния.</param>
-        /// <param name="isMain">Надо ли дополнительные действия.</param>
-        /// <param name="needModeStep">Надо ли основной шаг.</param>
+        /// <param name="stateType">Тип состояния</param>
+        /// <param name="needMainStep">Надо ли основной шаг.</param>
         /// <param name="owner">Владелец состояния (Операция)</param>
-        public State(string name, bool isMain, Mode owner, 
-            bool needMainStep = false)
+        public State(StateType stateType, Mode owner, bool needMainStep = false)
         {
-            this.name = name;
-            this.isMain = isMain;
+            name = stateStr[(int)stateType];
+            Type = stateType;
             this.owner = owner;
             steps = new List<Step>();
 
             if (needMainStep)
             {
-                modeStep = new Step(Step.MainStepName, this.GetStepN, this, 
-                    true);
-                steps.Add(modeStep);
+                modeStep = AddNewStepToItems(needMainStep);
+                modeStep.AddParent(this);
             }
         }
 
         public State Clone(string name = "")
         {
             State clone = (State)MemberwiseClone();
+            clone.Type = Type;
 
-            if (name != "")
+            if (name != string.Empty)
             {
                 clone.name = name;
             }
@@ -125,9 +122,9 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix)
         {
-            if (steps.Count == 0) return "";
+            if (steps.Count == 0) return string.Empty;
 
-            string res = "";
+            string res = string.Empty;
 
             if (modeStep != null)
             {
@@ -149,7 +146,7 @@ namespace TechObject
                 res += prefix + "\t},\n";
             }
 
-            if (res != "")
+            if (res != string.Empty)
             {
                 res = prefix + "--\'" + name + "\'\n" + res;
             }
@@ -164,17 +161,19 @@ namespace TechObject
         /// <param name="baseStepLuaName">Имя базового шага</param>
         public void AddStep(string stepName, string baseStepLuaName)
         {
-            Step newStep = new Step(stepName, GetStepN, this);
-            newStep.SetNewValue(baseStepLuaName, true);
-
-            if (modeStep == null)
+            if (NeedMainStep)
             {
-                modeStep = new Step(Step.MainStepName, GetStepN, this, 
-                    isMain);
-                steps.Add(modeStep);
+                modeStep = AddNewStepToItems(NeedMainStep);
+                modeStep.AddParent(this);
             }
 
-            steps.Add(newStep);
+            Step newStep = AddNewStepToItems(false, stepName);
+            newStep.AddParent(this);
+
+            if (!string.IsNullOrEmpty(baseStepLuaName))
+            {
+                newStep.SetNewValue(baseStepLuaName, true);
+            }
         }
 
         public List<Step> Steps
@@ -245,14 +244,29 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Является ли состояние главным (Выполнение).
+        /// Добавить новый шаг в состояние
         /// </summary>
-        public bool IsMain
+        /// <param name="isMain">Главный шаг или нет (первый)</param>
+        /// <param name="stepName">Имя шага (дефолт, если пустое)</param>
+        /// <returns>Добавленный шаг</returns>
+        private Step AddNewStepToItems(bool isMain = false,
+            string stepName = "")
         {
-            get
+            Step step;
+            if (isMain)
             {
-                return isMain;
+                step = new Step(Step.MainStepName, GetStepN, this, true);
             }
+            else
+            {
+                string newStepName =
+                    stepName == string.Empty ? Step.NewStepName : stepName;
+                step = new Step(newStepName, GetStepN, this);
+            }
+
+            steps.Add(step);
+            
+            return step;
         }
 
         #region Реализация ITreeViewItem
@@ -266,7 +280,7 @@ namespace TechObject
                     res += " (" + (steps.Count - 1) + ")";
                 }
 
-                return new string[] { res, "" };
+                return new string[] { res, string.Empty };
             }
         }
 
@@ -291,11 +305,10 @@ namespace TechObject
             var step = child as Step;
             if (step != null)
             {
-                const string ignoreStateName = "Выполнение";
-                if (steps.IndexOf(step) == 0 &&
-                    steps[0].Owner.name == ignoreStateName)
+                bool ignoreDeleting = steps.IndexOf(step) == 0 &&
+                    steps.First().Owner.Type == StateType.RUN;
+                if (ignoreDeleting)
                 {
-                    // Не удаляем шаг операции.
                     return false;
                 }
 
@@ -403,18 +416,15 @@ namespace TechObject
 
         override public ITreeViewItem Insert()
         {
-            if (modeStep == null || Items.Count() == 0)
+            if (NeedMainStep)
             {
-                modeStep = new Step(Step.MainStepName, GetStepN, this, isMain);
-                steps.Add(modeStep);
-
+                modeStep = AddNewStepToItems(NeedMainStep);
                 modeStep.AddParent(this);
+
                 return modeStep;
             }
 
-            Step newStep = new Step(Step.NewStepName, GetStepN, this);
-            steps.Add(newStep);
-
+            Step newStep = AddNewStepToItems();
             newStep.AddParent(this);
             return newStep;
         }
@@ -501,10 +511,41 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Нужен главный шаг (Во время операции)
+        /// </summary>
+        private bool NeedMainStep
+        {
+            get
+            {
+                return modeStep == null || Items.Count() == 0;
+            }
+        }
+
+        /// <summary>
+        /// Тип состояния
+        /// </summary>
+        public StateType Type { get; private set; }
+
+        public enum StateType
+        {
+            RUN = 0,    // Выполнение
+            PAUSE,      // Пауза
+            STOP,       // Остановка
+
+            STATES_CNT = 3,
+        }
+
+        private readonly string[] stateStr =
+        {
+            "Выполнение",
+            "Пауза",
+            "Остановка",
+        };
+
         private string name;        ///< Имя.
-        internal List<Step> steps;  ///< Список шагов.
+        private List<Step> steps;   ///< Список шагов.
         private Step modeStep;      ///< Шаг.
-        bool isMain;                ///< Надо ли дополнительные действия.
         private Mode owner;         ///< Владелец элемента
     }
 }

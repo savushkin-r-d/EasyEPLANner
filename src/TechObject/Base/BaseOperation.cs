@@ -11,10 +11,10 @@ namespace TechObject
     {
         public BaseOperation(Mode owner)
         {
-            Name = "";
-            LuaName = "";
+            Name = string.Empty;
+            LuaName = string.Empty;
             Properties = new List<BaseParameter>();
-            Steps = new List<BaseStep>();
+            states = new Dictionary<string, List<BaseStep>>();
             this.owner = owner;
         }
 
@@ -24,8 +24,9 @@ namespace TechObject
         /// <returns></returns>
         public static BaseOperation EmptyOperation()
         {
-            return new BaseOperation("", "", new List<BaseParameter>(), 
-                new List<BaseStep>());
+            return new BaseOperation(string.Empty, string.Empty,
+                new List<BaseParameter>(),
+                new Dictionary<string, List<BaseStep>>());
         }
 
         /// <summary>
@@ -34,37 +35,46 @@ namespace TechObject
         /// <param name="name">Имя операции</param>
         /// <param name="luaName">Lua имя операции</param>
         /// <param name="baseOperationProperties">Свойства операции</param>
-        /// <param name="baseSteps">Базовые шаги операции</param>
+        /// <param name="baseStates">Состояния операции с базовыми шагами</param>
         public BaseOperation(string name, string luaName, 
             List<BaseParameter> baseOperationProperties, 
-            List<BaseStep> baseSteps)
+            Dictionary<string, List<BaseStep>> baseStates)
         {
             Name = name;
             LuaName = luaName;
             Properties = baseOperationProperties;
-            Steps = baseSteps;
+            states = baseStates;
         }
 
         /// <summary>
         /// Добавить базовый шаг
         /// </summary>
+        /// <param name="stateTypeStr">Тип состояния</param>
         /// <param name="luaName">Lua-имя</param>
         /// <param name="name">Имя</param>
         /// <param name="defaultPosition">Стандартная позиция шага в 
         /// базовой операции.</param>
-        public void AddStep(string luaName, string name, int defaultPosition)
+        public void AddStep(string stateTypeStr, string luaName, string name,
+            int defaultPosition)
         {
-            if (Steps.Count == 0)
-            {
-                var emptyStep = new BaseStep("", "");
-                emptyStep.Owner = this;
-                // Пустой объект, если не должно быть выбрано никаких объектов
-                Steps.Add(emptyStep);
-            }
-
             var step = new BaseStep(name, luaName, defaultPosition);
             step.Owner = this;
-            Steps.Add(step);
+
+            if (states.ContainsKey(stateTypeStr))
+            {
+                states[stateTypeStr].Add(step);
+            }
+            else
+            {
+                var emptyStep = new BaseStep(string.Empty, string.Empty);
+                emptyStep.Owner = this;
+                
+                var stepsList = new List<BaseStep>();
+                stepsList.Add(emptyStep);
+                stepsList.Add(step);
+
+                states.Add(stateTypeStr, stepsList);
+            }
         }
 
         /// <summary>
@@ -107,7 +117,6 @@ namespace TechObject
             {
                 return operationName;
             }
-
             set
             {
                 operationName = value;
@@ -123,7 +132,6 @@ namespace TechObject
             {
                 return luaOperationName;
             }
-
             set
             {
                 luaOperationName = value;
@@ -131,18 +139,45 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Шаги операции.
+        /// Состояния базовой операции.
+        /// Ключ - Lua-имя состояния (из перечисления).
+        /// Значение - базовые шаги.
         /// </summary>
-        public List<BaseStep> Steps
+        public Dictionary<string, List<BaseStep>> States
         {
             get
             {
-                return baseSteps;
+                return states;
             }
-            set
+        }
+
+        public List<BaseStep> GetStateBaseSteps(State.StateType stateType)
+        {
+            var steps = new List<BaseStep>();
+            if (StateExist(stateType))
             {
-                baseSteps = value;
+                steps = states[$"{stateType}"];
             }
+
+            return steps;
+        }
+
+        public List<string> GetStateStepsNames(State.StateType stateType)
+        {
+            var stepsNames = new List<string>();
+            if (StateExist(stateType))
+            {
+                stepsNames = states[$"{stateType}"]
+                    .Select(x => x.Name).ToList();
+            }
+
+            return stepsNames;
+        }
+
+        private bool StateExist(State.StateType stateType)
+        {
+            string stateTypeStr = stateType.ToString();
+            return states.ContainsKey(stateTypeStr);
         }
 
         /// <summary>
@@ -158,7 +193,7 @@ namespace TechObject
 
             ResetOperationSteps();
 
-            if (baseTechObjectName != "")
+            if (baseTechObjectName != string.Empty)
             {
                 BaseOperation operation;
                 operation = techObject.BaseTechObject
@@ -182,10 +217,13 @@ namespace TechObject
                         property.Parent = this;
                     }
 
-                    baseSteps = operation.Steps;
-                    foreach(var step in baseSteps)
+                    states = operation.States;
+                    foreach(var state in states)
                     {
-                        step.Owner = this;
+                        foreach(var step in states[state.Key])
+                        {
+                            step.Owner = this;
+                        }
                     }
 
                     owner = mode;
@@ -197,10 +235,10 @@ namespace TechObject
             }
             else
             {
-                Name = "";
-                LuaName = "";
+                Name = string.Empty;
+                LuaName = string.Empty;
                 baseOperationProperties = new List<BaseParameter>();
-                baseSteps = new List<BaseStep>();
+                states = new Dictionary<string, List<BaseStep>>();
             }
 
             techObject.AttachedObjects.Check();
@@ -212,9 +250,12 @@ namespace TechObject
         /// </summary>
         private void ResetOperationSteps()
         {
-            foreach (var step in owner.MainSteps)
+            foreach (var state in owner.States)
             {
-                step.SetNewValue("", true);
+                foreach(var step in state.Steps)
+                {
+                    step.SetNewValue(string.Empty, true);
+                }
             }
         }
 
@@ -238,14 +279,14 @@ namespace TechObject
         /// <returns></returns>
         public string SaveAsLuaTable(string prefix)
         {
-            var res = "";
+            var res = string.Empty;
             var propertiesCountForSave = Properties.Count();
             if (Properties == null || propertiesCountForSave <= 0)
             {
                 return res;
             }
 
-            string paramsForSave = "";
+            string paramsForSave = string.Empty;
             foreach (var operParam in Properties)
             {
                 if(!operParam.NeedDisable && !operParam.IsEmpty)
@@ -255,7 +296,7 @@ namespace TechObject
                 }
             }
 
-            if (paramsForSave != "")
+            if (paramsForSave != string.Empty)
             {
                 res += prefix + "props =\n" + prefix + "\t{\n";
                 res += paramsForSave;
@@ -376,7 +417,7 @@ namespace TechObject
         /// </summary>
         public string Check()
         {
-            string errors = "";
+            string errors = string.Empty;
             foreach (var property in Properties)
             {
                 if (property is MainAggregateParameter)
@@ -438,9 +479,31 @@ namespace TechObject
         /// <returns></returns>
         public BaseOperation Clone()
         {
-            var properties = new List<BaseParameter>(baseOperationProperties
-                .Count);
             var operation = EmptyOperation();
+            List<BaseParameter> properties = CloneProperties(operation);
+            Dictionary<string, List<BaseStep>> states = CloneStates(operation);
+
+            operation.Name = operationName;
+            operation.LuaName = luaOperationName;
+            operation.Properties = properties;
+            operation.states = states;
+            operation.owner = Owner;
+            operation.DefaultPosition = DefaultPosition;
+
+            operation.SetItems();
+
+            return operation;
+        }
+
+        /// <summary>
+        /// Копирование доп. свойств базовой операции
+        /// </summary>
+        /// <param name="newOwner">Новая базовая операция-владелец</param>
+        /// <returns></returns>
+        private List<BaseParameter> CloneProperties(BaseOperation newOwner)
+        {
+            var properties = new List<BaseParameter>();
+
             for (int i = 0; i < baseOperationProperties.Count; i++)
             {
                 BaseParameter oldProperty = baseOperationProperties[i];
@@ -455,29 +518,38 @@ namespace TechObject
                 }
                 else
                 {
-                    newProperty.Owner = operation;
+                    newProperty.Owner = newOwner;
                 }
                 properties.Add(newProperty);
             }
 
-            var steps = new List<BaseStep>();
-            for (int i = 0; i < Steps.Count; i++)
+            return properties;
+        }
+
+        /// <summary>
+        /// Копирование состояний и базовых шагов
+        /// </summary>
+        /// <param name="newOwner">Новая операция-владелец</param>
+        /// <returns></returns>
+        private Dictionary<string, List<BaseStep>> CloneStates(
+            BaseOperation newOwner)
+        {
+            var clonedStates = new Dictionary<string, List<BaseStep>>();
+            foreach (var state in States)
             {
-                var newStep = Steps[i].Clone();
-                newStep.Owner = operation;
-                steps.Add(newStep);
+                var clonedSteps = new List<BaseStep>();
+                List<BaseStep> steps = state.Value;
+                foreach (var step in steps)
+                {
+                    BaseStep clonedStep = step.Clone();
+                    clonedStep.Owner = newOwner;
+                    clonedSteps.Add(clonedStep);
+                }
+
+                clonedStates.Add(state.Key, clonedSteps);
             }
 
-            operation.Name = operationName;
-            operation.LuaName = luaOperationName;
-            operation.Properties = properties;
-            operation.Steps = steps;
-            operation.owner = this.Owner;
-            operation.DefaultPosition = DefaultPosition;
-
-            operation.SetItems();
-
-            return operation;
+            return clonedStates;
         }
 
         #region синхронизация устройств
@@ -499,12 +571,12 @@ namespace TechObject
                 {
                     string res = string.Format("Доп. свойства ({0})", 
                         items.Count());
-                    return new string[] { res, "" };
+                    return new string[] { res, string.Empty };
                 }
                 else
                 {
                     string res = string.Format("Доп. свойства");
-                    return new string[] { res, "" };
+                    return new string[] { res, string.Empty };
                 }
             }
         }
@@ -522,7 +594,7 @@ namespace TechObject
             if (child is ActiveParameter)
             {
                 var property = child as ActiveParameter;
-                property.SetNewValue("");
+                property.SetNewValue(string.Empty);
                 return true;
             }
             return false;
@@ -556,7 +628,7 @@ namespace TechObject
         private List<BaseParameter> baseOperationProperties;
         private string operationName;
         private string luaOperationName;
-        private List<BaseStep> baseSteps;
+        private Dictionary<string, List<BaseStep>> states;
 
         private Mode owner;
     }
