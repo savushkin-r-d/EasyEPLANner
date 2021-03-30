@@ -33,6 +33,11 @@ namespace Device
         /// <param name="index">Индекс устройства</param>
         /// <returns></returns>
         IDevice GetDeviceByIndex(int index);
+
+        /// <summary>
+        /// Устройства проекта
+        /// </summary>
+        List<IODevice> Devices { get; }
     }
 
     /// <summary>

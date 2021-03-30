@@ -25,8 +25,12 @@ namespace IO
                     break;
 
                 case "750-341":
-                case "750-841":
                 case "750-352":
+                    type = TYPES.T_ETHERNET;
+                    IsCoupler = true;
+                    break;
+
+                case "750-841":
                     type = TYPES.T_ETHERNET;
                     break;
 
@@ -39,8 +43,12 @@ namespace IO
 
                 case "AXL F BK ETH":
                     type = TYPES.T_PHOENIX_CONTACT;
+                    IsCoupler = true;
                     break;
+
+                case "AXC F 1152":
                 case "AXC F 2152":
+                case "AXC F 3152":
                     type = TYPES.T_PHOENIX_CONTACT_MAIN;
                     break;
 
@@ -264,6 +272,11 @@ namespace IO
                 }
             }
         }
+
+        /// <summary>
+        /// Является ли узел каплером.
+        /// </summary>
+        public bool IsCoupler { get; private set; } = false;
 
         #region Закрытые поля.
         /// <summary>
