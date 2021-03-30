@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using IO;
 using NUnit.Framework;
 
@@ -8,15 +6,16 @@ namespace Tests.IO
 {
     class IONodeTest
     {
-        [TestCaseSource(nameof(TestSetGetTypeSource))]
-        public void TestSetGetType(string typeStr, IONode.TYPES expectedType)
+        [TestCaseSource(nameof(TypeTestCaseSource))]
+        public void Type_NewNode_CorrectGetAndSet(string typeStr,
+            IONode.TYPES expectedType)
         {
             var testNode = new IONode(typeStr, IntStub, StrStub, StrStub);
 
             Assert.AreEqual(expectedType, testNode.Type);
         }
 
-        private static object[] TestSetGetTypeSource()
+        private static object[] TypeTestCaseSource()
         {
             var testData = new List<object[]>();
 
@@ -38,7 +37,9 @@ namespace Tests.IO
             testData.Add(new object[] { "AXL F BK ETH", pxcCoupler });
 
             IONode.TYPES pxcController = IONode.TYPES.T_PHOENIX_CONTACT_MAIN;
+            testData.Add(new object[] { "AXC F 1152", pxcController });
             testData.Add(new object[] { "AXC F 2152", pxcController });
+            testData.Add(new object[] { "AXC F 3152", pxcController });
 
             IONode.TYPES emptyType = IONode.TYPES.T_EMPTY;
             testData.Add(new object[] { "", emptyType });
@@ -48,11 +49,35 @@ namespace Tests.IO
             return testData.ToArray();
         }
 
+        [TestCase("750-863", false)]
+        [TestCase("750-341", true)]
+        [TestCase("750-841", false)]
+        [TestCase("750-352", true)]
+        [TestCase("750-8202", false)]
+        [TestCase("750-8203", false)]
+        [TestCase("750-8204", false)]
+        [TestCase("750-8206", false)]
+        [TestCase("AXL F BK ETH", true)]
+        [TestCase("AXC F 1152", false)]
+        [TestCase("AXC F 2152", false)]
+        [TestCase("AXC F 3152", false)]
+        [TestCase("", false)]
+        [TestCase(null, false)]
+        [TestCase("Wrong type", false)]
+        public void IsCoupler_NewNode_ReturnsTrueOrFalse(string typeStr,
+            bool expectedValue)
+        {
+            var testNode = new IONode(typeStr, IntStub, StrStub, StrStub);
+
+            Assert.AreEqual(expectedValue, testNode.IsCoupler);
+        }
+
         [TestCase("NodeName","NodeName")]
         [TestCase(null, null)]
         [TestCase("", "")]
         [TestCase("Имя узла", "Имя узла")]
-        public void TestSetGetNodeName(string expected, string actual)
+        public void Name_NewNode_CorrectGetAndSet(string expected,
+            string actual)
         {
             var testNode = new IONode(StrStub, IntStub, StrStub, actual);
             Assert.AreEqual(expected, testNode.Name);
@@ -62,7 +87,7 @@ namespace Tests.IO
         [TestCase(null, null)]
         [TestCase("255.0.0.0", "255.0.0.0")]
         [TestCase("12.12.12.12", "12.12.12.12")]
-        public void TestSetGetIP(string expected, string actual)
+        public void IP_NewNode_CorrectGetAndSet(string expected,string actual)
         {
             var testNode = new IONode(StrStub, IntStub, actual, StrStub);
             Assert.AreEqual(expected, testNode.IP);
@@ -72,7 +97,7 @@ namespace Tests.IO
         [TestCase(null, null)]
         [TestCase("", "")]
         [TestCase("Строковый тип", "Строковый тип")]
-        public void TestSetGetTypeStr(string expected, string actual)
+        public void Type_NewNode_CorrectGetAndSet(string expected, string actual)
         {
             var testNode = new IONode(actual, IntStub, StrStub, StrStub);
             Assert.AreEqual(expected, testNode.TypeStr);
@@ -82,7 +107,7 @@ namespace Tests.IO
         [TestCase(1, 1)]
         [TestCase(2, 2)]
         [TestCase(10, 10)]
-        public void TestSetGetN(int expected, int actual)
+        public void N_NewNode_CorrectGetAndSet(int expected, int actual)
         {
             var testNode = new IONode(StrStub, actual, StrStub, StrStub);
             Assert.AreEqual(expected, testNode.N);
@@ -92,7 +117,7 @@ namespace Tests.IO
         [TestCase(1, 1)]
         [TestCase(200, 2)]
         [TestCase(1000, 10)]
-        public void TestSetGetFullN(int expected, int actual)
+        public void FullN_NewNode_CorrectGetAndSet(int expected, int actual)
         {
             var testNode = new IONode(StrStub, actual, StrStub, StrStub);
             Assert.AreEqual(expected, testNode.FullN);
@@ -100,21 +125,50 @@ namespace Tests.IO
 
         [TestCase(0,0)]
         [TestCase(4,4)]
-        public void TestSetGetChannelsCount(int expected, int actual)
+        public void AIcount_NewNode_CorrectGetAndSetSignalsCount(int expected,
+            int actual)
         {
             var testNode = new IONode(StrStub, IntStub, StrStub, StrStub);
+
             testNode.AI_count += actual;
+
+            Assert.AreEqual(expected, testNode.AI_count);
+        }
+
+        [TestCase(0, 0)]
+        [TestCase(4, 4)]
+        public void AOcount_NewNode_CorrectGetAndSetSignalsCount(int expected,
+            int actual)
+        {
+            var testNode = new IONode(StrStub, IntStub, StrStub, StrStub);
+
             testNode.AO_count += actual;
+
+            Assert.AreEqual(expected, testNode.AO_count);
+        }
+
+        [TestCase(0, 0)]
+        [TestCase(4, 4)]
+        public void DIcount_NewNode_CorrectGetAndSetSignalsCount(int expected,
+            int actual)
+        {
+            var testNode = new IONode(StrStub, IntStub, StrStub, StrStub);
+
             testNode.DI_count += actual;
+
+            Assert.AreEqual(expected, testNode.DI_count);
+        }
+
+        [TestCase(0, 0)]
+        [TestCase(4, 4)]
+        public void DOcount_NewNode_CorrectGetAndSetSignalsCount(int expected,
+            int actual)
+        {
+            var testNode = new IONode(StrStub, IntStub, StrStub, StrStub);
+
             testNode.DO_count += actual;
 
-            Assert.Multiple(() =>
-            {
-                Assert.AreEqual(expected, testNode.AI_count);
-                Assert.AreEqual(expected, testNode.AO_count);
-                Assert.AreEqual(expected, testNode.DI_count);
-                Assert.AreEqual(expected, testNode.DO_count);
-            });
+            Assert.AreEqual(expected, testNode.DO_count);
         }
 
         const string StrStub = "";

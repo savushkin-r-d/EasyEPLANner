@@ -48,7 +48,7 @@ namespace EasyEPlanner
                     ProjectManager.GetInstance().SaveAsLua(projectName, path,
                         silentMode);
 
-                    SVGStatisticsSaver.Save(path);
+                    new SVGStatisticsSaver().Save(path);
                 }
             }
             catch (Exception ex)

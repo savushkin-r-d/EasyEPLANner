@@ -1,15 +1,15 @@
-﻿using System.Text;
-using System.IO;
+﻿using System.IO;
 using TechObject;
+using System.Linq;
 
 namespace EasyEPlanner
 {
     /// <summary>
     /// Класс, сохраняющий статистику в картинках SVG
     /// </summary>
-    public static class SVGStatisticsSaver
+    public class SVGStatisticsSaver
     {
-        public static void Save(string path)
+        public void Save(string path)
         {
             string pathToFiles = path + @"\docs\statistics\";
             svgFilePattern = Properties.Resources.ResourceManager
@@ -25,6 +25,8 @@ namespace EasyEPlanner
             SaveEquipmentModulesCount(pathToFiles);
             SaveDevicesCount(pathToFiles);
             SaveIOLinkModulesPercentage(pathToFiles);
+            SaveCouplersCount(pathToFiles);
+            SaveIOModulesCount(pathToFiles);
         }
 
         /// <summary>
@@ -33,7 +35,7 @@ namespace EasyEPlanner
         /// <param name="folderPath">Путь к каталогу</param>
         /// <param name="locFilePath">Пусть к файлу, для которого надо 
         /// сохранить LOC</param>
-        private static void SaveLOC(string folderPath, string locFilePath)
+        private void SaveLOC(string folderPath, string locFilePath)
         {
             const int maxLOCCount = 1000;
 
@@ -57,7 +59,7 @@ namespace EasyEPlanner
         /// Сохранить количество тэгов в SVG.
         /// </summary>
         /// <param name="folderPath">Путь к каталогу</param>
-        private static void SaveTagsCount(string folderPath)
+        private void SaveTagsCount(string folderPath)
         {
             const int maxTagsCount = 5000;
 
@@ -73,7 +75,7 @@ namespace EasyEPlanner
         /// Сохранить количество аппаратов в SVG.
         /// </summary>
         /// <param name="folderPath">Путь к каталогу</param>
-        private static void SaveUnintsCount(string folderPath)
+        private void SaveUnintsCount(string folderPath)
         {
             const int maxUnitsCount = 10;
 
@@ -89,7 +91,7 @@ namespace EasyEPlanner
         /// Сохранить количество агрегатов в SVG.
         /// </summary>
         /// <param name="folderPath">Путь к каталогу</param>
-        private static void SaveEquipmentModulesCount(string folderPath)
+        private void SaveEquipmentModulesCount(string folderPath)
         {
             const int maxEquipCount = 50;
 
@@ -105,7 +107,7 @@ namespace EasyEPlanner
         /// Сохранить количество устройств в SVG.
         /// </summary>
         /// <param name="folderPath">Путь к каталогу</param>
-        private static void SaveDevicesCount(string folderPath)
+        private void SaveDevicesCount(string folderPath)
         {
             const int maxDevicesCount = 1000;
 
@@ -122,7 +124,7 @@ namespace EasyEPlanner
         /// к общему количеству в SVG.
         /// </summary>
         /// <param name="folderPath">Путь к каталогу</param>
-        private static void SaveIOLinkModulesPercentage(string folderPath)
+        private void SaveIOLinkModulesPercentage(string folderPath)
         {
             int modulesCount = 0;
             int ioLinkModules = 0;
@@ -142,7 +144,39 @@ namespace EasyEPlanner
             string displayingText = $"{valueInPercents}% IO-Link I/O";
             string result = MakeStringForWriting(ioLinkModules,
                 modulesCount, displayingText);
-            folderPath += IOModulesInPercentage;
+            folderPath += IOLModulesInPercentFileName;
+            WriteFile(result, folderPath);
+        }
+
+        /// <summary>
+        /// Сохранить количество модулей ввода-вывода в SVG.
+        /// </summary>
+        /// <param name="folderPath">Путь к каталогу</param>
+        private void SaveIOModulesCount(string folderPath)
+        {
+            const int maxCount = 50;
+            int modulesCount = ioManager.IONodes.SelectMany(x => x.IOModules)
+                .Count();
+            string displayingText = $"{modulesCount} I/O модулей";
+            string result = MakeStringForWriting(modulesCount, maxCount,
+                displayingText);
+            folderPath += IOModulesCountFileName;
+            WriteFile(result, folderPath);
+        }
+
+        /// <summary>
+        /// Сохранить количество каплеров из всех узлов ввода-вывода в SVG.
+        /// </summary>
+        /// <param name="folderPath">Путь к каталогу</param>
+        private void SaveCouplersCount(string folderPath)
+        {
+            const int maxCount = 10;
+            int couplersCount = ioManager.IONodes
+                .Where(x => x.IsCoupler).Count();
+            string displayingText = $"{couplersCount} каплера";
+            string result = MakeStringForWriting(couplersCount, maxCount,
+                displayingText);
+            folderPath += CouplersCountFileName;
             WriteFile(result, folderPath);
         }
 
@@ -154,7 +188,7 @@ namespace EasyEPlanner
         /// </param>
         /// <param name="displayingText">Отображаемый текст</param>
         /// <returns></returns>
-        private static string MakeStringForWriting(int itemsCount, 
+        private string MakeStringForWriting(int itemsCount, 
             int maxItemsCount, string displayingText)
         {
             int currentValue = ValueAsPercentage(itemsCount, maxItemsCount);
@@ -169,7 +203,7 @@ namespace EasyEPlanner
         /// <param name="currentValue">Текущее значение параметры</param>
         /// <param name="maxValue">Максимальное значение параметра</param>
         /// <returns></returns>
-        private static int ValueAsPercentage(int currentValue, int maxValue)
+        private int ValueAsPercentage(int currentValue, int maxValue)
         {
             if (maxValue == 0)
             {
@@ -186,7 +220,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="text">Текст для записи</param>
         /// <param name="folderPath">Путь для записи</param>
-        private static void WriteFile(string text, string folderPath)
+        private void WriteFile(string text, string folderPath)
         {
             var equipmentWriter = new StreamWriter(folderPath, false,
                 EncodingDetector.UTF8);
@@ -195,24 +229,26 @@ namespace EasyEPlanner
             equipmentWriter.Close();
         }
 
-        static string svgFilePattern;
+        string svgFilePattern;
 
         const string LinesOfCodeMainProgramFileName = "lines_total.svg";
         const string CountOfTagsFileName = "tags_total.svg";
         const string CountOfUnitsFileName = "units_total.svg";
         const string CountOfEquipmentModulesFileName = "agregates_total.svg";
         const string CountOfDevicesFileName = "devices_total.svg";
-        const string IOModulesInPercentage = "io_link_usage.svg";
+        const string IOLModulesInPercentFileName = "io_link_usage.svg";
+        const string IOModulesCountFileName = "io_modules_total.svg";
+        const string CouplersCountFileName = "io_couplers_total.svg";
 
         /// <summary>
         /// 100% длина линии SVG. 
         /// </summary>
         const int percents = 100;
 
-        static ITechObjectManager techObjectManager = TechObjectManager
+        ITechObjectManager techObjectManager = TechObjectManager
             .GetInstance();
-        static Device.DeviceManager deviceManager = Device.DeviceManager
+        Device.IDeviceManager deviceManager = Device.DeviceManager
             .GetInstance();
-        static IO.IOManager ioManager = IO.IOManager.GetInstance();
+        IO.IIOManager ioManager = IO.IOManager.GetInstance();
     }
 }

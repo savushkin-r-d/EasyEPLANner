@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 
 namespace IO
@@ -11,7 +10,15 @@ namespace IO
     /// Все узлы модулей ввода-вывода IO. Содержит минимальную функциональность, 
     /// необходимую для экспорта для PAC.
     /// </summary>
-    public class IOManager
+    public interface IIOManager
+    {
+        /// <summary>
+        /// Узлы ввода вывода
+        /// </summary>
+        List<IONode> IONodes { get; }
+    }
+
+    public class IOManager : IIOManager
     {
         /// <summary>
         /// Конструктор.
