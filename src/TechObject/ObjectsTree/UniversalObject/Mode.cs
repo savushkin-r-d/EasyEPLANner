@@ -692,6 +692,7 @@ namespace TechObject
             {
                 var stateSteps = baseOperation
                     .GetStateBaseSteps(state.Type)
+                    .Where(x => x.DefaultPosition > 0)
                     .OrderBy(x => x.DefaultPosition);
                 foreach(var baseStep in stateSteps)
                 {
