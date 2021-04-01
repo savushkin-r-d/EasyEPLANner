@@ -13,7 +13,7 @@ init_base_objects = function()
         local bindingName = value.bindingName or ""
         local isPid = value.isPID or false
         local luaModuleName = value.luaModuleName or ""
-        local monitorName = value.monitorName or ""
+        local monitorName = value.monitorName or "TankObj"
 
         -- Добавить базовый объект
         local baseObject = AddBaseObject(name, eplanName, s88Level,
