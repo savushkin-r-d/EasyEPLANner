@@ -91,7 +91,7 @@ namespace Tests.TechObject
             {
                 manager.AddBaseObject(obj.Name, obj.EplanName, obj.S88Level,
                     obj.BasicName, obj.BindingName, obj.IsPID,
-                    obj.LuaModuleName);
+                    obj.LuaModuleName, obj.MonitorName);
 
                 BaseTechObject addedObj = manager.Objects
                     .Where(x => x.Name == obj.Name ||
@@ -105,7 +105,8 @@ namespace Tests.TechObject
                         addedObj.BasicName == obj.BasicName &&
                         addedObj.BindingName == obj.BindingName &&
                         addedObj.IsPID == obj.IsPID &&
-                        addedObj.LuaModuleName == obj.LuaModuleName;
+                        addedObj.LuaModuleName == obj.LuaModuleName &&
+                        addedObj.MonitorName == obj.MonitorName;
                 }
             }
 
@@ -131,6 +132,7 @@ namespace Tests.TechObject
                         BindingName = "base_Object_one",
                         IsPID = true,
                         LuaModuleName = "LuaModuleNameOne",
+                        MonitorName = "MonitorName1",
                     },
                     new BaseTechObject()
                     {
@@ -141,6 +143,7 @@ namespace Tests.TechObject
                         BindingName = "base_Object_two",
                         IsPID = false,
                         LuaModuleName = "SecondModule",
+                        MonitorName = "MonitorName2",
                     },
                 },
                 2,
@@ -160,6 +163,7 @@ namespace Tests.TechObject
                         BindingName = "base_Object_one",
                         IsPID = true,
                         LuaModuleName = "ModuleOne",
+                        MonitorName = "MonitorName1",
                     },
                     new BaseTechObject()
                     {
@@ -169,7 +173,8 @@ namespace Tests.TechObject
                         BasicName = "process_cell_obj",
                         BindingName = "Process_cell_Obj",
                         IsPID = false,
-                        LuaModuleName = "ModuleSecond"
+                        LuaModuleName = "ModuleSecond",
+                        MonitorName = "MonitorName2",
                     },
                     new BaseTechObject()
                     {
@@ -180,6 +185,7 @@ namespace Tests.TechObject
                         BindingName = "base_Object_one",
                         IsPID = true,
                         LuaModuleName = "ModuleOne",
+                        MonitorName = "MonitorName1",
                     },
                     new BaseTechObject()
                     {
@@ -190,6 +196,7 @@ namespace Tests.TechObject
                         BindingName = "The_third_base_Obj",
                         IsPID = false,
                         LuaModuleName = "ThirdModule",
+                        MonitorName = "ThirdMonitorName",
                     },
                 },
                 3,
@@ -209,6 +216,7 @@ namespace Tests.TechObject
                         BindingName = "Process_cell_Obj",
                         IsPID = false,
                         LuaModuleName = "FirstModule",
+                        MonitorName = "MonitorName1",
                     },
                     new BaseTechObject()
                     {
@@ -219,6 +227,7 @@ namespace Tests.TechObject
                         BindingName = "base_Object_one",
                         IsPID = true,
                         LuaModuleName = "InvalidModule",
+                        MonitorName = "InvalidNameMonitor",
                     },
                     new BaseTechObject()
                     {
@@ -229,6 +238,7 @@ namespace Tests.TechObject
                         BindingName = "The_third_base_Obj",
                         IsPID = false,
                         LuaModuleName = "ThirdModule",
+                        MonitorName = "ThirdMonitorName",
                     },
                 },
                 1,
@@ -248,6 +258,7 @@ namespace Tests.TechObject
                         BindingName = "base_Object_one",
                         IsPID = true,
                         LuaModuleName = "FirstModule",
+                        MonitorName = "MonitorName1",
                     },
                     new BaseTechObject()
                     {
@@ -258,6 +269,7 @@ namespace Tests.TechObject
                         BindingName = "The_third_base_Obj",
                         IsPID = false,
                         LuaModuleName = "SecondModule",
+                        MonitorName = "MonitorName2",
                     },
                 },
                 0,

@@ -274,6 +274,7 @@ namespace TechObject
                 return;
             }
 
+            nameBC.SetNewValue(BaseTechObject.MonitorName);
             systemParams.SetUpFromBaseTechObject(BaseTechObject.SystemParams);
             ModesManager.SetUpFromBaseTechObject(BaseTechObject);
             paramsManager.SetUpFromBaseTechObject(BaseTechObject.Parameters);

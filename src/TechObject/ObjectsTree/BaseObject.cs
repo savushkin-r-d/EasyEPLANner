@@ -88,7 +88,8 @@ namespace TechObject
             ObjectsAdder.Reset();
             var newObject = new TechObject(baseTechObject.Name, 
                 GetTechObjectLocalNum, localObjects.Count + 1, techTypeNum, 
-                "TANK", cooperParamNum, "TankObj", "", baseTechObject);
+                "TANK", cooperParamNum, string.Empty, string.Empty,
+                baseTechObject);
 
             // Работа со списком в дереве и общим списком объектов.
             localObjects.Add(newObject);
