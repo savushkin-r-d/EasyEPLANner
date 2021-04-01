@@ -23,6 +23,7 @@ namespace TechObject
             Parameters =
                 new Params(string.Empty, string.Empty, false, string.Empty);
             LuaModuleName = string.Empty;
+            MonitorName = string.Empty;
 
             objectGroups = new List<AttachedObjects>();
         }
@@ -368,6 +369,7 @@ namespace TechObject
             cloned.SystemParams = SystemParams.Clone();
             cloned.Parameters = Parameters.Clone();
             cloned.LuaModuleName = LuaModuleName;
+            cloned.MonitorName = MonitorName;
 
             return cloned;
         }
@@ -457,6 +459,11 @@ namespace TechObject
         /// Lua-имя модуля в котором содержится описание логики объекта
         /// </summary>
         public string LuaModuleName { get; set; }
+
+        /// <summary>
+        /// Имя объекта Monitor (SCADA)
+        /// </summary>
+        public string MonitorName { get; set; }
 
         private List<BaseParameter> aggregateProperties;
         private List<AttachedObjects> objectGroups;
