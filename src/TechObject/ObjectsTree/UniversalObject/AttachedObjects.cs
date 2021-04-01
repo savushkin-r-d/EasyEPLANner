@@ -518,6 +518,11 @@ namespace TechObject
 
                     TechObject obj = TechObjectManager.GetInstance()
                         .GetTObject(number);
+                    if (obj.BaseTechObject == null)
+                    {
+                        return new List<int>();
+                    }
+
                     var objValues = obj?.AttachedObjects.Value.Split(' ')
                         .Where(x => int.TryParse(x, out _))
                         .Select(x => int.Parse(x)).ToList();
