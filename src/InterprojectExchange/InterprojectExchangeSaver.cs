@@ -38,68 +38,32 @@ namespace InterprojectExchange
         /// </summary>
         private void WriteMainProject()
         {
-            string res = SaveMainProject();
-            if (!string.IsNullOrEmpty(res))
-            {
-                res = res.Replace("\t", "    ");
-                WriteSharedFile(interprojectExchange.MainProjectName,
-                    new List<string> { res });
-            }
-            else
-            {
-                DeleteSharedFile(interprojectExchange.MainProjectName);
-            }
+            SaveMainProject();
+            WriteSharedFile(interprojectExchange.MainProjectName,
+                interprojectExchange.MainModel.SharedFileAsStringList);
         }
 
         /// <summary>
         /// Генерация файла для текущего проекта
         /// </summary>
         /// <returns>Содержимое файла для сохранения</returns>
-        private string SaveMainProject()
+        private void SaveMainProject()
         {
-            var remoteGateWays = new List<string>();
-            var sharedDevices = new List<string>();
+            var advancedModels = interprojectExchange.Models
+                .Where(x => x.ProjectName != 
+                interprojectExchange.MainModel.ProjectName);
 
-            string[] loadedAdvancedModelsNames = interprojectExchange
-                .LoadedAdvancedModelNames;
-            CurrentProjectModel mainModel = interprojectExchange.MainModel;
+            IProjectModel mainModel = interprojectExchange.MainModel;
             bool invertSignals = false;
-
-            var advancedModels = new List<IProjectModel>();
-            for(int i = 0; i < loadedAdvancedModelsNames.Length; i ++)
-            {
-                IProjectModel advancedModel = interprojectExchange
-                    .GetModel(loadedAdvancedModelsNames[i]);
-                advancedModels.Add(advancedModel);
-            }
-
             foreach (var model in advancedModels)
             {
-                string projectName = model.ProjectName;
                 // SelectModel - с каким проектом работаем,
                 // влияет на список сигналов с mainModel
                 interprojectExchange.SelectModel(model);
 
-                string remoteGateWay = SaveProjectRemoteGateWays(projectName, 
-                    mainModel.PacInfo, mainModel.ReceiverSignals, 
-                    invertSignals);
-                if (!string.IsNullOrEmpty(remoteGateWay))
-                {
-                    remoteGateWays.Add(remoteGateWay);
-                }
-
-                string sharedDevice = SaveProjectSharedDevices(projectName,
-                    model.PacInfo.Station, mainModel.SourceSignals, 
-                    invertSignals);
-                if (!string.IsNullOrEmpty(sharedDevice))
-                {
-                    sharedDevices.Add(sharedDevice);
-                }
+                UpdateModelRemoteGateWays(mainModel, model, invertSignals);
+                UpdateModelSharedDevices(mainModel, model, invertSignals);
             }
-
-            string res = GenerateMainProjectTextForWriteInFile(remoteGateWays,
-                sharedDevices);
-            return res;
         }
 
         /// <summary>
@@ -123,26 +87,25 @@ namespace InterprojectExchange
         /// <param name="model">Модель</param>
         private void WriteAdvancedModel(IProjectModel model)
         {
-            bool deleteModel = model.MarkedForDelete;
-            if (deleteModel)
-            {
-                DeleteSharedFile(model.ProjectName);
-            }
-            else
-            {
-                SaveAdvancedModelRemoteGateWays(model);
-                SaveAdvancedModelSharedDevices(model);
-            }
+            bool invertSignals = true;
+            IProjectModel mainModel = interprojectExchange.MainModel;
+            interprojectExchange.SelectModel(model);
+            UpdateModelRemoteGateWays(model, mainModel, invertSignals);
+            UpdateModelSharedDevices(model, mainModel, invertSignals);
+            WriteSharedFile(model.ProjectName,
+                model.SharedFileAsStringList);
         }
 
         /// <summary>
         /// Запись удаленных узлов альтернативной модели
         /// </summary>
         /// <param name="model">Модель с данными</param>
-        private void SaveAdvancedModelRemoteGateWays(IProjectModel model)
+        /// <param name="invertSignals">Инвертировать сигналы</param>
+        private void UpdateModelRemoteGateWays(IProjectModel model,
+            IProjectModel mainModel, bool invertSignals)
         {
             List<string> sharedFileData = model.SharedFileAsStringList;
-            string searchPattern = $"['{interprojectExchange.MainProjectName}'] =";
+            string searchPattern = $"['{mainModel.ProjectName}'] =";
             int startIndex = FindModelDescriptionStartIndex(searchPattern,
                 sharedFileData);
 
@@ -163,8 +126,11 @@ namespace InterprojectExchange
                 startIndex += offset;
             }
 
-            bool invertSignals = true;
-            IProjectModel mainModel = interprojectExchange.MainModel;
+            if (model.MarkedForDelete || mainModel.MarkedForDelete)
+            {
+                return;
+            }
+
             string remoteGateWay = SaveProjectRemoteGateWays(
                 mainModel.ProjectName, model.PacInfo,
                 model.ReceiverSignals, invertSignals);
@@ -172,19 +138,19 @@ namespace InterprojectExchange
             {
                 sharedFileData.Insert(startIndex, remoteGateWay);
             }
-
-            WriteSharedFile(model.ProjectName, sharedFileData);
         }
 
         /// <summary>
         /// Запись сигналов-источников альтернативной модели
         /// </summary>
         /// <param name="model">Модель с данными</param>
-        private void SaveAdvancedModelSharedDevices(IProjectModel model)
+        /// <param name="invertSignals">Инвертировать сигналы</param>
+        private void UpdateModelSharedDevices(IProjectModel model,
+            IProjectModel mainModel, bool invertSignals)
         {
             List<string> sharedFileData = model.SharedFileAsStringList;
             string searchPattern = $"projectName = " +
-                $"\"{interprojectExchange.MainProjectName}\",";
+                $"\"{mainModel.ProjectName}\",";
             int startIndex = FindModelDescriptionStartIndex(searchPattern,
                 sharedFileData);
 
@@ -206,9 +172,12 @@ namespace InterprojectExchange
                 startIndex += offset;
             }
 
-            IProjectModel mainModel = interprojectExchange.MainModel;
-            interprojectExchange.SelectModel(model);
-            bool invertSignals = true;
+
+            if (model.MarkedForDelete || mainModel.MarkedForDelete)
+            {
+                return;
+            }
+
             string sharedDevices = SaveProjectSharedDevices(
                 mainModel.ProjectName, mainModel.PacInfo.Station,
                 model.SourceSignals, invertSignals);
@@ -216,8 +185,6 @@ namespace InterprojectExchange
             {
                 sharedFileData.Insert(startIndex, sharedDevices);
             }
-
-            WriteSharedFile(model.ProjectName, sharedFileData);
         }
 
         /// <summary>
@@ -525,44 +492,6 @@ namespace InterprojectExchange
         }
 
         /// <summary>
-        /// Генерация текста для записи в файл по главному проекту.
-        /// Аргументы передаются в виде списка, в котором содержится описание
-        /// для вставки в файл.
-        /// </summary>
-        /// <param name="remoteGateWays">Удаленные узлы (описание)</param>
-        /// <param name="sharedDevices">Устройства-источники (описание)</param>
-        /// <returns></returns>
-        private string GenerateMainProjectTextForWriteInFile(
-            List<string> remoteGateWays, List<string> sharedDevices)
-        {
-            var res = "";
-            const string doubleNewLine = "\n\n";
-            if (remoteGateWays.Count > 0)
-            {
-                string remoteGateWaysStr = string.Join(doubleNewLine,
-                    remoteGateWays);
-                res += $"remote_gateways =\n{{\n{remoteGateWaysStr}\n}}\n";
-            }
-            else
-            {
-                res += $"remote_gateways =\n{{\n}}\n";
-            }
-
-            if (sharedDevices.Count > 0)
-            {
-                string sharedDevicesStr = string.Join(doubleNewLine,
-                    sharedDevices);
-                res += $"shared_devices =\n{{\n{sharedDevicesStr}\n}}";
-            }
-            else
-            {
-                res += $"shared_devices =\n{{\n}}";
-            }
-
-            return res;
-        }
-
-        /// <summary>
         /// Заполнение SharedFileData стандартным значением
         /// </summary>
         /// <param name="variableName">Имя переменной и знаком равно ("var1 =")
@@ -664,18 +593,6 @@ namespace InterprojectExchange
                     writer.WriteLine(line);
                 }
             }
-        }
-
-        /// <summary>
-        /// Удалить Shared файл
-        /// </summary>
-        /// <param name="projectName">Имя проекта</param>
-        public void DeleteSharedFile(string projectName)
-        {
-            var model = interprojectExchange.GetModel(projectName);
-            string path = Path.Combine(model.PathToProject, 
-                projectName, SharedFile);
-            File.Delete(path);
         }
 
         /// <summary>
