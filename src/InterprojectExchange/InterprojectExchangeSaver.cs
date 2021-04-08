@@ -72,8 +72,6 @@ namespace InterprojectExchange
                     .GetModel(loadedAdvancedModelsNames[i]);
                 advancedModels.Add(advancedModel);
             }
-            advancedModels = advancedModels.OrderBy(x => x.PacInfo.Station)
-                .ToList();
 
             foreach (var model in advancedModels)
             {
