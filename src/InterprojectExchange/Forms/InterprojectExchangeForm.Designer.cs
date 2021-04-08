@@ -77,6 +77,7 @@
             this.advProjNameComboBox.Location = new System.Drawing.Point(835, 11);
             this.advProjNameComboBox.Name = "advProjNameComboBox";
             this.advProjNameComboBox.Size = new System.Drawing.Size(194, 21);
+            this.advProjNameComboBox.Sorted = true;
             this.advProjNameComboBox.TabIndex = 5;
             this.advProjNameComboBox.SelectedValueChanged += new System.EventHandler(this.advProjNameComboBox_SelectedItemChanged);
             // 
