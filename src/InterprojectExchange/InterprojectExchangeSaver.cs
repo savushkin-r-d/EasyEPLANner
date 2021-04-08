@@ -1,5 +1,4 @@
-﻿using System.Text;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,16 +37,18 @@ namespace InterprojectExchange
         /// </summary>
         private void WriteMainProject()
         {
-            SaveMainProject();
-            WriteSharedFile(interprojectExchange.MainProjectName,
-                interprojectExchange.MainModel.SharedFileAsStringList);
+            UpdateMainProjectModel();
+            string projectName = interprojectExchange.MainProjectName;
+            List<string> sharedData = interprojectExchange.MainModel
+                .SharedFileAsStringList;
+            WriteSharedFile(projectName, sharedData);
         }
 
         /// <summary>
         /// Генерация файла для текущего проекта
         /// </summary>
         /// <returns>Содержимое файла для сохранения</returns>
-        private void SaveMainProject()
+        private void UpdateMainProjectModel()
         {
             var advancedModels = interprojectExchange.Models
                 .Where(x => x.ProjectName != 
@@ -60,7 +61,6 @@ namespace InterprojectExchange
                 // SelectModel - с каким проектом работаем,
                 // влияет на список сигналов с mainModel
                 interprojectExchange.SelectModel(model);
-
                 UpdateModelRemoteGateWays(mainModel, model, invertSignals);
                 UpdateModelSharedDevices(mainModel, model, invertSignals);
             }
