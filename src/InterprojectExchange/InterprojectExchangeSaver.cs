@@ -37,19 +37,8 @@ namespace InterprojectExchange
         /// </summary>
         private void WriteMainProject()
         {
-            UpdateMainProjectModel();
-            IProjectModel mainModel = interprojectExchange.MainModel;
-            WriteSharedFile(mainModel.ProjectName,
-                mainModel.SharedFileAsStringList);
-        }
-
-        /// <summary>
-        /// Обновление шаблона файла открытого проекта (главного)
-        /// </summary>
-        private void UpdateMainProjectModel()
-        {
             var advancedModels = interprojectExchange.Models
-                .Where(x => x.ProjectName != 
+                .Where(x => x.ProjectName !=
                 interprojectExchange.MainModel.ProjectName);
 
             IProjectModel mainModel = interprojectExchange.MainModel;
@@ -62,6 +51,9 @@ namespace InterprojectExchange
                 UpdateModelRemoteGateWays(mainModel, model, invertSignals);
                 UpdateModelSharedDevices(mainModel, model, invertSignals);
             }
+
+            WriteSharedFile(mainModel.ProjectName,
+                mainModel.SharedFileAsStringList);
         }
 
         /// <summary>
