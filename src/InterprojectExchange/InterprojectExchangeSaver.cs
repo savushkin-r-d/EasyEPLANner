@@ -43,15 +43,13 @@ namespace InterprojectExchange
 
             IProjectModel mainModel = interprojectExchange.MainModel;
             bool invertSignals = false;
-            foreach (var alternativeModel in alternativeModels)
+            foreach (var altModel in alternativeModels)
             {
                 // SelectModel - с каким проектом работаем,
                 // влияет на список сигналов с mainModel
-                interprojectExchange.SelectModel(alternativeModel);
-                UpdateModelRemoteGateWays(
-                    mainModel, alternativeModel, invertSignals);
-                UpdateModelSharedDevices(
-                    mainModel, alternativeModel, invertSignals);
+                interprojectExchange.SelectModel(altModel);
+                UpdateModelRemoteGateWays(mainModel, altModel, invertSignals);
+                UpdateModelSharedDevices(mainModel, altModel, invertSignals);
             }
 
             WriteSharedFile(mainModel.ProjectName,
@@ -76,30 +74,32 @@ namespace InterprojectExchange
         /// <summary>
         /// Запись модели альтернативного проекта
         /// </summary>
-        /// <param name="model">Модель</param>
-        private void WriteAlternativeModel(IProjectModel model)
+        /// <param name="altModel">Модель</param>
+        private void WriteAlternativeModel(IProjectModel altModel)
         {
             bool invertSignals = true;
             IProjectModel mainModel = interprojectExchange.MainModel;
             // SelectModel - с каким проектом работаем,
             // влияет на список сигналов с mainModel
-            interprojectExchange.SelectModel(model);
-            UpdateModelRemoteGateWays(model, mainModel, invertSignals);
-            UpdateModelSharedDevices(model, mainModel, invertSignals);
-            WriteSharedFile(model.ProjectName, model.SharedFileAsStringList);
+            interprojectExchange.SelectModel(altModel);
+            UpdateModelRemoteGateWays(altModel, mainModel, invertSignals);
+            UpdateModelSharedDevices(altModel, mainModel, invertSignals);
+            WriteSharedFile(altModel.ProjectName,
+                altModel.SharedFileAsStringList);
         }
 
         /// <summary>
         /// Запись удаленных узлов модели
         /// </summary>
-        /// <param name="model"></param>
-        /// <param name="mainModel"></param>
+        /// <param name="savingModel">Сохраняемая модель</param>
+        /// <param name="oppositeModel">Противоположная сохраняемой модель
+        /// </param>
         /// <param name="invertSignals">Инвертировать сигналы</param>
-        private void UpdateModelRemoteGateWays(IProjectModel model,
-            IProjectModel mainModel, bool invertSignals)
+        private void UpdateModelRemoteGateWays(IProjectModel savingModel,
+            IProjectModel oppositeModel, bool invertSignals)
         {
-            List<string> sharedFileData = model.SharedFileAsStringList;
-            string searchPattern = $"['{mainModel.ProjectName}'] =";
+            List<string> sharedFileData = savingModel.SharedFileAsStringList;
+            string searchPattern = $"['{oppositeModel.ProjectName}'] =";
             int startIndex = FindModelDescriptionStartIndex(searchPattern,
                 sharedFileData);
 
@@ -113,21 +113,21 @@ namespace InterprojectExchange
             else
             {
                 string valuePattern = $"remote_gateways =";
-                FillDefaultSharedData(valuePattern, model);
+                FillDefaultSharedData(valuePattern, savingModel);
                 startIndex = FindModelDescriptionStartIndex(valuePattern,
                     sharedFileData);
                 int offset = 2;
                 startIndex += offset;
             }
 
-            if (model.MarkedForDelete || mainModel.MarkedForDelete)
+            if (savingModel.MarkedForDelete || oppositeModel.MarkedForDelete)
             {
                 return;
             }
 
             string remoteGateWay = SaveProjectRemoteGateWays(
-                mainModel.ProjectName, model.PacInfo,
-                model.ReceiverSignals, invertSignals);
+                oppositeModel.ProjectName, savingModel.PacInfo,
+                savingModel.ReceiverSignals, invertSignals);
             if (!string.IsNullOrEmpty(remoteGateWay))
             {
                 sharedFileData.Insert(startIndex, remoteGateWay);
@@ -137,15 +137,16 @@ namespace InterprojectExchange
         /// <summary>
         /// Запись сигналов-источников модели
         /// </summary>
-        /// <param name="model"></param>
-        /// <param name="mainModel"></param>
+        /// <param name="savingModel">Сохраняемая модель</param>
+        /// <param name="oppositeModel">Противоположная сохраняемой модель
+        /// </param>
         /// <param name="invertSignals">Инвертировать сигналы</param>
-        private void UpdateModelSharedDevices(IProjectModel model,
-            IProjectModel mainModel, bool invertSignals)
+        private void UpdateModelSharedDevices(IProjectModel savingModel,
+            IProjectModel oppositeModel, bool invertSignals)
         {
-            List<string> sharedFileData = model.SharedFileAsStringList;
+            List<string> sharedFileData = savingModel.SharedFileAsStringList;
             string searchPattern = $"projectName = " +
-                $"\"{mainModel.ProjectName}\",";
+                $"\"{oppositeModel.ProjectName}\",";
             int startIndex = FindModelDescriptionStartIndex(searchPattern,
                 sharedFileData);
 
@@ -161,21 +162,21 @@ namespace InterprojectExchange
             else
             {
                 string valuePattern = $"shared_devices =";
-                FillDefaultSharedData(valuePattern, model);
+                FillDefaultSharedData(valuePattern, savingModel);
                 startIndex = FindModelDescriptionStartIndex(valuePattern,
                     sharedFileData);
                 startIndex += offset;
             }
 
 
-            if (model.MarkedForDelete || mainModel.MarkedForDelete)
+            if (savingModel.MarkedForDelete || oppositeModel.MarkedForDelete)
             {
                 return;
             }
 
             string sharedDevices = SaveProjectSharedDevices(
-                mainModel.ProjectName, mainModel.PacInfo.Station,
-                model.SourceSignals, invertSignals);
+                oppositeModel.ProjectName, oppositeModel.PacInfo.Station,
+                savingModel.SourceSignals, invertSignals);
             if (!string.IsNullOrEmpty(sharedDevices))
             {
                 sharedFileData.Insert(startIndex, sharedDevices);
