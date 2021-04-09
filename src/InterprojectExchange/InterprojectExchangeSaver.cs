@@ -37,19 +37,21 @@ namespace InterprojectExchange
         /// </summary>
         private void WriteMainProject()
         {
-            var advancedModels = interprojectExchange.Models
+            var alternativeModels = interprojectExchange.Models
                 .Where(x => x.ProjectName !=
                 interprojectExchange.MainModel.ProjectName);
 
             IProjectModel mainModel = interprojectExchange.MainModel;
             bool invertSignals = false;
-            foreach (var model in advancedModels)
+            foreach (var alternativeModel in alternativeModels)
             {
                 // SelectModel - с каким проектом работаем,
                 // влияет на список сигналов с mainModel
-                interprojectExchange.SelectModel(model);
-                UpdateModelRemoteGateWays(mainModel, model, invertSignals);
-                UpdateModelSharedDevices(mainModel, model, invertSignals);
+                interprojectExchange.SelectModel(alternativeModel);
+                UpdateModelRemoteGateWays(
+                    mainModel, alternativeModel, invertSignals);
+                UpdateModelSharedDevices(
+                    mainModel, alternativeModel, invertSignals);
             }
 
             WriteSharedFile(mainModel.ProjectName,
@@ -66,7 +68,7 @@ namespace InterprojectExchange
             {
                 if (model.ProjectName != mainProjectName)
                 {
-                    await Task.Run(() => WriteAdvancedModel(model));
+                    await Task.Run(() => WriteAlternativeModel(model));
                 }
             }
         }
@@ -75,10 +77,12 @@ namespace InterprojectExchange
         /// Запись модели альтернативного проекта
         /// </summary>
         /// <param name="model">Модель</param>
-        private void WriteAdvancedModel(IProjectModel model)
+        private void WriteAlternativeModel(IProjectModel model)
         {
             bool invertSignals = true;
             IProjectModel mainModel = interprojectExchange.MainModel;
+            // SelectModel - с каким проектом работаем,
+            // влияет на список сигналов с mainModel
             interprojectExchange.SelectModel(model);
             UpdateModelRemoteGateWays(model, mainModel, invertSignals);
             UpdateModelSharedDevices(model, mainModel, invertSignals);
