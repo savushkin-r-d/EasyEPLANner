@@ -125,13 +125,14 @@ namespace EasyEPlanner
                 (sender, args) => outputBuilder.AppendLine(args.Data);
             cmdProcess.Start();
             cmdProcess.BeginOutputReadLine();
-            cmdProcess.WaitForExit();
+            const int timeoutMs = 30000;
+            cmdProcess.WaitForExit(timeoutMs);
 
             int exitCode = cmdProcess.ExitCode;
             if (exitCode == 0)
             {
                 isValid = true;
-                errors = "";
+                errors = string.Empty;
             }
             else
             {
