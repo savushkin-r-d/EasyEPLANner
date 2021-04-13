@@ -24,7 +24,7 @@ namespace EasyEPlanner
             bool enabled = CheckEnable();
             if (!enabled)
             {
-                return "";
+                return string.Empty;
             }
 
             bool validLUA = CheckLua();
@@ -114,6 +114,7 @@ namespace EasyEPlanner
         // <returns>Рабочий или нет проект</returns>
         private bool CheckProject(out string errors)
         {
+            errors = string.Empty;
             bool isValid = false;
             const string projectCheckScriptFileName = "TestProjectScript.txt";
             string arguments = GetArguments(projectCheckScriptFileName);
@@ -125,8 +126,15 @@ namespace EasyEPlanner
                 (sender, args) => outputBuilder.AppendLine(args.Data);
             cmdProcess.Start();
             cmdProcess.BeginOutputReadLine();
-            const int timeoutMs = 30000;
-            cmdProcess.WaitForExit(timeoutMs);
+            const int timeoutMs = 10000;
+            bool success = cmdProcess.WaitForExit(timeoutMs);
+            if (!success)
+            {
+                cmdProcess.Kill();
+                errors += "Превышено время выполнения тестирования" +
+                    " проекта.\n";
+                return isValid;
+            }
 
             int exitCode = cmdProcess.ExitCode;
             if (exitCode == 0)
@@ -136,8 +144,7 @@ namespace EasyEPlanner
             }
             else
             {
-                string output = $"Лог ошибок:" + 
-                    StaticHelper.CommonConst.NewLine + outputBuilder.ToString();
+                string output = $"Лог ошибок:\n" + outputBuilder.ToString();
                 errors = output;
             }
 
