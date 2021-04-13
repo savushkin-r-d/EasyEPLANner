@@ -114,7 +114,6 @@ namespace EasyEPlanner
         // <returns>Рабочий или нет проект</returns>
         private bool CheckProject(out string errors)
         {
-            errors = string.Empty;
             bool isValid = false;
             const string projectCheckScriptFileName = "TestProjectScript.txt";
             string arguments = GetArguments(projectCheckScriptFileName);
@@ -131,7 +130,7 @@ namespace EasyEPlanner
             if (!success)
             {
                 cmdProcess.Kill();
-                errors += "Превышено время выполнения тестирования" +
+                errors = "Превышено время выполнения тестирования" +
                     " проекта.\n";
                 return isValid;
             }
