@@ -48,6 +48,9 @@ namespace EasyEPlanner
             var param = new ProjectDescriptionSaver.ParametersForSave(PAC_Name, 
                 path, silentMode);
 
+            projectConfiguration.Check();
+            IOManager.CalculateIOLinkAdresses();
+
             if (silentMode)
             {
                 ProjectDescriptionSaver.Save(param);
@@ -68,7 +71,7 @@ namespace EasyEPlanner
         public int LoadDescription(out string errStr,
             string projectName, bool loadFromLua)
         {
-            errStr = "";
+            errStr = string.Empty;
             Logs.Clear();
             EProjectManager.GetInstance().ProjectDataIsLoaded = false;
 
@@ -110,8 +113,8 @@ namespace EasyEPlanner
                         projectName, 
                         $"\\{ProjectDescriptionSaver.MainTechObjectsFileName}");
                     techObjectManager.LoadDescription(LuaStr, projectName);
-                    errStr = "";
-                    LuaStr = "";
+                    errStr = string.Empty;
+                    LuaStr = string.Empty;
                     res = LoadDescriptionFromFile(out LuaStr, out errStr, 
                         projectName,
                         $"\\{ProjectDescriptionSaver.MainRestrictionsFileName}");
@@ -119,12 +122,6 @@ namespace EasyEPlanner
                     oProgress.EndPart();
                 }
 
-                oProgress.BeginPart(15, "Проверка данных");
-                projectConfiguration.Check();
-                oProgress.EndPart();
-
-                oProgress.BeginPart(15, "Расчет IO-Link");
-                IOManager.CalculateIOLinkAdresses();
                 oProgress.EndPart(true);
                 EProjectManager.GetInstance().ProjectDataIsLoaded = true;
             }
