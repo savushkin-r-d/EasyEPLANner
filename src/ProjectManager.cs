@@ -48,9 +48,6 @@ namespace EasyEPlanner
             var param = new ProjectDescriptionSaver.ParametersForSave(PAC_Name, 
                 path, silentMode);
 
-            projectConfiguration.Check();
-            IOManager.CalculateIOLinkAdresses();
-
             if (silentMode)
             {
                 ProjectDescriptionSaver.Save(param);
@@ -121,7 +118,15 @@ namespace EasyEPlanner
                     techObjectManager.LoadRestriction(LuaStr);
                     oProgress.EndPart();
                 }
+                else
+                {
+                    oProgress.BeginPart(15, "Тестирование проекта");
+                    projectConfiguration.Check();
+                    oProgress.EndPart();
+                }
 
+                oProgress.BeginPart(15, "Расчет IO-Link");
+                IOManager.CalculateIOLinkAdresses();
                 oProgress.EndPart(true);
                 EProjectManager.GetInstance().ProjectDataIsLoaded = true;
             }
