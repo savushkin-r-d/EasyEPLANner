@@ -120,7 +120,7 @@ namespace EasyEPlanner
                 }
                 else
                 {
-                    oProgress.BeginPart(15, "Тестирование проекта");
+                    oProgress.BeginPart(15, "Проверка данных и тестирование");
                     projectConfiguration.Check();
                     oProgress.EndPart();
                 }
