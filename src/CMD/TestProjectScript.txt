@@ -1,1 +1,2 @@
+/C chcp 65001
 lua ..\..\spec\main.lua -o TAP
