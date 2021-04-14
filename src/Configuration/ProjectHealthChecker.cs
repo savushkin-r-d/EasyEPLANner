@@ -167,6 +167,7 @@ namespace EasyEPlanner
                 RedirectStandardOutput = true,
                 WorkingDirectory = workingDirectory,
                 CreateNoWindow = true,
+                StandardOutputEncoding = EncodingDetector.MainFilesEncoding,
             };
             cmdProcess.StartInfo = startInfo;
 
