@@ -68,7 +68,7 @@ namespace EasyEPlanner
         public int LoadDescription(out string errStr,
             string projectName, bool loadFromLua)
         {
-            errStr = "";
+            errStr = string.Empty;
             Logs.Clear();
             EProjectManager.GetInstance().ProjectDataIsLoaded = false;
 
@@ -110,18 +110,20 @@ namespace EasyEPlanner
                         projectName, 
                         $"\\{ProjectDescriptionSaver.MainTechObjectsFileName}");
                     techObjectManager.LoadDescription(LuaStr, projectName);
-                    errStr = "";
-                    LuaStr = "";
+                    errStr = string.Empty;
+                    LuaStr = string.Empty;
                     res = LoadDescriptionFromFile(out LuaStr, out errStr, 
                         projectName,
                         $"\\{ProjectDescriptionSaver.MainRestrictionsFileName}");
                     techObjectManager.LoadRestriction(LuaStr);
                     oProgress.EndPart();
                 }
-
-                oProgress.BeginPart(15, "Проверка данных");
-                projectConfiguration.Check();
-                oProgress.EndPart();
+                else
+                {
+                    oProgress.BeginPart(15, "Проверка данных и тестирование");
+                    projectConfiguration.Check();
+                    oProgress.EndPart();
+                }
 
                 oProgress.BeginPart(15, "Расчет IO-Link");
                 IOManager.CalculateIOLinkAdresses();
