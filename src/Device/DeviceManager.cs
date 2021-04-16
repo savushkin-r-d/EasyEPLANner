@@ -352,6 +352,7 @@ namespace Device
                     case "F":
                     case "Y":
                     case "DEV_VTUG": // Совместимость со старыми проектами
+                    case "CONTROL":
 
                         objectName = match.Groups["object_main"].Value + match.Groups["object"];
                         if (match.Groups["object_n"].Value != "")
@@ -550,6 +551,12 @@ namespace Device
                     dev = new F(name, description, deviceNumber, objectName,
                         objectNumber, articleName);
                     break;
+
+                case "REGULATOR":
+                    dev = new Regulator(name, description, deviceNumber,
+                        objectName, objectNumber);
+                    break;
+
                 default:
                     break;
             }
