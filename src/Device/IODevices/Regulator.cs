@@ -19,6 +19,6 @@ namespace Device
             dType = DeviceType.REGULATOR;
         }
 
-        //TODO: implementation and unit-tests to test project
+        //TODO: implementation
     }
 }
