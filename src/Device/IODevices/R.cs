@@ -69,5 +69,32 @@ namespace Device
             }
             return null;
         }
+
+        protected override string SaveParameters(string prefix)
+        {
+            string res = string.Empty;
+
+            if (parameters.Count > 0)
+            {
+                string tmp = string.Empty;
+                foreach (var par in parameters)
+                {
+                    if (par.Value != null)
+                    {
+                        tmp += $"{prefix}\t{par.Key} = {par.Value},\n";
+                    }
+                }
+
+                if (tmp != string.Empty)
+                {
+                    res += $"{prefix}par =\n";
+                    res += $"{prefix}\t{{\n";
+                    res += tmp.Remove(tmp.Length - 2) + "\n";
+                    res += $"{prefix}\t}}\n";
+                }
+            }
+
+            return res;
+        }
     }
 }

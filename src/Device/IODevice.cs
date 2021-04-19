@@ -567,13 +567,13 @@ namespace Device
             if (channels.Count > 0 && bindedChannels > 0)
             {
                 string typeName = channels.First().Name;
-                res += prefix + $"{typeName} =\n";
-                res += prefix + "\t{\n";
+                res += $"{prefix}{typeName} =\n";
+                res += $"{prefix}\t{{\n";
                 foreach (IOChannel ch in channels)
                 {
-                    res += ch.SaveAsLuaTable(prefix + "\t\t");
+                    res += ch.SaveAsLuaTable($"{prefix}\t\t");
                 }
-                res += prefix + "\t},\n";
+                res += $"{prefix}\t}},\n";
             }
 
             return res;
