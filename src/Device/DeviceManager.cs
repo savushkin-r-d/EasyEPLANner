@@ -543,8 +543,8 @@ namespace Device
                         objectNumber, articleName);
                     break;
                 case "DEV_VTUG": // Совместимость со старыми проектами
-                    dev = new DEV_VTUG(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
+                    dev = new DEV_VTUG(name, description, deviceNumber,
+                        objectName, objectNumber, articleName);
                     break;
 
                 case "F":
@@ -553,8 +553,8 @@ namespace Device
                     break;
 
                 case "R":
-                    dev = new R(name, description, deviceNumber,
-                        objectName, objectNumber);
+                    dev = new R(name, description, deviceNumber, objectName,
+                        objectNumber);
                     break;
 
                 default:
