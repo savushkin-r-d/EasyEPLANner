@@ -60,7 +60,7 @@ namespace Device
         {
             switch (dt)
             {
-                case DeviceType.SB:
+                case DeviceType.R:
                     return new Dictionary<string, int>()
                     {
                         {"ST", 1},
