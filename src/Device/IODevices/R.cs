@@ -21,27 +21,27 @@ namespace Device
             properties.Add("IN_VALUE", null);
             properties.Add("OUT_VALUE", null);
 
-            parameters.Add("k", 1);
-            parameters.Add("Ti", 15);
-            parameters.Add("Td", 0.01);
-            parameters.Add("dt", 1000);
+            parameters.Add("P_k", 1);
+            parameters.Add("P_Ti", 15);
+            parameters.Add("P_Td", 0.01);
+            parameters.Add("P_dt", 1000);
 
-            parameters.Add("max", 100);
-            parameters.Add("min", 0);
+            parameters.Add("P_max", 100);
+            parameters.Add("P_min", 0);
 
-            parameters.Add("acceleration_time", 30);
-            parameters.Add("is_manual_mode", 0);
-            parameters.Add("U_manual", 65);
+            parameters.Add("P_acceleration_time", 30);
+            parameters.Add("P_is_manual_mode", 0);
+            parameters.Add("P_U_manual", 65);
 
-            parameters.Add("k2", 0);
-            parameters.Add("Ti2", 0);
-            parameters.Add("Td2", 0);
+            parameters.Add("P_k2", 0);
+            parameters.Add("P_Ti2", 0);
+            parameters.Add("P_Td2", 0);
 
-            parameters.Add("out_max", 100);
-            parameters.Add("out_min", 0);
+            parameters.Add("P_out_max", 100);
+            parameters.Add("P_out_min", 0);
 
-            parameters.Add("is_reverse", 0);
-            parameters.Add("is_zero_start", 1);
+            parameters.Add("P_is_reverse", 0);
+            parameters.Add("P_is_zero_start", 1);
         }
 
         public override string GetDeviceSubTypeStr(DeviceType dt,
