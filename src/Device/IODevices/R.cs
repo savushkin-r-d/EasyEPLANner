@@ -33,15 +33,15 @@ namespace Device
             parameters.Add("is_manual_mode", 0);
             parameters.Add("U_manual", 65);
 
-            parameters.Add("is_reverse", 0);
-            parameters.Add("is_zero_start", 1);
-
             parameters.Add("k2", 0);
             parameters.Add("Ti2", 0);
             parameters.Add("Td2", 0);
 
             parameters.Add("out_max", 100);
             parameters.Add("out_min", 0);
+
+            parameters.Add("is_reverse", 0);
+            parameters.Add("is_zero_start", 1);
         }
 
         public override string GetDeviceSubTypeStr(DeviceType dt,

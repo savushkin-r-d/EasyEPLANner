@@ -486,20 +486,55 @@ namespace Device
         virtual public string SaveAsLuaTable(string prefix)
         {
             string res = prefix + "{\n";
+
+            res += SaveBasicData(prefix);
+            res += SaveProperties(prefix);
+            res += SaveBindedSignals(DO, prefix);
+            res += SaveBindedSignals(DI, prefix);
+            res += SaveBindedSignals(AO, prefix);
+            res += SaveBindedSignals(AI, prefix);
+            res += SaveRuntimeParameters(prefix);
+            res += SaveParameters(prefix);
+
+            res += prefix + "}";
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить базовую информацию об устройстве
+        /// </summary>
+        /// <param name="prefix">Префикс (для выравнивания).</param>
+        /// <returns></returns>
+        private string SaveBasicData(string prefix)
+        {
+            string res = string.Empty;
+
             res += prefix + "name    = \'" + Name + "\',\n";
-            res += prefix + "descr   = \'" + Description.Replace("\n", ". ") + 
+            res += prefix + "descr   = \'" + Description.Replace("\n", ". ") +
                 "\',\n";
             res += prefix + "dtype   = " + (int)dType + ",\n";
-            res += prefix + "subtype = " + (int)dSubType + ", -- " + 
+            res += prefix + "subtype = " + (int)dSubType + ", -- " +
                 GetDeviceSubTypeStr(dType, dSubType) + "\n";
             res += prefix + $"article = \'{ArticleName}\',\n";
+
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить свойства
+        /// </summary>
+        /// <param name="prefix">Префикс (для выравнивания).</param>
+        /// <returns></returns>
+        private string SaveProperties(string prefix)
+        {
+            string res = string.Empty;
 
             if (properties.Count > 0)
             {
                 var validProperties = properties
                     .Where(x => x.Value != null &&
                     (x.Value.ToString() != "\'\'" &&
-                    x.Value.ToString() != ""));
+                    x.Value.ToString() != string.Empty));
                 if (validProperties.Count() > 0)
                 {
                     res += prefix + "prop = --Дополнительные свойства\n";
@@ -513,57 +548,49 @@ namespace Device
                 }
             }
 
-            int bindedDO = CountOfBindedChannels(DO);
-            if (DO.Count > 0 && bindedDO > 0)
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить привязанные сигналы
+        /// </summary>
+        /// <param name="channels">Список каналов для сохранения
+        /// (AO, AI, DO, DI)</param>
+        /// <param name="prefix">Префикс (для выравнивания).</param>
+        /// <returns></returns>
+        private string SaveBindedSignals(List<IOChannel> channels,
+            string prefix)
+        {
+            string res = string.Empty;
+
+            int bindedChannels = CountOfBindedChannels(channels);
+            if (channels.Count > 0 && bindedChannels > 0)
             {
-                res += prefix + "DO =\n";
+                string typeName = channels.First().Name;
+                res += prefix + $"{typeName} =\n";
                 res += prefix + "\t{\n";
-                foreach (IOChannel ch in DO)
+                foreach (IOChannel ch in channels)
                 {
                     res += ch.SaveAsLuaTable(prefix + "\t\t");
                 }
                 res += prefix + "\t},\n";
             }
 
-            int bindedDI = CountOfBindedChannels(DI);
-            if (DI.Count > 0 && bindedDI > 0)
-            {
-                res += prefix + "DI =\n";
-                res += prefix + "\t{\n";
-                foreach (IOChannel ch in DI)
-                {
-                    res += ch.SaveAsLuaTable(prefix + "\t\t");
-                }
-                res += prefix + "\t},\n";
-            }
+            return res;
+        }
 
-            int bindedAO = CountOfBindedChannels(AO);
-            if (AO.Count > 0 && bindedAO > 0)
-            {
-                res += prefix + "AO =\n";
-                res += prefix + "\t{\n";
-                foreach (IOChannel ch in AO)
-                {
-                    res += ch.SaveAsLuaTable(prefix + "\t\t");
-                }
-                res += prefix + "\t},\n";
-            }
-
-            int bindedAI = CountOfBindedChannels(AI);
-            if (AI.Count > 0 && bindedAI > 0)
-            {
-                res += prefix + "AI =\n";
-                res += prefix + "\t{\n";
-                foreach (IOChannel ch in AI)
-                {
-                    res += ch.SaveAsLuaTable(prefix + "\t\t");
-                }
-                res += prefix + "\t},\n";
-            }
+        /// <summary>
+        /// Сохранить рабочие параметры
+        /// </summary>
+        /// <param name="prefix">Префикс (для выравнивания).</param>
+        /// <returns></returns>
+        private string SaveRuntimeParameters(string prefix)
+        {
+            string res = string.Empty;
 
             if (rtParameters.Count > 0)
             {
-                string tmp = "";
+                string tmp = string.Empty;
 
                 foreach (var par in rtParameters)
                 {
@@ -571,14 +598,14 @@ namespace Device
                     {
                         string tmpForSpacebars = $"\t\t\t\t{par.Value},";
                         int tmpForSpacebarsLength = tmpForSpacebars.Length % 4;
-                        var spacebars = 
+                        var spacebars =
                             new string(' ', 4 + (4 - tmpForSpacebarsLength));
 
                         tmp += $"\t\t\t\t{par.Value},{spacebars}--{par.Key}\n";
                     }
                 }
 
-                if (tmp != "")
+                if (tmp != string.Empty)
                 {
                     res += prefix + "rt_par = \n\t\t\t\t{\n";
                     res += tmp;
@@ -586,9 +613,21 @@ namespace Device
                 }
             }
 
+            return res;
+        }
+
+        /// <summary>
+        /// Сохранить параметры
+        /// </summary>
+        /// <param name="prefix">Префикс (для выравнивания).</param>
+        /// <returns></returns>
+        protected virtual string SaveParameters(string prefix)
+        {
+            string res = string.Empty;
+
             if (parameters.Count > 0)
             {
-                string tmp = "";
+                string tmp = string.Empty;
                 foreach (var par in parameters)
                 {
                     if (par.Value != null)
@@ -597,15 +636,13 @@ namespace Device
                     }
                 }
 
-                if (tmp != "")
+                if (tmp != string.Empty)
                 {
                     res += prefix + "par = {";
                     res += tmp.Remove(tmp.Length - 1 - 1);
                     res += " }\n";
                 }
             }
-
-            res += prefix + "}";
 
             return res;
         }
