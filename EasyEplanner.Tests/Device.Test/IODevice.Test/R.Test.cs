@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace Tests
 {
-    public class RegulatorTest
+    public class RTest
     {
         // TODO: Unit-tests
     }
