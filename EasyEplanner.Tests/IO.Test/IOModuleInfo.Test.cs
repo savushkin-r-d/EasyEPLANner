@@ -239,7 +239,7 @@ namespace Tests.IO
             Assert.AreEqual(expected, testModule.GroupName);
         }
 
-        private static void FillRandomModulesInfo(int count,
+        private void FillRandomModulesInfo(int count,
             int repeatableCount = 0)
         {
             int currentCount = count;
@@ -253,11 +253,11 @@ namespace Tests.IO
             while (currentCount > 0)
             {
                 int n = GetRandomIntNumber();
-                string name = GetRandomString(5);
-                string description = GetRandomString(10);
+                string name = $"n{currentCount}";
+                string description = $"d{currentCount}";
                 int addressSpaceTypeNum = new Random().Next(0, enumSize);
-                string typeName = GetRandomString(10);
-                string groupName = GetRandomString(7);
+                string typeName = $"tn{currentCount}";
+                string groupName = $"gn{currentCount}";
                 int[] channelClamps = GetRandomIntArr();
                 int[] channelAddressesIn = GetRandomIntArr();
                 int[] channelAddressesOut = GetRandomIntArr();
@@ -287,20 +287,13 @@ namespace Tests.IO
                 currentCount--;
             }
         }
-
-        private static string GetRandomString(int length)
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, length)
-              .Select(s => s[new Random().Next(s.Length)]).ToArray());
-        }
-        
-        private static int GetRandomIntNumber()
+       
+        private int GetRandomIntNumber()
         {
             return new Random().Next(0, 9);
         }
 
-        private static int[] GetRandomIntArr()
+        private int[] GetRandomIntArr()
         {
             const int maxIntArrSize = 50;
             const int minNum = -1;
@@ -312,7 +305,7 @@ namespace Tests.IO
                 .ToArray();
         }
 
-        private static IOModuleInfo GetModuleInfoForTest(
+        private IOModuleInfo GetModuleInfoForTest(
             string expectedName = null)
         {
             const int IntStub = 0;
