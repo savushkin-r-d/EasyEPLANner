@@ -38,6 +38,12 @@ namespace Device
         /// Устройства проекта
         /// </summary>
         List<IODevice> Devices { get; }
+
+        /// <summary>
+        /// Генерация тегов устройств для экспорта в базу каналов.
+        /// </summary>
+        /// <param name="rootNode">Корневой узел</param>
+        void GetObjectForXML(TreeNode rootNode);
     }
 
     /// <summary>
@@ -45,10 +51,6 @@ namespace Device
     /// </summary>
     public class DeviceManager : IDeviceManager
     {
-        /// <summary>
-        /// Генерация тегов устройств для экспорта в базу каналов.
-        /// </summary>
-        /// <param name="rootNode">Корневой узел</param>
         public void GetObjectForXML(TreeNode rootNode)
         {
             foreach (IODevice dev in devices)
