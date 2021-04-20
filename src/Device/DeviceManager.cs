@@ -152,6 +152,7 @@ namespace Device
         private string CheckPIDInputAndOutputProperties()
         {
             string res = string.Empty;
+            string cap = StaticHelper.CommonConst.Cap;
 
             var PIDs = Devices.Where(x => x.DeviceType == DeviceType.R);
             foreach(var dev in PIDs)
@@ -159,12 +160,23 @@ namespace Device
                 foreach(var property in dev.Properties)
                 {
                     string value = property.Value.ToString();
-                    var devInValue = GetDevice(value.Trim(new char[] { '\'' }));
-                    if (devInValue.Description == StaticHelper.CommonConst.Cap)
+                    var devInPropery = GetDevice(value.Trim(new char[] { '\'' }));
+                    if (devInPropery.Description == cap)
                     {
-                        res += $"Некорректно задано устройство для " +
+                        res += $"Задано несуществующее устройство для " +
                             $"ПИД-регулятора {dev.Name}, свойство " +
                             $"{property.Key}.\n";
+                    }
+
+                    if(property.Key == dev.Properties.Keys.Last() &&
+                        devInPropery.DeviceType != DeviceType.AO &&
+                        devInPropery.DeviceType != DeviceType.VC &&
+                        devInPropery.DeviceType != DeviceType.M &&
+                        devInPropery.DeviceType != DeviceType.R)
+                    {
+                        res += $"В выходе {property.Key} ПИД-регулятора" +
+                            $" {dev.Name} задано некорректное устройство. " +
+                            $"Нужно указать AO, VC, M или R.\n";
                     }
                 }
             }
