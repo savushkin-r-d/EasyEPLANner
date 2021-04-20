@@ -105,12 +105,17 @@ namespace Device
         #region сохранение базы каналов
         public override void GenerateDeviceTags(TreeNode rootNode)
         {
-            GenerateDefaultDeviceTags(rootNode);
             GeneratePIDTags(rootNode);
         }
 
         private void GeneratePIDTags(TreeNode rootNode)
         {
+            var devTagsNames = GetDeviceProperties(DeviceType, DeviceSubType)
+                .Keys;
+            var devParameters = new List<string>();
+            devParameters.AddRange(devTagsNames);
+            devParameters.AddRange(parameters.Keys);
+
             TreeNode newNode;
             if (!rootNode.Nodes.ContainsKey(Name))
             {
@@ -123,7 +128,7 @@ namespace Device
                     .First();
             }
 
-            foreach(var parName in parameters.Keys)
+            foreach(var parName in devParameters)
             {
                 newNode.Nodes.Add($"{Name}.{parName}", $"{Name}.{parName}");
             }
