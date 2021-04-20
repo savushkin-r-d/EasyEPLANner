@@ -3,8 +3,7 @@ using StaticHelper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Device
 {
@@ -43,6 +42,58 @@ namespace Device
                     return null; 
             }
             return null;
+        }
+
+        /// <summary>
+        /// Генерация тэгов устройства.
+        /// </summary>
+        /// <param name="rootNode">Корневой узел</param>
+        public virtual void GenerateDeviceTags(TreeNode rootNode)
+        {
+            GenerateDefaultDeviceTags(rootNode);
+        }
+
+        protected void GenerateDefaultDeviceTags(TreeNode rootNode)
+        {
+            Dictionary<string, int> propertiesList = GetDeviceProperties(
+                DeviceType, DeviceSubType);
+            if (propertiesList == null)
+            {
+                return;
+            }
+
+            foreach (var tagPair in propertiesList)
+            {
+                string propName = tagPair.Key;
+                int theSameTagsCount = tagPair.Value;
+
+                TreeNode newNode;
+                string nodeName = $"{DeviceType}_{propName}";
+                for (int i = 1; i <= theSameTagsCount; i++)
+                {
+                    if (!rootNode.Nodes.ContainsKey(nodeName))
+                    {
+                        newNode = rootNode.Nodes.Add(nodeName, nodeName);
+                    }
+                    else
+                    {
+                        bool searchChildren = false;
+                        newNode = rootNode.Nodes.Find(nodeName, searchChildren)
+                            .First();
+                    }
+
+                    if (theSameTagsCount > 1)
+                    {
+                        newNode.Nodes.Add($"{Name}.{propName}[{i}]",
+                            $"{Name}.{propName}[{i}]");
+                    }
+                    else
+                    {
+                        newNode.Nodes.Add($"{Name}.{propName}",
+                            $"{Name}.{propName}");
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -479,6 +530,7 @@ namespace Device
             return 1;
         }
 
+        #region сохранение в Lua
         /// <summary>
         /// Сохранение в виде таблицы Lua.
         /// </summary>
@@ -646,6 +698,7 @@ namespace Device
 
             return res;
         }
+#endregion
 
         /// <summary>
         /// Сортировка каналов устройства для соответствия.

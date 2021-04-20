@@ -55,58 +55,7 @@ namespace Device
             {
                 if (dev != null)
                 {
-                    Dictionary<string, int> propertiesList = dev.GetDeviceProperties(
-                        dev.DeviceType, dev.DeviceSubType);
-                    if (propertiesList != null)
-                    {
-                        foreach (var keyValuePair in propertiesList)
-                        {
-                            string propName = keyValuePair.Key;
-                            int sameTagsCount = keyValuePair.Value;
-                            GenerateDeviceTag(propName, rootNode, dev, 
-                                sameTagsCount);
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Генерация тэга устройства.
-        /// </summary>
-        /// <param name="propname">Название тэга</param>
-        /// <param name="rootNode">Корневой узел</param>
-        /// <param name="dev">Устройство</param>
-        /// <param name="sameTagsCount">Количество повторяемых тэгов,
-        /// дефолт = 1</param>
-        private void GenerateDeviceTag(string propname, TreeNode rootNode, 
-            Device dev, int sameTagsCount = 1)
-        {
-            TreeNode newNode;
-            string nodeName = dev.DeviceType.ToString() + "_" + propname;
-            for(int i = 1; i <= sameTagsCount; i++)
-            {
-                if (!rootNode.Nodes.ContainsKey(nodeName))
-                {
-                    newNode = rootNode.Nodes.Add(nodeName, nodeName);
-                }
-                else
-                {
-                    bool searchChildren = false;
-                    newNode = rootNode.Nodes.Find(nodeName, searchChildren)
-                        .First();
-                }
-
-                if(sameTagsCount > 1)
-                {
-                    newNode.Nodes.Add($"{dev.Name}.{propname}[{i}]", 
-                        $"{dev.Name}.{propname}[{i}]");
-
-                }
-                else
-                {
-                    newNode.Nodes.Add($"{dev.Name}.{propname}", 
-                        $"{dev.Name}.{propname}");
+                    dev.GenerateDeviceTags(rootNode);
                 }
             }
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Device
 {
@@ -70,6 +71,7 @@ namespace Device
             return null;
         }
 
+        #region сохранение в Lua
         protected override string SaveParameters(string prefix)
         {
             string res = string.Empty;
@@ -96,5 +98,19 @@ namespace Device
 
             return res;
         }
+        #endregion
+
+        #region сохранение базы каналов
+        public override void GenerateDeviceTags(TreeNode rootNode)
+        {
+            GenerateDefaultDeviceTags(rootNode);
+            GeneratePIDTags(rootNode);
+        }
+
+        private void GeneratePIDTags(TreeNode rootNode)
+        {
+            //TODO: Process channel base
+        }
+        #endregion
     }
 }
