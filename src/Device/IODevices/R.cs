@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Device
@@ -105,11 +102,6 @@ namespace Device
         #region сохранение базы каналов
         public override void GenerateDeviceTags(TreeNode rootNode)
         {
-            GeneratePIDTags(rootNode);
-        }
-
-        private void GeneratePIDTags(TreeNode rootNode)
-        {
             var devTagsNames = GetDeviceProperties(DeviceType, DeviceSubType)
                 .Keys;
             var devParameters = new List<string>();
@@ -128,7 +120,7 @@ namespace Device
                     .First();
             }
 
-            foreach(var parName in devParameters)
+            foreach (var parName in devParameters)
             {
                 newNode.Nodes.Add($"{Name}.{parName}", $"{Name}.{parName}");
             }

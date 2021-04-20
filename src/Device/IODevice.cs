@@ -50,11 +50,6 @@ namespace Device
         /// <param name="rootNode">Корневой узел</param>
         public virtual void GenerateDeviceTags(TreeNode rootNode)
         {
-            GenerateDefaultDeviceTags(rootNode);
-        }
-
-        protected void GenerateDefaultDeviceTags(TreeNode rootNode)
-        {
             Dictionary<string, int> propertiesList = GetDeviceProperties(
                 DeviceType, DeviceSubType);
             if (propertiesList == null)
