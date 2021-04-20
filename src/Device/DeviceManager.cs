@@ -75,21 +75,23 @@ namespace Device
         /// </summary>
         public string Check()
         {
-            var res = "";
+            var res = string.Empty;
 
             foreach (var dev in devices)
             {
                 res += dev.Check();
             }
 
-            long startingIP = EasyEPlanner.ProjectConfiguration
-                .GetInstance().StartingIPInterval;
-            long endingIP = EasyEPlanner.ProjectConfiguration.GetInstance()
+            long startingIP = ProjectConfiguration.GetInstance()
+                .StartingIPInterval;
+            long endingIP = ProjectConfiguration.GetInstance()
                 .EndingIPInterval;
             if (startingIP != 0 && endingIP != 0)
             {
                 res += CheckDevicesIP(startingIP, endingIP);
-            }           
+            }
+
+            res += CheckPIDInputAndOutputProperties();
 
             return res;
         }
@@ -141,6 +143,33 @@ namespace Device
 
             errors = errors.Distinct().ToList();
             return string.Concat(errors);
+        }
+
+        /// <summary>
+        /// Проверить входы и выходы ПИД-регуляторов
+        /// </summary>
+        /// <returns></returns>
+        private string CheckPIDInputAndOutputProperties()
+        {
+            string res = string.Empty;
+
+            var PIDs = Devices.Where(x => x.DeviceType == DeviceType.R);
+            foreach(var dev in PIDs)
+            {
+                foreach(var property in dev.Properties)
+                {
+                    string value = property.Value.ToString();
+                    var devInValue = GetDevice(value.Trim(new char[] { '\'' }));
+                    if (devInValue.Description == StaticHelper.CommonConst.Cap)
+                    {
+                        res += $"Некорректно задано устройство для " +
+                            $"ПИД-регулятора {dev.Name}, свойство " +
+                            $"{property.Key}.\n";
+                    }
+                }
+            }
+
+            return res;
         }
 
         /// <summary>
