@@ -111,11 +111,6 @@ namespace Device
 
         private void GeneratePIDTags(TreeNode rootNode)
         {
-            var rtPIDParNames = new string[] { "SS1", "SS2" };
-            var devParameters = new List<string>();
-            devParameters.AddRange(rtPIDParNames);
-            devParameters.AddRange(parameters.Keys);
-
             TreeNode newNode;
             if (!rootNode.Nodes.ContainsKey(Name))
             {
@@ -128,7 +123,7 @@ namespace Device
                     .First();
             }
 
-            foreach(var parName in devParameters)
+            foreach(var parName in parameters.Keys)
             {
                 newNode.Nodes.Add($"{Name}.{parName}", $"{Name}.{parName}");
             }
