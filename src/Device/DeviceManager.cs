@@ -168,11 +168,13 @@ namespace Device
                             $"{property.Key}.\n";
                     }
 
-                    if(property.Key == dev.Properties.Keys.Last() &&
+                    bool allowedDevices =
                         devInPropery.DeviceType != DeviceType.AO &&
                         devInPropery.DeviceType != DeviceType.VC &&
                         devInPropery.DeviceType != DeviceType.M &&
-                        devInPropery.DeviceType != DeviceType.R)
+                        devInPropery.DeviceType != DeviceType.R;
+                    if (property.Key == dev.Properties.Keys.Last() &&
+                        allowedDevices)
                     {
                         res += $"В выходе {property.Key} ПИД-регулятора" +
                             $" {dev.Name} задано некорректное устройство. " +
