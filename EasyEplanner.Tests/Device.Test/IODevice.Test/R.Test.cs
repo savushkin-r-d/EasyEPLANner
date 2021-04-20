@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using NUnit.Framework;
 
 namespace Tests
@@ -186,13 +187,91 @@ namespace Tests
             Assert.AreEqual(0, dev.Channels.Count);
         }
 
-        /// <summary>
-        /// Создать новое R устройство
-        /// </summary>
-        /// <returns></returns>
+        [Test]
+        public void GenerateDeviceTags_NewObject_ReturnsTreeNodeForChannelBase()
+        {
+            var dev = GetNewRDevice();
+
+            TreeNode actualNode = new TreeNode("obj");
+            dev.GenerateDeviceTags(actualNode);
+
+            TreeNode expectedNode = new TreeNode(dev.Name);
+            var devProps = dev.GetDeviceProperties(dev.DeviceType,
+                dev.DeviceSubType).Keys.ToList();
+            devProps.AddRange(dev.Parameters.Keys.ToList());
+            foreach (var property in devProps)
+            {
+                expectedNode.Nodes.Add($"{dev.Name}.{property}",
+                    $"{dev.Name}.{property}");
+            }
+
+            for(int i = 0; i < expectedNode.Nodes.Count; i++)
+            {
+                string expectedText = expectedNode.Nodes[i].Text;
+                string actualText = actualNode.FirstNode.Nodes[i].Text;
+                Assert.AreEqual(expectedText, actualText);
+            }     
+        }
+
+        [TestCase("")]
+        [TestCase("\t")]
+        public void SaveParameters_NewObject_ReturnsStringWithCorrectString(
+            string prefix)
+        {
+            var dev = GetNewRDevTestDevice();
+            string expectedSaveString = string.Empty;
+            string tmp = string.Empty;
+            foreach (var par in dev.Parameters)
+            {
+                if (par.Value != null)
+                {
+                    tmp += $"{prefix}\t{par.Key} = {par.Value},\n";
+                }
+            }
+            if (tmp != string.Empty)
+            {
+                expectedSaveString += $"{prefix}par =\n";
+                expectedSaveString += $"{prefix}\t{{\n";
+                expectedSaveString += tmp.Remove(tmp.Length - 2) + "\n";
+                expectedSaveString += $"{prefix}\t}}\n";
+            }
+
+            string actualSaveString = dev.SaveParameters(prefix);
+
+            Assert.AreEqual(expectedSaveString, actualSaveString);
+        }
+
         private static Device.IODevice GetNewRDevice()
         {
-            return new Device.R("TANK1R1", "PID", 1,  "TANK", 1);
+            return new Device.R(TestDevName, TestDevDescription, TestDevNum,
+                TestDevObjName, TestDevObjNum);
+        }
+
+        private static RDevTest GetNewRDevTestDevice()
+        {
+            return new RDevTest(TestDevName, TestDevDescription, TestDevNum,
+                TestDevObjName, TestDevObjNum);
+        }
+
+        const string TestDevName = "TANK1R1";
+        const string TestDevDescription = "PID";
+        const int TestDevObjNum = 1;
+        const string TestDevObjName = "TANK";
+        const int TestDevNum = 1;
+
+        public class RDevTest : Device.R
+        {
+            // Используем только внутри этого класса, поскольку цель -  это
+            // протестировать protected метод.
+            public RDevTest(string fullName, string description,
+                int deviceNumber, string objectName, int objectNumber) : base(
+                    fullName, description, deviceNumber, objectName,
+                    objectNumber) { }
+
+            public new string SaveParameters(string prefix)
+            {
+                return base.SaveParameters(prefix);
+            }
         }
     }
 }

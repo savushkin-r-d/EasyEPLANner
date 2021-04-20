@@ -10,8 +10,8 @@ namespace Device
     public class R : IODevice
     {
         public R(string fullName, string description, int deviceNumber,
-            string objectName, int objectNumber) : base(
-                fullName, description, deviceNumber, objectName, objectNumber)
+            string objectName, int objectNumber) : base(fullName, description,
+                deviceNumber, objectName, objectNumber)
         {
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.R;
