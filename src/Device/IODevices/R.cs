@@ -65,7 +65,9 @@ namespace Device
                     return new Dictionary<string, int>()
                     {
                         {"ST", 1},
-                        {"M", 1}, // TODO: Tags
+                        {"M", 1},
+                        {"V", 1},
+                        {"Z", 1},
                     };
             }
             return null;
@@ -109,7 +111,27 @@ namespace Device
 
         private void GeneratePIDTags(TreeNode rootNode)
         {
-            //TODO: Process channel base
+            var rtPIDParNames = new string[] { "SS1", "SS2" };
+            var devParameters = new List<string>();
+            devParameters.AddRange(rtPIDParNames);
+            devParameters.AddRange(parameters.Keys);
+
+            TreeNode newNode;
+            if (!rootNode.Nodes.ContainsKey(Name))
+            {
+                newNode = rootNode.Nodes.Add(Name, Name);
+            }
+            else
+            {
+                bool searchChildren = false;
+                newNode = rootNode.Nodes.Find(Name, searchChildren)
+                    .First();
+            }
+
+            foreach(var parName in devParameters)
+            {
+                newNode.Nodes.Add($"{Name}.{parName}", $"{Name}.{parName}");
+            }
         }
         #endregion
     }
