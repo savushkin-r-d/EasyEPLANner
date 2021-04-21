@@ -15,7 +15,7 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
-        public void GetDeviceSubTypeStr_NewObject_ReturnsDevType(
+        public void GetDeviceSubTypeStr_NewDev_ReturnsDevType(
             string expectedType, string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
@@ -88,7 +88,7 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(ParametersTestData))]
-        public void Parameters_NewObject_ReturnsParametersArrWithDefaultValues(
+        public void Parameters_NewDev_ReturnsParametersArrWithDefaultValues(
             string[] parametersSequence, double[] defaultValuesSequence,
             string subType, Device.IODevice device)
         {
@@ -152,7 +152,7 @@ namespace Tests
         }
 
         [Test]
-        public void Properties_NewObject_ReturnsPropertiesArrWithNullValues()
+        public void Properties_NewDev_ReturnsPropertiesArrWithNullValues()
         {
             const int expectedPropertiesCount = 2;
             string[] expectedPropertiesNames = 
@@ -171,7 +171,7 @@ namespace Tests
         }
 
         [Test]
-        public void DefaultConstructor_NewObject_ReturnsCorrectTypeAndSubType()
+        public void DefaultConstructor_NewDev_ReturnsCorrectTypeAndSubType()
         {
             var dev = GetNewRDevice();
 
@@ -180,7 +180,7 @@ namespace Tests
         }
 
         [Test]
-        public void Channels_NewObject_ReturnsEmptyChannels()
+        public void Channels_NewDev_ReturnsEmptyChannels()
         {
             var dev = GetNewRDevice();
 
@@ -188,7 +188,7 @@ namespace Tests
         }
 
         [Test]
-        public void GenerateDeviceTags_NewObject_ReturnsTreeNodeForChannelBase()
+        public void GenerateDeviceTags_NewDev_ReturnsTreeNodeForChannelBase()
         {
             var dev = GetNewRDevice();
 
@@ -215,7 +215,7 @@ namespace Tests
 
         [TestCase("")]
         [TestCase("\t")]
-        public void SaveParameters_NewObject_ReturnsStringWithCorrectString(
+        public void SaveParameters_NewDev_ReturnsStringWithCorrectString(
             string prefix)
         {
             var dev = GetNewRDevTestDevice();

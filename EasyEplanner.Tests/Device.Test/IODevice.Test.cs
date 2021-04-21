@@ -1,19 +1,17 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Windows.Forms;
 
 namespace Tests
 {
     public class IODeviceTest
     {
         [TestCaseSource(nameof(TestSortingChannelsForVDeviceData))]
-        public void TestSortingChannelsForVDevice(Device.IODevice dev, 
-            string subType, string[] expected)
+        public void SortChannels_NewValveDevices_ReturnsSortedArrayOfChannels(
+            Device.IODevice dev, string subType, string[] expected)
         {
             dev.SetSubType(subType);
-            dev.sortChannels();
+            dev.SortChannels();
             string[] actual = dev.Channels
                 .Where(x => x.Comment != "")
                 .Select(x => x.Comment ).ToArray();
@@ -62,6 +60,60 @@ namespace Tests
                         "Открыт", "Закрыт"} 
                 },
             };
+        }
+
+        [TestCaseSource(nameof(GenerateDeviceTagsCaseSource))]
+        public void GenerateDeviceTags_DeviceAODefault_ReturnsTree(
+            Device.IODevice dev, TreeNode expectedNode)
+        {
+            var actualNode = new TreeNode();
+            
+            dev.GenerateDeviceTags(actualNode);
+            
+            for(int i = 0; i < actualNode.Nodes.Count; i++)
+            {
+                TreeNode actualSubNode = actualNode.Nodes[i];
+                TreeNode expectedSubNode = expectedNode.Nodes[i];
+                Assert.AreEqual(expectedSubNode.Text, actualSubNode.Text);
+                for (int j = 0; j < actualNode.Nodes.Count; j++)
+                {
+                    Assert.AreEqual(expectedSubNode.Nodes[j].Text,
+                        actualSubNode.Nodes[j].Text);
+                }
+            }
+        }
+
+        public static object[] GenerateDeviceTagsCaseSource()
+        {
+            string devName = "TANK1AO1";
+            string descr = "Сигнал AO";
+            string objName = "TANK";
+            int objNum = 1;
+            int devNum = 1;
+
+            string devMTag = "M";
+            string devVTag = "V";
+            string devPMinVTag = "P_MIN_V";
+            string devPMaxVTag = "P_MAX_V";
+
+            var expectedNode = new TreeNode();
+            var mNode = new TreeNode($"AO_{devMTag}");
+            mNode.Nodes.Add($"{devName}.{devMTag}");
+            var vNode = new TreeNode($"AO_{devVTag}");
+            vNode.Nodes.Add($"{devName}.{devVTag}");
+            var pMinVNode = new TreeNode($"AO_{devPMinVTag}");
+            pMinVNode.Nodes.Add($"{devName}.{devPMinVTag}");
+            var pMaxVNode = new TreeNode($"AO_{devPMaxVTag}");
+            pMaxVNode.Nodes.Add($"{devName}.{devPMaxVTag}");
+            expectedNode.Nodes.Add(mNode);
+            expectedNode.Nodes.Add(vNode);
+            expectedNode.Nodes.Add(pMinVNode);
+            expectedNode.Nodes.Add(pMaxVNode);
+
+            var dev = new Device.AO(devName, descr, devNum, objName, objNum);
+            var defaultAODev = new object[] { dev, expectedNode };
+
+            return new object[] { defaultAODev };
         }
     }
 }

@@ -693,12 +693,12 @@ namespace Device
 
             return res;
         }
-#endregion
+        #endregion
 
         /// <summary>
         /// Сортировка каналов устройства для соответствия.
         /// </summary>
-        public void sortChannels()
+        public void SortChannels()
         {
             if (dType == DeviceType.V)
             {

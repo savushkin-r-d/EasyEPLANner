@@ -717,7 +717,7 @@ namespace Device
                 if (dev.DeviceType == DeviceType.Y ||
                     dev.DeviceType == DeviceType.DEV_VTUG) continue;
 
-                dev.sortChannels();
+                dev.SortChannels();
                 res += dev.SaveAsLuaTable(prefix + "\t\t") + ",\n\n";
             }
 
