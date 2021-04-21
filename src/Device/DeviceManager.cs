@@ -38,6 +38,12 @@ namespace Device
         /// Устройства проекта
         /// </summary>
         List<IODevice> Devices { get; }
+
+        /// <summary>
+        /// Генерация тегов устройств для экспорта в базу каналов.
+        /// </summary>
+        /// <param name="rootNode">Корневой узел</param>
+        void GetObjectForXML(TreeNode rootNode);
     }
 
     /// <summary>
@@ -45,68 +51,13 @@ namespace Device
     /// </summary>
     public class DeviceManager : IDeviceManager
     {
-        /// <summary>
-        /// Генерация тегов устройств для экспорта в базу каналов.
-        /// </summary>
-        /// <param name="rootNode">Корневой узел</param>
         public void GetObjectForXML(TreeNode rootNode)
         {
             foreach (IODevice dev in devices)
             {
                 if (dev != null)
                 {
-                    Dictionary<string, int> propertiesList = dev.GetDeviceProperties(
-                        dev.DeviceType, dev.DeviceSubType);
-                    if (propertiesList != null)
-                    {
-                        foreach (var keyValuePair in propertiesList)
-                        {
-                            string propName = keyValuePair.Key;
-                            int sameTagsCount = keyValuePair.Value;
-                            GenerateDeviceTag(propName, rootNode, dev, 
-                                sameTagsCount);
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Генерация тэга устройства.
-        /// </summary>
-        /// <param name="propname">Название тэга</param>
-        /// <param name="rootNode">Корневой узел</param>
-        /// <param name="dev">Устройство</param>
-        /// <param name="sameTagsCount">Количество повторяемых тэгов,
-        /// дефолт = 1</param>
-        private void GenerateDeviceTag(string propname, TreeNode rootNode, 
-            Device dev, int sameTagsCount = 1)
-        {
-            TreeNode newNode;
-            string nodeName = dev.DeviceType.ToString() + "_" + propname;
-            for(int i = 1; i <= sameTagsCount; i++)
-            {
-                if (!rootNode.Nodes.ContainsKey(nodeName))
-                {
-                    newNode = rootNode.Nodes.Add(nodeName, nodeName);
-                }
-                else
-                {
-                    bool searchChildren = false;
-                    newNode = rootNode.Nodes.Find(nodeName, searchChildren)
-                        .First();
-                }
-
-                if(sameTagsCount > 1)
-                {
-                    newNode.Nodes.Add($"{dev.Name}.{propname}[{i}]", 
-                        $"{dev.Name}.{propname}[{i}]");
-
-                }
-                else
-                {
-                    newNode.Nodes.Add($"{dev.Name}.{propname}", 
-                        $"{dev.Name}.{propname}");
+                    dev.GenerateDeviceTags(rootNode);
                 }
             }
         }
@@ -124,21 +75,23 @@ namespace Device
         /// </summary>
         public string Check()
         {
-            var res = "";
+            var res = string.Empty;
 
             foreach (var dev in devices)
             {
                 res += dev.Check();
             }
 
-            long startingIP = EasyEPlanner.ProjectConfiguration
-                .GetInstance().StartingIPInterval;
-            long endingIP = EasyEPlanner.ProjectConfiguration.GetInstance()
+            long startingIP = ProjectConfiguration.GetInstance()
+                .StartingIPInterval;
+            long endingIP = ProjectConfiguration.GetInstance()
                 .EndingIPInterval;
             if (startingIP != 0 && endingIP != 0)
             {
                 res += CheckDevicesIP(startingIP, endingIP);
-            }           
+            }
+
+            res += CheckPIDInputAndOutputProperties();
 
             return res;
         }
@@ -190,6 +143,47 @@ namespace Device
 
             errors = errors.Distinct().ToList();
             return string.Concat(errors);
+        }
+
+        /// <summary>
+        /// Проверить входы и выходы ПИД-регуляторов
+        /// </summary>
+        /// <returns></returns>
+        private string CheckPIDInputAndOutputProperties()
+        {
+            string res = string.Empty;
+            string cap = StaticHelper.CommonConst.Cap;
+
+            var PIDs = Devices.Where(x => x.DeviceType == DeviceType.R);
+            foreach(var dev in PIDs)
+            {
+                foreach(var property in dev.Properties)
+                {
+                    string value = property.Value.ToString();
+                    var devInPropery = GetDevice(value.Trim(new char[] { '\'' }));
+                    if (devInPropery.Description == cap)
+                    {
+                        res += $"Задано несуществующее устройство для " +
+                            $"ПИД-регулятора {dev.Name}, свойство " +
+                            $"{property.Key}.\n";
+                    }
+
+                    bool allowedDevices =
+                        devInPropery.DeviceType != DeviceType.AO &&
+                        devInPropery.DeviceType != DeviceType.VC &&
+                        devInPropery.DeviceType != DeviceType.M &&
+                        devInPropery.DeviceType != DeviceType.R;
+                    if (property.Key == dev.Properties.Keys.Last() &&
+                        allowedDevices)
+                    {
+                        res += $"В выходе {property.Key} ПИД-регулятора" +
+                            $" {dev.Name} задано некорректное устройство. " +
+                            $"Нужно указать AO, VC, M или R.\n";
+                    }
+                }
+            }
+
+            return res;
         }
 
         /// <summary>
@@ -352,6 +346,7 @@ namespace Device
                     case "F":
                     case "Y":
                     case "DEV_VTUG": // Совместимость со старыми проектами
+                    case "R":
 
                         objectName = match.Groups["object_main"].Value + match.Groups["object"];
                         if (match.Groups["object_n"].Value != "")
@@ -542,14 +537,20 @@ namespace Device
                         objectNumber, articleName);
                     break;
                 case "DEV_VTUG": // Совместимость со старыми проектами
-                    dev = new DEV_VTUG(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
+                    dev = new DEV_VTUG(name, description, deviceNumber,
+                        objectName, objectNumber, articleName);
                     break;
 
                 case "F":
                     dev = new F(name, description, deviceNumber, objectName,
                         objectNumber, articleName);
                     break;
+
+                case "R":
+                    dev = new R(name, description, deviceNumber, objectName,
+                        objectNumber);
+                    break;
+
                 default:
                     break;
             }
@@ -716,7 +717,7 @@ namespace Device
                 if (dev.DeviceType == DeviceType.Y ||
                     dev.DeviceType == DeviceType.DEV_VTUG) continue;
 
-                dev.sortChannels();
+                dev.SortChannels();
                 res += dev.SaveAsLuaTable(prefix + "\t\t") + ",\n\n";
             }
 

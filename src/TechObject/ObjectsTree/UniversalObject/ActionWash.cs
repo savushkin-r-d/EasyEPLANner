@@ -38,7 +38,8 @@ namespace TechObject
                     Device.DeviceType.V,
                     Device.DeviceType.DO,
                     Device.DeviceType.AO,
-                    Device.DeviceType.VC
+                    Device.DeviceType.VC,
+                    Device.DeviceType.R
                 },
                 new Device.DeviceSubType[]
                 {

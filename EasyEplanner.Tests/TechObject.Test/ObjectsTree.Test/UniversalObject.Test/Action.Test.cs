@@ -434,10 +434,10 @@ namespace Tests.TechObject
                 .Returns(StaticHelper.CommonConst.Cap);
             var deviceManagerMock = new Mock<Device.IDeviceManager>();
             deviceManagerMock
-                .Setup(x => x.GetDeviceByIndex(It.Is<int>(x => x % 2 == 0)))
+                .Setup(x => x.GetDeviceByIndex(It.Is<int>(y => y % 2 == 0)))
                 .Returns(validDevMock.Object);
             deviceManagerMock
-                .Setup(x => x.GetDeviceByIndex(It.Is<int>(x => x % 2 != 0)))
+                .Setup(x => x.GetDeviceByIndex(It.Is<int>(y => y % 2 != 0)))
                 .Returns(invalidDevMock.Object);
             var action = new Action(string.Empty, null, string.Empty, null,
                 null, null, deviceManagerMock.Object);
@@ -465,10 +465,10 @@ namespace Tests.TechObject
                 .Returns(StaticHelper.CommonConst.Cap);
             var deviceManagerMock = new Mock<Device.IDeviceManager>();
             deviceManagerMock
-                .Setup(x => x.GetDeviceByIndex(It.Is<int>(x => x % 2 == 0)))
+                .Setup(x => x.GetDeviceByIndex(It.Is<int>(y => y % 2 == 0)))
                 .Returns(validDevMock.Object);
             deviceManagerMock
-                .Setup(x => x.GetDeviceByIndex(It.Is<int>(x => x % 2 != 0)))
+                .Setup(x => x.GetDeviceByIndex(It.Is<int>(y => y % 2 != 0)))
                 .Returns(invalidDevMock.Object);
             var action = new Action(actionName, null, luaName, null, null,
                 null, deviceManagerMock.Object);

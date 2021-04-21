@@ -766,17 +766,22 @@ namespace EasyEPlanner
         /// <summary>
         /// Получить необходимость протоколирования тэга
         /// </summary>
-        /// <param name="tagName">Тэг</param>
+        /// <param name="tagName">Имя тэга</param>
+        /// <param name="node">Имя узла</param>
         /// <returns></returns>
         private static bool GetNeedProtocolCondition(string tagName, 
             TreeNode node)
         {
-            if (Protocol.Contains(tagName) ||
+            bool protocolDev = Protocol.Contains(tagName);
+            bool protocolObject =
                 node.Text.Contains(DefaultNodeName) &&
-                (node.Text.Contains("ST") || 
+                (node.Text.Contains("ST") ||
                 node.Text.Contains("MODES") ||
-                node.Text.Contains("OPERATIONS") || 
-                node.Text.Contains("STEPS"))) 
+                node.Text.Contains("OPERATIONS") ||
+                node.Text.Contains("STEPS"));
+            bool protocolPID = GetPIDProtocolability(tagName, node.Text);
+
+            if (protocolDev || protocolObject || protocolPID) 
             {
                 return true;
             }
@@ -784,6 +789,25 @@ namespace EasyEPlanner
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Получить протоколируемость ПИД-регулятора
+        /// </summary>
+        /// <param name="tagName">Имя тэга</param>
+        /// <param name="nodeText">Имя узла</param>
+        /// <returns></returns>
+        private static bool GetPIDProtocolability(string tagName,
+            string nodeText)
+        {
+            bool isPID = deviceManager
+                .GetDeviceByEplanName(tagName).DeviceType == DeviceType.R;
+            if (isPID && ProtocolPID.Any(x => nodeText.Contains(x)))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -836,6 +860,13 @@ namespace EasyEPlanner
                 "AI_V"
             });
 
+        private static HashSet<string> ProtocolPID =
+            new HashSet<string>(new string[]
+            {
+                ".V",
+                ".Z"
+            });
+
         /// <summary>
         /// Узлы, в которых устанавливается опрос по времени.
         /// </summary>
@@ -858,6 +889,6 @@ namespace EasyEPlanner
             .GetInstance();
         static ITechObjectManager techObjectManager = TechObjectManager
             .GetInstance();
-        static DeviceManager deviceManager = DeviceManager.GetInstance();
+        static IDeviceManager deviceManager = DeviceManager.GetInstance();
     }
 }
