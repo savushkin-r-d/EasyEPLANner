@@ -110,7 +110,7 @@
     <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Configuration\DeviceSynchronizeService.cs" />
     <Compile Include="Device\IODevices\F.cs" />
-    <Compile Include="Device\IODevices\R.cs" />
+    <Compile Include="Device\IODevices\C.cs" />
     <Compile Include="Editor\DrawInfo.cs" />
     <Compile Include="Editor\Editor.cs" />
     <Compile Include="Editor\IBaseObjChangeable.cs" />

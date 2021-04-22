@@ -801,7 +801,7 @@ namespace EasyEPlanner
             string nodeText)
         {
             bool isPID = deviceManager
-                .GetDeviceByEplanName(tagName).DeviceType == DeviceType.R;
+                .GetDeviceByEplanName(tagName).DeviceType == DeviceType.C;
             if (isPID && ProtocolPID.Any(x => nodeText.Contains(x)))
             {
                 return true;

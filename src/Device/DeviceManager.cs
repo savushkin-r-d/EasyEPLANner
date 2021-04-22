@@ -154,7 +154,7 @@ namespace Device
             string res = string.Empty;
             string cap = StaticHelper.CommonConst.Cap;
 
-            var PIDs = Devices.Where(x => x.DeviceType == DeviceType.R);
+            var PIDs = Devices.Where(x => x.DeviceType == DeviceType.C);
             foreach(var dev in PIDs)
             {
                 foreach(var property in dev.Properties)
@@ -172,7 +172,7 @@ namespace Device
                         devInPropery.DeviceType != DeviceType.AO &&
                         devInPropery.DeviceType != DeviceType.VC &&
                         devInPropery.DeviceType != DeviceType.M &&
-                        devInPropery.DeviceType != DeviceType.R;
+                        devInPropery.DeviceType != DeviceType.C;
                     if (property.Key == dev.Properties.Keys.Last() &&
                         allowedDevices)
                     {
@@ -547,7 +547,7 @@ namespace Device
                     break;
 
                 case "R":
-                    dev = new R(name, description, deviceNumber, objectName,
+                    dev = new C(name, description, deviceNumber, objectName,
                         objectNumber);
                     break;
 
