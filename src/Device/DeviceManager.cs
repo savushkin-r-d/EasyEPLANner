@@ -346,7 +346,7 @@ namespace Device
                     case "F":
                     case "Y":
                     case "DEV_VTUG": // Совместимость со старыми проектами
-                    case "R":
+                    case "C":
 
                         objectName = match.Groups["object_main"].Value + match.Groups["object"];
                         if (match.Groups["object_n"].Value != "")
@@ -546,7 +546,7 @@ namespace Device
                         objectNumber, articleName);
                     break;
 
-                case "R":
+                case "C":
                     dev = new C(name, description, deviceNumber, objectName,
                         objectNumber);
                     break;
