@@ -159,26 +159,31 @@ namespace Device
             {
                 foreach(var property in dev.Properties)
                 {
-                    string value = property.Value.ToString();
-                    var devInPropery = GetDevice(value.Trim(new char[] { '\'' }));
-                    if (devInPropery.Description == cap)
+                    object value = property.Value;
+                    if(value != null)
                     {
-                        res += $"Задано несуществующее устройство для " +
-                            $"ПИД-регулятора {dev.Name}, свойство " +
-                            $"{property.Key}.\n";
-                    }
+                        var devInPropery = GetDevice(
+                            value.ToString().Trim(new char[] { '\'' }));
+                        if (devInPropery.Description == cap)
+                        {
+                            res += $"Задано несуществующее устройство для " +
+                                $"ПИД-регулятора {dev.Name}, свойство " +
+                                $"{property.Key}.\n";
+                        }
 
-                    bool allowedDevices =
-                        devInPropery.DeviceType != DeviceType.AO &&
-                        devInPropery.DeviceType != DeviceType.VC &&
-                        devInPropery.DeviceType != DeviceType.M &&
-                        devInPropery.DeviceType != DeviceType.C;
-                    if (property.Key == dev.Properties.Keys.Last() &&
-                        allowedDevices)
-                    {
-                        res += $"В выходе {property.Key} ПИД-регулятора" +
-                            $" {dev.Name} задано некорректное устройство. " +
-                            $"Нужно указать AO, VC, M или R.\n";
+                        bool allowedDevices =
+                            devInPropery.DeviceType != DeviceType.AO &&
+                            devInPropery.DeviceType != DeviceType.VC &&
+                            devInPropery.DeviceType != DeviceType.M &&
+                            devInPropery.DeviceType != DeviceType.C;
+                        if (property.Key == dev.Properties.Keys.Last() &&
+                            allowedDevices)
+                        {
+                            res += $"В выходе {property.Key} ПИД-регулятора" +
+                                $" {dev.Name} задано некорректное " +
+                                $"устройство. Нужно указать AO, VC, M или " +
+                                $"другой ПИД-регулятор.\n";
+                        }
                     }
                 }
             }
@@ -301,9 +306,14 @@ namespace Device
         /// <summary>
         /// Проверка на корректное имя устройства.
         /// </summary>
-        /// <param name="devName">Имя устройство.</param>
-        static public bool CheckDeviceName(string fullDevName,
-            out string devName, out string objectName, out int objectNumber,
+        /// <param name="devName">Имя устройства.</param>
+        /// <param name="deviceNumber">Номер устройства.</param>
+        /// <param name="deviceType">Тип устройства.</param>
+        /// <param name="fullDevName">Полное имя устройства.</param>
+        /// <param name="objectName">Имя объекта.</param>
+        /// <param name="objectNumber">Номер объекта.</param>
+        public bool CheckDeviceName(string fullDevName, out string devName,
+            out string objectName, out int objectNumber,
             out string deviceType, out int deviceNumber)
         {
             bool res = false;
@@ -319,6 +329,12 @@ namespace Device
             if (match.Success)
             {
                 string type = match.Groups["type"].Value;
+                bool isPID = IsPIDControl(type);
+                if (isPID)
+                {
+                    type = DeviceType.C.ToString();
+                }
+
                 switch (type)
                 {
                     case "V":
@@ -425,6 +441,11 @@ namespace Device
 
             CheckDeviceName(devName, out name, out objectName,
                 out objectNumber, out deviceType, out deviceNumber);
+            bool isPID = IsPIDControl(deviceType);
+            if (isPID)
+            {
+                deviceType = DeviceType.C.ToString();
+            }
 
             // Если изделия нет или пустое, то оставляем пустое
             if (articleName == "" || articleName == null)
@@ -990,6 +1011,40 @@ namespace Device
             }
 
             return isMultiple;
+        }
+
+        /// <summary>
+        /// Тип устройства является ПИД-ом или нет
+        /// </summary>
+        /// <param name="devices">Тип устройства</param>
+        /// <returns></returns>
+        private bool IsPIDControl(string type)
+        {
+            bool isPID = false;
+
+            int length = type.Length;
+            if (length <= 1)
+            {
+                return isPID;
+            }
+
+            const int firstCharIndex = 0;
+            if (type[firstCharIndex] == Convert.ToChar(DeviceType.V.ToString())
+                || type.Contains(DeviceType.C.ToString()) == false)
+            {
+                return isPID;
+            }
+
+            for (int i = 1; i < length; i++)
+            {
+                if (type[i] == Convert.ToChar(DeviceType.C.ToString()))
+                {
+                    isPID = true;
+                    break;
+                }
+            }
+
+            return isPID;
         }
 
         /// <summary>
