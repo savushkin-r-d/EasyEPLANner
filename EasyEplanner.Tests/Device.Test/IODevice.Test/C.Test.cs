@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace Tests
 {
-    public class RTest
+    public class CTest
     {
         /// <summary>
         /// Тест получения подтипа устройства
@@ -33,10 +33,10 @@ namespace Tests
         {
             return new object[]
             {
-                new object[] { "R", "", GetNewRDevice() },
-                new object[] { "R", "R", GetNewRDevice() },
-                new object[] { "R", "Random", GetNewRDevice() },
-                new object[] { "R", "Incorrect", GetNewRDevice() },
+                new object[] { "C", "", GetNewRDevice() },
+                new object[] { "C", "C", GetNewRDevice() },
+                new object[] { "C", "Random", GetNewRDevice() },
+                new object[] { "C", "Incorrect", GetNewRDevice() },
             };
         }
 
@@ -74,7 +74,7 @@ namespace Tests
 
             return new object[]
             {
-                new object[] { exportTags, "R", GetNewRDevice() },
+                new object[] { exportTags, "C", GetNewRDevice() },
                 new object[] { exportTags, "Random", GetNewRDevice() },
                 new object[] { exportTags, "Incorrect", GetNewRDevice() },
             };
@@ -131,7 +131,7 @@ namespace Tests
                 {
                     parameters,
                     defaultValues,
-                    "R",
+                    "C",
                     GetNewRDevice()
                 },
                 new object[]
@@ -175,7 +175,7 @@ namespace Tests
         {
             var dev = GetNewRDevice();
 
-            Assert.AreEqual(Device.DeviceType.R, dev.DeviceType);
+            Assert.AreEqual(Device.DeviceType.C, dev.DeviceType);
             Assert.AreEqual(Device.DeviceSubType.NONE, dev.DeviceSubType);
         }
 
@@ -243,27 +243,27 @@ namespace Tests
 
         private static Device.IODevice GetNewRDevice()
         {
-            return new Device.R(TestDevName, TestDevDescription, TestDevNum,
+            return new Device.C(TestDevName, TestDevDescription, TestDevNum,
                 TestDevObjName, TestDevObjNum);
         }
 
-        private static RDevTest GetNewRDevTestDevice()
+        private static CDevTest GetNewRDevTestDevice()
         {
-            return new RDevTest(TestDevName, TestDevDescription, TestDevNum,
+            return new CDevTest(TestDevName, TestDevDescription, TestDevNum,
                 TestDevObjName, TestDevObjNum);
         }
 
-        const string TestDevName = "TANK1R1";
+        const string TestDevName = "TANK1C1";
         const string TestDevDescription = "PID";
         const int TestDevObjNum = 1;
         const string TestDevObjName = "TANK";
         const int TestDevNum = 1;
 
-        public class RDevTest : Device.R
+        public class CDevTest : Device.C
         {
             // Используем только внутри этого класса, поскольку цель -  это
             // протестировать protected метод.
-            public RDevTest(string fullName, string description,
+            public CDevTest(string fullName, string description,
                 int deviceNumber, string objectName, int objectNumber) : base(
                     fullName, description, deviceNumber, objectName,
                     objectNumber) { }

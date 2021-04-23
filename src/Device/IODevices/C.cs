@@ -7,14 +7,14 @@ namespace Device
     /// <summary>
     /// ПИД-регулятор
     /// </summary>
-    public class R : IODevice
+    public class C : IODevice
     {
-        public R(string fullName, string description, int deviceNumber,
+        public C(string fullName, string description, int deviceNumber,
             string objectName, int objectNumber) : base(fullName, description,
                 deviceNumber, objectName, objectNumber)
         {
             dSubType = DeviceSubType.NONE;
-            dType = DeviceType.R;
+            dType = DeviceType.C;
 
             properties.Add("IN_VALUE", null);
             properties.Add("OUT_VALUE", null);
@@ -47,7 +47,7 @@ namespace Device
         {
             switch (dt)
             {
-                case DeviceType.R:
+                case DeviceType.C:
                     return dt.ToString();
             }
             return string.Empty;
@@ -58,7 +58,7 @@ namespace Device
         {
             switch (dt)
             {
-                case DeviceType.R:
+                case DeviceType.C:
                     return new Dictionary<string, int>()
                     {
                         {"ST", 1},
