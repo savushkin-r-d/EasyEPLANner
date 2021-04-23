@@ -50,8 +50,12 @@ namespace Tests
         [TestCase("LINE1V2", true)]
         [TestCase("+TANK99-TE99", true)]
         [TestCase("KOAG99PT99", true)]
-        [TestCase("MCC1", false)]
+        [TestCase("MKK1", false)]
         [TestCase("DI2", true)]
+        [TestCase("FC2", true)]
+        [TestCase("TC1", true)]
+        [TestCase("TRC2", true)]
+        [TestCase("TKK1", false)]
         public void CheckDeviceNameTest(string device, bool expected)
         {
             bool actual = Device.DeviceManager.GetInstance()
