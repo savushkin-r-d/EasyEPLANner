@@ -411,10 +411,6 @@ Phoenix Contact | AXL SE SC-A (1088134) | - | Заглушка
 
 <p align="center"><b>Рисунок</b> - <i>Схема описания операций в Eplan</i></p>
 
-<p align="center"><img src="images/operations_descr.png"></p>
-
-<p align="center"><b>Рисунок</b> - <i>Схема операций</i></p>
-
 ## 6 Устройства технологической схемы
 
 ### 6.1 Нумерация устройств ###
