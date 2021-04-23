@@ -54,8 +54,8 @@ namespace Tests
         [TestCase("DI2", true)]
         public void CheckDeviceNameTest(string device, bool expected)
         {
-            bool actual = Device.DeviceManager.CheckDeviceName(device, out _,
-                out _, out _, out _, out _);
+            bool actual = Device.DeviceManager.GetInstance()
+                .CheckDeviceName(device, out _, out _, out _, out _, out _);
             Assert.AreEqual(expected, actual);
         }
 

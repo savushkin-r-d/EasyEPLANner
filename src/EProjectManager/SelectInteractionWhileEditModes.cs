@@ -82,8 +82,9 @@ namespace EasyEPlanner
             if (editorItem.IsUseDevList)
             {
                 string devName;
-                bool res = Device.DeviceManager.CheckDeviceName(oF.Name,
-                    out devName, out _, out _, out _, out _);
+                bool res = Device.DeviceManager.GetInstance()
+                    .CheckDeviceName(oF.Name, out devName, out _, out _,
+                    out _, out _);
 
                 if (res)
                 {
