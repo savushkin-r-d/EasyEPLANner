@@ -1023,7 +1023,7 @@ namespace Device
             bool isPID = false;
 
             int length = type.Length;
-            if (length < 1)
+            if (length <= 1)
             {
                 return isPID;
             }
