@@ -13,7 +13,7 @@ namespace EasyEPlanner
         {
             string pathToFiles = path + @"\docs\statistics\";
             svgFilePattern = Properties.Resources.ResourceManager
-            .GetString("svgPattern");
+                .GetString("svgPattern");
             if (Directory.Exists(pathToFiles) == false)
             {
                 Directory.CreateDirectory(pathToFiles);
