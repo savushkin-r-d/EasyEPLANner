@@ -50,9 +50,7 @@ namespace EasyEPlanner
                 loc = readedFile.Length;
             }
 
-            string labelName = GenerateNounAfterNumber("строк", loc, "a", "и",
-                string.Empty);
-            string displayingText = $"{loc} {labelName} кода";
+            string displayingText = $"{loc}";
             string result = MakeStringForWriting(loc, maxLOCCount,
                 displayingText);
             WriteFile(result, folderPath);
@@ -68,9 +66,7 @@ namespace EasyEPlanner
 
             folderPath += CountOfTagsFileName;
             int tagsCount = XMLReporter.GetTagsCount();
-            string labelName = GenerateNounAfterNumber("тэг", tagsCount,
-                string.Empty, "а", "ов");
-            string displayingText = $"{tagsCount} {labelName}";
+            string displayingText = $"{tagsCount}";
             string result = MakeStringForWriting(tagsCount, maxTagsCount,
                 displayingText);
             WriteFile(result, folderPath);
@@ -86,9 +82,7 @@ namespace EasyEPlanner
 
             folderPath += CountOfUnitsFileName;
             int unitsCount = techObjectManager.UnitsCount;
-            string labelName = GenerateNounAfterNumber("аппарат", unitsCount,
-                string.Empty, "а", "ов");
-            string displayingText = $"{unitsCount} {labelName}";
+            string displayingText = $"{unitsCount}";
             string result = MakeStringForWriting(unitsCount, maxUnitsCount,
                 displayingText);
             WriteFile(result, folderPath);
@@ -104,9 +98,7 @@ namespace EasyEPlanner
 
             folderPath += CountOfEquipmentModulesFileName;
             int equipCount = techObjectManager.EquipmentModulesCount;
-            string labelName = GenerateNounAfterNumber("агрегат", equipCount,
-                string.Empty, "а", "ов");
-            string displayingText = $"{equipCount} {labelName}";
+            string displayingText = $"{equipCount}";
             string result = MakeStringForWriting(equipCount, maxEquipCount,
                 displayingText);
             WriteFile(result, folderPath);
@@ -122,9 +114,7 @@ namespace EasyEPlanner
 
             folderPath += CountOfDevicesFileName;
             int devicesCount = deviceManager.Devices.Count;
-            string labelName = GenerateNounAfterNumber("устройств",
-                devicesCount, "о", "а", string.Empty);
-            string displayingText = $"{devicesCount} {labelName}";
+            string displayingText = $"{devicesCount}";
             string result = MakeStringForWriting(devicesCount, maxDevicesCount,
                 displayingText);
             WriteFile(result, folderPath);
@@ -152,7 +142,7 @@ namespace EasyEPlanner
             }
             int valueInPercents = ValueAsPercentage(ioLinkModules,
                 modulesCount);
-            string displayingText = $"{valueInPercents}% IO-Link I/O";
+            string displayingText = $"{valueInPercents}%";
             string result = MakeStringForWriting(ioLinkModules,
                 modulesCount, displayingText);
             folderPath += IOLModulesInPercentFileName;
@@ -168,9 +158,7 @@ namespace EasyEPlanner
             const int maxCount = 50;
             int modulesCount = ioManager.IONodes.SelectMany(x => x.IOModules)
                 .Count();
-            string labelname = GenerateNounAfterNumber("I/O модул",
-                modulesCount, "ь", "я", "ей");
-            string displayingText = $"{modulesCount} {labelname}";
+            string displayingText = $"{modulesCount}";
             string result = MakeStringForWriting(modulesCount, maxCount,
                 displayingText);
             folderPath += IOModulesCountFileName;
@@ -186,52 +174,11 @@ namespace EasyEPlanner
             const int maxCount = 10;
             int couplersCount = ioManager.IONodes
                 .Where(x => x.IsCoupler).Count();
-            string labelName = GenerateNounAfterNumber("уз", couplersCount,
-                "ел", "ла", "лов");
-            string displayingText = $"{couplersCount} {labelName}";
+            string displayingText = $"{couplersCount}";
             string result = MakeStringForWriting(couplersCount, maxCount,
                 displayingText);
             folderPath += CouplersCountFileName;
             WriteFile(result, folderPath);
-        }
-
-        /// <summary>
-        /// Генерация существительного стоящего после числительного
-        /// </summary>
-        /// <param name="noun">Существительное</param>
-        /// <param name="number">Числительное</param>
-        /// <param name="subjectiveCaseSingularEnding">Окончание
-        /// существительного в именительном падеже единственного значения
-        /// </param>
-        /// <param name="genitiveCaseSingularEnding">Окончание
-        /// существительного в родительном падеже единственного значения
-        /// </param>
-        /// <param name="genitiveCasePluralEnding">Окончание существительного
-        /// в родительном падеже множественного значения</param>
-        /// <returns></returns>
-        private string GenerateNounAfterNumber(string noun, int number,
-            string subjectiveCaseSingularEnding,
-            string genitiveCaseSingularEnding,
-            string genitiveCasePluralEnding)
-        {
-            const int subjectiveCaseSingularDigit = 1;
-            const int genitiveCasePluralDigit = 5;
-            const int divider = 10;
-
-            var lastDigit = number % divider;
-            if (lastDigit == subjectiveCaseSingularDigit)
-            {
-                return $"{noun}{subjectiveCaseSingularEnding}";
-            }
-            else if (lastDigit > subjectiveCaseSingularDigit &&
-                lastDigit < genitiveCasePluralDigit)
-            {
-                return $"{noun}{genitiveCaseSingularEnding}";
-            }
-            else
-            {
-                return $"{noun}{genitiveCasePluralEnding}";
-            }
         }
 
         /// <summary>
