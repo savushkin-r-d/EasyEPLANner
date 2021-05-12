@@ -119,3 +119,9 @@ end
 function DEVICE(dev)
 	return devs[dev][1] or { }
 end
+
+function C(dev)
+	devs[devsidx] = {dev, "C"}
+	devsidx = devsidx + 1
+	return dev
+end
