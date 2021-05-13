@@ -8,12 +8,13 @@ namespace TechObject
         /// <summary>
         /// Сохранить информацию об объекте в prg.lua
         /// </summary>
-        /// <param name="obj">Сохраняемый базовый объект</param>
+        /// <param name="obj">Технологический объект</param>
+        /// <param name="baseObj">Сохраняемый базовый объект</param>
         /// <param name="objName">Уникальное имя объекта</param>
         /// <param name="prefix">Отступ</param>
         /// <returns></returns>
-        string SaveObjectInfoToPrgLua(BaseTechObject obj, string objName,
-            string prefix);
+        string SaveObjectInfoToPrgLua(TechObject obj, BaseTechObject baseObj,
+            string objName, string prefix);
 
         /// <summary>
         /// Сохранить операции объекта
@@ -54,13 +55,14 @@ namespace TechObject
 
     public class BaseTechObjectSaver : IBaseTechObjectSaver
     {
-        public string SaveObjectInfoToPrgLua(BaseTechObject obj, 
-            string objName, string prefix)
+        public string SaveObjectInfoToPrgLua(TechObject obj,
+            BaseTechObject baseObj, string objName, string prefix)
         {
             string res = string.Empty;
 
-            res += SaveTankAdditionalParameters(obj, objName, prefix);
-            res += SaveLineAdditionalParameters(obj, objName, prefix);
+            res += SaveTankAdditionalParameters(baseObj, objName, prefix);
+            res += SaveLineAdditionalParameters(baseObj, objName, prefix);
+            res += SaveObjectProperties(obj, objName, prefix);
 
             return res;
         }
@@ -138,6 +140,24 @@ namespace TechObject
                     prefix + $"{objName}.PAR_FLOAT.PROD_V,\n" +
                     prefix + $"{objName}.PAR_FLOAT.WATER_V,\n" +
                     prefix + "}\n";
+            }
+
+            return res;
+        }
+
+        private string SaveObjectProperties(TechObject obj, string objName,
+            string prefix)
+        {
+            string res = string.Empty;
+            if (obj.BaseProperties.Count > 0)
+            {
+                res += $"{objName}.properties =\n";
+                res += $"{prefix}{{\n";
+                foreach(var property in obj.BaseProperties.Properties)
+                {
+                    res += $"{prefix}{property.SaveToPrgLua(string.Empty)},\n";
+                }
+                res += $"{prefix}}}\n";
             }
 
             return res;

@@ -65,9 +65,20 @@ namespace TechObject
         /// <summary>
         /// Добавление полей в массив для отображения на дереве.
         /// </summary>
-        void SetItems()
+        public void SetItems()
         {
-            items = new ITreeViewItem[stepsMngr.Count + 3];
+            bool emptyOperation = baseOperation.Name == string.Empty &&
+                baseOperation.LuaName == string.Empty;
+            // TODO: Refactor magic nums
+            if (emptyOperation)
+            {
+                items = new ITreeViewItem[stepsMngr.Count + 2];
+            }
+            else
+            {
+                items = new ITreeViewItem[stepsMngr.Count + 3];
+                items[stepsMngr.Count + 2] = baseOperation;
+            }
 
             for (int i = 0; i < stepsMngr.Count; i++)
             {
@@ -76,7 +87,6 @@ namespace TechObject
 
             items[stepsMngr.Count] = operPar;
             items[stepsMngr.Count + 1] = restrictionMngr;
-            items[stepsMngr.Count + 2] = baseOperation;
         }
 
         public OperationParams GetOperationParams()
@@ -452,6 +462,7 @@ namespace TechObject
                 similarBaseOperation == false)
             {
                 baseOperation.Init(newBaseOperationName, this);
+                SetItems();
                 return true;
             }
 

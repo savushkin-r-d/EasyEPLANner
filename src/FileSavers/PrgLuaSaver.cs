@@ -250,7 +250,7 @@ namespace EasyEPlanner
                     obj.TechNumber.ToString();
 
                 objectsInfo += baseTechObjectSaver.
-                    SaveObjectInfoToPrgLua(baseObj, objName, prefix);
+                    SaveObjectInfoToPrgLua(obj, baseObj, objName, prefix);
 
                 var modesManager = obj.ModesManager;
                 var modes = modesManager.Modes;
