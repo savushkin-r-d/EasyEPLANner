@@ -67,26 +67,22 @@ namespace TechObject
         /// </summary>
         public void SetItems()
         {
-            bool emptyOperation = baseOperation.Name == string.Empty &&
-                baseOperation.LuaName == string.Empty;
-            // TODO: Refactor magic nums
-            if (emptyOperation)
+            bool notEmptyBaseOperation = baseOperation.Name != string.Empty &&
+                baseOperation.LuaName != string.Empty;
+            bool baseOperationHasProperties =
+                baseOperation.Properties.Count > 0;
+
+            var itemsList = new List<ITreeViewItem>();
+            itemsList.AddRange(stepsMngr);
+            itemsList.Add(operPar);
+            itemsList.Add(restrictionMngr);
+
+            if (notEmptyBaseOperation && baseOperationHasProperties)
             {
-                items = new ITreeViewItem[stepsMngr.Count + 2];
-            }
-            else
-            {
-                items = new ITreeViewItem[stepsMngr.Count + 3];
-                items[stepsMngr.Count + 2] = baseOperation;
+                itemsList.Add(baseOperation);
             }
 
-            for (int i = 0; i < stepsMngr.Count; i++)
-            {
-                items[i] = stepsMngr[i];
-            }
-
-            items[stepsMngr.Count] = operPar;
-            items[stepsMngr.Count + 1] = restrictionMngr;
+            items = itemsList.ToArray();
         }
 
         public OperationParams GetOperationParams()
