@@ -45,7 +45,8 @@ init_base_objects = function()
 
         -- Добавить доп. свойства объекта
         local baseProperties = value.baseProperties or { }
-        init_base_properties(baseObject, baseProperties)
+        local basePropertiesObj = baseObject.BaseProperties
+        init_base_properties(basePropertiesObj, baseProperties)
     end
 
     return 0
@@ -207,13 +208,11 @@ end
 
 -- Инициализация доп. свойств базового объекта
 init_base_properties = function(object, properties)
-        local baseProperties = object.BaseProperties
+    -- Добавить активные свойства объекта
+    local activeParameters = properties.active or { }
+    init_active_parameters(object, activeParameters)
 
-        -- Добавить активные свойства объекта
-        local activeParameters = properties.active or { }
-        init_active_parameters(baseProperties, activeParameters)
-
-        -- Добавить булевые доп. свойства объекта
-        local activeBoolParameters = properties.bool or { }
-        init_active_bool_parameters(baseProperties, activeBoolParameters)
+    -- Добавить булевые доп. свойства объекта
+    local activeBoolParameters = properties.bool or { }
+    init_active_bool_parameters(object, activeBoolParameters)
 end
