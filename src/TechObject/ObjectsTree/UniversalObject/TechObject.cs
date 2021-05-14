@@ -464,7 +464,10 @@ namespace TechObject
             if (baseTechObject.BaseProperties.Count > 0)
             {
                 var foundProperty = baseProperties.GetProperty(luaName);
-                foundProperty.SetValue(value);
+                if (foundProperty != null)
+                {
+                    foundProperty.SetValue(value);
+                }
             }
         }
         #endregion
