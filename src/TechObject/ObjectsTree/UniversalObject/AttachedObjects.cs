@@ -108,6 +108,7 @@ namespace TechObject
                 {
                     mode.BaseOperation.ChangePropertiesOwner(
                         oldObject.BaseTechObject, newObject.BaseTechObject);
+                    mode.SetItems();
                 }
             }
         }
@@ -192,6 +193,7 @@ namespace TechObject
                 foreach (var mode in modes)
                 {
                     mode.BaseOperation.RemoveProperties(deletingProperties);
+                    mode.SetItems();
                 }
             }
         }

@@ -370,7 +370,10 @@ namespace TechObject
                 itemsList.Add(systemParams);
             }
 
-            itemsList.Add(equipment);
+            if (baseTechObject?.Equipment.Count > 0)
+            {
+                itemsList.Add(equipment);
+            }
 
             if (baseTechObject?.UseGroups == true)
             {
