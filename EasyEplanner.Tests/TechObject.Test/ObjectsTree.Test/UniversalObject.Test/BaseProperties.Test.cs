@@ -206,6 +206,33 @@ namespace Tests.TechObject
         }
 
         [Test]
+        public void SaveAsLuaTable_TwoPropertiesOneEmpty_ReturnsExpectedString()
+        {
+            var obj = new BaseProperties();
+
+            string activeParLuaName = "active";
+            string activeParName = "активный";
+            obj.AddActiveParameter(activeParLuaName, activeParName,
+                string.Empty);
+
+            string boolParLuaName = "bool";
+            string boolParName = "булевый";
+            string boolParValue = "false";
+            obj.AddActiveBoolParameter(boolParLuaName, boolParName,
+                boolParValue);
+
+            string prefix = string.Empty;
+            string expectedSaveString = $"{prefix}properties =\n" +
+                $"{prefix}\t{{\n" +
+                $"{prefix}\tbool = \'false\',\n" +
+                $"{prefix}\t}},\n";
+
+            string actualSaveString = obj.SaveAsLuaTable(prefix);
+
+            Assert.AreEqual(expectedSaveString, actualSaveString);
+        }
+
+        [Test]
         public void SaveAsLuaTable_ObjNoProperties_ReturnsEmptyString()
         {
             var obj = new BaseProperties();
