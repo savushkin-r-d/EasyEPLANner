@@ -34,6 +34,7 @@ namespace Tests.TechObject
                 Assert.AreEqual(zeroValue, obj.BaseOperations.Count);
                 Assert.AreEqual(zeroValue, obj.AggregateParameters.Count);
                 Assert.IsEmpty(obj.LuaModuleName);
+                Assert.AreEqual(zeroValue, obj.BaseProperties.Count);
             });
         }
 
