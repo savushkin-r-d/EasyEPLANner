@@ -371,7 +371,6 @@ namespace TechObject
             cloned.Parameters = Parameters.Clone();
             cloned.LuaModuleName = LuaModuleName;
             cloned.MonitorName = MonitorName;
-
             cloned.BaseProperties = BaseProperties.Clone();
 
             return cloned;
