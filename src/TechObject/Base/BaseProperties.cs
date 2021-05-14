@@ -132,8 +132,11 @@ namespace TechObject
             res += $"{prefix}\t{{\n";
             foreach(var property in Properties)
             {
-                res += $"{prefix}\t{property.LuaName} = " +
-                    $"\'{property.Value}\',\n";
+                if (!property.IsEmpty)
+                {
+                    res += $"{prefix}\t{property.LuaName} = " +
+                        $"\'{property.Value}\',\n";
+                }
             }
             res += $"{prefix}\t}},\n";
 

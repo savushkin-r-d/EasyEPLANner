@@ -155,6 +155,12 @@ namespace TechObject
                 res += $"{prefix}{{\n";
                 foreach(var property in obj.BaseProperties.Properties)
                 {
+                    bool skip = property.IsEmpty;
+                    if (skip)
+                    {
+                        continue;
+                    }
+
                     res += $"{prefix}{property.SaveToPrgLua(string.Empty)},\n";
                 }
                 res += $"{prefix}}}\n";
