@@ -17,6 +17,11 @@ namespace TechObject
         {
             try
             {
+                if (newValue == Value)
+                {
+                    throw new Exception();
+                }
+
                 string[] numbersStrings = newValue.Trim().Split(' ');
                 var numbers = new List<int>();
                 foreach (string numberString in numbersStrings)

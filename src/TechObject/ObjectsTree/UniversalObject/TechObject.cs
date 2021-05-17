@@ -152,6 +152,7 @@ namespace TechObject
 
             res += paramsManager.SaveAsLuaTable(prefix);
             res += systemParams.SaveAsLuaTable(prefix);
+            res += baseProperties.SaveAsLuaTable(prefix);
             res += "\n";
 
             res += modes.SaveAsLuaTable(prefix);
@@ -231,12 +232,12 @@ namespace TechObject
             paramsManager = new ParamsManager();
             paramsManager.Parent = this;
 
-            string sysParName = "Системные параметры";
-            string sysParLuName = "system_parameters";
-            systemParams = new SystemParams(sysParName, sysParLuName);
+            systemParams = new SystemParams();
             systemParams.Parent = this;
             
             equipment = new Equipment(this);
+
+            baseProperties = new BaseProperties();
 
             InitBaseTechObject(baseTechObject);
             SetItems();
@@ -255,12 +256,13 @@ namespace TechObject
                 systemParams
                     .SetUpFromBaseTechObject(baseTechObject.SystemParams);
                 equipment.AddItems(baseTechObject.Equipment);
-                SetItems();
+                baseProperties = baseTechObject.BaseProperties.Clone();
             }
 
             // Установили новое значение, произошла смена базового объекта
             // Надо сравнить ОУ и изменить его, если требуется
             CompareEplanNames();
+            SetItems();
         }
 
         /// <summary>
@@ -340,6 +342,8 @@ namespace TechObject
             clone.equipment = equipment.Clone(clone);
             clone.equipment.ModifyDevNames();
 
+            clone.baseProperties = baseProperties.Clone();
+
             clone.SetItems();
             return clone;
         }
@@ -366,11 +370,19 @@ namespace TechObject
                 itemsList.Add(systemParams);
             }
 
-            itemsList.Add(equipment);
+            if (baseTechObject?.Equipment.Count > 0)
+            {
+                itemsList.Add(equipment);
+            }
 
             if (baseTechObject?.UseGroups == true)
             {
                 itemsList.AddRange(baseTechObject.ObjectGroupsList);
+            }
+
+            if (baseTechObject?.BaseProperties.Count > 0)
+            {
+                itemsList.Add(baseProperties);
             }
 
             items = itemsList.ToArray();
@@ -404,7 +416,7 @@ namespace TechObject
         /// </summary>
         /// <param name="equipmentName">Имя</param>
         /// <param name="value">Значение</param>
-        public void AddEquipment(string equipmentName, string value)
+        public void SetEquipment(string equipmentName, string value)
         {
             equipment.SetEquipmentValue(equipmentName, value);
         }
@@ -414,7 +426,7 @@ namespace TechObject
         /// </summary>
         /// <param name="luaName">Lua-имя группы</param>
         /// <param name="value">Значение</param>
-        public void AddGroupObjects(string luaName, string value)
+        public void SetGroupObject(string luaName, string value)
         {
             if (baseTechObject?.UseGroups == true)
             {
@@ -433,12 +445,29 @@ namespace TechObject
         /// </summary>
         /// <param name="luaName">Lua-имя параметра</param>
         /// <param name="value">Значение параметра</param>
-        public void AddSystemParameters(string luaName, string value)
+        public void SetSystemParameter(string luaName, string value)
         {
             if (baseTechObject?.SystemParams.Count > 0)
             {
                 var foundParam = systemParams.GetParam(luaName);
                 foundParam.Value.SetNewValue(value);
+            }
+        }
+
+        /// <summary>
+        /// Установить значение свойств объекта
+        /// </summary>
+        /// <param name="luaName">Lua-имя параметра</param>
+        /// <param name="value">Значение параметра</param>
+        public void SetBaseProperty(string luaName, string value)
+        {
+            if (baseTechObject.BaseProperties.Count > 0)
+            {
+                var foundProperty = baseProperties.GetProperty(luaName);
+                if (foundProperty != null)
+                {
+                    foundProperty.SetValue(value);
+                }
             }
         }
         #endregion
@@ -567,6 +596,7 @@ namespace TechObject
         {
             modes.Synch(array);
             equipment.Synch(array);
+            baseProperties.Synch(array);
         }
         #endregion
 
@@ -938,9 +968,11 @@ namespace TechObject
             ModesManager.ClearBaseOperations();
             systemParams.Clear();
             equipment.Clear();
+            baseProperties.Clear();
             attachedObjects.SetNewValue(string.Empty);
             baseTechObject = null;
             CompareEplanNames();
+            SetItems();
         }
 
         public override string GetLinkToHelpPage()
@@ -966,6 +998,14 @@ namespace TechObject
             }
         }
 
+        public BaseProperties BaseProperties
+        {
+            get
+            {
+                return baseProperties;
+            }
+        }
+
         private TechObjectN techNumber; /// Номер объекта технологический.
         private ObjectProperty techType; /// Тип объекта технологический.
 
@@ -983,5 +1023,6 @@ namespace TechObject
         private BaseTechObject baseTechObject; 
         private AttachedObjects attachedObjects; // Привязанные агрегаты
         private Equipment equipment; // Оборудование объекта
+        private BaseProperties baseProperties; // Доп. свойства объекта
     }
 }

@@ -65,18 +65,24 @@ namespace TechObject
         /// <summary>
         /// Добавление полей в массив для отображения на дереве.
         /// </summary>
-        void SetItems()
+        public void SetItems()
         {
-            items = new ITreeViewItem[stepsMngr.Count + 3];
+            bool notEmptyBaseOperation = baseOperation.Name != string.Empty &&
+                baseOperation.LuaName != string.Empty;
+            bool baseOperationHasProperties =
+                baseOperation.Properties.Count > 0;
 
-            for (int i = 0; i < stepsMngr.Count; i++)
+            var itemsList = new List<ITreeViewItem>();
+            itemsList.AddRange(stepsMngr);
+            itemsList.Add(operPar);
+            itemsList.Add(restrictionMngr);
+
+            if (notEmptyBaseOperation && baseOperationHasProperties)
             {
-                items[i] = stepsMngr[i];
+                itemsList.Add(baseOperation);
             }
 
-            items[stepsMngr.Count] = operPar;
-            items[stepsMngr.Count + 1] = restrictionMngr;
-            items[stepsMngr.Count + 2] = baseOperation;
+            items = itemsList.ToArray();
         }
 
         public OperationParams GetOperationParams()
@@ -452,6 +458,7 @@ namespace TechObject
                 similarBaseOperation == false)
             {
                 baseOperation.Init(newBaseOperationName, this);
+                SetItems();
                 return true;
             }
 

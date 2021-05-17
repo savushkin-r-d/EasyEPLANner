@@ -43,18 +43,21 @@ init = function()
             -- Системные параметры
             proc_system_params( value.system_parameters, obj)
 
+            -- Свойства объекта
+            proc_object_properties( value.properties, obj )
+
             local params_float = value.par_float
 
             --Оборудование (всегда после параметров)
             if value.equipment ~= nil then
                 for field, value in pairs( value.equipment ) do
-                    obj:AddEquipment(field, value)
+                    obj:SetEquipment(field, value)
                 end
             end
 
             if value.tank_groups ~= nil then
                 for luaName, value in pairs(value.tank_groups) do
-                    obj:AddGroupObjects(luaName, value)
+                    obj:SetGroupObject(luaName, value)
                 end
             end
 
@@ -155,7 +158,15 @@ proc_system_params = function( par, obj )
     if type ( par ) == "table" then
         for luaName, param in pairs( par ) do
             local parValue = param.value
-            obj:AddSystemParameters(luaName, parValue)
+            obj:SetSystemParameter(luaName, parValue)
+        end
+    end
+end
+
+proc_object_properties = function( par, obj )
+    if type ( par ) == "table" then
+        for luaName, value in pairs( par ) do
+            obj:SetBaseProperty(luaName, value)
         end
     end
 end

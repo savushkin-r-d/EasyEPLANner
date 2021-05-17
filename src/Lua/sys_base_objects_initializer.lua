@@ -42,6 +42,11 @@ init_base_objects = function()
         -- Добавить параметры объекта
         local parameters = value.parameters or { }
         init_parameters(baseObject, parameters)
+
+        -- Добавить доп. свойства объекта
+        local baseProperties = value.baseProperties or { }
+        local basePropertiesObj = baseObject.BaseProperties
+        init_base_properties(basePropertiesObj, baseProperties)
     end
 
     return 0
@@ -199,4 +204,15 @@ init_parameters = function(object, parameters)
 
         object:AddParameter(luaName, name, value, meter)
     end
+end
+
+-- Инициализация доп. свойств базового объекта
+init_base_properties = function(object, properties)
+    -- Добавить активные свойства объекта
+    local activeParameters = properties.active or { }
+    init_active_parameters(object, activeParameters)
+
+    -- Добавить булевые доп. свойства объекта
+    local activeBoolParameters = properties.bool or { }
+    init_active_bool_parameters(object, activeBoolParameters)
 end
