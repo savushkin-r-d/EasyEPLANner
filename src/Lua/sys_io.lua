@@ -494,7 +494,7 @@ local io_modules =
             },
 
     [ 27 ] = {
-            n = 2701916,
+            n = 2701916, -- Big Endian bytes sequence
             name = 'AXL F DI8/1 DO8/1 1H',
             description = '8-channel Digital I/O module 24V DC, 1-wire',
             addressSpaceType = 6,
@@ -516,7 +516,7 @@ local io_modules =
             },
 
     [ 28 ] = {
-            n = 2702071,
+            n = 2702071, -- Big Endian bytes sequence
             name = 'AXL F DI8/3 DO8/3 2H',
             description = '8-channel Digital I/O Module 24V DC, 3-wire',
             addressSpaceType = 6,
