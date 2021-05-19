@@ -111,6 +111,7 @@
     <Compile Include="Configuration\DeviceSynchronizeService.cs" />
     <Compile Include="Device\IODevices\F.cs" />
     <Compile Include="Device\IODevices\C.cs" />
+    <Compile Include="Device\IODevices\HLA.cs" />
     <Compile Include="Editor\DrawInfo.cs" />
     <Compile Include="Editor\Editor.cs" />
     <Compile Include="Editor\IBaseObjChangeable.cs" />
