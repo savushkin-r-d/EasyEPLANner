@@ -24,7 +24,6 @@ namespace Device
             switch (subType)
             {
                 case "VC":
-                case "":
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     break;
 
@@ -35,6 +34,11 @@ namespace Device
                     // TODO: Параметры, если надо
 
                     SetIOLinkSizes(ArticleName);
+                    break;
+
+                case "":
+                    errStr = string.Format("\"{0}\" - не задан тип" +
+                        " (VC, VC_IOLINK).\n", Name);
                     break;
 
                 default:
