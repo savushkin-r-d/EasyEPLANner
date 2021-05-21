@@ -140,20 +140,20 @@ namespace EasyEPlanner
 
             if (pathIsValid)
             {
+                var reporter = new XMLReporter();
                 if (newChBaseBut.Checked == true)
                 {
                     string filePath = path + "\\" + projectName + chBaseFormat;
                     bool rewrite = true;
-                    ProjectManager.GetInstance().SaveAsCDBX(filePath, 
-                        combineTag, useNewNames, rewrite);
+                    reporter.SaveAsCDBX(filePath, combineTag, useNewNames,
+                        rewrite);
                 }
                 else
                 {
-                    ProjectManager.GetInstance().SaveAsCDBX(path, combineTag,
-                    useNewNames);
+                    reporter.SaveAsCDBX(path, combineTag, useNewNames);
                 }
 
-                this.Close();
+                Close();
             }
         }
 

@@ -587,15 +587,15 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Экспорт информации о проекта для SCADA системы
+        /// Экспорт информации о проекте для SCADA системы
         /// </summary>
-        /// <param name="project">Проект, для которого осуществляется
-        /// экспорт</param>
-        public static void AutomaticExportExcelForSCADA(
-            Eplan.EplApi.DataModel.Project project)
+        /// <param name="projectName">Название проекта</param>
+        /// <param name="projectDirPath">Путь к папке проекта Eplan</param>
+        public static void AutomaticExportExcelForSCADA(string projectDirPath,
+            string projectName)
         {
-            string path = project.ProjectDirectoryPath + @"\DOC\" +
-                    project.ProjectName + " auto report.xlsx";
+            string path = projectDirPath + @"\DOC\" + projectName +
+                " auto report.xlsx";
             ExportTechDevs(path, true);
         }
     }

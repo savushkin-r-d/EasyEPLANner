@@ -6,31 +6,81 @@ using System.IO;
 using TechObject;
 using Device;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace EasyEPlanner
 {
-    public static class XMLReporter
+    public class XMLReporter
     {
         /// <summary>
-        /// Получить количество тегов проекта.
+        /// Экспорт из проекта базы каналов.
         /// </summary>
-        /// <returns></returns>
-        public static int GetTagsCount()
+        public void SaveAsCDBX(string projectName, bool combineTag = false,
+            bool useNewNames = false, bool rewrite = false)
         {
-            var rootNode = new TreeNode("subtypes");
-            bool useNewNames = false;
-            bool combineTags = false;
-            techObjectManager.GetObjectForXML(rootNode, combineTags,
-                useNewNames);            
-            deviceManager.GetObjectForXML(rootNode);
+            Thread t = new Thread(
+                new ParameterizedThreadStart(SaveAsXMLThread));
 
-            int tagsCount = 0;
-            foreach(TreeNode node in rootNode.Nodes)
+            var dataForSave = new DataForSaveAsXML(projectName, rewrite,
+                combineTag, useNewNames);
+            t.CurrentCulture = StaticHelper.CommonConst
+                .CultureWithDotInsteadComma;
+            t.Start(dataForSave);
+        }
+
+        /// <summary>
+        /// Экспорт базы каналов, поток.
+        /// </summary>
+        /// <param name="param">Параметр потока</param>
+        private void SaveAsXMLThread(object param)
+        {
+            var data = param as DataForSaveAsXML;
+
+            Logs.Show();
+            Logs.DisableButtons();
+            Logs.Clear();
+            Logs.SetProgress(0);
+
+            try
             {
-                tagsCount += node.Nodes.Count;
+                Logs.SetProgress(1);
+                SaveAsXML(data.pathToFile, data.rewrite, data.cdbxTagView,
+                    data.cdbxNewNames);
+                Logs.SetProgress(50);
+                Logs.AddMessage("Done.");
+            }
+            catch (System.Exception ex)
+            {
+                Logs.AddMessage("Exception - " + ex);
+            }
+            finally
+            {
+                if (Logs.IsNull() == false)
+                {
+                    Logs.EnableButtons();
+                    Logs.SetProgress(100);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Класс для передачи данных при сохранении XML базы каналов
+        /// </summary>
+        private class DataForSaveAsXML
+        {
+            public DataForSaveAsXML(string pathToFile, bool rewrite,
+                bool cdbxTagView, bool cdbxNewNames)
+            {
+                this.pathToFile = pathToFile;
+                this.rewrite = rewrite;
+                this.cdbxNewNames = cdbxNewNames;
+                this.cdbxTagView = cdbxTagView;
             }
 
-            return tagsCount;
+            public string pathToFile;
+            public bool rewrite;
+            public bool cdbxTagView;
+            public bool cdbxNewNames;
         }
 
         /// <summary>
@@ -41,7 +91,7 @@ namespace EasyEPlanner
         /// <param name="cdbxNewNames">Использовать имена объектов вместо OBJECT
         /// </param>
         /// <param name="cdbxTagView">Сгруппировать тэги в один подтип</param>
-        public static void SaveAsXML(string path, bool rewrite = false, 
+        private void SaveAsXML(string path, bool rewrite = false, 
             bool cdbxTagView = false, bool cdbxNewNames = false)
         {
             projectConfig.SynchronizeDevices();
@@ -102,7 +152,7 @@ namespace EasyEPlanner
         /// <param name="path">Путь к месту хранения</param>
         /// <param name="xmlDoc">XML-документ, куда писать</param>
         /// <param name="rootNode">Узел с данными</param>
-        private static void CreateNewChannelBase(string path, 
+        private void CreateNewChannelBase(string path, 
             XmlDocument xmlDoc, TreeNode rootNode)
         {
             var textWritter = new XmlTextWriter(path,
@@ -122,7 +172,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Формирование общей структуры базы каналов
         /// </summary>
-        private static XmlElement WriteCommonXMLPart(XmlDocument xmlDoc)
+        private XmlElement WriteCommonXMLPart(XmlDocument xmlDoc)
         {
             string nsDriver = "http://brestmilk.by/driver/";
             string prefixDriver = "driver";
@@ -305,7 +355,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Создание узлов и каналов в новой пустой базе каналов
         /// </summary>
-        private static void CreateNewChannels(XmlDocument xmlDoc,
+        private void CreateNewChannels(XmlDocument xmlDoc,
             XmlElement subtypesNode, TreeNodeCollection Nodes)
         {
             for (int i = 0; i < Nodes.Count; i++)
@@ -328,7 +378,7 @@ namespace EasyEPlanner
         /// Генерация заполненного списка с номерами узлов
         /// </summary>
         /// <returns></returns>
-        private static List<string> GenerateSubTypesIdsList()
+        private List<string> GenerateSubTypesIdsList()
         {
             const int maxNodesCount = 256;
             var list = new List<string>();
@@ -342,7 +392,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Настройка существующей базы каналов
         /// </summary>
-        private static void SetUpExistingChannelBase(List<string> subtupesId,
+        private void SetUpExistingChannelBase(List<string> subtupesId,
             XmlElement item, TreeNode rootNode)
         {
             const int channelLocationId = 9;
@@ -365,7 +415,7 @@ namespace EasyEPlanner
         /// <param name="nodes">Редактируемые узлы базы каналов</param>
         /// <param name="item">Узел в XML</param>
         /// <param name="subTypeChannels">Тэги узла в XML</param>
-        private static void SetUpChannelBaseObject(TreeNode[] nodes, 
+        private void SetUpChannelBaseObject(TreeNode[] nodes, 
             XmlElement item, XmlNodeList subTypeChannels)
         {
             const int channelDescrNum = 4;
@@ -382,7 +432,7 @@ namespace EasyEPlanner
         /// <param name="subTypeChannels">Список каналов</param>
         /// <param name="nodes">Редактируемые узлы</param>
         /// <param name="channelDescrNum">Номер ячейки описания канала</param>
-        private static void ReplaceObjectNumber(XmlNodeList subTypeChannels,
+        private void ReplaceObjectNumber(XmlNodeList subTypeChannels,
             TreeNode[] nodes, int channelDescrNum)
         {
             const string searchPattern = @"(?<name>OBJECT)(?<n>[0-9]+)+";
@@ -421,7 +471,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="channels">Список каналов </param>
         /// <param name="channelDescrNum">Номер ячейки описания канала</param>
-        private static void ReplaceStepsToRunSteps(XmlNodeList channels,
+        private void ReplaceStepsToRunSteps(XmlNodeList channels,
             int channelDescrNum)
         {
             const string searchOldStepsPattern = "\\.STEPS[1-9]\\[";
@@ -448,7 +498,7 @@ namespace EasyEPlanner
         /// <param name="item">Узел в XML</param>
         /// <param name="subTypeChannels">Тэги узла в XML</param>
         /// <param name="channelDescrNum">Номер ячейки описания канала</param>
-        private static void OnOffNodesDependOnTheirState(TreeNode[] nodes,
+        private void OnOffNodesDependOnTheirState(TreeNode[] nodes,
             XmlElement item, XmlNodeList subTypeChannels, int channelDescrNum)
         {
             const int channelEnabledId = 3;
@@ -489,9 +539,9 @@ namespace EasyEPlanner
         /// <summary>
         /// Расчет идентификаторов для базы каналов
         /// </summary>
-        private static void CalculateIdentificatorsForChannelBase(
-            TreeNode subtype, XmlElement elm, XmlNamespaceManager nsmgr, 
-            string baseId, List<string> subTypesId, XmlDocument xmlDoc)
+        private void CalculateIdentificatorsForChannelBase(TreeNode subtype,
+            XmlElement elm, XmlNamespaceManager nsmgr, string baseId,
+            List<string> subTypesId, XmlDocument xmlDoc)
         {
             const int maxTagsCount = 65535;
             string xpath = "//subtypes:subtype[subtypes:sdrvname='" +
@@ -580,7 +630,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Добавление узла в базу каналов
         /// </summary>
-        private static XmlElement AddSubType(XmlDocument xmlDoc,
+        private XmlElement AddSubType(XmlDocument xmlDoc,
             XmlElement subtypesNode, TreeNode Node, long subTypeId)
         {
             string ns = "http://brestmilk.by/subtypes/";
@@ -628,7 +678,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Добавление канала с указанным адресом
         /// </summary>
-        private static void AddChannel(XmlDocument xmlDoc, TreeNode node,
+        private void AddChannel(XmlDocument xmlDoc, TreeNode node,
             XmlElement subtypeElm, long channelId)
         {
             string prefix = "channels";
@@ -726,7 +776,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="tagName">Тэг</param>
         /// <returns></returns>
-        private static string GetRequestPeriodForTag(string tagName)
+        private string GetRequestPeriodForTag(string tagName)
         {
             if (!tagName.Contains("LE") && !tagName.Equals("V_V"))
             {
@@ -743,7 +793,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="tagName">Тэг</param>
         /// <returns></returns>
-        private static string GetDeltaForTag(string tagName)
+        private string GetDeltaForTag(string tagName)
         {
             if (tagName.Contains("QT"))
             {
@@ -769,7 +819,7 @@ namespace EasyEPlanner
         /// <param name="tagName">Имя тэга</param>
         /// <param name="node">Имя узла</param>
         /// <returns></returns>
-        private static bool GetNeedProtocolCondition(string tagName, 
+        private bool GetNeedProtocolCondition(string tagName, 
             TreeNode node)
         {
             bool protocolDev = Protocol.Contains(tagName);
@@ -797,8 +847,7 @@ namespace EasyEPlanner
         /// <param name="tagName">Имя тэга</param>
         /// <param name="nodeText">Имя узла</param>
         /// <returns></returns>
-        private static bool GetPIDProtocolability(string tagName,
-            string nodeText)
+        private bool GetPIDProtocolability(string tagName, string nodeText)
         {
             bool isPID = deviceManager
                 .GetDeviceByEplanName(tagName).DeviceType == DeviceType.C;
@@ -813,7 +862,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Добавление атрибута канала
         /// </summary>
-        private static void AddChannelAtribute(XmlDocument xmlDoc,
+        private void AddChannelAtribute(XmlDocument xmlDoc,
             XmlElement elm, string atribute)
         {
             string prefix = "parameters";
@@ -884,6 +933,37 @@ namespace EasyEPlanner
                 "LT_CLEVEL",
                 "V_V"
             });
+
+        /// <summary>
+        /// Получить количество тегов проекта.
+        /// </summary>
+        /// <returns></returns>
+        public static int GetTagsCount()
+        {
+            var rootNode = new TreeNode("subtypes");
+            bool useNewNames = false;
+            bool combineTags = false;
+            techObjectManager.GetObjectForXML(rootNode, combineTags,
+                useNewNames);
+            deviceManager.GetObjectForXML(rootNode);
+
+            int tagsCount = 0;
+            foreach (TreeNode node in rootNode.Nodes)
+            {
+                tagsCount += node.Nodes.Count;
+            }
+
+            return tagsCount;
+        }
+
+        public void AutomaticExportNewChannelBaseCombineTags(
+            string projectDirPath, string projectName)
+        {
+            string path = Path.Combine(projectDirPath, "chbase");
+            Directory.CreateDirectory(path);
+            path = Path.Combine(path, $"{projectName}.cdbx");
+            SaveAsXML(path, true, true);
+        }
 
         static ProjectConfiguration projectConfig = ProjectConfiguration
             .GetInstance();
