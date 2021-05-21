@@ -14,8 +14,35 @@ namespace Device
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.VC;
             ArticleName = articleName;
+        }
 
-            AO.Add(new IOChannel("AO", -1, -1, -1, ""));
+        public override string SetSubType(string subType)
+        {
+            base.SetSubType(subType);
+
+            string errStr = "";
+            switch (subType)
+            {
+                case "VC":
+                case "":
+                    AO.Add(new IOChannel("AO", -1, -1, -1, ""));
+                    break;
+
+                case "VC_IOLINK":
+                    AO.Add(new IOChannel("AO", -1, -1, -1, ""));
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+
+                    // TODO: Параметры, если надо
+
+                    SetIOLinkSizes(ArticleName);
+                    break;
+
+                default:
+                    errStr = string.Format("\"{0}\" - неверный тип" +
+                        " (VC, VC_IOLINK).\n", Name);
+                    break;
+            }
+            return errStr;
         }
 
         public override string GetDeviceSubTypeStr(DeviceType dt,
@@ -24,9 +51,18 @@ namespace Device
             switch (dt)
             {
                 case DeviceType.VC:
-                    return dt.ToString();
+                    switch (dst)
+                    {
+                        case DeviceSubType.VC:
+                            return "VC";
+
+                        case DeviceSubType.VC_IOLINK:
+                            return "VC_IOLINK";
+                    }
+                    break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -35,13 +71,22 @@ namespace Device
             switch (dt)
             {
                 case DeviceType.VC:
-                    return new Dictionary<string, int>()
+                    switch (dst)
                     {
-                        {"ST", 1},
-                        {"M", 1},
-                        {"V", 1},
-                    };
+                        case DeviceSubType.VC:
+                            return new Dictionary<string, int>()
+                            {
+                                {"ST", 1},
+                                {"M", 1},
+                                {"V", 1},
+                            };
+
+                        case DeviceSubType.VC_IOLINK:
+                            return null; // TODO: Return right value;
+                    }
+                    break;
             }
+
             return null;
         }
     }
