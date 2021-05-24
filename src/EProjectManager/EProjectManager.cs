@@ -169,7 +169,13 @@ namespace EasyEPlanner
             SyncAndSave();
             StopEditModes();
 
-            ExcelRepoter.AutomaticExportExcelForSCADA(currentProject);
+            string projectName = currentProject.ProjectName;
+            string projectDirPath = currentProject.ProjectDirectoryPath;    
+            ExcelRepoter.AutomaticExportExcelForSCADA(projectDirPath,
+                projectName);
+            var xmlReporter = new XMLReporter();
+            xmlReporter.AutomaticExportNewChannelBaseCombineTags(
+                projectDirPath, projectName);
 
             // Проверка и сохранение состояний окон.
             ModeFrm.CheckShown();
