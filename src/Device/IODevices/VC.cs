@@ -93,5 +93,18 @@ namespace Device
 
             return null;
         }
+
+        public override string Check()
+        {
+            string res = base.Check();
+
+            if (ArticleName == string.Empty &&
+                DeviceSubType == DeviceSubType.VC_IOLINK)
+            {
+                res += $"\"{name}\" - не задано изделие.\n";
+            }
+
+            return res;
+        }
     }
 }

@@ -49,7 +49,7 @@ local iolink_devices =
     -- F
     { articleName = "PXC.2910411", sizeIn = 4, sizeOut = 1.5 },
     -- VC
-    { articleName = "BURKERT.8694", sizeIn = 5, sizeOut = 2.5}, -- TODO VC_IOLINK article
+    { articleName = "BURKERT.8694", sizeIn = 5, sizeOut = 2.5},
 }
 
 return iolink_devices

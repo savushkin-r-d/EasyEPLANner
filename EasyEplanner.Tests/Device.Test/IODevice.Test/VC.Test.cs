@@ -2,12 +2,46 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Tests
 {
     public class VCTest
     {
+        /// <summary>
+        /// Тест установки подтипа устройства
+        /// </summary>
+        /// <param name="expectedSubType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(SetSubTypeTestData))]
+        public void SetSubTypeTest(Device.DeviceSubType expectedSubType,
+            string subType, Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            Assert.AreEqual(expectedSubType, device.DeviceSubType);
+        }
+
+        /// <summary>
+        /// 1 - Ожидаемое значение подтипа,
+        /// 2 - Задаваемое значение подтипа,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] SetSubTypeTestData()
+        {
+            return new object[]
+            {
+                new object[] { Device.DeviceSubType.VC, "VC",
+                    GetRandomVCDevice() },
+                new object[] { Device.DeviceSubType.VC_IOLINK, "VC_IOLINK",
+                    GetRandomVCDevice() },
+                new object[] { Device.DeviceSubType.NONE, "",
+                    GetRandomVCDevice() },
+                new object[] { Device.DeviceSubType.NONE, "Incorrect",
+                    GetRandomVCDevice() },
+            };
+        }
+
         /// <summary>
         /// Тест получения подтипа устройства
         /// </summary>
@@ -21,6 +55,23 @@ namespace Tests
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
                 device.DeviceType, device.DeviceSubType));
+        }
+
+        /// <summary>
+        /// 1 - Ожидаемое значение подтипа,
+        /// 2 - Задаваемое значение подтипа,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] GetDeviceSubTypeStrTestData()
+        {
+            return new object[]
+            {
+                new object[] { "VC", "VC", GetRandomVCDevice() },
+                new object[] { "VC_IOLINK", "VC_IOLINK", GetRandomVCDevice() },
+                new object[] { "", "", GetRandomVCDevice() },
+                new object[] { "", "Incorrect", GetRandomVCDevice() },
+            };
         }
 
         /// <summary>
@@ -40,6 +91,30 @@ namespace Tests
         }
 
         /// <summary>
+        /// 1 - Ожидаемый список свойств для экспорта,
+        /// 2 - Задаваемый подтип устройства,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] GetDevicePropertiesTestData()
+        {
+            var exportForVC = new Dictionary<string, int>()
+            {
+                {"ST", 1},
+                {"M", 1},
+                {"V", 1},
+            };
+
+            return new object[]
+            {
+                new object[] {null, "Incorrect", GetRandomVCDevice()},
+                new object[] {null, "", GetRandomVCDevice()},
+                new object[] {exportForVC, "VC", GetRandomVCDevice()},
+                new object[] {null, "VC_IOLINK", GetRandomVCDevice()} //TODO
+            };
+        }
+
+        /// <summary>
         /// Тестирование параметров устройства
         /// </summary>
         /// <param name="parametersSequence">Ожидаемые параметры</param>
@@ -54,6 +129,43 @@ namespace Tests
                 .Select(x => x.Key)
                 .ToArray();
             Assert.AreEqual(parametersSequence, actualParametersSequence);
+        }
+
+        /// <summary>
+        /// 1 - Параметры в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        private static object[] ParametersTestData()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new string[0],
+                    "VC",
+                    GetRandomVCDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "",
+                    GetRandomVCDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "VC_IOLINK",
+                    GetRandomVCDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "Incorrect",
+                    GetRandomVCDevice()
+                },
+            };
         }
 
         /// <summary>
@@ -80,68 +192,6 @@ namespace Tests
                 Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
                 Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
             });
-        }
-
-        /// <summary>
-        /// 1 - Ожидаемое значение подтипа,
-        /// 2 - Задаваемое значение подтипа,
-        /// 3 - Устройство для тестов
-        /// </summary>
-        /// <returns></returns>
-        private static object[] GetDeviceSubTypeStrTestData()
-        {
-            return new object[]
-            {
-                new object[] { "VC", "", GetRandomVCDevice() },
-                new object[] { "VC", "Incorrect", GetRandomVCDevice() },
-            };
-        }
-
-        /// <summary>
-        /// 1 - Ожидаемый список свойств для экспорта,
-        /// 2 - Задаваемый подтип устройства,
-        /// 3 - Устройство для тестов
-        /// </summary>
-        /// <returns></returns>
-        private static object[] GetDevicePropertiesTestData()
-        {
-            var exportForVC = new Dictionary<string, int>()
-            {
-                {"ST", 1},
-                {"M", 1},
-                {"V", 1},
-            };
-
-            return new object[]
-            {
-                new object[] {exportForVC, "", GetRandomVCDevice()},
-                new object[] {exportForVC, "VC", GetRandomVCDevice()},
-            };
-        }
-
-        /// <summary>
-        /// 1 - Параметры в том порядке, который нужен
-        /// 2 - Подтип устройства
-        /// 3 - Устройство
-        /// </summary>
-        /// <returns></returns>
-        private static object[] ParametersTestData()
-        {
-            return new object[]
-            {
-                new object[]
-                {
-                    new string[0],
-                    "VC",
-                    GetRandomVCDevice()
-                },
-                new object[]
-                {
-                    new string[0],
-                    "",
-                    GetRandomVCDevice()
-                },
-            };
         }
 
         /// <summary>
@@ -172,7 +222,7 @@ namespace Tests
                     new Dictionary<string, int>()
                     {
                         { "AI", 0 },
-                        { "AO", 1 },
+                        { "AO", 0 },
                         { "DI", 0 },
                         { "DO", 0 },
                     },
@@ -184,11 +234,23 @@ namespace Tests
                     new Dictionary<string, int>()
                     {
                         { "AI", 0 },
-                        { "AO", 1 },
+                        { "AO", 0 },
                         { "DI", 0 },
                         { "DO", 0 },
                     },
                     "Incorrect",
+                    GetRandomVCDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 1 },
+                        { "AO", 1 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "VC_IOLINK",
                     GetRandomVCDevice()
                 }
             };
