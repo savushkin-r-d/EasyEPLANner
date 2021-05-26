@@ -85,7 +85,7 @@ namespace EasyEPlanner
             }
 
             const string RegexPattern =
-                "(?<plant>[A-Z]+[1-9]{1})\\-(?<project>[а-яА-Я1-9\\-]+$)";
+                "(?<plant>[A-Z]+[1-9]{1})\\-(?<project>[а-яА-Я0-9\\-]+$)";
             Match match = Regex.Match(name, RegexPattern);
             if (!match.Success)
             {
