@@ -128,6 +128,6 @@ end
 
 function F(dev)
 	devs[devsidx] = {dev, "F"}
-	devsIdx = devsidx + 1
+	devsidx = devsidx + 1
 	return dev
 end
