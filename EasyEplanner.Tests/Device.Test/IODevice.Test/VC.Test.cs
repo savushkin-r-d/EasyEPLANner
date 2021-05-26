@@ -111,7 +111,7 @@ namespace Tests
                 {"M", 1},
                 {"V", 1},
                 {"BLINK", 1},
-                {"NAMURST", 1},
+                {"NAMUR_ST", 1},
                 {"OPENED", 1},
                 {"CLOSED", 1},
             };
