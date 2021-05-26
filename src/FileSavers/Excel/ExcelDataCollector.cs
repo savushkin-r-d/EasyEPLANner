@@ -675,7 +675,6 @@ namespace EasyEPlanner
                 "AO",
                 "DI",
                 "DO",
-                "VC",
             };
 
             var ignoringDevicesSubTypes = new List<string>()
@@ -691,6 +690,7 @@ namespace EasyEPlanner
                 "FQT_VIRT",
                 "LS_VIRT",
                 "LT_VIRT",
+                "VC",
             };
 
             var devices = new List<IODevice>();
