@@ -30,9 +30,6 @@ namespace Device
                 case "VC_IOLINK":
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
-
-                    // TODO: Параметры, если надо
-
                     SetIOLinkSizes(ArticleName);
                     break;
 
@@ -86,7 +83,16 @@ namespace Device
                             };
 
                         case DeviceSubType.VC_IOLINK:
-                            return null; // TODO: Return right value;
+                            return new Dictionary<string, int>()
+                            {
+                                {"ST", 1},
+                                {"M", 1},
+                                {"V", 1},
+                                {"BLINK", 1},
+                                {"NAMURST", 1},
+                                {"OPENED", 1},
+                                {"CLOSED", 1},
+                            };
                     }
                     break;
             }
