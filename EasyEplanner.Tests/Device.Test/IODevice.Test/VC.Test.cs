@@ -105,12 +105,23 @@ namespace Tests
                 {"V", 1},
             };
 
+            var exportForVCIOL = new Dictionary<string, int>()
+            {
+                {"ST", 1},
+                {"M", 1},
+                {"V", 1},
+                {"BLINK", 1},
+                {"NAMURST", 1},
+                {"OPENED", 1},
+                {"CLOSED", 1},
+            };
+
             return new object[]
             {
                 new object[] {null, "Incorrect", GetRandomVCDevice()},
                 new object[] {null, "", GetRandomVCDevice()},
                 new object[] {exportForVC, "VC", GetRandomVCDevice()},
-                new object[] {null, "VC_IOLINK", GetRandomVCDevice()} //TODO
+                new object[] {exportForVCIOL, "VC_IOLINK", GetRandomVCDevice()}
             };
         }
 
