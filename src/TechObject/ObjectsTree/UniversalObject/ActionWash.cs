@@ -70,6 +70,8 @@ namespace TechObject
                     Device.DeviceSubType.AO_VIRT,
                     Device.DeviceSubType.DO,
                     Device.DeviceSubType.DO_VIRT,
+                    Device.DeviceSubType.VC,
+                    Device.DeviceSubType.VC_IOLINK,
                     Device.DeviceSubType.NONE
                 }));
 
