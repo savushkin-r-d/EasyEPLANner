@@ -807,6 +807,23 @@ local io_modules =
             AI_count = 0,
             Color = 'Gray',
             },
+
+    [ 43 ] = {
+            n = 2701916,
+            name = 'AXL F AI2 AO2 1H',
+            description = '2-Channel analog input 2-Channel analog output',
+            addressSpaceType = 5,
+            typeName = 'Аналоговый вход/выход',
+            groupName = 'AXL F',
+            channelClamps = {0, 1, 2, 3},
+            channelAddressesIn = {0, 1, -1, -1},
+            channelAddressesOut = {-1,-1, 0, 1},
+            DO_count = 32,
+            DI_count = 32,
+            AO_count = 2,
+            AI_count = 2,
+            Color = 'Green',
+            },
     }
 
 return io_modules

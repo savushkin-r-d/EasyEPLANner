@@ -373,20 +373,21 @@ WAGO | 750-612 | - | Питание
 WAGO | 750-627 | - | Расширение шины
 WAGO | 750-628 | - | Расширение шины
 Phoenix Contact | AXL F CNT2 INC2 1F (2688093) | AI | 4 канала, счетчик
-Phoenix Contact | AXL F AI4 I 1H (2688491) | AI | 4 канала 
+Phoenix Contact | AXL F AI4 I 1H (2688491) | AI | 4 канала
 Phoenix Contact | AXL F RTD4 1H (2688556) | AI | 4 канала RTD
 Phoenix Contact | AXL F AO4 1H (2688527) | AO | 4 канала
 Phoenix Contact | AXL F IOL8 2H (1027843) | AI/AO/DI/DO | IO-Link с привязкой DI/DO, 8 каналов
-Phoenix Contact | AXL F DI16/4 2F (2688022) | DI | 16 каналов 
-Phoenix Contact | AXL F DO16/3 2F (2688048) | DO | 16 каналов 
+Phoenix Contact | AXL F DI16/4 2F (2688022) | DI | 16 каналов
+Phoenix Contact | AXL F DO16/3 2F (2688048) | DO | 16 каналов
 Phoenix Contact | AXL F DI8/3 DO8/3 2H (2702071) | DI/DO | 8 каналов DI и 8 каналов DO
 Phoenix Contact | AXL F DI8/1 DO8/1 1H (2701916) | DI/DO | 8 каналов DI и 8 каналов DO
+Phoenix Contact | AXL F AI2 AO2 1H 0-10V (2702072) | AI/AO | 2 канала AI и 2 канала DI
 Phoenix Contact | AXL SE AI4 I 4-20 (1088062) | AI | 4 канала
 Phoenix Contact | AXL SE RTD4 PT100 (1088106) | AI | 4 канала RTD
 Phoenix Contact | AXL SE CNT1 (1088131) | AI | 1 канал, счетчик
 Phoenix Contact | AXL SE AO4 I 4-20 (1088123) | AO | 4 канала
 Phoenix Contact | AXL SE IOL4 (1088132) | AI/AO/DI/DO | IO-Link с привязкой DI/DO, 4 канала
-Phoenix Contact | AXL SE DI16/1 (1088127) | DI | 16 каналов 
+Phoenix Contact | AXL SE DI16/1 (1088127) | DI | 16 каналов
 Phoenix Contact | AXL SE DO16/1 (1088129) | DO | 16 каналов
 Phoenix Contact | AXL SE SC-A (1088134) | - | Заглушка
 
