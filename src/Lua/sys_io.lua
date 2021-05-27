@@ -775,14 +775,14 @@ local io_modules =
             },
 
     [ 41 ] = {
-            n = 1088131,
+            n = 1088131, -- Сдвиг в 2 слова для входа (Low word)
             name = 'AXL SE CNT1',
             description = '1-Channel Up/Down Counter',
             addressSpaceType = 4,
             typeName = 'Счетчик',
             groupName = 'AXL SE',
             channelClamps = {0},
-            channelAddressesIn = {0, -1, -1, -1, -1, -1, -1, -1},
+            channelAddressesIn = {2, -1, -1, -1, -1, -1, -1, -1},
             channelAddressesOut = { },
             DO_count = 48,
             DI_count = 48,
