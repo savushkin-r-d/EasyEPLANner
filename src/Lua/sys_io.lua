@@ -809,7 +809,7 @@ local io_modules =
             },
 
     [ 43 ] = {
-            n = 2701916,
+            n = 2702072,
             name = 'AXL F AI2 AO2 1H',
             description = '2-Channel analog input 2-Channel analog output',
             addressSpaceType = 5,
