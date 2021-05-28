@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace TechObject
 {
@@ -29,28 +28,52 @@ namespace TechObject
             var selectedTechObject = selectedModesManager.Parent as TechObject;
             var selectedTechObjectManager = selectedTechObject.Parent;
 
-            foreach(var item  in selectedTechObjectManager.Items)
+            int objTechTypeNum = 0;
+            foreach (TechObject techObject in selectedTechObjectManager.Items)
             {
-                var techObject = item as TechObject;
-                if (techObject.TechType == selectedTechObject.TechType)
+                bool skipObjectBecauseTechType =
+                    techObject.TechType != selectedTechObject.TechType;
+                if (skipObjectBecauseTechType)
                 {
-                    var newDict = MakeSimilarObjectDictionary(dict, techObject);
+                    continue;
+                }
 
-                    var mode = techObject.ModesManager.Modes
-                        .Where(x => x.Name == selectedMode.Name)
+                var newDict = MakeSimilarObjectDictionary(dict, techObject);
+
+                var mode = techObject.ModesManager.Modes
+                    .Where(x => x.Name == selectedMode.Name)
+                    .FirstOrDefault();
+                if (mode != null)
+                {
+                    var restrictions = mode.GetRestrictionManager()
+                        .Restrictions
+                        .Where(x => x.Name == Name)
                         .FirstOrDefault();
-
-                    if(mode != null)
+                    try
                     {
-                        var restrictions = mode.GetRestrictionManager()
-                            .Restrictions
-                            .Where(x => x.Name == Name)
-                            .FirstOrDefault();
-
                         restrictions.SetValue(newDict);
+                    }
+                    catch
+                    {
+                        objTechTypeNum = techObject.TechType;
                     }
                 }
             }
+
+            bool hasErrors = objTechTypeNum != 0;
+            if (hasErrors)
+            {
+                ShowCrossRestrictionWarning(objTechTypeNum);
+            }
+        }
+
+        private void ShowCrossRestrictionWarning(int restrictionObjType)
+        {
+            string message = "Ошибка обработки перекрестных ограничений " +
+                $"в объектах с типом {restrictionObjType} - " +
+                "проверьте операции в перекрестных объектах.\n";
+            MessageBox.Show(message , "Предупреждение",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         /// <summary>
@@ -95,8 +118,17 @@ namespace TechObject
 
             SortedDictionary<int, List<int>> deletedRestriction =
                 GetDeletedRestriction(oldRestriction);
+
             ClearCrossRestriction(deletedRestriction);
-            SetCrossRestriction();
+
+            try
+            {
+                SetCrossRestriction();
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
         }
 
         /// <summary>
