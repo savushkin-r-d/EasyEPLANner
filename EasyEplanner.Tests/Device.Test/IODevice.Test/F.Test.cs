@@ -145,8 +145,8 @@ namespace Tests
                 {"ST", 1},
                 {"ERR", 1},
                 {"ST_CH", 4},
-                {"NOMINAL_CURRENT", 4},
-                {"LOAD_CURRENT", 4},
+                {"NOMINAL_CURRENT_CH", 4},
+                {"LOAD_CURRENT_CH", 4},
                 {"ERR_CH", 4},
             };
 
