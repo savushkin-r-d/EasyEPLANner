@@ -162,7 +162,7 @@ namespace Device
                     object value = property.Value;
                     if(value != null)
                     {
-                        var devInPropery = GetDevice(
+                        var devInPropery = GetDeviceByEplanName(
                             value.ToString().Trim(new char[] { '\'' }));
                         if (devInPropery.Description == cap)
                         {

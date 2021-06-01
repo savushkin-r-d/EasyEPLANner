@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "OJSC Savushkin product" )]
 [assembly: AssemblyProduct( "EPLAN project designer" )]
-[assembly: AssemblyCopyright( "Copyright ©  2012 - 2020" )]
+[assembly: AssemblyCopyright( "Copyright ©  2012 - 2021" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2021.05.*")]
-[assembly: AssemblyFileVersion("2021.05.0.0")]
+[assembly: AssemblyVersion("2021.06.*")]
+[assembly: AssemblyFileVersion("2021.06.0.0")]
