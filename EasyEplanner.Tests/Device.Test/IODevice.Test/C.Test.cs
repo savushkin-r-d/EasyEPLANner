@@ -33,10 +33,10 @@ namespace Tests
         {
             return new object[]
             {
-                new object[] { "C", "", GetNewRDevice() },
-                new object[] { "C", "C", GetNewRDevice() },
-                new object[] { "C", "Random", GetNewRDevice() },
-                new object[] { "C", "Incorrect", GetNewRDevice() },
+                new object[] { "C", "", GetNewCDevice() },
+                new object[] { "C", "C", GetNewCDevice() },
+                new object[] { "C", "Random", GetNewCDevice() },
+                new object[] { "C", "Incorrect", GetNewCDevice() },
             };
         }
 
@@ -74,9 +74,9 @@ namespace Tests
 
             return new object[]
             {
-                new object[] { exportTags, "C", GetNewRDevice() },
-                new object[] { exportTags, "Random", GetNewRDevice() },
-                new object[] { exportTags, "Incorrect", GetNewRDevice() },
+                new object[] { exportTags, "C", GetNewCDevice() },
+                new object[] { exportTags, "Random", GetNewCDevice() },
+                new object[] { exportTags, "Incorrect", GetNewCDevice() },
             };
         }
 
@@ -132,21 +132,21 @@ namespace Tests
                     parameters,
                     defaultValues,
                     "C",
-                    GetNewRDevice()
+                    GetNewCDevice()
                 },
                 new object[]
                 {
                     parameters,
                     defaultValues,
                     "",
-                    GetNewRDevice()
+                    GetNewCDevice()
                 },
                 new object[]
                 {
                     parameters,
                     defaultValues,
                     "Incorrect",
-                    GetNewRDevice()
+                    GetNewCDevice()
                 },
             };
         }
@@ -157,7 +157,7 @@ namespace Tests
             const int expectedPropertiesCount = 2;
             string[] expectedPropertiesNames = 
                 new string[] {"IN_VALUE", "OUT_VALUE" };
-            var dev = GetNewRDevice();
+            var dev = GetNewCDevice();
             var properties = dev.Properties;
 
             bool allNull = properties.All(x => x.Value == null);
@@ -173,7 +173,7 @@ namespace Tests
         [Test]
         public void DefaultConstructor_NewDev_ReturnsCorrectTypeAndSubType()
         {
-            var dev = GetNewRDevice();
+            var dev = GetNewCDevice();
 
             Assert.AreEqual(Device.DeviceType.C, dev.DeviceType);
             Assert.AreEqual(Device.DeviceSubType.NONE, dev.DeviceSubType);
@@ -182,7 +182,7 @@ namespace Tests
         [Test]
         public void Channels_NewDev_ReturnsEmptyChannels()
         {
-            var dev = GetNewRDevice();
+            var dev = GetNewCDevice();
 
             Assert.AreEqual(0, dev.Channels.Count);
         }
@@ -190,7 +190,7 @@ namespace Tests
         [Test]
         public void GenerateDeviceTags_NewDev_ReturnsTreeNodeForChannelBase()
         {
-            var dev = GetNewRDevice();
+            var dev = GetNewCDevice();
 
             TreeNode actualNode = new TreeNode("obj");
             dev.GenerateDeviceTags(actualNode);
@@ -218,7 +218,7 @@ namespace Tests
         public void SaveParameters_NewDev_ReturnsStringWithCorrectString(
             string prefix)
         {
-            var dev = GetNewRDevTestDevice();
+            var dev = GetNewCDevTestDevice();
             string expectedSaveString = string.Empty;
             string tmp = string.Empty;
             foreach (var par in dev.Parameters)
@@ -241,19 +241,20 @@ namespace Tests
             Assert.AreEqual(expectedSaveString, actualSaveString);
         }
 
-        private static Device.IODevice GetNewRDevice()
+        private static Device.IODevice GetNewCDevice()
         {
-            return new Device.C(TestDevName, TestDevDescription, TestDevNum,
-                TestDevObjName, TestDevObjNum);
+            return new Device.C(TestDevName, TestEplanName, TestDevDescription,
+                TestDevNum, TestDevObjName, TestDevObjNum);
         }
 
-        private static CDevTest GetNewRDevTestDevice()
+        private static CDevTest GetNewCDevTestDevice()
         {
-            return new CDevTest(TestDevName, TestDevDescription, TestDevNum,
-                TestDevObjName, TestDevObjNum);
+            return new CDevTest(TestDevName, TestEplanName,TestDevDescription,
+                TestDevNum, TestDevObjName, TestDevObjNum);
         }
 
         const string TestDevName = "TANK1C1";
+        const string TestEplanName = "+TANK1-C1";
         const string TestDevDescription = "PID";
         const int TestDevObjNum = 1;
         const string TestDevObjName = "TANK";
@@ -263,9 +264,9 @@ namespace Tests
         {
             // Используем только внутри этого класса, поскольку цель -  это
             // протестировать protected метод.
-            public CDevTest(string fullName, string description,
+            public CDevTest(string name, string eplanName, string description,
                 int deviceNumber, string objectName, int objectNumber) : base(
-                    fullName, description, deviceNumber, objectName,
+                    name, eplanName, description, deviceNumber, objectName,
                     objectNumber) { }
 
             public new string SaveParameters(string prefix)

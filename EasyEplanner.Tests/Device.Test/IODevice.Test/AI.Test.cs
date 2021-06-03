@@ -309,17 +309,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.AI("KOAG4AI1", "Test device", 1, 
-                        "KOAG", 4);
+                    return new Device.AI("KOAG4AI1", "+KOAG4-AI1",
+                        "Test device", 1, "KOAG", 4);
                 case 2:
-                    return new Device.AI("LINE1AI2", "Test device", 2, 
-                        "LINE", 1);
+                    return new Device.AI("LINE1AI2", "+LINE1-AI2",
+                        "Test device", 2, "LINE", 1);
                 case 3:
-                    return new Device.AI("TANK2AI1", "Test device", 1, 
-                        "TANK", 2);
+                    return new Device.AI("TANK2AI1", "+TANK2-AI1",
+                        "Test device", 1, "TANK", 2);
                 default:
-                    return new Device.AI("CW_TANK3AI3", "Test device", 3, 
-                        "CW_TANK", 3);
+                    return new Device.AI("CW_TANK3AI3", "+CW_TANK3-AI3",
+                        "Test device", 3, "CW_TANK", 3);
             }
         }
     }

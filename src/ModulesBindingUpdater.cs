@@ -133,7 +133,7 @@ namespace EasyEPlanner
 
             deviceVisibleName += ChannelPostfix + channel.PhysicalClamp.
                 ToString();
-            string functionalText = device.EPlanName;
+            string functionalText = device.EplanName;
             string devicePartNumber = deviceFunction.ArticleReferences[0]
                 .PartNr;
             // Для модулей ASi не нужно добавлять комментарии 
@@ -645,14 +645,14 @@ namespace EasyEPlanner
                     // конфликтов. Потом вернем обратно.
                     string replacedDeviceDescription = device.Description.
                         Replace(PlusSymbol.ToString(), SymbolForPlusReplacing);
-                    sortedDevices += device.EPlanName +
+                    sortedDevices += device.EplanName +
                         CommonConst.NewLineWithCarriageReturn +
                         replacedDeviceDescription +
                         CommonConst.NewLineWithCarriageReturn;
                 }
                 else
                 {
-                    sortedDevices += device.EPlanName +
+                    sortedDevices += device.EplanName +
                         CommonConst.NewLineWithCarriageReturn +
                         device.Description +
                         CommonConst.NewLineWithCarriageReturn;
@@ -697,7 +697,7 @@ namespace EasyEPlanner
                     GetRuntimeParameter("R_AS_NUMBER");
                 if (numberAsString == null)
                 {
-                    devicesWithoutASNumber += device.EPlanName
+                    devicesWithoutASNumber += device.EplanName
                         + CommonConst.NewLineWithCarriageReturn;
                     continue;
                 }
@@ -710,7 +710,7 @@ namespace EasyEPlanner
                 const int NormalDifference = 1; // Нормальные условия
                 if (number < MinimalASNumber && number > MaximalASNumber)
                 {
-                    devicesWithoutASNumber += device.EPlanName
+                    devicesWithoutASNumber += device.EplanName
                         + WhiteSpace;
                     continue;
                 }
@@ -726,19 +726,19 @@ namespace EasyEPlanner
                             NewLines += CommonConst.NewLineWithCarriageReturn;
                         }
 
-                        sortedDevices += NewLines + device.EPlanName;
+                        sortedDevices += NewLines + device.EplanName;
                     }
                     else
                     {
                         if (lastASNumber == 0 &&
                             number == MinimalASNumber)
                         {
-                            sortedDevices += device.EPlanName;
+                            sortedDevices += device.EplanName;
                         }
                         else
                         {
                             sortedDevices += CommonConst
-                                .NewLineWithCarriageReturn + device.EPlanName;
+                                .NewLineWithCarriageReturn + device.EplanName;
 
                         }
                     }

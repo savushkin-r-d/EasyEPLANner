@@ -340,17 +340,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.PT("KOAG4PT1", "Test device", 1,
-                        "KOAG", 4, "Test article");
+                    return new Device.PT("KOAG4PT1", "+KOAG4-PT1",
+                        "Test device", 1, "KOAG", 4, "Test article");
                 case 2:
-                    return new Device.PT("LINE1PT2", "Test device", 2,
-                        "LINE", 1, "Test article");
+                    return new Device.PT("LINE1PT2", "+LINE1-PT2",
+                        "Test device", 2, "LINE", 1, "Test article");
                 case 3:
-                    return new Device.PT("TANK2PT1", "Test device", 1,
-                        "TANK", 2, "Test article");
+                    return new Device.PT("TANK2PT1", "+TANK2-PT1",
+                        "Test device", 1, "TANK", 2, "Test article");
                 default:
-                    return new Device.PT("CW_TANK3PT3", "Test device", 3,
-                        "CW_TANK", 3, "Test article");
+                    return new Device.PT("CW_TANK3PT3", "+CW_TANK3-PT3",
+                        "Test device", 3, "CW_TANK", 3, "Test article");
             }
         }
     }

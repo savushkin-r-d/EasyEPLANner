@@ -384,17 +384,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.FQT("KOAG4FQT1", "Test device", 1,
-                        "KOAG", 4, "DeviceArticle");
+                    return new Device.FQT("KOAG4FQT1", "+KOAG4-FQT1",
+                        "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.FQT("LINE1FQT2", "Test device", 2,
-                        "LINE", 1, "DeviceArticle");
+                    return new Device.FQT("LINE1FQT2", "+LINE1-FQT2",
+                        "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.FQT("TANK2FQT1", "Test device", 1,
-                        "TANK", 2, "DeviceArticle");
+                    return new Device.FQT("TANK2FQT1", "+TANK2-FQT1",
+                        "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.FQT("CW_TANK3FQT3", "Test device", 3,
-                        "CW_TANK", 3, "DeviceArticle");
+                    return new Device.FQT("CW_TANK3FQT3", "+CW_TANK3-FQT3",
+                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }
     }

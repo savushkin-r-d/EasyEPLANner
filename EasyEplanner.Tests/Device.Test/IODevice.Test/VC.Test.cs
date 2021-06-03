@@ -278,17 +278,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.VC("KOAG4VC1", "Test device", 1,
-                        "KOAG", 4, "DeviceArticle");
+                    return new Device.VC("KOAG4VC1", "+KOAG4-VC1",
+                        "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.VC("LINE1VC2", "Test device", 2,
-                        "LINE", 1, "DeviceArticle");
+                    return new Device.VC("LINE1VC2", "+LINE1-VC2",
+                        "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.VC("TANK2VC1", "Test device", 1,
-                        "TANK", 2, "DeviceArticle");
+                    return new Device.VC("TANK2VC1", "+TANK2-VC1",
+                        "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.VC("CW_TANK3VC3", "Test device", 3,
-                        "CW_TANK", 3, "DeviceArticle");
+                    return new Device.VC("CW_TANK3VC3", "+CW_TANK3-VC3",
+                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }
     }

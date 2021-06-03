@@ -83,7 +83,7 @@ namespace EasyEPlanner
             {
                 string devName;
                 bool res = Device.DeviceManager.GetInstance()
-                    .CheckDeviceName(oF.Name, out devName, out _, out _,
+                    .CheckDeviceName(oF.Name, out devName, out _, out _, out _,
                     out _, out _);
 
                 if (res)

@@ -257,17 +257,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.TE("KOAG4TE1", "Test device", 1,
-                        "KOAG", 4, "Test article");
+                    return new Device.TE("KOAG4TE1", "+KOAG4-TE1",
+                        "Test device", 1, "KOAG", 4, "Test article");
                 case 2:
-                    return new Device.TE("LINE1TE2", "Test device", 2,
-                        "LINE", 1, "Test article");
+                    return new Device.TE("LINE1TE2", "+LINE1-TE2",
+                        "Test device", 2, "LINE", 1, "Test article");
                 case 3:
-                    return new Device.TE("TANK2TE1", "Test device", 1,
-                        "TANK", 2, "Test article");
+                    return new Device.TE("TANK2TE1", "+TANK2-TE1",
+                        "Test device", 1, "TANK", 2, "Test article");
                 default:
-                    return new Device.TE("CW_TANK3TE3", "Test device", 3,
-                        "CW_TANK", 3, "Test article");
+                    return new Device.TE("CW_TANK3TE3", "+CW_TANK3-TE3",
+                        "Test device", 3, "CW_TANK", 3, "Test article");
             }
         }
     }

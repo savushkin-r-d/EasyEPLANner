@@ -126,7 +126,7 @@ namespace Device
                 if (devicesWithEqualsIP.Length > 1)
                 {
                     var equalsDevicesNames = devicesWithEqualsIP
-                        .Select(x => x.EPlanName).ToArray();
+                        .Select(x => x.EplanName).ToArray();
                     string error = $"IP-адреса устройств " +
                         $"{string.Join(",", equalsDevicesNames)} совпадают.\n";
                     errors.Add(error);
@@ -135,7 +135,7 @@ namespace Device
                 long devIP = StaticHelper.IPConverter.ConvertIPStrToLong(IPstr);
                 if (devIP - startingIP < 0 || endingIP - devIP < 0)
                 {
-                    string error = $"IP-адрес устройства {device.EPlanName} " +
+                    string error = $"IP-адрес устройства {device.EplanName} " +
                     $"вышел за диапазон.\n";
                     errors.Add(error);
                 }
@@ -162,7 +162,7 @@ namespace Device
                     object value = property.Value;
                     if(value != null)
                     {
-                        var devInPropery = GetDeviceByEplanName(
+                        var devInPropery = GetDevice(
                             value.ToString().Trim(new char[] { '\'' }));
                         if (devInPropery.Description == cap)
                         {
@@ -211,16 +211,17 @@ namespace Device
 
             // Если не нашли, возвратим заглушку.
             string name;
+            string eplanName;
             string objectName;
             int objectNumber;
             string deviceType;
             int deviceNumber;
 
             // Устройства нет, вернет состояние заглушки.
-            CheckDeviceName(devName, out name, out objectName,
+            CheckDeviceName(devName, out name, out eplanName, out objectName,
                 out objectNumber, out deviceType, out deviceNumber);
-            return new IODevice(name, StaticHelper.CommonConst.Cap, deviceType,
-                deviceNumber, objectName, objectNumber);
+            return new IODevice(name, eplanName, StaticHelper.CommonConst.Cap,
+                deviceType, deviceNumber, objectName, objectNumber);
         }
 
         /// <summary>
@@ -231,16 +232,18 @@ namespace Device
         public IODevice GetDevice(string devName)
         {
             string name;
+            string eplanName;
             string objectName;
             int objectNumber;
             string deviceType;
             int deviceNumber;
 
-            CheckDeviceName(devName, out name, out objectName, out objectNumber,
-                out deviceType, out deviceNumber);
+            CheckDeviceName(devName, out name, out eplanName, out objectName,
+                out objectNumber, out deviceType, out deviceNumber);
 
-            IODevice devStub = new IODevice(name, StaticHelper.CommonConst.Cap,
-                deviceType, deviceNumber, objectName, objectNumber);
+            IODevice devStub = new IODevice(name, eplanName, 
+                StaticHelper.CommonConst.Cap, deviceType, deviceNumber,
+                objectName, objectNumber);
 
             int resDevN = devices.BinarySearch(devStub);
 
@@ -267,15 +270,17 @@ namespace Device
         public int GetDeviceIndex(string devName)
         {
             string name;
+            string eplanName;
             string objectName;
             int objectNumber;
             string deviceType;
             int deviceNumber;
 
-            CheckDeviceName(devName, out name, out objectName, out objectNumber,
-                out deviceType, out deviceNumber);
-            IODevice devStub = new IODevice(name, StaticHelper.CommonConst.Cap,
-                deviceType, deviceNumber, objectName, objectNumber);
+            CheckDeviceName(devName, out name, out eplanName, out objectName,
+                out objectNumber, out deviceType, out deviceNumber);
+            IODevice devStub = new IODevice(name, eplanName,
+                StaticHelper.CommonConst.Cap, deviceType, deviceNumber,
+                objectName, objectNumber);
 
             int resDevN = devices.IndexOf(devStub);
 
@@ -306,90 +311,106 @@ namespace Device
         /// <summary>
         /// Проверка на корректное имя устройства.
         /// </summary>
-        /// <param name="devName">Имя устройства.</param>
+        /// <param name="devName">Имя устройства (A1V1).</param>
+        /// <param name="eplanName">Имя устройства Eplan (+A1-V1)</param>
         /// <param name="deviceNumber">Номер устройства.</param>
         /// <param name="deviceType">Тип устройства.</param>
         /// <param name="fullDevName">Полное имя устройства.</param>
         /// <param name="objectName">Имя объекта.</param>
         /// <param name="objectNumber">Номер объекта.</param>
         public bool CheckDeviceName(string fullDevName, out string devName,
-            out string objectName, out int objectNumber,
+            out string eplanName, out string objectName, out int objectNumber,
             out string deviceType, out int deviceNumber)
         {
             bool res = false;
-            objectName = "";
-            objectNumber = 0;
-            deviceType = "";
-            deviceNumber = 0;
 
+            eplanName = string.Empty;
+            objectName = string.Empty;
+            objectNumber = 0;
+            deviceType = string.Empty;
+            deviceNumber = 0;
             devName = fullDevName;
 
             Match match = Regex.Match(fullDevName, DESCRIPTION_PATTERN,
                 RegexOptions.IgnoreCase);
             if (match.Success)
             {
-                string type = match.Groups["type"].Value;
-                bool isPID = IsPIDControl(type);
+                string devType = match.Groups["type"].Value;
+                bool isPID = IsPIDControl(devType);
                 if (isPID)
                 {
-                    type = DeviceType.C.ToString();
+                    devType = DeviceType.C.ToString();
                 }
 
-                switch (type)
+                bool devTypeExist = allowedDevTypes.Contains(devType);
+                if (devTypeExist)
                 {
-                    case "V":
-                    case "VC":
-                    case "M":
-                    case "N":
-                    case "LS":
-                    case "TE":
-                    case "GS":
-                    case "FS":
-                    case "FQT":
-                    case "AO":
-                    case "LT":
-                    case "OS":
-                    case "DI":
-                    case "UPR":
-                    case "DO":
-                    case "QT":
-                    case "AI":
-                    case "HA":
-                    case "HL":
-                    case "SB":
-                    case "WT":
-                    case "PT":
-                    case "F":
-                    case "Y":
-                    case "DEV_VTUG": // Совместимость со старыми проектами
-                    case "C":
+                    objectName = match.Groups["object_main"].Value +
+                            match.Groups["object"].Value;
 
-                        objectName = match.Groups["object_main"].Value + match.Groups["object"];
-                        if (match.Groups["object_n"].Value != "")
-                        {
-                            objectNumber = System.Convert.ToInt32(
-                                match.Groups["object_n"].Value);
-                        }
+                    if (match.Groups["object_n"].Value != string.Empty)
+                    {
+                        objectNumber = Convert
+                            .ToInt32(match.Groups["object_n"].Value);
+                    }
 
-                        deviceType = match.Groups["type"].Value;
-                        if (match.Groups["n"].Value != "")
-                        {
-                            deviceNumber = System.Convert.ToInt32(
-                                match.Groups["n"].Value);
-                        }
+                    deviceType = devType;
 
-                        devName = match.Groups["object_main"].Value + match.Groups["object"].Value +
-                            match.Groups["object_n"].Value +
-                            match.Groups["type"].Value +
-                            match.Groups["n"].Value;
+                    if (match.Groups["n"].Value != string.Empty)
+                    {
+                        deviceNumber = Convert
+                            .ToInt32(match.Groups["n"].Value);
+                    }
 
-                        res = true;
-                        break;
-                }
+                    devName = match.Groups["object_main"].Value +
+                        match.Groups["object"].Value +
+                        match.Groups["object_n"].Value +
+                        match.Groups["type"].Value +
+                        match.Groups["n"].Value;
+
+                    eplanName = match.Groups["object_main"].Value + "+" +
+                        match.Groups["object"].Value +
+                        match.Groups["object_n"].Value + "-" +
+                        match.Groups["type"].Value +
+                        match.Groups["n"].Value;
+
+                    res = true;
+                } 
             }
 
             return res;
         }
+
+        private List<string> allowedDevTypes = new List<string>()
+        {
+            "V",
+            "VC",
+            "M",
+            "N",
+            "LS",
+            "TE",
+            "GS",
+            "FS",
+            "FQT",
+            "AO",
+            "LT",
+            "OS",
+            "DI",
+            "UPR",
+            "DO",
+            "QT",
+            "AI",
+            "HA",
+            "HL",
+            "SB",
+            "WT",
+            "PT",
+            "F",
+            "Y",
+            "DEV_VTUG", // Совместимость со старыми проектами
+            "C"
+        };
+
         /// <summary>
         /// Добавление канала ввода\вывода к устройству.
         /// </summary>
@@ -429,17 +450,18 @@ namespace Device
             string subType, string paramStr, string rtParamStr, string propStr,
             int dLocation, out string errStr, string articleName)
         {
-            errStr = "";
+            errStr = string.Empty;
             IODevice dev = null;
 
             string name;
+            string eplanName;
             string objectName;
             int objectNumber;
             string deviceType;
             int deviceNumber;
 
 
-            CheckDeviceName(devName, out name, out objectName,
+            CheckDeviceName(devName, out name, out eplanName, out objectName,
                 out objectNumber, out deviceType, out deviceNumber);
             bool isPID = IsPIDControl(deviceType);
             if (isPID)
@@ -448,128 +470,128 @@ namespace Device
             }
 
             // Если изделия нет или пустое, то оставляем пустое
-            if (articleName == "" || articleName == null)
+            if (articleName == string.Empty || articleName == null)
             {
-                articleName = "";
+                articleName = string.Empty;
             }
 
             switch (deviceType)
             {
                 case "V":
-                    dev = new V(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
+                    dev = new V(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
                     break;
 
                 case "VC":
-                    dev = new VC(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
+                    dev = new VC(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
                     break;
 
                 case "M":
                 case "N":
-                    dev = new M(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
+                    dev = new M(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
                     break;
 
                 case "LS":
-                    dev = new LS(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
+                    dev = new LS(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
                     break;
 
                 case "TE":
-                    dev = new TE(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
+                    dev = new TE(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
                     break;
 
                 case "GS":
-                    dev = new GS(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
+                    dev = new GS(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
                     break;
 
                 case "FS":
-                    dev = new FS(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
+                    dev = new FS(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
                     break;
 
                 case "FQT":
-                    dev = new FQT(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
+                    dev = new FQT(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
                     break;
 
                 case "AO":
-                    dev = new AO(name, description, deviceNumber, objectName,
-                        objectNumber);
+                    dev = new AO(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber);
                     break;
 
                 case "LT":
-                    dev = new LT(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
+                    dev = new LT(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
                     break;
 
                 case "OS":
                 case "DI":
-                    dev = new DI(name, description, deviceNumber, objectName,
-                        objectNumber);
+                    dev = new DI(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber);
                     break;
 
                 case "UPR":
                 case "DO":
-                    dev = new DO(name, description, deviceNumber, objectName,
-                        objectNumber);
+                    dev = new DO(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber);
                     break;
 
                 case "QT":
-                    dev = new QT(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
-                    break;
-
-                case "AI":
-                    dev = new AI(name, description, deviceNumber, objectName,
-                        objectNumber);
-                    break;
-
-                case "HA":
-                    dev = new HA(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
-                    break;
-
-                case "HL":
-                    dev = new HL(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
-                    break;
-
-                case "SB":
-                    dev = new SB(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
-                    break;
-
-                case "WT":
-                    dev = new WT(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
-                    break;
-
-                case "PT":
-                    dev = new PT(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
-                    break;
-
-                case "Y":
-                    dev = new Y(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
-                    break;
-                case "DEV_VTUG": // Совместимость со старыми проектами
-                    dev = new DEV_VTUG(name, description, deviceNumber,
+                    dev = new QT(name, eplanName, description, deviceNumber,
                         objectName, objectNumber, articleName);
                     break;
 
+                case "AI":
+                    dev = new AI(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber);
+                    break;
+
+                case "HA":
+                    dev = new HA(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
+                    break;
+
+                case "HL":
+                    dev = new HL(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
+                    break;
+
+                case "SB":
+                    dev = new SB(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
+                    break;
+
+                case "WT":
+                    dev = new WT(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
+                    break;
+
+                case "PT":
+                    dev = new PT(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
+                    break;
+
+                case "Y":
+                    dev = new Y(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
+                    break;
+                case "DEV_VTUG": // Совместимость со старыми проектами
+                    dev = new DEV_VTUG(name, eplanName, description,
+                        deviceNumber, objectName, objectNumber, articleName);
+                    break;
+
                 case "F":
-                    dev = new F(name, description, deviceNumber, objectName,
-                        objectNumber, articleName);
+                    dev = new F(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
                     break;
 
                 case "C":
-                    dev = new C(name, description, deviceNumber, objectName,
-                        objectNumber);
+                    dev = new C(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber);
                     break;
 
                 default:
@@ -958,7 +980,7 @@ namespace Device
                 string parameter = device.GetRuntimeParameter("R_AS_NUMBER");
                 if (parameter == null)
                 {
-                    errorsBuffer += $"В устройстве {device.EPlanName} " +
+                    errorsBuffer += $"В устройстве {device.EplanName} " +
                         $"отсутствует R_AS_NUMBER.\n ";
                 }
                 else
@@ -968,13 +990,13 @@ namespace Device
                     if (isNumber == false)
                     {
                         errorsBuffer += $"В устройстве " +
-                            $"{device.EPlanName} некорректно задан параметр " +
+                            $"{device.EplanName} некорректно задан параметр " +
                             $"R_AS_NUMBER.\n ";
                     }
                     if (isNumber == true && ASNumber < 1 && ASNumber > 62)
                     {
                         errorsBuffer += $"В устройстве " +
-                            $"{device.EPlanName} некорректно задан диапазон " +
+                            $"{device.EplanName} некорректно задан диапазон " +
                             $"R_AS_NUMBER (от 1 до 62).\n ";
                     }
                 }
@@ -1021,9 +1043,9 @@ namespace Device
         private bool IsPIDControl(string type)
         {
             bool isPID = false;
+            const int maxTypeLength = 4;
 
-            int length = type.Length;
-            if (length <= 1)
+            if (type.Length <= 1)
             {
                 return isPID;
             }
@@ -1035,7 +1057,7 @@ namespace Device
                 return isPID;
             }
 
-            for (int i = 1; i < length; i++)
+            for (int i = 1; i < maxTypeLength; i++)
             {
                 if (type[i] == Convert.ToChar(DeviceType.C.ToString()))
                 {
@@ -1063,7 +1085,8 @@ namespace Device
         public const string valveTerminalPattern = @"([A-Z0-9]+\-[Y0-9]+)";
 
         private static IODevice cap = 
-            new IODevice(StaticHelper.CommonConst.Cap, "", 0, "", 0);
+            new IODevice(StaticHelper.CommonConst.Cap, string.Empty,
+                StaticHelper.CommonConst.Cap, 0, string.Empty, 0);
         private List<IODevice> devices;       ///Устройства проекта.     
         private static DeviceManager instance;  ///Экземпляр класса.
 
