@@ -345,17 +345,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.QT("KOAG4QT1", "Test device", 1,
-                        "KOAG", 4, "Test article");
+                    return new Device.QT("KOAG4QT1", "+KOAG4-QT1",
+                        "Test device", 1, "KOAG", 4, "Test article");
                 case 2:
-                    return new Device.QT("LINE1QT2", "Test device", 2,
-                        "LINE", 1, "Test article");
+                    return new Device.QT("LINE1QT2", "+LINE1-QT2",
+                        "Test device", 2, "LINE", 1, "Test article");
                 case 3:
-                    return new Device.QT("TANK2QT1", "Test device", 1,
-                        "TANK", 2, "Test article");
+                    return new Device.QT("TANK2QT1", "+TANK2-QT1",
+                        "Test device", 1, "TANK", 2, "Test article");
                 default:
-                    return new Device.QT("CW_TANK3QT3", "Test device", 3,
-                        "CW_TANK", 3, "Test article");
+                    return new Device.QT("CW_TANK3QT3", "+CW_TANK3-QT3",
+                        "Test device", 3, "CW_TANK", 3, "Test article");
             }
         }
     }

@@ -10,6 +10,11 @@ namespace Device
         string Name { get; }
 
         /// <summary>
+        /// Имя устройства (например "+А1-V12").
+        /// </summary>
+        string EplanName { get; }
+
+        /// <summary>
         /// Описание устройства.
         /// </summary>
         string Description { get; }
@@ -88,19 +93,23 @@ namespace Device
                 return dx.dType.CompareTo(dy.dType);
             }
         }
+
         /// <summary>
         /// Конструктор на основе имени.
         /// </summary>
-        /// <param name="name">Имя устройства (формат - А1V12).</param>
+        /// <param name="name">Имя устройства (А1V12).</param>
+        /// <param name="eplanName">Имя устройства в Eplan (+A1-V12)</param>
+        /// <param name="deviceNumber">Номер устройства</param>
+        /// <param name="objectName">Имя объекта (A)</param>
+        /// <param name="objectNumber">Номер объекта (1)</param>
         /// <param name="description">Описание устройства.</param>
-        protected Device(string fullName, string description,
+        protected Device(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber)
         {
-            this.name = fullName;
+            this.name = name;
+            this.eplanName = eplanName;
             this.description = description;
-
             this.deviceNumber = deviceNumber;
-
             this.objectName = objectName;
             this.objectNumber = objectNumber;
         }
@@ -120,7 +129,7 @@ namespace Device
                 dSubType = DeviceSubType.NONE;
             }
 
-            return "";
+            return string.Empty;
         }
 
         /// <summary>
@@ -128,7 +137,7 @@ namespace Device
         /// </summary>
         public virtual string GetConnectionType()
         {
-            return "";
+            return string.Empty;
         }
 
         /// <summary>
@@ -136,7 +145,7 @@ namespace Device
         /// </summary>
         public virtual string GetRange()
         {
-            return "";
+            return string.Empty;
         }
 
         public Device Clone()
@@ -208,22 +217,14 @@ namespace Device
             }
         }
 
-        /// <summary>
-        /// Имя устройства (например "+А1-V12").
-        /// </summary>
-        public string EPlanName
+        public string EplanName
         {
             get
             {
-                return "+" + objectName +
-                    (objectNumber > 0 ? objectNumber.ToString() : "") +
-                    "-" + DeviceType + DeviceNumber;
+                return eplanName;
             }
         }
 
-        /// <summary>
-        /// Номер устройства.
-        /// </summary>
         public long DeviceNumber
         {
             get
@@ -281,19 +282,14 @@ namespace Device
         }
 
         #region Защищенные поля.
-
         protected string name; /// Имя устройства (А1V12).
-
+        protected string eplanName; /// Имя из Eplan (+A1-V12)
         protected int deviceNumber;     /// Номер устройства (12 в R1V12).
-
         protected DeviceType dType = DeviceType.NONE;
         protected DeviceSubType dSubType = DeviceSubType.NONE;
-
         protected int dLocation; /// Номер узла, в котором должно располагаться устройство.
-
         protected string objectName;    /// Объект устройства (R в R1V12).
         protected int objectNumber;     /// Номер объекта (1 в R1V12)
-
         protected string description;  /// Описание устройства (пример - "Отсечной клапан линии").   
         #endregion
     }

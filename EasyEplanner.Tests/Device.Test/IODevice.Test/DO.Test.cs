@@ -261,17 +261,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.DO("KOAG4DO1", "Test device", 1,
-                        "KOAG", 4);
+                    return new Device.DO("KOAG4DO1", "+KOAG4-DO1", 
+                        "Test device", 1, "KOAG", 4);
                 case 2:
-                    return new Device.DO("LINE1DO2", "Test device", 2,
-                        "LINE", 1);
+                    return new Device.DO("LINE1DO2", "+LINE1-DO2", 
+                        "Test device", 2, "LINE", 1);
                 case 3:
-                    return new Device.DO("TANK2DO1", "Test device", 1,
-                        "TANK", 2);
+                    return new Device.DO("TANK2DO1", "+TANK2-DO1", 
+                        "Test device", 1, "TANK", 2);
                 default:
-                    return new Device.DO("CW_TANK3DO3", "Test device", 3,
-                        "CW_TANK", 3);
+                    return new Device.DO("CW_TANK3DO3", "+CW_TANK3-DO3",
+                        "Test device", 3, "CW_TANK", 3);
             }
         }
     }

@@ -721,7 +721,7 @@ namespace EasyEPlanner
             int counter = 1;
             foreach(var device in devices)
             {         
-                devicesWithArticles[counter, 0] = device.EPlanName;
+                devicesWithArticles[counter, 0] = device.EplanName;
                 devicesWithArticles[counter, 1] = device.GetDeviceSubTypeStr(
                     device.DeviceType, device.DeviceSubType);
                 devicesWithArticles[counter, 2] = device.ArticleName;

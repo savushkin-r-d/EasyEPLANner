@@ -307,17 +307,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.AO("KOAG4AO1", "Test device", 1,
-                        "KOAG", 4);
+                    return new Device.AO("KOAG4AO1", "+KOAG4-AO1",
+                        "Test device", 1, "KOAG", 4);
                 case 2:
-                    return new Device.AO("LINE1AO2", "Test device", 2,
-                        "LINE", 1);
+                    return new Device.AO("LINE1AO2", "+LINE1-AO2",
+                        "Test device", 2, "LINE", 1);
                 case 3:
-                    return new Device.AO("TANK2AO1", "Test device", 1,
-                        "TANK", 2);
+                    return new Device.AO("TANK2AO1", "+TANK2-AO1",
+                        "Test device", 1, "TANK", 2);
                 default:
-                    return new Device.AO("CW_TANK3AO3", "Test device", 3,
-                        "CW_TANK", 3);
+                    return new Device.AO("CW_TANK3AO3", "+CW_TANK3-AO3",
+                        "Test device", 3, "CW_TANK", 3);
             }
         }
     }

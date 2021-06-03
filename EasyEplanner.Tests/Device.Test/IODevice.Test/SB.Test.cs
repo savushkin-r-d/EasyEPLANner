@@ -205,17 +205,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.SB("KOAG4SB1", "Test device", 1,
-                        "KOAG", 4, "DeviceArticle");
+                    return new Device.SB("KOAG4SB1", "+KOAG4-SB1",
+                        "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.SB("LINE1SB2", "Test device", 2,
-                        "LINE", 1, "DeviceArticle");
+                    return new Device.SB("LINE1SB2", "+LINE1-SB2",
+                        "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.SB("TANK2SB1", "Test device", 1,
-                        "TANK", 2, "DeviceArticle");
+                    return new Device.SB("TANK2SB1", "+TANK2-SB1",
+                        "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.SB("CW_TANK3SB3", "Test device", 3,
-                        "CW_TANK", 3, "DeviceArticle");
+                    return new Device.SB("CW_TANK3SB3", "+CW_TANK3-SB3",
+                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }
     }

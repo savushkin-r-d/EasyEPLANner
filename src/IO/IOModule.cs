@@ -172,7 +172,7 @@ namespace IO
 
                     if (devChannel.Name == "DI" || devChannel.Name == "DO")
                     {
-                        devName = dev.EPlanName +
+                        devName = dev.EplanName +
                             dev.GetConnectionType() +
                             $"{dev.GetRange()}: " +
                             $"{devChannel.Name}: " +
@@ -185,7 +185,7 @@ namespace IO
                             devices[clamp][0].Name == devices[clamp][1].Name;
                         if (devices[clamp].Count == 1 || isIOLinkVale)
                         {
-                            devName = dev.EPlanName +
+                            devName = dev.EplanName +
                                 dev.GetConnectionType() +
                                 $"{dev.GetRange()}: " +
                                 $"{devChannel.Name}: " +
@@ -210,7 +210,7 @@ namespace IO
                 int devIdx = 0;
                 foreach (Device.IODevice dev in devices[clamp])
                 {
-                    devName += dev.EPlanName + 
+                    devName += dev.EplanName + 
                         dev.GetConnectionType() + 
                         dev.GetRange() + ": " +
                         devicesChannels[clamp][devIdx].Name + ": " + 
@@ -242,7 +242,7 @@ namespace IO
                             foreach (Device.IODevice dev in devices[clamp])
                             {
                                 asConnection[devIdx, 0] = clamp.ToString() + "(" + (deviceCounter + 1).ToString() + ")";
-                                string devDescription = dev.EPlanName + dev.GetConnectionType() + dev.GetRange() + ": " +
+                                string devDescription = dev.EplanName + dev.GetConnectionType() + dev.GetRange() + ": " +
                                     devicesChannels[clamp][deviceCounter].Name + ": " + dev.Description + " " +
                                     devicesChannels[clamp][deviceCounter].Comment;
                                 devDescription = devDescription.Replace('\n', ' ');

@@ -10,25 +10,25 @@ namespace Tests
         [SetUp]
         public void SetUpDevices()
         {
-            var firstValve = new Device.V("LINE1V2", "Test valve", 2, "LINE", 
-                1, "Test V article");
+            var firstValve = new Device.V("LINE1V2", "+LINE1-V2", "Test valve",
+                2, "LINE", 1, "Test V article");
             firstValve.SetSubType("V_AS_MIXPROOF");
             firstValve.SetParameter("R_AS_NUMBER", 1);
             Device.DeviceManager.GetInstance().Devices.Add(firstValve);
 
-            var secondValve = new Device.V("TANK2V1", "Test valve", 1, "TANK", 
-                2, "Test V article");
+            var secondValve = new Device.V("TANK2V1", "+LINE2-V2", "Test valve",
+                1, "TANK", 2, "Test V article");
             secondValve.SetSubType("V_AS_MIXPROOF");
             secondValve.SetParameter("R_AS_NUMBER", 2);
             Device.DeviceManager.GetInstance().Devices.Add(secondValve);
 
-            var pressureSensor = new Device.PT("KOAG3PT1", "Test PT", 1, 
-                "KOAG", 3, "Test PT article");
+            var pressureSensor = new Device.PT("KOAG3PT1", "+KOAG3-PT1", 
+                "Test PT", 1, "KOAG", 3, "Test PT article");
             pressureSensor.SetSubType("PT_IOLINK");
             Device.DeviceManager.GetInstance().Devices.Add(pressureSensor);
 
-            var temperatureSensor = new Device.TE("BATH4TE2", "Test TE", 2, 
-                "BATH", 4, "Test TE article");
+            var temperatureSensor = new Device.TE("BATH4TE2", "+BATH4-TE2",
+                "Test TE", 2, "BATH", 4, "Test TE article");
             temperatureSensor.SetSubType("TE");
             Device.DeviceManager.GetInstance().Devices.Add(temperatureSensor);
         }
@@ -59,7 +59,8 @@ namespace Tests
         public void CheckDeviceNameTest(string device, bool expected)
         {
             bool actual = Device.DeviceManager.GetInstance()
-                .CheckDeviceName(device, out _, out _, out _, out _, out _);
+                .CheckDeviceName(device, out _, out _, out _, out _, out _,
+                out _);
             Assert.AreEqual(expected, actual);
         }
 
@@ -116,8 +117,8 @@ namespace Tests
         [TestCase("", "")]
         public void GetDeviceByEplanNameTest(string devName, string expectedDevName)
         {
-            var dev = Device.DeviceManager.GetInstance().GetDeviceByEplanName(
-                devName);
+            var dev = Device.DeviceManager.GetInstance()
+                .GetDeviceByEplanName(devName);
             string actualDevName = dev.Name;
             if (expectedDevName == StaticHelper.CommonConst.Cap)
             {

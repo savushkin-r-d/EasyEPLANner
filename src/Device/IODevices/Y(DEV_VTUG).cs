@@ -6,9 +6,10 @@
 
     public class Y : IODevice
     {
-        public Y(string fullName, string description, int deviceNumber,
-            string objectName, int objectNumber, string articleName) : base(
-                fullName, description, deviceNumber, objectName, objectNumber)
+        public Y(string name, string eplanName, string description, 
+            int deviceNumber, string objectName, int objectNumber,
+            string articleName) : base(name, eplanName, description,
+                deviceNumber, objectName, objectNumber)
         {
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.Y;
@@ -76,9 +77,10 @@
     /// </summary>
     public class DEV_VTUG : IODevice
     {
-        public DEV_VTUG(string fullName, string description, int deviceNumber,
-            string objectName, int objectNumber, string articleName) : base(
-                fullName, description, deviceNumber, objectName, objectNumber)
+        public DEV_VTUG(string name, string eplanName, string description,
+            int deviceNumber, string objectName, int objectNumber,
+            string articleName) : base(name, eplanName, description,
+                deviceNumber, objectName, objectNumber)
         {
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.DEV_VTUG;

@@ -112,7 +112,7 @@ namespace EasyEPlanner
                 if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
                 {
                     //С Ctrl устанавливаем только название устройства.
-                    NewFunctionalText = SelectedDevice.EPlanName;
+                    NewFunctionalText = SelectedDevice.EplanName;
                 }
 
                 SetDevicesChannel = NewFunctionalText;
@@ -151,12 +151,12 @@ namespace EasyEPlanner
 
                         var functionalTextContainsDevice = 
                             FunctionalTextContainsDevice(oldFunctionalText, 
-                            SelectedDevice.EPlanName);
+                            SelectedDevice.EplanName);
                         if (functionalTextContainsDevice == true)
                         {
                             ResetDevicesChannel = NewFunctionalText;
                             NewFunctionalText = oldFunctionalText
-                                .Replace(SelectedDevice.EPlanName, "")
+                                .Replace(SelectedDevice.EplanName, "")
                                 .Trim();
 
                             if (NewFunctionalText.Length > 0)
@@ -175,12 +175,12 @@ namespace EasyEPlanner
                             if (oldFunctionalText == CommonConst.Reserve)
                             {
                                 oldFunctionalText = "";
-                                text = SelectedDevice.EPlanName;
+                                text = SelectedDevice.EplanName;
                             }
                             else
                             {
                                 text = CommonConst.NewLineWithCarriageReturn +
-                                SelectedDevice.EPlanName;
+                                SelectedDevice.EplanName;
                             }
 
                             SetDevicesChannel = NewFunctionalText;
@@ -302,7 +302,7 @@ namespace EasyEPlanner
         {
             const string PhoenixContact = "PXC";
 
-            string functionalText = SelectedDevice.EPlanName + 
+            string functionalText = SelectedDevice.EplanName + 
                 CommonConst.NewLineWithCarriageReturn;
             if (string.IsNullOrEmpty(SelectedDevice.Description) == false)
             {
