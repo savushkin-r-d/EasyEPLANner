@@ -342,7 +342,7 @@ namespace Device
                     devType = DeviceType.C.ToString();
                 }
 
-                bool devTypeExist = IsDeviceTypeExist(devType);
+                bool devTypeExist = allowedDevTypes.Contains(devType);
                 if (devTypeExist)
                 {
                     objectName = match.Groups["object_main"].Value +
@@ -381,48 +381,35 @@ namespace Device
             return res;
         }
 
-        /// <summary>
-        /// Существует ли такой тип устройства
-        /// </summary>
-        /// <param name="deviceType">Тип устройства в текстовом формате
-        /// </param>
-        /// <returns></returns>
-        private bool IsDeviceTypeExist(string deviceType)
+        private List<string> allowedDevTypes = new List<string>()
         {
-            switch (deviceType)
-            {
-                case "V":
-                case "VC":
-                case "M":
-                case "N":
-                case "LS":
-                case "TE":
-                case "GS":
-                case "FS":
-                case "FQT":
-                case "AO":
-                case "LT":
-                case "OS":
-                case "DI":
-                case "UPR":
-                case "DO":
-                case "QT":
-                case "AI":
-                case "HA":
-                case "HL":
-                case "SB":
-                case "WT":
-                case "PT":
-                case "F":
-                case "Y":
-                case "DEV_VTUG": // Совместимость со старыми проектами
-                case "C":
-                    return true;
-
-                default:
-                    return false;
-            }
-        }
+            "V",
+            "VC",
+            "M",
+            "N",
+            "LS",
+            "TE",
+            "GS",
+            "FS",
+            "FQT",
+            "AO",
+            "LT",
+            "OS",
+            "DI",
+            "UPR",
+            "DO",
+            "QT",
+            "AI",
+            "HA",
+            "HL",
+            "SB",
+            "WT",
+            "PT",
+            "F",
+            "Y",
+            "DEV_VTUG", // Совместимость со старыми проектами
+            "C"
+        };
 
         /// <summary>
         /// Добавление канала ввода\вывода к устройству.
