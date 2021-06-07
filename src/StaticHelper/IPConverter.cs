@@ -12,7 +12,7 @@ namespace StaticHelper
         /// Из вида "000.000.000.000".
         /// </summary>
         /// <param name="IP">Строка с адресом</param>
-        /// <returns></returns>
+        /// <returns>0 - если не конвертировалось</returns>
         public static long ConvertIPStrToLong(string IP)
         {
             long convertedIP;
