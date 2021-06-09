@@ -787,12 +787,81 @@ namespace Tests.TechObject
                 new List<int> { 12, 14 }
             };
 
+
+            var useHLInSequence = new object[]
+            {
+                "TANK1DO1 TANK1HL1 TANK2DI2",
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.DI,
+                    Device.DeviceType.DO,
+                    Device.DeviceType.HL,
+                },
+                new Device.DeviceSubType[]
+                {
+                    Device.DeviceSubType.DI,
+                    Device.DeviceSubType.DI_VIRT,
+                    Device.DeviceSubType.DO,
+                    Device.DeviceSubType.DO_VIRT,
+                    Device.DeviceSubType.NONE,
+                },
+                new List<int> { 13, 14 },
+                new List<int> { 13, 14, 20 }
+            };
+
+            var useHLAndReplaceDIwithGS = new object[]
+            {
+                "TANK1DO1 TANK1HL1 TANK1GS1 TANK2DI2",
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.DI,
+                    Device.DeviceType.DO,
+                    Device.DeviceType.HL,
+                    Device.DeviceType.GS,
+                },
+                new Device.DeviceSubType[]
+                {
+                    Device.DeviceSubType.DI,
+                    Device.DeviceSubType.DI_VIRT,
+                    Device.DeviceSubType.DO,
+                    Device.DeviceSubType.DO_VIRT,
+                    Device.DeviceSubType.NONE,
+                },
+                new List<int> { 13, 14 },
+                new List<int> { 22, 14, 20 }
+            };
+
+            var removeAllInputDevsIfDoubleInputDevs = new object[]
+            {
+                "TANK1DO1 TANK1HL1 TANK1GS2 TANK2DI2",
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.DI,
+                    Device.DeviceType.DO,
+                    Device.DeviceType.HL,
+                    Device.DeviceType.GS,
+                },
+                new Device.DeviceSubType[]
+                {
+                    Device.DeviceSubType.DI,
+                    Device.DeviceSubType.DI_VIRT,
+                    Device.DeviceSubType.DO,
+                    Device.DeviceSubType.DO_VIRT,
+                    Device.DeviceSubType.NONE,
+                },
+                new List<int> { 14 },
+                new List<int> { 14, 20 }
+            };
+
             return new object[]
             {
                 correctSequenceAIAO,
                 replacingAIAOCase,
                 correctSequenceDIDO,
                 replacingDIDOCase,
+                useHLInSequence,
+                useHLAndReplaceDIwithGS,
+                removeAllInputDevsIfDoubleInputDevs
             };
         }
     }
@@ -869,6 +938,14 @@ namespace Tests.TechObject
                 Device.DeviceType.AO, 1, Device.DeviceSubType.AO);
             Device.IDevice tank1AO2Dev = MakeMockedDevice(TANK, 1,
                 Device.DeviceType.AO, 2, Device.DeviceSubType.AO_VIRT);
+            Device.IDevice tank1HL1Dev = MakeMockedDevice(TANK, 1,
+                Device.DeviceType.HL, 1, Device.DeviceSubType.NONE);
+            Device.IDevice tank1HL2Dev = MakeMockedDevice(TANK, 1,
+                Device.DeviceType.HL, 2, Device.DeviceSubType.NONE);
+            Device.IDevice tank1GS1Dev = MakeMockedDevice(TANK, 1,
+                Device.DeviceType.GS, 1, Device.DeviceSubType.NONE);
+            Device.IDevice tank1GS2Dev = MakeMockedDevice(TANK, 1,
+                Device.DeviceType.GS, 2, Device.DeviceSubType.NONE);
 
             var devicesDescription = new[]
             {
@@ -891,6 +968,10 @@ namespace Tests.TechObject
                 new { Id = 17, Name = "TANK2AI2", Dev = tank2AI2Dev },
                 new { Id = 18, Name = "TANK1AO1", Dev = tank1AO1Dev },
                 new { Id = 19, Name = "TANK1AO2", Dev = tank1AO2Dev },
+                new { Id = 20, Name = "TANK1HL1", Dev = tank1HL1Dev },
+                new { Id = 21, Name = "TANK1HL2", Dev = tank1HL2Dev },
+                new { Id = 22, Name = "TANK1GS1", Dev = tank1GS1Dev },
+                new { Id = 23, Name = "TANK1GS2", Dev = tank1GS2Dev },
             };
 
             devManagerMock.Setup(x => x.GetDeviceByIndex(It.IsAny<int>()))
