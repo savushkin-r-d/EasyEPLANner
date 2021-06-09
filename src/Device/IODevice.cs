@@ -79,8 +79,8 @@ namespace Device
 
                     if (theSameTagsCount > 1)
                     {
-                        newNode.Nodes.Add($"{Name}.{propName}[{i}]",
-                            $"{Name}.{propName}[{i}]");
+                        newNode.Nodes.Add($"{Name}.{propName}[ {i} ]",
+                            $"{Name}.{propName}[ {i} ]");
                     }
                     else
                     {
