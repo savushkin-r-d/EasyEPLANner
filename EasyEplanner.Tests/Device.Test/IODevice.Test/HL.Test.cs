@@ -109,7 +109,6 @@ namespace Tests
             {
                 {"ST", 1},
                 {"M", 1},
-                {"P_DT", 1},
             };
 
             return new object[]
