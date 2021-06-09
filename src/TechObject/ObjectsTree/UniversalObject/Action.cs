@@ -647,28 +647,27 @@ namespace TechObject
                     }
                 }
 
+                bool incorrectCountInputDevs = idDevDict
+                    .Where(x => allowedInputDevTypes.Contains(
+                        x.Value.DeviceType))
+                    .Count() > 1;
                 List<int> devList;
-                //bool isCorrectList = idDevDict
-                //    .Where(x => allowedInputDevTypes.Contains(
-                //        x.Value.DeviceType))
-                //    .Count() <= 1;
-                //if (isCorrectList)
-                //{
+                if (incorrectCountInputDevs)
+                {
+                    devList = idDevDict.Where(x => allowedInputDevTypes
+                            .Contains(x.Value.DeviceType) == false)
+                        .Select(x => x.Key)
+                        .ToList();
+                }
+                else
+                {
                     devList = idDevDict
                         .ToList()
                         .OrderBy(x => x.Value.DeviceType,
                             new OneInManyDevicesComparer(allowedInputDevTypes))
                         .Select(x => x.Key)
                         .ToList();
-                //}
-                //else
-                //{
-                //    devList = idDevDict
-                //        .Where(x => allowedInputDevTypes.Contains(
-                //            x.Value.DeviceType) == false)
-                //        .Select(x => x.Key)
-                //        .ToList();
-                //}
+                }
 
                 return devList;
             }
@@ -683,10 +682,19 @@ namespace TechObject
 
                 public int Compare(Device.DeviceType x, Device.DeviceType y)
                 {
-                    if (allowedFirstPlaceDevTypes.Contains(x)) return -1;
-                    //if (allowedFirstPlaceDevTypes.Contains(y)) return 1;
-                    //if (allowedFirstPlaceDevTypes.Contains(x) &&
-                    //    allowedFirstPlaceDevTypes.Contains(y)) return 0;
+                    if (x == y) return 0;
+
+                    if(allowedFirstPlaceDevTypes.Contains(x) &&
+                        !allowedFirstPlaceDevTypes.Contains(y))
+                    {
+                        return -1;
+                    }
+
+                    if (!allowedFirstPlaceDevTypes.Contains(x) &&
+                        allowedFirstPlaceDevTypes.Contains(y))
+                    {
+                        return 1;
+                    }
 
                     return x.ToString().CompareTo(y.ToString());
                 }
