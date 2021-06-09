@@ -118,8 +118,8 @@ namespace TechObject
             int startValue = 2;
             for(int i = startValue; i <= nodesCount; i++)
             {
-                node.Nodes.Add($"SYSTEM.NODEENABLED[{i}]",
-                    $"SYSTEM.NODEENABLED[{i}]");
+                node.Nodes.Add($"SYSTEM.NODEENABLED[ {i} ]",
+                    $"SYSTEM.NODEENABLED[ {i} ]");
             }
         }
 
