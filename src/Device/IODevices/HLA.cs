@@ -15,18 +15,6 @@ namespace Device
             dType = DeviceType.HLA;
         }
 
-        public override string Check()
-        {
-            string res = base.Check();
-
-            if (ArticleName == string.Empty)
-            {
-                res += $"\"{name}\" - не задано изделие.\n";
-            }
-
-            return res;
-        }
-
         public override string SetSubType(string subtype)
         {
             base.SetSubType(subtype);
