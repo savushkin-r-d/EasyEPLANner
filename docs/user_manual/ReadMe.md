@@ -730,9 +730,10 @@ DEV_VTUG_8 | SPECIAL Festo valve terminal (16 клапанов)
 DEV_VTUG_16 | SPECIAL Festo valve terminal (32 клапана)
 DEV_VTUG_24 | SPECIAL Festo valve terminal (48 клапанов)
 PT | Датчик давления
-PT_IOLINK | **IO-Link** датчик давления 
+PT_IOLINK | **IO-Link** датчик давления
 DEV_SPAE | **IO-Link** датчик давления воздуха
 F | **IO-Link** автоматический выключатель
+HLA | Дискретная сигнальная колонна (_4 DO сигнала на каждый из цветов и сирену_)
 
 Пример приведен ниже:
 
