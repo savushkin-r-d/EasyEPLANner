@@ -8,19 +8,18 @@ namespace Device
     public class HLA : IODevice
     {
         public HLA(string fullName, string description, int deviceNumber,
-            string objectName, int objectNumber, string articleName) : base(
+            string objectName, int objectNumber) : base(
                 fullName, description, deviceNumber, objectName, objectNumber)
         {
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.HLA;
-            ArticleName = articleName;
         }
 
         public override string Check()
         {
             string res = base.Check();
 
-            if (ArticleName == "")
+            if (ArticleName == string.Empty)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -32,41 +31,20 @@ namespace Device
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "":
-                case "HLA_R":
-                    dSubType = DeviceSubType.HLA_R;
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Сирена"));
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Красная лампа"));
-                    break;
-
-                case "HLA_RY":
-                    dSubType = DeviceSubType.HLA_RY;
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Сирена"));
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Красная лампа"));
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Желтая лампа"));
-                    break;
-
-                case "HLA_RG":
-                    dSubType = DeviceSubType.HLA_RG;
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Сирена"));
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Красная лампа"));
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Зеленая лампа"));
-                    break;
-
-                case "HLA_RYG":
-                    dSubType = DeviceSubType.HLA_RYG;
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Сирена"));
+                case "HLA":
+                    dSubType = DeviceSubType.HLA;
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Красная лампа"));
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Желтая лампа"));
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Зеленая лампа"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Сирена"));
                     break;
 
                 default:
-                    errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (HLA_R, HLA_RY, HLA_RG, HLA_RYG).\n",
+                    errStr = string.Format("\"{0}\" - неверный тип (HLA).\n",
                         Name);
                     break;
             }
@@ -82,22 +60,13 @@ namespace Device
                 case DeviceType.HLA:
                     switch(dst)
                     {
-                        case DeviceSubType.HLA_R:
-                            return "HLA_R";
-
-                        case DeviceSubType.HLA_RY:
-                            return "HLA_RY";
-
-                        case DeviceSubType.HLA_RG:
-                            return "HLA_RG";
-
-                        case DeviceSubType.HLA_RYG:
-                            return "HLA_RYG";
+                        case DeviceSubType.HLA:
+                            return "HLA";
                     }
                     break;
             }
 
-            return "";
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
