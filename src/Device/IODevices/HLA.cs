@@ -74,15 +74,20 @@ namespace Device
         {
             switch (dt)
             {
-                //TODO: Build correct properties
                 case DeviceType.HLA:
-                    return new Dictionary<string, int>()
+                    switch(dst)
                     {
-                        {"ST", 1},
-                        {"M", 1},
-                        {"P_DT", 1},
-                    };
+                        case DeviceSubType.HLA:
+                            return new Dictionary<string, int>()
+                            {
+                                {"ST", 1}, //TODO
+                                {"M", 1},
+                                {"P_DT", 1},
+                            };
+                    }
+                    break;
             }
+
             return null;
         }
     }
