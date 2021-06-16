@@ -8,8 +8,8 @@ namespace Device
     public class HLA : IODevice
     {
         public HLA(string fullName, string description, int deviceNumber,
-            string objectName, int objectNumber) : base(
-                fullName, description, deviceNumber, objectName, objectNumber)
+            string objectName, int objectNumber) : base(fullName, description,
+                deviceNumber, objectName, objectNumber)
         {
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.HLA;
