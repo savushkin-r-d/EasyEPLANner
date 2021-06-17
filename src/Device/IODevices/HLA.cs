@@ -25,10 +25,10 @@ namespace Device
                 case "":
                 case "HLA":
                     dSubType = DeviceSubType.HLA;
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Красная лампа"));
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Желтая лампа"));
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Зеленая лампа"));
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Сирена"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Красный цвет"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Желтый цвет"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Зеленый цвет"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Звуковая сигнализация"));
                     break;
 
                 default:
