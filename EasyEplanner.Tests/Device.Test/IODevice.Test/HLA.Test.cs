@@ -244,17 +244,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.HLA("KOAG4HL1", "Test device", 1,
-                        "KOAG", 4);
+                    return new Device.HLA("KOAG4HL1", "+KOAG4-HL1",
+                        "Test device", 1, "KOAG", 4);
                 case 2:
-                    return new Device.HLA("LINE1HL2", "Test device", 2,
-                        "LINE", 1);
+                    return new Device.HLA("LINE1HL2", "+LINE1-HL2",
+                        "Test device", 2, "LINE", 1);
                 case 3:
-                    return new Device.HLA("TANK2HL1", "Test device", 1,
-                        "TANK", 2);
+                    return new Device.HLA("TANK2HL1", "+TANK2-HL1",
+                        "Test device", 1, "TANK", 2);
                 default:
-                    return new Device.HLA("CW_TANK3HL3", "Test device", 3,
-                        "CW_TANK", 3);
+                    return new Device.HLA("CW_TANK3HL3", "+CW_TANK3-HL3",
+                        "Test device", 3, "CW_TANK", 3);
             }
         }
     }

@@ -595,8 +595,8 @@ namespace Device
                     break;
 
                 case "HLA":
-                    dev = new HLA(name, description, deviceNumber, objectName,
-                        objectNumber);
+                    dev = new HLA(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber);
                     break;
 
                 default:
