@@ -228,7 +228,7 @@ namespace TechObject
         /// </summary>
         protected void SetCrossRestriction()
         {
-            if (LuaName != "NextModeRestriction")
+            if (LuaName != skippedRestrictionName)
             {
                 SortedDictionary<int, List<int>>.KeyCollection keyColl =
                     restrictList.Keys;
@@ -240,7 +240,15 @@ namespace TechObject
                     foreach (int val in restrictList[key])
                     {
                         Mode mode = to.GetMode(val - 1);
-                        mode.AddRestriction(luaName, ownerObjNum, ownerModeNum);
+                        if (mode != null)
+                        {
+                            mode.AddRestriction(luaName, ownerObjNum,
+                                ownerModeNum);
+                        }
+                        else
+                        {
+                            throw new System.Exception();
+                        }
                     }
                 }
             }
@@ -254,7 +262,7 @@ namespace TechObject
         {
             // Для ограничений на последующие операции
             // не должны проставляться симметричные ограничения.
-            if ((luaName != "NextModeRestriction") && (diffDict.Count != 0))
+            if (LuaName != skippedRestrictionName && diffDict.Count != 0)
             {
                 SortedDictionary<int, List<int>>.KeyCollection keyColl =
                     diffDict.Keys;
@@ -642,6 +650,8 @@ namespace TechObject
                 return luaName;
             }
         }
+
+        private const string skippedRestrictionName = "NextModeRestriction";
 
         private string name;
         private string restrictStr;

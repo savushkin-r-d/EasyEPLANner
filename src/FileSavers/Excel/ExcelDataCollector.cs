@@ -675,7 +675,6 @@ namespace EasyEPlanner
                 "AO",
                 "DI",
                 "DO",
-                "VC",
             };
 
             var ignoringDevicesSubTypes = new List<string>()
@@ -691,6 +690,7 @@ namespace EasyEPlanner
                 "FQT_VIRT",
                 "LS_VIRT",
                 "LT_VIRT",
+                "VC",
             };
 
             var devices = new List<IODevice>();
@@ -721,7 +721,7 @@ namespace EasyEPlanner
             int counter = 1;
             foreach(var device in devices)
             {         
-                devicesWithArticles[counter, 0] = device.EPlanName;
+                devicesWithArticles[counter, 0] = device.EplanName;
                 devicesWithArticles[counter, 1] = device.GetDeviceSubTypeStr(
                     device.DeviceType, device.DeviceSubType);
                 devicesWithArticles[counter, 2] = device.ArticleName;

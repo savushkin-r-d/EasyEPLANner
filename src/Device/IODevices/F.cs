@@ -4,9 +4,10 @@ namespace Device
 {
     public class F : IODevice
     {
-        public F(string fullName, string description, int deviceNumber,
-            string objectName, int objectNumber, string articleName) : base(
-                fullName, description, deviceNumber, objectName, objectNumber)
+        public F(string name, string eplanName, string description,
+            int deviceNumber, string objectName, int objectNumber,
+            string articleName) : base(name, eplanName, description,
+                deviceNumber, objectName, objectNumber)
         {
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.F;
@@ -72,8 +73,8 @@ namespace Device
                                 {"ST", 1},
                                 {"ERR", 1},
                                 {"ST_CH", 4},
-                                {"NOMINAL_CURRENT", 4},
-                                {"LOAD_CURRENT", 4},
+                                {"NOMINAL_CURRENT_CH", 4},
+                                {"LOAD_CURRENT_CH", 4},
                                 {"ERR_CH", 4},
                             };
                     }

@@ -145,8 +145,8 @@ namespace Tests
                 {"ST", 1},
                 {"ERR", 1},
                 {"ST_CH", 4},
-                {"NOMINAL_CURRENT", 4},
-                {"LOAD_CURRENT", 4},
+                {"NOMINAL_CURRENT_CH", 4},
+                {"LOAD_CURRENT_CH", 4},
                 {"ERR_CH", 4},
             };
 
@@ -250,17 +250,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.F("KOAG4F1", "Test device", 1, 
-                        "KOAG", 4, "");
+                    return new Device.F("KOAG4F1", "+KOAG4-F1",
+                        "Test device", 1, "KOAG", 4, string.Empty);
                 case 2:
-                    return new Device.F("LINE1F2", "Test device", 2, 
-                        "LINE", 1, "");
+                    return new Device.F("LINE1F2", "+LINE1-F2",
+                        "Test device", 2, "LINE", 1, string.Empty);
                 case 3:
-                    return new Device.F("TANK2F1", "Test device", 1, 
-                        "TANK", 2, "");
+                    return new Device.F("TANK2F1", "+TANK2-F1",
+                        "Test device", 1, "TANK", 2, string.Empty);
                 default:
-                    return new Device.F("CW_TANK3F3", "Test device", 3, 
-                        "CW_TANK", 3, "");
+                    return new Device.F("CW_TANK3F3", "+CW_TANK3-F3",
+                        "Test device", 3, "CW_TANK", 3, string.Empty);
             }
         }
     }

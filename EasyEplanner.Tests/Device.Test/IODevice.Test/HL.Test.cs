@@ -109,7 +109,6 @@ namespace Tests
             {
                 {"ST", 1},
                 {"M", 1},
-                {"P_DT", 1},
             };
 
             return new object[]
@@ -205,17 +204,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.HL("KOAG4HL1", "Test device", 1,
-                        "KOAG", 4, "DeviceArticle");
+                    return new Device.HL("KOAG4HL1", "+KOAG4-HL1",
+                        "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.HL("LINE1HL2", "Test device", 2,
-                        "LINE", 1, "DeviceArticle");
+                    return new Device.HL("LINE1HL2", "+LINE1-HL2",
+                        "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.HL("TANK2HL1", "Test device", 1,
-                        "TANK", 2, "DeviceArticle");
+                    return new Device.HL("TANK2HL1", "+TANK2-HL1",
+                        "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.HL("CW_TANK3HL3", "Test device", 3,
-                        "CW_TANK", 3, "DeviceArticle");
+                    return new Device.HL("CW_TANK3HL3", "+CW_TANK3-HL3",
+                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }
     }

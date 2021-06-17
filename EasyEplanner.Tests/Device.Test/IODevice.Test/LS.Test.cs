@@ -368,17 +368,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.LS("KOAG4LS1", "Test device", 1,
-                        "KOAG", 4, "DeviceArticle");
+                    return new Device.LS("KOAG4LS1", "+KOAG4-LS1",
+                        "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.LS("LINE1LS2", "Test device", 2,
-                        "LINE", 1, "DeviceArticle");
+                    return new Device.LS("LINE1LS2", "+LINE1-LS2",
+                        "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.LS("TANK2LS1", "Test device", 1,
-                        "TANK", 2, "DeviceArticle");
+                    return new Device.LS("TANK2LS1", "+TANK2-LS1",
+                        "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.LS("CW_TANK3LS3", "Test device", 3,
-                        "CW_TANK", 3, "DeviceArticle");
+                    return new Device.LS("CW_TANK3LS3", "+CW_TANK3-LS3",
+                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }
     }

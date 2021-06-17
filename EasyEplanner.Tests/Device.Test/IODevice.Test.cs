@@ -86,6 +86,7 @@ namespace Tests
         public static object[] GenerateDeviceTagsCaseSource()
         {
             string devName = "TANK1AO1";
+            string eplanName = "+TANK1-AO1";
             string descr = "Сигнал AO";
             string objName = "TANK";
             int objNum = 1;
@@ -110,7 +111,8 @@ namespace Tests
             expectedNode.Nodes.Add(pMinVNode);
             expectedNode.Nodes.Add(pMaxVNode);
 
-            var dev = new Device.AO(devName, descr, devNum, objName, objNum);
+            var dev = new Device.AO(devName, eplanName, descr, devNum, objName,
+                objNum);
             var defaultAODev = new object[] { dev, expectedNode };
 
             return new object[] { defaultAODev };

@@ -209,17 +209,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.WT("KOAG4WT1", "Test device", 1,
-                        "KOAG", 4, "DeviceArticle");
+                    return new Device.WT("KOAG4WT1", "+KOAG4-WT1",
+                        "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.WT("LINE1WT2", "Test device", 2,
-                        "LINE", 1, "DeviceArticle");
+                    return new Device.WT("LINE1WT2", "+LINE1-WT2",
+                        "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.WT("TANK2WT1", "Test device", 1,
-                        "TANK", 2, "DeviceArticle");
+                    return new Device.WT("TANK2WT1", "+TANK2-WT1",
+                        "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.WT("CW_TANK3WT3", "Test device", 3,
-                        "CW_TANK", 3, "DeviceArticle");
+                    return new Device.WT("CW_TANK3WT3", "+CW_TANK3-WT3",
+                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }
     }

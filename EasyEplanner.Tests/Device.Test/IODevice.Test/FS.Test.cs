@@ -205,17 +205,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.FS("KOAG4FS1", "Test device", 1,
-                        "KOAG", 4, "DeviceArticle");
+                    return new Device.FS("KOAG4FS1", "+KOAG4-FS1",
+                        "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.FS("LINE1FS2", "Test device", 2,
-                        "LINE", 1, "DeviceArticle");
+                    return new Device.FS("LINE1FS2", "+LINE1-FS2",
+                        "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.FS("TANK2FS1", "Test device", 1,
-                        "TANK", 2, "DeviceArticle");
+                    return new Device.FS("TANK2FS1", "+TANK2-FS1",
+                        "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.FS("CW_TANK3FS3", "Test device", 3,
-                        "CW_TANK", 3, "DeviceArticle");
+                    return new Device.FS("CW_TANK3FS3", "+CW_TANK3-FS3",
+                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }
     }

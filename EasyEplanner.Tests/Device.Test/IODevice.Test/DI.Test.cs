@@ -268,17 +268,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.DI("KOAG4DI1", "Test device", 1,
-                        "KOAG", 4);
+                    return new Device.DI("KOAG4DI1", "+KOAG4-DI1",
+                        "Test device", 1, "KOAG", 4);
                 case 2:
-                    return new Device.DI("LINE1DI2", "Test device", 2,
-                        "LINE", 1);
+                    return new Device.DI("LINE1DI2", "+LINE1-DI2",
+                        "Test device", 2, "LINE", 1);
                 case 3:
-                    return new Device.DI("TANK2DI1", "Test device", 1,
-                        "TANK", 2);
+                    return new Device.DI("TANK2DI1", "+TANK2-DI1",
+                        "Test device", 1, "TANK", 2);
                 default:
-                    return new Device.DI("CW_TANK3DI3", "Test device", 3,
-                        "CW_TANK", 3);
+                    return new Device.DI("CW_TANK3DI3", "+CW_TANK3-DI3",
+                        "Test device", 3, "CW_TANK", 3);
             }
         }
     }

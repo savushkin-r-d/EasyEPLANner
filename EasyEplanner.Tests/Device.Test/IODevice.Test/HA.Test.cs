@@ -204,17 +204,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.HA("KOAG4HA1", "Test device", 1,
-                        "KOAG", 4, "DeviceArticle");
+                    return new Device.HA("KOAG4HA1", "+KOAG4-HA1",
+                        "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.HA("LINE1HA2", "Test device", 2,
-                        "LINE", 1, "DeviceArticle");
+                    return new Device.HA("LINE1HA2", "+LINE1-HA2",
+                        "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.HA("TANK2HA1", "Test device", 1,
-                        "TANK", 2, "DeviceArticle");
+                    return new Device.HA("TANK2HA1", "+TANK2-HA1",
+                        "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.HA("CW_TANK3HA3", "Test device", 3,
-                        "CW_TANK", 3, "DeviceArticle");
+                    return new Device.HA("CW_TANK3HA3", "+CW_TANK3-HA3",
+                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }
     }

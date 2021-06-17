@@ -12,7 +12,7 @@ namespace StaticHelper
         /// Из вида "000.000.000.000".
         /// </summary>
         /// <param name="IP">Строка с адресом</param>
-        /// <returns></returns>
+        /// <returns>0 - если не конвертировалось</returns>
         public static long ConvertIPStrToLong(string IP)
         {
             long convertedIP;
@@ -36,8 +36,16 @@ namespace StaticHelper
             }
 
             string IPstring = string.Concat(IPPairs);
-            convertedIP = Convert.ToInt64(IPstring);
-            return convertedIP;
+
+            bool isCorrectIP = long.TryParse(IPstring, out convertedIP);
+            if (isCorrectIP)
+            {
+                return convertedIP;
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
 }

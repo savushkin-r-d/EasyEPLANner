@@ -79,8 +79,8 @@ namespace Device
 
                     if (theSameTagsCount > 1)
                     {
-                        newNode.Nodes.Add($"{Name}.{propName}[{i}]",
-                            $"{Name}.{propName}[{i}]");
+                        newNode.Nodes.Add($"{Name}.{propName}[ {i} ]",
+                            $"{Name}.{propName}[ {i} ]");
                     }
                     else
                     {
@@ -95,14 +95,17 @@ namespace Device
         /// Конструктор на основе имени.
         /// </summary>
         /// <param name="name">Имя устройства (формат - А1V12).</param>
+        /// <param name="eplanName">Имя устройства в Eplan (+A1-V12)</param>
         /// <param name="description">Описание устройства.</param>
         /// <param name="deviceType">Тип устройства (V для А1V12).</param>
         /// <param name="deviceNumber">Номер устройства (12 для А1V12).</param>
         /// <param name="objectName">Объект устройства (А для А1V12).</param>
-        /// <param name="objectNumber">Номер объекта устройства (1 для А1V12).</param>
-        protected internal IODevice(string fullName, string description,
-            string deviceType, int deviceNumber, string objectName, int objectNumber)
-            : this(fullName, description, deviceNumber, objectName, objectNumber)
+        /// <param name="objectNumber">Номер объекта устройства (1 для А1V12).
+        /// </param>
+        protected internal IODevice(string name, string eplanName,
+            string description, string deviceType, int deviceNumber,
+            string objectName, int objectNumber) : this(name, eplanName,
+                description, deviceNumber, objectName, objectNumber)
         {
             try
             {
@@ -118,13 +121,16 @@ namespace Device
         /// Конструктор на основе имени.
         /// </summary>
         /// <param name="name">Имя устройства (формат - А1V12).</param>
+        /// <param name="eplanName">Имя устройства в Eplan (+A1-V12).</param>
         /// <param name="description">Описание устройства.</param>
         /// <param name="deviceNumber">Номер устройства (12 для А1V12).</param>
         /// <param name="objectName">Объект устройства (А для А1V12).</param>
-        /// <param name="objectNumber">Номер объекта устройства (1 для А1V12).</param>
-        protected internal IODevice(string fullName, string description,
-            int deviceNumber, string objectName, int objectNumber)
-            : base(fullName, description, deviceNumber, objectName, objectNumber)
+        /// <param name="objectNumber">Номер объекта устройства (1 для А1V12).
+        /// </param>
+        protected internal IODevice(string name, string eplanName,
+            string description, int deviceNumber, string objectName,
+            int objectNumber) : base(name, eplanName, description,
+                deviceNumber, objectName, objectNumber)
         {
             DO = new List<IOChannel>();
             DI = new List<IOChannel>();

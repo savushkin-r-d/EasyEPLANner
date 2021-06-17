@@ -433,17 +433,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.M("KOAG4M1", "Test device", 1,
-                        "KOAG", 4, "DeviceArticle");
+                    return new Device.M("KOAG4M1", "+KOAG4-M1",
+                        "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.M("LINE1M2", "Test device", 2,
-                        "LINE", 1, "DeviceArticle");
+                    return new Device.M("LINE1M2", "+LINE1-M2",
+                        "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.M("TANK2M1", "Test device", 1,
-                        "TANK", 2, "DeviceArticle");
+                    return new Device.M("TANK2M1", "+TANK2-M1",
+                        "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.M("CW_TANK3M3", "Test device", 3,
-                        "CW_TANK", 3, "DeviceArticle");
+                    return new Device.M("CW_TANK3M3", "+CW_TANK3-M3",
+                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }
     }

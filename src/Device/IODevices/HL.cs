@@ -7,9 +7,10 @@ namespace Device
     /// </summary>
     public class HL : IODevice
     {
-        public HL(string fullName, string description, int deviceNumber,
-            string objectName, int objectNumber, string articleName) : base(
-                fullName, description, deviceNumber, objectName, objectNumber)
+        public HL(string name, string eplanName, string description,
+            int deviceNumber, string objectName, int objectNumber,
+            string articleName) : base(name, eplanName, description,
+                deviceNumber, objectName, objectNumber)
         {
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.HL;
@@ -51,7 +52,6 @@ namespace Device
                     {
                         {"ST", 1},
                         {"M", 1},
-                        {"P_DT", 1},
                     };
             }
             return null;

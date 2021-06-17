@@ -494,7 +494,7 @@ local io_modules =
             },
 
     [ 27 ] = {
-            n = 2701916,
+            n = 2701916, -- Big Endian bytes sequence
             name = 'AXL F DI8/1 DO8/1 1H',
             description = '8-channel Digital I/O module 24V DC, 1-wire',
             addressSpaceType = 6,
@@ -502,12 +502,12 @@ local io_modules =
             groupName = 'AXL F',
             channelClamps = {00, 01, 02, 03, 10, 11, 12, 13, 20, 21, 22, 23,
                             30, 31, 32, 33},
-            channelAddressesIn = {0, 1, -1, -1, -1, -1, -1, -1, -1, 2, 3, -1,
-                            -1, -1, -1, -1, -1, -1, -1, 4, 5, -1, -1, -1, -1,
-                            -1, -1, -1, -1, 6, 7, -1, -1, -1},
-            channelAddressesOut = {-1, -1, 0, 1, -1, -1, -1, -1, -1, -1, 2, 3,
-                            -1, -1, -1, -1, -1, -1, -1, -1, 4, 5, -1, -1, -1,
-                            -1, -1, -1, -1, -1, 6, 7, -1, -1},
+            channelAddressesIn = {8, 9, -1, -1, -1, -1, -1, -1, -1, -1, 10, 11,
+                            -1, -1, -1, -1, -1, -1, -1, -1, 12, 13, -1, -1, -1,
+                            -1, -1, -1, -1, -1, 14, 15, -1, -1},
+            channelAddressesOut = {-1, -1, 8, 9, -1, -1, -1, -1, -1, -1, -1, -1,
+                            10, 11, -1, -1, -1, -1, -1, -1, -1, -1, 12, 13, -1,
+                            -1, -1, -1, -1, -1, -1, -1, 14, 15},
             DO_count = 16,
             DI_count = 16,
             AO_count = 1,
@@ -516,7 +516,7 @@ local io_modules =
             },
 
     [ 28 ] = {
-            n = 2702071,
+            n = 2702071, -- Big Endian bytes sequence
             name = 'AXL F DI8/3 DO8/3 2H',
             description = '8-channel Digital I/O Module 24V DC, 3-wire',
             addressSpaceType = 6,
@@ -775,14 +775,14 @@ local io_modules =
             },
 
     [ 41 ] = {
-            n = 1088131,
+            n = 1088131, -- Сдвиг в 2 слова для входа (Low word)
             name = 'AXL SE CNT1',
             description = '1-Channel Up/Down Counter',
             addressSpaceType = 4,
             typeName = 'Счетчик',
             groupName = 'AXL SE',
             channelClamps = {0},
-            channelAddressesIn = {0, -1, -1, -1, -1, -1, -1, -1},
+            channelAddressesIn = {2, -1, -1, -1, -1, -1, -1, -1},
             channelAddressesOut = { },
             DO_count = 48,
             DI_count = 48,
@@ -806,6 +806,23 @@ local io_modules =
             AO_count = 0,
             AI_count = 0,
             Color = 'Gray',
+            },
+
+    [ 43 ] = {
+            n = 2702072,
+            name = 'AXL F AI2 AO2 1H',
+            description = '2-Channel analog input 2-Channel analog output',
+            addressSpaceType = 5,
+            typeName = 'Аналоговый вход/выход',
+            groupName = 'AXL F',
+            channelClamps = {0, 1, 2, 3},
+            channelAddressesIn = {0, 1, -1, -1},
+            channelAddressesOut = {-1,-1, 0, 1},
+            DO_count = 32,
+            DI_count = 32,
+            AO_count = 2,
+            AI_count = 2,
+            Color = 'Green',
             },
     }
 

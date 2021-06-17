@@ -632,8 +632,8 @@ namespace TechObject
                 }
 
                 var newInputDevs = idDevDict
-                    .Where(x => x.Value.DeviceType == Device.DeviceType.AI ||
-                    x.Value.DeviceType == Device.DeviceType.DI)
+                    .Where(x => allowedInputDevTypes.Contains(
+                        x.Value.DeviceType) == true)
                     .ToList();
                 if (newInputDevs.Count > 1)
                 {
@@ -647,13 +647,68 @@ namespace TechObject
                     }
                 }
 
-                var devList = idDevDict
-                    .ToList()
-                    .OrderBy(x => x.Value.DeviceType.ToString())
-                    .Select(x => x.Key)
-                    .ToList();
+                bool incorrectCountInputDevs = idDevDict
+                    .Where(x => allowedInputDevTypes.Contains(
+                        x.Value.DeviceType))
+                    .Count() > 1;
+                List<int> devList;
+                if (incorrectCountInputDevs)
+                {
+                    devList = idDevDict.Where(x => allowedInputDevTypes
+                            .Contains(x.Value.DeviceType) == false)
+                        .Select(x => x.Key)
+                        .ToList();
+                }
+                else
+                {
+                    devList = idDevDict
+                        .ToList()
+                        .OrderBy(x => x.Value.DeviceType,
+                            new OneInManyDevicesComparer(allowedInputDevTypes))
+                        .Select(x => x.Key)
+                        .ToList();
+                }
+
                 return devList;
             }
+
+            class OneInManyDevicesComparer : IComparer<Device.DeviceType>
+            {
+                public OneInManyDevicesComparer(
+                    List<Device.DeviceType> allowedFirstPlaceDevTypes)
+                {
+                    this.allowedFirstPlaceDevTypes = allowedFirstPlaceDevTypes;
+                }
+
+                public int Compare(Device.DeviceType x, Device.DeviceType y)
+                {
+                    if (x == y) return 0;
+
+                    if(allowedFirstPlaceDevTypes.Contains(x) &&
+                        !allowedFirstPlaceDevTypes.Contains(y))
+                    {
+                        return -1;
+                    }
+
+                    if (!allowedFirstPlaceDevTypes.Contains(x) &&
+                        allowedFirstPlaceDevTypes.Contains(y))
+                    {
+                        return 1;
+                    }
+
+                    return x.ToString().CompareTo(y.ToString());
+                }
+
+                private List<Device.DeviceType> allowedFirstPlaceDevTypes;
+            }
+
+            private List<Device.DeviceType> allowedInputDevTypes =
+                new List<Device.DeviceType>()
+                { 
+                    Device.DeviceType.AI,
+                    Device.DeviceType.DI,
+                    Device.DeviceType.GS
+                };
         }
     }
 }

@@ -113,7 +113,9 @@ namespace TechObject
                 {
                     Device.DeviceType.DI,
                     Device.DeviceType.SB,
-                    Device.DeviceType.DO
+                    Device.DeviceType.DO,
+                    Device.DeviceType.HL,
+                    Device.DeviceType.GS
                 },
                 null,
                 new OneInManyOutActionProcessingStrategy()));

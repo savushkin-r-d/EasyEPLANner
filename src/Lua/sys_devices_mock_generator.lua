@@ -2,6 +2,10 @@
 devs = {}
 devsidx = 0
 
+function DEVICE(dev)
+	return devs[dev][1] or { }
+end
+
 function V(dev)
 	devs[devsidx] = {dev, 'V'}
 	devsidx = devsidx + 1
@@ -116,12 +120,14 @@ function AI(dev)
 	return dev
 end
 
-function DEVICE(dev)
-	return devs[dev][1] or { }
-end
-
 function C(dev)
 	devs[devsidx] = {dev, "C"}
+	devsidx = devsidx + 1
+	return dev
+end
+
+function F(dev)
+	devs[devsidx] = {dev, "F"}
 	devsidx = devsidx + 1
 	return dev
 end

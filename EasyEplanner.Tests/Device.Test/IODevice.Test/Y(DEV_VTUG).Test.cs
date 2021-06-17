@@ -204,17 +204,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.DEV_VTUG("KOAG4Y1", "Test device", 1,
-                        "KOAG", 4, "Test article");
+                    return new Device.DEV_VTUG("KOAG4Y1", "+KOAG4-Y1",
+                        "Test device", 1, "KOAG", 4, "Test article");
                 case 2:
-                    return new Device.DEV_VTUG("LINE1Y2", "Test device", 2,
-                        "LINE", 1, "Test article");
+                    return new Device.DEV_VTUG("LINE1Y2", "+LINE1-Y2",
+                        "Test device", 2, "LINE", 1, "Test article");
                 case 3:
-                    return new Device.DEV_VTUG("TANK2Y1", "Test device", 1,
-                        "TANK", 2, "Test article");
+                    return new Device.DEV_VTUG("TANK2Y1", "+TANK2-Y1",
+                        "Test device", 1, "TANK", 2, "Test article");
                 default:
-                    return new Device.DEV_VTUG("CW_TANK3Y3", "Test device", 3,
-                        "CW_TANK", 3, "Test article");
+                    return new Device.DEV_VTUG("CW_TANK3Y3", "+CW_TANK3-Y3",
+                        "Test device", 3, "CW_TANK", 3, "Test article");
             }
         }
     }
@@ -417,17 +417,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.Y("KOAG4Y1", "Test device", 1,
-                        "KOAG", 4, "Test article");
+                    return new Device.Y("KOAG4Y1", "+KOAG4-Y1",
+                        "Test device", 1, "KOAG", 4, "Test article");
                 case 2:
-                    return new Device.Y("LINE1Y2", "Test device", 2,
-                        "LINE", 1, "Test article");
+                    return new Device.Y("LINE1Y2", "+LINE1-Y2",
+                        "Test device", 2, "LINE", 1, "Test article");
                 case 3:
-                    return new Device.Y("TANK2Y1", "Test device", 1,
-                        "TANK", 2, "Test article");
+                    return new Device.Y("TANK2Y1", "+TANK2-Y1",
+                        "Test device", 1, "TANK", 2, "Test article");
                 default:
-                    return new Device.Y("CW_TANK3Y3", "Test device", 3,
-                        "CW_TANK", 3, "Test article");
+                    return new Device.Y("CW_TANK3Y3", "+CW_TANK3-Y3",
+                        "Test device", 3, "CW_TANK", 3, "Test article");
             }
         }
     }

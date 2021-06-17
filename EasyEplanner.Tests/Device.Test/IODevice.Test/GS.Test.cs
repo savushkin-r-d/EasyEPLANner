@@ -205,17 +205,17 @@ namespace Tests
             switch (value)
             {
                 case 1:
-                    return new Device.GS("KOAG4GS1", "Test device", 1,
-                        "KOAG", 4, "DeviceArticle");
+                    return new Device.GS("KOAG4GS1", "+KOAG4-GS1",
+                        "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.GS("LINE1GS2", "Test device", 2,
-                        "LINE", 1, "DeviceArticle");
+                    return new Device.GS("LINE1GS2", "+LINE1-GS2",
+                        "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.GS("TANK2GS1", "Test device", 1,
-                        "TANK", 2, "DeviceArticle");
+                    return new Device.GS("TANK2GS1", "+TANK2-GS1",
+                        "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.GS("CW_TANK3GS3", "Test device", 3,
-                        "CW_TANK", 3, "DeviceArticle");
+                    return new Device.GS("CW_TANK3GS3", "+CW_TANK3-GS3",
+                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }
     }

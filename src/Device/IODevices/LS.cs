@@ -9,9 +9,10 @@ namespace Device
     /// </summary>
     public class LS : IODevice
     {
-        public LS(string fullName, string description, int deviceNumber,
-            string objectName, int objectNumber, string articleName) : base(
-                fullName, description, deviceNumber, objectName, objectNumber)
+        public LS(string name, string eplanName,  string description,
+            int deviceNumber, string objectName, int objectNumber,
+            string articleName) : base(name, eplanName, description,
+                deviceNumber, objectName, objectNumber)
         {
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.LS;
