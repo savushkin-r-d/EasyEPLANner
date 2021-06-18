@@ -30,7 +30,7 @@ namespace Device
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Зеленый цвет"));
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Звуковая сигнализация"));
 
-                    properties.Add("P_CONST_RED", null);
+                    properties.Add("CONST_RED", null);
                     break;
 
                 default:

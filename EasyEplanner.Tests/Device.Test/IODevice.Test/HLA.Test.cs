@@ -140,13 +140,13 @@ namespace Tests
             {
                 new object[]
                 {
-                    new string[] { "P_CONST_RED" },
+                    new string[] { "CONST_RED" },
                     "HLA",
                     GetRandomHLADevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_CONST_RED" },
+                    new string[] { "CONST_RED" },
                     "",
                     GetRandomHLADevice()
                 },
