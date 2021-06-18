@@ -30,7 +30,7 @@ namespace Device
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Зеленый цвет"));
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Звуковая сигнализация"));
 
-                    parameters.Add("P_CONST_RED", null);
+                    properties.Add("P_CONST_RED", null);
                     break;
 
                 default:
@@ -70,9 +70,8 @@ namespace Device
                         case DeviceSubType.HLA:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1}, //TODO
+                                {"ST", 1},
                                 {"M", 1},
-                                {"P_DT", 1},
                             };
                     }
                     break;

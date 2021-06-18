@@ -14,8 +14,9 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
-        public void SetSubTypeTest(Device.DeviceSubType expectedSubType,
-            string subType, Device.IODevice device)
+        public void SetSubType_NewDev_ReturnsExpectedSubType(
+            Device.DeviceSubType expectedSubType, string subType,
+            Device.IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -47,8 +48,8 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
-        public void GetDeviceSubTypeStrTest(string expectedType,
-            string subType, Device.IODevice device)
+        public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
+            string expectedType, string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
@@ -78,7 +79,7 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
-        public void GetDevicePropertiesTest(
+        public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
             Device.IODevice device)
         {
@@ -98,7 +99,7 @@ namespace Tests
             var exportForHLA = new Dictionary<string, int>()
             {
                 {"ST", 1},
-                {"M", 1}, // TODO
+                {"M", 1},
             };
 
             return new object[]
@@ -110,20 +111,21 @@ namespace Tests
         }
 
         /// <summary>
-        /// Тестирование параметров устройства
+        /// Тестирование свойств устройства
         /// </summary>
-        /// <param name="parametersSequence">Ожидаемые параметры</param>
+        /// <param name="expectedProperties">Ожидаемые свойства</param>
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(ParametersTestData))]
-        public void ParametersTest(string[] parametersSequence, string subType,
+        [TestCaseSource(nameof(PropertiesTestData))]
+        public void Properties_NewDev_ReturnsExpectedProperties(
+            string[] expectedProperties, string subType,
             Device.IODevice device)
         {
             device.SetSubType(subType);
-            string[] actualParametersSequence = device.Parameters
+            string[] actualSequence = device.Properties
                 .Select(x => x.Key)
                 .ToArray();
-            Assert.AreEqual(parametersSequence, actualParametersSequence);
+            Assert.AreEqual(expectedProperties, actualSequence);
         }
 
         /// <summary>
@@ -132,7 +134,7 @@ namespace Tests
         /// 3 - Устройство
         /// </summary>
         /// <returns></returns>
-        private static object[] ParametersTestData()
+        private static object[] PropertiesTestData()
         {
             return new object[]
             {
@@ -165,8 +167,9 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(ChannelsTestData))]
-        public void ChannelsTest(Dictionary<string, int> expectedChannelsCount,
-            string subType, Device.IODevice device)
+        public void Channels_NewDev_ReturnsExpectedCount(
+            Dictionary<string, int> expectedChannelsCount, string subType,
+            Device.IODevice device)
         {
             device.SetSubType(subType);
             int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
