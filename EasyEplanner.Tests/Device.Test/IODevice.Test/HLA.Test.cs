@@ -98,7 +98,7 @@ namespace Tests
             var exportForHLA = new Dictionary<string, int>()
             {
                 {"ST", 1},
-                {"M", 1},
+                {"M", 1}, // TODO
             };
 
             return new object[]
@@ -138,13 +138,13 @@ namespace Tests
             {
                 new object[]
                 {
-                    new string[0], //TODO
+                    new string[] { "P_CONST_RED" },
                     "HLA",
                     GetRandomHLADevice()
                 },
                 new object[]
                 {
-                    new string[0], //TODO
+                    new string[] { "P_CONST_RED" },
                     "",
                     GetRandomHLADevice()
                 },
