@@ -347,7 +347,6 @@ namespace Device
                 {
                     objectName = match.Groups["object_main"].Value +
                             match.Groups["object"].Value;
-
                     if (match.Groups["object_n"].Value != string.Empty)
                     {
                         objectNumber = Convert
@@ -408,7 +407,8 @@ namespace Device
             "F",
             "Y",
             "DEV_VTUG", // Совместимость со старыми проектами
-            "C"
+            "C",
+            "HLA",
         };
 
         /// <summary>
@@ -591,6 +591,11 @@ namespace Device
 
                 case "C":
                     dev = new C(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber);
+                    break;
+
+                case "HLA":
+                    dev = new HLA(name, eplanName, description, deviceNumber,
                         objectName, objectNumber);
                     break;
 

@@ -131,3 +131,9 @@ function F(dev)
 	devsidx = devsidx + 1
 	return dev
 end
+
+function HLA(dev)
+	devs[devsidx] = {dev, "HLA"}
+	devsidx = devsidx + 1
+	return dev
+end
