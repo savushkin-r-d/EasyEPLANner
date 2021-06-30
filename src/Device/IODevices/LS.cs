@@ -158,6 +158,7 @@ namespace Device
                                 {"ST", 1},
                                 {"M", 1},
                                 {"V", 1},
+                                {"P_DT", 1},
                                 {"P_ERR", 1},
                             };
                     }
