@@ -72,6 +72,10 @@ namespace Device
                             {
                                 {"ST", 1},
                                 {"M", 1},
+                                {"L_RED", 1 },
+                                {"L_YELLOW", 1 },
+                                {"L_GREEN", 1 },
+                                {"L_SIREN", 1 },
                             };
                     }
                     break;
