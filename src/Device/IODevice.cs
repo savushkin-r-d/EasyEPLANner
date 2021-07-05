@@ -827,6 +827,17 @@ namespace Device
         }
 
         /// <summary>
+        /// Рабочие параметры устройства.
+        /// </summary>
+        public Dictionary<string, object> RuntimeParameters
+        {
+            get
+            {
+                return rtParameters;
+            }
+        }
+
+        /// <summary>
         /// Свойство содержащее изделие, которое используется для устройства
         /// </summary>
         public string ArticleName { get; set; } = "";
