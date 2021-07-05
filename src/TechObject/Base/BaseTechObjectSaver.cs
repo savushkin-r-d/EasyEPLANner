@@ -233,6 +233,7 @@ namespace TechObject
                 res += $"{prefix}}}\n";
             }
 
+
             return res;
         }
 
@@ -272,6 +273,10 @@ namespace TechObject
                     statesDescription += $"{stepPrefix}{{\n";
                     statesDescription += steps;
                     statesDescription += $"{stepPrefix}}},\n";
+                }
+                else
+                {
+                    statesDescription += $"{statePrefix}{state.Type} = {{}},\n";
                 }
             }
 
