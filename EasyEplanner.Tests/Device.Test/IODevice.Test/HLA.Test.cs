@@ -192,6 +192,55 @@ namespace Tests
         }
 
         /// <summary>
+        /// Тестирование свойств устройства
+        /// </summary>
+        /// <param name="expectedProperties">Ожидаемые свойства</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(PropertiesTestData))]
+        public void RuntimeParameters_NewDev_ReturnsExpectedProperties(
+            string[] expectedProperties, string subType,
+            Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            string[] actualSequence = device.RuntimeParameters
+                .Select(x => x.Key)
+                .ToArray();
+            Assert.AreEqual(expectedProperties, actualSequence);
+        }
+
+        /// <summary>
+        /// 1 - Параметры в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        private static object[] PropertiesTestData()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new string[] { "R_CONST_RED" },
+                    "HLA",
+                    GetRandomHLADevice()
+                },
+                new object[]
+                {
+                    new string[] { "R_CONST_RED" },
+                    "",
+                    GetRandomHLADevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "InCorrect",
+                    GetRandomHLADevice()
+                },
+            };
+        }
+
+        /// <summary>
         /// Генератор HL устройств
         /// </summary>
         /// <returns></returns>
