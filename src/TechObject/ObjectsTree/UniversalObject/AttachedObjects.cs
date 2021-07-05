@@ -28,7 +28,9 @@ namespace TechObject
                 thisObjNum);
 
             newValue = string.Join(" ", newNumbers);
-            base.SetNewValue(newValue);
+            string sortedValue = MoveNewValuesInTheEndOfString(newValue,
+                oldValue);
+            base.SetNewValue(sortedValue);
 
             if (strategy.UseInitialization)
             {
@@ -53,6 +55,37 @@ namespace TechObject
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Переместить новые значения в конец строки
+        /// </summary>
+        /// <param name="newValue">Строка с новыми значениями</param>
+        /// <param name="oldValue">Строка со старыми значениями</param>
+        /// <returns></returns>
+        private string MoveNewValuesInTheEndOfString(string newValue,
+            string oldValue)
+        {
+            char charSeparator = ' ';
+            List<string> oldValues = oldValue.Split(charSeparator).ToList();
+            List<string> newValues = newValue.Split(charSeparator).ToList();
+            
+            if(oldValues.Count >= newValues.Count)
+            {
+                return newValue;
+            }
+            else
+            {
+                List<string> differenceInValues = newValues
+                    .Except(oldValues).ToList();
+                foreach(var diffValue in differenceInValues)
+                {
+                    oldValues.Add(diffValue);
+                }
+
+                string stringSeparator = " ";
+                return string.Join(stringSeparator, oldValues);
+            }
         }
 
         public override bool SetNewValue(IDictionary<int, List<int>> newDict)
