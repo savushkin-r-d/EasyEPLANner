@@ -233,7 +233,6 @@ namespace TechObject
                 res += $"{prefix}}}\n";
             }
 
-
             return res;
         }
 
