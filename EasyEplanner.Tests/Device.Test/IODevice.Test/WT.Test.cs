@@ -2,12 +2,50 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Tests
 {
     public class WTTest
     {
+        private const string IncorrectSubType = "Incorrect";
+        private const string WT = "WT";
+        private const string WT_VIRT = "WT_VIRT";
+
+        /// <summary>
+        /// Тест установки подтипа устройства
+        /// </summary>
+        /// <param name="expectedSubType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(SetSubTypeTestData))]
+        public void SetSubTypeTest(Device.DeviceSubType expectedSubType,
+            string subType, Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            Assert.AreEqual(expectedSubType, device.DeviceSubType);
+        }
+
+        /// <summary>
+        /// 1 - Ожидаемое значение подтипа,
+        /// 2 - Задаваемое значение подтипа,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] SetSubTypeTestData()
+        {
+            return new object[]
+            {
+                new object[] { Device.DeviceSubType.WT, WT,
+                    GetRandomWTDevice() },
+                new object[] { Device.DeviceSubType.WT_VIRT, WT_VIRT,
+                    GetRandomWTDevice() },
+                new object[] { Device.DeviceSubType.WT, WT,
+                    GetRandomWTDevice() },
+                new object[] { Device.DeviceSubType.NONE, IncorrectSubType,
+                    GetRandomWTDevice() },
+            };
+        }
+
         /// <summary>
         /// Тест получения подтипа устройства
         /// </summary>
@@ -21,6 +59,23 @@ namespace Tests
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
                 device.DeviceType, device.DeviceSubType));
+        }
+
+        /// <summary>
+        /// 1 - Ожидаемое значение подтипа,
+        /// 2 - Задаваемое значение подтипа,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] GetDeviceSubTypeStrTestData()
+        {
+            return new object[]
+            {
+                new object[] { WT, string.Empty, GetRandomWTDevice() },
+                new object[] { WT, WT, GetRandomWTDevice() },
+                new object[] { string.Empty, IncorrectSubType, GetRandomWTDevice() },
+                new object[] { WT_VIRT, WT_VIRT, GetRandomWTDevice() },
+            };
         }
 
         /// <summary>
@@ -40,6 +95,34 @@ namespace Tests
         }
 
         /// <summary>
+        /// 1 - Ожидаемый список свойств для экспорта,
+        /// 2 - Задаваемый подтип устройства,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] GetDevicePropertiesTestData()
+        {
+            var exportForWT = new Dictionary<string, int>()
+            {
+                {"ST", 1},
+                {"M", 1},
+                {"V", 1},
+                {"P_NOMINAL_W", 1},
+                {"P_DT", 1},
+                {"P_RKP", 1},
+                {"P_CZ", 1},
+            };
+
+            return new object[]
+            {
+                new object[] {exportForWT, string.Empty, GetRandomWTDevice() },
+                new object[] {exportForWT, WT, GetRandomWTDevice() },
+                new object[] {null, WT_VIRT, GetRandomWTDevice() },
+                new object[] {null, IncorrectSubType, GetRandomWTDevice() },
+            };
+        }
+
+        /// <summary>
         /// Тестирование параметров устройства
         /// </summary>
         /// <param name="parametersSequence">Ожидаемые параметры</param>
@@ -54,6 +137,51 @@ namespace Tests
                 .Select(x => x.Key)
                 .ToArray();
             Assert.AreEqual(parametersSequence, actualParametersSequence);
+        }
+
+        /// <summary>
+        /// 1 - Параметры в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        private static object[] ParametersTestData()
+        {
+            var parameters = new string[]
+            {
+                "P_NOMINAL_W",
+                "P_RKP",
+                "P_C0",
+                "P_DT"
+            };
+
+            return new object[]
+            {
+                new object[]
+                {
+                    parameters,
+                    WT,
+                    GetRandomWTDevice()
+                },
+                new object[]
+                {
+                    parameters,
+                    string.Empty,
+                    GetRandomWTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    WT_VIRT,
+                    GetRandomWTDevice(),
+                },
+                new object[]
+                {
+                    new string[0],
+                    IncorrectSubType,
+                    GetRandomWTDevice(),
+                }
+            };
         }
 
         /// <summary>
@@ -83,72 +211,6 @@ namespace Tests
         }
 
         /// <summary>
-        /// 1 - Ожидаемое значение подтипа,
-        /// 2 - Задаваемое значение подтипа,
-        /// 3 - Устройство для тестов
-        /// </summary>
-        /// <returns></returns>
-        private static object[] GetDeviceSubTypeStrTestData()
-        {
-            return new object[]
-            {
-                new object[] { "WT", "", GetRandomWTDevice() },
-                new object[] { "WT", "Incorrect", GetRandomWTDevice() },
-            };
-        }
-
-        /// <summary>
-        /// 1 - Ожидаемый список свойств для экспорта,
-        /// 2 - Задаваемый подтип устройства,
-        /// 3 - Устройство для тестов
-        /// </summary>
-        /// <returns></returns>
-        private static object[] GetDevicePropertiesTestData()
-        {
-            var exportForWT = new Dictionary<string, int>()
-            {
-                {"ST", 1},
-                {"M", 1},
-                {"V", 1},
-                {"P_NOMINAL_W", 1},
-                {"P_DT", 1},
-                {"P_RKP", 1},
-                {"P_CZ", 1},
-            };
-
-            return new object[]
-            {
-                new object[] {exportForWT, "", GetRandomWTDevice()},
-                new object[] {exportForWT, "WT", GetRandomWTDevice()},
-            };
-        }
-
-        /// <summary>
-        /// 1 - Параметры в том порядке, который нужен
-        /// 2 - Подтип устройства
-        /// 3 - Устройство
-        /// </summary>
-        /// <returns></returns>
-        private static object[] ParametersTestData()
-        {
-            return new object[]
-            {
-                new object[]
-                {
-                    new string[] { "P_NOMINAL_W", "P_RKP", "P_C0", "P_DT" },
-                    "WT",
-                    GetRandomWTDevice()
-                },
-                new object[]
-                {
-                    new string[] { "P_NOMINAL_W", "P_RKP", "P_C0", "P_DT" },
-                    "",
-                    GetRandomWTDevice()
-                },
-            };
-        }
-
-        /// <summary>
         /// Данные для тестирования каналов устройств по подтипам.
         /// 1. Словарь с количеством каналов и их типами
         /// 2. Подтип устройства
@@ -168,7 +230,7 @@ namespace Tests
                         { "DI", 0 },
                         { "DO", 0 },
                     },
-                    "WT",
+                    WT,
                     GetRandomWTDevice()
                 },
                 new object[]
@@ -180,19 +242,31 @@ namespace Tests
                         { "DI", 0 },
                         { "DO", 0 },
                     },
-                    "",
+                    string.Empty,
                     GetRandomWTDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 2 },
+                        { "AI", 0 },
                         { "AO", 0 },
                         { "DI", 0 },
                         { "DO", 0 },
                     },
-                    "Incorrect",
+                    IncorrectSubType,
+                    GetRandomWTDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    WT_VIRT,
                     GetRandomWTDevice()
                 }
             };
