@@ -23,11 +23,10 @@ namespace Device
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "AI_VIRT":
-                    dSubType = DeviceSubType.AI_VIRT;
                     break;
 
                 case "AI":
@@ -43,7 +42,7 @@ namespace Device
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (AI, AI_VIRT).\n",
+                        " (пустая строка, AI, AI_VIRT).\n",
                         Name);
                     break;
             }
@@ -53,13 +52,14 @@ namespace Device
 
         public override string GetRange()
         {
-            string range = "";
+            string range = string.Empty;
             if (parameters.ContainsKey("P_MIN_V") &&
                 parameters.ContainsKey("P_MAX_V"))
             {
                 range = "_" + parameters["P_MIN_V"].ToString() + ".." +
                     parameters["P_MAX_V"].ToString();
             }
+
             return range;
         }
 
@@ -78,7 +78,8 @@ namespace Device
                     }
                     break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -109,6 +110,7 @@ namespace Device
                     }
                     break;
             }
+
             return null;
         }
     }

@@ -23,7 +23,7 @@ namespace Device
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "LT":
@@ -100,7 +100,8 @@ namespace Device
         {
             string res = base.Check();
 
-            if (ArticleName == "" && dSubType != DeviceSubType.LT_VIRT)
+            if (ArticleName == string.Empty &&
+                dSubType != DeviceSubType.LT_VIRT)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -131,7 +132,8 @@ namespace Device
                     }
                     break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -211,6 +213,7 @@ namespace Device
                     }
                     break;
             }
+
             return null;
         }
     }

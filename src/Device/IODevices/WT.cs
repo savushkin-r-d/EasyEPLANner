@@ -77,7 +77,6 @@ namespace Device
                     {
                         case DeviceSubType.WT:
                             return "WT";
-
                         case DeviceSubType.WT_VIRT:
                             return "WT_VIRT";
                     }

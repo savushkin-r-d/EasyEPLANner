@@ -50,6 +50,7 @@ namespace Device
                 case DeviceType.C:
                     return dt.ToString();
             }
+
             return string.Empty;
         }
 
@@ -67,6 +68,7 @@ namespace Device
                         {"Z", 1},
                     };
             }
+
             return null;
         }
 

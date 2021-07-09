@@ -18,7 +18,7 @@ namespace Device
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "F":
@@ -31,14 +31,30 @@ namespace Device
                     SetIOLinkSizes(ArticleName);
                     break;
 
+                case "F_VIRT":
+                    break;
+
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (пустая строка, F).\n",
+                        " (пустая строка, F, F_VIRT).\n",
                         Name);
                     break;
             }
 
             return errStr;
+        }
+
+        public override string Check()
+        {
+            string res = base.Check();
+
+            if (ArticleName == string.Empty &&
+                dSubType != DeviceSubType.F_VIRT)
+            {
+                res += $"\"{name}\" - не задано изделие.\n";
+            }
+
+            return res;
         }
 
         public override string GetDeviceSubTypeStr(DeviceType dt,
@@ -51,10 +67,13 @@ namespace Device
                     {
                         case DeviceSubType.F:
                             return "F";
+                        case DeviceSubType.F_VIRT:
+                            return "F_VIRT";
                     }
                     break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -80,6 +99,7 @@ namespace Device
                     }
                     break;
             }
+
             return null;
         }
     }

@@ -64,7 +64,6 @@ namespace Device
                     {
                         case DeviceSubType.SB:
                             return "SB";
-
                         case DeviceSubType.SB_VIRT:
                             return "SB_VIRT";
                     }

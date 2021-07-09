@@ -33,8 +33,12 @@ namespace Device
                     rtParameters.Add("R_CONST_RED", null);
                     break;
 
+                case "HLA_VIRT":
+                    break;
+
                 default:
-                    errStr = string.Format("\"{0}\" - неверный тип (HLA).\n",
+                    errStr = string.Format("\"{0}\" - неверный тип " +
+                        "(пустая строка, HLA, HLA_VIRT).\n",
                         Name);
                     break;
             }
@@ -52,6 +56,8 @@ namespace Device
                     {
                         case DeviceSubType.HLA:
                             return "HLA";
+                        case DeviceSubType.HLA_VIRT:
+                            return "HLA_VIRT";
                     }
                     break;
             }

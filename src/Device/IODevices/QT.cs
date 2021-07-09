@@ -19,21 +19,21 @@ namespace Device
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.QT;
             ArticleName = articleName;
-
-            AI.Add(new IOChannel("AI", -1, -1, -1, ""));
         }
 
         public override string SetSubType(string subtype)
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "QT":
                     parameters.Add("P_C0", null);
                     parameters.Add("P_MIN_V", null);
                     parameters.Add("P_MAX_V", null);
+
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     break;
 
                 case "QT_OK":
@@ -41,24 +41,30 @@ namespace Device
                     parameters.Add("P_MIN_V", null);
                     parameters.Add("P_MAX_V", null);
 
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
                     break;
 
                 case "QT_IOLINK":
                     parameters.Add("P_ERR", null);
 
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+
                     SetIOLinkSizes(ArticleName);
+                    break;
+
+                case "QT_VIRT":
                     break;
 
                 case "":
                     errStr = string.Format("\"{0}\" - не задан тип" +
-                        " (QT, QT_OK, QT_IOLINK).\n",
+                        " (QT, QT_OK, QT_IOLINK, QT_VIRT).\n",
                         Name);
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (QT, QT_OK, QT_IOLINK).\n",
+                        " (QT, QT_OK, QT_IOLINK, QT_VIRT).\n",
                         Name);
                     break;
             }
@@ -68,13 +74,14 @@ namespace Device
 
         public override string GetRange()
         {
-            string range = "";
+            string range = string.Empty;
             if (parameters.ContainsKey("P_MIN_V") &&
                 parameters.ContainsKey("P_MAX_V"))
             {
                 range = "_" + parameters["P_MIN_V"].ToString() + ".." +
                     parameters["P_MAX_V"].ToString();
             }
+
             return range;
         }
 
@@ -86,7 +93,7 @@ namespace Device
         {
             string res = base.Check();
 
-            if (this.DeviceSubType != DeviceSubType.QT_IOLINK)
+            if (DeviceSubType != DeviceSubType.QT_IOLINK)
             {
                 if (parameters.Count < 2)
                 {
@@ -95,7 +102,8 @@ namespace Device
                 }
             }
 
-            if (ArticleName == "")
+            if (ArticleName == string.Empty &&
+                dSubType != DeviceSubType.QT_VIRT)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -117,10 +125,13 @@ namespace Device
                             return "QT_OK";
                         case DeviceSubType.QT_IOLINK:
                             return "QT_IOLINK";
+                        case DeviceSubType.QT_VIRT:
+                            return "QT_VIRT";
                     }
                     break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -167,6 +178,7 @@ namespace Device
                     }
                     break;
             }
+
             return null;
         }
     }

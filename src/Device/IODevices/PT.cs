@@ -19,25 +19,27 @@ namespace Device
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.PT;
             ArticleName = articleName;
-
-            AI.Add(new IOChannel("AI", -1, -1, -1, ""));
         }
 
         public override string SetSubType(string subType)
         {
             base.SetSubType(subType);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subType)
             {
                 case "PT":
                     parameters.Add("P_C0", null);
                     parameters.Add("P_MIN_V", null);
                     parameters.Add("P_MAX_V", null);
+
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     break;
 
                 case "PT_IOLINK":
                     parameters.Add("P_ERR", null);
+
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
                     SetIOLinkSizes(ArticleName);
                     break;
@@ -45,31 +47,38 @@ namespace Device
                 case "DEV_SPAE":
                     parameters.Add("P_ERR", null);
 
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+
                     SetIOLinkSizes(ArticleName);
+                    break;
+
+                case "PT_VIRT":
                     break;
 
                 case "":
                     errStr = string.Format("\"{0}\" - не задан тип" +
-                        " (PT, PT_IOLINK, DEV_SPAE).\n", Name);
+                        " (PT, PT_IOLINK, DEV_SPAE, PT_VIRT).\n", Name);
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (PT, PT_IOLINK, DEV_SPAE).\n", Name);
+                        " (PT, PT_IOLINK, DEV_SPAE, PT_VIRT).\n", Name);
                     break;
             }
+
             return errStr;
         }
 
         public override string GetRange()
         {
-            string range = "";
+            string range = string.Empty;
             if (parameters.ContainsKey("P_MIN_V") &&
                 parameters.ContainsKey("P_MAX_V"))
             {
                 range = "_" + parameters["P_MIN_V"].ToString() + ".." +
                     parameters["P_MAX_V"].ToString();
             }
+
             return range;
         }
 
@@ -77,7 +86,8 @@ namespace Device
         {
             string res = base.Check();
 
-            if (ArticleName == "")
+            if (ArticleName == string.Empty &&
+                dSubType != DeviceSubType.PT_VIRT)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -95,16 +105,17 @@ namespace Device
                     {
                         case DeviceSubType.PT:
                             return "PT";
-
                         case DeviceSubType.PT_IOLINK:
                             return "PT_IOLINK";
-
                         case DeviceSubType.DEV_SPAE:
                             return "DEV_SPAE";
+                        case DeviceSubType.PT_VIRT:
+                            return "PT_VIRT";
                     }
                     break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -146,6 +157,7 @@ namespace Device
                     }
                     break;
             }
+
             return null;
         }
     }

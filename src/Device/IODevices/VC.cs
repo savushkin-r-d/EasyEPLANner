@@ -61,10 +61,8 @@ namespace Device
                     {
                         case DeviceSubType.VC:
                             return "VC";
-
                         case DeviceSubType.VC_IOLINK:
                             return "VC_IOLINK";
-
                         case DeviceSubType.VC_VIRT:
                             return "VC_VIRT";
                     }

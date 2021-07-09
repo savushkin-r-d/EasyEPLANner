@@ -19,23 +19,24 @@ namespace Device
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "DI_VIRT":
-                    dSubType = DeviceSubType.DI_VIRT;
                     break;
 
                 case "DI":
                 case "":
                     parameters.Add("P_DT", null);
+
                     dSubType = DeviceSubType.DI;
+
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (DI, DI_VIRT).\n",
+                        " (пустая строка, DI, DI_VIRT).\n",
                         Name);
                     break;
             }
@@ -58,7 +59,8 @@ namespace Device
                     }
                     break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -86,6 +88,7 @@ namespace Device
                     }
                     break;
             }
+
             return null;
         }
     }

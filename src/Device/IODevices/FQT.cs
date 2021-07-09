@@ -27,7 +27,7 @@ namespace Device
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "FQT":
@@ -44,7 +44,6 @@ namespace Device
                     parameters.Add("P_DT", null);
 
                     properties.Add("MT", null); //Связанные моторы.
-
                     break;
 
                 case "FQT_F_OK":
@@ -58,7 +57,6 @@ namespace Device
                     parameters.Add("P_DT", null);
 
                     properties.Add("MT", null); //Связанные моторы.
-
                     break;
 
                 case "FQT_VIRT":
@@ -82,13 +80,14 @@ namespace Device
 
         public override string GetRange()
         {
-            string range = "";
+            string range = string.Empty;
             if (parameters.ContainsKey("P_MIN_F") &&
                 parameters.ContainsKey("P_MAX_F"))
             {
                 range = "_" + parameters["P_MIN_F"].ToString() + ".." +
                     parameters["P_MAX_F"].ToString();
             }
+
             return range;
         }
 
@@ -123,7 +122,8 @@ namespace Device
                     }
                     break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -188,6 +188,7 @@ namespace Device
                     }
                     break;
             }
+
             return null;
         }
     }
