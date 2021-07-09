@@ -34,7 +34,9 @@ namespace Tests.Devices
             {
                 new object[] { Device.DeviceSubType.HLA, "HLA",
                     GetRandomHLADevice() },
-                new object[] { Device.DeviceSubType.HLA, "",
+                new object[] { Device.DeviceSubType.HLA_VIRT, "HLA_VIRT",
+                    GetRandomHLADevice() },
+                new object[] { Device.DeviceSubType.HLA, string.Empty,
                     GetRandomHLADevice() },
                 new object[] { Device.DeviceSubType.NONE,
                     "Incorrect", GetRandomHLADevice() },
@@ -66,9 +68,10 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "HLA", "", GetRandomHLADevice() },
-                new object[] { "HLA", "", GetRandomHLADevice() },
-                new object[] { "", "Incorrect", GetRandomHLADevice() },
+                new object[] { "HLA", string.Empty, GetRandomHLADevice() },
+                new object[] { "HLA", "HLA", GetRandomHLADevice() },
+                new object[] { "HLA_VIRT", "HLA_VIRT", GetRandomHLADevice() },
+                new object[] { string.Empty, "Incorrect", GetRandomHLADevice() },
             };
         }
 
@@ -108,9 +111,10 @@ namespace Tests.Devices
 
             return new object[]
             {
-                new object[] {exportForHLA, "", GetRandomHLADevice()},
+                new object[] {exportForHLA, string.Empty, GetRandomHLADevice()},
                 new object[] {exportForHLA, "HLA", GetRandomHLADevice()},
                 new object[] {null, "Incorrect", GetRandomHLADevice()},
+                new object[] {null, "HLA_VIRT", GetRandomHLADevice()},
             };
         }
 
@@ -173,7 +177,7 @@ namespace Tests.Devices
                         { "DI", 0 },
                         { "DO", 4 },
                     },
-                    "",
+                    string.Empty,
                     GetRandomHLADevice()
                 },
                 new object[]
@@ -186,6 +190,18 @@ namespace Tests.Devices
                         { "DO", 0 },
                     },
                     "Incorrect",
+                    GetRandomHLADevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "HLA_VIRT",
                     GetRandomHLADevice()
                 }
             };
@@ -228,13 +244,19 @@ namespace Tests.Devices
                 new object[]
                 {
                     new string[] { "R_CONST_RED" },
-                    "",
+                    string.Empty,
                     GetRandomHLADevice()
                 },
                 new object[]
                 {
                     new string[0],
                     "InCorrect",
+                    GetRandomHLADevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "HLA_VIRT",
                     GetRandomHLADevice()
                 },
             };

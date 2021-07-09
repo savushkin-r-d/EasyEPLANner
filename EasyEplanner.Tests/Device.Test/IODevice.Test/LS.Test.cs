@@ -129,7 +129,7 @@ namespace Tests.Devices
                     "LS_IOLINK_MAX", GetRandomLSDevice() },
                 new object[] { Device.DeviceSubType.LS_VIRT, "LS_VIRT",
                     GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.NONE, "",
+                new object[] { Device.DeviceSubType.NONE, string.Empty,
                     GetRandomLSDevice() },
                 new object[] { Device.DeviceSubType.NONE, "Incorrect",
                     GetRandomLSDevice() },
@@ -153,8 +153,8 @@ namespace Tests.Devices
                 new object[] { "LS_IOLINK_MAX", "LS_IOLINK_MAX",
                     GetRandomLSDevice() },
                 new object[] { "LS_VIRT", "LS_VIRT", GetRandomLSDevice() },
-                new object[] { "", "", GetRandomLSDevice() },
-                new object[] { "", "Incorrect", GetRandomLSDevice() },
+                new object[] { string.Empty, string.Empty, GetRandomLSDevice() },
+                new object[] { string.Empty, "Incorrect", GetRandomLSDevice() },
             };
         }
 
@@ -192,7 +192,7 @@ namespace Tests.Devices
                 new object[] {exportForIOLinkLS, "LS_IOLINK_MAX",
                     GetRandomLSDevice()},
                 new object[] {null, "Incorrect", GetRandomLSDevice()},
-                new object[] {null, "", GetRandomLSDevice()},
+                new object[] {null, string.Empty, GetRandomLSDevice()},
             };
         }
 
@@ -210,9 +210,9 @@ namespace Tests.Devices
                 new object[] {$"_Min", "LS_IOLINK_MIN", GetRandomLSDevice()},
                 new object[] {$"_Max", "LS_MAX", GetRandomLSDevice()},
                 new object[] {$"_Max", "LS_IOLINK_MAX", GetRandomLSDevice()},
-                new object[] {$"", "", GetRandomLSDevice()},
-                new object[] {$"", "Incorrect", GetRandomLSDevice()},
-                new object[] {$"", "LS_VIRT", GetRandomLSDevice()},
+                new object[] { string.Empty, string.Empty, GetRandomLSDevice()},
+                new object[] { string.Empty, "Incorrect", GetRandomLSDevice()},
+                new object[] { string.Empty, "LS_VIRT", GetRandomLSDevice()},
             };
         }
 
@@ -254,6 +254,12 @@ namespace Tests.Devices
                 {
                     new string[] { "P_DT", "P_ERR" },
                     "LS_IOLINK_MAX",
+                    GetRandomLSDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    string.Empty,
                     GetRandomLSDevice()
                 },
             };
@@ -339,7 +345,7 @@ namespace Tests.Devices
                         { "DI", 0 },
                         { "DO", 0 },
                     },
-                    "",
+                    string.Empty,
                     GetRandomLSDevice()
                 },
                 new object[]

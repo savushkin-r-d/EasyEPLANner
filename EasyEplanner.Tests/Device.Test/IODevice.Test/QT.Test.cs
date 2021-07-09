@@ -123,7 +123,7 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.NONE, "",
+                new object[] { Device.DeviceSubType.NONE, string.Empty,
                     GetRandomQTDevice() },
                 new object[] { Device.DeviceSubType.QT, "QT",
                     GetRandomQTDevice() },
@@ -132,6 +132,8 @@ namespace Tests.Devices
                 new object[] { Device.DeviceSubType.QT_OK, "QT_OK",
                     GetRandomQTDevice() },
                 new object[] { Device.DeviceSubType.NONE, "Incorrect",
+                    GetRandomQTDevice() },
+                new object[] { Device.DeviceSubType.QT_VIRT, "QT_VIRT",
                     GetRandomQTDevice() },
             };
         }
@@ -146,11 +148,12 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "", "", GetRandomQTDevice() },
+                new object[] { string.Empty, string.Empty, GetRandomQTDevice() },
                 new object[] { "QT", "QT", GetRandomQTDevice() },
                 new object[] { "QT_IOLINK", "QT_IOLINK", GetRandomQTDevice() },
                 new object[] { "QT_OK", "QT_OK", GetRandomQTDevice() },
-                new object[] { "", "Incorrect", GetRandomQTDevice() },
+                new object[] { string.Empty, "Incorrect", GetRandomQTDevice() },
+                new object[] { "QT_VIRT", "QT_VIRT", GetRandomQTDevice() },
             };
         }
 
@@ -200,8 +203,9 @@ namespace Tests.Devices
                     GetRandomQTDevice()},
                 new object[] {exportForQTOk, "QT_OK",
                     GetRandomQTDevice()},
-                new object[] {null, "", GetRandomQTDevice()},
+                new object[] {null, string.Empty, GetRandomQTDevice()},
                 new object[] {null, "Incorrect", GetRandomQTDevice()},
+                new object[] {null, "QT_VIRT", GetRandomQTDevice()},
             };
         }
 
@@ -223,8 +227,12 @@ namespace Tests.Devices
                     GetRandomQTDevice()},
                 new object[] {$"_{1.0}..{3.0}", "QT_OK", 1.0, 3.0,
                     GetRandomQTDevice()},
-                new object[] {$"", "", 4.0, 8.0, GetRandomQTDevice()},
-                new object[] {$"", "Incorrect", 7.0, 9.0, GetRandomQTDevice()},
+                new object[] {string.Empty, string.Empty, 4.0, 8.0,
+                    GetRandomQTDevice()},
+                new object[] {string.Empty, "Incorrect", 7.0, 9.0,
+                    GetRandomQTDevice()},
+                new object[] {string.Empty, "QT_VIRT", 2.0, 3.0,
+                    GetRandomQTDevice()},
             };
         }
 
@@ -254,6 +262,24 @@ namespace Tests.Devices
                 {
                     new string[] { "P_ERR" },
                     "QT_IOLINK",
+                    GetRandomQTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "QT_VIRT",
+                    GetRandomQTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "Incorrect",
+                    GetRandomQTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    string.Empty,
                     GetRandomQTDevice()
                 },
             };
@@ -310,7 +336,7 @@ namespace Tests.Devices
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 1 },
+                        { "AI", 0 },
                         { "AO", 0 },
                         { "DI", 0 },
                         { "DO", 0 },
@@ -322,12 +348,24 @@ namespace Tests.Devices
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 1 },
+                        { "AI", 0 },
                         { "AO", 0 },
                         { "DI", 0 },
                         { "DO", 0 },
                     },
                     "Incorrect",
+                    GetRandomQTDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "QT_VIRT",
                     GetRandomQTDevice()
                 },
             };

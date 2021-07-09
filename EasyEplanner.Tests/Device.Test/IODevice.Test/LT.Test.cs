@@ -117,7 +117,7 @@ namespace Tests.Devices
                     GetRandomLTDevice() },
                 new object[] { Device.DeviceSubType.LT_VIRT, "LT_VIRT",
                     GetRandomLTDevice() },
-                new object[] { Device.DeviceSubType.NONE, "",
+                new object[] { Device.DeviceSubType.NONE, string.Empty,
                     GetRandomLTDevice() },
                 new object[] { Device.DeviceSubType.NONE, "Incorrect",
                     GetRandomLTDevice() },
@@ -140,8 +140,8 @@ namespace Tests.Devices
                 new object[] { "LT_TRUNC", "LT_TRUNC", GetRandomLTDevice() },
                 new object[] { "LT_IOLINK", "LT_IOLINK", GetRandomLTDevice() },
                 new object[] { "LT_VIRT", "LT_VIRT", GetRandomLTDevice() },
-                new object[] { "", "", GetRandomLTDevice() },
-                new object[] { "", "Incorrect", GetRandomLTDevice() },
+                new object[] { string.Empty, string.Empty, GetRandomLTDevice() },
+                new object[] { string.Empty, "Incorrect", GetRandomLTDevice() },
             };
         }
 
@@ -226,7 +226,7 @@ namespace Tests.Devices
                     GetRandomLTDevice()},
                 new object[] {exportForLTVirt, "LT_VIRT", GetRandomLTDevice()},
                 new object[] {null, "Incorrect", GetRandomLTDevice()},
-                new object[] {null, "", GetRandomLTDevice()},
+                new object[] {null, string.Empty, GetRandomLTDevice()},
             };
         }
 
@@ -277,6 +277,12 @@ namespace Tests.Devices
                 {
                     new string[0],
                     "LT_VIRT",
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    string.Empty,
                     GetRandomLTDevice()
                 },
             };
@@ -374,7 +380,7 @@ namespace Tests.Devices
                         { "DI", 0 },
                         { "DO", 0 },
                     },
-                    "",
+                    string.Empty,
                     GetRandomLTDevice()
                 },
                 new object[]

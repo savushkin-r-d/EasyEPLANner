@@ -123,9 +123,11 @@ namespace Tests.Devices
                     "M_REV_FREQ_2_ERROR", GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.M_ATV, "M_ATV",
                     GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.NONE, "",
+                new object[] { Device.DeviceSubType.NONE, string.Empty,
                     GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.NONE, "Incorrect",
+                    GetRandomMDevice() },
+                new object[] { Device.DeviceSubType.M_VIRT, "M_VIRT",
                     GetRandomMDevice() },
             };
         }
@@ -153,8 +155,9 @@ namespace Tests.Devices
                 new object[] { "M_REV_FREQ_2_ERROR", "M_REV_FREQ_2_ERROR", 
                     GetRandomMDevice() },
                 new object[] { "M_ATV", "M_ATV", GetRandomMDevice() },
-                new object[] { "", "", GetRandomMDevice() },
-                new object[] { "", "Incorrect", GetRandomMDevice() },
+                new object[] { string.Empty, string.Empty, GetRandomMDevice() },
+                new object[] { string.Empty, "Incorrect", GetRandomMDevice() },
+                new object[] { "M_VIRT", "M_VIRT", GetRandomMDevice() },
             };
         }
 
@@ -216,7 +219,8 @@ namespace Tests.Devices
                     GetRandomMDevice()},
                 new object[] {exportForMATV, "M_ATV", GetRandomMDevice()},
                 new object[] {null, "Incorrect", GetRandomMDevice()},
-                new object[] {null, "", GetRandomMDevice()},
+                new object[] {null, string.Empty, GetRandomMDevice()},
+                new object[] {null, "M_VIRT", GetRandomMDevice()},
             };
         }
 
@@ -282,6 +286,18 @@ namespace Tests.Devices
                 {
                     new string[] { "P_ON_TIME" },
                     "M_ATV",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "M_VIRT",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    string.Empty,
                     GetRandomMDevice()
                 },
             };
@@ -401,9 +417,9 @@ namespace Tests.Devices
                         { "AI", 0 },
                         { "AO", 0 },
                         { "DI", 0 },
-                        { "DO", 1 },
+                        { "DO", 0 },
                     },
-                    "",
+                    string.Empty,
                     GetRandomMDevice()
                 },
                 new object[]
@@ -413,9 +429,21 @@ namespace Tests.Devices
                         { "AI", 0 },
                         { "AO", 0 },
                         { "DI", 0 },
-                        { "DO", 1 },
+                        { "DO", 0 },
                     },
                     "Incorrect",
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "M_VIRT",
                     GetRandomMDevice()
                 },
             };

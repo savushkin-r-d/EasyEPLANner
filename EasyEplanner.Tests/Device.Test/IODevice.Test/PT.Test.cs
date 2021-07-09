@@ -123,7 +123,7 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.NONE, "",
+                new object[] { Device.DeviceSubType.NONE, string.Empty,
                     GetRandomPTDevice() },
                 new object[] { Device.DeviceSubType.PT, "PT",
                     GetRandomPTDevice() },
@@ -132,6 +132,8 @@ namespace Tests.Devices
                 new object[] { Device.DeviceSubType.DEV_SPAE, "DEV_SPAE",
                     GetRandomPTDevice() },
                 new object[] { Device.DeviceSubType.NONE, "Incorrect",
+                    GetRandomPTDevice() },
+                new object[] { Device.DeviceSubType.PT_VIRT, "PT_VIRT",
                     GetRandomPTDevice() },
             };
         }
@@ -146,11 +148,12 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "", "", GetRandomPTDevice() },
+                new object[] { string.Empty, string.Empty, GetRandomPTDevice() },
                 new object[] { "PT", "PT", GetRandomPTDevice() },
                 new object[] { "PT_IOLINK", "PT_IOLINK", GetRandomPTDevice() },
                 new object[] { "DEV_SPAE", "DEV_SPAE", GetRandomPTDevice() },
-                new object[] { "", "Incorrect", GetRandomPTDevice() },
+                new object[] { string.Empty, "Incorrect", GetRandomPTDevice() },
+                new object[] { "PT_VIRT", "PT_VIRT", GetRandomPTDevice() },
             };
         }
 
@@ -195,8 +198,9 @@ namespace Tests.Devices
                     GetRandomPTDevice()},
                 new object[] {exportForDevSpae, "DEV_SPAE", 
                     GetRandomPTDevice()},
-                new object[] {null, "", GetRandomPTDevice()},
+                new object[] {null, string.Empty, GetRandomPTDevice()},
                 new object[] {null, "Incorrect", GetRandomPTDevice()},
+                new object[] {null, "PT_VIRT", GetRandomPTDevice()},
             };
         }
 
@@ -212,14 +216,18 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] {$"_{2.0}..{4.0}", "PT", 2.0, 4.0,
+                new object[] { $"_{2.0}..{4.0}", "PT", 2.0, 4.0,
                     GetRandomPTDevice()},
-                new object[] {$"", "PT_IOLINK", 1.0, 3.0,
+                new object[] { string.Empty, "PT_IOLINK", 1.0, 3.0,
                     GetRandomPTDevice()},
-                new object[] {$"", "DEV_SPAE", 1.0, 3.0,
+                new object[] { string.Empty, "DEV_SPAE", 1.0, 3.0,
                     GetRandomPTDevice()},
-                new object[] {$"", "", 4.0, 8.0, GetRandomPTDevice()},
-                new object[] {$"", "Incorrect", 7.0, 9.0, GetRandomPTDevice()},
+                new object[] { string.Empty, string.Empty, 4.0, 8.0,
+                    GetRandomPTDevice()},
+                new object[] { string.Empty, "Incorrect", 7.0, 9.0,
+                    GetRandomPTDevice()},
+                new object[] { string.Empty, "PT_VIRT", 7.0, 9.0,
+                    GetRandomPTDevice()},
             };
         }
 
@@ -249,6 +257,18 @@ namespace Tests.Devices
                 {
                     new string[] { "P_ERR" },
                     "DEV_SPAE",
+                    GetRandomPTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "PT_VIRT",
+                    GetRandomPTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    string.Empty,
                     GetRandomPTDevice()
                 },
             };
@@ -305,24 +325,36 @@ namespace Tests.Devices
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 1 },
+                        { "AI", 0 },
                         { "AO", 0 },
                         { "DI", 0 },
                         { "DO", 0 },
                     },
-                    "",
+                    string.Empty,
                     GetRandomPTDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 1 },
+                        { "AI", 0 },
                         { "AO", 0 },
                         { "DI", 0 },
                         { "DO", 0 },
                     },
                     "Incorrect",
+                    GetRandomPTDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "PT_VIRT",
                     GetRandomPTDevice()
                 },
             };
