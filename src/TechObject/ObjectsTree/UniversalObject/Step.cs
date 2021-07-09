@@ -53,7 +53,8 @@ namespace TechObject
                     Device.DeviceSubType.M_REV_FREQ_2,
                     Device.DeviceSubType.M_REV_FREQ_2_ERROR,
                     Device.DeviceSubType.M_ATV,
-                    Device.DeviceSubType.M
+                    Device.DeviceSubType.M,
+                    Device.DeviceSubType.M_VIRT,
                 }));
 
             actions.Add(new Action(closeDevicesActionName, this,
@@ -76,7 +77,8 @@ namespace TechObject
                 {
                     Device.DeviceSubType.V_MIXPROOF,
                     Device.DeviceSubType.V_AS_MIXPROOF,
-                    Device.DeviceSubType.V_IOLINK_MIXPROOF
+                    Device.DeviceSubType.V_IOLINK_MIXPROOF,
+                    Device.DeviceSubType.V_VIRT,
                 }));
             actions[3].DrawStyle = DrawInfo.Style.GREEN_UPPER_BOX;
 
@@ -90,7 +92,8 @@ namespace TechObject
                 {
                     Device.DeviceSubType.V_MIXPROOF,
                     Device.DeviceSubType.V_AS_MIXPROOF,
-                    Device.DeviceSubType.V_IOLINK_MIXPROOF
+                    Device.DeviceSubType.V_IOLINK_MIXPROOF,
+                    Device.DeviceSubType.V_VIRT,
                 }));
             actions[4].DrawStyle = DrawInfo.Style.GREEN_LOWER_BOX;
 
