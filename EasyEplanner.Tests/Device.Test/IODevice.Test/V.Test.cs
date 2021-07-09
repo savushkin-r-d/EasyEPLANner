@@ -7,6 +7,32 @@ namespace Tests.Devices
 {
     public class VTest
     {
+        const string Incorrect = "Incorrect";
+
+        const string V_DO1 = "V_DO1";
+        const string V_DO2 = "V_DO2";
+        const string V_DO1_DI1_FB_OFF = "V_DO1_DI1_FB_OFF";
+        const string V_DO1_DI1_FB_ON = "V_DO1_DI1_FB_ON";
+        const string V_DO1_DI2 = "V_DO1_DI2";
+        const string V_DO2_DI2 = "V_DO2_DI2";
+        const string V_MIXPROOF = "V_MIXPROOF";
+        const string V_AS_MIXPROOF = "V_AS_MIXPROOF";
+        const string V_BOTTOM_MIXPROOF = "V_BOTTOM_MIXPROOF";
+        const string V_AS_DO1_DI2 = "V_AS_DO1_DI2";
+        const string V_DO2_DI2_BISTABLE = "V_DO2_DI2_BISTABLE";
+        const string V_IOLINK_VTUG_DO1 = "V_IOLINK_VTUG_DO1";
+        const string V_IOLINK_VTUG_DO1_FB_OFF = "V_IOLINK_VTUG_DO1_FB_OFF";
+        const string V_IOLINK_VTUG_DO1_FB_ON = "V_IOLINK_VTUG_DO1_FB_ON";
+        const string V_IOLINK_MIXPROOF = "V_IOLINK_MIXPROOF";
+        const string V_IOLINK_DO1_DI2 = "V_IOLINK_DO1_DI2";
+        const string V_IOLINK_VTUG_DO1_DI2 = "V_IOLINK_VTUG_DO1_DI2";
+        const string V_VIRT = "V_VIRT";
+
+        const string AI = Device.IODevice.IOChannel.AI;
+        const string AO = Device.IODevice.IOChannel.AO;
+        const string DI = Device.IODevice.IOChannel.DI;
+        const string DO = Device.IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест установки подтипа устройства
         /// </summary>
@@ -19,6 +45,59 @@ namespace Tests.Devices
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
+        }
+
+        /// <summary>
+        /// 1 - Ожидаемое значение подтипа,
+        /// 2 - Задаваемое значение подтипа,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] SetSubTypeTestData()
+        {
+            return new object[]
+            {
+                new object[] { Device.DeviceSubType.V_DO1, V_DO1,
+                    GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.V_DO2, V_DO2,
+                    GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.V_DO1_DI1_FB_OFF,
+                    V_DO1_DI1_FB_OFF, GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.V_DO1_DI1_FB_ON,
+                    V_DO1_DI1_FB_ON, GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.V_DO1_DI2, V_DO1_DI2,
+                    GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.V_DO2_DI2, V_DO2_DI2,
+                    GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.V_MIXPROOF, V_MIXPROOF,
+                    GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.V_IOLINK_MIXPROOF,
+                    V_IOLINK_MIXPROOF, GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.V_AS_MIXPROOF,
+                    V_AS_MIXPROOF, GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.V_BOTTOM_MIXPROOF,
+                    V_BOTTOM_MIXPROOF, GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.V_AS_DO1_DI2,
+                    V_AS_DO1_DI2, GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.V_IOLINK_DO1_DI2,
+                    V_IOLINK_DO1_DI2, GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.V_DO2_DI2_BISTABLE,
+                    V_DO2_DI2_BISTABLE, GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.V_IOLINK_VTUG_DO1,
+                    V_IOLINK_VTUG_DO1, GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF,
+                    V_IOLINK_VTUG_DO1_FB_OFF, GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON,
+                    V_IOLINK_VTUG_DO1_FB_ON, GetRandomVDevice() },
+                new object[] {Device.DeviceSubType.V_IOLINK_VTUG_DO1_DI2,
+                    V_IOLINK_VTUG_DO1_DI2, GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                    GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.NONE, string.Empty,
+                    GetRandomVDevice() },
+                new object[] { Device.DeviceSubType.V_VIRT, V_VIRT,
+                    GetRandomVDevice() },
+            };
         }
 
         /// <summary>
@@ -37,6 +116,51 @@ namespace Tests.Devices
         }
 
         /// <summary>
+        /// 1 - Ожидаемое значение подтипа,
+        /// 2 - Задаваемое значение подтипа,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] GetDeviceSubTypeStrTestData()
+        {
+            return new object[]
+            {
+                new object[] { V_DO1, V_DO1, GetRandomVDevice() },
+                new object[] { V_DO2, V_DO2, GetRandomVDevice() },
+                new object[] { V_DO1_DI1_FB_OFF, V_DO1_DI1_FB_OFF,
+                    GetRandomVDevice() },
+                new object[] { V_DO1_DI1_FB_ON, V_DO1_DI1_FB_ON,
+                    GetRandomVDevice() },
+                new object[] { V_DO1_DI2, V_DO1_DI2, GetRandomVDevice() },
+                new object[] { V_DO2_DI2, V_DO2_DI2, GetRandomVDevice() },
+                new object[] { V_MIXPROOF, V_MIXPROOF, GetRandomVDevice() },
+                new object[] { V_IOLINK_MIXPROOF, V_IOLINK_MIXPROOF,
+                    GetRandomVDevice() },
+                new object[] { V_AS_MIXPROOF, V_AS_MIXPROOF,
+                    GetRandomVDevice() },
+                new object[] { V_BOTTOM_MIXPROOF, V_BOTTOM_MIXPROOF,
+                    GetRandomVDevice() },
+                new object[] { V_AS_DO1_DI2, V_AS_DO1_DI2,
+                    GetRandomVDevice() },
+                new object[] { V_IOLINK_DO1_DI2, V_IOLINK_DO1_DI2,
+                    GetRandomVDevice() },
+                new object[] { V_DO2_DI2_BISTABLE, V_DO2_DI2_BISTABLE,
+                    GetRandomVDevice() },
+                new object[] { V_IOLINK_VTUG_DO1, V_IOLINK_VTUG_DO1,
+                    GetRandomVDevice() },
+                new object[] { V_IOLINK_VTUG_DO1_FB_OFF,
+                    V_IOLINK_VTUG_DO1_FB_OFF, GetRandomVDevice() },
+                new object[] { V_IOLINK_VTUG_DO1_FB_ON,
+                    V_IOLINK_VTUG_DO1_FB_ON, GetRandomVDevice() },
+                new object[] { V_IOLINK_VTUG_DO1_DI2,
+                    V_IOLINK_VTUG_DO1_DI2, GetRandomVDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomVDevice() },
+                new object[] { string.Empty, string.Empty, GetRandomVDevice() },
+                new object[] { V_VIRT, V_VIRT, GetRandomVDevice() },
+            };
+        }
+
+        /// <summary>
         /// Тест свойств устройств в зависимости от подтипа
         /// </summary>
         /// <param name="expectedProperties">Ожидаемый список свойств</param>
@@ -50,6 +174,88 @@ namespace Tests.Devices
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
                 device.DeviceType, device.DeviceSubType));
+        }
+
+        /// <summary>
+        /// 1 - Ожидаемый список свойств для экспорта,
+        /// 2 - Задаваемый подтип устройства,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] GetDevicePropertiesTestData()
+        {
+            var exportForV = new Dictionary<string, int>()
+            {
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+            };
+
+
+            var exportForVFBOff = new Dictionary<string, int>()
+            {
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.P_ON_TIME, 1},
+                {DeviceTag.P_FB, 1},
+                {DeviceTag.FB_OFF_ST, 1},
+            };
+
+            var exportForVFBOn = new Dictionary<string, int>()
+            {
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.P_ON_TIME, 1},
+                {DeviceTag.P_FB, 1},
+                {DeviceTag.FB_OFF_ST, 1},
+                {DeviceTag.FB_ON_ST, 1},
+            };
+
+            var exportForVIOLinkMixproof = new Dictionary<string, int>()
+            {
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.P_ON_TIME, 1},
+                {DeviceTag.P_FB, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.BLINK, 1},
+                {DeviceTag.CS, 1},
+                {DeviceTag.ERR, 1},
+            };
+
+            return new object[]
+            {
+                new object[] {exportForV, V_DO1, GetRandomVDevice()},
+                new object[] {exportForV, V_DO2, GetRandomVDevice()},
+                new object[] {exportForV, V_IOLINK_VTUG_DO1,
+                    GetRandomVDevice()},
+                new object[] {exportForVFBOff, V_DO1_DI1_FB_ON,
+                    GetRandomVDevice()},
+                new object[] {exportForVFBOff, V_IOLINK_VTUG_DO1_FB_ON,
+                    GetRandomVDevice()},
+                new object[] {exportForVFBOff, V_DO1_DI1_FB_OFF,
+                    GetRandomVDevice()},
+                new object[] {exportForVFBOff, V_IOLINK_VTUG_DO1_FB_OFF,
+                    GetRandomVDevice()},
+                new object[] {exportForVFBOn, V_DO1_DI2, GetRandomVDevice()},
+                new object[] {exportForVFBOn, V_DO2_DI2, GetRandomVDevice()},
+                new object[] {exportForVFBOn, V_DO2_DI2_BISTABLE,
+                    GetRandomVDevice()},
+                new object[] {exportForVFBOn, V_MIXPROOF, GetRandomVDevice()},
+                new object[] {exportForVFBOn, V_AS_MIXPROOF,
+                    GetRandomVDevice()},
+                new object[] {exportForVFBOn, V_MIXPROOF, GetRandomVDevice()},
+                new object[] {exportForVFBOn, V_BOTTOM_MIXPROOF,
+                    GetRandomVDevice()},
+                new object[] {exportForVFBOn, V_IOLINK_VTUG_DO1_DI2,
+                    GetRandomVDevice()},
+                new object[] {exportForVIOLinkMixproof, V_IOLINK_MIXPROOF,
+                    GetRandomVDevice()},
+                new object[] {exportForVIOLinkMixproof, V_IOLINK_DO1_DI2,
+                    GetRandomVDevice()},
+                new object[] {null, Incorrect, GetRandomVDevice()},
+                new object[] {null, string.Empty, GetRandomVDevice()},
+                new object[] {null, V_VIRT, GetRandomVDevice()},
+            };
         }
 
         /// <summary>
@@ -70,6 +276,141 @@ namespace Tests.Devices
         }
 
         /// <summary>
+        /// 1 - Параметры в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        private static object[] ParametersTestData()
+        {
+            var parameters = new string[]
+            { 
+                DeviceParameter.P_ON_TIME,
+                DeviceParameter.P_FB
+            };
+            var emptyArr = new string[0];
+
+
+            return new object[]
+            {
+                new object[]
+                {
+                    emptyArr,
+                    V_DO1,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    emptyArr,
+                    V_DO2,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    parameters,
+                    V_DO1_DI1_FB_OFF,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    parameters,
+                    V_DO1_DI2,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    parameters,
+                    V_DO2_DI2,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    parameters,
+                    V_DO2_DI2_BISTABLE,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    parameters,
+                    V_MIXPROOF,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    parameters,
+                    V_IOLINK_MIXPROOF,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    parameters,
+                    V_AS_MIXPROOF,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    parameters,
+                    V_BOTTOM_MIXPROOF,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    parameters,
+                    V_AS_DO1_DI2,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    parameters,
+                    V_IOLINK_DO1_DI2,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    emptyArr,
+                    V_IOLINK_VTUG_DO1,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    parameters,
+                    V_IOLINK_VTUG_DO1_FB_OFF,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    parameters,
+                    V_IOLINK_VTUG_DO1_FB_ON,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    parameters,
+                    V_IOLINK_VTUG_DO1_DI2,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    emptyArr,
+                    string.Empty,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    emptyArr,
+                    Incorrect,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    emptyArr,
+                    V_VIRT,
+                    GetRandomVDevice()
+                },
+            };
+        }
+
+        /// <summary>
         /// Тестирование каналов устройства
         /// </summary>
         /// <param name="expectedChannelsCount">Ожидаемое количество каналов
@@ -81,316 +422,18 @@ namespace Tests.Devices
             string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
-            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
-            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
-            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
-                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
-                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
-                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
             });
-        }
-
-        /// <summary>
-        /// 1 - Ожидаемое значение подтипа,
-        /// 2 - Задаваемое значение подтипа,
-        /// 3 - Устройство для тестов
-        /// </summary>
-        /// <returns></returns>
-        private static object[] SetSubTypeTestData()
-        {
-            return new object[]
-            {
-                new object[] { Device.DeviceSubType.V_DO1, "V_DO1", 
-                    GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_DO2, "V_DO2", 
-                    GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_DO1_DI1_FB_OFF,
-                    "V_DO1_DI1_FB_OFF", GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_DO1_DI1_FB_ON, 
-                    "V_DO1_DI1_FB_ON", GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_DO1_DI2, "V_DO1_DI2", 
-                    GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_DO2_DI2, "V_DO2_DI2", 
-                    GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_MIXPROOF, "V_MIXPROOF", 
-                    GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_IOLINK_MIXPROOF, 
-                    "V_IOLINK_MIXPROOF", GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_AS_MIXPROOF,
-                    "V_AS_MIXPROOF", GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_BOTTOM_MIXPROOF,
-                    "V_BOTTOM_MIXPROOF", GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_AS_DO1_DI2,
-                    "V_AS_DO1_DI2", GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_IOLINK_DO1_DI2, 
-                    "V_IOLINK_DO1_DI2", GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_DO2_DI2_BISTABLE, 
-                    "V_DO2_DI2_BISTABLE", GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_IOLINK_VTUG_DO1, 
-                    "V_IOLINK_VTUG_DO1", GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF, 
-                    "V_IOLINK_VTUG_DO1_FB_OFF", GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON,
-                    "V_IOLINK_VTUG_DO1_FB_ON", GetRandomVDevice() },
-                new object[] {Device.DeviceSubType.V_IOLINK_VTUG_DO1_DI2,
-                    "V_IOLINK_VTUG_DO1_DI2", GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.NONE, "Incorrect", 
-                    GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.NONE, "",
-                    GetRandomVDevice() },
-            };
-        }
-
-        /// <summary>
-        /// 1 - Ожидаемое значение подтипа,
-        /// 2 - Задаваемое значение подтипа,
-        /// 3 - Устройство для тестов
-        /// </summary>
-        /// <returns></returns>
-        private static object[] GetDeviceSubTypeStrTestData()
-        {
-            return new object[]
-            {
-                new object[] { "V_DO1", "V_DO1", GetRandomVDevice() },
-                new object[] { "V_DO2", "V_DO2", GetRandomVDevice() },
-                new object[] { "V_DO1_DI1_FB_OFF", "V_DO1_DI1_FB_OFF", 
-                    GetRandomVDevice() },
-                new object[] { "V_DO1_DI1_FB_ON", "V_DO1_DI1_FB_ON", 
-                    GetRandomVDevice() },
-                new object[] { "V_DO1_DI2", "V_DO1_DI2", GetRandomVDevice() },
-                new object[] { "V_DO2_DI2", "V_DO2_DI2", GetRandomVDevice() },
-                new object[] { "V_MIXPROOF", "V_MIXPROOF", GetRandomVDevice() },
-                new object[] { "V_IOLINK_MIXPROOF", "V_IOLINK_MIXPROOF", 
-                    GetRandomVDevice() },
-                new object[] { "V_AS_MIXPROOF", "V_AS_MIXPROOF", 
-                    GetRandomVDevice() },
-                new object[] { "V_BOTTOM_MIXPROOF", "V_BOTTOM_MIXPROOF", 
-                    GetRandomVDevice() },
-                new object[] { "V_AS_DO1_DI2", "V_AS_DO1_DI2", 
-                    GetRandomVDevice() },
-                new object[] { "V_IOLINK_DO1_DI2", "V_IOLINK_DO1_DI2", 
-                    GetRandomVDevice() },
-                new object[] { "V_DO2_DI2_BISTABLE", "V_DO2_DI2_BISTABLE", 
-                    GetRandomVDevice() },
-                new object[] { "V_IOLINK_VTUG_DO1", "V_IOLINK_VTUG_DO1", 
-                    GetRandomVDevice() },
-                new object[] { "V_IOLINK_VTUG_DO1_FB_OFF", 
-                    "V_IOLINK_VTUG_DO1_FB_OFF", GetRandomVDevice() },
-                new object[] { "V_IOLINK_VTUG_DO1_FB_ON",
-                    "V_IOLINK_VTUG_DO1_FB_ON", GetRandomVDevice() },
-                new object[] { "V_IOLINK_VTUG_DO1_DI2",
-                    "V_IOLINK_VTUG_DO1_DI2", GetRandomVDevice() },
-                new object[] { "", "Incorrect", GetRandomVDevice() },
-                new object[] { "", "", GetRandomVDevice() },
-            };
-        }
-
-        /// <summary>
-        /// 1 - Ожидаемый список свойств для экспорта,
-        /// 2 - Задаваемый подтип устройства,
-        /// 3 - Устройство для тестов
-        /// </summary>
-        /// <returns></returns>
-        private static object[] GetDevicePropertiesTestData()
-        {
-            var exportForV = new Dictionary<string, int>()
-            {
-                {"ST", 1},
-                {"M", 1},
-            };
-
-
-            var exportForVFBOff = new Dictionary<string, int>()
-            {
-                {"ST", 1},
-                {"M", 1},
-                {"P_ON_TIME", 1},
-                {"P_FB", 1},
-                {"FB_OFF_ST", 1},
-            };
-
-            var exportForVFBOn = new Dictionary<string, int>()
-            {
-                {"ST", 1},
-                {"M", 1},
-                {"P_ON_TIME", 1},
-                {"P_FB", 1},
-                {"FB_OFF_ST", 1},
-                {"FB_ON_ST", 1},
-            };
-
-            var exportForVIOLinkMixproof = new Dictionary<string, int>()
-            {
-                {"ST", 1},
-                {"M", 1},
-                {"P_ON_TIME", 1},
-                {"P_FB", 1},
-                {"V", 1},
-                {"BLINK", 1},
-                {"CS", 1},
-                {"ERR", 1},
-            };
-
-            return new object[]
-            {
-                new object[] {exportForV, "V_DO1", GetRandomVDevice()},
-                new object[] {exportForV, "V_DO2", GetRandomVDevice()},
-                new object[] {exportForV, "V_IOLINK_VTUG_DO1", 
-                    GetRandomVDevice()},
-                new object[] {exportForVFBOff, "V_DO1_DI1_FB_ON", 
-                    GetRandomVDevice()},
-                new object[] {exportForVFBOff, "V_IOLINK_VTUG_DO1_FB_ON", 
-                    GetRandomVDevice()},
-                new object[] {exportForVFBOff, "V_DO1_DI1_FB_OFF", 
-                    GetRandomVDevice()},
-                new object[] {exportForVFBOff, "V_IOLINK_VTUG_DO1_FB_OFF", 
-                    GetRandomVDevice()},
-                new object[] {exportForVFBOff, "FQT_VIRT", GetRandomVDevice()},
-                new object[] {exportForVFBOn, "V_DO1_DI2", GetRandomVDevice()},
-                new object[] {exportForVFBOn, "V_DO2_DI2", GetRandomVDevice()},
-                new object[] {exportForVFBOn, "V_DO2_DI2_BISTABLE", 
-                    GetRandomVDevice()},
-                new object[] {exportForVFBOn, "V_MIXPROOF", GetRandomVDevice()},
-                new object[] {exportForVFBOn, "V_AS_MIXPROOF", 
-                    GetRandomVDevice()},
-                new object[] {exportForVFBOn, "V_MIXPROOF", GetRandomVDevice()},
-                new object[] {exportForVFBOn, "V_BOTTOM_MIXPROOF", 
-                    GetRandomVDevice()},
-                new object[] {exportForVFBOn, "V_IOLINK_VTUG_DO1_DI2",
-                    GetRandomVDevice()},
-                new object[] {exportForVIOLinkMixproof, "V_IOLINK_MIXPROOF", 
-                    GetRandomVDevice()},
-                new object[] {exportForVIOLinkMixproof, "V_IOLINK_DO1_DI2", 
-                    GetRandomVDevice()},
-                new object[] {null, "Incorrect", GetRandomVDevice()},
-                new object[] {null, "", GetRandomVDevice()},
-            };
-        }
-
-        /// <summary>
-        /// 1 - Параметры в том порядке, который нужен
-        /// 2 - Подтип устройства
-        /// 3 - Устройство
-        /// </summary>
-        /// <returns></returns>
-        private static object[] ParametersTestData()
-        {
-            return new object[]
-            {
-                new object[]
-                {
-                    new string[0],
-                    "V_DO1",
-                    GetRandomVDevice()
-                },
-                new object[]
-                {
-                    new string[0],
-                    "V_DO2",
-                    GetRandomVDevice()
-                },
-                new object[]
-                {
-                    new string[] { "P_ON_TIME", "P_FB" },
-                    "V_DO1_DI1_FB_OFF",
-                    GetRandomVDevice()
-                },
-                new object[]
-                {
-                    new string[] { "P_ON_TIME", "P_FB" },
-                    "V_DO1_DI2",
-                    GetRandomVDevice()
-                },
-                new object[]
-                {
-                    new string[] { "P_ON_TIME", "P_FB" },
-                    "V_DO2_DI2",
-                    GetRandomVDevice()
-                },
-                new object[]
-                {
-                    new string[] { "P_ON_TIME", "P_FB" },
-                    "V_DO2_DI2_BISTABLE",
-                    GetRandomVDevice()
-                },
-                new object[]
-                {
-                    new string[] { "P_ON_TIME", "P_FB" },
-                    "V_MIXPROOF",
-                    GetRandomVDevice()
-                },
-                new object[]
-                {
-                    new string[] { "P_ON_TIME", "P_FB" },
-                    "V_IOLINK_MIXPROOF",
-                    GetRandomVDevice()
-                },
-                new object[]
-                {
-                    new string[] { "P_ON_TIME", "P_FB" },
-                    "V_AS_MIXPROOF",
-                    GetRandomVDevice()
-                },
-                new object[]
-                {
-                    new string[] { "P_ON_TIME", "P_FB" },
-                    "V_BOTTOM_MIXPROOF",
-                    GetRandomVDevice()
-                },
-                new object[]
-                {
-                    new string[] { "P_ON_TIME", "P_FB" },
-                    "V_AS_DO1_DI2",
-                    GetRandomVDevice()
-                },
-                new object[]
-                {
-                    new string[] { "P_ON_TIME", "P_FB" },
-                    "V_IOLINK_DO1_DI2",
-                    GetRandomVDevice()
-                },
-                new object[]
-                {
-                    new string[0],
-                    "V_IOLINK_VTUG_DO1",
-                    GetRandomVDevice()
-                },
-                new object[]
-                {
-                    new string[] { "P_ON_TIME", "P_FB" },
-                    "V_IOLINK_VTUG_DO1_FB_OFF",
-                    GetRandomVDevice()
-                },
-                new object[]
-                {
-                    new string[] { "P_ON_TIME", "P_FB" },
-                    "V_IOLINK_VTUG_DO1_FB_ON",
-                    GetRandomVDevice()
-                },
-                new object[]
-                {
-                    new string[] { "P_ON_TIME", "P_FB" },
-                    "V_IOLINK_VTUG_DO1_DI2",
-                    GetRandomVDevice()
-                },
-                new object[]
-                {
-                    new string[0],
-                    "",
-                    GetRandomVDevice()
-                },
-                new object[]
-                {
-                    new string[0],
-                    "Incorrect",
-                    GetRandomVDevice()
-                },
-            };
         }
 
         /// <summary>
@@ -402,222 +445,224 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var emptySignals = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             return new object[]
             {
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 1 },
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 0 },
+                        { DO, 1 },
                     },
-                    "V_DO1",
+                    V_DO1,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 2 },
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 0 },
+                        { DO, 2 },
                     },
-                    "V_DO2",
+                    V_DO2,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 1 },
-                        { "DO", 1 },
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 1 },
+                        { DO, 1 },
                     },
-                    "V_DO1_DI1_FB_OFF",
+                    V_DO1_DI1_FB_OFF,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 2 },
-                        { "DO", 1 },
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 2 },
+                        { DO, 1 },
                     },
-                    "V_DO1_DI2",
+                    V_DO1_DI2,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 2 },
-                        { "DO", 2 },
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 2 },
+                        { DO, 2 },
                     },
-                    "V_DO2_DI2",
+                    V_DO2_DI2,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 2 },
-                        { "DO", 2 },
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 2 },
+                        { DO, 2 },
                     },
-                    "V_DO2_DI2_BISTABLE",
+                    V_DO2_DI2_BISTABLE,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 2 },
-                        { "DO", 3 },
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 2 },
+                        { DO, 3 },
                     },
-                    "V_MIXPROOF",
+                    V_MIXPROOF,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 1 },
-                        { "AO", 1 },
-                        { "DI", 0 },
-                        { "DO", 0 },
+                        { AI, 1 },
+                        { AO, 1 },
+                        { DI, 0 },
+                        { DO, 0 },
                     },
-                    "V_IOLINK_MIXPROOF",
+                    V_IOLINK_MIXPROOF,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 1 },
-                        { "AO", 1 },
-                        { "DI", 0 },
-                        { "DO", 0 },
+                        { AI, 1 },
+                        { AO, 1 },
+                        { DI, 0 },
+                        { DO, 0 },
                     },
-                    "V_AS_MIXPROOF",
+                    V_AS_MIXPROOF,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 2 },
-                        { "DO", 3 },
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 2 },
+                        { DO, 3 },
                     },
-                    "V_BOTTOM_MIXPROOF",
+                    V_BOTTOM_MIXPROOF,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 1 },
-                        { "AO", 1 },
-                        { "DI", 0 },
-                        { "DO", 0 },
+                        { AI, 1 },
+                        { AO, 1 },
+                        { DI, 0 },
+                        { DO, 0 },
                     },
-                    "V_AS_DO1_DI2",
+                    V_AS_DO1_DI2,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 1 },
-                        { "AO", 1 },
-                        { "DI", 0 },
-                        { "DO", 0 },
+                        { AI, 1 },
+                        { AO, 1 },
+                        { DI, 0 },
+                        { DO, 0 },
                     },
-                    "V_IOLINK_DO1_DI2",
+                    V_IOLINK_DO1_DI2,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 1 },
-                        { "DI", 0 },
-                        { "DO", 0 },
+                        { AI, 0 },
+                        { AO, 1 },
+                        { DI, 0 },
+                        { DO, 0 },
                     },
-                    "V_IOLINK_VTUG_DO1",
+                    V_IOLINK_VTUG_DO1,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 1 },
-                        { "DI", 1 },
-                        { "DO", 0 },
+                        { AI, 0 },
+                        { AO, 1 },
+                        { DI, 1 },
+                        { DO, 0 },
                     },
-                    "V_IOLINK_VTUG_DO1_FB_OFF",
+                    V_IOLINK_VTUG_DO1_FB_OFF,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 1 },
-                        { "DI", 1 },
-                        { "DO", 0 },
+                        { AI, 0 },
+                        { AO, 1 },
+                        { DI, 1 },
+                        { DO, 0 },
                     },
-                    "V_IOLINK_VTUG_DO1_FB_ON",
+                    V_IOLINK_VTUG_DO1_FB_ON,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 1 },
-                        { "DI", 2 },
-                        { "DO", 0 },
+                        { AI, 0 },
+                        { AO, 1 },
+                        { DI, 2 },
+                        { DO, 0 },
                     },
-                    "V_IOLINK_VTUG_DO1_DI2",
+                    V_IOLINK_VTUG_DO1_DI2,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "",
+                    emptySignals,
+                    string.Empty,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "Incorrect",
+                    emptySignals,
+                    Incorrect,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    emptySignals,
+                    V_VIRT,
                     GetRandomVDevice()
                 },
             };

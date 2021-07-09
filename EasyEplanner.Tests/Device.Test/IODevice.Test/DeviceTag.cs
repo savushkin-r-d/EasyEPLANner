@@ -13,5 +13,11 @@
         public const string NAMUR_ST = "NAMUR_ST";
         public const string OPENED = "OPENED";
         public const string CLOSED = "CLOSED";
+        public const string P_ON_TIME = "P_ON_TIME";
+        public const string P_FB = "P_FB";
+        public const string FB_OFF_ST = "FB_OFF_ST";
+        public const string FB_ON_ST = "FB_ON_ST";
+        public const string CS = "CS";
+        public const string ERR = "ERR";
     }
 }

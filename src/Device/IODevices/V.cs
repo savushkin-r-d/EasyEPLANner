@@ -236,6 +236,9 @@ namespace Device
                     parameters.Add("P_FB", 1);
                     break;
 
+                case "V_VIRT":
+                    break;
+
                 case "":
                     errStr = string.Format(
                         "\"{0}\" - не задан тип (V_DO1, V_DO2, ...).\n", name);
@@ -292,6 +295,8 @@ namespace Device
                             return "V_IOLINK_VTUG_DO1_FB_ON";
                         case DeviceSubType.V_IOLINK_VTUG_DO1_DI2:
                             return "V_IOLINK_VTUG_DO1_DI2";
+                        case DeviceSubType.V_VIRT:
+                            return "V_VIRT";
                     }
                     break;
             }
