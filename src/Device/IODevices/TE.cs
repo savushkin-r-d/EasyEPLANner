@@ -18,25 +18,32 @@ namespace Device
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.TE;
             ArticleName = articleName;
-
-            parameters.Add("P_C0", null);
-            parameters.Add("P_ERR", null);
-
-            AI.Add(new IOChannel("AI", -1, -1, -1, ""));
         }
 
         public override string SetSubType(string subType)
         {
             base.SetSubType(subType);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subType)
             {
                 case "TE":
+                    parameters.Add("P_C0", null);
+                    parameters.Add("P_ERR", null);
+
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     break;
 
                 case "TE_IOLINK":
+                    parameters.Add("P_C0", null);
+                    parameters.Add("P_ERR", null);
+
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+
                     SetIOLinkSizes(ArticleName);
+                    break;
+
+                case "TE_VIRT":
                     break;
 
                 case "":
@@ -56,7 +63,7 @@ namespace Device
         {
             string res = base.Check();
 
-            if (ArticleName == "")
+            if (ArticleName == string.Empty)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -76,10 +83,12 @@ namespace Device
                             return "TE";
                         case DeviceSubType.TE_IOLINK:
                             return "TE_IOLINK";
+                        case DeviceSubType.TE_VIRT:
+                            return "TE_VIRT";
                     }
                     break;
             }
-            return "";
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(

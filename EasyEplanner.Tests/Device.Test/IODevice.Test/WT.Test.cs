@@ -159,6 +159,7 @@ namespace Tests.Devices
                 DeviceParameter.P_C0,
                 DeviceParameter.P_DT
             };
+            var emptyParameters = new string[0];
 
             return new object[]
             {
@@ -176,13 +177,13 @@ namespace Tests.Devices
                 },
                 new object[]
                 {
-                    new string[0],
+                    emptyParameters,
                     WT_VIRT,
                     GetRandomWTDevice(),
                 },
                 new object[]
                 {
-                    new string[0],
+                    emptyParameters,
                     Incorrect,
                     GetRandomWTDevice(),
                 }
@@ -224,53 +225,44 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var defaultChannels = new Dictionary<string, int>()
+            {
+                { AI, 2 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+            var emptyChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { AI, 2 },
-                        { AO, 0 },
-                        { DI, 0 },
-                        { DO, 0 },
-                    },
+                    defaultChannels,
                     WT,
                     GetRandomWTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { AI, 2 },
-                        { AO, 0 },
-                        { DI, 0 },
-                        { DO, 0 },
-                    },
+                    defaultChannels,
                     string.Empty,
                     GetRandomWTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { AI, 0 },
-                        { AO, 0 },
-                        { DI, 0 },
-                        { DO, 0 },
-                    },
+                    emptyChannels,
                     Incorrect,
                     GetRandomWTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { AI, 0 },
-                        { AO, 0 },
-                        { DI, 0 },
-                        { DO, 0 },
-                    },
+                    emptyChannels,
                     WT_VIRT,
                     GetRandomWTDevice()
                 }

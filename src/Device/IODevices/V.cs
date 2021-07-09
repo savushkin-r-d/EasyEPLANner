@@ -73,7 +73,7 @@ namespace Device
                 }
             }
 
-            if (ArticleName == "")
+            if (ArticleName == string.Empty)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -85,7 +85,7 @@ namespace Device
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "V_DO1":
@@ -300,7 +300,7 @@ namespace Device
                     }
                     break;
             }
-            return "";
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(

@@ -7,6 +7,16 @@ namespace Tests.Devices
 {
     class TETest
     {
+        const string Incorrect = "Incorrect";
+        const string TE = "TE";
+        const string TE_IOLINK = "TE_IOLINK";
+        const string TE_VIRT = "TE_VIRT";
+
+        const string AI = Device.IODevice.IOChannel.AI;
+        const string AO = Device.IODevice.IOChannel.AO;
+        const string DI = Device.IODevice.IOChannel.DI;
+        const string DO = Device.IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест установки подтипа устройства
         /// </summary>
@@ -19,6 +29,29 @@ namespace Tests.Devices
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
+        }
+
+        /// <summary>
+        /// 1 - Ожидаемое значение подтипа,
+        /// 2 - Задаваемое значение подтипа,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] SetSubTypeTestData()
+        {
+            return new object[]
+            {
+                new object[] { Device.DeviceSubType.TE, TE,
+                    GetRandomTEDevice() },
+                new object[] { Device.DeviceSubType.TE_IOLINK, TE_IOLINK,
+                    GetRandomTEDevice() },
+                new object[] { Device.DeviceSubType.NONE, string.Empty,
+                    GetRandomTEDevice() },
+                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                    GetRandomTEDevice() },
+                new object[] { Device.DeviceSubType.TE_VIRT, TE_VIRT,
+                    GetRandomTEDevice() },
+            };
         }
 
         /// <summary>
@@ -37,6 +70,24 @@ namespace Tests.Devices
         }
 
         /// <summary>
+        /// 1 - Ожидаемое значение подтипа,
+        /// 2 - Задаваемое значение подтипа,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] GetDeviceSubTypeStrTestData()
+        {
+            return new object[]
+            {
+                new object[] { string.Empty, string.Empty, GetRandomTEDevice() },
+                new object[] { TE, TE, GetRandomTEDevice() },
+                new object[] { TE_IOLINK, TE_IOLINK, GetRandomTEDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomTEDevice() },
+                new object[] { TE_VIRT, TE_VIRT, GetRandomTEDevice() },
+            };
+        }
+
+        /// <summary>
         /// Тест свойств устройств в зависимости от подтипа
         /// </summary>
         /// <param name="expectedProperties">Ожидаемый список свойств</param>
@@ -50,6 +101,31 @@ namespace Tests.Devices
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
                 device.DeviceType, device.DeviceSubType));
+        }
+
+        /// <summary>
+        /// 1 - Ожидаемый список свойств для экспорта,
+        /// 2 - Задаваемый подтип устройства,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] GetDevicePropertiesTestData()
+        {
+            var exportForTE = new Dictionary<string, int>()
+            {
+                {DeviceTag.M, 1},
+                {DeviceTag.P_CZ, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.ST, 1},
+            };
+
+            return new object[]
+            {
+                new object[] {null, string.Empty, GetRandomTEDevice()},
+                new object[] {exportForTE, TE, GetRandomTEDevice()},
+                new object[] {exportForTE, TE_IOLINK, GetRandomTEDevice()},
+                new object[] {null, Incorrect, GetRandomTEDevice()},
+            };
         }
 
         /// <summary>
@@ -70,6 +146,37 @@ namespace Tests.Devices
         }
 
         /// <summary>
+        /// 1 - Параметры в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        private static object[] ParametersTestData()
+        {
+            var parameters = new string[]
+            {
+                DeviceParameter.P_C0,
+                DeviceParameter.P_ERR
+            };
+
+            return new object[]
+            {
+                new object[]
+                {
+                    parameters,
+                    TE,
+                    GetRandomTEDevice()
+                },
+                new object[]
+                {
+                    parameters,
+                    TE_IOLINK,
+                    GetRandomTEDevice()
+                },
+            };
+        }
+
+        /// <summary>
         /// Тестирование каналов устройства
         /// </summary>
         /// <param name="expectedChannelsCount">Ожидаемое количество каналов
@@ -81,106 +188,18 @@ namespace Tests.Devices
             string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
-            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
-            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
-            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
-                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
-                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
-                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
             });
-        }
-
-        /// <summary>
-        /// 1 - Ожидаемое значение подтипа,
-        /// 2 - Задаваемое значение подтипа,
-        /// 3 - Устройство для тестов
-        /// </summary>
-        /// <returns></returns>
-        private static object[] SetSubTypeTestData()
-        {
-            return new object[]
-            {
-                new object[] { Device.DeviceSubType.TE, "TE",
-                    GetRandomTEDevice() },
-                new object[] { Device.DeviceSubType.TE_IOLINK, "TE_IOLINK",
-                    GetRandomTEDevice() },
-                new object[] { Device.DeviceSubType.NONE, "",
-                    GetRandomTEDevice() },
-                new object[] { Device.DeviceSubType.NONE, "Incorrect",
-                    GetRandomTEDevice() },
-            };
-        }
-
-        /// <summary>
-        /// 1 - Ожидаемое значение подтипа,
-        /// 2 - Задаваемое значение подтипа,
-        /// 3 - Устройство для тестов
-        /// </summary>
-        /// <returns></returns>
-        private static object[] GetDeviceSubTypeStrTestData()
-        {
-            return new object[]
-            {
-                new object[] { "", "", GetRandomTEDevice() },
-                new object[] { "TE", "TE", GetRandomTEDevice() },
-                new object[] { "TE_IOLINK", "TE_IOLINK", GetRandomTEDevice() },
-                new object[] { "", "Incorrect", GetRandomTEDevice() },
-            };
-        }
-
-        /// <summary>
-        /// 1 - Ожидаемый список свойств для экспорта,
-        /// 2 - Задаваемый подтип устройства,
-        /// 3 - Устройство для тестов
-        /// </summary>
-        /// <returns></returns>
-        private static object[] GetDevicePropertiesTestData()
-        {
-            var exportForTE = new Dictionary<string, int>()
-            {
-                {"M", 1},
-                {"P_CZ", 1},
-                {"V", 1},
-                {"ST", 1},
-            };
-
-            return new object[]
-            {
-                new object[] {null, "", GetRandomTEDevice()},
-                new object[] {exportForTE, "TE", GetRandomTEDevice()},
-                new object[] {exportForTE, "TE_IOLINK", GetRandomTEDevice()},
-                new object[] {null, "Incorrect", GetRandomTEDevice()},
-            };
-        }
-
-        /// <summary>
-        /// 1 - Параметры в том порядке, который нужен
-        /// 2 - Подтип устройства
-        /// 3 - Устройство
-        /// </summary>
-        /// <returns></returns>
-        private static object[] ParametersTestData()
-        {
-            return new object[]
-            {
-                new object[] 
-                { 
-                    new string[] { "P_C0", "P_ERR" }, 
-                    "TE", 
-                    GetRandomTEDevice()
-                },
-                new object[]
-                {
-                    new string[] { "P_C0", "P_ERR" },
-                    "TE_IOLINK",
-                    GetRandomTEDevice()
-                },
-            };
         }
 
         /// <summary>
@@ -192,54 +211,51 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var defaultSignals = new Dictionary<string, int>()
+            {
+                { AI, 1 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+            var emptySignals = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "TE",
+                    defaultSignals,
+                    TE,
                     GetRandomTEDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "TE_IOLINK",
+                    defaultSignals,
+                    TE_IOLINK,
                     GetRandomTEDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "",
+                    emptySignals,
+                    string.Empty,
                     GetRandomTEDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "Incorrect",
+                    emptySignals,
+                    Incorrect,
+                    GetRandomTEDevice()
+                },
+                new object[]
+                {
+                    emptySignals,
+                    TE_VIRT,
                     GetRandomTEDevice()
                 },
             };

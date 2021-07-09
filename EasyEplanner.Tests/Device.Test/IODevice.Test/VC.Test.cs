@@ -164,35 +164,36 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
+            var emptyParameters = new string[0];
             return new object[]
             {
                 new object[]
                 {
-                    new string[0],
+                    emptyParameters,
                     VC,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
-                    new string[0],
+                    emptyParameters,
                     string.Empty,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
-                    new string[0],
+                    emptyParameters,
                     VC_IOLINK,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
-                    new string[0],
-                    "Incorrect",
+                    emptyParameters,
+                    Incorrect,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
-                    new string[0],
+                    emptyParameters,
                     VC_VIRT,
                     GetRandomVCDevice()
                 },
@@ -234,6 +235,14 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var emptySignals = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             return new object[]
             {
                 new object[]
@@ -250,25 +259,13 @@ namespace Tests.Devices
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { AI, 0 },
-                        { AO, 0 },
-                        { DI, 0 },
-                        { DO, 0 },
-                    },
+                    emptySignals,
                     string.Empty,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { AI, 0 },
-                        { AO, 0 },
-                        { DI, 0 },
-                        { DO, 0 },
-                    },
+                    emptySignals,
                     Incorrect,
                     GetRandomVCDevice()
                 },
