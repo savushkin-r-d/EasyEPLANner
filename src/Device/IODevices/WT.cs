@@ -26,7 +26,7 @@ namespace Device
         {
             base.SetSubType(subType);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subType)
             {
                 case "WT":
@@ -58,7 +58,7 @@ namespace Device
         {
             string res = base.Check();
 
-            if (ArticleName == "")
+            if (ArticleName == string.Empty)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -83,7 +83,7 @@ namespace Device
                     break;
             }
 
-            return "";
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Tests
+namespace Tests.Devices
 {
     public class HLATest
     {

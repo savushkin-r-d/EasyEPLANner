@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
 
-namespace Tests
+namespace Tests.Devices
 {
     public class CTest
     {

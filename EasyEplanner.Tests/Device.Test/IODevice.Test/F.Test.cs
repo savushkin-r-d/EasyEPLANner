@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
-namespace Tests
+namespace Tests.Devices
 {
     public class FTest
     {

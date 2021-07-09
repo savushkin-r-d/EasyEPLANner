@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Tests
+namespace Tests.Devices
 {
     public class IODeviceTest
     {

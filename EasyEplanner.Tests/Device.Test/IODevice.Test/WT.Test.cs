@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Tests
+namespace Tests.Devices
 {
     public class WTTest
     {
@@ -104,13 +104,13 @@ namespace Tests
         {
             var exportForWT = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"V", 1},
-                {"P_NOMINAL_W", 1},
-                {"P_DT", 1},
-                {"P_RKP", 1},
-                {"P_CZ", 1},
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.P_NOMINAL_W, 1},
+                {DeviceTag.P_DT, 1},
+                {DeviceTag.P_RKP, 1},
+                {DeviceTag.P_CZ, 1},
             };
 
             return new object[]
@@ -149,10 +149,10 @@ namespace Tests
         {
             var parameters = new string[]
             {
-                "P_NOMINAL_W",
-                "P_RKP",
-                "P_C0",
-                "P_DT"
+                DeviceParameter.P_NOMINAL_W,
+                DeviceParameter.P_RKP,
+                DeviceParameter.P_C0,
+                DeviceParameter.P_DT
             };
 
             return new object[]
