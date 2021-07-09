@@ -48,14 +48,15 @@ namespace Device
 
                 case "":
                     errStr = string.Format("\"{0}\" - не задан тип" +
-                        " (TE, TE_IOLINK).\n", Name);
+                        " (TE, TE_IOLINK, TE_VIRT).\n", Name);
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (TE, TE_IOLINK).\n", Name);
+                        " (TE, TE_IOLINK, TE_VIRT).\n", Name);
                     break;
             }
+
             return errStr;
         }
 
@@ -88,6 +89,7 @@ namespace Device
                     }
                     break;
             }
+
             return string.Empty;
         }
 
@@ -111,6 +113,7 @@ namespace Device
                     }
                     break;
             }
+
             return null;
         }
     }

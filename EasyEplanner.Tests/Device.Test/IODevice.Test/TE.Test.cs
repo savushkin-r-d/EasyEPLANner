@@ -173,6 +173,18 @@ namespace Tests.Devices
                     TE_IOLINK,
                     GetRandomTEDevice()
                 },
+                new object[]
+                {
+                    new string[0],
+                    TE_VIRT,
+                    GetRandomTEDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    Incorrect,
+                    GetRandomTEDevice()
+                },
             };
         }
 

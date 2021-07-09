@@ -300,6 +300,7 @@ namespace Device
                     }
                     break;
             }
+
             return string.Empty;
         }
 
@@ -367,6 +368,7 @@ namespace Device
                     }
                     break;
             }
+
             return null;
         }
     }

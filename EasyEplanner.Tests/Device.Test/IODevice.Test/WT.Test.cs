@@ -159,7 +159,6 @@ namespace Tests.Devices
                 DeviceParameter.P_C0,
                 DeviceParameter.P_DT
             };
-            var emptyParameters = new string[0];
 
             return new object[]
             {
@@ -177,13 +176,13 @@ namespace Tests.Devices
                 },
                 new object[]
                 {
-                    emptyParameters,
+                    new string[0],
                     WT_VIRT,
                     GetRandomWTDevice(),
                 },
                 new object[]
                 {
-                    emptyParameters,
+                    new string[0],
                     Incorrect,
                     GetRandomWTDevice(),
                 }

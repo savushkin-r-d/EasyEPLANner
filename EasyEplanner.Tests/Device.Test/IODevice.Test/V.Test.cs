@@ -8,7 +8,6 @@ namespace Tests.Devices
     public class VTest
     {
         const string Incorrect = "Incorrect";
-
         const string V_DO1 = "V_DO1";
         const string V_DO2 = "V_DO2";
         const string V_DO1_DI1_FB_OFF = "V_DO1_DI1_FB_OFF";
@@ -190,7 +189,6 @@ namespace Tests.Devices
                 {DeviceTag.M, 1},
             };
 
-
             var exportForVFBOff = new Dictionary<string, int>()
             {
                 {DeviceTag.ST, 1},
@@ -288,20 +286,18 @@ namespace Tests.Devices
                 DeviceParameter.P_ON_TIME,
                 DeviceParameter.P_FB
             };
-            var emptyArr = new string[0];
-
 
             return new object[]
             {
                 new object[]
                 {
-                    emptyArr,
+                    new string[0],
                     V_DO1,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
-                    emptyArr,
+                    new string[0],
                     V_DO2,
                     GetRandomVDevice()
                 },
@@ -367,7 +363,7 @@ namespace Tests.Devices
                 },
                 new object[]
                 {
-                    emptyArr,
+                    new string[0],
                     V_IOLINK_VTUG_DO1,
                     GetRandomVDevice()
                 },
@@ -391,19 +387,19 @@ namespace Tests.Devices
                 },
                 new object[]
                 {
-                    emptyArr,
+                    new string[0],
                     string.Empty,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
-                    emptyArr,
+                    new string[0],
                     Incorrect,
                     GetRandomVDevice()
                 },
                 new object[]
                 {
-                    emptyArr,
+                    new string[0],
                     V_VIRT,
                     GetRandomVDevice()
                 },

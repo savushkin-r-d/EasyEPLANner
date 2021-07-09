@@ -51,6 +51,7 @@ namespace Device
                         " (WT, WT_VIRT).\n", Name);
                     break;
             }
+
             return errStr;
         }
 

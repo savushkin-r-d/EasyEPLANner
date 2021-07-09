@@ -39,14 +39,15 @@ namespace Device
 
                 case "":
                     errStr = string.Format("\"{0}\" - не задан тип" +
-                        " (VC, VC_IOLINK).\n", Name);
+                        " (VC, VC_IOLINK, VC_VIRT).\n", Name);
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (VC, VC_IOLINK).\n", Name);
+                        " (VC, VC_IOLINK, VC_VIRT).\n", Name);
                     break;
             }
+
             return errStr;
         }
 

@@ -164,36 +164,35 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
-            var emptyParameters = new string[0];
             return new object[]
             {
                 new object[]
                 {
-                    emptyParameters,
+                    new string[0],
                     VC,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
-                    emptyParameters,
+                    new string[0],
                     string.Empty,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
-                    emptyParameters,
+                    new string[0],
                     VC_IOLINK,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
-                    emptyParameters,
+                    new string[0],
                     Incorrect,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
-                    emptyParameters,
+                    new string[0],
                     VC_VIRT,
                     GetRandomVCDevice()
                 },
