@@ -133,7 +133,7 @@ namespace Tests.Devices
                     GetRandomFQTDevice() },
                 new object[] { Device.DeviceSubType.NONE, "Incorrect",
                     GetRandomFQTDevice() },
-                new object[] { Device.DeviceSubType.NONE, "",
+                new object[] { Device.DeviceSubType.NONE, string.Empty,
                     GetRandomFQTDevice() },
             };
         }
@@ -148,12 +148,12 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "", "", GetRandomFQTDevice() },
+                new object[] { string.Empty, string.Empty, GetRandomFQTDevice() },
                 new object[] { "FQT", "FQT", GetRandomFQTDevice() },
                 new object[] { "FQT_F", "FQT_F", GetRandomFQTDevice() },
                 new object[] { "FQT_F_OK", "FQT_F_OK", GetRandomFQTDevice() },
                 new object[] { "FQT_VIRT", "FQT_VIRT", GetRandomFQTDevice() },
-                new object[] { "", "Incorrect", GetRandomFQTDevice() },
+                new object[] { string.Empty, "Incorrect", GetRandomFQTDevice() },
             };
         }
 
@@ -222,7 +222,7 @@ namespace Tests.Devices
                 new object[] {exportForFQTVirt, "FQT_VIRT", 
                     GetRandomFQTDevice()},
                 new object[] {null, "Incorrect", GetRandomFQTDevice()},
-                new object[] {null, "", GetRandomFQTDevice()},
+                new object[] {null, string.Empty, GetRandomFQTDevice()},
             };
         }
 
@@ -242,10 +242,14 @@ namespace Tests.Devices
                     GetRandomFQTDevice()},
                 new object[] {$"_{1.0}..{3.0}", "FQT_F_OK", 1.0, 3.0,
                     GetRandomFQTDevice()},
-                new object[] {$"", "FQT", 4.0, 8.0, GetRandomFQTDevice()},
-                new object[] {$"", "FQT_VIRT", 7.0, 9.0, GetRandomFQTDevice()},
-                new object[] {$"", "", 4.0, 8.0, GetRandomFQTDevice()},
-                new object[] {$"", "Incorrect", 7.0, 9.0, GetRandomFQTDevice()},
+                new object[] {string.Empty, "FQT", 4.0, 8.0,
+                    GetRandomFQTDevice()},
+                new object[] {string.Empty, "FQT_VIRT", 7.0, 9.0,
+                    GetRandomFQTDevice()},
+                new object[] {string.Empty, string.Empty, 4.0, 8.0,
+                    GetRandomFQTDevice()},
+                new object[] {string.Empty, "Incorrect", 7.0, 9.0,
+                    GetRandomFQTDevice()},
             };
         }
 
@@ -281,6 +285,18 @@ namespace Tests.Devices
                 {
                     new string[0],
                     "FQT_VIRT",
+                    GetRandomFQTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "Incorrect",
+                    GetRandomFQTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    string.Empty,
                     GetRandomFQTDevice()
                 },
             };
@@ -366,7 +382,7 @@ namespace Tests.Devices
                         { "DI", 0 },
                         { "DO", 0 },
                     },
-                    "",
+                    string.Empty,
                     GetRandomFQTDevice()
                 },
             };

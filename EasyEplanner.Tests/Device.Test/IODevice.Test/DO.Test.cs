@@ -105,7 +105,7 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.DO, "",
+                new object[] { Device.DeviceSubType.DO, string.Empty,
                     GetRandomDODevice() },
                 new object[] { Device.DeviceSubType.DO, "DO",
                     GetRandomDODevice() },
@@ -126,10 +126,10 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "DO", "", GetRandomDODevice() },
+                new object[] { "DO", string.Empty, GetRandomDODevice() },
                 new object[] { "DO", "DO", GetRandomDODevice() },
                 new object[] { "DO_VIRT", "DO_VIRT", GetRandomDODevice() },
-                new object[] { "", "Incorrect", GetRandomDODevice() },
+                new object[] { string.Empty, "Incorrect", GetRandomDODevice() },
             };
         }
 
@@ -149,7 +149,7 @@ namespace Tests.Devices
 
             return new object[]
             {
-                new object[] {exportForDO, "", GetRandomDODevice()},
+                new object[] {exportForDO, string.Empty, GetRandomDODevice()},
                 new object[] {exportForDO, "DO", GetRandomDODevice()},
                 new object[] {exportForDO, "DO_VIRT", GetRandomDODevice()},
                 new object[] {exportForDO, "Incorrect", GetRandomDODevice()},
@@ -175,7 +175,7 @@ namespace Tests.Devices
                 new object[]
                 {
                     new string[0],
-                    "",
+                    string.Empty,
                     GetRandomDODevice()
                 },
                 new object[]
@@ -207,7 +207,7 @@ namespace Tests.Devices
                         { "DI", 0 },
                         { "DO", 1 },
                     },
-                    "",
+                    string.Empty,
                     GetRandomDODevice()
                 },
                 new object[]

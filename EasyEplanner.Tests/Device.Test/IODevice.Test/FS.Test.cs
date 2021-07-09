@@ -23,6 +23,41 @@ namespace Tests.Devices
         }
 
         /// <summary>
+        /// Тест установки подтипа устройства
+        /// </summary>
+        /// <param name="expectedSubType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(SetSubTypeTestData))]
+        public void SetSubTypeTest(Device.DeviceSubType expectedSubType,
+            string subType, Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            Assert.AreEqual(expectedSubType, device.DeviceSubType);
+        }
+
+        /// <summary>
+        /// 1 - Ожидаемое перечисление подтипа,
+        /// 2 - Задаваемое значение подтипа,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] SetSubTypeTestData()
+        {
+            return new object[]
+            {
+                new object[] { Device.DeviceSubType.FS, string.Empty,
+                    GetRandomFSDevice() },
+                new object[] { Device.DeviceSubType.FS, "FS",
+                    GetRandomFSDevice() },
+                new object[] { Device.DeviceSubType.NONE, "Incorrect",
+                    GetRandomFSDevice() },
+                new object[] { Device.DeviceSubType.FS_VIRT, "FS_VIRT",
+                    GetRandomFSDevice() },
+            };
+        }
+
+        /// <summary>
         /// Тест свойств устройств в зависимости от подтипа
         /// </summary>
         /// <param name="expectedProperties">Ожидаемый список свойств</param>
@@ -91,8 +126,10 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "FS", "", GetRandomFSDevice() },
-                new object[] { "FS", "Incorrect", GetRandomFSDevice() },
+                new object[] { "FS", string.Empty, GetRandomFSDevice() },
+                new object[] { string.Empty, "Incorrect", GetRandomFSDevice() },
+                new object[] { "FS", "FS", GetRandomFSDevice() },
+                new object[] { "FS_VIRT", "FS_VIRT", GetRandomFSDevice() },
             };
         }
 
@@ -113,8 +150,10 @@ namespace Tests.Devices
 
             return new object[]
             {
-                new object[] {exportForFS, "", GetRandomFSDevice()},
+                new object[] {exportForFS, string.Empty, GetRandomFSDevice()},
                 new object[] {exportForFS, "FS", GetRandomFSDevice()},
+                new object[] {null, "FS_VIRT", GetRandomFSDevice()},
+                new object[] {null, "Incorrect", GetRandomFSDevice()},
             };
         }
 
@@ -137,7 +176,19 @@ namespace Tests.Devices
                 new object[]
                 {
                     new string[] { "P_DT" },
-                    "",
+                    string.Empty,
+                    GetRandomFSDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "FS_VIRT",
+                    GetRandomFSDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "Incorrect",
                     GetRandomFSDevice()
                 },
             };
@@ -175,7 +226,7 @@ namespace Tests.Devices
                         { "DI", 1 },
                         { "DO", 0 },
                     },
-                    "",
+                    string.Empty,
                     GetRandomFSDevice()
                 },
                 new object[]
@@ -184,10 +235,22 @@ namespace Tests.Devices
                     {
                         { "AI", 0 },
                         { "AO", 0 },
-                        { "DI", 1 },
+                        { "DI", 0 },
                         { "DO", 0 },
                     },
                     "Incorrect",
+                    GetRandomFSDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "FS_VIRT",
                     GetRandomFSDevice()
                 }
             };

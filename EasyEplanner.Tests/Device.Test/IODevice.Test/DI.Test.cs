@@ -105,7 +105,7 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.DI, "",
+                new object[] { Device.DeviceSubType.DI, string.Empty,
                     GetRandomDIDevice() },
                 new object[] { Device.DeviceSubType.DI, "DI",
                     GetRandomDIDevice() },
@@ -126,10 +126,10 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "DI", "", GetRandomDIDevice() },
+                new object[] { "DI", string.Empty, GetRandomDIDevice() },
                 new object[] { "DI", "DI", GetRandomDIDevice() },
                 new object[] { "DI_VIRT", "DI_VIRT", GetRandomDIDevice() },
-                new object[] { "", "Incorrect", GetRandomDIDevice() },
+                new object[] { string.Empty, "Incorrect", GetRandomDIDevice() },
             };
         }
 
@@ -156,7 +156,7 @@ namespace Tests.Devices
 
             return new object[]
             {
-                new object[] {exportForDI, "", GetRandomDIDevice()},
+                new object[] {exportForDI, string.Empty, GetRandomDIDevice()},
                 new object[] {exportForDI, "DI", GetRandomDIDevice()},
                 new object[] {exportForVirtDI, "DI_VIRT", GetRandomDIDevice()},
                 new object[] {null, "Incorrect", GetRandomDIDevice()},
@@ -182,7 +182,7 @@ namespace Tests.Devices
                 new object[]
                 {
                     new string[] { "P_DT" },
-                    "",
+                    string.Empty,
                     GetRandomDIDevice()
                 },
                 new object[]
@@ -214,7 +214,7 @@ namespace Tests.Devices
                         { "DI", 1 },
                         { "DO", 0 },
                     },
-                    "",
+                    string.Empty,
                     GetRandomDIDevice()
                 },
                 new object[]

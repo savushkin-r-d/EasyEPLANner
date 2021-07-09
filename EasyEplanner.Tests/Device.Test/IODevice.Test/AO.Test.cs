@@ -123,7 +123,7 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.AO, "", 
+                new object[] { Device.DeviceSubType.AO, string.Empty, 
                     GetRandomAODevice() },
                 new object[] { Device.DeviceSubType.AO, "AO", 
                     GetRandomAODevice() },
@@ -144,10 +144,10 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "AO", "", GetRandomAODevice() },
+                new object[] { "AO", string.Empty, GetRandomAODevice() },
                 new object[] { "AO", "AO", GetRandomAODevice() },
                 new object[] { "AO_VIRT", "AO_VIRT", GetRandomAODevice() },
-                new object[] { "", "Incorrect", GetRandomAODevice() },
+                new object[] { string.Empty, "Incorrect", GetRandomAODevice() },
             };
         }
 
@@ -175,7 +175,7 @@ namespace Tests.Devices
 
             return new object[]
             {
-                new object[] {exportForAO, "", GetRandomAODevice()},
+                new object[] {exportForAO, string.Empty, GetRandomAODevice()},
                 new object[] {exportForAO, "AO", GetRandomAODevice()},
                 new object[] {exportForVirtAO, "AO_VIRT", GetRandomAODevice()},
                 new object[] {null, "Incorrect", GetRandomAODevice()},
@@ -194,12 +194,14 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] {$"_{2.0}..{4.0}", "", 2.0, 4.0,
+                new object[] {$"_{2.0}..{4.0}", string.Empty, 2.0, 4.0,
                     GetRandomAODevice()},
                 new object[] {$"_{1.0}..{3.0}", "AO", 1.0, 3.0,
                     GetRandomAODevice()},
-                new object[] {$"", "AO_VIRT", 4.0, 8.0, GetRandomAODevice()},
-                new object[] {$"", "Incorrect", 7.0, 9.0, GetRandomAODevice()},
+                new object[] {string.Empty, "AO_VIRT", 4.0, 8.0,
+                    GetRandomAODevice()},
+                new object[] {string.Empty, "Incorrect", 7.0, 9.0,
+                    GetRandomAODevice()},
             };
         }
 
@@ -222,7 +224,7 @@ namespace Tests.Devices
                 new object[]
                 {
                     new string[] { "P_MIN_V", "P_MAX_V" },
-                    "",
+                    string.Empty,
                     GetRandomAODevice()
                 },
                 new object[]
@@ -254,7 +256,7 @@ namespace Tests.Devices
                         { "DI", 0 },
                         { "DO", 0 },
                     },
-                    "",
+                    string.Empty,
                     GetRandomAODevice()
                 },
                 new object[]

@@ -105,11 +105,13 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.F, "", 
+                new object[] { Device.DeviceSubType.F, string.Empty, 
                     GetRandomFDevice() },
                 new object[] { Device.DeviceSubType.F, "F", 
                     GetRandomFDevice() },
                 new object[] { Device.DeviceSubType.NONE, "Incorrect", 
+                    GetRandomFDevice() },
+                new object[] { Device.DeviceSubType.F_VIRT, "F_VIRT",
                     GetRandomFDevice() },
             };
         }
@@ -124,9 +126,10 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "F", "", GetRandomFDevice() },
+                new object[] { "F", string.Empty, GetRandomFDevice() },
                 new object[] { "F", "F", GetRandomFDevice() },
-                new object[] { "", "Incorrect", GetRandomFDevice() },
+                new object[] { "F_VIRT", "F_VIRT", GetRandomFDevice() },
+                new object[] { string.Empty, "Incorrect", GetRandomFDevice() },
             };
         }
 
@@ -152,9 +155,10 @@ namespace Tests.Devices
 
             return new object[]
             {
-                new object[] {exportForAI, "", GetRandomFDevice()},
+                new object[] {exportForAI, string.Empty, GetRandomFDevice()},
                 new object[] {exportForAI, "F", GetRandomFDevice()},
                 new object[] {null, "Incorrect", GetRandomFDevice()},
+                new object[] {null, "F_VIRT", GetRandomFDevice()},
             };
         }
 
@@ -171,7 +175,7 @@ namespace Tests.Devices
                 new object[]
                 {
                     new string[0],
-                    "",
+                    string.Empty,
                     GetRandomFDevice()
                 },
                 new object[]
@@ -184,6 +188,12 @@ namespace Tests.Devices
                 {
                     new string[0],
                     "Incorrect",
+                    GetRandomFDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "F_VIRT",
                     GetRandomFDevice()
                 },
             };
@@ -209,7 +219,7 @@ namespace Tests.Devices
                         { "DI", 0 },
                         { "DO", 0 },
                     }, 
-                    "", 
+                    string.Empty, 
                     GetRandomFDevice() 
                 },
                 new object[] 
@@ -235,6 +245,18 @@ namespace Tests.Devices
                     },
                     "Incorrect", 
                     GetRandomFDevice() 
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { "AI", 0 },
+                        { "AO", 0 },
+                        { "DI", 0 },
+                        { "DO", 0 },
+                    },
+                    "F_VIRT",
+                    GetRandomFDevice()
                 },
             };
         }

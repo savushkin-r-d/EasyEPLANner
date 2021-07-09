@@ -123,7 +123,7 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.AI, "", 
+                new object[] { Device.DeviceSubType.AI, string.Empty, 
                     GetRandomAIDevice() },
                 new object[] { Device.DeviceSubType.AI, "AI", 
                     GetRandomAIDevice() },
@@ -144,10 +144,10 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "AI", "", GetRandomAIDevice() },
+                new object[] { "AI", string.Empty, GetRandomAIDevice() },
                 new object[] { "AI", "AI", GetRandomAIDevice() },
                 new object[] { "AI_VIRT", "AI_VIRT", GetRandomAIDevice() },
-                new object[] { "", "Incorrect", GetRandomAIDevice() },
+                new object[] { string.Empty, "Incorrect", GetRandomAIDevice() },
             };
         }
 
@@ -177,7 +177,7 @@ namespace Tests.Devices
 
             return new object[]
             {
-                new object[] {exportForAI, "", GetRandomAIDevice()},
+                new object[] {exportForAI, string.Empty, GetRandomAIDevice()},
                 new object[] {exportForAI, "AI", GetRandomAIDevice()},
                 new object[] {exportForAIVirt, "AI_VIRT", GetRandomAIDevice()},
                 new object[] {null, "Incorrect", GetRandomAIDevice()},
@@ -196,12 +196,14 @@ namespace Tests.Devices
         {
 			return new object[]
 			{
-			    new object[] {$"_{2.0}..{4.0}", "", 2.0, 4.0, 
+			    new object[] {$"_{2.0}..{4.0}", string.Empty, 2.0, 4.0, 
                     GetRandomAIDevice()},
 			    new object[] {$"_{1.0}..{3.0}", "AI", 1.0, 3.0, 
                     GetRandomAIDevice()},
-			    new object[] {$"", "AI_VIRT", 4.0, 8.0, GetRandomAIDevice()},
-			    new object[] {$"", "Incorrect", 7.0, 9.0, GetRandomAIDevice()},
+			    new object[] {string.Empty, "AI_VIRT", 4.0, 8.0,
+                    GetRandomAIDevice()},
+			    new object[] {string.Empty, "Incorrect", 7.0, 9.0,
+                    GetRandomAIDevice()},
 			};
         }
 
@@ -218,7 +220,7 @@ namespace Tests.Devices
                 new object[]
                 {
                     new string[] { "P_C0", "P_MIN_V", "P_MAX_V" },
-                    "",
+                    string.Empty,
                     GetRandomAIDevice()
                 },
                 new object[]
@@ -231,6 +233,12 @@ namespace Tests.Devices
                 {
                     new string[0],
                     "AI_VIRT",
+                    GetRandomAIDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    "Incorrect",
                     GetRandomAIDevice()
                 },
             };
@@ -256,7 +264,7 @@ namespace Tests.Devices
                         { "DI", 0 },
                         { "DO", 0 },
                     }, 
-                    "", 
+                    string.Empty, 
                     GetRandomAIDevice() 
                 },
                 new object[] 
