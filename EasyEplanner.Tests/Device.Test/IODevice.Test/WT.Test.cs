@@ -7,9 +7,14 @@ namespace Tests.Devices
 {
     public class WTTest
     {
-        private const string IncorrectSubType = "Incorrect";
-        private const string WT = "WT";
-        private const string WT_VIRT = "WT_VIRT";
+        const string Incorrect = "Incorrect";
+        const string WT = "WT";
+        const string WT_VIRT = "WT_VIRT";
+
+        const string AI = Device.IODevice.IOChannel.AI;
+        const string AO = Device.IODevice.IOChannel.AO;
+        const string DI = Device.IODevice.IOChannel.DI;
+        const string DO = Device.IODevice.IOChannel.DO;
 
         /// <summary>
         /// Тест установки подтипа устройства
@@ -41,7 +46,7 @@ namespace Tests.Devices
                     GetRandomWTDevice() },
                 new object[] { Device.DeviceSubType.WT, WT,
                     GetRandomWTDevice() },
-                new object[] { Device.DeviceSubType.NONE, IncorrectSubType,
+                new object[] { Device.DeviceSubType.NONE, Incorrect,
                     GetRandomWTDevice() },
             };
         }
@@ -73,7 +78,7 @@ namespace Tests.Devices
             {
                 new object[] { WT, string.Empty, GetRandomWTDevice() },
                 new object[] { WT, WT, GetRandomWTDevice() },
-                new object[] { string.Empty, IncorrectSubType, GetRandomWTDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomWTDevice() },
                 new object[] { WT_VIRT, WT_VIRT, GetRandomWTDevice() },
             };
         }
@@ -118,7 +123,7 @@ namespace Tests.Devices
                 new object[] {exportForWT, string.Empty, GetRandomWTDevice() },
                 new object[] {exportForWT, WT, GetRandomWTDevice() },
                 new object[] {null, WT_VIRT, GetRandomWTDevice() },
-                new object[] {null, IncorrectSubType, GetRandomWTDevice() },
+                new object[] {null, Incorrect, GetRandomWTDevice() },
             };
         }
 
@@ -178,7 +183,7 @@ namespace Tests.Devices
                 new object[]
                 {
                     new string[0],
-                    IncorrectSubType,
+                    Incorrect,
                     GetRandomWTDevice(),
                 }
             };
@@ -196,17 +201,17 @@ namespace Tests.Devices
             string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
-            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
-            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
-            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
-                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
-                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
-                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
             });
         }
 
@@ -225,10 +230,10 @@ namespace Tests.Devices
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 2 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
+                        { AI, 2 },
+                        { AO, 0 },
+                        { DI, 0 },
+                        { DO, 0 },
                     },
                     WT,
                     GetRandomWTDevice()
@@ -237,10 +242,10 @@ namespace Tests.Devices
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 2 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
+                        { AI, 2 },
+                        { AO, 0 },
+                        { DI, 0 },
+                        { DO, 0 },
                     },
                     string.Empty,
                     GetRandomWTDevice()
@@ -249,22 +254,22 @@ namespace Tests.Devices
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 0 },
+                        { DO, 0 },
                     },
-                    IncorrectSubType,
+                    Incorrect,
                     GetRandomWTDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 0 },
+                        { DO, 0 },
                     },
                     WT_VIRT,
                     GetRandomWTDevice()

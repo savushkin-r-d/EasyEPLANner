@@ -75,7 +75,7 @@ namespace Device
                     switch(dst)
                     {
                         case DeviceSubType.WT:
-                            return dt.ToString();
+                            return "WT";
 
                         case DeviceSubType.WT_VIRT:
                             return "WT_VIRT";

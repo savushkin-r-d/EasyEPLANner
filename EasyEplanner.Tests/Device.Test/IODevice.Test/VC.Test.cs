@@ -7,6 +7,16 @@ namespace Tests.Devices
 {
     public class VCTest
     {
+        const string VC = "VC";
+        const string VC_IOLINK = "VC_IOLINK";
+        const string VC_VIRT = "VC_VIRT";
+        const string Incorrect = "Incorrect";
+
+        const string AI = Device.IODevice.IOChannel.AI;
+        const string AO = Device.IODevice.IOChannel.AO;
+        const string DI = Device.IODevice.IOChannel.DI;
+        const string DO = Device.IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест установки подтипа устройства
         /// </summary>
@@ -31,13 +41,15 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.VC, "VC",
+                new object[] { Device.DeviceSubType.VC, VC,
                     GetRandomVCDevice() },
-                new object[] { Device.DeviceSubType.VC_IOLINK, "VC_IOLINK",
+                new object[] { Device.DeviceSubType.VC_IOLINK, VC_IOLINK,
                     GetRandomVCDevice() },
-                new object[] { Device.DeviceSubType.NONE, "",
+                new object[] { Device.DeviceSubType.NONE, string.Empty,
                     GetRandomVCDevice() },
-                new object[] { Device.DeviceSubType.NONE, "Incorrect",
+                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                    GetRandomVCDevice() },
+                new object[] { Device.DeviceSubType.VC_VIRT, VC_VIRT,
                     GetRandomVCDevice() },
             };
         }
@@ -67,10 +79,11 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "VC", "VC", GetRandomVCDevice() },
-                new object[] { "VC_IOLINK", "VC_IOLINK", GetRandomVCDevice() },
-                new object[] { "", "", GetRandomVCDevice() },
-                new object[] { "", "Incorrect", GetRandomVCDevice() },
+                new object[] { VC, VC, GetRandomVCDevice() },
+                new object[] { VC_IOLINK, VC_IOLINK, GetRandomVCDevice() },
+                new object[] { string.Empty, string.Empty, GetRandomVCDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomVCDevice() },
+                new object[] { VC_VIRT, VC_VIRT, GetRandomVCDevice() },
             };
         }
 
@@ -100,28 +113,29 @@ namespace Tests.Devices
         {
             var exportForVC = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"V", 1},
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.V, 1},
             };
 
             var exportForVCIOL = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"V", 1},
-                {"BLINK", 1},
-                {"NAMUR_ST", 1},
-                {"OPENED", 1},
-                {"CLOSED", 1},
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.BLINK, 1},
+                {DeviceTag.NAMUR_ST, 1},
+                {DeviceTag.OPENED, 1},
+                {DeviceTag.CLOSED, 1},
             };
 
             return new object[]
             {
-                new object[] {null, "Incorrect", GetRandomVCDevice()},
-                new object[] {null, "", GetRandomVCDevice()},
-                new object[] {exportForVC, "VC", GetRandomVCDevice()},
-                new object[] {exportForVCIOL, "VC_IOLINK", GetRandomVCDevice()}
+                new object[] {null, Incorrect, GetRandomVCDevice()},
+                new object[] {null, string.Empty, GetRandomVCDevice()},
+                new object[] {exportForVC, VC, GetRandomVCDevice()},
+                new object[] {exportForVCIOL, VC_IOLINK, GetRandomVCDevice()},
+                new object[] {null, VC_VIRT, GetRandomVCDevice()}
             };
         }
 
@@ -155,25 +169,31 @@ namespace Tests.Devices
                 new object[]
                 {
                     new string[0],
-                    "VC",
+                    VC,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "",
+                    string.Empty,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "VC_IOLINK",
+                    VC_IOLINK,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
                     new string[0],
                     "Incorrect",
+                    GetRandomVCDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    VC_VIRT,
                     GetRandomVCDevice()
                 },
             };
@@ -191,17 +211,17 @@ namespace Tests.Devices
             string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
-            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
-            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
-            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
-                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
-                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
-                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
             });
         }
 
@@ -220,48 +240,48 @@ namespace Tests.Devices
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 1 },
-                        { "DI", 0 },
-                        { "DO", 0 },
+                        { AI, 0 },
+                        { AO, 1 },
+                        { DI, 0 },
+                        { DO, 0 },
                     },
-                    "VC",
+                    VC,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 0 },
+                        { DO, 0 },
                     },
-                    "",
+                    string.Empty,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 0 },
+                        { DO, 0 },
                     },
-                    "Incorrect",
+                    Incorrect,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 1 },
-                        { "AO", 1 },
-                        { "DI", 0 },
-                        { "DO", 0 },
+                        { AI, 1 },
+                        { AO, 1 },
+                        { DI, 0 },
+                        { DO, 0 },
                     },
-                    "VC_IOLINK",
+                    VC_IOLINK,
                     GetRandomVCDevice()
                 }
             };

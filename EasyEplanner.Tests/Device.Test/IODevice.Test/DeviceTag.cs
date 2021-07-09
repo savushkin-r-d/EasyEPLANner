@@ -9,5 +9,9 @@
         public const string P_DT = "P_DT";
         public const string P_RKP = "P_RKP";
         public const string P_CZ = "P_CZ";
+        public const string BLINK = "BLINK";
+        public const string NAMUR_ST = "NAMUR_ST";
+        public const string OPENED = "OPENED";
+        public const string CLOSED = "CLOSED";
     }
 }

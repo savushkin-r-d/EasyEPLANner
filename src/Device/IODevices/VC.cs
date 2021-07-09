@@ -21,7 +21,7 @@ namespace Device
         {
             base.SetSubType(subType);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subType)
             {
                 case "VC":
@@ -32,6 +32,9 @@ namespace Device
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     SetIOLinkSizes(ArticleName);
+                    break;
+
+                case "VC_VIRT":
                     break;
 
                 case "":
@@ -60,6 +63,9 @@ namespace Device
 
                         case DeviceSubType.VC_IOLINK:
                             return "VC_IOLINK";
+
+                        case DeviceSubType.VC_VIRT:
+                            return "VC_VIRT";
                     }
                     break;
             }
