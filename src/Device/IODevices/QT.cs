@@ -93,12 +93,13 @@ namespace Device
         {
             string res = base.Check();
 
-            if (DeviceSubType != DeviceSubType.QT_IOLINK)
+            if (DeviceSubType != DeviceSubType.QT_IOLINK &&
+                DeviceSubType != DeviceSubType.QT_VIRT)
             {
                 if (parameters.Count < 2)
                 {
                     res += string.Format(
-                        "{0} - не указан диапазон измерений\n", name);
+                        "\"{0}\" - не указан диапазон измерений\n", name);
                 }
             }
 
