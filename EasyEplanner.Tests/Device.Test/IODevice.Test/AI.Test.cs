@@ -23,8 +23,9 @@ namespace Tests.Devices
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
-        public void SetSubTypeTest(Device.DeviceSubType expectedSubType,
-            string subType, Device.IODevice device)
+        public void SetSubType_NewDev_ReturnsExpectedSubType(
+            Device.DeviceSubType expectedSubType, string subType,
+            Device.IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -58,8 +59,8 @@ namespace Tests.Devices
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
-        public void GetDeviceSubTypeStrTest(string expectedType,
-            string subType, Device.IODevice device)
+        public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
+            string expectedType, string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
@@ -90,7 +91,7 @@ namespace Tests.Devices
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
-        public void GetDevicePropertiesTest(
+        public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
             Device.IODevice device)
         {
@@ -141,8 +142,9 @@ namespace Tests.Devices
         /// <param name="value2">Конец диапазона</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetRangeTestData))]
-        public void GetRangeTest(string expected, string subType,
-            double value1, double value2, Device.IODevice device)
+        public void GetRange_NewDev_ReturnsExpectedRangeString(string expected,
+            string subType, double value1, double value2,
+            Device.IODevice device)
         {
             device.SetSubType(subType);
             device.SetParameter(DeviceParameter.P_MIN_V, value1);
@@ -180,7 +182,8 @@ namespace Tests.Devices
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(ParametersTestData))]
-        public void ParametersTest(string[] parametersSequence, string subType,
+        public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
+            string[] parametersSequence, string subType,
             Device.IODevice device)
         {
             device.SetSubType(subType);
@@ -242,8 +245,9 @@ namespace Tests.Devices
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(ChannelsTestData))]
-        public void ChannelsTest(Dictionary<string, int> expectedChannelsCount,
-            string subType, Device.IODevice device)
+        public void Channels_NewDev_ReturnsExpectedCount(
+            Dictionary<string, int> expectedChannelsCount, string subType,
+            Device.IODevice device)
         {
             device.SetSubType(subType);
             int actualAI = device.Channels.Where(x => x.Name == AI).Count();
