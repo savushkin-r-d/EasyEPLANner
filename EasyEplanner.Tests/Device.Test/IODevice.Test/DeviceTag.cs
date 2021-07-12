@@ -33,5 +33,13 @@
         public const string P_R = "P_R";
         public const string CLEVEL = "CLEVEL";
         public const string P_H_TRUNC = "P_H_TRUNC";
+        public const string L_RED = "L_RED";
+        public const string L_YELLOW = "L_YELLOW";
+        public const string L_GREEN = "L_GREEN";
+        public const string L_SIREN = "L_SIREN";
+        public const string ABS_V = "ABS_V";
+        public const string P_MIN_FLOW = "P_MIN_FLOW";
+        public const string P_MAX_FLOW = "P_MAX_FLOW";
+        public const string F = "F";
     }
 }

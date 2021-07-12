@@ -7,6 +7,15 @@ namespace Tests.Devices
 {
     public class HLTest
     {
+        const string Incorrect = "Incorrect";
+        const string HL = "HL";
+        const string HL_VIRT = "HL_VIRT";
+
+        const string AI = Device.IODevice.IOChannel.AI;
+        const string AO = Device.IODevice.IOChannel.AO;
+        const string DI = Device.IODevice.IOChannel.DI;
+        const string DO = Device.IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест получения подтипа устройства
         /// </summary>
@@ -48,11 +57,11 @@ namespace Tests.Devices
             {
                 new object[] { Device.DeviceSubType.HL, string.Empty,
                     GetRandomHLDevice() },
-                new object[] { Device.DeviceSubType.HL, "HL",
+                new object[] { Device.DeviceSubType.HL, HL,
                     GetRandomHLDevice() },
-                new object[] { Device.DeviceSubType.NONE, "Incorrect",
+                new object[] { Device.DeviceSubType.NONE, Incorrect,
                     GetRandomHLDevice() },
-                new object[] { Device.DeviceSubType.HL_VIRT, "HL_VIRT",
+                new object[] { Device.DeviceSubType.HL_VIRT, HL_VIRT,
                     GetRandomHLDevice() },
             };
         }
@@ -102,17 +111,17 @@ namespace Tests.Devices
             string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
-            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
-            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
-            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
-                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
-                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
-                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
             });
         }
 
@@ -126,10 +135,10 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "HL", string.Empty, GetRandomHLDevice() },
-                new object[] { string.Empty, "Incorrect", GetRandomHLDevice() },
-                new object[] { "HL_VIRT", "HL_VIRT", GetRandomHLDevice() },
-                new object[] { "HL", "HL", GetRandomHLDevice() },
+                new object[] { HL, string.Empty, GetRandomHLDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomHLDevice() },
+                new object[] { HL_VIRT, HL_VIRT, GetRandomHLDevice() },
+                new object[] { HL, HL, GetRandomHLDevice() },
             };
         }
 
@@ -143,16 +152,16 @@ namespace Tests.Devices
         {
             var exportForHL = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
             };
 
             return new object[]
             {
                 new object[] {exportForHL, string.Empty, GetRandomHLDevice()},
-                new object[] {exportForHL, "HL", GetRandomHLDevice()},
-                new object[] {null, "HL_VIRT", GetRandomHLDevice()},
-                new object[] {null, "Incorrect", GetRandomHLDevice()},
+                new object[] {exportForHL, HL, GetRandomHLDevice()},
+                new object[] {null, HL_VIRT, GetRandomHLDevice()},
+                new object[] {null, Incorrect, GetRandomHLDevice()},
             };
         }
 
@@ -169,7 +178,7 @@ namespace Tests.Devices
                 new object[]
                 {
                     new string[0],
-                    "HL",
+                    HL,
                     GetRandomHLDevice()
                 },
                 new object[]
@@ -181,13 +190,13 @@ namespace Tests.Devices
                 new object[]
                 {
                     new string[0],
-                    "HL_VIRT",
+                    HL_VIRT,
                     GetRandomHLDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "Incorrect",
+                    Incorrect,
                     GetRandomHLDevice()
                 },
             };
@@ -202,54 +211,46 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var emptyChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
+            var discreteLampChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 1 },
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 1 },
-                    },
-                    "HL",
+                    discreteLampChannels,
+                    HL,
                     GetRandomHLDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 1 },
-                    },
+                    discreteLampChannels,
                     string.Empty,
                     GetRandomHLDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "Incorrect",
+                    emptyChannels,
+                    Incorrect,
                     GetRandomHLDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "HL_VIRT",
+                    emptyChannels,
+                    HL_VIRT,
                     GetRandomHLDevice()
                 }
             };

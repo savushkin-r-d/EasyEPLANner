@@ -7,6 +7,15 @@ namespace Tests.Devices
 {
     public class HLATest
     {
+        const string Incorrect = "Incorrect";
+        const string HLA = "HLA";
+        const string HLA_VIRT = "HLA_VIRT";
+
+        const string AI = Device.IODevice.IOChannel.AI;
+        const string AO = Device.IODevice.IOChannel.AO;
+        const string DI = Device.IODevice.IOChannel.DI;
+        const string DO = Device.IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест установки подтипа устройства
         /// </summary>
@@ -32,14 +41,14 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.HLA, "HLA",
+                new object[] { Device.DeviceSubType.HLA, HLA,
                     GetRandomHLADevice() },
-                new object[] { Device.DeviceSubType.HLA_VIRT, "HLA_VIRT",
+                new object[] { Device.DeviceSubType.HLA_VIRT, HLA_VIRT,
                     GetRandomHLADevice() },
                 new object[] { Device.DeviceSubType.HLA, string.Empty,
                     GetRandomHLADevice() },
                 new object[] { Device.DeviceSubType.NONE,
-                    "Incorrect", GetRandomHLADevice() },
+                    Incorrect, GetRandomHLADevice() },
             };
         }
 
@@ -68,10 +77,10 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "HLA", string.Empty, GetRandomHLADevice() },
-                new object[] { "HLA", "HLA", GetRandomHLADevice() },
-                new object[] { "HLA_VIRT", "HLA_VIRT", GetRandomHLADevice() },
-                new object[] { string.Empty, "Incorrect", GetRandomHLADevice() },
+                new object[] { HLA, string.Empty, GetRandomHLADevice() },
+                new object[] { HLA, HLA, GetRandomHLADevice() },
+                new object[] { HLA_VIRT, HLA_VIRT, GetRandomHLADevice() },
+                new object[] { string.Empty, Incorrect, GetRandomHLADevice() },
             };
         }
 
@@ -101,20 +110,20 @@ namespace Tests.Devices
         {
             var exportForHLA = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"L_RED", 1 },
-                {"L_YELLOW", 1 },
-                {"L_GREEN", 1 },
-                {"L_SIREN", 1 }
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.L_RED, 1 },
+                {DeviceTag.L_YELLOW, 1 },
+                {DeviceTag.L_GREEN, 1 },
+                {DeviceTag.L_SIREN, 1 }
             };
 
             return new object[]
             {
                 new object[] {exportForHLA, string.Empty, GetRandomHLADevice()},
-                new object[] {exportForHLA, "HLA", GetRandomHLADevice()},
-                new object[] {null, "Incorrect", GetRandomHLADevice()},
-                new object[] {null, "HLA_VIRT", GetRandomHLADevice()},
+                new object[] {exportForHLA, HLA, GetRandomHLADevice()},
+                new object[] {null, Incorrect, GetRandomHLADevice()},
+                new object[] {null, HLA_VIRT, GetRandomHLADevice()},
             };
         }
 
@@ -131,17 +140,17 @@ namespace Tests.Devices
             Device.IODevice device)
         {
             device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
-            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
-            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
-            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
-                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
-                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
-                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
             });
         }
 
@@ -154,54 +163,46 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var discreteHLAChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 4 },
+            };
+
+            var emptyChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 4 },
-                    },
-                    "HLA",
+                    discreteHLAChannels,
+                    HLA,
                     GetRandomHLADevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 4 },
-                    },
+                    discreteHLAChannels,
                     string.Empty,
                     GetRandomHLADevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "Incorrect",
+                    emptyChannels,
+                    Incorrect,
                     GetRandomHLADevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "HLA_VIRT",
+                    emptyChannels,
+                    HLA_VIRT,
                     GetRandomHLADevice()
                 }
             };
@@ -233,30 +234,35 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] PropertiesTestData()
         {
+            var defaultParameters = new string[]
+            {
+                DeviceParameter.R_CONST_RED
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new string[] { "R_CONST_RED" },
-                    "HLA",
+                    defaultParameters,
+                    HLA,
                     GetRandomHLADevice()
                 },
                 new object[]
                 {
-                    new string[] { "R_CONST_RED" },
+                    defaultParameters,
                     string.Empty,
                     GetRandomHLADevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "InCorrect",
+                    Incorrect,
                     GetRandomHLADevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "HLA_VIRT",
+                    HLA_VIRT,
                     GetRandomHLADevice()
                 },
             };

@@ -15,5 +15,8 @@
         public const string P_R = "P_R";
         public const string P_H_CONE = "P_H_CONE";
         public const string P_H_TRUNC = "P_H_TRUNC";
+        public const string R_CONST_RED = "R_CONST_RED";
+        public const string P_MIN_F = "P_MIN_F";
+        public const string P_MAX_F = "P_MAX_F";
     }
 }

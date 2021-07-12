@@ -7,6 +7,15 @@ namespace Tests.Devices
 {
     public class HATest
     {
+        const string Incorrect = "Incorrect";
+        const string HA = "HA";
+        const string HA_VIRT = "HA_VIRT";
+
+        const string AI = Device.IODevice.IOChannel.AI;
+        const string AO = Device.IODevice.IOChannel.AO;
+        const string DI = Device.IODevice.IOChannel.DI;
+        const string DO = Device.IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест получения подтипа устройства
         /// </summary>
@@ -48,11 +57,11 @@ namespace Tests.Devices
             {
                 new object[] { Device.DeviceSubType.HA, string.Empty,
                     GetRandomHADevice() },
-                new object[] { Device.DeviceSubType.HA, "HA",
+                new object[] { Device.DeviceSubType.HA, HA,
                     GetRandomHADevice() },
-                new object[] { Device.DeviceSubType.NONE, "Incorrect",
+                new object[] { Device.DeviceSubType.NONE, Incorrect,
                     GetRandomHADevice() },
-                new object[] { Device.DeviceSubType.HA_VIRT, "HA_VIRT",
+                new object[] { Device.DeviceSubType.HA_VIRT, HA_VIRT,
                     GetRandomHADevice() },
             };
         }
@@ -102,17 +111,17 @@ namespace Tests.Devices
             string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
-            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
-            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
-            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
-                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
-                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
-                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
             });
         }
 
@@ -126,10 +135,10 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "HA", string.Empty, GetRandomHADevice() },
-                new object[] { string.Empty, "Incorrect", GetRandomHADevice() },
-                new object[] { "HA", "HA", GetRandomHADevice() },
-                new object[] { "HA_VIRT", "HA_VIRT", GetRandomHADevice() },
+                new object[] { HA, string.Empty, GetRandomHADevice() },
+                new object[] { string.Empty, Incorrect, GetRandomHADevice() },
+                new object[] { HA, HA, GetRandomHADevice() },
+                new object[] { HA_VIRT, HA_VIRT, GetRandomHADevice() },
             };
         }
 
@@ -143,16 +152,16 @@ namespace Tests.Devices
         {
             var exportForFS = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
             };
 
             return new object[]
             {
                 new object[] {exportForFS, string.Empty, GetRandomHADevice()},
-                new object[] {exportForFS, "HA", GetRandomHADevice()},
-                new object[] {null, "Incorrect", GetRandomHADevice()},
-                new object[] {null, "HA_VIRT", GetRandomHADevice()},
+                new object[] {exportForFS, HA, GetRandomHADevice()},
+                new object[] {null, Incorrect, GetRandomHADevice()},
+                new object[] {null, HA_VIRT, GetRandomHADevice()},
             };
         }
 
@@ -169,7 +178,7 @@ namespace Tests.Devices
                 new object[]
                 {
                     new string[0],
-                    "HA",
+                    HA,
                     GetRandomHADevice()
                 },
                 new object[]
@@ -181,13 +190,13 @@ namespace Tests.Devices
                 new object[]
                 {
                     new string[0],
-                    "Incorrect",
+                    Incorrect,
                     GetRandomHADevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "HA_VIRT",
+                    HA_VIRT,
                     GetRandomHADevice()
                 },
             };
@@ -202,54 +211,46 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var discreteSirenChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 1 },
+            };
+
+            var emptyChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 1 },
-                    },
-                    "HA",
+                    discreteSirenChannels,
+                    HA,
                     GetRandomHADevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 1 },
-                    },
+                    discreteSirenChannels,
                     string.Empty,
                     GetRandomHADevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "Incorrect",
+                    emptyChannels,
+                    Incorrect,
                     GetRandomHADevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "HA_VIRT",
+                    emptyChannels,
+                    HA_VIRT,
                     GetRandomHADevice()
                 }
             };

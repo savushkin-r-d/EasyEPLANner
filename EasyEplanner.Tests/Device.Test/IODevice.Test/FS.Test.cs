@@ -7,6 +7,15 @@ namespace Tests.Devices
 {
     public class FSTest
     {
+        const string Incorrect = "Incorrect";
+        const string FS = "FS";
+        const string FS_VIRT = "FS_VIRT";
+
+        const string AI = Device.IODevice.IOChannel.AI;
+        const string AO = Device.IODevice.IOChannel.AO;
+        const string DI = Device.IODevice.IOChannel.DI;
+        const string DO = Device.IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест получения подтипа устройства
         /// </summary>
@@ -48,11 +57,11 @@ namespace Tests.Devices
             {
                 new object[] { Device.DeviceSubType.FS, string.Empty,
                     GetRandomFSDevice() },
-                new object[] { Device.DeviceSubType.FS, "FS",
+                new object[] { Device.DeviceSubType.FS, FS,
                     GetRandomFSDevice() },
-                new object[] { Device.DeviceSubType.NONE, "Incorrect",
+                new object[] { Device.DeviceSubType.NONE, Incorrect,
                     GetRandomFSDevice() },
-                new object[] { Device.DeviceSubType.FS_VIRT, "FS_VIRT",
+                new object[] { Device.DeviceSubType.FS_VIRT, FS_VIRT,
                     GetRandomFSDevice() },
             };
         }
@@ -102,17 +111,17 @@ namespace Tests.Devices
             string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
-            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
-            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
-            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
-                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
-                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
-                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
             });
         }
 
@@ -126,10 +135,10 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "FS", string.Empty, GetRandomFSDevice() },
-                new object[] { string.Empty, "Incorrect", GetRandomFSDevice() },
-                new object[] { "FS", "FS", GetRandomFSDevice() },
-                new object[] { "FS_VIRT", "FS_VIRT", GetRandomFSDevice() },
+                new object[] { FS, string.Empty, GetRandomFSDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomFSDevice() },
+                new object[] { FS, FS, GetRandomFSDevice() },
+                new object[] { FS_VIRT, FS_VIRT, GetRandomFSDevice() },
             };
         }
 
@@ -143,17 +152,17 @@ namespace Tests.Devices
         {
             var exportForFS = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"P_DT", 1},
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.P_DT, 1},
             };
 
             return new object[]
             {
                 new object[] {exportForFS, string.Empty, GetRandomFSDevice()},
-                new object[] {exportForFS, "FS", GetRandomFSDevice()},
-                new object[] {null, "FS_VIRT", GetRandomFSDevice()},
-                new object[] {null, "Incorrect", GetRandomFSDevice()},
+                new object[] {exportForFS, FS, GetRandomFSDevice()},
+                new object[] {null, FS_VIRT, GetRandomFSDevice()},
+                new object[] {null, Incorrect, GetRandomFSDevice()},
             };
         }
 
@@ -165,30 +174,35 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
+            var defaultParameters = new string[]
+            {
+                DeviceParameter.P_DT
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new string[] { "P_DT" },
-                    "FS",
+                    defaultParameters,
+                    FS,
                     GetRandomFSDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_DT" },
+                    defaultParameters,
                     string.Empty,
                     GetRandomFSDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "FS_VIRT",
+                    FS_VIRT,
                     GetRandomFSDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "Incorrect",
+                    Incorrect,
                     GetRandomFSDevice()
                 },
             };
@@ -203,54 +217,46 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var discreteSensorChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 1 },
+                { DO, 0 },
+            };
+
+            var emptyChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 1 },
-                        { "DO", 0 },
-                    },
-                    "FS",
+                    discreteSensorChannels,
+                    FS,
                     GetRandomFSDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 1 },
-                        { "DO", 0 },
-                    },
+                    discreteSensorChannels,
                     string.Empty,
                     GetRandomFSDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "Incorrect",
+                    emptyChannels,
+                    Incorrect,
                     GetRandomFSDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "FS_VIRT",
+                    emptyChannels,
+                    FS_VIRT,
                     GetRandomFSDevice()
                 }
             };
