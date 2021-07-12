@@ -7,6 +7,17 @@ namespace Tests.Devices
 {
     public class QTTest
     {
+        const string Incorrect = "Incorrect";
+        const string QT = "QT";
+        const string QT_OK = "QT_OK";
+        const string QT_IOLINK = "QT_IOLINK";
+        const string QT_VIRT = "QT_VIRT";
+
+        const string AI = Device.IODevice.IOChannel.AI;
+        const string AO = Device.IODevice.IOChannel.AO;
+        const string DI = Device.IODevice.IOChannel.DI;
+        const string DO = Device.IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест установки подтипа устройства
         /// </summary>
@@ -65,8 +76,8 @@ namespace Tests.Devices
             double value1, double value2, Device.IODevice device)
         {
             device.SetSubType(subType);
-            device.SetParameter("P_MIN_V", value1);
-            device.SetParameter("P_MAX_V", value2);
+            device.SetParameter(DeviceParameter.P_MIN_V, value1);
+            device.SetParameter(DeviceParameter.P_MAX_V, value2);
             Assert.AreEqual(expected, device.GetRange());
         }
 
@@ -99,17 +110,17 @@ namespace Tests.Devices
             string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
-            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
-            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
-            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
-                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
-                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
-                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
             });
         }
 
@@ -125,15 +136,15 @@ namespace Tests.Devices
             {
                 new object[] { Device.DeviceSubType.NONE, string.Empty,
                     GetRandomQTDevice() },
-                new object[] { Device.DeviceSubType.QT, "QT",
+                new object[] { Device.DeviceSubType.QT, QT,
                     GetRandomQTDevice() },
-                new object[] { Device.DeviceSubType.QT_IOLINK, "QT_IOLINK",
+                new object[] { Device.DeviceSubType.QT_IOLINK, QT_IOLINK,
                     GetRandomQTDevice() },
-                new object[] { Device.DeviceSubType.QT_OK, "QT_OK",
+                new object[] { Device.DeviceSubType.QT_OK, QT_OK,
                     GetRandomQTDevice() },
-                new object[] { Device.DeviceSubType.NONE, "Incorrect",
+                new object[] { Device.DeviceSubType.NONE, Incorrect,
                     GetRandomQTDevice() },
-                new object[] { Device.DeviceSubType.QT_VIRT, "QT_VIRT",
+                new object[] { Device.DeviceSubType.QT_VIRT, QT_VIRT,
                     GetRandomQTDevice() },
             };
         }
@@ -149,11 +160,11 @@ namespace Tests.Devices
             return new object[]
             {
                 new object[] { string.Empty, string.Empty, GetRandomQTDevice() },
-                new object[] { "QT", "QT", GetRandomQTDevice() },
-                new object[] { "QT_IOLINK", "QT_IOLINK", GetRandomQTDevice() },
-                new object[] { "QT_OK", "QT_OK", GetRandomQTDevice() },
-                new object[] { string.Empty, "Incorrect", GetRandomQTDevice() },
-                new object[] { "QT_VIRT", "QT_VIRT", GetRandomQTDevice() },
+                new object[] { QT, QT, GetRandomQTDevice() },
+                new object[] { QT_IOLINK, QT_IOLINK, GetRandomQTDevice() },
+                new object[] { QT_OK, QT_OK, GetRandomQTDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomQTDevice() },
+                new object[] { QT_VIRT, QT_VIRT, GetRandomQTDevice() },
             };
         }
 
@@ -167,45 +178,44 @@ namespace Tests.Devices
         {
             var exportForQT = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"V", 1},
-                {"P_MIN_V", 1},
-                {"P_MAX_V", 1},
-                {"P_CZ", 1},
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.P_MIN_V, 1},
+                {DeviceTag.P_MAX_V, 1},
+                {DeviceTag.P_CZ, 1},
             };
 
             var exportForQTIOLink = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"V", 1},
-                {"P_CZ", 1},
-                {"T", 1},
-                {"P_ERR", 1}
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.P_CZ, 1},
+                {DeviceTag.T, 1},
+                {DeviceTag.P_ERR, 1}
             };
 
             var exportForQTOk = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"V", 1},
-                {"OK", 1},
-                {"P_MIN_V", 1},
-                {"P_MAX_V", 1},
-                {"P_CZ", 1},
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.OK, 1},
+                {DeviceTag.P_MIN_V, 1},
+                {DeviceTag.P_MAX_V, 1},
+                {DeviceTag.P_CZ, 1},
             };
 
             return new object[]
             {
-                new object[] {exportForQT, "QT", GetRandomQTDevice()},
-                new object[] {exportForQTIOLink, "QT_IOLINK",
+                new object[] {exportForQT, QT, GetRandomQTDevice()},
+                new object[] {exportForQTIOLink, QT_IOLINK,
                     GetRandomQTDevice()},
-                new object[] {exportForQTOk, "QT_OK",
-                    GetRandomQTDevice()},
+                new object[] {exportForQTOk, QT_OK, GetRandomQTDevice()},
                 new object[] {null, string.Empty, GetRandomQTDevice()},
-                new object[] {null, "Incorrect", GetRandomQTDevice()},
-                new object[] {null, "QT_VIRT", GetRandomQTDevice()},
+                new object[] {null, Incorrect, GetRandomQTDevice()},
+                new object[] {null, QT_VIRT, GetRandomQTDevice()},
             };
         }
 
@@ -221,17 +231,17 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] {$"_{2.0}..{4.0}", "QT", 2.0, 4.0,
+                new object[] {$"_{2.0}..{4.0}", QT, 2.0, 4.0,
                     GetRandomQTDevice()},
-                new object[] {$"", "QT_IOLINK", 1.0, 3.0,
+                new object[] {string.Empty, QT_IOLINK, 1.0, 3.0,
                     GetRandomQTDevice()},
-                new object[] {$"_{1.0}..{3.0}", "QT_OK", 1.0, 3.0,
+                new object[] {$"_{1.0}..{3.0}", QT_OK, 1.0, 3.0,
                     GetRandomQTDevice()},
                 new object[] {string.Empty, string.Empty, 4.0, 8.0,
                     GetRandomQTDevice()},
-                new object[] {string.Empty, "Incorrect", 7.0, 9.0,
+                new object[] {string.Empty, Incorrect, 7.0, 9.0,
                     GetRandomQTDevice()},
-                new object[] {string.Empty, "QT_VIRT", 2.0, 3.0,
+                new object[] {string.Empty, QT_VIRT, 2.0, 3.0,
                     GetRandomQTDevice()},
             };
         }
@@ -244,36 +254,48 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
+            var defaultParameters = new string[]
+            {
+                DeviceParameter.P_C0,
+                DeviceParameter.P_MIN_V,
+                DeviceParameter.P_MAX_V,
+            };
+
+            var iolinkParameters = new string[]
+            {
+                DeviceParameter.P_ERR
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new string[] { "P_C0", "P_MIN_V", "P_MAX_V" },
-                    "QT",
+                    defaultParameters,
+                    QT,
                     GetRandomQTDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_C0", "P_MIN_V", "P_MAX_V" },
-                    "QT_OK",
+                    defaultParameters,
+                    QT_OK,
                     GetRandomQTDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_ERR" },
-                    "QT_IOLINK",
-                    GetRandomQTDevice()
-                },
-                new object[]
-                {
-                    new string[0],
-                    "QT_VIRT",
+                    iolinkParameters,
+                    QT_IOLINK,
                     GetRandomQTDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "Incorrect",
+                    QT_VIRT,
+                    GetRandomQTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    Incorrect,
                     GetRandomQTDevice()
                 },
                 new object[]
@@ -294,78 +316,64 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var emptyChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
+            var oneAnalogInputChannel = new Dictionary<string, int>()
+            {
+                { AI, 1 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "QT",
+                    oneAnalogInputChannel,
+                    QT,
                     GetRandomQTDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 1 },
-                        { "DO", 0 },
+                        { AI, 1 },
+                        { AO, 0 },
+                        { DI, 1 },
+                        { DO, 0 },
                     },
-                    "QT_OK",
+                    QT_OK,
                     GetRandomQTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "QT_IOLINK",
+                    oneAnalogInputChannel,
+                    QT_IOLINK,
                     GetRandomQTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "",
+                    emptyChannels,
+                    string.Empty,
                     GetRandomQTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "Incorrect",
+                    emptyChannels,
+                    Incorrect,
                     GetRandomQTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "QT_VIRT",
+                    emptyChannels,
+                    QT_VIRT,
                     GetRandomQTDevice()
                 },
             };

@@ -7,6 +7,17 @@ namespace Tests.Devices
 {
     public class PTTest
     {
+        const string Incorrect = "Incorrect";
+        const string PT = "PT";
+        const string PT_IOLINK = "PT_IOLINK";
+        const string DEV_SPAE = "DEV_SPAE";
+        const string PT_VIRT = "PT_VIRT";
+
+        const string AI = Device.IODevice.IOChannel.AI;
+        const string AO = Device.IODevice.IOChannel.AO;
+        const string DI = Device.IODevice.IOChannel.DI;
+        const string DO = Device.IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест установки подтипа устройства
         /// </summary>
@@ -65,8 +76,8 @@ namespace Tests.Devices
             double value1, double value2, Device.IODevice device)
         {
             device.SetSubType(subType);
-            device.SetParameter("P_MIN_V", value1);
-            device.SetParameter("P_MAX_V", value2);
+            device.SetParameter(DeviceParameter.P_MIN_V, value1);
+            device.SetParameter(DeviceParameter.P_MAX_V, value2);
             Assert.AreEqual(expected, device.GetRange());
         }
 
@@ -99,17 +110,17 @@ namespace Tests.Devices
             string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
-            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
-            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
-            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
-                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
-                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
-                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
             });
         }
 
@@ -125,15 +136,15 @@ namespace Tests.Devices
             {
                 new object[] { Device.DeviceSubType.NONE, string.Empty,
                     GetRandomPTDevice() },
-                new object[] { Device.DeviceSubType.PT, "PT",
+                new object[] { Device.DeviceSubType.PT, PT,
                     GetRandomPTDevice() },
-                new object[] { Device.DeviceSubType.PT_IOLINK, "PT_IOLINK",
+                new object[] { Device.DeviceSubType.PT_IOLINK, PT_IOLINK,
                     GetRandomPTDevice() },
-                new object[] { Device.DeviceSubType.DEV_SPAE, "DEV_SPAE",
+                new object[] { Device.DeviceSubType.DEV_SPAE, DEV_SPAE,
                     GetRandomPTDevice() },
-                new object[] { Device.DeviceSubType.NONE, "Incorrect",
+                new object[] { Device.DeviceSubType.NONE, Incorrect,
                     GetRandomPTDevice() },
-                new object[] { Device.DeviceSubType.PT_VIRT, "PT_VIRT",
+                new object[] { Device.DeviceSubType.PT_VIRT, PT_VIRT,
                     GetRandomPTDevice() },
             };
         }
@@ -149,11 +160,11 @@ namespace Tests.Devices
             return new object[]
             {
                 new object[] { string.Empty, string.Empty, GetRandomPTDevice() },
-                new object[] { "PT", "PT", GetRandomPTDevice() },
-                new object[] { "PT_IOLINK", "PT_IOLINK", GetRandomPTDevice() },
-                new object[] { "DEV_SPAE", "DEV_SPAE", GetRandomPTDevice() },
-                new object[] { string.Empty, "Incorrect", GetRandomPTDevice() },
-                new object[] { "PT_VIRT", "PT_VIRT", GetRandomPTDevice() },
+                new object[] { PT, PT, GetRandomPTDevice() },
+                new object[] { PT_IOLINK, PT_IOLINK, GetRandomPTDevice() },
+                new object[] { DEV_SPAE, DEV_SPAE, GetRandomPTDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomPTDevice() },
+                new object[] { PT_VIRT, PT_VIRT, GetRandomPTDevice() },
             };
         }
 
@@ -167,40 +178,40 @@ namespace Tests.Devices
         {
             var exportForPT = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"V", 1},
-                {"P_MIN_V", 1},
-                {"P_MAX_V", 1},
-                {"P_CZ", 1},
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.P_MIN_V, 1},
+                {DeviceTag.P_MAX_V, 1},
+                {DeviceTag.P_CZ, 1},
             };
 
             var exportForPTIOLink = new Dictionary<string, int>()
             {
-                {"M", 1},
-                {"V", 1},
-                {"P_MIN_V", 1},
-                {"P_MAX_V", 1},
-                {"P_ERR", 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.P_MIN_V, 1},
+                {DeviceTag.P_MAX_V, 1},
+                {DeviceTag.P_ERR, 1},
             };
 
             var exportForDevSpae = new Dictionary<string, int>()
             {
-                {"M", 1},
-                {"V", 1},
-                {"P_ERR", 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.P_ERR, 1},
             };
 
             return new object[]
             {
-                new object[] {exportForPT, "PT", GetRandomPTDevice()},
-                new object[] {exportForPTIOLink, "PT_IOLINK", 
+                new object[] {exportForPT, PT, GetRandomPTDevice()},
+                new object[] {exportForPTIOLink, PT_IOLINK, 
                     GetRandomPTDevice()},
-                new object[] {exportForDevSpae, "DEV_SPAE", 
+                new object[] {exportForDevSpae, DEV_SPAE, 
                     GetRandomPTDevice()},
                 new object[] {null, string.Empty, GetRandomPTDevice()},
-                new object[] {null, "Incorrect", GetRandomPTDevice()},
-                new object[] {null, "PT_VIRT", GetRandomPTDevice()},
+                new object[] {null, Incorrect, GetRandomPTDevice()},
+                new object[] {null, PT_VIRT, GetRandomPTDevice()},
             };
         }
 
@@ -216,17 +227,17 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { $"_{2.0}..{4.0}", "PT", 2.0, 4.0,
+                new object[] { $"_{2.0}..{4.0}", PT, 2.0, 4.0,
                     GetRandomPTDevice()},
-                new object[] { string.Empty, "PT_IOLINK", 1.0, 3.0,
+                new object[] { string.Empty, PT_IOLINK, 1.0, 3.0,
                     GetRandomPTDevice()},
-                new object[] { string.Empty, "DEV_SPAE", 1.0, 3.0,
+                new object[] { string.Empty, DEV_SPAE, 1.0, 3.0,
                     GetRandomPTDevice()},
                 new object[] { string.Empty, string.Empty, 4.0, 8.0,
                     GetRandomPTDevice()},
-                new object[] { string.Empty, "Incorrect", 7.0, 9.0,
+                new object[] { string.Empty, Incorrect, 7.0, 9.0,
                     GetRandomPTDevice()},
-                new object[] { string.Empty, "PT_VIRT", 7.0, 9.0,
+                new object[] { string.Empty, PT_VIRT, 7.0, 9.0,
                     GetRandomPTDevice()},
             };
         }
@@ -239,30 +250,42 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
+            var defaultParameters = new string[]
+            {
+                DeviceParameter.P_C0,
+                DeviceParameter.P_MIN_V,
+                DeviceParameter.P_MAX_V,
+            };
+
+            var iolinkParameters = new string[]
+            {
+                DeviceParameter.P_ERR
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new string[] { "P_C0", "P_MIN_V", "P_MAX_V" },
-                    "PT",
+                    defaultParameters,
+                    PT,
                     GetRandomPTDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_ERR" },
-                    "PT_IOLINK",
+                    iolinkParameters,
+                    PT_IOLINK,
                     GetRandomPTDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_ERR" },
-                    "DEV_SPAE",
+                    iolinkParameters,
+                    DEV_SPAE,
                     GetRandomPTDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "PT_VIRT",
+                    PT_VIRT,
                     GetRandomPTDevice()
                 },
                 new object[]
@@ -283,78 +306,58 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var emptyChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
+            var oneAnalogInputChannel = new Dictionary<string, int>()
+            {
+                { AI, 1 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "PT_IOLINK",
+                    oneAnalogInputChannel,
+                    PT_IOLINK,
                     GetRandomPTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "PT",
+                    oneAnalogInputChannel,
+                    PT,
                     GetRandomPTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "DEV_SPAE",
+                    oneAnalogInputChannel,
+                    DEV_SPAE,
                     GetRandomPTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
+                    emptyChannels,
                     string.Empty,
                     GetRandomPTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "Incorrect",
+                    emptyChannels,
+                    Incorrect,
                     GetRandomPTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "PT_VIRT",
+                    emptyChannels,
+                    PT_VIRT,
                     GetRandomPTDevice()
                 },
             };

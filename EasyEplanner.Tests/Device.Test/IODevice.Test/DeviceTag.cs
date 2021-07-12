@@ -19,5 +19,14 @@
         public const string FB_ON_ST = "FB_ON_ST";
         public const string CS = "CS";
         public const string ERR = "ERR";
+        public const string P_MIN_V = "P_MIN_V";
+        public const string P_MAX_V = "P_MAX_V";
+        public const string T = "T";
+        public const string OK = "OK";
+        public const string P_ERR = "P_ERR";
+        public const string R = "R";
+        public const string FRQ = "FRQ";
+        public const string RPM = "RPM";
+        public const string EST = "EST";
     }
 }

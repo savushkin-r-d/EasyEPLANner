@@ -9,5 +9,7 @@
         public const string P_ON_TIME = "P_ON_TIME";
         public const string P_FB = "P_FB";
         public const string P_ERR = "P_ERR";
+        public const string P_MIN_V = "P_MIN_V";
+        public const string P_MAX_V = "P_MAX_V";
     }
 }

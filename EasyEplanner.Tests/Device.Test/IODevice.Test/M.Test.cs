@@ -7,6 +7,23 @@ namespace Tests.Devices
 {
     public class MTest
     {
+        const string Incorrect = "Incorrect";
+        const string M = "M";
+        const string M_FREQ = "M_FREQ";
+        const string M_REV = "M_REV";
+        const string M_REV_FREQ = "M_REV_FREQ";
+        const string M_REV_2 = "M_REV_2";
+        const string M_REV_FREQ_2 = "M_REV_FREQ_2";
+        const string M_REV_2_ERROR = "M_REV_2_ERROR";
+        const string M_REV_FREQ_2_ERROR = "M_REV_FREQ_2_ERROR";
+        const string M_ATV = "M_ATV";
+        const string M_VIRT = "M_VIRT";
+
+        const string AI = Device.IODevice.IOChannel.AI;
+        const string AO = Device.IODevice.IOChannel.AO;
+        const string DI = Device.IODevice.IOChannel.DI;
+        const string DO = Device.IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест установки подтипа устройства
         /// </summary>
@@ -81,17 +98,17 @@ namespace Tests.Devices
             string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
-            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
-            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
-            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
-                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
-                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
-                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
             });
         }
 
@@ -105,29 +122,29 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.M, "M",
+                new object[] { Device.DeviceSubType.M, M,
                     GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_FREQ, "M_FREQ",
+                new object[] { Device.DeviceSubType.M_FREQ, M_FREQ,
                     GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_REV, "M_REV",
+                new object[] { Device.DeviceSubType.M_REV, M_REV,
                     GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_REV_FREQ, "M_REV_FREQ",
+                new object[] { Device.DeviceSubType.M_REV_FREQ, M_REV_FREQ,
                     GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_REV_2, "M_REV_2",
+                new object[] { Device.DeviceSubType.M_REV_2, M_REV_2,
                     GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.M_REV_FREQ_2, 
-                    "M_REV_FREQ_2", GetRandomMDevice() },
+                    M_REV_FREQ_2, GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.M_REV_2_ERROR, 
-                    "M_REV_2_ERROR", GetRandomMDevice() },
+                    M_REV_2_ERROR, GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.M_REV_FREQ_2_ERROR, 
-                    "M_REV_FREQ_2_ERROR", GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_ATV, "M_ATV",
+                    M_REV_FREQ_2_ERROR, GetRandomMDevice() },
+                new object[] { Device.DeviceSubType.M_ATV, M_ATV,
                     GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.NONE, string.Empty,
                     GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.NONE, "Incorrect",
+                new object[] { Device.DeviceSubType.NONE, Incorrect,
                     GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_VIRT, "M_VIRT",
+                new object[] { Device.DeviceSubType.M_VIRT, M_VIRT,
                     GetRandomMDevice() },
             };
         }
@@ -142,22 +159,22 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "M", "M", GetRandomMDevice() },
-                new object[] { "M_FREQ", "M_FREQ", GetRandomMDevice() },
-                new object[] { "M_REV", "M_REV", GetRandomMDevice() },
-                new object[] { "M_REV_FREQ", "M_REV_FREQ", 
+                new object[] { M, M, GetRandomMDevice() },
+                new object[] { M_FREQ, M_FREQ, GetRandomMDevice() },
+                new object[] { M_REV, M_REV, GetRandomMDevice() },
+                new object[] { M_REV_FREQ, M_REV_FREQ, 
                     GetRandomMDevice() },
-                new object[] { "M_REV_2", "M_REV_2", GetRandomMDevice() },
-                new object[] { "M_REV_FREQ_2", "M_REV_FREQ_2", 
+                new object[] { M_REV_2, M_REV_2, GetRandomMDevice() },
+                new object[] { M_REV_FREQ_2, M_REV_FREQ_2, 
                     GetRandomMDevice() },
-                new object[] { "M_REV_2_ERROR", "M_REV_2_ERROR", 
+                new object[] { M_REV_2_ERROR, M_REV_2_ERROR, 
                     GetRandomMDevice() },
-                new object[] { "M_REV_FREQ_2_ERROR", "M_REV_FREQ_2_ERROR", 
+                new object[] { M_REV_FREQ_2_ERROR, M_REV_FREQ_2_ERROR, 
                     GetRandomMDevice() },
-                new object[] { "M_ATV", "M_ATV", GetRandomMDevice() },
+                new object[] { M_ATV, M_ATV, GetRandomMDevice() },
                 new object[] { string.Empty, string.Empty, GetRandomMDevice() },
-                new object[] { string.Empty, "Incorrect", GetRandomMDevice() },
-                new object[] { "M_VIRT", "M_VIRT", GetRandomMDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomMDevice() },
+                new object[] { M_VIRT, M_VIRT, GetRandomMDevice() },
             };
         }
 
@@ -171,56 +188,56 @@ namespace Tests.Devices
         {
             var exportForM = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"P_ON_TIME", 1},
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.P_ON_TIME, 1},
             };
 
             var exportForMFreq = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"P_ON_TIME", 1},
-                {"V", 1},
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.P_ON_TIME, 1},
+                {DeviceTag.V, 1},
             };
 
             var exportForMRev = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"P_ON_TIME", 1},
-                {"V", 1},
-                {"R", 1},
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.P_ON_TIME, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.R, 1},
             };
 
             var exportForMATV = new Dictionary<string, int>()
             {
-                {"M", 1},
-                {"ST", 1},
-                {"R", 1},
-                {"FRQ", 1},
-                {"RPM", 1},
-                {"EST", 1},
-                {"V", 1},
-                {"P_ON_TIME", 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.ST, 1},
+                {DeviceTag.R, 1},
+                {DeviceTag.FRQ, 1},
+                {DeviceTag.RPM, 1},
+                {DeviceTag.EST, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.P_ON_TIME, 1},
             };
 
             return new object[]
             {
-                new object[] {exportForM, "M", GetRandomMDevice()},
-                new object[] {exportForMFreq, "M_FREQ", GetRandomMDevice()},
-                new object[] {exportForMRev, "M_REV", GetRandomMDevice()},
-                new object[] {exportForMRev, "M_REV_FREQ", 
+                new object[] {exportForM, M, GetRandomMDevice()},
+                new object[] {exportForMFreq, M_FREQ, GetRandomMDevice()},
+                new object[] {exportForMRev, M_REV, GetRandomMDevice()},
+                new object[] {exportForMRev, M_REV_FREQ, 
                     GetRandomMDevice()},
-                new object[] {exportForMRev, "M_REV_2", GetRandomMDevice()},
-                new object[] {exportForMRev, "M_REV_FREQ_2", 
+                new object[] {exportForMRev, M_REV_2, GetRandomMDevice()},
+                new object[] {exportForMRev, M_REV_FREQ_2, 
                     GetRandomMDevice()},
-                new object[] {exportForMRev, "M_REV_2_ERROR", 
+                new object[] {exportForMRev, M_REV_2_ERROR, 
                     GetRandomMDevice()},
-                new object[] {exportForMATV, "M_ATV", GetRandomMDevice()},
-                new object[] {null, "Incorrect", GetRandomMDevice()},
+                new object[] {exportForMATV, M_ATV, GetRandomMDevice()},
+                new object[] {null, Incorrect, GetRandomMDevice()},
                 new object[] {null, string.Empty, GetRandomMDevice()},
-                new object[] {null, "M_VIRT", GetRandomMDevice()},
+                new object[] {null, M_VIRT, GetRandomMDevice()},
             };
         }
 
@@ -232,66 +249,71 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
+            var parameters = new string[]
+            {
+                DeviceParameter.P_ON_TIME
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new string[] { "P_ON_TIME" },
-                    "M",
+                    parameters,
+                    M,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_ON_TIME" },
-                    "M_FREQ",
+                    parameters,
+                    M_FREQ,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_ON_TIME" },
-                    "M_REV",
+                    parameters,
+                    M_REV,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_ON_TIME" },
-                    "M_REV_FREQ",
+                    parameters,
+                    M_REV_FREQ,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_ON_TIME" },
-                    "M_REV_2",
+                    parameters,
+                    M_REV_2,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_ON_TIME" },
-                    "M_REV_FREQ_2",
+                    parameters,
+                    M_REV_FREQ_2,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_ON_TIME" },
-                    "M_REV_2_ERROR",
+                    parameters,
+                    M_REV_2_ERROR,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_ON_TIME" },
-                    "M_REV_FREQ_2_ERROR",
+                    parameters,
+                    M_REV_FREQ_2_ERROR,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_ON_TIME" },
-                    "M_ATV",
+                    parameters,
+                    M_ATV,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "M_VIRT",
+                    M_VIRT,
                     GetRandomMDevice()
                 },
                 new object[]
@@ -312,138 +334,134 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var emptyChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             return new object[]
             {
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 1 },
-                        { "DO", 1 },
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 1 },
+                        { DO, 1 },
                     },
-                    "M",
+                    M,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 1 },
-                        { "DI", 1 },
-                        { "DO", 1 },
+                        { AI, 0 },
+                        { AO, 1 },
+                        { DI, 1 },
+                        { DO, 1 },
                     },
-                    "M_FREQ",
+                    M_FREQ,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 1 },
-                        { "DO", 2 },
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 1 },
+                        { DO, 2 },
                     },
-                    "M_REV",
+                    M_REV,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 1 },
-                        { "DI", 1 },
-                        { "DO", 2 },
+                        { AI, 0 },
+                        { AO, 1 },
+                        { DI, 1 },
+                        { DO, 2 },
                     },
-                    "M_REV_FREQ",
+                    M_REV_FREQ,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 1 },
-                        { "DO", 2 },
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 1 },
+                        { DO, 2 },
                     },
-                    "M_REV_2",
+                    M_REV_2,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 1 },
-                        { "DI", 1 },
-                        { "DO", 2 },
+                        { AI, 0 },
+                        { AO, 1 },
+                        { DI, 1 },
+                        { DO, 2 },
                     },
-                    "M_REV_FREQ_2",
+                    M_REV_FREQ_2,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 1 },
-                        { "DO", 2 },
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 1 },
+                        { DO, 2 },
                     },
-                    "M_REV_2_ERROR",
+                    M_REV_2_ERROR,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 1 },
-                        { "DI", 2 },
-                        { "DO", 2 },
+                        { AI, 0 },
+                        { AO, 1 },
+                        { DI, 2 },
+                        { DO, 2 },
                     },
-                    "M_REV_FREQ_2_ERROR",
+                    M_REV_FREQ_2_ERROR,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
+                    emptyChannels,
+                    M_ATV,
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    emptyChannels,
                     string.Empty,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "Incorrect",
+                    emptyChannels,
+                    Incorrect,
                     GetRandomMDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "M_VIRT",
+                    emptyChannels,
+                    M_VIRT,
                     GetRandomMDevice()
                 },
             };
