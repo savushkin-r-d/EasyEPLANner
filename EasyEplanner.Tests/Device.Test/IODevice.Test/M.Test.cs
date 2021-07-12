@@ -39,80 +39,6 @@ namespace Tests.Devices
         }
 
         /// <summary>
-        /// Тест получения подтипа устройства
-        /// </summary>
-        /// <param name="expectedType">Ожидаемый подтип</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
-        public void GetDeviceSubTypeStrTest(string expectedType,
-            string subType, Device.IODevice device)
-        {
-            device.SetSubType(subType);
-            Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
-                device.DeviceType, device.DeviceSubType));
-        }
-
-        /// <summary>
-        /// Тест свойств устройств в зависимости от подтипа
-        /// </summary>
-        /// <param name="expectedProperties">Ожидаемый список свойств</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(GetDevicePropertiesTestData))]
-        public void GetDevicePropertiesTest(
-            Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
-        {
-            device.SetSubType(subType);
-            Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
-                device.DeviceType, device.DeviceSubType));
-        }
-
-        /// <summary>
-        /// Тестирование параметров устройства
-        /// </summary>
-        /// <param name="parametersSequence">Ожидаемые параметры</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(ParametersTestData))]
-        public void ParametersTest(string[] parametersSequence, string subType,
-            Device.IODevice device)
-        {
-            device.SetSubType(subType);
-            string[] actualParametersSequence = device.Parameters
-                .Select(x => x.Key)
-                .ToArray();
-            Assert.AreEqual(parametersSequence, actualParametersSequence);
-        }
-
-        /// <summary>
-        /// Тестирование каналов устройства
-        /// </summary>
-        /// <param name="expectedChannelsCount">Ожидаемое количество каналов
-        /// в словаре с названием каналов</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(ChannelsTestData))]
-        public void ChannelsTest(Dictionary<string, int> expectedChannelsCount,
-            string subType, Device.IODevice device)
-        {
-            device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
-            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
-            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
-            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
-
-            Assert.Multiple(() =>
-            {
-                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
-                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
-                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
-                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
-            });
-        }
-
-        /// <summary>
         /// 1 - Ожидаемое значение подтипа,
         /// 2 - Задаваемое значение подтипа,
         /// 3 - Устройство для тестов
@@ -132,11 +58,11 @@ namespace Tests.Devices
                     GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.M_REV_2, M_REV_2,
                     GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_REV_FREQ_2, 
+                new object[] { Device.DeviceSubType.M_REV_FREQ_2,
                     M_REV_FREQ_2, GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_REV_2_ERROR, 
+                new object[] { Device.DeviceSubType.M_REV_2_ERROR,
                     M_REV_2_ERROR, GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_REV_FREQ_2_ERROR, 
+                new object[] { Device.DeviceSubType.M_REV_FREQ_2_ERROR,
                     M_REV_FREQ_2_ERROR, GetRandomMDevice() },
                 new object[] { Device.DeviceSubType.M_ATV, M_ATV,
                     GetRandomMDevice() },
@@ -147,6 +73,21 @@ namespace Tests.Devices
                 new object[] { Device.DeviceSubType.M_VIRT, M_VIRT,
                     GetRandomMDevice() },
             };
+        }
+
+        /// <summary>
+        /// Тест получения подтипа устройства
+        /// </summary>
+        /// <param name="expectedType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
+        public void GetDeviceSubTypeStrTest(string expectedType,
+            string subType, Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
+                device.DeviceType, device.DeviceSubType));
         }
 
         /// <summary>
@@ -162,20 +103,36 @@ namespace Tests.Devices
                 new object[] { M, M, GetRandomMDevice() },
                 new object[] { M_FREQ, M_FREQ, GetRandomMDevice() },
                 new object[] { M_REV, M_REV, GetRandomMDevice() },
-                new object[] { M_REV_FREQ, M_REV_FREQ, 
+                new object[] { M_REV_FREQ, M_REV_FREQ,
                     GetRandomMDevice() },
                 new object[] { M_REV_2, M_REV_2, GetRandomMDevice() },
-                new object[] { M_REV_FREQ_2, M_REV_FREQ_2, 
+                new object[] { M_REV_FREQ_2, M_REV_FREQ_2,
                     GetRandomMDevice() },
-                new object[] { M_REV_2_ERROR, M_REV_2_ERROR, 
+                new object[] { M_REV_2_ERROR, M_REV_2_ERROR,
                     GetRandomMDevice() },
-                new object[] { M_REV_FREQ_2_ERROR, M_REV_FREQ_2_ERROR, 
+                new object[] { M_REV_FREQ_2_ERROR, M_REV_FREQ_2_ERROR,
                     GetRandomMDevice() },
                 new object[] { M_ATV, M_ATV, GetRandomMDevice() },
                 new object[] { string.Empty, string.Empty, GetRandomMDevice() },
                 new object[] { string.Empty, Incorrect, GetRandomMDevice() },
                 new object[] { M_VIRT, M_VIRT, GetRandomMDevice() },
             };
+        }
+
+        /// <summary>
+        /// Тест свойств устройств в зависимости от подтипа
+        /// </summary>
+        /// <param name="expectedProperties">Ожидаемый список свойств</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(GetDevicePropertiesTestData))]
+        public void GetDevicePropertiesTest(
+            Dictionary<string, int> expectedProperties, string subType,
+            Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
+                device.DeviceType, device.DeviceSubType));
         }
 
         /// <summary>
@@ -227,18 +184,35 @@ namespace Tests.Devices
                 new object[] {exportForM, M, GetRandomMDevice()},
                 new object[] {exportForMFreq, M_FREQ, GetRandomMDevice()},
                 new object[] {exportForMRev, M_REV, GetRandomMDevice()},
-                new object[] {exportForMRev, M_REV_FREQ, 
+                new object[] {exportForMRev, M_REV_FREQ,
                     GetRandomMDevice()},
                 new object[] {exportForMRev, M_REV_2, GetRandomMDevice()},
-                new object[] {exportForMRev, M_REV_FREQ_2, 
+                new object[] {exportForMRev, M_REV_FREQ_2,
                     GetRandomMDevice()},
-                new object[] {exportForMRev, M_REV_2_ERROR, 
+                new object[] {exportForMRev, M_REV_2_ERROR,
                     GetRandomMDevice()},
                 new object[] {exportForMATV, M_ATV, GetRandomMDevice()},
                 new object[] {null, Incorrect, GetRandomMDevice()},
                 new object[] {null, string.Empty, GetRandomMDevice()},
                 new object[] {null, M_VIRT, GetRandomMDevice()},
             };
+        }
+
+        /// <summary>
+        /// Тестирование параметров устройства
+        /// </summary>
+        /// <param name="parametersSequence">Ожидаемые параметры</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(ParametersTestData))]
+        public void ParametersTest(string[] parametersSequence, string subType,
+            Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            string[] actualParametersSequence = device.Parameters
+                .Select(x => x.Key)
+                .ToArray();
+            Assert.AreEqual(parametersSequence, actualParametersSequence);
         }
 
         /// <summary>
@@ -323,6 +297,32 @@ namespace Tests.Devices
                     GetRandomMDevice()
                 },
             };
+        }
+
+        /// <summary>
+        /// Тестирование каналов устройства
+        /// </summary>
+        /// <param name="expectedChannelsCount">Ожидаемое количество каналов
+        /// в словаре с названием каналов</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(ChannelsTestData))]
+        public void ChannelsTest(Dictionary<string, int> expectedChannelsCount,
+            string subType, Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
+            });
         }
 
         /// <summary>

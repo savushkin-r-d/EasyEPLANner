@@ -33,98 +33,6 @@ namespace Tests.Devices
         }
 
         /// <summary>
-        /// Тест получения подтипа устройства
-        /// </summary>
-        /// <param name="expectedType">Ожидаемый подтип</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
-        public void GetDeviceSubTypeStrTest(string expectedType,
-            string subType, Device.IODevice device)
-        {
-            device.SetSubType(subType);
-            Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
-                device.DeviceType, device.DeviceSubType));
-        }
-
-        /// <summary>
-        /// Тест свойств устройств в зависимости от подтипа
-        /// </summary>
-        /// <param name="expectedProperties">Ожидаемый список свойств</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(GetDevicePropertiesTestData))]
-        public void GetDevicePropertiesTest(
-            Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
-        {
-            device.SetSubType(subType);
-            Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
-                device.DeviceType, device.DeviceSubType));
-        }
-
-        /// <summary>
-        /// Тестирование диапазона измерения устройства
-        /// </summary>
-        /// <param name="expected">Ожидаемый диапазон</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="value1">Начало диапазона</param>
-        /// <param name="value2">Конец диапазона</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(GetRangeTestData))]
-        public void GetRangeTest(string expected, string subType,
-            double value1, double value2, Device.IODevice device)
-        {
-            device.SetSubType(subType);
-            device.SetParameter(DeviceParameter.P_MIN_F, value1);
-            device.SetParameter(DeviceParameter.P_MAX_F, value2);
-            Assert.AreEqual(expected, device.GetRange());
-        }
-
-        /// <summary>
-        /// Тестирование параметров устройства
-        /// </summary>
-        /// <param name="parametersSequence">Ожидаемые параметры</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(ParametersTestData))]
-        public void ParametersTest(string[] parametersSequence, string subType,
-            Device.IODevice device)
-        {
-            device.SetSubType(subType);
-            string[] actualParametersSequence = device.Parameters
-                .Select(x => x.Key)
-                .ToArray();
-            Assert.AreEqual(parametersSequence, actualParametersSequence);
-        }
-
-        /// <summary>
-        /// Тестирование каналов устройства
-        /// </summary>
-        /// <param name="expectedChannelsCount">Ожидаемое количество каналов
-        /// в словаре с названием каналов</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(ChannelsTestData))]
-        public void ChannelsTest(Dictionary<string, int> expectedChannelsCount,
-            string subType, Device.IODevice device)
-        {
-            device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
-            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
-            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
-            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
-
-            Assert.Multiple(() =>
-            {
-                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
-                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
-                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
-                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
-            });
-        }
-
-        /// <summary>
         /// 1 - Ожидаемое значение подтипа,
         /// 2 - Задаваемое значение подтипа,
         /// 3 - Устройство для тестов
@@ -150,6 +58,21 @@ namespace Tests.Devices
         }
 
         /// <summary>
+        /// Тест получения подтипа устройства
+        /// </summary>
+        /// <param name="expectedType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
+        public void GetDeviceSubTypeStrTest(string expectedType,
+            string subType, Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
+                device.DeviceType, device.DeviceSubType));
+        }
+
+        /// <summary>
         /// 1 - Ожидаемое значение подтипа,
         /// 2 - Задаваемое значение подтипа,
         /// 3 - Устройство для тестов
@@ -166,6 +89,22 @@ namespace Tests.Devices
                 new object[] { FQT_VIRT, FQT_VIRT, GetRandomFQTDevice() },
                 new object[] { string.Empty, Incorrect, GetRandomFQTDevice() },
             };
+        }
+
+        /// <summary>
+        /// Тест свойств устройств в зависимости от подтипа
+        /// </summary>
+        /// <param name="expectedProperties">Ожидаемый список свойств</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(GetDevicePropertiesTestData))]
+        public void GetDevicePropertiesTest(
+            Dictionary<string, int> expectedProperties, string subType,
+            Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
+                device.DeviceType, device.DeviceSubType));
         }
 
         /// <summary>
@@ -228,13 +167,31 @@ namespace Tests.Devices
             {
                 new object[] {exportForFQT, FQT, GetRandomFQTDevice()},
                 new object[] {exportForFQTF, FQT_F, GetRandomFQTDevice()},
-                new object[] {exportForFQTFOK, FQT_F_OK, 
+                new object[] {exportForFQTFOK, FQT_F_OK,
                     GetRandomFQTDevice()},
-                new object[] {exportForFQTVirt, FQT_VIRT, 
+                new object[] {exportForFQTVirt, FQT_VIRT,
                     GetRandomFQTDevice()},
                 new object[] {null, Incorrect, GetRandomFQTDevice()},
                 new object[] {null, string.Empty, GetRandomFQTDevice()},
             };
+        }
+
+        /// <summary>
+        /// Тестирование диапазона измерения устройства
+        /// </summary>
+        /// <param name="expected">Ожидаемый диапазон</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="value1">Начало диапазона</param>
+        /// <param name="value2">Конец диапазона</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(GetRangeTestData))]
+        public void GetRangeTest(string expected, string subType,
+            double value1, double value2, Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            device.SetParameter(DeviceParameter.P_MIN_F, value1);
+            device.SetParameter(DeviceParameter.P_MAX_F, value2);
+            Assert.AreEqual(expected, device.GetRange());
         }
 
         /// <summary>
@@ -262,6 +219,23 @@ namespace Tests.Devices
                 new object[] {string.Empty, Incorrect, 7.0, 9.0,
                     GetRandomFQTDevice()},
             };
+        }
+
+        /// <summary>
+        /// Тестирование параметров устройства
+        /// </summary>
+        /// <param name="parametersSequence">Ожидаемые параметры</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(ParametersTestData))]
+        public void ParametersTest(string[] parametersSequence, string subType,
+            Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            string[] actualParametersSequence = device.Parameters
+                .Select(x => x.Key)
+                .ToArray();
+            Assert.AreEqual(parametersSequence, actualParametersSequence);
         }
 
         /// <summary>
@@ -319,6 +293,32 @@ namespace Tests.Devices
                     GetRandomFQTDevice()
                 },
             };
+        }
+
+        /// <summary>
+        /// Тестирование каналов устройства
+        /// </summary>
+        /// <param name="expectedChannelsCount">Ожидаемое количество каналов
+        /// в словаре с названием каналов</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(ChannelsTestData))]
+        public void ChannelsTest(Dictionary<string, int> expectedChannelsCount,
+            string subType, Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
+            });
         }
 
         /// <summary>

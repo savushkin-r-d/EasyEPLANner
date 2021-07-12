@@ -232,7 +232,7 @@ namespace Tests.Devices
                 string expectedText = expectedNode.Nodes[i].Text;
                 string actualText = actualNode.FirstNode.Nodes[i].Text;
                 Assert.AreEqual(expectedText, actualText);
-            }     
+            }
         }
 
         [TestCase("")]
@@ -272,7 +272,7 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(ChannelsTestData))]
         public void Channels_ObjWithDiffSubTypes_ReturnCorrectDictionary(
-            Dictionary<string, int> expectedChannelsCount, string subType, 
+            Dictionary<string, int> expectedChannelsCount, string subType,
             Device.IODevice device)
         {
             device.SetSubType(subType);

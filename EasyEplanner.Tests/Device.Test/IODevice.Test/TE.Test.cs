@@ -135,7 +135,7 @@ namespace Tests.Devices
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(ParametersTestData))]
-        public void ParametersTest(string[] parametersSequence, string subType, 
+        public void ParametersTest(string[] parametersSequence, string subType,
             Device.IODevice device)
         {
             device.SetSubType(subType);
