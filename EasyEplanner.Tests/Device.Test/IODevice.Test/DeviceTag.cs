@@ -28,5 +28,10 @@
         public const string FRQ = "FRQ";
         public const string RPM = "RPM";
         public const string EST = "EST";
+        public const string P_H_CONE = "P_H_CONE";
+        public const string P_MAX_P = "P_MAX_P";
+        public const string P_R = "P_R";
+        public const string CLEVEL = "CLEVEL";
+        public const string P_H_TRUNC = "P_H_TRUNC";
     }
 }

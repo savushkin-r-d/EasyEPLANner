@@ -11,5 +11,9 @@
         public const string P_ERR = "P_ERR";
         public const string P_MIN_V = "P_MIN_V";
         public const string P_MAX_V = "P_MAX_V";
+        public const string P_MAX_P = "P_MAX_P";
+        public const string P_R = "P_R";
+        public const string P_H_CONE = "P_H_CONE";
+        public const string P_H_TRUNC = "P_H_TRUNC";
     }
 }

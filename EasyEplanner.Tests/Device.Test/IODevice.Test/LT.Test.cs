@@ -7,6 +7,19 @@ namespace Tests.Devices
 {
     public class LTTest
     {
+        const string Incorrect = "Incorrect";
+        const string LT = "LT";
+        const string LT_IOLINK = "LT_IOLINK";
+        const string LT_CYL = "LT_CYL";
+        const string LT_CONE = "LT_CONE";
+        const string LT_TRUNC = "LT_TRUNC";
+        const string LT_VIRT = "LT_VIRT";
+
+        const string AI = Device.IODevice.IOChannel.AI;
+        const string AO = Device.IODevice.IOChannel.AO;
+        const string DI = Device.IODevice.IOChannel.DI;
+        const string DO = Device.IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест установки подтипа устройства
         /// </summary>
@@ -81,17 +94,17 @@ namespace Tests.Devices
             string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
-            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
-            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
-            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
-                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
-                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
-                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
             });
         }
 
@@ -105,21 +118,21 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.LT, "LT",
+                new object[] { Device.DeviceSubType.LT, LT,
                     GetRandomLTDevice() },
-                new object[] { Device.DeviceSubType.LT_CYL, "LT_CYL",
+                new object[] { Device.DeviceSubType.LT_CYL, LT_CYL,
                     GetRandomLTDevice() },
-                new object[] { Device.DeviceSubType.LT_CONE, "LT_CONE", 
+                new object[] { Device.DeviceSubType.LT_CONE, LT_CONE, 
                     GetRandomLTDevice() },
-                new object[] { Device.DeviceSubType.LT_TRUNC, "LT_TRUNC", 
+                new object[] { Device.DeviceSubType.LT_TRUNC, LT_TRUNC, 
                     GetRandomLTDevice() },
-                new object[] { Device.DeviceSubType.LT_IOLINK, "LT_IOLINK",
+                new object[] { Device.DeviceSubType.LT_IOLINK, LT_IOLINK,
                     GetRandomLTDevice() },
-                new object[] { Device.DeviceSubType.LT_VIRT, "LT_VIRT",
+                new object[] { Device.DeviceSubType.LT_VIRT, LT_VIRT,
                     GetRandomLTDevice() },
                 new object[] { Device.DeviceSubType.NONE, string.Empty,
                     GetRandomLTDevice() },
-                new object[] { Device.DeviceSubType.NONE, "Incorrect",
+                new object[] { Device.DeviceSubType.NONE, Incorrect,
                     GetRandomLTDevice() },
             };
         }
@@ -134,14 +147,15 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "LT", "LT", GetRandomLTDevice() },
-                new object[] { "LT_CYL", "LT_CYL", GetRandomLTDevice() },
-                new object[] { "LT_CONE", "LT_CONE", GetRandomLTDevice() },
-                new object[] { "LT_TRUNC", "LT_TRUNC", GetRandomLTDevice() },
-                new object[] { "LT_IOLINK", "LT_IOLINK", GetRandomLTDevice() },
-                new object[] { "LT_VIRT", "LT_VIRT", GetRandomLTDevice() },
-                new object[] { string.Empty, string.Empty, GetRandomLTDevice() },
-                new object[] { string.Empty, "Incorrect", GetRandomLTDevice() },
+                new object[] { LT, LT, GetRandomLTDevice() },
+                new object[] { LT_CYL, LT_CYL, GetRandomLTDevice() },
+                new object[] { LT_CONE, LT_CONE, GetRandomLTDevice() },
+                new object[] { LT_TRUNC, LT_TRUNC, GetRandomLTDevice() },
+                new object[] { LT_IOLINK, LT_IOLINK, GetRandomLTDevice() },
+                new object[] { LT_VIRT, LT_VIRT, GetRandomLTDevice() },
+                new object[] { string.Empty, string.Empty,
+                    GetRandomLTDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomLTDevice() },
             };
         }
 
@@ -155,77 +169,77 @@ namespace Tests.Devices
         {
             var exportForLT = new Dictionary<string, int>()
             {
-                {"M", 1},
-                {"P_CZ", 1},
-                {"V", 1},
-                {"P_ERR", 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.P_CZ, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.P_ERR, 1},
             };
 
             var exportForLTIOLink = new Dictionary<string, int>()
             {
-                {"M", 1},
-                {"P_CZ", 1},
-                {"V", 1},
-                {"P_H_CONE", 1},
-                {"P_MAX_P", 1},
-                {"P_R", 1},
-                {"CLEVEL", 1},
-                {"P_ERR", 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.P_CZ, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.P_H_CONE, 1},
+                {DeviceTag.P_MAX_P, 1},
+                {DeviceTag.P_R, 1},
+                {DeviceTag.CLEVEL, 1},
+                {DeviceTag.P_ERR, 1},
             };
 
             var exportForLTCyl = new Dictionary<string, int>()
             {
-                {"M", 1},
-                {"P_CZ", 1},
-                {"V", 1},
-                {"P_MAX_P", 1},
-                {"P_R", 1},
-                {"CLEVEL", 1},
-                {"P_ERR", 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.P_CZ, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.P_MAX_P, 1},
+                {DeviceTag.P_R, 1},
+                {DeviceTag.CLEVEL, 1},
+                {DeviceTag.P_ERR, 1},
             };
 
             var exportForLTCone = new Dictionary<string, int>()
             {
-                {"M", 1},
-                {"P_CZ", 1},
-                {"V", 1},
-                {"P_MAX_P", 1},
-                {"P_R", 1},
-                {"P_H_CONE", 1},
-                {"CLEVEL", 1},
-                {"P_ERR", 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.P_CZ, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.P_MAX_P, 1},
+                {DeviceTag.P_R, 1},
+                {DeviceTag.P_H_CONE, 1},
+                {DeviceTag.CLEVEL, 1},
+                {DeviceTag.P_ERR, 1},
             };
 
             var exportForLTTrunc = new Dictionary<string, int>()
             {
-                {"M", 1},
-                {"P_CZ", 1},
-                {"V", 1},
-                {"P_MAX_P", 1},
-                {"P_R", 1},
-                {"P_H_TRUNC", 1},
-                {"CLEVEL", 1},
-                {"P_ERR", 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.P_CZ, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.P_MAX_P, 1},
+                {DeviceTag.P_R, 1},
+                {DeviceTag.P_H_TRUNC, 1},
+                {DeviceTag.CLEVEL, 1},
+                {DeviceTag.P_ERR, 1},
             };
 
             var exportForLTVirt = new Dictionary<string, int>()
             {
-                {"M", 1},
-                {"V", 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.V, 1},
             };
 
             return new object[]
             {
-                new object[] {exportForLT, "LT", GetRandomLTDevice()},
-                new object[] {exportForLTIOLink, "LT_IOLINK", 
+                new object[] {exportForLT, LT, GetRandomLTDevice()},
+                new object[] {exportForLTIOLink, LT_IOLINK, 
                     GetRandomLTDevice()},
-                new object[] {exportForLTCyl, "LT_CYL", GetRandomLTDevice()},
-                new object[] {exportForLTCone, "LT_CONE",
+                new object[] {exportForLTCyl, LT_CYL, GetRandomLTDevice()},
+                new object[] {exportForLTCone, LT_CONE,
                     GetRandomLTDevice()},
-                new object[] {exportForLTTrunc, "LT_TRUNC",
+                new object[] {exportForLTTrunc, LT_TRUNC,
                     GetRandomLTDevice()},
-                new object[] {exportForLTVirt, "LT_VIRT", GetRandomLTDevice()},
-                new object[] {null, "Incorrect", GetRandomLTDevice()},
+                new object[] {exportForLTVirt, LT_VIRT, GetRandomLTDevice()},
+                new object[] {null, Incorrect, GetRandomLTDevice()},
                 new object[] {null, string.Empty, GetRandomLTDevice()},
             };
         }
@@ -238,45 +252,68 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
+            var colAndIOLSubTypesParameters = new string[]
+            {
+                DeviceParameter.P_C0,
+                DeviceParameter.P_ERR,
+                DeviceParameter.P_MAX_P,
+                DeviceParameter.P_R,
+                DeviceParameter.P_H_CONE
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new string[] { "P_C0", "P_ERR" },
-                    "LT",
+                    new string[]
+                    {
+                        DeviceParameter.P_C0,
+                        DeviceParameter.P_ERR
+                    },
+                    LT,
                     GetRandomLTDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_C0", "P_ERR", "P_MAX_P", "P_R" },
-                    "LT_CYL",
+                    new string[]
+                    {
+                        DeviceParameter.P_C0,
+                        DeviceParameter.P_ERR,
+                        DeviceParameter.P_MAX_P,
+                        DeviceParameter.P_R
+                    },
+                    LT_CYL,
                     GetRandomLTDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_C0", "P_ERR", "P_MAX_P", "P_R", 
-                        "P_H_CONE" },
-                    "LT_CONE",
+                    colAndIOLSubTypesParameters,
+                    LT_CONE,
                     GetRandomLTDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_C0", "P_ERR", "P_MAX_P", "P_R", 
-                        "P_H_TRUNC" },
-                    "LT_TRUNC",
+                    new string[]
+                    {
+                        DeviceParameter.P_C0,
+                        DeviceParameter.P_ERR,
+                        DeviceParameter.P_MAX_P,
+                        DeviceParameter.P_R,
+                        DeviceParameter.P_H_TRUNC
+                    },
+                    LT_TRUNC,
                     GetRandomLTDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_C0", "P_ERR", "P_MAX_P", "P_R",
-                        "P_H_CONE" },
-                    "LT_IOLINK",
+                    colAndIOLSubTypesParameters,
+                    LT_IOLINK,
                     GetRandomLTDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "LT_VIRT",
+                    LT_VIRT,
                     GetRandomLTDevice()
                 },
                 new object[]
@@ -297,102 +334,70 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var defaultChannels = new Dictionary<string, int>()
+            {
+                { AI, 1 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
+            var emptyChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "LT",
+                    defaultChannels,
+                    LT,
                     GetRandomLTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "LT_CYL",
+                    defaultChannels,
+                    LT_CYL,
                     GetRandomLTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "LT_CONE",
+                    defaultChannels,
+                    LT_CONE,
                     GetRandomLTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "LT_TRUNC",
+                    defaultChannels,
+                    LT_TRUNC,
                     GetRandomLTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "LT_IOLINK",
+                    defaultChannels,
+                    LT_IOLINK,
                     GetRandomLTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "LT_VIRT",
+                    emptyChannels,
+                    LT_VIRT,
                     GetRandomLTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
+                    emptyChannels,
                     string.Empty,
                     GetRandomLTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "Incorrect",
+                    emptyChannels,
+                    Incorrect,
                     GetRandomLTDevice()
                 },
             };

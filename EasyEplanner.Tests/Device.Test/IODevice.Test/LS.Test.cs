@@ -7,6 +7,18 @@ namespace Tests.Devices
 {
     public class LSTest
     {
+        const string Incorrect = "Incorrect";
+        const string LS_MIN = "LS_MIN";
+        const string LS_MAX = "LS_MAX";
+        const string LS_IOLINK_MIN = "LS_IOLINK_MIN";
+        const string LS_IOLINK_MAX = "LS_IOLINK_MAX";
+        const string LS_VIRT = "LS_VIRT";
+
+        const string AI = Device.IODevice.IOChannel.AI;
+        const string AO = Device.IODevice.IOChannel.AO;
+        const string DI = Device.IODevice.IOChannel.DI;
+        const string DO = Device.IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест установки подтипа устройства
         /// </summary>
@@ -95,17 +107,17 @@ namespace Tests.Devices
             string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
-            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
-            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
-            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
-                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
-                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
-                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
             });
         }
 
@@ -119,19 +131,19 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.LS_MIN, "LS_MIN",
+                new object[] { Device.DeviceSubType.LS_MIN, LS_MIN,
                     GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.LS_MAX, "LS_MAX",
+                new object[] { Device.DeviceSubType.LS_MAX, LS_MAX,
                     GetRandomLSDevice() },
                 new object[] { Device.DeviceSubType.LS_IOLINK_MIN,
-                    "LS_IOLINK_MIN", GetRandomLSDevice() },
+                    LS_IOLINK_MIN, GetRandomLSDevice() },
                 new object[] { Device.DeviceSubType.LS_IOLINK_MAX,
-                    "LS_IOLINK_MAX", GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.LS_VIRT, "LS_VIRT",
+                    LS_IOLINK_MAX, GetRandomLSDevice() },
+                new object[] { Device.DeviceSubType.LS_VIRT, LS_VIRT,
                     GetRandomLSDevice() },
                 new object[] { Device.DeviceSubType.NONE, string.Empty,
                     GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.NONE, "Incorrect",
+                new object[] { Device.DeviceSubType.NONE, Incorrect,
                     GetRandomLSDevice() },
             };
         }
@@ -146,15 +158,15 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "LS_MIN", "LS_MIN", GetRandomLSDevice() },
-                new object[] { "LS_MAX", "LS_MAX", GetRandomLSDevice() },
-                new object[] { "LS_IOLINK_MIN", "LS_IOLINK_MIN",
+                new object[] { LS_MIN, LS_MIN, GetRandomLSDevice() },
+                new object[] { LS_MAX, LS_MAX, GetRandomLSDevice() },
+                new object[] { LS_IOLINK_MIN, LS_IOLINK_MIN,
                     GetRandomLSDevice() },
-                new object[] { "LS_IOLINK_MAX", "LS_IOLINK_MAX",
+                new object[] { LS_IOLINK_MAX, LS_IOLINK_MAX,
                     GetRandomLSDevice() },
-                new object[] { "LS_VIRT", "LS_VIRT", GetRandomLSDevice() },
+                new object[] { LS_VIRT, LS_VIRT, GetRandomLSDevice() },
                 new object[] { string.Empty, string.Empty, GetRandomLSDevice() },
-                new object[] { string.Empty, "Incorrect", GetRandomLSDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomLSDevice() },
             };
         }
 
@@ -168,30 +180,30 @@ namespace Tests.Devices
         {
             var exportForIOLinkLS = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"V", 1},
-                {"P_DT", 1},
-                {"P_ERR", 1},
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.P_DT, 1},
+                {DeviceTag.P_ERR, 1},
             };
 
             var exportForLS = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"P_DT", 1},
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.P_DT, 1},
             };
 
             return new object[]
             {
-                new object[] {exportForLS, "LS_MIN", GetRandomLSDevice()},
-                new object[] {exportForLS, "LS_MAX", GetRandomLSDevice()},
-                new object[] {exportForLS, "LS_VIRT", GetRandomLSDevice()},
-                new object[] {exportForIOLinkLS, "LS_IOLINK_MIN",
+                new object[] {exportForLS, LS_MIN, GetRandomLSDevice()},
+                new object[] {exportForLS, LS_MAX, GetRandomLSDevice()},
+                new object[] {exportForLS, LS_VIRT, GetRandomLSDevice()},
+                new object[] {exportForIOLinkLS, LS_IOLINK_MIN,
                     GetRandomLSDevice()},
-                new object[] {exportForIOLinkLS, "LS_IOLINK_MAX",
+                new object[] {exportForIOLinkLS, LS_IOLINK_MAX,
                     GetRandomLSDevice()},
-                new object[] {null, "Incorrect", GetRandomLSDevice()},
+                new object[] {null, Incorrect, GetRandomLSDevice()},
                 new object[] {null, string.Empty, GetRandomLSDevice()},
             };
         }
@@ -204,15 +216,18 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] GetConnectionTestData()
         {
+            var min = "_Min";
+            var max = "_Max";
+
             return new object[]
             {
-                new object[] {$"_Min", "LS_MIN", GetRandomLSDevice()},
-                new object[] {$"_Min", "LS_IOLINK_MIN", GetRandomLSDevice()},
-                new object[] {$"_Max", "LS_MAX", GetRandomLSDevice()},
-                new object[] {$"_Max", "LS_IOLINK_MAX", GetRandomLSDevice()},
+                new object[] {min, LS_MIN, GetRandomLSDevice()},
+                new object[] {min, LS_IOLINK_MIN, GetRandomLSDevice()},
+                new object[] {max, LS_MAX, GetRandomLSDevice()},
+                new object[] {max, LS_IOLINK_MAX, GetRandomLSDevice()},
                 new object[] { string.Empty, string.Empty, GetRandomLSDevice()},
-                new object[] { string.Empty, "Incorrect", GetRandomLSDevice()},
-                new object[] { string.Empty, "LS_VIRT", GetRandomLSDevice()},
+                new object[] { string.Empty, Incorrect, GetRandomLSDevice()},
+                new object[] { string.Empty, LS_VIRT, GetRandomLSDevice()},
             };
         }
 
@@ -224,36 +239,47 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
+            var defaultParameters = new string[]
+            {
+                DeviceParameter.P_DT
+            };
+
+            var iolinkParameters = new string[]
+            {
+                DeviceParameter.P_DT,
+                DeviceParameter.P_ERR,
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new string[] { "P_DT" },
-                    "LS_MIN",
+                    defaultParameters,
+                    LS_MIN,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_DT" },
-                    "LS_MAX",
+                    defaultParameters,
+                    LS_MAX,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "LS_VIRT",
+                    LS_VIRT,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_DT", "P_ERR" },
-                    "LS_IOLINK_MIN",
+                    iolinkParameters,
+                    LS_IOLINK_MIN,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_DT", "P_ERR" },
-                    "LS_IOLINK_MAX",
+                    iolinkParameters,
+                    LS_IOLINK_MAX,
                     GetRandomLSDevice()
                 },
                 new object[]
@@ -274,90 +300,72 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var discreteSensorChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 1 },
+                { DO, 0 },
+            };
+
+            var iolinkSensorChannels = new Dictionary<string, int>()
+            {
+                { AI, 1 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
+            var emptyChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 1 },
-                        { "DO", 0 },
-                    },
-                    "LS_MIN",
+                    discreteSensorChannels,
+                    LS_MIN,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 1 },
-                        { "DO", 0 },
-                    },
-                    "LS_MAX",
+                    discreteSensorChannels,
+                    LS_MAX,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "LS_IOLINK_MIN",
+                    iolinkSensorChannels,
+                    LS_IOLINK_MIN,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "LS_IOLINK_MAX",
+                    iolinkSensorChannels,
+                    LS_IOLINK_MAX,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "LS_VIRT",
+                    emptyChannels,
+                    LS_VIRT,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
+                    emptyChannels,
                     string.Empty,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "Incorrect",
+                    emptyChannels,
+                    Incorrect,
                     GetRandomLSDevice()
                 },
             };
