@@ -121,10 +121,22 @@ namespace Tests.Devices
         {
             var parameters = new string[]
             {
-                "P_k", "P_Ti", "P_Td", "P_dt","P_max",
-                "P_min", "P_acceleration_time", "P_is_manual_mode",
-                "P_U_manual", "P_k2", "P_Ti2", "P_Td2", "P_out_max",
-                "P_out_min", "P_is_reverse", "P_is_zero_start"
+                DeviceParameter.P_k,
+                DeviceParameter.P_Ti,
+                DeviceParameter.P_Td,
+                DeviceParameter.P_dt,
+                DeviceParameter.P_max,
+                DeviceParameter.P_min,
+                DeviceParameter.P_acceleration_time,
+                DeviceParameter.P_is_manual_mode,
+                DeviceParameter.P_U_manual,
+                DeviceParameter.P_k2,
+                DeviceParameter.P_Ti2,
+                DeviceParameter.P_Td2,
+                DeviceParameter.P_out_max,
+                DeviceParameter.P_out_min,
+                DeviceParameter.P_is_reverse,
+                DeviceParameter.P_is_zero_start
             };
 
             var defaultValues = new double[]
