@@ -41,5 +41,9 @@
         public const string P_MIN_FLOW = "P_MIN_FLOW";
         public const string P_MAX_FLOW = "P_MAX_FLOW";
         public const string F = "F";
+        public const string ST_CH = "ST_CH";
+        public const string NOMINAL_CURRENT_CH = "NOMINAL_CURRENT_CH";
+        public const string LOAD_CURRENT_CH = "LOAD_CURRENT_CH";
+        public const string ERR_CH = "ERR_CH";
     }
 }

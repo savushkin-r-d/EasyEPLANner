@@ -7,6 +7,15 @@ namespace Tests.Devices
 {
     public class DITest
     {
+        const string Incorrect = "Incorrect";
+        const string DISubType = "DI";
+        const string DI_VIRT = "DI_VIRT";
+
+        const string AI = Device.IODevice.IOChannel.AI;
+        const string AO = Device.IODevice.IOChannel.AO;
+        const string DI = Device.IODevice.IOChannel.DI;
+        const string DO = Device.IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест установки подтипа устройства
         /// </summary>
@@ -81,17 +90,17 @@ namespace Tests.Devices
             string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
-            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
-            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
-            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
-                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
-                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
-                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
             });
         }
 
@@ -107,11 +116,11 @@ namespace Tests.Devices
             {
                 new object[] { Device.DeviceSubType.DI, string.Empty,
                     GetRandomDIDevice() },
-                new object[] { Device.DeviceSubType.DI, "DI",
+                new object[] { Device.DeviceSubType.DI, DISubType,
                     GetRandomDIDevice() },
-                new object[] { Device.DeviceSubType.DI_VIRT, "DI_VIRT",
+                new object[] { Device.DeviceSubType.DI_VIRT, DI_VIRT,
                     GetRandomDIDevice() },
-                new object[] { Device.DeviceSubType.NONE, "Incorrect",
+                new object[] { Device.DeviceSubType.NONE, Incorrect,
                     GetRandomDIDevice() },
             };
         }
@@ -126,10 +135,10 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "DI", string.Empty, GetRandomDIDevice() },
-                new object[] { "DI", "DI", GetRandomDIDevice() },
-                new object[] { "DI_VIRT", "DI_VIRT", GetRandomDIDevice() },
-                new object[] { string.Empty, "Incorrect", GetRandomDIDevice() },
+                new object[] { DISubType, string.Empty, GetRandomDIDevice() },
+                new object[] { DISubType, DISubType, GetRandomDIDevice() },
+                new object[] { DI_VIRT, DI_VIRT, GetRandomDIDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomDIDevice() },
             };
         }
 
@@ -143,23 +152,23 @@ namespace Tests.Devices
         {
             var exportForDI = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"P_DT", 1},
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.P_DT, 1},
             };
 
             var exportForVirtDI = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
             };
 
             return new object[]
             {
                 new object[] {exportForDI, string.Empty, GetRandomDIDevice()},
-                new object[] {exportForDI, "DI", GetRandomDIDevice()},
-                new object[] {exportForVirtDI, "DI_VIRT", GetRandomDIDevice()},
-                new object[] {null, "Incorrect", GetRandomDIDevice()},
+                new object[] {exportForDI, DISubType, GetRandomDIDevice()},
+                new object[] {exportForVirtDI, DI_VIRT, GetRandomDIDevice()},
+                new object[] {null, Incorrect, GetRandomDIDevice()},
             };
         }
 
@@ -171,24 +180,29 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
+            var defaultParameters = new string[]
+            {
+                DeviceParameter.P_DT,
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new string[] { "P_DT" },
-                    "DI",
+                    defaultParameters,
+                    DISubType,
                     GetRandomDIDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_DT" },
+                    defaultParameters,
                     string.Empty,
                     GetRandomDIDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "DI_VIRT",
+                    DI_VIRT,
                     GetRandomDIDevice()
                 },
             };
@@ -203,54 +217,46 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var oneDiscreteInputChannel = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 1 },
+                { DO, 0 },
+            };
+
+            var emptyChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 1 },
-                        { "DO", 0 },
-                    },
+                    oneDiscreteInputChannel,
                     string.Empty,
                     GetRandomDIDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 1 },
-                        { "DO", 0 },
-                    },
-                    "DI",
+                    oneDiscreteInputChannel,
+                    DISubType,
                     GetRandomDIDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "DI_VIRT",
+                    emptyChannels,
+                    DI_VIRT,
                     GetRandomDIDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "Incorrect",
+                    emptyChannels,
+                    Incorrect,
                     GetRandomDIDevice()
                 },
             };

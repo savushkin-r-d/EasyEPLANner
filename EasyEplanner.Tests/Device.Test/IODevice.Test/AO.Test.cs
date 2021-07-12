@@ -7,6 +7,15 @@ namespace Tests.Devices
 {
     public class AOTest
     {
+        const string Incorrect = "Incorrect";
+        const string AOSubType = "AO";
+        const string AO_VIRT = "AO_VIRT";
+
+        const string AI = Device.IODevice.IOChannel.AI;
+        const string AO = Device.IODevice.IOChannel.AO;
+        const string DI = Device.IODevice.IOChannel.DI;
+        const string DO = Device.IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест установки подтипа устройства
         /// </summary>
@@ -65,8 +74,8 @@ namespace Tests.Devices
             double value1, double value2, Device.IODevice device)
         {
             device.SetSubType(subType);
-            device.SetParameter("P_MIN_V", value1);
-            device.SetParameter("P_MAX_V", value2);
+            device.SetParameter(DeviceParameter.P_MIN_V, value1);
+            device.SetParameter(DeviceParameter.P_MAX_V, value2);
             Assert.AreEqual(expected, device.GetRange());
         }
 
@@ -99,17 +108,17 @@ namespace Tests.Devices
             string subType, Device.IODevice device)
         {
             device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
-            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
-            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
-            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
-                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
-                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
-                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
             });
         }
 
@@ -125,11 +134,11 @@ namespace Tests.Devices
             {
                 new object[] { Device.DeviceSubType.AO, string.Empty, 
                     GetRandomAODevice() },
-                new object[] { Device.DeviceSubType.AO, "AO", 
+                new object[] { Device.DeviceSubType.AO, AOSubType, 
                     GetRandomAODevice() },
-                new object[] { Device.DeviceSubType.AO_VIRT, "AO_VIRT", 
+                new object[] { Device.DeviceSubType.AO_VIRT, AO_VIRT, 
                     GetRandomAODevice() },
-                new object[] { Device.DeviceSubType.NONE, "Incorrect", 
+                new object[] { Device.DeviceSubType.NONE, Incorrect, 
                     GetRandomAODevice() },
             };
         }
@@ -144,10 +153,10 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "AO", string.Empty, GetRandomAODevice() },
-                new object[] { "AO", "AO", GetRandomAODevice() },
-                new object[] { "AO_VIRT", "AO_VIRT", GetRandomAODevice() },
-                new object[] { string.Empty, "Incorrect", GetRandomAODevice() },
+                new object[] { AOSubType, string.Empty, GetRandomAODevice() },
+                new object[] { AOSubType, AOSubType, GetRandomAODevice() },
+                new object[] { AO_VIRT, AO_VIRT, GetRandomAODevice() },
+                new object[] { string.Empty, Incorrect, GetRandomAODevice() },
             };
         }
 
@@ -161,24 +170,24 @@ namespace Tests.Devices
         {
             var exportForAO = new Dictionary<string, int>()
             {
-                {"M", 1},
-                {"V", 1},
-                {"P_MIN_V", 1},
-                {"P_MAX_V", 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.P_MIN_V, 1},
+                {DeviceTag.P_MAX_V, 1},
             };
 
             var exportForVirtAO = new Dictionary<string, int>()
             {
-                {"M", 1},
-                {"V", 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.V, 1},
             };
 
             return new object[]
             {
                 new object[] {exportForAO, string.Empty, GetRandomAODevice()},
-                new object[] {exportForAO, "AO", GetRandomAODevice()},
-                new object[] {exportForVirtAO, "AO_VIRT", GetRandomAODevice()},
-                new object[] {null, "Incorrect", GetRandomAODevice()},
+                new object[] {exportForAO, AOSubType, GetRandomAODevice()},
+                new object[] {exportForVirtAO, AO_VIRT, GetRandomAODevice()},
+                new object[] {null, Incorrect, GetRandomAODevice()},
             };
         }
 
@@ -196,11 +205,11 @@ namespace Tests.Devices
             {
                 new object[] {$"_{2.0}..{4.0}", string.Empty, 2.0, 4.0,
                     GetRandomAODevice()},
-                new object[] {$"_{1.0}..{3.0}", "AO", 1.0, 3.0,
+                new object[] {$"_{1.0}..{3.0}", AOSubType, 1.0, 3.0,
                     GetRandomAODevice()},
-                new object[] {string.Empty, "AO_VIRT", 4.0, 8.0,
+                new object[] {string.Empty, AO_VIRT, 4.0, 8.0,
                     GetRandomAODevice()},
-                new object[] {string.Empty, "Incorrect", 7.0, 9.0,
+                new object[] {string.Empty, Incorrect, 7.0, 9.0,
                     GetRandomAODevice()},
             };
         }
@@ -213,24 +222,30 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
+            var defaultParameters = new string[]
+            {
+                DeviceParameter.P_MIN_V,
+                DeviceParameter.P_MAX_V,
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new string[] { "P_MIN_V", "P_MAX_V" },
-                    "AO",
+                    defaultParameters,
+                    AOSubType,
                     GetRandomAODevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_MIN_V", "P_MAX_V" },
+                    defaultParameters,
                     string.Empty,
                     GetRandomAODevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "AO_VIRT",
+                    AO_VIRT,
                     GetRandomAODevice()
                 },
             };
@@ -245,54 +260,46 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var oneAnalogOutputChannel = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 1 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
+            var emptyChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 1 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
+                    oneAnalogOutputChannel,
                     string.Empty,
                     GetRandomAODevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 1 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "AO",
+                    oneAnalogOutputChannel,
+                    AOSubType,
                     GetRandomAODevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "AO_VIRT",
+                    emptyChannels,
+                    AO_VIRT,
                     GetRandomAODevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "Incorrect",
+                    emptyChannels,
+                    Incorrect,
                     GetRandomAODevice()
                 },
             };
