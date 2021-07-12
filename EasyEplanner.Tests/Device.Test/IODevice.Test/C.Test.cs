@@ -8,6 +8,14 @@ namespace Tests.Devices
 {
     public class CTest
     {
+        const string Incorrect = "Incorrect";
+        const string C = "C";
+
+        const string AI = Device.IODevice.IOChannel.AI;
+        const string AO = Device.IODevice.IOChannel.AO;
+        const string DI = Device.IODevice.IOChannel.DI;
+        const string DO = Device.IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест получения подтипа устройства
         /// </summary>
@@ -33,10 +41,9 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { "C", "", GetNewCDevice() },
-                new object[] { "C", "C", GetNewCDevice() },
-                new object[] { "C", "Random", GetNewCDevice() },
-                new object[] { "C", "Incorrect", GetNewCDevice() },
+                new object[] { C, string.Empty, GetNewCDevice() },
+                new object[] { C, C, GetNewCDevice() },
+                new object[] { C, Incorrect, GetNewCDevice() },
             };
         }
 
@@ -66,17 +73,17 @@ namespace Tests.Devices
         {
             var exportTags = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"V", 1},
-                {"Z", 1}
+                {DeviceTag.ST, 1},
+                {DeviceTag.M, 1},
+                {DeviceTag.V, 1},
+                {DeviceTag.Z, 1}
             };
 
             return new object[]
             {
-                new object[] { exportTags, "C", GetNewCDevice() },
-                new object[] { exportTags, "Random", GetNewCDevice() },
-                new object[] { exportTags, "Incorrect", GetNewCDevice() },
+                new object[] { exportTags, C, GetNewCDevice() },
+                new object[] { exportTags, string.Empty, GetNewCDevice() },
+                new object[] { exportTags, Incorrect, GetNewCDevice() },
             };
         }
 
@@ -131,21 +138,21 @@ namespace Tests.Devices
                 {
                     parameters,
                     defaultValues,
-                    "C",
+                    C,
                     GetNewCDevice()
                 },
                 new object[]
                 {
                     parameters,
                     defaultValues,
-                    "",
+                    string.Empty,
                     GetNewCDevice()
                 },
                 new object[]
                 {
                     parameters,
                     defaultValues,
-                    "Incorrect",
+                    Incorrect,
                     GetNewCDevice()
                 },
             };
@@ -155,8 +162,11 @@ namespace Tests.Devices
         public void Properties_NewDev_ReturnsPropertiesArrWithNullValues()
         {
             const int expectedPropertiesCount = 2;
-            string[] expectedPropertiesNames = 
-                new string[] {"IN_VALUE", "OUT_VALUE" };
+            string[] expectedPropertiesNames = new string[]
+            {
+                DeviceProperty.IN_VALUE,
+                DeviceProperty.OUT_VALUE
+            };
             var dev = GetNewCDevice();
             var properties = dev.Properties;
 
@@ -239,6 +249,73 @@ namespace Tests.Devices
             string actualSaveString = dev.SaveParameters(prefix);
 
             Assert.AreEqual(expectedSaveString, actualSaveString);
+        }
+
+        /// <summary>
+        /// Тестирование каналов устройства
+        /// </summary>
+        /// <param name="expectedChannelsCount">Ожидаемое количество каналов
+        /// в словаре с названием каналов</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(ChannelsTestData))]
+        public void Channels_ObjWithDiffSubTypes_ReturnCorrectDictionary(
+            Dictionary<string, int> expectedChannelsCount, string subType, 
+            Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
+            });
+        }
+
+        /// <summary>
+        /// Данные для тестирования каналов устройств по подтипам.
+        /// 1. Словарь с количеством каналов и их типами
+        /// 2. Подтип устройства
+        /// 3. Устройство
+        /// </summary>
+        /// <returns></returns>
+        private static object[] ChannelsTestData()
+        {
+            var emptyChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
+            return new object[]
+            {
+                new object[]
+                {
+                    emptyChannels,
+                    string.Empty,
+                    GetNewCDevice()
+                },
+                new object[]
+                {
+                    emptyChannels,
+                    C,
+                    GetNewCDevice()
+                },
+                new object[]
+                {
+                    emptyChannels,
+                    Incorrect,
+                    GetNewCDevice()
+                },
+            };
         }
 
         private static Device.IODevice GetNewCDevice()

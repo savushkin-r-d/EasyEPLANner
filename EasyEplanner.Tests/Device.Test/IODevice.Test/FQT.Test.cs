@@ -398,6 +398,78 @@ namespace Tests.Devices
         }
 
         /// <summary>
+        /// Тестирование свойств устройства
+        /// </summary>
+        /// <param name="expectedProperties">Ожидаемые свойства</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(PropertiesTestData))]
+        public void Properties_NewDev_ReturnsExpectedProperties(
+            string[] expectedProperties, string subType,
+            Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            string[] actualSequence = device.Properties
+                .Select(x => x.Key)
+                .ToArray();
+            Assert.AreEqual(expectedProperties, actualSequence);
+        }
+
+        /// <summary>
+        /// 1 - Параметры в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        private static object[] PropertiesTestData()
+        {
+            var defaultProperties = new string[]
+            {
+                DeviceProperty.MT,
+            };
+
+            return new object[]
+            {
+                new object[]
+                {
+                    new string[0],
+                    FQT,
+                    GetRandomFQTDevice()
+                },
+                new object[]
+                {
+                    defaultProperties,
+                    FQT_F,
+                    GetRandomFQTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    Incorrect,
+                    GetRandomFQTDevice()
+                },
+                new object[]
+                {
+                    defaultProperties,
+                    FQT_F_OK,
+                    GetRandomFQTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    FQT_VIRT,
+                    GetRandomFQTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    string.Empty,
+                    GetRandomFQTDevice()
+                },
+            };
+        }
+
+        /// <summary>
         /// Генератор FQT устройств
         /// </summary>
         /// <returns></returns>

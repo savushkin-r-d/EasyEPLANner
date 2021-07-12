@@ -214,7 +214,7 @@ namespace Tests.Devices
         /// <param name="expectedProperties">Ожидаемые свойства</param>
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(PropertiesTestData))]
+        [TestCaseSource(nameof(RuntimeParametersTestData))]
         public void RuntimeParameters_NewDev_ReturnsExpectedProperties(
             string[] expectedProperties, string subType,
             Device.IODevice device)
@@ -232,11 +232,11 @@ namespace Tests.Devices
         /// 3 - Устройство
         /// </summary>
         /// <returns></returns>
-        private static object[] PropertiesTestData()
+        private static object[] RuntimeParametersTestData()
         {
             var defaultParameters = new string[]
             {
-                DeviceParameter.R_CONST_RED
+                DeviceRuntimeParameter.R_CONST_RED
             };
 
             return new object[]

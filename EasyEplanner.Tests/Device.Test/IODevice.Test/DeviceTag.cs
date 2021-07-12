@@ -45,5 +45,6 @@
         public const string NOMINAL_CURRENT_CH = "NOMINAL_CURRENT_CH";
         public const string LOAD_CURRENT_CH = "LOAD_CURRENT_CH";
         public const string ERR_CH = "ERR_CH";
+        public const string Z = "Z";
     }
 }

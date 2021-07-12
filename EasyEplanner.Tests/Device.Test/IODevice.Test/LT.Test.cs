@@ -14,7 +14,6 @@ namespace Tests.Devices
         const string LT_CONE = "LT_CONE";
         const string LT_TRUNC = "LT_TRUNC";
         const string LT_VIRT = "LT_VIRT";
-
         const string AI = Device.IODevice.IOChannel.AI;
         const string AO = Device.IODevice.IOChannel.AO;
         const string DI = Device.IODevice.IOChannel.DI;
@@ -398,6 +397,84 @@ namespace Tests.Devices
                 {
                     emptyChannels,
                     Incorrect,
+                    GetRandomLTDevice()
+                },
+            };
+        }
+
+        /// <summary>
+        /// Тестирование свойств устройства
+        /// </summary>
+        /// <param name="expectedProperties">Ожидаемые свойства</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(PropertiesTestData))]
+        public void Properties_NewDev_ReturnsExpectedProperties(
+            string[] expectedProperties, string subType,
+            Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            string[] actualSequence = device.Properties
+                .Select(x => x.Key)
+                .ToArray();
+            Assert.AreEqual(expectedProperties, actualSequence);
+        }
+
+        /// <summary>
+        /// 1 - Параметры в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        private static object[] PropertiesTestData()
+        {
+            var defaultProperties = new string[]
+            {
+                DeviceProperty.PT,
+            };
+
+            return new object[]
+            {
+                new object[]
+                {
+                    defaultProperties,
+                    LT_IOLINK,
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    string.Empty,
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    Incorrect,
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    LT_VIRT,
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    LT_TRUNC,
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    LT_CONE,
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    LT_CYL,
                     GetRandomLTDevice()
                 },
             };

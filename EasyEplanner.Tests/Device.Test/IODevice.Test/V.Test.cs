@@ -665,6 +665,162 @@ namespace Tests.Devices
         }
 
         /// <summary>
+        /// Тестирование свойств устройства
+        /// </summary>
+        /// <param name="expectedProperties">Ожидаемые свойства</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(RuntimeParametersTestData))]
+        public void RuntimeParameters_NewDev_ReturnsExpectedProperties(
+            string[] expectedProperties, string subType,
+            Device.IODevice device)
+        {
+            device.SetSubType(subType);
+            string[] actualSequence = device.RuntimeParameters
+                .Select(x => x.Key)
+                .ToArray();
+            Assert.AreEqual(expectedProperties, actualSequence);
+        }
+
+        /// <summary>
+        /// 1 - Параметры в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        private static object[] RuntimeParametersTestData()
+        {
+            var vtugParameters = new string[]
+            {
+                DeviceRuntimeParameter.R_VTUG_NUMBER,
+                DeviceRuntimeParameter.R_VTUG_SIZE,
+            };
+
+            var interfaceASiParameters = new string[]
+            {
+                DeviceRuntimeParameter.R_AS_NUMBER,
+            };
+
+            return new object[]
+            {
+                new object[]
+                {
+                    new string[0],
+                    V_DO1,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    V_DO2,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    V_DO1_DI1_FB_OFF,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    V_DO1_DI2,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    V_DO2_DI2,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    V_DO2_DI2_BISTABLE,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    V_MIXPROOF,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    V_IOLINK_MIXPROOF,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    interfaceASiParameters,
+                    V_AS_MIXPROOF,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    V_BOTTOM_MIXPROOF,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    interfaceASiParameters,
+                    V_AS_DO1_DI2,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    V_IOLINK_DO1_DI2,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    vtugParameters,
+                    V_IOLINK_VTUG_DO1,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    vtugParameters,
+                    V_IOLINK_VTUG_DO1_FB_OFF,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    vtugParameters,
+                    V_IOLINK_VTUG_DO1_FB_ON,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    vtugParameters,
+                    V_IOLINK_VTUG_DO1_DI2,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    string.Empty,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    Incorrect,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    V_VIRT,
+                    GetRandomVDevice()
+                },
+            };
+        }
+
+        /// <summary>
         /// Генератор V устройств
         /// </summary>
         /// <returns></returns>
