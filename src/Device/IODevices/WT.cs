@@ -38,7 +38,6 @@ namespace Device
                     break;
 
                 case "WT_VIRT":
-                    dSubType = DeviceSubType.WT_VIRT;
                     break;
 
                 default:
