@@ -4,8 +4,6 @@ namespace Device
 {
     /// <summary>
     /// Технологическое устройство - мотор.
-    /// Параметры:
-    /// 1. P_ON_TIME - время включения, мсек.
     /// </summary>
     public class M : IODevice
     {

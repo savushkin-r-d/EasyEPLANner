@@ -4,8 +4,6 @@ namespace Device
 {
     /// <summary>
     /// Технологическое устройство - датчик текущего уровня.
-    /// Параметры:
-    /// 1. P_C0 - сдвиг нуля.    
     /// </summary>
     public class LT : IODevice
     {
