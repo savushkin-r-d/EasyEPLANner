@@ -2,20 +2,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Device;
 
 namespace Tests.Devices
 {
-    public class DEV_VTUG
+    public class DEV_VTUGTest
     {
         const string Incorrect = "Incorrect";
         const string DEV_VTUG_8 = "DEV_VTUG_8";
         const string DEV_VTUG_16 = "DEV_VTUG_16";
         const string DEV_VTUG_24 = "DEV_VTUG_24";
 
-        const string AI = Device.IODevice.IOChannel.AI;
-        const string AO = Device.IODevice.IOChannel.AO;
-        const string DI = Device.IODevice.IOChannel.DI;
-        const string DO = Device.IODevice.IOChannel.DO;
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
 
         /// <summary>
         /// Тест установки подтипа устройства
@@ -25,8 +26,8 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubType_NewDev_ReturnsExpectedSubType(
-            Device.DeviceSubType expectedSubType, string subType,
-            Device.IODevice device)
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -42,15 +43,15 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.DEV_VTUG_8, DEV_VTUG_8,
+                new object[] { DeviceSubType.DEV_VTUG_8, DEV_VTUG_8,
                     GetRandomDEV_VTUGDevice() },
-                new object[] { Device.DeviceSubType.DEV_VTUG_16, DEV_VTUG_16,
+                new object[] { DeviceSubType.DEV_VTUG_16, DEV_VTUG_16,
                     GetRandomDEV_VTUGDevice() },
-                new object[] { Device.DeviceSubType.DEV_VTUG_24, DEV_VTUG_24,
+                new object[] { DeviceSubType.DEV_VTUG_24, DEV_VTUG_24,
                     GetRandomDEV_VTUGDevice() },
-                new object[] { Device.DeviceSubType.NONE, string.Empty,
+                new object[] { DeviceSubType.NONE, string.Empty,
                     GetRandomDEV_VTUGDevice() },
-                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomDEV_VTUGDevice() },
             };
         }
@@ -64,7 +65,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
             string[] parametersSequence, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -113,7 +114,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ChannelsTestData))]
         public void Channels_NewDev_ReturnsExpectedCount(
             Dictionary<string, int> expectedChannelsCount, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             int actualAI = device.Channels.Where(x => x.Name == AI).Count();
@@ -208,39 +209,39 @@ namespace Tests.Devices
         /// Генератор DEV_VTUG устройств
         /// </summary>
         /// <returns></returns>
-        private static Device.IODevice GetRandomDEV_VTUGDevice()
+        private static IODevice GetRandomDEV_VTUGDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new Device.DEV_VTUG("KOAG4Y1", "+KOAG4-Y1",
+                    return new DEV_VTUG("KOAG4Y1", "+KOAG4-Y1",
                         "Test device", 1, "KOAG", 4, "Test article");
                 case 2:
-                    return new Device.DEV_VTUG("LINE1Y2", "+LINE1-Y2",
+                    return new DEV_VTUG("LINE1Y2", "+LINE1-Y2",
                         "Test device", 2, "LINE", 1, "Test article");
                 case 3:
-                    return new Device.DEV_VTUG("TANK2Y1", "+TANK2-Y1",
+                    return new DEV_VTUG("TANK2Y1", "+TANK2-Y1",
                         "Test device", 1, "TANK", 2, "Test article");
                 default:
-                    return new Device.DEV_VTUG("CW_TANK3Y3", "+CW_TANK3-Y3",
+                    return new DEV_VTUG("CW_TANK3Y3", "+CW_TANK3-Y3",
                         "Test device", 3, "CW_TANK", 3, "Test article");
             }
         }
     }
 
-    public class Y
+    public class YTest
     {
         const string Incorrect = "Incorrect";
         const string DEV_VTUG_8 = "DEV_VTUG_8";
         const string DEV_VTUG_16 = "DEV_VTUG_16";
         const string DEV_VTUG_24 = "DEV_VTUG_24";
 
-        const string AI = Device.IODevice.IOChannel.AI;
-        const string AO = Device.IODevice.IOChannel.AO;
-        const string DI = Device.IODevice.IOChannel.DI;
-        const string DO = Device.IODevice.IOChannel.DO;
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
 
         /// <summary>
         /// Тест установки подтипа устройства
@@ -250,8 +251,8 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubType_NewDev_ReturnsExpectedSubType(
-            Device.DeviceSubType expectedSubType, string subType,
-            Device.IODevice device)
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -267,15 +268,15 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.DEV_VTUG_8, DEV_VTUG_8,
+                new object[] { DeviceSubType.DEV_VTUG_8, DEV_VTUG_8,
                     GetRandomYDevice() },
-                new object[] { Device.DeviceSubType.DEV_VTUG_16, DEV_VTUG_16,
+                new object[] { DeviceSubType.DEV_VTUG_16, DEV_VTUG_16,
                     GetRandomYDevice() },
-                new object[] { Device.DeviceSubType.DEV_VTUG_24, DEV_VTUG_24,
+                new object[] { DeviceSubType.DEV_VTUG_24, DEV_VTUG_24,
                     GetRandomYDevice() },
-                new object[] { Device.DeviceSubType.NONE, string.Empty,
+                new object[] { DeviceSubType.NONE, string.Empty,
                     GetRandomYDevice() },
-                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomYDevice() },
             };
         }
@@ -289,7 +290,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
             string[] parametersSequence, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -345,7 +346,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ChannelsTestData))]
         public void Channels_NewDev_ReturnsExpectedCount(
             Dictionary<string, int> expectedChannelsCount, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             int actualAI = device.Channels.Where(x => x.Name == AI).Count();
@@ -440,23 +441,23 @@ namespace Tests.Devices
         /// Генератор Y устройств
         /// </summary>
         /// <returns></returns>
-        private static Device.IODevice GetRandomYDevice()
+        private static IODevice GetRandomYDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new Device.Y("KOAG4Y1", "+KOAG4-Y1",
+                    return new Y("KOAG4Y1", "+KOAG4-Y1",
                         "Test device", 1, "KOAG", 4, "Test article");
                 case 2:
-                    return new Device.Y("LINE1Y2", "+LINE1-Y2",
+                    return new Y("LINE1Y2", "+LINE1-Y2",
                         "Test device", 2, "LINE", 1, "Test article");
                 case 3:
-                    return new Device.Y("TANK2Y1", "+TANK2-Y1",
+                    return new Y("TANK2Y1", "+TANK2-Y1",
                         "Test device", 1, "TANK", 2, "Test article");
                 default:
-                    return new Device.Y("CW_TANK3Y3", "+CW_TANK3-Y3",
+                    return new Y("CW_TANK3Y3", "+CW_TANK3-Y3",
                         "Test device", 3, "CW_TANK", 3, "Test article");
             }
         }

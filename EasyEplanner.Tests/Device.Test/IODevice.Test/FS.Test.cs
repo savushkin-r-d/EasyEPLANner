@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Device;
 
 namespace Tests.Devices
 {
@@ -11,10 +12,10 @@ namespace Tests.Devices
         const string FS = "FS";
         const string FS_VIRT = "FS_VIRT";
 
-        const string AI = Device.IODevice.IOChannel.AI;
-        const string AO = Device.IODevice.IOChannel.AO;
-        const string DI = Device.IODevice.IOChannel.DI;
-        const string DO = Device.IODevice.IOChannel.DO;
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
 
         /// <summary>
         /// Тест получения подтипа устройства
@@ -24,7 +25,7 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
-            string expectedType, string subType, Device.IODevice device)
+            string expectedType, string subType, IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
@@ -56,8 +57,8 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubType_NewDev_ReturnsExpectedSubType(
-            Device.DeviceSubType expectedSubType, string subType,
-            Device.IODevice device)
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -73,13 +74,13 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.FS, string.Empty,
+                new object[] { DeviceSubType.FS, string.Empty,
                     GetRandomFSDevice() },
-                new object[] { Device.DeviceSubType.FS, FS,
+                new object[] { DeviceSubType.FS, FS,
                     GetRandomFSDevice() },
-                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomFSDevice() },
-                new object[] { Device.DeviceSubType.FS_VIRT, FS_VIRT,
+                new object[] { DeviceSubType.FS_VIRT, FS_VIRT,
                     GetRandomFSDevice() },
             };
         }
@@ -93,7 +94,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -110,9 +111,9 @@ namespace Tests.Devices
         {
             var exportForFS = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.P_DT, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_DT, 1},
             };
 
             return new object[]
@@ -133,7 +134,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
             string[] parametersSequence, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -152,7 +153,7 @@ namespace Tests.Devices
         {
             var defaultParameters = new string[]
             {
-                DeviceParameter.P_DT
+                IODevice.Parameter.P_DT
             };
 
             return new object[]
@@ -194,7 +195,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ChannelsTestData))]
         public void Channels_NewDev_ReturnsExpectedCount(
             Dictionary<string, int> expectedChannelsCount, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             int actualAI = device.Channels.Where(x => x.Name == AI).Count();
@@ -269,23 +270,23 @@ namespace Tests.Devices
         /// Генератор FS устройств
         /// </summary>
         /// <returns></returns>
-        private static Device.IODevice GetRandomFSDevice()
+        private static IODevice GetRandomFSDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new Device.FS("KOAG4FS1", "+KOAG4-FS1",
+                    return new FS("KOAG4FS1", "+KOAG4-FS1",
                         "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.FS("LINE1FS2", "+LINE1-FS2",
+                    return new FS("LINE1FS2", "+LINE1-FS2",
                         "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.FS("TANK2FS1", "+TANK2-FS1",
+                    return new FS("TANK2FS1", "+TANK2-FS1",
                         "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.FS("CW_TANK3FS3", "+CW_TANK3-FS3",
+                    return new FS("CW_TANK3FS3", "+CW_TANK3-FS3",
                         "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }

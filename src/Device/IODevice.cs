@@ -10,7 +10,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство, подключенное к модулям ввода\вывод IO.
     /// </summary>
-    public class IODevice : Device
+    public partial class IODevice : Device
     {
         /// <summary>
         /// Получение строкового представления подтипа устройства.
@@ -369,11 +369,11 @@ namespace Device
                             IO.AddRange(AI);
                             break;
 
-                        case "DO":
+                        case IOChannel.DO:
                             IO.AddRange(DO);
                             break;
 
-                        case "DI":
+                        case IOChannel.DI:
                             IO.AddRange(DI);
                             break;
                     }

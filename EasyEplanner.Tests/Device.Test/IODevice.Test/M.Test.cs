@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Device;
 
 namespace Tests.Devices
 {
@@ -19,10 +20,10 @@ namespace Tests.Devices
         const string M_ATV = "M_ATV";
         const string M_VIRT = "M_VIRT";
 
-        const string AI = Device.IODevice.IOChannel.AI;
-        const string AO = Device.IODevice.IOChannel.AO;
-        const string DI = Device.IODevice.IOChannel.DI;
-        const string DO = Device.IODevice.IOChannel.DO;
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
 
         /// <summary>
         /// Тест установки подтипа устройства
@@ -32,8 +33,8 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubType_NewDev_ReturnsExpectedSubType(
-            Device.DeviceSubType expectedSubType, string subType,
-            Device.IODevice device)
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -49,29 +50,29 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.M, M,
+                new object[] { DeviceSubType.M, M,
                     GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_FREQ, M_FREQ,
+                new object[] { DeviceSubType.M_FREQ, M_FREQ,
                     GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_REV, M_REV,
+                new object[] { DeviceSubType.M_REV, M_REV,
                     GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_REV_FREQ, M_REV_FREQ,
+                new object[] { DeviceSubType.M_REV_FREQ, M_REV_FREQ,
                     GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_REV_2, M_REV_2,
+                new object[] { DeviceSubType.M_REV_2, M_REV_2,
                     GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_REV_FREQ_2,
+                new object[] { DeviceSubType.M_REV_FREQ_2,
                     M_REV_FREQ_2, GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_REV_2_ERROR,
+                new object[] { DeviceSubType.M_REV_2_ERROR,
                     M_REV_2_ERROR, GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_REV_FREQ_2_ERROR,
+                new object[] { DeviceSubType.M_REV_FREQ_2_ERROR,
                     M_REV_FREQ_2_ERROR, GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_ATV, M_ATV,
+                new object[] { DeviceSubType.M_ATV, M_ATV,
                     GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.NONE, string.Empty,
+                new object[] { DeviceSubType.NONE, string.Empty,
                     GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomMDevice() },
-                new object[] { Device.DeviceSubType.M_VIRT, M_VIRT,
+                new object[] { DeviceSubType.M_VIRT, M_VIRT,
                     GetRandomMDevice() },
             };
         }
@@ -84,7 +85,7 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
-            string expectedType, string subType, Device.IODevice device)
+            string expectedType, string subType, IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
@@ -129,7 +130,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -146,38 +147,38 @@ namespace Tests.Devices
         {
             var exportForM = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.P_ON_TIME, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_ON_TIME, 1},
             };
 
             var exportForMFreq = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.P_ON_TIME, 1},
-                {DeviceTag.V, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_ON_TIME, 1},
+                {IODevice.Tag.V, 1},
             };
 
             var exportForMRev = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.P_ON_TIME, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.R, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_ON_TIME, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.R, 1},
             };
 
             var exportForMATV = new Dictionary<string, int>()
             {
-                {DeviceTag.M, 1},
-                {DeviceTag.ST, 1},
-                {DeviceTag.R, 1},
-                {DeviceTag.FRQ, 1},
-                {DeviceTag.RPM, 1},
-                {DeviceTag.EST, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.P_ON_TIME, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.R, 1},
+                {IODevice.Tag.FRQ, 1},
+                {IODevice.Tag.RPM, 1},
+                {IODevice.Tag.EST, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_ON_TIME, 1},
             };
 
             return new object[]
@@ -208,7 +209,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
             string[] parametersSequence, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -227,7 +228,7 @@ namespace Tests.Devices
         {
             var parameters = new string[]
             {
-                DeviceParameter.P_ON_TIME
+                IODevice.Parameter.P_ON_TIME
             };
 
             return new object[]
@@ -311,7 +312,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ChannelsTestData))]
         public void Channels_NewDev_ReturnsExpectedCount(
             Dictionary<string, int> expectedChannelsCount, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             int actualAI = device.Channels.Where(x => x.Name == AI).Count();
@@ -471,26 +472,128 @@ namespace Tests.Devices
         }
 
         /// <summary>
+        /// Тестирование свойств устройства
+        /// </summary>
+        /// <param name="parametersSequence">Ожидаемые свойства</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(PropertiesTestData))]
+        public void Property_NewDev_ReturnsExpectedArrayWithParameters(
+            string[] parametersSequence, string subType,
+            IODevice device)
+        {
+            device.SetSubType(subType);
+            string[] actualParametersSequence = device.Properties
+                .Select(x => x.Key)
+                .ToArray();
+            Assert.AreEqual(parametersSequence, actualParametersSequence);
+        }
+
+        /// <summary>
+        /// 1 - Свойства в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        private static object[] PropertiesTestData()
+        {
+            var properties = new string[]
+            {
+                IODevice.Property.IP
+            };
+
+            return new object[]
+            {
+                new object[]
+                {
+                    new string[0],
+                    M,
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    M_FREQ,
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    M_REV,
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    M_REV_FREQ,
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    M_REV_2,
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    M_REV_FREQ_2,
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    M_REV_2_ERROR,
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    M_REV_FREQ_2_ERROR,
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    properties,
+                    M_ATV,
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    M_VIRT,
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    string.Empty,
+                    GetRandomMDevice()
+                },
+            };
+        }
+
+        /// <summary>
         /// Генератор M устройств
         /// </summary>
         /// <returns></returns>
-        private static Device.IODevice GetRandomMDevice()
+        private static IODevice GetRandomMDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new Device.M("KOAG4M1", "+KOAG4-M1",
+                    return new M("KOAG4M1", "+KOAG4-M1",
                         "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.M("LINE1M2", "+LINE1-M2",
+                    return new M("LINE1M2", "+LINE1-M2",
                         "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.M("TANK2M1", "+TANK2-M1",
+                    return new M("TANK2M1", "+TANK2-M1",
                         "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.M("CW_TANK3M3", "+CW_TANK3-M3",
+                    return new M("CW_TANK3M3", "+CW_TANK3-M3",
                         "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Device;
 
 namespace Tests.Devices
 {
@@ -11,10 +12,10 @@ namespace Tests.Devices
         const string SB = "SB";
         const string SB_VIRT = "SB_VIRT";
 
-        const string AI = Device.IODevice.IOChannel.AI;
-        const string AO = Device.IODevice.IOChannel.AO;
-        const string DI = Device.IODevice.IOChannel.DI;
-        const string DO = Device.IODevice.IOChannel.DO;
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
 
         /// <summary>
         /// Тест установки подтипа устройства
@@ -24,8 +25,8 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubType_NewDev_ReturnsExpectedSubType(
-            Device.DeviceSubType expectedSubType, string subType,
-            Device.IODevice device)
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -41,13 +42,13 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.SB, SB,
+                new object[] { DeviceSubType.SB, SB,
                     GetRandomSBDevice() },
-                new object[] { Device.DeviceSubType.SB_VIRT, SB_VIRT,
+                new object[] { DeviceSubType.SB_VIRT, SB_VIRT,
                     GetRandomSBDevice() },
-                new object[] { Device.DeviceSubType.SB, string.Empty,
+                new object[] { DeviceSubType.SB, string.Empty,
                     GetRandomSBDevice() },
-                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomSBDevice() },
 
             };
@@ -61,7 +62,7 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
-            string expectedType, string subType, Device.IODevice device)
+            string expectedType, string subType, IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
@@ -94,7 +95,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -111,9 +112,9 @@ namespace Tests.Devices
         {
             var exportForSB = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.P_DT, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_DT, 1},
             };
 
             return new object[]
@@ -133,7 +134,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
             string[] parametersSequence, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -189,7 +190,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ChannelsTestData))]
         public void Channels_NewDev_ReturnsExpectedCount(
             Dictionary<string, int> expectedChannelsCount, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             int actualAI = device.Channels.Where(x => x.Name == AI).Count();
@@ -264,23 +265,23 @@ namespace Tests.Devices
         /// Генератор SB устройств
         /// </summary>
         /// <returns></returns>
-        private static Device.IODevice GetRandomSBDevice()
+        private static IODevice GetRandomSBDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new Device.SB("KOAG4SB1", "+KOAG4-SB1",
+                    return new SB("KOAG4SB1", "+KOAG4-SB1",
                         "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.SB("LINE1SB2", "+LINE1-SB2",
+                    return new SB("LINE1SB2", "+LINE1-SB2",
                         "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.SB("TANK2SB1", "+TANK2-SB1",
+                    return new SB("TANK2SB1", "+TANK2-SB1",
                         "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.SB("CW_TANK3SB3", "+CW_TANK3-SB3",
+                    return new SB("CW_TANK3SB3", "+CW_TANK3-SB3",
                         "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Device;
 
 namespace Tests.Devices
 {
@@ -13,10 +14,10 @@ namespace Tests.Devices
         const string FQT_F_OK = "FQT_F_OK";
         const string FQT_VIRT = "FQT_VIRT";
 
-        const string AI = Device.IODevice.IOChannel.AI;
-        const string AO = Device.IODevice.IOChannel.AO;
-        const string DI = Device.IODevice.IOChannel.DI;
-        const string DO = Device.IODevice.IOChannel.DO;
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
 
         /// <summary>
         /// Тест установки подтипа устройства
@@ -26,8 +27,8 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubType_NewDev_ReturnsExpectedSubType(
-            Device.DeviceSubType expectedSubType, string subType,
-            Device.IODevice device)
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -43,17 +44,17 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.FQT, FQT,
+                new object[] { DeviceSubType.FQT, FQT,
                     GetRandomFQTDevice() },
-                new object[] { Device.DeviceSubType.FQT_F, FQT_F,
+                new object[] { DeviceSubType.FQT_F, FQT_F,
                     GetRandomFQTDevice() },
-                new object[] { Device.DeviceSubType.FQT_F_OK, FQT_F_OK,
+                new object[] { DeviceSubType.FQT_F_OK, FQT_F_OK,
                     GetRandomFQTDevice() },
-                new object[] { Device.DeviceSubType.FQT_VIRT, FQT_VIRT,
+                new object[] { DeviceSubType.FQT_VIRT, FQT_VIRT,
                     GetRandomFQTDevice() },
-                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomFQTDevice() },
-                new object[] { Device.DeviceSubType.NONE, string.Empty,
+                new object[] { DeviceSubType.NONE, string.Empty,
                     GetRandomFQTDevice() },
             };
         }
@@ -66,7 +67,7 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
-            string expectedType, string subType, Device.IODevice device)
+            string expectedType, string subType, IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
@@ -101,7 +102,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -118,50 +119,50 @@ namespace Tests.Devices
         {
             var exportForFQT = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.ABS_V, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.ABS_V, 1},
             };
 
             var exportForFQTF = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.P_MIN_FLOW, 1},
-                {DeviceTag.P_MAX_FLOW, 1},
-                {DeviceTag.P_CZ, 1},
-                {DeviceTag.F, 1},
-                {DeviceTag.P_DT, 1},
-                {DeviceTag.ABS_V, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_MIN_FLOW, 1},
+                {IODevice.Tag.P_MAX_FLOW, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.F, 1},
+                {IODevice.Tag.P_DT, 1},
+                {IODevice.Tag.ABS_V, 1},
             };
 
             var exportForFQTFOK = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.P_MIN_FLOW, 1},
-                {DeviceTag.P_MAX_FLOW, 1},
-                {DeviceTag.P_CZ, 1},
-                {DeviceTag.F, 1},
-                {DeviceTag.P_DT, 1},
-                {DeviceTag.ABS_V, 1},
-                {DeviceTag.OK, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_MIN_FLOW, 1},
+                {IODevice.Tag.P_MAX_FLOW, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.F, 1},
+                {IODevice.Tag.P_DT, 1},
+                {IODevice.Tag.ABS_V, 1},
+                {IODevice.Tag.OK, 1},
             };
 
             var exportForFQTVirt = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.P_MIN_FLOW, 1},
-                {DeviceTag.P_MAX_FLOW, 1},
-                {DeviceTag.P_CZ, 1},
-                {DeviceTag.F, 1},
-                {DeviceTag.P_DT, 1},
-                {DeviceTag.ABS_V, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_MIN_FLOW, 1},
+                {IODevice.Tag.P_MAX_FLOW, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.F, 1},
+                {IODevice.Tag.P_DT, 1},
+                {IODevice.Tag.ABS_V, 1},
             };
 
             return new object[]
@@ -188,11 +189,11 @@ namespace Tests.Devices
         [TestCaseSource(nameof(GetRangeTestData))]
         public void GetRange_NewDev_ReturnsExpectedRangeString(string expected,
             string subType, double value1, double value2,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
-            device.SetParameter(DeviceParameter.P_MIN_F, value1);
-            device.SetParameter(DeviceParameter.P_MAX_F, value2);
+            device.SetParameter(IODevice.Parameter.P_MIN_F, value1);
+            device.SetParameter(IODevice.Parameter.P_MAX_F, value2);
             Assert.AreEqual(expected, device.GetRange());
         }
 
@@ -232,7 +233,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
             string[] parametersSequence, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -251,10 +252,10 @@ namespace Tests.Devices
         {
             var defaultParameters = new string[]
             {
-                DeviceParameter.P_MIN_F,
-                DeviceParameter.P_MAX_F,
-                DeviceParameter.P_C0,
-                DeviceParameter.P_DT
+                IODevice.Parameter.P_MIN_F,
+                IODevice.Parameter.P_MAX_F,
+                IODevice.Parameter.P_C0,
+                IODevice.Parameter.P_DT
             };
 
             return new object[]
@@ -308,7 +309,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ChannelsTestData))]
         public void Channels_NewDev_ReturnsExpectedCount(
             Dictionary<string, int> expectedChannelsCount, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             int actualAI = device.Channels.Where(x => x.Name == AI).Count();
@@ -410,7 +411,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(PropertiesTestData))]
         public void Properties_NewDev_ReturnsExpectedProperties(
             string[] expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualSequence = device.Properties
@@ -429,7 +430,7 @@ namespace Tests.Devices
         {
             var defaultProperties = new string[]
             {
-                DeviceProperty.MT,
+                IODevice.Property.MT,
             };
 
             return new object[]
@@ -477,23 +478,23 @@ namespace Tests.Devices
         /// Генератор FQT устройств
         /// </summary>
         /// <returns></returns>
-        private static Device.IODevice GetRandomFQTDevice()
+        private static IODevice GetRandomFQTDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new Device.FQT("KOAG4FQT1", "+KOAG4-FQT1",
+                    return new FQT("KOAG4FQT1", "+KOAG4-FQT1",
                         "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.FQT("LINE1FQT2", "+LINE1-FQT2",
+                    return new FQT("LINE1FQT2", "+LINE1-FQT2",
                         "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.FQT("TANK2FQT1", "+TANK2-FQT1",
+                    return new FQT("TANK2FQT1", "+TANK2-FQT1",
                         "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.FQT("CW_TANK3FQT3", "+CW_TANK3-FQT3",
+                    return new FQT("CW_TANK3FQT3", "+CW_TANK3-FQT3",
                         "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }

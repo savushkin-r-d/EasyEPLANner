@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Device;
 
 namespace Tests.Devices
 {
@@ -11,10 +12,10 @@ namespace Tests.Devices
         const string AOSubType = "AO";
         const string AO_VIRT = "AO_VIRT";
 
-        const string AI = Device.IODevice.IOChannel.AI;
-        const string AO = Device.IODevice.IOChannel.AO;
-        const string DI = Device.IODevice.IOChannel.DI;
-        const string DO = Device.IODevice.IOChannel.DO;
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
 
         /// <summary>
         /// Тест установки подтипа устройства
@@ -24,8 +25,8 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubType_NewDev_ReturnsExpectedSubType(
-            Device.DeviceSubType expectedSubType, string subType,
-            Device.IODevice device)
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -41,13 +42,13 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.AO, string.Empty,
+                new object[] { DeviceSubType.AO, string.Empty,
                     GetRandomAODevice() },
-                new object[] { Device.DeviceSubType.AO, AOSubType,
+                new object[] { DeviceSubType.AO, AOSubType,
                     GetRandomAODevice() },
-                new object[] { Device.DeviceSubType.AO_VIRT, AO_VIRT,
+                new object[] { DeviceSubType.AO_VIRT, AO_VIRT,
                     GetRandomAODevice() },
-                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomAODevice() },
             };
         }
@@ -60,7 +61,7 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
-            string expectedType, string subType, Device.IODevice device)
+            string expectedType, string subType, IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
@@ -93,7 +94,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -110,16 +111,16 @@ namespace Tests.Devices
         {
             var exportForAO = new Dictionary<string, int>()
             {
-                {DeviceTag.M, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.P_MIN_V, 1},
-                {DeviceTag.P_MAX_V, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_MIN_V, 1},
+                {IODevice.Tag.P_MAX_V, 1},
             };
 
             var exportForVirtAO = new Dictionary<string, int>()
             {
-                {DeviceTag.M, 1},
-                {DeviceTag.V, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
             };
 
             return new object[]
@@ -141,11 +142,11 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetRangeTestData))]
         public void GetRangeTest(string expected, string subType,
-            double value1, double value2, Device.IODevice device)
+            double value1, double value2, IODevice device)
         {
             device.SetSubType(subType);
-            device.SetParameter(DeviceParameter.P_MIN_V, value1);
-            device.SetParameter(DeviceParameter.P_MAX_V, value2);
+            device.SetParameter(IODevice.Parameter.P_MIN_V, value1);
+            device.SetParameter(IODevice.Parameter.P_MAX_V, value2);
             Assert.AreEqual(expected, device.GetRange());
         }
 
@@ -181,7 +182,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
             string[] parametersSequence, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -200,8 +201,8 @@ namespace Tests.Devices
         {
             var defaultParameters = new string[]
             {
-                DeviceParameter.P_MIN_V,
-                DeviceParameter.P_MAX_V,
+                IODevice.Parameter.P_MIN_V,
+                IODevice.Parameter.P_MAX_V,
             };
 
             return new object[]
@@ -237,7 +238,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ChannelsTestData))]
         public void Channels_NewDev_ReturnsExpectedCount(
             Dictionary<string, int> expectedChannelsCount, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             int actualAI = device.Channels.Where(x => x.Name == AI).Count();
@@ -312,23 +313,23 @@ namespace Tests.Devices
         /// Генератор AO устройств
         /// </summary>
         /// <returns></returns>
-        private static Device.IODevice GetRandomAODevice()
+        private static IODevice GetRandomAODevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new Device.AO("KOAG4AO1", "+KOAG4-AO1",
+                    return new AO("KOAG4AO1", "+KOAG4-AO1",
                         "Test device", 1, "KOAG", 4);
                 case 2:
-                    return new Device.AO("LINE1AO2", "+LINE1-AO2",
+                    return new AO("LINE1AO2", "+LINE1-AO2",
                         "Test device", 2, "LINE", 1);
                 case 3:
-                    return new Device.AO("TANK2AO1", "+TANK2-AO1",
+                    return new AO("TANK2AO1", "+TANK2-AO1",
                         "Test device", 1, "TANK", 2);
                 default:
-                    return new Device.AO("CW_TANK3AO3", "+CW_TANK3-AO3",
+                    return new AO("CW_TANK3AO3", "+CW_TANK3-AO3",
                         "Test device", 3, "CW_TANK", 3);
             }
         }

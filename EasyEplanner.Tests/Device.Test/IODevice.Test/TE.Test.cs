@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Device;
 
 namespace Tests.Devices
 {
@@ -12,10 +13,10 @@ namespace Tests.Devices
         const string TE_IOLINK = "TE_IOLINK";
         const string TE_VIRT = "TE_VIRT";
 
-        const string AI = Device.IODevice.IOChannel.AI;
-        const string AO = Device.IODevice.IOChannel.AO;
-        const string DI = Device.IODevice.IOChannel.DI;
-        const string DO = Device.IODevice.IOChannel.DO;
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
 
         /// <summary>
         /// Тест установки подтипа устройства
@@ -25,8 +26,8 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubType_NewDev_ReturnsExpectedSubType(
-            Device.DeviceSubType expectedSubType, string subType,
-            Device.IODevice device)
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -42,15 +43,15 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.TE, TE,
+                new object[] { DeviceSubType.TE, TE,
                     GetRandomTEDevice() },
-                new object[] { Device.DeviceSubType.TE_IOLINK, TE_IOLINK,
+                new object[] { DeviceSubType.TE_IOLINK, TE_IOLINK,
                     GetRandomTEDevice() },
-                new object[] { Device.DeviceSubType.NONE, string.Empty,
+                new object[] { DeviceSubType.NONE, string.Empty,
                     GetRandomTEDevice() },
-                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomTEDevice() },
-                new object[] { Device.DeviceSubType.TE_VIRT, TE_VIRT,
+                new object[] { DeviceSubType.TE_VIRT, TE_VIRT,
                     GetRandomTEDevice() },
             };
         }
@@ -63,7 +64,7 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
-            string expectedType, string subType, Device.IODevice device)
+            string expectedType, string subType, IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
@@ -80,7 +81,8 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { string.Empty, string.Empty, GetRandomTEDevice() },
+                new object[] { string.Empty, string.Empty,
+                    GetRandomTEDevice() },
                 new object[] { TE, TE, GetRandomTEDevice() },
                 new object[] { TE_IOLINK, TE_IOLINK, GetRandomTEDevice() },
                 new object[] { string.Empty, Incorrect, GetRandomTEDevice() },
@@ -97,7 +99,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -114,10 +116,10 @@ namespace Tests.Devices
         {
             var exportForTE = new Dictionary<string, int>()
             {
-                {DeviceTag.M, 1},
-                {DeviceTag.P_CZ, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.ST, 1},
             };
 
             return new object[]
@@ -138,7 +140,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
             string[] parametersSequence, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -157,8 +159,8 @@ namespace Tests.Devices
         {
             var parameters = new string[]
             {
-                DeviceParameter.P_C0,
-                DeviceParameter.P_ERR
+                IODevice.Parameter.P_C0,
+                IODevice.Parameter.P_ERR
             };
 
             return new object[]
@@ -200,7 +202,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ChannelsTestData))]
         public void Channels_NewDev_ReturnsExpectedCount(
             Dictionary<string, int> expectedChannelsCount, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             int actualAI = device.Channels.Where(x => x.Name == AI).Count();
@@ -280,23 +282,23 @@ namespace Tests.Devices
         /// Генератор TE устройств
         /// </summary>
         /// <returns></returns>
-        private static Device.IODevice GetRandomTEDevice()
+        private static IODevice GetRandomTEDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new Device.TE("KOAG4TE1", "+KOAG4-TE1",
+                    return new TE("KOAG4TE1", "+KOAG4-TE1",
                         "Test device", 1, "KOAG", 4, "Test article");
                 case 2:
-                    return new Device.TE("LINE1TE2", "+LINE1-TE2",
+                    return new TE("LINE1TE2", "+LINE1-TE2",
                         "Test device", 2, "LINE", 1, "Test article");
                 case 3:
-                    return new Device.TE("TANK2TE1", "+TANK2-TE1",
+                    return new TE("TANK2TE1", "+TANK2-TE1",
                         "Test device", 1, "TANK", 2, "Test article");
                 default:
-                    return new Device.TE("CW_TANK3TE3", "+CW_TANK3-TE3",
+                    return new TE("CW_TANK3TE3", "+CW_TANK3-TE3",
                         "Test device", 3, "CW_TANK", 3, "Test article");
             }
         }

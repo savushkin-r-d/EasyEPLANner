@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Device;
 
 namespace Tests.Devices
 {
@@ -11,10 +12,10 @@ namespace Tests.Devices
         const string DISubType = "DI";
         const string DI_VIRT = "DI_VIRT";
 
-        const string AI = Device.IODevice.IOChannel.AI;
-        const string AO = Device.IODevice.IOChannel.AO;
-        const string DI = Device.IODevice.IOChannel.DI;
-        const string DO = Device.IODevice.IOChannel.DO;
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
 
         /// <summary>
         /// Тест установки подтипа устройства
@@ -24,8 +25,8 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubType_NewDev_ReturnsExpectedSubType(
-            Device.DeviceSubType expectedSubType, string subType,
-            Device.IODevice device)
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -41,13 +42,13 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.DI, string.Empty,
+                new object[] { DeviceSubType.DI, string.Empty,
                     GetRandomDIDevice() },
-                new object[] { Device.DeviceSubType.DI, DISubType,
+                new object[] { DeviceSubType.DI, DISubType,
                     GetRandomDIDevice() },
-                new object[] { Device.DeviceSubType.DI_VIRT, DI_VIRT,
+                new object[] { DeviceSubType.DI_VIRT, DI_VIRT,
                     GetRandomDIDevice() },
-                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomDIDevice() },
             };
         }
@@ -60,7 +61,7 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
-            string expectedType, string subType, Device.IODevice device)
+            string expectedType, string subType, IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
@@ -93,7 +94,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -110,15 +111,15 @@ namespace Tests.Devices
         {
             var exportForDI = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.P_DT, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_DT, 1},
             };
 
             var exportForVirtDI = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
             };
 
             return new object[]
@@ -139,7 +140,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
             string[] parametersSequence, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -158,7 +159,7 @@ namespace Tests.Devices
         {
             var defaultParameters = new string[]
             {
-                DeviceParameter.P_DT,
+                IODevice.Parameter.P_DT,
             };
 
             return new object[]
@@ -194,7 +195,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ChannelsTestData))]
         public void Channels_NewDev_ReturnsExpectedCount(
             Dictionary<string, int> expectedChannelsCount, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             int actualAI = device.Channels.Where(x => x.Name == AI).Count();
@@ -269,23 +270,23 @@ namespace Tests.Devices
         /// Генератор DI устройств
         /// </summary>
         /// <returns></returns>
-        private static Device.IODevice GetRandomDIDevice()
+        private static IODevice GetRandomDIDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new Device.DI("KOAG4DI1", "+KOAG4-DI1",
+                    return new DI("KOAG4DI1", "+KOAG4-DI1",
                         "Test device", 1, "KOAG", 4);
                 case 2:
-                    return new Device.DI("LINE1DI2", "+LINE1-DI2",
+                    return new DI("LINE1DI2", "+LINE1-DI2",
                         "Test device", 2, "LINE", 1);
                 case 3:
-                    return new Device.DI("TANK2DI1", "+TANK2-DI1",
+                    return new DI("TANK2DI1", "+TANK2-DI1",
                         "Test device", 1, "TANK", 2);
                 default:
-                    return new Device.DI("CW_TANK3DI3", "+CW_TANK3-DI3",
+                    return new DI("CW_TANK3DI3", "+CW_TANK3-DI3",
                         "Test device", 3, "CW_TANK", 3);
             }
         }

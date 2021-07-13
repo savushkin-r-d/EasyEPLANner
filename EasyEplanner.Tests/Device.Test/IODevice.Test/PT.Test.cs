@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Device;
 
 namespace Tests.Devices
 {
@@ -13,10 +14,10 @@ namespace Tests.Devices
         const string DEV_SPAE = "DEV_SPAE";
         const string PT_VIRT = "PT_VIRT";
 
-        const string AI = Device.IODevice.IOChannel.AI;
-        const string AO = Device.IODevice.IOChannel.AO;
-        const string DI = Device.IODevice.IOChannel.DI;
-        const string DO = Device.IODevice.IOChannel.DO;
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
 
         /// <summary>
         /// Тест установки подтипа устройства
@@ -26,8 +27,8 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubType_NewDev_ReturnsExpectedSubType(
-            Device.DeviceSubType expectedSubType, string subType,
-            Device.IODevice device)
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -43,17 +44,17 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.NONE, string.Empty,
+                new object[] { DeviceSubType.NONE, string.Empty,
                     GetRandomPTDevice() },
-                new object[] { Device.DeviceSubType.PT, PT,
+                new object[] { DeviceSubType.PT, PT,
                     GetRandomPTDevice() },
-                new object[] { Device.DeviceSubType.PT_IOLINK, PT_IOLINK,
+                new object[] { DeviceSubType.PT_IOLINK, PT_IOLINK,
                     GetRandomPTDevice() },
-                new object[] { Device.DeviceSubType.DEV_SPAE, DEV_SPAE,
+                new object[] { DeviceSubType.DEV_SPAE, DEV_SPAE,
                     GetRandomPTDevice() },
-                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomPTDevice() },
-                new object[] { Device.DeviceSubType.PT_VIRT, PT_VIRT,
+                new object[] { DeviceSubType.PT_VIRT, PT_VIRT,
                     GetRandomPTDevice() },
             };
         }
@@ -66,7 +67,7 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
-            string expectedType, string subType, Device.IODevice device)
+            string expectedType, string subType, IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
@@ -101,7 +102,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -118,28 +119,28 @@ namespace Tests.Devices
         {
             var exportForPT = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.P_MIN_V, 1},
-                {DeviceTag.P_MAX_V, 1},
-                {DeviceTag.P_CZ, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_MIN_V, 1},
+                {IODevice.Tag.P_MAX_V, 1},
+                {IODevice.Tag.P_CZ, 1},
             };
 
             var exportForPTIOLink = new Dictionary<string, int>()
             {
-                {DeviceTag.M, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.P_MIN_V, 1},
-                {DeviceTag.P_MAX_V, 1},
-                {DeviceTag.P_ERR, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_MIN_V, 1},
+                {IODevice.Tag.P_MAX_V, 1},
+                {IODevice.Tag.P_ERR, 1},
             };
 
             var exportForDevSpae = new Dictionary<string, int>()
             {
-                {DeviceTag.M, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.P_ERR, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_ERR, 1},
             };
 
             return new object[]
@@ -166,11 +167,11 @@ namespace Tests.Devices
         [TestCaseSource(nameof(GetRangeTestData))]
         public void GetRange_NewDev_ReturnsExpectedRangeString(string expected,
             string subType, double value1, double value2,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
-            device.SetParameter(DeviceParameter.P_MIN_V, value1);
-            device.SetParameter(DeviceParameter.P_MAX_V, value2);
+            device.SetParameter(IODevice.Parameter.P_MIN_V, value1);
+            device.SetParameter(IODevice.Parameter.P_MAX_V, value2);
             Assert.AreEqual(expected, device.GetRange());
         }
 
@@ -210,7 +211,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
             string[] parametersSequence, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -229,14 +230,14 @@ namespace Tests.Devices
         {
             var defaultParameters = new string[]
             {
-                DeviceParameter.P_C0,
-                DeviceParameter.P_MIN_V,
-                DeviceParameter.P_MAX_V,
+                IODevice.Parameter.P_C0,
+                IODevice.Parameter.P_MIN_V,
+                IODevice.Parameter.P_MAX_V,
             };
 
             var iolinkParameters = new string[]
             {
-                DeviceParameter.P_ERR
+                IODevice.Parameter.P_ERR
             };
 
             return new object[]
@@ -284,7 +285,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ChannelsTestData))]
         public void Channels_NewDev_ReturnsExpectedCount(
             Dictionary<string, int> expectedChannelsCount, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             int actualAI = device.Channels.Where(x => x.Name == AI).Count();
@@ -371,23 +372,23 @@ namespace Tests.Devices
         /// Генератор PT устройств
         /// </summary>
         /// <returns></returns>
-        private static Device.IODevice GetRandomPTDevice()
+        private static IODevice GetRandomPTDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new Device.PT("KOAG4PT1", "+KOAG4-PT1",
+                    return new PT("KOAG4PT1", "+KOAG4-PT1",
                         "Test device", 1, "KOAG", 4, "Test article");
                 case 2:
-                    return new Device.PT("LINE1PT2", "+LINE1-PT2",
+                    return new PT("LINE1PT2", "+LINE1-PT2",
                         "Test device", 2, "LINE", 1, "Test article");
                 case 3:
-                    return new Device.PT("TANK2PT1", "+TANK2-PT1",
+                    return new PT("TANK2PT1", "+TANK2-PT1",
                         "Test device", 1, "TANK", 2, "Test article");
                 default:
-                    return new Device.PT("CW_TANK3PT3", "+CW_TANK3-PT3",
+                    return new PT("CW_TANK3PT3", "+CW_TANK3-PT3",
                         "Test device", 3, "CW_TANK", 3, "Test article");
             }
         }

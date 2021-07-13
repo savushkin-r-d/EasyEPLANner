@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Device;
 
 namespace Tests.Devices
 {
@@ -11,10 +12,10 @@ namespace Tests.Devices
         const string HL = "HL";
         const string HL_VIRT = "HL_VIRT";
 
-        const string AI = Device.IODevice.IOChannel.AI;
-        const string AO = Device.IODevice.IOChannel.AO;
-        const string DI = Device.IODevice.IOChannel.DI;
-        const string DO = Device.IODevice.IOChannel.DO;
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
 
         /// <summary>
         /// Тест получения подтипа устройства
@@ -24,7 +25,7 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
-            string expectedType, string subType, Device.IODevice device)
+            string expectedType, string subType, IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
@@ -56,8 +57,8 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubType_NewDev_ReturnsExpectedSubType(
-            Device.DeviceSubType expectedSubType, string subType,
-            Device.IODevice device)
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -73,13 +74,13 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.HL, string.Empty,
+                new object[] { DeviceSubType.HL, string.Empty,
                     GetRandomHLDevice() },
-                new object[] { Device.DeviceSubType.HL, HL,
+                new object[] { DeviceSubType.HL, HL,
                     GetRandomHLDevice() },
-                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomHLDevice() },
-                new object[] { Device.DeviceSubType.HL_VIRT, HL_VIRT,
+                new object[] { DeviceSubType.HL_VIRT, HL_VIRT,
                     GetRandomHLDevice() },
             };
         }
@@ -93,7 +94,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -110,8 +111,8 @@ namespace Tests.Devices
         {
             var exportForHL = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
             };
 
             return new object[]
@@ -132,7 +133,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
             string[] parametersSequence, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -188,7 +189,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ChannelsTestData))]
         public void Channels_NewDev_ReturnsExpectedCount(
             Dictionary<string, int> expectedChannelsCount, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             int actualAI = device.Channels.Where(x => x.Name == AI).Count();
@@ -263,23 +264,23 @@ namespace Tests.Devices
         /// Генератор HL устройств
         /// </summary>
         /// <returns></returns>
-        private static Device.IODevice GetRandomHLDevice()
+        private static IODevice GetRandomHLDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new Device.HL("KOAG4HL1", "+KOAG4-HL1",
+                    return new HL("KOAG4HL1", "+KOAG4-HL1",
                         "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.HL("LINE1HL2", "+LINE1-HL2",
+                    return new HL("LINE1HL2", "+LINE1-HL2",
                         "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.HL("TANK2HL1", "+TANK2-HL1",
+                    return new HL("TANK2HL1", "+TANK2-HL1",
                         "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.HL("CW_TANK3HL3", "+CW_TANK3-HL3",
+                    return new HL("CW_TANK3HL3", "+CW_TANK3-HL3",
                         "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }

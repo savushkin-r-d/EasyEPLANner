@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Device;
 
 namespace Tests.Devices
 {
@@ -13,10 +14,10 @@ namespace Tests.Devices
         const string QT_IOLINK = "QT_IOLINK";
         const string QT_VIRT = "QT_VIRT";
 
-        const string AI = Device.IODevice.IOChannel.AI;
-        const string AO = Device.IODevice.IOChannel.AO;
-        const string DI = Device.IODevice.IOChannel.DI;
-        const string DO = Device.IODevice.IOChannel.DO;
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
 
         /// <summary>
         /// Тест установки подтипа устройства
@@ -26,8 +27,8 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubType_NewDev_ReturnsExpectedSubType(
-            Device.DeviceSubType expectedSubType, string subType,
-            Device.IODevice device)
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -43,17 +44,17 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.NONE, string.Empty,
+                new object[] { DeviceSubType.NONE, string.Empty,
                     GetRandomQTDevice() },
-                new object[] { Device.DeviceSubType.QT, QT,
+                new object[] { DeviceSubType.QT, QT,
                     GetRandomQTDevice() },
-                new object[] { Device.DeviceSubType.QT_IOLINK, QT_IOLINK,
+                new object[] { DeviceSubType.QT_IOLINK, QT_IOLINK,
                     GetRandomQTDevice() },
-                new object[] { Device.DeviceSubType.QT_OK, QT_OK,
+                new object[] { DeviceSubType.QT_OK, QT_OK,
                     GetRandomQTDevice() },
-                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomQTDevice() },
-                new object[] { Device.DeviceSubType.QT_VIRT, QT_VIRT,
+                new object[] { DeviceSubType.QT_VIRT, QT_VIRT,
                     GetRandomQTDevice() },
             };
         }
@@ -66,7 +67,7 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
-            string expectedType, string subType, Device.IODevice device)
+            string expectedType, string subType, IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
@@ -83,7 +84,8 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { string.Empty, string.Empty, GetRandomQTDevice() },
+                new object[] { string.Empty, string.Empty,
+                    GetRandomQTDevice() },
                 new object[] { QT, QT, GetRandomQTDevice() },
                 new object[] { QT_IOLINK, QT_IOLINK, GetRandomQTDevice() },
                 new object[] { QT_OK, QT_OK, GetRandomQTDevice() },
@@ -101,7 +103,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -118,33 +120,33 @@ namespace Tests.Devices
         {
             var exportForQT = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.P_MIN_V, 1},
-                {DeviceTag.P_MAX_V, 1},
-                {DeviceTag.P_CZ, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_MIN_V, 1},
+                {IODevice.Tag.P_MAX_V, 1},
+                {IODevice.Tag.P_CZ, 1},
             };
 
             var exportForQTIOLink = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.P_CZ, 1},
-                {DeviceTag.T, 1},
-                {DeviceTag.P_ERR, 1}
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.T, 1},
+                {IODevice.Tag.P_ERR, 1}
             };
 
             var exportForQTOk = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.OK, 1},
-                {DeviceTag.P_MIN_V, 1},
-                {DeviceTag.P_MAX_V, 1},
-                {DeviceTag.P_CZ, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.OK, 1},
+                {IODevice.Tag.P_MIN_V, 1},
+                {IODevice.Tag.P_MAX_V, 1},
+                {IODevice.Tag.P_CZ, 1},
             };
 
             return new object[]
@@ -170,11 +172,11 @@ namespace Tests.Devices
         [TestCaseSource(nameof(GetRangeTestData))]
         public void GetRange_NewDev_ReturnsExpectedRangeString(string expected,
             string subType, double value1, double value2,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
-            device.SetParameter(DeviceParameter.P_MIN_V, value1);
-            device.SetParameter(DeviceParameter.P_MAX_V, value2);
+            device.SetParameter(IODevice.Parameter.P_MIN_V, value1);
+            device.SetParameter(IODevice.Parameter.P_MAX_V, value2);
             Assert.AreEqual(expected, device.GetRange());
         }
 
@@ -214,7 +216,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
             string[] parametersSequence, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -233,14 +235,14 @@ namespace Tests.Devices
         {
             var defaultParameters = new string[]
             {
-                DeviceParameter.P_C0,
-                DeviceParameter.P_MIN_V,
-                DeviceParameter.P_MAX_V,
+                IODevice.Parameter.P_C0,
+                IODevice.Parameter.P_MIN_V,
+                IODevice.Parameter.P_MAX_V,
             };
 
             var iolinkParameters = new string[]
             {
-                DeviceParameter.P_ERR
+                IODevice.Parameter.P_ERR
             };
 
             return new object[]
@@ -294,7 +296,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ChannelsTestData))]
         public void Channels_NewDev_ReturnsExpectedCount(
             Dictionary<string, int> expectedChannelsCount, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             int actualAI = device.Channels.Where(x => x.Name == AI).Count();
@@ -387,23 +389,23 @@ namespace Tests.Devices
         /// Генератор QT устройств
         /// </summary>
         /// <returns></returns>
-        private static Device.IODevice GetRandomQTDevice()
+        private static IODevice GetRandomQTDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new Device.QT("KOAG4QT1", "+KOAG4-QT1",
+                    return new QT("KOAG4QT1", "+KOAG4-QT1",
                         "Test device", 1, "KOAG", 4, "Test article");
                 case 2:
-                    return new Device.QT("LINE1QT2", "+LINE1-QT2",
+                    return new QT("LINE1QT2", "+LINE1-QT2",
                         "Test device", 2, "LINE", 1, "Test article");
                 case 3:
-                    return new Device.QT("TANK2QT1", "+TANK2-QT1",
+                    return new QT("TANK2QT1", "+TANK2-QT1",
                         "Test device", 1, "TANK", 2, "Test article");
                 default:
-                    return new Device.QT("CW_TANK3QT3", "+CW_TANK3-QT3",
+                    return new QT("CW_TANK3QT3", "+CW_TANK3-QT3",
                         "Test device", 3, "CW_TANK", 3, "Test article");
             }
         }

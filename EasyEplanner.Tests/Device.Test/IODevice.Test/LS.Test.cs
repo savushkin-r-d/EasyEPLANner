@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Device;
 
 namespace Tests.Devices
 {
@@ -14,10 +15,10 @@ namespace Tests.Devices
         const string LS_IOLINK_MAX = "LS_IOLINK_MAX";
         const string LS_VIRT = "LS_VIRT";
 
-        const string AI = Device.IODevice.IOChannel.AI;
-        const string AO = Device.IODevice.IOChannel.AO;
-        const string DI = Device.IODevice.IOChannel.DI;
-        const string DO = Device.IODevice.IOChannel.DO;
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
 
         /// <summary>
         /// Тест установки подтипа устройства
@@ -27,8 +28,8 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubType_NewDev_ReturnsExpectedSubType(
-            Device.DeviceSubType expectedSubType, string subType,
-            Device.IODevice device)
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -44,19 +45,19 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.LS_MIN, LS_MIN,
+                new object[] { DeviceSubType.LS_MIN, LS_MIN,
                     GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.LS_MAX, LS_MAX,
+                new object[] { DeviceSubType.LS_MAX, LS_MAX,
                     GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.LS_IOLINK_MIN,
+                new object[] { DeviceSubType.LS_IOLINK_MIN,
                     LS_IOLINK_MIN, GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.LS_IOLINK_MAX,
+                new object[] { DeviceSubType.LS_IOLINK_MAX,
                     LS_IOLINK_MAX, GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.LS_VIRT, LS_VIRT,
+                new object[] { DeviceSubType.LS_VIRT, LS_VIRT,
                     GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.NONE, string.Empty,
+                new object[] { DeviceSubType.NONE, string.Empty,
                     GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomLSDevice() },
             };
         }
@@ -69,7 +70,7 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
-            string expectedType, string subType, Device.IODevice device)
+            string expectedType, string subType, IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
@@ -107,7 +108,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -124,18 +125,18 @@ namespace Tests.Devices
         {
             var exportForIOLinkLS = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.P_DT, 1},
-                {DeviceTag.P_ERR, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_DT, 1},
+                {IODevice.Tag.P_ERR, 1},
             };
 
             var exportForLS = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.P_DT, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_DT, 1},
             };
 
             return new object[]
@@ -160,7 +161,7 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetConnectionTestData))]
         public void GetConnectionType_NewDev_ReturnsExpectedString(
-            string expected, string subType, Device.IODevice device)
+            string expected, string subType, IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expected, device.GetConnectionType());
@@ -198,7 +199,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
             string[] parametersSequence, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -217,13 +218,13 @@ namespace Tests.Devices
         {
             var defaultParameters = new string[]
             {
-                DeviceParameter.P_DT
+                IODevice.Parameter.P_DT
             };
 
             var iolinkParameters = new string[]
             {
-                DeviceParameter.P_DT,
-                DeviceParameter.P_ERR,
+                IODevice.Parameter.P_DT,
+                IODevice.Parameter.P_ERR,
             };
 
             return new object[]
@@ -277,7 +278,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ChannelsTestData))]
         public void Channels_NewDev_ReturnsExpectedCount(
             Dictionary<string, int> expectedChannelsCount, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             int actualAI = device.Channels.Where(x => x.Name == AI).Count();
@@ -378,23 +379,23 @@ namespace Tests.Devices
         /// Генератор LS устройств
         /// </summary>
         /// <returns></returns>
-        private static Device.IODevice GetRandomLSDevice()
+        private static IODevice GetRandomLSDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new Device.LS("KOAG4LS1", "+KOAG4-LS1",
+                    return new LS("KOAG4LS1", "+KOAG4-LS1",
                         "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.LS("LINE1LS2", "+LINE1-LS2",
+                    return new LS("LINE1LS2", "+LINE1-LS2",
                         "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.LS("TANK2LS1", "+TANK2-LS1",
+                    return new LS("TANK2LS1", "+TANK2-LS1",
                         "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.LS("CW_TANK3LS3", "+CW_TANK3-LS3",
+                    return new LS("CW_TANK3LS3", "+CW_TANK3-LS3",
                         "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }

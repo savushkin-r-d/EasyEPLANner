@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Device;
 
 namespace Tests.Devices
 {
@@ -27,10 +28,10 @@ namespace Tests.Devices
         const string V_IOLINK_VTUG_DO1_DI2 = "V_IOLINK_VTUG_DO1_DI2";
         const string V_VIRT = "V_VIRT";
 
-        const string AI = Device.IODevice.IOChannel.AI;
-        const string AO = Device.IODevice.IOChannel.AO;
-        const string DI = Device.IODevice.IOChannel.DI;
-        const string DO = Device.IODevice.IOChannel.DO;
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
 
         /// <summary>
         /// Тест установки подтипа устройства
@@ -40,8 +41,8 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubType_NewDev_ReturnsExpectedSubType(
-            Device.DeviceSubType expectedSubType, string subType,
-            Device.IODevice device)
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -57,45 +58,45 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.V_DO1, V_DO1,
+                new object[] { DeviceSubType.V_DO1, V_DO1,
                     GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_DO2, V_DO2,
+                new object[] { DeviceSubType.V_DO2, V_DO2,
                     GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_DO1_DI1_FB_OFF,
+                new object[] { DeviceSubType.V_DO1_DI1_FB_OFF,
                     V_DO1_DI1_FB_OFF, GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_DO1_DI1_FB_ON,
+                new object[] { DeviceSubType.V_DO1_DI1_FB_ON,
                     V_DO1_DI1_FB_ON, GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_DO1_DI2, V_DO1_DI2,
+                new object[] { DeviceSubType.V_DO1_DI2, V_DO1_DI2,
                     GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_DO2_DI2, V_DO2_DI2,
+                new object[] { DeviceSubType.V_DO2_DI2, V_DO2_DI2,
                     GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_MIXPROOF, V_MIXPROOF,
+                new object[] { DeviceSubType.V_MIXPROOF, V_MIXPROOF,
                     GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_IOLINK_MIXPROOF,
+                new object[] { DeviceSubType.V_IOLINK_MIXPROOF,
                     V_IOLINK_MIXPROOF, GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_AS_MIXPROOF,
+                new object[] { DeviceSubType.V_AS_MIXPROOF,
                     V_AS_MIXPROOF, GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_BOTTOM_MIXPROOF,
+                new object[] { DeviceSubType.V_BOTTOM_MIXPROOF,
                     V_BOTTOM_MIXPROOF, GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_AS_DO1_DI2,
+                new object[] { DeviceSubType.V_AS_DO1_DI2,
                     V_AS_DO1_DI2, GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_IOLINK_DO1_DI2,
+                new object[] { DeviceSubType.V_IOLINK_DO1_DI2,
                     V_IOLINK_DO1_DI2, GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_DO2_DI2_BISTABLE,
+                new object[] { DeviceSubType.V_DO2_DI2_BISTABLE,
                     V_DO2_DI2_BISTABLE, GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_IOLINK_VTUG_DO1,
+                new object[] { DeviceSubType.V_IOLINK_VTUG_DO1,
                     V_IOLINK_VTUG_DO1, GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF,
+                new object[] { DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF,
                     V_IOLINK_VTUG_DO1_FB_OFF, GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON,
+                new object[] { DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON,
                     V_IOLINK_VTUG_DO1_FB_ON, GetRandomVDevice() },
-                new object[] {Device.DeviceSubType.V_IOLINK_VTUG_DO1_DI2,
+                new object[] {DeviceSubType.V_IOLINK_VTUG_DO1_DI2,
                     V_IOLINK_VTUG_DO1_DI2, GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.NONE, string.Empty,
+                new object[] { DeviceSubType.NONE, string.Empty,
                     GetRandomVDevice() },
-                new object[] { Device.DeviceSubType.V_VIRT, V_VIRT,
+                new object[] { DeviceSubType.V_VIRT, V_VIRT,
                     GetRandomVDevice() },
             };
         }
@@ -108,7 +109,7 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
-            string expectedType, string subType, Device.IODevice device)
+            string expectedType, string subType, IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
@@ -169,7 +170,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -186,39 +187,39 @@ namespace Tests.Devices
         {
             var exportForV = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
             };
 
             var exportForVFBOff = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.P_ON_TIME, 1},
-                {DeviceTag.P_FB, 1},
-                {DeviceTag.FB_OFF_ST, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_ON_TIME, 1},
+                {IODevice.Tag.P_FB, 1},
+                {IODevice.Tag.FB_OFF_ST, 1},
             };
 
             var exportForVFBOn = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.P_ON_TIME, 1},
-                {DeviceTag.P_FB, 1},
-                {DeviceTag.FB_OFF_ST, 1},
-                {DeviceTag.FB_ON_ST, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_ON_TIME, 1},
+                {IODevice.Tag.P_FB, 1},
+                {IODevice.Tag.FB_OFF_ST, 1},
+                {IODevice.Tag.FB_ON_ST, 1},
             };
 
             var exportForVIOLinkMixproof = new Dictionary<string, int>()
             {
-                {DeviceTag.ST, 1},
-                {DeviceTag.M, 1},
-                {DeviceTag.P_ON_TIME, 1},
-                {DeviceTag.P_FB, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.BLINK, 1},
-                {DeviceTag.CS, 1},
-                {DeviceTag.ERR, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_ON_TIME, 1},
+                {IODevice.Tag.P_FB, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.BLINK, 1},
+                {IODevice.Tag.CS, 1},
+                {IODevice.Tag.ERR, 1},
             };
 
             return new object[]
@@ -266,7 +267,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
             string[] parametersSequence, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -285,8 +286,8 @@ namespace Tests.Devices
         {
             var parameters = new string[]
             { 
-                DeviceParameter.P_ON_TIME,
-                DeviceParameter.P_FB
+                IODevice.Parameter.P_ON_TIME,
+                IODevice.Parameter.P_FB
             };
 
             return new object[]
@@ -418,7 +419,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ChannelsTestData))]
         public void Channels_NewDev_ReturnsExpectedCount(
             Dictionary<string, int> expectedChannelsCount, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             int actualAI = device.Channels.Where(x => x.Name == AI).Count();
@@ -676,7 +677,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(RuntimeParametersTestData))]
         public void RuntimeParameters_NewDev_ReturnsExpectedRuntimeParameters(
             string[] expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualSequence = device.RuntimeParameters
@@ -695,13 +696,13 @@ namespace Tests.Devices
         {
             var vtugParameters = new string[]
             {
-                DeviceRuntimeParameter.R_VTUG_NUMBER,
-                DeviceRuntimeParameter.R_VTUG_SIZE,
+                IODevice.RuntimeParameter.R_VTUG_NUMBER,
+                IODevice.RuntimeParameter.R_VTUG_SIZE,
             };
 
             var interfaceASiParameters = new string[]
             {
-                DeviceRuntimeParameter.R_AS_NUMBER,
+                IODevice.RuntimeParameter.R_AS_NUMBER,
             };
 
             return new object[]
@@ -827,23 +828,23 @@ namespace Tests.Devices
         /// Генератор V устройств
         /// </summary>
         /// <returns></returns>
-        public static Device.IODevice GetRandomVDevice()
+        public static IODevice GetRandomVDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new Device.V("KOAG4V1", "+KOAG4-V1",
+                    return new V("KOAG4V1", "+KOAG4-V1",
                         "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.V("LINE1V2", "+LINE1-V2",
+                    return new V("LINE1V2", "+LINE1-V2",
                         "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.V("TANK2V1", "+TANK2-V1",
+                    return new V("TANK2V1", "+TANK2-V1",
                         "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.V("CW_TANK3V3", "+CW_TANK3-V3",
+                    return new V("CW_TANK3V3", "+CW_TANK3-V3",
                         "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }

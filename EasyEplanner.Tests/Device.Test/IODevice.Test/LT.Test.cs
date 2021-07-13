@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Device;
 
 namespace Tests.Devices
 {
@@ -14,10 +15,11 @@ namespace Tests.Devices
         const string LT_CONE = "LT_CONE";
         const string LT_TRUNC = "LT_TRUNC";
         const string LT_VIRT = "LT_VIRT";
-        const string AI = Device.IODevice.IOChannel.AI;
-        const string AO = Device.IODevice.IOChannel.AO;
-        const string DI = Device.IODevice.IOChannel.DI;
-        const string DO = Device.IODevice.IOChannel.DO;
+
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
 
         /// <summary>
         /// Тест установки подтипа устройства
@@ -27,8 +29,8 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
         public void SetSubType_NewDev_ReturnsExpectedSubType(
-            Device.DeviceSubType expectedSubType, string subType,
-            Device.IODevice device)
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -44,21 +46,21 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.LT, LT,
+                new object[] { DeviceSubType.LT, LT,
                     GetRandomLTDevice() },
-                new object[] { Device.DeviceSubType.LT_CYL, LT_CYL,
+                new object[] { DeviceSubType.LT_CYL, LT_CYL,
                     GetRandomLTDevice() },
-                new object[] { Device.DeviceSubType.LT_CONE, LT_CONE,
+                new object[] { DeviceSubType.LT_CONE, LT_CONE,
                     GetRandomLTDevice() },
-                new object[] { Device.DeviceSubType.LT_TRUNC, LT_TRUNC,
+                new object[] { DeviceSubType.LT_TRUNC, LT_TRUNC,
                     GetRandomLTDevice() },
-                new object[] { Device.DeviceSubType.LT_IOLINK, LT_IOLINK,
+                new object[] { DeviceSubType.LT_IOLINK, LT_IOLINK,
                     GetRandomLTDevice() },
-                new object[] { Device.DeviceSubType.LT_VIRT, LT_VIRT,
+                new object[] { DeviceSubType.LT_VIRT, LT_VIRT,
                     GetRandomLTDevice() },
-                new object[] { Device.DeviceSubType.NONE, string.Empty,
+                new object[] { DeviceSubType.NONE, string.Empty,
                     GetRandomLTDevice() },
-                new object[] { Device.DeviceSubType.NONE, Incorrect,
+                new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomLTDevice() },
             };
         }
@@ -71,7 +73,7 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
-            string expectedType, string subType, Device.IODevice device)
+            string expectedType, string subType, IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
@@ -109,7 +111,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -126,63 +128,63 @@ namespace Tests.Devices
         {
             var exportForLT = new Dictionary<string, int>()
             {
-                {DeviceTag.M, 1},
-                {DeviceTag.P_CZ, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.P_ERR, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_ERR, 1},
             };
 
             var exportForLTIOLink = new Dictionary<string, int>()
             {
-                {DeviceTag.M, 1},
-                {DeviceTag.P_CZ, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.P_H_CONE, 1},
-                {DeviceTag.P_MAX_P, 1},
-                {DeviceTag.P_R, 1},
-                {DeviceTag.CLEVEL, 1},
-                {DeviceTag.P_ERR, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_H_CONE, 1},
+                {IODevice.Tag.P_MAX_P, 1},
+                {IODevice.Tag.P_R, 1},
+                {IODevice.Tag.CLEVEL, 1},
+                {IODevice.Tag.P_ERR, 1},
             };
 
             var exportForLTCyl = new Dictionary<string, int>()
             {
-                {DeviceTag.M, 1},
-                {DeviceTag.P_CZ, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.P_MAX_P, 1},
-                {DeviceTag.P_R, 1},
-                {DeviceTag.CLEVEL, 1},
-                {DeviceTag.P_ERR, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_MAX_P, 1},
+                {IODevice.Tag.P_R, 1},
+                {IODevice.Tag.CLEVEL, 1},
+                {IODevice.Tag.P_ERR, 1},
             };
 
             var exportForLTCone = new Dictionary<string, int>()
             {
-                {DeviceTag.M, 1},
-                {DeviceTag.P_CZ, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.P_MAX_P, 1},
-                {DeviceTag.P_R, 1},
-                {DeviceTag.P_H_CONE, 1},
-                {DeviceTag.CLEVEL, 1},
-                {DeviceTag.P_ERR, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_MAX_P, 1},
+                {IODevice.Tag.P_R, 1},
+                {IODevice.Tag.P_H_CONE, 1},
+                {IODevice.Tag.CLEVEL, 1},
+                {IODevice.Tag.P_ERR, 1},
             };
 
             var exportForLTTrunc = new Dictionary<string, int>()
             {
-                {DeviceTag.M, 1},
-                {DeviceTag.P_CZ, 1},
-                {DeviceTag.V, 1},
-                {DeviceTag.P_MAX_P, 1},
-                {DeviceTag.P_R, 1},
-                {DeviceTag.P_H_TRUNC, 1},
-                {DeviceTag.CLEVEL, 1},
-                {DeviceTag.P_ERR, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_MAX_P, 1},
+                {IODevice.Tag.P_R, 1},
+                {IODevice.Tag.P_H_TRUNC, 1},
+                {IODevice.Tag.CLEVEL, 1},
+                {IODevice.Tag.P_ERR, 1},
             };
 
             var exportForLTVirt = new Dictionary<string, int>()
             {
-                {DeviceTag.M, 1},
-                {DeviceTag.V, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
             };
 
             return new object[]
@@ -210,7 +212,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
             string[] parametersSequence, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -229,11 +231,11 @@ namespace Tests.Devices
         {
             var colAndIOLSubTypesParameters = new string[]
             {
-                DeviceParameter.P_C0,
-                DeviceParameter.P_ERR,
-                DeviceParameter.P_MAX_P,
-                DeviceParameter.P_R,
-                DeviceParameter.P_H_CONE
+                IODevice.Parameter.P_C0,
+                IODevice.Parameter.P_ERR,
+                IODevice.Parameter.P_MAX_P,
+                IODevice.Parameter.P_R,
+                IODevice.Parameter.P_H_CONE
             };
 
             return new object[]
@@ -242,8 +244,8 @@ namespace Tests.Devices
                 {
                     new string[]
                     {
-                        DeviceParameter.P_C0,
-                        DeviceParameter.P_ERR
+                        IODevice.Parameter.P_C0,
+                        IODevice.Parameter.P_ERR
                     },
                     LT,
                     GetRandomLTDevice()
@@ -252,10 +254,10 @@ namespace Tests.Devices
                 {
                     new string[]
                     {
-                        DeviceParameter.P_C0,
-                        DeviceParameter.P_ERR,
-                        DeviceParameter.P_MAX_P,
-                        DeviceParameter.P_R
+                        IODevice.Parameter.P_C0,
+                        IODevice.Parameter.P_ERR,
+                        IODevice.Parameter.P_MAX_P,
+                        IODevice.Parameter.P_R
                     },
                     LT_CYL,
                     GetRandomLTDevice()
@@ -270,11 +272,11 @@ namespace Tests.Devices
                 {
                     new string[]
                     {
-                        DeviceParameter.P_C0,
-                        DeviceParameter.P_ERR,
-                        DeviceParameter.P_MAX_P,
-                        DeviceParameter.P_R,
-                        DeviceParameter.P_H_TRUNC
+                        IODevice.Parameter.P_C0,
+                        IODevice.Parameter.P_ERR,
+                        IODevice.Parameter.P_MAX_P,
+                        IODevice.Parameter.P_R,
+                        IODevice.Parameter.P_H_TRUNC
                     },
                     LT_TRUNC,
                     GetRandomLTDevice()
@@ -310,7 +312,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(ChannelsTestData))]
         public void Channels_NewDev_ReturnsExpectedCount(
             Dictionary<string, int> expectedChannelsCount, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             int actualAI = device.Channels.Where(x => x.Name == AI).Count();
@@ -414,7 +416,7 @@ namespace Tests.Devices
         [TestCaseSource(nameof(PropertiesTestData))]
         public void Properties_NewDev_ReturnsExpectedProperties(
             string[] expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualSequence = device.Properties
@@ -433,7 +435,7 @@ namespace Tests.Devices
         {
             var defaultProperties = new string[]
             {
-                DeviceProperty.PT,
+                IODevice.Property.PT,
             };
 
             return new object[]
@@ -487,23 +489,23 @@ namespace Tests.Devices
         /// Генератор LT устройств
         /// </summary>
         /// <returns></returns>
-        private static Device.IODevice GetRandomLTDevice()
+        private static IODevice GetRandomLTDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new Device.LT("KOAG4LT1", "+KOAG4-LT1",
+                    return new LT("KOAG4LT1", "+KOAG4-LT1",
                         "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.LT("LINE1LT2", "+LINE1-LT2",
+                    return new LT("LINE1LT2", "+LINE1-LT2",
                         "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.LT("TANK2LT1", "+TANK2-LT1",
+                    return new LT("TANK2LT1", "+TANK2-LT1",
                         "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.LT("CW_TANK3LT3", "+CW_TANK3-LT3",
+                    return new LT("CW_TANK3LT3", "+CW_TANK3-LT3",
                         "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }
