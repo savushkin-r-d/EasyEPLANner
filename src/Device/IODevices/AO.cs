@@ -31,8 +31,8 @@ namespace Device
                 case "AO":
                 case "":
                     dSubType = DeviceSubType.AO;
-                    parameters.Add("P_MIN_V", null);
-                    parameters.Add("P_MAX_V", null);
+                    parameters.Add(Parameter.P_MIN_V, null);
+                    parameters.Add(Parameter.P_MAX_V, null);
 
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     break;
@@ -50,11 +50,11 @@ namespace Device
         public override string GetRange()
         {
             string range = string.Empty;
-            if (parameters.ContainsKey("P_MIN_V") &&
-                parameters.ContainsKey("P_MAX_V"))
+            if (parameters.ContainsKey(Parameter.P_MIN_V) &&
+                parameters.ContainsKey(Parameter.P_MAX_V))
             {
-                range = "_" + parameters["P_MIN_V"].ToString() + ".." +
-                    parameters["P_MAX_V"].ToString();
+                range = "_" + parameters[Parameter.P_MIN_V].ToString() +
+                    ".." + parameters[Parameter.P_MAX_V].ToString();
             }
 
             return range;
@@ -90,17 +90,17 @@ namespace Device
                         case DeviceSubType.AO:
                             return new Dictionary<string, int>()
                             {
-                                {"M", 1},
-                                {"V", 1},
-                                {"P_MIN_V", 1},
-                                {"P_MAX_V", 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.P_MIN_V, 1},
+                                {Tag.P_MAX_V, 1},
                             };
 
                         case DeviceSubType.AO_VIRT:
                             return new Dictionary<string, int>()
                             {
-                                {"M", 1},
-                                {"V", 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
                             };
                     }
                     break;

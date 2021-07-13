@@ -30,7 +30,7 @@ namespace Device
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Зеленый цвет"));
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Звуковая сигнализация"));
 
-                    rtParameters.Add("R_CONST_RED", null);
+                    rtParameters.Add(RuntimeParameter.R_CONST_RED, null);
                     break;
 
                 case "HLA_VIRT":
@@ -76,12 +76,12 @@ namespace Device
                         case DeviceSubType.HLA:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"L_RED", 1 },
-                                {"L_YELLOW", 1 },
-                                {"L_GREEN", 1 },
-                                {"L_SIREN", 1 },
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.L_RED, 1 },
+                                {Tag.L_YELLOW, 1 },
+                                {Tag.L_GREEN, 1 },
+                                {Tag.L_SIREN, 1 },
                             };
                     }
                     break;

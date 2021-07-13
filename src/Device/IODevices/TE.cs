@@ -28,15 +28,15 @@ namespace Device
             switch (subType)
             {
                 case "TE":
-                    parameters.Add("P_C0", null);
-                    parameters.Add("P_ERR", null);
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_ERR, null);
 
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     break;
 
                 case "TE_IOLINK":
-                    parameters.Add("P_C0", null);
-                    parameters.Add("P_ERR", null);
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_ERR, null);
 
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
@@ -105,10 +105,10 @@ namespace Device
                         case DeviceSubType.TE_IOLINK:
                             return new Dictionary<string, int>()
                             {
-                                {"M", 1},
-                                {"P_CZ", 1},
-                                {"V", 1},
-                                {"ST", 1},
+                                {Tag.M, 1},
+                                {Tag.P_CZ, 1},
+                                {Tag.V, 1},
+                                {Tag.ST, 1},
                             };
                     }
                     break;

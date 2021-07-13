@@ -3,7 +3,6 @@
     /// <summary>
     /// Устройство - пневмоостров.
     /// </summary>
-
     public class Y : IODevice
     {
         public Y(string name, string eplanName, string description, 
@@ -21,7 +20,7 @@
         public override string SetSubType(string subtype)
         {
             base.SetSubType(subtype);
-            string errStr = "";
+            string errStr = string.Empty;
             int sizeOut;
             switch (subtype)
             {
@@ -62,7 +61,7 @@
         {
             string res = base.Check();
 
-            if (ArticleName == "")
+            if (ArticleName == string.Empty)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -93,7 +92,7 @@
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "DEV_VTUG_8":
@@ -126,7 +125,7 @@
         {
             string res = base.Check();
 
-            if (ArticleName == "")
+            if (ArticleName == string.Empty)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }

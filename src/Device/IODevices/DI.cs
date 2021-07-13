@@ -27,7 +27,7 @@ namespace Device
 
                 case "DI":
                 case "":
-                    parameters.Add("P_DT", null);
+                    parameters.Add(Parameter.P_DT, null);
 
                     dSubType = DeviceSubType.DI;
 
@@ -74,16 +74,16 @@ namespace Device
                         case DeviceSubType.DI:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"P_DT", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.P_DT, 1},
                             };
 
                         case DeviceSubType.DI_VIRT:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
                             };
                     }
                     break;

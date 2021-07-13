@@ -16,30 +16,30 @@ namespace Device
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.C;
 
-            properties.Add("IN_VALUE", null);
-            properties.Add("OUT_VALUE", null);
+            properties.Add(Property.IN_VALUE, null);
+            properties.Add(Property.OUT_VALUE, null);
 
-            parameters.Add("P_k", 1);
-            parameters.Add("P_Ti", 15);
-            parameters.Add("P_Td", 0.01);
-            parameters.Add("P_dt", 1000);
+            parameters.Add(Parameter.P_k, 1);
+            parameters.Add(Parameter.P_Ti, 15);
+            parameters.Add(Parameter.P_Td, 0.01);
+            parameters.Add(Parameter.P_dt, 1000);
 
-            parameters.Add("P_max", 100);
-            parameters.Add("P_min", 0);
+            parameters.Add(Parameter.P_max, 100);
+            parameters.Add(Parameter.P_min, 0);
 
-            parameters.Add("P_acceleration_time", 30);
-            parameters.Add("P_is_manual_mode", 0);
-            parameters.Add("P_U_manual", 65);
+            parameters.Add(Parameter.P_acceleration_time, 30);
+            parameters.Add(Parameter.P_is_manual_mode, 0);
+            parameters.Add(Parameter.P_U_manual, 65);
 
-            parameters.Add("P_k2", 0);
-            parameters.Add("P_Ti2", 0);
-            parameters.Add("P_Td2", 0);
+            parameters.Add(Parameter.P_k2, 0);
+            parameters.Add(Parameter.P_Ti2, 0);
+            parameters.Add(Parameter.P_Td2, 0);
 
-            parameters.Add("P_out_max", 100);
-            parameters.Add("P_out_min", 0);
+            parameters.Add(Parameter.P_out_max, 100);
+            parameters.Add(Parameter.P_out_min, 0);
 
-            parameters.Add("P_is_reverse", 0);
-            parameters.Add("P_is_zero_start", 1);
+            parameters.Add(Parameter.P_is_reverse, 0);
+            parameters.Add(Parameter.P_is_zero_start, 1);
         }
 
         public override string GetDeviceSubTypeStr(DeviceType dt,
@@ -62,10 +62,10 @@ namespace Device
                 case DeviceType.C:
                     return new Dictionary<string, int>()
                     {
-                        {"ST", 1},
-                        {"M", 1},
-                        {"V", 1},
-                        {"Z", 1},
+                        {Tag.ST, 1},
+                        {Tag.M, 1},
+                        {Tag.V, 1},
+                        {Tag.Z, 1},
                     };
             }
 

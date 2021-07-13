@@ -27,28 +27,28 @@ namespace Device
             switch (subtype)
             {
                 case "LS_MIN":
-                    parameters.Add("P_DT", null);
+                    parameters.Add(Parameter.P_DT, null);
 
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
                     break;
 
                 case "LS_MAX":
-                    parameters.Add("P_DT", null);
+                    parameters.Add(Parameter.P_DT, null);
 
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
                     break;
 
                 case "LS_IOLINK_MIN":
-                    parameters.Add("P_DT", null);
-                    parameters.Add("P_ERR", null);
+                    parameters.Add(Parameter.P_DT, null);
+                    parameters.Add(Parameter.P_ERR, null);
 
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     SetIOLinkSizes(ArticleName);
                     break;
 
                 case "LS_IOLINK_MAX":
-                    parameters.Add("P_DT", null);
-                    parameters.Add("P_ERR", null);
+                    parameters.Add(Parameter.P_DT, null);
+                    parameters.Add(Parameter.P_ERR, null);
 
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     SetIOLinkSizes(ArticleName);
@@ -149,20 +149,20 @@ namespace Device
                         case DeviceSubType.LS_VIRT:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"P_DT", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.P_DT, 1},
                             };
 
                         case DeviceSubType.LS_IOLINK_MIN:
                         case DeviceSubType.LS_IOLINK_MAX:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"V", 1},
-                                {"P_DT", 1},
-                                {"P_ERR", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.P_DT, 1},
+                                {Tag.P_ERR, 1},
                             };
                     }
                     break;

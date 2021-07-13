@@ -84,9 +84,9 @@ namespace Device
                         case DeviceSubType.SB:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"P_DT", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.P_DT, 1},
                             };
                     }
                     break;

@@ -30,7 +30,7 @@ namespace Device
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Пуск"));
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Обратная связь"));
 
-                    parameters.Add("P_ON_TIME", null);
+                    parameters.Add(Parameter.P_ON_TIME, null);
                     break;
 
                 case "M_FREQ":
@@ -38,7 +38,7 @@ namespace Device
                     AO.Add(new IOChannel("AO", -1, -1, -1, "Частота вращения"));
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Пуск"));
 
-                    parameters.Add("P_ON_TIME", null);
+                    parameters.Add(Parameter.P_ON_TIME, null);
                     break;
 
                 case "M_REV":
@@ -46,7 +46,7 @@ namespace Device
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Пуск"));
 
-                    parameters.Add("P_ON_TIME", null);
+                    parameters.Add(Parameter.P_ON_TIME, null);
                     break;
 
                 case "M_REV_FREQ":
@@ -55,7 +55,7 @@ namespace Device
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Пуск"));
                     AO.Add(new IOChannel("AO", -1, -1, -1, "Частота вращения"));
 
-                    parameters.Add("P_ON_TIME", null);
+                    parameters.Add(Parameter.P_ON_TIME, null);
                     break;
 
                 case "M_REV_2":
@@ -63,7 +63,7 @@ namespace Device
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Пуск"));
 
-                    parameters.Add("P_ON_TIME", null);
+                    parameters.Add(Parameter.P_ON_TIME, null);
                     break;
 
                 case "M_REV_FREQ_2":
@@ -72,7 +72,7 @@ namespace Device
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Пуск"));
                     AO.Add(new IOChannel("AO", -1, -1, -1, "Частота вращения"));
 
-                    parameters.Add("P_ON_TIME", null);
+                    parameters.Add(Parameter.P_ON_TIME, null);
                     break;
 
 
@@ -81,7 +81,7 @@ namespace Device
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Пуск"));
 
-                    parameters.Add("P_ON_TIME", null);
+                    parameters.Add(Parameter.P_ON_TIME, null);
                     break;
 
                 case "M_REV_FREQ_2_ERROR":
@@ -91,13 +91,13 @@ namespace Device
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Пуск"));
                     AO.Add(new IOChannel("AO", -1, -1, -1, "Частота вращения"));
 
-                    parameters.Add("P_ON_TIME", null);
+                    parameters.Add(Parameter.P_ON_TIME, null);
                     break;
 
                 case "M_ATV":
-                    properties.Add("IP", null);
+                    properties.Add(Property.IP, null);
 
-                    parameters.Add("P_ON_TIME", null);
+                    parameters.Add(Parameter.P_ON_TIME, null);
                     break;
 
                 case "M_VIRT":
@@ -167,18 +167,18 @@ namespace Device
                         case DeviceSubType.M:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"P_ON_TIME", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.P_ON_TIME, 1},
                             };
 
                         case DeviceSubType.M_FREQ:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"P_ON_TIME", 1},
-                                {"V", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.P_ON_TIME, 1},
+                                {Tag.V, 1},
                             };
 
                         case DeviceSubType.M_REV:
@@ -188,24 +188,24 @@ namespace Device
                         case DeviceSubType.M_REV_2_ERROR:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"P_ON_TIME", 1},
-                                {"V", 1},
-                                {"R", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.P_ON_TIME, 1},
+                                {Tag.V, 1},
+                                {Tag.R, 1},
                             };
 
                         case DeviceSubType.M_ATV:
                             return new Dictionary<string, int>()
                             {
-                                {"M", 1},
-                                {"ST", 1},
-                                {"R", 1},
-                                {"FRQ", 1},
-                                {"RPM", 1},
-                                {"EST", 1},
-                                {"V", 1},
-                                {"P_ON_TIME", 1},
+                                {Tag.M, 1},
+                                {Tag.ST, 1},
+                                {Tag.R, 1},
+                                {Tag.FRQ, 1},
+                                {Tag.RPM, 1},
+                                {Tag.EST, 1},
+                                {Tag.V, 1},
+                                {Tag.P_ON_TIME, 1},
                             };
                     }
                     break;

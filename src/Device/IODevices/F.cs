@@ -87,14 +87,14 @@ namespace Device
                         case DeviceSubType.F:
                             return new Dictionary<string, int>()
                             {
-                                {"M", 1},
-                                {"V", 1},
-                                {"ST", 1},
-                                {"ERR", 1},
-                                {"ST_CH", 4},
-                                {"NOMINAL_CURRENT_CH", 4},
-                                {"LOAD_CURRENT_CH", 4},
-                                {"ERR_CH", 4},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.ST, 1},
+                                {Tag.ERR, 1},
+                                {Tag.ST_CH, 4},
+                                {Tag.NOMINAL_CURRENT_CH, 4},
+                                {Tag.LOAD_CURRENT_CH, 4},
+                                {Tag.ERR_CH, 4},
                             };
                     }
                     break;
