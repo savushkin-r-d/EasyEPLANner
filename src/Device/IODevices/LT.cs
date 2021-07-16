@@ -4,8 +4,6 @@ namespace Device
 {
     /// <summary>
     /// Технологическое устройство - датчик текущего уровня.
-    /// Параметры:
-    /// 1. P_C0 - сдвиг нуля.    
     /// </summary>
     public class LT : IODevice
     {
@@ -23,55 +21,55 @@ namespace Device
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "LT":
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
-                    parameters.Add("P_C0", null);
-                    parameters.Add("P_ERR", null);
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_ERR, null);
                     break;
 
                 case "LT_CYL":
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
-                    parameters.Add("P_C0", null);
-                    parameters.Add("P_ERR", null);
-                    parameters.Add("P_MAX_P", null);
-                    parameters.Add("P_R", null);
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_ERR, null);
+                    parameters.Add(Parameter.P_MAX_P, null);
+                    parameters.Add(Parameter.P_R, null);
                     break;
 
                 case "LT_CONE":
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
-                    parameters.Add("P_C0", null);
-                    parameters.Add("P_ERR", null);
-                    parameters.Add("P_MAX_P", null);
-                    parameters.Add("P_R", null);
-                    parameters.Add("P_H_CONE", null);
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_ERR, null);
+                    parameters.Add(Parameter.P_MAX_P, null);
+                    parameters.Add(Parameter.P_R, null);
+                    parameters.Add(Parameter.P_H_CONE, null);
                     break;
 
                 case "LT_TRUNC":
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
-                    parameters.Add("P_C0", null);
-                    parameters.Add("P_ERR", null);
-                    parameters.Add("P_MAX_P", null);
-                    parameters.Add("P_R", null);
-                    parameters.Add("P_H_TRUNC", null);
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_ERR, null);
+                    parameters.Add(Parameter.P_MAX_P, null);
+                    parameters.Add(Parameter.P_R, null);
+                    parameters.Add(Parameter.P_H_TRUNC, null);
                     break;
 
                 case "LT_IOLINK":
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
-                    parameters.Add("P_C0", null);
-                    parameters.Add("P_ERR", null);
-                    parameters.Add("P_MAX_P", null);
-                    parameters.Add("P_R", null);
-                    parameters.Add("P_H_CONE", 0);
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_ERR, null);
+                    parameters.Add(Parameter.P_MAX_P, null);
+                    parameters.Add(Parameter.P_R, null);
+                    parameters.Add(Parameter.P_H_CONE, 0);
     
-                    properties.Add("PT", "\'\'");
+                    properties.Add(Property.PT, "\'\'");
 
                     SetIOLinkSizes(ArticleName);
                     break;
@@ -100,7 +98,8 @@ namespace Device
         {
             string res = base.Check();
 
-            if (ArticleName == "" && dSubType != DeviceSubType.LT_VIRT)
+            if (ArticleName == string.Empty &&
+                dSubType != DeviceSubType.LT_VIRT)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -131,7 +130,8 @@ namespace Device
                     }
                     break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -145,72 +145,73 @@ namespace Device
                         case DeviceSubType.LT:
                             return new Dictionary<string, int>()
                             {
-                                {"M", 1},
-                                {"P_CZ", 1},
-                                {"V", 1},
-                                {"P_ERR", 1},
+                                {Tag.M, 1},
+                                {Tag.P_CZ, 1},
+                                {Tag.V, 1},
+                                {Tag.P_ERR, 1},
                             };
 
                         case DeviceSubType.LT_IOLINK:
                             return new Dictionary<string, int>()
                             {
-                                {"M", 1},
-                                {"P_CZ", 1},
-                                {"V", 1},
-                                {"P_H_CONE", 1},
-                                {"P_MAX_P", 1},
-                                {"P_R", 1},
-                                {"CLEVEL", 1},
-                                {"P_ERR", 1},
+                                {Tag.M, 1},
+                                {Tag.P_CZ, 1},
+                                {Tag.V, 1},
+                                {Tag.P_H_CONE, 1},
+                                {Tag.P_MAX_P, 1},
+                                {Tag.P_R, 1},
+                                {Tag.CLEVEL, 1},
+                                {Tag.P_ERR, 1},
                             };
 
                         case DeviceSubType.LT_CYL:
                             return new Dictionary<string, int>()
                             {
-                                {"M", 1},
-                                {"P_CZ", 1},
-                                {"V", 1},
-                                {"P_MAX_P", 1},
-                                {"P_R", 1},
-                                {"CLEVEL", 1},
-                                {"P_ERR", 1},
+                                {Tag.M, 1},
+                                {Tag.P_CZ, 1},
+                                {Tag.V, 1},
+                                {Tag.P_MAX_P, 1},
+                                {Tag.P_R, 1},
+                                {Tag.CLEVEL, 1},
+                                {Tag.P_ERR, 1},
                             };
 
                         case DeviceSubType.LT_CONE:
                             return new Dictionary<string, int>()
                             {
-                                {"M", 1},
-                                {"P_CZ", 1},
-                                {"V", 1},
-                                {"P_MAX_P", 1},
-                                {"P_R", 1},
-                                {"P_H_CONE", 1},
-                                {"CLEVEL", 1},
-                                {"P_ERR", 1},
+                                {Tag.M, 1},
+                                {Tag.P_CZ, 1},
+                                {Tag.V, 1},
+                                {Tag.P_MAX_P, 1},
+                                {Tag.P_R, 1},
+                                {Tag.P_H_CONE, 1},
+                                {Tag.CLEVEL, 1},
+                                {Tag.P_ERR, 1},
                             };
 
                         case DeviceSubType.LT_TRUNC:
                             return new Dictionary<string, int>()
                             {
-                                {"M", 1},
-                                {"P_CZ", 1},
-                                {"V", 1},
-                                {"P_MAX_P", 1},
-                                {"P_R", 1},
-                                {"P_H_TRUNC", 1},
-                                {"CLEVEL", 1},
-                                {"P_ERR", 1},
+                                {Tag.M, 1},
+                                {Tag.P_CZ, 1},
+                                {Tag.V, 1},
+                                {Tag.P_MAX_P, 1},
+                                {Tag.P_R, 1},
+                                {Tag.P_H_TRUNC, 1},
+                                {Tag.CLEVEL, 1},
+                                {Tag.P_ERR, 1},
                             };
 
                         case DeviceSubType.LT_VIRT:
                             return new Dictionary<string, int>()
                             {
-                                {"M", 1},
-                                {"V", 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
                             };
                     }
                     break;
             }
+
             return null;
         }
     }

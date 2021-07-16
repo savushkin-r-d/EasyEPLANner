@@ -10,7 +10,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство, подключенное к модулям ввода\вывод IO.
     /// </summary>
-    public class IODevice : Device
+    public partial class IODevice : Device
     {
         /// <summary>
         /// Получение строкового представления подтипа устройства.
@@ -369,11 +369,11 @@ namespace Device
                             IO.AddRange(AI);
                             break;
 
-                        case "DO":
+                        case IOChannel.DO:
                             IO.AddRange(DO);
                             break;
 
-                        case "DI":
+                        case IOChannel.DI:
                             IO.AddRange(DI);
                             break;
                     }
@@ -924,22 +924,22 @@ namespace Device
             {
                 switch (name)
                 {
-                    case "DO":
+                    case DO:
                         return 0;
 
-                    case "DI":
+                    case DI:
                         return 1;
 
-                    case "AI":
+                    case AI:
                         return 2;
 
-                    case "AO":
+                    case AO:
                         return 3;
 
-                    case "AIAO":
+                    case AIAO:
                         return 4;
 
-                    case "DODI":
+                    case DODI:
                         return 5;
 
                     default:
@@ -953,7 +953,7 @@ namespace Device
             /// <param name="prefix">Префикс (для выравнивания).</param>
             public string SaveAsLuaTable(string prefix)
             {
-                string res = "";
+                string res = string.Empty;
 
                 if (IOManager.GetInstance()[node] != null &&
                     IOManager.GetInstance()[node][module - 1] != null &&
@@ -964,19 +964,19 @@ namespace Device
                     int offset;
                     switch (name)
                     {
-                        case "DO":
+                        case DO:
                             offset = CalculateDO();
                             break;
 
-                        case "AO":
+                        case AO:
                             offset = CalculateAO();
                             break;
 
-                        case "DI":
+                        case DI:
                             offset = CalculateDI();
                             break;
 
-                        case "AI":
+                        case AI:
                             offset = CalculateAI();
                             break;
 
@@ -985,7 +985,7 @@ namespace Device
                             break;
                     }
 
-                    if (comment != "")
+                    if (comment != string.Empty)
                     {
                         res += prefix + "-- " + comment + "\n";
                     }
@@ -1217,6 +1217,13 @@ namespace Device
                 @"(Желтый цвет(?n:\s+|$))|" +
                 @"(Зеленый цвет(?n:\s+|$))|" +
                 @"(Звуковая сигнализация(?n:\s+|$))";
+
+            public const string AI = "AI";
+            public const string AO = "AO";
+            public const string DI = "DI";
+            public const string DO = "DO";
+            const string AIAO = "AIAO";
+            const string DODI = "DODI";
 
             #region Закрытые поля
             private int node;            ///Номер узла.

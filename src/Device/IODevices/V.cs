@@ -5,12 +5,6 @@ namespace Device
 {
     /// <summary>
     /// Технологическое устройство - клапан.
-    /// Параметры:
-    /// 1. P_ON_TIME - время включения, мсек.
-    /// 2. P_FB - обратная связь, 1/0 (Да/Нет).
-    /// 3. R_AS_NUMBER - номер клапана в AS-i.
-    /// 4. R_VTUG_SIZE - размер области клапана для пневмоострова.
-    /// 5. R_VTUG_NUMBER - номер клапана на пневмоострове.
     /// </summary>
     public class V : IODevice
     {
@@ -59,21 +53,21 @@ namespace Device
                     switch (vtug.DeviceSubType)
                     {
                         case DeviceSubType.DEV_VTUG_8:
-                            rtParameters["R_VTUG_SIZE"] = 1;
+                            rtParameters[RuntimeParameter.R_VTUG_SIZE] = 1;
                             break;
 
                         case DeviceSubType.DEV_VTUG_16:
-                            rtParameters["R_VTUG_SIZE"] = 2;
+                            rtParameters[RuntimeParameter.R_VTUG_SIZE] = 2;
                             break;
 
                         case DeviceSubType.DEV_VTUG_24:
-                            rtParameters["R_VTUG_SIZE"] = 3;
+                            rtParameters[RuntimeParameter.R_VTUG_SIZE] = 3;
                             break;
                     }
                 }
             }
 
-            if (ArticleName == "")
+            if (ArticleName == string.Empty)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -85,7 +79,7 @@ namespace Device
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "V_DO1":
@@ -101,16 +95,16 @@ namespace Device
                     DO.Add(new IOChannel("DO", -1, -1, -1, ""));
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
 
-                    parameters.Add("P_ON_TIME", null);
-                    parameters.Add("P_FB", 1);
+                    parameters.Add(Parameter.P_ON_TIME, null);
+                    parameters.Add(Parameter.P_FB, 1);
                     break;
 
                 case "V_DO1_DI1_FB_ON":
                     DO.Add(new IOChannel("DO", -1, -1, -1, ""));
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
 
-                    parameters.Add("P_ON_TIME", null);
-                    parameters.Add("P_FB", 1);
+                    parameters.Add(Parameter.P_ON_TIME, null);
+                    parameters.Add(Parameter.P_FB, 1);
                     break;
 
                 case "V_DO1_DI2":
@@ -118,8 +112,8 @@ namespace Device
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Закрыт"));
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Открыт"));
 
-                    parameters.Add("P_ON_TIME", null);
-                    parameters.Add("P_FB", 1);
+                    parameters.Add(Parameter.P_ON_TIME, null);
+                    parameters.Add(Parameter.P_FB, 1);
                     break;
 
                 case "V_DO2_DI2":
@@ -129,8 +123,8 @@ namespace Device
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Закрыт"));
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Открыт"));
 
-                    parameters.Add("P_ON_TIME", null);
-                    parameters.Add("P_FB", 1);
+                    parameters.Add(Parameter.P_ON_TIME, null);
+                    parameters.Add(Parameter.P_FB, 1);
                     break;
 
                 case "V_MIXPROOF":
@@ -140,13 +134,13 @@ namespace Device
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Закрыт"));
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Открыт"));
 
-                    parameters.Add("P_ON_TIME", null);
-                    parameters.Add("P_FB", 1);
+                    parameters.Add(Parameter.P_ON_TIME, null);
+                    parameters.Add(Parameter.P_FB, 1);
                     break;
 
                 case "V_IOLINK_MIXPROOF":
-                    parameters.Add("P_ON_TIME", null);
-                    parameters.Add("P_FB", 1);
+                    parameters.Add(Parameter.P_ON_TIME, null);
+                    parameters.Add(Parameter.P_FB, 1);
 
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
@@ -158,10 +152,10 @@ namespace Device
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
-                    parameters.Add("P_ON_TIME", null);
-                    parameters.Add("P_FB", 1);
+                    parameters.Add(Parameter.P_ON_TIME, null);
+                    parameters.Add(Parameter.P_FB, 1);
 
-                    rtParameters.Add("R_AS_NUMBER", null);
+                    rtParameters.Add(RuntimeParameter.R_AS_NUMBER, null);
                     break;
 
                 case "V_BOTTOM_MIXPROOF":
@@ -171,69 +165,72 @@ namespace Device
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Закрыт"));
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Открыт"));
 
-                    parameters.Add("P_ON_TIME", null);
-                    parameters.Add("P_FB", 1);
+                    parameters.Add(Parameter.P_ON_TIME, null);
+                    parameters.Add(Parameter.P_FB, 1);
                     break;
 
                 case "V_AS_DO1_DI2":
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
-                    parameters.Add("P_ON_TIME", null);
-                    parameters.Add("P_FB", 1);
+                    parameters.Add(Parameter.P_ON_TIME, null);
+                    parameters.Add(Parameter.P_FB, 1);
 
-                    rtParameters.Add("R_AS_NUMBER", null);
+                    rtParameters.Add(RuntimeParameter.R_AS_NUMBER, null);
                     break;
 
                 case "V_IOLINK_DO1_DI2":
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
-                    parameters.Add("P_ON_TIME", null);
-                    parameters.Add("P_FB", 1);
+                    parameters.Add(Parameter.P_ON_TIME, null);
+                    parameters.Add(Parameter.P_FB, 1);
 
                     SetIOLinkSizes(ArticleName);
                     break;
 
                 case "V_IOLINK_VTUG_DO1":
-                    rtParameters.Add("R_VTUG_NUMBER", null);
-                    rtParameters.Add("R_VTUG_SIZE", 1);
+                    rtParameters.Add(RuntimeParameter.R_VTUG_NUMBER, null);
+                    rtParameters.Add(RuntimeParameter.R_VTUG_SIZE, 1);
 
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     break;
 
                 case "V_IOLINK_VTUG_DO1_FB_OFF":
-                    rtParameters.Add("R_VTUG_NUMBER", null);
-                    rtParameters.Add("R_VTUG_SIZE", 1);
+                    rtParameters.Add(RuntimeParameter.R_VTUG_NUMBER, null);
+                    rtParameters.Add(RuntimeParameter.R_VTUG_SIZE, 1);
 
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
 
-                    parameters.Add("P_ON_TIME", null);
-                    parameters.Add("P_FB", 1);
+                    parameters.Add(Parameter.P_ON_TIME, null);
+                    parameters.Add(Parameter.P_FB, 1);
                     break;
 
                 case "V_IOLINK_VTUG_DO1_FB_ON":
-                    rtParameters.Add("R_VTUG_NUMBER", null);
-                    rtParameters.Add("R_VTUG_SIZE", 1);
+                    rtParameters.Add(RuntimeParameter.R_VTUG_NUMBER, null);
+                    rtParameters.Add(RuntimeParameter.R_VTUG_SIZE, 1);
 
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
 
-                    parameters.Add("P_ON_TIME", null);
-                    parameters.Add("P_FB", 1);
+                    parameters.Add(Parameter.P_ON_TIME, null);
+                    parameters.Add(Parameter.P_FB, 1);
                     break;
 
                 case "V_IOLINK_VTUG_DO1_DI2":
-                    rtParameters.Add("R_VTUG_NUMBER", null);
-                    rtParameters.Add("R_VTUG_SIZE", 1);
+                    rtParameters.Add(RuntimeParameter.R_VTUG_NUMBER, null);
+                    rtParameters.Add(RuntimeParameter.R_VTUG_SIZE, 1);
 
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Открыт"));
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Закрыт"));
 
-                    parameters.Add("P_ON_TIME", null);
-                    parameters.Add("P_FB", 1);
+                    parameters.Add(Parameter.P_ON_TIME, null);
+                    parameters.Add(Parameter.P_FB, 1);
+                    break;
+
+                case "V_VIRT":
                     break;
 
                 case "":
@@ -292,10 +289,13 @@ namespace Device
                             return "V_IOLINK_VTUG_DO1_FB_ON";
                         case DeviceSubType.V_IOLINK_VTUG_DO1_DI2:
                             return "V_IOLINK_VTUG_DO1_DI2";
+                        case DeviceSubType.V_VIRT:
+                            return "V_VIRT";
                     }
                     break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -311,8 +311,8 @@ namespace Device
                         case DeviceSubType.V_IOLINK_VTUG_DO1:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
                             };
 
                         case DeviceSubType.V_DO1_DI1_FB_ON:
@@ -321,11 +321,11 @@ namespace Device
                         case DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"P_ON_TIME", 1},
-                                {"P_FB", 1},
-                                {"FB_OFF_ST", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.P_ON_TIME, 1},
+                                {Tag.P_FB, 1},
+                                {Tag.FB_OFF_ST, 1},
                             };
 
                         case DeviceSubType.V_DO1_DI2:
@@ -338,30 +338,31 @@ namespace Device
                         case DeviceSubType.V_IOLINK_VTUG_DO1_DI2:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"P_ON_TIME", 1},
-                                {"P_FB", 1},
-                                {"FB_OFF_ST", 1},
-                                {"FB_ON_ST", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.P_ON_TIME, 1},
+                                {Tag.P_FB, 1},
+                                {Tag.FB_OFF_ST, 1},
+                                {Tag.FB_ON_ST, 1},
                             };
 
                         case DeviceSubType.V_IOLINK_MIXPROOF:
                         case DeviceSubType.V_IOLINK_DO1_DI2:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"P_ON_TIME", 1},
-                                {"P_FB", 1},
-                                {"V", 1},
-                                {"BLINK", 1},
-                                {"CS", 1},
-                                {"ERR", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.P_ON_TIME, 1},
+                                {Tag.P_FB, 1},
+                                {Tag.V, 1},
+                                {Tag.BLINK, 1},
+                                {Tag.CS, 1},
+                                {Tag.ERR, 1},
                             };
                     }
                     break;
             }
+
             return null;
         }
     }

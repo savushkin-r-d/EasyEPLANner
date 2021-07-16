@@ -4,8 +4,6 @@ namespace Device
 {
     /// <summary>
     /// Технологическое устройство - датчик положения.
-    /// Параметры:
-    /// 1. P_DT - время порогового фильтра, мсек.
     /// </summary>
     public class GS : IODevice
     {
@@ -17,17 +15,43 @@ namespace Device
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.GS;
             ArticleName = articleName;
+        }
 
-            DI.Add(new IOChannel("DI", -1, -1, -1, ""));
+        public override string SetSubType(string subType)
+        {
+            base.SetSubType(subType);
 
-            parameters.Add("P_DT", null);
+            string errStr = string.Empty;
+            switch (subType)
+            {
+                case "GS":
+                case "":
+                    parameters.Add(Parameter.P_DT, null);
+
+                    dSubType = DeviceSubType.GS;
+
+                    DI.Add(new IOChannel("DI", -1, -1, -1, ""));
+                    break;
+
+                case "GS_VIRT":
+                    break;
+
+                default:
+                    errStr = string.Format("\"{0}\" - неверный тип" +
+                        " (пустая строка, GS, GS_VIRT).\n",
+                        Name);
+                    break;
+            }
+
+            return errStr;
         }
 
         public override string Check()
         {
             string res = base.Check();
 
-            if (ArticleName == "")
+            if (ArticleName == string.Empty &&
+                dSubType != DeviceSubType.GS_VIRT)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -41,9 +65,17 @@ namespace Device
             switch (dt)
             {
                 case DeviceType.GS:
-                    return dt.ToString();
+                    switch (dst)
+                    {
+                        case DeviceSubType.GS:
+                            return "GS";
+                        case DeviceSubType.GS_VIRT:
+                            return "GS_VIRT";
+                    }
+                    break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -52,13 +84,19 @@ namespace Device
             switch (dt)
             {
                 case DeviceType.GS:
-                    return new Dictionary<string, int>()
+                    switch (dst)
                     {
-                        {"ST", 1},
-                        {"M", 1},
-                        {"P_DT", 1},
-                    };
+                        case DeviceSubType.GS:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.P_DT, 1},
+                            };
+                    }
+                    break;
             }
+
             return null;
         }
     }

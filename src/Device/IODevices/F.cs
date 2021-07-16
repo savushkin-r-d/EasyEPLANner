@@ -2,6 +2,9 @@
 
 namespace Device
 {
+    /// <summary>
+    /// Технологическое устройство - автоматический выключатель.
+    /// </summary>
     public class F : IODevice
     {
         public F(string name, string eplanName, string description,
@@ -18,7 +21,7 @@ namespace Device
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "F":
@@ -31,14 +34,30 @@ namespace Device
                     SetIOLinkSizes(ArticleName);
                     break;
 
+                case "F_VIRT":
+                    break;
+
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (пустая строка, F).\n",
+                        " (пустая строка, F, F_VIRT).\n",
                         Name);
                     break;
             }
 
             return errStr;
+        }
+
+        public override string Check()
+        {
+            string res = base.Check();
+
+            if (ArticleName == string.Empty &&
+                dSubType != DeviceSubType.F_VIRT)
+            {
+                res += $"\"{name}\" - не задано изделие.\n";
+            }
+
+            return res;
         }
 
         public override string GetDeviceSubTypeStr(DeviceType dt,
@@ -51,10 +70,13 @@ namespace Device
                     {
                         case DeviceSubType.F:
                             return "F";
+                        case DeviceSubType.F_VIRT:
+                            return "F_VIRT";
                     }
                     break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -68,18 +90,19 @@ namespace Device
                         case DeviceSubType.F:
                             return new Dictionary<string, int>()
                             {
-                                {"M", 1},
-                                {"V", 1},
-                                {"ST", 1},
-                                {"ERR", 1},
-                                {"ST_CH", 4},
-                                {"NOMINAL_CURRENT_CH", 4},
-                                {"LOAD_CURRENT_CH", 4},
-                                {"ERR_CH", 4},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.ST, 1},
+                                {Tag.ERR, 1},
+                                {Tag.ST_CH, 4},
+                                {Tag.NOMINAL_CURRENT_CH, 4},
+                                {Tag.LOAD_CURRENT_CH, 4},
+                                {Tag.ERR_CH, 4},
                             };
                     }
                     break;
             }
+
             return null;
         }
     }

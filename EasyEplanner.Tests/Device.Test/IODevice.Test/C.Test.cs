@@ -3,11 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
+using Device;
 
-namespace Tests
+namespace Tests.Devices
 {
     public class CTest
     {
+        const string Incorrect = "Incorrect";
+        const string C = "C";
+
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест получения подтипа устройства
         /// </summary>
@@ -16,7 +25,7 @@ namespace Tests
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
         public void GetDeviceSubTypeStr_NewDev_ReturnsDevType(
-            string expectedType, string subType, Device.IODevice device)
+            string expectedType, string subType, IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
@@ -33,10 +42,9 @@ namespace Tests
         {
             return new object[]
             {
-                new object[] { "C", "", GetNewCDevice() },
-                new object[] { "C", "C", GetNewCDevice() },
-                new object[] { "C", "Random", GetNewCDevice() },
-                new object[] { "C", "Incorrect", GetNewCDevice() },
+                new object[] { C, string.Empty, GetNewCDevice() },
+                new object[] { C, C, GetNewCDevice() },
+                new object[] { C, Incorrect, GetNewCDevice() },
             };
         }
 
@@ -49,7 +57,7 @@ namespace Tests
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewObj_ReturnsTagsArr(
             Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -66,17 +74,17 @@ namespace Tests
         {
             var exportTags = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"V", 1},
-                {"Z", 1}
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.Z, 1}
             };
 
             return new object[]
             {
-                new object[] { exportTags, "C", GetNewCDevice() },
-                new object[] { exportTags, "Random", GetNewCDevice() },
-                new object[] { exportTags, "Incorrect", GetNewCDevice() },
+                new object[] { exportTags, C, GetNewCDevice() },
+                new object[] { exportTags, string.Empty, GetNewCDevice() },
+                new object[] { exportTags, Incorrect, GetNewCDevice() },
             };
         }
 
@@ -90,7 +98,7 @@ namespace Tests
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsParametersArrWithDefaultValues(
             string[] parametersSequence, double[] defaultValuesSequence,
-            string subType, Device.IODevice device)
+            string subType, IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -114,10 +122,22 @@ namespace Tests
         {
             var parameters = new string[]
             {
-                "P_k", "P_Ti", "P_Td", "P_dt","P_max",
-                "P_min", "P_acceleration_time", "P_is_manual_mode",
-                "P_U_manual", "P_k2", "P_Ti2", "P_Td2", "P_out_max",
-                "P_out_min", "P_is_reverse", "P_is_zero_start"
+                IODevice.Parameter.P_k,
+                IODevice.Parameter.P_Ti,
+                IODevice.Parameter.P_Td,
+                IODevice.Parameter.P_dt,
+                IODevice.Parameter.P_max,
+                IODevice.Parameter.P_min,
+                IODevice.Parameter.P_acceleration_time,
+                IODevice.Parameter.P_is_manual_mode,
+                IODevice.Parameter.P_U_manual,
+                IODevice.Parameter.P_k2,
+                IODevice.Parameter.P_Ti2,
+                IODevice.Parameter.P_Td2,
+                IODevice.Parameter.P_out_max,
+                IODevice.Parameter.P_out_min,
+                IODevice.Parameter.P_is_reverse,
+                IODevice.Parameter.P_is_zero_start
             };
 
             var defaultValues = new double[]
@@ -131,21 +151,21 @@ namespace Tests
                 {
                     parameters,
                     defaultValues,
-                    "C",
+                    C,
                     GetNewCDevice()
                 },
                 new object[]
                 {
                     parameters,
                     defaultValues,
-                    "",
+                    string.Empty,
                     GetNewCDevice()
                 },
                 new object[]
                 {
                     parameters,
                     defaultValues,
-                    "Incorrect",
+                    Incorrect,
                     GetNewCDevice()
                 },
             };
@@ -155,8 +175,11 @@ namespace Tests
         public void Properties_NewDev_ReturnsPropertiesArrWithNullValues()
         {
             const int expectedPropertiesCount = 2;
-            string[] expectedPropertiesNames = 
-                new string[] {"IN_VALUE", "OUT_VALUE" };
+            string[] expectedPropertiesNames = new string[]
+            {
+                IODevice.Property.IN_VALUE,
+                IODevice.Property.OUT_VALUE
+            };
             var dev = GetNewCDevice();
             var properties = dev.Properties;
 
@@ -175,8 +198,8 @@ namespace Tests
         {
             var dev = GetNewCDevice();
 
-            Assert.AreEqual(Device.DeviceType.C, dev.DeviceType);
-            Assert.AreEqual(Device.DeviceSubType.NONE, dev.DeviceSubType);
+            Assert.AreEqual(DeviceType.C, dev.DeviceType);
+            Assert.AreEqual(DeviceSubType.NONE, dev.DeviceSubType);
         }
 
         [Test]
@@ -210,7 +233,7 @@ namespace Tests
                 string expectedText = expectedNode.Nodes[i].Text;
                 string actualText = actualNode.FirstNode.Nodes[i].Text;
                 Assert.AreEqual(expectedText, actualText);
-            }     
+            }
         }
 
         [TestCase("")]
@@ -241,9 +264,76 @@ namespace Tests
             Assert.AreEqual(expectedSaveString, actualSaveString);
         }
 
-        private static Device.IODevice GetNewCDevice()
+        /// <summary>
+        /// Тестирование каналов устройства
+        /// </summary>
+        /// <param name="expectedChannelsCount">Ожидаемое количество каналов
+        /// в словаре с названием каналов</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(ChannelsTestData))]
+        public void Channels_ObjWithDiffSubTypes_ReturnCorrectDictionary(
+            Dictionary<string, int> expectedChannelsCount, string subType,
+            IODevice device)
         {
-            return new Device.C(TestDevName, TestEplanName, TestDevDescription,
+            device.SetSubType(subType);
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
+            });
+        }
+
+        /// <summary>
+        /// Данные для тестирования каналов устройств по подтипам.
+        /// 1. Словарь с количеством каналов и их типами
+        /// 2. Подтип устройства
+        /// 3. Устройство
+        /// </summary>
+        /// <returns></returns>
+        private static object[] ChannelsTestData()
+        {
+            var emptyChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
+            return new object[]
+            {
+                new object[]
+                {
+                    emptyChannels,
+                    string.Empty,
+                    GetNewCDevice()
+                },
+                new object[]
+                {
+                    emptyChannels,
+                    C,
+                    GetNewCDevice()
+                },
+                new object[]
+                {
+                    emptyChannels,
+                    Incorrect,
+                    GetNewCDevice()
+                },
+            };
+        }
+
+        private static IODevice GetNewCDevice()
+        {
+            return new C(TestDevName, TestEplanName, TestDevDescription,
                 TestDevNum, TestDevObjName, TestDevObjNum);
         }
 
@@ -260,7 +350,7 @@ namespace Tests
         const string TestDevObjName = "TANK";
         const int TestDevNum = 1;
 
-        public class CDevTest : Device.C
+        public class CDevTest : C
         {
             // Используем только внутри этого класса, поскольку цель -  это
             // протестировать protected метод.

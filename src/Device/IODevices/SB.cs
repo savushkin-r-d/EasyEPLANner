@@ -15,15 +15,38 @@ namespace Device
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.SB;
             ArticleName = articleName;
+        }
 
-            DI.Add(new IOChannel("DI", -1, -1, -1, ""));
+        public override string SetSubType(string subType)
+        {
+            base.SetSubType(subType);
+
+            string errStr = string.Empty;
+            switch (subType)
+            {
+                case "SB":
+                case "":
+                    dSubType = DeviceSubType.SB;
+                    DI.Add(new IOChannel("DI", -1, -1, -1, ""));
+                    break;
+
+                case "SB_VIRT":
+                    break;
+
+                default:
+                    errStr = string.Format("\"{0}\" - неверный тип" +
+                        " (SB, SB_VIRT).\n", Name);
+                    break;
+            }
+
+            return errStr;
         }
 
         public override string Check()
         {
             string res = base.Check();
 
-            if (ArticleName == "")
+            if (ArticleName == string.Empty)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -37,9 +60,17 @@ namespace Device
             switch (dt)
             {
                 case DeviceType.SB:
-                    return dt.ToString();
+                    switch (dst)
+                    {
+                        case DeviceSubType.SB:
+                            return "SB";
+                        case DeviceSubType.SB_VIRT:
+                            return "SB_VIRT";
+                    }
+                    break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -48,13 +79,19 @@ namespace Device
             switch (dt)
             {
                 case DeviceType.SB:
-                    return new Dictionary<string, int>()
+                    switch (dst)
                     {
-                        {"ST", 1},
-                        {"M", 1},
-                        {"P_DT", 1},
-                    };
+                        case DeviceSubType.SB:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.P_DT, 1},
+                            };
+                    }
+                    break;
             }
+
             return null;
         }
     }

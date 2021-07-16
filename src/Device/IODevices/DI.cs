@@ -19,23 +19,24 @@ namespace Device
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "DI_VIRT":
-                    dSubType = DeviceSubType.DI_VIRT;
                     break;
 
                 case "DI":
                 case "":
-                    parameters.Add("P_DT", null);
+                    parameters.Add(Parameter.P_DT, null);
+
                     dSubType = DeviceSubType.DI;
+
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (DI, DI_VIRT).\n",
+                        " (пустая строка, DI, DI_VIRT).\n",
                         Name);
                     break;
             }
@@ -58,7 +59,8 @@ namespace Device
                     }
                     break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -72,20 +74,21 @@ namespace Device
                         case DeviceSubType.DI:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"P_DT", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.P_DT, 1},
                             };
 
                         case DeviceSubType.DI_VIRT:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
                             };
                     }
                     break;
             }
+
             return null;
         }
     }
