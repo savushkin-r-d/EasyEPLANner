@@ -161,6 +161,16 @@
             /// Нулевое стартовое значение, 0 - false, 1 - true.
             /// </summary>
             public const string P_is_zero_start = "P_is_zero_start";
+
+            /// <summary>
+            /// Диаметр вала, м.
+            /// </summary>
+            public const string ss = "1";
+
+            /// <summary>
+            /// Передаточное число
+            /// </summary>
+            public const string qq = "2";
         }
     }
 }

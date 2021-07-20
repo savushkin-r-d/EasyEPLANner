@@ -96,6 +96,9 @@ namespace Device
                     properties.Add(Property.IP, null);
 
                     parameters.Add(Parameter.P_ON_TIME, null);
+
+                    parameters.Add(Parameter.ss, 0);
+                    parameters.Add(Parameter.qq, 0);
                     break;
 
                 case "M_VIRT":
