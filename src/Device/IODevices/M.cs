@@ -97,8 +97,8 @@ namespace Device
 
                     parameters.Add(Parameter.P_ON_TIME, null);
 
-                    parameters.Add(Parameter.ss, 0);
-                    parameters.Add(Parameter.qq, 0);
+                    parameters.Add(Parameter.P_SHAFT_DIAMETER, 0);
+                    parameters.Add(Parameter.P_TRANSFER_RATIO, 0);
                     break;
 
                 case "M_VIRT":

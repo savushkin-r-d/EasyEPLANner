@@ -234,8 +234,8 @@ namespace Tests.Devices
             var altivarParameters = new string[]
             {
                 IODevice.Parameter.P_ON_TIME,
-                IODevice.Parameter.ss,
-                IODevice.Parameter.qq,
+                IODevice.Parameter.P_SHAFT_DIAMETER,
+                IODevice.Parameter.P_TRANSFER_RATIO,
             };
 
             return new object[]

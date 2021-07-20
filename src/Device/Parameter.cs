@@ -165,12 +165,12 @@
             /// <summary>
             /// Диаметр вала, м.
             /// </summary>
-            public const string ss = "1";
+            public const string P_SHAFT_DIAMETER = "P_SHAFT_DIAMETER";
 
             /// <summary>
             /// Передаточное число
             /// </summary>
-            public const string qq = "2";
+            public const string P_TRANSFER_RATIO = "P_TRANSFER_RATIO";
         }
     }
 }
