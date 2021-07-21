@@ -304,6 +304,7 @@
     <Compile Include="TechObject\ObjectsTree\ProcessCell.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Action.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\ActionGroupWash.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\ActionMoveToStep.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\ActionWash.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\ActionGroup.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\AttachedObjects.cs" />

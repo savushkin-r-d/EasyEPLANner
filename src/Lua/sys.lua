@@ -133,6 +133,8 @@ proc_operation = function( value, mode, state_n )
 
             proc_wash_data(mode, state_n, step_n, value)
 
+            proc_control_devices(mode, state_n, step_n, value)
+
             local time_param_n = value.time_param_n or 0
             local next_step_n = value.next_step_n or 0
 
@@ -288,5 +290,22 @@ proc_wash_group_data = function ( mode, state_n, step_n, wash_data, wash_group_i
     if wash_data.pump_freq ~= nil then
         mode[ state_n ][ step_n ]:AddParam( parent_action, wash_data.pump_freq,
             wash_group_index )
+    end
+end
+
+proc_control_devices = function(  mode, state_n, step_n, value ) --TODO
+    local controlData = value.move_to_step_after_enabling
+    local parentAction = "move_to_step_after_enabling"
+
+    -- devices_enabled
+    if controlData.devices_enabled ~= nil then
+        local idx1 = 0
+        proc( mode, state_n, controlData.devices_enabled, step_n, parent_action, idx1)
+    end
+
+    --devices_disabled
+    if controlData.devices_disabled ~= nil then
+        local idx2 = 1
+        proc( mode, state_n, wash_data.DO, step_n, parent_action, idx2 )
     end
 end

@@ -136,6 +136,9 @@ namespace TechObject
                 null,
                 new OneInManyOutActionProcessingStrategy()));
 
+            actions.Add(new ActionMoveToStep("Переход к шагу по", this,
+                "move_to_step_after_enabling"));
+
             items.AddRange(actions.ToArray());
 
             if (!isMainStep)
