@@ -111,7 +111,7 @@ proc_operation = function( value, mode, state_n )
 
     proc_wash_data(mode, state_n, -1, value)
 
-    proc_control_devices(mode, state_n, step_n, value)
+    proc_control_devices(mode, state_n, -1, value) --TODO
 
     if value.steps ~= nil then
         for fields, value in ipairs( value.steps ) do
@@ -135,7 +135,7 @@ proc_operation = function( value, mode, state_n )
 
             proc_wash_data(mode, state_n, step_n, value)
 
-            proc_control_devices(mode, state_n, step_n, value)
+            proc_control_devices(mode, state_n, step_n, value) --TODO
 
             local time_param_n = value.time_param_n or 0
             local next_step_n = value.next_step_n or 0
@@ -295,20 +295,20 @@ proc_wash_group_data = function ( mode, state_n, step_n, wash_data, wash_group_i
     end
 end
 
-proc_control_devices = function(  mode, state_n, step_n, value ) --TODO
+proc_control_devices = function( mode, state_n, step_n, value ) --TODO
     local controlData = value.move_to_step_after_enabling
     local parent_action = "move_to_step_after_enabling"
     if controlData ~= nil then
-        -- devices_enabled
-        if controlData.devices_enabled ~= nil then
+        -- control_enabled
+        if controlData.control_enabled ~= nil then
             local idx1 = 0
-            proc( mode, state_n, controlData.devices_enabled, step_n, parent_action, idx1 )
+            proc( mode, state_n, controlData.control_enabled, step_n, parent_action, idx1 )
         end
 
-        --devices_disabled
-        if controlData.devices_disabled ~= nil then
+        --control_disabled
+        if controlData.control_disabled ~= nil then
             local idx2 = 1
-            proc( mode, state_n, controlData.devices_disabled, step_n, parent_action, idx2 )
+            proc( mode, state_n, controlData.control_disabled, step_n, parent_action, idx2 )
         end
     end
 end
