@@ -105,7 +105,7 @@ proc_operation = function( value, mode, state_n )
     proc_groups( mode, state_n, -1, value.opened_lower_seat_v, 
         "opened_lower_seat_v" )
 
-    proc( mode, state_n, value.required_FB,    -1, "required_FB" )
+    proc( mode, state_n, value.required_FB, -1, "required_FB" )
 
     proc_groups(mode, state_n, -1, value.DI_DO, "DI_DO")
     proc_groups(mode, state_n, -1, value.AI_AO, "AI_AO")
