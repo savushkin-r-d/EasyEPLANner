@@ -296,16 +296,17 @@ end
 proc_control_devices = function(  mode, state_n, step_n, value ) --TODO
     local controlData = value.move_to_step_after_enabling
     local parentAction = "move_to_step_after_enabling"
+    if controlData ~= nil then
+        -- devices_enabled
+        if controlData.devices_enabled ~= nil then
+            local idx1 = 0
+            proc( mode, state_n, controlData.devices_enabled, step_n, parent_action, idx1)
+        end
 
-    -- devices_enabled
-    if controlData.devices_enabled ~= nil then
-        local idx1 = 0
-        proc( mode, state_n, controlData.devices_enabled, step_n, parent_action, idx1)
-    end
-
-    --devices_disabled
-    if controlData.devices_disabled ~= nil then
-        local idx2 = 1
-        proc( mode, state_n, wash_data.DO, step_n, parent_action, idx2 )
+        --devices_disabled
+        if controlData.devices_disabled ~= nil then
+            local idx2 = 1
+            proc( mode, state_n, controlData.devices_disabled, step_n, parent_action, idx2 )
+        end
     end
 end

@@ -171,8 +171,6 @@ namespace TechObject
                 groupData += group.SaveAsLuaTable(prefix + "\t");
             }
 
-
-
             if (groupData != "")
             {
                 string pumpFreqVal = pumpFreq.EditText[1].Trim();
@@ -197,7 +195,7 @@ namespace TechObject
         public override void AddDev(int index, int groupNumber,
             int washGroupIndex = 0)
         {
-            if (groupNumber < vGroups.Count /*Количество групп*/ )
+            if (groupNumber < vGroups.Count)
             {
                 vGroups[groupNumber].AddDev(index, 0);
             }
