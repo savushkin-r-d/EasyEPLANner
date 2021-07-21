@@ -94,6 +94,7 @@ end
 
 --Обработка сохраненного описания операции.
 proc_operation = function( value, mode, state_n )
+    proc( mode, state_n, value.checked_devices, -1, "checked_devices")
     proc( mode, state_n, value.opened_devices, -1, "opened_devices" )
     proc( mode, state_n, value.opened_reverse_devices, -1, 
         "opened_reverse_devices" )
