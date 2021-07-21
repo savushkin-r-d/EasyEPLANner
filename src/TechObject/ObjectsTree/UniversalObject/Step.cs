@@ -32,6 +32,10 @@ namespace TechObject
             items = new List<ITreeViewItem>();
 
             actions = new List<Action>();
+
+            actions.Add(new Action("Проверяемые устройства", this,
+                "checked_devices", null, null));
+
             actions.Add(new Action(openDevicesActionName, this,
                 Action.OpenDevices,
                 new Device.DeviceType[]
