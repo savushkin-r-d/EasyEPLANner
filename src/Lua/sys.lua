@@ -111,6 +111,8 @@ proc_operation = function( value, mode, state_n )
 
     proc_wash_data(mode, state_n, -1, value)
 
+    proc_control_devices(mode, state_n, step_n, value)
+
     if value.steps ~= nil then
         for fields, value in ipairs( value.steps ) do
             mode:AddStep( state_n, value.name or "Шаг ??", value.baseStep or "" )
@@ -295,12 +297,12 @@ end
 
 proc_control_devices = function(  mode, state_n, step_n, value ) --TODO
     local controlData = value.move_to_step_after_enabling
-    local parentAction = "move_to_step_after_enabling"
+    local parent_action = "move_to_step_after_enabling"
     if controlData ~= nil then
         -- devices_enabled
         if controlData.devices_enabled ~= nil then
             local idx1 = 0
-            proc( mode, state_n, controlData.devices_enabled, step_n, parent_action, idx1)
+            proc( mode, state_n, controlData.devices_enabled, step_n, parent_action, idx1 )
         end
 
         --devices_disabled
