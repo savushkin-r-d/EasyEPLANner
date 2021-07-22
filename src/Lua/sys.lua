@@ -94,6 +94,7 @@ end
 
 --Обработка сохраненного описания операции.
 proc_operation = function( value, mode, state_n )
+    proc( mode, state_n, value.checked_devices, -1, "checked_devices")
     proc( mode, state_n, value.opened_devices, -1, "opened_devices" )
     proc( mode, state_n, value.opened_reverse_devices, -1, 
         "opened_reverse_devices" )
@@ -104,7 +105,7 @@ proc_operation = function( value, mode, state_n )
     proc_groups( mode, state_n, -1, value.opened_lower_seat_v, 
         "opened_lower_seat_v" )
 
-    proc( mode, state_n, value.required_FB,    -1, "required_FB" )
+    proc( mode, state_n, value.required_FB, -1, "required_FB" )
 
     proc_groups(mode, state_n, -1, value.DI_DO, "DI_DO")
     proc_groups(mode, state_n, -1, value.AI_AO, "AI_AO")
@@ -116,6 +117,7 @@ proc_operation = function( value, mode, state_n )
             mode:AddStep( state_n, value.name or "Шаг ??", value.baseStep or "" )
             local step_n = fields - 1
 
+            proc( mode, state_n, value.checked_devices, -1, "checked_devices")
             proc( mode, state_n, value.opened_devices, step_n,
                 "opened_devices" )
             proc( mode, state_n, value.opened_reverse_devices, step_n, 
