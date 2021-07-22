@@ -13,10 +13,6 @@ namespace Device
         {
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.CAM;
-
-            DO.Add(new IOChannel("DO", -1, -1, -1, "Сигнал активации"));
-
-            properties.Add(Property.IP, null);
         }
 
         public override string SetSubType(string subtype)
@@ -27,22 +23,31 @@ namespace Device
             switch (subtype)
             {
                 case "CAM_DO1_DI2":
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Сигнал активации"));
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Готовность"));
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Результат обработки"));
 
                     parameters.Add(Parameter.P_READY_TIME, null);
+
+                    properties.Add(Property.IP, null);
                     break;
 
                 case "CAM_DO1_DI1":
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Сигнал активации"));
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Результат обработки"));
+
+                    properties.Add(Property.IP, null);
                     break;
 
                 case "CAM_DO1_DI3":
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Сигнал активации"));
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Готовность"));
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Результат обработки 1"));
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Результат обработки 2"));
 
                     parameters.Add(Parameter.P_READY_TIME, null);
+
+                    properties.Add(Property.IP, null);
                     break;
 
                 default:
@@ -93,14 +98,6 @@ namespace Device
                             };
 
                         case DeviceSubType.CAM_DO1_DI2:
-                            return new Dictionary<string, int>()
-                            {
-                                {Tag.ST, 1},
-                                {Tag.M, 1},
-                                {Tag.READY, 1},
-                                {Tag.RESULT, 1},
-                            };
-
                         case DeviceSubType.CAM_DO1_DI3:
                             return new Dictionary<string, int>()
                             {
