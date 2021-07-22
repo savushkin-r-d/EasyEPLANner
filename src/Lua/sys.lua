@@ -135,6 +135,8 @@ proc_operation = function( value, mode, state_n )
 
             proc_wash_data(mode, state_n, step_n, value)
 
+            proc_to_step_by_condition(mode, state_n, step_n, value)
+
             local time_param_n = value.time_param_n or 0
             local next_step_n = value.next_step_n or 0
 
@@ -290,5 +292,25 @@ proc_wash_group_data = function ( mode, state_n, step_n, wash_data, wash_group_i
     if wash_data.pump_freq ~= nil then
         mode[ state_n ][ step_n ]:AddParam( parent_action, wash_data.pump_freq,
             wash_group_index )
+    end
+end
+
+proc_to_step_by_condition = function( mode, state_n, step_n, value )
+    local devices = value.to_step_if_devices_in_specific_state
+    local parent_action = "to_step_if_devices_in_specific_state"
+    if devices ~= nil then
+        -- on_devices
+        if devices.on_devices ~= nil then
+            local on_devices_idx = 0
+            proc( mode, state_n, devices.on_devices, step_n, parent_action,
+                on_devices_idx )
+        end
+
+        -- off_devices
+        if devices.off_devices ~= nil then
+            local off_devices_idx = 1
+            proc( mode, state_n, devices.off_devices, step_n, parent_action,
+                off_devices_idx )
+        end
     end
 end
