@@ -109,6 +109,7 @@
   <ItemGroup>
     <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Configuration\DeviceSynchronizeService.cs" />
+    <Compile Include="Device\IODevices\CAM.cs" />
     <Compile Include="Device\Parameter.cs" />
     <Compile Include="Device\Property.cs" />
     <Compile Include="Device\RuntimeParameter.cs" />

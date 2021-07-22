@@ -226,6 +226,16 @@
             /// Задание.
             /// </summary>
             public const string Z = "Z";
+
+            /// <summary>
+            /// Результат обработки.
+            /// </summary>
+            public const string RESULT = "RESULT";
+
+            /// <summary>
+            /// Готовность.
+            /// </summary>
+            public const string READY = "READY";
         }
     }
 }

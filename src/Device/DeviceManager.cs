@@ -409,6 +409,7 @@ namespace Device
             "DEV_VTUG", // Совместимость со старыми проектами
             "C",
             "HLA",
+            "CAM"
         };
 
         /// <summary>
@@ -596,6 +597,11 @@ namespace Device
 
                 case "HLA":
                     dev = new HLA(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber);
+                    break;
+
+                case "CAM":
+                    dev = new CAM(name, eplanName, description, deviceNumber,
                         objectName, objectNumber);
                     break;
 
