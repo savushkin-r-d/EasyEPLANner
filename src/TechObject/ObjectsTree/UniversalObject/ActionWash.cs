@@ -48,6 +48,7 @@ namespace TechObject
                     Device.DeviceSubType.M_REV_FREQ_2,
                     Device.DeviceSubType.M_REV_FREQ_2_ERROR,
                     Device.DeviceSubType.M_ATV,
+                    Device.DeviceSubType.M_ATV_LINEAR,
                     Device.DeviceSubType.M,
                     Device.DeviceSubType.M_VIRT,
                     Device.DeviceSubType.V_AS_DO1_DI2,
@@ -91,6 +92,7 @@ namespace TechObject
                     Device.DeviceSubType.M_REV_FREQ_2,
                     Device.DeviceSubType.M_REV_FREQ_2_ERROR,
                     Device.DeviceSubType.M_ATV,
+                    Device.DeviceSubType.M_ATV_LINEAR,
                     Device.DeviceSubType.M,
                     Device.DeviceSubType.M_VIRT,
                 }));

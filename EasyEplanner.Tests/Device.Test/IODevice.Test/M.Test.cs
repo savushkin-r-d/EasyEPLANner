@@ -19,6 +19,7 @@ namespace Tests.Devices
         const string M_REV_FREQ_2_ERROR = "M_REV_FREQ_2_ERROR";
         const string M_ATV = "M_ATV";
         const string M_VIRT = "M_VIRT";
+        const string M_ATV_LINEAR = "M_ATV_LINEAR";
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
@@ -74,6 +75,8 @@ namespace Tests.Devices
                     GetRandomMDevice() },
                 new object[] { DeviceSubType.M_VIRT, M_VIRT,
                     GetRandomMDevice() },
+                new object[] { DeviceSubType.M_ATV_LINEAR, M_ATV_LINEAR,
+                    GetRandomMDevice() },
             };
         }
 
@@ -118,6 +121,7 @@ namespace Tests.Devices
                 new object[] { string.Empty, string.Empty, GetRandomMDevice() },
                 new object[] { string.Empty, Incorrect, GetRandomMDevice() },
                 new object[] { M_VIRT, M_VIRT, GetRandomMDevice() },
+                new object[] { M_ATV_LINEAR, M_ATV_LINEAR, GetRandomMDevice() },
             };
         }
 
@@ -181,6 +185,20 @@ namespace Tests.Devices
                 {IODevice.Tag.P_ON_TIME, 1},
             };
 
+            var exportForMATVLinear = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.R, 1},
+                {IODevice.Tag.FRQ, 1},
+                {IODevice.Tag.RPM, 1},
+                {IODevice.Tag.EST, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_ON_TIME, 1},
+                {IODevice.Tag.P_SHAFT_DIAMETER, 1},
+                {IODevice.Tag.P_TRANSFER_RATIO, 1},
+            };
+
             return new object[]
             {
                 new object[] {exportForM, M, GetRandomMDevice()},
@@ -197,6 +215,8 @@ namespace Tests.Devices
                 new object[] {null, Incorrect, GetRandomMDevice()},
                 new object[] {null, string.Empty, GetRandomMDevice()},
                 new object[] {null, M_VIRT, GetRandomMDevice()},
+                new object[] {exportForMATVLinear, M_ATV_LINEAR,
+                    GetRandomMDevice()},
             };
         }
 
@@ -231,7 +251,7 @@ namespace Tests.Devices
                 IODevice.Parameter.P_ON_TIME
             };
 
-            var altivarParameters = new string[]
+            var altivarLinearParameters = new string[]
             {
                 IODevice.Parameter.P_ON_TIME,
                 IODevice.Parameter.P_SHAFT_DIAMETER,
@@ -290,7 +310,7 @@ namespace Tests.Devices
                 },
                 new object[]
                 {
-                    altivarParameters,
+                    parameters,
                     M_ATV,
                     GetRandomMDevice()
                 },
@@ -304,6 +324,12 @@ namespace Tests.Devices
                 {
                     new string[0],
                     string.Empty,
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    altivarLinearParameters,
+                    M_ATV_LINEAR,
                     GetRandomMDevice()
                 },
             };
@@ -475,6 +501,12 @@ namespace Tests.Devices
                     M_VIRT,
                     GetRandomMDevice()
                 },
+                new object[]
+                {
+                    emptyChannels,
+                    M_ATV_LINEAR,
+                    GetRandomMDevice()
+                },
             };
         }
 
@@ -575,6 +607,12 @@ namespace Tests.Devices
                 {
                     new string[0],
                     string.Empty,
+                    GetRandomMDevice()
+                },
+                new object[]
+                {
+                    properties,
+                    M_ATV_LINEAR,
                     GetRandomMDevice()
                 },
             };

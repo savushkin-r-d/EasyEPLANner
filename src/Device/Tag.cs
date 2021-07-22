@@ -236,6 +236,16 @@
             /// Готовность.
             /// </summary>
             public const string READY = "READY";
+
+            /// <summary>
+            /// Диаметр вала, м.
+            /// </summary>
+            public const string P_SHAFT_DIAMETER = "P_SHAFT_DIAMETER";
+
+            /// <summary>
+            /// Передаточное число
+            /// </summary>
+            public const string P_TRANSFER_RATIO = "P_TRANSFER_RATIO";
         }
     }
 }

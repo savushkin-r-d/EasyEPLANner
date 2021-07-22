@@ -96,9 +96,15 @@ namespace Device
                     properties.Add(Property.IP, null);
 
                     parameters.Add(Parameter.P_ON_TIME, null);
+                    break;
 
-                    parameters.Add(Parameter.P_SHAFT_DIAMETER, 0);
-                    parameters.Add(Parameter.P_TRANSFER_RATIO, 0);
+                case "M_ATV_LINEAR":
+                    properties.Add(Property.IP, null);
+
+                    parameters.Add(Parameter.P_ON_TIME, null);
+
+                    parameters.Add(Parameter.P_SHAFT_DIAMETER, null);
+                    parameters.Add(Parameter.P_TRANSFER_RATIO, null);
                     break;
 
                 case "M_VIRT":
@@ -108,14 +114,14 @@ namespace Device
                     errStr = string.Format("\"{0}\" - не задан тип" +
                         " (M, M_FREQ, M_REV, M_REV_FREQ, M_REV_2," +
                         " M_REV_FREQ_2, M_REV_2_ERROR, M_REV_FREQ_2_ERROR, " +
-                        "M_ATV, M_VIRT).\n", Name);
+                        "M_ATV, M_ATV_LINEAR, M_VIRT).\n", Name);
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
                         " (M, M_FREQ, M_REV, M_REV_FREQ, M_REV_2," +
                         " M_REV_FREQ_2, M_REV_2_ERROR, M_REV_FREQ_2_ERROR, " +
-                        "M_ATV, M_VIRT).\n", Name);
+                        "M_ATV, M_ATV_LINEAR, M_VIRT).\n", Name);
                     break;
             }
 
@@ -148,6 +154,8 @@ namespace Device
                             return "M_REV_FREQ_2_ERROR";
                         case DeviceSubType.M_ATV:
                             return "M_ATV";
+                        case DeviceSubType.M_ATV_LINEAR:
+                            return "M_ATV_LINEAR";
                         case DeviceSubType.M_VIRT:
                             return "M_VIRT";
                     }
@@ -208,6 +216,21 @@ namespace Device
                                 {Tag.V, 1},
                                 {Tag.P_ON_TIME, 1},
                             };
+
+                        case DeviceSubType.M_ATV_LINEAR:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.M, 1},
+                                {Tag.ST, 1},
+                                {Tag.R, 1},
+                                {Tag.FRQ, 1},
+                                {Tag.RPM, 1},
+                                {Tag.EST, 1},
+                                {Tag.V, 1},
+                                {Tag.P_ON_TIME, 1},
+                                {Tag.P_SHAFT_DIAMETER, 1},
+                                {Tag.P_TRANSFER_RATIO, 1}
+                            };
                     }
                     break;
             }
@@ -220,7 +243,8 @@ namespace Device
             string res = base.Check();
 
             if (ArticleName == string.Empty &&
-                DeviceSubType == DeviceSubType.M_VIRT)
+                (DeviceSubType == DeviceSubType.M_ATV ||
+                DeviceSubType == DeviceSubType.M_ATV_LINEAR))
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
