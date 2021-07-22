@@ -136,17 +136,20 @@ namespace TechObject
                 null,
                 new OneInManyOutActionProcessingStrategy()));
 
-            actions.Add(new ActionToStepByCondition("Переход к шагу по условию",
-                this, "to_step_if_devices_in_specific_state"));
-
             items.AddRange(actions.ToArray());
 
             if (!isMainStep)
             {
-                timeParam = new ObjectProperty("Время (параметр)", -1, -1);
-                nextStepN = new ObjectProperty("Номер следующего шага", -1, -1);
+                var toStepByConditionAction = new ActionToStepByCondition(
+                    "Переход к шагу по условию", this,
+                    "to_step_if_devices_in_specific_state");
+                actions.Add(toStepByConditionAction);
+                items.Add(toStepByConditionAction);
 
+                timeParam = new ObjectProperty("Время (параметр)", -1, -1);
                 items.Add(timeParam);
+
+                nextStepN = new ObjectProperty("Номер следующего шага", -1, -1);  
                 items.Add(nextStepN);
             }
         }

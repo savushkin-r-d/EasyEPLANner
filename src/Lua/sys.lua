@@ -111,8 +111,6 @@ proc_operation = function( value, mode, state_n )
 
     proc_wash_data(mode, state_n, -1, value)
 
-    proc_to_step_by_condition(mode, state_n, -1, value)
-
     if value.steps ~= nil then
         for fields, value in ipairs( value.steps ) do
             mode:AddStep( state_n, value.name or "Шаг ??", value.baseStep or "" )
