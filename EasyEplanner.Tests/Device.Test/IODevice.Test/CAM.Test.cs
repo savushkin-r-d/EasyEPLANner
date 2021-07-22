@@ -196,6 +196,12 @@ namespace Tests.Devices
                     string.Empty,
                     GetRandomCAMDevice()
                 },
+                new object[]
+                {
+                    new string[0],
+                    Incorrect,
+                    GetRandomCAMDevice()
+                },
             };
         }
 
@@ -351,6 +357,12 @@ namespace Tests.Devices
                 {
                     new string[0],
                     string.Empty,
+                    GetRandomCAMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    Incorrect,
                     GetRandomCAMDevice()
                 },
             };
