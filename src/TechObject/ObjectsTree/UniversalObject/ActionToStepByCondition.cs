@@ -4,9 +4,9 @@ using Editor;
 namespace TechObject
 {
     /// <summary>
-    /// Специальное действие - TODO.
+    /// Специальное действие - переход к шагу по условию.
     /// </summary>
-    public class ActionMoveToStep : Action
+    public class ActionToStepByCondition : Action
     {
         /// <summary>
         /// Создание нового действия.
@@ -15,8 +15,8 @@ namespace TechObject
         /// <param name="luaName">Имя действия - как оно будет называться в 
         /// таблице Lua.</param>
         /// <param name="owner">Владелец действия (Шаг)</param>
-        public ActionMoveToStep(string name, Step owner, string luaName)
-            : base(name, owner, luaName)
+        public ActionToStepByCondition(string name, Step owner, 
+            string luaName) : base(name, owner, luaName)
         {
             var allowedDevTypes = new Device.DeviceType[]
             {
@@ -24,9 +24,9 @@ namespace TechObject
             };
 
             vGroups = new List<Action>();
-            vGroups.Add(new Action("Контроль включения", owner, "control_enabled", //TODO
+            vGroups.Add(new Action("Включение устройств", owner, "on_devices",
                 allowedDevTypes));
-            vGroups.Add(new Action("Контроль выключения", owner, "control_disabled", //TODO
+            vGroups.Add(new Action("Выключение устройств", owner, "off_devices",
                 allowedDevTypes));
 
             items = new List<ITreeViewItem>();
@@ -38,7 +38,7 @@ namespace TechObject
 
         override public Action Clone()
         {
-            var clone = new ActionMoveToStep(name, owner, luaName);
+            var clone = new ActionToStepByCondition(name, owner, luaName);
 
             clone.vGroups = new List<Action>();
             foreach (var action in vGroups)
@@ -97,7 +97,7 @@ namespace TechObject
                 groupData += group.SaveAsLuaTable(prefix + "\t");
             }
 
-            if (groupData != "")
+            if (groupData != string.Empty)
             {
                 res += prefix;
                 if (luaName != string.Empty)
@@ -145,7 +145,7 @@ namespace TechObject
         {
             get
             {
-                string res = "";
+                string res = string.Empty;
                 foreach (Action action in vGroups)
                 {
                     res += $"{{ {action.DisplayText[1]} }} ";

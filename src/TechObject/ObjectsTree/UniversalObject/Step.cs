@@ -136,8 +136,8 @@ namespace TechObject
                 null,
                 new OneInManyOutActionProcessingStrategy()));
 
-            actions.Add(new ActionMoveToStep("Переход к шагу по", this,
-                "move_to_step_after_enabling"));
+            actions.Add(new ActionToStepByCondition("Переход к шагу по условию",
+                this, "to_step_if_devices_in_specific_state"));
 
             items.AddRange(actions.ToArray());
 
