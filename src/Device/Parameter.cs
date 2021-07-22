@@ -171,6 +171,10 @@
             /// Передаточное число
             /// </summary>
             public const string P_TRANSFER_RATIO = "P_TRANSFER_RATIO";
+
+            /// Предельное время отсутствия готовности к работе, секунд.
+            /// </summary>
+            public const string P_READY_TIME = "P_READY_TIME";
         }
     }
 }

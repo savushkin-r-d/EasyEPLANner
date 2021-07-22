@@ -409,6 +409,7 @@ namespace Device
             "DEV_VTUG", // Совместимость со старыми проектами
             "C",
             "HLA",
+            "CAM"
         };
 
         /// <summary>
@@ -596,6 +597,11 @@ namespace Device
 
                 case "HLA":
                     dev = new HLA(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber);
+                    break;
+
+                case "CAM":
+                    dev = new CAM(name, eplanName, description, deviceNumber,
                         objectName, objectNumber);
                     break;
 
@@ -1055,9 +1061,12 @@ namespace Device
                 return isPID;
             }
 
-            const int firstCharIndex = 0;
-            if (type[firstCharIndex] == Convert.ToChar(DeviceType.V.ToString())
-                || type.Contains(DeviceType.C.ToString()) == false)
+            const int firstChar = 0;
+            bool noPID =
+                (type[firstChar] == Convert.ToChar($"{DeviceType.V}") ||
+                type[firstChar] == Convert.ToChar($"{DeviceType.C}") ||
+                type.Contains($"{DeviceType.C}") == false);
+            if (noPID)
             {
                 return isPID;
             }
