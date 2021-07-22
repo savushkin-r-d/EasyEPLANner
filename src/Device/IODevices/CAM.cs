@@ -14,7 +14,7 @@ namespace Device
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.CAM;
 
-            DO.Add(new IOChannel("DO", -1, -1, -1, "Триггер"));
+            DO.Add(new IOChannel("DO", -1, -1, -1, "Сигнал активации"));
 
             properties.Add(Property.IP, null);
         }

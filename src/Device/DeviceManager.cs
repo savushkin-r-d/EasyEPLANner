@@ -1061,9 +1061,12 @@ namespace Device
                 return isPID;
             }
 
-            const int firstCharIndex = 0;
-            if (type[firstCharIndex] == Convert.ToChar(DeviceType.V.ToString())
-                || type.Contains(DeviceType.C.ToString()) == false)
+            const int firstChar = 0;
+            bool noPID =
+                (type[firstChar] == Convert.ToChar($"{DeviceType.V}") ||
+                type[firstChar] == Convert.ToChar($"{DeviceType.C}") ||
+                type.Contains($"{DeviceType.C}") == false);
+            if (noPID)
             {
                 return isPID;
             }
