@@ -163,6 +163,15 @@
             public const string P_is_zero_start = "P_is_zero_start";
 
             /// <summary>
+            /// Диаметр вала, м.
+            /// </summary>
+            public const string P_SHAFT_DIAMETER = "P_SHAFT_DIAMETER";
+
+            /// <summary>
+            /// Передаточное число
+            /// </summary>
+            public const string P_TRANSFER_RATIO = "P_TRANSFER_RATIO";
+
             /// Предельное время отсутствия готовности к работе, секунд.
             /// </summary>
             public const string P_READY_TIME = "P_READY_TIME";

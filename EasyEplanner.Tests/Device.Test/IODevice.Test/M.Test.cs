@@ -231,6 +231,13 @@ namespace Tests.Devices
                 IODevice.Parameter.P_ON_TIME
             };
 
+            var altivarParameters = new string[]
+            {
+                IODevice.Parameter.P_ON_TIME,
+                IODevice.Parameter.P_SHAFT_DIAMETER,
+                IODevice.Parameter.P_TRANSFER_RATIO,
+            };
+
             return new object[]
             {
                 new object[]
@@ -283,7 +290,7 @@ namespace Tests.Devices
                 },
                 new object[]
                 {
-                    parameters,
+                    altivarParameters,
                     M_ATV,
                     GetRandomMDevice()
                 },
