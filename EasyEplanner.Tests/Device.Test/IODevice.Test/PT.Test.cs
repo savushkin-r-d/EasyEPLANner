@@ -122,8 +122,8 @@ namespace Tests.Devices
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
-                {IODevice.Tag.P_MIN_V, 1},
-                {IODevice.Tag.P_MAX_V, 1},
+                {IODevice.Parameter.P_MIN_V, 1},
+                {IODevice.Parameter.P_MAX_V, 1},
                 {IODevice.Tag.P_CZ, 1},
             };
 
@@ -131,16 +131,16 @@ namespace Tests.Devices
             {
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
-                {IODevice.Tag.P_MIN_V, 1},
-                {IODevice.Tag.P_MAX_V, 1},
-                {IODevice.Tag.P_ERR, 1},
+                {IODevice.Parameter.P_MIN_V, 1},
+                {IODevice.Parameter.P_MAX_V, 1},
+                {IODevice.Parameter.P_ERR, 1},
             };
 
             var exportForDevSpae = new Dictionary<string, int>()
             {
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
-                {IODevice.Tag.P_ERR, 1},
+                {IODevice.Parameter.P_ERR, 1},
             };
 
             return new object[]

@@ -323,8 +323,8 @@ namespace Device
                             {
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
-                                {Tag.P_ON_TIME, 1},
-                                {Tag.P_FB, 1},
+                                {Parameter.P_ON_TIME, 1},
+                                {Parameter.P_FB, 1},
                                 {Tag.FB_OFF_ST, 1},
                             };
 
@@ -340,8 +340,8 @@ namespace Device
                             {
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
-                                {Tag.P_ON_TIME, 1},
-                                {Tag.P_FB, 1},
+                                {Parameter.P_ON_TIME, 1},
+                                {Parameter.P_FB, 1},
                                 {Tag.FB_OFF_ST, 1},
                                 {Tag.FB_ON_ST, 1},
                             };
@@ -352,8 +352,8 @@ namespace Device
                             {
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
-                                {Tag.P_ON_TIME, 1},
-                                {Tag.P_FB, 1},
+                                {Parameter.P_ON_TIME, 1},
+                                {Parameter.P_FB, 1},
                                 {Tag.V, 1},
                                 {Tag.BLINK, 1},
                                 {Tag.CS, 1},

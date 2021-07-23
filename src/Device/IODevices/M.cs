@@ -178,7 +178,7 @@ namespace Device
                             {
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
-                                {Tag.P_ON_TIME, 1},
+                                {Parameter.P_ON_TIME, 1},
                             };
 
                         case DeviceSubType.M_FREQ:
@@ -186,7 +186,7 @@ namespace Device
                             {
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
-                                {Tag.P_ON_TIME, 1},
+                                {Parameter.P_ON_TIME, 1},
                                 {Tag.V, 1},
                             };
 
@@ -199,7 +199,7 @@ namespace Device
                             {
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
-                                {Tag.P_ON_TIME, 1},
+                                {Parameter.P_ON_TIME, 1},
                                 {Tag.V, 1},
                                 {Tag.R, 1},
                             };
@@ -214,7 +214,7 @@ namespace Device
                                 {Tag.RPM, 1},
                                 {Tag.EST, 1},
                                 {Tag.V, 1},
-                                {Tag.P_ON_TIME, 1},
+                                {Parameter.P_ON_TIME, 1},
                             };
 
                         case DeviceSubType.M_ATV_LINEAR:
@@ -227,9 +227,9 @@ namespace Device
                                 {Tag.RPM, 1},
                                 {Tag.EST, 1},
                                 {Tag.V, 1},
-                                {Tag.P_ON_TIME, 1},
-                                {Tag.P_SHAFT_DIAMETER, 1},
-                                {Tag.P_TRANSFER_RATIO, 1}
+                                {Parameter.P_ON_TIME, 1},
+                                {Parameter.P_SHAFT_DIAMETER, 1},
+                                {Parameter.P_TRANSFER_RATIO, 1}
                             };
                     }
                     break;

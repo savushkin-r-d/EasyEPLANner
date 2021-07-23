@@ -148,7 +148,7 @@ namespace Device
                                 {Tag.M, 1},
                                 {Tag.P_CZ, 1},
                                 {Tag.V, 1},
-                                {Tag.P_ERR, 1},
+                                {Parameter.P_ERR, 1},
                             };
 
                         case DeviceSubType.LT_IOLINK:
@@ -157,11 +157,11 @@ namespace Device
                                 {Tag.M, 1},
                                 {Tag.P_CZ, 1},
                                 {Tag.V, 1},
-                                {Tag.P_H_CONE, 1},
-                                {Tag.P_MAX_P, 1},
-                                {Tag.P_R, 1},
+                                {Parameter.P_H_CONE, 1},
+                                {Parameter.P_MAX_P, 1},
+                                {Parameter.P_R, 1},
                                 {Tag.CLEVEL, 1},
-                                {Tag.P_ERR, 1},
+                                {Parameter.P_ERR, 1},
                             };
 
                         case DeviceSubType.LT_CYL:
@@ -170,10 +170,10 @@ namespace Device
                                 {Tag.M, 1},
                                 {Tag.P_CZ, 1},
                                 {Tag.V, 1},
-                                {Tag.P_MAX_P, 1},
-                                {Tag.P_R, 1},
+                                {Parameter.P_MAX_P, 1},
+                                {Parameter.P_R, 1},
                                 {Tag.CLEVEL, 1},
-                                {Tag.P_ERR, 1},
+                                {Parameter.P_ERR, 1},
                             };
 
                         case DeviceSubType.LT_CONE:
@@ -182,11 +182,11 @@ namespace Device
                                 {Tag.M, 1},
                                 {Tag.P_CZ, 1},
                                 {Tag.V, 1},
-                                {Tag.P_MAX_P, 1},
-                                {Tag.P_R, 1},
-                                {Tag.P_H_CONE, 1},
+                                {Parameter.P_MAX_P, 1},
+                                {Parameter.P_R, 1},
+                                {Parameter.P_H_CONE, 1},
                                 {Tag.CLEVEL, 1},
-                                {Tag.P_ERR, 1},
+                                {Parameter.P_ERR, 1},
                             };
 
                         case DeviceSubType.LT_TRUNC:
@@ -195,11 +195,11 @@ namespace Device
                                 {Tag.M, 1},
                                 {Tag.P_CZ, 1},
                                 {Tag.V, 1},
-                                {Tag.P_MAX_P, 1},
-                                {Tag.P_R, 1},
-                                {Tag.P_H_TRUNC, 1},
+                                {Parameter.P_MAX_P, 1},
+                                {Parameter.P_R, 1},
+                                {Parameter.P_H_TRUNC, 1},
                                 {Tag.CLEVEL, 1},
-                                {Tag.P_ERR, 1},
+                                {Parameter.P_ERR, 1},
                             };
 
                         case DeviceSubType.LT_VIRT:

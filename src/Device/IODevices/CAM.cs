@@ -105,6 +105,7 @@ namespace Device
                                 {Tag.M, 1},
                                 {Tag.READY, 1},
                                 {Tag.RESULT, 1},
+                                {Parameter.P_READY_TIME, 1}
                             };
                     }
                     break;

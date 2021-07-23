@@ -112,9 +112,9 @@ namespace Tests.Devices
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
-                {IODevice.Tag.P_NOMINAL_W, 1},
-                {IODevice.Tag.P_DT, 1},
-                {IODevice.Tag.P_RKP, 1},
+                {IODevice.Parameter.P_NOMINAL_W, 1},
+                {IODevice.Parameter.P_DT, 1},
+                {IODevice.Parameter.P_RKP, 1},
                 {IODevice.Tag.P_CZ, 1},
             };
 

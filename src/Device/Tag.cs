@@ -23,21 +23,6 @@
             public const string V = "V";
 
             /// <summary>
-            /// Номинальная нагрузка.
-            /// </summary>
-            public const string P_NOMINAL_W = "P_NOMINAL_W";
-
-            /// <summary>
-            /// Время порогового фильтра (дельта).
-            /// </summary>
-            public const string P_DT = "P_DT";
-
-            /// <summary>
-            /// Рабочий коэффициент передачи.
-            /// </summary>
-            public const string P_RKP = "P_RKP";
-
-            /// <summary>
             /// Сдвиг нуля.
             /// </summary>
             public const string P_CZ = "P_CZ";
@@ -63,16 +48,6 @@
             public const string CLOSED = "CLOSED";
 
             /// <summary>
-            /// Время включения.
-            /// </summary>
-            public const string P_ON_TIME = "P_ON_TIME";
-
-            /// <summary>
-            /// Включение/выключение обратной связи.
-            /// </summary>
-            public const string P_FB = "P_FB";
-
-            /// <summary>
             /// Текущее состояние обратной связи (на отключенное состояние).
             /// </summary>
             public const string FB_OFF_ST = "FB_OFF_ST";
@@ -93,16 +68,6 @@
             public const string ERR = "ERR";
 
             /// <summary>
-            /// Минимальное значение.
-            /// </summary>
-            public const string P_MIN_V = "P_MIN_V";
-
-            /// <summary>
-            /// Максимальное значение.
-            /// </summary>
-            public const string P_MAX_V = "P_MAX_V";
-
-            /// <summary>
             /// Температура.
             /// </summary>
             public const string T = "T";
@@ -111,11 +76,6 @@
             /// Проверка устройства.
             /// </summary>
             public const string OK = "OK";
-
-            /// <summary>
-            /// Значение ошибки (значение во время ошибки датчика).
-            /// </summary>
-            public const string P_ERR = "P_ERR";
 
             /// <summary>
             /// Реверс (обычно мотор).
@@ -138,29 +98,9 @@
             public const string EST = "EST";
 
             /// <summary>
-            /// Высота конусной части танка.
-            /// </summary>
-            public const string P_H_CONE = "P_H_CONE";
-
-            /// <summary>
-            /// Максимальное давление.
-            /// </summary>
-            public const string P_MAX_P = "P_MAX_P";
-
-            /// <summary>
-            /// Радиус танка.
-            /// </summary>
-            public const string P_R = "P_R";
-
-            /// <summary>
             /// Пересчитанный уровень (обычно в уровне).
             /// </summary>
             public const string CLEVEL = "CLEVEL";
-
-            /// <summary>
-            /// Высота усеченной части танка.
-            /// </summary>
-            public const string P_H_TRUNC = "P_H_TRUNC";
 
             /// <summary>
             /// Состояние красной лампочки.
@@ -236,16 +176,6 @@
             /// Готовность.
             /// </summary>
             public const string READY = "READY";
-
-            /// <summary>
-            /// Диаметр вала, м.
-            /// </summary>
-            public const string P_SHAFT_DIAMETER = "P_SHAFT_DIAMETER";
-
-            /// <summary>
-            /// Передаточное число
-            /// </summary>
-            public const string P_TRANSFER_RATIO = "P_TRANSFER_RATIO";
         }
     }
 }

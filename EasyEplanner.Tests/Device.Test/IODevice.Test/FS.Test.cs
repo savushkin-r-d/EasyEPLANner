@@ -113,7 +113,7 @@ namespace Tests.Devices
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
-                {IODevice.Tag.P_DT, 1},
+                {IODevice.Parameter.P_DT, 1},
             };
 
             return new object[]

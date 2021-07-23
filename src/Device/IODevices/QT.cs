@@ -145,8 +145,8 @@ namespace Device
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
                                 {Tag.V, 1},
-                                {Tag.P_MIN_V, 1},
-                                {Tag.P_MAX_V, 1},
+                                {Parameter.P_MIN_V, 1},
+                                {Parameter.P_MAX_V, 1},
                                 {Tag.P_CZ, 1},
                             };
 
@@ -157,8 +157,8 @@ namespace Device
                                 {Tag.M, 1},
                                 {Tag.V, 1},
                                 {Tag.OK, 1},
-                                {Tag.P_MIN_V, 1},
-                                {Tag.P_MAX_V, 1},
+                                {Parameter.P_MIN_V, 1},
+                                {Parameter.P_MAX_V, 1},
                                 {Tag.P_CZ, 1},
                             };
 
@@ -170,7 +170,7 @@ namespace Device
                                 {Tag.V, 1},
                                 {Tag.P_CZ, 1},
                                 {Tag.T, 1},
-                                {Tag.P_ERR, 1},
+                                {Parameter.P_ERR, 1},
                             };
                     }
                     break;

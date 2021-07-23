@@ -195,8 +195,8 @@ namespace Tests.Devices
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
-                {IODevice.Tag.P_ON_TIME, 1},
-                {IODevice.Tag.P_FB, 1},
+                {IODevice.Parameter.P_ON_TIME, 1},
+                {IODevice.Parameter.P_FB, 1},
                 {IODevice.Tag.FB_OFF_ST, 1},
             };
 
@@ -204,8 +204,8 @@ namespace Tests.Devices
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
-                {IODevice.Tag.P_ON_TIME, 1},
-                {IODevice.Tag.P_FB, 1},
+                {IODevice.Parameter.P_ON_TIME, 1},
+                {IODevice.Parameter.P_FB, 1},
                 {IODevice.Tag.FB_OFF_ST, 1},
                 {IODevice.Tag.FB_ON_ST, 1},
             };
@@ -214,8 +214,8 @@ namespace Tests.Devices
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
-                {IODevice.Tag.P_ON_TIME, 1},
-                {IODevice.Tag.P_FB, 1},
+                {IODevice.Parameter.P_ON_TIME, 1},
+                {IODevice.Parameter.P_FB, 1},
                 {IODevice.Tag.V, 1},
                 {IODevice.Tag.BLINK, 1},
                 {IODevice.Tag.CS, 1},
