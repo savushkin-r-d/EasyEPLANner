@@ -153,14 +153,14 @@ namespace Tests.Devices
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
-                {IODevice.Tag.P_ON_TIME, 1},
+                {IODevice.Parameter.P_ON_TIME, 1},
             };
 
             var exportForMFreq = new Dictionary<string, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
-                {IODevice.Tag.P_ON_TIME, 1},
+                {IODevice.Parameter.P_ON_TIME, 1},
                 {IODevice.Tag.V, 1},
             };
 
@@ -168,7 +168,7 @@ namespace Tests.Devices
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
-                {IODevice.Tag.P_ON_TIME, 1},
+                {IODevice.Parameter.P_ON_TIME, 1},
                 {IODevice.Tag.V, 1},
                 {IODevice.Tag.R, 1},
             };
@@ -182,7 +182,7 @@ namespace Tests.Devices
                 {IODevice.Tag.RPM, 1},
                 {IODevice.Tag.EST, 1},
                 {IODevice.Tag.V, 1},
-                {IODevice.Tag.P_ON_TIME, 1},
+                {IODevice.Parameter.P_ON_TIME, 1},
             };
 
             var exportForMATVLinear = new Dictionary<string, int>()
@@ -194,9 +194,9 @@ namespace Tests.Devices
                 {IODevice.Tag.RPM, 1},
                 {IODevice.Tag.EST, 1},
                 {IODevice.Tag.V, 1},
-                {IODevice.Tag.P_ON_TIME, 1},
-                {IODevice.Tag.P_SHAFT_DIAMETER, 1},
-                {IODevice.Tag.P_TRANSFER_RATIO, 1},
+                {IODevice.Parameter.P_ON_TIME, 1},
+                {IODevice.Parameter.P_SHAFT_DIAMETER, 1},
+                {IODevice.Parameter.P_TRANSFER_RATIO, 1},
             };
 
             return new object[]

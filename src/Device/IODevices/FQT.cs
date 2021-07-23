@@ -147,7 +147,7 @@ namespace Device
                                 {Tag.P_MAX_FLOW, 1},
                                 {Tag.P_CZ, 1},
                                 {Tag.F, 1},
-                                {Tag.P_DT, 1},
+                                {Parameter.P_DT, 1},
                                 {Tag.ABS_V, 1},
                             };
 
@@ -161,7 +161,7 @@ namespace Device
                                 {Tag.P_MAX_FLOW, 1},
                                 {Tag.P_CZ, 1},
                                 {Tag.F, 1},
-                                {Tag.P_DT, 1},
+                                {Parameter.P_DT, 1},
                                 {Tag.ABS_V, 1},
                                 {Tag.OK, 1},
                             };
@@ -176,7 +176,7 @@ namespace Device
                                 {Tag.P_MAX_FLOW, 1},
                                 {Tag.P_CZ, 1},
                                 {Tag.F, 1},
-                                {Tag.P_DT, 1},
+                                {Parameter.P_DT, 1},
                                 {Tag.ABS_V, 1},
                             };
                     }

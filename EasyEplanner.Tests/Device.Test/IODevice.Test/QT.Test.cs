@@ -123,8 +123,8 @@ namespace Tests.Devices
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
-                {IODevice.Tag.P_MIN_V, 1},
-                {IODevice.Tag.P_MAX_V, 1},
+                {IODevice.Parameter.P_MIN_V, 1},
+                {IODevice.Parameter.P_MAX_V, 1},
                 {IODevice.Tag.P_CZ, 1},
             };
 
@@ -135,7 +135,7 @@ namespace Tests.Devices
                 {IODevice.Tag.V, 1},
                 {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.T, 1},
-                {IODevice.Tag.P_ERR, 1}
+                {IODevice.Parameter.P_ERR, 1}
             };
 
             var exportForQTOk = new Dictionary<string, int>()
@@ -144,8 +144,8 @@ namespace Tests.Devices
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
                 {IODevice.Tag.OK, 1},
-                {IODevice.Tag.P_MIN_V, 1},
-                {IODevice.Tag.P_MAX_V, 1},
+                {IODevice.Parameter.P_MIN_V, 1},
+                {IODevice.Parameter.P_MAX_V, 1},
                 {IODevice.Tag.P_CZ, 1},
             };
 

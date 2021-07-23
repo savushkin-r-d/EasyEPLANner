@@ -128,8 +128,8 @@ namespace Device
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
                                 {Tag.V, 1},
-                                {Tag.P_MIN_V, 1},
-                                {Tag.P_MAX_V, 1},
+                                {Parameter.P_MIN_V, 1},
+                                {Parameter.P_MAX_V, 1},
                                 {Tag.P_CZ, 1},
                             };
 
@@ -138,9 +138,9 @@ namespace Device
                             {
                                 {Tag.M, 1},
                                 {Tag.V, 1},
-                                {Tag.P_MIN_V, 1},
-                                {Tag.P_MAX_V, 1},
-                                {Tag.P_ERR, 1},
+                                {Parameter.P_MIN_V, 1},
+                                {Parameter.P_MAX_V, 1},
+                                {Parameter.P_ERR, 1},
                             };
 
                         case DeviceSubType.DEV_SPAE:
@@ -148,7 +148,7 @@ namespace Device
                             {
                                 {Tag.M, 1},
                                 {Tag.V, 1},
-                                {Tag.P_ERR, 1},
+                                {Parameter.P_ERR, 1},
                             };
                     }
                     break;

@@ -126,8 +126,8 @@ namespace Tests.Devices
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.RESULT, 1},
                 {IODevice.Tag.READY, 1},
+                {IODevice.Parameter.P_READY_TIME, 1},
             };
-
 
             return new object[]
             {

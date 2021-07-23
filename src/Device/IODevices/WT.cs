@@ -94,9 +94,9 @@ namespace Device
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
                                 {Tag.V, 1},
-                                {Tag.P_NOMINAL_W, 1},
-                                {Tag.P_DT, 1},
-                                {Tag.P_RKP, 1},
+                                {Parameter.P_NOMINAL_W, 1},
+                                {Parameter.P_DT, 1},
+                                {Parameter.P_RKP, 1},
                                 {Tag.P_CZ, 1},
                             };
                     }

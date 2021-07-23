@@ -134,7 +134,7 @@ namespace Tests.Devices
                 {IODevice.Tag.P_MAX_FLOW, 1},
                 {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.F, 1},
-                {IODevice.Tag.P_DT, 1},
+                {IODevice.Parameter.P_DT, 1},
                 {IODevice.Tag.ABS_V, 1},
             };
 
@@ -147,7 +147,7 @@ namespace Tests.Devices
                 {IODevice.Tag.P_MAX_FLOW, 1},
                 {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.F, 1},
-                {IODevice.Tag.P_DT, 1},
+                {IODevice.Parameter.P_DT, 1},
                 {IODevice.Tag.ABS_V, 1},
                 {IODevice.Tag.OK, 1},
             };
@@ -161,7 +161,7 @@ namespace Tests.Devices
                 {IODevice.Tag.P_MAX_FLOW, 1},
                 {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.F, 1},
-                {IODevice.Tag.P_DT, 1},
+                {IODevice.Parameter.P_DT, 1},
                 {IODevice.Tag.ABS_V, 1},
             };
 

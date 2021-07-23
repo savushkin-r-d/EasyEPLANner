@@ -131,7 +131,7 @@ namespace Tests.Devices
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.V, 1},
-                {IODevice.Tag.P_ERR, 1},
+                {IODevice.Parameter.P_ERR, 1},
             };
 
             var exportForLTIOLink = new Dictionary<string, int>()
@@ -139,11 +139,11 @@ namespace Tests.Devices
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.V, 1},
-                {IODevice.Tag.P_H_CONE, 1},
-                {IODevice.Tag.P_MAX_P, 1},
-                {IODevice.Tag.P_R, 1},
+                {IODevice.Parameter.P_H_CONE, 1},
+                {IODevice.Parameter.P_MAX_P, 1},
+                {IODevice.Parameter.P_R, 1},
                 {IODevice.Tag.CLEVEL, 1},
-                {IODevice.Tag.P_ERR, 1},
+                {IODevice.Parameter.P_ERR, 1},
             };
 
             var exportForLTCyl = new Dictionary<string, int>()
@@ -151,10 +151,10 @@ namespace Tests.Devices
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.V, 1},
-                {IODevice.Tag.P_MAX_P, 1},
-                {IODevice.Tag.P_R, 1},
+                {IODevice.Parameter.P_MAX_P, 1},
+                {IODevice.Parameter.P_R, 1},
                 {IODevice.Tag.CLEVEL, 1},
-                {IODevice.Tag.P_ERR, 1},
+                {IODevice.Parameter.P_ERR, 1},
             };
 
             var exportForLTCone = new Dictionary<string, int>()
@@ -162,11 +162,11 @@ namespace Tests.Devices
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.V, 1},
-                {IODevice.Tag.P_MAX_P, 1},
-                {IODevice.Tag.P_R, 1},
-                {IODevice.Tag.P_H_CONE, 1},
+                {IODevice.Parameter.P_MAX_P, 1},
+                {IODevice.Parameter.P_R, 1},
+                {IODevice.Parameter.P_H_CONE, 1},
                 {IODevice.Tag.CLEVEL, 1},
-                {IODevice.Tag.P_ERR, 1},
+                {IODevice.Parameter.P_ERR, 1},
             };
 
             var exportForLTTrunc = new Dictionary<string, int>()
@@ -174,11 +174,11 @@ namespace Tests.Devices
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.V, 1},
-                {IODevice.Tag.P_MAX_P, 1},
-                {IODevice.Tag.P_R, 1},
-                {IODevice.Tag.P_H_TRUNC, 1},
+                {IODevice.Parameter.P_MAX_P, 1},
+                {IODevice.Parameter.P_R, 1},
+                {IODevice.Parameter.P_H_TRUNC, 1},
                 {IODevice.Tag.CLEVEL, 1},
-                {IODevice.Tag.P_ERR, 1},
+                {IODevice.Parameter.P_ERR, 1},
             };
 
             var exportForLTVirt = new Dictionary<string, int>()

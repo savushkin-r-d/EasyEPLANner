@@ -89,8 +89,8 @@ namespace Device
                             {
                                 {Tag.M, 1},
                                 {Tag.V, 1},
-                                {Tag.P_MIN_V, 1},
-                                {Tag.P_MAX_V, 1},
+                                {Parameter.P_MIN_V, 1},
+                                {Parameter.P_MAX_V, 1},
                             };
 
                         case DeviceSubType.AO_VIRT:

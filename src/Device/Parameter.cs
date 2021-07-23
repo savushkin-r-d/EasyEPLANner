@@ -172,6 +172,7 @@
             /// </summary>
             public const string P_TRANSFER_RATIO = "P_TRANSFER_RATIO";
 
+            /// <summary>
             /// Предельное время отсутствия готовности к работе, секунд.
             /// </summary>
             public const string P_READY_TIME = "P_READY_TIME";

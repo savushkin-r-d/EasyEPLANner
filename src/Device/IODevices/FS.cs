@@ -91,7 +91,7 @@ namespace Device
                             {
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
-                                {Tag.P_DT, 1},
+                                {Parameter.P_DT, 1},
                             };
                     }
                     break;

@@ -149,7 +149,7 @@ namespace Device
                             {
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
-                                {Tag.P_DT, 1},
+                                {Parameter.P_DT, 1},
                             };
 
                         case DeviceSubType.LS_IOLINK_MIN:
@@ -159,8 +159,8 @@ namespace Device
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
                                 {Tag.V, 1},
-                                {Tag.P_DT, 1},
-                                {Tag.P_ERR, 1},
+                                {Parameter.P_DT, 1},
+                                {Parameter.P_ERR, 1},
                             };
                     }
                     break;
