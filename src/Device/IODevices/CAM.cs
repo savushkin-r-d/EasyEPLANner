@@ -24,8 +24,8 @@ namespace Device
             {
                 case "CAM_DO1_DI2":
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Сигнал активации"));
-                    DI.Add(new IOChannel("DI", -1, -1, -1, "Готовность"));
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Результат обработки"));
+                    DI.Add(new IOChannel("DI", -1, -1, -1, "Готовность"));
 
                     parameters.Add(Parameter.P_READY_TIME, null);
 
@@ -41,8 +41,8 @@ namespace Device
 
                 case "CAM_DO1_DI3":
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Сигнал активации"));
+                    DI.Add(new IOChannel("DI", -1, -1, -1, "Результат обработки"));
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Готовность"));
-                    DI.Add(new IOChannel("DI", -1, -1, -1, "Результат обработки 1"));
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Результат обработки 2"));
 
                     parameters.Add(Parameter.P_READY_TIME, null);
