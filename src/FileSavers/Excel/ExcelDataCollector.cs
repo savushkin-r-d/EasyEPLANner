@@ -82,14 +82,14 @@ namespace EasyEPlanner
                 commonStep = state.Steps.First();
                 var stateNode = new TreeNode();
 
-                const int OpenedDevices = 0;
-                const int ClosedDevices = 2;
-                const int UpperSeats = 3;
-                const int LowerSeats = 4;
-                const int RequiredFB = 5;
-                const int WashDevices = 6;
-                const int DIDOGroup = 7;
-                const int AIAOGroup = 8;
+                const int OpenedDevices = 1;
+                const int ClosedDevices = 3;
+                const int UpperSeats = 4;
+                const int LowerSeats = 5;
+                const int RequiredFB = 6;
+                const int WashDevices = 7;
+                const int DIDOGroup = 8;
+                const int AIAOGroup = 9;
 
                 const int DevicesDI = 0;
                 const int DevicesDO = 1;
