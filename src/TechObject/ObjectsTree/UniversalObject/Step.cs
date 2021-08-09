@@ -22,7 +22,7 @@ namespace TechObject
         public Step(string name, GetN getN, State owner,
             bool isMainStep = false)
         {
-            this.name = name;
+            this.name = name ?? string.Empty;
             this.getN = getN;
             IsMainStep = isMainStep;
             Owner = owner;
