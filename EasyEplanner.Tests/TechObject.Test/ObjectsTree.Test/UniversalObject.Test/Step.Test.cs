@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using TechObject;
+using Editor;
+using System.Collections.Generic;
 
 namespace EasyEplanner.Tests
 {
@@ -115,6 +117,197 @@ namespace EasyEplanner.Tests
                 sequenceIfMainStep,
                 sequenceIfNoMainStep
             };
+        }
+
+        [TestCaseSource(nameof(CheckActionsDrawStyleTestSource))]
+        public void Constructor_NewStep_CheckActionsDrawStyle(bool isMainStep,
+            DrawInfo.Style[] drawStyles)
+        {
+            var step = new Step(string.Empty, null, null, isMainStep);
+
+            var actions = step.GetActions;
+
+            for(int i = 0; i < actions.Count; i++)
+            {
+                Assert.AreEqual(actions[i].DrawStyle, drawStyles[i]);
+            }
+        }
+
+        private static object[] CheckActionsDrawStyleTestSource()
+        {
+            var greenBox = DrawInfo.Style.GREEN_BOX;
+            var redBox = DrawInfo.Style.RED_BOX;
+            var greenUpBox = DrawInfo.Style.GREEN_UPPER_BOX;
+            var greenLowBox = DrawInfo.Style.GREEN_LOWER_BOX;
+
+            var noMainStep = new object[]
+            {
+                false,
+                new DrawInfo.Style[]
+                {
+                    greenBox,
+                    greenBox,
+                    greenBox,
+                    redBox,
+                    greenUpBox,
+                    greenLowBox,
+                    greenBox,
+                    greenBox,
+                    greenBox,
+                    greenBox,
+                    greenBox,
+                }
+            };
+
+            var mainStep = new object[]
+            {
+                true,
+                new DrawInfo.Style[]
+                {
+                    greenBox,
+                    greenBox,
+                    greenBox,
+                    redBox,
+                    greenUpBox,
+                    greenLowBox,
+                    greenBox,
+                    greenBox,
+                    greenBox,
+                    greenBox,
+                }
+            };
+
+            return new object[]
+            {
+                noMainStep,
+                mainStep
+            };
+        }
+
+        [TestCaseSource(nameof(CheckActionsAllowedDevTypes))]
+        public void Constructor_NewStep_CheckActionsAllowedDevTypes(
+            bool isMainStep, List<Device.DeviceType[]> devTypesList)
+        {
+            var step = new Step(string.Empty, null, null, isMainStep);
+
+            var actions = step.GetActions;
+
+            for(int i = 0; i < actions.Count; i++)
+            {
+                var action = actions[i];
+                action.GetDisplayObjects(out Device.DeviceType[] actualDevTypes,
+                    out _, out _);
+                Device.DeviceType[] expectedDevTypes = devTypesList[i];
+
+                Assert.AreEqual(expectedDevTypes, actualDevTypes);
+            }
+        }
+
+        private static object[] CheckActionsAllowedDevTypes()
+        {
+            // null - allowed all devices in action.
+            // But action can contain other actions and it means, that main
+            // action can't be changed itself, inner can. Null for main if u
+            // have inner = it's ok.
+            Device.DeviceType[] allDevicesAllowed = null;
+
+            var openDevice = new Device.DeviceType[]
+            {
+                Device.DeviceType.V,
+                Device.DeviceType.DO,
+                Device.DeviceType.M
+            };
+
+            var openReverse = new Device.DeviceType[]
+            {
+                Device.DeviceType.M
+            };
+
+            var closeDevice = new Device.DeviceType[]
+            {
+                Device.DeviceType.V,
+                Device.DeviceType.DO,
+                Device.DeviceType.M
+            };
+
+            var valveSeats = new Device.DeviceType[]
+            {
+                Device.DeviceType.V
+            };
+            Device.DeviceType[] openUpperSeats = valveSeats;
+            Device.DeviceType[] openLowerSeats = valveSeats;
+
+            var requiredFB = new Device.DeviceType[]
+            {
+                Device.DeviceType.DI,
+                Device.DeviceType.GS
+            };
+
+            var groupDIDO = new Device.DeviceType[]
+            {
+                Device.DeviceType.DI,
+                Device.DeviceType.SB,
+                Device.DeviceType.DO,
+                Device.DeviceType.HL,
+                Device.DeviceType.GS
+            };
+
+            var groupAIAO = new Device.DeviceType[]
+            {
+                Device.DeviceType.AI,
+                Device.DeviceType.AO,
+                Device.DeviceType.M
+            };
+
+            var mainStep = new object[]
+            {
+                true,
+                new List<Device.DeviceType[]>()
+                {
+                    allDevicesAllowed,
+                    openDevice,
+                    openReverse,
+                    closeDevice,
+                    openUpperSeats,
+                    openLowerSeats,
+                    requiredFB,
+                    allDevicesAllowed,
+                    groupDIDO,
+                    groupAIAO
+                }
+            };
+
+            var noMainStep = new object[]
+            {
+                true,
+                new List<Device.DeviceType[]>()
+                {
+                    allDevicesAllowed,
+                    openDevice,
+                    openReverse,
+                    closeDevice,
+                    openUpperSeats,
+                    openLowerSeats,
+                    requiredFB,
+                    allDevicesAllowed,
+                    groupDIDO,
+                    groupAIAO,
+                    allDevicesAllowed
+                }
+            };
+
+            return new object[]
+            {
+                mainStep,
+                noMainStep
+            };
+        }
+
+        //[TestCaseSource(nameof(CheckActionsAllowedDevSubTypesSource))]
+        public void Constructor_NewStep_CheckActionsAllowedDevSubTypes(
+            bool isMainStep)
+        {
+
         }
     }
 }

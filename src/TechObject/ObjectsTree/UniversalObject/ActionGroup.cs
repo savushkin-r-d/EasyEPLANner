@@ -260,6 +260,13 @@ namespace TechObject
                 }
             }
         }
+
+        public override void GetDisplayObjects(out Device.DeviceType[] devTypes,
+            out Device.DeviceSubType[] devSubTypes, out bool displayParameters)
+        {
+            subActions.First().GetDisplayObjects(out devTypes, out devSubTypes,
+                out displayParameters);
+        }
         #endregion
 
         private Action AddNewAction(Step owner, Device.DeviceType[] devTypes,
