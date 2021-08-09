@@ -209,7 +209,7 @@ namespace EasyEplanner.Tests
             // But action can contain other actions and it means, that main
             // action can't be changed itself, inner can. Null for main if u
             // have inner = it's ok.
-            Device.DeviceType[] allDevicesAllowed = null;
+            Device.DeviceType[] allTypesAllowed = null;
 
             var openDevice = new Device.DeviceType[]
             {
@@ -264,14 +264,14 @@ namespace EasyEplanner.Tests
                 true,
                 new List<Device.DeviceType[]>()
                 {
-                    allDevicesAllowed,
+                    allTypesAllowed,
                     openDevice,
                     openReverse,
                     closeDevice,
                     openUpperSeats,
                     openLowerSeats,
                     requiredFB,
-                    allDevicesAllowed,
+                    allTypesAllowed,
                     groupDIDO,
                     groupAIAO
                 }
@@ -282,17 +282,17 @@ namespace EasyEplanner.Tests
                 true,
                 new List<Device.DeviceType[]>()
                 {
-                    allDevicesAllowed,
+                    allTypesAllowed,
                     openDevice,
                     openReverse,
                     closeDevice,
                     openUpperSeats,
                     openLowerSeats,
                     requiredFB,
-                    allDevicesAllowed,
+                    allTypesAllowed,
                     groupDIDO,
                     groupAIAO,
-                    allDevicesAllowed
+                    allTypesAllowed
                 }
             };
 
@@ -303,11 +303,93 @@ namespace EasyEplanner.Tests
             };
         }
 
-        //[TestCaseSource(nameof(CheckActionsAllowedDevSubTypesSource))]
+        [TestCaseSource(nameof(CheckActionsAllowedDevSubTypesSource))]
         public void Constructor_NewStep_CheckActionsAllowedDevSubTypes(
-            bool isMainStep)
+            bool isMainStep, List<Device.DeviceSubType[]> devSubTypesList)
         {
+            var step = new Step(string.Empty, null, null, isMainStep);
 
+            var actions = step.GetActions;
+
+            for (int i = 0; i < actions.Count; i++)
+            {
+                var action = actions[i];
+                action.GetDisplayObjects(out _,
+                    out Device.DeviceSubType[] actualDevSubTypes, out _);
+                Device.DeviceSubType[] expectedDevTypes = devSubTypesList[i];
+
+                Assert.AreEqual(expectedDevTypes, actualDevSubTypes);
+            }
+        }
+
+        private static object[] CheckActionsAllowedDevSubTypesSource()
+        {
+            // null - it means, that we can use any subtype from defined types.
+            Device.DeviceSubType[] allSubTypesAllowed = null;
+
+            var openReverse = new Device.DeviceSubType[]
+            {
+                Device.DeviceSubType.M_REV_FREQ,
+                Device.DeviceSubType.M_REV_FREQ_2,
+                Device.DeviceSubType.M_REV_FREQ_2_ERROR,
+                Device.DeviceSubType.M_ATV,
+                Device.DeviceSubType.M_ATV_LINEAR,
+                Device.DeviceSubType.M,
+                Device.DeviceSubType.M_VIRT,
+            };
+
+            var valveSeats = new Device.DeviceSubType[]
+            {
+                Device.DeviceSubType.V_MIXPROOF,
+                Device.DeviceSubType.V_AS_MIXPROOF,
+                Device.DeviceSubType.V_IOLINK_MIXPROOF,
+                Device.DeviceSubType.V_VIRT,
+            };
+            Device.DeviceSubType[] openUpperSeats = valveSeats;
+            Device.DeviceSubType[] openLowerSeats = valveSeats;
+
+            var mainStep = new object[]
+            {
+                true,
+                new List<Device.DeviceSubType[]>()
+                {
+                    allSubTypesAllowed,
+                    allSubTypesAllowed,
+                    openReverse,
+                    allSubTypesAllowed,
+                    openUpperSeats,
+                    openLowerSeats,
+                    allSubTypesAllowed,
+                    allSubTypesAllowed,
+                    allSubTypesAllowed,
+                    allSubTypesAllowed
+                }
+            };
+
+            var noMainStep = new object[]
+            {
+                true,
+                new List<Device.DeviceSubType[]>()
+                {
+                    allSubTypesAllowed,
+                    allSubTypesAllowed,
+                    openReverse,
+                    allSubTypesAllowed,
+                    openUpperSeats,
+                    openLowerSeats,
+                    allSubTypesAllowed,
+                    allSubTypesAllowed,
+                    allSubTypesAllowed,
+                    allSubTypesAllowed,
+                    allSubTypesAllowed
+                }
+            };
+
+            return new object[]
+            {
+                mainStep,
+                noMainStep
+            };
         }
     }
 }
