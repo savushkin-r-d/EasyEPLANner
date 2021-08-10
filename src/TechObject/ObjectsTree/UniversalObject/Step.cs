@@ -22,7 +22,7 @@ namespace TechObject
         public Step(string name, GetN getN, State owner,
             bool isMainStep = false)
         {
-            this.name = name;
+            this.name = name ?? string.Empty;
             this.getN = getN;
             IsMainStep = isMainStep;
             Owner = owner;
@@ -33,22 +33,33 @@ namespace TechObject
 
             actions = new List<Action>();
 
-            actions.Add(new Action("Проверяемые устройства", this,
-                "checked_devices", null, null));
+            AddDefaultActions(isMainStep);
+        }
 
-            actions.Add(new Action(openDevicesActionName, this,
+        /// <summary>
+        /// Добавить стандартные действия
+        /// </summary>
+        /// <param name="isMainStep">Главный шаг</param>
+        private void AddDefaultActions(bool isMainStep)
+        {
+            var checkedDevices = new Action("Проверяемые устройства",
+                this, "checked_devices", null, null);
+            actions.Add(checkedDevices);
+
+            var openDevices = new Action(openDevicesActionName, this,
                 Action.OpenDevices,
                 new Device.DeviceType[]
-                { 
-                    Device.DeviceType.V, 
-                    Device.DeviceType.DO, 
+                {
+                    Device.DeviceType.V,
+                    Device.DeviceType.DO,
                     Device.DeviceType.M
-                }));
+                });
+            actions.Add(openDevices);
 
-            actions.Add(new Action("Включать реверс", this, 
+            var openReverse = new Action("Включать реверс", this,
                 Action.OpenReverseDevices,
                 new Device.DeviceType[]
-                { 
+                {
                     Device.DeviceType.M
                 },
                 new Device.DeviceSubType[]
@@ -60,19 +71,21 @@ namespace TechObject
                     Device.DeviceSubType.M_ATV_LINEAR,
                     Device.DeviceSubType.M,
                     Device.DeviceSubType.M_VIRT,
-                }));
+                });
+            actions.Add(openReverse);
 
-            actions.Add(new Action(closeDevicesActionName, this,
+            var closeDevices = new Action(closeDevicesActionName, this,
                 Action.CloseDevices,
                 new Device.DeviceType[]
-                { 
-                    Device.DeviceType.V, 
-                    Device.DeviceType.DO, 
+                {
+                    Device.DeviceType.V,
+                    Device.DeviceType.DO,
                     Device.DeviceType.M
-                }));
-            actions[2].DrawStyle = DrawInfo.Style.RED_BOX;
+                });
+            closeDevices.DrawStyle = DrawInfo.Style.RED_BOX;
+            actions.Add(closeDevices);
 
-            actions.Add(new ActionGroup("Верхние седла", this,
+            var openUpperSeats = new ActionGroup("Верхние седла", this,
                 ActionGroup.OpenedUpperSeats,
                 new Device.DeviceType[]
                 {
@@ -84,10 +97,11 @@ namespace TechObject
                     Device.DeviceSubType.V_AS_MIXPROOF,
                     Device.DeviceSubType.V_IOLINK_MIXPROOF,
                     Device.DeviceSubType.V_VIRT,
-                }));
-            actions[3].DrawStyle = DrawInfo.Style.GREEN_UPPER_BOX;
+                });
+            openUpperSeats.DrawStyle = DrawInfo.Style.GREEN_UPPER_BOX;
+            actions.Add(openUpperSeats);
 
-            actions.Add(new ActionGroup("Нижние седла", this,
+            var openLowerSeats = new ActionGroup("Нижние седла", this,
                 ActionGroup.OpenedLowerSeats,
                 new Device.DeviceType[]
                 {
@@ -99,23 +113,26 @@ namespace TechObject
                     Device.DeviceSubType.V_AS_MIXPROOF,
                     Device.DeviceSubType.V_IOLINK_MIXPROOF,
                     Device.DeviceSubType.V_VIRT,
-                }));
-            actions[4].DrawStyle = DrawInfo.Style.GREEN_LOWER_BOX;
+                });
+            openLowerSeats.DrawStyle = DrawInfo.Style.GREEN_LOWER_BOX;
+            actions.Add(openLowerSeats);
 
-            actions.Add(new Action("Сигналы для включения", this,
+            var requiredFB = new Action("Сигналы для включения", this,
                 Action.RequiredFB,
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.DI,
                     Device.DeviceType.GS
-                }));
+                });
+            actions.Add(requiredFB);
 
-            actions.Add(new ActionGroupWash("Устройства", this,
-                ActionGroupWash.SingleGroupAction));
+            var groupWash = new ActionGroupWash("Устройства", this,
+                ActionGroupWash.SingleGroupAction);
+            actions.Add(groupWash);
 
             // Специальное действие - выдача дискретных сигналов 
             // при наличии входного дискретного сигнала.
-            actions.Add(new ActionGroup(groupDIDOActionName, this,
+            var groupDIDO = new ActionGroup(groupDIDOActionName, this,
                 ActionGroup.DIDO,
                 new Device.DeviceType[]
                 {
@@ -125,12 +142,12 @@ namespace TechObject
                     Device.DeviceType.HL,
                     Device.DeviceType.GS
                 },
-                null,
-                new OneInManyOutActionProcessingStrategy()));
+                null, new OneInManyOutActionProcessingStrategy());
+            actions.Add(groupDIDO);
 
             // Специальное действие - выдача аналоговых сигналов при
             // наличии входного  аналогового сигнала.
-            actions.Add(new ActionGroup(groupAIAOActionName, this,
+            var groupAIAO = new ActionGroup(groupAIAOActionName, this,
                 ActionGroup.AIAO,
                 new Device.DeviceType[]
                 {
@@ -139,7 +156,8 @@ namespace TechObject
                     Device.DeviceType.M
                 },
                 null,
-                new OneInManyOutActionProcessingStrategy()));
+                new OneInManyOutActionProcessingStrategy());
+            actions.Add(groupAIAO);
 
             items.AddRange(actions.ToArray());
 
@@ -154,7 +172,7 @@ namespace TechObject
                 timeParam = new ObjectProperty("Время (параметр)", -1, -1);
                 items.Add(timeParam);
 
-                nextStepN = new ObjectProperty("Номер следующего шага", -1, -1);  
+                nextStepN = new ObjectProperty("Номер следующего шага", -1, -1);
                 items.Add(nextStepN);
             }
         }
