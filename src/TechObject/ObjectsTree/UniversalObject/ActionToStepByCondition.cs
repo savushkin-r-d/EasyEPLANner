@@ -20,7 +20,9 @@ namespace TechObject
         {
             var allowedDevTypes = new Device.DeviceType[]
             {
-                Device.DeviceType.V
+                Device.DeviceType.V,
+                Device.DeviceType.GS,
+                Device.DeviceType.DI
             };
 
             vGroups = new List<Action>();
