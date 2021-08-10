@@ -13,7 +13,23 @@ namespace TechObject
                     out Device.DeviceSubType[] validSubTypes,
                     out bool displayParameter);
 
+        /// <summary>
+        /// Индексы устройств в дейсвии.
+        /// </summary>
         List<int> DeviceIndex { get; set; }
+
+        Action Clone();
+
+        /// <summary>
+        /// Добавление устройства к действию.
+        /// </summary>
+        /// <param name="groupNumber">Номер группы в действии.</param>
+        /// <param name="index">Индекс устройства</param>
+        /// <param name="washGroupIndex">Индекс группы в действии мойка 
+        /// (устройства)</param>
+        void AddDev(int index, int groupNumber, int washGroupIndex = 0);
+        
+        string LuaName { get; }
     }
 
     /// <summary>
@@ -208,13 +224,6 @@ namespace TechObject
             return res;
         }
 
-        /// <summary>
-        /// Добавление устройства к действию.
-        /// </summary>
-        /// <param name="groupNumber">Номер группы в действии.</param>
-        /// <param name="index">Индекс устройства</param>
-        /// <param name="washGroupIndex">Индекс группы в действии мойка 
-        /// (устройства)</param>
         public virtual void AddDev(int index, int groupNumber = 0,
             int washGroupIndex = 0)
         {
@@ -255,9 +264,6 @@ namespace TechObject
         }
         #endregion
 
-        /// <summary>
-        /// Получение/установка устройств.
-        /// </summary>
         public List<int> DeviceIndex
         {
             get

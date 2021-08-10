@@ -25,16 +25,16 @@ namespace TechObject
                 Device.DeviceType.DI
             };
 
-            vGroups = new List<Action>();
+            vGroups = new List<IAction>();
             vGroups.Add(new Action("Включение устройств", owner, "on_devices",
                 allowedDevTypes));
             vGroups.Add(new Action("Выключение устройств", owner, "off_devices",
                 allowedDevTypes));
 
             items = new List<ITreeViewItem>();
-            foreach (Action action in vGroups)
+            foreach (var action in vGroups)
             {
-                items.Add(action);
+                items.Add((ITreeViewItem)action);
             }
         }
 
@@ -42,7 +42,7 @@ namespace TechObject
         {
             var clone = new ActionToStepByCondition(name, owner, luaName);
 
-            clone.vGroups = new List<Action>();
+            clone.vGroups = new List<IAction>();
             foreach (var action in vGroups)
             {
                 clone.vGroups.Add(action.Clone());
@@ -52,7 +52,7 @@ namespace TechObject
             clone.items = new List<ITreeViewItem>();
             foreach (var action in clone.vGroups)
             {
-                clone.items.Add(action);
+                clone.items.Add((ITreeViewItem)action);
             }
 
             return clone;
@@ -217,7 +217,15 @@ namespace TechObject
         }
         #endregion
 
-        List<Action> vGroups;
+        public List<IAction> Actions
+        {
+            get
+            {
+                return vGroups;
+            }
+        }
+
+        List<IAction> vGroups;
         List<ITreeViewItem> items;
     }
 }
