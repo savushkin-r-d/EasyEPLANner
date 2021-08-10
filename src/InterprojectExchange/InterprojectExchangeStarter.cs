@@ -42,6 +42,7 @@ namespace InterprojectExchange
         public void Start()
         {
             interprojectExchange.Owner = this;
+            form = new InterprojectExchangeForm();
             bool isReadSignals = UpdateDevices();
             bool isLoadData = LoadCurrentInterprojectExchange(isReadSignals);
             ShowForm(isLoadData);
@@ -245,9 +246,8 @@ namespace InterprojectExchange
             }
             else
             {
-                MessageBox.Show($"Не найден файл main.io.lua проекта" +
-                    $" \"{projName}\"", "Ошибка", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                form.ShowErrorMessage($"Не найден файл main.io.lua проекта" +
+                    $" \"{projName}\"");
             }
         }
 
