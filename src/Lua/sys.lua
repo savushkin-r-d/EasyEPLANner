@@ -82,7 +82,7 @@ init = function()
                 if value.states ~= nil then
                     for fields, value in pairs( value.states ) do
                         local state_n = fields - 1
-                        proc_operation( value, mode, state_n )
+                        proc_operation_devices( value, mode, state_n )
                     end
                 end
             end
@@ -90,61 +90,6 @@ init = function()
     end
 
     return 0
-end
-
---Обработка сохраненного описания операции.
-proc_operation = function( value, mode, state_n )
-    proc( mode, state_n, value.checked_devices, -1, "checked_devices")
-    proc( mode, state_n, value.opened_devices, -1, "opened_devices" )
-    proc( mode, state_n, value.opened_reverse_devices, -1, 
-        "opened_reverse_devices" )
-    proc( mode, state_n, value.closed_devices, -1, "closed_devices" )
-
-    proc_groups( mode, state_n, -1, value.opened_upper_seat_v, 
-        "opened_upper_seat_v" )
-    proc_groups( mode, state_n, -1, value.opened_lower_seat_v, 
-        "opened_lower_seat_v" )
-
-    proc( mode, state_n, value.required_FB, -1, "required_FB" )
-
-    proc_groups(mode, state_n, -1, value.DI_DO, "DI_DO")
-    proc_groups(mode, state_n, -1, value.AI_AO, "AI_AO")
-
-    proc_wash_data(mode, state_n, -1, value)
-
-    if value.steps ~= nil then
-        for fields, value in ipairs( value.steps ) do
-            mode:AddStep( state_n, value.name or "Шаг ??", value.baseStep or "" )
-            local step_n = fields - 1
-
-            proc( mode, state_n, value.checked_devices, -1, "checked_devices")
-            proc( mode, state_n, value.opened_devices, step_n,
-                "opened_devices" )
-            proc( mode, state_n, value.opened_reverse_devices, step_n, 
-                "opened_reverse_devices" )
-            proc( mode, state_n, value.closed_devices, step_n, 
-                "closed_devices" )
-            proc_groups( mode, state_n, step_n, value.opened_upper_seat_v,
-                "opened_upper_seat_v" )
-            proc_groups( mode, state_n, step_n, value.opened_lower_seat_v,
-                "opened_lower_seat_v" )
-            proc( mode, state_n, value.required_FB, step_n, "required_FB" )
-
-            proc_groups(mode, state_n, step_n, value.DI_DO, "DI_DO")
-            proc_groups(mode, state_n, step_n, value.AI_AO, "AI_AO")
-
-            proc_wash_data(mode, state_n, step_n, value)
-
-            proc_to_step_by_condition(mode, state_n, step_n, value)
-
-            local time_param_n = value.time_param_n or 0
-            local next_step_n = value.next_step_n or 0
-
-            if time_param_n > 0 then
-                mode[ state_n ][ step_n ]:SetPar( time_param_n, next_step_n )
-            end
-        end
-    end
 end
 
 proc_params = function( par, par_name, obj )
@@ -175,6 +120,7 @@ proc_object_properties = function( par, obj )
     end
 end
 
+--Обработка сохраненного описания операции
 proc_oper_params = function( par, operation, idx, obj )
     if type( par ) == "table" then
         for fields, value in ipairs( par ) do
@@ -193,6 +139,42 @@ proc_oper_params = function( par, operation, idx, obj )
                 end
             end
         end
+    end
+end
+
+proc_operation_devices = function( value, mode, state_n )
+    proc_actions(mode, state_n, -1, value)
+    if value.steps ~= nil then
+        for fields, value in ipairs( value.steps ) do
+            mode:AddStep( state_n, value.name or "Шаг ??", value.baseStep or "" )
+            local step_n = fields - 1
+
+            proc_actions(mode, state_n, step_n, value)
+
+            local next_step_n = value.next_step_n or 0
+            local time_param_n = value.time_param_n or 0
+            if time_param_n > 0 then
+                mode[ state_n ][ step_n ]:SetPar( time_param_n, next_step_n )
+            end
+        end
+    end
+end
+
+proc_actions = function( mode, state_n, step_n, value )
+	proc( mode, state_n, value.checked_devices, step_n, "checked_devices")
+    proc( mode, state_n, value.opened_devices, step_n, "opened_devices" )
+    proc( mode, state_n, value.opened_reverse_devices, step_n, "opened_reverse_devices" )
+    proc( mode, state_n, value.closed_devices, step_n, "closed_devices" )
+    proc_groups( mode, state_n, step_n, value.opened_upper_seat_v, "opened_upper_seat_v" )
+    proc_groups( mode, state_n, step_n, value.opened_lower_seat_v, "opened_lower_seat_v" )
+    proc( mode, state_n, value.required_FB, step_n, "required_FB" )
+    proc_groups(mode, state_n, step_n, value.DI_DO, "DI_DO")
+    proc_groups(mode, state_n, step_n, value.AI_AO, "AI_AO")
+    proc_wash_data(mode, state_n, step_n, value)
+
+    local notRuntimeStep = step_n >= 0
+    if (notRuntimeStep) then
+        proc_to_step_by_condition(mode, state_n, step_n, value)
     end
 end
 

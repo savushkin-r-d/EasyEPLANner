@@ -312,7 +312,7 @@ namespace TechObject
                 return false;
             }
 
-            foreach (Action act in actions)
+            foreach (IAction act in actions)
             {
                 if (act.LuaName == actionLuaName)
                 {
