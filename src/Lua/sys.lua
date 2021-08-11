@@ -161,7 +161,7 @@ proc_operation_devices = function( value, mode, state_n )
 end
 
 proc_actions = function( mode, state_n, step_n, value )
-	proc( mode, state_n, value.checked_devices, step_n, "checked_devices")
+    proc( mode, state_n, value.checked_devices, step_n, "checked_devices")
     proc( mode, state_n, value.opened_devices, step_n, "opened_devices" )
     proc( mode, state_n, value.opened_reverse_devices, step_n, "opened_reverse_devices" )
     proc( mode, state_n, value.closed_devices, step_n, "closed_devices" )
