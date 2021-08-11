@@ -287,9 +287,10 @@ namespace TechObject
                 {
                     foreach (Param par in parGroup.Items)
                     {
-                        AddParam(parGroup.LuaName, par.GetName(),
-                            float.Parse(par.GetValue()), par.GetMeter(),
-                            par.GetNameLua());
+                        Param addedParam = AddParam(parGroup.LuaName,
+                            par.GetName(), float.Parse(par.GetValue()),
+                            par.GetMeter(), par.GetNameLua());
+                        addedParam.SetOperationN(par.GetOperationN());
                     }
                 }
 
