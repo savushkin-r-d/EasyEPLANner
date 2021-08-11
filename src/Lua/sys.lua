@@ -117,7 +117,7 @@ proc_operation = function( value, mode, state_n )
             mode:AddStep( state_n, value.name or "Шаг ??", value.baseStep or "" )
             local step_n = fields - 1
 
-            proc( mode, state_n, value.checked_devices, -1, "checked_devices")
+            proc( mode, state_n, value.checked_devices, step_n, "checked_devices")
             proc( mode, state_n, value.opened_devices, step_n,
                 "opened_devices" )
             proc( mode, state_n, value.opened_reverse_devices, step_n, 
