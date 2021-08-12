@@ -61,7 +61,7 @@ namespace TechObject
         override public void ModifyDevNames(int newTechObjectN, 
             int oldTechObjectN, string techObjectName)
         {
-            foreach (Action subAction in vGroups)
+            foreach (IAction subAction in vGroups)
             {
                 subAction.ModifyDevNames(newTechObjectN, oldTechObjectN, 
                     techObjectName);
@@ -72,7 +72,7 @@ namespace TechObject
             int newTechObjectNumber, string oldTechObjectName,
             int oldTechObjectNumber)
         {
-            foreach (Action subAction in vGroups)
+            foreach (IAction subAction in vGroups)
             {
                 subAction.ModifyDevNames(newTechObjectName,
                     newTechObjectNumber, oldTechObjectName,
@@ -94,7 +94,7 @@ namespace TechObject
             }
 
             string groupData = string.Empty;
-            foreach (Action group in vGroups)
+            foreach (IAction group in vGroups)
             {
                 groupData += group.SaveAsLuaTable(prefix + "\t");
             }
@@ -135,7 +135,7 @@ namespace TechObject
         override public void Synch(int[] array)
         {
             base.Synch(array);
-            foreach (Action subAction in vGroups)
+            foreach (IAction subAction in vGroups)
             {
                 subAction.Synch(array);
             }
@@ -148,9 +148,9 @@ namespace TechObject
             get
             {
                 string res = string.Empty;
-                foreach (Action action in vGroups)
+                foreach (IAction action in vGroups)
                 {
-                    res += $"{{ {action.DisplayText[1]} }} ";
+                    res += $"{{ {string.Join(" ", action.DevicesNames)} }} ";
                 }
 
                 return new string[] { name, res };
@@ -167,7 +167,7 @@ namespace TechObject
 
         override public void Clear()
         {
-            foreach (Action subAction in vGroups)
+            foreach (IAction subAction in vGroups)
             {
                 subAction.Clear();
             }
@@ -217,13 +217,12 @@ namespace TechObject
         }
         #endregion
 
-        public List<IAction> Actions
+        public override bool HasSubActions
         {
-            get
-            {
-                return vGroups;
-            }
+            get => true;
         }
+
+        public override List<IAction> SubActions => vGroups;
 
         List<IAction> vGroups;
         List<ITreeViewItem> items;

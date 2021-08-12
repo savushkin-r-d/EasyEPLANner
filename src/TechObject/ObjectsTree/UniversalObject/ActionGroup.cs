@@ -27,7 +27,7 @@ namespace TechObject
             IActionProcessorStrategy actionProcessorStrategy = null)
             : base(name, owner, luaName)
         {
-            subActions = new List<Action>();
+            subActions = new List<IAction>();
             AddNewAction(owner, devTypes, devSubTypes,
                 actionProcessorStrategy);
         }
@@ -35,8 +35,8 @@ namespace TechObject
         public override Action Clone()
         {
             var clone = (ActionGroup)base.Clone();
-            clone.subActions = new List<Action>();
-            foreach (Action action in subActions)
+            clone.subActions = new List<IAction>();
+            foreach (IAction action in subActions)
             {
                 clone.subActions.Add(action.Clone());
             }
@@ -47,7 +47,7 @@ namespace TechObject
         override public void ModifyDevNames(int newTechObjectN, 
             int oldTechObjectN, string techObjectName)
         {
-            foreach (Action subAction in subActions)
+            foreach (IAction subAction in subActions)
             {
                 subAction.ModifyDevNames(newTechObjectN, oldTechObjectN, 
                     techObjectName);
@@ -58,7 +58,7 @@ namespace TechObject
             int newTechObjectNumber, string oldTechObjectName,
             int oldTechObjectNumber)
         {
-            foreach (Action subAction in subActions)
+            foreach (IAction subAction in subActions)
             {
                 subAction.ModifyDevNames(newTechObjectName, 
                     newTechObjectNumber, oldTechObjectName, 
@@ -87,7 +87,7 @@ namespace TechObject
         override public void Synch(int[] array)
         {
             base.Synch(array);
-            foreach (Action subAction in subActions)
+            foreach (IAction subAction in subActions)
             {
                 subAction.Synch(array);
             }
@@ -108,7 +108,7 @@ namespace TechObject
 
             string res = string.Empty;
 
-            foreach (Action group in subActions)
+            foreach (IAction group in subActions)
             {
                 res += group.SaveAsLuaTable(prefix + "\t");
             }
@@ -133,7 +133,7 @@ namespace TechObject
                     .GetInstance();
                 string res = string.Empty;
 
-                foreach (Action group in subActions)
+                foreach (IAction group in subActions)
                 {
                     res += "{";
 
@@ -161,7 +161,7 @@ namespace TechObject
         {
             get
             {
-                return subActions.ToArray();
+                return subActions.Cast<ITreeViewItem>().ToArray();
             }
         }
 
@@ -175,7 +175,7 @@ namespace TechObject
 
         override public bool Delete(object child)
         {
-            var subAction = child as Action;
+            var subAction = child as IAction;
             if (subAction != null)
             {
                 int minCount = 1;
@@ -199,14 +199,14 @@ namespace TechObject
 
         override public ITreeViewItem Insert()
         {
-            Action newAction = InsertNewAction();
+            ITreeViewItem newAction = InsertNewAction();
             newAction.AddParent(this);
             return newAction;
         }
 
         override public void Clear()
         {
-            foreach (Action subAction in subActions)
+            foreach (IAction subAction in subActions)
             {
                 subAction.Clear();
             }
@@ -269,7 +269,14 @@ namespace TechObject
         }
         #endregion
 
-        private Action AddNewAction(Step owner, Device.DeviceType[] devTypes,
+        public override bool HasSubActions
+        {
+            get => true;
+        }
+
+        public override List<IAction> SubActions => subActions;
+
+        private IAction AddNewAction(Step owner, Device.DeviceType[] devTypes,
             Device.DeviceSubType[] devSubTypes,
             IActionProcessorStrategy strategy)
         {
@@ -281,21 +288,21 @@ namespace TechObject
             return newAction;
         }
 
-        private Action InsertNewAction()
+        private ITreeViewItem InsertNewAction()
         {
-            Action firstSubAction = subActions.First();
+            IAction firstSubAction = subActions.First();
             firstSubAction.GetDisplayObjects(out Device.DeviceType[] devTypes,
                 out Device.DeviceSubType[] devSubTypes, out _);
             IActionProcessorStrategy strategy = firstSubAction
                 .GetActionProcessingStrategy();
 
-            Action newAction = AddNewAction(owner, devTypes, devSubTypes,
+            IAction newAction = AddNewAction(owner, devTypes, devSubTypes,
                 strategy);
 
-            return newAction;
+            return (ITreeViewItem)newAction;
         }
 
-        private List<Action> subActions;
+        private List<IAction> subActions;
 
         public const string AIAO = "AI_AO";
         public const string DIDO = "DI_DO";

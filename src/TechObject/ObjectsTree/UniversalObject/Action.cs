@@ -30,6 +30,54 @@ namespace TechObject
         void AddDev(int index, int groupNumber, int washGroupIndex = 0);
         
         string LuaName { get; }
+
+        bool HasSubActions { get; } //IGroupableAction?
+
+        List<IAction> SubActions { get; } //IGroupableAction?
+
+        /// <summary>
+        /// Очищение списка устройств.
+        /// </summary>
+        void Clear();
+
+        bool Empty { get; }
+
+        string Name { get; }
+
+        /// <summary>
+        /// Синхронизация индексов устройств.
+        /// </summary>
+        /// <param name="array">Массив флагов, определяющих изменение 
+        /// индексов.</param>
+        void Synch(int[] array);
+
+        /// <summary>
+        /// Сохранение в виде таблицы Lua.
+        /// </summary>
+        /// <param name="prefix">Префикс (для выравнивания).</param>
+        /// <returns>Описание в виде таблицы Lua.</returns>
+        string SaveAsLuaTable(string prefix);
+
+        void ModifyDevNames(int newTechObjectN, int oldTechObjectN,
+            string techObjectName);
+
+        void ModifyDevNames(string newTechObjectName, int newTechObjectNumber,
+            string oldTechObjectName, int oldTechObjNumber);
+
+        List<DrawInfo> GetObjectToDrawOnEplanPage();
+
+        DrawInfo.Style DrawStyle { get; set; }
+
+        /// <summary>
+        /// Добавление параметра к действию.
+        /// </summary>
+        /// <param name="val">Значение параметра.</param>
+        /// <param name="groupIndex">Индекс группы в действии </param>
+        void AddParam(object val, int groupIndex = 0); // IParametrableAction?
+
+        List<string> DevicesNames { get; }
+
+        IActionProcessorStrategy GetActionProcessingStrategy();
     }
 
     /// <summary>
@@ -179,11 +227,6 @@ namespace TechObject
             deviceIndex = tmpIndex;
         }
 
-        /// <summary>
-        /// Сохранение в виде таблицы Lua.
-        /// </summary>
-        /// <param name="prefix">Префикс (для выравнивания).</param>
-        /// <returns>Описание в виде таблицы Lua.</returns>
         public virtual string SaveAsLuaTable(string prefix)
         {
             if (deviceIndex.Count == 0)
@@ -234,28 +277,14 @@ namespace TechObject
             }
         }
 
-        /// <summary>
-        /// Добавление параметра к действию.
-        /// </summary>
-        /// <param name="val">Значение параметра.</param>
-        /// <param name="washGroupIndex">Индекс группы мойки в действии
-        /// (устройства)</param>
-        public virtual void AddParam(object val, int washGroupIndex = 0) { }
+        public virtual void AddParam(object val, int groupIndex = 0) { }
             
-        /// <summary>
-        /// Очищение списка устройств.
-        /// </summary>
         virtual public void Clear()
         {
             deviceIndex.Clear();
         }
 
         #region Синхронизация устройств в объекте.
-        /// <summary>
-        /// Синхронизация индексов устройств.
-        /// </summary>
-        /// <param name="array">Массив флагов, определяющих изменение 
-        /// индексов.</param>
         virtual public void Synch(int[] array)
         {
             IDeviceSynchronizeService synchronizer = DeviceSynchronizer
@@ -281,6 +310,17 @@ namespace TechObject
             get
             {
                 return luaName;
+            }
+        }
+
+        public List<string> DevicesNames
+        {
+            get
+            {
+                var devices = deviceIndex
+                    .Select(x => deviceManager.GetDeviceByIndex(x).Name)
+                    .ToList();
+                return devices;
             }
         }
 
@@ -450,6 +490,13 @@ namespace TechObject
             }
         }
         #endregion
+
+        public virtual bool HasSubActions
+        {
+            get => false;
+        }
+
+        public virtual List<IAction> SubActions => null;
 
         public string Name
         {

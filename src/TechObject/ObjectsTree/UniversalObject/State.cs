@@ -316,7 +316,7 @@ namespace TechObject
                 return true;
             }
 
-            var action = child as Action;
+            var action = child as IAction;
             if (action != null)
             {
                 action.Clear();

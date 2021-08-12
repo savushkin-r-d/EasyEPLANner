@@ -18,7 +18,7 @@ namespace TechObject
         public ActionWash(string name, Step owner, string luaName)
             : base(name, owner, luaName)
         {
-            vGroups = new List<Action>();
+            vGroups = new List<IAction>();
             vGroups.Add(new Action(DI, owner, DI,
                 new Device.DeviceType[]
                 { 
@@ -114,7 +114,7 @@ namespace TechObject
         {
             var clone = new ActionWash(name, owner, luaName);
 
-            clone.vGroups = new List<Action>();
+            clone.vGroups = new List<IAction>();
             foreach (var action in vGroups)
             {
                 clone.vGroups.Add(action.Clone());
@@ -124,7 +124,7 @@ namespace TechObject
             clone.items = new List<ITreeViewItem>();
             foreach (var action in clone.vGroups)
             {
-                clone.items.Add(action);
+                clone.items.Add((ITreeViewItem)action);
             }
 
             clone.pumpFreq = pumpFreq.Clone();
@@ -135,7 +135,7 @@ namespace TechObject
         override public void ModifyDevNames(int newTechObjectN, 
             int oldTechObjectN, string techObjectName)
         {
-            foreach (Action subAction in vGroups)
+            foreach (IAction subAction in vGroups)
             {
                 subAction.ModifyDevNames(newTechObjectN, oldTechObjectN, 
                     techObjectName);
@@ -146,7 +146,7 @@ namespace TechObject
             int newTechObjectNumber, string oldTechObjectName,
             int oldTechObjectNumber)
         {
-            foreach (Action subAction in vGroups)
+            foreach (IAction subAction in vGroups)
             {
                 subAction.ModifyDevNames(newTechObjectName,
                     newTechObjectNumber, oldTechObjectName,
@@ -168,7 +168,7 @@ namespace TechObject
             }
 
             string groupData = string.Empty;
-            foreach (Action group in vGroups)
+            foreach (IAction group in vGroups)
             {
                 groupData += group.SaveAsLuaTable(prefix + "\t");
             }
@@ -219,7 +219,7 @@ namespace TechObject
         override public void Synch(int[] array)
         {
             base.Synch(array);
-            foreach (Action subAction in vGroups)
+            foreach (IAction subAction in vGroups)
             {
                 subAction.Synch(array);
             }
@@ -233,9 +233,9 @@ namespace TechObject
             {
                 string res = "";
 
-                foreach (Action action in vGroups)
+                foreach (IAction action in vGroups)
                 {
-                    res += $"{{ {action.DisplayText[1]} }} ";
+                    res += $"{{ {string.Join(" ", action.DevicesNames)} }} ";
                 }
 
                 res += "{" + pumpFreq.DisplayText[1] + "}";
@@ -254,7 +254,7 @@ namespace TechObject
 
         override public void Clear()
         {
-            foreach (Action subAction in vGroups)
+            foreach (IAction subAction in vGroups)
             {
                 subAction.Clear();
             }
@@ -304,7 +304,14 @@ namespace TechObject
         }
         #endregion
 
-        List<Action> vGroups;
+        public override bool HasSubActions
+        {
+            get => true;
+        }
+
+        public override List<IAction> SubActions => vGroups;
+
+        List<IAction> vGroups;
         private BaseParameter pumpFreq; ///< Частота насоса, параметр.
 
         List<ITreeViewItem> items;

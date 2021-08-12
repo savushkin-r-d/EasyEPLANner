@@ -49,7 +49,7 @@ namespace Tests.TechObject
             var action = new ActionToStepByCondition(string.Empty, null,
                 string.Empty);
 
-            List<IAction> actions = action.Actions;
+            List<IAction> actions = action.SubActions;
 
             for(int i = 0; i < actions.Count; i++)
             {
@@ -80,7 +80,7 @@ namespace Tests.TechObject
             var action = new ActionToStepByCondition(string.Empty, null,
                 string.Empty);
 
-            List<IAction> actions = action.Actions;
+            List<IAction> actions = action.SubActions;
 
             for (int i = 0; i < actions.Count; i++)
             {

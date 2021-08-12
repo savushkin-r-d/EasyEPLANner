@@ -20,7 +20,7 @@ namespace TechObject
         public ActionGroupWash(string name, Step owner, string luaName)
             : base(name, owner, luaName)
         {
-            subActions = new List<Action>();
+            subActions = new List<IAction>();
             var newAction = new ActionWash(GroupDefaultName, owner,
                 string.Empty);
             subActions.Add(newAction);
@@ -29,8 +29,8 @@ namespace TechObject
         public override Action Clone()
         {
             var clone = (ActionGroupWash)base.Clone();
-            clone.subActions = new List<Action>();
-            foreach (Action action in subActions)
+            clone.subActions = new List<IAction>();
+            foreach (IAction action in subActions)
             {
                 clone.subActions.Add(action.Clone());
             }
@@ -41,7 +41,7 @@ namespace TechObject
         override public void ModifyDevNames(int newTechObjectN, 
             int oldTechObjectN, string techObjectName)
         {
-            foreach (Action subAction in subActions)
+            foreach (IAction subAction in subActions)
             {
                 subAction.ModifyDevNames(newTechObjectN, oldTechObjectN, 
                     techObjectName);
@@ -52,7 +52,7 @@ namespace TechObject
             int newTechObjectNumber, string oldTechObjectName,
             int oldTechObjectNumber)
         {
-            foreach (Action subAction in subActions)
+            foreach (IAction subAction in subActions)
             {
                 subAction.ModifyDevNames(newTechObjectName, 
                     newTechObjectNumber, oldTechObjectName, 
@@ -75,9 +75,9 @@ namespace TechObject
             deviceIndex.Add(index);
         }
 
-        public override void AddParam(object val, int washGroupIndex)
+        public override void AddParam(object val, int groupIndex)
         {
-            subActions[washGroupIndex].AddParam(val);
+            subActions[groupIndex].AddParam(val);
         }
 
         #region Синхронизация устройств в объекте.
@@ -180,7 +180,7 @@ namespace TechObject
         {
             get
             {
-                return subActions.ToArray();
+                return subActions.Cast<ITreeViewItem>().ToArray();
             }
         }
 
@@ -286,7 +286,14 @@ namespace TechObject
         }
         #endregion
 
-        private List<Action> subActions;
+        public override bool HasSubActions
+        {
+            get => true;
+        }
+
+        public override List<IAction> SubActions => subActions;
+
+        private List<IAction> subActions;
 
         /// <summary>
         /// Название действия, для сохранения всех групп.

@@ -31,7 +31,7 @@ namespace TechObject
 
             items = new List<ITreeViewItem>();
 
-            actions = new List<Action>();
+            actions = new List<IAction>();
 
             AddDefaultActions(isMainStep);
         }
@@ -159,7 +159,7 @@ namespace TechObject
                 new OneInManyOutActionProcessingStrategy());
             actions.Add(groupAIAO);
 
-            items.AddRange(actions.ToArray());
+            items.AddRange(actions.Cast<ITreeViewItem>().ToArray());
 
             if (!isMainStep)
             {
@@ -187,14 +187,14 @@ namespace TechObject
                 clone.name = name.Substring(3);
             }
 
-            clone.actions = new List<Action>();
-            foreach (Action action in actions)
+            clone.actions = new List<IAction>();
+            foreach (IAction action in actions)
             {
                 clone.actions.Add(action.Clone());
             }
 
             clone.items = new List<ITreeViewItem>();
-            clone.items.AddRange(clone.actions.ToArray());
+            clone.items.AddRange(clone.actions.Cast<ITreeViewItem>().ToArray());
 
             if (!IsMainStep)
             {
@@ -214,7 +214,7 @@ namespace TechObject
         public void ModifyDevNames(int newTechObjectN, int oldTechObjectN,
             string techObjectName)
         {
-            foreach (Action action in actions)
+            foreach (IAction action in actions)
             {
                 action.ModifyDevNames(newTechObjectN,
                     oldTechObjectN, techObjectName);
@@ -225,7 +225,7 @@ namespace TechObject
             int newTechObjectNumber, string oldTechObjectName,
             int oldTechObjectNumber)
         {
-            foreach (Action action in actions)
+            foreach (IAction action in actions)
             {
                 action.ModifyDevNames(newTechObjectName, newTechObjectNumber,
                     oldTechObjectName, oldTechObjectNumber);
@@ -245,7 +245,7 @@ namespace TechObject
 
             if (isShortForm)
             {
-                foreach (Action action in actions)
+                foreach (IAction action in actions)
                 {
                     res += action.SaveAsLuaTable(prefix);
                 }
@@ -270,7 +270,7 @@ namespace TechObject
                 string baseStepName = baseStep.LuaName;
                 res += prefix + $"baseStep = \'{baseStepName}\',\n";
 
-                foreach (Action action in actions)
+                foreach (IAction action in actions)
                 {
                     res += action.SaveAsLuaTable(prefix);
                 }
@@ -331,16 +331,16 @@ namespace TechObject
         /// </summary>
         /// <param name="actionLuaName">Имя действия в Lua.</param>
         /// <param name="val">Значение параметра.</param>
-        /// <param name="washGroupIndex">Индекс группы в действии
+        /// <param name="groupIndex">Индекс группы в действии
         /// мойки (устройства)</param>
         public bool AddParam(string actionLuaName, object val,
-            int washGroupIndex = 0)
+            int groupIndex = 0)
         {
-            foreach (Action act in actions)
+            foreach (IAction act in actions)
             {
                 if (act.LuaName == actionLuaName)
                 {
-                    act.AddParam(val, washGroupIndex);
+                    act.AddParam(val, groupIndex);
                     return true;
                 }
             }
@@ -348,7 +348,7 @@ namespace TechObject
             return false;
         }
 
-        public List<Action> GetActions
+        public List<IAction> GetActions
         {
             get
             {
@@ -359,7 +359,7 @@ namespace TechObject
         #region Синхронизация устройств в объекте.
         public void Synch(int[] array)
         {
-            foreach (Action action in actions)
+            foreach (IAction action in actions)
             {
                 action.Synch(array);
             }
@@ -538,7 +538,7 @@ namespace TechObject
 
         override public bool Delete(object child)
         {
-            var action = child as Action;
+            var action = child as IAction;
             if (action != null)
             {
                 action.Clear();
@@ -561,7 +561,7 @@ namespace TechObject
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
         {
             List<DrawInfo> devToDraw = new List<DrawInfo>();
-            foreach (Action action in actions)
+            foreach (IAction action in actions)
             {
                 devToDraw.AddRange(action.GetObjectToDrawOnEplanPage());
             }
@@ -680,8 +680,8 @@ namespace TechObject
             foreach(var group in checkingActionsGroups)
             {
                 bool hasError = false;
-                var groupActions = group.Items;
-                foreach(Action groupAction in groupActions)
+                var groupActions = group.SubActions;
+                foreach(IAction groupAction in groupActions)
                 {
                     if(groupAction.Empty)
                     {
@@ -792,7 +792,7 @@ namespace TechObject
         private List<ITreeViewItem> items;
 
         private string name;           ///< Имя шага.
-        internal List<Action> actions; ///< Список действий шага.
+        internal List<IAction> actions; ///< Список действий шага.
 
         private string openDevicesActionName = "Включать";
         private string closeDevicesActionName = "Выключать";

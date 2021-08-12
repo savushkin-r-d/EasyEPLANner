@@ -96,19 +96,35 @@ namespace EasyEPlanner
                 const int Devices = 2;
 
                 var devicesAction = commonStep.GetActions[WashDevices];
+                
+                var openedDevices = string.Join(spaceStr, commonStep
+                    .GetActions[OpenedDevices].DevicesNames);
+                var closedDevices = string.Join(spaceStr, commonStep
+                    .GetActions[ClosedDevices].DevicesNames);
+                var upperSeats = string.Join(spaceStr, commonStep
+                    .GetActions[UpperSeats].DevicesNames);
+                var lowerSeats = string.Join(spaceStr, commonStep
+                    .GetActions[LowerSeats].DevicesNames);
+                var requiredFB = string.Join(spaceStr, commonStep
+                    .GetActions[RequiredFB].DevicesNames);
+                var dIDOGroup = string.Join(spaceStr, commonStep
+                    .GetActions[DIDOGroup].DevicesNames);
+                var aIAOGroup = string.Join(spaceStr, commonStep
+                    .GetActions[AIAOGroup].DevicesNames);
+
                 var rowWithState = new string[]
                 {
-                        state.DisplayText.First(),
-                        commonStep.GetActions[OpenedDevices].EditText.Last(),
-                        commonStep.GetActions[ClosedDevices].EditText.Last(),
-                        commonStep.GetActions[UpperSeats].EditText.Last(),
-                        commonStep.GetActions[LowerSeats].EditText.Last(),
-                        commonStep.GetActions[RequiredFB].EditText.Last(),
-                        GenerateGroupWashActionText(devicesAction, DevicesDI),
-                        GenerateGroupWashActionText(devicesAction, DevicesDO),
-                        GenerateGroupWashActionText(devicesAction, Devices),
-                        commonStep.GetActions[DIDOGroup].EditText.Last(),
-                        commonStep.GetActions[AIAOGroup].EditText.Last(),
+                    state.DisplayText.First(),
+                    openedDevices,
+                    closedDevices,
+                    upperSeats,
+                    lowerSeats,
+                    requiredFB,
+                    GenerateGroupWashActionText(devicesAction, DevicesDI),
+                    GenerateGroupWashActionText(devicesAction, DevicesDO),
+                    GenerateGroupWashActionText(devicesAction, Devices),
+                    dIDOGroup,
+                    aIAOGroup,
                 };
                 stateNode.Tag = rowWithState;
                 modeNode.Nodes.Add(stateNode);
@@ -122,17 +138,18 @@ namespace EasyEPlanner
         /// <param name="subGroupNum">Номер подгруппы действия внутри группы
         /// </param>
         /// <returns></returns>
-        private static string GenerateGroupWashActionText(
-            TechObject.Action devicesAction, int subGroupNum)
+        private static string GenerateGroupWashActionText(IAction devicesAction,
+            int subGroupNum)
         {
             string res = "";
 
-            for (int i = 0; i < devicesAction.Items.Length; i++)
+            for (int i = 0; i < devicesAction.SubActions.Count; i++)
             {
                 int groupNum = i + 1;
-                var group = devicesAction.Items[i];
+                var group = devicesAction.SubActions[i];
 
-                string groupText = group.Items[subGroupNum].EditText.Last();
+                string groupText = string.Join(" ",
+                    group.SubActions[subGroupNum].DevicesNames);
                 bool notEmptyGroup = groupText != string.Empty;
                 if (notEmptyGroup)
                 {
@@ -162,14 +179,27 @@ namespace EasyEPlanner
                 const int LowerSeats = 4;
 
                 stepName = i.ToString() + ". " + commonStep.EditText.First();
+                var openedDevices = string.Join(spaceStr, commonStep
+                    .GetActions[OpenedDevices].DevicesNames);
+                var closedDevices = string.Join(spaceStr, commonStep
+                    .GetActions[ClosedDevices].DevicesNames);
+                var upperSeats = string.Join(spaceStr, commonStep
+                    .GetActions[UpperSeats].DevicesNames);
+                var lowerSeats = string.Join(spaceStr, commonStep
+                    .GetActions[LowerSeats].DevicesNames);
                 var resStep = new string[]
                 {
                     stepName,
-                    commonStep.GetActions[OpenedDevices].EditText.Last(),
-                    commonStep.GetActions[ClosedDevices].EditText.Last(),
-                    commonStep.GetActions[UpperSeats].EditText.Last(),
-                    commonStep.GetActions[LowerSeats].EditText.Last(),
-                    "", "", "", "", "", ""
+                    openedDevices,
+                    closedDevices,
+                    upperSeats,
+                    lowerSeats,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty
                 };
                 stepNode.Tag = resStep;
                 modeNode.Nodes.Add(stepNode);
@@ -767,6 +797,8 @@ namespace EasyEPlanner
             return newResult;
 
         }
+
+        const string spaceStr = " ";
 
         /// <summary>
         /// Менеджер устройств
