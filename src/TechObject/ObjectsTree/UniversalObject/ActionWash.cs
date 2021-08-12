@@ -98,9 +98,9 @@ namespace TechObject
                 }));
 
             items = new List<ITreeViewItem>();
-            foreach (Action action in vGroups)
+            foreach (IAction action in vGroups)
             {
-                items.Add(action);
+                items.Add((ITreeViewItem)action);
             }
 
             var pumpFreqParam = new ActiveParameter("frequency",
