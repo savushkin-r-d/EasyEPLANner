@@ -8,7 +8,7 @@ namespace TechObject
     /// Действие - обработка сигналов во время мойки
     /// с возможностью группировки объектов
     /// </summary>
-    public class ActionGroupWash : Action
+    public class ActionGroupWash : GroupableAction
     {
         /// <summary>
         /// Создание нового действия.
@@ -20,81 +20,43 @@ namespace TechObject
         public ActionGroupWash(string name, Step owner, string luaName)
             : base(name, owner, luaName)
         {
-            subActions = new List<IAction>();
+            SubActions = new List<IAction>();
             var newAction = new ActionWash(GroupDefaultName, owner,
                 string.Empty);
-            subActions.Add(newAction);
+            SubActions.Add(newAction);
         }
 
         public override IAction Clone()
         {
             var clone = (ActionGroupWash)base.Clone();
-            clone.subActions = new List<IAction>();
-            foreach (IAction action in subActions)
+            clone.SubActions = new List<IAction>();
+            foreach (IAction action in SubActions)
             {
-                clone.subActions.Add(action.Clone());
+                clone.SubActions.Add(action.Clone());
             }
 
             return clone;
         }
 
-        override public void ModifyDevNames(int newTechObjectN, 
-            int oldTechObjectN, string techObjectName)
-        {
-            foreach (IAction subAction in subActions)
-            {
-                subAction.ModifyDevNames(newTechObjectN, oldTechObjectN, 
-                    techObjectName);
-            }
-        }
-
-        override public void ModifyDevNames(string newTechObjectName,
-            int newTechObjectNumber, string oldTechObjectName,
-            int oldTechObjectNumber)
-        {
-            foreach (IAction subAction in subActions)
-            {
-                subAction.ModifyDevNames(newTechObjectName, 
-                    newTechObjectNumber, oldTechObjectName, 
-                    oldTechObjectNumber);
-            }
-        }
-
         public override void AddDev(int index, int groupNumber,
             int washGroupIndex)
         {
-            while (subActions.Count <= washGroupIndex)
+            while (SubActions.Count <= washGroupIndex)
             {
                 var newAction = new ActionWash(GroupDefaultName, owner,
                     string.Empty);
                 newAction.DrawStyle = DrawStyle;
-                subActions.Add(newAction);
+                SubActions.Add(newAction);
             }
 
-            subActions[washGroupIndex].AddDev(index, groupNumber, 0);
+            SubActions[washGroupIndex].AddDev(index, groupNumber, 0);
             deviceIndex.Add(index);
         }
 
         public override void AddParam(object val, int groupIndex)
         {
-            subActions[groupIndex].AddParam(val);
+            SubActions[groupIndex].AddParam(val);
         }
-
-        #region Синхронизация устройств в объекте.
-        /// <summary>
-        /// Синхронизация индексов устройств.
-        /// </summary>
-        /// <param name="array">Массив флагов, определяющих изменение индексов.
-        /// </param>
-        override public void Synch(int[] array)
-        {
-            base.Synch(array);
-            foreach (ActionWash subAction in subActions)
-            {
-                subAction.Synch(array);
-            }
-        }
-        #endregion
 
         /// <summary>
         /// Сохранение в виде таблицы Lua.
@@ -104,7 +66,7 @@ namespace TechObject
         override public string SaveAsLuaTable(string prefix)
         {
             string res = string.Empty;
-            if (subActions.Count == 0)
+            if (SubActions.Count == 0)
             {
                 return res;
             }
@@ -140,7 +102,7 @@ namespace TechObject
         private string SaveSingleGroup(string prefix)
         {
             string res = string.Empty;
-            var firstGroup = subActions.First();
+            var firstGroup = SubActions.First();
             res += firstGroup?.SaveAsLuaTable(prefix);
             return res;
         }
@@ -153,7 +115,7 @@ namespace TechObject
         private string SaveMultiGroup(string prefix)
         {
             string res = string.Empty;
-            foreach (ActionWash group in subActions)
+            foreach (ActionWash group in SubActions)
             {
                 res += group.SaveAsLuaTable(prefix + "\t");
             }
@@ -165,14 +127,7 @@ namespace TechObject
         {
             get
             {
-                string res = string.Empty;
-
-                foreach (ActionWash group in subActions)
-                {
-                    res += $"{{ {group.DisplayText[1]} }} ";
-                }
-
-                return new string[] { name, res };
+                return new string[] { name, ToString() };
             }
         }
 
@@ -180,27 +135,19 @@ namespace TechObject
         {
             get
             {
-                return subActions.Cast<ITreeViewItem>().ToArray();
-            }
-        }
-
-        override public bool IsDeletable
-        {
-            get
-            {
-                return true;
+                return SubActions.Cast<ITreeViewItem>().ToArray();
             }
         }
 
         override public bool Delete(object child)
         {
-            var subAction = child as ActionWash;
+            var subAction = child as IAction;
             if (subAction != null)
             {
                 int minCount = 1;
-                if(subActions.Count > minCount)
+                if(SubActions.Count > minCount)
                 {
-                    subActions.Remove(subAction);
+                    SubActions.Remove(subAction);
                     return true;
                 }
             }
@@ -221,26 +168,10 @@ namespace TechObject
             var newAction = new ActionWash(GroupDefaultName, owner,
                 string.Empty);
             newAction.DrawStyle = DrawStyle;
-            subActions.Add(newAction);
+            SubActions.Add(newAction);
 
             newAction.AddParent(this);
             return newAction;
-        }
-
-        override public void Clear()
-        {
-            foreach (ActionWash subAction in subActions)
-            {
-                subAction.Clear();
-            }
-        }
-
-        override public bool IsUseDevList
-        {
-            get
-            {
-                return false;
-            }
         }
 
         override public DrawInfo.Style DrawStyle
@@ -252,9 +183,9 @@ namespace TechObject
             set
             {
                 base.DrawStyle = value;
-                if (subActions != null)
+                if (SubActions != null)
                 {
-                    foreach(var subAction in subActions)
+                    foreach(var subAction in SubActions)
                     {
                         subAction.DrawStyle = DrawStyle;
                     }
@@ -269,31 +200,7 @@ namespace TechObject
                 return true;
             }
         }
-
-        public override ImageIndexEnum ImageIndex
-        {
-            get
-            {
-                switch (luaName)
-                {
-                    case SingleGroupAction:
-                        return ImageIndexEnum.ActionWash;
-
-                    default:
-                        return ImageIndexEnum.NONE;
-                }
-            }
-        }
         #endregion
-
-        public override bool HasSubActions
-        {
-            get => true;
-        }
-
-        public override List<IAction> SubActions => subActions;
-
-        private List<IAction> subActions;
 
         /// <summary>
         /// Название действия, для сохранения всех групп.

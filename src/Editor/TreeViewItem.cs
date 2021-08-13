@@ -285,13 +285,8 @@ namespace Editor
             }
         }
 
-        public virtual ImageIndexEnum ImageIndex
-        {
-            get
-            {
-                return ImageIndexEnum.NONE;
-            }
-        }
+        public virtual ImageIndexEnum ImageIndex { get; set; } =
+            ImageIndexEnum.NONE;
 
         public virtual bool ContainsBaseObject
         {

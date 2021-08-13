@@ -6,7 +6,7 @@ namespace TechObject
     /// <summary>
     /// Специальное действие - переход к шагу по условию.
     /// </summary>
-    public class ActionToStepByCondition : Action
+    public class ActionToStepByCondition : GroupableAction
     {
         /// <summary>
         /// Создание нового действия.
@@ -25,14 +25,13 @@ namespace TechObject
                 Device.DeviceType.DI
             };
 
-            vGroups = new List<IAction>();
-            vGroups.Add(new Action("Включение устройств", owner, "on_devices",
+            SubActions.Add(new Action("Включение устройств", owner, "on_devices",
                 allowedDevTypes));
-            vGroups.Add(new Action("Выключение устройств", owner, "off_devices",
+            SubActions.Add(new Action("Выключение устройств", owner, "off_devices",
                 allowedDevTypes));
 
             items = new List<ITreeViewItem>();
-            foreach (var action in vGroups)
+            foreach (var action in SubActions)
             {
                 items.Add((ITreeViewItem)action);
             }
@@ -42,42 +41,20 @@ namespace TechObject
         {
             var clone = new ActionToStepByCondition(name, owner, luaName);
 
-            clone.vGroups = new List<IAction>();
-            foreach (var action in vGroups)
+            clone.SubActions = new List<IAction>();
+            foreach (var action in SubActions)
             {
-                clone.vGroups.Add(action.Clone());
+                clone.SubActions.Add(action.Clone());
             }
 
             clone.items.Clear();
             clone.items = new List<ITreeViewItem>();
-            foreach (var action in clone.vGroups)
+            foreach (var action in clone.SubActions)
             {
                 clone.items.Add((ITreeViewItem)action);
             }
 
             return clone;
-        }
-
-        override public void ModifyDevNames(int newTechObjectN, 
-            int oldTechObjectN, string techObjectName)
-        {
-            foreach (IAction subAction in vGroups)
-            {
-                subAction.ModifyDevNames(newTechObjectN, oldTechObjectN, 
-                    techObjectName);
-            }
-        }
-
-        override public void ModifyDevNames(string newTechObjectName,
-            int newTechObjectNumber, string oldTechObjectName,
-            int oldTechObjectNumber)
-        {
-            foreach (IAction subAction in vGroups)
-            {
-                subAction.ModifyDevNames(newTechObjectName,
-                    newTechObjectNumber, oldTechObjectName,
-                    oldTechObjectNumber);
-            }
         }
 
         /// <summary>
@@ -88,13 +65,13 @@ namespace TechObject
         public override string SaveAsLuaTable(string prefix)
         {
             string res = string.Empty;
-            if (vGroups.Count == 0)
+            if (SubActions.Count == 0)
             {
                 return res;
             }
 
             string groupData = string.Empty;
-            foreach (IAction group in vGroups)
+            foreach (IAction group in SubActions)
             {
                 groupData += group.SaveAsLuaTable(prefix + "\t");
             }
@@ -118,90 +95,20 @@ namespace TechObject
         public override void AddDev(int index, int groupNumber,
             int washGroupIndex = 0)
         {
-            if (groupNumber < vGroups.Count)
+            if (groupNumber < SubActions.Count)
             {
-                vGroups[groupNumber].AddDev(index, 0);
+                SubActions[groupNumber].AddDev(index, 0);
             }
 
             deviceIndex.Add(index);
         }
 
-        #region Синхронизация устройств в объекте.
-        /// <summary>
-        /// Синхронизация индексов устройств.
-        /// </summary>
-        /// <param name="array">Массив флагов, определяющих изменение 
-        /// индексов.</param>
-        override public void Synch(int[] array)
-        {
-            base.Synch(array);
-            foreach (IAction subAction in vGroups)
-            {
-                subAction.Synch(array);
-            }
-        }
-        #endregion
-
         #region Реализация ITreeViewItem
-        override public string[] DisplayText
-        {
-            get
-            {
-                string res = string.Empty;
-                foreach (IAction action in vGroups)
-                {
-                    res += $"{{ {string.Join(" ", action.DevicesNames)} }} ";
-                }
-
-                return new string[] { name, res };
-            }
-        }
-
         override public ITreeViewItem[] Items
         {
             get
             {
                 return items.ToArray();
-            }
-        }
-
-        override public void Clear()
-        {
-            foreach (IAction subAction in vGroups)
-            {
-                subAction.Clear();
-            }
-        }
-
-        override public bool IsEditable
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        override public bool IsUseDevList
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        public override ImageIndexEnum ImageIndex
-        {
-            get
-            {
-                return ImageIndexEnum.NONE;
-            }
-        }
-
-        public override bool IsDeletable
-        {
-            get
-            {
-                return true;
             }
         }
 
@@ -217,14 +124,6 @@ namespace TechObject
         }
         #endregion
 
-        public override bool HasSubActions
-        {
-            get => true;
-        }
-
-        public override List<IAction> SubActions => vGroups;
-
-        List<IAction> vGroups;
         List<ITreeViewItem> items;
     }
 }

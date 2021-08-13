@@ -310,6 +310,7 @@
     <Compile Include="TechObject\ObjectsTree\UniversalObject\ActionGroup.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\AttachedObjects.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Equipment.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\GroupableAction.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\LocalRestriction.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Mode.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\ModesManager.cs" />

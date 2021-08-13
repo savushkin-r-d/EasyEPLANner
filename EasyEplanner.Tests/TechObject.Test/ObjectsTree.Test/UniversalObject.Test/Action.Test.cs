@@ -18,7 +18,7 @@ namespace Tests.TechObject
         [TestCase("")]
         public void Name_NewAction_ReturnsActionName(string expectedName)
         {
-            var action = new Action(expectedName, null);
+            var action = new Action(expectedName, null, string.Empty);
 
             Assert.AreEqual(expectedName, action.Name);
         }
@@ -44,6 +44,7 @@ namespace Tests.TechObject
             ImageIndexEnum expectedImageIndex, string luaName)
         {
             var action = new Action(string.Empty, null, luaName);
+            action.ImageIndex = expectedImageIndex;
 
             Assert.AreEqual(expectedImageIndex, action.ImageIndex);
         }
@@ -56,7 +57,7 @@ namespace Tests.TechObject
         [TestCase(DrawInfo.Style.RED_BOX)]
         public void DrawStyle_NewAction_GetSetNewDrawStyle(DrawInfo.Style style)
         {
-            var action = new Action(string.Empty, null);
+            var action = new Action(string.Empty, null, string.Empty);
 
             action.DrawStyle = style;
 
@@ -66,7 +67,7 @@ namespace Tests.TechObject
         [Test]
         public void IsDrawOnEplanPage_NewAction_ReturnsTrue()
         {
-            var action = new Action(string.Empty, null);
+            var action = new Action(string.Empty, null, string.Empty);
 
             Assert.IsTrue(action.IsDrawOnEplanPage);
         }
@@ -74,7 +75,7 @@ namespace Tests.TechObject
         [Test]
         public void IsUseDevList_NewAction_ReturnsTrue()
         {
-            var action = new Action(string.Empty, null);
+            var action = new Action(string.Empty, null, string.Empty);
 
             Assert.IsTrue(action.IsUseDevList);
         }
@@ -82,7 +83,7 @@ namespace Tests.TechObject
         [Test]
         public void IsDeleteable_NewAction_ReturnsTrue()
         {
-            var action = new Action(string.Empty, null);
+            var action = new Action(string.Empty, null, string.Empty);
 
             Assert.IsTrue(action.IsDeletable);
         }
@@ -90,7 +91,7 @@ namespace Tests.TechObject
         [TestCase(new int[] { -1, 1 })]
         public void EditablePart_NewAction_ReturnsExpectedArr(int[] expectedArr)
         {
-            var action = new Action(string.Empty, null);
+            var action = new Action(string.Empty, null, string.Empty);
 
             Assert.AreEqual(expectedArr, action.EditablePart);
         }
@@ -98,7 +99,7 @@ namespace Tests.TechObject
         [Test]
         public void IsEditable_NewAction_ReturnsTrue()
         {
-            var action = new Action(string.Empty, null);
+            var action = new Action(string.Empty, null, string.Empty);
 
             Assert.IsTrue(action.IsEditable);
         }
@@ -108,7 +109,7 @@ namespace Tests.TechObject
         {
             const int expectedCountAfterAdd = 1;
             const int expectedCountAfterDel = 0;
-            var action = new Action(string.Empty, null);
+            var action = new Action(string.Empty, null, string.Empty);
 
             int addingValue = new System.Random().Next();
             action.DeviceIndex.Add(addingValue);
@@ -125,7 +126,7 @@ namespace Tests.TechObject
         {
             const int expectedDevsCount = 0;
             var newDevs = new List<int> { 8, 6, 4, 3, 2, 9 };
-            var action = new Action(string.Empty, null);
+            var action = new Action(string.Empty, null, string.Empty);
             action.DeviceIndex = newDevs;
 
             action.Clear();
@@ -134,31 +135,31 @@ namespace Tests.TechObject
         }
 
         [Test]
-        public void SetActionStrategy_NewActionMockStrategy_SetNewStrategy()
+        public void ActionProcessorStrategy_NewActionMockStrategy_SetNewStrategy()
         {
-            var action = new Action(string.Empty, null);
+            var action = new Action(string.Empty, null, string.Empty);
             var strategyMock = new Mock<IActionProcessorStrategy>();
             strategyMock.SetupProperty(x => x.Action);
 
-            action.SetActionProcessingStrategy(strategyMock.Object);
+            action.ActionProcessorStrategy = strategyMock.Object;
 
             Assert.Multiple(() =>
             {
                 Assert.AreEqual(strategyMock.Object.GetHashCode(),
-                    action.GetActionProcessingStrategy().GetHashCode());
+                    action.ActionProcessorStrategy.GetHashCode());
                 Assert.AreEqual(action, strategyMock.Object.Action);
             });
         }
 
         [Test]
-        public void SetActionStrategy_NewActionNullStrategy_SetDefaultStrategy()
+        public void ActionProcessorStrategy_NewActionNullStrategy_SetDefaultStrategy()
         {
-            var action = new Action(string.Empty, null);
+            var action = new Action(string.Empty, null, string.Empty);
 
-            action.SetActionProcessingStrategy(null);
+            action.ActionProcessorStrategy = null;
 
             IActionProcessorStrategy strategy = action
-                .GetActionProcessingStrategy();
+                .ActionProcessorStrategy;
             Assert.Multiple(() =>
             {
                 Assert.IsNotNull(strategy);
@@ -170,7 +171,7 @@ namespace Tests.TechObject
         public void Empty_NewActionWithOrNoDevs_ReturnsTrueOrFalse(
             List<int> devicesIds, bool expectedResult)
         {
-            var action = new Action(string.Empty, null);
+            var action = new Action(string.Empty, null, string.Empty);
 
             foreach (var devId in devicesIds)
             {
@@ -193,7 +194,7 @@ namespace Tests.TechObject
         public void IsFilled_NewACtionWithOrNoDevs_ReturnsTrueOrFalse(
             List<int> devicesIds, bool expectedResult)
         {
-            var action = new Action(string.Empty, null);
+            var action = new Action(string.Empty, null, string.Empty);
 
             foreach (var devId in devicesIds)
             {
@@ -571,14 +572,14 @@ namespace Tests.TechObject
         [TestCase(new int[0])]
         public void Clone_NewAction_ReturnsCopy(int[] devIds)
         {
-            var action = new Action(string.Empty, null);
+            var action = new Action(string.Empty, null, string.Empty);
             action.DeviceIndex.AddRange(devIds);
 
             var cloned = action.Clone();
 
-            int actionStrategyHashCode = action.GetActionProcessingStrategy()
+            int actionStrategyHashCode = action.ActionProcessorStrategy
                 .GetHashCode();
-            int clonedStrategyHashCode = cloned.GetActionProcessingStrategy()
+            int clonedStrategyHashCode = cloned.ActionProcessorStrategy
                 .GetHashCode();
 
             Assert.Multiple(() =>
@@ -599,7 +600,7 @@ namespace Tests.TechObject
         [Test]
         public void Constructor_NewAction_CheckDefaultDrawStyle()
         {
-            var action = new Action(string.Empty, null);
+            var action = new Action(string.Empty, null, string.Empty);
 
             Assert.AreEqual(DrawInfo.Style.GREEN_BOX, action.DrawStyle);
         }

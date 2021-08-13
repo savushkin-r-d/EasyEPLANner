@@ -54,6 +54,7 @@ namespace TechObject
                     Device.DeviceType.DO,
                     Device.DeviceType.M
                 });
+            openDevices.ImageIndex = ImageIndexEnum.ActionON;
             actions.Add(openDevices);
 
             var openReverse = new Action("Включать реверс", this,
@@ -83,6 +84,7 @@ namespace TechObject
                     Device.DeviceType.M
                 });
             closeDevices.DrawStyle = DrawInfo.Style.RED_BOX;
+            closeDevices.ImageIndex = ImageIndexEnum.ActionOFF;
             actions.Add(closeDevices);
 
             var openUpperSeats = new ActionGroup("Верхние седла", this,
@@ -99,6 +101,7 @@ namespace TechObject
                     Device.DeviceSubType.V_VIRT,
                 });
             openUpperSeats.DrawStyle = DrawInfo.Style.GREEN_UPPER_BOX;
+            openUpperSeats.ImageIndex = ImageIndexEnum.ActionWashUpperSeats;
             actions.Add(openUpperSeats);
 
             var openLowerSeats = new ActionGroup("Нижние седла", this,
@@ -115,6 +118,7 @@ namespace TechObject
                     Device.DeviceSubType.V_VIRT,
                 });
             openLowerSeats.DrawStyle = DrawInfo.Style.GREEN_LOWER_BOX;
+            openLowerSeats.ImageIndex = ImageIndexEnum.ActionWashLowerSeats;
             actions.Add(openLowerSeats);
 
             var requiredFB = new Action("Сигналы для включения", this,
@@ -124,10 +128,12 @@ namespace TechObject
                     Device.DeviceType.DI,
                     Device.DeviceType.GS
                 });
+            requiredFB.ImageIndex = ImageIndexEnum.ActionSignals;
             actions.Add(requiredFB);
 
             var groupWash = new ActionGroupWash("Устройства", this,
                 ActionGroupWash.SingleGroupAction);
+            groupWash.ImageIndex = ImageIndexEnum.ActionWash;
             actions.Add(groupWash);
 
             // Специальное действие - выдача дискретных сигналов 
@@ -143,6 +149,7 @@ namespace TechObject
                     Device.DeviceType.GS
                 },
                 null, new OneInManyOutActionProcessingStrategy());
+            groupDIDO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupDIDO);
 
             // Специальное действие - выдача аналоговых сигналов при
@@ -157,6 +164,7 @@ namespace TechObject
                 },
                 null,
                 new OneInManyOutActionProcessingStrategy());
+            groupAIAO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupAIAO);
 
             items.AddRange(actions.Cast<ITreeViewItem>().ToArray());

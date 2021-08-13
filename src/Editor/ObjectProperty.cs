@@ -7,13 +7,8 @@ namespace Editor
     /// </summary>
     public class ObjectProperty : ITreeViewItem, IHelperItem
     {
-        public virtual ImageIndexEnum ImageIndex
-        {
-            get
-            {
-                return ImageIndexEnum.NONE;
-            }
-        }
+        public ImageIndexEnum ImageIndex { get; set; } = 
+            ImageIndexEnum.NONE;
 
         /// <param name="name">Имя свойства.</param>
         /// <param name="value">Значение свойства.</param>
