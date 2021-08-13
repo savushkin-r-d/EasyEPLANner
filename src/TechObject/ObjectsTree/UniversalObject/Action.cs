@@ -18,7 +18,7 @@ namespace TechObject
         /// </summary>
         List<int> DeviceIndex { get; set; }
 
-        Action Clone();
+        IAction Clone();
 
         /// <summary>
         /// Добавление устройства к действию.
@@ -120,7 +120,7 @@ namespace TechObject
             SetActionProcessingStrategy(actionProcessorStrategy);
         }
 
-        public virtual Action Clone()
+        public virtual IAction Clone()
         {
             var clone = (Action)MemberwiseClone();
             clone.SetActionProcessingStrategy(actionProcessorStrategy);

@@ -32,7 +32,7 @@ namespace TechObject
                 actionProcessorStrategy);
         }
 
-        public override Action Clone()
+        public override IAction Clone()
         {
             var clone = (ActionGroup)base.Clone();
             clone.subActions = new List<IAction>();

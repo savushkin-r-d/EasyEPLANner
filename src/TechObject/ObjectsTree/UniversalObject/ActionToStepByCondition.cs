@@ -38,7 +38,7 @@ namespace TechObject
             }
         }
 
-        override public Action Clone()
+        override public IAction Clone()
         {
             var clone = new ActionToStepByCondition(name, owner, luaName);
 

@@ -110,7 +110,7 @@ namespace TechObject
             items.Add(pumpFreq);
         }
 
-        override public Action Clone()
+        override public IAction Clone()
         {
             var clone = new ActionWash(name, owner, luaName);
 
