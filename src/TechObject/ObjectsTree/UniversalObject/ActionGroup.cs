@@ -99,14 +99,6 @@ namespace TechObject
         }
 
         #region Реализация ITreeViewItem
-        override public ITreeViewItem[] Items
-        {
-            get
-            {
-                return SubActions.Cast<ITreeViewItem>().ToArray();
-            }
-        }
-
         override public bool Delete(object child)
         {
             var subAction = child as IAction;

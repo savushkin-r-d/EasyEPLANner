@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Editor;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TechObject
 {
@@ -100,6 +102,15 @@ namespace TechObject
             }
         }
 
+        override public ITreeViewItem[] Items
+        {
+            get
+            {
+                return SubActions.Cast<ITreeViewItem>().ToArray();
+            }
+        }
+        #endregion
+
         public override string ToString()
         {
             string res = string.Empty;
@@ -110,7 +121,6 @@ namespace TechObject
 
             return res;
         }
-        #endregion
 
         private List<IAction> subActions;
     }

@@ -176,6 +176,7 @@ namespace TechObject
             this.owner = owner;
 
             deviceIndex = new List<int>();
+            ActionProcessorStrategy = new DefaultActionProcessorStrategy();
         }
 
         public virtual IAction Clone()
@@ -542,20 +543,17 @@ namespace TechObject
 
         public IActionProcessorStrategy ActionProcessorStrategy
         {
-            get => actionProcessorStrategy;
+            get   
+            {
+                return actionProcessorStrategy;
+            }
             set
             {
-                if (value == null)
+                actionProcessorStrategy = value;
+                if (value != null)
                 {
-                    actionProcessorStrategy =
-                        new DefaultActionProcessorStrategy();
+                    actionProcessorStrategy.Action = this;
                 }
-                else
-                {
-                    actionProcessorStrategy = value;
-                }
-
-                actionProcessorStrategy.Action = this;
             }
         }
 
@@ -593,8 +591,7 @@ namespace TechObject
         protected private const string Devices = "devices";
         protected private const string ReverseDevices = "rev_devices";
 
-        IActionProcessorStrategy actionProcessorStrategy =
-            new DefaultActionProcessorStrategy();
+        IActionProcessorStrategy actionProcessorStrategy;
         Device.IDeviceManager deviceManager = Device.DeviceManager
             .GetInstance();
     }

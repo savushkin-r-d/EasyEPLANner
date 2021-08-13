@@ -29,12 +29,6 @@ namespace TechObject
                 allowedDevTypes));
             SubActions.Add(new Action("Выключение устройств", owner, "off_devices",
                 allowedDevTypes));
-
-            items = new List<ITreeViewItem>();
-            foreach (var action in SubActions)
-            {
-                items.Add((ITreeViewItem)action);
-            }
         }
 
         override public IAction Clone()
@@ -45,13 +39,6 @@ namespace TechObject
             foreach (var action in SubActions)
             {
                 clone.SubActions.Add(action.Clone());
-            }
-
-            clone.items.Clear();
-            clone.items = new List<ITreeViewItem>();
-            foreach (var action in clone.SubActions)
-            {
-                clone.items.Add((ITreeViewItem)action);
             }
 
             return clone;
@@ -104,26 +91,16 @@ namespace TechObject
         }
 
         #region Реализация ITreeViewItem
-        override public ITreeViewItem[] Items
-        {
-            get
-            {
-                return items.ToArray();
-            }
-        }
-
         public override bool Delete(object child)
         {
-            if (child is BaseParameter parameter)
+            if (child is IAction action)
             {
-                parameter.Delete(this);
+                action.Clear();
                 return true;
             }
 
             return false;
         }
         #endregion
-
-        List<ITreeViewItem> items;
     }
 }

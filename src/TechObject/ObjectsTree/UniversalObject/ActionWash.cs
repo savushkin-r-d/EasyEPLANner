@@ -96,17 +96,10 @@ namespace TechObject
                     Device.DeviceSubType.M_VIRT,
                 }));
 
-            items = new List<ITreeViewItem>();
-            foreach (IAction action in SubActions)
-            {
-                items.Add((ITreeViewItem)action);
-            }
-
             var pumpFreqParam = new ActiveParameter("frequency",
                 "Производительность");
             pumpFreqParam.OneValueOnly = true;
             pumpFreq = pumpFreqParam;
-            items.Add(pumpFreq);
         }
 
         override public IAction Clone()
@@ -119,15 +112,7 @@ namespace TechObject
                 clone.SubActions.Add(action.Clone());
             }
 
-            clone.items.Clear();
-            clone.items = new List<ITreeViewItem>();
-            foreach (var action in clone.SubActions)
-            {
-                clone.items.Add((ITreeViewItem)action);
-            }
-
             clone.pumpFreq = pumpFreq.Clone();
-            clone.items.Add(clone.pumpFreq);
             return clone;
         }
 
@@ -200,7 +185,20 @@ namespace TechObject
         {
             get
             {
-                return items.ToArray();
+                int parametersCount = 1;
+                int capacity = SubActions.Count + parametersCount;
+                var items = new ITreeViewItem[capacity];
+
+                int counter = 0;
+                foreach(var subAction in SubActions)
+                {
+                    items[counter] = (ITreeViewItem)subAction;
+                    counter++;
+                }
+
+                items[counter] = pumpFreq;
+
+                return items;
             }
         }
 
@@ -209,6 +207,12 @@ namespace TechObject
             if (child is BaseParameter parameter)
             {
                 parameter.Delete(this);
+                return true;
+            }
+
+            if (child is IAction action)
+            {
+                action.Clear();
                 return true;
             }
 
@@ -227,7 +231,7 @@ namespace TechObject
                     string.IsNullOrEmpty(subActionStr);
                 if (invalidString)
                 {
-                    res += "{{ }} ";
+                    res += $"{{ }} ";
                 }
                 else
                 {
@@ -242,7 +246,5 @@ namespace TechObject
         }
 
         private BaseParameter pumpFreq; ///< Частота насоса, параметр.
-
-        List<ITreeViewItem> items;
     }
 }
