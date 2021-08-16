@@ -109,6 +109,25 @@ namespace TechObject
                 return SubActions.Cast<ITreeViewItem>().ToArray();
             }
         }
+
+        override public DrawInfo.Style DrawStyle
+        {
+            get
+            {
+                return base.DrawStyle;
+            }
+            set
+            {
+                base.DrawStyle = value;
+                if (SubActions != null)
+                {
+                    foreach (var subAction in SubActions)
+                    {
+                        subAction.DrawStyle = DrawStyle;
+                    }
+                }
+            }
+        }
         #endregion
 
         public override string ToString()
@@ -123,5 +142,7 @@ namespace TechObject
         }
 
         private List<IAction> subActions;
+
+        protected private const string GroupDefaultName = "Группа";
     }
 }

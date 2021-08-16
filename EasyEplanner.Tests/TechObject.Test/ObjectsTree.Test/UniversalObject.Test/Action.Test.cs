@@ -35,10 +35,10 @@ namespace Tests.TechObject
             Assert.AreEqual(expectedLuaName, action.LuaName);
         }
 
-        [TestCase(ImageIndexEnum.ActionON, Action.OpenDevices)]
-        [TestCase(ImageIndexEnum.ActionOFF, Action.CloseDevices)]
-        [TestCase(ImageIndexEnum.ActionSignals, Action.RequiredFB)]
-        [TestCase(ImageIndexEnum.NONE, Action.OpenReverseDevices)]
+        [TestCase(ImageIndexEnum.ActionON, "opened_devices")]
+        [TestCase(ImageIndexEnum.ActionOFF, "closed_devices")]
+        [TestCase(ImageIndexEnum.ActionSignals, "required_FB")]
+        [TestCase(ImageIndexEnum.NONE, "opened_reverse_devices")]
         [TestCase(ImageIndexEnum.NONE, "")]
         public void ImageIndex_NewAction_ReturnsImageIndexEnum(
             ImageIndexEnum expectedImageIndex, string luaName)

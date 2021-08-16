@@ -549,11 +549,17 @@ namespace TechObject
             }
             set
             {
-                actionProcessorStrategy = value;
                 if (value != null)
                 {
-                    actionProcessorStrategy.Action = this;
+                    actionProcessorStrategy = value;
                 }
+                else
+                {
+                    actionProcessorStrategy =
+                        new DefaultActionProcessorStrategy();
+                }
+
+                actionProcessorStrategy.Action = this;
             }
         }
 
@@ -578,18 +584,6 @@ namespace TechObject
         protected Device.DeviceSubType[] devSubTypes;
 
         protected Step owner;
-
-        protected private const string GroupDefaultName = "Группа";
-
-        public const string OpenDevices = "opened_devices";
-        public const string CloseDevices = "closed_devices";
-        public const string OpenReverseDevices = "opened_reverse_devices";
-        public const string RequiredFB = "required_FB";
-
-        protected private const string DO = "DO";
-        protected private const string DI = "DI";
-        protected private const string Devices = "devices";
-        protected private const string ReverseDevices = "rev_devices";
 
         IActionProcessorStrategy actionProcessorStrategy;
         Device.IDeviceManager deviceManager = Device.DeviceManager

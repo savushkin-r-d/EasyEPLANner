@@ -18,19 +18,19 @@ namespace TechObject
         public ActionWash(string name, Step owner, string luaName)
             : base(name, owner, luaName)
         {
-            SubActions.Add(new Action(DI, owner, DI,
+            SubActions.Add(new Action("DI", owner,"DI",
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.DI,
                     Device.DeviceType.SB
                 }));
-            SubActions.Add(new Action(DO, owner, DO,
+            SubActions.Add(new Action("DO", owner, "DO",
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.DO
                 }));
 
-            SubActions.Add(new Action("Устройства", owner, Devices,
+            SubActions.Add(new Action("Устройства", owner, "devices",
                 new Device.DeviceType[] 
                 { 
                     Device.DeviceType.M,
@@ -79,7 +79,7 @@ namespace TechObject
                 }));
 
             SubActions.Add(new Action("Реверсивные устройства", owner,
-                ReverseDevices,
+                "rev_devices",
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.M
@@ -173,14 +173,6 @@ namespace TechObject
         }
 
         #region Реализация ITreeViewItem
-        override public string[] DisplayText
-        {
-            get
-            {
-                return new string[] { name, ToString() };
-            }
-        }
-
         override public ITreeViewItem[] Items
         {
             get

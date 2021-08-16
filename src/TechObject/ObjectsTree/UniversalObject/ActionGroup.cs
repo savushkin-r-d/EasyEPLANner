@@ -130,25 +130,6 @@ namespace TechObject
             return newAction;
         }
 
-        override public DrawInfo.Style DrawStyle
-        {
-            get
-            {
-                return base.DrawStyle;
-            }
-            set
-            {
-                base.DrawStyle = value;
-                if (SubActions != null)
-                {
-                    foreach(var subAction in SubActions)
-                    {
-                        subAction.DrawStyle = DrawStyle;
-                    }
-                }
-            }
-        }
-
         public override void GetDisplayObjects(out Device.DeviceType[] devTypes,
             out Device.DeviceSubType[] devSubTypes, out bool displayParameters)
         {
@@ -182,10 +163,5 @@ namespace TechObject
 
             return (ITreeViewItem)newAction;
         }
-
-        public const string AIAO = "AI_AO";
-        public const string DIDO = "DI_DO";
-        public const string OpenedLowerSeats = "opened_lower_seat_v";
-        public const string OpenedUpperSeats = "opened_upper_seat_v";
     }
 }

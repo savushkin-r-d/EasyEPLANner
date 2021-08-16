@@ -72,6 +72,14 @@ namespace EasyEplanner.Tests
         private static object[] CheckActionsSequenceByLuaNameTestSource()
         {
             var checkedDevices = "checked_devices";
+            var openedDevices = "opened_devices";
+            var openedReverseDevices = "opened_reverse_devices";
+            var closedDevices = "closed_devices";
+            var openedUpperSeats = "opened_upper_seat_v";
+            var openedLowerSeats = "opened_lower_seat_v";
+            var requiredFB = "required_FB";
+            var pairsDIDO = "DI_DO";
+            var pairsAIAO = "AI_AO";
             var toStepIfDevicesInSpecificState = 
                 "to_step_if_devices_in_specific_state";
 
@@ -81,15 +89,15 @@ namespace EasyEplanner.Tests
                 new string[]
                 {
                     checkedDevices,
-                    Action.OpenDevices,
-                    Action.OpenReverseDevices,
-                    Action.CloseDevices,
-                    ActionGroup.OpenedUpperSeats,
-                    ActionGroup.OpenedLowerSeats,
-                    Action.RequiredFB,
+                    openedDevices,
+                    openedReverseDevices,
+                    closedDevices,
+                    openedUpperSeats,
+                    openedLowerSeats,
+                    requiredFB,
                     ActionGroupWash.SingleGroupAction,
-                    ActionGroup.DIDO,
-                    ActionGroup.AIAO,
+                    pairsDIDO,
+                    pairsAIAO,
                     toStepIfDevicesInSpecificState
                 }
             };
@@ -100,15 +108,15 @@ namespace EasyEplanner.Tests
                 new string[]
                 {
                     checkedDevices,
-                    Action.OpenDevices,
-                    Action.OpenReverseDevices,
-                    Action.CloseDevices,
-                    ActionGroup.OpenedUpperSeats,
-                    ActionGroup.OpenedLowerSeats,
-                    Action.RequiredFB,
+                    openedDevices,
+                    openedReverseDevices,
+                    closedDevices,
+                    openedUpperSeats,
+                    openedLowerSeats,
+                    requiredFB,
                     ActionGroupWash.SingleGroupAction,
-                    ActionGroup.DIDO,
-                    ActionGroup.AIAO
+                    pairsDIDO,
+                    pairsAIAO
                 }
             };
 

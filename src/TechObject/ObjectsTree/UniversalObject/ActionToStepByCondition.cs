@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Editor;
 
 namespace TechObject
 {
@@ -25,10 +24,10 @@ namespace TechObject
                 Device.DeviceType.DI
             };
 
-            SubActions.Add(new Action("Включение устройств", owner, "on_devices",
-                allowedDevTypes));
-            SubActions.Add(new Action("Выключение устройств", owner, "off_devices",
-                allowedDevTypes));
+            SubActions.Add(new Action("Включение устройств", owner,
+                "on_devices", allowedDevTypes));
+            SubActions.Add(new Action("Выключение устройств", owner,
+                "off_devices", allowedDevTypes));
         }
 
         override public IAction Clone()

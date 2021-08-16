@@ -123,14 +123,6 @@ namespace TechObject
         }
 
         #region Реализация ITreeViewItem
-        override public string[] DisplayText
-        {
-            get
-            {
-                return new string[] { name, ToString() };
-            }
-        }
-
         override public bool Delete(object child)
         {
             var subAction = child as IAction;
@@ -164,25 +156,6 @@ namespace TechObject
 
             newAction.AddParent(this);
             return newAction;
-        }
-
-        override public DrawInfo.Style DrawStyle
-        {
-            get
-            {
-                return base.DrawStyle;
-            }
-            set
-            {
-                base.DrawStyle = value;
-                if (SubActions != null)
-                {
-                    foreach(var subAction in SubActions)
-                    {
-                        subAction.DrawStyle = DrawStyle;
-                    }
-                }
-            }
         }
 
         public override bool ShowWarningBeforeDelete

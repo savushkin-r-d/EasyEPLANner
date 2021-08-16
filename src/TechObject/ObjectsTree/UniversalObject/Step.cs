@@ -47,7 +47,7 @@ namespace TechObject
             actions.Add(checkedDevices);
 
             var openDevices = new Action(openDevicesActionName, this,
-                Action.OpenDevices,
+                "opened_devices",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.V,
@@ -58,7 +58,7 @@ namespace TechObject
             actions.Add(openDevices);
 
             var openReverse = new Action("Включать реверс", this,
-                Action.OpenReverseDevices,
+                "opened_reverse_devices",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.M
@@ -76,7 +76,7 @@ namespace TechObject
             actions.Add(openReverse);
 
             var closeDevices = new Action(closeDevicesActionName, this,
-                Action.CloseDevices,
+                "closed_devices",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.V,
@@ -88,7 +88,7 @@ namespace TechObject
             actions.Add(closeDevices);
 
             var openUpperSeats = new ActionGroup("Верхние седла", this,
-                ActionGroup.OpenedUpperSeats,
+                "opened_upper_seat_v",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.V
@@ -105,7 +105,7 @@ namespace TechObject
             actions.Add(openUpperSeats);
 
             var openLowerSeats = new ActionGroup("Нижние седла", this,
-                ActionGroup.OpenedLowerSeats,
+                "opened_lower_seat_v",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.V
@@ -122,7 +122,7 @@ namespace TechObject
             actions.Add(openLowerSeats);
 
             var requiredFB = new Action("Сигналы для включения", this,
-                Action.RequiredFB,
+                "required_FB",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.DI,
@@ -139,7 +139,7 @@ namespace TechObject
             // Специальное действие - выдача дискретных сигналов 
             // при наличии входного дискретного сигнала.
             var groupDIDO = new ActionGroup(groupDIDOActionName, this,
-                ActionGroup.DIDO,
+                "DI_DO",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.DI,
@@ -155,7 +155,7 @@ namespace TechObject
             // Специальное действие - выдача аналоговых сигналов при
             // наличии входного  аналогового сигнала.
             var groupAIAO = new ActionGroup(groupAIAOActionName, this,
-                ActionGroup.AIAO,
+                "AI_AO",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.AI,
