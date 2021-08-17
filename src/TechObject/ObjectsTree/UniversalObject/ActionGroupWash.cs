@@ -52,9 +52,10 @@ namespace TechObject
             SubActions[groupNumber].AddDev(index, 0, subActionLuaName);
         }
 
-        public override void AddParam(object val, int groupIndex)
+        public override void AddParam(object val, string paramName,
+            int groupNumber)
         {
-            SubActions[groupIndex].AddParam(val);
+            SubActions[groupNumber].AddParam(val, paramName, groupNumber);
         }
 
         /// <summary>

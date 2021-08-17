@@ -335,18 +335,18 @@ namespace TechObject
         /// </summary>
         /// <param name="actionLuaName">Имя действия в Lua.</param>
         /// <param name="val">Значение параметра.</param>
-        /// <param name="groupIndex">Индекс группы в действии
+        /// <param name="groupNumber">Индекс группы в действии
         /// мойки (устройства)</param>
-        public bool AddParam(string actionLuaName, object val,
-            int groupIndex = 0)
+        /// <param name="paramName">Имя параметра</param>
+        public bool AddParam(string actionLuaName, object val, string paramName,
+            int groupNumber)
         {
-            foreach (IAction act in actions)
+            IAction action = GetActionByLuaName(actionLuaName, actions);
+            bool haveAction = action != null;
+            if (haveAction)
             {
-                if (act.LuaName == actionLuaName)
-                {
-                    act.AddParam(val, groupIndex);
-                    return true;
-                }
+                action.AddParam(val, paramName, groupNumber);
+                return true;
             }
 
             return false;

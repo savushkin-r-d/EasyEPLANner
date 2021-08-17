@@ -143,42 +143,43 @@ function proc_oper_params(par, operation, idx, obj)
 end
 
 function proc_operation_devices(value, mode, state_n)
-    proc_actions(mode, state_n, -1, value)
+    local mainStep = mode[state_n][-1]
+    proc_actions(mainStep, value)
     if value.steps then
         for fields, value in ipairs(value.steps) do
             mode:AddStep(state_n, value.name or "Шаг ??", value.baseStep or "")
             local step_n = fields - 1
-
-            proc_actions(mode, state_n, step_n, value)
+            local step = mode[state_n][step_n]
+            proc_actions(step, value)
 
             local next_step_n = value.next_step_n or 0
             local time_param_n = value.time_param_n or 0
             if time_param_n > 0 then
-                mode[state_n][step_n]:SetPar(time_param_n, next_step_n)
+                step:SetPar(time_param_n, next_step_n)
             end
         end
     end
 end
 
-function proc_actions( mode, state_n, step_n, value )
-    proc(mode, state_n, step_n, value, "checked_devices")
-    proc(mode, state_n, step_n, value, "opened_devices")
-    proc(mode, state_n, step_n, value, "opened_reverse_devices")
-    proc(mode, state_n, step_n, value, "closed_devices")
-    proc_groups(mode, state_n, step_n, value, "opened_upper_seat_v")
-    proc_groups(mode, state_n, step_n, value, "opened_lower_seat_v")
-    proc(mode, state_n, step_n, value, "required_FB")
-    proc_groups(mode, state_n, step_n, value, "DI_DO")
-    proc_groups(mode, state_n, step_n, value, "AI_AO")
-    proc_wash_data(mode, state_n, step_n, value)
+function proc_actions(step, value, is_runtime_step)
+    proc(step, value, "checked_devices")
+    proc(step, value, "opened_devices")
+    proc(step, value, "opened_reverse_devices")
+    proc(step, value, "closed_devices")
+    proc_groups(step, value, "opened_upper_seat_v")
+    proc_groups(step, value, "opened_lower_seat_v")
+    proc(step, value, "required_FB")
+    proc_groups(step, value, "DI_DO")
+    proc_groups(step, value, "AI_AO")
+    proc_wash_data(step, value)
 
-    local notRuntimeStep = step_n >= 0
+    local notRuntimeStep = step:GetStepNumber() >= 0
     if (notRuntimeStep) then
-        proc_to_step_by_condition(mode, state_n, step_n, value)
+        proc_to_step_by_condition(step, value)
     end
 end
 
-function proc(mode, state_n, step_n, actions, action_name, group_number, sub_action_name)
+function proc(step, actions, action_name, group_number, sub_action_name)
     if (group_number == nil) then
         group_number = 0
     end
@@ -192,27 +193,26 @@ function proc(mode, state_n, step_n, actions, action_name, group_number, sub_act
     end
 
     for current_action_name, devices in pairs (actions) do
-        if (current_action_name == action_name and devices ~= nil) then
+        if (current_action_name == action_name and devices) then
             for _, dev_name in pairs (devices) do
-                add_dev(mode, state_n, step_n, action_name, dev_name,
-                    group_number, sub_action_name)
+                add_dev(step, action_name, dev_name, group_number,
+                    sub_action_name)
             end  
         end
     end
 end
 
-function proc_groups(mode, state_n, step_n, actions, action_name)
+function proc_groups(step, actions, action_name)
     if (actions == nil) then
         return
     end
 
     for current_action_name, groups in pairs (actions) do
-        if (current_action_name == action_name and groups ~= nil) then
+        if (current_action_name == action_name and groups) then
             local group_n = 0
             for _, group in pairs(groups) do
                 for _, dev_name in pairs(group) do
-                    add_dev(mode, state_n, step_n, action_name, dev_name,
-                        group_n, "")
+                    add_dev(step, action_name, dev_name, group_n, "")
                 end
                 group_n = group_n + 1
             end 
@@ -220,7 +220,7 @@ function proc_groups(mode, state_n, step_n, actions, action_name)
     end  
 end
 
-function proc_wash_data(mode, state_n, step_n, value)
+function proc_wash_data(step, value)
     local devices_data = value.devices_data -- Новая функциональность.
     local wash_data = value.wash_data -- Старая функциональность.
 
@@ -237,49 +237,47 @@ function proc_wash_data(mode, state_n, step_n, value)
             wash_data.pump_freq) then
 
             local group_number = 0
-            proc_wash_group_data(mode, state_n, step_n, wash_data, group_number)
+            proc_wash_group_data(step, wash_data, group_number)
         else -- Process new version
             local group_number = 0
             for _, wash_group in pairs(wash_data) do
-                proc_wash_group_data(mode, state_n, step_n, wash_group, group_number)
+                proc_wash_group_data(step, wash_group, group_number)
                 group_number = group_number + 1
             end
         end
     end
 end
 
-function proc_wash_group_data(mode, state_n, step_n, wash_data, group_number)
+function proc_wash_group_data(step, wash_data, group_number)
     local action_name = "devices_data"
-    for sub_action_name, devices in pairs(wash_data) do
+    for sub_action_name, devices in pairs(wash_data) do                                                                
         if (type(devices) == "table") then
             for _, dev_name in pairs(devices) do
-                add_dev(mode, state_n, step_n, action_name, dev_name, group_number,
+                add_dev(step, action_name, dev_name, group_number,
                     sub_action_name)
             end
+        else
+            local parameter_value = devices
+            local parameter_name = sub_action_name
+            step:AddParam(action_name, parameter_value, parameter_name,
+                group_number)
         end
-    end
-
-    --Frequency parameter.
-    if wash_data.pump_freq then
-        mode[state_n][step_n]:AddParam(action_name, wash_data.pump_freq,
-            group_number)
     end
 end
 
-function proc_to_step_by_condition(mode, state_n, step_n, value)
+function proc_to_step_by_condition(step, value)
     local actions = value.to_step_if_devices_in_specific_state
     local action_name = "to_step_if_devices_in_specific_state"
 
     if actions then
         for sub_action_name, devices in pairs(action_name) do
             for _, dev_name in pairs(devices) do
-                add_dev(mode, state_n, step_n, action_name, dev_name, 0, sub_action_name)
+                add_dev(step, action_name, dev_name, 0, sub_action_name)
             end
         end
     end
 end
 
-function add_dev(mode, state_n, step_n, action_name, dev_name, group_number, sub_action_name)
-	mode[state_n][step_n]:AddDev(action_name, dev_name, group_number,
-        sub_action_name)
+function add_dev(step, action_name, dev_name, group_number, sub_action_name)
+	step:AddDev(action_name, dev_name, group_number, sub_action_name)
 end

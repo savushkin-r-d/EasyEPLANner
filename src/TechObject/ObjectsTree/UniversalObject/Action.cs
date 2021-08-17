@@ -71,8 +71,9 @@ namespace TechObject
         /// Добавление параметра к действию.
         /// </summary>
         /// <param name="val">Значение параметра.</param>
-        /// <param name="groupIndex">Индекс группы в действии </param>
-        void AddParam(object val, int groupIndex = 0); // IParametrableAction?
+        /// <param name="grouNumber">Индекс группы в действии </param>
+        /// <param name="paramName">Имя параметра</param>
+        void AddParam(object val, string paramName, int grouNumber);
 
         List<string> DevicesNames { get; }
 
@@ -335,7 +336,8 @@ namespace TechObject
             }
         }
 
-        public virtual void AddParam(object val, int groupIndex = 0) { }
+        public virtual void AddParam(object val, string paramName,
+            int groupNumber) { }
             
         virtual public void Clear()
         {

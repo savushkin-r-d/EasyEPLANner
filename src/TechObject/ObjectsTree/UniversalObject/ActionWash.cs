@@ -97,10 +97,11 @@ namespace TechObject
                     Device.DeviceSubType.M_VIRT,
                 }));
 
-            var pumpFreqParam = new ActiveParameter("frequency",
+            var pumpFreqParam = new ActiveParameter("pump_freq",
                 "Производительность");
             pumpFreqParam.OneValueOnly = true;
-            pumpFreq = pumpFreqParam;
+            parameters = new List<BaseParameter>();
+            parameters.Add(pumpFreqParam);
         }
 
         override public IAction Clone()
@@ -113,7 +114,12 @@ namespace TechObject
                 clone.SubActions.Add(action.Clone());
             }
 
-            clone.pumpFreq = pumpFreq.Clone();
+            clone.parameters = new List<BaseParameter>();
+            foreach(var parameter in parameters)
+            {
+                clone.parameters.Add(parameter.Clone());
+            }
+
             return clone;
         }
 
@@ -136,21 +142,35 @@ namespace TechObject
                 groupData += group.SaveAsLuaTable(prefix + "\t");
             }
 
-            if (groupData != "")
+            string parametersData = string.Empty;
+            if (groupData != string.Empty)
             {
-                string pumpFreqVal = pumpFreq.EditText[1].Trim();
-                bool isParamNum = int.TryParse(pumpFreqVal, out int paramNum);
-                string paramValue = 
-                    isParamNum ? $"{paramNum}" : $"'{pumpFreqVal}'";
-                string saveFreqVal = $"{prefix}\tpump_freq = {paramValue},\n";
+                foreach(var parameter in parameters)
+                {
+                    if (parameter.IsEmpty)
+                    {
+                        continue;
+                    }
 
+                    bool isParamNum = int.TryParse(parameter.Value,
+                        out int paramNum);
+                    string paramValue =
+                        isParamNum ? $"{paramNum}" : $"'{parameter.Value}'";
+                    string saveParameterValue =
+                        $"{prefix}\t{parameter.LuaName} = {paramValue},\n";
+                    parametersData += saveParameterValue;
+                }
+                
                 res += prefix;
                 if (luaName != string.Empty)
                 {
                     res += luaName + " =";
                 }
-                res += " --" + name + "\n" + prefix + "\t{\n" + groupData + 
-                    (pumpFreqVal == string.Empty ? string.Empty : saveFreqVal) +
+
+                res += " --" + name + "\n" +
+                    prefix + "\t{\n" +
+                    groupData +
+                    parametersData +
                     prefix + "\t},\n";
             }
 
@@ -168,9 +188,16 @@ namespace TechObject
             }
         }
 
-        public override void AddParam(object val, int washGroupIndex = 0)
-        {           
-            pumpFreq.SetNewValue(val.ToString());
+        public override void AddParam(object val, string paramName,
+            int groupNumber)
+        {
+            var parameter = parameters.Where(x => x.LuaName == paramName)
+                .FirstOrDefault();
+            bool haveParameter = parameter != null;
+            if (haveParameter)
+            {
+                parameter.SetNewValue(val.ToString());
+            }
         }
 
         #region Реализация ITreeViewItem
@@ -178,8 +205,7 @@ namespace TechObject
         {
             get
             {
-                int parametersCount = 1;
-                int capacity = SubActions.Count + parametersCount;
+                int capacity = SubActions.Count + parameters.Count;
                 var items = new ITreeViewItem[capacity];
 
                 int counter = 0;
@@ -189,7 +215,11 @@ namespace TechObject
                     counter++;
                 }
 
-                items[counter] = pumpFreq;
+                foreach(var parameter in parameters)
+                {
+                    items[counter] = parameter;
+                    counter++;
+                }
 
                 return items;
             }
@@ -233,11 +263,14 @@ namespace TechObject
 
             }
 
-            res += $"{{ {pumpFreq.DisplayText[1]} }}";
+            foreach(var parameter in parameters)
+            {
+                res += $"{{ {parameter.DisplayText[1]} }}";
+            }
 
             return res;
         }
 
-        private BaseParameter pumpFreq; ///< Частота насоса, параметр.
+        private List<BaseParameter> parameters;
     }
 }
