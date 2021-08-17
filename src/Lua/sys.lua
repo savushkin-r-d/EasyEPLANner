@@ -270,7 +270,7 @@ function proc_to_step_by_condition(step, value)
     local action_name = "to_step_if_devices_in_specific_state"
 
     if actions then
-        for sub_action_name, devices in pairs(action_name) do
+        for sub_action_name, devices in pairs(actions) do
             for _, dev_name in pairs(devices) do
                 add_dev(step, action_name, dev_name, 0, sub_action_name)
             end

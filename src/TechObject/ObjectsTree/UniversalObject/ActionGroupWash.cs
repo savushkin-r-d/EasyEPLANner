@@ -43,10 +43,7 @@ namespace TechObject
         {
             while (SubActions.Count <= groupNumber)
             {
-                var newAction = new ActionWash(GroupDefaultName, owner,
-                    string.Empty);
-                newAction.DrawStyle = DrawStyle;
-                SubActions.Add(newAction);
+                AddNewGroup();
             }
 
             SubActions[groupNumber].AddDev(index, 0, subActionLuaName);
@@ -55,7 +52,20 @@ namespace TechObject
         public override void AddParam(object val, string paramName,
             int groupNumber)
         {
+            while (SubActions.Count <= groupNumber)
+            {
+                AddNewGroup();
+            }
+
             SubActions[groupNumber].AddParam(val, paramName, groupNumber);
+        }
+
+        private void AddNewGroup()
+        {
+            var newAction = new ActionWash(GroupDefaultName, owner,
+                string.Empty);
+            newAction.DrawStyle = DrawStyle;
+            SubActions.Add(newAction);
         }
 
         /// <summary>
