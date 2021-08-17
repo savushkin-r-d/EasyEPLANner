@@ -39,9 +39,9 @@ namespace TechObject
         }
 
         public override void AddDev(int index, int groupNumber,
-            int washGroupIndex)
+            string subActionLuaName)
         {
-            while (SubActions.Count <= washGroupIndex)
+            while (SubActions.Count <= groupNumber)
             {
                 var newAction = new ActionWash(GroupDefaultName, owner,
                     string.Empty);
@@ -49,8 +49,7 @@ namespace TechObject
                 SubActions.Add(newAction);
             }
 
-            SubActions[washGroupIndex].AddDev(index, groupNumber, 0);
-            deviceIndex.Add(index);
+            SubActions[groupNumber].AddDev(index, 0, subActionLuaName);
         }
 
         public override void AddParam(object val, int groupIndex)
@@ -115,7 +114,7 @@ namespace TechObject
         private string SaveMultiGroup(string prefix)
         {
             string res = string.Empty;
-            foreach (ActionWash group in SubActions)
+            foreach (IAction group in SubActions)
             {
                 res += group.SaveAsLuaTable(prefix + "\t");
             }
@@ -170,7 +169,7 @@ namespace TechObject
         /// <summary>
         /// Название действия, для сохранения всех групп.
         /// </summary>
-        private const string MultiGroupAction = "devices_data";
+        public const string MultiGroupAction = "devices_data";
 
         /// <summary>
         /// Название действия, для сохранения первой группы.

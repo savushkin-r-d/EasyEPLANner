@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Editor;
 
 namespace TechObject
@@ -157,14 +158,14 @@ namespace TechObject
         }
 
         public override void AddDev(int index, int groupNumber,
-            int washGroupIndex = 0)
+            string subActionLuaName)
         {
-            if (groupNumber < SubActions.Count)
+            var subAction = SubActions.Where(x => x.LuaName == subActionLuaName)
+                .FirstOrDefault();
+            if(subAction != null)
             {
-                SubActions[groupNumber].AddDev(index, 0);
+                subAction.AddDev(index, 0, string.Empty);
             }
-
-            deviceIndex.Add(index);
         }
 
         public override void AddParam(object val, int washGroupIndex = 0)

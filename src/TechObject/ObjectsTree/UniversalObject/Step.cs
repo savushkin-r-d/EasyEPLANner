@@ -132,7 +132,7 @@ namespace TechObject
             actions.Add(requiredFB);
 
             var groupWash = new ActionGroupWash("Устройства", this,
-                ActionGroupWash.SingleGroupAction);
+                ActionGroupWash.MultiGroupAction);
             groupWash.ImageIndex = ImageIndexEnum.ActionWash;
             actions.Add(groupWash);
 
@@ -307,34 +307,30 @@ namespace TechObject
         /// <param name="actionLuaName">Имя действия в Lua.</param>
         /// <param name="devName">Имя устройства.</param>
         /// <param name="groupNumber">Номер группы.</param>
-        /// <param name="washGroupIndex">Номер группы для действия 
-        /// мойки (устройства)</param>
-        /// <param name="innerActionIndex">Индекс внутреннего действия.</param>
+        /// <param name="subActionLuaName">Имя поддействия</param>
         public bool AddDev(string actionLuaName, string devName,
-            int groupNumber = 0, int washGroupIndex = 0)
+            int groupNumber, string subActionLuaName)
         {
-            int index = Device.DeviceManager.GetInstance()
+            int devId = Device.DeviceManager.GetInstance()
                 .GetDeviceIndex(devName);
-            if (index == -1)
+            if (devId == -1)
             {
                 return false;
             }
 
-            foreach (IAction act in actions)
+            var action = GetActionByLuaName(actionLuaName, actions);
+            bool haveAction = action != null;
+            if(haveAction)
             {
-                if (act.LuaName == actionLuaName)
-                {
-                    act.AddDev(index, groupNumber, washGroupIndex);
-                    return true;
-                }
+                action.AddDev(devId, groupNumber, subActionLuaName);
+                return true;
             }
-
+            
             return false;
         }
 
         /// <summary>
         /// Добавление параметра.
-        /// 
         /// Вызывается из Lua-скрипта sys.lua.
         /// </summary>
         /// <param name="actionLuaName">Имя действия в Lua.</param>
@@ -354,6 +350,30 @@ namespace TechObject
             }
 
             return false;
+        }
+
+        private IAction GetActionByLuaName(string name, List<IAction> actions)
+        {
+            foreach (IAction act in actions)
+            {
+                if (act.LuaName == string.Empty)
+                {
+                    break;
+                }
+
+                if(act.LuaName == name)
+                {
+                    return act;
+                }
+
+                if (name == ActionGroupWash.SingleGroupAction)
+                {
+                    return actions.Where(x => x.LuaName ==
+                    ActionGroupWash.MultiGroupAction).First();
+                }
+            }
+
+            return null;
         }
 
         public List<IAction> GetActions

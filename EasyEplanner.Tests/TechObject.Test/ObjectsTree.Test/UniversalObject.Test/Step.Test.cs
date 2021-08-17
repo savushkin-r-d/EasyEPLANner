@@ -78,6 +78,7 @@ namespace EasyEplanner.Tests
             var openedUpperSeats = "opened_upper_seat_v";
             var openedLowerSeats = "opened_lower_seat_v";
             var requiredFB = "required_FB";
+            var devices = "devices_data";
             var pairsDIDO = "DI_DO";
             var pairsAIAO = "AI_AO";
             var toStepIfDevicesInSpecificState = 
@@ -95,7 +96,7 @@ namespace EasyEplanner.Tests
                     openedUpperSeats,
                     openedLowerSeats,
                     requiredFB,
-                    ActionGroupWash.SingleGroupAction,
+                    devices,
                     pairsDIDO,
                     pairsAIAO,
                     toStepIfDevicesInSpecificState
@@ -114,7 +115,7 @@ namespace EasyEplanner.Tests
                     openedUpperSeats,
                     openedLowerSeats,
                     requiredFB,
-                    ActionGroupWash.SingleGroupAction,
+                    devices,
                     pairsDIDO,
                     pairsAIAO
                 }

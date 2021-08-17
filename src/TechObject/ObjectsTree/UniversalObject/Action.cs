@@ -25,9 +25,8 @@ namespace TechObject
         /// </summary>
         /// <param name="groupNumber">Номер группы в действии.</param>
         /// <param name="index">Индекс устройства</param>
-        /// <param name="washGroupIndex">Индекс группы в действии мойка 
-        /// (устройства)</param>
-        void AddDev(int index, int groupNumber, int washGroupIndex = 0);
+        /// <param name="subActionLuaName">Lua-имя поддействия</param>
+        void AddDev(int index, int groupNumber, string subActionLuaName);
         
         string LuaName { get; }
 
@@ -326,8 +325,8 @@ namespace TechObject
             return res;
         }
 
-        public virtual void AddDev(int index, int groupNumber = 0,
-            int washGroupIndex = 0)
+        public virtual void AddDev(int index, int groupNumber,
+            string subActionLuaName)
         {
             var device = deviceManager.GetDeviceByIndex(index);
             if (device.Description != StaticHelper.CommonConst.Cap)

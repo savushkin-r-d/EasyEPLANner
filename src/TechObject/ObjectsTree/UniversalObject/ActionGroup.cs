@@ -45,15 +45,14 @@ namespace TechObject
             : this (name, owner, luaName, devTypes, devSubTypes, null) { }
 
         public override void AddDev(int index, int groupNumber,
-            int washGroupIndex = 0)
+            string subActionLuaName)
         {
             while (SubActions.Count <= groupNumber)
             {
                 InsertNewAction();
             }
 
-            SubActions[groupNumber].AddDev(index, 0);
-            deviceIndex.Add(index);
+            SubActions[groupNumber].AddDev(index, 0, string.Empty);
         }
 
         public override IAction Clone()

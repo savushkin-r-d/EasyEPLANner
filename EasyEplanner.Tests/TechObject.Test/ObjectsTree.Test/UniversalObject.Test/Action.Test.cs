@@ -446,7 +446,7 @@ namespace Tests.TechObject
             foreach (var devId in devIds)
             {
                 // Another arguments were skipped because they are useless.
-                action.AddDev(devId);
+                action.AddDev(devId, 0, string.Empty);
             }
 
             Assert.AreEqual(expectedDevCount, action.DeviceIndex.Count);

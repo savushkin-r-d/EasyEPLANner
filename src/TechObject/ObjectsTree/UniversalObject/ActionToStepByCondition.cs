@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace TechObject
 {
@@ -79,14 +80,14 @@ namespace TechObject
         }
 
         public override void AddDev(int index, int groupNumber,
-            int washGroupIndex = 0)
+            string subActionLuaName)
         {
-            if (groupNumber < SubActions.Count)
+            var action = SubActions.Where(x => x.LuaName == subActionLuaName)
+                .FirstOrDefault();
+            if (action != null)
             {
-                SubActions[groupNumber].AddDev(index, 0);
+                action.AddDev(index, 0, string.Empty);
             }
-
-            deviceIndex.Add(index);
         }
 
         #region Реализация ITreeViewItem
