@@ -138,15 +138,15 @@ namespace Tests.TechObject
         public void ActionProcessorStrategy_NewActionMockStrategy_SetNewStrategy()
         {
             var action = new Action(string.Empty, null, string.Empty);
-            var strategyMock = new Mock<IActionProcessorStrategy>();
+            var strategyMock = new Mock<IDeviceProcessingStrategy>();
             strategyMock.SetupProperty(x => x.Action);
 
-            action.ActionProcessorStrategy = strategyMock.Object;
+            action.SetDeviceProcessingStrategy(strategyMock.Object);
 
             Assert.Multiple(() =>
             {
                 Assert.AreEqual(strategyMock.Object.GetHashCode(),
-                    action.ActionProcessorStrategy.GetHashCode());
+                    action.GetDeviceProcessingStrategy().GetHashCode());
                 Assert.AreEqual(action, strategyMock.Object.Action);
             });
         }
@@ -156,10 +156,10 @@ namespace Tests.TechObject
         {
             var action = new Action(string.Empty, null, string.Empty);
 
-            action.ActionProcessorStrategy = null;
+            action.SetDeviceProcessingStrategy(null);
 
-            IActionProcessorStrategy strategy = action
-                .ActionProcessorStrategy;
+            IDeviceProcessingStrategy strategy = action
+                .GetDeviceProcessingStrategy();
             Assert.Multiple(() =>
             {
                 Assert.IsNotNull(strategy);
@@ -405,7 +405,7 @@ namespace Tests.TechObject
         public void SetNewvalue_NewAction_ReturnsExpectedValues(
             string newDevs, int expectedDevsCount, bool expectedResult)
         {
-            var strategyMock = new Mock<IActionProcessorStrategy>();
+            var strategyMock = new Mock<IDeviceProcessingStrategy>();
             strategyMock.Setup(x => x.ProcessDevices(It.IsAny<string>(),
                 It.IsAny<Device.IDeviceManager>()))
                 .Returns(Enumerable.Range(1, expectedDevsCount).ToList());
@@ -575,11 +575,11 @@ namespace Tests.TechObject
             var action = new Action(string.Empty, null, string.Empty);
             action.DeviceIndex.AddRange(devIds);
 
-            var cloned = action.Clone();
-
-            int actionStrategyHashCode = action.ActionProcessorStrategy
+            int actionStrategyHashCode = action.GetDeviceProcessingStrategy()
                 .GetHashCode();
-            int clonedStrategyHashCode = cloned.ActionProcessorStrategy
+
+            var cloned = action.Clone();
+            int clonedStrategyHashCode = cloned.GetDeviceProcessingStrategy()
                 .GetHashCode();
 
             Assert.Multiple(() =>
@@ -604,6 +604,76 @@ namespace Tests.TechObject
 
             Assert.AreEqual(DrawInfo.Style.GREEN_BOX, action.DrawStyle);
         }
+
+        [TestCaseSource(nameof(DeviceNamesTestCaseSource))]
+        public void DeviceNames_ActionWithDevs_ReturnsCorrectNamesList(
+            List<string> expectedNames, List<int> devIdsToSet)
+        {
+            Device.IDeviceManager deviceManager = DeviceManagerMock
+                .DeviceManager;
+            var action = new Action(string.Empty, null, string.Empty, null,
+                null, null, deviceManager);
+            action.DeviceIndex.AddRange(devIdsToSet);
+
+            List<string> actualNames = action.DevicesNames;
+
+            Assert.AreEqual(expectedNames, actualNames);
+        }
+
+        private static object[] DeviceNamesTestCaseSource()
+        {
+            var randomFirstCase = new object[]
+            {
+                new List<string>()
+                { 
+                    "KOAG1V1", 
+                    "KOAG1M2", 
+                    "TANK2V1", 
+                    "TANK1LS1" 
+                },
+                new List<int>() { 3, 4, 5, 9 }
+            };
+
+            var randomSecondCase = new object[]
+            {
+                new List<string>()
+                {
+                    "TANK1V2",
+                    "TANK2V2",
+                    "TANK2V3",
+                    "TANK3V3",
+                    "TANK1LS1",
+                    "TANK1HL1"
+                },
+                new List<int>() { 2, 6, 7, 8, 9, 20 }
+            };
+
+            return new object[]
+            {
+                randomFirstCase,
+                randomSecondCase
+            };
+        }
+
+        [Test]
+        public void HasSubActions_NewAction_ReturnsFalse()
+        {
+            var action = new Action(string.Empty, null, string.Empty);
+
+            bool actualHasSubActions = action.HasSubActions;
+
+            Assert.IsFalse(actualHasSubActions);
+        }
+
+        [Test]
+        public void SubActions_NewAction_ReturnsNull()
+        {
+            var action = new Action(string.Empty, null, string.Empty);
+
+            List<IAction> actualSubActions = action.SubActions;
+
+            Assert.IsNull(actualSubActions);
+        }
     }
 
     class DefaultActionProcessingStrategyTest
@@ -614,7 +684,7 @@ namespace Tests.TechObject
             Device.DeviceSubType[] allowedDevSubTypes,
             IList<int> expectedDevsIds)
         {
-            IAction action = IActionMock.GetAction(allowedDevTypes,
+            IAction action = ActionMock.GetAction(allowedDevTypes,
                 allowedDevSubTypes, new List<int>());
             var strategy = new OneInManyOutActionProcessingStrategy();
             strategy.Action = action;
@@ -698,7 +768,7 @@ namespace Tests.TechObject
             Device.DeviceSubType[] allowedDevSubTypes,
             List<int> actionDevsDefaultIds, IList<int> expectedDevsIds)
         {
-            IAction action = IActionMock.GetAction(allowedDevTypes,
+            IAction action = ActionMock.GetAction(allowedDevTypes,
                 allowedDevSubTypes, actionDevsDefaultIds);
             var strategy = new OneInManyOutActionProcessingStrategy();
             strategy.Action = action;
@@ -867,7 +937,7 @@ namespace Tests.TechObject
         }
     }
 
-    static class IActionMock
+    static class ActionMock
     {
         public static IAction GetAction(Device.DeviceType[] allowedDevTypes,
             Device.DeviceSubType[] allowedDevSubTypes,
@@ -896,83 +966,107 @@ namespace Tests.TechObject
             devManagerMock)
         {
             Device.IDevice stubDev = MakeMockedDevice(string.Empty, 0,
-                Device.DeviceType.NONE, 0, Device.DeviceSubType.NONE);
+                Device.DeviceType.NONE, Device.DeviceSubType.NONE, 0,
+                string.Empty);
 
             const string TANK = "TANK";
             const string KOAG = "KOAG";
 
             Device.IDevice tank1V1Dev = MakeMockedDevice(TANK, 1,
-                Device.DeviceType.V, 1, Device.DeviceSubType.V_IOLINK_MIXPROOF);
+                Device.DeviceType.V, Device.DeviceSubType.V_IOLINK_MIXPROOF, 1,
+                $"{TANK}1V1");
             Device.IDevice tank1V2Dev = MakeMockedDevice(TANK, 1,
-                Device.DeviceType.V, 2, Device.DeviceSubType.V_IOLINK_MIXPROOF);
+                Device.DeviceType.V, Device.DeviceSubType.V_IOLINK_MIXPROOF, 2,
+                $"{TANK}1V2");
             Device.IDevice koag1V1Dev = MakeMockedDevice(KOAG, 1,
-                Device.DeviceType.V, 1, Device.DeviceSubType.V_IOLINK_MIXPROOF);
+                Device.DeviceType.V, Device.DeviceSubType.V_IOLINK_MIXPROOF, 1,
+                $"{KOAG}1V1");
             Device.IDevice koag1M2Dev = MakeMockedDevice(KOAG, 1,
-                Device.DeviceType.M, 2, Device.DeviceSubType.M_ATV);
+                Device.DeviceType.M, Device.DeviceSubType.M_ATV, 2,
+                $"{KOAG}1M2");
             Device.IDevice tank2V1Dev = MakeMockedDevice(TANK, 2,
-                Device.DeviceType.V, 1, Device.DeviceSubType.V_IOLINK_MIXPROOF);
+                Device.DeviceType.V, Device.DeviceSubType.V_IOLINK_MIXPROOF, 1,
+                $"{TANK}2V1");
             Device.IDevice tank2V2Dev = MakeMockedDevice(TANK, 2,
-                Device.DeviceType.V, 2, Device.DeviceSubType.V_IOLINK_MIXPROOF);
+                Device.DeviceType.V, Device.DeviceSubType.V_IOLINK_MIXPROOF, 2,
+                $"{TANK}2V2");
             Device.IDevice tank2V3Dev = MakeMockedDevice(TANK, 2,
-                Device.DeviceType.V, 3, Device.DeviceSubType.V_IOLINK_MIXPROOF);
+                Device.DeviceType.V, Device.DeviceSubType.V_IOLINK_MIXPROOF, 3,
+                $"{TANK}2V3");
             Device.IDevice tank3V3Dev = MakeMockedDevice(TANK, 3,
-                Device.DeviceType.V, 3, Device.DeviceSubType.V_IOLINK_MIXPROOF);
+                Device.DeviceType.V, Device.DeviceSubType.V_IOLINK_MIXPROOF, 3,
+                $"{TANK}3V3");
             Device.IDevice tank1LS1Dev = MakeMockedDevice(TANK, 1,
-                Device.DeviceType.LS, 1, Device.DeviceSubType.LS_IOLINK_MIN);
+                Device.DeviceType.LS, Device.DeviceSubType.LS_IOLINK_MIN, 1,
+                $"{TANK}1LS1");
             Device.IDevice tank2LS2Dev = MakeMockedDevice(TANK, 2,
-                Device.DeviceType.LS, 2, Device.DeviceSubType.LS_IOLINK_MAX);
+                Device.DeviceType.LS, Device.DeviceSubType.LS_IOLINK_MAX, 2,
+                $"{TANK}1LS2");
             Device.IDevice tank3VC1Dev = MakeMockedDevice(TANK, 3,
-                Device.DeviceType.VC, 1, Device.DeviceSubType.NONE);
+                Device.DeviceType.VC, Device.DeviceSubType.NONE, 1,
+                $"{TANK}3VC1");
             Device.IDevice tank1DI1Dev = MakeMockedDevice(TANK, 1,
-                Device.DeviceType.DI, 1, Device.DeviceSubType.DI);
+                Device.DeviceType.DI, Device.DeviceSubType.DI, 1,
+                $"{TANK}1DI1");
             Device.IDevice tank2DI2Dev = MakeMockedDevice(TANK, 2,
-                Device.DeviceType.DI, 2, Device.DeviceSubType.DI_VIRT);
+                Device.DeviceType.DI, Device.DeviceSubType.DI_VIRT, 2,
+                $"{TANK}2DI2");
             Device.IDevice tank1DO1Dev = MakeMockedDevice(TANK, 1,
-                Device.DeviceType.DO, 1, Device.DeviceSubType.DO);
+                Device.DeviceType.DO, Device.DeviceSubType.DO, 1,
+                $"{TANK}1DO1");
             Device.IDevice tank1DO2Dev = MakeMockedDevice(TANK, 1,
-                Device.DeviceType.DO, 2, Device.DeviceSubType.DO_VIRT);
+                Device.DeviceType.DO, Device.DeviceSubType.DO_VIRT, 2,
+                $"{TANK}1DO2");
             Device.IDevice tank1AI1Dev = MakeMockedDevice(TANK, 1,
-                Device.DeviceType.AI, 1, Device.DeviceSubType.AI);
+                Device.DeviceType.AI, Device.DeviceSubType.AI, 1,
+                $"{TANK}1AI1");
             Device.IDevice tank2AI2Dev = MakeMockedDevice(TANK, 2,
-                Device.DeviceType.AI, 2, Device.DeviceSubType.AI_VIRT);
+                Device.DeviceType.AI, Device.DeviceSubType.AI_VIRT, 2,
+                $"{TANK}2AI2");
             Device.IDevice tank1AO1Dev = MakeMockedDevice(TANK, 1,
-                Device.DeviceType.AO, 1, Device.DeviceSubType.AO);
+                Device.DeviceType.AO, Device.DeviceSubType.AO, 1,
+                $"{TANK}1AO1");
             Device.IDevice tank1AO2Dev = MakeMockedDevice(TANK, 1,
-                Device.DeviceType.AO, 2, Device.DeviceSubType.AO_VIRT);
+                Device.DeviceType.AO, Device.DeviceSubType.AO_VIRT, 2,
+                $"{TANK}1AO2");
             Device.IDevice tank1HL1Dev = MakeMockedDevice(TANK, 1,
-                Device.DeviceType.HL, 1, Device.DeviceSubType.NONE);
+                Device.DeviceType.HL, Device.DeviceSubType.NONE, 1,
+                $"{TANK}1HL1");
             Device.IDevice tank1HL2Dev = MakeMockedDevice(TANK, 1,
-                Device.DeviceType.HL, 2, Device.DeviceSubType.NONE);
+                Device.DeviceType.HL, Device.DeviceSubType.NONE, 2,
+                $"{TANK}1HL2");
             Device.IDevice tank1GS1Dev = MakeMockedDevice(TANK, 1,
-                Device.DeviceType.GS, 1, Device.DeviceSubType.NONE);
+                Device.DeviceType.GS, Device.DeviceSubType.NONE, 1,
+                $"{TANK}1GS1");
             Device.IDevice tank1GS2Dev = MakeMockedDevice(TANK, 1,
-                Device.DeviceType.GS, 2, Device.DeviceSubType.NONE);
+                Device.DeviceType.GS, Device.DeviceSubType.NONE, 2,
+                $"{TANK}1GS2");
 
             var devicesDescription = new[]
             {
-                new { Id = 1, Name = "TANK1V1", Dev = tank1V1Dev },
-                new { Id = 2, Name = "TANK1V2", Dev = tank1V2Dev },
-                new { Id = 3, Name = "KOAG1V1", Dev = koag1V1Dev },
-                new { Id = 4, Name = "KOAG1M2", Dev = koag1M2Dev },
-                new { Id = 5, Name = "TANK2V1", Dev = tank2V1Dev },
-                new { Id = 6, Name = "TANK2V2", Dev = tank2V2Dev },
-                new { Id = 7, Name = "TANK2V3", Dev = tank2V3Dev },
-                new { Id = 8, Name = "TANK3V3", Dev = tank3V3Dev },
-                new { Id = 9, Name = "TANK1LS1", Dev = tank1LS1Dev },
-                new { Id = 10, Name = "TANK2LS2", Dev = tank2LS2Dev },
-                new { Id = 11, Name = "TANK3VC1", Dev = tank3VC1Dev },
-                new { Id = 12, Name = "TANK1DI1", Dev = tank1DI1Dev },
-                new { Id = 13, Name = "TANK2DI2", Dev = tank2DI2Dev },
-                new { Id = 14, Name = "TANK1DO1", Dev = tank1DO1Dev },
-                new { Id = 15, Name = "TANK1DO2", Dev = tank1DO2Dev },
-                new { Id = 16, Name = "TANK1AI1", Dev = tank1AI1Dev },
-                new { Id = 17, Name = "TANK2AI2", Dev = tank2AI2Dev },
-                new { Id = 18, Name = "TANK1AO1", Dev = tank1AO1Dev },
-                new { Id = 19, Name = "TANK1AO2", Dev = tank1AO2Dev },
-                new { Id = 20, Name = "TANK1HL1", Dev = tank1HL1Dev },
-                new { Id = 21, Name = "TANK1HL2", Dev = tank1HL2Dev },
-                new { Id = 22, Name = "TANK1GS1", Dev = tank1GS1Dev },
-                new { Id = 23, Name = "TANK1GS2", Dev = tank1GS2Dev },
+                new { Id = 1, Dev = tank1V1Dev },
+                new { Id = 2, Dev = tank1V2Dev },
+                new { Id = 3, Dev = koag1V1Dev },
+                new { Id = 4, Dev = koag1M2Dev },
+                new { Id = 5, Dev = tank2V1Dev },
+                new { Id = 6, Dev = tank2V2Dev },
+                new { Id = 7, Dev = tank2V3Dev },
+                new { Id = 8, Dev = tank3V3Dev },
+                new { Id = 9, Dev = tank1LS1Dev },
+                new { Id = 10, Dev = tank2LS2Dev },
+                new { Id = 11, Dev = tank3VC1Dev },
+                new { Id = 12, Dev = tank1DI1Dev },
+                new { Id = 13, Dev = tank2DI2Dev },
+                new { Id = 14, Dev = tank1DO1Dev },
+                new { Id = 15, Dev = tank1DO2Dev },
+                new { Id = 16, Dev = tank1AI1Dev },
+                new { Id = 17, Dev = tank2AI2Dev },
+                new { Id = 18, Dev = tank1AO1Dev },
+                new { Id = 19, Dev = tank1AO2Dev },
+                new { Id = 20, Dev = tank1HL1Dev },
+                new { Id = 21, Dev = tank1HL2Dev },
+                new { Id = 22, Dev = tank1GS1Dev },
+                new { Id = 23, Dev = tank1GS2Dev },
             };
 
             devManagerMock.Setup(x => x.GetDeviceByIndex(It.IsAny<int>()))
@@ -986,16 +1080,16 @@ namespace Tests.TechObject
             {
                 devManagerMock.Setup(x => x.GetDeviceByIndex(devDescr.Id))
                     .Returns(devDescr.Dev);
-                devManagerMock.Setup(x => x.GetDeviceIndex(devDescr.Name))
+                devManagerMock.Setup(x => x.GetDeviceIndex(devDescr.Dev.Name))
                     .Returns(devDescr.Id);
-                devManagerMock.Setup(x => x.GetDeviceByEplanName(devDescr.Name))
-                    .Returns(devDescr.Dev);
+                devManagerMock.Setup(x => x.GetDeviceByEplanName(
+                    devDescr.Dev.Name)).Returns(devDescr.Dev);
             }
         }
 
-        private static Device.IDevice MakeMockedDevice(string objName, int objNum,
-            Device.DeviceType devType, int devNumber,
-            Device.DeviceSubType deviceSubType)
+        private static Device.IDevice MakeMockedDevice(string objName,
+            int objNum, Device.DeviceType devType,
+            Device.DeviceSubType deviceSubType, int devNumber, string devName)
         {
             var devMock = new Mock<Device.IDevice>();
             devMock.SetupGet(x => x.ObjectName).Returns(objName);
@@ -1003,6 +1097,7 @@ namespace Tests.TechObject
             devMock.SetupGet(x => x.DeviceType).Returns(devType);
             devMock.SetupGet(x => x.DeviceNumber).Returns(devNumber);
             devMock.SetupGet(x => x.DeviceSubType).Returns(deviceSubType);
+            devMock.SetupGet(x => x.Name).Returns(devName);
             return devMock.Object;
         }
 

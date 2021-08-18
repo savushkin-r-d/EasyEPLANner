@@ -77,7 +77,9 @@ namespace TechObject
 
         List<string> DevicesNames { get; }
 
-        IActionProcessorStrategy ActionProcessorStrategy { get; }
+        IDeviceProcessingStrategy GetDeviceProcessingStrategy();
+
+        void SetDeviceProcessingStrategy(IDeviceProcessingStrategy strategy);
     }
 
     /// <summary>
@@ -101,7 +103,7 @@ namespace TechObject
         /// <param name="deviceManager">Менеджер устройств</param>
         public Action(string name, Step owner, string luaName,
             Device.DeviceType[] devTypes, Device.DeviceSubType[] devSubTypes,
-            IActionProcessorStrategy actionProcessorStrategy,
+            IDeviceProcessingStrategy actionProcessorStrategy,
             Device.IDeviceManager deviceManager) : this(name, owner, luaName,
                 devTypes, devSubTypes, actionProcessorStrategy)
         {
@@ -123,10 +125,10 @@ namespace TechObject
         /// устройств в действии</param>
         public Action(string name, Step owner, string luaName,
             Device.DeviceType[] devTypes, Device.DeviceSubType[] devSubTypes,
-            IActionProcessorStrategy actionProcessorStrategy)
+            IDeviceProcessingStrategy actionProcessorStrategy)
         : this(name, owner, luaName, devTypes, devSubTypes)
         {
-            ActionProcessorStrategy = actionProcessorStrategy;
+            SetDeviceProcessingStrategy(actionProcessorStrategy);
         }
 
         /// <summary>
@@ -176,13 +178,12 @@ namespace TechObject
             this.owner = owner;
 
             deviceIndex = new List<int>();
-            ActionProcessorStrategy = new DefaultActionProcessorStrategy();
         }
 
         public virtual IAction Clone()
         {
             var clone = (Action)MemberwiseClone();
-            clone.ActionProcessorStrategy = actionProcessorStrategy;
+            clone.SetDeviceProcessingStrategy(actionProcessorStrategy);
 
             clone.deviceIndex = new List<int>();
             foreach (int index in deviceIndex)
@@ -342,6 +343,25 @@ namespace TechObject
         virtual public void Clear()
         {
             deviceIndex.Clear();
+        }
+
+        public void SetDeviceProcessingStrategy(IDeviceProcessingStrategy strategy)
+        {
+            actionProcessorStrategy = strategy;
+            if (strategy != null)
+            {
+                strategy.Action = this;
+            }
+        }
+
+        public IDeviceProcessingStrategy GetDeviceProcessingStrategy()
+        {
+            if (actionProcessorStrategy == null)
+            {
+                SetDeviceProcessingStrategy(new DefaultActionProcessorStrategy());
+            }
+
+            return actionProcessorStrategy;
         }
 
         #region Синхронизация устройств в объекте.
@@ -542,28 +562,6 @@ namespace TechObject
             }
         }
 
-        public IActionProcessorStrategy ActionProcessorStrategy
-        {
-            get   
-            {
-                return actionProcessorStrategy;
-            }
-            set
-            {
-                if (value != null)
-                {
-                    actionProcessorStrategy = value;
-                }
-                else
-                {
-                    actionProcessorStrategy =
-                        new DefaultActionProcessorStrategy();
-                }
-
-                actionProcessorStrategy.Action = this;
-            }
-        }
-
         public override string ToString()
         {
             bool hasDevices = DeviceIndex.Count > 0;
@@ -586,14 +584,14 @@ namespace TechObject
 
         protected Step owner;
 
-        IActionProcessorStrategy actionProcessorStrategy;
+        IDeviceProcessingStrategy actionProcessorStrategy;
         Device.IDeviceManager deviceManager = Device.DeviceManager
             .GetInstance();
     }
 
     namespace ActionProcessingStrategy
     {
-        public interface IActionProcessorStrategy
+        public interface IDeviceProcessingStrategy
         {
             IList<int> ProcessDevices(string devicesStr,
                 Device.IDeviceManager deviceManager);
@@ -601,7 +599,7 @@ namespace TechObject
             IAction Action { get; set; }
         }
 
-        public class DefaultActionProcessorStrategy : IActionProcessorStrategy
+        public class DefaultActionProcessorStrategy : IDeviceProcessingStrategy
         {
             public virtual IList<int> ProcessDevices(
                 string devicesStr, Device.IDeviceManager deviceManager)

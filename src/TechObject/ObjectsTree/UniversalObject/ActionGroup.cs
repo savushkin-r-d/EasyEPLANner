@@ -24,7 +24,7 @@ namespace TechObject
         public ActionGroup(string name, Step owner, string luaName,
             Device.DeviceType[] devTypes,
             Device.DeviceSubType[] devSubTypes,
-            IActionProcessorStrategy actionProcessorStrategy)
+            IDeviceProcessingStrategy actionProcessorStrategy)
             : base(name, owner, luaName)
         {
             AddNewAction(owner, devTypes, devSubTypes,
@@ -139,7 +139,7 @@ namespace TechObject
 
         private IAction AddNewAction(Step owner, Device.DeviceType[] devTypes,
             Device.DeviceSubType[] devSubTypes,
-            IActionProcessorStrategy strategy)
+            IDeviceProcessingStrategy strategy)
         {
             var newAction = new Action(GroupDefaultName, owner,
                 string.Empty, devTypes, devSubTypes, strategy);
@@ -154,8 +154,8 @@ namespace TechObject
             IAction firstSubAction = SubActions.First();
             firstSubAction.GetDisplayObjects(out Device.DeviceType[] devTypes,
                 out Device.DeviceSubType[] devSubTypes, out _);
-            IActionProcessorStrategy strategy = firstSubAction
-                .ActionProcessorStrategy;
+            IDeviceProcessingStrategy strategy = firstSubAction
+                .GetDeviceProcessingStrategy();
 
             IAction newAction = AddNewAction(owner, devTypes, devSubTypes,
                 strategy);
