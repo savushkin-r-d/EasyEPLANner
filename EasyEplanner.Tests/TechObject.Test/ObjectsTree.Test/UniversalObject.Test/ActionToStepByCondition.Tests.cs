@@ -129,7 +129,7 @@ namespace Tests.TechObject
         }
 
         [Test]
-        public void Clone_NewAction_ReturnsFullClonedAction()
+        public void Clone_NewAction_ReturnsClonedAction()
         {
             string name = "Действие 1";
             string luaName = "ActionLuaName";
@@ -144,8 +144,8 @@ namespace Tests.TechObject
                 Assert.AreEqual(name, cloned.Name);
                 Assert.AreEqual(luaName, cloned.LuaName);
                 Assert.AreEqual(actionsCount, action.SubActions.Count);
+                Assert.AreNotEqual(cloned.GetHashCode(), action.GetHashCode());
             });
-
         }
     }
 }
