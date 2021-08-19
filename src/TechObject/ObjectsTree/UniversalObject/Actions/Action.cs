@@ -183,7 +183,7 @@ namespace TechObject
         public virtual IAction Clone()
         {
             var clone = (Action)MemberwiseClone();
-            clone.SetDeviceProcessingStrategy(actionProcessorStrategy);
+            clone.SetDeviceProcessingStrategy(deviceProcessingStrategy);
 
             clone.deviceIndex = new List<int>();
             foreach (int index in deviceIndex)
@@ -347,7 +347,7 @@ namespace TechObject
 
         public void SetDeviceProcessingStrategy(IDeviceProcessingStrategy strategy)
         {
-            actionProcessorStrategy = strategy;
+            deviceProcessingStrategy = strategy;
             if (strategy != null)
             {
                 strategy.Action = this;
@@ -356,12 +356,12 @@ namespace TechObject
 
         public IDeviceProcessingStrategy GetDeviceProcessingStrategy()
         {
-            if (actionProcessorStrategy == null)
+            if (deviceProcessingStrategy == null)
             {
                 SetDeviceProcessingStrategy(new DefaultActionProcessorStrategy());
             }
 
-            return actionProcessorStrategy;
+            return deviceProcessingStrategy;
         }
 
         #region Синхронизация устройств в объекте.
@@ -432,8 +432,8 @@ namespace TechObject
                 return false;
             }
 
-            IList<int> allowedDevicesId =
-                actionProcessorStrategy.ProcessDevices(newName, deviceManager);
+            IList<int> allowedDevicesId = GetDeviceProcessingStrategy()
+                .ProcessDevices(newName, deviceManager);
             DeviceIndex.Clear();
             deviceIndex.AddRange(allowedDevicesId);
 
@@ -584,7 +584,7 @@ namespace TechObject
 
         protected Step owner;
 
-        IDeviceProcessingStrategy actionProcessorStrategy;
+        IDeviceProcessingStrategy deviceProcessingStrategy;
         Device.IDeviceManager deviceManager = Device.DeviceManager
             .GetInstance();
     }

@@ -305,7 +305,8 @@ namespace Editor
                     ((c == (uint)Keys.C ||
                     c == (uint)Keys.V ||
                     c == (uint)Keys.A ||
-                    c == (uint)Keys.X) &&
+                    c == (uint)Keys.X ||
+                    c == (uint)Keys.B) &&
                     PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_CONTROL) != -0))
                 {
                     if (IsCellEditing || editorTView.Focused)
@@ -415,6 +416,21 @@ namespace Editor
                                     (int)PI.WM.KEYDOWN,
                                     (int)Keys.V, 0);
                                 return (IntPtr) 1;
+                            }
+                        }
+                        break;
+
+                    case (uint)Keys.B:                                   //B
+                        ctrlState = PI.GetKeyState(
+                            (int)PI.VIRTUAL_KEY.VK_CONTROL);
+                        if ((ctrlState & SHIFTED) > 0)
+                        {
+                            if (editorTView.Focused)
+                            {
+                                PI.SendMessage(PI.GetFocus(),
+                                    (int)PI.WM.KEYDOWN,
+                                    (int)Keys.B, 0);
+                                return (IntPtr)1;
                             }
                         }
                         break;
