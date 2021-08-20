@@ -72,6 +72,15 @@ namespace EasyEplanner.Tests
         private static object[] CheckActionsSequenceByLuaNameTestSource()
         {
             var checkedDevices = "checked_devices";
+            var openedDevices = "opened_devices";
+            var openedReverseDevices = "opened_reverse_devices";
+            var closedDevices = "closed_devices";
+            var openedUpperSeats = "opened_upper_seat_v";
+            var openedLowerSeats = "opened_lower_seat_v";
+            var requiredFB = "required_FB";
+            var devices = "devices_data";
+            var pairsDIDO = "DI_DO";
+            var pairsAIAO = "AI_AO";
             var toStepIfDevicesInSpecificState = 
                 "to_step_if_devices_in_specific_state";
 
@@ -81,15 +90,15 @@ namespace EasyEplanner.Tests
                 new string[]
                 {
                     checkedDevices,
-                    Action.OpenDevices,
-                    Action.OpenReverseDevices,
-                    Action.CloseDevices,
-                    ActionGroup.OpenedUpperSeats,
-                    ActionGroup.OpenedLowerSeats,
-                    Action.RequiredFB,
-                    ActionGroupWash.SingleGroupAction,
-                    ActionGroup.DIDO,
-                    ActionGroup.AIAO,
+                    openedDevices,
+                    openedReverseDevices,
+                    closedDevices,
+                    openedUpperSeats,
+                    openedLowerSeats,
+                    requiredFB,
+                    devices,
+                    pairsDIDO,
+                    pairsAIAO,
                     toStepIfDevicesInSpecificState
                 }
             };
@@ -100,15 +109,15 @@ namespace EasyEplanner.Tests
                 new string[]
                 {
                     checkedDevices,
-                    Action.OpenDevices,
-                    Action.OpenReverseDevices,
-                    Action.CloseDevices,
-                    ActionGroup.OpenedUpperSeats,
-                    ActionGroup.OpenedLowerSeats,
-                    Action.RequiredFB,
-                    ActionGroupWash.SingleGroupAction,
-                    ActionGroup.DIDO,
-                    ActionGroup.AIAO
+                    openedDevices,
+                    openedReverseDevices,
+                    closedDevices,
+                    openedUpperSeats,
+                    openedLowerSeats,
+                    requiredFB,
+                    devices,
+                    pairsDIDO,
+                    pairsAIAO
                 }
             };
 
@@ -389,6 +398,81 @@ namespace EasyEplanner.Tests
             {
                 mainStep,
                 noMainStep
+            };
+        }
+
+        [TestCaseSource(nameof(ImageIndexInActionsTest))]
+        public void ImageIndex_SetOfActions_ReturnCorrectImageIndexSequence(
+            bool isMainStep, List<ImageIndexEnum> expectedImageIndexes)
+        {
+            var step = new Step(string.Empty, null, null, isMainStep);
+
+            var actualImageIndexes = new List<ImageIndexEnum>();
+            foreach(var action in step.GetActions)
+            {
+                var treeViewItem = (ITreeViewItem)action;
+                ImageIndexEnum imageIndex = treeViewItem.ImageIndex;
+                actualImageIndexes.Add(imageIndex);
+            }
+
+            Assert.AreEqual(expectedImageIndexes, actualImageIndexes);
+        }
+
+        private static object[] ImageIndexInActionsTest()
+        {
+            var checkedDevices = ImageIndexEnum.NONE;
+            var openedDevices = ImageIndexEnum.ActionON;
+            var openedReverseDevices = ImageIndexEnum.NONE;
+            var closedDevices = ImageIndexEnum.ActionOFF;
+            var openedUpperSeats = ImageIndexEnum.ActionWashUpperSeats;
+            var openedLowerSeats = ImageIndexEnum.ActionWashLowerSeats;
+            var requiredFB = ImageIndexEnum.ActionSignals;
+            var devices = ImageIndexEnum.ActionWash;
+            var pairsDIDO = ImageIndexEnum.ActionDIDOPairs;
+            var pairsAIAO = ImageIndexEnum.ActionDIDOPairs;
+            var toStepIfDevicesInSpecificState = ImageIndexEnum.NONE;
+
+            object[] notMainStepImageIndexes = new object[]
+            {
+                false,
+                new List<ImageIndexEnum>()
+                {
+                    checkedDevices,
+                    openedDevices,
+                    openedReverseDevices,
+                    closedDevices,
+                    openedUpperSeats,
+                    openedLowerSeats,
+                    requiredFB,
+                    devices,
+                    pairsDIDO,
+                    pairsAIAO,
+                    toStepIfDevicesInSpecificState
+                }
+            };
+
+            object[] mainStepImageIndexes = new object[]
+            {
+                true,
+                new List<ImageIndexEnum>()
+                {
+                    checkedDevices,
+                    openedDevices,
+                    openedReverseDevices,
+                    closedDevices,
+                    openedUpperSeats,
+                    openedLowerSeats,
+                    requiredFB,
+                    devices,
+                    pairsDIDO,
+                    pairsAIAO
+                }
+            };
+
+            return new object[]
+            {
+                mainStepImageIndexes,
+                notMainStepImageIndexes
             };
         }
     }

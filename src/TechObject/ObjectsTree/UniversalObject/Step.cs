@@ -31,7 +31,7 @@ namespace TechObject
 
             items = new List<ITreeViewItem>();
 
-            actions = new List<Action>();
+            actions = new List<IAction>();
 
             AddDefaultActions(isMainStep);
         }
@@ -47,17 +47,18 @@ namespace TechObject
             actions.Add(checkedDevices);
 
             var openDevices = new Action(openDevicesActionName, this,
-                Action.OpenDevices,
+                "opened_devices",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.V,
                     Device.DeviceType.DO,
                     Device.DeviceType.M
                 });
+            openDevices.ImageIndex = ImageIndexEnum.ActionON;
             actions.Add(openDevices);
 
             var openReverse = new Action("Включать реверс", this,
-                Action.OpenReverseDevices,
+                "opened_reverse_devices",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.M
@@ -75,7 +76,7 @@ namespace TechObject
             actions.Add(openReverse);
 
             var closeDevices = new Action(closeDevicesActionName, this,
-                Action.CloseDevices,
+                "closed_devices",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.V,
@@ -83,10 +84,11 @@ namespace TechObject
                     Device.DeviceType.M
                 });
             closeDevices.DrawStyle = DrawInfo.Style.RED_BOX;
+            closeDevices.ImageIndex = ImageIndexEnum.ActionOFF;
             actions.Add(closeDevices);
 
             var openUpperSeats = new ActionGroup("Верхние седла", this,
-                ActionGroup.OpenedUpperSeats,
+                "opened_upper_seat_v",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.V
@@ -99,10 +101,11 @@ namespace TechObject
                     Device.DeviceSubType.V_VIRT,
                 });
             openUpperSeats.DrawStyle = DrawInfo.Style.GREEN_UPPER_BOX;
+            openUpperSeats.ImageIndex = ImageIndexEnum.ActionWashUpperSeats;
             actions.Add(openUpperSeats);
 
             var openLowerSeats = new ActionGroup("Нижние седла", this,
-                ActionGroup.OpenedLowerSeats,
+                "opened_lower_seat_v",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.V
@@ -115,25 +118,28 @@ namespace TechObject
                     Device.DeviceSubType.V_VIRT,
                 });
             openLowerSeats.DrawStyle = DrawInfo.Style.GREEN_LOWER_BOX;
+            openLowerSeats.ImageIndex = ImageIndexEnum.ActionWashLowerSeats;
             actions.Add(openLowerSeats);
 
             var requiredFB = new Action("Сигналы для включения", this,
-                Action.RequiredFB,
+                "required_FB",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.DI,
                     Device.DeviceType.GS
                 });
+            requiredFB.ImageIndex = ImageIndexEnum.ActionSignals;
             actions.Add(requiredFB);
 
             var groupWash = new ActionGroupWash("Устройства", this,
-                ActionGroupWash.SingleGroupAction);
+                ActionGroupWash.MultiGroupAction);
+            groupWash.ImageIndex = ImageIndexEnum.ActionWash;
             actions.Add(groupWash);
 
             // Специальное действие - выдача дискретных сигналов 
             // при наличии входного дискретного сигнала.
             var groupDIDO = new ActionGroup(groupDIDOActionName, this,
-                ActionGroup.DIDO,
+                "DI_DO",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.DI,
@@ -143,12 +149,13 @@ namespace TechObject
                     Device.DeviceType.GS
                 },
                 null, new OneInManyOutActionProcessingStrategy());
+            groupDIDO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupDIDO);
 
             // Специальное действие - выдача аналоговых сигналов при
             // наличии входного  аналогового сигнала.
             var groupAIAO = new ActionGroup(groupAIAOActionName, this,
-                ActionGroup.AIAO,
+                "AI_AO",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.AI,
@@ -157,9 +164,10 @@ namespace TechObject
                 },
                 null,
                 new OneInManyOutActionProcessingStrategy());
+            groupAIAO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupAIAO);
 
-            items.AddRange(actions.ToArray());
+            items.AddRange(actions.Cast<ITreeViewItem>().ToArray());
 
             if (!isMainStep)
             {
@@ -187,14 +195,14 @@ namespace TechObject
                 clone.name = name.Substring(3);
             }
 
-            clone.actions = new List<Action>();
-            foreach (Action action in actions)
+            clone.actions = new List<IAction>();
+            foreach (IAction action in actions)
             {
                 clone.actions.Add(action.Clone());
             }
 
             clone.items = new List<ITreeViewItem>();
-            clone.items.AddRange(clone.actions.ToArray());
+            clone.items.AddRange(clone.actions.Cast<ITreeViewItem>().ToArray());
 
             if (!IsMainStep)
             {
@@ -214,7 +222,7 @@ namespace TechObject
         public void ModifyDevNames(int newTechObjectN, int oldTechObjectN,
             string techObjectName)
         {
-            foreach (Action action in actions)
+            foreach (IAction action in actions)
             {
                 action.ModifyDevNames(newTechObjectN,
                     oldTechObjectN, techObjectName);
@@ -225,7 +233,7 @@ namespace TechObject
             int newTechObjectNumber, string oldTechObjectName,
             int oldTechObjectNumber)
         {
-            foreach (Action action in actions)
+            foreach (IAction action in actions)
             {
                 action.ModifyDevNames(newTechObjectName, newTechObjectNumber,
                     oldTechObjectName, oldTechObjectNumber);
@@ -245,7 +253,7 @@ namespace TechObject
 
             if (isShortForm)
             {
-                foreach (Action action in actions)
+                foreach (IAction action in actions)
                 {
                     res += action.SaveAsLuaTable(prefix);
                 }
@@ -270,7 +278,7 @@ namespace TechObject
                 string baseStepName = baseStep.LuaName;
                 res += prefix + $"baseStep = \'{baseStepName}\',\n";
 
-                foreach (Action action in actions)
+                foreach (IAction action in actions)
                 {
                     res += action.SaveAsLuaTable(prefix);
                 }
@@ -299,56 +307,76 @@ namespace TechObject
         /// <param name="actionLuaName">Имя действия в Lua.</param>
         /// <param name="devName">Имя устройства.</param>
         /// <param name="groupNumber">Номер группы.</param>
-        /// <param name="washGroupIndex">Номер группы для действия 
-        /// мойки (устройства)</param>
-        /// <param name="innerActionIndex">Индекс внутреннего действия.</param>
+        /// <param name="subActionLuaName">Имя поддействия</param>
         public bool AddDev(string actionLuaName, string devName,
-            int groupNumber = 0, int washGroupIndex = 0)
+            int groupNumber, string subActionLuaName)
         {
-            int index = Device.DeviceManager.GetInstance()
+            int devId = Device.DeviceManager.GetInstance()
                 .GetDeviceIndex(devName);
-            if (index == -1)
+            if (devId == -1)
             {
                 return false;
             }
 
-            foreach (Action act in actions)
+            var action = GetActionByLuaName(actionLuaName, actions);
+            bool haveAction = action != null;
+            if(haveAction)
             {
-                if (act.LuaName == actionLuaName)
-                {
-                    act.AddDev(index, groupNumber, washGroupIndex);
-                    return true;
-                }
+                action.AddDev(devId, groupNumber, subActionLuaName);
+                return true;
             }
-
+            
             return false;
         }
 
         /// <summary>
         /// Добавление параметра.
-        /// 
         /// Вызывается из Lua-скрипта sys.lua.
         /// </summary>
         /// <param name="actionLuaName">Имя действия в Lua.</param>
         /// <param name="val">Значение параметра.</param>
-        /// <param name="washGroupIndex">Индекс группы в действии
+        /// <param name="groupNumber">Индекс группы в действии
         /// мойки (устройства)</param>
-        public bool AddParam(string actionLuaName, object val,
-            int washGroupIndex = 0)
+        /// <param name="paramName">Имя параметра</param>
+        public bool AddParam(string actionLuaName, object val, string paramName,
+            int groupNumber)
         {
-            foreach (Action act in actions)
+            IAction action = GetActionByLuaName(actionLuaName, actions);
+            bool haveAction = action != null;
+            if (haveAction)
             {
-                if (act.LuaName == actionLuaName)
-                {
-                    act.AddParam(val, washGroupIndex);
-                    return true;
-                }
+                action.AddParam(val, paramName, groupNumber);
+                return true;
             }
 
             return false;
         }
 
-        public List<Action> GetActions
+        private IAction GetActionByLuaName(string name, List<IAction> actions)
+        {
+            foreach (IAction act in actions)
+            {
+                if (act.LuaName == string.Empty)
+                {
+                    break;
+                }
+
+                if(act.LuaName == name)
+                {
+                    return act;
+                }
+
+                if (name == ActionGroupWash.SingleGroupAction)
+                {
+                    return actions.Where(x => x.LuaName ==
+                    ActionGroupWash.MultiGroupAction).First();
+                }
+            }
+
+            return null;
+        }
+
+        public List<IAction> GetActions
         {
             get
             {
@@ -359,7 +387,7 @@ namespace TechObject
         #region Синхронизация устройств в объекте.
         public void Synch(int[] array)
         {
-            foreach (Action action in actions)
+            foreach (IAction action in actions)
             {
                 action.Synch(array);
             }
@@ -538,7 +566,7 @@ namespace TechObject
 
         override public bool Delete(object child)
         {
-            var action = child as Action;
+            var action = child as IAction;
             if (action != null)
             {
                 action.Clear();
@@ -561,7 +589,7 @@ namespace TechObject
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
         {
             List<DrawInfo> devToDraw = new List<DrawInfo>();
-            foreach (Action action in actions)
+            foreach (IAction action in actions)
             {
                 devToDraw.AddRange(action.GetObjectToDrawOnEplanPage());
             }
@@ -680,8 +708,8 @@ namespace TechObject
             foreach(var group in checkingActionsGroups)
             {
                 bool hasError = false;
-                var groupActions = group.Items;
-                foreach(Action groupAction in groupActions)
+                var groupActions = group.SubActions;
+                foreach(IAction groupAction in groupActions)
                 {
                     if(groupAction.Empty)
                     {
@@ -792,7 +820,7 @@ namespace TechObject
         private List<ITreeViewItem> items;
 
         private string name;           ///< Имя шага.
-        internal List<Action> actions; ///< Список действий шага.
+        internal List<IAction> actions; ///< Список действий шага.
 
         private string openDevicesActionName = "Включать";
         private string closeDevicesActionName = "Выключать";

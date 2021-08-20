@@ -49,7 +49,7 @@ namespace Tests.TechObject
             var action = new ActionToStepByCondition(string.Empty, null,
                 string.Empty);
 
-            List<IAction> actions = action.Actions;
+            List<IAction> actions = action.SubActions;
 
             for(int i = 0; i < actions.Count; i++)
             {
@@ -80,7 +80,7 @@ namespace Tests.TechObject
             var action = new ActionToStepByCondition(string.Empty, null,
                 string.Empty);
 
-            List<IAction> actions = action.Actions;
+            List<IAction> actions = action.SubActions;
 
             for (int i = 0; i < actions.Count; i++)
             {
@@ -126,6 +126,26 @@ namespace Tests.TechObject
                     },
                 },
             };
+        }
+
+        [Test]
+        public void Clone_NewAction_ReturnsClonedAction()
+        {
+            string name = "Действие 1";
+            string luaName = "ActionLuaName";
+
+            var action = new ActionToStepByCondition(name, null, luaName);
+            int actionsCount = action.SubActions.Count;
+
+            IAction cloned = action.Clone();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(name, cloned.Name);
+                Assert.AreEqual(luaName, cloned.LuaName);
+                Assert.AreEqual(actionsCount, action.SubActions.Count);
+                Assert.AreNotEqual(cloned.GetHashCode(), action.GetHashCode());
+            });
         }
     }
 }
