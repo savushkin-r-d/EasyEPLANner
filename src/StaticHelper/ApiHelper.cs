@@ -316,5 +316,27 @@ namespace StaticHelper
 
             return m.ToString();
         }
+
+        public static string GetClampNumberAsString(
+            Function deviceClampFunction)
+        {
+            string clampNumberAsString = deviceClampFunction.Properties
+                .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
+
+            bool haveValveTerminal = deviceClampFunction.Name
+                .Contains(Device.DeviceManager.ValveTerminalName);
+            if (haveValveTerminal)
+            {
+                Function IOModuleFunction = ApiHelper
+                    .GetIOModuleFunction(deviceClampFunction);
+                string bindedDevice = deviceClampFunction.Name;
+                Function IOModuleClampFunction = ApiHelper
+                    .GetClampFunction(IOModuleFunction, bindedDevice);
+                clampNumberAsString = IOModuleClampFunction.Properties
+                .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
+            }
+
+            return clampNumberAsString ?? string.Empty;
+        }
     }
 }

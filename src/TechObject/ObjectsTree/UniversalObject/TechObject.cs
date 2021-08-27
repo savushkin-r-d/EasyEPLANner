@@ -35,7 +35,7 @@ namespace TechObject
                 newValue = newValue.ToUpper();
                 newValue = Regex.Replace(newValue,
                     StaticHelper.CommonConst.RusAsEngPattern,
-                    StaticHelper.CommonConst.RusAsEnsEvaluator);
+                    StaticHelper.CommonConst.RusAsEngEvaluator);
 
                 owner.ModifyDevNames(newValue);
                 base.SetNewValue(newValue);

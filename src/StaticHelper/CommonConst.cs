@@ -32,7 +32,7 @@ namespace StaticHelper
         /// <summary>
         /// Evaluator для замены заглавных русских букв на английские.
         /// </summary>
-        public static MatchEvaluator RusAsEnsEvaluator = new MatchEvaluator(
+        public static MatchEvaluator RusAsEngEvaluator = new MatchEvaluator(
             ApiHelper.RussianToEnglish);
 
         /// <summary>

@@ -26,55 +26,21 @@ namespace EasyEPlanner
             Function deviceClampFunction, IO.IOModuleInfo moduleInfo,
             string devicesDescription = "")
         {
+            bool correctClampNumber = IsCorrectClampNumber(
+                deviceClampFunction, moduleInfo);
+            bool correctPageType = IsCorrectPageType(deviceClampFunction);
+            bool correctDeviceDescription = IsCorrectDeviceDescription(
+                deviceClampFunction, devicesDescription);
+
             var res = new Dictionary<string, string>();
-            string clampNumberAsString = deviceClampFunction.Properties
-                .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
-
-            if (deviceClampFunction.Name.Contains(DeviceManager
-                .ValveTerminalName))
-            {
-                Function IOModuleFunction = ApiHelper
-                    .GetIOModuleFunction(deviceClampFunction);
-                string bindedDevice = deviceClampFunction.Name;
-                Function IOModuleClampFunction = ApiHelper
-                    .GetClampFunction(IOModuleFunction, bindedDevice);
-                clampNumberAsString = IOModuleClampFunction.Properties
-                .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
-            }
-
-            int clampNumber;
-            bool isDigit = int.TryParse(clampNumberAsString, out clampNumber);
-            if (isDigit == false)
+            if (!correctClampNumber ||
+                !correctDeviceDescription ||
+                !correctPageType)
             {
                 return res;
             }
 
-            if (Array.IndexOf(moduleInfo.ChannelClamps, clampNumber) < 0)
-            {
-                return res;
-            }
-
-            DocumentTypeManager.DocumentType pageType = deviceClampFunction
-                .Page.PageType;
-            if (pageType != DocumentTypeManager.DocumentType.Circuit &&
-                pageType != DocumentTypeManager.DocumentType.Overview)
-            {
-                return res;
-            }
-
-            if (devicesDescription == "")
-            {
-                devicesDescription = ApiHelper.GetFunctionalText(
-                    deviceClampFunction);
-            }
-
-            if (devicesDescription == "")
-            {
-                return res;
-            }
-
-            var comment = "";
-            var clampComment = "";
+            var comment = string.Empty;
             Match actionMatch;
             bool isMultipleBinding = deviceManager.IsMultipleBinding(
                 devicesDescription);
@@ -84,35 +50,22 @@ namespace EasyEPlanner
                 if (endPos > 0)
                 {
                     comment = devicesDescription.Substring(endPos + 1);
-                    devicesDescription = devicesDescription.Substring(0,
-                        endPos);
+                    devicesDescription = devicesDescription
+                        .Substring(0, endPos);
                 }
 
-                devicesDescription = Regex.Replace(devicesDescription,
-                    CommonConst.RusAsEngPattern, CommonConst.RusAsEnsEvaluator);
-
-                actionMatch = Regex.Match(comment,
-                    IODevice.IOChannel.ChannelCommentPattern,
-                    RegexOptions.IgnoreCase);
-
-                comment = Regex.Replace(comment,
-                    IODevice.IOChannel.ChannelCommentPattern,
-                    "", RegexOptions.IgnoreCase);
-                comment = comment.Replace(CommonConst.NewLine, ". ").Trim();
-                if (comment.Length > 0 && comment[comment.Length - 1] != '.')
-                {
-                    comment += ".";
-                }
+                devicesDescription = ReplaceRusBigLettersByEngBig(
+                    devicesDescription);
+                actionMatch = FindCorrectClampCommentMatch(comment);
             }
             else
             {
-                devicesDescription = Regex.Replace(devicesDescription,
-                    CommonConst.RusAsEngPattern, CommonConst.RusAsEnsEvaluator);
-                actionMatch = Regex.Match(comment,
-                    IODevice.IOChannel.ChannelCommentPattern,
-                    RegexOptions.IgnoreCase);
+                devicesDescription = ReplaceRusBigLettersByEngBig(
+                    devicesDescription);
+                actionMatch = FindCorrectClampCommentMatch(comment);
             }
 
+            var clampComment = string.Empty;
             var descrMatch = Regex.Match(devicesDescription,
                 DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
             while (descrMatch.Success)
@@ -129,6 +82,86 @@ namespace EasyEPlanner
             }
 
             return res;
+        }
+
+        private bool IsCorrectClampNumber(Function deviceClampFunction,
+            IO.IOModuleInfo moduleInfo)
+        {
+            string clampNumberAsString = ApiHelper.GetClampNumberAsString(
+                deviceClampFunction);
+            bool isDigit = int.TryParse(clampNumberAsString,
+                out int clampNumber);
+            if (isDigit == false)
+            {
+                return false;
+            }
+
+            bool clampNumberNotExistsInModule =
+                Array.IndexOf(moduleInfo.ChannelClamps, clampNumber) < 0;
+            if (clampNumberNotExistsInModule)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsCorrectPageType(Function deviceClampFunction)
+        {
+            DocumentTypeManager.DocumentType pageType = deviceClampFunction
+                .Page.PageType;
+            bool notAllowedPageTypes =
+                pageType != DocumentTypeManager.DocumentType.Circuit &&
+                pageType != DocumentTypeManager.DocumentType.Overview;
+            if (notAllowedPageTypes)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsCorrectDeviceDescription(Function deviceClampFunction,
+            string devicesDescription)
+        {
+            if (devicesDescription == string.Empty)
+            {
+                devicesDescription = ApiHelper.GetFunctionalText(
+                    deviceClampFunction);
+                if (devicesDescription == string.Empty)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private string ReplaceRusBigLettersByEngBig(string replacingString)
+        {
+            return Regex.Replace(replacingString,
+                CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
+        }
+
+        private Match FindCorrectClampCommentMatch(string comment)
+        {
+            string[] splitBySeparator = comment.Split(
+                new string[] { CommonConst.NewLineWithCarriageReturn },
+                StringSplitOptions.RemoveEmptyEntries);
+
+            int arrEndIndex = splitBySeparator.Length - 1;
+            for (int i = arrEndIndex; i > 0; i++)
+            {
+                var match = Regex.Match(splitBySeparator[i],
+                    IODevice.IOChannel.ChannelCommentPattern,
+                    RegexOptions.IgnoreCase);
+                if (match.Value.Length == splitBySeparator[i].Length)
+                {
+                    return match;
+                }
+            }
+
+            return Match.Empty;
         }
 
         /// <summary>
@@ -231,7 +264,7 @@ namespace EasyEPlanner
         {
             var name = function.Name;
             name = Regex.Replace(name, CommonConst.RusAsEngPattern,
-                    CommonConst.RusAsEnsEvaluator);
+                    CommonConst.RusAsEngEvaluator);
             return name;
         }
 
@@ -290,7 +323,7 @@ namespace EasyEPlanner
 
                 subType = subType.Trim();
                 subType = Regex.Replace(subType, 
-                    CommonConst.RusAsEngPattern, CommonConst.RusAsEnsEvaluator);
+                    CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
             }
 
             if (subType == null)
@@ -322,7 +355,7 @@ namespace EasyEPlanner
                 };
 
                 properties = Regex.Replace(properties,
-                    CommonConst.RusAsEngPattern, CommonConst.RusAsEnsEvaluator);
+                    CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
             }
 
             if (properties == null)
@@ -361,7 +394,7 @@ namespace EasyEPlanner
                 }
 
                 runtimeParameters = Regex.Replace(runtimeParameters,
-                    CommonConst.RusAsEngPattern, CommonConst.RusAsEnsEvaluator);
+                    CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
             }
 
             return runtimeParameters;
@@ -427,7 +460,7 @@ namespace EasyEPlanner
                 };
 
                 parameters = Regex.Replace(parameters, 
-                    CommonConst.RusAsEngPattern, CommonConst.RusAsEnsEvaluator);
+                    CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
             }
 
             if (parameters == null)
