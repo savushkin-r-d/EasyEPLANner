@@ -280,6 +280,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="StaticHelper\DeviceBindingHelper.cs" />
     <Compile Include="StaticHelper\GUIHelper.cs" />
     <Compile Include="StaticHelper\CommonConst.cs" />
     <Compile Include="StaticHelper\IPConverter.cs" />

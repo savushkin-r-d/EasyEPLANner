@@ -218,7 +218,7 @@ namespace EasyEPlanner
 
                 var device = DeviceManager.GetInstance().GetDevice(deviceName);
 
-                string channelName = ApiHelper
+                string channelName = DeviceBindingHelper
                     .GetChannelNameForIOLinkModuleFromString(deviceComment);
 
                 device.ClearChannel(moduleInfo.AddressSpaceType,
@@ -324,7 +324,7 @@ namespace EasyEPlanner
                 manufacturer.Contains(PhoenixContact) &&
                 SelectedDevice.Channels.Count > 1)
             {
-                string channelType = ApiHelper
+                string channelType = DeviceBindingHelper
                     .GetChannelNameForIOLinkModuleFromString(
                     SelectedChannel.Name);
                 functionalText += channelType;

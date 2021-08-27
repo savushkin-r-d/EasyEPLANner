@@ -54,15 +54,17 @@ namespace EasyEPlanner
                         .Substring(0, endPos);
                 }
 
-                devicesDescription = ApiHelper
+                devicesDescription = DeviceBindingHelper
                     .ReplaceRusBigLettersByEngBig(devicesDescription);
-                actionMatch = FindCorrectClampCommentMatch(comment);
+                actionMatch = DeviceBindingHelper
+                    .FindCorrectClampCommentMatch(comment);
             }
             else
             {
-                devicesDescription = ApiHelper
+                devicesDescription = DeviceBindingHelper
                     .ReplaceRusBigLettersByEngBig(devicesDescription);
-                actionMatch = FindCorrectClampCommentMatch(comment);
+                actionMatch = DeviceBindingHelper
+                    .FindCorrectClampCommentMatch(comment);
             }
 
             var clampComment = string.Empty;
@@ -87,8 +89,8 @@ namespace EasyEPlanner
         private bool IsCorrectClampNumber(Function deviceClampFunction,
             IO.IOModuleInfo moduleInfo)
         {
-            string clampNumberAsString = ApiHelper.GetClampNumberAsString(
-                deviceClampFunction);
+            string clampNumberAsString = DeviceBindingHelper
+                .GetClampNumberAsString(deviceClampFunction);
             bool isDigit = int.TryParse(clampNumberAsString,
                 out int clampNumber);
             if (isDigit == false)
@@ -135,27 +137,6 @@ namespace EasyEPlanner
             }
 
             return true;
-        }
-
-        private Match FindCorrectClampCommentMatch(string comment)
-        {
-            string[] splitBySeparator = comment.Split(
-                new string[] { CommonConst.NewLineWithCarriageReturn },
-                StringSplitOptions.RemoveEmptyEntries);
-
-            int arrEndIndex = splitBySeparator.Length - 1;
-            for (int i = arrEndIndex; i > 0; i++)
-            {
-                var match = Regex.Match(splitBySeparator[i],
-                    IODevice.IOChannel.ChannelCommentPattern,
-                    RegexOptions.IgnoreCase);
-                if (match.Value.Length == splitBySeparator[i].Length)
-                {
-                    return match;
-                }
-            }
-
-            return Match.Empty;
         }
 
         /// <summary>

@@ -305,39 +305,20 @@ namespace EasyEPlanner
                     description = description.Substring(0, endPosition);
                 }
 
-                description = ApiHelper
+                description = DeviceBindingHelper
                     .ReplaceRusBigLettersByEngBig(description);
-                actionMatch = FindCorrectClampCommentMatch(comment);
+                actionMatch = DeviceBindingHelper
+                    .FindCorrectClampCommentMatch(comment);
                 comment = ReplaceClampCommentInComment(comment,
                     actionMatch.Value);
             }
             else
             {
-                description = ApiHelper
+                description = DeviceBindingHelper
                     .ReplaceRusBigLettersByEngBig(description);
-                actionMatch = FindCorrectClampCommentMatch(comment);
+                actionMatch = DeviceBindingHelper
+                    .FindCorrectClampCommentMatch(comment);
             }
-        }
-
-        private Match FindCorrectClampCommentMatch(string comment)
-        {
-            string[] splitBySeparator = comment.Split(
-                new string[] { CommonConst.NewLineWithCarriageReturn },
-                StringSplitOptions.RemoveEmptyEntries);
-
-            int arrEndIndex = splitBySeparator.Length - 1;
-            for (int i = arrEndIndex; i > 0; i++)
-            {
-                var match = Regex.Match(splitBySeparator[i],
-                    IODevice.IOChannel.ChannelCommentPattern,
-                    RegexOptions.IgnoreCase);
-                if (match.Value.Length == splitBySeparator[i].Length)
-                {
-                    return match;
-                }
-            }
-
-            return Match.Empty;
         }
 
         private string ReplaceClampCommentInComment(string comment,
@@ -413,13 +394,13 @@ namespace EasyEPlanner
                     {
                         List<IODevice.IOChannel> chanels = 
                             device.Channels;
-                        channelName = ApiHelper
+                        channelName = DeviceBindingHelper
                             .GetChannelNameForIOLinkModuleFromString(
                             chanels.First().Name);
                     }
                     else
                     {
-                        channelName = ApiHelper
+                        channelName = DeviceBindingHelper
                             .GetChannelNameForIOLinkModuleFromString(comment);
                     }
                 }

@@ -174,8 +174,8 @@ namespace EasyEPlanner
                     device.Channels.Count > 1)
                 {
                     functionalText += CommonConst.NewLineWithCarriageReturn +
-                        ApiHelper.GetChannelNameForIOLinkModuleFromString(
-                            channel.Name);
+                        DeviceBindingHelper
+                        .GetChannelNameForIOLinkModuleFromString(channel.Name);
                 }
             }
             else

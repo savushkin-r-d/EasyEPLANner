@@ -30,10 +30,45 @@ namespace StaticHelper
         private const string Dot = ".";
 
         /// <summary>
+        /// MatchEvaluator для regular expression,
+        /// замена русских букв на английские
+        /// </summary>
+        private static string RussianToEnglish(Match m)
+        {
+            switch (m.ToString()[0])
+            {
+                case 'А':
+                    return "A";
+                case 'В':
+                    return "B";
+                case 'С':
+                    return "C";
+                case 'Е':
+                    return "E";
+                case 'К':
+                    return "K";
+                case 'М':
+                    return "M";
+                case 'Н':
+                    return "H";
+                case 'Х':
+                    return "X";
+                case 'Р':
+                    return "P";
+                case 'О':
+                    return "O";
+                case 'Т':
+                    return "T";
+            }
+
+            return m.ToString();
+        }
+
+        /// <summary>
         /// Evaluator для замены заглавных русских букв на английские.
         /// </summary>
         public static MatchEvaluator RusAsEngEvaluator = new MatchEvaluator(
-            ApiHelper.RussianToEnglish);
+            RussianToEnglish);
 
         /// <summary>
         /// Шаблон для поиска русских букв.
