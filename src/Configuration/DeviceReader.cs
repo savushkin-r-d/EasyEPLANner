@@ -54,14 +54,14 @@ namespace EasyEPlanner
                         .Substring(0, endPos);
                 }
 
-                devicesDescription = ReplaceRusBigLettersByEngBig(
-                    devicesDescription);
+                devicesDescription = ApiHelper
+                    .ReplaceRusBigLettersByEngBig(devicesDescription);
                 actionMatch = FindCorrectClampCommentMatch(comment);
             }
             else
             {
-                devicesDescription = ReplaceRusBigLettersByEngBig(
-                    devicesDescription);
+                devicesDescription = ApiHelper
+                    .ReplaceRusBigLettersByEngBig(devicesDescription);
                 actionMatch = FindCorrectClampCommentMatch(comment);
             }
 
@@ -135,12 +135,6 @@ namespace EasyEPlanner
             }
 
             return true;
-        }
-
-        private string ReplaceRusBigLettersByEngBig(string replacingString)
-        {
-            return Regex.Replace(replacingString,
-                CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
         }
 
         private Match FindCorrectClampCommentMatch(string comment)

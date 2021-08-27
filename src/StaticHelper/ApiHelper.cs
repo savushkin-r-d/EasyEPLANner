@@ -338,5 +338,11 @@ namespace StaticHelper
 
             return clampNumberAsString ?? string.Empty;
         }
+
+        public static string ReplaceRusBigLettersByEngBig(string replacingStr)
+        {
+            return Regex.Replace(replacingStr,
+                CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
+        }
     }
 }

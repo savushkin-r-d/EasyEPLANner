@@ -305,22 +305,18 @@ namespace EasyEPlanner
                     description = description.Substring(0, endPosition);
                 }
 
-                description = ReplaceRusBigLettersByEngBig(description);
+                description = ApiHelper
+                    .ReplaceRusBigLettersByEngBig(description);
                 actionMatch = FindCorrectClampCommentMatch(comment);
                 comment = ReplaceClampCommentInComment(comment,
                     actionMatch.Value);
             }
             else
             {
-                description = ReplaceRusBigLettersByEngBig(description);
+                description = ApiHelper
+                    .ReplaceRusBigLettersByEngBig(description);
                 actionMatch = FindCorrectClampCommentMatch(comment);
             }
-        }
-
-        private string ReplaceRusBigLettersByEngBig(string replacingString)
-        {
-            return Regex.Replace(replacingString,
-                CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
         }
 
         private Match FindCorrectClampCommentMatch(string comment)
