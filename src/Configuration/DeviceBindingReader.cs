@@ -287,8 +287,7 @@ namespace EasyEPlanner
         private void CorrectDataIfMultipleBinding(ref string description, 
             out Match actionMatch, out string comment)
         {
-            actionMatch = Match.Empty;
-            comment = "";
+            comment = string.Empty;
             bool isMultipleBinding = DeviceManager.GetInstance()
                 .IsMultipleBinding(description);
             if (isMultipleBinding == false)
@@ -306,30 +305,34 @@ namespace EasyEPlanner
                     description = description.Substring(0, endPosition);
                 }
 
-                description = Regex.Replace(description,
-                    CommonConst.RusAsEngPattern, CommonConst.RusAsEnsEvaluator);
-                actionMatch = Regex.Match(comment, 
-                    IODevice.IOChannel.ChannelCommentPattern,
-                    RegexOptions.IgnoreCase);
-
-                comment = Regex.Replace(comment,
-                    IODevice.IOChannel.ChannelCommentPattern,
-                    "", RegexOptions.IgnoreCase);
-                comment = comment.Replace(CommonConst.NewLine, ". ").Trim();
-                if (comment.Length > 0 && comment[comment.Length - 1] != '.')
-                {
-                    comment += ".";
-                }
+                description = DeviceBindingHelper
+                    .ReplaceRusBigLettersByEngBig(description);
+                actionMatch = DeviceBindingHelper
+                    .FindCorrectClampCommentMatch(comment);
+                comment = ReplaceClampCommentInComment(comment,
+                    actionMatch.Value);
             }
             else
             {
-                description = Regex.Replace(description,
-                    CommonConst.RusAsEngPattern,
-                    CommonConst.RusAsEnsEvaluator);
-                actionMatch = Regex.Match(comment,
-                    IODevice.IOChannel.ChannelCommentPattern,
-                    RegexOptions.IgnoreCase);
+                description = DeviceBindingHelper
+                    .ReplaceRusBigLettersByEngBig(description);
+                actionMatch = DeviceBindingHelper
+                    .FindCorrectClampCommentMatch(comment);
             }
+        }
+
+        private string ReplaceClampCommentInComment(string comment,
+            string foundClampComment)
+        {
+            string replaced = Regex.Replace(comment, foundClampComment,
+                    string.Empty, RegexOptions.IgnoreCase);
+            replaced = replaced.Replace(CommonConst.NewLine, ". ").Trim();
+            if (replaced.Length > 0 && replaced[replaced.Length - 1] != '.')
+            {
+                replaced += ".";
+            }
+
+            return replaced;
         }
 
         /// <summary>
@@ -391,13 +394,13 @@ namespace EasyEPlanner
                     {
                         List<IODevice.IOChannel> chanels = 
                             device.Channels;
-                        channelName = ApiHelper
+                        channelName = DeviceBindingHelper
                             .GetChannelNameForIOLinkModuleFromString(
                             chanels.First().Name);
                     }
                     else
                     {
-                        channelName = ApiHelper
+                        channelName = DeviceBindingHelper
                             .GetChannelNameForIOLinkModuleFromString(comment);
                     }
                 }
