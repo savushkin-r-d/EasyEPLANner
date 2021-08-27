@@ -327,11 +327,11 @@ namespace StaticHelper
                 .Contains(Device.DeviceManager.ValveTerminalName);
             if (haveValveTerminal)
             {
-                Function IOModuleFunction = ApiHelper
-                    .GetIOModuleFunction(deviceClampFunction);
+                Function IOModuleFunction = 
+                    GetIOModuleFunction(deviceClampFunction);
                 string bindedDevice = deviceClampFunction.Name;
-                Function IOModuleClampFunction = ApiHelper
-                    .GetClampFunction(IOModuleFunction, bindedDevice);
+                Function IOModuleClampFunction = 
+                    GetClampFunction(IOModuleFunction, bindedDevice);
                 clampNumberAsString = IOModuleClampFunction.Properties
                 .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
             }
