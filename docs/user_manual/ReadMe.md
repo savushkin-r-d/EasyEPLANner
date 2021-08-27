@@ -410,7 +410,9 @@ WAGO | 750-8204
 WAGO | 750-8206
 Phoenix Contact | AXL F BK ETH
 Phoenix Contact | AXL F BK ETH NET2
+Phoenix Contact | AXC F 1152
 Phoenix Contact | AXC F 2152
+Phoenix Contact | AXC F 3152
 
 ##  5 Объекты технологической схемы ##
 
