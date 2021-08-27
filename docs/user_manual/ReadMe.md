@@ -397,6 +397,23 @@ Phoenix Contact | AXL SE DI16/1 (1088127) | DI | 16 каналов
 Phoenix Contact | AXL SE DO16/1 (1088129) | DO | 16 каналов
 Phoenix Contact | AXL SE SC-A (1088134) | - | Заглушка
 
+Поддерживаемые контроллеры и каплеры:
+Производитель | Название (Номер)
+-- | --
+WAGO | 750-863
+WAGO | 750-341
+WAGO | 750-841
+WAGO | 750-352
+WAGO | 750-8202
+WAGO | 750-8203
+WAGO | 750-8204
+WAGO | 750-8206
+Phoenix Contact | AXL F BK ETH
+Phoenix Contact | AXL F BK ETH NET2
+Phoenix Contact | AXC F 1152
+Phoenix Contact | AXC F 2152
+Phoenix Contact | AXC F 3152
+
 ##  5 Объекты технологической схемы ##
 
 <p align="justify">Объектами являются физические танки, линии и т.д. Логически они делятся на аппараты, агрегаты, блоки управления.</p>

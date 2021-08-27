@@ -35,6 +35,7 @@ namespace Tests.IO
 
             IONode.TYPES pxcCoupler = IONode.TYPES.T_PHOENIX_CONTACT;
             testData.Add(new object[] { "AXL F BK ETH", pxcCoupler });
+            testData.Add(new object[] { "AXL F BK ETH NET2", pxcCoupler });
 
             IONode.TYPES pxcController = IONode.TYPES.T_PHOENIX_CONTACT_MAIN;
             testData.Add(new object[] { "AXC F 1152", pxcController });
@@ -58,6 +59,7 @@ namespace Tests.IO
         [TestCase("750-8204", false)]
         [TestCase("750-8206", false)]
         [TestCase("AXL F BK ETH", true)]
+        [TestCase("AXL F BK ETH NET2", true)]
         [TestCase("AXC F 1152", false)]
         [TestCase("AXC F 2152", false)]
         [TestCase("AXC F 3152", false)]

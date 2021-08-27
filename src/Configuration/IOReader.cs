@@ -233,7 +233,10 @@ namespace EasyEPlanner
                         case "750-8204":
                         case "750-8206":
                         case "AXL F BK ETH":
+                        case "AXL F BK ETH NET2":
+                        case "AXC F 1152":
                         case "AXC F 2152":
+                        case "AXC F 3152":
                             isTruePLCType = true;
                             break;
                     }
