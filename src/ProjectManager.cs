@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using TechObject;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace EasyEPlanner
 {
@@ -291,8 +292,116 @@ namespace EasyEPlanner
         /// </summary>
         private void CheckLibsAndFiles()
         {
+            Task.Run(() =>
+            {
+                MarkForDeleteGitAndSvnDirectoriesInShadowAssembly();
+            });
+
             CheckExcelLibs();
             CopySystemFiles();
+        }
+
+        private void MarkForDeleteGitAndSvnDirectoriesInShadowAssembly()
+        {
+            string shadowAssemblyPath = GetShadowAssemblyPath();
+
+            var pathsToControlVersionDirs = new List<string>();
+            var checkingDirectories = new string[] { ".svn", ".git" };
+            foreach(var dir in checkingDirectories)
+            {
+                pathsToControlVersionDirs.AddRange(Directory.GetDirectories(
+                    shadowAssemblyPath, dir, SearchOption.AllDirectories));
+            }
+
+            foreach (var pathToCVDir in pathsToControlVersionDirs)
+            {
+                var directoryInfo = new DirectoryInfo(pathToCVDir);
+                FileInfo[] files = directoryInfo
+                    .GetFiles("*.*", SearchOption.AllDirectories);
+                foreach (var file in files)
+                {
+                    file.IsReadOnly = false;
+                }
+            }
+        }
+
+        private string GetShadowAssemblyPath()
+        {
+            int pathOffset = 3;
+            List<string> pathParts = AssemblyPath
+                .Split('\\')
+                .ToList();
+            pathParts.RemoveRange(pathParts.Count - pathOffset, pathOffset);
+            var pathToShadowAssembly = string.Join("\\", pathParts);
+
+            return pathToShadowAssembly;
+        }
+
+        /// <summary>
+        /// Проверить Excel библиотеки надстройки.
+        /// </summary>
+        private void CheckExcelLibs()
+        {
+            const string spireLicense = "Spire.License.dll";
+            const string spireXLS = "Spire.XLS.dll";
+            const string spirePDF = "Spire.Pdf.dll";
+
+            string SpireLicensePath = Path.Combine(AssemblyPath, spireLicense);
+            string SpireXLSPath = Path.Combine(AssemblyPath, spireXLS);
+            string SpirePDFPath = Path.Combine(AssemblyPath, spirePDF);
+
+            if (File.Exists(SpireLicensePath) == false ||
+                File.Exists(SpireXLSPath) == false ||
+                File.Exists(SpirePDFPath) == false)
+            {
+                var files = new string[] { spireLicense, spireXLS, spirePDF };
+                CopySpireXLSFiles(AssemblyPath, files, OriginalAssemblyPath);
+            }
+        }
+
+        /// <summary>
+        /// Копировать файлы библиотек Spire XLS
+        /// </summary>
+        /// <param name="shadowAssemblySpireFilesDir">Путь к библиотекам
+        /// в теневом хранилище Eplan</param>
+        /// <param name="files">Имена файлов для копирования</param>
+        /// <param name="originalPath">Путь к надстройке из каталога
+        /// подключения надстройки</param>
+        private void CopySpireXLSFiles(string shadowAssemblySpireFilesDir,
+            string[] files, string originalPath)
+        {
+            var libsDir = new DirectoryInfo(originalPath);
+            foreach (FileInfo file in libsDir.GetFiles())
+            {
+                if (files.Contains(file.Name))
+                {
+                    string path = Path.Combine(shadowAssemblySpireFilesDir,
+                        file.Name);
+                    file.CopyTo(path, true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Копирует системные .lua файлы если они не загрузились
+        /// в теневое хранилище (Win 7 fix).
+        /// <param name="systemFilesPath">Путь к Lua файлам
+        /// в теневом хранилище Eplan</param>
+        /// <param name="originalSystemFilesPath">Путь к файлам Lua в месте 
+        /// подключения надстройки к программе</param>
+        /// </summary>
+        private void CopySystemFiles()
+        {
+            Directory.CreateDirectory(SystemFilesPath);
+
+            var systemFilesDir = new DirectoryInfo(OriginalSystemFilesPath);
+            FileInfo[] systemFiles = systemFilesDir.GetFiles();
+            foreach (FileInfo systemFile in systemFiles)
+            {
+                string pathToFile = Path.Combine(SystemFilesPath,
+                    systemFile.Name);
+                systemFile.CopyTo(pathToFile, true);
+            }
         }
 
         /// <summary>
@@ -657,73 +766,6 @@ namespace EasyEPlanner
             return link;
         }
         #endregion
-
-        /// <summary>
-        /// Проверить Excel библиотеки надстройки.
-        /// </summary>
-        private void CheckExcelLibs()
-        {
-            const string spireLicense = "Spire.License.dll";
-            const string spireXLS = "Spire.XLS.dll";
-            const string spirePDF = "Spire.Pdf.dll";
-
-            string SpireLicensePath = Path.Combine(AssemblyPath, spireLicense);
-            string SpireXLSPath = Path.Combine(AssemblyPath, spireXLS);
-            string SpirePDFPath = Path.Combine(AssemblyPath, spirePDF);
-
-            if (File.Exists(SpireLicensePath) == false ||
-                File.Exists(SpireXLSPath) == false ||
-                File.Exists(SpirePDFPath) == false)
-            {
-                var files = new string[] { spireLicense, spireXLS, spirePDF };
-                CopySpireXLSFiles(AssemblyPath, files, OriginalAssemblyPath);
-            }
-        }
-
-        /// <summary>
-        /// Копировать файлы библиотек Spire XLS
-        /// </summary>
-        /// <param name="shadowAssemblySpireFilesDir">Путь к библиотекам
-        /// в теневом хранилище Eplan</param>
-        /// <param name="files">Имена файлов для копирования</param>
-        /// <param name="originalPath">Путь к надстройке из каталога
-        /// подключения надстройки</param>
-        private void CopySpireXLSFiles(string shadowAssemblySpireFilesDir,
-            string[] files, string originalPath)
-        {
-            var libsDir = new DirectoryInfo(originalPath);
-            foreach (FileInfo file in libsDir.GetFiles())
-            {
-                if (files.Contains(file.Name))
-                {
-                    string path = Path.Combine(shadowAssemblySpireFilesDir,
-                        file.Name);
-                    file.CopyTo(path, true);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Копирует системные .lua файлы если они не загрузились
-        /// в теневое хранилище (Win 7 fix).
-        /// <param name="systemFilesPath">Путь к Lua файлам
-        /// в теневом хранилище Eplan</param>
-        /// <param name="originalSystemFilesPath">Путь к файлам Lua в месте 
-        /// подключения надстройки к программе</param>
-        /// </summary>
-        private void CopySystemFiles()
-        {
-            Directory.CreateDirectory(SystemFilesPath);
-
-            var systemFilesDir = new DirectoryInfo(OriginalSystemFilesPath);
-            FileInfo[] systemFiles = systemFilesDir.GetFiles();
-            foreach (FileInfo systemFile in systemFiles)
-            {
-                string pathToFile = Path.Combine(SystemFilesPath,
-                    systemFile.Name);
-                systemFile.CopyTo(pathToFile, true);
-            }
-        }
 
         /// <summary>
         /// Путь к надстройке, к месту, из которого она подключалась к программе
