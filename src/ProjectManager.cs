@@ -306,10 +306,12 @@ namespace EasyEPlanner
             string shadowAssemblyPath = GetShadowAssemblyPath();
 
             var pathsToControlVersionDirs = new List<string>();
-            pathsToControlVersionDirs.AddRange(Directory.GetDirectories(
-                shadowAssemblyPath, ".svn", SearchOption.AllDirectories));
-            pathsToControlVersionDirs.AddRange(Directory.GetDirectories(
-                shadowAssemblyPath, ".git", SearchOption.AllDirectories));
+            var checkingDirectories = new string[] { ".svn", ".git" };
+            foreach(var dir in checkingDirectories)
+            {
+                pathsToControlVersionDirs.AddRange(Directory.GetDirectories(
+                    shadowAssemblyPath, dir, SearchOption.AllDirectories));
+            }
 
             foreach (var pathToCVDir in pathsToControlVersionDirs)
             {
@@ -325,10 +327,11 @@ namespace EasyEPlanner
 
         private string GetShadowAssemblyPath()
         {
+            int pathOffset = 3;
             List<string> pathParts = AssemblyPath
                 .Split('\\')
                 .ToList();
-            pathParts.RemoveRange(pathParts.Count - 3, 3);
+            pathParts.RemoveRange(pathParts.Count - pathOffset, pathOffset);
             var pathToShadowAssembly = string.Join("\\", pathParts);
 
             return pathToShadowAssembly;
