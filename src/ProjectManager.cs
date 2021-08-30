@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using TechObject;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace EasyEPlanner
 {
@@ -291,6 +292,7 @@ namespace EasyEPlanner
         /// </summary>
         private void CheckLibsAndFiles()
         {
+            DeleteVersionControlDirectoriesInShadowAssembly();
             CheckExcelLibs();
             CopySystemFiles();
         }
@@ -722,6 +724,31 @@ namespace EasyEPlanner
                 string pathToFile = Path.Combine(SystemFilesPath,
                     systemFile.Name);
                 systemFile.CopyTo(pathToFile, true);
+            }
+        }
+
+        private void DeleteVersionControlDirectoriesInShadowAssembly()
+        {
+            var deletingDirectories = new string[] { ".svn", ".git" };
+            foreach(var dir in deletingDirectories)
+            {
+                string dirPath = Path.Combine(AssemblyPath, dir);
+                bool dirExists = Directory.Exists(dirPath);
+                if (dirExists)
+                {
+                    Task.Run(() =>
+                    {
+                        var directoryInfo = new DirectoryInfo(dirPath);
+                        FileInfo[] files = directoryInfo
+                            .GetFiles("*.*", SearchOption.AllDirectories);
+                        foreach (var file in files)
+                        {
+                            file.IsReadOnly = false;
+                        }
+
+                        directoryInfo.Delete(true);
+                    });
+                }
             }
         }
 
