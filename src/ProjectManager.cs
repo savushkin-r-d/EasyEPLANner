@@ -292,12 +292,12 @@ namespace EasyEPlanner
         /// </summary>
         private void CheckLibsAndFiles()
         {
-            DeleteVersionControlDirectoriesInShadowAssembly();
+            MarkForDeleteVersionControlDirectoriesInShadowAssembly();
             CheckExcelLibs();
             CopySystemFiles();
         }
 
-        private void DeleteVersionControlDirectoriesInShadowAssembly()
+        private void MarkForDeleteVersionControlDirectoriesInShadowAssembly()
         {
             var deletingDirectories = new string[] { ".svn", ".git" };
             foreach (var dir in deletingDirectories)
@@ -315,8 +315,6 @@ namespace EasyEPlanner
                         {
                             file.IsReadOnly = false;
                         }
-
-                        directoryInfo.Delete(true);
                     });
                 }
             }
