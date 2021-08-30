@@ -324,8 +324,18 @@ namespace EasyEPlanner
         private string ReplaceClampCommentInComment(string comment,
             string foundClampComment)
         {
-            string replaced = Regex.Replace(comment, foundClampComment,
-                    string.Empty, RegexOptions.IgnoreCase);
+            bool invalidComment =
+                comment == CommonConst.NewLineWithCarriageReturn ||
+                comment == CommonConst.NewLine ||
+                comment == string.Empty;
+            if (invalidComment)
+            {
+                return string.Empty;
+            }
+
+            string replaced = Regex.Replace(comment,
+                Regex.Escape(foundClampComment), string.Empty,
+                RegexOptions.IgnoreCase);
             replaced = replaced.Replace(CommonConst.NewLine, ". ").Trim();
             if (replaced.Length > 0 && replaced[replaced.Length - 1] != '.')
             {

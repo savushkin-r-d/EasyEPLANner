@@ -67,20 +67,28 @@ namespace StaticHelper
 
         public static Match FindCorrectClampCommentMatch(string comment)
         {
-            string[] splitBySeparator = comment.Split(
-                new string[] { CommonConst.NewLineWithCarriageReturn },
+            string replaceCarriageToNewLine = Regex.Replace(comment,
+                CommonConst.NewLineWithCarriageReturn,
+                CommonConst.NewLine);
+            string[] splitBySeparator = replaceCarriageToNewLine.Split(
+                new string[] { CommonConst.NewLine },
                 StringSplitOptions.RemoveEmptyEntries);
 
             int arrEndIndex = splitBySeparator.Length - 1;
-            for (int i = arrEndIndex; i > 0; i++)
+            int maxDeep = 2;
+            for (int i = arrEndIndex; i >= 0; i--)
             {
-                var match = Regex.Match(splitBySeparator[i],
+                if (maxDeep > 0)
+                {
+                    var match = Regex.Match(splitBySeparator[i],
                     IODevice.IOChannel.ChannelCommentPattern,
                     RegexOptions.IgnoreCase);
-                if (match.Value.Length == splitBySeparator[i].Length)
-                {
-                    return match;
+                    if (match.Value.Length == splitBySeparator[i].Length)
+                    {
+                        return match;
+                    }
                 }
+                maxDeep--;
             }
 
             return Match.Empty;
