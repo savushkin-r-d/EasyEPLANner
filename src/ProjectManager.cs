@@ -292,32 +292,46 @@ namespace EasyEPlanner
         /// </summary>
         private void CheckLibsAndFiles()
         {
-            MarkForDeleteVersionControlDirectoriesInShadowAssembly();
+            Task.Run(() =>
+            {
+                MarkForDeleteGitAndSvnDirectoriesInShadowAssembly();
+            });
+
             CheckExcelLibs();
             CopySystemFiles();
         }
 
-        private void MarkForDeleteVersionControlDirectoriesInShadowAssembly()
+        private void MarkForDeleteGitAndSvnDirectoriesInShadowAssembly()
         {
-            var deletingDirectories = new string[] { ".svn", ".git" };
-            foreach (var dir in deletingDirectories)
+            string shadowAssemblyPath = GetShadowAssemblyPath();
+
+            var pathsToControlVersionDirs = new List<string>();
+            pathsToControlVersionDirs.AddRange(Directory.GetDirectories(
+                shadowAssemblyPath, ".svn", SearchOption.AllDirectories));
+            pathsToControlVersionDirs.AddRange(Directory.GetDirectories(
+                shadowAssemblyPath, ".git", SearchOption.AllDirectories));
+
+            foreach (var pathToCVDir in pathsToControlVersionDirs)
             {
-                string dirPath = Path.Combine(AssemblyPath, dir);
-                bool dirExists = Directory.Exists(dirPath);
-                if (dirExists)
+                var directoryInfo = new DirectoryInfo(pathToCVDir);
+                FileInfo[] files = directoryInfo
+                    .GetFiles("*.*", SearchOption.AllDirectories);
+                foreach (var file in files)
                 {
-                    Task.Run(() =>
-                    {
-                        var directoryInfo = new DirectoryInfo(dirPath);
-                        FileInfo[] files = directoryInfo
-                            .GetFiles("*.*", SearchOption.AllDirectories);
-                        foreach (var file in files)
-                        {
-                            file.IsReadOnly = false;
-                        }
-                    });
+                    file.IsReadOnly = false;
                 }
             }
+        }
+
+        private string GetShadowAssemblyPath()
+        {
+            List<string> pathParts = AssemblyPath
+                .Split('\\')
+                .ToList();
+            pathParts.RemoveRange(pathParts.Count - 3, 3);
+            var pathToShadowAssembly = string.Join("\\", pathParts);
+
+            return pathToShadowAssembly;
         }
 
         /// <summary>
