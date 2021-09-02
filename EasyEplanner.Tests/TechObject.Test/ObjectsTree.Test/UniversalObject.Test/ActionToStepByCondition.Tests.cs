@@ -104,7 +104,8 @@ namespace Tests.TechObject
             {
                 Device.DeviceType.V,
                 Device.DeviceType.GS,
-                Device.DeviceType.DI
+                Device.DeviceType.DI,
+                Device.DeviceType.DO
             };
 
             var onDevsTypes = allowedOnoffDevTypes;
