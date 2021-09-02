@@ -22,7 +22,8 @@ namespace TechObject
             {
                 Device.DeviceType.V,
                 Device.DeviceType.GS,
-                Device.DeviceType.DI
+                Device.DeviceType.DI,
+                Device.DeviceType.DO
             };
 
             SubActions.Add(new Action("Включение устройств", owner,
