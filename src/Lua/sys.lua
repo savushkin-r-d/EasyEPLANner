@@ -170,6 +170,7 @@ function proc_actions(step, value, is_runtime_step)
     proc_groups(step, value, "opened_lower_seat_v")
     proc(step, value, "required_FB")
     proc_groups(step, value, "DI_DO")
+    proc_groups(step, value, "inverted_DI_DO")
     proc_groups(step, value, "AI_AO")
     proc_wash_data(step, value)
 
