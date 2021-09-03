@@ -136,34 +136,27 @@ namespace TechObject
             groupWash.ImageIndex = ImageIndexEnum.ActionWash;
             actions.Add(groupWash);
 
+            var pairsDIDOAllowedDevTypes = new Device.DeviceType[]
+            {
+                Device.DeviceType.DI,
+                Device.DeviceType.SB,
+                Device.DeviceType.DO,
+                Device.DeviceType.HL,
+                Device.DeviceType.GS
+            };
+
             // Специальное действие - выдача дискретных сигналов 
             // при наличии входного дискретного сигнала.
             var groupDIDO = new ActionGroup(groupDIDOActionName, this,
-                "DI_DO",
-                new Device.DeviceType[]
-                {
-                    Device.DeviceType.DI,
-                    Device.DeviceType.SB,
-                    Device.DeviceType.DO,
-                    Device.DeviceType.HL,
-                    Device.DeviceType.GS
-                },
-                null, new OneInManyOutActionProcessingStrategy());
+                "DI_DO", pairsDIDOAllowedDevTypes, null,
+                new OneInManyOutActionProcessingStrategy());
             groupDIDO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupDIDO);
 
             // Специальное действие - выдача дискретных сигналов 
             // при пропадании входного дискретного сигнала.
             var groupInvertedDIDO = new ActionGroup(groupDIDOActionNameInverted,
-                this, "inverted_DI_DO",
-                new Device.DeviceType[]
-                {
-                    Device.DeviceType.DI,
-                    Device.DeviceType.SB,
-                    Device.DeviceType.DO,
-                    Device.DeviceType.HL,
-                    Device.DeviceType.GS
-                },
+                this, "inverted_DI_DO", pairsDIDOAllowedDevTypes,
                 null, new OneInManyOutActionProcessingStrategy());
             groupInvertedDIDO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupInvertedDIDO);
