@@ -175,31 +175,12 @@ namespace Device
                 {Tag.M, 1},
             };
 
-            if (hasAlarm)
-            {
-                defaultTags.Add(Tag.L_SIREN, 1);
-            }
-
-            if (hasBlue)
-            {
-                defaultTags.Add(Tag.L_BLUE, 1);
-            }
-
-            if (hasGreen)
-            {
-                defaultTags.Add(Tag.L_GREEN, 1);
-            }
-
-            if (hasYellow)
-            {
-                defaultTags.Add(Tag.L_YELLOW, 1);
-            }
-
-            if (hasRed)
-            {
-                defaultTags.Add(Tag.L_RED, 1);
-            }
-
+            if (hasAlarm) defaultTags.Add(Tag.L_SIREN, 1);
+            if (hasBlue) defaultTags.Add(Tag.L_BLUE, 1);
+            if (hasGreen) defaultTags.Add(Tag.L_GREEN, 1);
+            if (hasYellow) defaultTags.Add(Tag.L_YELLOW, 1);
+            if (hasRed) defaultTags.Add(Tag.L_RED, 1);
+            
             return defaultTags;
         }
 
