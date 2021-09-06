@@ -31,6 +31,11 @@
             /// IP-адрес устройства.
             /// </summary>
             public const string IP = "IP";
+
+            /// <summary>
+            /// Последовательность сигналов.
+            /// </summary>
+            public const string SIGNALS_SEQUENCE = "SIGNALS_SEQUENCE";
         }
     }
 }

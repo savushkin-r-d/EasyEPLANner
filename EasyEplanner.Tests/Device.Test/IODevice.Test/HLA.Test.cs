@@ -281,16 +281,16 @@ namespace Tests.Devices
             {
                 case 1:
                     return new HLA("KOAG4HL1", "+KOAG4-HL1",
-                        "Test device", 1, "KOAG", 4);
+                        "Test device", 1, "KOAG", 4, string.Empty);
                 case 2:
                     return new HLA("LINE1HL2", "+LINE1-HL2",
-                        "Test device", 2, "LINE", 1);
+                        "Test device", 2, "LINE", 1, string.Empty);
                 case 3:
                     return new HLA("TANK2HL1", "+TANK2-HL1",
-                        "Test device", 1, "TANK", 2);
+                        "Test device", 1, "TANK", 2, string.Empty);
                 default:
                     return new HLA("CW_TANK3HL3", "+CW_TANK3-HL3",
-                        "Test device", 3, "CW_TANK", 3);
+                        "Test device", 3, "CW_TANK", 3, string.Empty);
             }
         }
     }

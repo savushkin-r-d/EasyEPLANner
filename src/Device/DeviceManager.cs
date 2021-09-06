@@ -597,7 +597,7 @@ namespace Device
 
                 case "HLA":
                     dev = new HLA(name, eplanName, description, deviceNumber,
-                        objectName, objectNumber);
+                        objectName, objectNumber, articleName);
                     break;
 
                 case "CAM":

@@ -8,11 +8,13 @@ namespace Device
     public class HLA : IODevice
     {
         public HLA(string name, string eplanName, string description,
-            int deviceNumber, string objectName, int objectNumber) : base(name,
-                eplanName, description, deviceNumber, objectName, objectNumber)
+            int deviceNumber, string objectName, int objectNumber,
+            string articleName) : base(name, eplanName, description,
+                deviceNumber, objectName, objectNumber)
         {
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.HLA;
+            ArticleName = articleName;
         }
 
         public override string SetSubType(string subtype)
@@ -36,14 +38,39 @@ namespace Device
                 case "HLA_VIRT":
                     break;
 
+                case "HLA_IOLINK":
+                    dSubType = DeviceSubType.HLA_IOLINK;
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+                    AO.Add(new IOChannel("AO", -1, -1, -1, ""));
+                    SetIOLinkSizes(ArticleName);
+
+                    properties.Add(Property.SIGNALS_SEQUENCE, null);
+                    break;
+
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип " +
-                        "(пустая строка, HLA, HLA_VIRT).\n",
+                        "(пустая строка, HLA, HLA_VIRT, HLA_IOLINK).\n",
                         Name);
                     break;
             }
 
             return errStr;
+        }
+
+        public override string Check()
+        {
+            if (dSubType == DeviceSubType.HLA_IOLINK)
+            {
+                return CheckSignalsSequence();
+            }
+
+            return string.Empty;
+        }
+
+        private string CheckSignalsSequence()
+        {
+            //TODO: Check sequence;
+            return string.Empty;
         }
 
         public override string GetDeviceSubTypeStr(DeviceType dt,
@@ -58,6 +85,8 @@ namespace Device
                             return "HLA";
                         case DeviceSubType.HLA_VIRT:
                             return "HLA_VIRT";
+                        case DeviceSubType.HLA_IOLINK:
+                            return "HLA_IOLINK";
                     }
                     break;
             }
@@ -83,10 +112,19 @@ namespace Device
                                 {Tag.L_GREEN, 1 },
                                 {Tag.L_SIREN, 1 },
                             };
+
+                        case DeviceSubType.HLA_IOLINK:
+                            return GetDeviceIOLinkProperties();
                     }
                     break;
             }
 
+            return null;
+        }
+
+        private Dictionary<string, int> GetDeviceIOLinkProperties()
+        {
+            //TODO: Depends on sequence
             return null;
         }
     }
