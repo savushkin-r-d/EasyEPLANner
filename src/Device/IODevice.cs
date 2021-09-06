@@ -410,7 +410,7 @@ namespace Device
             {
                 string valueAsStr = value as string;
                 valueAsStr = valueAsStr.Replace("\'", string.Empty);
-                properties[name] = valueAsStr;
+                properties[name] = valueAsStr.Trim();
                 OnPropertyChanged?.Invoke();
             }
             else

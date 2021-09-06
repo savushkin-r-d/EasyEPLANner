@@ -44,7 +44,7 @@ namespace Device
 
                 case "HLA_VIRT":
                     properties.Add(Property.SIGNALS_SEQUENCE, null);
-                    OnPropertyChanged +=  SetAlarmsAndLights;
+                    OnPropertyChanged +=  ReadSignalsSequence;
                     break;
 
                 case "HLA_IOLINK":
@@ -54,7 +54,7 @@ namespace Device
                     SetIOLinkSizes(ArticleName);
 
                     properties.Add(Property.SIGNALS_SEQUENCE, null);
-                    OnPropertyChanged += SetAlarmsAndLights;
+                    OnPropertyChanged += ReadSignalsSequence;
                     break;
 
                 default:
@@ -67,19 +67,23 @@ namespace Device
             return errStr;
         }
 
-        private void SetAlarmsAndLights()
+        private void ReadSignalsSequence()
         {
             string sequenceLuaName = Property.SIGNALS_SEQUENCE;
             string sequenceValue = Properties[sequenceLuaName] as string;
             if (sequenceValue != null)
             {
-                sequenceValue = sequenceValue.Trim();
+                char soundAlarm = 'A';
+                char blueLight = 'B';
+                char greenLight = 'G';
+                char yellowLight = 'Y';
+                char redLight = 'R';
 
-                hasAlarm = sequenceValue.Count(x => x == 'A') == 1;
-                hasBlue = sequenceValue.Count(x => x == 'B') == 1;
-                hasGreen = sequenceValue.Count(x => x == 'G') == 1;
-                hasYellow = sequenceValue.Count(x => x == 'Y') == 1;
-                hasRed = sequenceValue.Count(x => x == 'R') == 1;
+                hasAlarm = sequenceValue.Count(x => x == soundAlarm) == 1;
+                hasBlue = sequenceValue.Count(x => x == blueLight) == 1;
+                hasGreen = sequenceValue.Count(x => x == greenLight) == 1;
+                hasYellow = sequenceValue.Count(x => x == yellowLight) == 1;
+                hasRed = sequenceValue.Count(x => x == redLight) == 1;
             }
         }
 
@@ -109,8 +113,6 @@ namespace Device
                     $"{sequenceLuaName} сигнальной колонны \"{eplanName}\"." +
                     $"{CommonConst.NewLine}";
             }
-
-            sequenceValue = sequenceValue.Trim();
 
             int sequenceLength = sequenceValue.Length;
             int minLength = 1;
