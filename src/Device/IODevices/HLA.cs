@@ -17,12 +17,6 @@ namespace Device
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.HLA;
             ArticleName = articleName;
-
-            hasAlarm = false;
-            hasBlue = false;
-            hasGreen = false;
-            hasYellow = false;
-            hasRed = false;
         }
 
         public override string SetSubType(string subtype)
@@ -49,6 +43,8 @@ namespace Device
                     break;
 
                 case "HLA_VIRT":
+                    properties.Add(Property.SIGNALS_SEQUENCE, null);
+                    OnPropertyChanged +=  SetAlarmsAndLights;
                     break;
 
                 case "HLA_IOLINK":
@@ -58,6 +54,7 @@ namespace Device
                     SetIOLinkSizes(ArticleName);
 
                     properties.Add(Property.SIGNALS_SEQUENCE, null);
+                    OnPropertyChanged += SetAlarmsAndLights;
                     break;
 
                 default:
@@ -70,12 +67,31 @@ namespace Device
             return errStr;
         }
 
+        private void SetAlarmsAndLights()
+        {
+            string sequenceLuaName = Property.SIGNALS_SEQUENCE;
+            string sequenceValue = Properties[sequenceLuaName] as string;
+            if (sequenceValue != null)
+            {
+                sequenceValue = sequenceValue.Trim();
+
+                hasAlarm = sequenceValue.Count(x => x == 'A') == 1;
+                hasBlue = sequenceValue.Count(x => x == 'B') == 1;
+                hasGreen = sequenceValue.Count(x => x == 'G') == 1;
+                hasYellow = sequenceValue.Count(x => x == 'Y') == 1;
+                hasRed = sequenceValue.Count(x => x == 'R') == 1;
+            }
+        }
+
         public override string Check()
         {
             string errors = string.Empty;
             errors += base.Check();
 
-            if (dSubType == DeviceSubType.HLA_IOLINK)
+            bool devContainsSequenceProperties =
+                dSubType == DeviceSubType.HLA_IOLINK ||
+                dSubType == DeviceSubType.HLA_VIRT;
+            if (devContainsSequenceProperties)
             {
                 errors += CheckSignalsSequence();
             }
@@ -109,12 +125,6 @@ namespace Device
                     $"{minLength} до {maxLength} символов." +
                     $"{CommonConst.NewLine}";
             }
-
-            hasAlarm = sequenceValue.Count(x => x == 'A') == 1;
-            hasBlue = sequenceValue.Count(x => x == 'B') == 1;
-            hasGreen = sequenceValue.Count(x => x == 'G') == 1;
-            hasYellow = sequenceValue.Count(x => x == 'Y') == 1;
-            hasRed = sequenceValue.Count(x => x == 'R') == 1;
 
             if (hasAlarm) sequenceLength--;
             if (hasBlue) sequenceLength--;
@@ -160,7 +170,13 @@ namespace Device
             switch (dt)
             {
                 case DeviceType.HLA:
-                    GetDeviceIOLinkProperties();
+                    switch (dst)
+                    {
+                        case DeviceSubType.HLA:
+                        case DeviceSubType.HLA_IOLINK:
+                        case DeviceSubType.HLA_VIRT:
+                            return GetDeviceIOLinkProperties();
+                    }
                     break;
             }
 
@@ -184,10 +200,10 @@ namespace Device
             return defaultTags;
         }
 
-        private bool hasAlarm;
-        private bool hasBlue;
-        private bool hasGreen;
-        private bool hasYellow;
-        private bool hasRed;
+        private bool hasAlarm = false;
+        private bool hasBlue = false;
+        private bool hasGreen = false;
+        private bool hasYellow = false;
+        private bool hasRed = false;
     }
 }

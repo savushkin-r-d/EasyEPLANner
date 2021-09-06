@@ -411,6 +411,7 @@ namespace Device
                 string valueAsStr = value as string;
                 valueAsStr = valueAsStr.Replace("\'", string.Empty);
                 properties[name] = valueAsStr;
+                OnPropertyChanged?.Invoke();
             }
             else
             {
@@ -854,6 +855,9 @@ namespace Device
         protected Dictionary<string, object> properties; ///Свойства.
 
         internal IOLinkSize IOLinkProperties; ///IO-Link свойства устройства.
+
+        protected delegate void PropertyChanged();
+        protected event PropertyChanged OnPropertyChanged;
         #endregion
 
         /// <summary>
