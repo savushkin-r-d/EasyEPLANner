@@ -93,7 +93,7 @@ namespace Device
             if (wrongLength)
             {
                 return $"Неправильно заполнена последовательность сигналов " +
-                    $"{sequenceLuaName} сигнальной колонны \"{eplanName}\"." +
+                    $"{sequenceLuaName} сигнальной колонны \"{eplanName}\". " +
                     $"Длина последовательности должна быть от " +
                     $"{minLength} до {maxLength} символов." +
                     $"{CommonConst.NewLine}";
