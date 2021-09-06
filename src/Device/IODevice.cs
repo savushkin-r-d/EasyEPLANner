@@ -405,16 +405,17 @@ namespace Device
         /// </summary>
         virtual public string SetProperty(string name, object value)
         {
-            string res = "";
-
-            object val = null;
-            if (properties.TryGetValue(name, out val))
+            string res = string.Empty;
+            if (properties.TryGetValue(name, out _))
             {
-                properties[name] = value;
+                string valueAsStr = value as string;
+                valueAsStr = valueAsStr.Replace("\'", string.Empty);
+                properties[name] = valueAsStr;
             }
             else
             {
-                res = string.Format("\"{0}\" - свойство не найдено\n", name);
+                res = $"\"{name}\" - свойство не найдено." +
+                    $"{CommonConst.NewLine}";
             }
 
             return res;
@@ -595,7 +596,7 @@ namespace Device
 
                     foreach (var prop in validProperties)
                     {
-                        res += prefix + $"\t{prop.Key} = {prop.Value},\n";
+                        res += prefix + $"\t{prop.Key} = \'{prop.Value}\',\n";
                     }
                     res += prefix + "\t},\n";
                 }

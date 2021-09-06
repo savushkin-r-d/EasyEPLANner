@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using StaticHelper;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Device
@@ -49,9 +50,9 @@ namespace Device
                     break;
 
                 default:
-                    errStr = string.Format("\"{0}\" - неверный тип " +
-                        "(пустая строка, HLA, HLA_VIRT, HLA_IOLINK).\n",
-                        Name);
+                    errStr = $"\"{Name}\" - неверный тип " +
+                        $"(пустая строка, HLA, HLA_VIRT, HLA_IOLINK)." +
+                        $"{CommonConst.NewLine}";
                     break;
             }
 
@@ -60,26 +61,31 @@ namespace Device
 
         public override string Check()
         {
+            string errors = string.Empty;
+            errors += base.Check();
+
             if (dSubType == DeviceSubType.HLA_IOLINK)
             {
-                return CheckSignalsSequence();
+                errors += CheckSignalsSequence();
             }
 
-            return string.Empty;
+            return errors;
         }
 
         private string CheckSignalsSequence()
         {
-            string sequence = Properties[Property.SIGNALS_SEQUENCE] as string;
-            if (sequence == null)
+            string sequenceLuaName = Property.SIGNALS_SEQUENCE;
+            string sequenceValue = Properties[sequenceLuaName] as string;
+            if (sequenceValue == null)
             {
-                return $"Не заполнена последовательность сигналов" +
-                    $" сигнальной колонны {eplanName}.";
+                return $"Не заполнена последовательность сигналов " +
+                    $"{sequenceLuaName} сигнальной колонны \"{eplanName}\"." +
+                    $"{CommonConst.NewLine}";
             }
 
-            sequence = sequence.Trim();
+            sequenceValue = sequenceValue.Trim();
 
-            int sequenceLength = sequence.Length;
+            int sequenceLength = sequenceValue.Length;
             int minLength = 1;
             int maxLength = 5;
             bool wrongLength = sequenceLength < minLength ||
@@ -87,15 +93,17 @@ namespace Device
             if (wrongLength)
             {
                 return $"Неправильно заполнена последовательность сигналов " +
-                    $"сигнальной колонны {eplanName}. Длина " +
-                    $"последовательности должна быть от 1 до 5 символов.";
+                    $"{sequenceLuaName} сигнальной колонны \"{eplanName}\"." +
+                    $"Длина последовательности должна быть от " +
+                    $"{minLength} до {maxLength} символов." +
+                    $"{CommonConst.NewLine}";
             }
 
-            HasAlarm = sequence.Count(x => x == 'A') == 1;
-            HasBlue = sequence.Count(x => x == 'B') == 1;
-            HasGreen = sequence.Count(x => x == 'G') == 1;
-            HasYellow = sequence.Count(x => x == 'Y') == 1;
-            HasRed = sequence.Count(x => x == 'R') == 1;
+            HasAlarm = sequenceValue.Count(x => x == 'A') == 1;
+            HasBlue = sequenceValue.Count(x => x == 'B') == 1;
+            HasGreen = sequenceValue.Count(x => x == 'G') == 1;
+            HasYellow = sequenceValue.Count(x => x == 'Y') == 1;
+            HasRed = sequenceValue.Count(x => x == 'R') == 1;
 
             if (HasAlarm)
             {
@@ -122,10 +130,13 @@ namespace Device
                 sequenceLength--;
             }
 
-            if (sequenceLength != 0)
+            bool wrongCharsInSequence = sequenceLength != 0;
+            if (wrongCharsInSequence)
             {
-                return "Строка последовательности сигналов содержит " +
-                    "некорректные символы";
+                return $"Неправильно заполнена последовательность сигналов " +
+                    $"{sequenceLuaName} сигнальной колонны \"{eplanName}\". " +
+                    $"Дублирование символов или неправильные символы." +
+                    $"{CommonConst.NewLine}";
             }
 
             return string.Empty;

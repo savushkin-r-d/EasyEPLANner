@@ -105,7 +105,7 @@ namespace Device
         private string CheckDevicesIP(long startingIP, long endingIP)
         {
             var errors = new List<string>();
-            string ipProperty = "IP";
+            string ipProperty = IODevice.Property.IP;
 
             var devicesWithIPProperty = Devices
                 .Where(x => x.Properties.ContainsKey(ipProperty) &&
@@ -115,7 +115,7 @@ namespace Device
                 string IPstr = Regex.Match(device.Properties[ipProperty]
                     .ToString(), StaticHelper.CommonConst.IPAddressPattern)
                     .Value;
-                if (IPstr == "")
+                if (IPstr == string.Empty)
                 {
                     continue;
                 }
@@ -162,8 +162,7 @@ namespace Device
                     object value = property.Value;
                     if(value != null)
                     {
-                        var devInPropery = GetDevice(
-                            value.ToString().Trim(new char[] { '\'' }));
+                        var devInPropery = GetDevice(value.ToString());
                         if (devInPropery.Description == cap)
                         {
                             res += $"Задано несуществующее устройство для " +
