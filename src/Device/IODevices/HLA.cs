@@ -17,6 +17,12 @@ namespace Device
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.HLA;
             ArticleName = articleName;
+
+            hasAlarm = false;
+            hasBlue = false;
+            hasGreen = false;
+            hasYellow = false;
+            hasRed = false;
         }
 
         public override string SetSubType(string subtype)
@@ -33,6 +39,11 @@ namespace Device
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Желтый цвет"));
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Зеленый цвет"));
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Звуковая сигнализация"));
+
+                    hasAlarm = true;
+                    hasGreen = true;
+                    hasYellow = true;
+                    hasRed = true;
 
                     rtParameters.Add(RuntimeParameter.R_CONST_RED, null);
                     break;
@@ -99,37 +110,17 @@ namespace Device
                     $"{CommonConst.NewLine}";
             }
 
-            HasAlarm = sequenceValue.Count(x => x == 'A') == 1;
-            HasBlue = sequenceValue.Count(x => x == 'B') == 1;
-            HasGreen = sequenceValue.Count(x => x == 'G') == 1;
-            HasYellow = sequenceValue.Count(x => x == 'Y') == 1;
-            HasRed = sequenceValue.Count(x => x == 'R') == 1;
+            hasAlarm = sequenceValue.Count(x => x == 'A') == 1;
+            hasBlue = sequenceValue.Count(x => x == 'B') == 1;
+            hasGreen = sequenceValue.Count(x => x == 'G') == 1;
+            hasYellow = sequenceValue.Count(x => x == 'Y') == 1;
+            hasRed = sequenceValue.Count(x => x == 'R') == 1;
 
-            if (HasAlarm)
-            {
-                sequenceLength--;
-            }
-
-            if (HasBlue)
-            {
-                sequenceLength--;
-            }
-
-            if (HasGreen)
-            {
-                sequenceLength--;
-            }
-
-            if (HasYellow)
-            {
-                sequenceLength--;
-            }
-
-            if (HasRed)
-            {
-                sequenceLength--;
-            }
-
+            if (hasAlarm) sequenceLength--;
+            if (hasBlue) sequenceLength--;
+            if (hasGreen) sequenceLength--;
+            if (hasYellow) sequenceLength--;
+            if (hasRed) sequenceLength--;
             bool wrongCharsInSequence = sequenceLength != 0;
             if (wrongCharsInSequence)
             {
@@ -169,22 +160,7 @@ namespace Device
             switch (dt)
             {
                 case DeviceType.HLA:
-                    switch(dst)
-                    {
-                        case DeviceSubType.HLA:
-                            return new Dictionary<string, int>()
-                            {
-                                {Tag.ST, 1},
-                                {Tag.M, 1},
-                                {Tag.L_RED, 1 },
-                                {Tag.L_YELLOW, 1 },
-                                {Tag.L_GREEN, 1 },
-                                {Tag.L_SIREN, 1 },
-                            };
-
-                        case DeviceSubType.HLA_IOLINK:
-                            return GetDeviceIOLinkProperties();
-                    }
+                    GetDeviceIOLinkProperties();
                     break;
             }
 
@@ -199,27 +175,27 @@ namespace Device
                 {Tag.M, 1},
             };
 
-            if (HasAlarm)
+            if (hasAlarm)
             {
                 defaultTags.Add(Tag.L_SIREN, 1);
             }
 
-            if (HasBlue)
+            if (hasBlue)
             {
                 defaultTags.Add(Tag.L_BLUE, 1);
             }
 
-            if (HasGreen)
+            if (hasGreen)
             {
                 defaultTags.Add(Tag.L_GREEN, 1);
             }
 
-            if (HasYellow)
+            if (hasYellow)
             {
                 defaultTags.Add(Tag.L_YELLOW, 1);
             }
 
-            if (HasRed)
+            if (hasRed)
             {
                 defaultTags.Add(Tag.L_RED, 1);
             }
@@ -227,14 +203,10 @@ namespace Device
             return defaultTags;
         }
 
-        private bool HasAlarm { get; set; } = false;
-
-        private bool HasBlue { get; set; } = false;
-
-        private bool HasGreen { get; set; } = false;
-
-        private bool HasYellow { get; set; } = false;
-
-        private bool HasRed { get; set; } = false;
+        private bool hasAlarm;
+        private bool hasBlue;
+        private bool hasGreen;
+        private bool hasYellow;
+        private bool hasRed;
     }
 }
