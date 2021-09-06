@@ -103,6 +103,11 @@
             public const string CLEVEL = "CLEVEL";
 
             /// <summary>
+            /// Состояние голубой лампочки.
+            /// </summary>
+            public const string L_BLUE = "L_BLUE";
+
+            /// <summary>
             /// Состояние красной лампочки.
             /// </summary>
             public const string L_RED = "L_RED";

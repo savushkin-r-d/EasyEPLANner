@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Device
 {
@@ -69,7 +70,64 @@ namespace Device
 
         private string CheckSignalsSequence()
         {
-            //TODO: Check sequence;
+            string sequence = Properties[Property.SIGNALS_SEQUENCE] as string;
+            if (sequence == null)
+            {
+                return $"Не заполнена последовательность сигналов" +
+                    $" сигнальной колонны {eplanName}.";
+            }
+
+            sequence = sequence.Trim();
+
+            int sequenceLength = sequence.Length;
+            int minLength = 1;
+            int maxLength = 5;
+            bool wrongLength = sequenceLength < minLength ||
+                sequenceLength > maxLength;
+            if (wrongLength)
+            {
+                return $"Неправильно заполнена последовательность сигналов " +
+                    $"сигнальной колонны {eplanName}. Длина " +
+                    $"последовательности должна быть от 1 до 5 символов.";
+            }
+
+            HasAlarm = sequence.Count(x => x == 'A') == 1;
+            HasBlue = sequence.Count(x => x == 'B') == 1;
+            HasGreen = sequence.Count(x => x == 'G') == 1;
+            HasYellow = sequence.Count(x => x == 'Y') == 1;
+            HasRed = sequence.Count(x => x == 'R') == 1;
+
+            if (HasAlarm)
+            {
+                sequenceLength--;
+            }
+
+            if (HasBlue)
+            {
+                sequenceLength--;
+            }
+
+            if (HasGreen)
+            {
+                sequenceLength--;
+            }
+
+            if (HasYellow)
+            {
+                sequenceLength--;
+            }
+
+            if (HasRed)
+            {
+                sequenceLength--;
+            }
+
+            if (sequenceLength != 0)
+            {
+                return "Строка последовательности сигналов содержит " +
+                    "некорректные символы";
+            }
+
             return string.Empty;
         }
 
@@ -124,8 +182,48 @@ namespace Device
 
         private Dictionary<string, int> GetDeviceIOLinkProperties()
         {
-            //TODO: Depends on sequence
-            return null;
+            var defaultTags = new Dictionary<string, int>()
+            {
+                {Tag.ST, 1},
+                {Tag.M, 1},
+            };
+
+            if (HasAlarm)
+            {
+                defaultTags.Add(Tag.L_SIREN, 1);
+            }
+
+            if (HasBlue)
+            {
+                defaultTags.Add(Tag.L_BLUE, 1);
+            }
+
+            if (HasGreen)
+            {
+                defaultTags.Add(Tag.L_GREEN, 1);
+            }
+
+            if (HasYellow)
+            {
+                defaultTags.Add(Tag.L_YELLOW, 1);
+            }
+
+            if (HasRed)
+            {
+                defaultTags.Add(Tag.L_RED, 1);
+            }
+
+            return defaultTags;
         }
+
+        private bool HasAlarm { get; set; } = false;
+
+        private bool HasBlue { get; set; } = false;
+
+        private bool HasGreen { get; set; } = false;
+
+        private bool HasYellow { get; set; } = false;
+
+        private bool HasRed { get; set; } = false;
     }
 }
