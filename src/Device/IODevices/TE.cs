@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - датчик температуры.
     /// </summary>
-    public class TE : IODevice
+    sealed public class TE : IODevice
     {
         public TE(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,

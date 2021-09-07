@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - мотор.
     /// </summary>
-    public class M : IODevice
+    sealed public class M : IODevice
     {
         public M(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,

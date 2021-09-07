@@ -7,7 +7,7 @@ namespace Device
     /// <summary>
     /// ПИД-регулятор
     /// </summary>
-    public class C : IODevice
+    sealed public class C : IODevice
     {
         public C(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber) : base(name,

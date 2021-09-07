@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - световая сигнализация.
     /// </summary>
-    public class HL : IODevice
+    sealed public class HL : IODevice
     {
         public HL(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -85,6 +85,7 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.HL:
+                        case DeviceSubType.HL_VIRT:
                             return new Dictionary<string, int>()
                             {
                                 {Tag.ST, 1},

@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - аварийная звуковая сигнализация.
     /// </summary>
-    public class HA : IODevice
+    sealed public class HA : IODevice
     {
         public HA(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -85,6 +85,7 @@ namespace Device
                     switch (dst)
                     {
                         case DeviceSubType.HA:
+                        case DeviceSubType.HA_VIRT:
                             return new Dictionary<string, int>()
                             {
                                 {Tag.ST, 1},

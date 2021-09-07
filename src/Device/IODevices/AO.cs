@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - аналоговый выход.
     /// </summary>
-    public class AO : IODevice
+    sealed public class AO : IODevice
     {
         public AO(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber) : base(name,

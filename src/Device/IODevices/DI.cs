@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - дискретный вход.
     /// </summary>
-    public class DI : IODevice
+    sealed public class DI : IODevice
     {
         public DI(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber) : base(name,

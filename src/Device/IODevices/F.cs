@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - автоматический выключатель.
     /// </summary>
-    public class F : IODevice
+    sealed public class F : IODevice
     {
         public F(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,

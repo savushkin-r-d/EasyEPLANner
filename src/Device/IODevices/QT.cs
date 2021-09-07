@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - датчик проводимости.
     /// </summary>
-    public class QT : IODevice
+    sealed public class QT : IODevice
     {
         public QT(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,

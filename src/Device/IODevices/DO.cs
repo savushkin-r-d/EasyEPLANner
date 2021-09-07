@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - дискретный выход.
     /// </summary>
-    public class DO : IODevice
+    sealed public class DO : IODevice
     {
         public DO(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber) : base(name,

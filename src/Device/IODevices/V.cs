@@ -6,7 +6,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - клапан.
     /// </summary>
-    public class V : IODevice
+    sealed public class V : IODevice
     {
         public V(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,

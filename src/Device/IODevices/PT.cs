@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - датчик давления.
     /// </summary>
-    public class PT : IODevice
+    sealed public class PT : IODevice
     {
         public PT(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,

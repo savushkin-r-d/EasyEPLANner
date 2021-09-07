@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - камера.
     /// </summary>
-    public class CAM : IODevice
+    sealed public class CAM : IODevice
     {
         public CAM(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber) : base(name,

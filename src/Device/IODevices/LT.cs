@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - датчик текущего уровня.
     /// </summary>
-    public class LT : IODevice
+    sealed public class LT : IODevice
     {
         public LT(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,

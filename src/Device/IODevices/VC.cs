@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - управляемый клапан.
     /// </summary>
-    public class VC : IODevice
+    sealed public class VC : IODevice
     {
         public VC(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,

@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - тензодатчик (датчик веса).
     /// </summary>
-    public class WT : IODevice
+    sealed public class WT : IODevice
     {
         public WT(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
