@@ -187,11 +187,13 @@ namespace Tests.Devices
             sirenBluGreenYellowRedProps.Add(IODevice.Tag.L_RED, 1);
 
             string emptySequence = string.Empty;
-            string hasSiren = "A";
-            string hasSirenBlue = hasSiren + "B";
-            string hasSirenBlueGreen = hasSirenBlue + "G";
-            string hasSirenBlueGreenYellow = hasSirenBlueGreen + "Y";
-            string hasSirenBlueGreenYellowRed = hasSirenBlueGreenYellow + "R";
+            string siren = "A";
+            string sirenBlue = siren + "B";
+            string sirenBlueGreen = sirenBlue + "G";
+            string sirenBlueGreenYellow = sirenBlueGreen + "Y";
+            string sirenBlueGreenYellowRed = sirenBlueGreenYellow + "R";
+            string wrongSequence = "BlahBlah";
+            string sirenBlueButWrongSequence = "AKKKB";
 
             return new object[]
             {
@@ -211,73 +213,101 @@ namespace Tests.Devices
                 },
                 new object[]
                 {
+                    defaultProps,
+                    HLA_VIRT,
+                    GetRandomHLADevice(),
+                    wrongSequence
+                },
+                new object[]
+                {
+                    defaultProps,
+                    HLA_IOLINK,
+                    GetRandomHLADevice(),
+                    wrongSequence
+                },
+                new object[]
+                {
                     sirenProps,
                     HLA_VIRT,
                     GetRandomHLADevice(),
-                    hasSiren
+                    siren
                 },
                 new object[]
                 {
                     sirenProps,
                     HLA_IOLINK,
                     GetRandomHLADevice(),
-                    hasSiren
+                    siren
                 },
                 new object[]
                 {
                     sirenBlueProps,
                     HLA_VIRT,
                     GetRandomHLADevice(),
-                    hasSirenBlue
+                    sirenBlue
                 },
                 new object[]
                 {
                     sirenBlueProps,
                     HLA_IOLINK,
                     GetRandomHLADevice(),
-                    hasSirenBlue
+                    sirenBlue
+                },
+                new object[]
+                {
+                    sirenBlueProps,
+                    HLA_VIRT,
+                    GetRandomHLADevice(),
+                    sirenBlueButWrongSequence
+                },
+                new object[]
+                {
+                    sirenBlueProps,
+                    HLA_IOLINK,
+                    GetRandomHLADevice(),
+                    sirenBlueButWrongSequence
                 },
                 new object[]
                 {
                     sirenBlueGreenProps,
                     HLA_VIRT,
                     GetRandomHLADevice(),
-                    hasSirenBlueGreen
+                    sirenBlueGreen
                 },
                 new object[]
                 {
                     sirenBlueGreenProps,
                     HLA_IOLINK,
                     GetRandomHLADevice(),
-                    hasSirenBlueGreen
+                    sirenBlueGreen
                 },
                 new object[]
                 {
                     sirenBlueGreenYellowProps,
                     HLA_VIRT,
                     GetRandomHLADevice(),
-                    hasSirenBlueGreenYellow
+                    sirenBlueGreenYellow
                 },
                 new object[]
                 {
                     sirenBlueGreenYellowProps,
                     HLA_IOLINK,
                     GetRandomHLADevice(),
-                    hasSirenBlueGreenYellow
+                    sirenBlueGreenYellow
                 },
                 new object[]
                 {
                     sirenBluGreenYellowRedProps,
                     HLA_VIRT,
                     GetRandomHLADevice(),
-                    hasSirenBlueGreenYellowRed
+                    sirenBlueGreenYellowRed
                 },
                 new object[]
                 {
                     sirenBluGreenYellowRedProps,
                     HLA_IOLINK,
                     GetRandomHLADevice(),
-                    hasSirenBlueGreenYellowRed
+                    sirenBlueGreenYellowRed
                 },
             };
         }
