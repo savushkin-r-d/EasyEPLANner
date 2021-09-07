@@ -31,8 +31,8 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(actualName, expectedName);
         }
 
-        [TestCase(true, 10)]
-        [TestCase(false, 11)]
+        [TestCase(true, 11)]
+        [TestCase(false, 12)]
         public void Constructor_NewStep_CheckActionsCount(bool isMainStep,
             int expectedCount)
         {
@@ -43,8 +43,8 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(expectedCount, actualCount);
         }
 
-        [TestCase(true, 10)]
-        [TestCase(false, 13)]
+        [TestCase(true, 11)]
+        [TestCase(false, 14)]
         public void Constructor_NewStep_CheckItemsCount(bool isMainStep,
             int expectedCount)
         {
@@ -80,6 +80,7 @@ namespace EasyEplanner.Tests
             var requiredFB = "required_FB";
             var devices = "devices_data";
             var pairsDIDO = "DI_DO";
+            var pairsInvertedDIDO = "inverted_DI_DO";
             var pairsAIAO = "AI_AO";
             var toStepIfDevicesInSpecificState = 
                 "to_step_if_devices_in_specific_state";
@@ -98,6 +99,7 @@ namespace EasyEplanner.Tests
                     requiredFB,
                     devices,
                     pairsDIDO,
+                    pairsInvertedDIDO,
                     pairsAIAO,
                     toStepIfDevicesInSpecificState
                 }
@@ -117,6 +119,7 @@ namespace EasyEplanner.Tests
                     requiredFB,
                     devices,
                     pairsDIDO,
+                    pairsInvertedDIDO,
                     pairsAIAO
                 }
             };
@@ -165,6 +168,7 @@ namespace EasyEplanner.Tests
                     greenBox,
                     greenBox,
                     greenBox,
+                    greenBox,
                 }
             };
 
@@ -179,6 +183,7 @@ namespace EasyEplanner.Tests
                     redBox,
                     greenUpBox,
                     greenLowBox,
+                    greenBox,
                     greenBox,
                     greenBox,
                     greenBox,
@@ -261,6 +266,8 @@ namespace EasyEplanner.Tests
                 Device.DeviceType.GS
             };
 
+            var groupInvertedDIDO = groupDIDO;
+
             var groupAIAO = new Device.DeviceType[]
             {
                 Device.DeviceType.AI,
@@ -282,6 +289,7 @@ namespace EasyEplanner.Tests
                     requiredFB,
                     allTypesAllowed,
                     groupDIDO,
+                    groupInvertedDIDO,
                     groupAIAO
                 }
             };
@@ -300,6 +308,7 @@ namespace EasyEplanner.Tests
                     requiredFB,
                     allTypesAllowed,
                     groupDIDO,
+                    groupInvertedDIDO,
                     groupAIAO,
                     allTypesAllowed
                 }
@@ -371,6 +380,7 @@ namespace EasyEplanner.Tests
                     allSubTypesAllowed,
                     allSubTypesAllowed,
                     allSubTypesAllowed,
+                    allSubTypesAllowed,
                     allSubTypesAllowed
                 }
             };
@@ -386,6 +396,7 @@ namespace EasyEplanner.Tests
                     allSubTypesAllowed,
                     openUpperSeats,
                     openLowerSeats,
+                    allSubTypesAllowed,
                     allSubTypesAllowed,
                     allSubTypesAllowed,
                     allSubTypesAllowed,
@@ -429,6 +440,7 @@ namespace EasyEplanner.Tests
             var requiredFB = ImageIndexEnum.ActionSignals;
             var devices = ImageIndexEnum.ActionWash;
             var pairsDIDO = ImageIndexEnum.ActionDIDOPairs;
+            var pairsInvertedDIDO = pairsDIDO;
             var pairsAIAO = ImageIndexEnum.ActionDIDOPairs;
             var toStepIfDevicesInSpecificState = ImageIndexEnum.NONE;
 
@@ -446,6 +458,7 @@ namespace EasyEplanner.Tests
                     requiredFB,
                     devices,
                     pairsDIDO,
+                    pairsInvertedDIDO,
                     pairsAIAO,
                     toStepIfDevicesInSpecificState
                 }
@@ -465,6 +478,7 @@ namespace EasyEplanner.Tests
                     requiredFB,
                     devices,
                     pairsDIDO,
+                    pairsInvertedDIDO,
                     pairsAIAO
                 }
             };

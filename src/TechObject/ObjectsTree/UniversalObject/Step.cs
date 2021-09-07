@@ -136,21 +136,30 @@ namespace TechObject
             groupWash.ImageIndex = ImageIndexEnum.ActionWash;
             actions.Add(groupWash);
 
+            var pairsDIDOAllowedDevTypes = new Device.DeviceType[]
+            {
+                Device.DeviceType.DI,
+                Device.DeviceType.SB,
+                Device.DeviceType.DO,
+                Device.DeviceType.HL,
+                Device.DeviceType.GS
+            };
+
             // Специальное действие - выдача дискретных сигналов 
             // при наличии входного дискретного сигнала.
             var groupDIDO = new ActionGroup(groupDIDOActionName, this,
-                "DI_DO",
-                new Device.DeviceType[]
-                {
-                    Device.DeviceType.DI,
-                    Device.DeviceType.SB,
-                    Device.DeviceType.DO,
-                    Device.DeviceType.HL,
-                    Device.DeviceType.GS
-                },
-                null, new OneInManyOutActionProcessingStrategy());
+                "DI_DO", pairsDIDOAllowedDevTypes, null,
+                new OneInManyOutActionProcessingStrategy());
             groupDIDO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupDIDO);
+
+            // Специальное действие - выдача дискретных сигналов 
+            // при пропадании входного дискретного сигнала.
+            var groupInvertedDIDO = new ActionGroup(groupDIDOActionNameInverted,
+                this, "inverted_DI_DO", pairsDIDOAllowedDevTypes,
+                null, new OneInManyOutActionProcessingStrategy());
+            groupInvertedDIDO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
+            actions.Add(groupInvertedDIDO);
 
             // Специальное действие - выдача аналоговых сигналов при
             // наличии входного  аналогового сигнала.
@@ -703,7 +712,8 @@ namespace TechObject
 
             var checkingActionsGroups = actions
                 .Where(x => x.Name == groupAIAOActionName ||
-                x.Name == groupDIDOActionName);
+                x.Name == groupDIDOActionName ||
+                x.Name == groupDIDOActionNameInverted);
 
             foreach(var group in checkingActionsGroups)
             {
@@ -819,12 +829,14 @@ namespace TechObject
         private ObjectProperty timeParam; ///< Параметр времени.
         private List<ITreeViewItem> items;
 
-        private string name;           ///< Имя шага.
+        private string name; ///< Имя шага.
         internal List<IAction> actions; ///< Список действий шага.
 
         private string openDevicesActionName = "Включать";
         private string closeDevicesActionName = "Выключать";
         private string groupDIDOActionName = "Группы DI -> DO DO ...";
+        private string groupDIDOActionNameInverted =
+            "Группы инвертированный DI -> DO DO ...";
         private string groupAIAOActionName = "Группы AI -> AO AO ...";
 
         private BaseStep baseStep;
