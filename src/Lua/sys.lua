@@ -39,7 +39,7 @@ function init()
                 local mode_name = value.name or "Операция ??"
                 local mode_base_operation = value.base_operation or ""
 
-                -- Доп. свойства по операции
+                --Доп. свойства по операции
                 local mode_base_operation_props = {}
                 if value.props then
                     for fields, value in pairs(value.props) do
@@ -50,8 +50,7 @@ function init()
                 local mode = obj:AddMode(mode_name, mode_base_operation, 
                     mode_base_operation_props)
 
-                local idx = fields
-
+                --Состояния
                 if value.states then
                     for fields, value in pairs(value.states) do
                         local state_n = fields - 1
@@ -79,6 +78,7 @@ function init()
                 end
             end
 
+            --Группы объектов
             if value.tank_groups then
                 for luaName, value in pairs(value.tank_groups) do
                     obj:SetGroupObject(luaName, value)
