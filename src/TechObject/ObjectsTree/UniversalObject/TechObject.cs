@@ -254,9 +254,9 @@ namespace TechObject
                 this.baseTechObject = baseTechObject.Clone(this);
 
                 systemParams
-                    .SetUpFromBaseTechObject(baseTechObject.SystemParams);
-                equipment.AddItems(baseTechObject.Equipment);
-                baseProperties = baseTechObject.BaseProperties.Clone();
+                    .SetUpFromBaseTechObject(this.baseTechObject.SystemParams);
+                equipment.AddItems(this.baseTechObject.Equipment);
+                baseProperties = this.baseTechObject.BaseProperties.Clone();
             }
 
             // Установили новое значение, произошла смена базового объекта
