@@ -34,6 +34,31 @@ function init()
         if (#value == 0) then
             local obj = initialized_objects[fields]
 
+            --Операции (инциализация всегда перед параметрами)
+            for fields, value in ipairs(value.modes) do
+                local mode_name = value.name or "Операция ??"
+                local mode_base_operation = value.base_operation or ""
+
+                --Доп. свойства по операции
+                local mode_base_operation_props = {}
+                if value.props then
+                    for fields, value in pairs(value.props) do
+                        mode_base_operation_props[fields] = value 
+                    end
+                end
+
+                local mode = obj:AddMode(mode_name, mode_base_operation, 
+                    mode_base_operation_props)
+
+                --Состояния
+                if value.states then
+                    for fields, value in pairs(value.states) do
+                        local state_n = fields - 1
+                        proc_operation_devices(value, mode, state_n)
+                    end
+                end
+            end
+
             --Параметры
             proc_params(value.par_float, "par_float", obj)
             proc_params(value.par_uint, "par_uint", obj)
@@ -46,8 +71,6 @@ function init()
             -- Свойства объекта
             proc_object_properties(value.properties, obj)
 
-            local params_float = value.par_float
-
             --Оборудование (всегда после параметров)
             if value.equipment then
                 for field, value in pairs(value.equipment) do
@@ -55,35 +78,10 @@ function init()
                 end
             end
 
+            --Группы объектов
             if value.tank_groups then
                 for luaName, value in pairs(value.tank_groups) do
                     obj:SetGroupObject(luaName, value)
-                end
-            end
-
-            for fields, value in ipairs(value.modes) do
-                local mode_name = value.name or "Операция ??"
-			    local mode_base_operation = value.base_operation or ""
-
-			    -- Доп. свойства по операции
-			    local mode_base_operation_props = {}
-			    if value.props then
-				    for fields, value in pairs(value.props) do
-					    mode_base_operation_props[fields] = value 
-				    end
-			    end
-
-                local mode = obj:AddMode(mode_name, mode_base_operation, 
-                    mode_base_operation_props)
-
-                local idx = fields
-                proc_oper_params(params_float, mode, idx, obj)
-
-                if value.states then
-                    for fields, value in pairs(value.states) do
-                        local state_n = fields - 1
-                        proc_operation_devices(value, mode, state_n)
-                    end
                 end
             end
         end
@@ -116,28 +114,6 @@ function proc_object_properties(par, obj)
     if type (par) == "table" then
         for luaName, value in pairs(par) do
             obj:SetBaseProperty(luaName, value)
-        end
-    end
-end
-
---Обработка сохраненного описания операции
-function proc_oper_params(par, operation, idx, obj)
-    if type(par) == "table" then
-        for fields, value in ipairs(par) do
-            local pr = obj:GetParamsManager():GetParam(value.nameLua or "")
-            if pr then
-                if type(value.oper) == "table" then
-                    for field, operationNumber in ipairs(value.oper) do
-                        if operationNumber == idx then
-                            operation:GetOperationParams():AddParam(pr)
-                        end
-                    end
-                elseif type (value.oper) == "number" then
-                    if value.oper == idx then
-                        operation:GetOperationParams():AddParam(pr)
-                    end
-                end
-            end
         end
     end
 end

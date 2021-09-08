@@ -367,7 +367,8 @@ namespace Device
                         match.Groups["type"].Value +
                         match.Groups["n"].Value;
 
-                    eplanName = match.Groups["object_main"].Value + "+" +
+                    eplanName = "+" + 
+                        match.Groups["object_main"].Value +
                         match.Groups["object"].Value +
                         match.Groups["object_n"].Value + "-" +
                         match.Groups["type"].Value +
