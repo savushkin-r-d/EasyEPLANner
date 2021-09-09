@@ -51,7 +51,7 @@ local iolink_devices =
     -- VC
     { articleName = "BURKERT.8694", sizeIn = 5, sizeOut = 2.5},
     -- HLA
-    { articleName = "PXC.1191993", sizeIn = 1, sizeOut = 0 },
+    { articleName = "PXC.1191993", sizeIn = 0, sizeOut = 1 },
 }
 
 return iolink_devices
