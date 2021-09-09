@@ -109,7 +109,7 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForFS = new Dictionary<string, int>()
+            var exportForHA = new Dictionary<string, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
@@ -117,10 +117,10 @@ namespace Tests.Devices
 
             return new object[]
             {
-                new object[] {exportForFS, string.Empty, GetRandomHADevice()},
-                new object[] {exportForFS, HA, GetRandomHADevice()},
+                new object[] {exportForHA, string.Empty, GetRandomHADevice()},
+                new object[] {exportForHA, HA, GetRandomHADevice()},
                 new object[] {null, Incorrect, GetRandomHADevice()},
-                new object[] {exportForFS, HA_VIRT, GetRandomHADevice()},
+                new object[] {exportForHA, HA_VIRT, GetRandomHADevice()},
             };
         }
 
