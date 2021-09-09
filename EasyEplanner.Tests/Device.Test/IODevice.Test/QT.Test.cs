@@ -149,6 +149,13 @@ namespace Tests.Devices
                 {IODevice.Tag.P_CZ, 1},
             };
 
+            var exportForQTVirt = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+            };
+
             return new object[]
             {
                 new object[] {exportForQT, QT, GetRandomQTDevice()},
@@ -157,7 +164,7 @@ namespace Tests.Devices
                 new object[] {exportForQTOk, QT_OK, GetRandomQTDevice()},
                 new object[] {null, string.Empty, GetRandomQTDevice()},
                 new object[] {null, Incorrect, GetRandomQTDevice()},
-                new object[] {null, QT_VIRT, GetRandomQTDevice()},
+                new object[] {exportForQTVirt, QT_VIRT, GetRandomQTDevice()},
             };
         }
 

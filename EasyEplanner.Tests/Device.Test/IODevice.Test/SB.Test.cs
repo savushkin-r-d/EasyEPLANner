@@ -117,11 +117,17 @@ namespace Tests.Devices
                 {IODevice.Parameter.P_DT, 1},
             };
 
+            var exportForSBVirt = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+            };
+
             return new object[]
             {
                 new object[] {exportForSB, string.Empty, GetRandomSBDevice()},
                 new object[] {exportForSB, SB, GetRandomSBDevice()},
-                new object[] {null, SB_VIRT, GetRandomSBDevice()},
+                new object[] {exportForSBVirt, SB_VIRT, GetRandomSBDevice()},
             };
         }
 

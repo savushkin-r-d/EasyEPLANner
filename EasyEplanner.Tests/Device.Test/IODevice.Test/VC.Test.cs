@@ -138,7 +138,7 @@ namespace Tests.Devices
                 new object[] {null, string.Empty, GetRandomVCDevice()},
                 new object[] {exportForVC, VC, GetRandomVCDevice()},
                 new object[] {exportForVCIOL, VC_IOLINK, GetRandomVCDevice()},
-                new object[] {null, VC_VIRT, GetRandomVCDevice()}
+                new object[] {exportForVC, VC_VIRT, GetRandomVCDevice()}
             };
         }
 

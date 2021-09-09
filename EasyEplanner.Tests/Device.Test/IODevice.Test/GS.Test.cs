@@ -109,19 +109,25 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForFS = new Dictionary<string, int>()
+            var exportForGS = new Dictionary<string, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
                 {IODevice.Parameter.P_DT, 1},
             };
 
+            var exportForGSVirt = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+            };
+
             return new object[]
             {
-                new object[] {exportForFS, string.Empty, GetRandomGSDevice()},
-                new object[] {exportForFS, GS, GetRandomGSDevice()},
+                new object[] {exportForGS, string.Empty, GetRandomGSDevice()},
+                new object[] {exportForGS, GS, GetRandomGSDevice()},
                 new object[] {null, Incorrect, GetRandomGSDevice()},
-                new object[] {null, GS_VIRT, GetRandomGSDevice()},
+                new object[] {exportForGSVirt, GS_VIRT, GetRandomGSDevice()},
             };
         }
 

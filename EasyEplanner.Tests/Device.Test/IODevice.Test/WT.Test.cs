@@ -118,11 +118,18 @@ namespace Tests.Devices
                 {IODevice.Tag.P_CZ, 1},
             };
 
+            var exportForWTVirt = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+            };
+
             return new object[]
             {
                 new object[] {exportForWT, string.Empty, GetRandomWTDevice() },
                 new object[] {exportForWT, WT, GetRandomWTDevice() },
-                new object[] {null, WT_VIRT, GetRandomWTDevice() },
+                new object[] { exportForWTVirt, WT_VIRT, GetRandomWTDevice() },
                 new object[] {null, Incorrect, GetRandomWTDevice() },
             };
         }

@@ -120,7 +120,7 @@ namespace Tests.Devices
                 new object[] {exportForFS, string.Empty, GetRandomHADevice()},
                 new object[] {exportForFS, HA, GetRandomHADevice()},
                 new object[] {null, Incorrect, GetRandomHADevice()},
-                new object[] {null, HA_VIRT, GetRandomHADevice()},
+                new object[] {exportForFS, HA_VIRT, GetRandomHADevice()},
             };
         }
 

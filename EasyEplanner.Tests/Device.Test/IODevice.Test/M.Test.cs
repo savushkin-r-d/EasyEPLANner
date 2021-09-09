@@ -199,6 +199,13 @@ namespace Tests.Devices
                 {IODevice.Parameter.P_TRANSFER_RATIO, 1},
             };
 
+            var exportForMVirt = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+            };
+
             return new object[]
             {
                 new object[] {exportForM, M, GetRandomMDevice()},
@@ -214,7 +221,7 @@ namespace Tests.Devices
                 new object[] {exportForMATV, M_ATV, GetRandomMDevice()},
                 new object[] {null, Incorrect, GetRandomMDevice()},
                 new object[] {null, string.Empty, GetRandomMDevice()},
-                new object[] {null, M_VIRT, GetRandomMDevice()},
+                new object[] {exportForMVirt, M_VIRT, GetRandomMDevice()},
                 new object[] {exportForMATVLinear, M_ATV_LINEAR,
                     GetRandomMDevice()},
             };

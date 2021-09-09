@@ -122,11 +122,19 @@ namespace Tests.Devices
                 {IODevice.Tag.ST, 1},
             };
 
+            var exportForTEVirt = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.ST, 1},
+            };
+
             return new object[]
             {
                 new object[] {null, string.Empty, GetRandomTEDevice()},
                 new object[] {exportForTE, TE, GetRandomTEDevice()},
                 new object[] {exportForTE, TE_IOLINK, GetRandomTEDevice()},
+                new object[] {exportForTEVirt, TE_VIRT, GetRandomTEDevice()},
                 new object[] {null, Incorrect, GetRandomTEDevice()},
             };
         }
