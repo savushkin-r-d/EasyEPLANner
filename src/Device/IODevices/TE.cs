@@ -107,6 +107,14 @@ namespace Device
                                 {Tag.V, 1},
                                 {Tag.ST, 1},
                             };
+
+                        case DeviceSubType.TE_VIRT:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.ST, 1},
+                            };
                     }
                     break;
             }

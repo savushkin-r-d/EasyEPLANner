@@ -99,6 +99,14 @@ namespace Device
                                 {Tag.OPENED, 1},
                                 {Tag.CLOSED, 1},
                             };
+
+                        case DeviceSubType.VC_VIRT:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                            };
                     }
                     break;
             }

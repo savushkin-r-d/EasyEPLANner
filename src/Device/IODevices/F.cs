@@ -99,6 +99,14 @@ namespace Device
                                 {Tag.LOAD_CURRENT_CH, 4},
                                 {Tag.ERR_CH, 4},
                             };
+
+                        case DeviceSubType.F_VIRT:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.M, 1},
+                                {Tag.ST, 1},
+                                {Tag.V, 1},
+                            };
                     }
                     break;
             }

@@ -359,6 +359,14 @@ namespace Device
                                 {Tag.CS, 1},
                                 {Tag.ERR, 1},
                             };
+
+                        case DeviceSubType.V_VIRT:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                            };
                     }
                     break;
             }

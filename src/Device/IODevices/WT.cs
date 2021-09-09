@@ -99,6 +99,14 @@ namespace Device
                                 {Parameter.P_RKP, 1},
                                 {Tag.P_CZ, 1},
                             };
+
+                        case DeviceSubType.WT_VIRT:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                            };
                     }
                     break;
             }
