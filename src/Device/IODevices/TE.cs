@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - датчик температуры.
     /// </summary>
-    public class TE : IODevice
+    sealed public class TE : IODevice
     {
         public TE(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -104,6 +104,14 @@ namespace Device
                             {
                                 {Tag.M, 1},
                                 {Tag.P_CZ, 1},
+                                {Tag.V, 1},
+                                {Tag.ST, 1},
+                            };
+
+                        case DeviceSubType.TE_VIRT:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.M, 1},
                                 {Tag.V, 1},
                                 {Tag.ST, 1},
                             };

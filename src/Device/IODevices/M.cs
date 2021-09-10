@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - мотор.
     /// </summary>
-    public class M : IODevice
+    sealed public class M : IODevice
     {
         public M(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -230,6 +230,14 @@ namespace Device
                                 {Parameter.P_ON_TIME, 1},
                                 {Parameter.P_SHAFT_DIAMETER, 1},
                                 {Parameter.P_TRANSFER_RATIO, 1}
+                            };
+
+                        case DeviceSubType.M_VIRT:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.M, 1},
+                                {Tag.ST, 1},
+                                {Tag.V, 1},
                             };
                     }
                     break;

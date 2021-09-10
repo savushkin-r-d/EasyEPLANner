@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - датчик наличия потока.
     /// </summary>
-    public class FS : IODevice
+    sealed public class FS : IODevice
     {
         public FS(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -92,6 +92,13 @@ namespace Device
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
                                 {Parameter.P_DT, 1},
+                            };
+
+                        case DeviceSubType.FS_VIRT:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
                             };
                     }
                     break;

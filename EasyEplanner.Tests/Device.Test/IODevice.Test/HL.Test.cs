@@ -119,7 +119,7 @@ namespace Tests.Devices
             {
                 new object[] {exportForHL, string.Empty, GetRandomHLDevice()},
                 new object[] {exportForHL, HL, GetRandomHLDevice()},
-                new object[] {null, HL_VIRT, GetRandomHLDevice()},
+                new object[] {exportForHL, HL_VIRT, GetRandomHLDevice()},
                 new object[] {null, Incorrect, GetRandomHLDevice()},
             };
         }

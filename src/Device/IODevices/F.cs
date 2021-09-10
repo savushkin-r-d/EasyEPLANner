@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - автоматический выключатель.
     /// </summary>
-    public class F : IODevice
+    sealed public class F : IODevice
     {
         public F(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -98,6 +98,14 @@ namespace Device
                                 {Tag.NOMINAL_CURRENT_CH, 4},
                                 {Tag.LOAD_CURRENT_CH, 4},
                                 {Tag.ERR_CH, 4},
+                            };
+
+                        case DeviceSubType.F_VIRT:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.M, 1},
+                                {Tag.ST, 1},
+                                {Tag.V, 1},
                             };
                     }
                     break;

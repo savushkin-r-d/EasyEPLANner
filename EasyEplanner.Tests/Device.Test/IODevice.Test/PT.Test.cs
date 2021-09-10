@@ -143,6 +143,13 @@ namespace Tests.Devices
                 {IODevice.Parameter.P_ERR, 1},
             };
 
+            var exportForPTVirt = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.ST, 1},
+            };
+
             return new object[]
             {
                 new object[] {exportForPT, PT, GetRandomPTDevice()},
@@ -152,7 +159,7 @@ namespace Tests.Devices
                     GetRandomPTDevice()},
                 new object[] {null, string.Empty, GetRandomPTDevice()},
                 new object[] {null, Incorrect, GetRandomPTDevice()},
-                new object[] {null, PT_VIRT, GetRandomPTDevice()},
+                new object[] {exportForPTVirt, PT_VIRT, GetRandomPTDevice()},
             };
         }
 

@@ -222,6 +222,13 @@ namespace Tests.Devices
                 {IODevice.Tag.ERR, 1},
             };
 
+            var exportForVVirt = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+            };
+
             return new object[]
             {
                 new object[] {exportForV, V_DO1, GetRandomVDevice()},
@@ -254,7 +261,7 @@ namespace Tests.Devices
                     GetRandomVDevice()},
                 new object[] {null, Incorrect, GetRandomVDevice()},
                 new object[] {null, string.Empty, GetRandomVDevice()},
-                new object[] {null, V_VIRT, GetRandomVDevice()},
+                new object[] {exportForVVirt, V_VIRT, GetRandomVDevice()},
             };
         }
 

@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - счетчик.
     /// </summary>
-    public class FQT : IODevice
+    sealed public class FQT : IODevice
     {
         public FQT(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,

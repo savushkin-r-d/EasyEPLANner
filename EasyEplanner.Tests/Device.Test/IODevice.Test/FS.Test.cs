@@ -116,11 +116,17 @@ namespace Tests.Devices
                 {IODevice.Parameter.P_DT, 1},
             };
 
+            var exportForFSVirt = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+            };
+
             return new object[]
             {
                 new object[] {exportForFS, string.Empty, GetRandomFSDevice()},
                 new object[] {exportForFS, FS, GetRandomFSDevice()},
-                new object[] {null, FS_VIRT, GetRandomFSDevice()},
+                new object[] {exportForFSVirt, FS_VIRT, GetRandomFSDevice()},
                 new object[] {null, Incorrect, GetRandomFSDevice()},
             };
         }

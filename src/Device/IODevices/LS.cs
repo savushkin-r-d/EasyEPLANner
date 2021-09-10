@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - предельный уровень.
     /// </summary>
-    public class LS : IODevice
+    sealed public class LS : IODevice
     {
         public LS(string name, string eplanName,  string description,
             int deviceNumber, string objectName, int objectNumber,

@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - датчик проводимости.
     /// </summary>
-    public class QT : IODevice
+    sealed public class QT : IODevice
     {
         public QT(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -171,6 +171,14 @@ namespace Device
                                 {Tag.P_CZ, 1},
                                 {Tag.T, 1},
                                 {Parameter.P_ERR, 1},
+                            };
+
+                        case DeviceSubType.QT_VIRT:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
                             };
                     }
                     break;

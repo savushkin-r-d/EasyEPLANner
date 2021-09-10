@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - датчик давления.
     /// </summary>
-    public class PT : IODevice
+    sealed public class PT : IODevice
     {
         public PT(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -149,6 +149,14 @@ namespace Device
                                 {Tag.M, 1},
                                 {Tag.V, 1},
                                 {Parameter.P_ERR, 1},
+                            };
+
+                        case DeviceSubType.PT_VIRT:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.ST, 1},
                             };
                     }
                     break;

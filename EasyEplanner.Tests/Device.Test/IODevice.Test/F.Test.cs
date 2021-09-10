@@ -109,7 +109,7 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForAI = new Dictionary<string, int>()
+            var exportForF = new Dictionary<string, int>()
             {
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
@@ -121,12 +121,19 @@ namespace Tests.Devices
                 {IODevice.Tag.ERR_CH, 4},
             };
 
+            var exportForFVirt = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.ST, 1},
+            };
+
             return new object[]
             {
-                new object[] {exportForAI, string.Empty, GetRandomFDevice()},
-                new object[] {exportForAI, F, GetRandomFDevice()},
+                new object[] {exportForF, string.Empty, GetRandomFDevice()},
+                new object[] {exportForF, F, GetRandomFDevice()},
                 new object[] {null, Incorrect, GetRandomFDevice()},
-                new object[] {null, F_VIRT, GetRandomFDevice()},
+                new object[] {exportForFVirt, F_VIRT, GetRandomFDevice()},
             };
         }
 

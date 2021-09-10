@@ -6,7 +6,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - клапан.
     /// </summary>
-    public class V : IODevice
+    sealed public class V : IODevice
     {
         public V(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -358,6 +358,14 @@ namespace Device
                                 {Tag.BLINK, 1},
                                 {Tag.CS, 1},
                                 {Tag.ERR, 1},
+                            };
+
+                        case DeviceSubType.V_VIRT:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
                             };
                     }
                     break;

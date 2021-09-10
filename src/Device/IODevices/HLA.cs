@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - сигнальная колонна
     /// </summary>
-    public class HLA : IODevice
+    sealed public class HLA : IODevice
     {
         public HLA(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber) : base(name,

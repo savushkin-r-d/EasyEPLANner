@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - тензодатчик (датчик веса).
     /// </summary>
-    public class WT : IODevice
+    sealed public class WT : IODevice
     {
         public WT(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -98,6 +98,14 @@ namespace Device
                                 {Parameter.P_DT, 1},
                                 {Parameter.P_RKP, 1},
                                 {Tag.P_CZ, 1},
+                            };
+
+                        case DeviceSubType.WT_VIRT:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
                             };
                     }
                     break;

@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - управляемый клапан.
     /// </summary>
-    public class VC : IODevice
+    sealed public class VC : IODevice
     {
         public VC(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -98,6 +98,14 @@ namespace Device
                                 {Tag.NAMUR_ST, 1},
                                 {Tag.OPENED, 1},
                                 {Tag.CLOSED, 1},
+                            };
+
+                        case DeviceSubType.VC_VIRT:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
                             };
                     }
                     break;
