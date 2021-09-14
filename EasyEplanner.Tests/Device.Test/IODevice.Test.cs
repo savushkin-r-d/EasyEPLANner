@@ -1,19 +1,98 @@
 ﻿using NUnit.Framework;
 using System.Linq;
 using System.Windows.Forms;
+using Device;
 
 namespace Tests.Devices
 {
     public class IODeviceTest
     {
+        class IODeviceFake : IODevice
+        {
+            public IODeviceFake(string name, string eplanName,
+            string description, string deviceType, int deviceNumber,
+            string objectName, int objectNumber) : base(name, eplanName,
+                description, deviceType, deviceNumber, objectName, objectNumber)
+            {
+                OnPropertyChanged += () => InvokedOnPropertyChanged = true;
+            }
+
+            /// <summary>
+            /// Property for checking invoking of OnPropertyChanged event
+            /// </summary>
+            public bool InvokedOnPropertyChanged { get; set; } = false;
+        }
+
+        [Test]
+        public void Constructor_SetCorrectDevType_ReturnsDevType()
+        {
+            string settingDevType = "V"; //Valve
+            DeviceType expectedDevType = DeviceType.V;
+            
+            var device = new IODeviceFake(string.Empty, string.Empty,
+                string.Empty, settingDevType, 0, string.Empty, 0);
+
+            Assert.AreEqual(expectedDevType, device.DeviceType);
+        }
+
+        [Test]
+        public void Constructor_SetWrongDevType_ReturnsNoneDevType()
+        {
+            string settingDevType = "SuperDuperDev"; //Not exists
+            DeviceType expectedDevType = DeviceType.NONE;
+
+            var device = new IODeviceFake(string.Empty, string.Empty,
+                string.Empty, settingDevType, 0, string.Empty, 0);
+
+            Assert.AreEqual(expectedDevType, device.DeviceType);
+        }
+
+        [Test]
+        public void SetProperty_SetCorrectValue_InvokeEventAndSetValue()
+        {
+            var device = new IODeviceFake(string.Empty, string.Empty,
+                string.Empty, string.Empty, 0, string.Empty, 0);
+            string propertyName = "TEST_PROPERTY";
+            device.Properties.Add(propertyName, null);
+            var propertyValue = "value";
+
+            string errors = device.SetProperty(propertyName, propertyValue);
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsEmpty(errors);
+                Assert.AreEqual(propertyValue, device.Properties[propertyName]);
+                Assert.IsTrue(device.InvokedOnPropertyChanged);
+            });
+        }
+
+        [Test]
+        public void SetProperty_SetIncorrectValue_NotSetAndReturnErrorString()
+        {
+            var device = new IODeviceFake(string.Empty, string.Empty,
+                string.Empty, string.Empty, 0, string.Empty, 0);
+            string wrongPropertyName = "BlahBlahBlah";
+            string anyValue = "JustValue";
+            // Property is not exists, we will have error
+
+            string errors = device.SetProperty(wrongPropertyName, anyValue);
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsNotEmpty(errors);
+                Assert.IsFalse(device.InvokedOnPropertyChanged);
+            });
+        }
+
+
         [TestCaseSource(nameof(TestSortingChannelsForVDeviceData))]
         public void SortChannels_NewValveDevices_ReturnsSortedArrayOfChannels(
-            Device.IODevice dev, string subType, string[] expected)
+            IODevice dev, string subType, string[] expected)
         {
             dev.SetSubType(subType);
             dev.SortChannels();
             string[] actual = dev.Channels
-                .Where(x => x.Comment != "")
+                .Where(x => x.Comment != string.Empty)
                 .Select(x => x.Comment ).ToArray();
             Assert.AreEqual(expected, actual);
         }
@@ -64,7 +143,7 @@ namespace Tests.Devices
 
         [TestCaseSource(nameof(GenerateDeviceTagsCaseSource))]
         public void GenerateDeviceTags_DeviceAODefault_ReturnsTree(
-            Device.IODevice dev, TreeNode expectedNode)
+            IODevice dev, TreeNode expectedNode)
         {
             var actualNode = new TreeNode();
             
@@ -111,7 +190,7 @@ namespace Tests.Devices
             expectedNode.Nodes.Add(pMinVNode);
             expectedNode.Nodes.Add(pMaxVNode);
 
-            var dev = new Device.AO(devName, eplanName, descr, devNum, objName,
+            var dev = new AO(devName, eplanName, descr, devNum, objName,
                 objNum);
             var defaultAODev = new object[] { dev, expectedNode };
 
