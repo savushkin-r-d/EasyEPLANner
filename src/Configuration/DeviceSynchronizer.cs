@@ -70,12 +70,12 @@ namespace EasyEPlanner
             for (int k = 0; k < prevDevicesCount; k++)                       //2
             {
                 Device.IODevice prevDevice = prevDevices[k];
-                var prevDevEplanObjFunc = prevDevice.EplanObjectFunction;
+                var prevDeviceEplanFunc = prevDevice.EplanObjectFunction;
 
-                bool addedNewDev = prevDevEplanObjFunc == null;
-                bool devNotChanged = k < deviceReader.DevicesCount &&
+                bool addedNewDevice = prevDeviceEplanFunc == null;
+                bool deviceNotChanged = k < deviceReader.DevicesCount &&
                     prevDevice.Name == deviceReader.Devices[k].Name;
-                if (addedNewDev || devNotChanged)
+                if (addedNewDevice || deviceNotChanged)
                 {
                     //Если мы не заполним, то будет "0", а это съест другой
                     //алгоритм приняв за устройство.
@@ -84,29 +84,29 @@ namespace EasyEPlanner
                 }
 
                 needSynch = true;
-                int devIdx = -1;
-                foreach (Device.IODevice newDev in deviceReader.Devices)
+                int deviceIndex = -1;
+                foreach (Device.IODevice newDevice in deviceReader.Devices)
                 {
-                    devIdx++;                                                 //2.1
-                    bool devDeleted = prevDevEplanObjFunc.IsValid == false;
-                    bool devOff = prevDevEplanObjFunc.Properties
+                    deviceIndex++;                                         //2.1
+                    bool deviceDeleted = prevDeviceEplanFunc.IsValid == false;
+                    bool deviceOff = prevDeviceEplanFunc.Properties
                         .FUNC_SUPPLEMENTARYFIELD[1].IsEmpty == false &&
-                        prevDevEplanObjFunc.Properties
+                        prevDeviceEplanFunc.Properties
                         .FUNC_SUPPLEMENTARYFIELD[1]
                         .ToString(ISOCode.Language.L___) == deviceSkipSign;
-                    bool devMainFunctionUnchecked =
-                        prevDevEplanObjFunc.IsMainFunction == false;
-                    if (devDeleted || devOff || devMainFunctionUnchecked)
+                    bool deviceMainFunctionOff =
+                        prevDeviceEplanFunc.IsMainFunction == false;
+                    if (deviceDeleted || deviceOff || deviceMainFunctionOff)
                     {
                         indexArray[k] = deleteDeviceIndex;
                         break;
                     }
 
                     bool foundNewDeviceIndex =
-                        newDev.EplanObjectFunction == prevDevEplanObjFunc;
+                        newDevice.EplanObjectFunction == prevDeviceEplanFunc;
                     if (foundNewDeviceIndex)                               //2.2
                     {
-                        indexArray[k] = devIdx;
+                        indexArray[k] = deviceIndex;
                         break;
                     }
                 }

@@ -31,7 +31,7 @@ namespace EasyEPlanner
             }
 
             const int deleteDeviceIndex = -1;
-            var del = new List<int>();
+            var deviceIndexesForDeleting = new List<int>();
             for (int j = 0; j < devicesIndexes.Count; j++)
             {
                 for (int i = 0; i < array.Length; i++)
@@ -42,7 +42,7 @@ namespace EasyEPlanner
                         bool deleteDevice = array[i] == deleteDeviceIndex;
                         if (deleteDevice)
                         {
-                            del.Add(j);
+                            deviceIndexesForDeleting.Add(j);
                             break;
                         }
 
@@ -57,7 +57,7 @@ namespace EasyEPlanner
             }
 
             int dx = 0;
-            foreach (int index in del)
+            foreach (int index in deviceIndexesForDeleting)
             {
                 devicesIndexes.RemoveAt(index - dx++);
             }
