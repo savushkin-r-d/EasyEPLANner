@@ -61,44 +61,52 @@ namespace EasyEPlanner
         private void SynchronizeDevices()
         {
             int prevDevicesCount = prevDevices.Length;
-            int[] indexArray = new int[prevDevicesCount];                    //1            
+            int[] indexArray = new int[prevDevicesCount];                    //1
             bool needSynch = false;
+            int deleteDeviceIndex = -1;
+            int doNothingIndex = -2;
+            const string deviceSkipSign = "1";
 
             for (int k = 0; k < prevDevicesCount; k++)                       //2
             {
                 Device.IODevice prevDevice = prevDevices[k];
-                var prevDevEplanObjFunc = prevDevice.EplanObjectFunction;
+                var prevDeviceEplanFunc = prevDevice.EplanObjectFunction;
 
-                if (prevDevEplanObjFunc == null ||
-                    (k < deviceReader.DevicesCount &&
-                    prevDevice.Name == deviceReader.Devices[k].Name))
+                bool addedNewDevice = prevDeviceEplanFunc == null;
+                bool deviceNotChanged = k < deviceReader.DevicesCount &&
+                    prevDevice.Name == deviceReader.Devices[k].Name;
+                if (addedNewDevice || deviceNotChanged)
                 {
-                    // Т.к если мы не заполним, то будет "0", а это съест другой
-                    // алгоритм приняв за устройство.
-                    indexArray[k] = -2;
+                    //Если мы не заполним, то будет "0", а это съест другой
+                    //алгоритм приняв за устройство.
+                    indexArray[k] = doNothingIndex;
                     continue;
                 }
 
                 needSynch = true;
-                int idx = -1;
-                foreach (Device.IODevice newDev in deviceReader.Devices)
+                int deviceIndex = -1;
+                foreach (Device.IODevice newDevice in deviceReader.Devices)
                 {
-                    idx++;
-                    const string deviceSkipSign = "1";                     //2.1
-                    if (prevDevEplanObjFunc.IsValid != true ||
-                        (prevDevEplanObjFunc.Properties
-                        .FUNC_SUPPLEMENTARYFIELD[1].IsEmpty != true &&
-                        prevDevEplanObjFunc.Properties
+                    deviceIndex++;                                         //2.1
+                    bool deviceDeleted = prevDeviceEplanFunc.IsValid == false;
+                    bool deviceOff = prevDeviceEplanFunc.Properties
+                        .FUNC_SUPPLEMENTARYFIELD[1].IsEmpty == false &&
+                        prevDeviceEplanFunc.Properties
                         .FUNC_SUPPLEMENTARYFIELD[1]
-                        .ToString(ISOCode.Language.L___) == deviceSkipSign))
+                        .ToString(ISOCode.Language.L___) == deviceSkipSign;
+                    bool deviceMainFunctionOff =
+                        prevDeviceEplanFunc.IsMainFunction == false;
+                    if (deviceDeleted || deviceOff || deviceMainFunctionOff)
                     {
-                        indexArray[k] = -1;
+                        indexArray[k] = deleteDeviceIndex;
                         break;
                     }
 
-                    if (newDev.EplanObjectFunction == prevDevEplanObjFunc) //2.2
+                    bool foundNewDeviceIndex =
+                        newDevice.EplanObjectFunction == prevDeviceEplanFunc;
+                    if (foundNewDeviceIndex)                               //2.2
                     {
-                        indexArray[k] = idx;
+                        indexArray[k] = deviceIndex;
                         break;
                     }
                 }
