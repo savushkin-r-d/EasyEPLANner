@@ -30,6 +30,7 @@ namespace EasyEPlanner
                 return;
             }
 
+            const int deleteDeviceIndex = -1;
             var del = new List<int>();
             for (int j = 0; j < devicesIndexes.Count; j++)
             {
@@ -38,12 +39,15 @@ namespace EasyEPlanner
                     if (devicesIndexes[j] == i)
                     {
                         // Что бы не учитывало "-2" из array
-                        if (array[i] == -1)
+                        bool deleteDevice = array[i] == deleteDeviceIndex;
+                        if (deleteDevice)
                         {
                             del.Add(j);
                             break;
                         }
-                        if (array[i] >= 0)
+
+                        bool foundDeviceNewIndex = array[i] >= 0;
+                        if (foundDeviceNewIndex)
                         {
                             devicesIndexes[j] = array[i];
                             break;
