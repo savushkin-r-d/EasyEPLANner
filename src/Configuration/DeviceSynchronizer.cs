@@ -44,7 +44,7 @@ namespace EasyEPlanner
         /// 1.Создаем массив целочисленных флагов, количество элементов в 
         ///котором равняется количеству элементов в массиве ранее считанных 
         ///устройств. Все элементы массива флагов устанавливаются в 0. Далее 
-        ///будем считать, что если флаг = 0, то индекс объекта не изменился, 
+        ///будем считать, что если флаг = -2, то индекс объекта не изменился, 
         ///если флаг = -1, то индекс объекта помечен на удаление, если 
         ///флаг > 0, то изменяем старый индекс в операции на значение флага.
         ///2. Для каждого элемента массива предыдущих устройств проверяем 
@@ -89,24 +89,32 @@ namespace EasyEPlanner
                 {
                     deviceIndex++;                                         //2.1
                     bool deviceDeleted = prevDeviceEplanFunc.IsValid == false;
-                    bool deviceOff = prevDeviceEplanFunc.Properties
+                    if (deviceDeleted)
+                    {
+                        SetDeviceIndex(indexArray, k, deleteDeviceIndex);
+                        break;
+                    }
+                    else
+                    {
+                        bool deviceOff = prevDeviceEplanFunc.Properties
                         .FUNC_SUPPLEMENTARYFIELD[1].IsEmpty == false &&
                         prevDeviceEplanFunc.Properties
                         .FUNC_SUPPLEMENTARYFIELD[1]
                         .ToString(ISOCode.Language.L___) == deviceSkipSign;
-                    bool deviceMainFunctionOff =
-                        prevDeviceEplanFunc.IsMainFunction == false;
-                    if (deviceDeleted || deviceOff || deviceMainFunctionOff)
-                    {
-                        indexArray[k] = deleteDeviceIndex;
-                        break;
-                    }
+                        bool deviceMainFunctionOff =
+                            prevDeviceEplanFunc.IsMainFunction == false;
+                        if (deviceOff || deviceMainFunctionOff)
+                        {
+                            SetDeviceIndex(indexArray, k, deleteDeviceIndex);
+                            break;
+                        }
+                    }   
 
                     bool foundNewDeviceIndex =
                         newDevice.EplanObjectFunction == prevDeviceEplanFunc;
                     if (foundNewDeviceIndex)                               //2.2
                     {
-                        indexArray[k] = deviceIndex;
+                        SetDeviceIndex(indexArray, k, deviceIndex);
                         break;
                     }
                 }
@@ -117,6 +125,9 @@ namespace EasyEPlanner
                 techObjectManager.Synch(indexArray);
             }
         }
+
+        private void SetDeviceIndex(int[] indexArray, int arrId, int devId)
+            => indexArray[arrId] = devId;
 
         /// <summary>
         /// Получить сервис синхронизации устройств
