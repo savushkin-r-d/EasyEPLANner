@@ -117,8 +117,8 @@ namespace Tests.IO
 
         [TestCase(0, 0)]
         [TestCase(1, 1)]
-        [TestCase(200, 2)]
-        [TestCase(1000, 10)]
+        [TestCase(100, 2)]
+        [TestCase(900, 10)]
         public void FullN_NewNode_CorrectGetAndSet(int expected, int actual)
         {
             var testNode = new IONode(StrStub, actual, StrStub, StrStub);

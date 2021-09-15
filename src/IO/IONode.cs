@@ -267,9 +267,13 @@ namespace IO
                 {
                     return n;
                 }
+                else if (n > 1)
+                {
+                    return (n - 1) * 100;
+                }
                 else
                 {
-                    return n * 100;
+                    return 0;
                 }
             }
         }
