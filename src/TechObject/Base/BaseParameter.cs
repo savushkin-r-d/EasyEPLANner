@@ -520,6 +520,14 @@ namespace TechObject
             return null;
         }
 
+        public virtual void Check()
+        {
+            if (!IsEmpty && !Disabled)
+            {
+                ProcessValue(Value);
+            }
+        }
+
         /// <summary>
         /// Текущий тип значений, принимаемый параметром
         /// </summary>

@@ -23,7 +23,7 @@ namespace TechObject
         /// <summary>
         /// Проверка параметра
         /// </summary>
-        public void Check()
+        public override void Check()
         {
             SetUpParametersVisibility();
         }

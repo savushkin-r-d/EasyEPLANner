@@ -420,10 +420,7 @@ namespace TechObject
             string errors = string.Empty;
             foreach (var property in Properties)
             {
-                if (property is MainAggregateParameter)
-                {
-                    (property as MainAggregateParameter).Check();
-                }
+                property.Check();
 
                 bool notStub = !property.Value.ToLower()
                     .Contains(StaticHelper.CommonConst.StubForCells
