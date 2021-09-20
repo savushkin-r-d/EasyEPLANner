@@ -209,13 +209,18 @@ namespace TechObject
         private void ProcessValue(object value)
         {
             string valueStr = value.ToString();
-            currentValueType = GetParameterValueType(valueStr);
+            SetParameterValueType(valueStr);
             devicesIndexes.Clear();
             if (OnlyDevicesInParameter)
             {
                 List<string> splittedDevices = valueStr.Split(' ').ToList();
                 devicesIndexes.AddRange(GetDevicesIndexes(splittedDevices));
             }
+        }
+
+        private void SetParameterValueType(string valueStr)
+        {
+            currentValueType = GetParameterValueType(valueStr);
         }
 
         /// <summary>
@@ -518,6 +523,14 @@ namespace TechObject
             }
 
             return null;
+        }
+
+        public virtual void Check()
+        {
+            if (!IsEmpty && !Disabled)
+            {
+                SetParameterValueType(Value);
+            }
         }
 
         /// <summary>
