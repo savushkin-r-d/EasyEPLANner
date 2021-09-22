@@ -11,7 +11,6 @@ namespace Tests.Devices
         const string Incorrect = "Incorrect";
         const string PT = "PT";
         const string PT_IOLINK = "PT_IOLINK";
-        const string DEV_SPAE = "DEV_SPAE";
         const string PT_VIRT = "PT_VIRT";
 
         const string AI = IODevice.IOChannel.AI;
@@ -50,8 +49,6 @@ namespace Tests.Devices
                     GetRandomPTDevice() },
                 new object[] { DeviceSubType.PT_IOLINK, PT_IOLINK,
                     GetRandomPTDevice() },
-                new object[] { DeviceSubType.DEV_SPAE, DEV_SPAE,
-                    GetRandomPTDevice() },
                 new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomPTDevice() },
                 new object[] { DeviceSubType.PT_VIRT, PT_VIRT,
@@ -87,7 +84,6 @@ namespace Tests.Devices
                 new object[] { string.Empty, string.Empty, GetRandomPTDevice() },
                 new object[] { PT, PT, GetRandomPTDevice() },
                 new object[] { PT_IOLINK, PT_IOLINK, GetRandomPTDevice() },
-                new object[] { DEV_SPAE, DEV_SPAE, GetRandomPTDevice() },
                 new object[] { string.Empty, Incorrect, GetRandomPTDevice() },
                 new object[] { PT_VIRT, PT_VIRT, GetRandomPTDevice() },
             };
@@ -155,8 +151,6 @@ namespace Tests.Devices
                 new object[] {exportForPT, PT, GetRandomPTDevice()},
                 new object[] {exportForPTIOLink, PT_IOLINK,
                     GetRandomPTDevice()},
-                new object[] {exportForDevSpae, DEV_SPAE,
-                    GetRandomPTDevice()},
                 new object[] {null, string.Empty, GetRandomPTDevice()},
                 new object[] {null, Incorrect, GetRandomPTDevice()},
                 new object[] {exportForPTVirt, PT_VIRT, GetRandomPTDevice()},
@@ -197,8 +191,6 @@ namespace Tests.Devices
                 new object[] { $"_{2.0}..{4.0}", PT, 2.0, 4.0,
                     GetRandomPTDevice()},
                 new object[] { string.Empty, PT_IOLINK, 1.0, 3.0,
-                    GetRandomPTDevice()},
-                new object[] { string.Empty, DEV_SPAE, 1.0, 3.0,
                     GetRandomPTDevice()},
                 new object[] { string.Empty, string.Empty, 4.0, 8.0,
                     GetRandomPTDevice()},
@@ -259,12 +251,6 @@ namespace Tests.Devices
                 {
                     iolinkParameters,
                     PT_IOLINK,
-                    GetRandomPTDevice()
-                },
-                new object[]
-                {
-                    iolinkParameters,
-                    DEV_SPAE,
                     GetRandomPTDevice()
                 },
                 new object[]
@@ -346,12 +332,6 @@ namespace Tests.Devices
                 {
                     oneAnalogInputChannel,
                     PT,
-                    GetRandomPTDevice()
-                },
-                new object[]
-                {
-                    oneAnalogInputChannel,
-                    DEV_SPAE,
                     GetRandomPTDevice()
                 },
                 new object[]
