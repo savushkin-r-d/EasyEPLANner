@@ -61,7 +61,8 @@
         {
             string res = base.Check();
 
-            if (ArticleName == string.Empty)
+            bool emptyArticle = ArticleName == string.Empty;
+            if (emptyArticle)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -125,7 +126,8 @@
         {
             string res = base.Check();
 
-            if (ArticleName == string.Empty)
+            bool emptyArticle = ArticleName == string.Empty;
+            if (emptyArticle)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }

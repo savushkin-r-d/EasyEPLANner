@@ -92,6 +92,13 @@ namespace Device
             string errors = string.Empty;
             errors += base.Check();
 
+            bool emptyArticle = ArticleName == string.Empty;
+            bool needCheckArticle = dSubType != DeviceSubType.HLA_VIRT;
+            if (needCheckArticle && emptyArticle)
+            {
+                errors += $"\"{name}\" - не задано изделие.\n";
+            }
+
             bool devContainsSequenceProperties =
                 dSubType == DeviceSubType.HLA_IOLINK ||
                 dSubType == DeviceSubType.HLA_VIRT;

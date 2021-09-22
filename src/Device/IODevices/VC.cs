@@ -118,8 +118,9 @@ namespace Device
         {
             string res = base.Check();
 
-            if (ArticleName == string.Empty &&
-                DeviceSubType == DeviceSubType.VC_IOLINK)
+            bool emptyArticle = ArticleName == string.Empty;
+            bool needCheckArticle = DeviceSubType == DeviceSubType.VC_IOLINK;
+            if (needCheckArticle && emptyArticle)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }

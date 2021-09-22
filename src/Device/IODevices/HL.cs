@@ -48,8 +48,9 @@ namespace Device
         {
             string res = base.Check();
 
-            if (ArticleName == string.Empty &&
-                dSubType != DeviceSubType.HL_VIRT)
+            bool emptyArticle = ArticleName == string.Empty;
+            bool needCheckArticle = DeviceSubType != DeviceSubType.HL_VIRT;
+            if (needCheckArticle && emptyArticle)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }

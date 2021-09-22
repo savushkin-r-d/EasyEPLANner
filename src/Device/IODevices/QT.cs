@@ -99,8 +99,9 @@ namespace Device
                 }
             }
 
-            if (ArticleName == string.Empty &&
-                dSubType != DeviceSubType.QT_VIRT)
+            bool emptyArticle = ArticleName == string.Empty;
+            bool needCheckArticle = DeviceSubType != DeviceSubType.QT_VIRT;
+            if (needCheckArticle && emptyArticle)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
