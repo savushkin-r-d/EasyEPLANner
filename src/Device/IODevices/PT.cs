@@ -40,25 +40,17 @@ namespace Device
                     SetIOLinkSizes(ArticleName);
                     break;
 
-                case "DEV_SPAE":
-                    parameters.Add(Parameter.P_ERR, null);
-
-                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
-
-                    SetIOLinkSizes(ArticleName);
-                    break;
-
                 case "PT_VIRT":
                     break;
 
                 case "":
                     errStr = string.Format("\"{0}\" - не задан тип" +
-                        " (PT, PT_IOLINK, DEV_SPAE, PT_VIRT).\n", Name);
+                        " (PT, PT_IOLINK, PT_VIRT).\n", Name);
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (PT, PT_IOLINK, DEV_SPAE, PT_VIRT).\n", Name);
+                        " (PT, PT_IOLINK, PT_VIRT).\n", Name);
                     break;
             }
 
@@ -103,8 +95,6 @@ namespace Device
                             return "PT";
                         case DeviceSubType.PT_IOLINK:
                             return "PT_IOLINK";
-                        case DeviceSubType.DEV_SPAE:
-                            return "DEV_SPAE";
                         case DeviceSubType.PT_VIRT:
                             return "PT_VIRT";
                     }
@@ -140,14 +130,6 @@ namespace Device
                                 {Tag.V, 1},
                                 {Parameter.P_MIN_V, 1},
                                 {Parameter.P_MAX_V, 1},
-                                {Parameter.P_ERR, 1},
-                            };
-
-                        case DeviceSubType.DEV_SPAE:
-                            return new Dictionary<string, int>()
-                            {
-                                {Tag.M, 1},
-                                {Tag.V, 1},
                                 {Parameter.P_ERR, 1},
                             };
 
