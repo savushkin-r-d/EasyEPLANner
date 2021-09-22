@@ -251,5 +251,7 @@ namespace Editor
         /// Помечен на вырезание
         /// </summary>
         bool MarkToCut { get; set; }
+
+        string CheckedObjects { get; }
     }
 }

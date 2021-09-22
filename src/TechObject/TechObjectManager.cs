@@ -608,6 +608,8 @@ namespace TechObject
             var treeViewItem = child as ITreeViewItem;
             if (treeViewItem != null && treeObjects.Contains(treeViewItem))
             {
+                CheckRecipes(treeViewItem as TechObject);
+
                 foreach (var item in treeViewItem.Items)
                 {
                     treeViewItem.Delete(item);
@@ -624,9 +626,17 @@ namespace TechObject
                 return false;
             }
         }
+
         #endregion
 
         #region Корректировка объектов при их удалении или перемещении
+
+        private void CheckRecipes(TechObject techObject)
+        {
+            int objId = GetTechObjectN(techObject);
+            Recipe.RecipesManger.GetInstance().ClearRecipesByObj(objId);
+        }
+
         public void CheckRestriction(int oldNum, int newNum)
         {
             foreach (TechObject techObject in TechObjects)

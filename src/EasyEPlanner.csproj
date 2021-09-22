@@ -112,6 +112,12 @@
     <Compile Include="Device\IODevices\F.cs" />
     <Compile Include="Device\IODevices\C.cs" />
     <Compile Include="Device\IODevices\HLA.cs" />
+    <Compile Include="RecipeFrm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RecipeFrm.Designer.cs">
+      <DependentUpon>RecipeFrm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Editor\DrawInfo.cs" />
     <Compile Include="Editor\Editor.cs" />
     <Compile Include="Editor\IBaseObjChangeable.cs" />
@@ -187,6 +193,7 @@
     <Compile Include="InterprojectExchange\Forms\UnknownDevTypeForm.Designer.cs">
       <DependentUpon>UnknownDevTypeForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Main\ShowRecipesAction.cs" />
     <Compile Include="Main\InterprojectExchangeAction.cs" />
     <Compile Include="Configuration\ProjectHealthChecker.cs" />
     <Compile Include="Device\DeviceManager.cs" />
@@ -275,6 +282,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="RManager\IRecipesManager.cs" />
+    <Compile Include="RManager\Recipe.cs" />
+    <Compile Include="RManager\RParam.cs" />
+    <Compile Include="RManager\RecipesManger.cs" />
     <Compile Include="StaticHelper\GUIHelper.cs" />
     <Compile Include="StaticHelper\CommonConst.cs" />
     <Compile Include="StaticHelper\IPConverter.cs" />
@@ -328,6 +339,9 @@
     <Compile Include="TechObject\TechObjectXMLMaker.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="RecipeFrm.resx">
+      <DependentUpon>RecipeFrm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DFrm.resx">
       <DependentUpon>DFrm.cs</DependentUpon>
     </EmbeddedResource>
@@ -479,6 +493,7 @@
       <Name>EplanIdleTimeModule</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

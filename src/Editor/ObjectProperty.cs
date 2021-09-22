@@ -142,6 +142,14 @@ namespace Editor
             }
         }
 
+        public virtual string CheckedObjects
+        {
+            get
+            {
+                return EditText[1];
+            }
+        }
+
         public virtual bool IsDeletable
         {
             get

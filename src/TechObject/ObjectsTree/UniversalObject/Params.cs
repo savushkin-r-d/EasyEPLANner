@@ -215,12 +215,16 @@ namespace TechObject
             if (removingParam != null)
             {
                 removingParam.ClearOperationsBinding();
+
+                ClearRecipesParams(child as Param);
+
                 parameters.Remove(removingParam);
                 return true;
             }
 
             return false;
         }
+
 
         override public bool SetNewValue(string newValue)
         {
@@ -435,6 +439,17 @@ namespace TechObject
             }
         }
         #endregion
+
+        private void ClearRecipesParams(Param param)
+        {
+            int paramIdx = GetIdx(param);
+            TechObject parentTO = Parent.Parent as TechObject;
+            if (parentTO != null)
+            {
+                int objIdx = TechObjectManager.GetInstance().GetTechObjectN(parentTO);
+                Recipe.RecipesManger.GetInstance().ClearRecipesParams(objIdx, paramIdx);
+            }
+        }
 
         public override string GetLinkToHelpPage()
         {

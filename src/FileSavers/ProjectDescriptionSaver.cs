@@ -90,6 +90,7 @@ namespace EasyEPlanner
                 SaveProfibusFile(par);
                 SavePrgFile(par);
                 SaveSharedFile(par);
+                SaveRecipesFile(par);
 
                 if (par.silentMode == false)
                 {
@@ -216,6 +217,23 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Сохранить ограничения проекта в main.restrictions.lua
+        /// </summary>
+        /// <param name="par">Параметры</param>
+        private static void SaveRecipesFile(ParametersForSave par)
+        {
+           string filePattern = Properties.Resources.ResourceManager
+                .GetString("mainRecipesPattern");
+            string recipes = recipesManager.SaveAsLuaTable("");
+            var restrictionsFileData = string.Format(filePattern,
+                mainRecipesFileVersion, recipes);
+
+            string fileName = par.path + @"\" + MainRecipesFileName;
+            File.WriteAllText(fileName, restrictionsFileData,
+                    EncodingDetector.MainFilesEncoding); 
+        }
+
+        /// <summary>
         /// Сохранить файл main.plua (базовая инициализация).
         /// </summary>
         /// <param name="par">Параметры</param>
@@ -312,6 +330,7 @@ namespace EasyEPlanner
         private const int mainTechObjectsFileVersion = 1;
         private const int mainTechDevicesFileVersion = 1;
         private const int mainRestrictionsFileVersion = 1;
+        private const int mainRecipesFileVersion = 1;
         private const int mainPRGFileVersion = 1;
 
         private const string mainIOFileName = "main.io.lua";
@@ -319,6 +338,7 @@ namespace EasyEPlanner
         public const string MainTechObjectsFileName = "main.objects.lua";
         private const string mainTechDevicesFileName = "main.devices.lua";
         public const string MainRestrictionsFileName = "main.restrictions.lua";
+        public const string MainRecipesFileName = "recipes.lua";
         private const string mainProgramFileName = "main.plua";
         private static string mainProgramFilePattern = "";
         private static bool mainProgramFilePatternIsLoaded = false;
@@ -334,6 +354,9 @@ namespace EasyEPlanner
         private static DeviceManager deviceManager = DeviceManager
             .GetInstance();
         private static IOManager IOManager = IOManager.GetInstance();
+
+        private static Recipe.IRecipesManager recipesManager =
+            Recipe.RecipesManger.GetInstance();
 
         public static string MainProgramFileName
         {

@@ -6,7 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using TechObject;
+using Recipe;
 using System.Threading;
+using Editor;
 
 namespace EasyEPlanner
 {
@@ -116,6 +118,14 @@ namespace EasyEPlanner
                         projectName,
                         $"\\{ProjectDescriptionSaver.MainRestrictionsFileName}");
                     techObjectManager.LoadRestriction(LuaStr);
+
+                    //Считывание таблицы рецептов
+                    errStr = string.Empty;
+                    LuaStr = string.Empty;
+                    res = LoadDescriptionFromFile(out LuaStr, out errStr,
+                        projectName,
+                        $"\\{ProjectDescriptionSaver.MainRecipesFileName}");
+                    recipesManager.LoadRecipes(LuaStr);
                     oProgress.EndPart();
                 }
                 else
@@ -277,7 +287,11 @@ namespace EasyEPlanner
             CheckLibsAndFiles();
 
             editor = Editor.Editor.GetInstance();
+            recipeEditor = Editor.RecipeFrm.GetInstance();
+
             techObjectManager = TechObjectManager.GetInstance();
+
+            recipesManager = RecipesManger.GetInstance();
             Logs.Init(new LogFrm());           
             IOManager = IOManager.GetInstance();
             DeviceManager.GetInstance();
@@ -390,6 +404,15 @@ namespace EasyEPlanner
                     Logs.EnableButtons();
                 }
             }
+        }
+
+        /// <summary>
+        /// Загрузка окна для редактирования рецептов 
+        /// </summary>
+        public void ShowRecipesModule()
+        {
+            recipeEditor.ShowRecipes(recipesManager as Editor.ITreeViewItem);
+            
         }
 
         /// <summary>
@@ -800,10 +823,15 @@ namespace EasyEPlanner
         /// </summary>
         private Editor.IEditor editor;
 
+
+        private RecipeFrm recipeEditor;
+
         /// <summary>
         /// Менеджер технологических объектов.
         /// </summary>
         private ITechObjectManager techObjectManager;
+
+        private IRecipesManager recipesManager;
 
         /// <summary>
         /// Менеджер модулей ввода/вывода.
