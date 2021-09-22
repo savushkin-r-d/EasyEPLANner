@@ -67,7 +67,8 @@ namespace Device
                 }
             }
 
-            if (ArticleName == string.Empty)
+            bool emptyArticle = ArticleName == string.Empty;
+            if (emptyArticle)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }

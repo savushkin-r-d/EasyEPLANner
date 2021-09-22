@@ -250,9 +250,10 @@ namespace Device
         {
             string res = base.Check();
 
-            if (ArticleName == string.Empty &&
-                (DeviceSubType == DeviceSubType.M_ATV ||
-                DeviceSubType == DeviceSubType.M_ATV_LINEAR))
+            bool emptyArticle = ArticleName == string.Empty;
+            bool needCheckArticle = DeviceSubType == DeviceSubType.M_ATV ||
+                DeviceSubType == DeviceSubType.M_ATV_LINEAR;
+            if (needCheckArticle && emptyArticle)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
