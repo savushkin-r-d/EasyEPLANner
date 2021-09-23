@@ -72,7 +72,7 @@ namespace TechObject
             
             if(oldValues.Count >= newValues.Count)
             {
-                return newValue;
+                return newValue.Trim();
             }
             else
             {
@@ -84,7 +84,7 @@ namespace TechObject
                 }
 
                 string stringSeparator = " ";
-                return string.Join(stringSeparator, oldValues);
+                return string.Join(stringSeparator, oldValues).Trim();
             }
         }
 
