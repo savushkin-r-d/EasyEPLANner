@@ -153,7 +153,8 @@ namespace Tests.TechObject
                     new List<BaseTechObjectManager.ObjectType>
                     {
                         BaseTechObjectManager.ObjectType.Aggregate,
-                        BaseTechObjectManager.ObjectType.Unit
+                        BaseTechObjectManager.ObjectType.Unit,
+                        BaseTechObjectManager.ObjectType.UserObject
                     },
                 },
                 new object[]
