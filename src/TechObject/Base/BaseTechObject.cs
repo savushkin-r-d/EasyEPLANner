@@ -181,7 +181,8 @@ namespace TechObject
                         new List<BaseTechObjectManager.ObjectType>()
                         {
                             BaseTechObjectManager.ObjectType.Aggregate,
-                            BaseTechObjectManager.ObjectType.Unit
+                            BaseTechObjectManager.ObjectType.Unit,
+                            BaseTechObjectManager.ObjectType.UserObject
                         };
 
                     return new AttachedObjects(string.Empty, null,
