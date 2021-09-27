@@ -176,6 +176,14 @@ namespace TechObject
             groupAIAO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupAIAO);
 
+            var enableStepBySignal = new ActionGroup(
+                "Сигнал для включения шага", this, "enable_step_by_signal",
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.DI
+                }, null);
+            actions.Add(enableStepBySignal);
+
             items.AddRange(actions.Cast<ITreeViewItem>().ToArray());
 
             if (!isMainStep)
