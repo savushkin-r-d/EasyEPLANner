@@ -149,6 +149,7 @@ function proc_actions(step, value, is_runtime_step)
     proc_groups(step, value, "inverted_DI_DO")
     proc_groups(step, value, "AI_AO")
     proc_wash_data(step, value)
+    proc_groups(step, value, "enable_step_by_signal")
 
     local notRuntimeStep = step:GetStepNumber() >= 0
     if (notRuntimeStep) then

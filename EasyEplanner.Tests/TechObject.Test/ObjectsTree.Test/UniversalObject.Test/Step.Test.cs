@@ -2,6 +2,7 @@
 using TechObject;
 using Editor;
 using System.Collections.Generic;
+using System;
 
 namespace EasyEplanner.Tests
 {
@@ -31,8 +32,8 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(actualName, expectedName);
         }
 
-        [TestCase(true, 11)]
-        [TestCase(false, 12)]
+        [TestCase(true, 12)]
+        [TestCase(false, 13)]
         public void Constructor_NewStep_CheckActionsCount(bool isMainStep,
             int expectedCount)
         {
@@ -43,8 +44,8 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(expectedCount, actualCount);
         }
 
-        [TestCase(true, 11)]
-        [TestCase(false, 14)]
+        [TestCase(true, 12)]
+        [TestCase(false, 15)]
         public void Constructor_NewStep_CheckItemsCount(bool isMainStep,
             int expectedCount)
         {
@@ -82,6 +83,7 @@ namespace EasyEplanner.Tests
             var pairsDIDO = "DI_DO";
             var pairsInvertedDIDO = "inverted_DI_DO";
             var pairsAIAO = "AI_AO";
+            var enableStepBySignal = "enable_step_by_signal";
             var toStepIfDevicesInSpecificState = 
                 "to_step_if_devices_in_specific_state";
 
@@ -101,6 +103,7 @@ namespace EasyEplanner.Tests
                     pairsDIDO,
                     pairsInvertedDIDO,
                     pairsAIAO,
+                    enableStepBySignal,
                     toStepIfDevicesInSpecificState
                 }
             };
@@ -120,7 +123,8 @@ namespace EasyEplanner.Tests
                     devices,
                     pairsDIDO,
                     pairsInvertedDIDO,
-                    pairsAIAO
+                    pairsAIAO,
+                    enableStepBySignal
                 }
             };
 
@@ -152,23 +156,38 @@ namespace EasyEplanner.Tests
             var greenUpBox = DrawInfo.Style.GREEN_UPPER_BOX;
             var greenLowBox = DrawInfo.Style.GREEN_LOWER_BOX;
 
+            DrawInfo.Style checkedDevices = greenBox;
+            DrawInfo.Style openedDevices = greenBox;
+            DrawInfo.Style openedReverseDevices = greenBox;
+            DrawInfo.Style closedDevices = redBox;
+            DrawInfo.Style openedUpperSeats = greenUpBox;
+            DrawInfo.Style openedLowerSeats = greenLowBox;
+            DrawInfo.Style requiredFB = greenBox;
+            DrawInfo.Style devices = greenBox;
+            DrawInfo.Style pairsDIDO = greenBox;
+            DrawInfo.Style pairsInvertedDIDO = greenBox;
+            DrawInfo.Style pairsAIAO = greenBox;
+            DrawInfo.Style enableStepBySignal = greenBox;
+            DrawInfo.Style toStepByCondition = greenBox;
+
             var noMainStep = new object[]
             {
                 false,
                 new DrawInfo.Style[]
                 {
-                    greenBox,
-                    greenBox,
-                    greenBox,
-                    redBox,
-                    greenUpBox,
-                    greenLowBox,
-                    greenBox,
-                    greenBox,
-                    greenBox,
-                    greenBox,
-                    greenBox,
-                    greenBox,
+                    checkedDevices,
+                    openedDevices,
+                    openedReverseDevices,
+                    closedDevices,
+                    openedUpperSeats,
+                    openedLowerSeats,
+                    requiredFB,
+                    devices,
+                    pairsDIDO,
+                    pairsInvertedDIDO,
+                    pairsAIAO,
+                    enableStepBySignal,
+                    toStepByCondition,
                 }
             };
 
@@ -177,17 +196,18 @@ namespace EasyEplanner.Tests
                 true,
                 new DrawInfo.Style[]
                 {
-                    greenBox,
-                    greenBox,
-                    greenBox,
-                    redBox,
-                    greenUpBox,
-                    greenLowBox,
-                    greenBox,
-                    greenBox,
-                    greenBox,
-                    greenBox,
-                    greenBox,
+                    checkedDevices,
+                    openedDevices,
+                    openedReverseDevices,
+                    closedDevices,
+                    openedUpperSeats,
+                    openedLowerSeats,
+                    requiredFB,
+                    devices,
+                    pairsDIDO,
+                    pairsInvertedDIDO,
+                    pairsAIAO,
+                    enableStepBySignal,
                 }
             };
 
@@ -275,6 +295,11 @@ namespace EasyEplanner.Tests
                 Device.DeviceType.M
             };
 
+            var enableStepBySignal = new Device.DeviceType[]
+            {
+                Device.DeviceType.DI
+            };
+
             var mainStep = new object[]
             {
                 true,
@@ -290,7 +315,8 @@ namespace EasyEplanner.Tests
                     allTypesAllowed,
                     groupDIDO,
                     groupInvertedDIDO,
-                    groupAIAO
+                    groupAIAO,
+                    enableStepBySignal
                 }
             };
 
@@ -310,6 +336,7 @@ namespace EasyEplanner.Tests
                     groupDIDO,
                     groupInvertedDIDO,
                     groupAIAO,
+                    enableStepBySignal,
                     allTypesAllowed
                 }
             };
@@ -381,6 +408,7 @@ namespace EasyEplanner.Tests
                     allSubTypesAllowed,
                     allSubTypesAllowed,
                     allSubTypesAllowed,
+                    allSubTypesAllowed,
                     allSubTypesAllowed
                 }
             };
@@ -396,6 +424,7 @@ namespace EasyEplanner.Tests
                     allSubTypesAllowed,
                     openUpperSeats,
                     openLowerSeats,
+                    allSubTypesAllowed,
                     allSubTypesAllowed,
                     allSubTypesAllowed,
                     allSubTypesAllowed,
@@ -443,6 +472,7 @@ namespace EasyEplanner.Tests
             var pairsInvertedDIDO = pairsDIDO;
             var pairsAIAO = ImageIndexEnum.ActionDIDOPairs;
             var toStepIfDevicesInSpecificState = ImageIndexEnum.NONE;
+            var enableStepBySignal = ImageIndexEnum.NONE;
 
             object[] notMainStepImageIndexes = new object[]
             {
@@ -460,6 +490,7 @@ namespace EasyEplanner.Tests
                     pairsDIDO,
                     pairsInvertedDIDO,
                     pairsAIAO,
+                    enableStepBySignal,
                     toStepIfDevicesInSpecificState
                 }
             };
@@ -479,7 +510,8 @@ namespace EasyEplanner.Tests
                     devices,
                     pairsDIDO,
                     pairsInvertedDIDO,
-                    pairsAIAO
+                    pairsAIAO,
+                    enableStepBySignal
                 }
             };
 
@@ -487,6 +519,81 @@ namespace EasyEplanner.Tests
             {
                 mainStepImageIndexes,
                 notMainStepImageIndexes
+            };
+        }
+
+        [TestCaseSource(nameof(ActionsTypesSequenceTest))]
+        public void Constructor_NewStep_ReturnsCorrectTypesSequence(
+            bool isMainStep, Type[] expectedTypes)
+        {
+            var step = new Step(string.Empty, null, null, isMainStep);
+
+            var actualTypes = new List<Type>();
+            foreach(var action in step.GetActions)
+            {
+                actualTypes.Add(action.GetType());
+            }
+
+            Assert.AreEqual(expectedTypes, actualTypes.ToArray());
+        }
+
+        public static object[] ActionsTypesSequenceTest()
+        {
+            Type action = typeof(TechObject.Action);
+            Type actionGroup = typeof(ActionGroup);
+            Type actionGroupWash = typeof(ActionGroupWash);
+            Type actionToStepByCondition = typeof(ActionToStepByCondition);
+
+            Type checkedDevices = action;
+            Type openedDevices = action;
+            Type openedReverseDevices = action;
+            Type closedDevices = action;
+            Type openedUpperSeats = actionGroup;
+            Type openedLowerSeats = actionGroup;
+            Type requiredFB = action;
+            Type devices = actionGroupWash;
+            Type pairsDIDO = actionGroup;
+            Type pairsInvertedDIDO = actionGroup;
+            Type pairsAIAO = actionGroup;
+            Type enableStepBySignal = actionGroup;
+
+            var mainStepSequence = new Type[]
+            {
+                checkedDevices,
+                openedDevices,
+                openedReverseDevices,
+                closedDevices,
+                openedUpperSeats,
+                openedLowerSeats,
+                requiredFB,
+                devices,
+                pairsDIDO,
+                pairsInvertedDIDO,
+                pairsAIAO,
+                enableStepBySignal,
+            };
+
+            var notMainStepSequence = new Type[]
+            {
+                checkedDevices,
+                openedDevices,
+                openedReverseDevices,
+                closedDevices,
+                openedUpperSeats,
+                openedLowerSeats,
+                requiredFB,
+                devices,
+                pairsDIDO,
+                pairsInvertedDIDO,
+                pairsAIAO,
+                enableStepBySignal,
+                actionToStepByCondition
+            };
+
+            return new object[]
+            {
+                new object[] { true, mainStepSequence },
+                new object[] { false, notMainStepSequence },
             };
         }
     }
