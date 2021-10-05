@@ -43,6 +43,15 @@ namespace Device
                 case "TE_VIRT":
                     break;
 
+                case "TE_ANALOG":
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_ERR, null);
+                    parameters.Add(Parameter.P_MIN_V, null);
+                    parameters.Add(Parameter.P_MAX_V, null);
+
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+                    break;
+
                 case "":
                     errStr = string.Format("\"{0}\" - не задан тип" +
                         " (TE, TE_IOLINK, TE_VIRT).\n", Name);
@@ -85,6 +94,8 @@ namespace Device
                             return "TE_IOLINK";
                         case DeviceSubType.TE_VIRT:
                             return "TE_VIRT";
+                        case DeviceSubType.TE_ANALOG:
+                            return "TE_ANALOG";
                     }
                     break;
             }
@@ -116,6 +127,18 @@ namespace Device
                                 {Tag.M, 1},
                                 {Tag.V, 1},
                                 {Tag.ST, 1},
+                            };
+
+                        case DeviceSubType.TE_ANALOG:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.ST, 1},
+                                {Tag.P_CZ, 1},
+                                {Parameter.P_MIN_V, 1},
+                                {Parameter.P_MAX_V, 1},
+                                {Parameter.P_ERR, 1},
                             };
                     }
                     break;

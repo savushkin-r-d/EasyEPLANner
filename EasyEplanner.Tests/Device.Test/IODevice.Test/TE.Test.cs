@@ -12,6 +12,7 @@ namespace Tests.Devices
         const string TE = "TE";
         const string TE_IOLINK = "TE_IOLINK";
         const string TE_VIRT = "TE_VIRT";
+        const string TE_ANALOG = "TE_ANALOG";
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
@@ -53,6 +54,8 @@ namespace Tests.Devices
                     GetRandomTEDevice() },
                 new object[] { DeviceSubType.TE_VIRT, TE_VIRT,
                     GetRandomTEDevice() },
+                new object[] { DeviceSubType.TE_ANALOG, TE_ANALOG,
+                    GetRandomTEDevice() },
             };
         }
 
@@ -87,6 +90,7 @@ namespace Tests.Devices
                 new object[] { TE_IOLINK, TE_IOLINK, GetRandomTEDevice() },
                 new object[] { string.Empty, Incorrect, GetRandomTEDevice() },
                 new object[] { TE_VIRT, TE_VIRT, GetRandomTEDevice() },
+                new object[] { TE_ANALOG, TE_ANALOG, GetRandomTEDevice() },
             };
         }
 
@@ -129,6 +133,17 @@ namespace Tests.Devices
                 {IODevice.Tag.ST, 1},
             };
 
+            var exportForTEAnalog = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Parameter.P_MIN_V, 1},
+                {IODevice.Parameter.P_MAX_V, 1},
+                {IODevice.Parameter.P_ERR, 1},
+            };
+
             return new object[]
             {
                 new object[] {null, string.Empty, GetRandomTEDevice()},
@@ -136,6 +151,7 @@ namespace Tests.Devices
                 new object[] {exportForTE, TE_IOLINK, GetRandomTEDevice()},
                 new object[] {exportForTEVirt, TE_VIRT, GetRandomTEDevice()},
                 new object[] {null, Incorrect, GetRandomTEDevice()},
+                new object[] {exportForTEAnalog, TE_ANALOG, GetRandomTEDevice() },
             };
         }
 
@@ -171,6 +187,14 @@ namespace Tests.Devices
                 IODevice.Parameter.P_ERR
             };
 
+            var analogTEParameters = new string[]
+            {
+                IODevice.Parameter.P_C0,
+                IODevice.Parameter.P_ERR,
+                IODevice.Parameter.P_MIN_V,
+                IODevice.Parameter.P_MAX_V,
+            };
+
             return new object[]
             {
                 new object[]
@@ -197,6 +221,12 @@ namespace Tests.Devices
                     Incorrect,
                     GetRandomTEDevice()
                 },
+                new object[]
+                {
+                    analogTEParameters,
+                    TE_ANALOG,
+                    GetRandomTEDevice()
+                }
             };
         }
 
@@ -243,6 +273,7 @@ namespace Tests.Devices
                 { DI, 0 },
                 { DO, 0 },
             };
+
             var emptySignals = new Dictionary<string, int>()
             {
                 { AI, 0 },
@@ -283,6 +314,12 @@ namespace Tests.Devices
                     TE_VIRT,
                     GetRandomTEDevice()
                 },
+                new object[]
+                {
+                    defaultSignals,
+                    TE_ANALOG,
+                    GetRandomTEDevice()
+                }
             };
         }
 
