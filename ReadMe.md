@@ -20,6 +20,15 @@ Software engineer creates code in Lua programming language for the project. Easy
 1. [Phoenix Contact - PLCNext](https://github.com/plcnext);
 2. [WAGO - PFC200](https://github.com/WAGO).
 
+### How to build
+You could clone repository by next command:  
+`git clone --recurse-submodules https://github.com/savushkin-r-d/EasyEPLANner.git`
+
+or, if you cloned without initializing and updating submodules, try next:
+`git submodule update --init --recursive`
+
+Congratulations, now you can build our solution (_if you have a EPLAN P8 app_).
+
 ### User documentation
 You can find the latest version of user documentation for the project [here](docs/user_manual/ReadMe.md).
 
