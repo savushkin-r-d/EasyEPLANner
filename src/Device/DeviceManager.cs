@@ -782,47 +782,6 @@ namespace Device
         }
 
         /// <summary>
-        /// Сохранение устройств в виде скрипта Lua. Для последующего доступа
-        /// по имени. Строки в виде: "S1V23 = V( 'S1V23' ) ".
-        /// </summary>
-        public string SaveDevicesAsLuaScript()
-        {
-            string str = "system = system or {}\n";
-            str += "system.init_dev_names = function()\n";
-
-            foreach (IODevice dev in devices)
-            {
-                if (dev.DeviceType == DeviceType.Y ||
-                    dev.DeviceType == DeviceType.DEV_VTUG) continue;
-
-                if (dev.ObjectNumber > 0 && dev.ObjectName == "")
-                {
-                    str += "\t_";
-                }
-                else
-                {
-                    str += "\t";
-                }
-                str += dev.Name + " = " + dev.DeviceType.ToString() + "(\'" + dev.Name + "\')\n";
-            }
-            str += "\n";
-
-            int i = 0;
-            foreach (IODevice dev in devices)
-            {
-                if (dev.DeviceType == DeviceType.Y ||
-                    dev.DeviceType == DeviceType.DEV_VTUG) continue;
-
-                str += "\t__" + dev.Name + " = DEVICE( " + i + " )\n";
-                i++;
-            }
-            str += "end\n";
-            str = str.Replace("\t", "    ");
-
-            return str;
-        }
-
-        /// <summary>
         /// Закрытый конструктор.
         /// </summary>
         private DeviceManager()
