@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using Device;
 using IO;
 using System.Windows.Forms;
@@ -83,7 +82,6 @@ namespace EasyEPlanner
                 }
 
                 SaveTechObjectsFile(par);
-                SaveTechDevicesFile(par);
                 SaveRestrictionsFile(par);
                 SaveMainFile(par);
                 SaveModbusFile(par);
@@ -125,7 +123,7 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Сохранить описание контроллера, шины в main.io.lua и main.wago.lua
+        /// Сохранить описание контроллера, шины в main.io.lua
         /// </summary>
         /// <param name="par">Параметры</param>
         private static void SaveIOFile(ParametersForSave par)
@@ -148,10 +146,6 @@ namespace EasyEPlanner
 
             fileWriter.Flush();
             fileWriter.Close();
-
-            // Делаем копию с другим именем (IO.lua и WAGO.lua идентичный)
-            File.Copy(par.path + @"\" + mainIOFileName,
-                par.path + @"\" + mainWagoFileName, true);
         }
 
         /// <summary>
@@ -171,28 +165,6 @@ namespace EasyEPlanner
                 EncodingDetector.MainFilesEncoding);
 
             fileWriter.Write(descriptionFileData);
-            fileWriter.Flush();
-            fileWriter.Close();
-        }
-
-        /// <summary>
-        /// Сохранить устройства проекта в main.devices.lua
-        /// </summary>
-        /// <param name="par">Параметры</param>
-        private static void SaveTechDevicesFile(ParametersForSave par)
-        {
-            string fileName = par.path + @"\" + mainTechDevicesFileName;
-            var fileWriter = new StreamWriter(fileName,
-                false, EncodingDetector.MainFilesEncoding);
-
-            fileWriter.WriteLine("--version  = {0}",
-                mainTechDevicesFileVersion);
-            fileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);
-            fileWriter.WriteLine(new string('-', numberOfDashes));
-            fileWriter.WriteLine(new string('-', numberOfDashes));
-
-            fileWriter.Write(deviceManager.SaveDevicesAsLuaScript());
-
             fileWriter.Flush();
             fileWriter.Close();
         }
@@ -310,14 +282,11 @@ namespace EasyEPlanner
 
         private const int mainIOFileVersion = 1;
         private const int mainTechObjectsFileVersion = 1;
-        private const int mainTechDevicesFileVersion = 1;
         private const int mainRestrictionsFileVersion = 1;
         private const int mainPRGFileVersion = 1;
 
         private const string mainIOFileName = "main.io.lua";
-        private const string mainWagoFileName = "main.wago.lua";
         public const string MainTechObjectsFileName = "main.objects.lua";
-        private const string mainTechDevicesFileName = "main.devices.lua";
         public const string MainRestrictionsFileName = "main.restrictions.lua";
         private const string mainProgramFileName = "main.plua";
         private static string mainProgramFilePattern = "";
