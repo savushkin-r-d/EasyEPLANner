@@ -30,6 +30,13 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
 
+    - name: Download fetch.exe and EPLAN API binaries, copy it to specific path
+      run: |
+          curl -L "https://github.com/gruntwork-io/fetch/releases/download/v0.4.2/fetch_windows_amd64.exe" -O
+          md src/bin/Release
+          ./fetch_windows_amd64.exe --github-oauth-token="${{ secrets.EPLAN_API_BIN }}" --repo="https://github.com/savushkin-r-d/EPLAN-API-bin" --tag="2.9" --release-asset=".*" "C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2"
+          dir "C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2"
+
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
