@@ -36,8 +36,9 @@ jobs:
       run: |
           curl -L "https://github.com/gruntwork-io/fetch/releases/download/v0.4.2/fetch_windows_amd64.exe" -O
           md src/bin/Release
-          ./fetch_windows_amd64.exe --github-oauth-token="${{ secrets.EPLAN_API_BIN }}" --repo="https://github.com/savushkin-r-d/EPLAN-API-bin" --tag="2.9" --release-asset=".*" "C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2"
-          dir "C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2"
+          ./fetch_windows_amd64.exe --github-oauth-token="${{ secrets.EPLAN_API_BIN }}" --repo="https://github.com/savushkin-r-d/EPLAN-API-bin" --tag="2.9" --release-asset=".*" "src/bin/Release"
+          md submodule/EplanIdleTimeModule/EplanIdleTimeModule/bin/Release
+          cp src/bin/Release/* submodule/EplanIdleTimeModule/EplanIdleTimeModule/bin/Release
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
