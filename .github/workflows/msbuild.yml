@@ -32,7 +32,7 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
 
-    - name: Download fetch.exe and EPLAN API binaries, copy it to specific path
+    - name: Download fetch.exe and EPLAN API binaries, copy it to the .net specific path
       run: |
           curl -L "https://github.com/gruntwork-io/fetch/releases/download/v0.4.2/fetch_windows_amd64.exe" -O
           md src/bin/${{env.BUILD_CONFIGURATION}}
@@ -49,3 +49,17 @@ jobs:
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: dotnet test ${{env.SOLUTION_FILE_PATH}}
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: EPLANner
+        path: |
+          src/bin/${{env.BUILD_CONFIGURATION}}/EPLAN.EplAddin.EasyEPlanner.dll
+          src/bin/${{env.BUILD_CONFIGURATION}}/EPLAN.EplAddin.IdleTimeModule.dll
+          src/bin/${{env.BUILD_CONFIGURATION}}/Spire.Pdf.dll
+          src/bin/${{env.BUILD_CONFIGURATION}}/Spire.XLS.dll
+          src/bin/${{env.BUILD_CONFIGURATION}}/Spire.License.dll
+          src/bin/${{env.BUILD_CONFIGURATION}}/ObjectListView.dll
+          src/bin/${{env.BUILD_CONFIGURATION}}/Aga.Controls.dll
+          src/bin/${{env.BUILD_CONFIGURATION}}/LuaInterface.dll
+          src/bin/${{env.BUILD_CONFIGURATION}}/KopiLua.dll
