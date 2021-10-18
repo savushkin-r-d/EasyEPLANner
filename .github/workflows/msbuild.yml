@@ -7,9 +7,7 @@ on:
 
 env:
   # Path to the solution file relative to the root of the project.
-  SOLUTION_FILE_PATH: ./src/EasyEPlanner.sln
-
-  TEST_PROJECT_FILE_PATH: ./EasyEplanner.Tests/EasyEplanner.Tests.csproj
+  SOLUTION_FILE_PATH: ./src/EasyEPlanner.csproj
 
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
@@ -36,14 +34,14 @@ jobs:
 
     - name: Download fetch.exe and EPLAN API binaries, copy it to the .net specific path
       run: |
-          curl -L "https://github.com/gruntwork-io/fetch/releases/download/v0.4.2/fetch_windows_amd64.exe" -O
-          md src/bin/${{env.BUILD_CONFIGURATION}}
-          ./fetch_windows_amd64.exe --github-oauth-token="${{ secrets.EPLAN_API_BIN }}" --repo="https://github.com/savushkin-r-d/EPLAN-API-bin" --tag="2.9" --release-asset=".*" "src/bin/${{env.BUILD_CONFIGURATION}}"
-          md submodule/EplanIdleTimeModule/EplanIdleTimeModule/bin/${{env.BUILD_CONFIGURATION}}
-          cp src/bin/${{env.BUILD_CONFIGURATION}}/* submodule/EplanIdleTimeModule/EplanIdleTimeModule/bin/${{env.BUILD_CONFIGURATION}}
-          md EasyEplanner.Tests/bin/${{env.BUILD_CONFIGURATION}}/net472
-          cp src/bin/${{env.BUILD_CONFIGURATION}}/* EasyEplanner.Tests/bin/${{env.BUILD_CONFIGURATION}}/net472
-          cp src/bin/${{env.BUILD_CONFIGURATION}}/* "C:/Program Files/dotnet/sdk/5.0.401"
+        curl -L "https://github.com/gruntwork-io/fetch/releases/download/v0.4.2/fetch_windows_amd64.exe" -O
+        md src/bin/${{env.BUILD_CONFIGURATION}}
+        ./fetch_windows_amd64.exe --github-oauth-token="${{ secrets.EPLAN_API_BIN }}" --repo="https://github.com/savushkin-r-d/EPLAN-API-bin" --tag="2.9" --release-asset=".*" "src/bin/${{env.BUILD_CONFIGURATION}}"
+        md submodule/EplanIdleTimeModule/EplanIdleTimeModule/bin/${{env.BUILD_CONFIGURATION}}
+        cp src/bin/${{env.BUILD_CONFIGURATION}}/* submodule/EplanIdleTimeModule/EplanIdleTimeModule/bin/${{env.BUILD_CONFIGURATION}}
+        md EasyEplanner.Tests/bin/${{env.BUILD_CONFIGURATION}}/net472
+        cp src/bin/${{env.BUILD_CONFIGURATION}}/* EasyEplanner.Tests/bin/${{env.BUILD_CONFIGURATION}}/net472
+        cp src/bin/${{env.BUILD_CONFIGURATION}}/* "C:/Program Files/dotnet/sdk/5.0.401"
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -53,7 +51,9 @@ jobs:
 
     - name: Test
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: dotnet test ${{env.TEST_PROJECT_FILE_PATH}}
+      run: |
+        cd ./EasyEplanner.Tests
+        dotnet test
 
     - uses: actions/upload-artifact@v2
       with:
