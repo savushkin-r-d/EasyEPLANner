@@ -7,7 +7,7 @@ on:
 
 env:
   # Path to the solution file relative to the root of the project.
-  SOLUTION_FILE_PATH: ./src/EasyEPlanner.csproj
+  SOLUTION_FILE_PATH: ./src/EasyEPlanner.sln
 
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
@@ -39,9 +39,6 @@ jobs:
         ./fetch_windows_amd64.exe --github-oauth-token="${{ secrets.EPLAN_API_BIN }}" --repo="https://github.com/savushkin-r-d/EPLAN-API-bin" --tag="2.9" --release-asset=".*" "src/bin/${{env.BUILD_CONFIGURATION}}"
         md submodule/EplanIdleTimeModule/EplanIdleTimeModule/bin/${{env.BUILD_CONFIGURATION}}
         cp src/bin/${{env.BUILD_CONFIGURATION}}/* submodule/EplanIdleTimeModule/EplanIdleTimeModule/bin/${{env.BUILD_CONFIGURATION}}
-        md EasyEplanner.Tests/bin/${{env.BUILD_CONFIGURATION}}/net472
-        cp src/bin/${{env.BUILD_CONFIGURATION}}/* EasyEplanner.Tests/bin/${{env.BUILD_CONFIGURATION}}/net472
-        cp src/bin/${{env.BUILD_CONFIGURATION}}/* "C:/Program Files/dotnet/sdk/5.0.401"
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -53,7 +50,7 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
         cd ./EasyEplanner.Tests
-        dotnet test
+        dotnet test /p:Configuration=${{env.BUILD_CONFIGURATION}}
 
     - uses: actions/upload-artifact@v2
       with:
