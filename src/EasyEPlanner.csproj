@@ -17,7 +17,6 @@
     <SccAuxPath>Svn</SccAuxPath>
     <SccProvider>SubversionScc</SccProvider>
     <TargetFrameworkProfile />
-    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,7 +30,6 @@
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Prefer32Bit>false</Prefer32Bit>
-    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <AssemblyName>EPLAN.EplAddin.EasyEPlanner_debug</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -44,7 +42,6 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <PlatformTarget>x64</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
-    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <AssemblyName>EPLAN.EplAddin.EasyEPlanner</AssemblyName>
   </PropertyGroup>
   <PropertyGroup>
@@ -66,7 +63,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <AssemblyName>EPLAN.EplAddin.EasyEPlanner</AssemblyName>
     <Prefer32Bit>false</Prefer32Bit>
-    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Aga.Controls, Version=1.7.7.0, Culture=neutral, PublicKeyToken=0c6c09a5ec550785, processorArchitecture=MSIL">
@@ -110,7 +106,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Resources.Extensions" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ConfigurationChecker.cs" />
