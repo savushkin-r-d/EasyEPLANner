@@ -15,10 +15,10 @@ EasyEPLANner hilft bei der Beschreibung von technologischen Objekten (Tank, Kess
 2. [WAGO - PFC200](https://github.com/WAGO).
 
 ### Benutzerdokumentation
-Die neueste Version der Benutzerdokumentation für das Projekt finden Sie [hier](docs/user_manual/ReadMe.md).
+Die neueste Version der Benutzerdokumentation für das Projekt finden Sie [hier](../user_manual/ReadMe.md).
 
 ### Beitrag
-Wenn Sie zur Entwicklung unseres Projekts beitragen möchten, lesen Sie vor dem Beginn [wie man es am besten machen kann](docs/Contributing.md).
+Wenn Sie zur Entwicklung unseres Projekts beitragen möchten, lesen Sie vor dem Beginn [wie man es am besten machen kann](../contributing.md).
 
 ### Feedback
 Kontaktieren Sie uns über Slack oder die Google-Gruppe:
@@ -26,12 +26,12 @@ Kontaktieren Sie uns über Slack oder die Google-Gruppe:
 * Kanal in [Slack](https://slack.com) - EasyEPLANner.slack.com.
 
 ### Verhaltensregeln
-Wir [verwenden](docs/CODE_OF_CONDUCT.md)
+Wir [verwenden](../CODE_OF_CONDUCT.md)
 Standardverhaltensregeln (Kommunikation), die vom GitHub-Dienst bereitgestellt werden.
 
 ### Codestil
-Wir verwenden C# - und LUA-Programmiersprachen für die Entwicklung. Wir haben [eigene Vereinbarungen](docs/codestyle.md), die Sie befolgen müssen, um den Code bequem und lesbar zu machen.
+Wir verwenden C# - und LUA-Programmiersprachen für die Entwicklung. Wir haben [eigene Vereinbarungen](../codestyle.md), die Sie befolgen müssen, um den Code bequem und lesbar zu machen.
 
 
 ### Lizenz
-Das Projekt ist unter der Lizenz [MIT] (LICENSE.txt) lizensiert.
+Das Projekt ist unter der Lizenz [MIT](../../LICENSE.txt) lizensiert.
