@@ -57,8 +57,8 @@
 
 #### 2.1.1 Корневой каталог ####
 
-<p style="text-align:center"><img src="images/eplanner-folder.png" /></p>
-<p style="text-align:center">Рисунок - Общий вид каталога надстройки</p>
+<p align="center"><img src="images/eplanner-folder.png" /></p>
+<p align="center">Рисунок - Общий вид каталога надстройки</p>
 
 Описание:
 1. CMD - скрипты в **.txt** формате, которые используются для проверки наличия установленного **Lua**, а также для запуска автоматического тестирования проектов.
@@ -76,8 +76,8 @@
 
 #### 2.1.2 Каталог CMD ####
 
-<p style="text-align:center"><img src="images/cmd-folder.png" /></p>
-<p style="text-align:center">Рисунок - Каталог CMD</p>
+<p align="center"><img src="images/cmd-folder.png" /></p>
+<p align="center">Рисунок - Каталог CMD</p>
 
 Описание:
 1. TestLuaAvailability.txt - скрипт для проверки наличия **Lua** в системе. Запускается процессом из EasyEPlanner.
@@ -85,8 +85,8 @@
 
 #### 2.1.3 Каталог Lua ####
 
-<p style="text-align:center"><img src="images/lua-folder.png" /></p>
-<p style="text-align:center">Рисунок - Каталог Lua</p>
+<p align="center"><img src="images/lua-folder.png" /></p>
+<p align="center">Рисунок - Каталог Lua</p>
 
 Описание:
 1. BaseObjectsDescriptionFiles - каталог с описанием базовых объектов. Берется из репозитория **ptusa-lua-diary-system**. Если файлов нет - будет автоматически создан вместе с начальным пустым описанием.
@@ -104,10 +104,8 @@
 
 Нужно немного рассказать о том, как это работает. Базовые объекты могут быть любые, и их может быть любое количество. Главное, чтобы в файлах они не пересекались. Надстройка загружает из каждого файла базовые объекты, поэтому можно разделить их по разным критериям и использовать так, как надо пользователю. В этой папке всегда должен быть файл с описанием, иначе могут слететь в проектах базовые объекты со всеми настройками. В SVN репозитории файл зафиксирован (*sys_base_objects_description.lua*), который используется АСУТП. Если файла нет, то он будет создан автоматически, а внутри его будет базовое описание и комментарии о том, как заполнять этот файл. Дополнительно можно в папке Lua посмотреть файл **sys_base_object_initializer.lua**, которые показывает, что читается, и куда отправляется.
 
-<p style="text-align:center"><img src="images/base-objects-folder.png" /></p>
-<p style="text-align:center">Рисунок - Каталог BaseObjectsDescriptionFiles в каталоге Lua</p>
-
-
+<p align="center"><img src="images/base-objects-folder.png" /></p>
+<p align="center">Рисунок - Каталог BaseObjectsDescriptionFiles в каталоге Lua</p>
 
 ### 2.2 Описание файла configuration.ini и EPLAN.EplAddin.IdleTimeModule.dll.config ###
 
