@@ -37,15 +37,18 @@ namespace InterprojectExchange
         /// Загрузка данных проекта (вызывает событие)
         /// </summary>
         /// <param name="pathToProjectDir">Путь к папке с файлами проекта</param>
-        /// <returns></returns>
-        public bool LoadProjectData(string pathToProjectDir)
+        /// <param name="errors">Ошибки возникшие при загрузке</param>
+        /// <returns>Успешно или неуспешно загружены данные</returns>
+        public bool LoadProjectData(string pathToProjectDir, out string errors)
         {
             // Генерация пути к папке с проектами и его имени из полного пути
             string[] splittedPath = pathToProjectDir.Split('\\');
             int lastElem = splittedPath.Length - 1;
             string projName = splittedPath[lastElem];
             string pathToProjectsDir = pathToProjectDir.Replace(projName, "");
-            return Owner.LoadProjectData(pathToProjectsDir, projName);
+            bool loaded = Owner.LoadProjectData(pathToProjectsDir, projName,
+                out errors);
+            return loaded;
         }
 
         /// <summary>

@@ -892,7 +892,7 @@ namespace InterprojectExchange
                     else
                     {
                         bool loaded = interprojectExchange.LoadProjectData(
-                        selectedPath);
+                        selectedPath, out string errors);
                         if (loaded)
                         {
                             AddAndSelectModelToList(dirInfo);
@@ -900,7 +900,12 @@ namespace InterprojectExchange
                         else
                         {
                             string message = $"Данные по проекту " +
-                                $"\"{dirInfo.Name}\" не загружены.";
+                                $"\"{dirInfo.Name}\" не загружены.\n";
+                            if (!string.IsNullOrEmpty(errors))
+                            {
+                                message += "Дополнительные ошибки:\n" + errors;
+                            }
+
                             ShowErrorMessage(message);
                         }
                     }        
