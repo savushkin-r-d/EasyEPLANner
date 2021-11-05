@@ -100,7 +100,7 @@
 
 #### 2.1.1 Корневой каталог ####
 
-<p align="center"><img src="images/eplanner-folder.png" /></p>
+<p align="center"><img src="images/eplanner-folder.PNG" /></p>
 <p align="center">Рисунок - Общий вид каталога надстройки</p>
 
 Описание:
@@ -119,7 +119,7 @@
 
 #### 2.1.2 Каталог CMD ####
 
-<p align="center"><img src="images/cmd-folder.png" /></p>
+<p align="center"><img src="images/cmd-folder.PNG" /></p>
 <p align="center">Рисунок - Каталог CMD</p>
 
 Описание:
@@ -128,7 +128,7 @@
 
 #### 2.1.3 Каталог Lua ####
 
-<p align="center"><img src="images/lua-folder.png" /></p>
+<p align="center"><img src="images/lua-folder.PNG" /></p>
 <p align="center">Рисунок - Каталог Lua</p>
 
 Описание:
@@ -147,7 +147,7 @@
 
 Нужно немного рассказать о том, как это работает. Базовые объекты могут быть любые, и их может быть любое количество. Главное, чтобы в файлах они не пересекались. Надстройка загружает из каждого файла базовые объекты, поэтому можно разделить их по разным критериям и использовать так, как надо пользователю. В этой папке всегда должен быть файл с описанием, иначе могут слететь в проектах базовые объекты со всеми настройками. В **SVN** репозитории файл зафиксирован (*sys_base_objects_description.lua*), который используется АСУТП. Если файла нет, то он будет создан автоматически, а внутри его будет базовое описание и комментарии о том, как заполнять этот файл. Дополнительно можно в папке Lua посмотреть файл **sys_base_object_initializer.lua**, которые показывает, что читается, и куда отправляется.
 
-<p align="center"><img src="images/base-objects-folder.png" /></p>
+<p align="center"><img src="images/base-objects-folder.PNG" /></p>
 <p align="center">Рисунок - Каталог BaseObjectsDescriptionFiles в каталоге Lua</p>
 
 ### 2.2 Описание файла configuration.ini и EPLAN.EplAddin.IdleTimeModule.dll.config ###
@@ -187,7 +187,7 @@
 
 Проект использует **Win32** библиотеки `PIInvoke`.
 
-<p align="center"><img src="images/idle-time-module-project.png" /></p>
+<p align="center"><img src="images/idle-time-module-project.PNG" /></p>
 <p align="center">Рисунок - Структура файлов проекта IdleTimeModule</p>
 
 Описание:
@@ -210,7 +210,7 @@
 #### 2.5.1 Корень проекта ####
 
 
-<p align="center"><img src="images/eplanner-root-project.png" /></p>
+<p align="center"><img src="images/eplanner-root-project.PNG" /></p>
 <p align="center">Рисунок - Корень проекта</p>
 
 Каталоги `CMD`, `LuaInterface`, `Lua` (*без описания базовых объектов*) [аналогичны вот этому](#211-Корневой-каталог).
@@ -581,14 +581,14 @@ PathTo .sln - это путь к файлу решения `.sln`.
 
 После входа в систему, можно посмотреть уже загруженные и подписанные надстройки (*прошлые версии, которые мы делали*).
 
-<p align="center"><img src="images/sign-add-in-first-step.png" /></p>
+<p align="center"><img src="images/sign-add-in-first-step.PNG" /></p>
 <p align="center">Рисунок - Интерфейс сервера подписей</p>
 
 **MyDownloads** - то, где мы сейчас находимся. Скачать надстройку можно, нажав кнопку слева от красного крестика (__красный крестик - удаление__). Периодически старые надстройки нужно удалять т.к они занимают место (*у нас они есть в SVN подписанные*).
 
 Для загрузки надстройки на подпись, нажимаем слева пункт меню "**Upload one file**", появится новое окно.
 
-<p align="center"><img src="images/sign-add-in-second-step.png" /></p>
+<p align="center"><img src="images/sign-add-in-second-step.PNG" /></p>
 <p align="center">Рисунок - Загрузка надстройки на подпись</p>
 
 Выбираем файл, предварительно загрузив его в **.zip** архив, и нажимаем кнопку **Upload**. После загрузки сервер покажет нам, что он загрузил, жмем **OK** и переходим обратно в **MyDownloads**. Появится новая строка с нашей подписанной надстройкой. Качаем её, распаковываем, переносим в каталог для пользователей и проверяем.
