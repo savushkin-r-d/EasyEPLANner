@@ -82,6 +82,7 @@ namespace EasyEPlanner
                 }
 
                 SaveTechObjectsFile(par);
+                SaveTechDevicesFile(par);
                 SaveRestrictionsFile(par);
                 SaveMainFile(par);
                 SaveModbusFile(par);
@@ -142,7 +143,7 @@ namespace EasyEPlanner
             fileWriter.WriteLine(new string('-', numberOfDashes));
 
             fileWriter.Write(IOManager.SaveAsLuaTable(""));
-            fileWriter.Write(deviceManager.SaveAsLuaTable(""));
+            fileWriter.Write(deviceManager.SaveAsLuaTableForMainIO(""));
 
             fileWriter.Flush();
             fileWriter.Close();
@@ -165,6 +166,33 @@ namespace EasyEPlanner
                 EncodingDetector.MainFilesEncoding);
 
             fileWriter.Write(descriptionFileData);
+            fileWriter.Flush();
+            fileWriter.Close();
+        }
+
+        /// <summary>
+        /// Сохранить устройства проекта в main.devices.lua
+        /// </summary>
+        /// <param name="par">Параметры</param>
+        private static void SaveTechDevicesFile(ParametersForSave par)
+        {
+            string fileName = par.path + @"\" + mainTechDevicesFileName;
+            if (!File.Exists(fileName))
+            {
+                return;
+            }
+
+            var fileWriter = new StreamWriter(fileName,
+            false, EncodingDetector.MainFilesEncoding);
+
+            fileWriter.WriteLine("--version  = {0}",
+                mainTechDevicesFileVersion);
+            fileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);
+            fileWriter.WriteLine(new string('-', numberOfDashes));
+            fileWriter.WriteLine(new string('-', numberOfDashes));
+
+            fileWriter.Write(deviceManager.SaveAsLuaTableForMainDevices());
+
             fileWriter.Flush();
             fileWriter.Close();
         }
@@ -271,7 +299,7 @@ namespace EasyEPlanner
         private static void SaveSharedFile(ParametersForSave par)
         {
             string fileName = par.path + @"\" + sharedFileName;
-            if(!File.Exists(fileName))
+            if (!File.Exists(fileName))
             {
                 string sharedContent = Properties.Resources.ResourceManager
                     .GetString("sharedFilePattern");
@@ -282,11 +310,13 @@ namespace EasyEPlanner
 
         private const int mainIOFileVersion = 1;
         private const int mainTechObjectsFileVersion = 1;
+        private const int mainTechDevicesFileVersion = 1;
         private const int mainRestrictionsFileVersion = 1;
         private const int mainPRGFileVersion = 1;
 
         private const string mainIOFileName = "main.io.lua";
         public const string MainTechObjectsFileName = "main.objects.lua";
+        private const string mainTechDevicesFileName = "main.devices.lua";
         public const string MainRestrictionsFileName = "main.restrictions.lua";
         private const string mainProgramFileName = "main.plua";
         private static string mainProgramFilePattern = "";
