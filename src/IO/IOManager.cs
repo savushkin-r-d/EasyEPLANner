@@ -198,14 +198,12 @@ namespace IO
         {
             var str = "";
 
-            int idx = 100;
             foreach (IONode node in iONodes)
             {
                 if (node != null && node.Type == IONode.TYPES.T_EMPTY)
                 {
-                    str += "Отсутствует узел \"A" + idx + "\".\n";
+                    str += "Отсутствует узел \"A" + node.FullN + "\".\n";
                 }
-                idx += 100;
 
                 str += CheckNodeIPEquality(node);
 

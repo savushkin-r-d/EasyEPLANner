@@ -4,12 +4,8 @@ namespace Device
 {
     /// <summary>
     /// Технологическое устройство - датчик проводимости.
-    /// Параметры:
-    /// 1. P_MIN_V - минимальное значение.
-    /// 2. P_MAX_V - максимальное значение.
-    /// 3. P_C0    - сдвиг нуля.
     /// </summary>
-    public class QT : IODevice
+    sealed public class QT : IODevice
     {
         public QT(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -19,46 +15,52 @@ namespace Device
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.QT;
             ArticleName = articleName;
-
-            AI.Add(new IOChannel("AI", -1, -1, -1, ""));
         }
 
         public override string SetSubType(string subtype)
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "QT":
-                    parameters.Add("P_C0", null);
-                    parameters.Add("P_MIN_V", null);
-                    parameters.Add("P_MAX_V", null);
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_MIN_V, null);
+                    parameters.Add(Parameter.P_MAX_V, null);
+
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     break;
 
                 case "QT_OK":
-                    parameters.Add("P_C0", null);
-                    parameters.Add("P_MIN_V", null);
-                    parameters.Add("P_MAX_V", null);
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_MIN_V, null);
+                    parameters.Add(Parameter.P_MAX_V, null);
 
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
                     break;
 
                 case "QT_IOLINK":
-                    parameters.Add("P_ERR", null);
+                    parameters.Add(Parameter.P_ERR, null);
+
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
 
                     SetIOLinkSizes(ArticleName);
                     break;
 
+                case "QT_VIRT":
+                    break;
+
                 case "":
                     errStr = string.Format("\"{0}\" - не задан тип" +
-                        " (QT, QT_OK, QT_IOLINK).\n",
+                        " (QT, QT_OK, QT_IOLINK, QT_VIRT).\n",
                         Name);
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (QT, QT_OK, QT_IOLINK).\n",
+                        " (QT, QT_OK, QT_IOLINK, QT_VIRT).\n",
                         Name);
                     break;
             }
@@ -68,13 +70,14 @@ namespace Device
 
         public override string GetRange()
         {
-            string range = "";
-            if (parameters.ContainsKey("P_MIN_V") &&
-                parameters.ContainsKey("P_MAX_V"))
+            string range = string.Empty;
+            if (parameters.ContainsKey(Parameter.P_MIN_V) &&
+                parameters.ContainsKey(Parameter.P_MAX_V))
             {
-                range = "_" + parameters["P_MIN_V"].ToString() + ".." +
-                    parameters["P_MAX_V"].ToString();
+                range = "_" + parameters[Parameter.P_MIN_V].ToString() + 
+                    ".." + parameters[Parameter.P_MAX_V].ToString();
             }
+
             return range;
         }
 
@@ -86,16 +89,19 @@ namespace Device
         {
             string res = base.Check();
 
-            if (this.DeviceSubType != DeviceSubType.QT_IOLINK)
+            if (DeviceSubType != DeviceSubType.QT_IOLINK &&
+                DeviceSubType != DeviceSubType.QT_VIRT)
             {
                 if (parameters.Count < 2)
                 {
                     res += string.Format(
-                        "{0} - не указан диапазон измерений\n", name);
+                        "\"{0}\" - не указан диапазон измерений\n", name);
                 }
             }
 
-            if (ArticleName == "")
+            bool emptyArticle = ArticleName == string.Empty;
+            bool needCheckArticle = DeviceSubType != DeviceSubType.QT_VIRT;
+            if (needCheckArticle && emptyArticle)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -117,10 +123,13 @@ namespace Device
                             return "QT_OK";
                         case DeviceSubType.QT_IOLINK:
                             return "QT_IOLINK";
+                        case DeviceSubType.QT_VIRT:
+                            return "QT_VIRT";
                     }
                     break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -134,39 +143,48 @@ namespace Device
                         case DeviceSubType.QT:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"V", 1},
-                                {"P_MIN_V", 1},
-                                {"P_MAX_V", 1},
-                                {"P_CZ", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Parameter.P_MIN_V, 1},
+                                {Parameter.P_MAX_V, 1},
+                                {Tag.P_CZ, 1},
                             };
 
                         case DeviceSubType.QT_OK:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"V", 1},
-                                {"OK", 1},
-                                {"P_MIN_V", 1},
-                                {"P_MAX_V", 1},
-                                {"P_CZ", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.OK, 1},
+                                {Parameter.P_MIN_V, 1},
+                                {Parameter.P_MAX_V, 1},
+                                {Tag.P_CZ, 1},
                             };
 
                         case DeviceSubType.QT_IOLINK:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"V", 1},
-                                {"P_CZ", 1},
-                                {"T", 1},
-                                {"P_ERR", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.P_CZ, 1},
+                                {Tag.T, 1},
+                                {Parameter.P_ERR, 1},
+                            };
+
+                        case DeviceSubType.QT_VIRT:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
                             };
                     }
                     break;
             }
+
             return null;
         }
     }

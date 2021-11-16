@@ -2,12 +2,24 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Device;
 
-namespace Tests
+namespace Tests.Devices
 {
     public class LSTest
     {
+        const string Incorrect = "Incorrect";
+        const string LS_MIN = "LS_MIN";
+        const string LS_MAX = "LS_MAX";
+        const string LS_IOLINK_MIN = "LS_IOLINK_MIN";
+        const string LS_IOLINK_MAX = "LS_IOLINK_MAX";
+        const string LS_VIRT = "LS_VIRT";
+
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест установки подтипа устройства
         /// </summary>
@@ -15,99 +27,12 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
-        public void SetSubTypeTest(Device.DeviceSubType expectedSubType,
-            string subType, Device.IODevice device)
+        public void SetSubType_NewDev_ReturnsExpectedSubType(
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
-        }
-
-        /// <summary>
-        /// Тест получения подтипа устройства
-        /// </summary>
-        /// <param name="expectedType">Ожидаемый подтип</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
-        public void GetDeviceSubTypeStrTest(string expectedType,
-            string subType, Device.IODevice device)
-        {
-            device.SetSubType(subType);
-            Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
-                device.DeviceType, device.DeviceSubType));
-        }
-
-        /// <summary>
-        /// Тест свойств устройств в зависимости от подтипа
-        /// </summary>
-        /// <param name="expectedProperties">Ожидаемый список свойств</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(GetDevicePropertiesTestData))]
-        public void GetDevicePropertiesTest(
-            Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
-        {
-            device.SetSubType(subType);
-            Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
-                device.DeviceType, device.DeviceSubType));
-        }
-
-        /// <summary>
-        /// Тестирование получения типа подключения датчика
-        /// </summary>
-        /// <param name="expected">Ожидаемый тип подключения</param>
-        /// <param name="subType">Подтип устройства</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(GetConnectionTestData))]
-        public void GetConnectionTest(string expected, string subType,
-            Device.IODevice device)
-        {
-            device.SetSubType(subType);
-            Assert.AreEqual(expected, device.GetConnectionType());
-        }
-
-        /// <summary>
-        /// Тестирование параметров устройства
-        /// </summary>
-        /// <param name="parametersSequence">Ожидаемые параметры</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(ParametersTestData))]
-        public void ParametersTest(string[] parametersSequence, string subType,
-            Device.IODevice device)
-        {
-            device.SetSubType(subType);
-            string[] actualParametersSequence = device.Parameters
-                .Select(x => x.Key)
-                .ToArray();
-            Assert.AreEqual(parametersSequence, actualParametersSequence);
-        }
-
-        /// <summary>
-        /// Тестирование каналов устройства
-        /// </summary>
-        /// <param name="expectedChannelsCount">Ожидаемое количество каналов
-        /// в словаре с названием каналов</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(ChannelsTestData))]
-        public void ChannelsTest(Dictionary<string, int> expectedChannelsCount,
-            string subType, Device.IODevice device)
-        {
-            device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
-            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
-            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
-            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
-
-            Assert.Multiple(() =>
-            {
-                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
-                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
-                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
-                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
-            });
         }
 
         /// <summary>
@@ -120,21 +45,36 @@ namespace Tests
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.LS_MIN, "LS_MIN",
+                new object[] { DeviceSubType.LS_MIN, LS_MIN,
                     GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.LS_MAX, "LS_MAX",
+                new object[] { DeviceSubType.LS_MAX, LS_MAX,
                     GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.LS_IOLINK_MIN,
-                    "LS_IOLINK_MIN", GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.LS_IOLINK_MAX,
-                    "LS_IOLINK_MAX", GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.LS_VIRT, "LS_VIRT",
+                new object[] { DeviceSubType.LS_IOLINK_MIN,
+                    LS_IOLINK_MIN, GetRandomLSDevice() },
+                new object[] { DeviceSubType.LS_IOLINK_MAX,
+                    LS_IOLINK_MAX, GetRandomLSDevice() },
+                new object[] { DeviceSubType.LS_VIRT, LS_VIRT,
                     GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.NONE, "",
+                new object[] { DeviceSubType.NONE, string.Empty,
                     GetRandomLSDevice() },
-                new object[] { Device.DeviceSubType.NONE, "Incorrect",
+                new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomLSDevice() },
             };
+        }
+
+        /// <summary>
+        /// Тест получения подтипа устройства
+        /// </summary>
+        /// <param name="expectedType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
+        public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
+            string expectedType, string subType, IODevice device)
+        {
+            device.SetSubType(subType);
+            Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
+                device.DeviceType, device.DeviceSubType));
         }
 
         /// <summary>
@@ -147,16 +87,32 @@ namespace Tests
         {
             return new object[]
             {
-                new object[] { "LS_MIN", "LS_MIN", GetRandomLSDevice() },
-                new object[] { "LS_MAX", "LS_MAX", GetRandomLSDevice() },
-                new object[] { "LS_IOLINK_MIN", "LS_IOLINK_MIN",
+                new object[] { LS_MIN, LS_MIN, GetRandomLSDevice() },
+                new object[] { LS_MAX, LS_MAX, GetRandomLSDevice() },
+                new object[] { LS_IOLINK_MIN, LS_IOLINK_MIN,
                     GetRandomLSDevice() },
-                new object[] { "LS_IOLINK_MAX", "LS_IOLINK_MAX",
+                new object[] { LS_IOLINK_MAX, LS_IOLINK_MAX,
                     GetRandomLSDevice() },
-                new object[] { "LS_VIRT", "LS_VIRT", GetRandomLSDevice() },
-                new object[] { "", "", GetRandomLSDevice() },
-                new object[] { "", "Incorrect", GetRandomLSDevice() },
+                new object[] { LS_VIRT, LS_VIRT, GetRandomLSDevice() },
+                new object[] { string.Empty, string.Empty, GetRandomLSDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomLSDevice() },
             };
+        }
+
+        /// <summary>
+        /// Тест свойств устройств в зависимости от подтипа
+        /// </summary>
+        /// <param name="expectedProperties">Ожидаемый список свойств</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(GetDevicePropertiesTestData))]
+        public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
+            Dictionary<string, int> expectedProperties, string subType,
+            IODevice device)
+        {
+            device.SetSubType(subType);
+            Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
+                device.DeviceType, device.DeviceSubType));
         }
 
         /// <summary>
@@ -169,32 +125,46 @@ namespace Tests
         {
             var exportForIOLinkLS = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"V", 1},
-                {"P_DT", 1},
-                {"P_ERR", 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Parameter.P_DT, 1},
+                {IODevice.Parameter.P_ERR, 1},
             };
 
             var exportForLS = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"P_DT", 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Parameter.P_DT, 1},
             };
 
             return new object[]
             {
-                new object[] {exportForLS, "LS_MIN", GetRandomLSDevice()},
-                new object[] {exportForLS, "LS_MAX", GetRandomLSDevice()},
-                new object[] {exportForLS, "LS_VIRT", GetRandomLSDevice()},
-                new object[] {exportForIOLinkLS, "LS_IOLINK_MIN",
+                new object[] {exportForLS, LS_MIN, GetRandomLSDevice()},
+                new object[] {exportForLS, LS_MAX, GetRandomLSDevice()},
+                new object[] {exportForLS, LS_VIRT, GetRandomLSDevice()},
+                new object[] {exportForIOLinkLS, LS_IOLINK_MIN,
                     GetRandomLSDevice()},
-                new object[] {exportForIOLinkLS, "LS_IOLINK_MAX",
+                new object[] {exportForIOLinkLS, LS_IOLINK_MAX,
                     GetRandomLSDevice()},
-                new object[] {null, "Incorrect", GetRandomLSDevice()},
-                new object[] {null, "", GetRandomLSDevice()},
+                new object[] {null, Incorrect, GetRandomLSDevice()},
+                new object[] {null, string.Empty, GetRandomLSDevice()},
             };
+        }
+
+        /// <summary>
+        /// Тестирование получения типа подключения датчика
+        /// </summary>
+        /// <param name="expected">Ожидаемый тип подключения</param>
+        /// <param name="subType">Подтип устройства</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(GetConnectionTestData))]
+        public void GetConnectionType_NewDev_ReturnsExpectedString(
+            string expected, string subType, IODevice device)
+        {
+            device.SetSubType(subType);
+            Assert.AreEqual(expected, device.GetConnectionType());
         }
 
         /// <summary>
@@ -205,16 +175,37 @@ namespace Tests
         /// <returns></returns>
         private static object[] GetConnectionTestData()
         {
+            var min = "_Min";
+            var max = "_Max";
+
             return new object[]
             {
-                new object[] {$"_Min", "LS_MIN", GetRandomLSDevice()},
-                new object[] {$"_Min", "LS_IOLINK_MIN", GetRandomLSDevice()},
-                new object[] {$"_Max", "LS_MAX", GetRandomLSDevice()},
-                new object[] {$"_Max", "LS_IOLINK_MAX", GetRandomLSDevice()},
-                new object[] {$"", "", GetRandomLSDevice()},
-                new object[] {$"", "Incorrect", GetRandomLSDevice()},
-                new object[] {$"", "LS_VIRT", GetRandomLSDevice()},
+                new object[] {min, LS_MIN, GetRandomLSDevice()},
+                new object[] {min, LS_IOLINK_MIN, GetRandomLSDevice()},
+                new object[] {max, LS_MAX, GetRandomLSDevice()},
+                new object[] {max, LS_IOLINK_MAX, GetRandomLSDevice()},
+                new object[] { string.Empty, string.Empty, GetRandomLSDevice()},
+                new object[] { string.Empty, Incorrect, GetRandomLSDevice()},
+                new object[] { string.Empty, LS_VIRT, GetRandomLSDevice()},
             };
+        }
+
+        /// <summary>
+        /// Тестирование параметров устройства
+        /// </summary>
+        /// <param name="parametersSequence">Ожидаемые параметры</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(ParametersTestData))]
+        public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
+            string[] parametersSequence, string subType,
+            IODevice device)
+        {
+            device.SetSubType(subType);
+            string[] actualParametersSequence = device.Parameters
+                .Select(x => x.Key)
+                .ToArray();
+            Assert.AreEqual(parametersSequence, actualParametersSequence);
         }
 
         /// <summary>
@@ -225,39 +216,83 @@ namespace Tests
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
+            var defaultParameters = new string[]
+            {
+                IODevice.Parameter.P_DT
+            };
+
+            var iolinkParameters = new string[]
+            {
+                IODevice.Parameter.P_DT,
+                IODevice.Parameter.P_ERR,
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new string[] { "P_DT" },
-                    "LS_MIN",
+                    defaultParameters,
+                    LS_MIN,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_DT" },
-                    "LS_MAX",
+                    defaultParameters,
+                    LS_MAX,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "LS_VIRT",
+                    LS_VIRT,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_DT", "P_ERR" },
-                    "LS_IOLINK_MIN",
+                    iolinkParameters,
+                    LS_IOLINK_MIN,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new string[] { "P_DT", "P_ERR" },
-                    "LS_IOLINK_MAX",
+                    iolinkParameters,
+                    LS_IOLINK_MAX,
+                    GetRandomLSDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    string.Empty,
                     GetRandomLSDevice()
                 },
             };
+        }
+
+        /// <summary>
+        /// Тестирование каналов устройства
+        /// </summary>
+        /// <param name="expectedChannelsCount">Ожидаемое количество каналов
+        /// в словаре с названием каналов</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(ChannelsTestData))]
+        public void Channels_NewDev_ReturnsExpectedCount(
+            Dictionary<string, int> expectedChannelsCount, string subType,
+            IODevice device)
+        {
+            device.SetSubType(subType);
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
+            });
         }
 
         /// <summary>
@@ -269,90 +304,72 @@ namespace Tests
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var discreteSensorChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 1 },
+                { DO, 0 },
+            };
+
+            var iolinkSensorChannels = new Dictionary<string, int>()
+            {
+                { AI, 1 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
+            var emptyChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 1 },
-                        { "DO", 0 },
-                    },
-                    "LS_MIN",
+                    discreteSensorChannels,
+                    LS_MIN,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 1 },
-                        { "DO", 0 },
-                    },
-                    "LS_MAX",
+                    discreteSensorChannels,
+                    LS_MAX,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "LS_IOLINK_MIN",
+                    iolinkSensorChannels,
+                    LS_IOLINK_MIN,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "LS_IOLINK_MAX",
+                    iolinkSensorChannels,
+                    LS_IOLINK_MAX,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "LS_VIRT",
+                    emptyChannels,
+                    LS_VIRT,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "",
+                    emptyChannels,
+                    string.Empty,
                     GetRandomLSDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "Incorrect",
+                    emptyChannels,
+                    Incorrect,
                     GetRandomLSDevice()
                 },
             };
@@ -362,23 +379,23 @@ namespace Tests
         /// Генератор LS устройств
         /// </summary>
         /// <returns></returns>
-        private static Device.IODevice GetRandomLSDevice()
+        private static IODevice GetRandomLSDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new Device.LS("KOAG4LS1", "+KOAG4-LS1",
+                    return new LS("KOAG4LS1", "+KOAG4-LS1",
                         "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.LS("LINE1LS2", "+LINE1-LS2",
+                    return new LS("LINE1LS2", "+LINE1-LS2",
                         "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.LS("TANK2LS1", "+TANK2-LS1",
+                    return new LS("TANK2LS1", "+TANK2-LS1",
                         "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.LS("CW_TANK3LS3", "+CW_TANK3-LS3",
+                    return new LS("CW_TANK3LS3", "+CW_TANK3-LS3",
                         "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }

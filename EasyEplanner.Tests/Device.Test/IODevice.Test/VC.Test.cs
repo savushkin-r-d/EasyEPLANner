@@ -2,11 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Device;
 
-namespace Tests
+namespace Tests.Devices
 {
     public class VCTest
     {
+        const string VC = "VC";
+        const string VC_IOLINK = "VC_IOLINK";
+        const string VC_VIRT = "VC_VIRT";
+        const string Incorrect = "Incorrect";
+
+        const string AI = IODevice.IOChannel.AI;
+        const string AO = IODevice.IOChannel.AO;
+        const string DI = IODevice.IOChannel.DI;
+        const string DO = IODevice.IOChannel.DO;
+
         /// <summary>
         /// Тест установки подтипа устройства
         /// </summary>
@@ -14,8 +25,9 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(SetSubTypeTestData))]
-        public void SetSubTypeTest(Device.DeviceSubType expectedSubType,
-            string subType, Device.IODevice device)
+        public void SetSubType_NewDev_ReturnsExpectedSubType(
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedSubType, device.DeviceSubType);
@@ -31,13 +43,15 @@ namespace Tests
         {
             return new object[]
             {
-                new object[] { Device.DeviceSubType.VC, "VC",
+                new object[] { DeviceSubType.VC, VC,
                     GetRandomVCDevice() },
-                new object[] { Device.DeviceSubType.VC_IOLINK, "VC_IOLINK",
+                new object[] { DeviceSubType.VC_IOLINK, VC_IOLINK,
                     GetRandomVCDevice() },
-                new object[] { Device.DeviceSubType.NONE, "",
+                new object[] { DeviceSubType.NONE, string.Empty,
                     GetRandomVCDevice() },
-                new object[] { Device.DeviceSubType.NONE, "Incorrect",
+                new object[] { DeviceSubType.NONE, Incorrect,
+                    GetRandomVCDevice() },
+                new object[] { DeviceSubType.VC_VIRT, VC_VIRT,
                     GetRandomVCDevice() },
             };
         }
@@ -49,8 +63,8 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
-        public void GetDeviceSubTypeStrTest(string expectedType,
-            string subType, Device.IODevice device)
+        public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
+            string expectedType, string subType, IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
@@ -67,10 +81,12 @@ namespace Tests
         {
             return new object[]
             {
-                new object[] { "VC", "VC", GetRandomVCDevice() },
-                new object[] { "VC_IOLINK", "VC_IOLINK", GetRandomVCDevice() },
-                new object[] { "", "", GetRandomVCDevice() },
-                new object[] { "", "Incorrect", GetRandomVCDevice() },
+                new object[] { VC, VC, GetRandomVCDevice() },
+                new object[] { VC_IOLINK, VC_IOLINK, GetRandomVCDevice() },
+                new object[] { string.Empty, string.Empty,
+                    GetRandomVCDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomVCDevice() },
+                new object[] { VC_VIRT, VC_VIRT, GetRandomVCDevice() },
             };
         }
 
@@ -81,9 +97,9 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(GetDevicePropertiesTestData))]
-        public void GetDevicePropertiesTest(
+        public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
-            Device.IODevice device)
+            IODevice device)
         {
             device.SetSubType(subType);
             Assert.AreEqual(expectedProperties, device.GetDeviceProperties(
@@ -100,28 +116,29 @@ namespace Tests
         {
             var exportForVC = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"V", 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
             };
 
             var exportForVCIOL = new Dictionary<string, int>()
             {
-                {"ST", 1},
-                {"M", 1},
-                {"V", 1},
-                {"BLINK", 1},
-                {"NAMUR_ST", 1},
-                {"OPENED", 1},
-                {"CLOSED", 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.BLINK, 1},
+                {IODevice.Tag.NAMUR_ST, 1},
+                {IODevice.Tag.OPENED, 1},
+                {IODevice.Tag.CLOSED, 1},
             };
 
             return new object[]
             {
-                new object[] {null, "Incorrect", GetRandomVCDevice()},
-                new object[] {null, "", GetRandomVCDevice()},
-                new object[] {exportForVC, "VC", GetRandomVCDevice()},
-                new object[] {exportForVCIOL, "VC_IOLINK", GetRandomVCDevice()}
+                new object[] {null, Incorrect, GetRandomVCDevice()},
+                new object[] {null, string.Empty, GetRandomVCDevice()},
+                new object[] {exportForVC, VC, GetRandomVCDevice()},
+                new object[] {exportForVCIOL, VC_IOLINK, GetRandomVCDevice()},
+                new object[] {exportForVC, VC_VIRT, GetRandomVCDevice()}
             };
         }
 
@@ -132,8 +149,9 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(ParametersTestData))]
-        public void ParametersTest(string[] parametersSequence, string subType,
-            Device.IODevice device)
+        public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
+            string[] parametersSequence, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -155,25 +173,31 @@ namespace Tests
                 new object[]
                 {
                     new string[0],
-                    "VC",
+                    VC,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "",
+                    string.Empty,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "VC_IOLINK",
+                    VC_IOLINK,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    "Incorrect",
+                    Incorrect,
+                    GetRandomVCDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    VC_VIRT,
                     GetRandomVCDevice()
                 },
             };
@@ -187,21 +211,22 @@ namespace Tests
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(ChannelsTestData))]
-        public void ChannelsTest(Dictionary<string, int> expectedChannelsCount,
-            string subType, Device.IODevice device)
+        public void Channels_NewDev_ReturnsExpectedCount(
+            Dictionary<string, int> expectedChannelsCount, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
-            int actualAI = device.Channels.Where(x => x.Name == "AI").Count();
-            int actualAO = device.Channels.Where(x => x.Name == "AO").Count();
-            int actualDI = device.Channels.Where(x => x.Name == "DI").Count();
-            int actualDO = device.Channels.Where(x => x.Name == "DO").Count();
+            int actualAI = device.Channels.Where(x => x.Name == AI).Count();
+            int actualAO = device.Channels.Where(x => x.Name == AO).Count();
+            int actualDI = device.Channels.Where(x => x.Name == DI).Count();
+            int actualDO = device.Channels.Where(x => x.Name == DO).Count();
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(expectedChannelsCount["AI"], actualAI);
-                Assert.AreEqual(expectedChannelsCount["AO"], actualAO);
-                Assert.AreEqual(expectedChannelsCount["DI"], actualDI);
-                Assert.AreEqual(expectedChannelsCount["DO"], actualDO);
+                Assert.AreEqual(expectedChannelsCount[AI], actualAI);
+                Assert.AreEqual(expectedChannelsCount[AO], actualAO);
+                Assert.AreEqual(expectedChannelsCount[DI], actualDI);
+                Assert.AreEqual(expectedChannelsCount[DO], actualDO);
             });
         }
 
@@ -214,54 +239,50 @@ namespace Tests
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var emptySignals = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             return new object[]
             {
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 1 },
-                        { "DI", 0 },
-                        { "DO", 0 },
+                        { AI, 0 },
+                        { AO, 1 },
+                        { DI, 0 },
+                        { DO, 0 },
                     },
-                    "VC",
+                    VC,
+                    GetRandomVCDevice()
+                },
+                new object[]
+                {
+                    emptySignals,
+                    string.Empty,
+                    GetRandomVCDevice()
+                },
+                new object[]
+                {
+                    emptySignals,
+                    Incorrect,
                     GetRandomVCDevice()
                 },
                 new object[]
                 {
                     new Dictionary<string, int>()
                     {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
+                        { AI, 1 },
+                        { AO, 1 },
+                        { DI, 0 },
+                        { DO, 0 },
                     },
-                    "",
-                    GetRandomVCDevice()
-                },
-                new object[]
-                {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 0 },
-                        { "AO", 0 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "Incorrect",
-                    GetRandomVCDevice()
-                },
-                new object[]
-                {
-                    new Dictionary<string, int>()
-                    {
-                        { "AI", 1 },
-                        { "AO", 1 },
-                        { "DI", 0 },
-                        { "DO", 0 },
-                    },
-                    "VC_IOLINK",
+                    VC_IOLINK,
                     GetRandomVCDevice()
                 }
             };
@@ -271,23 +292,23 @@ namespace Tests
         /// Генератор VC устройств
         /// </summary>
         /// <returns></returns>
-        private static Device.IODevice GetRandomVCDevice()
+        private static IODevice GetRandomVCDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new Device.VC("KOAG4VC1", "+KOAG4-VC1",
+                    return new VC("KOAG4VC1", "+KOAG4-VC1",
                         "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new Device.VC("LINE1VC2", "+LINE1-VC2",
+                    return new VC("LINE1VC2", "+LINE1-VC2",
                         "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new Device.VC("TANK2VC1", "+TANK2-VC1",
+                    return new VC("TANK2VC1", "+TANK2-VC1",
                         "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new Device.VC("CW_TANK3VC3", "+CW_TANK3-VC3",
+                    return new VC("CW_TANK3VC3", "+CW_TANK3-VC3",
                         "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }

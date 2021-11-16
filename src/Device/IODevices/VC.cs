@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - управляемый клапан.
     /// </summary>
-    public class VC : IODevice
+    sealed public class VC : IODevice
     {
         public VC(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -21,7 +21,7 @@ namespace Device
         {
             base.SetSubType(subType);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subType)
             {
                 case "VC":
@@ -34,16 +34,20 @@ namespace Device
                     SetIOLinkSizes(ArticleName);
                     break;
 
+                case "VC_VIRT":
+                    break;
+
                 case "":
                     errStr = string.Format("\"{0}\" - не задан тип" +
-                        " (VC, VC_IOLINK).\n", Name);
+                        " (VC, VC_IOLINK, VC_VIRT).\n", Name);
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (VC, VC_IOLINK).\n", Name);
+                        " (VC, VC_IOLINK, VC_VIRT).\n", Name);
                     break;
             }
+
             return errStr;
         }
 
@@ -57,9 +61,10 @@ namespace Device
                     {
                         case DeviceSubType.VC:
                             return "VC";
-
                         case DeviceSubType.VC_IOLINK:
                             return "VC_IOLINK";
+                        case DeviceSubType.VC_VIRT:
+                            return "VC_VIRT";
                     }
                     break;
             }
@@ -78,21 +83,29 @@ namespace Device
                         case DeviceSubType.VC:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"V", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
                             };
 
                         case DeviceSubType.VC_IOLINK:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"V", 1},
-                                {"BLINK", 1},
-                                {"NAMUR_ST", 1},
-                                {"OPENED", 1},
-                                {"CLOSED", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.BLINK, 1},
+                                {Tag.NAMUR_ST, 1},
+                                {Tag.OPENED, 1},
+                                {Tag.CLOSED, 1},
+                            };
+
+                        case DeviceSubType.VC_VIRT:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
                             };
                     }
                     break;
@@ -105,8 +118,9 @@ namespace Device
         {
             string res = base.Check();
 
-            if (ArticleName == string.Empty &&
-                DeviceSubType == DeviceSubType.VC_IOLINK)
+            bool emptyArticle = ArticleName == string.Empty;
+            bool needCheckArticle = DeviceSubType == DeviceSubType.VC_IOLINK;
+            if (needCheckArticle && emptyArticle)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }

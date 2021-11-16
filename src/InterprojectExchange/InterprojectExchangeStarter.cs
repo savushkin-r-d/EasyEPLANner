@@ -42,6 +42,7 @@ namespace InterprojectExchange
         public void Start()
         {
             interprojectExchange.Owner = this;
+            form = new InterprojectExchangeForm();
             bool isReadSignals = UpdateDevices();
             bool isLoadData = LoadCurrentInterprojectExchange(isReadSignals);
             ShowForm(isLoadData);
@@ -133,19 +134,27 @@ namespace InterprojectExchange
         /// </summary>
         /// <param name="pathToProjectDir">Путь к папке с проектом</param>
         /// <param name="projName">Имя проекта</param>
-        /// <returns></returns>
+        /// <param name="errors">Ошибки во время загрузки</param>
+        /// <returns>Загружены данные или нет</returns>
         public bool LoadProjectData(string pathToProjectDir, 
-            string projName)
+            string projName, out string errors)
         {
             InitLuaInstance();
             LoadScripts();
             LoadMainIOData(pathToProjectDir, projName);
             LoadDevicesFile(pathToProjectDir, projName);
             LoadAdvancedProjectSharedLuaData(pathToProjectDir, projName);
-            SetIPFromMainModel(projName);
-            interprojectExchange.GetModel(projName)
-                .PathToProject = pathToProjectDir;
-            return true;
+            errors = SetIPFromMainModel(projName);
+            if (string.IsNullOrEmpty(errors))
+            {
+                interprojectExchange.GetModel(projName)
+                    .PathToProject = pathToProjectDir;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -245,9 +254,8 @@ namespace InterprojectExchange
             }
             else
             {
-                MessageBox.Show($"Не найден файл main.io.lua проекта" +
-                    $" \"{projName}\"", "Ошибка", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                form.ShowErrorMessage($"Не найден файл main.io.lua проекта" +
+                    $" \"{projName}\"");
             }
         }
 
@@ -349,15 +357,29 @@ namespace InterprojectExchange
         /// <summary>
         /// Установка IP-адреса для альтернативных моделей из главной модели
         /// </summary>
-        private void SetIPFromMainModel(string projName)
+        /// <returns>Ошибки</returns>
+        private string SetIPFromMainModel(string projName)
         {
             CurrentProjectModel mainModel = interprojectExchange.MainModel;
             string alreadySelectedProject = mainModel.SelectedAdvancedProject;
             mainModel.SelectedAdvancedProject = interprojectExchange
                 .MainProjectName;
             IProjectModel model = interprojectExchange.GetModel(projName);
-            model.PacInfo.IP = mainModel.PacInfo.IP;
-            mainModel.SelectedAdvancedProject = alreadySelectedProject;
+            string errors = string.Empty;
+            bool modelNotFound = model == null;
+            if (modelNotFound)
+            {
+                errors += "Модель загружаемого проекта не была создана или" +
+                    " создана неправильно. Проверьте файлы проекта. Откройте " +
+                    "и закройте связываемый проект.\n";
+            }
+            else
+            {
+                model.PacInfo.IP = mainModel.PacInfo.IP;
+                mainModel.SelectedAdvancedProject = alreadySelectedProject;
+            }
+
+            return errors;
         }
 
         /// <summary>

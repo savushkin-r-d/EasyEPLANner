@@ -10,7 +10,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство, подключенное к модулям ввода\вывод IO.
     /// </summary>
-    public class IODevice : Device
+    public partial class IODevice : Device
     {
         /// <summary>
         /// Получение строкового представления подтипа устройства.
@@ -369,11 +369,11 @@ namespace Device
                             IO.AddRange(AI);
                             break;
 
-                        case "DO":
+                        case IOChannel.DO:
                             IO.AddRange(DO);
                             break;
 
-                        case "DI":
+                        case IOChannel.DI:
                             IO.AddRange(DI);
                             break;
                     }
@@ -405,16 +405,18 @@ namespace Device
         /// </summary>
         virtual public string SetProperty(string name, object value)
         {
-            string res = "";
-
-            object val = null;
-            if (properties.TryGetValue(name, out val))
+            string res = string.Empty;
+            if (properties.TryGetValue(name, out _))
             {
-                properties[name] = value;
+                string valueAsStr = value as string;
+                valueAsStr = valueAsStr.Replace("\'", string.Empty);
+                properties[name] = valueAsStr.Trim();
+                OnPropertyChanged?.Invoke();
             }
             else
             {
-                res = string.Format("\"{0}\" - свойство не найдено\n", name);
+                res = $"\"{name}\" - свойство не найдено." +
+                    $"{CommonConst.NewLine}";
             }
 
             return res;
@@ -595,7 +597,7 @@ namespace Device
 
                     foreach (var prop in validProperties)
                     {
-                        res += prefix + $"\t{prop.Key} = {prop.Value},\n";
+                        res += prefix + $"\t{prop.Key} = \'{prop.Value}\',\n";
                     }
                     res += prefix + "\t},\n";
                 }
@@ -853,6 +855,9 @@ namespace Device
         protected Dictionary<string, object> properties; ///Свойства.
 
         internal IOLinkSize IOLinkProperties; ///IO-Link свойства устройства.
+
+        protected delegate void PropertyChanged();
+        protected event PropertyChanged OnPropertyChanged;
         #endregion
 
         /// <summary>
@@ -924,22 +929,22 @@ namespace Device
             {
                 switch (name)
                 {
-                    case "DO":
+                    case DO:
                         return 0;
 
-                    case "DI":
+                    case DI:
                         return 1;
 
-                    case "AI":
+                    case AI:
                         return 2;
 
-                    case "AO":
+                    case AO:
                         return 3;
 
-                    case "AIAO":
+                    case AIAO:
                         return 4;
 
-                    case "DODI":
+                    case DODI:
                         return 5;
 
                     default:
@@ -953,7 +958,7 @@ namespace Device
             /// <param name="prefix">Префикс (для выравнивания).</param>
             public string SaveAsLuaTable(string prefix)
             {
-                string res = "";
+                string res = string.Empty;
 
                 if (IOManager.GetInstance()[node] != null &&
                     IOManager.GetInstance()[node][module - 1] != null &&
@@ -964,19 +969,19 @@ namespace Device
                     int offset;
                     switch (name)
                     {
-                        case "DO":
+                        case DO:
                             offset = CalculateDO();
                             break;
 
-                        case "AO":
+                        case AO:
                             offset = CalculateAO();
                             break;
 
-                        case "DI":
+                        case DI:
                             offset = CalculateDI();
                             break;
 
-                        case "AI":
+                        case AI:
                             offset = CalculateAI();
                             break;
 
@@ -985,7 +990,7 @@ namespace Device
                             break;
                     }
 
-                    if (comment != "")
+                    if (comment != string.Empty)
                     {
                         res += prefix + "-- " + comment + "\n";
                     }
@@ -1216,7 +1221,17 @@ namespace Device
                 @"(Красный цвет(?n:\s+|$))|" +
                 @"(Желтый цвет(?n:\s+|$))|" +
                 @"(Зеленый цвет(?n:\s+|$))|" +
-                @"(Звуковая сигнализация(?n:\s+|$))";
+                @"(Звуковая сигнализация(?n:\s+|$))|" +
+                @"(Готовность(?n:\s+|$))|" +
+                @"(Сигнал активации(?n:\s+|$))|" +
+                @"(Результат обработки(?n:\s+\d*|$))";
+
+            public const string AI = "AI";
+            public const string AO = "AO";
+            public const string DI = "DI";
+            public const string DO = "DO";
+            const string AIAO = "AIAO";
+            const string DODI = "DODI";
 
             #region Закрытые поля
             private int node;            ///Номер узла.

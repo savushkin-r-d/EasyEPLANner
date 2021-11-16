@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using Device;
 using IO;
 using System.Windows.Forms;
@@ -126,7 +125,7 @@ namespace EasyEPlanner
         }
 
         /// <summary>
-        /// Сохранить описание контроллера, шины в main.io.lua и main.wago.lua
+        /// Сохранить описание контроллера, шины в main.io.lua
         /// </summary>
         /// <param name="par">Параметры</param>
         private static void SaveIOFile(ParametersForSave par)
@@ -145,14 +144,10 @@ namespace EasyEPlanner
             fileWriter.WriteLine(new string('-', numberOfDashes));
 
             fileWriter.Write(IOManager.SaveAsLuaTable(""));
-            fileWriter.Write(deviceManager.SaveAsLuaTable(""));
+            fileWriter.Write(deviceManager.SaveAsLuaTableForMainIO(""));
 
             fileWriter.Flush();
             fileWriter.Close();
-
-            // Делаем копию с другим именем (IO.lua и WAGO.lua идентичный)
-            File.Copy(par.path + @"\" + mainIOFileName,
-                par.path + @"\" + mainWagoFileName, true);
         }
 
         /// <summary>
@@ -183,8 +178,13 @@ namespace EasyEPlanner
         private static void SaveTechDevicesFile(ParametersForSave par)
         {
             string fileName = par.path + @"\" + mainTechDevicesFileName;
+            if (!File.Exists(fileName))
+            {
+                return;
+            }
+
             var fileWriter = new StreamWriter(fileName,
-                false, EncodingDetector.MainFilesEncoding);
+            false, EncodingDetector.MainFilesEncoding);
 
             fileWriter.WriteLine("--version  = {0}",
                 mainTechDevicesFileVersion);
@@ -192,7 +192,7 @@ namespace EasyEPlanner
             fileWriter.WriteLine(new string('-', numberOfDashes));
             fileWriter.WriteLine(new string('-', numberOfDashes));
 
-            fileWriter.Write(deviceManager.SaveDevicesAsLuaScript());
+            fileWriter.Write(deviceManager.SaveAsLuaTableForMainDevices());
 
             fileWriter.Flush();
             fileWriter.Close();
@@ -317,7 +317,7 @@ namespace EasyEPlanner
         private static void SaveSharedFile(ParametersForSave par)
         {
             string fileName = par.path + @"\" + sharedFileName;
-            if(!File.Exists(fileName))
+            if (!File.Exists(fileName))
             {
                 string sharedContent = Properties.Resources.ResourceManager
                     .GetString("sharedFilePattern");
@@ -334,7 +334,6 @@ namespace EasyEPlanner
         private const int mainPRGFileVersion = 1;
 
         private const string mainIOFileName = "main.io.lua";
-        private const string mainWagoFileName = "main.wago.lua";
         public const string MainTechObjectsFileName = "main.objects.lua";
         private const string mainTechDevicesFileName = "main.devices.lua";
         public const string MainRestrictionsFileName = "main.restrictions.lua";

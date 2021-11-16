@@ -13,7 +13,73 @@ namespace TechObject
                     out Device.DeviceSubType[] validSubTypes,
                     out bool displayParameter);
 
+        /// <summary>
+        /// Индексы устройств в дейсвии.
+        /// </summary>
         List<int> DeviceIndex { get; set; }
+
+        IAction Clone();
+
+        /// <summary>
+        /// Добавление устройства к действию.
+        /// </summary>
+        /// <param name="groupNumber">Номер группы в действии.</param>
+        /// <param name="index">Индекс устройства</param>
+        /// <param name="subActionLuaName">Lua-имя поддействия</param>
+        void AddDev(int index, int groupNumber, string subActionLuaName);
+        
+        string LuaName { get; }
+
+        bool HasSubActions { get; }
+
+        List<IAction> SubActions { get; set; }
+
+        /// <summary>
+        /// Очищение списка устройств.
+        /// </summary>
+        void Clear();
+
+        bool Empty { get; }
+
+        string Name { get; }
+
+        /// <summary>
+        /// Синхронизация индексов устройств.
+        /// </summary>
+        /// <param name="array">Массив флагов, определяющих изменение 
+        /// индексов.</param>
+        void Synch(int[] array);
+
+        /// <summary>
+        /// Сохранение в виде таблицы Lua.
+        /// </summary>
+        /// <param name="prefix">Префикс (для выравнивания).</param>
+        /// <returns>Описание в виде таблицы Lua.</returns>
+        string SaveAsLuaTable(string prefix);
+
+        void ModifyDevNames(int newTechObjectN, int oldTechObjectN,
+            string techObjectName);
+
+        void ModifyDevNames(string newTechObjectName, int newTechObjectNumber,
+            string oldTechObjectName, int oldTechObjNumber);
+
+        List<DrawInfo> GetObjectToDrawOnEplanPage();
+
+        DrawInfo.Style DrawStyle { get; set; }
+
+        /// <summary>
+        /// Добавление параметра к действию.
+        /// </summary>
+        /// <param name="val">Значение параметра.</param>
+        /// <param name="grouNumber">Индекс группы в действии </param>
+        /// <param name="paramName">Имя параметра</param>
+        void AddParam(object val, string paramName, int grouNumber);
+
+        List<string> DevicesNames { get; }
+
+        IDeviceProcessingStrategy GetDeviceProcessingStrategy();
+
+        void SetDeviceProcessingStrategy(IDeviceProcessingStrategy strategy);
     }
 
     /// <summary>
@@ -35,31 +101,89 @@ namespace TechObject
         /// <param name="actionProcessorStrategy">Стратегия обработки
         /// устройств в действии</param>
         /// <param name="deviceManager">Менеджер устройств</param>
-        public Action(string name, Step owner, string luaName = "",
-            Device.DeviceType[] devTypes = null,
-            Device.DeviceSubType[] devSubTypes = null,
-            IActionProcessorStrategy actionProcessorStrategy = null,
-            Device.IDeviceManager deviceManager = null)
+        public Action(string name, Step owner, string luaName,
+            Device.DeviceType[] devTypes, Device.DeviceSubType[] devSubTypes,
+            IDeviceProcessingStrategy actionProcessorStrategy,
+            Device.IDeviceManager deviceManager) : this(name, owner, luaName,
+                devTypes, devSubTypes, actionProcessorStrategy)
+        {
+            this.deviceManager = deviceManager;
+        }
+
+        /// <summary>
+        /// Создание нового действия.
+        /// </summary>
+        /// <param name="name">Имя действия.</param>
+        /// <param name="luaName">Имя действия - как оно будет называться 
+        /// в таблице Lua.</param>
+        /// <param name="devTypes">Типы устройств, допустимые для 
+        /// редактирования.</param>
+        /// <param name="devSubTypes">Подтипы устройств, допустимые 
+        /// для редактирования.</param>
+        /// <param name="owner">Владелец действия (Шаг)</param>
+        /// <param name="actionProcessorStrategy">Стратегия обработки
+        /// устройств в действии</param>
+        public Action(string name, Step owner, string luaName,
+            Device.DeviceType[] devTypes, Device.DeviceSubType[] devSubTypes,
+            IDeviceProcessingStrategy actionProcessorStrategy)
+        : this(name, owner, luaName, devTypes, devSubTypes)
+        {
+            SetDeviceProcessingStrategy(actionProcessorStrategy);
+        }
+
+        /// <summary>
+        /// Создание нового действия.
+        /// </summary>
+        /// <param name="name">Имя действия.</param>
+        /// <param name="luaName">Имя действия - как оно будет называться 
+        /// в таблице Lua.</param>
+        /// <param name="devTypes">Типы устройств, допустимые для 
+        /// редактирования.</param>
+        /// <param name="devSubTypes">Подтипы устройств, допустимые 
+        /// для редактирования.</param>
+        /// <param name="owner">Владелец действия (Шаг)</param>
+        public Action(string name, Step owner, string luaName,
+            Device.DeviceType[] devTypes, Device.DeviceSubType[] devSubTypes)
+        : this(name, owner, luaName, devTypes)
+        {
+            this.devSubTypes = devSubTypes;
+        }
+
+        /// <summary>
+        /// Создание нового действия.
+        /// </summary>
+        /// <param name="name">Имя действия.</param>
+        /// <param name="luaName">Имя действия - как оно будет называться 
+        /// в таблице Lua.</param>
+        /// <param name="devTypes">Типы устройств, допустимые для 
+        /// редактирования.</param>
+        /// <param name="owner">Владелец действия (Шаг)</param>
+        public Action(string name, Step owner, string luaName,
+            Device.DeviceType[] devTypes) : this(name, owner, luaName)
+        {
+            this.devTypes = devTypes;
+        }
+
+        /// <summary>
+        /// Создание нового действия.
+        /// </summary>
+        /// <param name="name">Имя действия.</param>
+        /// <param name="luaName">Имя действия - как оно будет называться 
+        /// в таблице Lua.</param>
+        /// <param name="owner">Владелец действия (Шаг)</param>
+        public Action(string name, Step owner, string luaName)
         {
             this.name = name;
             this.luaName = luaName;
-            this.devTypes = devTypes;
-            this.devSubTypes = devSubTypes;
-            deviceIndex = new List<int>();
             this.owner = owner;
 
-            DrawStyle = DrawInfo.Style.GREEN_BOX;
-
-            this.deviceManager = deviceManager ?? Device.DeviceManager
-                .GetInstance();
-
-            SetActionProcessingStrategy(actionProcessorStrategy);
+            deviceIndex = new List<int>();
         }
 
-        public virtual Action Clone()
+        public virtual IAction Clone()
         {
             var clone = (Action)MemberwiseClone();
-            clone.SetActionProcessingStrategy(actionProcessorStrategy);
+            clone.SetDeviceProcessingStrategy(deviceProcessingStrategy);
 
             clone.deviceIndex = new List<int>();
             foreach (int index in deviceIndex)
@@ -163,11 +287,6 @@ namespace TechObject
             deviceIndex = tmpIndex;
         }
 
-        /// <summary>
-        /// Сохранение в виде таблицы Lua.
-        /// </summary>
-        /// <param name="prefix">Префикс (для выравнивания).</param>
-        /// <returns>Описание в виде таблицы Lua.</returns>
         public virtual string SaveAsLuaTable(string prefix)
         {
             if (deviceIndex.Count == 0)
@@ -208,15 +327,8 @@ namespace TechObject
             return res;
         }
 
-        /// <summary>
-        /// Добавление устройства к действию.
-        /// </summary>
-        /// <param name="groupNumber">Номер группы в действии.</param>
-        /// <param name="index">Индекс устройства</param>
-        /// <param name="washGroupIndex">Индекс группы в действии мойка 
-        /// (устройства)</param>
-        public virtual void AddDev(int index, int groupNumber = 0,
-            int washGroupIndex = 0)
+        public virtual void AddDev(int index, int groupNumber,
+            string subActionLuaName)
         {
             var device = deviceManager.GetDeviceByIndex(index);
             if (device.Description != StaticHelper.CommonConst.Cap)
@@ -225,28 +337,34 @@ namespace TechObject
             }
         }
 
-        /// <summary>
-        /// Добавление параметра к действию.
-        /// </summary>
-        /// <param name="val">Значение параметра.</param>
-        /// <param name="washGroupIndex">Индекс группы мойки в действии
-        /// (устройства)</param>
-        public virtual void AddParam(object val, int washGroupIndex = 0) { }
+        public virtual void AddParam(object val, string paramName,
+            int groupNumber) { }
             
-        /// <summary>
-        /// Очищение списка устройств.
-        /// </summary>
         virtual public void Clear()
         {
             deviceIndex.Clear();
         }
 
+        public void SetDeviceProcessingStrategy(IDeviceProcessingStrategy strategy)
+        {
+            deviceProcessingStrategy = strategy;
+            if (strategy != null)
+            {
+                strategy.Action = this;
+            }
+        }
+
+        public IDeviceProcessingStrategy GetDeviceProcessingStrategy()
+        {
+            if (deviceProcessingStrategy == null)
+            {
+                SetDeviceProcessingStrategy(new DefaultActionProcessorStrategy());
+            }
+
+            return deviceProcessingStrategy;
+        }
+
         #region Синхронизация устройств в объекте.
-        /// <summary>
-        /// Синхронизация индексов устройств.
-        /// </summary>
-        /// <param name="array">Массив флагов, определяющих изменение 
-        /// индексов.</param>
         virtual public void Synch(int[] array)
         {
             IDeviceSynchronizeService synchronizer = DeviceSynchronizer
@@ -255,9 +373,6 @@ namespace TechObject
         }
         #endregion
 
-        /// <summary>
-        /// Получение/установка устройств.
-        /// </summary>
         public List<int> DeviceIndex
         {
             get
@@ -278,25 +393,24 @@ namespace TechObject
             }
         }
 
+        public List<string> DevicesNames
+        {
+            get
+            {
+                var devices = deviceIndex
+                    .Select(x => deviceManager.GetDeviceByIndex(x).Name)
+                    .ToList();
+                return devices;
+            }
+        }
+
         #region Реализация ITreeViewItem
 
         override public string[] DisplayText
         {
             get
             {
-                var res = string.Empty;
-
-                foreach (int index in deviceIndex)
-                {
-                    res += $"{deviceManager.GetDeviceByIndex(index).Name} ";
-                }
-
-                if (res != string.Empty)
-                {
-                    res = res.Remove(res.Length - 1);
-                }
-
-                return new string[] { name, res };
+                return new string[] { name, ToString() };
             }
         }
 
@@ -318,8 +432,8 @@ namespace TechObject
                 return false;
             }
 
-            IList<int> allowedDevicesId =
-                actionProcessorStrategy.ProcessDevices(newName, deviceManager);
+            IList<int> allowedDevicesId = GetDeviceProcessingStrategy()
+                .ProcessDevices(newName, deviceManager);
             DeviceIndex.Clear();
             deviceIndex.AddRange(allowedDevicesId);
 
@@ -347,18 +461,7 @@ namespace TechObject
         {
             get
             {
-                string res = string.Empty;
-                foreach (int index in deviceIndex)
-                {
-                    res += $"{deviceManager.GetDeviceByIndex(index).Name} ";
-                }
-
-                if (res != string.Empty)
-                {
-                    res = res.Remove(res.Length - 1);
-                }
-
-                return new string[] { string.Empty, res };
+                return new string[] { string.Empty, ToString() };
             }
         }
 
@@ -394,7 +497,8 @@ namespace TechObject
             }
         }
 
-        virtual public DrawInfo.Style DrawStyle { get; set; }
+        virtual public DrawInfo.Style DrawStyle { get; set; } = DrawInfo.Style
+            .GREEN_BOX;
 
         override public List<DrawInfo> GetObjectToDrawOnEplanPage()
         {
@@ -422,28 +526,18 @@ namespace TechObject
                 }
             }
         }
-
-        public override ImageIndexEnum ImageIndex
-        {
-            get
-            {
-                switch(luaName)
-                {
-                    case OpenDevices:
-                        return ImageIndexEnum.ActionON;
-
-                    case CloseDevices:
-                        return ImageIndexEnum.ActionOFF;
-
-                    case RequiredFB:
-                        return ImageIndexEnum.ActionSignals;
-
-                    default:
-                        return ImageIndexEnum.NONE;
-                }
-            }
-        }
         #endregion
+
+        public virtual bool HasSubActions
+        {
+            get => false;
+        }
+
+        public virtual List<IAction> SubActions
+        {
+            get => null;
+            set { } // Not used
+        }
 
         public string Name
         {
@@ -468,53 +562,36 @@ namespace TechObject
             }
         }
 
-        public void SetActionProcessingStrategy(
-            IActionProcessorStrategy strategy)
+        public override string ToString()
         {
-            if (strategy == null)
+            bool hasDevices = DeviceIndex.Count > 0;
+            if (hasDevices)
             {
-                actionProcessorStrategy = new DefaultActionProcessorStrategy();
+                return $"{string.Join(" ", DevicesNames)}";
             }
             else
             {
-                actionProcessorStrategy = strategy;
+                return string.Empty;
             }
-
-            actionProcessorStrategy.Action = this;
         }
 
-        public IActionProcessorStrategy GetActionProcessingStrategy()
-            => actionProcessorStrategy;
+        protected string luaName;
+        protected string name;
+        protected List<int> deviceIndex;
 
+        protected Device.DeviceType[] devTypes;
+        protected Device.DeviceSubType[] devSubTypes;
 
-        protected string luaName; // Имя действия в таблице Lua.
-        protected string name; // Имя действия.
-        protected List<int> deviceIndex; // Список устройств.
+        protected Step owner;
 
-        protected Device.DeviceType[] devTypes; // Отображаемые типы
-        protected Device.DeviceSubType[] devSubTypes; // Отображаемые подтипы.
-
-        protected Step owner; // Владелец элемента.
-
-        protected private const string GroupDefaultName = "Группа";
-
-        public const string OpenDevices = "opened_devices";
-        public const string CloseDevices = "closed_devices";
-        public const string OpenReverseDevices = "opened_reverse_devices";
-        public const string RequiredFB = "required_FB";
-
-        protected private const string DO = "DO";
-        protected private const string DI = "DI";
-        protected private const string Devices = "devices";
-        protected private const string ReverseDevices = "rev_devices";
-
-        IActionProcessorStrategy actionProcessorStrategy;
-        Device.IDeviceManager deviceManager;
+        IDeviceProcessingStrategy deviceProcessingStrategy;
+        Device.IDeviceManager deviceManager = Device.DeviceManager
+            .GetInstance();
     }
 
     namespace ActionProcessingStrategy
     {
-        public interface IActionProcessorStrategy
+        public interface IDeviceProcessingStrategy
         {
             IList<int> ProcessDevices(string devicesStr,
                 Device.IDeviceManager deviceManager);
@@ -522,7 +599,7 @@ namespace TechObject
             IAction Action { get; set; }
         }
 
-        public class DefaultActionProcessorStrategy : IActionProcessorStrategy
+        public class DefaultActionProcessorStrategy : IDeviceProcessingStrategy
         {
             public virtual IList<int> ProcessDevices(
                 string devicesStr, Device.IDeviceManager deviceManager)

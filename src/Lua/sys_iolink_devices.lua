@@ -25,7 +25,7 @@ local iolink_devices =
     { articleName = "IFM.PM1708", sizeIn = 2, sizeOut = 0 }, -- PT&LT
     { articleName = "IFM.PM1709", sizeIn = 2, sizeOut = 0 },
     { articleName = "IFM.PM1715", sizeIn = 2, sizeOut = 0 },
-    { articleName = "FES.8001446", sizeIn = 1, sizeOut = 0 }, -- DEV_SPAE
+    { articleName = "FES.8001446", sizeIn = 1, sizeOut = 0 },
     -- LT
     { articleName = "IFM.LR2750", sizeIn = 1, sizeOut = 0 },
     -- TE
@@ -50,6 +50,8 @@ local iolink_devices =
     { articleName = "PXC.2910411", sizeIn = 4, sizeOut = 1.5 },
     -- VC
     { articleName = "BURKERT.8694", sizeIn = 5, sizeOut = 2.5},
+    -- HLA
+    { articleName = "PXC.1191993", sizeIn = 0, sizeOut = 1 },
 }
 
 return iolink_devices

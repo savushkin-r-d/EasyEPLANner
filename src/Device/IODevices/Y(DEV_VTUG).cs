@@ -3,8 +3,7 @@
     /// <summary>
     /// Устройство - пневмоостров.
     /// </summary>
-
-    public class Y : IODevice
+    sealed public class Y : IODevice
     {
         public Y(string name, string eplanName, string description, 
             int deviceNumber, string objectName, int objectNumber,
@@ -21,7 +20,7 @@
         public override string SetSubType(string subtype)
         {
             base.SetSubType(subtype);
-            string errStr = "";
+            string errStr = string.Empty;
             int sizeOut;
             switch (subtype)
             {
@@ -62,7 +61,8 @@
         {
             string res = base.Check();
 
-            if (ArticleName == "")
+            bool emptyArticle = ArticleName == string.Empty;
+            if (emptyArticle)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -75,7 +75,7 @@
     /// Устройство - пневмоостров.
     /// СОВМЕСТИМОСТЬ СО СТАРЫМИ ПРОЕКТАМИ
     /// </summary>
-    public class DEV_VTUG : IODevice
+    sealed public class DEV_VTUG : IODevice
     {
         public DEV_VTUG(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -93,7 +93,7 @@
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "DEV_VTUG_8":
@@ -126,7 +126,8 @@
         {
             string res = base.Check();
 
-            if (ArticleName == "")
+            bool emptyArticle = ArticleName == string.Empty;
+            if (emptyArticle)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }

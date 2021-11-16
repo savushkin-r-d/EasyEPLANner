@@ -4,11 +4,8 @@ namespace Device
 {
     /// <summary>
     /// Технологическое устройство - аналоговый выход.
-    /// Параметры:
-    /// 1. P_MIN_V - минимальное значение.
-    /// 2. P_MAX_V - максимальное значение.
     /// </summary>
-    public class AO : IODevice
+    sealed public class AO : IODevice
     {
         public AO(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber) : base(name,
@@ -22,26 +19,24 @@ namespace Device
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "AO_VIRT":
-                    dSubType = DeviceSubType.AO_VIRT;
                     break;
 
                 case "AO":
                 case "":
                     dSubType = DeviceSubType.AO;
-
-                    parameters.Add("P_MIN_V", null);
-                    parameters.Add("P_MAX_V", null);
+                    parameters.Add(Parameter.P_MIN_V, null);
+                    parameters.Add(Parameter.P_MAX_V, null);
 
                     AO.Add(new IOChannel("AO", -1, -1, -1, ""));
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (AO, AO_VIRT).\n",
+                        " (пустая строка, AO, AO_VIRT).\n",
                         Name);
                     break;
             }
@@ -51,13 +46,14 @@ namespace Device
 
         public override string GetRange()
         {
-            string range = "";
-            if (parameters.ContainsKey("P_MIN_V") &&
-                parameters.ContainsKey("P_MAX_V"))
+            string range = string.Empty;
+            if (parameters.ContainsKey(Parameter.P_MIN_V) &&
+                parameters.ContainsKey(Parameter.P_MAX_V))
             {
-                range = "_" + parameters["P_MIN_V"].ToString() + ".." +
-                    parameters["P_MAX_V"].ToString();
+                range = "_" + parameters[Parameter.P_MIN_V].ToString() +
+                    ".." + parameters[Parameter.P_MAX_V].ToString();
             }
+
             return range;
         }
 
@@ -76,7 +72,8 @@ namespace Device
                     }
                     break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string,int> GetDeviceProperties(
@@ -90,21 +87,22 @@ namespace Device
                         case DeviceSubType.AO:
                             return new Dictionary<string, int>()
                             {
-                                {"M", 1},
-                                {"V", 1},
-                                {"P_MIN_V", 1},
-                                {"P_MAX_V", 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Parameter.P_MIN_V, 1},
+                                {Parameter.P_MAX_V, 1},
                             };
 
                         case DeviceSubType.AO_VIRT:
                             return new Dictionary<string, int>()
                             {
-                                {"M", 1},
-                                {"V", 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
                             };
                     }
                     break;
             }
+
             return null;
         }
     }

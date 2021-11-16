@@ -219,7 +219,7 @@ namespace Editor
         /// <summary>
         /// Индекс картинки из формы, для вставки в элемент.
         /// </summary>
-        ImageIndexEnum ImageIndex { get; }
+        ImageIndexEnum ImageIndex { get; set; }
 
         /// <summary>
         /// Содержит ли объект базовый объект/операцию/шаг

@@ -4,11 +4,8 @@ namespace Device
 {
     /// <summary>
     /// Технологическое устройство - датчик температуры.
-    /// Параметры:
-    /// 1. P_C0  - сдвиг нуля.
-    /// 2. P_ERR - аварийное значение температуры.
     /// </summary>
-    public class TE : IODevice
+    sealed public class TE : IODevice
     {
         public TE(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -18,37 +15,54 @@ namespace Device
             dSubType = DeviceSubType.NONE;
             dType = DeviceType.TE;
             ArticleName = articleName;
-
-            parameters.Add("P_C0", null);
-            parameters.Add("P_ERR", null);
-
-            AI.Add(new IOChannel("AI", -1, -1, -1, ""));
         }
 
         public override string SetSubType(string subType)
         {
             base.SetSubType(subType);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subType)
             {
                 case "TE":
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_ERR, null);
+
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     break;
 
                 case "TE_IOLINK":
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_ERR, null);
+
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+
                     SetIOLinkSizes(ArticleName);
+                    break;
+
+                case "TE_VIRT":
+                    break;
+
+                case "TE_ANALOG":
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_ERR, null);
+                    parameters.Add(Parameter.P_MIN_V, null);
+                    parameters.Add(Parameter.P_MAX_V, null);
+
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     break;
 
                 case "":
                     errStr = string.Format("\"{0}\" - не задан тип" +
-                        " (TE, TE_IOLINK).\n", Name);
+                        " (TE, TE_IOLINK, TE_VIRT).\n", Name);
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (TE, TE_IOLINK).\n", Name);
+                        " (TE, TE_IOLINK, TE_VIRT).\n", Name);
                     break;
             }
+
             return errStr;
         }
 
@@ -56,7 +70,9 @@ namespace Device
         {
             string res = base.Check();
 
-            if (ArticleName == "")
+            bool emptyArticle = ArticleName == string.Empty;
+            bool needCheckArticle = DeviceSubType != DeviceSubType.TE_VIRT;
+            if (needCheckArticle && emptyArticle)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -76,10 +92,15 @@ namespace Device
                             return "TE";
                         case DeviceSubType.TE_IOLINK:
                             return "TE_IOLINK";
+                        case DeviceSubType.TE_VIRT:
+                            return "TE_VIRT";
+                        case DeviceSubType.TE_ANALOG:
+                            return "TE_ANALOG";
                     }
                     break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -94,14 +115,35 @@ namespace Device
                         case DeviceSubType.TE_IOLINK:
                             return new Dictionary<string, int>()
                             {
-                                {"M", 1},
-                                {"P_CZ", 1},
-                                {"V", 1},
-                                {"ST", 1},
+                                {Tag.M, 1},
+                                {Tag.P_CZ, 1},
+                                {Tag.V, 1},
+                                {Tag.ST, 1},
+                            };
+
+                        case DeviceSubType.TE_VIRT:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.ST, 1},
+                            };
+
+                        case DeviceSubType.TE_ANALOG:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.ST, 1},
+                                {Tag.P_CZ, 1},
+                                {Parameter.P_MIN_V, 1},
+                                {Parameter.P_MAX_V, 1},
+                                {Parameter.P_ERR, 1},
                             };
                     }
                     break;
             }
+
             return null;
         }
     }

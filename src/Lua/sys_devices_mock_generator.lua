@@ -137,3 +137,9 @@ function HLA(dev)
 	devsidx = devsidx + 1
 	return dev
 end
+
+function CAM(dev)
+	devs[devsidx] = {dev, "CAM"}
+	devsidx = devsidx + 1
+	return dev
+end

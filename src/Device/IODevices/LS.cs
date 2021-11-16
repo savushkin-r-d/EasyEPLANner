@@ -4,10 +4,8 @@ namespace Device
 {
     /// <summary>
     /// Технологическое устройство - предельный уровень.
-    /// Параметры:
-    /// 1. P_DT - время порогового фильтра, мсек.
     /// </summary>
-    public class LS : IODevice
+    sealed public class LS : IODevice
     {
         public LS(string name, string eplanName,  string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -23,32 +21,32 @@ namespace Device
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "LS_MIN":
-                    parameters.Add("P_DT", null);
+                    parameters.Add(Parameter.P_DT, null);
 
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
                     break;
 
                 case "LS_MAX":
-                    parameters.Add("P_DT", null);
+                    parameters.Add(Parameter.P_DT, null);
 
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
                     break;
 
                 case "LS_IOLINK_MIN":
-                    parameters.Add("P_DT", null);
-                    parameters.Add("P_ERR", null);
+                    parameters.Add(Parameter.P_DT, null);
+                    parameters.Add(Parameter.P_ERR, null);
 
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     SetIOLinkSizes(ArticleName);
                     break;
 
                 case "LS_IOLINK_MAX":
-                    parameters.Add("P_DT", null);
-                    parameters.Add("P_ERR", null);
+                    parameters.Add(Parameter.P_DT, null);
+                    parameters.Add(Parameter.P_ERR, null);
 
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
                     SetIOLinkSizes(ArticleName);
@@ -91,9 +89,10 @@ namespace Device
 
 
                 default:
-                    connectionType = "";
+                    connectionType = string.Empty;
                     break;
             }
+
             return connectionType;
         }
 
@@ -101,7 +100,9 @@ namespace Device
         {
             string res = base.Check();
 
-            if (ArticleName == "" && dSubType != DeviceSubType.LS_VIRT)
+            bool emptyArticle = ArticleName == string.Empty;
+            bool needCheckArticle = DeviceSubType != DeviceSubType.LS_VIRT;
+            if (needCheckArticle && emptyArticle)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -130,7 +131,8 @@ namespace Device
                     }
                     break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -146,24 +148,25 @@ namespace Device
                         case DeviceSubType.LS_VIRT:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"P_DT", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Parameter.P_DT, 1},
                             };
 
                         case DeviceSubType.LS_IOLINK_MIN:
                         case DeviceSubType.LS_IOLINK_MAX:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"V", 1},
-                                {"P_DT", 1},
-                                {"P_ERR", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Parameter.P_DT, 1},
+                                {Parameter.P_ERR, 1},
                             };
                     }
                     break;
             }
+
             return null;
         }
     }

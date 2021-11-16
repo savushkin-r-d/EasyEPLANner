@@ -1,11 +1,11 @@
-init = function()
+function init()
     if init_tech_objects_modes == nil then
         return
     end
 
     local objects = init_tech_objects_modes()
     local initialized_objects = { }
-	for number, value in ipairs( objects ) do
+	for number, value in ipairs(objects) do
 		-- Проверка пустоты таблицы для импортируемых объектов.
         -- Экспорт выполняется так, что бы пустые элементы таблицы имели длину 
         -- 1,а при импорте это игнорируется. Сохранение таблиц (файлов проекта)
@@ -29,61 +29,59 @@ init = function()
         end
 	end
 
-    for fields, value in ipairs( objects ) do
+    for fields, value in ipairs(objects) do
         -- Аналогично с предыдущим циклом.
         if (#value == 0) then
             local obj = initialized_objects[fields]
 
+            --Операции (инциализация всегда перед параметрами)
+            for fields, value in ipairs(value.modes) do
+                local mode_name = value.name or "Операция ??"
+                local mode_base_operation = value.base_operation or ""
+
+                --Доп. свойства по операции
+                local mode_base_operation_props = {}
+                if value.props then
+                    for fields, value in pairs(value.props) do
+                        mode_base_operation_props[fields] = value 
+                    end
+                end
+
+                local mode = obj:AddMode(mode_name, mode_base_operation, 
+                    mode_base_operation_props)
+
+                --Состояния
+                if value.states then
+                    for fields, value in pairs(value.states) do
+                        local state_n = fields - 1
+                        proc_operation_devices(value, mode, state_n)
+                    end
+                end
+            end
+
             --Параметры
-            proc_params( value.par_float, "par_float", obj )
-            proc_params( value.par_uint, "par_uint", obj )
-            proc_params( value.rt_par_float, "rt_par_float", obj )
-            proc_params( value.rt_par_uint, "rt_par_uint", obj)
+            proc_params(value.par_float, "par_float", obj)
+            proc_params(value.par_uint, "par_uint", obj)
+            proc_params(value.rt_par_float, "rt_par_float", obj)
+            proc_params(value.rt_par_uint, "rt_par_uint", obj)
 
             -- Системные параметры
-            proc_system_params( value.system_parameters, obj)
+            proc_system_params(value.system_parameters, obj)
 
             -- Свойства объекта
-            proc_object_properties( value.properties, obj )
-
-            local params_float = value.par_float
+            proc_object_properties(value.properties, obj)
 
             --Оборудование (всегда после параметров)
-            if value.equipment ~= nil then
-                for field, value in pairs( value.equipment ) do
+            if value.equipment then
+                for field, value in pairs(value.equipment) do
                     obj:SetEquipment(field, value)
                 end
             end
 
-            if value.tank_groups ~= nil then
+            --Группы объектов
+            if value.tank_groups then
                 for luaName, value in pairs(value.tank_groups) do
                     obj:SetGroupObject(luaName, value)
-                end
-            end
-
-            for fields, value in ipairs( value.modes ) do
-                local mode_name = value.name or "Операция ??"
-			    local mode_base_operation = value.base_operation or ""
-
-			    -- Доп. свойства по операции
-			    local mode_base_operation_props = {}
-			    if value.props ~= nil then
-				    for fields, value in pairs(value.props) do
-					    mode_base_operation_props[fields] = value 
-				    end
-			    end
-
-                local mode = obj:AddMode( mode_name, mode_base_operation, 
-                    mode_base_operation_props)
-
-                local idx = fields
-                proc_oper_params( params_float, mode, idx, obj )
-
-                if value.states ~= nil then
-                    for fields, value in pairs( value.states ) do
-                        local state_n = fields - 1
-                        proc_operation( value, mode, state_n )
-                    end
                 end
             end
         end
@@ -92,201 +90,172 @@ init = function()
     return 0
 end
 
---Обработка сохраненного описания операции.
-proc_operation = function( value, mode, state_n )
-    proc( mode, state_n, value.opened_devices, -1, "opened_devices" )
-    proc( mode, state_n, value.opened_reverse_devices, -1, 
-        "opened_reverse_devices" )
-    proc( mode, state_n, value.closed_devices, -1, "closed_devices" )
-
-    proc_groups( mode, state_n, -1, value.opened_upper_seat_v, 
-        "opened_upper_seat_v" )
-    proc_groups( mode, state_n, -1, value.opened_lower_seat_v, 
-        "opened_lower_seat_v" )
-
-    proc( mode, state_n, value.required_FB,    -1, "required_FB" )
-
-    proc_groups(mode, state_n, -1, value.DI_DO, "DI_DO")
-    proc_groups(mode, state_n, -1, value.AI_AO, "AI_AO")
-
-    proc_wash_data(mode, state_n, -1, value)
-
-    if value.steps ~= nil then
-        for fields, value in ipairs( value.steps ) do
-            mode:AddStep( state_n, value.name or "Шаг ??", value.baseStep or "" )
-            local step_n = fields - 1
-
-            proc( mode, state_n, value.opened_devices, step_n,
-                "opened_devices" )
-            proc( mode, state_n, value.opened_reverse_devices, step_n, 
-                "opened_reverse_devices" )
-            proc( mode, state_n, value.closed_devices, step_n, 
-                "closed_devices" )
-            proc_groups( mode, state_n, step_n, value.opened_upper_seat_v,
-                "opened_upper_seat_v" )
-            proc_groups( mode, state_n, step_n, value.opened_lower_seat_v,
-                "opened_lower_seat_v" )
-            proc( mode, state_n, value.required_FB, step_n, "required_FB" )
-
-            proc_groups(mode, state_n, step_n, value.DI_DO, "DI_DO")
-            proc_groups(mode, state_n, step_n, value.AI_AO, "AI_AO")
-
-            proc_wash_data(mode, state_n, step_n, value)
-
-            local time_param_n = value.time_param_n or 0
-            local next_step_n = value.next_step_n or 0
-
-            if time_param_n > 0 then
-                mode[ state_n ][ step_n ]:SetPar( time_param_n, next_step_n )
-            end
-        end
-    end
-end
-
-proc_params = function( par, par_name, obj )
-    if type( par ) == "table" then
-        for fields, value in ipairs( par ) do
+function proc_params(par, par_name, obj)
+    if type(par) == "table" then
+        for fields, value in ipairs(par) do
             local param = obj:GetParamsManager():AddParam(par_name,
-            value.name or "Параметр", value.value or 0, value.meter or "шт.",
-            value.nameLua or "" )
-            if value.oper ~= nil then param:SetOperationN( value.oper ) end
+                value.name or "Параметр", value.value or 0,
+                value.meter or "шт.", value.nameLua or "")
+            if value.oper then param:SetOperationN(value.oper) end
         end
     end
 end
 
-proc_system_params = function( par, obj )
-    if type ( par ) == "table" then
-        for luaName, param in pairs( par ) do
+function proc_system_params(par, obj)
+    if type (par) == "table" then
+        for luaName, param in pairs(par) do
             local parValue = param.value
             obj:SetSystemParameter(luaName, parValue)
         end
     end
 end
 
-proc_object_properties = function( par, obj )
-    if type ( par ) == "table" then
-        for luaName, value in pairs( par ) do
+function proc_object_properties(par, obj)
+    if type (par) == "table" then
+        for luaName, value in pairs(par) do
             obj:SetBaseProperty(luaName, value)
         end
     end
 end
 
-proc_oper_params = function( par, operation, idx, obj )
-    if type( par ) == "table" then
-        for fields, value in ipairs( par ) do
-            local pr = obj:GetParamsManager():GetParam( value.nameLua or "" )
-            if pr ~= nil then
-                if type( value.oper ) == "table" then
-                    for field, operationNumber in ipairs(value.oper) do
-                        if operationNumber == idx then
-                            operation:GetOperationParams():AddParam( pr )
-                        end
-                    end
-                elseif type (value.oper) == "number" then
-                    if value.oper == idx then
-                        operation:GetOperationParams():AddParam( pr )
-                    end
+function proc_operation_devices(value, mode, state_n)
+    local mainStep = mode[state_n][-1]
+    proc_actions(mainStep, value)
+    if value.steps then
+        for fields, value in ipairs(value.steps) do
+            mode:AddStep(state_n, value.name or "Шаг ??", value.baseStep or "")
+            local step_n = fields - 1
+            local step = mode[state_n][step_n]
+            proc_actions(step, value)
+
+            local next_step_n = value.next_step_n or 0
+            local time_param_n = value.time_param_n or 0
+            if time_param_n > 0 then
+                step:SetPar(time_param_n, next_step_n)
+            end
+        end
+    end
+end
+
+function proc_actions(step, value, is_runtime_step)
+    proc(step, value, "checked_devices")
+    proc(step, value, "opened_devices")
+    proc(step, value, "opened_reverse_devices")
+    proc(step, value, "closed_devices")
+    proc_groups(step, value, "opened_upper_seat_v")
+    proc_groups(step, value, "opened_lower_seat_v")
+    proc(step, value, "required_FB")
+    proc_groups(step, value, "DI_DO")
+    proc_groups(step, value, "inverted_DI_DO")
+    proc_groups(step, value, "AI_AO")
+    proc_wash_data(step, value)
+    proc_groups(step, value, "enable_step_by_signal")
+
+    local notRuntimeStep = step:GetStepNumber() >= 0
+    if (notRuntimeStep) then
+        proc_to_step_by_condition(step, value)
+    end
+end
+
+function proc(step, actions, action_name, group_number, sub_action_name)
+    if (group_number == nil) then
+        group_number = 0
+    end
+
+    if (sub_action_name == nil) then
+        sub_action_name = ""
+    end
+
+    if (actions == nil) then
+        return
+    end
+
+    for current_action_name, devices in pairs (actions) do
+        if (current_action_name == action_name and devices) then
+            for _, dev_name in pairs (devices) do
+                add_dev(step, action_name, dev_name, group_number,
+                    sub_action_name)
+            end  
+        end
+    end
+end
+
+function proc_groups(step, actions, action_name)
+    if (actions == nil) then
+        return
+    end
+
+    for current_action_name, groups in pairs (actions) do
+        if (current_action_name == action_name and groups) then
+            local group_n = 0
+            for _, group in pairs(groups) do
+                for _, dev_name in pairs(group) do
+                    add_dev(step, action_name, dev_name, group_n, "")
                 end
-            end
+                group_n = group_n + 1
+            end 
         end
-    end
+    end  
 end
 
-proc = function( mode, state_n, devices, step_n, action_name, inner_action_index,
-    wash_group_index )
-    if devices ~= nil then
-        if inner_action_index == nil then
-            inner_action_index = 0 -- default value in simple action.
-        end
-        if wash_group_index == nil then
-            wash_group_index = 0 -- default value in simple action.
-        end
-
-        for _, value in pairs ( devices ) do
-            mode[ state_n ][ step_n ]:AddDev( action_name, value,
-            inner_action_index, wash_group_index )
-        end
-    end
-end
-
-proc_groups = function( mode, state_n, step_n, groups, action_name )
-    --Группа устройств
-    if groups ~= nil then
-        local group_n = 0
-        local wash_group_index = 0
-
-        for _, group in pairs( groups ) do
-            for _, v in pairs( group ) do
-                mode[ state_n ][ step_n ]:AddDev( action_name, v, group_n,
-                    wash_group_index )
-            end
-            group_n = group_n + 1
-        end
-    end
-end
-
-proc_wash_data = function( mode, state_n, step_n, value )
+function proc_wash_data(step, value)
     local devices_data = value.devices_data -- Новая функциональность.
     local wash_data = value.wash_data -- Старая функциональность.
 
-    if devices_data ~= nil then
+    if devices_data then
         wash_data = devices_data
     end
 
     --Группа устройств, управляемых по ОС с выдачей сигнала
-    if wash_data ~= nil then
-        if ( wash_data.DI ~= nil or
-             wash_data.DO ~= nil or
-             wash_data.devices ~= nil or
-             wash_data.rev_devices ~= nil or
-             wash_data.pump_freq ~= nil ) then
+    if wash_data then
+        if (wash_data.DI or
+            wash_data.DO or
+            wash_data.devices or
+            wash_data.rev_devices or
+            wash_data.pump_freq) then
 
-            local wash_group_index = 0
-            proc_wash_group_data( mode, state_n, step_n, wash_data, wash_group_index )
+            local group_number = 0
+            proc_wash_group_data(step, wash_data, group_number)
         else -- Process new version
-            local wash_group_index = 0
-            for _, wash_group in pairs( wash_data ) do
-                proc_wash_group_data( mode, state_n, step_n, wash_group, wash_group_index )
-                wash_group_index = wash_group_index + 1
+            local group_number = 0
+            for _, wash_group in pairs(wash_data) do
+                proc_wash_group_data(step, wash_group, group_number)
+                group_number = group_number + 1
             end
         end
     end
 end
 
-proc_wash_group_data = function ( mode, state_n, step_n, wash_data, wash_group_index )
-    local parent_action = "wash_data"
-
-    --DI
-    if wash_data.DI ~= nil then
-        local DI_action_index = 0
-        proc( mode, state_n, wash_data.DI, step_n, parent_action,
-            DI_action_index, wash_group_index  )
+function proc_wash_group_data(step, wash_data, group_number)
+    local action_name = "devices_data"
+    for sub_action_name, devices in pairs(wash_data) do                                                                
+        if (type(devices) == "table") then
+            for _, dev_name in pairs(devices) do
+                add_dev(step, action_name, dev_name, group_number,
+                    sub_action_name)
+            end
+        else
+            local parameter_value = devices
+            local parameter_name = sub_action_name
+            step:AddParam(action_name, parameter_value, parameter_name,
+                group_number)
+        end
     end
+end
 
-    --Control signal DO
-    if wash_data.DO ~= nil then
-        local DO_action_index = 1
-        proc( mode, state_n, wash_data.DO, step_n, parent_action,
-            DO_action_index, wash_group_index )
-    end
+function proc_to_step_by_condition(step, value)
+    local actions = value.to_step_if_devices_in_specific_state
+    local action_name = "to_step_if_devices_in_specific_state"
 
-    --On devices.
-    if wash_data.devices ~= nil then
-        local devices_action_index = 2
-        proc( mode, state_n, wash_data.devices, step_n, parent_action,
-            devices_action_index, wash_group_index )
+    if actions then
+        for sub_action_name, devices in pairs(actions) do
+            for _, dev_name in pairs(devices) do
+                add_dev(step, action_name, dev_name, 0, sub_action_name)
+            end
+        end
     end
+end
 
-    --On reverse devices.
-    if wash_data.rev_devices ~= nil then
-        local rev_devices_action_index = 3
-        proc( mode, state_n, wash_data.rev_devices, step_n, parent_action,
-         rev_devices_action_index, wash_group_index )
-    end
-
-    --Frequency parameter.
-    if wash_data.pump_freq ~= nil then
-        mode[ state_n ][ step_n ]:AddParam( parent_action, wash_data.pump_freq,
-            wash_group_index )
-    end
+function add_dev(step, action_name, dev_name, group_number, sub_action_name)
+	step:AddDev(action_name, dev_name, group_number, sub_action_name)
 end

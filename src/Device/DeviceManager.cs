@@ -105,7 +105,7 @@ namespace Device
         private string CheckDevicesIP(long startingIP, long endingIP)
         {
             var errors = new List<string>();
-            string ipProperty = "IP";
+            string ipProperty = IODevice.Property.IP;
 
             var devicesWithIPProperty = Devices
                 .Where(x => x.Properties.ContainsKey(ipProperty) &&
@@ -115,13 +115,13 @@ namespace Device
                 string IPstr = Regex.Match(device.Properties[ipProperty]
                     .ToString(), StaticHelper.CommonConst.IPAddressPattern)
                     .Value;
-                if (IPstr == "")
+                if (IPstr == string.Empty)
                 {
                     continue;
                 }
 
                 var devicesWithEqualsIP = devicesWithIPProperty
-                    .Where(x => x.Properties[ipProperty].ToString() == 
+                    .Where(x => x.Properties[ipProperty].ToString() ==
                     device.Properties[ipProperty].ToString()).ToArray();
                 if (devicesWithEqualsIP.Length > 1)
                 {
@@ -155,15 +155,14 @@ namespace Device
             string cap = StaticHelper.CommonConst.Cap;
 
             var PIDs = Devices.Where(x => x.DeviceType == DeviceType.C);
-            foreach(var dev in PIDs)
+            foreach (var dev in PIDs)
             {
-                foreach(var property in dev.Properties)
+                foreach (var property in dev.Properties)
                 {
                     object value = property.Value;
-                    if(value != null)
+                    if (value != null)
                     {
-                        var devInPropery = GetDevice(
-                            value.ToString().Trim(new char[] { '\'' }));
+                        var devInPropery = GetDevice(value.ToString());
                         if (devInPropery.Description == cap)
                         {
                             res += $"Задано несуществующее устройство для " +
@@ -203,7 +202,7 @@ namespace Device
         {
             foreach (IODevice device in devices)
             {
-                if (device.Name == devName) 
+                if (device.Name == devName)
                 {
                     return device;
                 }
@@ -241,7 +240,7 @@ namespace Device
             CheckDeviceName(devName, out name, out eplanName, out objectName,
                 out objectNumber, out deviceType, out deviceNumber);
 
-            IODevice devStub = new IODevice(name, eplanName, 
+            IODevice devStub = new IODevice(name, eplanName,
                 StaticHelper.CommonConst.Cap, deviceType, deviceNumber,
                 objectName, objectNumber);
 
@@ -367,14 +366,15 @@ namespace Device
                         match.Groups["type"].Value +
                         match.Groups["n"].Value;
 
-                    eplanName = match.Groups["object_main"].Value + "+" +
+                    eplanName = "+" +
+                        match.Groups["object_main"].Value +
                         match.Groups["object"].Value +
                         match.Groups["object_n"].Value + "-" +
                         match.Groups["type"].Value +
                         match.Groups["n"].Value;
 
                     res = true;
-                } 
+                }
             }
 
             return res;
@@ -409,6 +409,7 @@ namespace Device
             "DEV_VTUG", // Совместимость со старыми проектами
             "C",
             "HLA",
+            "CAM"
         };
 
         /// <summary>
@@ -596,6 +597,11 @@ namespace Device
 
                 case "HLA":
                     dev = new HLA(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
+                    break;
+
+                case "CAM":
+                    dev = new CAM(name, eplanName, description, deviceNumber,
                         objectName, objectNumber);
                     break;
 
@@ -753,7 +759,7 @@ namespace Device
         /// Сохранение в виде таблицы Lua.
         /// </summary>
         /// <param name="prefix">Префикс (для выравнивания).</param>
-        public string SaveAsLuaTable(string prefix)
+        public string SaveAsLuaTableForMainIO(string prefix)
         {
             string res = "------------------------------------------------------------------------------\n";
             res += "--Устройства\n";
@@ -777,43 +783,76 @@ namespace Device
 
         /// <summary>
         /// Сохранение устройств в виде скрипта Lua. Для последующего доступа
-        /// по имени. Строки в виде: "S1V23 = V( 'S1V23' ) ".
+        /// по имени или индексу в main.devices.lua.
         /// </summary>
-        public string SaveDevicesAsLuaScript()
+        public string SaveAsLuaTableForMainDevices()
         {
             string str = "system = system or {}\n";
             str += "system.init_dev_names = function()\n";
-
-            foreach (IODevice dev in devices)
-            {
-                if (dev.DeviceType == DeviceType.Y ||
-                    dev.DeviceType == DeviceType.DEV_VTUG) continue;
-
-                if (dev.ObjectNumber > 0 && dev.ObjectName == "")
-                {
-                    str += "\t_";
-                }
-                else
-                {
-                    str += "\t";
-                }
-                str += dev.Name + " = " + dev.DeviceType.ToString() + "(\'" + dev.Name + "\')\n";
-            }
-            str += "\n";
-
-            int i = 0;
-            foreach (IODevice dev in devices)
-            {
-                if (dev.DeviceType == DeviceType.Y ||
-                    dev.DeviceType == DeviceType.DEV_VTUG) continue;
-
-                str += "\t__" + dev.Name + " = DEVICE( " + i + " )\n";
-                i++;
-            }
+            str += GetDevicesForMainDevices();
             str += "end\n";
             str = str.Replace("\t", "    ");
 
             return str;
+        }
+
+        /// <summary>
+        /// Генерирует тело скрипта Lua для файла main.devices.lua
+        /// </summary>
+        /// <returns></returns>
+        private string GetDevicesForMainDevices()
+        {
+            var deviceNameStr = string.Empty;
+            var deviceIndexesStr = string.Empty;
+            for (int i = 0; i < devices.Count; i++)
+            {
+                var dev = devices[i];
+                bool skipDevice = dev.DeviceType == DeviceType.Y ||
+                   dev.DeviceType == DeviceType.DEV_VTUG;
+                if (skipDevice) continue;
+
+                deviceNameStr += GenerateDevicesNameForMainDevices(dev);
+                deviceIndexesStr += GenerateDevicesIndexForMainDevices(i, dev);
+            }
+
+            return string.Join(string.Empty, deviceNameStr, "\n", deviceIndexesStr);
+        }
+
+        /// <summary>
+        /// Генерирует строку описания имени устройства в общем списке
+        /// устройств для main.devices.lua
+        /// </summary>
+        /// <param name="dev">Устройство</param>
+        /// <returns></returns>
+        private string GenerateDevicesNameForMainDevices(IODevice dev)
+        {
+            string temp = string.Empty;
+            bool hasObjectNumber = dev.ObjectNumber > 0;
+            bool noObjectName = dev.ObjectName == string.Empty;
+            if (hasObjectNumber && noObjectName)
+            {
+                temp += "\t_";
+            }
+            else
+            {
+                temp += "\t";
+            }
+
+            temp += $"{dev.Name} = {dev.DeviceType}(\'{dev.Name}\')\n";
+            return temp;
+        }
+
+        /// <summary>
+        /// Генерирует строку для описания индекса устройства в общем списке
+        /// устройств для main.devices.lua
+        /// </summary>
+        /// <param name="id">Индекс устройства</param>
+        /// <param name="device">Устройство</param>
+        /// <returns></returns>
+        private string GenerateDevicesIndexForMainDevices(int id,
+            IODevice device)
+        {
+            return "\t__" + device.Name + " = DEVICE( " + id + " )\n";
         }
 
         /// <summary>
@@ -1055,9 +1094,12 @@ namespace Device
                 return isPID;
             }
 
-            const int firstCharIndex = 0;
-            if (type[firstCharIndex] == Convert.ToChar(DeviceType.V.ToString())
-                || type.Contains(DeviceType.C.ToString()) == false)
+            const int firstChar = 0;
+            bool noPID =
+                (type[firstChar] == Convert.ToChar($"{DeviceType.V}") ||
+                type[firstChar] == Convert.ToChar($"{DeviceType.C}") ||
+                type.Contains($"{DeviceType.C}") == false);
+            if (noPID)
             {
                 return isPID;
             }
@@ -1089,7 +1131,7 @@ namespace Device
         /// </summary>
         public const string valveTerminalPattern = @"([A-Z0-9]+\-[Y0-9]+)";
 
-        private static IODevice cap = 
+        private static IODevice cap =
             new IODevice(StaticHelper.CommonConst.Cap, string.Empty,
                 StaticHelper.CommonConst.Cap, 0, string.Empty, 0);
         private List<IODevice> devices;       ///Устройства проекта.     

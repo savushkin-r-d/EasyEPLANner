@@ -582,8 +582,17 @@ namespace InterprojectExchange
             var model = interprojectExchange.GetModel(projectName);
             string path = Path.Combine(model.PathToProject, 
                 projectName, SharedFile);
-            using (var writer = new StreamWriter(path, false,
-                EasyEPlanner.EncodingDetector.DetectFileEncoding(path)))
+
+            if(!File.Exists(path))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+                var openedFileStream = File.Create(path);
+                openedFileStream.Close();
+            }
+
+            System.Text.Encoding encoding = EasyEPlanner.EncodingDetector
+                    .DetectFileEncoding(path);
+            using (var writer = new StreamWriter(path, false, encoding))
             {
                 foreach (string line in sharedFileData)
                 {

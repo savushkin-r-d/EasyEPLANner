@@ -42,6 +42,7 @@ namespace IO
                     break;
 
                 case "AXL F BK ETH":
+                case "AXL F BK ETH NET2":
                     type = TYPES.T_PHOENIX_CONTACT;
                     IsCoupler = true;
                     break;
@@ -266,9 +267,13 @@ namespace IO
                 {
                     return n;
                 }
+                else if (n > 1)
+                {
+                    return (n - 1) * 100;
+                }
                 else
                 {
-                    return n * 100;
+                    return 0;
                 }
             }
         }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Editor;
 
 namespace TechObject
@@ -6,7 +7,7 @@ namespace TechObject
     /// <summary>
     /// Специальное действие - обработка сигналов во время мойки.
     /// </summary>
-    public class ActionWash : Action
+    public class ActionWash : GroupableAction
     {
         /// <summary>
         /// Создание нового действия.
@@ -18,20 +19,19 @@ namespace TechObject
         public ActionWash(string name, Step owner, string luaName)
             : base(name, owner, luaName)
         {
-            vGroups = new List<Action>();
-            vGroups.Add(new Action(DI, owner, DI,
+            SubActions.Add(new Action("DI", owner,"DI",
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.DI,
                     Device.DeviceType.SB
                 }));
-            vGroups.Add(new Action(DO, owner, DO,
+            SubActions.Add(new Action("DO", owner, "DO",
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.DO
                 }));
 
-            vGroups.Add(new Action("Устройства", owner, Devices,
+            SubActions.Add(new Action("Устройства", owner, "devices",
                 new Device.DeviceType[] 
                 { 
                     Device.DeviceType.M,
@@ -48,7 +48,9 @@ namespace TechObject
                     Device.DeviceSubType.M_REV_FREQ_2,
                     Device.DeviceSubType.M_REV_FREQ_2_ERROR,
                     Device.DeviceSubType.M_ATV,
+                    Device.DeviceSubType.M_ATV_LINEAR,
                     Device.DeviceSubType.M,
+                    Device.DeviceSubType.M_VIRT,
                     Device.DeviceSubType.V_AS_DO1_DI2,
                     Device.DeviceSubType.V_AS_MIXPROOF,
                     Device.DeviceSubType.V_BOTTOM_MIXPROOF,
@@ -66,17 +68,19 @@ namespace TechObject
                     Device.DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF,
                     Device.DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON,
                     Device.DeviceSubType.V_MIXPROOF,
+                    Device.DeviceSubType.V_VIRT,
                     Device.DeviceSubType.AO,
                     Device.DeviceSubType.AO_VIRT,
                     Device.DeviceSubType.DO,
                     Device.DeviceSubType.DO_VIRT,
                     Device.DeviceSubType.VC,
                     Device.DeviceSubType.VC_IOLINK,
+                    Device.DeviceSubType.VC_VIRT,
                     Device.DeviceSubType.NONE
                 }));
 
-            vGroups.Add(new Action("Реверсивные устройства", owner,
-                ReverseDevices,
+            SubActions.Add(new Action("Реверсивные устройства", owner,
+                "rev_devices",
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.M
@@ -88,64 +92,35 @@ namespace TechObject
                     Device.DeviceSubType.M_REV_FREQ_2,
                     Device.DeviceSubType.M_REV_FREQ_2_ERROR,
                     Device.DeviceSubType.M_ATV,
-                    Device.DeviceSubType.M
+                    Device.DeviceSubType.M_ATV_LINEAR,
+                    Device.DeviceSubType.M,
+                    Device.DeviceSubType.M_VIRT,
                 }));
 
-            items = new List<ITreeViewItem>();
-            foreach (Action action in vGroups)
-            {
-                items.Add(action);
-            }
-
-            var pumpFreqParam = new ActiveParameter("frequency",
+            var pumpFreqParam = new ActiveParameter("pump_freq",
                 "Производительность");
             pumpFreqParam.OneValueOnly = true;
-            pumpFreq = pumpFreqParam;
-            items.Add(pumpFreq);
+            parameters = new List<BaseParameter>();
+            parameters.Add(pumpFreqParam);
         }
 
-        override public Action Clone()
+        override public IAction Clone()
         {
             var clone = new ActionWash(name, owner, luaName);
 
-            clone.vGroups = new List<Action>();
-            foreach (var action in vGroups)
+            clone.SubActions = new List<IAction>();
+            foreach (var action in SubActions)
             {
-                clone.vGroups.Add(action.Clone());
+                clone.SubActions.Add(action.Clone());
             }
 
-            clone.items.Clear();
-            clone.items = new List<ITreeViewItem>();
-            foreach (var action in clone.vGroups)
+            clone.parameters = new List<BaseParameter>();
+            foreach(var parameter in parameters)
             {
-                clone.items.Add(action);
+                clone.parameters.Add(parameter.Clone());
             }
 
-            clone.pumpFreq = pumpFreq.Clone();
-            clone.items.Add(clone.pumpFreq);
             return clone;
-        }
-
-        override public void ModifyDevNames(int newTechObjectN, 
-            int oldTechObjectN, string techObjectName)
-        {
-            foreach (Action subAction in vGroups)
-            {
-                subAction.ModifyDevNames(newTechObjectN, oldTechObjectN, 
-                    techObjectName);
-            }
-        }
-
-        override public void ModifyDevNames(string newTechObjectName,
-            int newTechObjectNumber, string oldTechObjectName,
-            int oldTechObjectNumber)
-        {
-            foreach (Action subAction in vGroups)
-            {
-                subAction.ModifyDevNames(newTechObjectName,
-                    newTechObjectNumber, oldTechObjectName,
-                    oldTechObjectNumber);
-            }
         }
 
         /// <summary>
@@ -156,34 +131,46 @@ namespace TechObject
         public override string SaveAsLuaTable(string prefix)
         {
             string res = string.Empty;
-            if (vGroups.Count == 0)
+            if (SubActions.Count == 0)
             {
                 return res;
             }
 
             string groupData = string.Empty;
-            foreach (Action group in vGroups)
+            foreach (IAction group in SubActions)
             {
                 groupData += group.SaveAsLuaTable(prefix + "\t");
             }
 
-
-
-            if (groupData != "")
+            string parametersData = string.Empty;
+            if (groupData != string.Empty)
             {
-                string pumpFreqVal = pumpFreq.EditText[1].Trim();
-                bool isParamNum = int.TryParse(pumpFreqVal, out int paramNum);
-                string paramValue = 
-                    isParamNum ? $"{paramNum}" : $"'{pumpFreqVal}'";
-                string saveFreqVal = $"{prefix}\tpump_freq = {paramValue},\n";
+                foreach(var parameter in parameters)
+                {
+                    if (parameter.IsEmpty)
+                    {
+                        continue;
+                    }
 
+                    bool isParamNum = int.TryParse(parameter.Value,
+                        out int paramNum);
+                    string paramValue =
+                        isParamNum ? $"{paramNum}" : $"'{parameter.Value}'";
+                    string saveParameterValue =
+                        $"{prefix}\t{parameter.LuaName} = {paramValue},\n";
+                    parametersData += saveParameterValue;
+                }
+                
                 res += prefix;
                 if (luaName != string.Empty)
                 {
                     res += luaName + " =";
                 }
-                res += " --" + name + "\n" + prefix + "\t{\n" + groupData + 
-                    (pumpFreqVal == string.Empty ? string.Empty : saveFreqVal) +
+
+                res += " --" + name + "\n" +
+                    prefix + "\t{\n" +
+                    groupData +
+                    parametersData +
                     prefix + "\t},\n";
             }
 
@@ -191,100 +178,50 @@ namespace TechObject
         }
 
         public override void AddDev(int index, int groupNumber,
-            int washGroupIndex = 0)
+            string subActionLuaName)
         {
-            if (groupNumber < vGroups.Count /*Количество групп*/ )
+            var subAction = SubActions.Where(x => x.LuaName == subActionLuaName)
+                .FirstOrDefault();
+            if(subAction != null)
             {
-                vGroups[groupNumber].AddDev(index, 0);
-            }
-
-            deviceIndex.Add(index);
-        }
-
-        public override void AddParam(object val, int washGroupIndex = 0)
-        {           
-            pumpFreq.SetNewValue(val.ToString());
-        }
-
-        #region Синхронизация устройств в объекте.
-        /// <summary>
-        /// Синхронизация индексов устройств.
-        /// </summary>
-        /// <param name="array">Массив флагов, определяющих изменение 
-        /// индексов.</param>
-        override public void Synch(int[] array)
-        {
-            base.Synch(array);
-            foreach (Action subAction in vGroups)
-            {
-                subAction.Synch(array);
+                subAction.AddDev(index, 0, string.Empty);
             }
         }
-        #endregion
+
+        public override void AddParam(object val, string paramName,
+            int groupNumber)
+        {
+            var parameter = parameters.Where(x => x.LuaName == paramName)
+                .FirstOrDefault();
+            bool haveParameter = parameter != null;
+            if (haveParameter)
+            {
+                parameter.SetNewValue(val.ToString());
+            }
+        }
 
         #region Реализация ITreeViewItem
-        override public string[] DisplayText
-        {
-            get
-            {
-                string res = "";
-
-                foreach (Action action in vGroups)
-                {
-                    res += $"{{ {action.DisplayText[1]} }} ";
-                }
-
-                res += "{" + pumpFreq.DisplayText[1] + "}";
-
-                return new string[] { name, res };
-            }
-        }
-
         override public ITreeViewItem[] Items
         {
             get
             {
-                return items.ToArray();
-            }
-        }
+                int capacity = SubActions.Count + parameters.Count;
+                var items = new ITreeViewItem[capacity];
 
-        override public void Clear()
-        {
-            foreach (Action subAction in vGroups)
-            {
-                subAction.Clear();
-            }
-        }
+                int counter = 0;
+                foreach(var subAction in SubActions)
+                {
+                    items[counter] = (ITreeViewItem)subAction;
+                    counter++;
+                }
 
-        override public bool IsEditable
-        {
-            get
-            {
-                return false;
-            }
-        }
+                foreach(var parameter in parameters)
+                {
+                    items[counter] = parameter;
+                    counter++;
+                }
 
-        override public bool IsUseDevList
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        public override ImageIndexEnum ImageIndex
-        {
-            get
-            {
-                return ImageIndexEnum.NONE;
-            }
-        }
-
-        public override bool IsDeletable
-        {
-            get
-            {
-                return true;
+                return items;
             }
         }
 
@@ -296,13 +233,44 @@ namespace TechObject
                 return true;
             }
 
+            if (child is IAction action)
+            {
+                action.Clear();
+                return true;
+            }
+
             return false;
         }
         #endregion
 
-        List<Action> vGroups;
-        private BaseParameter pumpFreq; ///< Частота насоса, параметр.
+        public override string ToString()
+        {
+            string res = string.Empty;
+            foreach (var subAction in SubActions)
+            {
+                string subActionStr = subAction.ToString();
+                bool invalidString =
+                    string.IsNullOrWhiteSpace(subActionStr) ||
+                    string.IsNullOrEmpty(subActionStr);
+                if (invalidString)
+                {
+                    res += $"{{ }} ";
+                }
+                else
+                {
+                    res += $"{{ {subAction} }} ";
+                }
 
-        List<ITreeViewItem> items;
+            }
+
+            foreach(var parameter in parameters)
+            {
+                res += $"{{ {parameter.DisplayText[1]} }}";
+            }
+
+            return res;
+        }
+
+        private List<BaseParameter> parameters;
     }
 }

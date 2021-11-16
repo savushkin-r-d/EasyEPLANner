@@ -5,7 +5,7 @@ namespace Device
     /// <summary>
     /// Технологическое устройство - дискретный выход.
     /// </summary>
-    public class DO : IODevice
+    sealed public class DO : IODevice
     {
         public DO(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber) : base(name,
@@ -19,22 +19,22 @@ namespace Device
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "DO_VIRT":
-                    dSubType = DeviceSubType.DO_VIRT;
                     break;
 
                 case "DO":
                 case "":
                     dSubType = DeviceSubType.DO;
+
                     DO.Add(new IOChannel("DO", -1, -1, -1, ""));
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (DO, DO_VIRT).\n",
+                        " (пустая строка, DO, DO_VIRT).\n",
                         Name);
                     break;
             }
@@ -57,7 +57,8 @@ namespace Device
                     }
                     break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -68,10 +69,11 @@ namespace Device
                 case DeviceType.DO:
                     return new Dictionary<string, int>()
                     {
-                        {"ST", 1},
-                        {"M", 1},
+                        {Tag.ST, 1},
+                        {Tag.M, 1},
                     };
             }
+
             return null;
         }
     }

@@ -4,14 +4,8 @@ namespace Device
 {
     /// <summary>
     /// Технологическое устройство - счетчик.
-    /// Параметры:
-    /// 1. P_MIN_V - минимальное значение потока.
-    /// 2. P_MAX_V - максимальное значение потока.
-    /// 3. P_C0    - сдвиг нуля для потока.
-    /// 4. P_DT    - дельта.
-    /// 5. MT      - связанные моторы.
     /// </summary>
-    public class FQT : IODevice
+    sealed public class FQT : IODevice
     {
         public FQT(string name, string eplanName, string description,
             int deviceNumber, string objectName, int objectNumber,
@@ -27,7 +21,7 @@ namespace Device
         {
             base.SetSubType(subtype);
 
-            string errStr = "";
+            string errStr = string.Empty;
             switch (subtype)
             {
                 case "FQT":
@@ -38,13 +32,12 @@ namespace Device
                     AI.Add(new IOChannel("AI", -1, -1, -1, "Объем"));
                     AI.Add(new IOChannel("AI", -1, -1, -1, "Поток"));
 
-                    parameters.Add("P_MIN_F", null);
-                    parameters.Add("P_MAX_F", null);
-                    parameters.Add("P_C0", null);
-                    parameters.Add("P_DT", null);
+                    parameters.Add(Parameter.P_MIN_F, null);
+                    parameters.Add(Parameter.P_MAX_F, null);
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_DT, null);
 
-                    properties.Add("MT", null); //Связанные моторы.
-
+                    properties.Add(Property.MT, null); //Связанные моторы.
                     break;
 
                 case "FQT_F_OK":
@@ -52,13 +45,12 @@ namespace Device
                     AI.Add(new IOChannel("AI", -1, -1, -1, "Поток"));
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
 
-                    parameters.Add("P_MIN_F", null);
-                    parameters.Add("P_MAX_F", null);
-                    parameters.Add("P_C0", null);
-                    parameters.Add("P_DT", null);
+                    parameters.Add(Parameter.P_MIN_F, null);
+                    parameters.Add(Parameter.P_MAX_F, null);
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_DT, null);
 
-                    properties.Add("MT", null); //Связанные моторы.
-
+                    properties.Add(Property.MT, null); //Связанные моторы.
                     break;
 
                 case "FQT_VIRT":
@@ -82,13 +74,14 @@ namespace Device
 
         public override string GetRange()
         {
-            string range = "";
-            if (parameters.ContainsKey("P_MIN_F") &&
-                parameters.ContainsKey("P_MAX_F"))
+            string range = string.Empty;
+            if (parameters.ContainsKey(Parameter.P_MIN_F) &&
+                parameters.ContainsKey(Parameter.P_MAX_F))
             {
-                range = "_" + parameters["P_MIN_F"].ToString() + ".." +
-                    parameters["P_MAX_F"].ToString();
+                range = "_" + parameters[Parameter.P_MIN_F].ToString() + 
+                    ".." + parameters[Parameter.P_MAX_F].ToString();
             }
+
             return range;
         }
 
@@ -96,7 +89,9 @@ namespace Device
         {
             string res = base.Check();
 
-            if (ArticleName == "" && dSubType != DeviceSubType.FQT_VIRT)
+            bool emptyArticle = ArticleName == string.Empty;
+            bool needCheckArticle = DeviceSubType != DeviceSubType.FQT_VIRT;
+            if (needCheckArticle && emptyArticle)
             {
                 res += $"\"{name}\" - не задано изделие.\n";
             }
@@ -123,7 +118,8 @@ namespace Device
                     }
                     break;
             }
-            return "";
+
+            return string.Empty;
         }
 
         public override Dictionary<string, int> GetDeviceProperties(
@@ -137,57 +133,58 @@ namespace Device
                         case DeviceSubType.FQT:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"V", 1},
-                                {"ABS_V", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.ABS_V, 1},
                             };
 
                         case DeviceSubType.FQT_F:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"V", 1},
-                                {"P_MIN_FLOW", 1},
-                                {"P_MAX_FLOW", 1},
-                                {"P_CZ", 1},
-                                {"F", 1},
-                                {"P_DT", 1},
-                                {"ABS_V", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.P_MIN_FLOW, 1},
+                                {Tag.P_MAX_FLOW, 1},
+                                {Tag.P_CZ, 1},
+                                {Tag.F, 1},
+                                {Parameter.P_DT, 1},
+                                {Tag.ABS_V, 1},
                             };
 
                         case DeviceSubType.FQT_F_OK:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"V", 1},
-                                {"P_MIN_FLOW", 1},
-                                {"P_MAX_FLOW", 1},
-                                {"P_CZ", 1},
-                                {"F", 1},
-                                {"P_DT", 1},
-                                {"ABS_V", 1},
-                                {"OK", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.P_MIN_FLOW, 1},
+                                {Tag.P_MAX_FLOW, 1},
+                                {Tag.P_CZ, 1},
+                                {Tag.F, 1},
+                                {Parameter.P_DT, 1},
+                                {Tag.ABS_V, 1},
+                                {Tag.OK, 1},
                             };
 
                         case DeviceSubType.FQT_VIRT:
                             return new Dictionary<string, int>()
                             {
-                                {"ST", 1},
-                                {"M", 1},
-                                {"V", 1},
-                                {"P_MIN_FLOW", 1},
-                                {"P_MAX_FLOW", 1},
-                                {"P_CZ", 1},
-                                {"F", 1},
-                                {"P_DT", 1},
-                                {"ABS_V", 1},
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.P_MIN_FLOW, 1},
+                                {Tag.P_MAX_FLOW, 1},
+                                {Tag.P_CZ, 1},
+                                {Tag.F, 1},
+                                {Parameter.P_DT, 1},
+                                {Tag.ABS_V, 1},
                             };
                     }
                     break;
             }
+
             return null;
         }
     }
