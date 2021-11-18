@@ -69,16 +69,16 @@ namespace EasyEPlanner
         public int LoadDescription(out string errStr,
             string projectName, bool loadFromLua)
         {
-            errStr = string.Empty;
             Logs.Clear();
             EProjectManager.GetInstance().ProjectDataIsLoaded = false;
-
-            string LuaStr;
-            int res = 0;
 
             var oProgress = new Eplan.EplApi.Base.Progress("EnhancedProgress");
             oProgress.SetAllowCancel(false);
             oProgress.SetTitle("Считывание данных проекта");
+
+            int res = 0;
+            errStr = string.Empty;
+            string thrownExceptions = string.Empty;
 
             try
             {
@@ -105,18 +105,21 @@ namespace EasyEPlanner
                 {
                     EncodingDetector.MainFilesEncoding = null;
 
+                    var luaStr = string.Empty;
                     oProgress.BeginPart(15, "Считывание технологических " +
                         "объектов");
-                    res = LoadDescriptionFromFile(out LuaStr, out errStr, 
-                        projectName, 
+                    res += LoadDescriptionFromFile(out luaStr,
+                        out string mainObjectsErrors, projectName, 
                         $"\\{ProjectDescriptionSaver.MainTechObjectsFileName}");
-                    techObjectManager.LoadDescription(LuaStr, projectName);
-                    errStr = string.Empty;
-                    LuaStr = string.Empty;
-                    res = LoadDescriptionFromFile(out LuaStr, out errStr, 
-                        projectName,
+                    thrownExceptions += mainObjectsErrors;
+                    techObjectManager.LoadDescription(luaStr, projectName);
+
+                    luaStr = string.Empty;
+                    res += LoadDescriptionFromFile(out luaStr,
+                        out string restrictionsErrors, projectName,
                         $"\\{ProjectDescriptionSaver.MainRestrictionsFileName}");
-                    techObjectManager.LoadRestriction(LuaStr);
+                    thrownExceptions += restrictionsErrors;
+                    techObjectManager.LoadRestriction(luaStr);
                     oProgress.EndPart();
                 }
                 else
@@ -138,6 +141,7 @@ namespace EasyEPlanner
                 EProjectManager.GetInstance().ProjectDataIsLoaded = false;
             }
 
+            errStr = thrownExceptions;
             return res;
         }
 
@@ -147,8 +151,9 @@ namespace EasyEPlanner
         private int LoadDescriptionFromFile(out string LuaStr,
             out string errStr, string projectName, string fileName)
         {
-            LuaStr = "";
-            errStr = "";
+            LuaStr = string.Empty;
+            errStr = string.Empty;
+            int res = 0;
 
             StreamReader sr = null;
             string path = GetPtusaProjectsPath(projectName) + projectName +
@@ -158,16 +163,18 @@ namespace EasyEPlanner
             {
                 if (!File.Exists(path))
                 {
-                    errStr = "Файл описания проекта \"" + path +
-                        "\" отсутствует! Создано пустое описание.";
+                    errStr += "Файл описания проекта \"" + path +
+                        "\" отсутствует! Создано пустое описание.\n";
+                    res = 1;
                     Directory.CreateDirectory(Path.GetDirectoryName(path));
                     File.WriteAllText(path, string.Empty);
                 }
             }
             catch (DriveNotFoundException)
             {
-                errStr = "Укажите правильные настройки каталога!";
-                return 1;
+                errStr += "Укажите правильные настройки каталога!\n";
+                res = 1;
+                return res;
             }
 
             bool needEncoding = EncodingDetector.MainFilesEncoding == null &&
@@ -183,7 +190,7 @@ namespace EasyEPlanner
             LuaStr = sr.ReadToEnd();
             sr.Close();
 
-            return 0;
+            return res;
         }
         #endregion
 
