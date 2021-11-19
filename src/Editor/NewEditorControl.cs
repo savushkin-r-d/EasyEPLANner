@@ -494,10 +494,12 @@ namespace Editor
             wasInit = false;
         }
      
-        private IntPtr DlgWndHookCallbackFunction(int code, IntPtr wParam, IntPtr lParam)
+        private IntPtr DlgWndHookCallbackFunction(int code, IntPtr wParam,
+            IntPtr lParam)
         {
             PI.CWPSTRUCT msg =
-                (PI.CWPSTRUCT)System.Runtime.InteropServices.Marshal.PtrToStructure(lParam, typeof(PI.CWPSTRUCT));
+                (PI.CWPSTRUCT)System.Runtime.InteropServices
+                .Marshal.PtrToStructure(lParam, typeof(PI.CWPSTRUCT));
 
             if (msg.hwnd == panelPtr)
             {
@@ -983,7 +985,8 @@ namespace Editor
 
             if (isModified)
             {
-                ITreeViewItem item = editorTView.SelectedObject as ITreeViewItem;
+                ITreeViewItem item = 
+                    editorTView.SelectedObject as ITreeViewItem;
                 noOnChange = true;
                 editorTView.RefreshObject(item);
                 noOnChange = false;
@@ -1003,7 +1006,8 @@ namespace Editor
 
             if (isModified)
             {
-                ITreeViewItem item = editorTView.SelectedObject as ITreeViewItem;
+                ITreeViewItem item = 
+                    editorTView.SelectedObject as ITreeViewItem;
                 noOnChange = true;
                 editorTView.RefreshObject(item.Parent);
                 DisableNeededObjects(item.Parent.Items);
@@ -1184,7 +1188,8 @@ namespace Editor
         /// </summary>
         private void editorTView_MouseEnter(object sender, EventArgs e)
         {
-            globalKeyboardHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_KEYBOARD_LL,
+            globalKeyboardHookPtr = 
+                PI.SetWindowsHookEx(PI.HookType.WH_KEYBOARD_LL,
                 mainWndKeyboardCallbackDelegate, IntPtr.Zero, 0);
         }
 
@@ -1464,7 +1469,8 @@ namespace Editor
         /// <summary>
         /// Обработка изменения выбранной строки.
         /// </summary>
-        private void editorTView_SelectedIndexChanged(object sender, EventArgs e)
+        private void editorTView_SelectedIndexChanged(object sender,
+            EventArgs e)
         {
             ITreeViewItem item = editorTView.SelectedObject as ITreeViewItem;
             if (item == null || noOnChange)
@@ -1493,7 +1499,8 @@ namespace Editor
                         DFrm.CheckShown();
                         if (DFrm.GetInstance().IsVisible())
                         {
-                            DFrm.GetInstance().ShowDisplayObjects(item, SetNewVal);
+                            DFrm.GetInstance().ShowDisplayObjects(
+                                item, SetNewVal);
                             editorTView.RefreshObjects(treeViewItemsList);
                             HiglihtItems();
                         }

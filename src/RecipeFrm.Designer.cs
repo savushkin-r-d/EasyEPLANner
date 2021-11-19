@@ -236,7 +236,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton addRecipeBtn;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        //private Aga.Controls.Tree.TreeViewAdv devicesTreeViewAdv;
         public BrightIdeasSoftware.TreeListView editorRView;
         private System.Windows.Forms.ToolStripButton delRecipeBtn;
         private System.Windows.Forms.ToolStripButton toolStripButton3;

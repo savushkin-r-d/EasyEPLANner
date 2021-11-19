@@ -292,52 +292,6 @@ namespace Editor
         /// </summary>
         public void ShowDlg()
         {
-            /*System.Diagnostics.Process oCurrent =
-                System.Diagnostics.Process.GetCurrentProcess();
-
-            // Идентификатор команды вызова окна "Основные данные изделия"
-            const int wndWmCommand = 32770;//35093;
-            string windowName = "Шаблоны сегментов";//"Штекеры";
-            //const int wndWmCommand = 35357;
-            //string windowName = "Основные данные изделия";
-
-            if (isLoaded == true)
-            {
-                StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent,
-                    wndDevVisibilePtr, wndWmCommand);
-                return;
-            }
-
-            StaticHelper.GUIHelper.SearchWindowDescriptor(oCurrent, windowName,
-                wndWmCommand, ref dialogHandle, ref wndDevVisibilePtr);
-            if (wndDevVisibilePtr != IntPtr.Zero)
-            {
-                StaticHelper.GUIHelper.ShowHiddenWindow(oCurrent,
-                    wndDevVisibilePtr, wndWmCommand);
-
-                if (isLoaded == false)
-                {
-                    StaticHelper.GUIHelper.ChangeWindowMainPanels(
-                        ref dialogHandle, ref panelPtr);
-
-                    Controls.Clear();
-
-                    // Переносим на найденное окно свои элементы (SetParent) и
-                    // подгоняем их размеры и позицию.
-                    PI.SetParent(editorRView.Handle, dialogHandle);
-                    PI.SetParent(toolStrip.Handle, dialogHandle);
-                    ChangeUISize();
-
-                    // Устанавливаем свой хук для найденного окна
-                    // (для изменения размеров своих элементов, сохранения
-                    // изменений при закрытии и отключения хука).
-                    SetUpHook();
-
-                    //deviceIsShown = true;
-                    isLoaded = true;
-                    Editable = true;
-                }
-            } */
             Process currentProcess = Process.GetCurrentProcess();
 
             // Идентификатор команды вызова окна "Навигатор комментариев"
@@ -381,16 +335,13 @@ namespace Editor
                 cancelChanges = false;
             }
 
-            }
+        }
 
         /// <summary>
         /// Устанавливаем хук для найденного окна.
         /// </summary>
         private void SetUpHook()
         {
-           /* uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);
-            dialogHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_CALLWNDPROC,
-                dialogCallbackDelegate, IntPtr.Zero, pid);*/
 
             uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);
             dialogHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_CALLWNDPROC,
@@ -755,10 +706,7 @@ namespace Editor
 
             if (item == null ||
                 !item.IsEditable ||
-                item.EditablePart[e.Column.Index] != e.Column.Index)// ||
-                //(e.Column.Index == 1 &&
-                //item.ContainsBaseObject &&
-                //item.BaseObjectsList.Count == 0))
+                item.EditablePart[e.Column.Index] != e.Column.Index)
             {
                 IsCellEditing = false;
                 e.Cancel = true;
@@ -890,7 +838,8 @@ namespace Editor
         /// <summary>
         /// Обработка изменения выбранной строки.
         /// </summary>
-        private void editorRView_SelectedIndexChanged(object sender, EventArgs e)
+        private void editorRView_SelectedIndexChanged(object sender, 
+            EventArgs e)
         {
             ITreeViewItem item = editorRView.SelectedObject as ITreeViewItem;
             if (item == null || noOnChange)
@@ -932,8 +881,9 @@ namespace Editor
         /// </summary>
         private void editorRView_MouseEnter(object sender, EventArgs e)
         {
-            globalKeyboardHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_KEYBOARD_LL,
-                mainWndKeyboardCallbackDelegate, IntPtr.Zero, 0);
+            globalKeyboardHookPtr = PI.SetWindowsHookEx(
+                PI.HookType.WH_KEYBOARD_LL, mainWndKeyboardCallbackDelegate,
+                IntPtr.Zero, 0);
         }
 
         /// <summary>
@@ -1066,7 +1016,8 @@ namespace Editor
 
             if (isModified)
             {
-                ITreeViewItem item = editorRView.SelectedObject as ITreeViewItem;
+                ITreeViewItem item = 
+                    editorRView.SelectedObject as ITreeViewItem;
                 noOnChange = true;
                 editorRView.RefreshObject(item);
                 noOnChange = false;

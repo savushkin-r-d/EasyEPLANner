@@ -101,8 +101,8 @@ namespace Recipe
                 tmp = rParam.SaveAsLuaTable(prefix+prefix);
                 if (tmp != "")
                 {
-                    res += prefix + "\t[ " + num + " ] =\n" + prefix + prefix+"{\n" +
-                        tmp;
+                    res += prefix + "\t[ " + num + " ] =\n" + prefix + 
+                        prefix + "{\n" + tmp;
                 }
             }
 
@@ -159,8 +159,6 @@ namespace Recipe
                     int[] intMatch = rgx.Matches(pair).Cast<Match>()
                         .Select(x => int.Parse(x.Value))
                         .ToArray();
-                    //pair.Where(Char.IsNumber).Select(
-                    //x => int.Parse(x.ToString())).ToArray();
                     if (intMatch.Length < 2)
                     {
                         continue;

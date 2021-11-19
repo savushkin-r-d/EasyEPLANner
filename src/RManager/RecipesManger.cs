@@ -181,7 +181,8 @@ namespace Recipe
 
         public override ITreeViewItem Insert()
         {
-            Recipe newRecipe = new Recipe("Рецепт № " + (recipes.Count + 1).ToString());
+            Recipe newRecipe = 
+                new Recipe("Рецепт № " + (recipes.Count + 1).ToString());
             newRecipe.AddParent(this);
             recipes.Add(newRecipe);
             return newRecipe;

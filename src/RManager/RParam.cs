@@ -51,9 +51,12 @@ namespace Recipe
         {
             get
             {
-                TechObject.TechObject techObject = TechObjectManager.GetInstance().GetTObject(objId);
-                string toName = techObject.Name + " №" + techObject.TechNumber.ToString();
-                string toParamName = techObject.GetParamsManager().GetParam(objParam - 1).GetName() + 
+                TechObject.TechObject techObject =
+                    TechObjectManager.GetInstance().GetTObject(objId);
+                string toName = 
+                    techObject.Name + " №" + techObject.TechNumber.ToString();
+                string toParamName = 
+                    techObject.GetParamsManager().GetParam(objParam - 1).GetName() + 
                     ", " + techObject.GetParamsManager().GetParam(objParam - 1).GetMeter();
 
                 string propName = toName + ": " + toParamName;
@@ -116,7 +119,9 @@ namespace Recipe
         {
             if (newVal.Contains("{"))
             {
-                int[] intMatch = newVal.Where(Char.IsDigit).Select(x => int.Parse(x.ToString())).ToArray();
+                int[] intMatch = 
+                    newVal.Where(Char.IsDigit).Select(
+                        x => int.Parse(x.ToString())).ToArray();
                 if (intMatch.Length == 2)
                 {
                     if (CheckObjParam(intMatch[0], intMatch[1]))
@@ -148,7 +153,8 @@ namespace Recipe
 
         private bool CheckObjParam(int ObjId, int ObjParam)
         {
-            TechObject.TechObject techObject = TechObjectManager.GetInstance().GetTObject(ObjId);
+            TechObject.TechObject techObject = 
+                TechObjectManager.GetInstance().GetTObject(ObjId);
             if (techObject != null)
             {
                 if (techObject.GetParamsManager().GetParam(ObjParam) != null)

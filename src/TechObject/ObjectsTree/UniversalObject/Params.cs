@@ -446,8 +446,10 @@ namespace TechObject
             TechObject parentTO = Parent.Parent as TechObject;
             if (parentTO != null)
             {
-                int objIdx = TechObjectManager.GetInstance().GetTechObjectN(parentTO);
-                Recipe.RecipesManger.GetInstance().ClearRecipesParams(objIdx, paramIdx);
+                int objIdx = 
+                    TechObjectManager.GetInstance().GetTechObjectN(parentTO);
+                Recipe.RecipesManger.GetInstance().ClearRecipesParams(
+                    objIdx, paramIdx);
             }
         }
 

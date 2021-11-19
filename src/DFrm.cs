@@ -311,7 +311,8 @@ namespace EasyEPlanner
             devicesTreeViewAdv.EndUpdate();
         }
 
-        private void SelectedDisplayPairs(List<Node> nodes, string checkedObjects)
+        private void SelectedDisplayPairs(List<Node> nodes,
+            string checkedObjects)
         {
             foreach (Node subNode in nodes)
             {
@@ -604,11 +605,7 @@ namespace EasyEPlanner
             devicesTreeViewAdv.Refresh();
             var treeModel = new TreeModel();
 
-            //FillDevicesNode(ref treeModel);
-
-            //bool showParameters = displayParametersLastSelected &&
-                //techObjectIndex >= 0;
-            if (displayParametersLastSelected)//if (showParameters)
+            if (displayParametersLastSelected)
             {
                 if (techObjectIndex >= 0)
                 {
@@ -631,7 +628,6 @@ namespace EasyEPlanner
                 SortTreeView(treeModel);
             }
 
-            //SortTreeView(treeModel);
 
             devicesTreeViewAdv.Model = treeModel;
 
@@ -732,7 +728,8 @@ namespace EasyEPlanner
             foreach(TechObject.TechObject techObject in tObjects)
             {
 
-                string objName = techObject.Name + " №" + techObject.TechNumber.ToString();
+                string objName = techObject.Name + " №" + 
+                    techObject.TechNumber.ToString();
                 var objNode = new Node(objName);
                 objNode.Tag = techObject;
 
@@ -741,7 +738,8 @@ namespace EasyEPlanner
 
                 foreach (TechObject.Param param in parameters.Items)
                 {
-                    var parNode = new Node(param.GetName() +", " + param.GetMeter());
+                    var parNode = new Node(param.GetName() +", " +
+                        param.GetMeter());
                     parNode.Tag = param;
                     objNode.Nodes.Add(parNode);
                 }
@@ -1224,9 +1222,8 @@ namespace EasyEPlanner
                 recipesEnabled;
             prevShowChannels = !enabledEdit;
             prevShowCheckboxes = enabledEdit;
-            //treeViewItemLastSelected = selectedItem;
 
-            GetItemDataForShowObjects(selectedItem,//treeViewItemLastSelected,
+            GetItemDataForShowObjects(selectedItem,
                 out Device.DeviceType[] devTypes,
                 out Device.DeviceSubType[] devSubTypes,
                 out bool displayParameters, 
@@ -1291,7 +1288,7 @@ namespace EasyEPlanner
             {
                 item.GetDisplayObjects(out devTypes, out devSubTypes,
                     out displayParameters);
-                checkedObjects = item.CheckedObjects;//item.EditText[1];
+                checkedObjects = item.CheckedObjects;
 
                 techObjectIndex = -1;
                 var mainObject = Editor.Editor.GetInstance()
