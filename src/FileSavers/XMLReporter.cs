@@ -763,7 +763,8 @@ namespace EasyEPlanner
             channelElm.SetAttribute("xmlns:parameters", nsParams);
             
             if (node.Text.Contains("UP_TIME") || 
-                node.Text.Contains("CMD_ANSWER"))
+                node.Text.Contains("CMD_ANSWER") ||
+                node.Text.Contains("VERSION"))
             {
                 AddChannelAtribute(xmlDoc, channelElm, "IsString");
             
