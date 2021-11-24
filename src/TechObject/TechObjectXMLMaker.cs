@@ -103,6 +103,8 @@ namespace TechObject
                 "SYSTEM.P_RESTRICTIONS_MANUAL_TIME");
             systemNode.Nodes.Add("SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR",
                 "SYSTEM.P_AUTO_PAUSE_OPER_ON_DEV_ERR");
+            systemNode.Nodes.Add("SYSTEM.VERSION",
+                "SYSTEM.VERSION");
             GenerateIONodesEnablingTags(systemNode);
             rootNode.Nodes.Add(systemNode);
         }
