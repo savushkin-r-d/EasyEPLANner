@@ -301,7 +301,6 @@ namespace EasyEPlanner
             var treeModel = devicesTreeViewAdv.Model as TreeModel;
             List<Node> nodes = treeModel.Nodes.ToList();
             SelectedDisplayObjects(nodes, checkedObjects);
-
             
             SelectedDisplayPairs(nodes, checkedObjects);
 
@@ -310,6 +309,10 @@ namespace EasyEPlanner
 
             devicesTreeViewAdv.EndUpdate();
         }
+
+        /// Минимальное количество параметров, которые должны входить в пару
+        /// {n ,m}, где n - номер объекта, m - номер параметра объекта.
+        private const int minParamsCount = 2;
 
         private void SelectedDisplayPairs(List<Node> nodes,
             string checkedObjects)
@@ -327,11 +330,10 @@ namespace EasyEPlanner
                         string pattern = @"\d{1,}";
                         Regex rgx = new Regex(pattern);
 
-
                         int[] intMatch = rgx.Matches(pair).Cast<Match>()
                             .Select(x => int.Parse(x.Value))
                             .ToArray();
-                        if (intMatch.Length < 2)
+                        if (intMatch.Length < minParamsCount)
                         {
                             continue;
                         }

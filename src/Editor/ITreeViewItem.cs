@@ -252,6 +252,9 @@ namespace Editor
         /// </summary>
         bool MarkToCut { get; set; }
 
+        /// <summary>
+        /// Пара выбранных для рецепта объекта и его параметра
+        /// </summary>
         string CheckedObjects { get; }
     }
 }

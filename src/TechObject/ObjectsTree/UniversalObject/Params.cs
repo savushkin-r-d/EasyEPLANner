@@ -221,10 +221,8 @@ namespace TechObject
                 parameters.Remove(removingParam);
                 return true;
             }
-
             return false;
         }
-
 
         override public bool SetNewValue(string newValue)
         {

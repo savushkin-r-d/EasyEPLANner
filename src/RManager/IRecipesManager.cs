@@ -25,7 +25,5 @@ namespace Recipe
         /// <param name="prefixStr">Отступ</param>
         /// <returns></returns>
         string SaveAsLuaTable(string prefixStr);
-
     }
-
 }

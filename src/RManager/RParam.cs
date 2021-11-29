@@ -68,10 +68,8 @@ namespace Recipe
         public override int[] EditablePart
         {
             get
-            {
-                
+            {               
                 return new int[] { -1, 1 };
-
             }
         }
 
@@ -147,9 +145,7 @@ namespace Recipe
 
             return true;
         }
-
         #endregion
-
 
         private bool CheckObjParam(int ObjId, int ObjParam)
         {

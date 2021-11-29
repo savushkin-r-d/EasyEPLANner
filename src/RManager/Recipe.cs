@@ -10,8 +10,7 @@ using TechObject;
 using System.Text.RegularExpressions;
 
 namespace Recipe
-{
-    
+{   
     public class Recipe : TreeViewItem
     {
         public Recipe(string Name)
@@ -30,11 +29,10 @@ namespace Recipe
             return instance;
         }
 
-
-
         public void AddParam( int ObjId, int ObjParam, float DefValue )
         {
-            if (CheckForDupicateParam(ObjId, ObjParam))
+            bool isNewParamPair = CheckForDupicateParam(ObjId, ObjParam);
+            if (isNewParamPair)
             {
                 RParam param = new RParam(ObjId, ObjParam, DefValue);
                 param.AddParent(this);
@@ -57,7 +55,9 @@ namespace Recipe
         {
             foreach(RParam par in parameters)
             {
-                if ((par.ObjID == ObjId) && (par.ObjParam == ObjParam))
+                bool isPairMatched = 
+                    (par.ObjID == ObjId) && (par.ObjParam == ObjParam);
+                if (isPairMatched)
                 {
                     return false;
                 }
@@ -118,7 +118,7 @@ namespace Recipe
         {
             get
             {
-                return new string[] { name, "" };
+                return new string[] { name, string.Empty };
             }
         }
 
@@ -129,6 +129,10 @@ namespace Recipe
                 return parameters.ToArray();
             }
         }
+
+        /// Минимальное количество параметров, которые должны входить в пару
+        /// {n ,m}, где n - номер объекта, m - номер параметра объекта.
+        private const int minParamsCount = 2;
 
         override public bool SetNewValue(string newValue)
         {
@@ -155,11 +159,10 @@ namespace Recipe
                     string pattern = @"\d{1,}";
                     Regex rgx = new Regex(pattern);
 
-
                     int[] intMatch = rgx.Matches(pair).Cast<Match>()
                         .Select(x => int.Parse(x.Value))
                         .ToArray();
-                    if (intMatch.Length < 2)
+                    if (intMatch.Length < minParamsCount)
                     {
                         continue;
                     }
@@ -170,28 +173,27 @@ namespace Recipe
                     {
                         prevPairs.Remove(pair);
                     }
-
                 }
 
                 foreach(string pair in prevPairs)
                 {
                     int[] intMatch = pair.Where(Char.IsDigit).Select(
                         x => int.Parse(x.ToString())).ToArray();
-                    if (intMatch.Length < 2)
+                    if (intMatch.Length < minParamsCount)
                     {
                         continue;
                     }
 
-                    DeleteParam(intMatch[0], intMatch[1]);
+                    int objId = intMatch[0];
+                    int objParam = intMatch[1];
+                    DeleteParam(objId, objParam);
                 }
-
             }
             else
             {
                 name = newValue;
             }
             
-
             return true;
         }
 

@@ -140,12 +140,9 @@ namespace Recipe
 
             if (recipe != null)
             {
-
                 recipes.Remove(recipe);
-
                 return true;
             }
-
             return false;
         }
 
@@ -186,7 +183,6 @@ namespace Recipe
             newRecipe.AddParent(this);
             recipes.Add(newRecipe);
             return newRecipe;
-
         }
 
         override public ITreeViewItem Replace(object child, object copyObject)
@@ -217,17 +213,18 @@ namespace Recipe
                 int index = recipes.IndexOf(movedRecipe);
                 if (index > 0)
                 {
-
                     recipes.Remove(movedRecipe);
                     recipes.Insert(index - 1, movedRecipe);
-
                     recipes[index].AddParent(this);
                     return recipes[index];
                 }
             }
-
             return null;
         }
+
+        ///Последняя позиция в списке, с которой мы можем переместиться на
+        ///одну позицию вниз
+        private const int lastPosInTheList = 2;
 
         override public ITreeViewItem MoveDown(object child)
         {
@@ -235,11 +232,10 @@ namespace Recipe
             if (movedRecipe != null)
             {
                 int index = recipes.IndexOf(movedRecipe);
-                if (index <= recipes.Count - 2)
+                if (index <= recipes.Count - lastPosInTheList)
                 {
                     recipes.Remove(movedRecipe);
                     recipes.Insert(index + 1, movedRecipe);
-
                     recipes[index].AddParent(this);
                     return recipes[index];
                 }

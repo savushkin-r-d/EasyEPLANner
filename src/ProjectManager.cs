@@ -527,8 +527,7 @@ namespace EasyEPlanner
         /// </summary>
         public void ShowRecipesModule()
         {
-            recipeEditor.ShowRecipes(recipesManager as Editor.ITreeViewItem);
-            
+            recipeEditor.ShowRecipes(recipesManager as Editor.ITreeViewItem);          
         }
 
         /// <summary>
@@ -872,7 +871,6 @@ namespace EasyEPlanner
         /// </summary>
         private Editor.IEditor editor;
 
-
         private RecipeFrm recipeEditor;
 
         /// <summary>
@@ -880,6 +878,9 @@ namespace EasyEPlanner
         /// </summary>
         private ITechObjectManager techObjectManager;
 
+        /// <summary>
+        /// Менеджер рецептов.
+        /// </summary>
         private IRecipesManager recipesManager;
 
         /// <summary>

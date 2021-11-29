@@ -294,7 +294,7 @@ namespace Editor
         {
             Process currentProcess = Process.GetCurrentProcess();
 
-            // Идентификатор команды вызова окна "Навигатор комментариев"
+            // Идентификатор команды вызова окна "Шаблоны сегментов"
             const int wndWmCommand = 35587;
             string windowName = "Шаблоны сегментов";
 
@@ -707,18 +707,14 @@ namespace Editor
                 IsCellEditing = false;
                 e.Cancel = true;
                 return;
-            }
-
-           
+            }          
                 InitTextBoxCellEditor();
                 textBoxCellEditor.Text = item.EditText[e.Column.Index];
                 textBoxCellEditor.Bounds = e.CellBounds;
                 e.Control = textBoxCellEditor;
                 textBoxCellEditor.Focus();
-                editorRView.Freeze();
-            
+                editorRView.Freeze();         
         }
-
 
         /// <summary>
         /// Обработка полученных данных после редактирования.
@@ -740,12 +736,10 @@ namespace Editor
                 editorRView.Unfreeze();
                 return;
             }
-
             
             editorRView.Controls.Remove(textBoxCellEditor);
             isModified = item.SetNewValue(e.NewValue.ToString());
            
-
             if (isModified)
             {
                 RefreshTree();
@@ -755,7 +749,6 @@ namespace Editor
                     DisableNeededObjects(item.Parent.Items);
                 }
             }
-
             e.Cancel = true;
             editorRView.Unfreeze();
         }
@@ -867,7 +860,6 @@ namespace Editor
                     }
                 }
             }
-
             editorRView.EndUpdate();
             editorRView.Focus();
         }
@@ -938,7 +930,6 @@ namespace Editor
                 // Вставка скопированного ранее элемента.
                 if (e.KeyCode == Keys.V && e.Control == true)
                 {
-
                     PasteItem(item);
                     return;
                 }
@@ -997,7 +988,6 @@ namespace Editor
 
                 return;
             }
-
             return;
         }
 
@@ -1065,7 +1055,6 @@ namespace Editor
                 ReplaceItem(item);
             }
         }
-
 
         /// <summary>
         /// Хранение скопированного объекта.
@@ -1163,8 +1152,6 @@ namespace Editor
                         copiedItem.MarkToCut = false;
                         copyItem = null;
                     }
-
-
                     RefreshTree();
                     DisableNeededObjects(newItem.Parent.Items);
                 }
@@ -1191,7 +1178,6 @@ namespace Editor
                         RefreshTree();
                         DisableNeededObjects(treeViewItemsList.ToArray());
                     }
-
                 }
             }
         }
@@ -1211,7 +1197,6 @@ namespace Editor
                     editorRView.RefreshObjects(itemParent.Items);
                     editorRView.SelectedIndex--;
                 }
-
             }
         }
 
@@ -1230,7 +1215,6 @@ namespace Editor
                     editorRView.RefreshObjects(itemParent.Items);
                     editorRView.SelectedIndex++;
                 }
-
             }
         }
 

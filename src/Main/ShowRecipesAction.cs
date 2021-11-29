@@ -33,8 +33,7 @@ namespace EasyEPlanner
                     // Синхронизация названий модулей и устройств в текущем
                     // проекте.
                     ProjectManager.GetInstance().ShowRecipesModule();
-                    //MessageBox.Show("Здесь должно быть дерево рецептов", "EPlaner",
-                       // MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
                 }
 
             }
