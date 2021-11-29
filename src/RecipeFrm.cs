@@ -333,6 +333,7 @@ namespace Editor
                 editIsShown = true;
                 IsShown = true;
                 cancelChanges = false;
+                Editable = true;
             }
 
         }
@@ -528,11 +529,6 @@ namespace Editor
             cancelChanges = true;
             editorRView.FinishCellEdit();
             editorRView.ClearObjects();
-
-            /*if (Editable)
-            {
-                edit_toolStripButton_Click(this, new EventArgs());
-            }*/
 
             PI.UnhookWindowsHookEx(dialogHookPtr);
             PI.UnhookWindowsHookEx(globalKeyboardHookPtr);

@@ -337,7 +337,7 @@ namespace EasyEPlanner
         public const string MainTechObjectsFileName = "main.objects.lua";
         private const string mainTechDevicesFileName = "main.devices.lua";
         public const string MainRestrictionsFileName = "main.restrictions.lua";
-        public const string MainRecipesFileName = "recipes.lua";
+        public const string MainRecipesFileName = "main.recipes.lua";
         private const string mainProgramFileName = "main.plua";
         private static string mainProgramFilePattern = "";
         private static bool mainProgramFilePatternIsLoaded = false;

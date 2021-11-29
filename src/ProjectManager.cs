@@ -125,9 +125,10 @@ namespace EasyEPlanner
 
                     //Считывание таблицы рецептов
                     var LuaStr = string.Empty;
-                    res = LoadDescriptionFromFile(out LuaStr, out errStr,
+                    res = LoadDescriptionFromFile(out LuaStr, out string recipesErrors,
                         projectName,
                         $"\\{ProjectDescriptionSaver.MainRecipesFileName}");
+                    thrownExceptions += recipesErrors;
                     recipesManager.LoadRecipes(LuaStr);
                     oProgress.EndPart();
                 }
