@@ -112,7 +112,7 @@ namespace TechObject
             {
                 if (techObject.BaseTechObject.IsAttachable)
                 {
-                    techObjectManager.RemoveAttachingToUnits(techObject);
+                    techObjectManager.RemoveAttachingToObjects(techObject);
                 }
 
                 int globalNum = globalObjectsList.IndexOf(techObject) + 1;
