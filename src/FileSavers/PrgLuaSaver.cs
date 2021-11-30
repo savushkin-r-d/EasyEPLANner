@@ -160,22 +160,20 @@ namespace EasyEPlanner
             var res = string.Empty;
             var temp = string.Empty;
 
-            string previouslyObjectName = string.Empty;
-            foreach (var techObjectPair in attachedObjectsDict)
+            var previouslyObjectName = string.Empty;
+            foreach (KeyValuePair<int, string> techObjectPair in attachedObjectsDict)
             {
-                TechObject.TechObject mainObj = TechObjectManager.GetInstance()
-                    .GetTObject(techObjectPair.Key);
+                TechObject.TechObject mainObj = TechObjectManager.GetInstance().GetTObject(techObjectPair.Key);
                 string mainObjNameLowCase = mainObj.NameEplanForFile.ToLower();
-                string techObjNameForFile = "prg." + mainObjNameLowCase +
-                        mainObj.TechNumber;
-                var bindedObjects = GetBindedObjectsList(techObjectPair);
-                var mainObjAttachedObjectGroups =
+                string techObjNameForFile = $"prg.{mainObjNameLowCase}{mainObj.TechNumber}";
+                List<TechObject.TechObject> bindedObjects = GetBindedObjectsList(techObjectPair);
+                Dictionary<string, List<TechObject.TechObject>> mainObjAttachedObjectGroups =
                     GetAttachedObjectsGroupsDict(bindedObjects);
-                foreach (var groupPair in mainObjAttachedObjectGroups)
+                foreach (KeyValuePair<string, List<TechObject.TechObject>> groupPair in mainObjAttachedObjectGroups)
                 {
                     string groupName = groupPair.Key;
                     var objectsDescription = new List<string>();
-                    foreach (var obj in groupPair.Value)
+                    foreach (TechObject.TechObject obj in groupPair.Value)
                     {
                         string objDescription =
                             $"prg.{obj.NameEplanForFile.ToLower()}{obj.TechNumber}";
@@ -191,7 +189,7 @@ namespace EasyEPlanner
                     if (groupPair.Value.Count > 1)
                     {
                         temp += $"{techObjNameForFile}.{groupName}" +
-                           $" = {{ {string.Join(",", objectsDescription)} }}\n";
+                           $" = {{ {string.Join(", ", objectsDescription)} }}\n";
                     }
                     else
                     {
@@ -226,7 +224,7 @@ namespace EasyEPlanner
             TechObject.TechObject techObject = techObjectManager
                 .GetTObject(techObjectPair.Key);
             string[] attachedObjs = techObjectPair.Value.Split(' ');
-            foreach(var objNumStr in attachedObjs)
+            foreach(string objNumStr in attachedObjs)
             {
                 bool isDigit = int.TryParse(objNumStr, out int objNum);
                 if (isDigit)
