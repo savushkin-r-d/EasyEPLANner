@@ -35,6 +35,7 @@ namespace Tests.TechObject
                 Assert.AreEqual(zeroValue, obj.AggregateParameters.Count);
                 Assert.IsEmpty(obj.LuaModuleName);
                 Assert.AreEqual(zeroValue, obj.BaseProperties.Count);
+                Assert.IsFalse(obj.Deprecated);
             });
         }
 
@@ -51,7 +52,15 @@ namespace Tests.TechObject
                     paramValueStr);
             }
 
-            Assert.AreEqual(parametersCount, obj.Equipment.Count);
+            var differentReferencesCount = obj.Equipment
+                .Select(x => x.GetHashCode())
+                .ToArray()
+                .Distinct();
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(parametersCount, differentReferencesCount.Count());
+                Assert.AreEqual(parametersCount, obj.Equipment.Count);
+            });
         }
 
         [TestCase(1)]
@@ -67,7 +76,15 @@ namespace Tests.TechObject
                     paramValueStr);
             }
 
-            Assert.AreEqual(parametersCount, obj.AggregateParameters.Count);
+            var differentReferencesCount = obj.AggregateParameters
+                .Select(x => x.GetHashCode())
+                .ToArray()
+                .Distinct();
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(parametersCount, differentReferencesCount.Count());
+                Assert.AreEqual(parametersCount, obj.AggregateParameters.Count);
+            });
         }
 
         [TestCase(1)]
@@ -84,7 +101,15 @@ namespace Tests.TechObject
                     defaultValue);
             }
 
-            Assert.AreEqual(parametersCount, obj.AggregateParameters.Count);
+            var differentReferencesCount = obj.AggregateParameters
+                .Select(x => x.GetHashCode())
+                .ToArray()
+                .Distinct();
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(parametersCount, differentReferencesCount.Count());
+                Assert.AreEqual(parametersCount, obj.AggregateParameters.Count);
+            });
         }
 
         [Test]
@@ -119,7 +144,15 @@ namespace Tests.TechObject
             }
             int baseOperationsCount = obj.BaseOperations.Count;
 
-            Assert.AreEqual(expectedOperationsCount, baseOperationsCount);
+            var differentReferencesCount = obj.BaseOperations
+                .Select(x => x.GetHashCode())
+                .ToArray()
+                .Distinct();
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedOperationsCount, differentReferencesCount.Count());
+                Assert.AreEqual(expectedOperationsCount, baseOperationsCount);
+            });
         }
 
         [TestCaseSource(nameof(TestCaseSourceForAddObjectGroup))]
@@ -135,8 +168,13 @@ namespace Tests.TechObject
             }
 
             var group = obj.ObjectGroupsList.First();
+            var differentReferencesCount = obj.ObjectGroupsList
+                .Select(x => x.GetHashCode())
+                .ToArray()
+                .Distinct();
             Assert.Multiple(() =>
             {
+                Assert.AreEqual(groupsCount, differentReferencesCount.Count());
                 Assert.AreEqual(groupsCount, obj.ObjectGroupsList.Count);
                 Assert.AreEqual(expectedAllowedObjects, group.WorkStrategy.AllowedObjects);
             });
@@ -278,6 +316,7 @@ namespace Tests.TechObject
             string expectedBindingName = "BindingName";
             bool expectedIsPID = true;
             string expectedLuaModuleName = "LuaModuleName";
+            bool expectedDeprecated = false;
 
             var obj = new BaseTechObject();
             obj.Name = expectedName;
@@ -287,6 +326,7 @@ namespace Tests.TechObject
             obj.BindingName = expectedBindingName;
             obj.IsPID = expectedIsPID;
             obj.LuaModuleName = expectedLuaModuleName;
+            obj.Deprecated = expectedDeprecated;
 
             // null - is Owner, dependency
             var clonedObj = obj.Clone(null);
@@ -301,6 +341,7 @@ namespace Tests.TechObject
                 Assert.AreEqual(expectedBindingName, clonedObj.BindingName);
                 Assert.AreEqual(expectedIsPID, clonedObj.IsPID);
                 Assert.AreEqual(expectedLuaModuleName, clonedObj.LuaModuleName);
+                Assert.AreEqual(expectedDeprecated, clonedObj.Deprecated);
             });
         }
 
@@ -325,8 +366,12 @@ namespace Tests.TechObject
 
             obj.S88Level = s88Level;
 
-            Assert.AreEqual(expectedValue, obj.IsAttachable);
-            Assert.AreEqual(s88Level, obj.S88Level);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedValue, obj.IsAttachable);
+                Assert.AreEqual(s88Level, obj.S88Level);
+            });
+            
         }
 
         [TestCase(1, true)]
@@ -358,8 +403,13 @@ namespace Tests.TechObject
             }
 
             var firstParam = emptyObject.SystemParams.GetParam(paramLuaName);
+            var differentReferencesCount = emptyObject.SystemParams.Items
+                .Select(x => x.GetHashCode())
+                .ToArray()
+                .Distinct();
             Assert.Multiple(() =>
             {
+                Assert.AreEqual(paramsCount, differentReferencesCount.Count());
                 Assert.AreEqual(paramsCount, emptyObject.SystemParams.Count);
                 Assert.AreEqual(paramName, firstParam.Name);
                 Assert.AreEqual(paramLuaName, firstParam.LuaName);
@@ -381,8 +431,13 @@ namespace Tests.TechObject
             }
 
             var firstParam = emptyObj.Parameters.GetParam(paramLuaName);
+            var differentReferencesCount = emptyObj.Parameters.Items
+                .Select(x => x.GetHashCode())
+                .ToArray()
+                .Distinct();
             Assert.Multiple(() =>
             {
+                Assert.AreEqual(paramsCount, differentReferencesCount.Count());
                 Assert.AreEqual(paramsCount, emptyObj.Parameters.Items.Length);
                 Assert.AreEqual(paramName, firstParam.GetName());
                 Assert.AreEqual(paramLuaName, firstParam.GetNameLua());
