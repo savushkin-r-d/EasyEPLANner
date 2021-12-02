@@ -14,10 +14,12 @@ init_base_objects = function()
         local isPid = value.isPID or false
         local luaModuleName = value.luaModuleName or ""
         local monitorName = value.monitorName or "TankObj"
+        local deprecated = value.deprecated or false
 
         -- Добавить базовый объект
         local baseObject = AddBaseObject(name, eplanName, s88Level,
-            basicName, bindingName, isPid, luaModuleName, monitorName)
+            basicName, bindingName, isPid, luaModuleName, monitorName,
+            deprecated)
 
         -- Добавить группы танков
         local objectGroups = value.objectGroups or { }

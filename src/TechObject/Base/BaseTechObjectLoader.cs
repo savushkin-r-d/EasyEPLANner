@@ -190,14 +190,15 @@ namespace TechObject
         /// <param name="isPID">Является ли объект ПИД-регулятором</param>
         /// <param name="luaModuleName">Имя модуля Lua для объекта</param>
         /// <param name="monitorName">Имя объекта Monitor (SCADA)</param>
+        /// <param name="deprecated">Устарел объект, или нет</param>
         /// <returns>Базовый объект в экземпляр LUA</returns>
         public BaseTechObject AddBaseObject(string name, string eplanName,
             int s88Level, string basicName, string bindingName, bool isPID,
-            string luaModuleName, string monitorName)
+            string luaModuleName, string monitorName, bool deprecated)
         {
             return baseTechObjectManager.AddBaseObject(name, eplanName,
                 s88Level, basicName, bindingName, isPID, luaModuleName,
-                monitorName);
+                monitorName, deprecated);
         }
 
         const string defaultFileName = "DescriptionTemplate.lua";

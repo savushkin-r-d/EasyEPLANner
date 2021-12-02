@@ -16,10 +16,11 @@ namespace TechObject
         /// <param name="isPID">Является ли объект ПИД-регулятором</param>
         /// <param name="luaModuleName">Имя модуля Lua для объекта</param>
         /// <param name="monitorName">Имя объекта Monitor (SCADA)</param>
+        /// <param name="deprecated">Устарел объект, или нет</param>
         /// <returns>Базовый объект</returns>
         BaseTechObject AddBaseObject(string name, string eplanName,
             int s88Level, string basicName, string bindingName, bool isPID,
-            string luaModuleName, string monitorName);
+            string luaModuleName, string monitorName, bool deprecated);
 
         BaseTechObject GetTechObjectCopy(string name);
 
@@ -75,7 +76,7 @@ namespace TechObject
 
         public BaseTechObject AddBaseObject(string name, string eplanName,
             int s88Level, string basicName, string bindingName, bool isPID,
-            string luaModuleName, string monitorName)
+            string luaModuleName, string monitorName, bool deprecated)
         {
             var obj = new BaseTechObject();
             obj.Name = name;
@@ -86,6 +87,7 @@ namespace TechObject
             obj.IsPID = isPID;
             obj.LuaModuleName = luaModuleName;
             obj.MonitorName = monitorName;
+            obj.Deprecated = deprecated;
 
             bool correctName = name != null && name.Trim() != string.Empty;
             bool correctEplanName = eplanName != null &&

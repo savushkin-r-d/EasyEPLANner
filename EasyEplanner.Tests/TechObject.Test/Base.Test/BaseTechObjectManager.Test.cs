@@ -91,7 +91,7 @@ namespace Tests.TechObject
             {
                 manager.AddBaseObject(obj.Name, obj.EplanName, obj.S88Level,
                     obj.BasicName, obj.BindingName, obj.IsPID,
-                    obj.LuaModuleName, obj.MonitorName);
+                    obj.LuaModuleName, obj.MonitorName, obj.Deprecated);
 
                 BaseTechObject addedObj = manager.Objects
                     .Where(x => x.Name == obj.Name ||
@@ -106,7 +106,8 @@ namespace Tests.TechObject
                         addedObj.BindingName == obj.BindingName &&
                         addedObj.IsPID == obj.IsPID &&
                         addedObj.LuaModuleName == obj.LuaModuleName &&
-                        addedObj.MonitorName == obj.MonitorName;
+                        addedObj.MonitorName == obj.MonitorName &&
+                        addedObj.Deprecated == obj.Deprecated;
                 }
             }
 
@@ -133,6 +134,7 @@ namespace Tests.TechObject
                         IsPID = true,
                         LuaModuleName = "LuaModuleNameOne",
                         MonitorName = "MonitorName1",
+                        Deprecated = true,
                     },
                     new BaseTechObject()
                     {
@@ -144,6 +146,7 @@ namespace Tests.TechObject
                         IsPID = false,
                         LuaModuleName = "SecondModule",
                         MonitorName = "MonitorName2",
+                        Deprecated= false,
                     },
                 },
                 2,
@@ -164,6 +167,7 @@ namespace Tests.TechObject
                         IsPID = true,
                         LuaModuleName = "ModuleOne",
                         MonitorName = "MonitorName1",
+                        Deprecated = false,
                     },
                     new BaseTechObject()
                     {
@@ -175,6 +179,7 @@ namespace Tests.TechObject
                         IsPID = false,
                         LuaModuleName = "ModuleSecond",
                         MonitorName = "MonitorName2",
+                        Deprecated = false,
                     },
                     new BaseTechObject()
                     {
@@ -186,6 +191,7 @@ namespace Tests.TechObject
                         IsPID = true,
                         LuaModuleName = "ModuleOne",
                         MonitorName = "MonitorName1",
+                        Deprecated = false,
                     },
                     new BaseTechObject()
                     {
@@ -197,6 +203,7 @@ namespace Tests.TechObject
                         IsPID = false,
                         LuaModuleName = "ThirdModule",
                         MonitorName = "ThirdMonitorName",
+                        Deprecated = false,
                     },
                 },
                 3,
@@ -217,6 +224,7 @@ namespace Tests.TechObject
                         IsPID = false,
                         LuaModuleName = "FirstModule",
                         MonitorName = "MonitorName1",
+                        Deprecated = false,
                     },
                     new BaseTechObject()
                     {
@@ -228,6 +236,7 @@ namespace Tests.TechObject
                         IsPID = true,
                         LuaModuleName = "InvalidModule",
                         MonitorName = "InvalidNameMonitor",
+                        Deprecated = false,
                     },
                     new BaseTechObject()
                     {
@@ -239,6 +248,7 @@ namespace Tests.TechObject
                         IsPID = false,
                         LuaModuleName = "ThirdModule",
                         MonitorName = "ThirdMonitorName",
+                        Deprecated = false,
                     },
                 },
                 1,
@@ -259,6 +269,7 @@ namespace Tests.TechObject
                         IsPID = true,
                         LuaModuleName = "FirstModule",
                         MonitorName = "MonitorName1",
+                        Deprecated = false,
                     },
                     new BaseTechObject()
                     {
@@ -270,6 +281,7 @@ namespace Tests.TechObject
                         IsPID = false,
                         LuaModuleName = "SecondModule",
                         MonitorName = "MonitorName2",
+                        Deprecated = false,
                     },
                 },
                 0,
