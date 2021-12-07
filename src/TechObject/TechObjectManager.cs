@@ -722,19 +722,19 @@ namespace TechObject
             attachedObjects.SetValue(string.Join(" ", attachingObjectsArr));
         }
 
-        public void RemoveAttachingToUnits(TechObject techObject)
+        public void RemoveAttachingToObjects(TechObject techObject)
         {
             int objNum = TechObjectManager.GetInstance()
                 .GetTechObjectN(techObject);
             foreach (var obj in TechObjects)
             {
-                RemoveAttachingToUnit(obj.AttachedObjects, objNum);
+                RemoveAttachingToObject(obj.AttachedObjects, objNum);
 
                 if (obj.BaseTechObject?.ObjectGroupsList != null)
                 {
                     foreach (var group in obj.BaseTechObject.ObjectGroupsList)
                     {
-                        RemoveAttachingToUnit(group, objNum);
+                        RemoveAttachingToObject(group, objNum);
                     }
                 }
             }
@@ -746,7 +746,7 @@ namespace TechObject
         /// <param name="attachedObjects">Элемент с привязанными объектами
         /// </param>
         /// <param name="objNum">Номер удаляемого объекта</param>
-        private void RemoveAttachingToUnit(AttachedObjects attachedObjects,
+        private void RemoveAttachingToObject(AttachedObjects attachedObjects,
             int objNum)
         {
             if (attachedObjects?.Value == string.Empty)
