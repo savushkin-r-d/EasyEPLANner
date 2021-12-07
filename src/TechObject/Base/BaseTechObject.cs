@@ -25,6 +25,7 @@ namespace TechObject
             LuaModuleName = string.Empty;
             MonitorName = string.Empty;
             BaseProperties = new BaseProperties();
+            Deprecated = false;
 
             objectGroups = new List<AttachedObjects>();
         }
@@ -472,6 +473,8 @@ namespace TechObject
         /// Базовые свойства объекта
         /// </summary>
         public BaseProperties BaseProperties { get; set; }
+
+        public bool Deprecated { get; set; }
 
         private List<BaseParameter> aggregateProperties;
         private List<AttachedObjects> objectGroups;

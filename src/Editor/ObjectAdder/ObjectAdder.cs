@@ -101,7 +101,8 @@ namespace Editor
                 string selectedType = objectTypes.SelectedItem.ToString();
                 int level = baseTechObjectsManager.GetS88Level(selectedType);
                 var subTypes = baseTechObjectsManager.Objects
-                    .Where(x => x.S88Level == level)
+                    .Where(x => x.S88Level == level &&
+                        x.Deprecated == false)
                     .Select(x => x.Name).ToArray();
                 objectSubTypes.Items.AddRange(subTypes);
             }
