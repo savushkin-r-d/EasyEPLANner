@@ -177,11 +177,6 @@ namespace EasyEPlanner
         private static void SaveTechDevicesFile(ParametersForSave par)
         {
             string fileName = par.path + @"\" + mainTechDevicesFileName;
-            if (!File.Exists(fileName))
-            {
-                return;
-            }
-
             var fileWriter = new StreamWriter(fileName,
             false, EncodingDetector.MainFilesEncoding);
 
