@@ -443,9 +443,13 @@ namespace TechObject
         private void CheckNotEmptyDisabledAggregateProperties(
             BaseParameter property, ref string errors)
         {
+            // Disabled устанавливается, когда был хотя бы раз запущен UI
+            // редактора технологических объектов,
+            // а если не был запущен, то надо смотреть NeedDisable.
             bool notEmptyDisabledAggregateProperty =
                 property.Owner is BaseTechObject &&
-                !property.Disabled &&
+                property.Disabled == false &&
+                property.NeedDisable == false &&
                 (property.Value == "");
             if (notEmptyDisabledAggregateProperty)
             {
