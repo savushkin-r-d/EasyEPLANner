@@ -552,6 +552,38 @@ namespace TechObject
             }
         }
 
+        public override ITreeViewItem Replace(object child, object copyObject)
+        {
+            var copyAction = copyObject as IAction;
+            var childAction = child as IAction;
+            bool notNullObjects = copyAction != null && childAction != null;
+            if (notNullObjects)
+            {
+                bool canReplace = copyAction.LuaName == childAction.LuaName;
+                if (canReplace)
+                {
+                    var newAction = copyAction.Clone();
+
+                    int index = actions.IndexOf(childAction);
+                    actions.RemoveAt(index);
+                    actions.Insert(index, newAction);
+
+                    newAction.Owner = this;
+
+                    newAction.AddParent(this);
+
+                    var childActionAsITreeViewItem = (ITreeViewItem)childAction;
+                    var newActionAsITreeViewItem = (ITreeViewItem)newAction;
+                    index = items.IndexOf(childActionAsITreeViewItem);
+                    items.RemoveAt(index);
+                    items.Insert(index, newActionAsITreeViewItem);
+                    return newAction as ITreeViewItem;
+                }
+            }
+
+            return null;
+        }
+
         override public string[] EditText
         {
             get
