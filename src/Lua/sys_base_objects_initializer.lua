@@ -202,7 +202,7 @@ init_parameters = function(object, parameters)
     local float_runtime = parameters.float_runtime or {}
 
     -- Если таблицы uint, float пусты - старый вариант записи
-    if (#float == 0 && #float_runtime == 0)
+    if (#float == 0 and #float_runtime == 0) then
         init_float_parameters(object, parameters)
     end
 
@@ -224,7 +224,7 @@ end
 
 -- Инициализация float runtime параметров базового объекта
 init_float_runtime_parameters = function (object, parameters)
-	for key, parameter in ipairs(float) do
+	for key, parameter in ipairs(parameters) do
         local name = parameter.name or ""
         local luaName = parameter.luaName or ""
         local meter = parameter.meter or ""

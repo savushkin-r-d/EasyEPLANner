@@ -341,14 +341,20 @@ namespace TechObject
 
         public void SetUpFromBaseTechObject(ParamsManager paramsManager)
         {
-            foreach (var floatPar in paramsManager.parFloat.Items)
+            if (paramsManager.Float != null)
             {
-                parFloat.InsertCopy(floatPar);
+                foreach (var floatPar in paramsManager.Float.Items)
+                {
+                    parFloat.InsertCopy(floatPar);
+                }
             }
-
-            foreach(var floatRuntimePar in paramsManager.parFloatRuntime.Items)
+            
+            if (paramsManager.FloatRuntime != null)
             {
-                parFloatRuntime.InsertCopy(floatRuntimePar);
+                foreach (var floatRuntimePar in paramsManager.FloatRuntime.Items)
+                {
+                    parFloatRuntime.InsertCopy(floatRuntimePar);
+                }
             }
         }
 
