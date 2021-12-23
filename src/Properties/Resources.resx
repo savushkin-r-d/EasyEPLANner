@@ -322,11 +322,12 @@ return iolink_devices</value>
 -- 8. isPID - является ли объект ПИД-регулятором.
 -- 9. objectGroups - группы объектов (танки, линии и др).
 -- 10. system_params - системные параметры объекта.
--- 11. parameters - указываются параметры объекта. Можно указать в виде ссылки на другую переменную,
+-- 11. parameters - указываются параметры объекта (float_runtime и float). Можно указать в виде ссылки на другую переменную,
 -- которая представляет параметр, или же описать самому в виде lua-таблицы. При описании в виде
 -- ссылки на переменную, параметры будут идти по порядку (по индексам), а если описывать через
 -- Lua-таблицы, то по ключу Lua-таблицы. Предпочтительный первый вариант, он описан ниже по файлу,
--- а именно, там где определена переменная object_parameters.
+-- а именно, там где определена переменная object_float_parameters. Указываются float паметры в таблице float, или float runtime
+-- в таблица float_runtime.
 -- 12. luaModuleName - имя модуля Lua, в котором описана логика работы базового объекта. Обычно описана
 -- в скриптах, которые идут в поставке вместе с этим файлом. На основании этого имени в prg.lua
 -- будет генерироваться заголовок подключаемого модуля - require( "luaModuleName").
@@ -410,6 +411,8 @@ return iolink_devices</value>
 base_tech_objects = function()
 return
     {
+    local object_float_parameters = get_objects_float_parameters()
+    local object_float_runtime_parameters = get_runtime_float_parameters()
         uniqueEplanName = { -- Уникальное Lua-имя объекта
             name = "",
             s88Level = 0,
@@ -460,7 +463,14 @@ return
                          nameLua = "parLuaName",
                      },
             },
-            parameters = { object_parameters.ParLuaName1, },
+            parameters = { 
+                float = {
+                    object_float_parameters.ParLuaName1
+                },
+                float_runtime = {
+                    object_float_runtime_parameters.ParLuaName1
+                },
+            },
             luaModuleName = "name",
             monitorName = "TankObj",
             baseProperties =
@@ -477,7 +487,7 @@ return
     }
 end
 
--- Здесь содержится общий пул параметров, для базовых объектов. Параметры
+-- Здесь содержится общий пул float параметров, для базовых объектов. Параметры
 -- настраиваются следующим образом:
 -- 1. luaName - указывается строковое Lua-имя параметра. Это Lua-имя дублируется
 -- в названии переменной (таблицы) параметра.
@@ -485,15 +495,34 @@ end
 -- 3. value - указывается начальное значение параметра.
 -- (целое число или число с плавающей запятой).
 -- 4. meter - указывается единица измерения в виде строки.
-object_parameters =
-{
-    ParLuaName1 = {
-        luaName = "ParLuaName1",
-        name = "Название параметра",
-        value = 20,
-        meter = "сек",
-    },
-}</value>
+get_objects_float_parameters = function()
+    return
+    {
+        ParLuaName1 = {
+            luaName = "ParLuaName1",
+            name = "Имя параметра",
+            value = 0,
+            meter = "na",
+        }
+    }
+end
+
+-- Здесь содержится общий пул float runtime параметров, для базовых объектов.
+-- Параметры настраиваются следующим образом:
+-- 1. luaName - указывается строковое Lua-имя параметра. Это Lua-имя дублируется
+-- в названии переменной (таблицы) параметра.
+-- 2. name - указывается строковое отображаемое название.
+-- 3. meter - указывается единица измерения в виде строки.
+get_runtime_float_parameters = function()
+    return
+    {
+        ParLuaName1 = {
+            luaName = "ParLuaName1",
+            name = "Имя параметра",
+            meter = "na",
+        }
+    }
+end</value>
     <comment>Шаблон для файла sys_base_objects_description.lua. В нем описаны базовые объекты, с операциями, шагами, параметрами и др.</comment>
   </data>
   <data name="mainRestrictionsPattern" xml:space="preserve">

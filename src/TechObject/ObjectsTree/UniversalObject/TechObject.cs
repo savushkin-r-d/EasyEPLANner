@@ -279,7 +279,7 @@ namespace TechObject
             nameBC.SetNewValue(BaseTechObject.MonitorName);
             systemParams.SetUpFromBaseTechObject(BaseTechObject.SystemParams);
             ModesManager.SetUpFromBaseTechObject(BaseTechObject);
-            paramsManager.SetUpFromBaseTechObject(BaseTechObject.Parameters);
+            paramsManager.SetUpFromBaseTechObject(BaseTechObject.ParamsManager);
         }
 
         /// <summary>

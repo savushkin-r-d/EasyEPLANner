@@ -198,13 +198,38 @@ end
 
 -- Инициализация параметров базового объекта
 init_parameters = function(object, parameters)
+    local float = parameters.float or {}
+    local float_runtime = parameters.float_runtime or {}
+
+    -- Если таблицы uint, float пусты - старый вариант записи
+    if (#float == 0 && #float_runtime == 0)
+        init_float_parameters(object, parameters)
+    end
+
+    init_float_parameters(object, float)
+    init_float_runtime_parameters(object, float_runtime)
+end
+
+-- Инициализация float параметров базового объекта
+init_float_parameters = function(object, parameters)
     for key, parameter in ipairs(parameters) do
         local name = parameter.name or ""
         local luaName = parameter.luaName or ""
         local meter = parameter.meter or ""
         local value = parameter.value or 0
 
-        object:AddParameter(luaName, name, value, meter)
+        object:AddFloatParameter(luaName, name, value, meter)
+    end
+end
+
+-- Инициализация float runtime параметров базового объекта
+init_float_runtime_parameters = function (object, parameters)
+	for key, parameter in ipairs(float) do
+        local name = parameter.name or ""
+        local luaName = parameter.luaName or ""
+        local meter = parameter.meter or ""
+
+        object:AddFloatRuntimeParameter(luaName, name, meter)
     end
 end
 
