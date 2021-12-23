@@ -80,6 +80,10 @@ namespace TechObject
         IDeviceProcessingStrategy GetDeviceProcessingStrategy();
 
         void SetDeviceProcessingStrategy(IDeviceProcessingStrategy strategy);
+
+        Step Owner { get; set; }
+
+        void AddParent(ITreeViewItem parent);
     }
 
     /// <summary>
@@ -249,7 +253,7 @@ namespace TechObject
         }
 
         virtual public void ModifyDevNames(string newTechObjectName,
-            int newTechObjectNumber, string oldTechObjectName, 
+            int newTechObjectNumber, string oldTechObjectName,
             int oldTechObjNumber)
         {
             List<int> tmpIndex = new List<int>();
@@ -339,7 +343,7 @@ namespace TechObject
 
         public virtual void AddParam(object val, string paramName,
             int groupNumber) { }
-            
+
         virtual public void Clear()
         {
             deviceIndex.Clear();
@@ -505,7 +509,7 @@ namespace TechObject
             var devToDraw = new List<DrawInfo>();
             foreach (int index in deviceIndex)
             {
-                devToDraw.Add(new DrawInfo(DrawStyle, 
+                devToDraw.Add(new DrawInfo(DrawStyle,
                     deviceManager.GetDeviceByIndex(index)));
             }
 
@@ -524,6 +528,22 @@ namespace TechObject
                 {
                     return true;
                 }
+            }
+        }
+
+        public override bool IsCopyable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool IsReplaceable
+        {
+            get
+            {
+                return true;
             }
         }
         #endregion
@@ -560,6 +580,12 @@ namespace TechObject
                     return false;
                 }
             }
+        }
+
+        public Step Owner
+        {
+            get => owner;
+            set => owner = value;
         }
 
         public override string ToString()
