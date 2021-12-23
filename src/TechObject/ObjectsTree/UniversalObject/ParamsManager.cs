@@ -343,17 +343,19 @@ namespace TechObject
         {
             if (paramsManager.Float != null)
             {
-                foreach (var floatPar in paramsManager.Float.Items)
+                foreach (Param par in paramsManager.Float.Items)
                 {
-                    parFloat.InsertCopy(floatPar);
+                    AddFloatParam(par.GetName(), double.Parse(par.GetValue()),
+                        par.GetMeter(), par.GetNameLua());
                 }
             }
             
             if (paramsManager.FloatRuntime != null)
             {
-                foreach (var floatRuntimePar in paramsManager.FloatRuntime.Items)
+                foreach (Param par in paramsManager.FloatRuntime.Items)
                 {
-                    parFloatRuntime.InsertCopy(floatRuntimePar);
+                    AddFloatRuntimeParam(par.GetName(), double.Parse(par.GetValue()),
+                        par.GetMeter(), par.GetNameLua());
                 }
             }
         }
