@@ -321,7 +321,7 @@ namespace TechObject
             }
 
             bool isParameter = GetCurrentTechObject()?.GetParamsManager()
-                .GetParam(value) != null;
+                .Float.GetParam(value) != null;
             if (isParameter)
             {
                 return ValueType.Parameter;

@@ -132,7 +132,7 @@ namespace TechObject
                     foreach(var value in values)
                     {
                         Param param = techObject.GetParamsManager()
-                            .GetParam(value);
+                            .Float.GetParam(value);
                         if(param == null)
                         {
                             continue;
@@ -175,7 +175,7 @@ namespace TechObject
                     foreach (var paramIndex in parameterIndexes)
                     {
                         Param param = techObject.GetParamsManager()
-                            .GetParam(paramIndex);
+                            .Float.GetParam(paramIndex);
                         parameters.Add(param.LuaNameProperty.Value);
                     }
                 }

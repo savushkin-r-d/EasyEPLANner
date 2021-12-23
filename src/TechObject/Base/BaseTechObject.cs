@@ -20,8 +20,7 @@ namespace TechObject
             AggregateParameters = new List<BaseParameter>();
             BindingName = string.Empty;
             SystemParams = new SystemParams();
-            Parameters =
-                new Params(string.Empty, string.Empty, false, string.Empty);
+            ParamsManager = new ParamsManager();
             LuaModuleName = string.Empty;
             MonitorName = string.Empty;
             BaseProperties = new BaseProperties();
@@ -149,18 +148,27 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Добавить параметр объекта
+        /// Добавить float параметр объекта
         /// </summary>
         /// <param name="luaName">Lua-имя</param>
         /// <param name="name">Отображаемое название</param>
         /// <param name="value">Значение</param>
         /// <param name="meter">Единица измерения</param>
-        public void AddParameter(string luaName, string name, double value,
+        public void AddFloatParameter(string luaName, string name, double value,
             string meter)
         {
-            var parameter = new Param(Parameters.GetIdx, name, false, value,
-                meter, luaName, true);
-            Parameters.AddParam(parameter);
+            ParamsManager.AddFloatParam(name, value, meter, luaName);
+        }
+
+        /// <summary>
+        /// Добавить float runtime параметр объекта
+        /// </summary>
+        /// <param name="luaName">Lua-имя</param>
+        /// <param name="name">Отображаемое название</param>
+        /// <param name="meter">Единица измерения</param>
+        public void AddFloatRuntimeParameter(string luaName, string name, string meter)
+        {
+            ParamsManager.AddFloatRuntimeParam(name, 0, meter, luaName);
         }
 
         /// <summary>
@@ -370,7 +378,7 @@ namespace TechObject
             }
 
             cloned.SystemParams = SystemParams.Clone();
-            cloned.Parameters = Parameters.Clone();
+            cloned.ParamsManager = ParamsManager.Clone();
             cloned.LuaModuleName = LuaModuleName;
             cloned.MonitorName = MonitorName;
             cloned.BaseProperties = BaseProperties.Clone();
@@ -457,7 +465,7 @@ namespace TechObject
         /// <summary>
         /// Параметры объекта
         /// </summary>
-        public Params Parameters { get; set; }
+        public ParamsManager ParamsManager { get; set; }
 
         /// <summary>
         /// Lua-имя модуля в котором содержится описание логики объекта

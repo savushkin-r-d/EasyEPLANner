@@ -19,7 +19,8 @@ namespace Tests.TechObject
                 Assert.IsFalse(obj.UseGroups);
                 Assert.AreEqual(zeroValue, obj.SystemParams.Count);
                 Assert.AreEqual(zeroValue, obj.S88Level);
-                Assert.AreEqual(zeroValue, obj.Parameters.Items.Length);
+                Assert.AreEqual(zeroValue, obj.ParamsManager.Float.Items.Length);
+                Assert.AreEqual(1, obj.ParamsManager.Items.Length);
                 Assert.IsNull(obj.Owner);
                 Assert.AreEqual(zeroValue, obj.ObjectGroupsList.Count);
                 Assert.IsEmpty(obj.Name);
@@ -420,29 +421,58 @@ namespace Tests.TechObject
 
         [TestCase(1)]
         [TestCase(100)]
-        public void AddParameter_EmptyBaseTechObject_AddParametersToList(
+        public void AddFloatParameter_EmptyBaseTechObject_AddparametersToManager(
             int paramsCount)
         {
             BaseTechObject emptyObj = GetEmpty();
             for (int i = 0; i < paramsCount; i++)
             {
-                emptyObj.AddParameter(paramLuaName, paramName,
+                emptyObj.AddFloatParameter(paramLuaName, paramName,
                     paramValue, paramMeter);
             }
 
-            var firstParam = emptyObj.Parameters.GetParam(paramLuaName);
-            var differentReferencesCount = emptyObj.Parameters.Items
+            var firstParam = emptyObj.ParamsManager.Float.GetParam(paramLuaName);
+            var differentReferencesCount = emptyObj.ParamsManager.Float.Items
                 .Select(x => x.GetHashCode())
                 .ToArray()
                 .Distinct();
             Assert.Multiple(() =>
             {
                 Assert.AreEqual(paramsCount, differentReferencesCount.Count());
-                Assert.AreEqual(paramsCount, emptyObj.Parameters.Items.Length);
+                Assert.AreEqual(paramsCount, emptyObj.ParamsManager.Float.Items.Length);
                 Assert.AreEqual(paramName, firstParam.GetName());
                 Assert.AreEqual(paramLuaName, firstParam.GetNameLua());
                 Assert.AreEqual(paramMeter, firstParam.GetMeter());
                 Assert.AreEqual(paramValue.ToString(), firstParam.GetValue());
+                Assert.IsNull(emptyObj.ParamsManager.FloatRuntime);
+            });
+        }
+
+        [TestCase(1)]
+        [TestCase(100)]
+        public void AddFloatRuntimeParameter_EmptyBaseTechObject_AddparametersToManager(
+            int paramsCount)
+        {
+            BaseTechObject emptyObj = GetEmpty();
+            for (int i = 0; i < paramsCount; i++)
+            {
+                emptyObj.AddFloatRuntimeParameter(paramLuaName, paramName,
+                    paramMeter);
+            }
+
+            var firstParam = emptyObj.ParamsManager.FloatRuntime.GetParam(paramLuaName);
+            var differentReferencesCount = emptyObj.ParamsManager.FloatRuntime.Items
+                .Select(x => x.GetHashCode())
+                .ToArray()
+                .Distinct();
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(paramsCount, differentReferencesCount.Count());
+                Assert.AreEqual(paramsCount, emptyObj.ParamsManager.FloatRuntime.Items.Length);
+                Assert.AreEqual(paramName, firstParam.GetName());
+                Assert.AreEqual(paramLuaName, firstParam.GetNameLua());
+                Assert.AreEqual(paramMeter, firstParam.GetMeter());
+                Assert.AreEqual(0, emptyObj.ParamsManager.Float.Items.Length);
             });
         }
 
