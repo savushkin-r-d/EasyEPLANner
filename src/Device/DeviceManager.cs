@@ -803,6 +803,7 @@ namespace Device
         private string GetDevicesForMainDevices()
         {
             var deviceNameStr = string.Empty;
+            var deviceIndexesStr = string.Empty;
             for (int i = 0; i < devices.Count; i++)
             {
                 var dev = devices[i];
@@ -811,9 +812,10 @@ namespace Device
                 if (skipDevice) continue;
 
                 deviceNameStr += GenerateDevicesNameForMainDevices(dev);
+                deviceIndexesStr += GenerateDevicesIndexForMainDevices(i, dev);
             }
 
-            return string.Join(string.Empty, deviceNameStr);
+            return string.Join(string.Empty, deviceNameStr, "\n", deviceIndexesStr);
         }
 
         /// <summary>
@@ -838,6 +840,19 @@ namespace Device
 
             temp += $"{dev.Name} = {dev.DeviceType}(\'{dev.Name}\')\n";
             return temp;
+        }
+
+        /// <summary>
+        /// Генерирует строку для описания индекса устройства в общем списке
+        /// устройств для main.devices.lua
+        /// </summary>
+        /// <param name="id">Индекс устройства</param>
+        /// <param name="device">Устройство</param>
+        /// <returns></returns>
+        private string GenerateDevicesIndexForMainDevices(int id,
+            IODevice device)
+        {
+            return "\t__" + device.Name + " = DEVICE( " + id + " )\n";
         }
 
         /// <summary>
