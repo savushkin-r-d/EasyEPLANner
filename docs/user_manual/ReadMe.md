@@ -1270,8 +1270,8 @@ HLA | PXC.1191993 | 0 | 1
 2. Включать - **DO**, **M**, **V**;
 3. Включать реверс - **M**;
 4. Выключать - **DO**, **M**, **V**;
-5. Верхние седла - **V** с подтипами **V_MIXPROOF**, **V_AS_MIXPROOF**, **V_IOLINK_MIXPROOF**, **V_VIRT**;
-6. Нижние седла - **V** с подтипами **V_MIXPROOF**, **V_AS_MIXPROOF**, **V_IOLINK_MIXPROOF**, **V_VIRT**;
+5. Верхние седла - **V**, **DO** с подтипами **V_MIXPROOF**, **V_AS_MIXPROOF**, **V_IOLINK_MIXPROOF**, **V_VIRT**, **DO**, **DO_VIRT**;
+6. Нижние седла - **V**, **DO** с подтипами **V_MIXPROOF**, **V_AS_MIXPROOF**, **V_IOLINK_MIXPROOF**, **V_VIRT**, **DO**, **DO_VIRT**;
 7. Сигналы для включения - **DI**, **GS**;
 8. Устройства
     * DI - **DI**, **SB**;

@@ -91,7 +91,8 @@ namespace TechObject
                 "opened_upper_seat_v",
                 new Device.DeviceType[]
                 {
-                    Device.DeviceType.V
+                    Device.DeviceType.V,
+                    Device.DeviceType.DO
                 },
                 new Device.DeviceSubType[]
                 {
@@ -99,6 +100,8 @@ namespace TechObject
                     Device.DeviceSubType.V_AS_MIXPROOF,
                     Device.DeviceSubType.V_IOLINK_MIXPROOF,
                     Device.DeviceSubType.V_VIRT,
+                    Device.DeviceSubType.DO,
+                    Device.DeviceSubType.DO_VIRT
                 });
             openUpperSeats.DrawStyle = DrawInfo.Style.GREEN_UPPER_BOX;
             openUpperSeats.ImageIndex = ImageIndexEnum.ActionWashUpperSeats;
@@ -108,7 +111,8 @@ namespace TechObject
                 "opened_lower_seat_v",
                 new Device.DeviceType[]
                 {
-                    Device.DeviceType.V
+                    Device.DeviceType.V,
+                    Device.DeviceType.DO
                 },
                 new Device.DeviceSubType[]
                 {
@@ -116,6 +120,8 @@ namespace TechObject
                     Device.DeviceSubType.V_AS_MIXPROOF,
                     Device.DeviceSubType.V_IOLINK_MIXPROOF,
                     Device.DeviceSubType.V_VIRT,
+                    Device.DeviceSubType.DO,
+                    Device.DeviceSubType.DO_VIRT
                 });
             openLowerSeats.DrawStyle = DrawInfo.Style.GREEN_LOWER_BOX;
             openLowerSeats.ImageIndex = ImageIndexEnum.ActionWashLowerSeats;
