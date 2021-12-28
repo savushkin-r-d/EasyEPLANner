@@ -527,23 +527,25 @@ end</value>
   </data>
   <data name="mainRestrictionsPattern" xml:space="preserve">
     <value>--version  = {0}
+--Eplanner version = {1}
 --Файл ограничений проекта
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 restrictions =
     {{
-{1}    }}</value>
+{2}    }}</value>
     <comment>Шаблон файла для сохранения ограничений проекта</comment>
   </data>
   <data name="mainObjectsPattern" xml:space="preserve">
     <value>--version  = {0}
---PAC_name = '{1}'
+--Eplanner version = {1}
+--PAC_name = '{2}'
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 init_tech_objects_modes = function()
     return
     {{
-{2}    }}
+{3}    }}
 end</value>
     <comment>Шаблон файла сохранения объектов проекта</comment>
   </data>
@@ -554,7 +556,8 @@ end</value>
     <value>..\Resources\hideEmptyItems.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="modbusSRVFilePattern" xml:space="preserve">
-    <value>--version  = 1
+    <value>--version  = {0}
+--Eplanner version = {1}
 ------------------------------------------------------------------------------
 function read_holding_registers( n, start_idx, count )
    return read_hr2(n, start_idx, count)
