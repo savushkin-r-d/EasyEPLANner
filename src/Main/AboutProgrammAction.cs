@@ -14,7 +14,8 @@ namespace EasyEPlanner
 
         public bool Execute(ActionCallingContext ctx)
         {
-            string message = $"Версия надстройки - {GetVersion()}\n" +
+            string version = AssemblyVersion.GetVersion();
+            string message = $"Версия надстройки - {version}\n" +
                "Проект распространяется под лицензией MIT.";
             MessageBox.Show(message, "Версия надстройки", 
                 MessageBoxButtons.OK,
@@ -32,17 +33,6 @@ namespace EasyEPlanner
 
         public void GetActionProperties(ref ActionProperties actionProperties)
         {
-        }
-
-        /// <summary>
-        /// Получить версию надстройки
-        /// </summary>
-        /// <returns></returns>
-        private string GetVersion()
-        {
-            Version version = Assembly.GetExecutingAssembly().GetName().
-                Version;
-            return version.ToString();
         }
     }
 }

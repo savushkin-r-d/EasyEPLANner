@@ -226,13 +226,14 @@ namespace EasyEPlanner.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to --version  = {0}
-        ///--PAC_name = &apos;{1}&apos;
+        ///--Eplanner version = {1}
+        ///--PAC_name = &apos;{2}&apos;
         ///------------------------------------------------------------------------------
         ///------------------------------------------------------------------------------
         ///init_tech_objects_modes = function()
         ///    return
         ///    {{
-        ///{2}    }}
+        ///{3}    }}
         ///end.
         /// </summary>
         public static string mainObjectsPattern {
@@ -243,12 +244,13 @@ namespace EasyEPlanner.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to --version  = {0}
+        ///--Eplanner version = {1}
         ///--Файл ограничений проекта
         ///------------------------------------------------------------------------------
         ///------------------------------------------------------------------------------
         ///restrictions =
         ///    {{
-        ///{1}    }}.
+        ///{2}    }}.
         /// </summary>
         public static string mainRestrictionsPattern {
             get {
@@ -257,7 +259,8 @@ namespace EasyEPlanner.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to --version  = 1
+        ///   Looks up a localized string similar to --version  = {0}
+        ///--Eplanner version = {1}
         ///------------------------------------------------------------------------------
         ///function read_holding_registers( n, start_idx, count )
         ///   return read_hr2(n, start_idx, count)
