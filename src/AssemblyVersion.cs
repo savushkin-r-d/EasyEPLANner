@@ -9,5 +9,12 @@ namespace EasyEPlanner
             return Assembly.GetExecutingAssembly().GetName().
                 Version.ToString();
         }
+
+        public static string GetStringForFileWithVersion()
+        {
+            return $"{StrForFilePattern} = {GetVersion()}";
+        }
+
+        public const string StrForFilePattern = "Eplanner version";
     }
 }

@@ -313,6 +313,9 @@ namespace EasyEPlanner
             {
                 string sharedContent = Properties.Resources.ResourceManager
                     .GetString("sharedFilePattern");
+                sharedContent = string.Concat(
+                    $"--{AssemblyVersion.GetStringForFileWithVersion()}",
+                    "\n", sharedContent);
                 File.WriteAllText(fileName, sharedContent,
                     EncodingDetector.MainFilesEncoding);
             }

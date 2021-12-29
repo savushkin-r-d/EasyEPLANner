@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using EasyEPlanner;
 
 namespace InterprojectExchange
 {
@@ -52,6 +53,8 @@ namespace InterprojectExchange
                 UpdateModelSharedDevices(mainModel, altModel, invertSignals);
             }
 
+            AddOrUpdateEplannerVersionInfo(mainModel);
+
             WriteSharedFile(mainModel.ProjectName,
                 mainModel.SharedFileAsStringList);
         }
@@ -84,8 +87,33 @@ namespace InterprojectExchange
             interprojectExchange.SelectModel(altModel);
             UpdateModelRemoteGateWays(altModel, mainModel, invertSignals);
             UpdateModelSharedDevices(altModel, mainModel, invertSignals);
+
+            AddOrUpdateEplannerVersionInfo(altModel);
+
             WriteSharedFile(altModel.ProjectName,
                 altModel.SharedFileAsStringList);
+        }
+
+        /// <summary>
+        /// Update or Add info about EasyEplanner version to shared.lua file 
+        /// </summary>
+        /// <param name="model">Project model</param>
+        private void AddOrUpdateEplannerVersionInfo(IProjectModel model)
+        {
+            var fileAsList = model.SharedFileAsStringList;
+            bool hasData = fileAsList.Count > 0;
+            if (hasData)
+            {
+                bool hasVersionInfo = fileAsList[0]
+                    .Contains(AssemblyVersion.StrForFilePattern);
+                if (hasVersionInfo)
+                {
+                    fileAsList.RemoveAt(0);
+                }
+
+                fileAsList.Insert(0,
+                        $"--{AssemblyVersion.GetStringForFileWithVersion()}");
+            }
         }
 
         /// <summary>
