@@ -43,6 +43,18 @@ namespace InterprojectExchange
         /// </summary>
         private CurrentProjectModel mainModel;
 
+        /// <summary>
+        /// Пустая ли таблица сигналов, которые отправляются из главного
+        /// проекта, разделенная по именам проектов.
+        /// </summary>
+        private Dictionary<string, bool> signalsSendingFromMainEmpty;
+
+        /// <summary>
+        /// Пустая ли таблица сигналов, которые присылаются в главный проект,
+        /// разделенная по именам проектов.
+        /// </summary>
+        private Dictionary<string, bool> signalsSendingToMainEmpty;
+
         private void cancelBtn_Click(object sender, EventArgs e)
         {
             mainModel.SelectedAdvancedProject = projectBeforeOpenForm;
@@ -109,6 +121,8 @@ namespace InterprojectExchange
             mainModel = interprojectExchange.MainModel;
             projectsSendingFromMain = new Dictionary<string, PacInfo>();
             projectsSendingToMain = new Dictionary<string, PacInfo>();
+            signalsSendingFromMainEmpty = new Dictionary<string, bool>();
+            signalsSendingToMainEmpty = new Dictionary<string, bool>();
             WorkWithProjectsData(true);
 
             projectBeforeOpenForm = interprojectExchange.Models
@@ -170,6 +184,10 @@ namespace InterprojectExchange
             projectsListView.Items.Add(projectName);
             projectsSendingFromMain.Add(projectName, model.PacInfo.Clone());
             projectsSendingToMain.Add(projectName, mainModel.PacInfo.Clone());
+            signalsSendingFromMainEmpty.Add(projectName,
+                mainModel.SourceSignals.Count == 0);
+            signalsSendingToMainEmpty.Add(projectName,
+                mainModel.ReceiverSignals.Count == 0);
         }
 
         private void projectsListView_ItemSelectionChanged(object sender, 
@@ -211,10 +229,14 @@ namespace InterprojectExchange
             if(editMode == EditMode.SourceReciever)
             {
                 pacInfo = projectsSendingFromMain[projectName];
+                stationNumberTextBox.Enabled =
+                    !signalsSendingFromMainEmpty[projectName];
             }
             else
             {
                 pacInfo = projectsSendingToMain[projectName];
+                stationNumberTextBox.Enabled =
+                    !signalsSendingToMainEmpty[projectName];
             }
 
             projNameTextBox.Text = projectName;
