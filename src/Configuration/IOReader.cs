@@ -228,6 +228,7 @@ namespace EasyEPlanner
                         case "750-341":
                         case "750-841":
                         case "750-352":
+                        case "750-362":
                         case "750-8202":
                         case "750-8203":
                         case "750-8204":
