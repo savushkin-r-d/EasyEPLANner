@@ -26,6 +26,7 @@ namespace Tests.IO
             testData.Add(new object[] { "750-341", ethernet });
             testData.Add(new object[] { "750-841", ethernet });
             testData.Add(new object[] { "750-352", ethernet });
+            testData.Add(new object[] { "750-362", ethernet });
 
             IONode.TYPES internal750_820x = IONode.TYPES.T_INTERNAL_750_820x;
             testData.Add(new object[] { "750-8202", internal750_820x });
@@ -54,6 +55,7 @@ namespace Tests.IO
         [TestCase("750-341", true)]
         [TestCase("750-841", false)]
         [TestCase("750-352", true)]
+        [TestCase("750-362", true)]
         [TestCase("750-8202", false)]
         [TestCase("750-8203", false)]
         [TestCase("750-8204", false)]

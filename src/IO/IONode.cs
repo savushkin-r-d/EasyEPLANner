@@ -26,6 +26,7 @@ namespace IO
 
                 case "750-341":
                 case "750-352":
+                case "750-362":
                     type = TYPES.T_ETHERNET;
                     IsCoupler = true;
                     break;
