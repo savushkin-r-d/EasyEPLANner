@@ -92,7 +92,13 @@ local io_nodes =
         name = "AXC F 3152",
         isCoupler = false,
         type = 201
-    }
+    },
+    [ 14 ] =
+    {
+        name = "750-362",
+        isCoupler = true,
+        type = 100
+    },
 }
 
 return io_nodes
