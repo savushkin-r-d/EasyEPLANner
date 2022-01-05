@@ -221,8 +221,8 @@ namespace EasyEPlanner
                     type = article.Properties[Eplan.EplApi.DataModel
                         .Properties.Article.ARTICLE_TYPENR];
 
-                    IO.IONodeInfo.GetNodeInfo(type, out bool isValidPlcType);
-                    if (isValidPlcType == true) break;
+                    IO.IONodeInfo.GetNodeInfo(type, out bool isStub);
+                    if (isStub == false) break;
                 }
             }
 
