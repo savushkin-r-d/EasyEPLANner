@@ -528,9 +528,31 @@ namespace EasyEPlanner.Properties {
         ///-- description - описание модуля ввода-вывода IO.
         ///-- adressSpacetype  [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string sysIOLuaFilePattern {
+        public static string sysIoModulesLuaFilePattern {
             get {
-                return ResourceManager.GetString("sysIOLuaFilePattern", resourceCulture);
+                return ResourceManager.GetString("sysIoModulesLuaFilePattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- Описание узлов ввода-вывода
+        ///
+        ///-- constructor description:
+        ///-- name - название узла ввода-вывода (eg. 750-863, AXL F BK ETH, AXC F 1152, etc.).
+        ///-- isCoupler - является ли узел каплером (default value - false).
+        ///-- type - тип устройства (берется из type enumeration).
+        ///
+        ///-- type enumeration:
+        ///-- -1 - Не определен.
+        ///-- 0 - Модули в контроллере 750-863.
+        ///-- 2 - Модули в контроллере PFC200.
+        ///-- 100 - Удаленный Ethernet узел.
+        ///-- 200 - Модули в контроллере Phoenix Contact.
+        ///-- 201 - Контроллер Phoenix Contact [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string sysIoNodesLuaFilePattern {
+            get {
+                return ResourceManager.GetString("sysIoNodesLuaFilePattern", resourceCulture);
             }
         }
         

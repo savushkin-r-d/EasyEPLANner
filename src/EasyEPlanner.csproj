@@ -194,6 +194,7 @@
     <Compile Include="InterprojectExchange\Forms\UnknownDevTypeForm.Designer.cs">
       <DependentUpon>UnknownDevTypeForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="IO\IONodeInfo.cs" />
     <Compile Include="Main\InterprojectExchangeAction.cs" />
     <Compile Include="Configuration\ProjectHealthChecker.cs" />
     <Compile Include="Device\DeviceManager.cs" />
@@ -400,10 +401,13 @@
     <None Include="Lua\sys_interproject_io.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Lua\sys_io.lua">
+    <None Include="Lua\sys_io_modules.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Lua\sys_iolink_devices.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Lua\sys_io_nodes.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Lua\sys_restriction.lua">

@@ -130,7 +130,7 @@
   <data name="refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\refresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="sysIOLuaFilePattern" xml:space="preserve">
+  <data name="sysIoModulesLuaFilePattern" xml:space="preserve">
     <value>-- В Phoenix Contact особенность, адресное пространство
 -- кратно 32, в связи с этим, увеличивается цифра DO/DI count
 -- в два раза в отличие от WAGO.
@@ -185,7 +185,7 @@ local io_modules =
 }
 
 return io_modules</value>
-    <comment>Шаблон для файла sys_io.lua, в котором находится информация по модулям ввода-вывода.</comment>
+    <comment>Шаблон для файла sys_io_modules.lua, в котором находится информация по модулям ввода-вывода.</comment>
   </data>
   <data name="toCheck" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\To Do's1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -578,5 +578,34 @@ shared_devices =
   </data>
   <data name="changeObj" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\changeObj.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="sysIoNodesLuaFilePattern" xml:space="preserve">
+    <value>-- Описание узлов ввода-вывода
+
+-- constructor description:
+-- name - название узла ввода-вывода (eg. 750-863, AXL F BK ETH, AXC F 1152, etc.).
+-- isCoupler - является ли узел каплером (default value - false).
+-- type - тип устройства (берется из type enumeration).
+
+-- type enumeration:
+-- -1 - Не определен.
+-- 0 - Модули в контроллере 750-863.
+-- 2 - Модули в контроллере PFC200.
+-- 100 - Удаленный Ethernet узел.
+-- 200 - Модули в контроллере Phoenix Contact.
+-- 201 - Контроллер Phoenix Contact
+
+local io_nodes =
+{
+    [ 1 ] =
+    {
+        name = "11111",
+        isCoupler = false,
+        type = -1
+    }
+}
+
+return io_nodes</value>
+    <comment>Шаблон файла sys_io_nodes.lua, с информацией об узлах ввода-вывода.</comment>
   </data>
 </root>

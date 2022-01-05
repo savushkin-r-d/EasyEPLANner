@@ -212,7 +212,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string GetNodeTypeFromFunction(Function function)
         {
-            var type = "";
+            var type = string.Empty;
             foreach (var article in function.Articles)
             {
                 if (!article.Properties[Eplan.EplApi.DataModel
@@ -221,30 +221,8 @@ namespace EasyEPlanner
                     type = article.Properties[Eplan.EplApi.DataModel
                         .Properties.Article.ARTICLE_TYPENR];
 
-                    bool isTruePLCType = false;
-                    switch (type)
-                    {
-                        case "750-863":
-                        case "750-341":
-                        case "750-841":
-                        case "750-352":
-                        case "750-8202":
-                        case "750-8203":
-                        case "750-8204":
-                        case "750-8206":
-                        case "AXL F BK ETH":
-                        case "AXL F BK ETH NET2":
-                        case "AXC F 1152":
-                        case "AXC F 2152":
-                        case "AXC F 3152":
-                            isTruePLCType = true;
-                            break;
-                    }
-
-                    if (isTruePLCType == true)
-                    {
-                        break;
-                    }
+                    IO.IONodeInfo.GetNodeInfo(type, out bool isValidPlcType);
+                    if (isValidPlcType == true) break;
                 }
             }
 
