@@ -194,7 +194,7 @@
     <Compile Include="InterprojectExchange\Forms\UnknownDevTypeForm.Designer.cs">
       <DependentUpon>UnknownDevTypeForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="IO\IONodeInfo.cs" />
+    <Compile Include="IO\IOModuleInfo.cs" />
     <Compile Include="Main\InterprojectExchangeAction.cs" />
     <Compile Include="Configuration\ProjectHealthChecker.cs" />
     <Compile Include="Device\DeviceManager.cs" />
@@ -246,7 +246,7 @@
     <Compile Include="IO\IOLinkCalculator.cs" />
     <Compile Include="IO\IOManager.cs" />
     <Compile Include="IO\IOModule.cs" />
-    <Compile Include="IO\IOModuleInfo.cs" />
+    <Compile Include="IO\IONodeInfo.cs" />
     <Compile Include="IO\IONode.cs" />
     <Compile Include="Logs\LogFrm.cs">
       <SubType>Form</SubType>

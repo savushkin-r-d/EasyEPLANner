@@ -10,6 +10,8 @@ namespace Tests.IO
         public void Type_NewNode_CorrectGetAndSet(string typeStr,
             IONode.TYPES expectedType)
         {
+            IOManager.GetInstance(); // Load description from file.
+
             var testNode = new IONode(typeStr, IntStub, StrStub, StrStub);
 
             Assert.AreEqual(expectedType, testNode.Type);
@@ -71,6 +73,8 @@ namespace Tests.IO
         public void IsCoupler_NewNode_ReturnsTrueOrFalse(string typeStr,
             bool expectedValue)
         {
+            IOManager.GetInstance(); // Load description from file.
+
             var testNode = new IONode(typeStr, IntStub, StrStub, StrStub);
 
             Assert.AreEqual(expectedValue, testNode.IsCoupler);
