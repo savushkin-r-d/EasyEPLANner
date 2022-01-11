@@ -1,17 +1,12 @@
 ﻿using EasyEPlanner;
 using Editor;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using LuaInterface;
-using System.Windows.Forms;
-using TechObject;
-using System.Text.RegularExpressions;
 
 namespace Recipe
 {
-     public class RecipesManger : TreeViewItem, IRecipesManager
+    public class RecipesManger : TreeViewItem, IRecipesManager
     {
         private RecipesManger()
         {

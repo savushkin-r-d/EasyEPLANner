@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using PInvoke;
-using Aga.Controls.Tree;
-using Aga.Controls.Tree.NodeControls;
 using BrightIdeasSoftware;
 using EasyEPlanner;
 using System.Collections;
 using System.Diagnostics;
+using Editor;
 
-
-namespace Editor
+namespace Recipe
 {
     public partial class RecipeFrm : Form
     {

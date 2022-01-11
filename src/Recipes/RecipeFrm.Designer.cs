@@ -1,7 +1,7 @@
-﻿namespace Editor
-    {
+﻿namespace Recipe
+{
     partial class RecipeFrm
-        {
+    {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -11,14 +11,14 @@
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose( bool disposing )
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
             {
-            if ( disposing && ( components != null ) )
-                {
                 components.Dispose();
-                }
-            base.Dispose( disposing );
             }
+            base.Dispose(disposing);
+        }
 
         #region Windows Form Designer generated code
 
@@ -27,7 +27,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
-            {
+        {
             this.components = new System.ComponentModel.Container();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
@@ -47,7 +47,7 @@
             // 
             // toolStrip
             // 
-            this.toolStrip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.toolStrip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.toolStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
@@ -226,7 +226,7 @@
             this.ResumeLayout(false);
             this.PerformLayout();
 
-            }
+        }
 
         #endregion
 
@@ -243,4 +243,4 @@
         private System.Windows.Forms.ToolStripButton pasteRecipeBtn;
         private System.Windows.Forms.ToolStripButton replaceRecipeBtn;
     }
-    }
+}

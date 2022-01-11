@@ -119,10 +119,10 @@
     <Compile Include="Device\IODevices\F.cs" />
     <Compile Include="Device\IODevices\C.cs" />
     <Compile Include="Device\IODevices\HLA.cs" />
-    <Compile Include="RecipeFrm.cs">
+    <Compile Include="Recipes\RecipeFrm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="RecipeFrm.Designer.cs">
+    <Compile Include="Recipes\RecipeFrm.Designer.cs">
       <DependentUpon>RecipeFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="Editor\DrawInfo.cs" />
@@ -291,10 +291,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="StaticHelper\DeviceBindingHelper.cs" />
-    <Compile Include="RManager\IRecipesManager.cs" />
-    <Compile Include="RManager\Recipe.cs" />
-    <Compile Include="RManager\RParam.cs" />
-    <Compile Include="RManager\RecipesManger.cs" />
+    <Compile Include="Recipes\IRecipesManager.cs" />
+    <Compile Include="Recipes\Recipe.cs" />
+    <Compile Include="Recipes\RParam.cs" />
+    <Compile Include="Recipes\RecipesManger.cs" />
     <Compile Include="StaticHelper\GUIHelper.cs" />
     <Compile Include="StaticHelper\CommonConst.cs" />
     <Compile Include="StaticHelper\IPConverter.cs" />
@@ -350,7 +350,7 @@
     <Compile Include="TechObject\TechObjectXMLMaker.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="RecipeFrm.resx">
+    <EmbeddedResource Include="Recipes\RecipeFrm.resx">
       <DependentUpon>RecipeFrm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DFrm.resx">

@@ -1219,7 +1219,7 @@ namespace EasyEPlanner
         public bool ShowDisplayObjects(Editor.ITreeViewItem selectedItem,
             OnSetNewValue fn, bool isRebuiltTree = false)
         {
-            recipesEnabled = Editor.RecipeFrm.CheckShown();
+            recipesEnabled = Recipe.RecipeFrm.CheckShown();
             bool enabledEdit = EProjectManager.GetInstance().EnabledEditMode ||
                 recipesEnabled;
             prevShowChannels = !enabledEdit;

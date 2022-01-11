@@ -608,7 +608,7 @@ namespace TechObject
             var treeViewItem = child as ITreeViewItem;
             if (treeViewItem != null && treeObjects.Contains(treeViewItem))
             {
-                CheckRecipes(treeViewItem as TechObject);
+                ClearRecipes(treeViewItem as TechObject);
 
                 foreach (var item in treeViewItem.Items)
                 {
@@ -631,7 +631,7 @@ namespace TechObject
 
         #region Корректировка объектов при их удалении или перемещении
 
-        private void CheckRecipes(TechObject techObject)
+        private void ClearRecipes(TechObject techObject)
         {
             int objId = GetTechObjectN(techObject);
             Recipe.RecipesManger.GetInstance().ClearRecipesByObj(objId);

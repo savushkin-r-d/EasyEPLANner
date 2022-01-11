@@ -295,7 +295,7 @@ namespace EasyEPlanner
             CheckLibsAndFiles();
 
             editor = Editor.Editor.GetInstance();
-            recipeEditor = Editor.RecipeFrm.GetInstance();
+            recipeEditor = RecipeFrm.GetInstance();
 
             techObjectManager = TechObjectManager.GetInstance();
 
