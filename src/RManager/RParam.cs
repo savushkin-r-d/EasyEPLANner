@@ -56,8 +56,8 @@ namespace Recipe
                 string toName = 
                     techObject.Name + " №" + techObject.TechNumber.ToString();
                 string toParamName = 
-                    techObject.GetParamsManager().GetParam(objParam - 1).GetName() + 
-                    ", " + techObject.GetParamsManager().GetParam(objParam - 1).GetMeter();
+                    techObject.GetParamsManager().Float.GetParam(objParam - 1).GetName() + 
+                    ", " + techObject.GetParamsManager().Float.GetParam(objParam - 1).GetMeter();
 
                 string propName = toName + ": " + toParamName;
 
@@ -153,7 +153,7 @@ namespace Recipe
                 TechObjectManager.GetInstance().GetTObject(ObjId);
             if (techObject != null)
             {
-                if (techObject.GetParamsManager().GetParam(ObjParam) != null)
+                if (techObject.GetParamsManager().Float.GetParam(ObjParam) != null)
                 {
                     return true;
                 }
