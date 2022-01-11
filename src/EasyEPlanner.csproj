@@ -293,7 +293,7 @@
     <Compile Include="StaticHelper\DeviceBindingHelper.cs" />
     <Compile Include="Recipes\IRecipesManager.cs" />
     <Compile Include="Recipes\Recipe.cs" />
-    <Compile Include="Recipes\RParam.cs" />
+    <Compile Include="Recipes\RecipeParameter.cs" />
     <Compile Include="Recipes\RecipesManger.cs" />
     <Compile Include="StaticHelper\GUIHelper.cs" />
     <Compile Include="StaticHelper\CommonConst.cs" />

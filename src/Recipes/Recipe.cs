@@ -8,10 +8,10 @@ namespace Recipe
 {
     public class Recipe : TreeViewItem
     {
-        public Recipe(string Name)
+        public Recipe(string name)
         {
-            name = Name;
-            parameters = new List<RParam>();
+            this.name = name;
+            parameters = new List<RecipeParameter>();
         }
 
         public static Recipe GetInstance()
@@ -24,49 +24,50 @@ namespace Recipe
             return instance;
         }
 
-        public void AddParam( int ObjId, int ObjParam, float DefValue )
+        public void AddParam(int objId, int objParam, float defaultValue)
         {
-            bool isNewParamPair = CheckForDupicateParam(ObjId, ObjParam);
-            if (isNewParamPair)
+            bool newParamPair = CheckForDupicateParam(objId, objParam);
+            if (newParamPair)
             {
-                RParam param = new RParam(ObjId, ObjParam, DefValue);
+                var param = new RecipeParameter(objId, objParam, defaultValue);
                 param.AddParent(this);
                 parameters.Add(param);
             }
         }
 
-        public void DeleteParam(int ObjId, int ObjParam)
+        public void DeleteParam(int objId, int objParam)
         {
-            parameters.RemoveAll(par => 
-                par.ObjID == ObjId && par.ObjParam == ObjParam);
+            parameters.RemoveAll(par =>
+                par.ObjID == objId && par.ObjParam == objParam);
         }
 
-        public void DeleteParamByObj(int ObjId)
+        public void DeleteParamByObj(int objId)
         {
-            parameters.RemoveAll(par => par.ObjID == ObjId);
+            parameters.RemoveAll(par => par.ObjID == objId);
         }
 
-        private bool CheckForDupicateParam(int ObjId, int ObjParam)
+        private bool CheckForDupicateParam(int objId, int objParam)
         {
-            foreach(RParam par in parameters)
+            foreach (RecipeParameter par in parameters)
             {
-                bool isPairMatched = 
-                    (par.ObjID == ObjId) && (par.ObjParam == ObjParam);
+                bool isPairMatched =
+                    (par.ObjID == objId) && (par.ObjParam == objParam);
                 if (isPairMatched)
                 {
                     return false;
                 }
             }
+
             return true;
         }
 
         internal Recipe Clone()
         {
-            Recipe clone = (Recipe)MemberwiseClone();
-            clone.parameters = new List<RParam>();
-            foreach(RParam par in parameters)
+            var clone = (Recipe)MemberwiseClone();
+            clone.parameters = new List<RecipeParameter>();
+            foreach (RecipeParameter par in parameters)
             {
-                RParam newPar = par.Clone();
+                RecipeParameter newPar = par.Clone();
                 newPar.AddParent(this);
                 clone.parameters.Add(newPar);
             }
@@ -82,27 +83,24 @@ namespace Recipe
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix, int globalNum)
         {
-            string tmp = "";
-
             string res = "\t[ " + globalNum + " ] =\n" +
                 prefix + "{\n" +
                 prefix + "name = '" + name + "',\n" +
-                prefix + "params = \n" + 
+                prefix + "params = \n" +
                 prefix + "\t{\n";
 
-            foreach (RParam rParam in parameters)
+            foreach (RecipeParameter rParam in parameters)
             {
                 int num = parameters.IndexOf(rParam) + 1;
-                tmp = rParam.SaveAsLuaTable(prefix+prefix);
-                if (tmp != "")
+                string tmp = rParam.SaveAsLuaTable(prefix + prefix);
+                if (tmp != string.Empty)
                 {
-                    res += prefix + "\t[ " + num + " ] =\n" + prefix + 
+                    res += prefix + "\t[ " + num + " ] =\n" + prefix +
                         prefix + "{\n" + tmp;
                 }
             }
 
-            res += prefix + "\t},\n" +
-                prefix + "},\n";
+            res += prefix + "\t},\n" + prefix + "},\n";
 
             return res;
         }
@@ -125,39 +123,41 @@ namespace Recipe
             }
         }
 
-        /// Минимальное количество параметров, которые должны входить в пару
-        /// {n ,m}, где n - номер объекта, m - номер параметра объекта.
-        private const int minParamsCount = 2;
-
         override public bool SetNewValue(string newValue)
         {
+            // Размер пары параметра {n, m},
+            // где n - номер объекта, m - номер параметра объекта.
+            const int pairSize = 2;
+
             //Если строка содержит пары чисел в скобках { },
             //нужно добавить параметры в список, иначе
             //заменить имя рецепта.
             if (newValue.Contains("{"))
             {
                 string[] separators = { "{", "}" };
-                var pairs = newValue.Split(separators,
-                    StringSplitOptions.RemoveEmptyEntries).
-                    Select(s => s.Trim()).
-                    Where(x => !string.IsNullOrWhiteSpace(x)).ToList(); 
+                var pairs = newValue
+                    .Split(separators, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => s.Trim())
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .ToList();
 
                 string prevValue = CheckedObjects;
-                var prevPairs = prevValue.Split(separators,
-                    StringSplitOptions.RemoveEmptyEntries).
-                    Select(s => s.Trim()).
-                    Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
-
+                var prevPairs = prevValue
+                    .Split(separators, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => s.Trim())
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .ToList();
 
                 foreach (string pair in pairs)
                 {
                     string pattern = @"\d{1,}";
-                    Regex rgx = new Regex(pattern);
+                    var rgx = new Regex(pattern);
 
-                    int[] intMatch = rgx.Matches(pair).Cast<Match>()
+                    int[] intMatch = rgx.Matches(pair)
+                        .Cast<Match>()
                         .Select(x => int.Parse(x.Value))
                         .ToArray();
-                    if (intMatch.Length < minParamsCount)
+                    if (intMatch.Length != pairSize)
                     {
                         continue;
                     }
@@ -170,11 +170,12 @@ namespace Recipe
                     }
                 }
 
-                foreach(string pair in prevPairs)
+                foreach (string pair in prevPairs)
                 {
-                    int[] intMatch = pair.Where(Char.IsDigit).Select(
-                        x => int.Parse(x.ToString())).ToArray();
-                    if (intMatch.Length < minParamsCount)
+                    int[] intMatch = pair.Where(Char.IsDigit)
+                        .Select(x => int.Parse(x.ToString()))
+                        .ToArray();
+                    if (intMatch.Length != pairSize)
                     {
                         continue;
                     }
@@ -188,7 +189,7 @@ namespace Recipe
             {
                 name = newValue;
             }
-            
+
             return true;
         }
 
@@ -205,7 +206,7 @@ namespace Recipe
             get
             {
                 //Можем редактировать содержимое первой колонки.
-                return new int[] { 0 , -1 };
+                return new int[] { 0, -1 };
             }
         }
 
@@ -213,7 +214,7 @@ namespace Recipe
         {
             get
             {
-                return new string[] { name, "" };
+                return new string[] { name, string.Empty };
             }
         }
 
@@ -221,10 +222,10 @@ namespace Recipe
         {
             get
             {
-                string pairs = "";
-                foreach (RParam par in parameters)
+                string pairs = string.Empty;
+                foreach (RecipeParameter par in parameters)
                 {
-                    pairs += "{ " + par.ObjID.ToString() + " " + 
+                    pairs += "{ " + par.ObjID.ToString() + " " +
                         par.ObjParam.ToString() + " } ";
                 }
                 return pairs;
@@ -249,10 +250,10 @@ namespace Recipe
 
         public override bool Delete(object child)
         {
-            RParam param = child as RParam;
+            var param = child as RecipeParameter;
             if (param != null)
             {
-                parameters.Remove( param );
+                parameters.Remove(param);
                 return true;
             }
 
@@ -301,12 +302,14 @@ namespace Recipe
 
         public override ITreeViewItem InsertCopy(object obj)
         {
-            var par = obj as RParam;
+            var par = obj as RecipeParameter;
             if (par != null)
             {
-                if (CheckForDupicateParam(par.ObjID, par.ObjParam))
+                bool newParamPair =
+                    CheckForDupicateParam(par.ObjID, par.ObjParam);
+                if (newParamPair)
                 {
-                    RParam newPar = par.Clone();
+                    RecipeParameter newPar = par.Clone();
                     newPar.AddParent(this);
                     parameters.Add(newPar);
                     return newPar;
@@ -318,14 +321,14 @@ namespace Recipe
 
         override public ITreeViewItem Replace(object child, object copyObject)
         {
-            var replacedPar = child as RParam;
-            var copyPar = copyObject as RParam;
+            var replacedPar = child as RecipeParameter;
+            var copyPar = copyObject as RecipeParameter;
             bool objectsNotNull = replacedPar != null && copyPar != null;
             if (objectsNotNull)
             {
                 if (CheckForDupicateParam(copyPar.ObjID, copyPar.ObjParam))
                 {
-                    RParam newPar = copyPar.Clone();
+                    RecipeParameter newPar = copyPar.Clone();
 
                     int replacedIdx = parameters.IndexOf(replacedPar);
                     parameters.Remove(replacedPar);
@@ -350,7 +353,6 @@ namespace Recipe
 
         private static Recipe instance;
         private string name;
-        private List<RParam> parameters;
+        private List<RecipeParameter> parameters;
     }
-
 }

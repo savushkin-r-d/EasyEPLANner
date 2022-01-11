@@ -24,20 +24,19 @@ namespace Recipe
             return instance;
         }
 
-        public Recipe AddRecipe( string name )
+        public Recipe AddRecipe(string name)
         {
-            Recipe recipe = new Recipe( name );
+            var recipe = new Recipe(name);
             recipe.AddParent(this);
             recipes.Add(recipe);
             return recipe;
-
         }
 
-        public void ClearRecipesByObj(int ObjId)
+        public void ClearRecipesByObj(int objId)
         {
             foreach (Recipe recipe in recipes)
             {
-                recipe.DeleteParamByObj(ObjId);
+                recipe.DeleteParamByObj(objId);
             }
         }
 
@@ -57,7 +56,6 @@ namespace Recipe
         {
             lua = new Lua();
             InitReadRecipesLuaScript();
-
         }
 
         /// <summary>
@@ -95,7 +93,7 @@ namespace Recipe
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix)
         {
-            string res = "";
+            string res = string.Empty;
             foreach (Recipe obj in recipes)
             {
                 int num = recipes.IndexOf(obj) + 1;
@@ -117,7 +115,7 @@ namespace Recipe
                     res += " (" + recipes.Count + ")";
                 }
 
-                return new string[] { res, "" };
+                return new string[] { res, string.Empty };
             }
         }
 
@@ -131,13 +129,14 @@ namespace Recipe
 
         public override bool Delete(object child)
         {
-            Recipe recipe = child as Recipe;
+            var recipe = child as Recipe;
 
             if (recipe != null)
             {
                 recipes.Remove(recipe);
                 return true;
             }
+
             return false;
         }
 
@@ -156,7 +155,7 @@ namespace Recipe
             {
                 Recipe newRecipe = recipe.Clone();
                 newRecipe.AddParent(this);
-                recipes.Add( newRecipe );
+                recipes.Add(newRecipe);
                 return newRecipe;
             }
 
@@ -173,7 +172,7 @@ namespace Recipe
 
         public override ITreeViewItem Insert()
         {
-            Recipe newRecipe = 
+            var newRecipe =
                 new Recipe("Рецепт № " + (recipes.Count + 1).ToString());
             newRecipe.AddParent(this);
             recipes.Add(newRecipe);
@@ -183,7 +182,7 @@ namespace Recipe
         override public ITreeViewItem Replace(object child, object copyObject)
         {
             var replacedRecipe = child as Recipe;
-            var copyRecipe = copyObject as  Recipe;
+            var copyRecipe = copyObject as Recipe;
             bool objectsNotNull = replacedRecipe != null && copyRecipe != null;
             if (objectsNotNull)
             {
@@ -206,7 +205,8 @@ namespace Recipe
             if (movedRecipe != null)
             {
                 int index = recipes.IndexOf(movedRecipe);
-                if (index > 0)
+                bool notFirstPosition = index > 0;
+                if (notFirstPosition)
                 {
                     recipes.Remove(movedRecipe);
                     recipes.Insert(index - 1, movedRecipe);
@@ -217,17 +217,18 @@ namespace Recipe
             return null;
         }
 
-        ///Последняя позиция в списке, с которой мы можем переместиться на
-        ///одну позицию вниз
-        private const int lastPosInTheList = 2;
-
         override public ITreeViewItem MoveDown(object child)
         {
+            //Смещение последней позиции, чтобы не выйти за пределы индекса
+            const int lastPositionOffset = 2;
+
             var movedRecipe = child as Recipe;
             if (movedRecipe != null)
             {
                 int index = recipes.IndexOf(movedRecipe);
-                if (index <= recipes.Count - lastPosInTheList)
+                bool notLastPosition =
+                    index <= recipes.Count - lastPositionOffset;
+                if (notLastPosition)
                 {
                     recipes.Remove(movedRecipe);
                     recipes.Insert(index + 1, movedRecipe);
@@ -255,5 +256,4 @@ namespace Recipe
         /// </summary>
         private Lua lua;
     }
-
 }

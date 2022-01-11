@@ -19,9 +19,7 @@ namespace Recipe
         {
             InitializeComponent();
 
-            //const string columnName = "Рецепты";
             InitObjectListView();
-
 
             dialogCallbackDelegate = new PI.HookProc(
                 DlgWndHookCallbackFunction);
@@ -339,7 +337,6 @@ namespace Recipe
         /// </summary>
         private void SetUpHook()
         {
-
             uint pid = PI.GetWindowThreadProcessId(dialogHandle, IntPtr.Zero);
             dialogHookPtr = PI.SetWindowsHookEx(PI.HookType.WH_CALLWNDPROC,
                 dialogCallbackDelegate, IntPtr.Zero, pid);
@@ -1270,7 +1267,5 @@ namespace Recipe
                 }
             }
         }
-
-
     }
 }
