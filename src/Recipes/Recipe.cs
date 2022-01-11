@@ -38,12 +38,12 @@ namespace Recipe
         public void DeleteParam(int objId, int objParam)
         {
             parameters.RemoveAll(par =>
-                par.ObjID == objId && par.ObjParam == objParam);
+                par.ObjectId == objId && par.ObjectParameterId == objParam);
         }
 
         public void DeleteParamByObj(int objId)
         {
-            parameters.RemoveAll(par => par.ObjID == objId);
+            parameters.RemoveAll(par => par.ObjectId == objId);
         }
 
         private bool CheckForDupicateParam(int objId, int objParam)
@@ -51,7 +51,7 @@ namespace Recipe
             foreach (RecipeParameter par in parameters)
             {
                 bool isPairMatched =
-                    (par.ObjID == objId) && (par.ObjParam == objParam);
+                    (par.ObjectId == objId) && (par.ObjectParameterId == objParam);
                 if (isPairMatched)
                 {
                     return false;
@@ -162,7 +162,9 @@ namespace Recipe
                         continue;
                     }
 
-                    AddParam(intMatch[0], intMatch[1], 0);
+                    int objId = intMatch[0];
+                    int objParamId = intMatch[1];
+                    AddParam(objId, objParamId, 0);
 
                     if (prevPairs.Contains(pair))
                     {
@@ -172,7 +174,8 @@ namespace Recipe
 
                 foreach (string pair in prevPairs)
                 {
-                    int[] intMatch = pair.Where(Char.IsDigit)
+                    int[] intMatch = pair
+                        .Where(Char.IsDigit)
                         .Select(x => int.Parse(x.ToString()))
                         .ToArray();
                     if (intMatch.Length != pairSize)
@@ -181,8 +184,8 @@ namespace Recipe
                     }
 
                     int objId = intMatch[0];
-                    int objParam = intMatch[1];
-                    DeleteParam(objId, objParam);
+                    int objParamId = intMatch[1];
+                    DeleteParam(objId, objParamId);
                 }
             }
             else
@@ -225,8 +228,8 @@ namespace Recipe
                 string pairs = string.Empty;
                 foreach (RecipeParameter par in parameters)
                 {
-                    pairs += "{ " + par.ObjID.ToString() + " " +
-                        par.ObjParam.ToString() + " } ";
+                    pairs += "{ " + par.ObjectId.ToString() + " " +
+                        par.ObjectParameterId.ToString() + " } ";
                 }
                 return pairs;
             }
@@ -306,7 +309,7 @@ namespace Recipe
             if (par != null)
             {
                 bool newParamPair =
-                    CheckForDupicateParam(par.ObjID, par.ObjParam);
+                    CheckForDupicateParam(par.ObjectId, par.ObjectParameterId);
                 if (newParamPair)
                 {
                     RecipeParameter newPar = par.Clone();
@@ -326,7 +329,7 @@ namespace Recipe
             bool objectsNotNull = replacedPar != null && copyPar != null;
             if (objectsNotNull)
             {
-                if (CheckForDupicateParam(copyPar.ObjID, copyPar.ObjParam))
+                if (CheckForDupicateParam(copyPar.ObjectId, copyPar.ObjectParameterId))
                 {
                     RecipeParameter newPar = copyPar.Clone();
 

@@ -9,16 +9,16 @@ namespace Recipe
     {
         public RecipeParameter(int objId, int objParam, float defaultValue)
         {
-            this.objId = objId;
-            this.objParam = objParam;
+            this.objectId = objId;
+            this.objectParameterId = objParam;
             this.defaultValue = defaultValue;
         }
 
         internal RecipeParameter Clone()
         {
             var clone = (RecipeParameter)MemberwiseClone();
-            clone.objId = objId;
-            clone.objParam = objParam;
+            clone.objectId = objectId;
+            clone.objectParameterId = objectParameterId;
             clone.defaultValue = defaultValue;
             return clone;
         }
@@ -31,8 +31,8 @@ namespace Recipe
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix)
         {
-            string res = prefix + "obj_id = " + objId + ",\n" +
-                prefix + "par_num = " + objParam + ",\n" +
+            string res = prefix + "obj_id = " + objectId + ",\n" +
+                prefix + "par_num = " + objectParameterId + ",\n" +
                 prefix + "def_value = " + defaultValue + ",\n" +
                 prefix + "},\n";
 
@@ -45,17 +45,23 @@ namespace Recipe
         {
             get
             {
-                TechObject.TechObject techObject =
-                    TechObjectManager.GetInstance().GetTObject(objId);
-                string toName =
-                    techObject.Name + " №" + techObject.TechNumber.ToString();
-                string toParamName =
-                    techObject.GetParamsManager().Float.GetParam(objParam - 1).GetName() +
-                    ", " + techObject.GetParamsManager().Float.GetParam(objParam - 1).GetMeter();
+                TechObject.TechObject techObject = 
+                    TechObjectManager.GetInstance().GetTObject(objectId);
+                Param techObjectParameter = techObject.GetParamsManager()
+                    .Float.GetParam(objectParameterId - 1);
+                string techObjectParameterStr = 
+                    $"{techObjectParameter.GetName()}, " +
+                    $"{techObjectParameter.GetMeter()}";
+                string techObjectStr =
+                    $"{techObject.Name} №{techObject.TechNumber}";
+                string recipeParameterName =
+                    $"{techObjectStr}: {techObjectParameterStr}";
 
-                string propName = toName + ": " + toParamName;
-
-                return new string[] { propName, defaultValue.ToString() };
+                return new string[]
+                {
+                    recipeParameterName,
+                    defaultValue.ToString()
+                };
             }
         }
 
@@ -63,6 +69,7 @@ namespace Recipe
         {
             get
             {
+                //Можем редактировать второй столбец
                 return new int[] { -1, 1 };
             }
         }
@@ -118,10 +125,14 @@ namespace Recipe
                 bool correctParameterPair = intMatch.Length == 2;
                 if (correctParameterPair)
                 {
-                    if (CheckObjParam(intMatch[0], intMatch[1]))
+                    int newObjId = intMatch[0];
+                    int newParamId = intMatch[1];
+                    bool parameterExists =
+                        CheckObjectParameterExistence(newObjId, newParamId);
+                    if (parameterExists)
                     {
-                        objId = intMatch[0];
-                        objParam = intMatch[1];
+                        objectId = newObjId;
+                        objectParameterId = newParamId;
                     }
                     else
                     {
@@ -142,13 +153,15 @@ namespace Recipe
         }
         #endregion
 
-        private bool CheckObjParam(int ObjId, int ObjParam)
+        private bool CheckObjectParameterExistence(int objId, int objParam)
         {
-            TechObject.TechObject techObject =
-                TechObjectManager.GetInstance().GetTObject(ObjId);
+            TechObject.TechObject techObject = TechObjectManager
+                .GetInstance().GetTObject(objId);
             if (techObject != null)
             {
-                if (techObject.GetParamsManager().Float.GetParam(ObjParam) != null)
+                bool parameterExists = techObject.GetParamsManager().Float
+                    .GetParam(objParam) != null;
+                if (parameterExists)
                 {
                     return true;
                 }
@@ -163,24 +176,24 @@ namespace Recipe
             }
         }
 
-        public int ObjID
+        public int ObjectId
         {
             get
             {
-                return objId;
+                return objectId;
             }
         }
 
-        public int ObjParam
+        public int ObjectParameterId
         {
             get
             {
-                return objParam;
+                return objectParameterId;
             }
         }
 
-        private int objId;
-        private int objParam;
+        private int objectId;
+        private int objectParameterId;
         private double defaultValue;
     }
 }
