@@ -299,7 +299,7 @@ namespace EasyEPlanner
 
             techObjectManager = TechObjectManager.GetInstance();
 
-            recipesManager = RecipesManger.GetInstance();
+            recipesManager = RecipesManager.GetInstance();
             Logs.Init(new LogFrm());           
             IOManager = IOManager.GetInstance();
             DeviceManager.GetInstance();

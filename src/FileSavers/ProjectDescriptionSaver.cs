@@ -369,7 +369,7 @@ namespace EasyEPlanner
         private static IOManager IOManager = IOManager.GetInstance();
 
         private static Recipe.IRecipesManager recipesManager =
-            Recipe.RecipesManger.GetInstance();
+            Recipe.RecipesManager.GetInstance();
 
         public static string MainProgramFileName
         {

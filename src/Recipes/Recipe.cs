@@ -41,7 +41,7 @@ namespace Recipe
                 par.ObjectId == objId && par.ObjectParameterId == objParam);
         }
 
-        public void DeleteParamByObj(int objId)
+        public void DeleteParam(int objId)
         {
             parameters.RemoveAll(par => par.ObjectId == objId);
         }

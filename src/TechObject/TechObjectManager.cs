@@ -634,7 +634,7 @@ namespace TechObject
         private void ClearRecipes(TechObject techObject)
         {
             int objId = GetTechObjectN(techObject);
-            Recipe.RecipesManger.GetInstance().ClearRecipesByObj(objId);
+            Recipe.RecipesManager.GetInstance().ClearRecipes(objId);
         }
 
         public void CheckRestriction(int oldNum, int newNum)

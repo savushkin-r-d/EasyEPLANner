@@ -6,19 +6,19 @@ using LuaInterface;
 
 namespace Recipe
 {
-    public class RecipesManger : TreeViewItem, IRecipesManager
+    public class RecipesManager : TreeViewItem, IRecipesManager
     {
-        private RecipesManger()
+        private RecipesManager()
         {
             InitLua();
             recipes = new List<Recipe>();
         }
 
-        public static RecipesManger GetInstance()
+        public static RecipesManager GetInstance()
         {
             if (instance == null)
             {
-                instance = new RecipesManger();
+                instance = new RecipesManager();
             }
 
             return instance;
@@ -32,19 +32,19 @@ namespace Recipe
             return recipe;
         }
 
-        public void ClearRecipesByObj(int objId)
+        public void ClearRecipes(int objId)
         {
             foreach (Recipe recipe in recipes)
             {
-                recipe.DeleteParamByObj(objId);
+                recipe.DeleteParam(objId);
             }
         }
 
-        public void ClearRecipesParams(int ObjId, int ObjParam)
+        public void ClearRecipes(int objId, int objParam)
         {
             foreach (Recipe recipe in recipes)
             {
-                recipe.DeleteParam(ObjId, ObjParam);
+                recipe.DeleteParam(objId, objParam);
             }
         }
 
@@ -75,14 +75,14 @@ namespace Recipe
         /// <summary>
         /// Загрузка ограничений объектов
         /// </summary>
-        /// <param name="LuaStr">Описание ограничений объектов</param>
-        public void LoadRecipes(string LuaStr)
+        /// <param name="luaStr">Описание ограничений объектов</param>
+        public void LoadRecipes(string luaStr)
         {
             //Очистка ранее считанного списка рецептов
             recipes.Clear();
 
             //Выполнения Lua скрипта с описанием объектов.
-            lua.DoString(LuaStr);
+            lua.DoString(luaStr);
             lua.DoString("init_recipes()");
         }
 
@@ -244,7 +244,7 @@ namespace Recipe
         /// <summary>
         /// Единственный объект менеджера объектов.
         /// </summary>
-        private static RecipesManger instance;
+        private static RecipesManager instance;
 
         /// <summary>
         /// Список всех технологических объектов в дереве.

@@ -446,7 +446,7 @@ namespace TechObject
             {
                 int objIdx = 
                     TechObjectManager.GetInstance().GetTechObjectN(parentTO);
-                Recipe.RecipesManger.GetInstance().ClearRecipesParams(
+                Recipe.RecipesManager.GetInstance().ClearRecipes(
                     objIdx, paramIdx);
             }
         }
