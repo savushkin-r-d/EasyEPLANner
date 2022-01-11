@@ -1,7 +1,7 @@
 
 # EasyEPLANner - Open Source
 
-Русский вариант находится [здесь](docs/ru/readme.md). Deutsche Readme ist [hier](docs/de/readme.md).
+**Русский вариант находится [здесь](docs/ru/readme.md). Deutsche Readme ist [hier](docs/de/readme.md).**
 
 ### Repository
 
@@ -32,6 +32,8 @@ Congratulations, now you can build our solution (_if you have a EPLAN P8 app_).
 ### User documentation
 You can find the latest version of user documentation for the project [here](docs/user_manual/ReadMe.md).
 
+### Developer documentation
+You can find the latest version of developer documentation [here](docs/developer_manual/ReadMe.md).
 
 ### Contribution
 If you want to contribute to the development of our project then check out [how to do it better](docs/contributing.md) before you start.

@@ -266,7 +266,8 @@ namespace EasyEplanner.Tests
 
             var valveSeats = new Device.DeviceType[]
             {
-                Device.DeviceType.V
+                Device.DeviceType.V,
+                Device.DeviceType.DO
             };
             Device.DeviceType[] openUpperSeats = valveSeats;
             Device.DeviceType[] openLowerSeats = valveSeats;
@@ -389,6 +390,8 @@ namespace EasyEplanner.Tests
                 Device.DeviceSubType.V_AS_MIXPROOF,
                 Device.DeviceSubType.V_IOLINK_MIXPROOF,
                 Device.DeviceSubType.V_VIRT,
+                Device.DeviceSubType.DO,
+                Device.DeviceSubType.DO_VIRT
             };
             Device.DeviceSubType[] openUpperSeats = valveSeats;
             Device.DeviceSubType[] openLowerSeats = valveSeats;

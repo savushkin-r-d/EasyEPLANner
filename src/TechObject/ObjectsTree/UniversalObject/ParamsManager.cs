@@ -12,10 +12,10 @@ namespace TechObject
         {
             items = new List<ITreeViewItem>();
 
-            parFLoat = new Params("Параметры float", "par_float", false,
+            parFloat = new Params("Параметры float", ParFloatLuaName, false,
                 "S_PAR_F", true);
-            parFLoat.Parent = this;
-            items.Add(parFLoat);
+            parFloat.Parent = this;
+            items.Add(parFloat);
         }
 
         /// <summary>
@@ -32,20 +32,20 @@ namespace TechObject
             Param res = null;
             switch (group)
             {
-                case "par_float":
+                case ParFloatLuaName:
                     res = AddFloatParam(name, value, meter, nameLua);
                     break;
 
-                case "rt_par_float":
+                case ParFloatRuntimeLuaName:
                     res = AddFloatRuntimeParam(name, value, meter, nameLua);
                     break;
 
-                case "par_uint":
-                    res = AddUIntParam(name, value, meter, nameLua);
+                case ParUintLuaName:
+                    res = AddUintParam(name, value, meter, nameLua);
                     break;
 
-                case "rt_par_uint":
-                    res = AddUIntRuntimeParam(name, value, meter, nameLua);
+                case ParUintRuntimeLuaName:
+                    res = AddUintRuntimeParam(name, value, meter, nameLua);
                     break;
             }
 
@@ -60,10 +60,10 @@ namespace TechObject
         /// <param name="meter">Ед. измерения</param>
         /// <param name="nameLua">Имя Lua</param>
         /// <returns></returns>
-        private Param AddFloatParam(string name, double value, string meter,
+        public Param AddFloatParam(string name, double value, string meter,
             string nameLua) 
         {
-            Param res = parFLoat.AddParam(new Param(parFLoat.GetIdx, name,
+            Param res = parFloat.AddParam(new Param(parFloat.GetIdx, name,
                 false, value, meter, nameLua, true));
             return res;
         }
@@ -76,19 +76,19 @@ namespace TechObject
         /// <param name="meter">Ед. измерения</param>
         /// <param name="nameLua">Имя Lua</param>
         /// <returns></returns>
-        private Param AddFloatRuntimeParam(string name, double value,
+        public Param AddFloatRuntimeParam(string name, double value,
             string meter, string nameLua) 
         {
-            if (parFLoatRunTime == null)
+            if (parFloatRuntime == null)
             {
-                parFLoatRunTime = new Params("Рабочие параметры float",
-                    "rt_par_float", true, "RT_PAR_F");
-                parFLoatRunTime.Parent = this;
-                items.Add(parFLoatRunTime);
+                parFloatRuntime = new Params("Рабочие параметры float",
+                    ParFloatRuntimeLuaName, true, "RT_PAR_F");
+                parFloatRuntime.Parent = this;
+                items.Add(parFloatRuntime);
             }
 
-            Param res = parFLoatRunTime.AddParam(
-                new Param(parFLoatRunTime.GetIdx, name, true, value, meter,
+            Param res = parFloatRuntime.AddParam(
+                new Param(parFloatRuntime.GetIdx, name, true, value, meter,
                 nameLua));
             return res;
         }
@@ -101,18 +101,18 @@ namespace TechObject
         /// <param name="meter">Ед. измерения</param>
         /// <param name="nameLua">Имя Lua</param>
         /// <returns></returns>
-        private Param AddUIntParam(string name, double value, string meter,
+        private Param AddUintParam(string name, double value, string meter,
             string nameLua) 
         {
-            if (parUInt == null)
+            if (parUint == null)
             {
-                parUInt = new Params("Параметры uint", "par_uint", false,
+                parUint = new Params("Параметры uint", ParUintLuaName, false,
                     "S_PAR_UI");
-                parUInt.Parent = this;
-                items.Add(parUInt);
+                parUint.Parent = this;
+                items.Add(parUint);
             }
 
-            Param res = parUInt.AddParam(new Param(parUInt.GetIdx, name,
+            Param res = parUint.AddParam(new Param(parUint.GetIdx, name,
                 false, value, meter, nameLua));
             return res;
         }
@@ -125,40 +125,21 @@ namespace TechObject
         /// <param name="meter">Ед. измерения</param>
         /// <param name="nameLua">Имя Lua</param>
         /// <returns></returns>
-        private Param AddUIntRuntimeParam(string name, double value,
+        private Param AddUintRuntimeParam(string name, double value,
             string meter, string nameLua) 
         {
-            if (parUIntRunTime == null)
+            if (parUintRuntime == null)
             {
-                parUIntRunTime = new Params("Рабочие параметры uint",
-                    "rt_par_uint", false, "RT_PAR_UI");
-                parUIntRunTime.Parent = this;
-                items.Add(parUIntRunTime);
+                parUintRuntime = new Params("Рабочие параметры uint",
+                    ParUintRuntimeLuaName, false, "RT_PAR_UI");
+                parUintRuntime.Parent = this;
+                items.Add(parUintRuntime);
             }
 
-            Param res = parUIntRunTime.AddParam(
-                new Param(parUIntRunTime.GetIdx, name, true, value,
+            Param res = parUintRuntime.AddParam(
+                new Param(parUintRuntime.GetIdx, name, true, value,
                 meter, nameLua));
             return res;
-        }
-
-        /// <summary>
-        /// Получение параметра.
-        /// </summary>
-        /// <param name="nameLua">Имя в Lua.</param>
-        public Param GetParam(string nameLua)
-        {
-            return parFLoat.GetParam(nameLua);
-        }
-
-        /// <summary>
-        /// Получение параметра.
-        /// </summary>
-        /// <param name="paramIndex">Индекс параметра</param>
-        /// <returns></returns>
-        public Param GetParam(int paramIndex)
-        {
-            return parFLoat.GetParam(paramIndex);
         }
 
         /// <summary>
@@ -183,25 +164,25 @@ namespace TechObject
             ParamsManager clone = (ParamsManager)MemberwiseClone();
             clone.items = new List<ITreeViewItem>();
 
-            clone.parFLoat = parFLoat.Clone();
-            clone.items.Add(clone.parFLoat);
+            clone.parFloat = parFloat.Clone();
+            clone.items.Add(clone.parFloat);
 
-            if (parFLoatRunTime != null)
+            if (parFloatRuntime != null)
             {
-                clone.parFLoatRunTime = parFLoatRunTime.Clone();
-                clone.items.Add(clone.parFLoatRunTime);
+                clone.parFloatRuntime = parFloatRuntime.Clone();
+                clone.items.Add(clone.parFloatRuntime);
             }
 
-            if (parUInt != null)
+            if (parUint != null)
             {
-                clone.parUInt = parUInt.Clone();
-                clone.items.Add(clone.parUInt);
+                clone.parUint = parUint.Clone();
+                clone.items.Add(clone.parUint);
             }
 
-            if (parUIntRunTime != null)
+            if (parUintRuntime != null)
             {
-                clone.parUIntRunTime = parUIntRunTime.Clone();
-                clone.items.Add(clone.parUIntRunTime);
+                clone.parUintRuntime = parUintRuntime.Clone();
+                clone.items.Add(clone.parUintRuntime);
             }
 
             return clone;
@@ -214,7 +195,18 @@ namespace TechObject
         {
             get
             {
-                return parFLoat;
+                return parFloat;
+            }
+        }
+
+        /// <summary>
+        /// Получить Float runtime параметры объекта.
+        /// </summary>
+        public Params FloatRuntime
+        {
+            get
+            {
+                return parFloatRuntime;
             }
         }
 
@@ -334,10 +326,10 @@ namespace TechObject
 
         public void Clear()
         {
-            parFLoat?.Clear();
-            parFLoatRunTime?.Clear();
-            parUInt?.Clear();
-            parUIntRunTime?.Clear();
+            parFloat?.Clear();
+            parFloatRuntime?.Clear();
+            parUint?.Clear();
+            parUintRuntime?.Clear();
         }
 
         public override string GetLinkToHelpPage()
@@ -347,18 +339,36 @@ namespace TechObject
             return ostisLink + "?sys_id=process_parameter";
         }
 
-        public void SetUpFromBaseTechObject(Params parameters)
+        public void SetUpFromBaseTechObject(ParamsManager paramsManager)
         {
-            foreach (Param parameter in parameters.Items)
+            if (paramsManager.Float != null)
             {
-                parFLoat.InsertCopy(parameter);
+                foreach (Param par in paramsManager.Float.Items)
+                {
+                    AddFloatParam(par.GetName(), double.Parse(par.GetValue()),
+                        par.GetMeter(), par.GetNameLua());
+                }
+            }
+            
+            if (paramsManager.FloatRuntime != null)
+            {
+                foreach (Param par in paramsManager.FloatRuntime.Items)
+                {
+                    AddFloatRuntimeParam(par.GetName(), double.Parse(par.GetValue()),
+                        par.GetMeter(), par.GetNameLua());
+                }
             }
         }
 
-        private Params parFLoat;
-        private Params parFLoatRunTime;
-        private Params parUInt;
-        private Params parUIntRunTime;
+        private Params parFloat;
+        private Params parFloatRuntime;
+        private Params parUint;
+        private Params parUintRuntime;
+
+        private const string ParFloatLuaName = "par_float";
+        private const string ParFloatRuntimeLuaName = "rt_par_float";
+        private const string ParUintLuaName = "par_uint";
+        private const string ParUintRuntimeLuaName = "rt_par_uint";
 
         private List<ITreeViewItem> items;
     }

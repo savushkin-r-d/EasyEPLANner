@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TechObject;
 using Device;
 
@@ -152,74 +150,138 @@ namespace EasyEPlanner
         /// <summary>
         /// Сохранить привязку объектов к объектам в prg.lua
         /// </summary>
-        /// <param name="attachedObjects">Словарь привязанных объектов</param>
+        /// <param name="attachedObjectsDict">Словарь привязанных объектов.
+        /// Key: номер технологического объекта. Value: номера связанных 
+        /// объектов в строке с разделителем в виде пробела.</param>
         /// <returns></returns>
         private static string SaveObjectsBindingToPrgLua(
-            Dictionary<int, string> attachedObjects)
+            Dictionary<int, string> attachedObjectsDict)
         {
-            var res = "";
-            var temp = "";
+            var res = string.Empty;
+            var temp = string.Empty;
 
-            string previouslyObjectName = "";
-            bool isDigit = false;
-            foreach (var val in attachedObjects)
+            var previouslyObjectName = string.Empty;
+            foreach (KeyValuePair<int, string> techObjectPair in attachedObjectsDict)
             {
-                var techObj = techObjectManager.GetTObject(val.Key);
-                var attachedObjs = val.Value.Split(' ');
-                foreach (string value in attachedObjs)
+                TechObject.TechObject mainObj = TechObjectManager.GetInstance().GetTObject(techObjectPair.Key);
+                string mainObjNameLowCase = mainObj.NameEplanForFile.ToLower();
+                string techObjNameForFile = $"prg.{mainObjNameLowCase}{mainObj.TechNumber}";
+                List<TechObject.TechObject> bindedObjects = GetBindedObjectsList(techObjectPair);
+                Dictionary<string, List<TechObject.TechObject>> mainObjAttachedObjectGroups =
+                    GetAttachedObjectsGroupsDict(bindedObjects);
+                foreach (KeyValuePair<string, List<TechObject.TechObject>> groupPair in mainObjAttachedObjectGroups)
                 {
-                    isDigit = int.TryParse(value, out _);
-                    if (isDigit)
+                    string groupName = groupPair.Key;
+                    var objectsDescription = new List<string>();
+                    foreach (TechObject.TechObject obj in groupPair.Value)
                     {
-                        var attachedTechObject = techObjectManager.GetTObject(
-                            Convert.ToInt32(value));
-                        if(attachedTechObject == null)
-                        {
-                            string objName = techObj.Name + techObj.TechNumber
-                                .ToString();
-                            string msg = $"Для объекта {objName} не найден " +
-                                $"привязанный агрегат под номером {value}.\n";
-                            Logs.AddMessage(msg);
-                            continue;
-                        }
+                        string objDescription =
+                            $"prg.{obj.NameEplanForFile.ToLower()}{obj.TechNumber}";
+                        objectsDescription.Add(objDescription);
+                    }
 
-                        var attachedTechObjectType = attachedTechObject
-                            .NameEplanForFile.ToLower();
-                        var attachedTechObjNameForFile =
-                            attachedTechObjectType +
-                            attachedTechObject.TechNumber;
-                        var techObjNameForFile = "prg." +
-                            techObj.NameEplanForFile.ToLower() +
-                            techObj.TechNumber;
+                    if (previouslyObjectName != mainObjNameLowCase &&
+                        previouslyObjectName != string.Empty)
+                    {
+                        temp += "\n";
+                    }
 
-                        if (previouslyObjectName != techObj.NameEplanForFile
-                            .ToLower() && previouslyObjectName != "")
-                        {
-                            temp += "\n";
-                        }
-
-                        temp += techObjNameForFile + "." +
-                            attachedTechObject.BaseTechObject.BindingName +
-                            " = prg." + attachedTechObjNameForFile + "\n";
-
-                        previouslyObjectName = techObj.NameEplanForFile
-                            .ToLower();
+                    if (groupPair.Value.Count > 1)
+                    {
+                        temp += $"{techObjNameForFile}.{groupName}" +
+                           $" = {{ {string.Join(", ", objectsDescription)} }}\n";
                     }
                     else
                     {
-                        string msg = $"В объекте \"{techObj.EditText[0]} " +
-                            $"{techObj.TechNumber}\" ошибка заполнения поля " +
-                            $"\"Привязанные устройства\"\n";
-                        Logs.AddMessage(msg);
+                        temp += $"{techObjNameForFile}.{groupName}" +
+                            $" = {objectsDescription.First()}\n";
                     }
+
+                    previouslyObjectName = mainObjNameLowCase;
                 }
             }
 
-            if (temp != "")
+            if (temp != string.Empty)
             {
-                res += "\n" + temp + "\n";
+                res += $"\n{temp}\n";
             }
+
             return res;
+        }
+
+        /// <summary>
+        /// Получить список привязанных к технологическому объекту объектов.
+        /// </summary>
+        /// <param name="techObjectPair">Key: номер технологического объекта.
+        /// Value: номера связанных объектов в строке с разделителем
+        /// в виде пробела.</param>
+        /// <returns></returns>
+        private static List<TechObject.TechObject> GetBindedObjectsList(
+            KeyValuePair<int, string> techObjectPair)
+        {
+            var techObjects = new List<TechObject.TechObject>();
+
+            TechObject.TechObject techObject = techObjectManager
+                .GetTObject(techObjectPair.Key);
+            string[] attachedObjs = techObjectPair.Value.Split(' ');
+            foreach(string objNumStr in attachedObjs)
+            {
+                bool isDigit = int.TryParse(objNumStr, out int objNum);
+                if (isDigit)
+                {
+                    TechObject.TechObject attachedTechObject = 
+                        techObjectManager.GetTObject(objNum);
+                    if (attachedTechObject == null)
+                    {
+                        string objName =
+                            $"{techObject.Name}{techObject.TechNumber}";
+                        string msg = $"Для объекта {objName} не найден " +
+                            $"привязанный агрегат под номером {objNum}.\n";
+                        Logs.AddMessage(msg);
+                        continue;
+                    }
+
+                    techObjects.Add(attachedTechObject);
+                }
+                else
+                {
+                    string msg = $"В объекте \"{techObject.EditText[0]} " +
+                        $"{techObject.TechNumber}\" ошибка заполнения поля " +
+                        $"\"Привязанные устройства\"\n";
+                    Logs.AddMessage(msg);
+                }
+            }
+
+            return techObjects;
+        }
+
+        /// <summary>
+        /// Получить словарь со связанными устройствами, которые разбиты по
+        /// фунцкиональным группам.
+        /// </summary>
+        /// <param name="bindedObjects">Список привязанных объектов к объекту
+        /// </param>
+        /// <returns></returns>
+        private static Dictionary<string, List<TechObject.TechObject>> GetAttachedObjectsGroupsDict(
+            List<TechObject.TechObject> bindedObjects)
+        {
+            var dict = new Dictionary<string, List<TechObject.TechObject>>();
+
+            foreach(var obj in bindedObjects)
+            {
+                var group = obj.BaseTechObject.BindingName;
+                if (dict.ContainsKey(group))
+                {
+                    dict[group].Add(obj);
+                }
+                else
+                {
+                    var list = new List<TechObject.TechObject>() { obj };
+                    dict.Add(group, list);
+                }
+            }
+
+            return dict;
         }
 
         /// <summary>

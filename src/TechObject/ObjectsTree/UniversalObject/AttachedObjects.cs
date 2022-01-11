@@ -43,9 +43,13 @@ namespace TechObject
                     .GetValidTechObjNums(oldValue, thisObjNum)
                     .Select(x => TechObjectManager.GetInstance().GetTObject(x))
                     .ToList();
-                replacedObjects = FindReplacedObjects(oldObjects,
-                    newObjects);
-                ChangeOwnerInReplacedObjectsProperties(replacedObjects);
+                bool bindToUnit = owner.BaseTechObject
+                    .S88Level == (int)BaseTechObjectManager.ObjectType.Unit;
+                if (bindToUnit)
+                {
+                    replacedObjects = FindReplacedObjects(oldObjects, newObjects);
+                    ChangeOwnerInReplacedObjectsProperties(replacedObjects);
+                }
 
                 List<int> deletedAgregatesNumbers = FindDeletedObjects(
                     oldValue, newValue, replacedObjects);

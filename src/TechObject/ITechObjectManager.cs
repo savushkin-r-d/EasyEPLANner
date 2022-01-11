@@ -123,8 +123,8 @@ namespace TechObject
         /// <summary>
         /// Удалить этот объект из привязки объектов
         /// </summary>
-        /// <param name="techObject">Агрегат</param>
-        void RemoveAttachingToUnits(TechObject techObject);
+        /// <param name="techObject">Объект</param>
+        void RemoveAttachingToObjects(TechObject techObject);
 
         /// <summary>
         /// Изменить базовый объект (первая реализация - сбросить)

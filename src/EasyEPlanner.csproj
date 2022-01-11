@@ -108,6 +108,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyVersion.cs" />
     <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Configuration\DeviceSynchronizeService.cs" />
     <Compile Include="Device\IODevices\CAM.cs" />
@@ -200,6 +201,7 @@
       <DependentUpon>UnknownDevTypeForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Main\ShowRecipesAction.cs" />
+    <Compile Include="IO\IOModuleInfo.cs" />
     <Compile Include="Main\InterprojectExchangeAction.cs" />
     <Compile Include="Configuration\ProjectHealthChecker.cs" />
     <Compile Include="Device\DeviceManager.cs" />
@@ -251,7 +253,7 @@
     <Compile Include="IO\IOLinkCalculator.cs" />
     <Compile Include="IO\IOManager.cs" />
     <Compile Include="IO\IOModule.cs" />
-    <Compile Include="IO\IOModuleInfo.cs" />
+    <Compile Include="IO\IONodeInfo.cs" />
     <Compile Include="IO\IONode.cs" />
     <Compile Include="Logs\LogFrm.cs">
       <SubType>Form</SubType>
@@ -413,10 +415,13 @@
     <None Include="Lua\sys_interproject_io.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Lua\sys_io.lua">
+    <None Include="Lua\sys_io_modules.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Lua\sys_iolink_devices.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Lua\sys_io_nodes.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Lua\sys_restriction.lua">

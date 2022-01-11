@@ -433,13 +433,23 @@ namespace EasyEPlanner
             switch(checkedItem)
             {
                 case TechObject.AttachedObjects item:
-                    if (item.WorkStrategy.UseInitialization == true)
+                    bool aggregatesAttaching = item.WorkStrategy.UseInitialization == true;
+                    if (aggregatesAttaching)
                     {
-                        SelectedTreeItem = EditType.AttachedAgregates;
+                        bool toUnit = item.Owner.BaseTechObject.S88Level == 
+                            (int)TechObject.BaseTechObjectManager.ObjectType.Unit;
+                        if (toUnit)
+                        {
+                            SelectedTreeItem = EditType.AttachedAgregatesToUnit;
+                        }
+                        else
+                        {
+                            SelectedTreeItem = EditType.AttachedAggregatesToAggregates;
+                        }
                     }
                     else
                     {
-                        SelectedTreeItem = EditType.AttachedUnits;
+                        SelectedTreeItem = EditType.AttachedUnitsToObjectGroup;
                     }
                     break;
 
@@ -855,8 +865,9 @@ namespace EasyEPlanner
                 if (item != null)
                 {
                     bool attachToObjEdit = item.IsMainObject &&
-                    (selectedEditType == EditType.AttachedAgregates ||
-                    selectedEditType == EditType.AttachedUnits);
+                    (selectedEditType == EditType.AttachedAgregatesToUnit ||
+                    selectedEditType == EditType.AttachedUnitsToObjectGroup ||
+                    selectedEditType == EditType.AttachedAggregatesToAggregates);
                     bool restrictionEdit = item.IsMode &&
                         selectedEditType == EditType.Restriction;
                     if (attachToObjEdit)
@@ -1006,7 +1017,7 @@ namespace EasyEPlanner
             object nodeObject = e.Path.LastNode;
             Node checkedNode = nodeObject as Node;
             
-            if (SelectedTreeItem == EditType.AttachedAgregates)
+            if (SelectedTreeItem == EditType.AttachedAgregatesToUnit)
             {
                 UnselectIncorrectValues(e, checkedNode.Text);
             }
@@ -1126,8 +1137,9 @@ namespace EasyEPlanner
         {
             None,
             Restriction,
-            AttachedAgregates,
-            AttachedUnits
+            AttachedAgregatesToUnit,
+            AttachedUnitsToObjectGroup,
+            AttachedAggregatesToAggregates
         }
     }
 }

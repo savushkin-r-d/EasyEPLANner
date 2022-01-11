@@ -14,10 +14,12 @@ init_base_objects = function()
         local isPid = value.isPID or false
         local luaModuleName = value.luaModuleName or ""
         local monitorName = value.monitorName or "TankObj"
+        local deprecated = value.deprecated or false
 
         -- Добавить базовый объект
         local baseObject = AddBaseObject(name, eplanName, s88Level,
-            basicName, bindingName, isPid, luaModuleName, monitorName)
+            basicName, bindingName, isPid, luaModuleName, monitorName,
+            deprecated)
 
         -- Добавить группы танков
         local objectGroups = value.objectGroups or { }
@@ -196,13 +198,38 @@ end
 
 -- Инициализация параметров базового объекта
 init_parameters = function(object, parameters)
+    local float = parameters.float or {}
+    local float_runtime = parameters.float_runtime or {}
+
+    -- Если таблицы uint, float пусты - старый вариант записи
+    if (#float == 0 and #float_runtime == 0) then
+        init_float_parameters(object, parameters)
+    end
+
+    init_float_parameters(object, float)
+    init_float_runtime_parameters(object, float_runtime)
+end
+
+-- Инициализация float параметров базового объекта
+init_float_parameters = function(object, parameters)
     for key, parameter in ipairs(parameters) do
         local name = parameter.name or ""
         local luaName = parameter.luaName or ""
         local meter = parameter.meter or ""
         local value = parameter.value or 0
 
-        object:AddParameter(luaName, name, value, meter)
+        object:AddFloatParameter(luaName, name, value, meter)
+    end
+end
+
+-- Инициализация float runtime параметров базового объекта
+init_float_runtime_parameters = function (object, parameters)
+	for key, parameter in ipairs(parameters) do
+        local name = parameter.name or ""
+        local luaName = parameter.luaName or ""
+        local meter = parameter.meter or ""
+
+        object:AddFloatRuntimeParameter(luaName, name, meter)
     end
 end
 

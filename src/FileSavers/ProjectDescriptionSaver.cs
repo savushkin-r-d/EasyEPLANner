@@ -135,6 +135,8 @@ namespace EasyEPlanner
                 EncodingDetector.MainFilesEncoding);
 
             fileWriter.WriteLine("--version  = {0}", mainIOFileVersion);
+            fileWriter.WriteLine("--Eplanner  version = {0}",
+                AssemblyVersion.GetVersion());
             fileWriter.WriteLine(new string('-', numberOfDashes));
             fileWriter.WriteLine("PAC_name       = \'{0}\'", par.PAC_Name);
 
@@ -160,7 +162,8 @@ namespace EasyEPlanner
                 .GetString("mainObjectsPattern");
             string desctiption = techObjectManager.SaveAsLuaTable("");
             var descriptionFileData = string.Format(filePattern,
-                mainTechObjectsFileVersion, par.PAC_Name, desctiption);
+                mainTechObjectsFileVersion, AssemblyVersion.GetVersion(),
+                par.PAC_Name, desctiption);
 
             string fileName = par.path + @"\" + MainTechObjectsFileName;
             var fileWriter = new StreamWriter(fileName, false,
@@ -178,16 +181,13 @@ namespace EasyEPlanner
         private static void SaveTechDevicesFile(ParametersForSave par)
         {
             string fileName = par.path + @"\" + mainTechDevicesFileName;
-            if (!File.Exists(fileName))
-            {
-                return;
-            }
-
             var fileWriter = new StreamWriter(fileName,
             false, EncodingDetector.MainFilesEncoding);
 
             fileWriter.WriteLine("--version  = {0}",
                 mainTechDevicesFileVersion);
+            fileWriter.WriteLine("--Eplanner  version = {0}",
+                AssemblyVersion.GetVersion());
             fileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);
             fileWriter.WriteLine(new string('-', numberOfDashes));
             fileWriter.WriteLine(new string('-', numberOfDashes));
@@ -209,7 +209,8 @@ namespace EasyEPlanner
             string resctrictions = techObjectManager
                 .SaveRestrictionAsLua("");
             var restrictionsFileData = string.Format(filePattern,
-                mainRestrictionsFileVersion, resctrictions);
+                mainRestrictionsFileVersion, AssemblyVersion.GetVersion(),
+                resctrictions);
 
             string fileName = par.path + @"\" + MainRestrictionsFileName;
             File.WriteAllText(fileName, restrictionsFileData,
@@ -248,6 +249,8 @@ namespace EasyEPlanner
                 string mainPluaFilePattern = mainProgramFilePattern;
                 mainPluaFilePattern = mainPluaFilePattern
                     .Replace("ProjectName", par.PAC_Name);
+                mainPluaFilePattern = string.Format(mainPluaFilePattern,
+                    AssemblyVersion.GetVersion());
                 fileWriter.WriteLine(mainPluaFilePattern);
 
                 fileWriter.Flush();
@@ -265,8 +268,10 @@ namespace EasyEPlanner
             if (!File.Exists(fileName))
             {
                 //Создаем базовое описание сервера MODBUS.
-                string modBusContent = Properties.Resources.ResourceManager
+                string filePattern = Properties.Resources.ResourceManager
                     .GetString("modbusSRVFilePattern");
+                string modBusContent = string.Format(filePattern,
+                    mainModbusSrvFileVersion, AssemblyVersion.GetVersion());
                 File.WriteAllText(fileName, modBusContent,
                     EncodingDetector.MainFilesEncoding);
             }
@@ -283,6 +288,8 @@ namespace EasyEPlanner
             {
                 //Создаем пустое описание конфигурации PROFIBUS.
                 string content = "--version  = 1\n";
+                content +=string.Format("--Eplanner version = {0}\n",
+                    AssemblyVersion.GetVersion());
                 content += "--Описание конфигурации PROFIBUS\n";
                 content += new string('-', numberOfDashes) + "\n";
                 content += "system = system or { }\n";
@@ -305,7 +312,10 @@ namespace EasyEPlanner
                 false, EncodingDetector.MainFilesEncoding);
 
             fileWriter.WriteLine("--version  = {0}", mainPRGFileVersion);
+            fileWriter.WriteLine("--Eplanner version = {0}",
+                AssemblyVersion.GetVersion());
             fileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);
+            
             fileWriter.WriteLine(new string('-', numberOfDashes));
             fileWriter.WriteLine(new string('-', numberOfDashes));
             fileWriter.WriteLine(PrgLuaSaver.Save("\t"));
@@ -321,6 +331,9 @@ namespace EasyEPlanner
             {
                 string sharedContent = Properties.Resources.ResourceManager
                     .GetString("sharedFilePattern");
+                sharedContent = string.Concat(
+                    $"--{AssemblyVersion.GetStringForFileWithVersion()}",
+                    "\n", sharedContent);
                 File.WriteAllText(fileName, sharedContent,
                     EncodingDetector.MainFilesEncoding);
             }
@@ -332,6 +345,7 @@ namespace EasyEPlanner
         private const int mainRestrictionsFileVersion = 1;
         private const int mainRecipesFileVersion = 1;
         private const int mainPRGFileVersion = 1;
+        private const int mainModbusSrvFileVersion = 1;
 
         private const string mainIOFileName = "main.io.lua";
         public const string MainTechObjectsFileName = "main.objects.lua";

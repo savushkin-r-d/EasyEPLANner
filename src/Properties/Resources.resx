@@ -130,7 +130,7 @@
   <data name="refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\refresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="sysIOLuaFilePattern" xml:space="preserve">
+  <data name="sysIoModulesLuaFilePattern" xml:space="preserve">
     <value>-- В Phoenix Contact особенность, адресное пространство
 -- кратно 32, в связи с этим, увеличивается цифра DO/DI count
 -- в два раза в отличие от WAGO.
@@ -185,7 +185,7 @@ local io_modules =
 }
 
 return io_modules</value>
-    <comment>Шаблон для файла sys_io.lua, в котором находится информация по модулям ввода-вывода.</comment>
+    <comment>Шаблон для файла sys_io_modules.lua, в котором находится информация по модулям ввода-вывода.</comment>
   </data>
   <data name="toCheck" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\To Do's1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -322,11 +322,12 @@ return iolink_devices</value>
 -- 8. isPID - является ли объект ПИД-регулятором.
 -- 9. objectGroups - группы объектов (танки, линии и др).
 -- 10. system_params - системные параметры объекта.
--- 11. parameters - указываются параметры объекта. Можно указать в виде ссылки на другую переменную,
+-- 11. parameters - указываются параметры объекта (float_runtime и float). Можно указать в виде ссылки на другую переменную,
 -- которая представляет параметр, или же описать самому в виде lua-таблицы. При описании в виде
 -- ссылки на переменную, параметры будут идти по порядку (по индексам), а если описывать через
 -- Lua-таблицы, то по ключу Lua-таблицы. Предпочтительный первый вариант, он описан ниже по файлу,
--- а именно, там где определена переменная object_parameters.
+-- а именно, там где определена переменная object_float_parameters. Указываются float паметры в таблице float, или float runtime
+-- в таблица float_runtime.
 -- 12. luaModuleName - имя модуля Lua, в котором описана логика работы базового объекта. Обычно описана
 -- в скриптах, которые идут в поставке вместе с этим файлом. На основании этого имени в prg.lua
 -- будет генерироваться заголовок подключаемого модуля - require( "luaModuleName").
@@ -335,6 +336,9 @@ return iolink_devices</value>
 -- при его добавлении в дерево. Если не задано - будет задаваться стандартное значение - TankObj.
 -- 14. baseProperties - базовые (дополнительные) свойства объекта. Добавляются также, как и параметры
 -- базовой операции. За исключением того, что доступны только bool и active параметры.
+-- 15. deprecated - устарел объект или нет. Если устарел - не будет показан в списке базовых объектов,
+-- но его можно использовать в уже существующих проектах, где такие объекты используются. Для этого
+-- надо добавлять его через Insert в группе объектов.
 
 -- Базовые операции (baseOperations) (название таблицы - это Lua-имя операции, пишется в верхнем регистре):
 -- 1. name - русскоязычное название операции.
@@ -407,6 +411,8 @@ return iolink_devices</value>
 base_tech_objects = function()
 return
     {
+    local object_float_parameters = get_objects_float_parameters()
+    local object_float_runtime_parameters = get_runtime_float_parameters()
         uniqueEplanName = { -- Уникальное Lua-имя объекта
             name = "",
             s88Level = 0,
@@ -457,7 +463,14 @@ return
                          nameLua = "parLuaName",
                      },
             },
-            parameters = { object_parameters.ParLuaName1, },
+            parameters = { 
+                float = {
+                    object_float_parameters.ParLuaName1
+                },
+                float_runtime = {
+                    object_float_runtime_parameters.ParLuaName1
+                },
+            },
             luaModuleName = "name",
             monitorName = "TankObj",
             baseProperties =
@@ -474,7 +487,7 @@ return
     }
 end
 
--- Здесь содержится общий пул параметров, для базовых объектов. Параметры
+-- Здесь содержится общий пул float параметров, для базовых объектов. Параметры
 -- настраиваются следующим образом:
 -- 1. luaName - указывается строковое Lua-имя параметра. Это Lua-имя дублируется
 -- в названии переменной (таблицы) параметра.
@@ -482,36 +495,57 @@ end
 -- 3. value - указывается начальное значение параметра.
 -- (целое число или число с плавающей запятой).
 -- 4. meter - указывается единица измерения в виде строки.
-object_parameters =
-{
-    ParLuaName1 = {
-        luaName = "ParLuaName1",
-        name = "Название параметра",
-        value = 20,
-        meter = "сек",
-    },
-}</value>
+get_objects_float_parameters = function()
+    return
+    {
+        ParLuaName1 = {
+            luaName = "ParLuaName1",
+            name = "Имя параметра",
+            value = 0,
+            meter = "na",
+        }
+    }
+end
+
+-- Здесь содержится общий пул float runtime параметров, для базовых объектов.
+-- Параметры настраиваются следующим образом:
+-- 1. luaName - указывается строковое Lua-имя параметра. Это Lua-имя дублируется
+-- в названии переменной (таблицы) параметра.
+-- 2. name - указывается строковое отображаемое название.
+-- 3. meter - указывается единица измерения в виде строки.
+get_runtime_float_parameters = function()
+    return
+    {
+        ParLuaName1 = {
+            luaName = "ParLuaName1",
+            name = "Имя параметра",
+            meter = "na",
+        }
+    }
+end</value>
     <comment>Шаблон для файла sys_base_objects_description.lua. В нем описаны базовые объекты, с операциями, шагами, параметрами и др.</comment>
   </data>
   <data name="mainRestrictionsPattern" xml:space="preserve">
     <value>--version  = {0}
+--Eplanner version = {1}
 --Файл ограничений проекта
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 restrictions =
     {{
-{1}    }}</value>
+{2}    }}</value>
     <comment>Шаблон файла для сохранения ограничений проекта</comment>
   </data>
   <data name="mainObjectsPattern" xml:space="preserve">
     <value>--version  = {0}
---PAC_name = '{1}'
+--Eplanner version = {1}
+--PAC_name = '{2}'
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 init_tech_objects_modes = function()
     return
     {{
-{2}    }}
+{3}    }}
 end</value>
     <comment>Шаблон файла сохранения объектов проекта</comment>
   </data>
@@ -522,7 +556,8 @@ end</value>
     <value>..\Resources\hideEmptyItems.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="modbusSRVFilePattern" xml:space="preserve">
-    <value>--version  = 1
+    <value>--version  = {0}
+--Eplanner version = {1}
 ------------------------------------------------------------------------------
 function read_holding_registers( n, start_idx, count )
    return read_hr2(n, start_idx, count)
@@ -553,5 +588,34 @@ Recipes =
     {{
 {1}    }}</value>
     <comment>Шаблон для файла рецептов</comment>
+  </data>
+  <data name="sysIoNodesLuaFilePattern" xml:space="preserve">
+    <value>-- Описание узлов ввода-вывода
+
+-- constructor description:
+-- name - название узла ввода-вывода (eg. 750-863, AXL F BK ETH, AXC F 1152, etc.).
+-- isCoupler - является ли узел каплером (default value - false).
+-- type - тип устройства (берется из type enumeration).
+
+-- type enumeration:
+-- -1 - Не определен.
+-- 0 - Модули в контроллере 750-863.
+-- 2 - Модули в контроллере PFC200.
+-- 100 - Удаленный Ethernet узел.
+-- 200 - Модули в контроллере Phoenix Contact.
+-- 201 - Контроллер Phoenix Contact
+
+local io_nodes =
+{
+    [ 1 ] =
+    {
+        name = "11111",
+        isCoupler = false,
+        type = -1
+    }
+}
+
+return io_nodes</value>
+    <comment>Шаблон файла sys_io_nodes.lua, с информацией об узлах ввода-вывода.</comment>
   </data>
 </root>

@@ -15,48 +15,13 @@ namespace IO
         /// <param name="n">Номер (также используется как адрес для COM-порта).
         /// </param>
         /// <param name="ip">IP-адрес.</param>
+        /// <param name="name">Имя на схеме (А100 и др.).</param>
         public IONode(string typeStr, int n, string ip, string name)
         {
             this.typeStr = typeStr;
-            switch (typeStr)
-            {
-                case "750-863":
-                    type = TYPES.T_INTERNAL_750_86x;
-                    break;
-
-                case "750-341":
-                case "750-352":
-                    type = TYPES.T_ETHERNET;
-                    IsCoupler = true;
-                    break;
-
-                case "750-841":
-                    type = TYPES.T_ETHERNET;
-                    break;
-
-                case "750-8202":
-                case "750-8203":
-                case "750-8204":
-                case "750-8206":
-                    type = TYPES.T_INTERNAL_750_820x;
-                    break;
-
-                case "AXL F BK ETH":
-                case "AXL F BK ETH NET2":
-                    type = TYPES.T_PHOENIX_CONTACT;
-                    IsCoupler = true;
-                    break;
-
-                case "AXC F 1152":
-                case "AXC F 2152":
-                case "AXC F 3152":
-                    type = TYPES.T_PHOENIX_CONTACT_MAIN;
-                    break;
-
-                default:
-                    type = TYPES.T_EMPTY;
-                    break;
-            }
+            var nodeinfo = IONodeInfo.GetNodeInfo(typeStr, out _);
+            IsCoupler = nodeinfo.IsCoupler;
+            type = nodeinfo.Type;
 
             this.ip = ip;
             this.n = n;

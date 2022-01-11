@@ -1,3 +1,4 @@
+--Eplanner version = {0}
 --Проект 'ProjectName'
 
 prg = require("prg")                        --Технологические объекты.

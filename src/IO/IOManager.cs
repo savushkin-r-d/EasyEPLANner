@@ -26,7 +26,8 @@ namespace IO
         private IOManager()
         {
             iONodes = new List<IONode>();
-            InitIOModulesInfo();
+            InitIoModulesInfo();
+            InitIoNodesInfo();
         }
 
         /// <summary>
@@ -301,11 +302,11 @@ namespace IO
         /// <summary>
         /// Инициализировать модули информацию о модулях ввода-вывода.
         /// </summary>
-        private void InitIOModulesInfo()
+        private void InitIoModulesInfo()
         {
             var lua = new LuaInterface.Lua();
-            const string fileName = "sys_io.lua";
-            const string templateName = "sysIOLuaFilePattern";
+            const string fileName = "sys_io_modules.lua";
+            const string templateName = "sysIoModulesLuaFilePattern";
             string pathToFile = Path.Combine(
                 ProjectManager.GetInstance().SystemFilesPath, fileName);
 
@@ -373,6 +374,46 @@ namespace IO
                 File.WriteAllText(pathToFile, template);
                 MessageBox.Show("Файл с описанием модулей ввода-вывода" +
                     " не найден. Будет создан пустой файл (без описания).", 
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void InitIoNodesInfo()
+        {
+            var lua = new LuaInterface.Lua();
+            const string fileName = "sys_io_nodes.lua";
+            const string templateName = "sysIoNodesLuaFilePattern";
+            string pathToFile = Path.Combine(
+                ProjectManager.GetInstance().SystemFilesPath, fileName);
+
+            if (File.Exists(pathToFile))
+            {
+                object[] result = lua.DoFile(pathToFile);
+                if (result == null)
+                {
+                    return;
+                }
+
+                var dataTables = result[0] as LuaInterface.LuaTable;
+                foreach (var table in dataTables.Values)
+                {
+                    var tableData = table as LuaInterface.LuaTable;
+
+                    string name = (string)tableData["name"];
+                    int enumNumber = Convert.ToInt32((double)tableData["type"]);
+                    IONode.TYPES type = (IONode.TYPES)enumNumber;
+                    bool isCoupler = (bool)tableData["isCoupler"];
+
+                    IONodeInfo.AddNodeInfo(name, type, isCoupler);
+                }
+            }
+            else
+            {
+                string template = EasyEPlanner.Properties.Resources
+                    .ResourceManager.GetString(templateName);
+                File.WriteAllText(pathToFile, template);
+                MessageBox.Show("Файл с описанием узлов ввода-вывода" +
+                    " не найден. Будет создан пустой файл (без описания).",
                     "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
