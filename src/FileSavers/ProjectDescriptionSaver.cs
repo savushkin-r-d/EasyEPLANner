@@ -157,17 +157,7 @@ namespace EasyEPlanner
             fileData.Append(ioDescription);
             fileData.Append(devicesForIo);
 
-            bool shouldSave = ShouldSaveFile(pathToFile, fileData);
-            if (shouldSave)
-            {
-                var fileWriter = new StreamWriter(pathToFile, false,
-                    EncodingDetector.MainFilesEncoding);
-
-                fileWriter.Write(fileData);
-
-                fileWriter.Flush();
-                fileWriter.Close();
-            }
+            SaveData(pathToFile, fileData);
         }
 
         /// <summary>
@@ -194,17 +184,7 @@ namespace EasyEPlanner
             fileData.Append(AddDashes());
             fileData.Append(description);
 
-            bool shouldSave = ShouldSaveFile(pathToFile, fileData);
-            if (shouldSave)
-            {
-                var fileWriter = new StreamWriter(pathToFile,
-                    false, EncodingDetector.MainFilesEncoding);
-
-                fileWriter.Write(fileData);
-
-                fileWriter.Flush();
-                fileWriter.Close();
-            }
+            SaveData(pathToFile, fileData);
         }
 
         /// <summary>
@@ -231,17 +211,7 @@ namespace EasyEPlanner
             fileData.Append(AddDashes());
             fileData.Append(devicesdata);
 
-            bool shouldSave = ShouldSaveFile(pathToFile, fileData);
-            if (shouldSave)
-            {
-                var fileWriter = new StreamWriter(pathToFile,
-                    false, EncodingDetector.MainFilesEncoding);
-
-                fileWriter.Write(fileData);
-
-                fileWriter.Flush();
-                fileWriter.Close();
-            }
+            SaveData(pathToFile, fileData);
         }
 
         /// <summary>
@@ -268,17 +238,7 @@ namespace EasyEPlanner
             fileData.Append(AddDashes());
             fileData.Append(resctrictions);
 
-            bool shouldSave = ShouldSaveFile(pathToFile, fileData);
-            if (shouldSave)
-            {
-                var fileWriter = new StreamWriter(pathToFile,
-                    false, EncodingDetector.MainFilesEncoding);
-
-                fileWriter.Write(fileData);
-
-                fileWriter.Flush();
-                fileWriter.Close();
-            }
+            SaveData(pathToFile, fileData);
         }
 
         /// <summary>
@@ -372,17 +332,7 @@ namespace EasyEPlanner
             fileData.Append(AddDashes());
             fileData.AppendLine(prgFileData);
 
-            bool shouldSave = ShouldSaveFile(pathToFile, fileData);
-            if (shouldSave)
-            {
-                var fileWriter = new StreamWriter(pathToFile,
-                    false, EncodingDetector.MainFilesEncoding);
-
-                fileWriter.Write(fileData);
-
-                fileWriter.Flush();
-                fileWriter.Close();
-            }
+            SaveData(pathToFile, fileData);
         }
 
         private static void SaveSharedFile(ParametersForSave par)
@@ -405,8 +355,25 @@ namespace EasyEPlanner
             return new string('-', numberOfDashes) + "\n";
         }
 
+
+        private static void SaveData(string pathToFile, StringBuilder fileData)
+        {
+            bool shouldSave = ShouldSaveFile(pathToFile, fileData);
+            if (shouldSave)
+            {
+                var fileWriter = new StreamWriter(pathToFile,
+                    false, EncodingDetector.MainFilesEncoding);
+
+                fileWriter.Write(fileData);
+
+                fileWriter.Flush();
+                fileWriter.Close();
+                fileWriter.Dispose();
+            }
+        }
+
         private static bool ShouldSaveFile(string pathToFile,
-            StringBuilder currentfileData)
+            StringBuilder currentFileData)
         {
             const string splitPattern = "\r\n|\n\r|\r|\n";
             const int eplannerVersionId = 1;
@@ -418,7 +385,7 @@ namespace EasyEPlanner
             previousVersion[eplannerVersionId] = string.Empty;
 
             string[] currentVersion = Regex
-                .Split(currentfileData.ToString(), splitPattern);
+                .Split(currentFileData.ToString(), splitPattern);
             currentVersion[eplannerVersionId] = string.Empty;
 
             bool save = !currentVersion.SequenceEqual(previousVersion);
