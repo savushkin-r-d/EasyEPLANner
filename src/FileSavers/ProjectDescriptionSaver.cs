@@ -136,8 +136,6 @@ namespace EasyEPlanner
 
             string versionForPlc = string
                 .Format(VersionPattern, mainIOFileVersion);
-            string eplannerVersion = string.Format("--Eplanner version = {0}",
-                AssemblyVersion.GetVersion());
             string pacName = string.Format(PacNamePattern, par.PAC_Name);
             ushort crc = ProjectManager.CRC16(par.PAC_Name);
             string pacId = string.Format("PAC_id         = \'{0}\'", crc);
@@ -146,7 +144,7 @@ namespace EasyEPlanner
 
             var fileData = new StringBuilder();
             fileData.AppendLine(versionForPlc);
-            fileData.AppendLine(eplannerVersion);
+            fileData.AppendLine(AssemblyVersion.GetVersionAsLuaComment());
 
             fileData.Append(AddDashes());
             fileData.AppendLine(pacName);
@@ -169,15 +167,13 @@ namespace EasyEPlanner
 
             string versionForPlc = string.Format(VersionPattern,
                     mainTechObjectsFileVersion);
-            string eplannerVersion = string.Format("--Eplanner version = {0}",
-                    AssemblyVersion.GetVersion());
             string pacName = string
                 .Format(PacNamePattern, par.PAC_Name);
             string description = techObjectManager.SaveAsLuaTable("");
 
             var fileData = new StringBuilder();
             fileData.AppendLine(versionForPlc);
-            fileData.AppendLine(eplannerVersion);
+            fileData.AppendLine(AssemblyVersion.GetVersionAsLuaComment());
             fileData.AppendLine(pacName);
             fileData.Append(AddDashes());
             fileData.Append(AddDashes());
@@ -196,15 +192,13 @@ namespace EasyEPlanner
 
             string versionForPlc = string.Format(VersionPattern,
                     mainTechDevicesFileVersion);
-            string eplannerVersion = string.Format("--Eplanner version = {0}",
-                    AssemblyVersion.GetVersion());
             string pacName = string
                 .Format(PacNamePattern, par.PAC_Name);
             string devicesdata = deviceManager.SaveAsLuaTableForMainDevices();
 
             var fileData = new StringBuilder();
             fileData.AppendLine(versionForPlc);
-            fileData.AppendLine(eplannerVersion);
+            fileData.AppendLine(AssemblyVersion.GetVersionAsLuaComment());
             fileData.AppendLine(pacName);
             fileData.Append(AddDashes());
             fileData.Append(AddDashes());
@@ -223,15 +217,13 @@ namespace EasyEPlanner
 
             string versionForPlc = string.Format(VersionPattern,
                     mainRestrictionsFileVersion);
-            string eplannerVersion = string.Format("--Eplanner version = {0}",
-                    AssemblyVersion.GetVersion());
             string fileHeader = "--Файл ограничений проекта";
             string resctrictions = techObjectManager
                 .SaveRestrictionAsLua("");
 
             var fileData = new StringBuilder();
             fileData.AppendLine(versionForPlc);
-            fileData.AppendLine(eplannerVersion);
+            fileData.AppendLine(AssemblyVersion.GetVersionAsLuaComment());
             fileData.AppendLine(fileHeader);
             fileData.Append(AddDashes());
             fileData.Append(AddDashes());
@@ -294,8 +286,7 @@ namespace EasyEPlanner
             {
                 //Создаем пустое описание конфигурации PROFIBUS.
                 string content = "--version  = 1\n";
-                content += string.Format("--Eplanner version = {0}\n",
-                    AssemblyVersion.GetVersion());
+                content += AssemblyVersion.GetVersionAsLuaComment();
                 content += "--Описание конфигурации PROFIBUS\n";
                 content += AddDashes();
                 content += "system = system or { }\n";
@@ -317,15 +308,13 @@ namespace EasyEPlanner
 
             string versionForPlc = string
                 .Format(VersionPattern, mainPRGFileVersion);
-            string eplannerVersion = string.Format("--Eplanner version = {0}",
-                    AssemblyVersion.GetVersion());
             string pacName = string
                 .Format(PacNamePattern, par.PAC_Name);
             string prgFileData = PrgLuaSaver.Save("\t");
 
             var fileData = new StringBuilder();
             fileData.AppendLine(versionForPlc);
-            fileData.AppendLine(eplannerVersion);
+            fileData.AppendLine(AssemblyVersion.GetVersionAsLuaComment());
             fileData.AppendLine(pacName);
             fileData.Append(AddDashes());
             fileData.Append(AddDashes());

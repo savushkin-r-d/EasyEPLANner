@@ -15,6 +15,11 @@ namespace EasyEPlanner
             return $"{StrForFilePattern} = {GetVersion()}";
         }
 
+        public static string GetVersionAsLuaComment()
+        {
+            return string.Format("--Eplanner version = {0}", GetVersion());
+        }
+
         public const string StrForFilePattern = "Eplanner version";
     }
 }
