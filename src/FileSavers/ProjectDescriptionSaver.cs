@@ -135,7 +135,7 @@ namespace EasyEPlanner
             string pathToFile = par.path + @"\" + mainIOFileName;
 
             string versionForPlc = string
-                .Format("--version  = {0}", mainIOFileVersion);
+                .Format(VersionPattern, mainIOFileVersion);
             string eplannerVersion = string.Format("--Eplanner version = {0}",
                 AssemblyVersion.GetVersion());
             string pacName = string
@@ -178,12 +178,12 @@ namespace EasyEPlanner
         {
             string pathToFile = par.path + @"\" + MainTechObjectsFileName;
 
-            string versionForPlc = string.Format("--version  = {0}",
-                    mainTechDevicesFileVersion);
+            string versionForPlc = string.Format(VersionPattern,
+                    mainTechObjectsFileVersion);
             string eplannerVersion = string.Format("--Eplanner version = {0}",
                     AssemblyVersion.GetVersion());
             string pacName = string
-                .Format("--PAC_name = \'{0}\'", par.PAC_Name);
+                .Format(PacNamePattern, par.PAC_Name);
             string description = techObjectManager.SaveAsLuaTable("");
 
             var fileData = new StringBuilder();
@@ -215,12 +215,12 @@ namespace EasyEPlanner
         {
             string pathToFile = par.path + @"\" + mainTechDevicesFileName;
 
-            string versionForPlc = string.Format("--version  = {0}",
+            string versionForPlc = string.Format(VersionPattern,
                     mainTechDevicesFileVersion);
             string eplannerVersion = string.Format("--Eplanner version = {0}",
                     AssemblyVersion.GetVersion());
             string pacName = string
-                .Format("--PAC_name = \'{0}\'", par.PAC_Name);
+                .Format(PacNamePattern, par.PAC_Name);
             string devicesdata = deviceManager.SaveAsLuaTableForMainDevices();
 
             var fileData = new StringBuilder();
@@ -252,7 +252,7 @@ namespace EasyEPlanner
         {
             string pathToFile = par.path + @"\" + MainRestrictionsFileName;
 
-            string versionForPlc = string.Format("--version  = {0}",
+            string versionForPlc = string.Format(VersionPattern,
                     mainRestrictionsFileVersion);
             string eplannerVersion = string.Format("--Eplanner version = {0}",
                     AssemblyVersion.GetVersion());
@@ -357,11 +357,11 @@ namespace EasyEPlanner
             string pathToFile = par.path + @"\" + mainPRGFileName;
 
             string versionForPlc = string
-                .Format("--version  = {0}", mainPRGFileVersion);
+                .Format(VersionPattern, mainPRGFileVersion);
             string eplannerVersion = string.Format("--Eplanner version = {0}",
                     AssemblyVersion.GetVersion());
             string pacName = string
-                .Format("--PAC_name = \'{0}\'", par.PAC_Name);
+                .Format(PacNamePattern, par.PAC_Name);
             string prgFileData = PrgLuaSaver.Save("\t");
 
             var fileData = new StringBuilder();
@@ -408,21 +408,25 @@ namespace EasyEPlanner
         private static bool ShouldSaveFile(string pathToFile,
             StringBuilder currentfileData)
         {
+            const string splitPattern = "\r\n|\n\r|\r|\n";
             const int eplannerVersionId = 1;
             if (!File.Exists(pathToFile)) return true;
 
             string previousfileData = File.ReadAllText(pathToFile);
             string[] previousVersion = Regex
-                .Split(previousfileData.ToString(), "\r\n|\n\r|\r|\n");
+                .Split(previousfileData.ToString(), splitPattern);
             previousVersion[eplannerVersionId] = string.Empty;
 
             string[] currentVersion = Regex
-                .Split(currentfileData.ToString(), "\r\n|\n\r|\r|\n");
+                .Split(currentfileData.ToString(), splitPattern);
             currentVersion[eplannerVersionId] = string.Empty;
 
             bool save = !currentVersion.SequenceEqual(previousVersion);
             return save;
         }
+
+        private const string VersionPattern = "--version  = {0}";
+        private const string PacNamePattern = "--PAC_name = \'{0}\'";
 
         private const int mainIOFileVersion = 1;
         private const int mainTechObjectsFileVersion = 1;
