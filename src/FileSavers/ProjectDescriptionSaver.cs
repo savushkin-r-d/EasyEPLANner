@@ -198,22 +198,35 @@ namespace EasyEPlanner
         /// <param name="par">Параметры</param>
         private static void SaveTechDevicesFile(ParametersForSave par)
         {
-            string fileName = par.path + @"\" + mainTechDevicesFileName;
-            var fileWriter = new StreamWriter(fileName,
-            false, EncodingDetector.MainFilesEncoding);
+            string pathToFile = par.path + @"\" + mainTechDevicesFileName;
 
-            fileWriter.WriteLine("--version  = {0}",
-                mainTechDevicesFileVersion);
-            fileWriter.WriteLine("--Eplanner version = {0}",
-                AssemblyVersion.GetVersion());
-            fileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);
-            AddDashes(fileWriter);
-            AddDashes(fileWriter);
+            string versionForPlc = string.Format("--version  = {0}",
+                    mainTechDevicesFileVersion);
+            string eplannerVersion = string.Format("--Eplanner version = {0}",
+                    AssemblyVersion.GetVersion());
+            string pacName = string
+                .Format("--PAC_name = \'{0}\'", par.PAC_Name);
+            string devicesdata = deviceManager.SaveAsLuaTableForMainDevices();
 
-            fileWriter.Write(deviceManager.SaveAsLuaTableForMainDevices());
+            var fileData = new StringBuilder();
+            fileData.AppendLine(versionForPlc);
+            fileData.AppendLine(eplannerVersion);
+            fileData.AppendLine(pacName);
+            fileData.Append(AddDashes());
+            fileData.Append(AddDashes());
+            fileData.Append(devicesdata);
 
-            fileWriter.Flush();
-            fileWriter.Close();
+            bool shouldSave = ShouldSaveFile(pathToFile, fileData);
+            if (shouldSave)
+            {
+                var fileWriter = new StreamWriter(pathToFile,
+                    false, EncodingDetector.MainFilesEncoding);
+
+                fileWriter.WriteLine(fileData);
+
+                fileWriter.Flush();
+                fileWriter.Close();
+            }
         }
 
         /// <summary>
