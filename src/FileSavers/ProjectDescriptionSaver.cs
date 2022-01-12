@@ -222,7 +222,7 @@ namespace EasyEPlanner
                 var fileWriter = new StreamWriter(pathToFile,
                     false, EncodingDetector.MainFilesEncoding);
 
-                fileWriter.WriteLine(fileData);
+                fileWriter.Write(fileData);
 
                 fileWriter.Flush();
                 fileWriter.Close();
@@ -321,21 +321,35 @@ namespace EasyEPlanner
         /// <param name="par">Параметры</param>
         private static void SavePrgFile(ParametersForSave par)
         {
-            string fileName = par.path + @"\" + mainPRGFileName;
-            var fileWriter = new StreamWriter(fileName,
-                false, EncodingDetector.MainFilesEncoding);
+            string pathToFile = par.path + @"\" + mainPRGFileName;
 
-            fileWriter.WriteLine("--version  = {0}", mainPRGFileVersion);
-            fileWriter.WriteLine("--Eplanner version = {0}",
-                AssemblyVersion.GetVersion());
-            fileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);
+            string versionForPlc = string
+                .Format("--version  = {0}", mainPRGFileVersion);
+            string eplannerVersion = string.Format("--Eplanner version = {0}",
+                    AssemblyVersion.GetVersion());
+            string pacName = string
+                .Format("--PAC_name = \'{0}\'", par.PAC_Name);
+            string prgFileData = PrgLuaSaver.Save("\t");
 
-            AddDashes(fileWriter);
-            AddDashes(fileWriter);
-            fileWriter.WriteLine(PrgLuaSaver.Save("\t"));
+            var fileData = new StringBuilder();
+            fileData.AppendLine(versionForPlc);
+            fileData.AppendLine(eplannerVersion);
+            fileData.AppendLine(pacName);
+            fileData.Append(AddDashes());
+            fileData.Append(AddDashes());
+            fileData.AppendLine(prgFileData);
 
-            fileWriter.Flush();
-            fileWriter.Close();
+            bool shouldSave = ShouldSaveFile(pathToFile, fileData);
+            if (shouldSave)
+            {
+                var fileWriter = new StreamWriter(pathToFile,
+                    false, EncodingDetector.MainFilesEncoding);
+
+                fileWriter.Write(fileData);
+
+                fileWriter.Flush();
+                fileWriter.Close();
+            }
         }
 
         private static void SaveSharedFile(ParametersForSave par)
@@ -351,11 +365,6 @@ namespace EasyEPlanner
                 File.WriteAllText(fileName, sharedContent,
                     EncodingDetector.MainFilesEncoding);
             }
-        }
-
-        private static void AddDashes(StreamWriter fileWriter)
-        {
-            fileWriter.WriteLine(new string('-', numberOfDashes));
         }
 
         private static string AddDashes()
