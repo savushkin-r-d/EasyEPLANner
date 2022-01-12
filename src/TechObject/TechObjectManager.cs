@@ -151,14 +151,14 @@ namespace TechObject
         {
             string res = string.Empty;
             res += "init_tech_objects_modes = function()\n";
-            res += $"{prefix}return\n";
-            res += $"{prefix}{{\n";
+            res += "\treturn\n";
+            res += "\t{\n";
             foreach (TechObject obj in TechObjects)
             {
                 int num = TechObjects.IndexOf(obj) + 1;
                 res += obj.SaveAsLuaTable(prefix + "\t\t", num);
             }
-            res += "\t}}\n";
+            res += "\t}\n";
             res += "end";
 
             res = res.Replace("\t", "    ");
@@ -174,13 +174,13 @@ namespace TechObject
         {
             var res = string.Empty;
             res += "restrictions =\n";
-            res += "{{\n";
+            res += "\t{\n";
             foreach (TechObject obj in TechObjects)
             {
                 int num = TechObjects.IndexOf(obj) + 1;
                 res += obj.SaveRestrictionAsLua(prefix + "\t", num);
             }
-            res += "}}\n";
+            res += "\t}";
             res = res.Replace("\t", "    ");
             return res;
         }
