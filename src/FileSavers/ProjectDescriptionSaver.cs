@@ -355,7 +355,6 @@ namespace EasyEPlanner
             return new string('-', numberOfDashes) + "\n";
         }
 
-
         private static void SaveData(string pathToFile, StringBuilder fileData)
         {
             bool shouldSave = ShouldSaveFile(pathToFile, fileData);
