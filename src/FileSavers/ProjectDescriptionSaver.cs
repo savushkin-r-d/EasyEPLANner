@@ -176,20 +176,35 @@ namespace EasyEPlanner
         /// <param name="par">Параметры</param>
         private static void SaveTechObjectsFile(ParametersForSave par)
         {
-            string filePattern = Properties.Resources.ResourceManager
-                .GetString("mainObjectsPattern");
-            string desctiption = techObjectManager.SaveAsLuaTable("");
-            var descriptionFileData = string.Format(filePattern,
-                mainTechObjectsFileVersion, AssemblyVersion.GetVersion(),
-                par.PAC_Name, desctiption);
+            string pathToFile = par.path + @"\" + MainTechObjectsFileName;
 
-            string fileName = par.path + @"\" + MainTechObjectsFileName;
-            var fileWriter = new StreamWriter(fileName, false,
-                EncodingDetector.MainFilesEncoding);
+            string versionForPlc = string.Format("--version  = {0}",
+                    mainTechDevicesFileVersion);
+            string eplannerVersion = string.Format("--Eplanner version = {0}",
+                    AssemblyVersion.GetVersion());
+            string pacName = string
+                .Format("--PAC_name = \'{0}\'", par.PAC_Name);
+            string description = techObjectManager.SaveAsLuaTable("");
 
-            fileWriter.Write(descriptionFileData);
-            fileWriter.Flush();
-            fileWriter.Close();
+            var fileData = new StringBuilder();
+            fileData.AppendLine(versionForPlc);
+            fileData.AppendLine(eplannerVersion);
+            fileData.AppendLine(pacName);
+            fileData.Append(AddDashes());
+            fileData.Append(AddDashes());
+            fileData.Append(description);
+
+            bool shouldSave = ShouldSaveFile(pathToFile, fileData);
+            if (shouldSave)
+            {
+                var fileWriter = new StreamWriter(pathToFile,
+                    false, EncodingDetector.MainFilesEncoding);
+
+                fileWriter.Write(fileData);
+
+                fileWriter.Flush();
+                fileWriter.Close();
+            }
         }
 
         /// <summary>
@@ -235,17 +250,35 @@ namespace EasyEPlanner
         /// <param name="par">Параметры</param>
         private static void SaveRestrictionsFile(ParametersForSave par)
         {
-            string filePattern = Properties.Resources.ResourceManager
-                .GetString("mainRestrictionsPattern");
+            string pathToFile = par.path + @"\" + MainRestrictionsFileName;
+
+            string versionForPlc = string.Format("--version  = {0}",
+                    mainRestrictionsFileVersion);
+            string eplannerVersion = string.Format("--Eplanner version = {0}",
+                    AssemblyVersion.GetVersion());
+            string fileHeader = "--Файл ограничений проекта";
             string resctrictions = techObjectManager
                 .SaveRestrictionAsLua("");
-            var restrictionsFileData = string.Format(filePattern,
-                mainRestrictionsFileVersion, AssemblyVersion.GetVersion(),
-                resctrictions);
 
-            string fileName = par.path + @"\" + MainRestrictionsFileName;
-            File.WriteAllText(fileName, restrictionsFileData,
-                    EncodingDetector.MainFilesEncoding);
+            var fileData = new StringBuilder();
+            fileData.AppendLine(versionForPlc);
+            fileData.AppendLine(eplannerVersion);
+            fileData.AppendLine(fileHeader);
+            fileData.Append(AddDashes());
+            fileData.Append(AddDashes());
+            fileData.Append(resctrictions);
+
+            bool shouldSave = ShouldSaveFile(pathToFile, fileData);
+            if (shouldSave)
+            {
+                var fileWriter = new StreamWriter(pathToFile,
+                    false, EncodingDetector.MainFilesEncoding);
+
+                fileWriter.Write(fileData);
+
+                fileWriter.Flush();
+                fileWriter.Close();
+            }
         }
 
         /// <summary>

@@ -149,12 +149,18 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix)
         {
-            string res = "";
+            string res = string.Empty;
+            res += "init_tech_objects_modes = function()\n";
+            res += $"{prefix}return\n";
+            res += $"{prefix}{{\n";
             foreach (TechObject obj in TechObjects)
             {
                 int num = TechObjects.IndexOf(obj) + 1;
                 res += obj.SaveAsLuaTable(prefix + "\t\t", num);
             }
+            res += "\t}}\n";
+            res += "end";
+
             res = res.Replace("\t", "    ");
             return res;
         }
@@ -166,12 +172,15 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveRestrictionAsLua(string prefix)
         {
-            var res = "";
+            var res = string.Empty;
+            res += "restrictions =\n";
+            res += "{{\n";
             foreach (TechObject obj in TechObjects)
             {
                 int num = TechObjects.IndexOf(obj) + 1;
                 res += obj.SaveRestrictionAsLua(prefix + "\t", num);
             }
+            res += "}}\n";
             res = res.Replace("\t", "    ");
             return res;
         }
