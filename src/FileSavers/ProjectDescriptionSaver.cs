@@ -138,8 +138,7 @@ namespace EasyEPlanner
                 .Format(VersionPattern, mainIOFileVersion);
             string eplannerVersion = string.Format("--Eplanner version = {0}",
                 AssemblyVersion.GetVersion());
-            string pacName = string
-                .Format("PAC_name       = \'{0}\'", par.PAC_Name);
+            string pacName = string.Format(PacNamePattern, par.PAC_Name);
             ushort crc = ProjectManager.CRC16(par.PAC_Name);
             string pacId = string.Format("PAC_id         = \'{0}\'", crc);
             string ioDescription = IOManager.SaveAsLuaTable("");
