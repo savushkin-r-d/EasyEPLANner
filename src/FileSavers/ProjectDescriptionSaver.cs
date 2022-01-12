@@ -136,9 +136,9 @@ namespace EasyEPlanner
 
             string versionForPlc = string
                 .Format(VersionPattern, mainIOFileVersion);
-            string pacName = string.Format(PacNamePattern, par.PAC_Name);
+            string pacName = string.Format("PAC_name = \'{0}\'", par.PAC_Name);
             ushort crc = ProjectManager.CRC16(par.PAC_Name);
-            string pacId = string.Format("PAC_id         = \'{0}\'", crc);
+            string pacId = string.Format("PAC_id = \'{0}\'", crc);
             string ioDescription = IOManager.SaveAsLuaTable("");
             string devicesForIo = deviceManager.SaveAsLuaTableForMainIO("");
 
@@ -286,7 +286,7 @@ namespace EasyEPlanner
             {
                 //Создаем пустое описание конфигурации PROFIBUS.
                 string content = "--version  = 1\n";
-                content += AssemblyVersion.GetVersionAsLuaComment();
+                content += AssemblyVersion.GetVersionAsLuaComment() + "\n";
                 content += "--Описание конфигурации PROFIBUS\n";
                 content += AddDashes();
                 content += "system = system or { }\n";
