@@ -3,6 +3,9 @@ using System.IO;
 using Device;
 using IO;
 using System.Windows.Forms;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace EasyEPlanner
 {
@@ -129,26 +132,29 @@ namespace EasyEPlanner
         /// <param name="par">Параметры</param>
         private static void SaveIOFile(ParametersForSave par)
         {
-            string fileName = par.path + @"\" + mainIOFileName;
-            var fileWriter = new StreamWriter(fileName, false,
-                EncodingDetector.MainFilesEncoding);
+            string pathToFile = par.path + @"\" + mainIOFileName;
 
-            fileWriter.WriteLine("--version  = {0}", mainIOFileVersion);
-            fileWriter.WriteLine("--Eplanner  version = {0}",
-                AssemblyVersion.GetVersion());
-            fileWriter.WriteLine(new string('-', numberOfDashes));
-            fileWriter.WriteLine("PAC_name       = \'{0}\'", par.PAC_Name);
-
+            string versionForPlc = string
+                .Format(VersionPattern, mainIOFileVersion);
+            string pacName = string.Format("PAC_name = \'{0}\'", par.PAC_Name);
             ushort crc = ProjectManager.CRC16(par.PAC_Name);
+            string pacId = string.Format("PAC_id = \'{0}\'", crc);
+            string ioDescription = IOManager.SaveAsLuaTable("");
+            string devicesForIo = deviceManager.SaveAsLuaTableForMainIO("");
 
-            fileWriter.WriteLine("PAC_id         = \'{0}\'", crc);
-            fileWriter.WriteLine(new string('-', numberOfDashes));
+            var fileData = new StringBuilder();
+            fileData.AppendLine(versionForPlc);
+            fileData.AppendLine(AssemblyVersion.GetVersionAsLuaComment());
 
-            fileWriter.Write(IOManager.SaveAsLuaTable(""));
-            fileWriter.Write(deviceManager.SaveAsLuaTableForMainIO(""));
+            fileData.Append(AddDashes());
+            fileData.AppendLine(pacName);
+            fileData.AppendLine(pacId);
+            fileData.Append(AddDashes());
 
-            fileWriter.Flush();
-            fileWriter.Close();
+            fileData.Append(ioDescription);
+            fileData.Append(devicesForIo);
+
+            SaveData(pathToFile, fileData);
         }
 
         /// <summary>
@@ -157,20 +163,23 @@ namespace EasyEPlanner
         /// <param name="par">Параметры</param>
         private static void SaveTechObjectsFile(ParametersForSave par)
         {
-            string filePattern = Properties.Resources.ResourceManager
-                .GetString("mainObjectsPattern");
-            string desctiption = techObjectManager.SaveAsLuaTable("");
-            var descriptionFileData = string.Format(filePattern,
-                mainTechObjectsFileVersion, AssemblyVersion.GetVersion(),
-                par.PAC_Name, desctiption);
+            string pathToFile = par.path + @"\" + MainTechObjectsFileName;
 
-            string fileName = par.path + @"\" + MainTechObjectsFileName;
-            var fileWriter = new StreamWriter(fileName, false,
-                EncodingDetector.MainFilesEncoding);
+            string versionForPlc = string.Format(VersionPattern,
+                    mainTechObjectsFileVersion);
+            string pacName = string
+                .Format(PacNamePattern, par.PAC_Name);
+            string description = techObjectManager.SaveAsLuaTable("");
 
-            fileWriter.Write(descriptionFileData);
-            fileWriter.Flush();
-            fileWriter.Close();
+            var fileData = new StringBuilder();
+            fileData.AppendLine(versionForPlc);
+            fileData.AppendLine(AssemblyVersion.GetVersionAsLuaComment());
+            fileData.AppendLine(pacName);
+            fileData.Append(AddDashes());
+            fileData.Append(AddDashes());
+            fileData.Append(description);
+
+            SaveData(pathToFile, fileData);
         }
 
         /// <summary>
@@ -179,22 +188,23 @@ namespace EasyEPlanner
         /// <param name="par">Параметры</param>
         private static void SaveTechDevicesFile(ParametersForSave par)
         {
-            string fileName = par.path + @"\" + mainTechDevicesFileName;
-            var fileWriter = new StreamWriter(fileName,
-            false, EncodingDetector.MainFilesEncoding);
+            string pathToFile = par.path + @"\" + mainTechDevicesFileName;
 
-            fileWriter.WriteLine("--version  = {0}",
-                mainTechDevicesFileVersion);
-            fileWriter.WriteLine("--Eplanner  version = {0}",
-                AssemblyVersion.GetVersion());
-            fileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);
-            fileWriter.WriteLine(new string('-', numberOfDashes));
-            fileWriter.WriteLine(new string('-', numberOfDashes));
+            string versionForPlc = string.Format(VersionPattern,
+                    mainTechDevicesFileVersion);
+            string pacName = string
+                .Format(PacNamePattern, par.PAC_Name);
+            string devicesdata = deviceManager.SaveAsLuaTableForMainDevices();
 
-            fileWriter.Write(deviceManager.SaveAsLuaTableForMainDevices());
+            var fileData = new StringBuilder();
+            fileData.AppendLine(versionForPlc);
+            fileData.AppendLine(AssemblyVersion.GetVersionAsLuaComment());
+            fileData.AppendLine(pacName);
+            fileData.Append(AddDashes());
+            fileData.Append(AddDashes());
+            fileData.Append(devicesdata);
 
-            fileWriter.Flush();
-            fileWriter.Close();
+            SaveData(pathToFile, fileData);
         }
 
         /// <summary>
@@ -203,17 +213,23 @@ namespace EasyEPlanner
         /// <param name="par">Параметры</param>
         private static void SaveRestrictionsFile(ParametersForSave par)
         {
-            string filePattern = Properties.Resources.ResourceManager
-                .GetString("mainRestrictionsPattern");
+            string pathToFile = par.path + @"\" + MainRestrictionsFileName;
+
+            string versionForPlc = string.Format(VersionPattern,
+                    mainRestrictionsFileVersion);
+            string fileHeader = "--Файл ограничений проекта";
             string resctrictions = techObjectManager
                 .SaveRestrictionAsLua("");
-            var restrictionsFileData = string.Format(filePattern,
-                mainRestrictionsFileVersion, AssemblyVersion.GetVersion(),
-                resctrictions);
 
-            string fileName = par.path + @"\" + MainRestrictionsFileName;
-            File.WriteAllText(fileName, restrictionsFileData,
-                    EncodingDetector.MainFilesEncoding);
+            var fileData = new StringBuilder();
+            fileData.AppendLine(versionForPlc);
+            fileData.AppendLine(AssemblyVersion.GetVersionAsLuaComment());
+            fileData.AppendLine(fileHeader);
+            fileData.Append(AddDashes());
+            fileData.Append(AddDashes());
+            fileData.Append(resctrictions);
+
+            SaveData(pathToFile, fileData);
         }
 
         /// <summary>
@@ -270,10 +286,9 @@ namespace EasyEPlanner
             {
                 //Создаем пустое описание конфигурации PROFIBUS.
                 string content = "--version  = 1\n";
-                content +=string.Format("--Eplanner version = {0}\n",
-                    AssemblyVersion.GetVersion());
+                content += AssemblyVersion.GetVersionAsLuaComment() + "\n";
                 content += "--Описание конфигурации PROFIBUS\n";
-                content += new string('-', numberOfDashes) + "\n";
+                content += AddDashes();
                 content += "system = system or { }\n";
                 content += "system.init_profibus = function()\n";
                 content += "end\n";
@@ -289,21 +304,23 @@ namespace EasyEPlanner
         /// <param name="par">Параметры</param>
         private static void SavePrgFile(ParametersForSave par)
         {
-            string fileName = par.path + @"\" + mainPRGFileName;
-            var fileWriter = new StreamWriter(fileName,
-                false, EncodingDetector.MainFilesEncoding);
+            string pathToFile = par.path + @"\" + mainPRGFileName;
 
-            fileWriter.WriteLine("--version  = {0}", mainPRGFileVersion);
-            fileWriter.WriteLine("--Eplanner version = {0}",
-                AssemblyVersion.GetVersion());
-            fileWriter.WriteLine("--PAC_name = \'{0}\'", par.PAC_Name);
-            
-            fileWriter.WriteLine(new string('-', numberOfDashes));
-            fileWriter.WriteLine(new string('-', numberOfDashes));
-            fileWriter.WriteLine(PrgLuaSaver.Save("\t"));
+            string versionForPlc = string
+                .Format(VersionPattern, mainPRGFileVersion);
+            string pacName = string
+                .Format(PacNamePattern, par.PAC_Name);
+            string prgFileData = PrgLuaSaver.Save("\t");
 
-            fileWriter.Flush();
-            fileWriter.Close();
+            var fileData = new StringBuilder();
+            fileData.AppendLine(versionForPlc);
+            fileData.AppendLine(AssemblyVersion.GetVersionAsLuaComment());
+            fileData.AppendLine(pacName);
+            fileData.Append(AddDashes());
+            fileData.Append(AddDashes());
+            fileData.AppendLine(prgFileData);
+
+            SaveData(pathToFile, fileData);
         }
 
         private static void SaveSharedFile(ParametersForSave par)
@@ -320,6 +337,50 @@ namespace EasyEPlanner
                     EncodingDetector.MainFilesEncoding);
             }
         }
+
+        private static string AddDashes()
+        {
+            return new string('-', numberOfDashes) + "\n";
+        }
+
+        private static void SaveData(string pathToFile, StringBuilder fileData)
+        {
+            bool shouldSave = ShouldSaveFile(pathToFile, fileData);
+            if (shouldSave)
+            {
+                var fileWriter = new StreamWriter(pathToFile,
+                    false, EncodingDetector.MainFilesEncoding);
+
+                fileWriter.Write(fileData);
+
+                fileWriter.Flush();
+                fileWriter.Close();
+                fileWriter.Dispose();
+            }
+        }
+
+        private static bool ShouldSaveFile(string pathToFile,
+            StringBuilder currentFileData)
+        {
+            const string splitPattern = "\r\n|\n\r|\r|\n";
+            const int eplannerVersionId = 1;
+            if (!File.Exists(pathToFile)) return true;
+
+            string previousfileData = File.ReadAllText(pathToFile);
+            string[] previousVersion = Regex
+                .Split(previousfileData.ToString(), splitPattern);
+            previousVersion[eplannerVersionId] = string.Empty;
+
+            string[] currentVersion = Regex
+                .Split(currentFileData.ToString(), splitPattern);
+            currentVersion[eplannerVersionId] = string.Empty;
+
+            bool save = !currentVersion.SequenceEqual(previousVersion);
+            return save;
+        }
+
+        private const string VersionPattern = "--version  = {0}";
+        private const string PacNamePattern = "--PAC_name = \'{0}\'";
 
         private const int mainIOFileVersion = 1;
         private const int mainTechObjectsFileVersion = 1;
