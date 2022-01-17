@@ -721,6 +721,12 @@ namespace TechObject
         public class OneInManyOutActionProcessingStrategy :
             DefaultActionProcessorStrategy
         {
+            public OneInManyOutActionProcessingStrategy(
+                Device.DeviceType[] allowedInputDevTypes)
+            {
+                this.allowedInputDevTypes = allowedInputDevTypes;
+            }
+
             public override IList<int> ProcessDevices(string devicesStr,
                 Device.IDeviceManager deviceManager)
             {
@@ -778,7 +784,7 @@ namespace TechObject
             class OneInManyDevicesComparer : IComparer<Device.DeviceType>
             {
                 public OneInManyDevicesComparer(
-                    List<Device.DeviceType> allowedFirstPlaceDevTypes)
+                    Device.DeviceType[] allowedFirstPlaceDevTypes)
                 {
                     this.allowedFirstPlaceDevTypes = allowedFirstPlaceDevTypes;
                 }
@@ -802,16 +808,10 @@ namespace TechObject
                     return x.ToString().CompareTo(y.ToString());
                 }
 
-                private List<Device.DeviceType> allowedFirstPlaceDevTypes;
+                private Device.DeviceType[] allowedFirstPlaceDevTypes;
             }
 
-            private List<Device.DeviceType> allowedInputDevTypes =
-                new List<Device.DeviceType>()
-                { 
-                    Device.DeviceType.AI,
-                    Device.DeviceType.DI,
-                    Device.DeviceType.GS
-                };
+            private Device.DeviceType[] allowedInputDevTypes;
         }
     }
 }
