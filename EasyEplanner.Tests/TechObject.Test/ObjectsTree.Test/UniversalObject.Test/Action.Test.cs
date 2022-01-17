@@ -686,7 +686,7 @@ namespace Tests.TechObject
         {
             IAction action = ActionMock.GetAction(allowedDevTypes,
                 allowedDevSubTypes, new List<int>());
-            var strategy = new OneInManyOutActionProcessingStrategy();
+            var strategy = new DefaultActionProcessorStrategy();
             strategy.Action = action;
             var deviceManager = DeviceManagerMock.DeviceManager;
 
@@ -709,7 +709,12 @@ namespace Tests.TechObject
                 {
                     Device.DeviceSubType.V_IOLINK_MIXPROOF,
                 },
-                new List<int> { 2, 7, 3}
+                new List<int>
+                {
+                    (int)DeviceManagerMock.Devices.TANK1V2,
+                    (int)DeviceManagerMock.Devices.TANK2V3,
+                    (int)DeviceManagerMock.Devices.KOAG1V1
+                }
             };
 
             var allowValeMixproofIOLinkAndGetEmptyList = new object[]
@@ -739,7 +744,11 @@ namespace Tests.TechObject
                     Device.DeviceSubType.LS_IOLINK_MIN,
                     Device.DeviceSubType.NONE
                 },
-                new List<int> { 9, 11 }
+                new List<int>
+                {
+                    (int)DeviceManagerMock.Devices.TANK3VC1,
+                    (int)DeviceManagerMock.Devices.TANK1LS1
+                }
             };
 
             var discardVCWhenAllowedInDevType = new object[]
@@ -766,11 +775,13 @@ namespace Tests.TechObject
         public void ProcessDevices_DataFromTestCaseSource_ReturnsDevsIdsList(
             string devicesStr, Device.DeviceType[] allowedDevTypes,
             Device.DeviceSubType[] allowedDevSubTypes,
-            List<int> actionDevsDefaultIds, IList<int> expectedDevsIds)
+            List<int> actionDevsDefaultIds, IList<int> expectedDevsIds,
+            Device.DeviceType[] allowedInputTypes)
         {
             IAction action = ActionMock.GetAction(allowedDevTypes,
                 allowedDevSubTypes, actionDevsDefaultIds);
-            var strategy = new OneInManyOutActionProcessingStrategy();
+            var strategy =
+                new OneInManyOutActionProcessingStrategy(allowedInputTypes);
             strategy.Action = action;
             var deviceManager = DeviceManagerMock.DeviceManager;
 
@@ -797,8 +808,17 @@ namespace Tests.TechObject
                     Device.DeviceSubType.DO,
                     Device.DeviceSubType.DO_VIRT
                 },
-                new List<int> { 14 },
-                new List<int> { 13, 14, 15 }
+                new List<int> { (int)DeviceManagerMock.Devices.TANK1DO1 },
+                new List<int>
+                {
+                    (int)DeviceManagerMock.Devices.TANK2DI2,
+                    (int)DeviceManagerMock.Devices.TANK1DO1,
+                    (int)DeviceManagerMock.Devices.TANK1DO2
+                },
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.DI
+                }
             };
 
             var correctSequenceAIAO = new object[]
@@ -817,7 +837,16 @@ namespace Tests.TechObject
                     Device.DeviceSubType.AO_VIRT
                 },
                 new List<int> { },
-                new List<int> { 17, 18, 19 }
+                new List<int>
+                {
+                    (int)DeviceManagerMock.Devices.TANK2AI2,
+                    (int)DeviceManagerMock.Devices.TANK1AO1,
+                    (int)DeviceManagerMock.Devices.TANK1AO2
+                },
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.AI
+                }
             };
 
             var replacingAIAOCase = new object[]
@@ -835,8 +864,21 @@ namespace Tests.TechObject
                     Device.DeviceSubType.AO,
                     Device.DeviceSubType.AO_VIRT
                 },
-                new List<int> { 17, 18 },
-                new List<int> { 16, 18 }
+                new List<int>
+                {
+                    (int)DeviceManagerMock.Devices.TANK2AI2,
+                    (int)DeviceManagerMock.Devices.TANK1AO1,
+                },
+                new List<int>
+                {
+                    (int)DeviceManagerMock.Devices.TANK1AI1,
+                    (int)DeviceManagerMock.Devices.TANK1AO1
+
+                },
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.AI
+                }
             };
 
             var replacingDIDOCase = new object[]
@@ -854,8 +896,20 @@ namespace Tests.TechObject
                     Device.DeviceSubType.DO,
                     Device.DeviceSubType.DO_VIRT
                 },
-                new List<int> { 13, 14 },
-                new List<int> { 12, 14 }
+                new List<int>
+                {
+                    (int)DeviceManagerMock.Devices.TANK2DI2,
+                    (int)DeviceManagerMock.Devices.TANK1DO1,
+                },
+                new List<int>
+                {
+                    (int)DeviceManagerMock.Devices.TANK1DI1,
+                    (int)DeviceManagerMock.Devices.TANK1DO1,
+                },
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.DI
+                }
             };
 
 
@@ -876,8 +930,21 @@ namespace Tests.TechObject
                     Device.DeviceSubType.DO_VIRT,
                     Device.DeviceSubType.NONE,
                 },
-                new List<int> { 13, 14 },
-                new List<int> { 13, 14, 20 }
+                new List<int>
+                {
+                    (int)DeviceManagerMock.Devices.TANK2DI2,
+                    (int)DeviceManagerMock.Devices.TANK1DO1,
+                },
+                new List<int>
+                {
+                    (int)DeviceManagerMock.Devices.TANK2DI2,
+                    (int)DeviceManagerMock.Devices.TANK1DO1,
+                    (int)DeviceManagerMock.Devices.TANK1HL1
+                },
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.DI
+                }
             };
 
             var useHLAndReplaceDIwithGS = new object[]
@@ -898,8 +965,22 @@ namespace Tests.TechObject
                     Device.DeviceSubType.DO_VIRT,
                     Device.DeviceSubType.NONE,
                 },
-                new List<int> { 13, 14 },
-                new List<int> { 22, 14, 20 }
+                new List<int>
+                {
+                    (int)DeviceManagerMock.Devices.TANK2DI2,
+                    (int)DeviceManagerMock.Devices.TANK1DO1,
+                },
+                new List<int>
+                {
+                    (int)DeviceManagerMock.Devices.TANK1GS1,
+                    (int)DeviceManagerMock.Devices.TANK1DO1,
+                    (int)DeviceManagerMock.Devices.TANK1HL1
+                },
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.DI,
+                    Device.DeviceType.GS
+                }
             };
 
             var removeAllInputDevsIfDoubleInputDevs = new object[]
@@ -920,8 +1001,20 @@ namespace Tests.TechObject
                     Device.DeviceSubType.DO_VIRT,
                     Device.DeviceSubType.NONE,
                 },
-                new List<int> { 14 },
-                new List<int> { 14, 20 }
+                new List<int>
+                {
+                    (int)DeviceManagerMock.Devices.TANK1DO1,
+                },
+                new List<int>
+                {
+                    (int)DeviceManagerMock.Devices.TANK1DO1,
+                    (int)DeviceManagerMock.Devices.TANK1HL1
+                },
+                new Device.DeviceType[]
+                {
+                    Device.DeviceType.DI,
+                    Device.DeviceType.GS
+                }
             };
 
             return new object[]
@@ -1085,6 +1178,33 @@ namespace Tests.TechObject
                 devManagerMock.Setup(x => x.GetDeviceByEplanName(
                     devDescr.Dev.Name)).Returns(devDescr.Dev);
             }
+        }
+
+        public enum Devices
+        {
+            TANK1V1 = 1,
+            TANK1V2 = 2,
+            KOAG1V1 = 3,
+            KOAG1M2 = 4,
+            TANK2V1 = 5,
+            TANK2V2 = 6,
+            TANK2V3 = 7,
+            TANK3V3 = 8,
+            TANK1LS1 = 9,
+            TANK2LS2 = 10,
+            TANK3VC1 = 11,
+            TANK1DI1 = 12,
+            TANK2DI2 = 13,
+            TANK1DO1 = 14,
+            TANK1DO2 = 15,
+            TANK1AI1 = 16,
+            TANK2AI2 = 17,
+            TANK1AO1 = 18,
+            TANK1AO2 = 19,
+            TANK1HL1 = 20,
+            TANK1HL2 = 21,
+            TANK1GS1 = 22,
+            TANK1GS2 = 23,
         }
 
         private static Device.IDevice MakeMockedDevice(string objName,
