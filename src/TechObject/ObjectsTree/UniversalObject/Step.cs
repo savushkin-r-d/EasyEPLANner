@@ -808,26 +808,6 @@ namespace TechObject
                     {
                         hasError = true;
                     }
-
-                    //var devices = new List<Device.IDevice>();
-                    //foreach(var devId in groupAction.DeviceIndex)
-                    //{
-                    //    devices.Add(Device.DeviceManager.GetInstance()
-                    //        .GetDeviceByIndex(devId));
-                    //}
-
-                    //bool hasInput = devices
-                    //    .Any(x => x.DeviceType == Device.DeviceType.DI ||
-                    //    x.DeviceType == Device.DeviceType.SB ||
-                    //    x.DeviceType == Device.DeviceType.GS ||
-                    //    x.DeviceType == Device.DeviceType.AI);
-                    //bool hasOutput = devices
-                    //    .Any(x => x.DeviceType == Device.DeviceType.DO ||
-                    //    x.DeviceType == Device.DeviceType.AO);
-                    //if (!hasInput || !hasOutput)
-                    //{
-                    //    hasError = true;
-                    //}
                 }
 
                 if (hasError)
