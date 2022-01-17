@@ -299,7 +299,6 @@ namespace EasyEplanner.Tests
                 Device.DeviceType.PT,
                 Device.DeviceType.LT,
                 Device.DeviceType.FQT,
-                Device.DeviceType.F,
                 Device.DeviceType.QT,
                 Device.DeviceType.TE,
                 Device.DeviceType.VC
