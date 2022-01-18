@@ -23,7 +23,10 @@ namespace TechObject
                 new Device.DeviceType[]
                 { 
                     Device.DeviceType.DI,
-                    Device.DeviceType.SB
+                    Device.DeviceType.SB,
+                    Device.DeviceType.GS,
+                    Device.DeviceType.LS,
+                    Device.DeviceType.FS
                 }));
             SubActions.Add(new Action("DO", owner, "DO",
                 new Device.DeviceType[]

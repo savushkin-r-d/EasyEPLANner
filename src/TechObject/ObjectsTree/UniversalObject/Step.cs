@@ -127,60 +127,88 @@ namespace TechObject
             openLowerSeats.ImageIndex = ImageIndexEnum.ActionWashLowerSeats;
             actions.Add(openLowerSeats);
 
-            var requiredFB = new Action("Сигналы для включения", this,
+            var requiredFb = new Action("Сигналы для включения", this,
                 "required_FB",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.DI,
                     Device.DeviceType.GS
                 });
-            requiredFB.ImageIndex = ImageIndexEnum.ActionSignals;
-            actions.Add(requiredFB);
+            requiredFb.ImageIndex = ImageIndexEnum.ActionSignals;
+            actions.Add(requiredFb);
 
             var groupWash = new ActionGroupWash("Устройства", this,
                 ActionGroupWash.MultiGroupAction);
             groupWash.ImageIndex = ImageIndexEnum.ActionWash;
             actions.Add(groupWash);
 
-            var pairsDIDOAllowedDevTypes = new Device.DeviceType[]
+            var pairsDiDoAllowedDevTypes = new Device.DeviceType[]
             {
                 Device.DeviceType.DI,
                 Device.DeviceType.SB,
                 Device.DeviceType.DO,
                 Device.DeviceType.HL,
-                Device.DeviceType.GS
+                Device.DeviceType.GS,
+                Device.DeviceType.LS,
+                Device.DeviceType.FS
+            };
+
+            var pairsDiDoAllowedInputTypes = new Device.DeviceType[]
+            {
+                Device.DeviceType.DI,
+                Device.DeviceType.SB,
+                Device.DeviceType.GS,
+                Device.DeviceType.LS,
+                Device.DeviceType.FS
             };
 
             // Специальное действие - выдача дискретных сигналов 
             // при наличии входного дискретного сигнала.
             var groupDIDO = new ActionGroup(groupDIDOActionName, this,
-                "DI_DO", pairsDIDOAllowedDevTypes, null,
-                new OneInManyOutActionProcessingStrategy());
+                "DI_DO", pairsDiDoAllowedDevTypes, null,
+                new OneInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes));
             groupDIDO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupDIDO);
 
+
             // Специальное действие - выдача дискретных сигналов 
             // при пропадании входного дискретного сигнала.
-            var groupInvertedDIDO = new ActionGroup(groupDIDOActionNameInverted,
-                this, "inverted_DI_DO", pairsDIDOAllowedDevTypes,
-                null, new OneInManyOutActionProcessingStrategy());
-            groupInvertedDIDO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
-            actions.Add(groupInvertedDIDO);
+            var groupInvertedDiDo = new ActionGroup(groupDIDOActionNameInverted,
+                this, "inverted_DI_DO", pairsDiDoAllowedDevTypes, null, 
+                new OneInManyOutActionProcessingStrategy(pairsDiDoAllowedInputTypes));
+            groupInvertedDiDo.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
+            actions.Add(groupInvertedDiDo);
+
+            var pairsAiAoAllowedInputTypes = new Device.DeviceType[]
+            {
+                Device.DeviceType.AI,
+                Device.DeviceType.PT,
+                Device.DeviceType.LT,
+                Device.DeviceType.FQT,
+                Device.DeviceType.QT,
+                Device.DeviceType.TE,
+            };
 
             // Специальное действие - выдача аналоговых сигналов при
             // наличии входного  аналогового сигнала.
-            var groupAIAO = new ActionGroup(groupAIAOActionName, this,
+            var groupAiAo = new ActionGroup(groupAIAOActionName, this,
                 "AI_AO",
                 new Device.DeviceType[]
                 {
                     Device.DeviceType.AI,
                     Device.DeviceType.AO,
-                    Device.DeviceType.M
+                    Device.DeviceType.M,
+                    Device.DeviceType.PT,
+                    Device.DeviceType.LT,
+                    Device.DeviceType.FQT,
+                    Device.DeviceType.QT,
+                    Device.DeviceType.TE,
+                    Device.DeviceType.VC
                 },
                 null,
-                new OneInManyOutActionProcessingStrategy());
-            groupAIAO.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
-            actions.Add(groupAIAO);
+                new OneInManyOutActionProcessingStrategy(pairsAiAoAllowedInputTypes));
+            groupAiAo.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
+            actions.Add(groupAiAo);
 
             var enableStepBySignal = new ActionGroup(
                 "Сигнал для включения шага", this, "enable_step_by_signal",
@@ -774,24 +802,6 @@ namespace TechObject
 
                     int devsCount = groupAction.DeviceIndex.Count;
                     if (devsCount == 1)
-                    {
-                        hasError = true;
-                    }
-
-                    var devices = new List<Device.IDevice>();
-                    foreach(var devId in groupAction.DeviceIndex)
-                    {
-                        devices.Add(Device.DeviceManager.GetInstance()
-                            .GetDeviceByIndex(devId));
-                    }
-
-                    bool hasInput = devices
-                        .Any(x => x.DeviceType == Device.DeviceType.DI ||
-                        x.DeviceType == Device.DeviceType.AI);
-                    bool hasOutput = devices
-                        .Any(x => x.DeviceType == Device.DeviceType.DO ||
-                        x.DeviceType == Device.DeviceType.AO);
-                    if (!hasInput || !hasOutput)
                     {
                         hasError = true;
                     }

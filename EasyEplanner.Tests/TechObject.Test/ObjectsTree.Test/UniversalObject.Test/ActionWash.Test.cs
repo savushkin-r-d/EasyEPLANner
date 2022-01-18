@@ -70,7 +70,10 @@ namespace Tests.TechObject
                         new Device.DeviceType[]
                         {
                             Device.DeviceType.DI,
-                            Device.DeviceType.SB
+                            Device.DeviceType.SB,
+                            Device.DeviceType.GS,
+                            Device.DeviceType.LS,
+                            Device.DeviceType.FS
                         },
                         new Device.DeviceType[]
                         {

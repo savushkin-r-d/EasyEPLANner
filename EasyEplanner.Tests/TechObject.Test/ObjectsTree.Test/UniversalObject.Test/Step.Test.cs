@@ -64,7 +64,7 @@ namespace EasyEplanner.Tests
 
             var actions = step.GetActions;
 
-            for(int i = 0; i < actions.Count; i++)
+            for (int i = 0; i < actions.Count; i++)
             {
                 Assert.AreEqual(expectedLuaNames[i], actions[i].LuaName);
             }
@@ -84,7 +84,7 @@ namespace EasyEplanner.Tests
             var pairsInvertedDIDO = "inverted_DI_DO";
             var pairsAIAO = "AI_AO";
             var enableStepBySignal = "enable_step_by_signal";
-            var toStepIfDevicesInSpecificState = 
+            var toStepIfDevicesInSpecificState =
                 "to_step_if_devices_in_specific_state";
 
             object[] sequenceIfNoMainStep = new object[]
@@ -143,7 +143,7 @@ namespace EasyEplanner.Tests
 
             var actions = step.GetActions;
 
-            for(int i = 0; i < actions.Count; i++)
+            for (int i = 0; i < actions.Count; i++)
             {
                 Assert.AreEqual(actions[i].DrawStyle, drawStyles[i]);
             }
@@ -226,7 +226,7 @@ namespace EasyEplanner.Tests
 
             var actions = step.GetActions;
 
-            for(int i = 0; i < actions.Count; i++)
+            for (int i = 0; i < actions.Count; i++)
             {
                 var action = actions[i];
                 action.GetDisplayObjects(out Device.DeviceType[] actualDevTypes,
@@ -272,28 +272,36 @@ namespace EasyEplanner.Tests
             Device.DeviceType[] openUpperSeats = valveSeats;
             Device.DeviceType[] openLowerSeats = valveSeats;
 
-            var requiredFB = new Device.DeviceType[]
+            var requiredFb = new Device.DeviceType[]
             {
                 Device.DeviceType.DI,
                 Device.DeviceType.GS
             };
 
-            var groupDIDO = new Device.DeviceType[]
+            var groupDiDo = new Device.DeviceType[]
             {
                 Device.DeviceType.DI,
                 Device.DeviceType.SB,
                 Device.DeviceType.DO,
                 Device.DeviceType.HL,
-                Device.DeviceType.GS
+                Device.DeviceType.GS,
+                Device.DeviceType.LS,
+                Device.DeviceType.FS
             };
 
-            var groupInvertedDIDO = groupDIDO;
+            var groupInvertedDIDO = groupDiDo;
 
-            var groupAIAO = new Device.DeviceType[]
+            var groupAiAo = new Device.DeviceType[]
             {
                 Device.DeviceType.AI,
                 Device.DeviceType.AO,
-                Device.DeviceType.M
+                Device.DeviceType.M,
+                Device.DeviceType.PT,
+                Device.DeviceType.LT,
+                Device.DeviceType.FQT,
+                Device.DeviceType.QT,
+                Device.DeviceType.TE,
+                Device.DeviceType.VC
             };
 
             var enableStepBySignal = new Device.DeviceType[]
@@ -312,11 +320,11 @@ namespace EasyEplanner.Tests
                     closeDevice,
                     openUpperSeats,
                     openLowerSeats,
-                    requiredFB,
+                    requiredFb,
                     allTypesAllowed,
-                    groupDIDO,
+                    groupDiDo,
                     groupInvertedDIDO,
-                    groupAIAO,
+                    groupAiAo,
                     enableStepBySignal
                 }
             };
@@ -332,11 +340,11 @@ namespace EasyEplanner.Tests
                     closeDevice,
                     openUpperSeats,
                     openLowerSeats,
-                    requiredFB,
+                    requiredFb,
                     allTypesAllowed,
-                    groupDIDO,
+                    groupDiDo,
                     groupInvertedDIDO,
-                    groupAIAO,
+                    groupAiAo,
                     enableStepBySignal,
                     allTypesAllowed
                 }
@@ -451,7 +459,7 @@ namespace EasyEplanner.Tests
             var step = new Step(string.Empty, null, null, isMainStep);
 
             var actualImageIndexes = new List<ImageIndexEnum>();
-            foreach(var action in step.GetActions)
+            foreach (var action in step.GetActions)
             {
                 var treeViewItem = (ITreeViewItem)action;
                 ImageIndexEnum imageIndex = treeViewItem.ImageIndex;
@@ -532,7 +540,7 @@ namespace EasyEplanner.Tests
             var step = new Step(string.Empty, null, null, isMainStep);
 
             var actualTypes = new List<Type>();
-            foreach(var action in step.GetActions)
+            foreach (var action in step.GetActions)
             {
                 actualTypes.Add(action.GetType());
             }
