@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2019 - present OJSC Savushkin Product, Brest.
+Copyright (c) 2019 - present OJSC Savushkin Product
 
 All rights reserved.
 
