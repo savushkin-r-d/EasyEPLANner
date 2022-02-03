@@ -59,6 +59,12 @@ namespace EasyEPlanner
                 "Синхронизация названий устройств и модулей", menuID, 1, 
                 false, false);
 
+            menuID = oMenu.AddMenuItem(
+                "Генерация описания IOL-Conf",
+                "PxcIolModulesConfiguration",
+                "Генерация описания IOL-Conf", menuID, 1,
+                false, false);
+
             menuID = oMenu.AddMenuItem("О дополнении", "AboutProgramm", "", 
                 menuID, 1, true, false);
 
