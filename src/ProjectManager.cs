@@ -131,7 +131,7 @@ namespace EasyEPlanner
                 }
 
                 oProgress.BeginPart(15, "Расчет IO-Link");
-                IOManager.CalculateIOLinkAdresses();
+                ioManager.CalculateIOLinkAdresses();
                 oProgress.EndPart(true);
                 eProjectManager.ProjectDataIsLoaded = true;
             }
@@ -287,9 +287,9 @@ namespace EasyEPlanner
 
             editor = Editor.Editor.GetInstance();
             techObjectManager = TechObjectManager.GetInstance();
-            Logs.Init(new LogFrm());           
-            IOManager = IOManager.GetInstance();
-            DeviceManager.GetInstance();
+            Logs.Init(new LogFrm());
+            ioManager = IO.IOManager.GetInstance();
+            deviceManager = DeviceManager.GetInstance();
             projectConfiguration = ProjectConfiguration.GetInstance();
             eProjectManager = EProjectManager.GetInstance();
             LoadBaseTechObjectsFromFiles();
@@ -788,9 +788,9 @@ namespace EasyEPlanner
             eProjectManager.SyncAndSave();
             oProgress.EndPart();
 
-            oProgress.BeginPart(50, "Чтение шаблонов и генерация файлов");
-            IPxcIolinkConfiguration pxcConfiguration =
-                new PxcIolinkModulesConfiguration(generateForDevices);
+            oProgress.BeginPart(40, "Чтение шаблонов и генерация файлов");
+            IPxcIolinkConfiguration pxcConfiguration = new PxcIolinkModulesConfiguration(
+                generateForDevices, deviceManager, ioManager);
             pxcConfiguration.Run();
             oProgress.EndPart();
 
@@ -912,7 +912,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Менеджер модулей ввода/вывода.
         /// </summary>
-        private IOManager IOManager;
+        private IIOManager ioManager;
 
         /// <summary>
         /// Конфигурация проекта.
@@ -928,5 +928,10 @@ namespace EasyEPlanner
         /// Менеджер проектов в Eplan (встроенный).
         /// </summary>
         private EProjectManager eProjectManager;
+
+        /// <summary>
+        /// Менеджер устройств.
+        /// </summary>
+        private IDeviceManager deviceManager;
     }
 }

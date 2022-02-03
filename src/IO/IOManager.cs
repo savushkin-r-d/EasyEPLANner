@@ -16,6 +16,12 @@ namespace IO
         /// Узлы ввода вывода
         /// </summary>
         List<IONode> IONodes { get; }
+
+        /// <summary>
+        /// Расчет IO-Link адресов привязанных устройств для всех модулей
+        /// ввода-вывода.
+        /// </summary>
+        void CalculateIOLinkAdresses();
     }
 
     public class IOManager : IIOManager
@@ -278,11 +284,6 @@ namespace IO
             return errors;
         }
 
-
-        /// <summary>
-        /// Расчет IO-Link адресов привязанных устройств для всех модулей
-        /// ввода-вывода.
-        /// </summary>
         public void CalculateIOLinkAdresses()
         {
             foreach (IONode node in IOManager.GetInstance().IONodes)
