@@ -1,6 +1,7 @@
 ﻿using Device;
 using IO;
 using System.Collections.Generic;
+using EasyEPlanner.PxcIolinkConfiguration.Models;
 
 namespace EasyEPlanner.PxcIolinkConfiguration
 {
@@ -8,8 +9,10 @@ namespace EasyEPlanner.PxcIolinkConfiguration
     {
         private List<string> errorsList;
         private bool generateDevices;
-        IDeviceManager deviceManager;
-        IIOManager ioManager;
+        private IDeviceManager deviceManager;
+        private IIOManager ioManager;
+        private Dictionary<string, Linerecorder_Sensor> moduleTemplates;
+        private Dictionary<string, Linerecorder_Sensor> deviceTemplates;
 
         public PxcIolinkModulesConfiguration(bool generateDevices,
             IDeviceManager deviceManager, IIOManager ioManager)
@@ -18,6 +21,8 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             this.generateDevices = generateDevices;
             this.deviceManager = deviceManager;
             this.ioManager = ioManager;
+            moduleTemplates = new Dictionary<string, Linerecorder_Sensor>();
+            deviceTemplates = new Dictionary<string, Linerecorder_Sensor>();
         }
 
         public void Run()
