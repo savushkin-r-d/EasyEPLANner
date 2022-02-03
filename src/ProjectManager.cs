@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using TechObject;
 using System.Threading;
 using System.Threading.Tasks;
+using EasyEPlanner.PxcIolinkConfiguration;
 
 namespace EasyEPlanner
 {
@@ -70,7 +71,7 @@ namespace EasyEPlanner
             string projectName, bool loadFromLua)
         {
             Logs.Clear();
-            EProjectManager.GetInstance().ProjectDataIsLoaded = false;
+            eProjectManager.ProjectDataIsLoaded = false;
 
             var oProgress = new Eplan.EplApi.Base.Progress("EnhancedProgress");
             oProgress.SetAllowCancel(false);
@@ -132,13 +133,13 @@ namespace EasyEPlanner
                 oProgress.BeginPart(15, "Расчет IO-Link");
                 IOManager.CalculateIOLinkAdresses();
                 oProgress.EndPart(true);
-                EProjectManager.GetInstance().ProjectDataIsLoaded = true;
+                eProjectManager.ProjectDataIsLoaded = true;
             }
             catch (System.Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 oProgress.EndPart(true);
-                EProjectManager.GetInstance().ProjectDataIsLoaded = false;
+                eProjectManager.ProjectDataIsLoaded = false;
             }
 
             errStr = thrownExceptions;
@@ -290,7 +291,7 @@ namespace EasyEPlanner
             IOManager = IOManager.GetInstance();
             DeviceManager.GetInstance();
             projectConfiguration = ProjectConfiguration.GetInstance();
-            EProjectManager.GetInstance();
+            eProjectManager = EProjectManager.GetInstance();
             LoadBaseTechObjectsFromFiles();
         }
 
@@ -774,6 +775,60 @@ namespace EasyEPlanner
         }
         #endregion
 
+        #region Генерация описания IOL-Conf
+        public void GenerateIolConf()
+        {
+            bool generateForDevices = AskAboutGenerationIolConfForDevices();
+
+            var oProgress = new Eplan.EplApi.Base.Progress("EnhancedProgress");
+            oProgress.SetAllowCancel(false);
+            oProgress.SetTitle("Генерация описания IOL-Conf");
+
+            oProgress.BeginPart(20, "Синхронизация описания");
+            eProjectManager.SyncAndSave();
+            oProgress.EndPart();
+
+            oProgress.BeginPart(50, "Чтение шаблонов и генерация файлов");
+            IPxcIolinkConfiguration pxcConfiguration =
+                new PxcIolinkModulesConfiguration(generateForDevices);
+            pxcConfiguration.Run();
+            oProgress.EndPart();
+
+            oProgress.BeginPart(90, "Обработка ошибок");
+            if (pxcConfiguration.HasErrors)
+            {
+                Logs.Clear();
+                var errorsList = pxcConfiguration.ErrorsList;
+                Logs.AddMessage("Генерация IOL-Conf завершилась с ошибками.");
+                foreach (var errorMessage in errorsList)
+                {
+                    Logs.AddMessage(errorMessage);
+                }
+                oProgress.EndPart(true);
+                Logs.EnableButtons();
+                Logs.Show();
+            }
+            oProgress.EndPart(true);
+
+            bool AskAboutGenerationIolConfForDevices()
+            {
+                var dialogResult = MessageBox.Show("Доп. информация",
+                    "Генерировать описание для устройств",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (dialogResult == DialogResult.Yes)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        #endregion
+
         /// <summary>
         /// Путь к надстройке, к месту, из которого она подключалась к программе
         /// инженером.
@@ -867,6 +922,11 @@ namespace EasyEPlanner
         /// <summary>
         /// Экземпляр класса ProjectManager
         /// </summary>
-        private static ProjectManager instance;      
+        private static ProjectManager instance;
+
+        /// <summary>
+        /// Менеджер проектов в Eplan (встроенный).
+        /// </summary>
+        private EProjectManager eProjectManager;
     }
 }

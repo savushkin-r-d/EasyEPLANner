@@ -2,8 +2,6 @@
 using Eplan.EplApi.DataModel;
 using System;
 using System.Windows.Forms;
-using EasyEPlanner.PxcIolinkConfiguration;
-using System.Threading.Tasks;
 
 namespace EasyEPlanner
 {
@@ -27,31 +25,7 @@ namespace EasyEPlanner
                 }
                 else
                 {
-                    var oProgress = new Eplan.EplApi.Base.Progress("EnhancedProgress");
-                    oProgress.SetAllowCancel(true);
-                    oProgress.SetTitle("Генерация описания IOL-Conf");
-
-                    oProgress.BeginPart(50, "Чтение шаблонов и генерация файлов");
-                    IPxcIolinkConfiguration pxcConfiguration = new PxcIolinkModulesConfiguration();
-                    pxcConfiguration.Run();
-                    oProgress.EndPart();
-                    
-                    oProgress.BeginPart(90, "Обработка ошибок");
-                    if (pxcConfiguration.HasErrors)
-                    {
-                        Logs.Clear();
-                        var errorsList = pxcConfiguration.ErrorsList;
-                        Logs.AddMessage("Генерация IOL-Conf завершилась с ошибками.");
-                        foreach (var errorMessage in errorsList)
-                        {
-                            Logs.AddMessage(errorMessage);
-                        }
-                        oProgress.EndPart(true);
-                        Logs.EnableButtons();
-                        Logs.Show();
-                        return false;
-                    }
-                    oProgress.EndPart(true);
+                    ProjectManager.GetInstance().GenerateIolConf();
                 }
             }
             catch (Exception ex)

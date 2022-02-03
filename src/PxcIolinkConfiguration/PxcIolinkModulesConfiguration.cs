@@ -1,24 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace EasyEPlanner.PxcIolinkConfiguration
 {
-
     internal class PxcIolinkModulesConfiguration : IPxcIolinkConfiguration
     {
         private List<string> errorsList;
+        private bool generateDevices;
 
-        public PxcIolinkModulesConfiguration()
+        public PxcIolinkModulesConfiguration(bool generateDevices)
         {
             errorsList = new List<string>();
+            this.generateDevices = generateDevices;
         }
 
         public void Run()
         {
-
+            //Check folders
+                // -> If not exists -> create
+                    // -> If no any files -> exception
+                        // -> Return exception, stop.
+                    // -> If has files -> Read templates
+            //Generate for modules
+                // -> Get modules with name, and channels
+                // -> Define channel type (or get) by each clamp
         }
 
         public List<string> ErrorsList
