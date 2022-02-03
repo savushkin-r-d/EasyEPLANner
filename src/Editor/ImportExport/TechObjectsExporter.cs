@@ -76,8 +76,11 @@ namespace Editor
         /// объектов</param>
         public void Export(string path, List<int> objectsNums)
         {
-            string objectsDescription = "";
+            var objectsDescription = new StringBuilder();
             List<TechObject.TechObject> objects = techObjectManager.TechObjects;
+            objectsDescription.Append("init_tech_objects_modes = function()\n");
+            objectsDescription.Append("\treturn\n");
+            objectsDescription.Append("\t{\n");
             foreach (var obj in objects)
             {
                 int globalNum = techObjectManager.GetTechObjectN(obj);
@@ -97,20 +100,24 @@ namespace Editor
                         .SaveAsLuaTable("\t\t", globalNum);
                     description = description
                         .Replace("[ 0 ]", $"[ {globalNum} ]");
-                    objectsDescription += description;
+                    objectsDescription.Append(description);
                 }
                 else
                 {
-                    objectsDescription += $"\t[ {globalNum} ] = {{0}},\n";
+                    objectsDescription.Append($"\t[ {globalNum} ] = {{0}},\n");
                 }
             }
+            objectsDescription.Append("\t}\n");
+            objectsDescription.Append("end");
+
+            objectsDescription = objectsDescription.Replace("\t", "    ");
 
             try
             {
                 var fileWriter = new StreamWriter(path, false, 
                     EasyEPlanner.EncodingDetector.DetectFileEncoding(path));
                 
-                WriteObjectsDescription(fileWriter, objectsDescription);
+                fileWriter.Write(objectsDescription);
                 
                 fileWriter.Flush();
                 fileWriter.Close();
@@ -119,21 +126,6 @@ namespace Editor
             {
                 throw new Exception("Ошибка записи в файл при экспорте");
             }            
-        }
-
-        /// <summary>
-        /// Записать описание объектов.
-        /// </summary>
-        /// <param name="fileWriter">Поток для записи</param>
-        /// <param name="description">Описание объектов</param>
-        private void WriteObjectsDescription(StreamWriter fileWriter, 
-            string description)
-        {
-            string filePattern = EasyEPlanner.Properties.Resources
-                .ResourceManager.GetString("mainObjectsPattern");
-            string descriptionFileData = string.Format(filePattern, "not used",
-                "not used", description);
-            fileWriter.Write(descriptionFileData);
         }
 
         private static TechObjectsExporter techObjectsExporter;
