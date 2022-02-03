@@ -2,24 +2,22 @@
 
 namespace EasyEPlanner.PxcIolinkConfiguration.Models
 {
-
     [XmlRoot(ElementName = "Linerecorder_Sensor")]
-	public class Linerecorder_Sensor
-	{
+    public class Linerecorder_Sensor
+    {
+        [XmlElement(ElementName = "Version")]
+        public string Version { get; set; }
 
-		[XmlElement(ElementName = "Version")]
-		public string Version { get; set; }
+        [XmlElement(ElementName = "Sensor")]
+        public Sensor Sensor { get; set; }
 
-		[XmlElement(ElementName = "Sensor")]
-		public Sensor Sensor { get; set; }
+        [XmlElement(ElementName = "Parameters")]
+        public Parameters Parameters { get; set; }
 
-		[XmlElement(ElementName = "Parameters")]
-		public Parameters Parameters { get; set; }
+        [XmlAttribute(AttributeName = "xmlns")]
+        public string xmlns { get; set; }
 
-		[XmlAttribute(AttributeName = "xmlns")]
-		public string xmlns { get; set; }
-
-		[XmlText]
-		public string text { get; set; }
-	}
+        [XmlText]
+        public string text { get; set; }
+    }
 }
