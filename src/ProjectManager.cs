@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using EasyEPlanner.PxcIolinkConfiguration;
 using System;
+using System.Text;
 
 namespace EasyEPlanner
 {
@@ -804,13 +805,13 @@ namespace EasyEPlanner
             {
                 foreach(var e in ae.InnerExceptions)
                 {
-                    Logs.AddMessage(e.Message);
+                    Logs.AddMessage(SeekExceptionEnd(e));
                 }
                 exceptionRaised = true;
             }
             catch (Exception e)
             {
-                Logs.AddMessage(e.Message);
+                Logs.AddMessage(SeekExceptionEnd(e));
                 exceptionRaised = true;
             }
 
@@ -821,6 +822,18 @@ namespace EasyEPlanner
             }
 
             oProgress.EndPart(true);
+        }
+
+        private string SeekExceptionEnd(Exception ex)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine(ex.Message);
+            if (ex.InnerException != null)
+            {
+                sb.AppendLine(SeekExceptionEnd(ex.InnerException));
+            }
+
+            return sb.ToString();
         }
         #endregion
 

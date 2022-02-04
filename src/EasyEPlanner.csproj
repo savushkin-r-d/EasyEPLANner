@@ -287,8 +287,8 @@
     <Compile Include="PxcIolinkConfiguration\IPxcIolinkConfiguration.cs" />
     <Compile Include="PxcIolinkConfiguration\Models\Device.cs" />
     <Compile Include="PxcIolinkConfiguration\Models\Devices.cs" />
-    <Compile Include="PxcIolinkConfiguration\Models\Linerecorder_MultiSensor.cs" />
-    <Compile Include="PxcIolinkConfiguration\Models\Linerecorder_Sensor.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\LinerecorderMultiSensor.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\LinerecorderSensor.cs" />
     <Compile Include="PxcIolinkConfiguration\Models\Param.cs" />
     <Compile Include="PxcIolinkConfiguration\Models\Parameters.cs" />
     <Compile Include="PxcIolinkConfiguration\Models\Sensor.cs" />

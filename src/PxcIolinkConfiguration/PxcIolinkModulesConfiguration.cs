@@ -53,6 +53,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
                 throw;
             }
         }
+
         private void CreateFoldersIfNotExists()
         {
             if (assemblyPath == null)
@@ -129,7 +130,8 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception($"Шаблон {path} с ошибкой.",
+                    ex.InnerException);
             }
 
             lock (store)
