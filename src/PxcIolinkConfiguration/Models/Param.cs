@@ -12,13 +12,13 @@ namespace EasyEPlanner.PxcIolinkConfiguration.Models
         public string Subindex { get; set; }
 
         [XmlAttribute(AttributeName = "internalValue")]
-        public int InternalValue { get; set; }
+        public string InternalValue { get; set; }
 
         [XmlAttribute(AttributeName = "name")]
         public string Name { get; set; }
 
         [XmlAttribute(AttributeName = "value")]
-        public int Value { get; set; }
+        public string Value { get; set; }
 
         [XmlAttribute(AttributeName = "unit")]
         public string Unit { get; set; }

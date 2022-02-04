@@ -2,7 +2,7 @@
 
 namespace EasyEPlanner.PxcIolinkConfiguration.Models
 {
-    [XmlRoot(ElementName = "Linerecorder_Sensor")]
+    [XmlRoot(ElementName = "Linerecorder_Sensor", Namespace = "http://www.ifm.com/datalink/LinerecorderSensor4")]
     public class LinerecorderSensor
     {
         [XmlElement(ElementName = "Version")]
