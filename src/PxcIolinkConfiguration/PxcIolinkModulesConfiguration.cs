@@ -15,8 +15,8 @@ namespace EasyEPlanner.PxcIolinkConfiguration
     {
         private IDeviceManager deviceManager;
         private IIOManager ioManager;
-        private Dictionary<string, Linerecorder_Sensor> moduleTemplates;
-        private Dictionary<string, Linerecorder_Sensor> deviceTemplates;
+        private Dictionary<string, LinerecorderSensor> moduleTemplates;
+        private Dictionary<string, LinerecorderSensor> deviceTemplates;
         private string assemblyPath;
         private string projectFilesPath;
         private string pathToDevicesFolder;
@@ -33,8 +33,8 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         {
             this.deviceManager = deviceManager;
             this.ioManager = ioManager;
-            moduleTemplates = new Dictionary<string, Linerecorder_Sensor>();
-            deviceTemplates = new Dictionary<string, Linerecorder_Sensor>();
+            moduleTemplates = new Dictionary<string, LinerecorderSensor>();
+            deviceTemplates = new Dictionary<string, LinerecorderSensor>();
             this.assemblyPath = assemblyPath;
             this.projectFilesPath = projectFilesPath;
             pathToDevicesFolder = string.Empty;
@@ -102,7 +102,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         }
 
         private List<Task> ReadTemplatesInStore(string pathToFolder,
-            Dictionary<string, Linerecorder_Sensor> store)
+            Dictionary<string, LinerecorderSensor> store)
         {
             var tasks = new List<Task>();
             var directoryInfo = new DirectoryInfo(pathToFolder);
@@ -119,10 +119,10 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         }
 
         private void ReadTemplate(string path, 
-            Dictionary<string, Linerecorder_Sensor> store)
+            Dictionary<string, LinerecorderSensor> store)
         {
             var xml = File.ReadAllText(path, Encoding.UTF8);
-            Linerecorder_Sensor recorder;
+            LinerecorderSensor recorder;
             try
             {
                 recorder = DeserializeXmlTemplate(xml);
@@ -145,12 +145,12 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             }
         }
 
-        private Linerecorder_Sensor DeserializeXmlTemplate(string xml)
+        private LinerecorderSensor DeserializeXmlTemplate(string xml)
         {
-            var serializer = new XmlSerializer(typeof(Linerecorder_Sensor));
+            var serializer = new XmlSerializer(typeof(LinerecorderSensor));
             using (var reader = new StringReader(xml))
             {
-                var info = (Linerecorder_Sensor)serializer.Deserialize(reader);
+                var info = (LinerecorderSensor)serializer.Deserialize(reader);
                 return info;
             }
         }
