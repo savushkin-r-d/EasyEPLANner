@@ -6,24 +6,24 @@ namespace EasyEPlanner.PxcIolinkConfiguration.Models
     public class Param
     {
         [XmlAttribute(AttributeName = "id")]
-        public string id { get; set; }
+        public string Id { get; set; }
 
         [XmlAttribute(AttributeName = "subindex")]
-        public object subindex { get; set; }
+        public string Subindex { get; set; }
 
         [XmlAttribute(AttributeName = "internalValue")]
-        public int internalValue { get; set; }
+        public int InternalValue { get; set; }
 
         [XmlAttribute(AttributeName = "name")]
-        public string name { get; set; }
+        public string Name { get; set; }
 
         [XmlAttribute(AttributeName = "value")]
-        public int value { get; set; }
+        public int Value { get; set; }
 
         [XmlAttribute(AttributeName = "unit")]
-        public string unit { get; set; }
+        public string Unit { get; set; }
 
         [XmlAttribute(AttributeName = "text")]
-        public string text { get; set; }
+        public string Text { get; set; }
     }
 }

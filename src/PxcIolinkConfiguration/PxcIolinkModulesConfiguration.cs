@@ -2,61 +2,156 @@
 using IO;
 using System.Collections.Generic;
 using EasyEPlanner.PxcIolinkConfiguration.Models;
+using System.IO;
+using System;
+using System.Xml.Serialization;
+using System.Threading.Tasks;
+using System.Text;
+using System.Linq;
 
 namespace EasyEPlanner.PxcIolinkConfiguration
 {
     internal class PxcIolinkModulesConfiguration : IPxcIolinkConfiguration
     {
-        private List<string> errorsList;
-        private bool generateDevices;
         private IDeviceManager deviceManager;
         private IIOManager ioManager;
         private Dictionary<string, Linerecorder_Sensor> moduleTemplates;
         private Dictionary<string, Linerecorder_Sensor> deviceTemplates;
+        private string assemblyPath;
+        private string projectFilesPath;
+        private string pathToDevicesFolder;
+        private string pathToModulesFolder;
 
-        public PxcIolinkModulesConfiguration(bool generateDevices,
-            IDeviceManager deviceManager, IIOManager ioManager)
+        private const string DevicesFolder = "Devices";
+        private const string ModulesFolder = "Modules";
+        private const string IolConfFolder = "IOL-Conf";
+        private const string lrpExtension = "*.lrp";
+
+        public PxcIolinkModulesConfiguration(string assemblyPath,
+            string projectFilesPath, IDeviceManager deviceManager,
+            IIOManager ioManager)
         {
-            errorsList = new List<string>();
-            this.generateDevices = generateDevices;
             this.deviceManager = deviceManager;
             this.ioManager = ioManager;
             moduleTemplates = new Dictionary<string, Linerecorder_Sensor>();
             deviceTemplates = new Dictionary<string, Linerecorder_Sensor>();
+            this.assemblyPath = assemblyPath;
+            this.projectFilesPath = projectFilesPath;
+            pathToDevicesFolder = string.Empty;
+            pathToModulesFolder = string.Empty;
         }
 
         public void Run()
         {
-            //Check folders
-                // -> If not exists -> create
-                    // -> If no any files -> exception
-                        // -> Return exception, stop.
-                    // -> If has files -> Read templates
-            //Generate for modules
-                // -> Get modules with name, and channels
-                // -> Define channel type (or get) by each clamp
+            try
+            {
+                CreateFoldersIfNotExists();
+                ReadTemplates();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        private void CreateFoldersIfNotExists()
+        {
+            if (assemblyPath == null)
+            {
+                throw new ArgumentException(
+                    "Невозможно проверить существование папок с шаблонами IOL-Conf.");
+            }
 
-            // using System.Xml.Serialization;
-            // XmlSerializer serializer = new XmlSerializer(typeof(Linerecorder_Sensor));
-            // using (StringReader reader = new StringReader(xml))
-            // {
-            //    var test = (Linerecorder_Sensor)serializer.Deserialize(reader);
-            // }
+            pathToDevicesFolder = Path.Combine(assemblyPath, IolConfFolder, DevicesFolder);
+            pathToModulesFolder = Path.Combine(assemblyPath, IolConfFolder, ModulesFolder);
+
+            Directory.CreateDirectory(pathToDevicesFolder);
+            Directory.CreateDirectory(pathToModulesFolder);
         }
 
-        public List<string> ErrorsList
+        private void ReadTemplates()
         {
-            get
+            try
             {
-                return errorsList;
+                var readTasks = new List<Task>();
+                var readDeviceTasks = ReadTemplatesInStore(pathToDevicesFolder, deviceTemplates);
+                var readModuleTasks = ReadTemplatesInStore(pathToModulesFolder, moduleTemplates);
+
+                if (readDeviceTasks.Count == 0)
+                {
+                    throw new Exception("Отсутствуют описания устройств.");
+                }
+
+                if (readModuleTasks.Count == 0)
+                {
+                    throw new Exception("Отсутствуют описания модулей ввода-вывода.");
+                }
+
+                readTasks.AddRange(readDeviceTasks);
+                readTasks.AddRange(readModuleTasks);
+
+                Task.WhenAll(readTasks).Wait();
+            }
+            catch (AggregateException ae)
+            {
+                throw ae.Flatten();
+            }
+            catch
+            {
+                throw;
             }
         }
 
-        public bool HasErrors
+        private List<Task> ReadTemplatesInStore(string pathToFolder,
+            Dictionary<string, Linerecorder_Sensor> store)
         {
-            get
+            var tasks = new List<Task>();
+            var directoryInfo = new DirectoryInfo(pathToFolder);
+            var paths = directoryInfo.GetFiles(lrpExtension)
+                .Select(x => x.FullName);
+            foreach(var path in paths)
             {
-                return ErrorsList.Count > 0;
+                var task = Task
+                    .Run(() => ReadTemplate(path, store));
+                tasks.Add(task);
+            }
+
+            return tasks;
+        }
+
+        private void ReadTemplate(string path, 
+            Dictionary<string, Linerecorder_Sensor> store)
+        {
+            var xml = File.ReadAllText(path, Encoding.UTF8);
+            Linerecorder_Sensor recorder;
+            try
+            {
+                recorder = DeserializeXmlTemplate(xml);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            lock (store)
+            {
+                var devName = recorder.Sensor.ProductId;
+                if (store.ContainsKey(devName))
+                {
+                    throw new InvalidDataException(
+                        $"Шаблон {devName} уже существует.");
+                }
+
+                store.Add(devName, recorder);
+            }
+        }
+
+        private Linerecorder_Sensor DeserializeXmlTemplate(string xml)
+        {
+            var serializer = new XmlSerializer(typeof(Linerecorder_Sensor));
+            using (var reader = new StringReader(xml))
+            {
+                var info = (Linerecorder_Sensor)serializer.Deserialize(reader);
+                return info;
             }
         }
     }

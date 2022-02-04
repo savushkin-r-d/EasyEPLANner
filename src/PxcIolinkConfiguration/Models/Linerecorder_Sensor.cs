@@ -15,9 +15,9 @@ namespace EasyEPlanner.PxcIolinkConfiguration.Models
         public Parameters Parameters { get; set; }
 
         [XmlAttribute(AttributeName = "xmlns")]
-        public string xmlns { get; set; }
+        public string Xmlns { get; set; }
 
         [XmlText]
-        public string text { get; set; }
+        public string Text { get; set; }
     }
 }

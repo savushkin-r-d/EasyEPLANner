@@ -9,6 +9,7 @@ using TechObject;
 using System.Threading;
 using System.Threading.Tasks;
 using EasyEPlanner.PxcIolinkConfiguration;
+using System;
 
 namespace EasyEPlanner
 {
@@ -778,8 +779,6 @@ namespace EasyEPlanner
         #region Генерация описания IOL-Conf
         public void GenerateIolConf()
         {
-            bool generateForDevices = AskAboutGenerationIolConfForDevices();
-
             var oProgress = new Eplan.EplApi.Base.Progress("EnhancedProgress");
             oProgress.SetAllowCancel(false);
             oProgress.SetTitle("Генерация описания IOL-Conf");
@@ -789,43 +788,39 @@ namespace EasyEPlanner
             oProgress.EndPart();
 
             oProgress.BeginPart(40, "Чтение шаблонов и генерация файлов");
+            var projectName = eProjectManager.GetCurrentProjectName();
+            var pathToProjectFiles = GetPtusaProjectsPath(projectName);
             IPxcIolinkConfiguration pxcConfiguration = new PxcIolinkModulesConfiguration(
-                generateForDevices, deviceManager, ioManager);
-            pxcConfiguration.Run();
-            oProgress.EndPart();
+                OriginalAssemblyPath, pathToProjectFiles, deviceManager, ioManager);
+            
+            bool exceptionRaised = false;
+            Logs.Clear();
 
-            oProgress.BeginPart(90, "Обработка ошибок");
-            if (pxcConfiguration.HasErrors)
+            try
             {
-                Logs.Clear();
-                var errorsList = pxcConfiguration.ErrorsList;
-                Logs.AddMessage("Генерация IOL-Conf завершилась с ошибками.");
-                foreach (var errorMessage in errorsList)
+                pxcConfiguration.Run();
+            }
+            catch(AggregateException ae)
+            {
+                foreach(var e in ae.InnerExceptions)
                 {
-                    Logs.AddMessage(errorMessage);
+                    Logs.AddMessage(e.Message);
                 }
-                oProgress.EndPart(true);
+                exceptionRaised = true;
+            }
+            catch (Exception e)
+            {
+                Logs.AddMessage(e.Message);
+                exceptionRaised = true;
+            }
+
+            if (exceptionRaised)
+            {
                 Logs.EnableButtons();
                 Logs.Show();
             }
+
             oProgress.EndPart(true);
-
-            bool AskAboutGenerationIolConfForDevices()
-            {
-                var dialogResult = MessageBox.Show("Доп. информация",
-                    "Генерировать описание для устройств",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                if (dialogResult == DialogResult.Yes)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
         }
         #endregion
 
