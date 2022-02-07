@@ -15,18 +15,11 @@ namespace EasyEPlanner.PxcIolinkConfiguration.Models
         [XmlElement(ElementName = "ProductId")]
         public string ProductId { get; set; }
 
-        public Sensor()
-        {
-            VendorId = 0;
-            DeviceId = 0;
-            ProductId = string.Empty;
-        }
-
         public bool IsEmpty()
         {
             return VendorId == 0 &&
                 DeviceId == 0 &&
-                ProductId == string.Empty;
+                ProductId == null;
         }
 
         public object Clone()

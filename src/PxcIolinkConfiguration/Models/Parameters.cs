@@ -10,14 +10,9 @@ namespace EasyEPlanner.PxcIolinkConfiguration.Models
         [XmlElement(ElementName = "Param")]
         public List<Param> Param { get; set; }
 
-        public Parameters()
-        {
-            Param = new List<Param>();
-        }
-
         public bool IsEmpty()
         {
-            return Param.Count == 0;
+            return Param == null || Param.Count == 0;
         }
 
         public object Clone()

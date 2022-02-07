@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace EasyEPlanner.PxcIolinkConfiguration.Models
 {
@@ -17,20 +18,31 @@ namespace EasyEPlanner.PxcIolinkConfiguration.Models
         [XmlElement(ElementName = "Devices")]
         public Devices Devices { get; set; }
 
-        public Device()
+        public void Add(List<Device> devices)
         {
-            Sensor = new Sensor();
-            Parameters = new Parameters();
-            Devices = new Devices();
-            Port = 0;
+            if (Devices == null) Devices = new Devices();
+
+            Devices.Device = devices;
+        }
+
+        public bool ShouldSerializePort()
+        {
+            return Port != 0;
+        }
+
+        public bool ShouldSerializeDevices()
+        {
+            return Devices != null &&
+                Devices.Device != null &&
+                Devices.Device.Count > 0;
         }
 
         public bool IsEmpty()
         {
-            return Sensor.IsEmpty() &&
+            return (Sensor == null || Sensor.IsEmpty()) &&
                 Port == 0 &&
-                Parameters.IsEmpty() &&
-                Devices.IsEmpty();
+                (Parameters == null || Parameters.IsEmpty()) &&
+                (Devices == null || Devices.IsEmpty());
         }
     }
 }

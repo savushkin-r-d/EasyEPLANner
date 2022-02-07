@@ -27,17 +27,6 @@ namespace EasyEPlanner.PxcIolinkConfiguration.Models
         [XmlAttribute(AttributeName = "text")]
         public string Text { get; set; }
 
-        public Param()
-        {
-            Id = string.Empty;
-            Subindex = string.Empty;
-            InternalValue = string.Empty;
-            Name = string.Empty;
-            Value = string.Empty;
-            Unit = string.Empty;
-            Text = string.Empty;
-        }
-
         public object Clone()
         {
             return new Param()

@@ -9,14 +9,9 @@ namespace EasyEPlanner.PxcIolinkConfiguration.Models
         [XmlElement(ElementName = "Device")]
         public List<Device> Device { get; set; }
 
-        public Devices()
-        {
-            Device = new List<Device>();
-        }
-
         public bool IsEmpty()
         {
-            return Device.Count == 0;
+            return Device == null || Device.Count == 0;
         }
     }
 }

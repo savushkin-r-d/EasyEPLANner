@@ -15,7 +15,6 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         private IIOManager ioManager;
         private Dictionary<string, LinerecorderSensor> moduleTemplates;
         private Dictionary<string, LinerecorderSensor> deviceTemplates;
-        private Dictionary<string, LinerecorderMultiSensor> modulesDescription;
         private string assemblyPath;
         private string projectFilesPath;
         private string devicesFolderPath;
@@ -36,7 +35,6 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             this.ioManager = ioManager;
             moduleTemplates = new Dictionary<string, LinerecorderSensor>();
             deviceTemplates = new Dictionary<string, LinerecorderSensor>();
-            modulesDescription = new Dictionary<string, LinerecorderMultiSensor>();
             this.assemblyPath = assemblyPath;
             this.projectFilesPath = projectFilesPath;
             devicesFolderPath = string.Empty;
@@ -142,7 +140,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         private void ReadTemplate(string path, string templateName,
             Dictionary<string, LinerecorderSensor> store)
         {
-            var xml = File.ReadAllText(path, Encoding.UTF8);
+            string xml = File.ReadAllText(path, Encoding.UTF8);
             LinerecorderSensor recorder;
             try
             {
@@ -179,7 +177,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
                 .Where(x => x.IsIOLink(collectOnlyPxcIol));
             foreach(var plcModule in plcModules)
             {
-                var sensor = CreateModuleDescription(plcModule);
+                LinerecorderMultiSensor sensor = CreateModuleDescription(plcModule);
                 if (sensor.IsEmpty()) continue;
 
                 string fileName = string.Concat(plcModule.Name, lrpExtension);
@@ -190,15 +188,15 @@ namespace EasyEPlanner.PxcIolinkConfiguration
 
         private LinerecorderMultiSensor CreateModuleDescription(IOModule module)
         {
+            Models.Device moduleDescription = CreateModuleFromTemplate(module);
+            List<Models.Device> devicesDescription = CreateDevicesFromTemplate(module);
+            moduleDescription.Add(devicesDescription);
+
             var sensor = new LinerecorderMultiSensor();
-            var moduleDescription = CreateModuleFromTemplate(module);
             if (moduleDescription.IsEmpty()) return sensor;
 
-            var devicesDescription = CreateDevicesFromTemplate(module);
-            moduleDescription.Devices.Device.AddRange(devicesDescription);
-
             sensor.Version = templateVersion;
-            sensor.Devices.Device.Add(moduleDescription);
+            sensor.Add(moduleDescription);
 
             return sensor;
         }
@@ -219,8 +217,8 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             moduleDescription.Sensor = template.Sensor.Clone() as Sensor;
             moduleDescription.Parameters = template.Parameters.Clone() as Parameters;
 
-            var channels = module.DevicesChannels.SelectMany(x => x)
-                .Where(x => x != null);
+            //var channels = module.DevicesChannels.SelectMany(x => x)
+            //    .Where(x => x != null);
             // TODO: Change module parameters
 
             return moduleDescription;
@@ -249,7 +247,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         private void SerializeMultiSensor(LinerecorderMultiSensor template, string path)
         {
             var serializer = new XmlSerializer(typeof(LinerecorderMultiSensor));
-            using(var fs = new FileStream(path, FileMode.OpenOrCreate))
+            using(var fs = new FileStream(path, FileMode.Create))
             {
                 serializer.Serialize(fs, template);
             }

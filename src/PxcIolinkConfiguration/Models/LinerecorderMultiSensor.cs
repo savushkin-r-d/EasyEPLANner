@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace EasyEPlanner.PxcIolinkConfiguration.Models
 {
@@ -17,17 +18,17 @@ namespace EasyEPlanner.PxcIolinkConfiguration.Models
         [XmlText]
         public string Text { get; set; }
 
-        public LinerecorderMultiSensor()
+        public void Add(Device device)
         {
-            Devices = new Devices();
-            Text = string.Empty;
-            Version = string.Empty;
-            Xmlns = string.Empty;
+            if (Devices == null) Devices = new Devices();
+            if (Devices.Device == null) Devices.Device = new List<Device>();
+
+            Devices.Device.Add(device);
         }
 
         public bool IsEmpty()
         {
-            return Devices.IsEmpty();
+            return Devices == null || Devices.IsEmpty();
         }
     }
 }
