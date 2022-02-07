@@ -792,8 +792,9 @@ namespace EasyEPlanner
             string projectName = eProjectManager.GetCurrentProjectName();
             string projectsFolderPath = GetPtusaProjectsPath(projectName);
             string projectFilesPath = Path.Combine(projectsFolderPath, projectName);
-            IPxcIolinkConfiguration pxcConfiguration = new PxcIolinkModulesConfiguration(
-                OriginalAssemblyPath, projectFilesPath, ioManager);
+            IPxcIolinkConfiguration pxcConfiguration =
+                new PxcIolinkModulesConfiguration(OriginalAssemblyPath,
+                projectFilesPath, ioManager);
             
             bool exceptionRaised = false;
             Logs.Clear();
