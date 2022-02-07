@@ -792,9 +792,13 @@ namespace EasyEPlanner
             string projectName = eProjectManager.GetCurrentProjectName();
             string projectsFolderPath = GetPtusaProjectsPath(projectName);
             string projectFilesPath = Path.Combine(projectsFolderPath, projectName);
-            IPxcIolinkConfiguration pxcConfiguration =
-                new PxcIolinkModulesConfiguration(OriginalAssemblyPath,
-                projectFilesPath, ioManager);
+
+            ISensorSerializer sensorSerializer = new SensorSerializer();
+            ITemplateReader templateReader = new TemplateReader(sensorSerializer);
+
+            IPxcIolinkConfiguration pxcConfiguration = new PxcIolinkModulesConfiguration(
+                OriginalAssemblyPath, projectFilesPath, ioManager, sensorSerializer,
+                templateReader);
             
             bool exceptionRaised = false;
             Logs.Clear();

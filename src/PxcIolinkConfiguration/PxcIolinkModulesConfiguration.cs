@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using EasyEPlanner.PxcIolinkConfiguration.Models;
 using System.IO;
 using System;
-using System.Xml.Serialization;
 using System.Threading.Tasks;
-using System.Text;
 using System.Linq;
 
 namespace EasyEPlanner.PxcIolinkConfiguration
@@ -13,6 +11,8 @@ namespace EasyEPlanner.PxcIolinkConfiguration
     internal class PxcIolinkModulesConfiguration : IPxcIolinkConfiguration
     {
         private IIOManager ioManager;
+        private ISensorSerializer sensorSerializer;
+        private ITemplateReader templateReader;
         private Dictionary<string, LinerecorderSensor> moduleTemplates;
         private Dictionary<string, LinerecorderSensor> deviceTemplates;
         private string assemblyPath;
@@ -24,13 +24,12 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         private const string DevicesFolderName = "Devices";
         private const string ModulesFolderName = "Modules";
         private const string IolConfFolderName = "IOL-Conf";
-        private const string lrpFileSearchPattern = "*.lrp";
         private const string lrpExtension = ".lrp";
 
-        private string templateVersion;
-
         public PxcIolinkModulesConfiguration(string assemblyPath,
-            string projectFilesPath, IIOManager ioManager)
+            string projectFilesPath, IIOManager ioManager,
+            ISensorSerializer sensorSerializer,
+            ITemplateReader templateReader)
         {
             this.ioManager = ioManager;
             moduleTemplates = new Dictionary<string, LinerecorderSensor>();
@@ -40,7 +39,8 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             devicesFolderPath = string.Empty;
             modulesFolderPath = string.Empty;
             createdIolConfPath = string.Empty;
-            templateVersion = string.Empty;
+            this.sensorSerializer = sensorSerializer;
+            this.templateReader = templateReader;
         }
 
         public void Run()
@@ -87,10 +87,9 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         {
             try
             {
-                //TODO: Create template reader?
                 var readTasks = new List<Task>();
-                var readDeviceTasks = ReadTemplatesInStore(devicesFolderPath, deviceTemplates);
-                var readModuleTasks = ReadTemplatesInStore(modulesFolderPath, moduleTemplates);
+                List<Task> readDeviceTasks = templateReader.Read(devicesFolderPath, deviceTemplates);
+                List<Task> readModuleTasks = templateReader.Read(modulesFolderPath, moduleTemplates);
 
                 if (readDeviceTasks.Count == 0)
                 {
@@ -117,60 +116,6 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             }
         }
 
-        private List<Task> ReadTemplatesInStore(string pathToFolder,
-            Dictionary<string, LinerecorderSensor> store)
-        {
-            var tasks = new List<Task>();
-            var directoryInfo = new DirectoryInfo(pathToFolder);
-            var paths = directoryInfo
-                .GetFiles(lrpFileSearchPattern)
-                .Select(x => new
-                {
-                    Path = x.FullName,
-                    TemplateName = x.Name.Substring(0, x.Name.Length - x.Extension.Length)
-                });
-            foreach(var fileInfo in paths)
-            {
-                var task = Task
-                    .Run(() => ReadTemplate(fileInfo.Path, fileInfo.TemplateName, store));
-                tasks.Add(task);
-            }
-
-            return tasks;
-        }
-
-        private void ReadTemplate(string path, string templateName,
-            Dictionary<string, LinerecorderSensor> store)
-        {
-            string xml = File.ReadAllText(path, Encoding.UTF8);
-            LinerecorderSensor recorder;
-            try
-            {
-                recorder = DeserializeSensor(xml);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Шаблон {path} с ошибкой.",
-                    ex.InnerException);
-            }
-
-            lock (store)
-            {
-                if (store.ContainsKey(templateName))
-                {
-                    throw new InvalidDataException(
-                        $"Шаблон {templateName} уже существует.");
-                }
-
-                store.Add(templateName, recorder);
-
-                if (string.IsNullOrEmpty(templateVersion))
-                {
-                    templateVersion = recorder.Version;
-                }
-            }
-        }
-
         private void CreateModulesDescription()
         {
             bool collectOnlyPxcIol = true;
@@ -185,7 +130,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
 
                 string fileName = string.Concat(plcModule.Name, lrpExtension);
                 string pathToSerialize = Path.Combine(createdIolConfPath, fileName);
-                SerializeMultiSensor(sensor, pathToSerialize);
+                sensorSerializer.Serialize(sensor, pathToSerialize);
             }
         }
 
@@ -198,7 +143,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             var sensor = new LinerecorderMultiSensor();
             if (moduleDescription.IsEmpty()) return sensor;
 
-            sensor.Version = templateVersion;
+            sensor.Version = templateReader.TemplateVersion;
             sensor.Add(moduleDescription);
 
             return sensor;
@@ -235,25 +180,6 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             //TODO: Change device parameters somehow
 
             return deviceList;
-        }
-
-        private LinerecorderSensor DeserializeSensor(string xml)
-        {
-            var serializer = new XmlSerializer(typeof(LinerecorderSensor));
-            using (var reader = new StringReader(xml))
-            {
-                var info = (LinerecorderSensor)serializer.Deserialize(reader);
-                return info;
-            }
-        }
-
-        private void SerializeMultiSensor(LinerecorderMultiSensor template, string path)
-        {
-            var serializer = new XmlSerializer(typeof(LinerecorderMultiSensor));
-            using(var fs = new FileStream(path, FileMode.Create))
-            {
-                serializer.Serialize(fs, template);
-            }
         }
     }
 }

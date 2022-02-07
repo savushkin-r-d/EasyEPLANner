@@ -293,6 +293,8 @@
     <Compile Include="PxcIolinkConfiguration\Models\Parameters.cs" />
     <Compile Include="PxcIolinkConfiguration\Models\Sensor.cs" />
     <Compile Include="PxcIolinkConfiguration\PxcIolinkModulesConfiguration.cs" />
+    <Compile Include="PxcIolinkConfiguration\SensorSerializer.cs" />
+    <Compile Include="PxcIolinkConfiguration\TemplateReader.cs" />
     <Compile Include="StaticHelper\DeviceBindingHelper.cs" />
     <Compile Include="StaticHelper\GUIHelper.cs" />
     <Compile Include="StaticHelper\CommonConst.cs" />
