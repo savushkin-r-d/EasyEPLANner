@@ -1,9 +1,10 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
 
 namespace EasyEPlanner.PxcIolinkConfiguration.Models
 {
     [XmlRoot(ElementName = "Param")]
-    public class Param
+    public class Param : ICloneable
     {
         [XmlAttribute(AttributeName = "id")]
         public string Id { get; set; }
@@ -25,5 +26,30 @@ namespace EasyEPlanner.PxcIolinkConfiguration.Models
 
         [XmlAttribute(AttributeName = "text")]
         public string Text { get; set; }
+
+        public Param()
+        {
+            Id = string.Empty;
+            Subindex = string.Empty;
+            InternalValue = string.Empty;
+            Name = string.Empty;
+            Value = string.Empty;
+            Unit = string.Empty;
+            Text = string.Empty;
+        }
+
+        public object Clone()
+        {
+            return new Param()
+            {
+                Id = Id,
+                Subindex = Subindex,
+                InternalValue = InternalValue,
+                Name = Name,
+                Value = Value,
+                Unit = Unit,
+                Text = Text
+            };
+        }
     }
 }

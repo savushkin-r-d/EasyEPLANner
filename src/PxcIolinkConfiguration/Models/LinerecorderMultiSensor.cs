@@ -16,5 +16,18 @@ namespace EasyEPlanner.PxcIolinkConfiguration.Models
 
         [XmlText]
         public string Text { get; set; }
+
+        public LinerecorderMultiSensor()
+        {
+            Devices = new Devices();
+            Text = string.Empty;
+            Version = string.Empty;
+            Xmlns = string.Empty;
+        }
+
+        public bool IsEmpty()
+        {
+            return Devices.IsEmpty();
+        }
     }
 }

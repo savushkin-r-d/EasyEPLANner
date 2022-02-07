@@ -16,5 +16,21 @@ namespace EasyEPlanner.PxcIolinkConfiguration.Models
 
         [XmlElement(ElementName = "Devices")]
         public Devices Devices { get; set; }
+
+        public Device()
+        {
+            Sensor = new Sensor();
+            Parameters = new Parameters();
+            Devices = new Devices();
+            Port = 0;
+        }
+
+        public bool IsEmpty()
+        {
+            return Sensor.IsEmpty() &&
+                Port == 0 &&
+                Parameters.IsEmpty() &&
+                Devices.IsEmpty();
+        }
     }
 }

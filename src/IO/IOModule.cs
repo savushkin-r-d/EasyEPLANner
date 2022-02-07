@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StaticHelper;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -29,6 +30,7 @@ namespace IO
             this.info = info;
             this.physicalNumber = physicalNumber;
             this.function = function;
+            articleName = ApiHelper.GetArticleName(function);
 
             devicesChannels = new List<EplanDevice.IODevice.IOChannel>[80];
             devices = new List<EplanDevice.IODevice>[80];
@@ -414,10 +416,33 @@ namespace IO
         }
 
         /// <summary>
+        /// Имя модуля на схеме ПЛК (А***).
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return $"A{physicalNumber}";
+            }
+        }
+
+        /// <summary>
+        /// Имя изделия в модуле.
+        /// </summary>
+        public string ArticleName
+        {
+            get
+            {
+                return articleName;
+            }
+        }
+
+        /// <summary>
         /// Является ли модуль IO-Link 
         /// </summary>
         /// <returns></returns>
-        public bool IsIOLink()
+        /// <param name="collectOnlyPhoenixContact">Проверять только модули Phoenix Contact</param>
+        public bool IsIOLink(bool collectOnlyPhoenixContact = false)
         {
             bool isIOLink = false;
 
@@ -427,11 +452,16 @@ namespace IO
             int phoenixContactSmart = (int)IOManager.IOLinkModules
                 .PhoenixContactSmart;
 
-            if (Info?.Number == wago ||
-                Info?.Number == phoenixContactStandard ||
-                Info?.Number == phoenixContactSmart)
+            bool isPhoenixContact = Info?.Number == phoenixContactStandard ||
+                Info?.Number == phoenixContactSmart;
+            bool isWago = Info?.Number == wago;
+            if (collectOnlyPhoenixContact)
             {
-                isIOLink = true;
+                if (isPhoenixContact) isIOLink = true;
+            }
+            else
+            {
+                if (isWago || isPhoenixContact) isIOLink = true;
             }
 
             return isIOLink;
@@ -465,36 +495,37 @@ namespace IO
             }
         }
 
+        /// <summary>
         /// Привязанные устройства.
-        public List<EplanDevice.IODevice>[] devices;
+        /// </summary>
+        public List<Device.IODevice>[] Devices
+        {
+            get
+            {
+                return devices;
+            }
+        }
+
+        /// <summary>
         /// Привязанные каналы.
-        public List<EplanDevice.IODevice.IOChannel>[] devicesChannels;
+        /// </summary>
+        public List<Device.IODevice.IOChannel>[] DevicesChannels
+        {
+            get
+            {
+                return devicesChannels;
+            }
+        }
 
         #region Закрытые поля.
-        /// <summary>
-        /// Смещение входного адресного пространства модуля.
-        /// </summary>
+        private List<Device.IODevice>[] devices;
+        private List<Device.IODevice.IOChannel>[] devicesChannels;
         private int inAddressSpaceOffset;
-
-        /// <summary>
-        /// Смещение выходного адресного пространства модуля.
-        /// </summary>
         private int outAddressSpaceOffset;
-
-        /// <summary>
-        /// Описание модуля
-        /// </summary>
         private IOModuleInfo info;
-
-        /// <summary>
-        /// Физический номер модуля
-        /// </summary>
         private int physicalNumber;
-
-        /// <summary>
-        /// Eplan функция модуля ввода-вывода.
-        /// </summary>
         Eplan.EplApi.DataModel.Function function;
+        private string articleName;
         #endregion
     }
 }

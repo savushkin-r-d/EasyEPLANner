@@ -789,10 +789,11 @@ namespace EasyEPlanner
             oProgress.EndPart();
 
             oProgress.BeginPart(40, "Чтение шаблонов и генерация файлов");
-            var projectName = eProjectManager.GetCurrentProjectName();
-            var pathToProjectFiles = GetPtusaProjectsPath(projectName);
+            string projectName = eProjectManager.GetCurrentProjectName();
+            string projectsFolderPath = GetPtusaProjectsPath(projectName);
+            string projectFilesPath = Path.Combine(projectsFolderPath, projectName);
             IPxcIolinkConfiguration pxcConfiguration = new PxcIolinkModulesConfiguration(
-                OriginalAssemblyPath, pathToProjectFiles, deviceManager, ioManager);
+                OriginalAssemblyPath, projectFilesPath, ioManager);
             
             bool exceptionRaised = false;
             Logs.Clear();

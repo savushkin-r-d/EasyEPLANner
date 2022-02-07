@@ -251,5 +251,25 @@ namespace StaticHelper
                 .ToString(ISOCode.Language.L___);
             return result;
         }
+
+        /// <summary>
+        /// Получить имя изделия устройства.
+        /// </summary>
+        /// <param name="function">Функция устройства</param>
+        /// <returns></returns>
+        public static string GetArticleName(Function function)
+        {
+            var articleName = string.Empty;
+            if (function == null) return articleName;
+
+            var articlesRefs = function.ArticleReferences;
+            if (articlesRefs.Length > 0 &&
+                !string.IsNullOrEmpty(function.ArticleReferences[0].PartNr))
+            {
+                articleName = function.ArticleReferences[0].PartNr;
+            }
+
+            return articleName;
+        }
     }
 }
