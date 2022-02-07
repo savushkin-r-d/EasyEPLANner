@@ -47,6 +47,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         {
             try
             {
+                //Think about strict sequence.
                 CreateFoldersIfNotExists();
                 ReadTemplates();
                 CreateModulesDescription();
@@ -86,6 +87,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         {
             try
             {
+                //TODO: Create template reader?
                 var readTasks = new List<Task>();
                 var readDeviceTasks = ReadTemplatesInStore(devicesFolderPath, deviceTemplates);
                 var readModuleTasks = ReadTemplatesInStore(modulesFolderPath, moduleTemplates);
@@ -177,6 +179,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
                 .Where(x => x.IsIOLink(collectOnlyPxcIol));
             foreach(var plcModule in plcModules)
             {
+                //TODO: Description generator class?
                 LinerecorderMultiSensor sensor = CreateModuleDescription(plcModule);
                 if (sensor.IsEmpty()) continue;
 
