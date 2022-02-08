@@ -78,13 +78,13 @@ namespace EasyEPlanner.PxcIolinkConfiguration
                 .Where(x => x != null && x.Count > 0)
                 .SelectMany(x => x);
 
-            const string clampNamePattern = "V_PortConfig_{0}";
+            const string clampNamePattern = "V_PortConfig_{0:d2}";
             int clampsCount = module.Info.ChannelClamps.Length;
             for(int i = 1; i <= clampsCount; i++)
             {
                 string paramName = string.Format(clampNamePattern, i);
                 var param = moduleDescription.Parameters.Param
-                    .Where(x => x.Name == paramName)
+                    .Where(x => x.Id == paramName)
                     .FirstOrDefault();
                 var channel = channels
                     .Where(x => x.LogicalClamp == i)
