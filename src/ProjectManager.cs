@@ -784,28 +784,37 @@ namespace EasyEPlanner
             oProgress.SetAllowCancel(false);
             oProgress.SetTitle("Генерация описания IOL-Conf");
 
-            oProgress.BeginPart(20, "Синхронизация описания");
+            oProgress.BeginPart(20, "Крутим планету и синхронизируем описание проекта");
             eProjectManager.SyncAndSave();
             oProgress.EndPart();
 
-            oProgress.BeginPart(40, "Чтение шаблонов и генерация файлов");
-            string projectName = eProjectManager.GetCurrentProjectName();
-            string projectsFolderPath = GetPtusaProjectsPath(projectName);
-            string projectFilesPath = Path.Combine(projectsFolderPath, projectName);
-
-            ISensorSerializer sensorSerializer = new SensorSerializer();
-            ITemplateReader templateReader = new TemplateReader(sensorSerializer);
-
+            oProgress.BeginPart(30, "Готовим окружение");
+            IXmlSensorSerializer sensorSerializer = new XmlSensorSerializer();
+            IXmlTemplateReader templateReader = new XmlTemplateReader(sensorSerializer);
+            ISensorDescriptionBuilder sensorDescriptionBuilder = new SensorDescriptionBuilder();
             IPxcIolinkConfiguration pxcConfiguration = new PxcIolinkModulesConfiguration(
-                OriginalAssemblyPath, projectFilesPath, ioManager, sensorSerializer,
-                templateReader);
-            
+                sensorSerializer, templateReader, sensorDescriptionBuilder);
+
             bool exceptionRaised = false;
             Logs.Clear();
+            oProgress.EndPart();
 
             try
             {
-                pxcConfiguration.Run();
+                oProgress.BeginPart(40, "Запускаем фиксиков и проверяем каталоги");
+                string projectName = eProjectManager.GetCurrentProjectName();
+                string projectsFolderPath = GetPtusaProjectsPath(projectName);
+                string projectFilesPath = Path.Combine(projectsFolderPath, projectName);
+                bool foldersCreated = pxcConfiguration.CreateFolders(OriginalAssemblyPath, projectFilesPath);
+                oProgress.EndPart();
+
+                oProgress.BeginPart(50, "Прибиваем обои и читаем шаблоны");
+                bool templatesLoaded = pxcConfiguration.ReadTemplates(foldersCreated);
+                oProgress.EndPart();
+
+                oProgress.BeginPart(70, "Красим потолок и генерируем описание модулей");
+                pxcConfiguration.CreateModulesDescription(templatesLoaded, ioManager);
+                oProgress.EndPart();
             }
             catch(AggregateException ae)
             {

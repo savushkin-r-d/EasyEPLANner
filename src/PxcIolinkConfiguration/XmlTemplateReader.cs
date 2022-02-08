@@ -8,7 +8,7 @@ using EasyEPlanner.PxcIolinkConfiguration.Models;
 
 namespace EasyEPlanner.PxcIolinkConfiguration
 {
-    public interface ITemplateReader
+    public interface IXmlTemplateReader
     {
         /// <summary>
         /// Возвращает список тасок с чтением шаблонов в dataStore. Таски
@@ -26,12 +26,16 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         string TemplateVersion { get; }
     }
 
-    internal class TemplateReader : ITemplateReader
+    /// <summary>
+    /// Класс с логикой чтения шаблонов Xml с описанием модулей ввода-вывода и
+    /// устройств.
+    /// </summary>
+    internal class XmlTemplateReader : IXmlTemplateReader
     {
         private const string lrpFileSearchPattern = "*.lrp";
-        private ISensorSerializer sensorSerializer;
+        private IXmlSensorSerializer sensorSerializer;
 
-        public TemplateReader(ISensorSerializer sensorSerializer)
+        public XmlTemplateReader(IXmlSensorSerializer sensorSerializer)
         {
             this.sensorSerializer = sensorSerializer;
         }

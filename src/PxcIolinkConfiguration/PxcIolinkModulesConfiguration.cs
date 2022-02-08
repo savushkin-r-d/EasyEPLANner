@@ -10,13 +10,11 @@ namespace EasyEPlanner.PxcIolinkConfiguration
 {
     internal class PxcIolinkModulesConfiguration : IPxcIolinkConfiguration
     {
-        private IIOManager ioManager;
-        private ISensorSerializer sensorSerializer;
-        private ITemplateReader templateReader;
+        private IXmlSensorSerializer sensorSerializer;
+        private IXmlTemplateReader templateReader;
+        private ISensorDescriptionBuilder sensorDescriptionBuilder;
         private Dictionary<string, LinerecorderSensor> moduleTemplates;
         private Dictionary<string, LinerecorderSensor> deviceTemplates;
-        private string assemblyPath;
-        private string projectFilesPath;
         private string devicesFolderPath;
         private string modulesFolderPath;
         private string createdIolConfPath;
@@ -26,51 +24,33 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         private const string IolConfFolderName = "IOL-Conf";
         private const string lrpExtension = ".lrp";
 
-        public PxcIolinkModulesConfiguration(string assemblyPath,
-            string projectFilesPath, IIOManager ioManager,
-            ISensorSerializer sensorSerializer,
-            ITemplateReader templateReader)
+        public PxcIolinkModulesConfiguration(IXmlSensorSerializer sensorSerializer,
+            IXmlTemplateReader templateReader,
+            ISensorDescriptionBuilder sensorDescriptionBuilder)
         {
-            this.ioManager = ioManager;
             moduleTemplates = new Dictionary<string, LinerecorderSensor>();
             deviceTemplates = new Dictionary<string, LinerecorderSensor>();
-            this.assemblyPath = assemblyPath;
-            this.projectFilesPath = projectFilesPath;
             devicesFolderPath = string.Empty;
             modulesFolderPath = string.Empty;
             createdIolConfPath = string.Empty;
             this.sensorSerializer = sensorSerializer;
             this.templateReader = templateReader;
+            this.sensorDescriptionBuilder = sensorDescriptionBuilder;
         }
 
-        public void Run()
-        {
-            try
-            {
-                //Think about strict sequence.
-                CreateFoldersIfNotExists();
-                ReadTemplates();
-                CreateModulesDescription();
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        private void CreateFoldersIfNotExists()
+        public bool CreateFolders(string assemblyPath, string projectFilesPath)
         {
             bool invalidAssemblyPath = string.IsNullOrEmpty(assemblyPath);
             if (invalidAssemblyPath)
             {
-                throw new ArgumentException(
+                throw new InvalidDataException(
                     "Невозможно проверить существование папок с шаблонами IOL-Conf.");
             }
 
             bool invalidProjectFilesPath = string.IsNullOrEmpty(projectFilesPath);
             if (invalidProjectFilesPath)
             {
-                throw new ArgumentException(
+                throw new InvalidDataException(
                     "Невозможно найти генерируемые файлы проекта.");
             }
 
@@ -81,10 +61,18 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             Directory.CreateDirectory(devicesFolderPath);
             Directory.CreateDirectory(modulesFolderPath);
             Directory.CreateDirectory(createdIolConfPath);
+
+            return true;
         }
 
-        private void ReadTemplates()
+        public bool ReadTemplates(bool foldersCreated)
         {
+            if (!foldersCreated)
+            {
+                throw new InvalidOperationException(
+                    "Каталоги не созданы, сначала создайте каталоги.");
+            }
+
             try
             {
                 var readTasks = new List<Task>();
@@ -114,72 +102,35 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             {
                 throw;
             }
+
+            return true;
         }
 
-        private void CreateModulesDescription()
+        public void CreateModulesDescription(bool templatesLoaded,
+            IIOManager ioManager)
         {
+            if (!templatesLoaded)
+            {
+                throw new InvalidOperationException(
+                    "Шаблоны не загружены, загрузите шаблоны.");
+            }
+
             bool collectOnlyPxcIol = true;
             var plcModules = ioManager.IONodes
                 .SelectMany(x => x.IOModules)
                 .Where(x => x.IsIOLink(collectOnlyPxcIol));
             foreach(var plcModule in plcModules)
             {
-                //TODO: Description generator class?
-                LinerecorderMultiSensor sensor = CreateModuleDescription(plcModule);
+                LinerecorderMultiSensor sensor = sensorDescriptionBuilder
+                    .CreateModuleDescription(plcModule, templateReader.TemplateVersion,
+                    moduleTemplates, deviceTemplates);
+
                 if (sensor.IsEmpty()) continue;
 
                 string fileName = string.Concat(plcModule.Name, lrpExtension);
                 string pathToSerialize = Path.Combine(createdIolConfPath, fileName);
                 sensorSerializer.Serialize(sensor, pathToSerialize);
             }
-        }
-
-        private LinerecorderMultiSensor CreateModuleDescription(IOModule module)
-        {
-            Models.Device moduleDescription = CreateModuleFromTemplate(module);
-            List<Models.Device> devicesDescription = CreateDevicesFromTemplate(module);
-            moduleDescription.Add(devicesDescription);
-
-            var sensor = new LinerecorderMultiSensor();
-            if (moduleDescription.IsEmpty()) return sensor;
-
-            sensor.Version = templateReader.TemplateVersion;
-            sensor.Add(moduleDescription);
-
-            return sensor;
-        }
-
-        private Models.Device CreateModuleFromTemplate(IOModule module)
-        {
-            var moduleDescription = new Models.Device();
-            LinerecorderSensor template;
-            if (moduleTemplates.ContainsKey(module.ArticleName))
-            {
-                template = moduleTemplates[module.ArticleName];
-            }
-            else
-            {
-                return moduleDescription;
-            }
-
-            moduleDescription.Sensor = template.Sensor.Clone() as Sensor;
-            moduleDescription.Parameters = template.Parameters.Clone() as Parameters;
-
-            //var channels = module.DevicesChannels.SelectMany(x => x)
-            //    .Where(x => x != null);
-            // TODO: Change module parameters
-
-            return moduleDescription;
-        }
-
-        private List<Models.Device> CreateDevicesFromTemplate(IOModule module)
-        {
-            var deviceList = new List<Models.Device>();
-
-            //TODO: Generate device info
-            //TODO: Change device parameters somehow
-
-            return deviceList;
         }
     }
 }

@@ -1,15 +1,10 @@
 ﻿using EasyEPlanner.PxcIolinkConfiguration.Models;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace EasyEPlanner.PxcIolinkConfiguration
 {
-    public interface ISensorSerializer
+    public interface IXmlSensorSerializer
     {
         /// <summary>
         /// Десериализует одиночное устройство из xml описания
@@ -27,7 +22,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         void Serialize(LinerecorderMultiSensor template, string path);
     }
 
-    internal class SensorSerializer : ISensorSerializer
+    internal class XmlSensorSerializer : IXmlSensorSerializer
     {
         public LinerecorderSensor Deserialize(string xml)
         {
