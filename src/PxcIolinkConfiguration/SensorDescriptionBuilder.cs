@@ -43,6 +43,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             return sensor;
         }
 
+        #region генерация описания модуля
         private Models.Device CreateModuleFromTemplate(IOModule module,
             Dictionary<string, LinerecorderSensor> moduleTemplates)
         {
@@ -95,33 +96,31 @@ namespace EasyEPlanner.PxcIolinkConfiguration
                         $"модуля {module.Name} {module.ArticleName} не найден.");
                 }
 
-                ConfigureParam(param, channel);
+                string channelName = channel?.Name ?? string.Empty;
+                ConfigureParam(param, channelName);
             }
         }
 
-        private void ConfigureParam(Param param, Device.IODevice.IOChannel channel)
+        private void ConfigureParam(Param param, string channelName)
         {
-            if (channel == null)
+            switch (channelName)
             {
-                SetDisabled(param);
-            }
-            else
-            {
-                switch (channel.Name)
-                {
-                    case "AI":
-                    case "AO":
-                        SetIoLink(param);
-                        break;
+                case "AI":
+                case "AO":
+                    SetIoLink(param);
+                    break;
 
-                    case "DI":
-                        SetDi(param);
-                        break;
+                case "DI":
+                    SetDi(param);
+                    break;
 
-                    case "DO":
-                        SetDo(param);
-                        break;
-                }
+                case "DO":
+                    SetDo(param);
+                    break;
+
+                default:
+                    SetDisabled(param);
+                    break;
             }
         }
 
@@ -152,6 +151,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             parameter.Value = "2";
             parameter.Text = "DO";
         }
+        #endregion
 
         private List<Models.Device> CreateDevicesFromTemplate(IOModule module,
             Dictionary<string, LinerecorderSensor> deviceTemplates)
