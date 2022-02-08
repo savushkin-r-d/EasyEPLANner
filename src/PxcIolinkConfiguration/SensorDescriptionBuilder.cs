@@ -126,33 +126,38 @@ namespace EasyEPlanner.PxcIolinkConfiguration
 
         private void SetDisabled(Param parameter)
         {
-            parameter.InternalValue = "3";
-            parameter.Value = "3";
+            const string disabledValue = "3";
+            parameter.InternalValue = disabledValue;
+            parameter.Value = disabledValue;
             parameter.Text = "Disabled";
         }
 
         private void SetIoLink(Param parameter)
         {
-            parameter.InternalValue = "0";
-            parameter.Value = "0";
+            const string ioLinkValue = "0";
+            parameter.InternalValue = ioLinkValue;
+            parameter.Value = ioLinkValue;
             parameter.Text = "IO-Link";
         }
 
         private void SetDi(Param parameter)
         {
-            parameter.InternalValue = "1";
-            parameter.Value = "1";
+            const string diValue = "1";
+            parameter.InternalValue = diValue;
+            parameter.Value = diValue;
             parameter.Text = "DI";
         }
 
         private void SetDo(Param parameter)
         {
-            parameter.InternalValue = "2";
-            parameter.Value = "2";
+            const string doValue = "2";
+            parameter.InternalValue = doValue;
+            parameter.Value = doValue;
             parameter.Text = "DO";
         }
         #endregion
 
+        #region генерация описания устройств для добавления в модуль
         private List<Models.Device> CreateDevicesFromTemplate(IOModule module,
             Dictionary<string, LinerecorderSensor> deviceTemplates)
         {
@@ -163,5 +168,6 @@ namespace EasyEPlanner.PxcIolinkConfiguration
 
             return deviceList;
         }
+        #endregion
     }
 }
