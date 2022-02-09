@@ -1,5 +1,6 @@
 ﻿using EasyEPlanner.PxcIolinkConfiguration.Models;
 using IO;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -162,9 +163,31 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             Dictionary<string, LinerecorderSensor> deviceTemplates)
         {
             var deviceList = new List<Models.Device>();
+            var devices = module.Devices
+                .Where(x => x != null && x.Count > 0)
+                .Select(x => new { Device = x.First(), Clamp = Array.IndexOf(module.Devices, x) });
+            foreach(var deviceClampPair in devices)
+            {
+                int logicalPort = module.DevicesChannels[deviceClampPair.Clamp]
+                    .Select(x => x.LogicalClamp).FirstOrDefault();
+                string articleName = deviceClampPair.Device.ArticleName;
+                bool templateNotFound = !deviceTemplates.ContainsKey(articleName);
+                bool invalidLogicalClamp = logicalPort <= 0;
 
-            //TODO: Generate device info
-            //TODO: Change device parameters somehow
+                if (templateNotFound || invalidLogicalClamp) continue;
+
+                LinerecorderSensor deviceTemplate = deviceTemplates[articleName];
+                var deviceDescription = new Models.Device
+                {
+                    Port = logicalPort,
+                    Sensor = deviceTemplate.Sensor.Clone() as Sensor,
+                    Parameters = deviceTemplate.Parameters.Clone() as Parameters
+                };
+
+                deviceList.Add(deviceDescription);
+            }
+
+            //TODO: Manage parameters
 
             return deviceList;
         }
