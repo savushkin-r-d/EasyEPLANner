@@ -498,7 +498,7 @@ namespace IO
         /// <summary>
         /// Привязанные устройства.
         /// </summary>
-        public List<Device.IODevice>[] Devices
+        public List<EplanDevice.IODevice>[] Devices
         {
             get
             {
@@ -509,7 +509,7 @@ namespace IO
         /// <summary>
         /// Привязанные каналы.
         /// </summary>
-        public List<Device.IODevice.IOChannel>[] DevicesChannels
+        public List<EplanDevice.IODevice.IOChannel>[] DevicesChannels
         {
             get
             {
@@ -518,8 +518,8 @@ namespace IO
         }
 
         #region Закрытые поля.
-        private List<Device.IODevice>[] devices;
-        private List<Device.IODevice.IOChannel>[] devicesChannels;
+        private List<EplanDevice.IODevice>[] devices;
+        private List<EplanDevice.IODevice.IOChannel>[] devicesChannels;
         private int inAddressSpaceOffset;
         private int outAddressSpaceOffset;
         private IOModuleInfo info;
