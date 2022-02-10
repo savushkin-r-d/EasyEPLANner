@@ -12,7 +12,7 @@ namespace EasyEPlanner
     {
         public ConfigurationChecker()
         {
-            deviceManager = Device.DeviceManager.GetInstance();
+            deviceManager = EplanDevice.DeviceManager.GetInstance();
             IOManager = IO.IOManager.GetInstance();
             techObjectManager = TechObject.TechObjectManager.GetInstance();
             projectHealthChecker = new ProjectHealthChecker();
@@ -94,7 +94,7 @@ namespace EasyEPlanner
 
         string errors;
 
-        Device.DeviceManager deviceManager;
+        EplanDevice.DeviceManager deviceManager;
         IO.IOManager IOManager;
         TechObject.ITechObjectManager techObjectManager;
         ProjectHealthChecker projectHealthChecker;

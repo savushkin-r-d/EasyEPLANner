@@ -1,4 +1,4 @@
-﻿namespace Device
+﻿namespace EplanDevice
 {
     /// Подтипы устройств.
     public enum DeviceSubType

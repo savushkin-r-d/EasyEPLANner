@@ -2,15 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Device;
+using EplanDevice;
 
-namespace Tests.Devices
+namespace Tests.EplanDevices
 {
-    public class WTTest
+    public class CAMTest
     {
         const string Incorrect = "Incorrect";
-        const string WT = "WT";
-        const string WT_VIRT = "WT_VIRT";
+        const string CAM_DO1_DI1 = "CAM_DO1_DI1";
+        const string CAM_DO1_DI2 = "CAM_DO1_DI2";
+        const string CAM_DO1_DI3 = "CAM_DO1_DI3";
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
@@ -42,12 +43,16 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { DeviceSubType.WT, WT, GetRandomWTDevice() },
-                new object[] { DeviceSubType.WT_VIRT, WT_VIRT,
-                    GetRandomWTDevice() },
-                new object[] { DeviceSubType.WT, WT, GetRandomWTDevice() },
+                new object[] { DeviceSubType.CAM_DO1_DI1, CAM_DO1_DI1,
+                    GetRandomCAMDevice() },
+                new object[] { DeviceSubType.CAM_DO1_DI2, CAM_DO1_DI2,
+                    GetRandomCAMDevice() },
+                new object[] { DeviceSubType.CAM_DO1_DI3, CAM_DO1_DI3,
+                    GetRandomCAMDevice() },
+                new object[] { DeviceSubType.NONE, string.Empty,
+                    GetRandomCAMDevice() },
                 new object[] { DeviceSubType.NONE, Incorrect,
-                    GetRandomWTDevice() },
+                    GetRandomCAMDevice() },
             };
         }
 
@@ -76,10 +81,11 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { WT, string.Empty, GetRandomWTDevice() },
-                new object[] { WT, WT, GetRandomWTDevice() },
-                new object[] { string.Empty, Incorrect, GetRandomWTDevice() },
-                new object[] { WT_VIRT, WT_VIRT, GetRandomWTDevice() },
+                new object[] { CAM_DO1_DI1, CAM_DO1_DI1, GetRandomCAMDevice() },
+                new object[] { CAM_DO1_DI2, CAM_DO1_DI2, GetRandomCAMDevice() },
+                new object[] { CAM_DO1_DI3, CAM_DO1_DI3, GetRandomCAMDevice() },
+                new object[] { string.Empty, string.Empty, GetRandomCAMDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomCAMDevice() },
             };
         }
 
@@ -107,30 +113,29 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForWT = new Dictionary<string, int>()
+            var camWithoutReady = new Dictionary<string, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
-                {IODevice.Tag.V, 1},
-                {IODevice.Parameter.P_NOMINAL_W, 1},
-                {IODevice.Parameter.P_DT, 1},
-                {IODevice.Parameter.P_RKP, 1},
-                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.RESULT, 1},
             };
 
-            var exportForWTVirt = new Dictionary<string, int>()
+            var camWithReady = new Dictionary<string, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
-                {IODevice.Tag.V, 1},
+                {IODevice.Tag.RESULT, 1},
+                {IODevice.Tag.READY, 1},
+                {IODevice.Parameter.P_READY_TIME, 1},
             };
 
             return new object[]
             {
-                new object[] {exportForWT, string.Empty, GetRandomWTDevice() },
-                new object[] {exportForWT, WT, GetRandomWTDevice() },
-                new object[] { exportForWTVirt, WT_VIRT, GetRandomWTDevice() },
-                new object[] {null, Incorrect, GetRandomWTDevice() },
+                new object[] {camWithoutReady, CAM_DO1_DI1, GetRandomCAMDevice()},
+                new object[] {camWithReady, CAM_DO1_DI2, GetRandomCAMDevice()},
+                new object[] {camWithReady, CAM_DO1_DI3, GetRandomCAMDevice()},
+                new object[] {null, Incorrect, GetRandomCAMDevice()},
+                new object[] {null, string.Empty, GetRandomCAMDevice()},
             };
         }
 
@@ -142,7 +147,8 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
-            string[] parametersSequence, string subType, IODevice device)
+            string[] parametersSequence, string subType,
+            IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -161,38 +167,41 @@ namespace Tests.Devices
         {
             var parameters = new string[]
             {
-                IODevice.Parameter.P_NOMINAL_W,
-                IODevice.Parameter.P_RKP,
-                IODevice.Parameter.P_C0,
-                IODevice.Parameter.P_DT
+                IODevice.Parameter.P_READY_TIME
             };
 
             return new object[]
             {
                 new object[]
                 {
-                    parameters,
-                    WT,
-                    GetRandomWTDevice()
+                    new string[0],
+                    CAM_DO1_DI1,
+                    GetRandomCAMDevice()
                 },
                 new object[]
                 {
                     parameters,
-                    string.Empty,
-                    GetRandomWTDevice()
+                    CAM_DO1_DI2,
+                    GetRandomCAMDevice()
+                },
+                new object[]
+                {
+                    parameters,
+                    CAM_DO1_DI3,
+                    GetRandomCAMDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    WT_VIRT,
-                    GetRandomWTDevice(),
+                    string.Empty,
+                    GetRandomCAMDevice()
                 },
                 new object[]
                 {
                     new string[0],
                     Incorrect,
-                    GetRandomWTDevice(),
-                }
+                    GetRandomCAMDevice()
+                },
             };
         }
 
@@ -232,13 +241,6 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
-            var defaultChannels = new Dictionary<string, int>()
-            {
-                { AI, 2 },
-                { AO, 0 },
-                { DI, 0 },
-                { DO, 0 },
-            };
             var emptyChannels = new Dictionary<string, int>()
             {
                 { AI, 0 },
@@ -251,53 +253,204 @@ namespace Tests.Devices
             {
                 new object[]
                 {
-                    defaultChannels,
-                    WT,
-                    GetRandomWTDevice()
+                    new Dictionary<string, int>()
+                    {
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 1 },
+                        { DO, 1 },
+                    },
+                    CAM_DO1_DI1,
+                    GetRandomCAMDevice()
                 },
                 new object[]
                 {
-                    defaultChannels,
+                    new Dictionary<string, int>()
+                    {
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 2 },
+                        { DO, 1 },
+                    },
+                    CAM_DO1_DI2,
+                    GetRandomCAMDevice()
+                },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { AI, 0 },
+                        { AO, 0 },
+                        { DI, 3 },
+                        { DO, 1 },
+                    },
+                    CAM_DO1_DI3,
+                    GetRandomCAMDevice()
+                },
+                new object[]
+                {
+                    emptyChannels,
                     string.Empty,
-                    GetRandomWTDevice()
+                    GetRandomCAMDevice()
                 },
                 new object[]
                 {
                     emptyChannels,
                     Incorrect,
-                    GetRandomWTDevice()
+                    GetRandomCAMDevice()
                 },
-                new object[]
-                {
-                    emptyChannels,
-                    WT_VIRT,
-                    GetRandomWTDevice()
-                }
             };
         }
 
         /// <summary>
-        /// Генератор WT устройств
+        /// Тестирование свойств устройства
+        /// </summary>
+        /// <param name="parametersSequence">Ожидаемые свойства</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(PropertiesTestData))]
+        public void Property_NewDev_ReturnsExpectedArrayWithParameters(
+            string[] parametersSequence, string subType,
+            IODevice device)
+        {
+            device.SetSubType(subType);
+            string[] actualParametersSequence = device.Properties
+                .Select(x => x.Key)
+                .ToArray();
+            Assert.AreEqual(parametersSequence, actualParametersSequence);
+        }
+
+        /// <summary>
+        /// 1 - Свойства в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
         /// </summary>
         /// <returns></returns>
-        private static IODevice GetRandomWTDevice()
+        private static object[] PropertiesTestData()
+        {
+            var properties = new string[]
+            {
+                IODevice.Property.IP
+            };
+
+            return new object[]
+            {
+                new object[]
+                {
+                    properties,
+                    CAM_DO1_DI1,
+                    GetRandomCAMDevice()
+                },
+                new object[]
+                {
+                    properties,
+                    CAM_DO1_DI2,
+                    GetRandomCAMDevice()
+                },
+                new object[]
+                {
+                    properties,
+                    CAM_DO1_DI3,
+                    GetRandomCAMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    string.Empty,
+                    GetRandomCAMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    Incorrect,
+                    GetRandomCAMDevice()
+                },
+            };
+        }
+
+        /// <summary>
+        /// Тестирование свойств устройства
+        /// </summary>
+        /// <param name="expectedProperties">Ожидаемые свойства</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(RuntimeParametersTestData))]
+        public void RuntimeParameters_NewDev_ReturnsExpectedProperties(
+            string[] expectedProperties, string subType,
+            IODevice device)
+        {
+            device.SetSubType(subType);
+            string[] actualSequence = device.RuntimeParameters
+                .Select(x => x.Key)
+                .ToArray();
+            Assert.AreEqual(expectedProperties, actualSequence);
+        }
+
+        /// <summary>
+        /// 1 - Параметры в том порядке, который нужен
+        /// 2 - Подтип устройства
+        /// 3 - Устройство
+        /// </summary>
+        /// <returns></returns>
+        private static object[] RuntimeParametersTestData()
+        {
+            return new object[]
+            {
+                new object[]
+                {
+                    new string[0],
+                    CAM_DO1_DI1,
+                    GetRandomCAMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    CAM_DO1_DI2,
+                    GetRandomCAMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    CAM_DO1_DI3,
+                    GetRandomCAMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    string.Empty,
+                    GetRandomCAMDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    Incorrect,
+                    GetRandomCAMDevice()
+                },
+            };
+        }
+
+        /// <summary>
+        /// Генератор M устройств
+        /// </summary>
+        /// <returns></returns>
+        private static IODevice GetRandomCAMDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new WT("KOAG4WT1", "+KOAG4-WT1",
-                        "Test device", 1, "KOAG", 4, "DeviceArticle");
+                    return new CAM("LINE4CAM1", "+LINE4-CAM1", "Test device", 1,
+                        "KOAG", 4);
                 case 2:
-                    return new WT("LINE1WT2", "+LINE1-WT2",
-                        "Test device", 2, "LINE", 1, "DeviceArticle");
+                    return new CAM("LINE1CAM2", "+LINE1-CAM2", "Test device", 2,
+                        "LINE", 1);
                 case 3:
-                    return new WT("TANK2WT1", "+TANK2-WT1",
-                        "Test device", 1, "TANK", 2, "DeviceArticle");
+                    return new CAM("TANK2CAM1", "+TANK2-CAM1", "Test device", 1,
+                        "TANK", 2);
                 default:
-                    return new WT("CW_TANK3WT3", "+CW_TANK3-WT3",
-                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
+                    return new CAM("CW_TANK3CAM3", "+CW_TANK3-CAM3",
+                        "Test device", 3, "CW_TANK", 3);
             }
         }
     }

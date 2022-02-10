@@ -248,7 +248,7 @@ namespace EasyEPlanner
 
         ITechObjectManager techObjectManager = TechObjectManager
             .GetInstance();
-        Device.IDeviceManager deviceManager = Device.DeviceManager
+        EplanDevice.IDeviceManager deviceManager = EplanDevice.DeviceManager
             .GetInstance();
         IO.IIOManager ioManager = IO.IOManager.GetInstance();
     }

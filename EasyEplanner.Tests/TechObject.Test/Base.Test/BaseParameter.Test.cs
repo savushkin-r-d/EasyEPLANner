@@ -15,7 +15,7 @@ namespace EasyEplanner.Tests
             public BaseParameterImplementation(string luaName, string name,
                 string defaultValue = "",
                 List<DisplayObject> displayObjects = null,
-                Device.IDeviceManager deviceManager = null) : base(luaName,
+                EplanDevice.IDeviceManager deviceManager = null) : base(luaName,
                     name, defaultValue, displayObjects, deviceManager) { }
 
             public override BaseParameter Clone()
@@ -169,15 +169,15 @@ namespace EasyEplanner.Tests
         [TestCaseSource(nameof(GetDisplayObjectsCaseSource))]
         public void GetDisplayObjects_NewObject_ReturnsExpectedValues(
             List<BaseParameter.DisplayObject> displayObjects,
-            Device.DeviceType[] expectedDevTypes,
-            Device.DeviceSubType[] expectedDevSubTypes,
+            EplanDevice.DeviceType[] expectedDevTypes,
+            EplanDevice.DeviceSubType[] expectedDevSubTypes,
             bool expectedDisplayParameters)
         {
             var newObj = new BaseParameterImplementation(stub, stub, stub,
                 displayObjects);
 
-            newObj.GetDisplayObjects(out Device.DeviceType[] devTypes,
-                out Device.DeviceSubType[] devSubTypes,
+            newObj.GetDisplayObjects(out EplanDevice.DeviceType[] devTypes,
+                out EplanDevice.DeviceSubType[] devSubTypes,
                 out bool displayParameters);
 
             Assert.Multiple(() =>
@@ -199,12 +199,12 @@ namespace EasyEplanner.Tests
                         BaseParameter.DisplayObject.Signals,
                         BaseParameter.DisplayObject.Parameters
                     },
-                    new Device.DeviceType[]
+                    new EplanDevice.DeviceType[]
                     {
-                        Device.DeviceType.AI,
-                        Device.DeviceType.AO,
-                        Device.DeviceType.DI,
-                        Device.DeviceType.DO
+                        EplanDevice.DeviceType.AI,
+                        EplanDevice.DeviceType.AO,
+                        EplanDevice.DeviceType.DI,
+                        EplanDevice.DeviceType.DO
                     },
                     null,
                     true,
@@ -215,12 +215,12 @@ namespace EasyEplanner.Tests
                     {
                         BaseParameter.DisplayObject.Signals,
                     },
-                    new Device.DeviceType[]
+                    new EplanDevice.DeviceType[]
                     {
-                        Device.DeviceType.AI,
-                        Device.DeviceType.AO,
-                        Device.DeviceType.DI,
-                        Device.DeviceType.DO
+                        EplanDevice.DeviceType.AI,
+                        EplanDevice.DeviceType.AO,
+                        EplanDevice.DeviceType.DI,
+                        EplanDevice.DeviceType.DO
                     },
                     null,
                     false,
@@ -231,14 +231,14 @@ namespace EasyEplanner.Tests
                     {
                         BaseParameter.DisplayObject.Parameters
                     },
-                    new Device.DeviceType[0],
+                    new EplanDevice.DeviceType[0],
                     null,
                     true,
                 },
                 new object[]
                 {
                     null,
-                    new Device.DeviceType[0],
+                    new EplanDevice.DeviceType[0],
                     null,
                     false,
                 },
@@ -251,7 +251,7 @@ namespace EasyEplanner.Tests
         {
             string name = "Name";
             string luaName = "LuaName";
-            Device.IDeviceManager deviceManager =
+            EplanDevice.IDeviceManager deviceManager =
                 GetMoqForSetValuesAndDisplayTextTest();
             var parameter = new BaseParameterImplementation(luaName, name,
                 stub, null, deviceManager);
@@ -267,7 +267,7 @@ namespace EasyEplanner.Tests
         {
             string name = "Name";
             string luaName = "LuaName";
-            Device.IDeviceManager deviceManager =
+            EplanDevice.IDeviceManager deviceManager =
                 GetMoqForSetValuesAndDisplayTextTest();
             var parameter = new BaseParameterImplementation(luaName, name,
                 stub, null, deviceManager);
@@ -293,7 +293,7 @@ namespace EasyEplanner.Tests
         {
             string name = "Name";
             string luaName = "LuaName";
-            Device.IDeviceManager deviceManager =
+            EplanDevice.IDeviceManager deviceManager =
                 GetMoqForSetValuesAndDisplayTextTest();
             var parameter = new BaseParameterImplementation(luaName, name,
                 stub, null, deviceManager);
@@ -331,7 +331,7 @@ namespace EasyEplanner.Tests
         {
             string name = "Name";
             string luaName = "LuaName";
-            Device.IDeviceManager deviceManager =
+            EplanDevice.IDeviceManager deviceManager =
                 GetMoqForSetValuesAndDisplayTextTest();
             var parameter = new BaseParameterImplementation(luaName, name,
                 string.Empty, null, deviceManager);
@@ -359,7 +359,7 @@ namespace EasyEplanner.Tests
             };
         }
 
-        private Device.IDeviceManager GetMoqForSetValuesAndDisplayTextTest()
+        private EplanDevice.IDeviceManager GetMoqForSetValuesAndDisplayTextTest()
         {
             string stubDev1Name = "STUB1DEV1";
             string stubDev2Name = "STUB1DEV2";
@@ -371,21 +371,21 @@ namespace EasyEplanner.Tests
             int normDev2Index = 3;
             int stubDev2Index = 4;
 
-            var stubDevice1 = Mock.Of<Device.IDevice>(
+            var stubDevice1 = Mock.Of<EplanDevice.IDevice>(
                 dev => dev.Name == stubDev1Name &&
                 dev.Description == StaticHelper.CommonConst.Cap);
-            var stubDevice2 = Mock.Of<Device.IDevice>(
+            var stubDevice2 = Mock.Of<EplanDevice.IDevice>(
                 dev => dev.Name == stubDev2Name &&
                 dev.Description == StaticHelper.CommonConst.Cap);
 
-            var okDevice1 = Mock.Of<Device.IDevice>(
+            var okDevice1 = Mock.Of<EplanDevice.IDevice>(
                 dev => dev.Name == normDev1Name &&
                 dev.Description == "Description 1");
-            var okDevice2 = Mock.Of<Device.IDevice>(
+            var okDevice2 = Mock.Of<EplanDevice.IDevice>(
                 dev => dev.Name == normDev2Name &&
                 dev.Description == "Description 2");
 
-            var deviceManagerMock = Mock.Of<Device.IDeviceManager>(
+            var deviceManagerMock = Mock.Of<EplanDevice.IDeviceManager>(
                 d => d.GetDeviceByEplanName(stubDev1Name) == stubDevice1 &&
                 d.GetDeviceByEplanName(It.IsAny<string>()) == stubDevice1 &&
                 d.GetDeviceByEplanName(stubDev2Name) == stubDevice2 &&

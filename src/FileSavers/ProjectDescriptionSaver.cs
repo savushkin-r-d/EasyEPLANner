@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using Device;
+using EplanDevice;
 using IO;
 using System.Windows.Forms;
 using System.Text;

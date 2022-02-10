@@ -1,4 +1,4 @@
-﻿namespace Device
+﻿namespace EplanDevice
 {
     /// <summary>
     /// Устройство - пневмоостров.

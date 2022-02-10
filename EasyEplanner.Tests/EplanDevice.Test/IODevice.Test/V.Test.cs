@@ -2,9 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Device;
+using EplanDevice;
 
-namespace Tests.Devices
+namespace Tests.EplanDevices
 {
     public class VTest
     {

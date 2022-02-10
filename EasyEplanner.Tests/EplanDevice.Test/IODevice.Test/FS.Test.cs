@@ -2,56 +2,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Device;
+using EplanDevice;
 
-namespace Tests.Devices
+namespace Tests.EplanDevices
 {
-    public class DOTest
+    public class FSTest
     {
         const string Incorrect = "Incorrect";
-        const string DOSubType = "DO";
-        const string DO_VIRT = "DO_VIRT";
+        const string FS = "FS";
+        const string FS_VIRT = "FS_VIRT";
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
         const string DI = IODevice.IOChannel.DI;
         const string DO = IODevice.IOChannel.DO;
-
-        /// <summary>
-        /// Тест установки подтипа устройства
-        /// </summary>
-        /// <param name="expectedSubType">Ожидаемый подтип</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(SetSubTypeTestDevices))]
-        public void SetSubType_NewDev_ReturnsExpectedSubType(
-            DeviceSubType expectedSubType, string subType,
-            IODevice device)
-        {
-            device.SetSubType(subType);
-            Assert.AreEqual(expectedSubType, device.DeviceSubType);
-        }
-
-        /// <summary>
-        /// 1 - Ожидаемое значение подтипа,
-        /// 2 - Задаваемое значение подтипа,
-        /// 3 - Устройство для тестов
-        /// </summary>
-        /// <returns></returns>
-        private static object[] SetSubTypeTestDevices()
-        {
-            return new object[]
-            {
-                new object[] { DeviceSubType.DO, string.Empty,
-                    GetRandomDODevice() },
-                new object[] { DeviceSubType.DO, DOSubType,
-                    GetRandomDODevice() },
-                new object[] { DeviceSubType.DO_VIRT, DO_VIRT,
-                    GetRandomDODevice() },
-                new object[] { DeviceSubType.NONE, Incorrect,
-                    GetRandomDODevice() },
-            };
-        }
 
         /// <summary>
         /// Тест получения подтипа устройства
@@ -78,10 +42,46 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { DOSubType, string.Empty, GetRandomDODevice() },
-                new object[] { DOSubType, DOSubType, GetRandomDODevice() },
-                new object[] { DO_VIRT, DO_VIRT, GetRandomDODevice() },
-                new object[] { string.Empty, Incorrect, GetRandomDODevice() },
+                new object[] { FS, string.Empty, GetRandomFSDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomFSDevice() },
+                new object[] { FS, FS, GetRandomFSDevice() },
+                new object[] { FS_VIRT, FS_VIRT, GetRandomFSDevice() },
+            };
+        }
+
+        /// <summary>
+        /// Тест установки подтипа устройства
+        /// </summary>
+        /// <param name="expectedSubType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(SetSubTypeTestData))]
+        public void SetSubType_NewDev_ReturnsExpectedSubType(
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
+        {
+            device.SetSubType(subType);
+            Assert.AreEqual(expectedSubType, device.DeviceSubType);
+        }
+
+        /// <summary>
+        /// 1 - Ожидаемое перечисление подтипа,
+        /// 2 - Задаваемое значение подтипа,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] SetSubTypeTestData()
+        {
+            return new object[]
+            {
+                new object[] { DeviceSubType.FS, string.Empty,
+                    GetRandomFSDevice() },
+                new object[] { DeviceSubType.FS, FS,
+                    GetRandomFSDevice() },
+                new object[] { DeviceSubType.NONE, Incorrect,
+                    GetRandomFSDevice() },
+                new object[] { DeviceSubType.FS_VIRT, FS_VIRT,
+                    GetRandomFSDevice() },
             };
         }
 
@@ -91,7 +91,7 @@ namespace Tests.Devices
         /// <param name="expectedProperties">Ожидаемый список свойств</param>
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(GetDevicePropertiesTestDevices))]
+        [TestCaseSource(nameof(GetDevicePropertiesTestData))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
             IODevice device)
@@ -107,9 +107,16 @@ namespace Tests.Devices
         /// 3 - Устройство для тестов
         /// </summary>
         /// <returns></returns>
-        private static object[] GetDevicePropertiesTestDevices()
+        private static object[] GetDevicePropertiesTestData()
         {
-            var exportForDO = new Dictionary<string, int>()
+            var exportForFS = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Parameter.P_DT, 1},
+            };
+
+            var exportForFSVirt = new Dictionary<string, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
@@ -117,10 +124,10 @@ namespace Tests.Devices
 
             return new object[]
             {
-                new object[] {exportForDO, string.Empty, GetRandomDODevice()},
-                new object[] {exportForDO, DOSubType, GetRandomDODevice()},
-                new object[] {exportForDO, DO_VIRT, GetRandomDODevice()},
-                new object[] {exportForDO, Incorrect, GetRandomDODevice()},
+                new object[] {exportForFS, string.Empty, GetRandomFSDevice()},
+                new object[] {exportForFS, FS, GetRandomFSDevice()},
+                new object[] {exportForFSVirt, FS_VIRT, GetRandomFSDevice()},
+                new object[] {null, Incorrect, GetRandomFSDevice()},
             };
         }
 
@@ -150,25 +157,36 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
+            var defaultParameters = new string[]
+            {
+                IODevice.Parameter.P_DT
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new string[0],
-                    DOSubType,
-                    GetRandomDODevice()
+                    defaultParameters,
+                    FS,
+                    GetRandomFSDevice()
                 },
                 new object[]
                 {
-                    new string[0],
+                    defaultParameters,
                     string.Empty,
-                    GetRandomDODevice()
+                    GetRandomFSDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    DO_VIRT,
-                    GetRandomDODevice()
+                    FS_VIRT,
+                    GetRandomFSDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    Incorrect,
+                    GetRandomFSDevice()
                 },
             };
         }
@@ -209,12 +227,12 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
-            var oneDiscreteOutputChannel = new Dictionary<string, int>()
+            var discreteSensorChannels = new Dictionary<string, int>()
             {
                 { AI, 0 },
                 { AO, 0 },
-                { DI, 0 },
-                { DO, 1 },
+                { DI, 1 },
+                { DO, 0 },
             };
 
             var emptyChannels = new Dictionary<string, int>()
@@ -229,53 +247,53 @@ namespace Tests.Devices
             {
                 new object[]
                 {
-                    oneDiscreteOutputChannel,
+                    discreteSensorChannels,
+                    FS,
+                    GetRandomFSDevice()
+                },
+                new object[]
+                {
+                    discreteSensorChannels,
                     string.Empty,
-                    GetRandomDODevice()
-                },
-                new object[]
-                {
-                    oneDiscreteOutputChannel,
-                    DOSubType,
-                    GetRandomDODevice()
-                },
-                new object[]
-                {
-                    emptyChannels,
-                    DO_VIRT,
-                    GetRandomDODevice()
+                    GetRandomFSDevice()
                 },
                 new object[]
                 {
                     emptyChannels,
                     Incorrect,
-                    GetRandomDODevice()
+                    GetRandomFSDevice()
                 },
+                new object[]
+                {
+                    emptyChannels,
+                    FS_VIRT,
+                    GetRandomFSDevice()
+                }
             };
         }
 
         /// <summary>
-        /// Генератор DO устройств
+        /// Генератор FS устройств
         /// </summary>
         /// <returns></returns>
-        private static IODevice GetRandomDODevice()
+        private static IODevice GetRandomFSDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new DO("KOAG4DO1", "+KOAG4-DO1",
-                        "Test device", 1, "KOAG", 4);
+                    return new FS("KOAG4FS1", "+KOAG4-FS1",
+                        "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new DO("LINE1DO2", "+LINE1-DO2",
-                        "Test device", 2, "LINE", 1);
+                    return new FS("LINE1FS2", "+LINE1-FS2",
+                        "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new DO("TANK2DO1", "+TANK2-DO1",
-                        "Test device", 1, "TANK", 2);
+                    return new FS("TANK2FS1", "+TANK2-FS1",
+                        "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new DO("CW_TANK3DO3", "+CW_TANK3-DO3",
-                        "Test device", 3, "CW_TANK", 3);
+                    return new FS("CW_TANK3FS3", "+CW_TANK3-FS3",
+                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }
     }

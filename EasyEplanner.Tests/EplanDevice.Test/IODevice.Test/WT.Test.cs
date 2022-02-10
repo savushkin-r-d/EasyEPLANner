@@ -2,20 +2,54 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Device;
+using EplanDevice;
 
-namespace Tests.Devices
+namespace Tests.EplanDevices
 {
-    public class HLTest
+    public class WTTest
     {
         const string Incorrect = "Incorrect";
-        const string HL = "HL";
-        const string HL_VIRT = "HL_VIRT";
+        const string WT = "WT";
+        const string WT_VIRT = "WT_VIRT";
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
         const string DI = IODevice.IOChannel.DI;
         const string DO = IODevice.IOChannel.DO;
+
+        /// <summary>
+        /// Тест установки подтипа устройства
+        /// </summary>
+        /// <param name="expectedSubType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(SetSubTypeTestData))]
+        public void SetSubType_NewDev_ReturnsExpectedSubType(
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
+        {
+            device.SetSubType(subType);
+            Assert.AreEqual(expectedSubType, device.DeviceSubType);
+        }
+
+        /// <summary>
+        /// 1 - Ожидаемое значение подтипа,
+        /// 2 - Задаваемое значение подтипа,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] SetSubTypeTestData()
+        {
+            return new object[]
+            {
+                new object[] { DeviceSubType.WT, WT, GetRandomWTDevice() },
+                new object[] { DeviceSubType.WT_VIRT, WT_VIRT,
+                    GetRandomWTDevice() },
+                new object[] { DeviceSubType.WT, WT, GetRandomWTDevice() },
+                new object[] { DeviceSubType.NONE, Incorrect,
+                    GetRandomWTDevice() },
+            };
+        }
 
         /// <summary>
         /// Тест получения подтипа устройства
@@ -42,46 +76,10 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { HL, string.Empty, GetRandomHLDevice() },
-                new object[] { string.Empty, Incorrect, GetRandomHLDevice() },
-                new object[] { HL_VIRT, HL_VIRT, GetRandomHLDevice() },
-                new object[] { HL, HL, GetRandomHLDevice() },
-            };
-        }
-
-        /// <summary>
-        /// Тест установки подтипа устройства
-        /// </summary>
-        /// <param name="expectedSubType">Ожидаемый подтип</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(SetSubTypeTestData))]
-        public void SetSubType_NewDev_ReturnsExpectedSubType(
-            DeviceSubType expectedSubType, string subType,
-            IODevice device)
-        {
-            device.SetSubType(subType);
-            Assert.AreEqual(expectedSubType, device.DeviceSubType);
-        }
-
-        /// <summary>
-        /// 1 - Ожидаемое перечисление подтипа,
-        /// 2 - Задаваемое значение подтипа,
-        /// 3 - Устройство для тестов
-        /// </summary>
-        /// <returns></returns>
-        private static object[] SetSubTypeTestData()
-        {
-            return new object[]
-            {
-                new object[] { DeviceSubType.HL, string.Empty,
-                    GetRandomHLDevice() },
-                new object[] { DeviceSubType.HL, HL,
-                    GetRandomHLDevice() },
-                new object[] { DeviceSubType.NONE, Incorrect,
-                    GetRandomHLDevice() },
-                new object[] { DeviceSubType.HL_VIRT, HL_VIRT,
-                    GetRandomHLDevice() },
+                new object[] { WT, string.Empty, GetRandomWTDevice() },
+                new object[] { WT, WT, GetRandomWTDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomWTDevice() },
+                new object[] { WT_VIRT, WT_VIRT, GetRandomWTDevice() },
             };
         }
 
@@ -109,18 +107,30 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForHL = new Dictionary<string, int>()
+            var exportForWT = new Dictionary<string, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Parameter.P_NOMINAL_W, 1},
+                {IODevice.Parameter.P_DT, 1},
+                {IODevice.Parameter.P_RKP, 1},
+                {IODevice.Tag.P_CZ, 1},
+            };
+
+            var exportForWTVirt = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
             };
 
             return new object[]
             {
-                new object[] {exportForHL, string.Empty, GetRandomHLDevice()},
-                new object[] {exportForHL, HL, GetRandomHLDevice()},
-                new object[] {exportForHL, HL_VIRT, GetRandomHLDevice()},
-                new object[] {null, Incorrect, GetRandomHLDevice()},
+                new object[] {exportForWT, string.Empty, GetRandomWTDevice() },
+                new object[] {exportForWT, WT, GetRandomWTDevice() },
+                new object[] { exportForWTVirt, WT_VIRT, GetRandomWTDevice() },
+                new object[] {null, Incorrect, GetRandomWTDevice() },
             };
         }
 
@@ -132,8 +142,7 @@ namespace Tests.Devices
         /// <param name="device">Тестируемое устройство</param>
         [TestCaseSource(nameof(ParametersTestData))]
         public void Parameters_NewDev_ReturnsExpectedArrayWithParameters(
-            string[] parametersSequence, string subType,
-            IODevice device)
+            string[] parametersSequence, string subType, IODevice device)
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
@@ -150,32 +159,40 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
+            var parameters = new string[]
+            {
+                IODevice.Parameter.P_NOMINAL_W,
+                IODevice.Parameter.P_RKP,
+                IODevice.Parameter.P_C0,
+                IODevice.Parameter.P_DT
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new string[0],
-                    HL,
-                    GetRandomHLDevice()
+                    parameters,
+                    WT,
+                    GetRandomWTDevice()
                 },
                 new object[]
                 {
-                    new string[0],
+                    parameters,
                     string.Empty,
-                    GetRandomHLDevice()
+                    GetRandomWTDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    HL_VIRT,
-                    GetRandomHLDevice()
+                    WT_VIRT,
+                    GetRandomWTDevice(),
                 },
                 new object[]
                 {
                     new string[0],
                     Incorrect,
-                    GetRandomHLDevice()
-                },
+                    GetRandomWTDevice(),
+                }
             };
         }
 
@@ -215,6 +232,13 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var defaultChannels = new Dictionary<string, int>()
+            {
+                { AI, 2 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
             var emptyChannels = new Dictionary<string, int>()
             {
                 { AI, 0 },
@@ -223,64 +247,56 @@ namespace Tests.Devices
                 { DO, 0 },
             };
 
-            var discreteLampChannels = new Dictionary<string, int>()
-            {
-                { AI, 0 },
-                { AO, 0 },
-                { DI, 0 },
-                { DO, 1 },
-            };
-
             return new object[]
             {
                 new object[]
                 {
-                    discreteLampChannels,
-                    HL,
-                    GetRandomHLDevice()
+                    defaultChannels,
+                    WT,
+                    GetRandomWTDevice()
                 },
                 new object[]
                 {
-                    discreteLampChannels,
+                    defaultChannels,
                     string.Empty,
-                    GetRandomHLDevice()
+                    GetRandomWTDevice()
                 },
                 new object[]
                 {
                     emptyChannels,
                     Incorrect,
-                    GetRandomHLDevice()
+                    GetRandomWTDevice()
                 },
                 new object[]
                 {
                     emptyChannels,
-                    HL_VIRT,
-                    GetRandomHLDevice()
+                    WT_VIRT,
+                    GetRandomWTDevice()
                 }
             };
         }
 
         /// <summary>
-        /// Генератор HL устройств
+        /// Генератор WT устройств
         /// </summary>
         /// <returns></returns>
-        private static IODevice GetRandomHLDevice()
+        private static IODevice GetRandomWTDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new HL("KOAG4HL1", "+KOAG4-HL1",
+                    return new WT("KOAG4WT1", "+KOAG4-WT1",
                         "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new HL("LINE1HL2", "+LINE1-HL2",
+                    return new WT("LINE1WT2", "+LINE1-WT2",
                         "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new HL("TANK2HL1", "+TANK2-HL1",
+                    return new WT("TANK2WT1", "+TANK2-WT1",
                         "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new HL("CW_TANK3HL3", "+CW_TANK3-HL3",
+                    return new WT("CW_TANK3WT3", "+CW_TANK3-WT3",
                         "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }

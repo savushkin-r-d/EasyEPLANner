@@ -2,16 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Device;
+using EplanDevice;
 
-namespace Tests.Devices
+namespace Tests.EplanDevices
 {
-    public class PTTest
+    class SBTest
     {
         const string Incorrect = "Incorrect";
-        const string PT = "PT";
-        const string PT_IOLINK = "PT_IOLINK";
-        const string PT_VIRT = "PT_VIRT";
+        const string SB = "SB";
+        const string SB_VIRT = "SB_VIRT";
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
@@ -34,7 +33,7 @@ namespace Tests.Devices
         }
 
         /// <summary>
-        /// 1 - Ожидаемое перечисление подтипа,
+        /// 1 - Ожидаемое значение подтипа,
         /// 2 - Задаваемое значение подтипа,
         /// 3 - Устройство для тестов
         /// </summary>
@@ -43,16 +42,15 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { DeviceSubType.NONE, string.Empty,
-                    GetRandomPTDevice() },
-                new object[] { DeviceSubType.PT, PT,
-                    GetRandomPTDevice() },
-                new object[] { DeviceSubType.PT_IOLINK, PT_IOLINK,
-                    GetRandomPTDevice() },
+                new object[] { DeviceSubType.SB, SB,
+                    GetRandomSBDevice() },
+                new object[] { DeviceSubType.SB_VIRT, SB_VIRT,
+                    GetRandomSBDevice() },
+                new object[] { DeviceSubType.SB, string.Empty,
+                    GetRandomSBDevice() },
                 new object[] { DeviceSubType.NONE, Incorrect,
-                    GetRandomPTDevice() },
-                new object[] { DeviceSubType.PT_VIRT, PT_VIRT,
-                    GetRandomPTDevice() },
+                    GetRandomSBDevice() },
+
             };
         }
 
@@ -81,11 +79,10 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { string.Empty, string.Empty, GetRandomPTDevice() },
-                new object[] { PT, PT, GetRandomPTDevice() },
-                new object[] { PT_IOLINK, PT_IOLINK, GetRandomPTDevice() },
-                new object[] { string.Empty, Incorrect, GetRandomPTDevice() },
-                new object[] { PT_VIRT, PT_VIRT, GetRandomPTDevice() },
+                new object[] { SB, string.Empty, GetRandomSBDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomSBDevice() },
+                new object[] { SB, SB, GetRandomSBDevice() },
+                new object[] { SB_VIRT, SB_VIRT, GetRandomSBDevice() },
             };
         }
 
@@ -113,91 +110,24 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForPT = new Dictionary<string, int>()
+            var exportForSB = new Dictionary<string, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
-                {IODevice.Tag.V, 1},
-                {IODevice.Parameter.P_MIN_V, 1},
-                {IODevice.Parameter.P_MAX_V, 1},
-                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Parameter.P_DT, 1},
             };
 
-            var exportForPTIOLink = new Dictionary<string, int>()
+            var exportForSBVirt = new Dictionary<string, int>()
             {
-                {IODevice.Tag.M, 1},
-                {IODevice.Tag.V, 1},
-                {IODevice.Parameter.P_MIN_V, 1},
-                {IODevice.Parameter.P_MAX_V, 1},
-                {IODevice.Parameter.P_ERR, 1},
-            };
-
-            var exportForDevSpae = new Dictionary<string, int>()
-            {
-                {IODevice.Tag.M, 1},
-                {IODevice.Tag.V, 1},
-                {IODevice.Parameter.P_ERR, 1},
-            };
-
-            var exportForPTVirt = new Dictionary<string, int>()
-            {
-                {IODevice.Tag.M, 1},
-                {IODevice.Tag.V, 1},
                 {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
             };
 
             return new object[]
             {
-                new object[] {exportForPT, PT, GetRandomPTDevice()},
-                new object[] {exportForPTIOLink, PT_IOLINK,
-                    GetRandomPTDevice()},
-                new object[] {null, string.Empty, GetRandomPTDevice()},
-                new object[] {null, Incorrect, GetRandomPTDevice()},
-                new object[] {exportForPTVirt, PT_VIRT, GetRandomPTDevice()},
-            };
-        }
-
-        /// <summary>
-        /// Тестирование диапазона измерения устройства
-        /// </summary>
-        /// <param name="expected">Ожидаемый диапазон</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="value1">Начало диапазона</param>
-        /// <param name="value2">Конец диапазона</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(GetRangeTestData))]
-        public void GetRange_NewDev_ReturnsExpectedRangeString(string expected,
-            string subType, double value1, double value2,
-            IODevice device)
-        {
-            device.SetSubType(subType);
-            device.SetParameter(IODevice.Parameter.P_MIN_V, value1);
-            device.SetParameter(IODevice.Parameter.P_MAX_V, value2);
-            Assert.AreEqual(expected, device.GetRange());
-        }
-
-        /// <summary>
-        /// 1 - Ожидаемое значение,
-        /// 2 - Подтип устройства в виде строки,
-        /// 3 - Значение параметра меньшее,
-        /// 4 - Значение параметра большее,
-        /// 5 - Устройство для теста
-        /// </summary>
-        /// <returns></returns>
-        private static object[] GetRangeTestData()
-        {
-            return new object[]
-            {
-                new object[] { $"_{2.0}..{4.0}", PT, 2.0, 4.0,
-                    GetRandomPTDevice()},
-                new object[] { string.Empty, PT_IOLINK, 1.0, 3.0,
-                    GetRandomPTDevice()},
-                new object[] { string.Empty, string.Empty, 4.0, 8.0,
-                    GetRandomPTDevice()},
-                new object[] { string.Empty, Incorrect, 7.0, 9.0,
-                    GetRandomPTDevice()},
-                new object[] { string.Empty, PT_VIRT, 7.0, 9.0,
-                    GetRandomPTDevice()},
+                new object[] {exportForSB, string.Empty, GetRandomSBDevice()},
+                new object[] {exportForSB, SB, GetRandomSBDevice()},
+                new object[] {exportForSBVirt, SB_VIRT, GetRandomSBDevice()},
             };
         }
 
@@ -227,43 +157,31 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
-            var defaultParameters = new string[]
-            {
-                IODevice.Parameter.P_C0,
-                IODevice.Parameter.P_MIN_V,
-                IODevice.Parameter.P_MAX_V,
-            };
-
-            var iolinkParameters = new string[]
-            {
-                IODevice.Parameter.P_ERR
-            };
-
             return new object[]
             {
                 new object[]
                 {
-                    defaultParameters,
-                    PT,
-                    GetRandomPTDevice()
-                },
-                new object[]
-                {
-                    iolinkParameters,
-                    PT_IOLINK,
-                    GetRandomPTDevice()
-                },
-                new object[]
-                {
                     new string[0],
-                    PT_VIRT,
-                    GetRandomPTDevice()
+                    SB,
+                    GetRandomSBDevice()
                 },
                 new object[]
                 {
                     new string[0],
                     string.Empty,
-                    GetRandomPTDevice()
+                    GetRandomSBDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    Incorrect,
+                    GetRandomSBDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    SB_VIRT,
+                    GetRandomSBDevice()
                 },
             };
         }
@@ -304,17 +222,17 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
-            var emptyChannels = new Dictionary<string, int>()
+            var defaultSignals = new Dictionary<string, int>()
             {
                 { AI, 0 },
                 { AO, 0 },
-                { DI, 0 },
+                { DI, 1 },
                 { DO, 0 },
             };
 
-            var oneAnalogInputChannel = new Dictionary<string, int>()
+            var emptySignals = new Dictionary<string, int>()
             {
-                { AI, 1 },
+                { AI, 0 },
                 { AO, 0 },
                 { DI, 0 },
                 { DO, 0 },
@@ -324,59 +242,53 @@ namespace Tests.Devices
             {
                 new object[]
                 {
-                    oneAnalogInputChannel,
-                    PT_IOLINK,
-                    GetRandomPTDevice()
+                    defaultSignals,
+                    SB,
+                    GetRandomSBDevice()
                 },
                 new object[]
                 {
-                    oneAnalogInputChannel,
-                    PT,
-                    GetRandomPTDevice()
-                },
-                new object[]
-                {
-                    emptyChannels,
+                    defaultSignals,
                     string.Empty,
-                    GetRandomPTDevice()
+                    GetRandomSBDevice()
                 },
                 new object[]
                 {
-                    emptyChannels,
+                    emptySignals,
                     Incorrect,
-                    GetRandomPTDevice()
+                    GetRandomSBDevice()
                 },
                 new object[]
                 {
-                    emptyChannels,
-                    PT_VIRT,
-                    GetRandomPTDevice()
-                },
+                    emptySignals,
+                    SB_VIRT,
+                    GetRandomSBDevice()
+                }
             };
         }
 
         /// <summary>
-        /// Генератор PT устройств
+        /// Генератор SB устройств
         /// </summary>
         /// <returns></returns>
-        private static IODevice GetRandomPTDevice()
+        private static IODevice GetRandomSBDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new PT("KOAG4PT1", "+KOAG4-PT1",
-                        "Test device", 1, "KOAG", 4, "Test article");
+                    return new SB("KOAG4SB1", "+KOAG4-SB1",
+                        "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new PT("LINE1PT2", "+LINE1-PT2",
-                        "Test device", 2, "LINE", 1, "Test article");
+                    return new SB("LINE1SB2", "+LINE1-SB2",
+                        "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new PT("TANK2PT1", "+TANK2-PT1",
-                        "Test device", 1, "TANK", 2, "Test article");
+                    return new SB("TANK2SB1", "+TANK2-SB1",
+                        "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new PT("CW_TANK3PT3", "+CW_TANK3-PT3",
-                        "Test device", 3, "CW_TANK", 3, "Test article");
+                    return new SB("CW_TANK3SB3", "+CW_TANK3-SB3",
+                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }
     }

@@ -176,7 +176,7 @@ namespace InterprojectExchange
         public List<string> GetDevicesList()
         {
             var devices = new List<string>();
-            var types = Enum.GetValues(typeof(Device.DeviceType));
+            var types = Enum.GetValues(typeof(EplanDevice.DeviceType));
             const string noneType = "NONE";
 
             foreach (var type in types)

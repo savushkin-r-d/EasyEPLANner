@@ -2,16 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Device;
+using EplanDevice;
 
-namespace Tests.Devices
+namespace Tests.EplanDevices
 {
-    public class VCTest
+    class TETest
     {
-        const string VC = "VC";
-        const string VC_IOLINK = "VC_IOLINK";
-        const string VC_VIRT = "VC_VIRT";
         const string Incorrect = "Incorrect";
+        const string TE = "TE";
+        const string TE_IOLINK = "TE_IOLINK";
+        const string TE_VIRT = "TE_VIRT";
+        const string TE_ANALOG = "TE_ANALOG";
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
@@ -43,16 +44,18 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { DeviceSubType.VC, VC,
-                    GetRandomVCDevice() },
-                new object[] { DeviceSubType.VC_IOLINK, VC_IOLINK,
-                    GetRandomVCDevice() },
+                new object[] { DeviceSubType.TE, TE,
+                    GetRandomTEDevice() },
+                new object[] { DeviceSubType.TE_IOLINK, TE_IOLINK,
+                    GetRandomTEDevice() },
                 new object[] { DeviceSubType.NONE, string.Empty,
-                    GetRandomVCDevice() },
+                    GetRandomTEDevice() },
                 new object[] { DeviceSubType.NONE, Incorrect,
-                    GetRandomVCDevice() },
-                new object[] { DeviceSubType.VC_VIRT, VC_VIRT,
-                    GetRandomVCDevice() },
+                    GetRandomTEDevice() },
+                new object[] { DeviceSubType.TE_VIRT, TE_VIRT,
+                    GetRandomTEDevice() },
+                new object[] { DeviceSubType.TE_ANALOG, TE_ANALOG,
+                    GetRandomTEDevice() },
             };
         }
 
@@ -81,12 +84,13 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { VC, VC, GetRandomVCDevice() },
-                new object[] { VC_IOLINK, VC_IOLINK, GetRandomVCDevice() },
                 new object[] { string.Empty, string.Empty,
-                    GetRandomVCDevice() },
-                new object[] { string.Empty, Incorrect, GetRandomVCDevice() },
-                new object[] { VC_VIRT, VC_VIRT, GetRandomVCDevice() },
+                    GetRandomTEDevice() },
+                new object[] { TE, TE, GetRandomTEDevice() },
+                new object[] { TE_IOLINK, TE_IOLINK, GetRandomTEDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomTEDevice() },
+                new object[] { TE_VIRT, TE_VIRT, GetRandomTEDevice() },
+                new object[] { TE_ANALOG, TE_ANALOG, GetRandomTEDevice() },
             };
         }
 
@@ -114,31 +118,40 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForVC = new Dictionary<string, int>()
+            var exportForTE = new Dictionary<string, int>()
             {
-                {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.V, 1},
+                {IODevice.Tag.ST, 1},
             };
 
-            var exportForVCIOL = new Dictionary<string, int>()
+            var exportForTEVirt = new Dictionary<string, int>()
             {
-                {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
-                {IODevice.Tag.BLINK, 1},
-                {IODevice.Tag.NAMUR_ST, 1},
-                {IODevice.Tag.OPENED, 1},
-                {IODevice.Tag.CLOSED, 1},
+                {IODevice.Tag.ST, 1},
+            };
+
+            var exportForTEAnalog = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Parameter.P_MIN_V, 1},
+                {IODevice.Parameter.P_MAX_V, 1},
+                {IODevice.Parameter.P_ERR, 1},
             };
 
             return new object[]
             {
-                new object[] {null, Incorrect, GetRandomVCDevice()},
-                new object[] {null, string.Empty, GetRandomVCDevice()},
-                new object[] {exportForVC, VC, GetRandomVCDevice()},
-                new object[] {exportForVCIOL, VC_IOLINK, GetRandomVCDevice()},
-                new object[] {exportForVC, VC_VIRT, GetRandomVCDevice()}
+                new object[] {null, string.Empty, GetRandomTEDevice()},
+                new object[] {exportForTE, TE, GetRandomTEDevice()},
+                new object[] {exportForTE, TE_IOLINK, GetRandomTEDevice()},
+                new object[] {exportForTEVirt, TE_VIRT, GetRandomTEDevice()},
+                new object[] {null, Incorrect, GetRandomTEDevice()},
+                new object[] {exportForTEAnalog, TE_ANALOG, GetRandomTEDevice() },
             };
         }
 
@@ -168,38 +181,52 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
+            var parameters = new string[]
+            {
+                IODevice.Parameter.P_C0,
+                IODevice.Parameter.P_ERR
+            };
+
+            var analogTEParameters = new string[]
+            {
+                IODevice.Parameter.P_C0,
+                IODevice.Parameter.P_ERR,
+                IODevice.Parameter.P_MIN_V,
+                IODevice.Parameter.P_MAX_V,
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new string[0],
-                    VC,
-                    GetRandomVCDevice()
+                    parameters,
+                    TE,
+                    GetRandomTEDevice()
+                },
+                new object[]
+                {
+                    parameters,
+                    TE_IOLINK,
+                    GetRandomTEDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    string.Empty,
-                    GetRandomVCDevice()
-                },
-                new object[]
-                {
-                    new string[0],
-                    VC_IOLINK,
-                    GetRandomVCDevice()
+                    TE_VIRT,
+                    GetRandomTEDevice()
                 },
                 new object[]
                 {
                     new string[0],
                     Incorrect,
-                    GetRandomVCDevice()
+                    GetRandomTEDevice()
                 },
                 new object[]
                 {
-                    new string[0],
-                    VC_VIRT,
-                    GetRandomVCDevice()
-                },
+                    analogTEParameters,
+                    TE_ANALOG,
+                    GetRandomTEDevice()
+                }
             };
         }
 
@@ -239,6 +266,14 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var defaultSignals = new Dictionary<string, int>()
+            {
+                { AI, 1 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             var emptySignals = new Dictionary<string, int>()
             {
                 { AI, 0 },
@@ -251,65 +286,65 @@ namespace Tests.Devices
             {
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { AI, 0 },
-                        { AO, 1 },
-                        { DI, 0 },
-                        { DO, 0 },
-                    },
-                    VC,
-                    GetRandomVCDevice()
+                    defaultSignals,
+                    TE,
+                    GetRandomTEDevice()
+                },
+                new object[]
+                {
+                    defaultSignals,
+                    TE_IOLINK,
+                    GetRandomTEDevice()
                 },
                 new object[]
                 {
                     emptySignals,
                     string.Empty,
-                    GetRandomVCDevice()
+                    GetRandomTEDevice()
                 },
                 new object[]
                 {
                     emptySignals,
                     Incorrect,
-                    GetRandomVCDevice()
+                    GetRandomTEDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { AI, 1 },
-                        { AO, 1 },
-                        { DI, 0 },
-                        { DO, 0 },
-                    },
-                    VC_IOLINK,
-                    GetRandomVCDevice()
+                    emptySignals,
+                    TE_VIRT,
+                    GetRandomTEDevice()
+                },
+                new object[]
+                {
+                    defaultSignals,
+                    TE_ANALOG,
+                    GetRandomTEDevice()
                 }
             };
         }
 
         /// <summary>
-        /// Генератор VC устройств
+        /// Генератор TE устройств
         /// </summary>
         /// <returns></returns>
-        private static IODevice GetRandomVCDevice()
+        private static IODevice GetRandomTEDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new VC("KOAG4VC1", "+KOAG4-VC1",
-                        "Test device", 1, "KOAG", 4, "DeviceArticle");
+                    return new TE("KOAG4TE1", "+KOAG4-TE1",
+                        "Test device", 1, "KOAG", 4, "Test article");
                 case 2:
-                    return new VC("LINE1VC2", "+LINE1-VC2",
-                        "Test device", 2, "LINE", 1, "DeviceArticle");
+                    return new TE("LINE1TE2", "+LINE1-TE2",
+                        "Test device", 2, "LINE", 1, "Test article");
                 case 3:
-                    return new VC("TANK2VC1", "+TANK2-VC1",
-                        "Test device", 1, "TANK", 2, "DeviceArticle");
+                    return new TE("TANK2TE1", "+TANK2-TE1",
+                        "Test device", 1, "TANK", 2, "Test article");
                 default:
-                    return new VC("CW_TANK3VC3", "+CW_TANK3-VC3",
-                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
+                    return new TE("CW_TANK3TE3", "+CW_TANK3-TE3",
+                        "Test device", 3, "CW_TANK", 3, "Test article");
             }
         }
     }

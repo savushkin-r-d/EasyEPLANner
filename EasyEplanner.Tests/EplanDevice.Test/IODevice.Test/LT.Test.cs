@@ -2,16 +2,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Device;
+using EplanDevice;
 
-namespace Tests.Devices
+namespace Tests.EplanDevices
 {
-    public class CAMTest
+    public class LTTest
     {
         const string Incorrect = "Incorrect";
-        const string CAM_DO1_DI1 = "CAM_DO1_DI1";
-        const string CAM_DO1_DI2 = "CAM_DO1_DI2";
-        const string CAM_DO1_DI3 = "CAM_DO1_DI3";
+        const string LT = "LT";
+        const string LT_IOLINK = "LT_IOLINK";
+        const string LT_CYL = "LT_CYL";
+        const string LT_CONE = "LT_CONE";
+        const string LT_TRUNC = "LT_TRUNC";
+        const string LT_VIRT = "LT_VIRT";
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
@@ -43,16 +46,22 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { DeviceSubType.CAM_DO1_DI1, CAM_DO1_DI1,
-                    GetRandomCAMDevice() },
-                new object[] { DeviceSubType.CAM_DO1_DI2, CAM_DO1_DI2,
-                    GetRandomCAMDevice() },
-                new object[] { DeviceSubType.CAM_DO1_DI3, CAM_DO1_DI3,
-                    GetRandomCAMDevice() },
+                new object[] { DeviceSubType.LT, LT,
+                    GetRandomLTDevice() },
+                new object[] { DeviceSubType.LT_CYL, LT_CYL,
+                    GetRandomLTDevice() },
+                new object[] { DeviceSubType.LT_CONE, LT_CONE,
+                    GetRandomLTDevice() },
+                new object[] { DeviceSubType.LT_TRUNC, LT_TRUNC,
+                    GetRandomLTDevice() },
+                new object[] { DeviceSubType.LT_IOLINK, LT_IOLINK,
+                    GetRandomLTDevice() },
+                new object[] { DeviceSubType.LT_VIRT, LT_VIRT,
+                    GetRandomLTDevice() },
                 new object[] { DeviceSubType.NONE, string.Empty,
-                    GetRandomCAMDevice() },
+                    GetRandomLTDevice() },
                 new object[] { DeviceSubType.NONE, Incorrect,
-                    GetRandomCAMDevice() },
+                    GetRandomLTDevice() },
             };
         }
 
@@ -81,11 +90,15 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { CAM_DO1_DI1, CAM_DO1_DI1, GetRandomCAMDevice() },
-                new object[] { CAM_DO1_DI2, CAM_DO1_DI2, GetRandomCAMDevice() },
-                new object[] { CAM_DO1_DI3, CAM_DO1_DI3, GetRandomCAMDevice() },
-                new object[] { string.Empty, string.Empty, GetRandomCAMDevice() },
-                new object[] { string.Empty, Incorrect, GetRandomCAMDevice() },
+                new object[] { LT, LT, GetRandomLTDevice() },
+                new object[] { LT_CYL, LT_CYL, GetRandomLTDevice() },
+                new object[] { LT_CONE, LT_CONE, GetRandomLTDevice() },
+                new object[] { LT_TRUNC, LT_TRUNC, GetRandomLTDevice() },
+                new object[] { LT_IOLINK, LT_IOLINK, GetRandomLTDevice() },
+                new object[] { LT_VIRT, LT_VIRT, GetRandomLTDevice() },
+                new object[] { string.Empty, string.Empty,
+                    GetRandomLTDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomLTDevice() },
             };
         }
 
@@ -113,29 +126,80 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var camWithoutReady = new Dictionary<string, int>()
+            var exportForLT = new Dictionary<string, int>()
             {
-                {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
-                {IODevice.Tag.RESULT, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Parameter.P_ERR, 1},
             };
 
-            var camWithReady = new Dictionary<string, int>()
+            var exportForLTIOLink = new Dictionary<string, int>()
             {
-                {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
-                {IODevice.Tag.RESULT, 1},
-                {IODevice.Tag.READY, 1},
-                {IODevice.Parameter.P_READY_TIME, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Parameter.P_H_CONE, 1},
+                {IODevice.Parameter.P_MAX_P, 1},
+                {IODevice.Parameter.P_R, 1},
+                {IODevice.Tag.CLEVEL, 1},
+                {IODevice.Parameter.P_ERR, 1},
+            };
+
+            var exportForLTCyl = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Parameter.P_MAX_P, 1},
+                {IODevice.Parameter.P_R, 1},
+                {IODevice.Tag.CLEVEL, 1},
+                {IODevice.Parameter.P_ERR, 1},
+            };
+
+            var exportForLTCone = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Parameter.P_MAX_P, 1},
+                {IODevice.Parameter.P_R, 1},
+                {IODevice.Parameter.P_H_CONE, 1},
+                {IODevice.Tag.CLEVEL, 1},
+                {IODevice.Parameter.P_ERR, 1},
+            };
+
+            var exportForLTTrunc = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Parameter.P_MAX_P, 1},
+                {IODevice.Parameter.P_R, 1},
+                {IODevice.Parameter.P_H_TRUNC, 1},
+                {IODevice.Tag.CLEVEL, 1},
+                {IODevice.Parameter.P_ERR, 1},
+            };
+
+            var exportForLTVirt = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
             };
 
             return new object[]
             {
-                new object[] {camWithoutReady, CAM_DO1_DI1, GetRandomCAMDevice()},
-                new object[] {camWithReady, CAM_DO1_DI2, GetRandomCAMDevice()},
-                new object[] {camWithReady, CAM_DO1_DI3, GetRandomCAMDevice()},
-                new object[] {null, Incorrect, GetRandomCAMDevice()},
-                new object[] {null, string.Empty, GetRandomCAMDevice()},
+                new object[] {exportForLT, LT, GetRandomLTDevice()},
+                new object[] {exportForLTIOLink, LT_IOLINK,
+                    GetRandomLTDevice()},
+                new object[] {exportForLTCyl, LT_CYL, GetRandomLTDevice()},
+                new object[] {exportForLTCone, LT_CONE,
+                    GetRandomLTDevice()},
+                new object[] {exportForLTTrunc, LT_TRUNC,
+                    GetRandomLTDevice()},
+                new object[] {exportForLTVirt, LT_VIRT, GetRandomLTDevice()},
+                new object[] {null, Incorrect, GetRandomLTDevice()},
+                new object[] {null, string.Empty, GetRandomLTDevice()},
             };
         }
 
@@ -165,42 +229,75 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
-            var parameters = new string[]
+            var colAndIOLSubTypesParameters = new string[]
             {
-                IODevice.Parameter.P_READY_TIME
+                IODevice.Parameter.P_C0,
+                IODevice.Parameter.P_ERR,
+                IODevice.Parameter.P_MAX_P,
+                IODevice.Parameter.P_R,
+                IODevice.Parameter.P_H_CONE
             };
 
             return new object[]
             {
                 new object[]
                 {
+                    new string[]
+                    {
+                        IODevice.Parameter.P_C0,
+                        IODevice.Parameter.P_ERR
+                    },
+                    LT,
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[]
+                    {
+                        IODevice.Parameter.P_C0,
+                        IODevice.Parameter.P_ERR,
+                        IODevice.Parameter.P_MAX_P,
+                        IODevice.Parameter.P_R
+                    },
+                    LT_CYL,
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    colAndIOLSubTypesParameters,
+                    LT_CONE,
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[]
+                    {
+                        IODevice.Parameter.P_C0,
+                        IODevice.Parameter.P_ERR,
+                        IODevice.Parameter.P_MAX_P,
+                        IODevice.Parameter.P_R,
+                        IODevice.Parameter.P_H_TRUNC
+                    },
+                    LT_TRUNC,
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    colAndIOLSubTypesParameters,
+                    LT_IOLINK,
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
                     new string[0],
-                    CAM_DO1_DI1,
-                    GetRandomCAMDevice()
-                },
-                new object[]
-                {
-                    parameters,
-                    CAM_DO1_DI2,
-                    GetRandomCAMDevice()
-                },
-                new object[]
-                {
-                    parameters,
-                    CAM_DO1_DI3,
-                    GetRandomCAMDevice()
+                    LT_VIRT,
+                    GetRandomLTDevice()
                 },
                 new object[]
                 {
                     new string[0],
                     string.Empty,
-                    GetRandomCAMDevice()
-                },
-                new object[]
-                {
-                    new string[0],
-                    Incorrect,
-                    GetRandomCAMDevice()
+                    GetRandomLTDevice()
                 },
             };
         }
@@ -241,6 +338,14 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
+            var defaultChannels = new Dictionary<string, int>()
+            {
+                { AI, 1 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
+
             var emptyChannels = new Dictionary<string, int>()
             {
                 { AI, 0 },
@@ -253,117 +358,51 @@ namespace Tests.Devices
             {
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { AI, 0 },
-                        { AO, 0 },
-                        { DI, 1 },
-                        { DO, 1 },
-                    },
-                    CAM_DO1_DI1,
-                    GetRandomCAMDevice()
+                    defaultChannels,
+                    LT,
+                    GetRandomLTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { AI, 0 },
-                        { AO, 0 },
-                        { DI, 2 },
-                        { DO, 1 },
-                    },
-                    CAM_DO1_DI2,
-                    GetRandomCAMDevice()
+                    defaultChannels,
+                    LT_CYL,
+                    GetRandomLTDevice()
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { AI, 0 },
-                        { AO, 0 },
-                        { DI, 3 },
-                        { DO, 1 },
-                    },
-                    CAM_DO1_DI3,
-                    GetRandomCAMDevice()
+                    defaultChannels,
+                    LT_CONE,
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    defaultChannels,
+                    LT_TRUNC,
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    defaultChannels,
+                    LT_IOLINK,
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    emptyChannels,
+                    LT_VIRT,
+                    GetRandomLTDevice()
                 },
                 new object[]
                 {
                     emptyChannels,
                     string.Empty,
-                    GetRandomCAMDevice()
+                    GetRandomLTDevice()
                 },
                 new object[]
                 {
                     emptyChannels,
                     Incorrect,
-                    GetRandomCAMDevice()
-                },
-            };
-        }
-
-        /// <summary>
-        /// Тестирование свойств устройства
-        /// </summary>
-        /// <param name="parametersSequence">Ожидаемые свойства</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(PropertiesTestData))]
-        public void Property_NewDev_ReturnsExpectedArrayWithParameters(
-            string[] parametersSequence, string subType,
-            IODevice device)
-        {
-            device.SetSubType(subType);
-            string[] actualParametersSequence = device.Properties
-                .Select(x => x.Key)
-                .ToArray();
-            Assert.AreEqual(parametersSequence, actualParametersSequence);
-        }
-
-        /// <summary>
-        /// 1 - Свойства в том порядке, который нужен
-        /// 2 - Подтип устройства
-        /// 3 - Устройство
-        /// </summary>
-        /// <returns></returns>
-        private static object[] PropertiesTestData()
-        {
-            var properties = new string[]
-            {
-                IODevice.Property.IP
-            };
-
-            return new object[]
-            {
-                new object[]
-                {
-                    properties,
-                    CAM_DO1_DI1,
-                    GetRandomCAMDevice()
-                },
-                new object[]
-                {
-                    properties,
-                    CAM_DO1_DI2,
-                    GetRandomCAMDevice()
-                },
-                new object[]
-                {
-                    properties,
-                    CAM_DO1_DI3,
-                    GetRandomCAMDevice()
-                },
-                new object[]
-                {
-                    new string[0],
-                    string.Empty,
-                    GetRandomCAMDevice()
-                },
-                new object[]
-                {
-                    new string[0],
-                    Incorrect,
-                    GetRandomCAMDevice()
+                    GetRandomLTDevice()
                 },
             };
         }
@@ -374,13 +413,13 @@ namespace Tests.Devices
         /// <param name="expectedProperties">Ожидаемые свойства</param>
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(RuntimeParametersTestData))]
-        public void RuntimeParameters_NewDev_ReturnsExpectedProperties(
+        [TestCaseSource(nameof(PropertiesTestData))]
+        public void Properties_NewDev_ReturnsExpectedProperties(
             string[] expectedProperties, string subType,
             IODevice device)
         {
             device.SetSubType(subType);
-            string[] actualSequence = device.RuntimeParameters
+            string[] actualSequence = device.Properties
                 .Select(x => x.Key)
                 .ToArray();
             Assert.AreEqual(expectedProperties, actualSequence);
@@ -392,65 +431,82 @@ namespace Tests.Devices
         /// 3 - Устройство
         /// </summary>
         /// <returns></returns>
-        private static object[] RuntimeParametersTestData()
+        private static object[] PropertiesTestData()
         {
+            var defaultProperties = new string[]
+            {
+                IODevice.Property.PT,
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    new string[0],
-                    CAM_DO1_DI1,
-                    GetRandomCAMDevice()
-                },
-                new object[]
-                {
-                    new string[0],
-                    CAM_DO1_DI2,
-                    GetRandomCAMDevice()
-                },
-                new object[]
-                {
-                    new string[0],
-                    CAM_DO1_DI3,
-                    GetRandomCAMDevice()
+                    defaultProperties,
+                    LT_IOLINK,
+                    GetRandomLTDevice()
                 },
                 new object[]
                 {
                     new string[0],
                     string.Empty,
-                    GetRandomCAMDevice()
+                    GetRandomLTDevice()
                 },
                 new object[]
                 {
                     new string[0],
                     Incorrect,
-                    GetRandomCAMDevice()
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    LT_VIRT,
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    LT_TRUNC,
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    LT_CONE,
+                    GetRandomLTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    LT_CYL,
+                    GetRandomLTDevice()
                 },
             };
         }
 
         /// <summary>
-        /// Генератор M устройств
+        /// Генератор LT устройств
         /// </summary>
         /// <returns></returns>
-        private static IODevice GetRandomCAMDevice()
+        private static IODevice GetRandomLTDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new CAM("LINE4CAM1", "+LINE4-CAM1", "Test device", 1,
-                        "KOAG", 4);
+                    return new LT("KOAG4LT1", "+KOAG4-LT1",
+                        "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new CAM("LINE1CAM2", "+LINE1-CAM2", "Test device", 2,
-                        "LINE", 1);
+                    return new LT("LINE1LT2", "+LINE1-LT2",
+                        "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new CAM("TANK2CAM1", "+TANK2-CAM1", "Test device", 1,
-                        "TANK", 2);
+                    return new LT("TANK2LT1", "+TANK2-LT1",
+                        "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new CAM("CW_TANK3CAM3", "+CW_TANK3-CAM3",
-                        "Test device", 3, "CW_TANK", 3);
+                    return new LT("CW_TANK3LT3", "+CW_TANK3-LT3",
+                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }
     }

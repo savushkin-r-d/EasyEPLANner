@@ -4,7 +4,7 @@ using System.Xml;
 using System.Windows.Forms;
 using System.IO;
 using TechObject;
-using Device;
+using EplanDevice;
 using System.Text.RegularExpressions;
 using System.Threading;
 

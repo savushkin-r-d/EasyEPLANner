@@ -2,62 +2,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Device;
+using EplanDevice;
 
-namespace Tests.Devices
+namespace Tests.EplanDevices
 {
-    class TETest
+    public class HLTest
     {
         const string Incorrect = "Incorrect";
-        const string TE = "TE";
-        const string TE_IOLINK = "TE_IOLINK";
-        const string TE_VIRT = "TE_VIRT";
-        const string TE_ANALOG = "TE_ANALOG";
+        const string HL = "HL";
+        const string HL_VIRT = "HL_VIRT";
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
         const string DI = IODevice.IOChannel.DI;
         const string DO = IODevice.IOChannel.DO;
-
-        /// <summary>
-        /// Тест установки подтипа устройства
-        /// </summary>
-        /// <param name="expectedSubType">Ожидаемый подтип</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(SetSubTypeTestData))]
-        public void SetSubType_NewDev_ReturnsExpectedSubType(
-            DeviceSubType expectedSubType, string subType,
-            IODevice device)
-        {
-            device.SetSubType(subType);
-            Assert.AreEqual(expectedSubType, device.DeviceSubType);
-        }
-
-        /// <summary>
-        /// 1 - Ожидаемое значение подтипа,
-        /// 2 - Задаваемое значение подтипа,
-        /// 3 - Устройство для тестов
-        /// </summary>
-        /// <returns></returns>
-        private static object[] SetSubTypeTestData()
-        {
-            return new object[]
-            {
-                new object[] { DeviceSubType.TE, TE,
-                    GetRandomTEDevice() },
-                new object[] { DeviceSubType.TE_IOLINK, TE_IOLINK,
-                    GetRandomTEDevice() },
-                new object[] { DeviceSubType.NONE, string.Empty,
-                    GetRandomTEDevice() },
-                new object[] { DeviceSubType.NONE, Incorrect,
-                    GetRandomTEDevice() },
-                new object[] { DeviceSubType.TE_VIRT, TE_VIRT,
-                    GetRandomTEDevice() },
-                new object[] { DeviceSubType.TE_ANALOG, TE_ANALOG,
-                    GetRandomTEDevice() },
-            };
-        }
 
         /// <summary>
         /// Тест получения подтипа устройства
@@ -84,13 +42,46 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { string.Empty, string.Empty,
-                    GetRandomTEDevice() },
-                new object[] { TE, TE, GetRandomTEDevice() },
-                new object[] { TE_IOLINK, TE_IOLINK, GetRandomTEDevice() },
-                new object[] { string.Empty, Incorrect, GetRandomTEDevice() },
-                new object[] { TE_VIRT, TE_VIRT, GetRandomTEDevice() },
-                new object[] { TE_ANALOG, TE_ANALOG, GetRandomTEDevice() },
+                new object[] { HL, string.Empty, GetRandomHLDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomHLDevice() },
+                new object[] { HL_VIRT, HL_VIRT, GetRandomHLDevice() },
+                new object[] { HL, HL, GetRandomHLDevice() },
+            };
+        }
+
+        /// <summary>
+        /// Тест установки подтипа устройства
+        /// </summary>
+        /// <param name="expectedSubType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(SetSubTypeTestData))]
+        public void SetSubType_NewDev_ReturnsExpectedSubType(
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
+        {
+            device.SetSubType(subType);
+            Assert.AreEqual(expectedSubType, device.DeviceSubType);
+        }
+
+        /// <summary>
+        /// 1 - Ожидаемое перечисление подтипа,
+        /// 2 - Задаваемое значение подтипа,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] SetSubTypeTestData()
+        {
+            return new object[]
+            {
+                new object[] { DeviceSubType.HL, string.Empty,
+                    GetRandomHLDevice() },
+                new object[] { DeviceSubType.HL, HL,
+                    GetRandomHLDevice() },
+                new object[] { DeviceSubType.NONE, Incorrect,
+                    GetRandomHLDevice() },
+                new object[] { DeviceSubType.HL_VIRT, HL_VIRT,
+                    GetRandomHLDevice() },
             };
         }
 
@@ -118,40 +109,18 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForTE = new Dictionary<string, int>()
+            var exportForHL = new Dictionary<string, int>()
             {
-                {IODevice.Tag.M, 1},
-                {IODevice.Tag.P_CZ, 1},
-                {IODevice.Tag.V, 1},
                 {IODevice.Tag.ST, 1},
-            };
-
-            var exportForTEVirt = new Dictionary<string, int>()
-            {
                 {IODevice.Tag.M, 1},
-                {IODevice.Tag.V, 1},
-                {IODevice.Tag.ST, 1},
-            };
-
-            var exportForTEAnalog = new Dictionary<string, int>()
-            {
-                {IODevice.Tag.M, 1},
-                {IODevice.Tag.V, 1},
-                {IODevice.Tag.ST, 1},
-                {IODevice.Tag.P_CZ, 1},
-                {IODevice.Parameter.P_MIN_V, 1},
-                {IODevice.Parameter.P_MAX_V, 1},
-                {IODevice.Parameter.P_ERR, 1},
             };
 
             return new object[]
             {
-                new object[] {null, string.Empty, GetRandomTEDevice()},
-                new object[] {exportForTE, TE, GetRandomTEDevice()},
-                new object[] {exportForTE, TE_IOLINK, GetRandomTEDevice()},
-                new object[] {exportForTEVirt, TE_VIRT, GetRandomTEDevice()},
-                new object[] {null, Incorrect, GetRandomTEDevice()},
-                new object[] {exportForTEAnalog, TE_ANALOG, GetRandomTEDevice() },
+                new object[] {exportForHL, string.Empty, GetRandomHLDevice()},
+                new object[] {exportForHL, HL, GetRandomHLDevice()},
+                new object[] {exportForHL, HL_VIRT, GetRandomHLDevice()},
+                new object[] {null, Incorrect, GetRandomHLDevice()},
             };
         }
 
@@ -181,52 +150,32 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
-            var parameters = new string[]
-            {
-                IODevice.Parameter.P_C0,
-                IODevice.Parameter.P_ERR
-            };
-
-            var analogTEParameters = new string[]
-            {
-                IODevice.Parameter.P_C0,
-                IODevice.Parameter.P_ERR,
-                IODevice.Parameter.P_MIN_V,
-                IODevice.Parameter.P_MAX_V,
-            };
-
             return new object[]
             {
                 new object[]
                 {
-                    parameters,
-                    TE,
-                    GetRandomTEDevice()
-                },
-                new object[]
-                {
-                    parameters,
-                    TE_IOLINK,
-                    GetRandomTEDevice()
+                    new string[0],
+                    HL,
+                    GetRandomHLDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    TE_VIRT,
-                    GetRandomTEDevice()
+                    string.Empty,
+                    GetRandomHLDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    HL_VIRT,
+                    GetRandomHLDevice()
                 },
                 new object[]
                 {
                     new string[0],
                     Incorrect,
-                    GetRandomTEDevice()
+                    GetRandomHLDevice()
                 },
-                new object[]
-                {
-                    analogTEParameters,
-                    TE_ANALOG,
-                    GetRandomTEDevice()
-                }
             };
         }
 
@@ -266,15 +215,7 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
-            var defaultSignals = new Dictionary<string, int>()
-            {
-                { AI, 1 },
-                { AO, 0 },
-                { DI, 0 },
-                { DO, 0 },
-            };
-
-            var emptySignals = new Dictionary<string, int>()
+            var emptyChannels = new Dictionary<string, int>()
             {
                 { AI, 0 },
                 { AO, 0 },
@@ -282,69 +223,65 @@ namespace Tests.Devices
                 { DO, 0 },
             };
 
+            var discreteLampChannels = new Dictionary<string, int>()
+            {
+                { AI, 0 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 1 },
+            };
+
             return new object[]
             {
                 new object[]
                 {
-                    defaultSignals,
-                    TE,
-                    GetRandomTEDevice()
+                    discreteLampChannels,
+                    HL,
+                    GetRandomHLDevice()
                 },
                 new object[]
                 {
-                    defaultSignals,
-                    TE_IOLINK,
-                    GetRandomTEDevice()
-                },
-                new object[]
-                {
-                    emptySignals,
+                    discreteLampChannels,
                     string.Empty,
-                    GetRandomTEDevice()
+                    GetRandomHLDevice()
                 },
                 new object[]
                 {
-                    emptySignals,
+                    emptyChannels,
                     Incorrect,
-                    GetRandomTEDevice()
+                    GetRandomHLDevice()
                 },
                 new object[]
                 {
-                    emptySignals,
-                    TE_VIRT,
-                    GetRandomTEDevice()
-                },
-                new object[]
-                {
-                    defaultSignals,
-                    TE_ANALOG,
-                    GetRandomTEDevice()
+                    emptyChannels,
+                    HL_VIRT,
+                    GetRandomHLDevice()
                 }
             };
         }
 
         /// <summary>
-        /// Генератор TE устройств
+        /// Генератор HL устройств
         /// </summary>
         /// <returns></returns>
-        private static IODevice GetRandomTEDevice()
+        private static IODevice GetRandomHLDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new TE("KOAG4TE1", "+KOAG4-TE1",
-                        "Test device", 1, "KOAG", 4, "Test article");
+                    return new HL("KOAG4HL1", "+KOAG4-HL1",
+                        "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new TE("LINE1TE2", "+LINE1-TE2",
-                        "Test device", 2, "LINE", 1, "Test article");
+                    return new HL("LINE1HL2", "+LINE1-HL2",
+                        "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new TE("TANK2TE1", "+TANK2-TE1",
-                        "Test device", 1, "TANK", 2, "Test article");
+                    return new HL("TANK2HL1", "+TANK2-HL1",
+                        "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new TE("CW_TANK3TE3", "+CW_TANK3-TE3",
-                        "Test device", 3, "CW_TANK", 3, "Test article");
+                    return new HL("CW_TANK3HL3", "+CW_TANK3-HL3",
+                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }
     }

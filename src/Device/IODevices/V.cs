@@ -1,7 +1,7 @@
 ﻿using IO;
 using System.Collections.Generic;
 
-namespace Device
+namespace EplanDevice
 {
     /// <summary>
     /// Технологическое устройство - клапан.

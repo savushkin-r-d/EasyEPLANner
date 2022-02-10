@@ -91,10 +91,10 @@ namespace EasyEPlanner
         {
             var deviceConnections = new Dictionary<string, string>();
 
-            foreach (Device.IODevice device in Device.DeviceManager.
+            foreach (EplanDevice.IODevice device in EplanDevice.DeviceManager.
                 GetInstance().Devices)
             {
-                foreach (Device.IODevice.IOChannel channel in device.Channels)
+                foreach (EplanDevice.IODevice.IOChannel channel in device.Channels)
                 {
                     if (!channel.IsEmpty())
                     {
@@ -116,8 +116,8 @@ namespace EasyEPlanner
         /// привязок устройств</param>
         /// <param name="deviceFunctions">Главные функции устройств для 
         /// поиска обновленных данных</param>
-        private void CollectModuleData(Device.IODevice device,
-            Device.IODevice.IOChannel channel, Function[] deviceFunctions,
+        private void CollectModuleData(EplanDevice.IODevice device,
+            EplanDevice.IODevice.IOChannel channel, Function[] deviceFunctions,
             ref Dictionary<string, string> deviceConnections)
         {
             const string IOModulePrefix = "A";
@@ -231,7 +231,7 @@ namespace EasyEPlanner
 
             if (deviceConnections.Values.
                 Where(x => x
-                .Contains(Device.DeviceManager.ValveTerminalName))
+                .Contains(EplanDevice.DeviceManager.ValveTerminalName))
                 .Count() > 0)
             {
                 isProjectWithValveTerminal = true;
@@ -269,7 +269,7 @@ namespace EasyEPlanner
 
                 string bindedDevices = deviceConnections[key];
                 var errors = string.Empty;
-                bool? isASInterface = Device.DeviceManager.GetInstance().
+                bool? isASInterface = EplanDevice.DeviceManager.GetInstance().
                     IsASInterfaceDevices(bindedDevices, out errors);
                 errorMessage += errors;
                 bool deletingComments = NeedDeletingComments(bindedDevices);
@@ -284,7 +284,7 @@ namespace EasyEPlanner
 
                 if (isASInterface == true)
                 {
-                    bool isValidASNumbers = Device.DeviceManager.GetInstance().
+                    bool isValidASNumbers = EplanDevice.DeviceManager.GetInstance().
                         CheckASNumbers(bindedDevices, out errors);
                     errorMessage += errors;
                     if (isValidASNumbers == true)
@@ -382,7 +382,7 @@ namespace EasyEPlanner
                 // Если нет пневмоострова Y - то синхронизация ничем 
                 // не отличается от старого проекта.
                 if (!deviceConnections[key]
-                    .Contains(Device.DeviceManager.ValveTerminalName))
+                    .Contains(EplanDevice.DeviceManager.ValveTerminalName))
                 {
                     var connections = new Dictionary<string, string>();
                     connections[key] = deviceConnections[key];
@@ -393,7 +393,7 @@ namespace EasyEPlanner
                     var bindedDevices = deviceConnections[key].
                         Split(PlusSymbol).
                         FirstOrDefault(x => x
-                        .Contains(Device.DeviceManager.ValveTerminalName))
+                        .Contains(EplanDevice.DeviceManager.ValveTerminalName))
                         .Insert(0, PlusSymbol.ToString());
                     var clamp = Convert.ToInt32(clampNumberAsString);
                     // Синхронизация пневмоострова.
@@ -455,15 +455,15 @@ namespace EasyEPlanner
                 if (string.IsNullOrEmpty(deviceString) ||
                     string.IsNullOrWhiteSpace(deviceString) ||
                     deviceString
-                    .Contains(Device.DeviceManager.ValveTerminalName))
+                    .Contains(EplanDevice.DeviceManager.ValveTerminalName))
                 {
                     continue;
                 }
 
                 string deviceName = Regex.Match(deviceString.
                     Insert(0, PlusSymbol.ToString()),
-                    Device.DeviceManager.DeviceNamePattern).Value;
-                Device.IODevice device = Device.DeviceManager.
+                    EplanDevice.DeviceManager.DeviceNamePattern).Value;
+                EplanDevice.IODevice device = EplanDevice.DeviceManager.
                     GetInstance().GetDevice(deviceName);
                 string clampNumber = device.GetRuntimeParameter(
                     ClampNumberParameter);
@@ -493,7 +493,7 @@ namespace EasyEPlanner
         private bool NeedDeletingComments(string devices)
         {
             var deviceMatches = Regex.Matches(devices,
-                Device.DeviceManager.DeviceNamePattern);
+                EplanDevice.DeviceManager.DeviceNamePattern);
 
             if (deviceMatches.Count > MinimalDevicesCountForCheck)
             {
@@ -501,17 +501,17 @@ namespace EasyEPlanner
                 // то все такие 
                 for (int i = 0; i < MinimalDevicesCountForCheck; i++)
                 {
-                    Device.IODevice device = Device.DeviceManager.
+                    EplanDevice.IODevice device = EplanDevice.DeviceManager.
                         GetInstance().GetDevice(deviceMatches[i].Value);
 
                     bool needSaveComments = 
-                        device.DeviceSubType == Device.DeviceSubType
+                        device.DeviceSubType == EplanDevice.DeviceSubType
                         .V_AS_DO1_DI2 ||
-                        device.DeviceSubType == Device.DeviceSubType
+                        device.DeviceSubType == EplanDevice.DeviceSubType
                         .V_AS_MIXPROOF ||
-                        device.DeviceSubType == Device.DeviceSubType
+                        device.DeviceSubType == EplanDevice.DeviceSubType
                         .V_IOLINK_MIXPROOF ||
-                        device.DeviceSubType == Device.DeviceSubType
+                        device.DeviceSubType == EplanDevice.DeviceSubType
                         .V_IOLINK_DO1_DI2;
 
                     if (needSaveComments)
@@ -537,7 +537,7 @@ namespace EasyEPlanner
         private string DeleteDevicesComments(string devices)
         {
             var devicesMatches = Regex.Matches(devices,
-                Device.DeviceManager.DeviceNamePattern);
+                EplanDevice.DeviceManager.DeviceNamePattern);
 
             if (devicesMatches.Count <= MinimalDevicesCountForCheck)
             {
@@ -568,7 +568,7 @@ namespace EasyEPlanner
             if (withoutComments)
             {
                 var devicesMatches = Regex.Matches(devicesString,
-                    Device.DeviceManager.DeviceNamePattern);
+                    EplanDevice.DeviceManager.DeviceNamePattern);
                 foreach (Match match in devicesMatches)
                 {
                     devicesList.Add(match.Value);
@@ -605,7 +605,7 @@ namespace EasyEPlanner
         private string SortDevices(string devices)
         {
             var devicesMatches = Regex.Matches(devices,
-                Device.DeviceManager.DeviceNamePattern);
+                EplanDevice.DeviceManager.DeviceNamePattern);
 
             if (devicesMatches.Count <= MinimalDevicesCountForCheck)
             {
@@ -613,13 +613,13 @@ namespace EasyEPlanner
             }
 
             // valveTerminal - для вставки VTUG в старых проектах первым.
-            Device.Device valveTerminal = null;
-            var devicesList = new List<Device.Device>();
+            EplanDevice.Device valveTerminal = null;
+            var devicesList = new List<EplanDevice.Device>();
             foreach (Match match in devicesMatches)
             {
-                Device.Device device = Device.DeviceManager.GetInstance().
+                EplanDevice.Device device = EplanDevice.DeviceManager.GetInstance().
                     GetDevice(match.Value);
-                if (device.DeviceType != Device.DeviceType.DEV_VTUG)
+                if (device.DeviceType != EplanDevice.DeviceType.DEV_VTUG)
                 {
                     devicesList.Add(device);
                 }
@@ -637,7 +637,7 @@ namespace EasyEPlanner
             }
 
             var sortedDevices = "";
-            foreach (Device.Device device in devicesList)
+            foreach (EplanDevice.Device device in devicesList)
             {
                 if (device.Description.Contains(PlusSymbol))
                 {
@@ -670,17 +670,17 @@ namespace EasyEPlanner
         private string SortASInterfaceDevices(string devices)
         {
             var devicesMatches = Regex.Matches(devices,
-                Device.DeviceManager.DeviceNamePattern);
+                EplanDevice.DeviceManager.DeviceNamePattern);
 
             if (devicesMatches.Count <= MinimalDevicesCountForCheck)
             {
                 return devices;
             }
 
-            var devicesList = new List<Device.IODevice>();
+            var devicesList = new List<EplanDevice.IODevice>();
             foreach (Match match in devicesMatches)
             {
-                Device.IODevice device = Device.DeviceManager.GetInstance().
+                EplanDevice.IODevice device = EplanDevice.DeviceManager.GetInstance().
                     GetDevice(match.Value);
                 devicesList.Add(device);
             }
@@ -691,7 +691,7 @@ namespace EasyEPlanner
             var devicesWithoutASNumber = CommonConst.NewLineWithCarriageReturn;
             var sortedDevices = "";
 
-            foreach (Device.IODevice device in devicesList)
+            foreach (EplanDevice.IODevice device in devicesList)
             {
                 string numberAsString = device.
                     GetRuntimeParameter("R_AS_NUMBER");
@@ -758,8 +758,8 @@ namespace EasyEPlanner
         /// <param name="device1">Устройство 1</param>
         /// <param name="device2">Устройство 2</param>
         /// <returns></returns>
-        private int ASInterfaceDevicesComparer(Device.IODevice device1,
-            Device.IODevice device2)
+        private int ASInterfaceDevicesComparer(EplanDevice.IODevice device1,
+            EplanDevice.IODevice device2)
         {
             string device1ASNumberString = device1.
                 GetRuntimeParameter("R_AS_NUMBER");
@@ -920,10 +920,10 @@ namespace EasyEPlanner
         /// <param name="x">Устройство 1</param>
         /// <param name="y">Устройство 2</param>
         /// <returns></returns>
-        private int DevicesComparer(Device.Device x, Device.Device y)
+        private int DevicesComparer(EplanDevice.Device x, EplanDevice.Device y)
         {
             int res;
-            res = Device.Device.Compare(x, y);
+            res = EplanDevice.Device.Compare(x, y);
             return res;
         }
 

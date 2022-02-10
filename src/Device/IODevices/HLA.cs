@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Device
+namespace EplanDevice
 {
     /// <summary>
     /// Технологическое устройство - сигнальная колонна

@@ -1,33 +1,33 @@
 ﻿using NUnit.Framework;
 
-namespace Tests.Devices
+namespace Tests.EplanDevices
 {
     public class DeviceManagerTest
     {
         [SetUp]
         public void SetUpDevices()
         {
-            var firstValve = new Device.V("LINE1V2", "+LINE1-V2", "Test valve",
+            var firstValve = new EplanDevice.V("LINE1V2", "+LINE1-V2", "Test valve",
                 2, "LINE", 1, "Test V article");
             firstValve.SetSubType("V_AS_MIXPROOF");
             firstValve.SetParameter("R_AS_NUMBER", 1);
-            Device.DeviceManager.GetInstance().Devices.Add(firstValve);
+            EplanDevice.DeviceManager.GetInstance().Devices.Add(firstValve);
 
-            var secondValve = new Device.V("TANK2V1", "+LINE2-V2", "Test valve",
+            var secondValve = new EplanDevice.V("TANK2V1", "+LINE2-V2", "Test valve",
                 1, "TANK", 2, "Test V article");
             secondValve.SetSubType("V_AS_MIXPROOF");
             secondValve.SetParameter("R_AS_NUMBER", 2);
-            Device.DeviceManager.GetInstance().Devices.Add(secondValve);
+            EplanDevice.DeviceManager.GetInstance().Devices.Add(secondValve);
 
-            var pressureSensor = new Device.PT("KOAG3PT1", "+KOAG3-PT1", 
+            var pressureSensor = new EplanDevice.PT("KOAG3PT1", "+KOAG3-PT1", 
                 "Test PT", 1, "KOAG", 3, "Test PT article");
             pressureSensor.SetSubType("PT_IOLINK");
-            Device.DeviceManager.GetInstance().Devices.Add(pressureSensor);
+            EplanDevice.DeviceManager.GetInstance().Devices.Add(pressureSensor);
 
-            var temperatureSensor = new Device.TE("BATH4TE2", "+BATH4-TE2",
+            var temperatureSensor = new EplanDevice.TE("BATH4TE2", "+BATH4-TE2",
                 "Test TE", 2, "BATH", 4, "Test TE article");
             temperatureSensor.SetSubType("TE");
-            Device.DeviceManager.GetInstance().Devices.Add(temperatureSensor);
+            EplanDevice.DeviceManager.GetInstance().Devices.Add(temperatureSensor);
         }
 
         [TestCase("+LINE1-V2", false)]
@@ -38,7 +38,7 @@ namespace Tests.Devices
         [TestCase("TANK2V1 KOAG3PT1", false)]
         public void IsASInterfaseDeviceTest(string devices, bool? expected)
         {
-            bool? actual = Device.DeviceManager.GetInstance()
+            bool? actual = EplanDevice.DeviceManager.GetInstance()
                 .IsASInterfaceDevices(devices, out _);
             Assert.AreEqual(expected, actual);
         }
@@ -55,7 +55,7 @@ namespace Tests.Devices
         [TestCase("TKK1", false)]
         public void CheckDeviceNameTest(string device, bool expected)
         {
-            bool actual = Device.DeviceManager.GetInstance()
+            bool actual = EplanDevice.DeviceManager.GetInstance()
                 .CheckDeviceName(device, out _, out _, out _, out _, out _,
                 out _);
             Assert.AreEqual(expected, actual);
@@ -73,7 +73,7 @@ namespace Tests.Devices
         [TestCase("", -1)]
         public void GetDeviceIndex(string device, int expectedNum)
         {
-            int actualNum = Device.DeviceManager.GetInstance()
+            int actualNum = EplanDevice.DeviceManager.GetInstance()
                 .GetDeviceIndex(device);
             Assert.AreEqual(expectedNum, actualNum);
         }
@@ -90,7 +90,7 @@ namespace Tests.Devices
         [TestCase("", "")]
         public void GetDeviceTest(string devName, string expectedDevName)
         {
-            var dev = Device.DeviceManager.GetInstance().GetDevice(devName);
+            var dev = EplanDevice.DeviceManager.GetInstance().GetDevice(devName);
             string actualDevName = dev.Name;
             if (expectedDevName == StaticHelper.CommonConst.Cap)
             {
@@ -114,7 +114,7 @@ namespace Tests.Devices
         [TestCase("", "")]
         public void GetDeviceByEplanNameTest(string devName, string expectedDevName)
         {
-            var dev = Device.DeviceManager.GetInstance()
+            var dev = EplanDevice.DeviceManager.GetInstance()
                 .GetDeviceByEplanName(devName);
             string actualDevName = dev.Name;
             if (expectedDevName == StaticHelper.CommonConst.Cap)

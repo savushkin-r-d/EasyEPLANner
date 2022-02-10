@@ -9,8 +9,8 @@ namespace TechObject
 {
     public interface IAction
     {
-        void GetDisplayObjects(out Device.DeviceType[] validTypes,
-                    out Device.DeviceSubType[] validSubTypes,
+        void GetDisplayObjects(out EplanDevice.DeviceType[] validTypes,
+                    out EplanDevice.DeviceSubType[] validSubTypes,
                     out bool displayParameter);
 
         /// <summary>
@@ -106,9 +106,9 @@ namespace TechObject
         /// устройств в действии</param>
         /// <param name="deviceManager">Менеджер устройств</param>
         public Action(string name, Step owner, string luaName,
-            Device.DeviceType[] devTypes, Device.DeviceSubType[] devSubTypes,
+            EplanDevice.DeviceType[] devTypes, EplanDevice.DeviceSubType[] devSubTypes,
             IDeviceProcessingStrategy actionProcessorStrategy,
-            Device.IDeviceManager deviceManager) : this(name, owner, luaName,
+            EplanDevice.IDeviceManager deviceManager) : this(name, owner, luaName,
                 devTypes, devSubTypes, actionProcessorStrategy)
         {
             this.deviceManager = deviceManager;
@@ -128,7 +128,7 @@ namespace TechObject
         /// <param name="actionProcessorStrategy">Стратегия обработки
         /// устройств в действии</param>
         public Action(string name, Step owner, string luaName,
-            Device.DeviceType[] devTypes, Device.DeviceSubType[] devSubTypes,
+            EplanDevice.DeviceType[] devTypes, EplanDevice.DeviceSubType[] devSubTypes,
             IDeviceProcessingStrategy actionProcessorStrategy)
         : this(name, owner, luaName, devTypes, devSubTypes)
         {
@@ -147,7 +147,7 @@ namespace TechObject
         /// для редактирования.</param>
         /// <param name="owner">Владелец действия (Шаг)</param>
         public Action(string name, Step owner, string luaName,
-            Device.DeviceType[] devTypes, Device.DeviceSubType[] devSubTypes)
+            EplanDevice.DeviceType[] devTypes, EplanDevice.DeviceSubType[] devSubTypes)
         : this(name, owner, luaName, devTypes)
         {
             this.devSubTypes = devSubTypes;
@@ -163,7 +163,7 @@ namespace TechObject
         /// редактирования.</param>
         /// <param name="owner">Владелец действия (Шаг)</param>
         public Action(string name, Step owner, string luaName,
-            Device.DeviceType[] devTypes) : this(name, owner, luaName)
+            EplanDevice.DeviceType[] devTypes) : this(name, owner, luaName)
         {
             this.devTypes = devTypes;
         }
@@ -210,7 +210,7 @@ namespace TechObject
             foreach (int index in deviceIndex)
             {
                 var newDevName = string.Empty;
-                Device.IDevice device = deviceManager.GetDeviceByIndex(index);
+                EplanDevice.IDevice device = deviceManager.GetDeviceByIndex(index);
                 int objNum = device.ObjectNumber;
                 string objName = device.ObjectName;
 
@@ -265,7 +265,7 @@ namespace TechObject
             foreach (int index in deviceIndex)
             {
                 var newDevName = string.Empty;
-                Device.IDevice device = deviceManager.GetDeviceByIndex(index);
+                EplanDevice.IDevice device = deviceManager.GetDeviceByIndex(index);
                 int objNum = newTechObjectNumber;
                 string objName = device.ObjectName;
 
@@ -429,7 +429,7 @@ namespace TechObject
             }
 
             Match strMatch = Regex.Match(newName,
-                Device.DeviceManager.DESCRIPTION_PATTERN_MULTYLINE,
+                EplanDevice.DeviceManager.DESCRIPTION_PATTERN_MULTYLINE,
                 RegexOptions.IgnoreCase);
             if (!strMatch.Success)
             {
@@ -485,8 +485,8 @@ namespace TechObject
             }
         }
 
-        override public void GetDisplayObjects(out Device.DeviceType[] devTypes,
-            out Device.DeviceSubType[] devSubTypes, out bool displayParameters)
+        override public void GetDisplayObjects(out EplanDevice.DeviceType[] devTypes,
+            out EplanDevice.DeviceSubType[] devSubTypes, out bool displayParameters)
         {
             devTypes = this.devTypes;
             devSubTypes = this.devSubTypes;
@@ -605,13 +605,13 @@ namespace TechObject
         protected string name;
         protected List<int> deviceIndex;
 
-        protected Device.DeviceType[] devTypes;
-        protected Device.DeviceSubType[] devSubTypes;
+        protected EplanDevice.DeviceType[] devTypes;
+        protected EplanDevice.DeviceSubType[] devSubTypes;
 
         protected Step owner;
 
         IDeviceProcessingStrategy deviceProcessingStrategy;
-        Device.IDeviceManager deviceManager = Device.DeviceManager
+        EplanDevice.IDeviceManager deviceManager = EplanDevice.DeviceManager
             .GetInstance();
     }
 
@@ -620,7 +620,7 @@ namespace TechObject
         public interface IDeviceProcessingStrategy
         {
             IList<int> ProcessDevices(string devicesStr,
-                Device.IDeviceManager deviceManager);
+                EplanDevice.IDeviceManager deviceManager);
 
             IAction Action { get; set; }
         }
@@ -628,17 +628,17 @@ namespace TechObject
         public class DefaultActionProcessorStrategy : IDeviceProcessingStrategy
         {
             public virtual IList<int> ProcessDevices(
-                string devicesStr, Device.IDeviceManager deviceManager)
+                string devicesStr, EplanDevice.IDeviceManager deviceManager)
             {
                 Match match = Regex.Match(devicesStr,
-                    Device.DeviceManager.DESCRIPTION_PATTERN, RegexOptions.
+                    EplanDevice.DeviceManager.DESCRIPTION_PATTERN, RegexOptions.
                     IgnoreCase);
 
                 var validDevices = new List<int>();
                 while (match.Success)
                 {
                     string str = match.Groups["name"].Value;
-                    Device.IDevice device = deviceManager
+                    EplanDevice.IDevice device = deviceManager
                         .GetDeviceByEplanName(str);
                     bool isValid = ValidateDevice(device);
                     if (isValid)
@@ -662,14 +662,14 @@ namespace TechObject
             /// </summary>
             /// <param name="device">Устройство</param>
             /// <returns></returns>
-            private bool ValidateDevice(Device.IDevice device)
+            private bool ValidateDevice(EplanDevice.IDevice device)
             {
                 bool isValidType = false;
-                Device.DeviceType deviceType = device.DeviceType;
-                Device.DeviceSubType deviceSubType = device.DeviceSubType;
+                EplanDevice.DeviceType deviceType = device.DeviceType;
+                EplanDevice.DeviceSubType deviceSubType = device.DeviceSubType;
 
-                Action.GetDisplayObjects(out Device.DeviceType[] validTypes,
-                    out Device.DeviceSubType[] validSubTypes, out _);
+                Action.GetDisplayObjects(out EplanDevice.DeviceType[] validTypes,
+                    out EplanDevice.DeviceSubType[] validSubTypes, out _);
 
                 if (validTypes == null)
                 {
@@ -677,7 +677,7 @@ namespace TechObject
                 }
                 else
                 {
-                    foreach (Device.DeviceType type in validTypes)
+                    foreach (EplanDevice.DeviceType type in validTypes)
                     {
                         if (type == deviceType)
                         {
@@ -693,7 +693,7 @@ namespace TechObject
                     if (validSubTypes != null)
                     {
                         bool isValidSubType = false;
-                        foreach (Device.DeviceSubType subType in validSubTypes)
+                        foreach (EplanDevice.DeviceSubType subType in validSubTypes)
                         {
                             if ((subType == deviceSubType) && isValidType)
                             {
@@ -722,18 +722,18 @@ namespace TechObject
             DefaultActionProcessorStrategy
         {
             public OneInManyOutActionProcessingStrategy(
-                Device.DeviceType[] allowedInputDevTypes)
+                EplanDevice.DeviceType[] allowedInputDevTypes)
             {
                 this.allowedInputDevTypes = allowedInputDevTypes;
             }
 
             public override IList<int> ProcessDevices(string devicesStr,
-                Device.IDeviceManager deviceManager)
+                EplanDevice.IDeviceManager deviceManager)
             {
                 IList<int> validatedDevicesId =
                     base.ProcessDevices(devicesStr, deviceManager);
 
-                var idDevDict = new Dictionary<int, Device.IDevice>();
+                var idDevDict = new Dictionary<int, EplanDevice.IDevice>();
                 foreach(var devId in validatedDevicesId)
                 {
                     var dev = deviceManager.GetDeviceByIndex(devId);
@@ -781,15 +781,15 @@ namespace TechObject
                 return devList;
             }
 
-            class OneInManyDevicesComparer : IComparer<Device.DeviceType>
+            class OneInManyDevicesComparer : IComparer<EplanDevice.DeviceType>
             {
                 public OneInManyDevicesComparer(
-                    Device.DeviceType[] allowedFirstPlaceDevTypes)
+                    EplanDevice.DeviceType[] allowedFirstPlaceDevTypes)
                 {
                     this.allowedFirstPlaceDevTypes = allowedFirstPlaceDevTypes;
                 }
 
-                public int Compare(Device.DeviceType x, Device.DeviceType y)
+                public int Compare(EplanDevice.DeviceType x, EplanDevice.DeviceType y)
                 {
                     if (x == y) return 0;
 
@@ -808,10 +808,10 @@ namespace TechObject
                     return x.ToString().CompareTo(y.ToString());
                 }
 
-                private Device.DeviceType[] allowedFirstPlaceDevTypes;
+                private EplanDevice.DeviceType[] allowedFirstPlaceDevTypes;
             }
 
-            private Device.DeviceType[] allowedInputDevTypes;
+            private EplanDevice.DeviceType[] allowedInputDevTypes;
         }
     }
 }
