@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 
-namespace EasyEPlanner.PxcIolinkConfiguration.Models
+namespace EasyEPlanner.PxcIolinkConfiguration.Models.IolConf
 {
     [XmlRoot(ElementName = "Param")]
     public class Param : ICloneable

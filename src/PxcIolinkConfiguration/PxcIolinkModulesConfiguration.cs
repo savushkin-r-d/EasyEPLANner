@@ -1,6 +1,6 @@
 ﻿using IO;
 using System.Collections.Generic;
-using EasyEPlanner.PxcIolinkConfiguration.Models;
+using EasyEPlanner.PxcIolinkConfiguration.Models.IolConf;
 using System.IO;
 using System;
 using System.Threading.Tasks;

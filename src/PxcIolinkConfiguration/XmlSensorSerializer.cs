@@ -1,4 +1,4 @@
-﻿using EasyEPlanner.PxcIolinkConfiguration.Models;
+﻿using EasyEPlanner.PxcIolinkConfiguration.Models.IolConf;
 using System.IO;
 using System.Xml.Serialization;
 

@@ -1,4 +1,4 @@
-﻿using EasyEPlanner.PxcIolinkConfiguration.Models;
+﻿using EasyEPlanner.PxcIolinkConfiguration.Models.IolConf;
 using IO;
 using System;
 using System.Collections.Generic;
@@ -20,8 +20,8 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             string templateVersion, Dictionary<string, LinerecorderSensor> moduleTemplates,
             Dictionary<string, LinerecorderSensor> deviceTemplates)
         {
-            Models.Device moduleDescription;
-            List<Models.Device> devicesDescription;
+            Device moduleDescription;
+            List<Device> devicesDescription;
 
             try
             {
@@ -45,10 +45,10 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         }
 
         #region генерация описания модуля
-        private Models.Device CreateModuleFromTemplate(IOModule module,
+        private Device CreateModuleFromTemplate(IOModule module,
             Dictionary<string, LinerecorderSensor> moduleTemplates)
         {
-            var moduleDescription = new Models.Device();
+            var moduleDescription = new Device();
             LinerecorderSensor template;
             if (moduleTemplates.ContainsKey(module.ArticleName))
             {
@@ -73,7 +73,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             return moduleDescription;
         }
 
-        private void ConfigureModuleParameters(IOModule module, Models.Device moduleDescription)
+        private void ConfigureModuleParameters(IOModule module, Device moduleDescription)
         {
             var channels = module.DevicesChannels
                 .Where(x => x != null && x.Count > 0)
@@ -159,10 +159,10 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         #endregion
 
         #region генерация описания устройств для добавления в модуль
-        private List<Models.Device> CreateDevicesFromTemplate(IOModule module,
+        private List<Device> CreateDevicesFromTemplate(IOModule module,
             Dictionary<string, LinerecorderSensor> deviceTemplates)
         {
-            var deviceList = new List<Models.Device>();
+            var deviceList = new List<Device>();
             var devices = module.Devices
                 .Where(x => x != null && x.Count > 0)
                 .Select(x => new { Device = x.First(), Clamp = Array.IndexOf(module.Devices, x) });
@@ -177,7 +177,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
                 if (templateNotFound || invalidLogicalClamp) continue;
 
                 LinerecorderSensor deviceTemplate = deviceTemplates[articleName];
-                var deviceDescription = new Models.Device
+                var deviceDescription = new Device
                 {
                     Port = logicalPort,
                     Sensor = deviceTemplate.Sensor.Clone() as Sensor,

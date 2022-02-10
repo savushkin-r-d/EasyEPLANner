@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using EasyEPlanner.PxcIolinkConfiguration.Models;
+using EasyEPlanner.PxcIolinkConfiguration.Models.IolConf;
 
 namespace EasyEPlanner.PxcIolinkConfiguration
 {
