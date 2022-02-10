@@ -299,8 +299,8 @@ namespace Tests.Editor
         public void GetDisplayObjects_NewObject_ReturnsNullAndFalse()
         {
             InheritedTreeViewItem property = GetNewTreeViewItem();
-            property.GetDisplayObjects(out Device.DeviceType[] devTypes,
-                out Device.DeviceSubType[] devSubTypes,
+            property.GetDisplayObjects(out EplanDevice.DeviceType[] devTypes,
+                out EplanDevice.DeviceSubType[] devSubTypes,
                 out bool displayParameters);
 
             Assert.IsNull(devTypes);

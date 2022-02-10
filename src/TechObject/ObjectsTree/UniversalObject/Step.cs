@@ -48,40 +48,40 @@ namespace TechObject
 
             var openDevices = new Action(openDevicesActionName, this,
                 "opened_devices",
-                new Device.DeviceType[]
+                new EplanDevice.DeviceType[]
                 {
-                    Device.DeviceType.V,
-                    Device.DeviceType.DO,
-                    Device.DeviceType.M
+                    EplanDevice.DeviceType.V,
+                    EplanDevice.DeviceType.DO,
+                    EplanDevice.DeviceType.M
                 });
             openDevices.ImageIndex = ImageIndexEnum.ActionON;
             actions.Add(openDevices);
 
             var openReverse = new Action("Включать реверс", this,
                 "opened_reverse_devices",
-                new Device.DeviceType[]
+                new EplanDevice.DeviceType[]
                 {
-                    Device.DeviceType.M
+                    EplanDevice.DeviceType.M
                 },
-                new Device.DeviceSubType[]
+                new EplanDevice.DeviceSubType[]
                 {
-                    Device.DeviceSubType.M_REV_FREQ,
-                    Device.DeviceSubType.M_REV_FREQ_2,
-                    Device.DeviceSubType.M_REV_FREQ_2_ERROR,
-                    Device.DeviceSubType.M_ATV,
-                    Device.DeviceSubType.M_ATV_LINEAR,
-                    Device.DeviceSubType.M,
-                    Device.DeviceSubType.M_VIRT,
+                    EplanDevice.DeviceSubType.M_REV_FREQ,
+                    EplanDevice.DeviceSubType.M_REV_FREQ_2,
+                    EplanDevice.DeviceSubType.M_REV_FREQ_2_ERROR,
+                    EplanDevice.DeviceSubType.M_ATV,
+                    EplanDevice.DeviceSubType.M_ATV_LINEAR,
+                    EplanDevice.DeviceSubType.M,
+                    EplanDevice.DeviceSubType.M_VIRT,
                 });
             actions.Add(openReverse);
 
             var closeDevices = new Action(closeDevicesActionName, this,
                 "closed_devices",
-                new Device.DeviceType[]
+                new EplanDevice.DeviceType[]
                 {
-                    Device.DeviceType.V,
-                    Device.DeviceType.DO,
-                    Device.DeviceType.M
+                    EplanDevice.DeviceType.V,
+                    EplanDevice.DeviceType.DO,
+                    EplanDevice.DeviceType.M
                 });
             closeDevices.DrawStyle = DrawInfo.Style.RED_BOX;
             closeDevices.ImageIndex = ImageIndexEnum.ActionOFF;
@@ -89,19 +89,19 @@ namespace TechObject
 
             var openUpperSeats = new ActionGroup("Верхние седла", this,
                 "opened_upper_seat_v",
-                new Device.DeviceType[]
+                new EplanDevice.DeviceType[]
                 {
-                    Device.DeviceType.V,
-                    Device.DeviceType.DO
+                    EplanDevice.DeviceType.V,
+                    EplanDevice.DeviceType.DO
                 },
-                new Device.DeviceSubType[]
+                new EplanDevice.DeviceSubType[]
                 {
-                    Device.DeviceSubType.V_MIXPROOF,
-                    Device.DeviceSubType.V_AS_MIXPROOF,
-                    Device.DeviceSubType.V_IOLINK_MIXPROOF,
-                    Device.DeviceSubType.V_VIRT,
-                    Device.DeviceSubType.DO,
-                    Device.DeviceSubType.DO_VIRT
+                    EplanDevice.DeviceSubType.V_MIXPROOF,
+                    EplanDevice.DeviceSubType.V_AS_MIXPROOF,
+                    EplanDevice.DeviceSubType.V_IOLINK_MIXPROOF,
+                    EplanDevice.DeviceSubType.V_VIRT,
+                    EplanDevice.DeviceSubType.DO,
+                    EplanDevice.DeviceSubType.DO_VIRT
                 });
             openUpperSeats.DrawStyle = DrawInfo.Style.GREEN_UPPER_BOX;
             openUpperSeats.ImageIndex = ImageIndexEnum.ActionWashUpperSeats;
@@ -109,19 +109,19 @@ namespace TechObject
 
             var openLowerSeats = new ActionGroup("Нижние седла", this,
                 "opened_lower_seat_v",
-                new Device.DeviceType[]
+                new EplanDevice.DeviceType[]
                 {
-                    Device.DeviceType.V,
-                    Device.DeviceType.DO
+                    EplanDevice.DeviceType.V,
+                    EplanDevice.DeviceType.DO
                 },
-                new Device.DeviceSubType[]
+                new EplanDevice.DeviceSubType[]
                 {
-                    Device.DeviceSubType.V_MIXPROOF,
-                    Device.DeviceSubType.V_AS_MIXPROOF,
-                    Device.DeviceSubType.V_IOLINK_MIXPROOF,
-                    Device.DeviceSubType.V_VIRT,
-                    Device.DeviceSubType.DO,
-                    Device.DeviceSubType.DO_VIRT
+                    EplanDevice.DeviceSubType.V_MIXPROOF,
+                    EplanDevice.DeviceSubType.V_AS_MIXPROOF,
+                    EplanDevice.DeviceSubType.V_IOLINK_MIXPROOF,
+                    EplanDevice.DeviceSubType.V_VIRT,
+                    EplanDevice.DeviceSubType.DO,
+                    EplanDevice.DeviceSubType.DO_VIRT
                 });
             openLowerSeats.DrawStyle = DrawInfo.Style.GREEN_LOWER_BOX;
             openLowerSeats.ImageIndex = ImageIndexEnum.ActionWashLowerSeats;
@@ -129,10 +129,10 @@ namespace TechObject
 
             var requiredFb = new Action("Сигналы для включения", this,
                 "required_FB",
-                new Device.DeviceType[]
+                new EplanDevice.DeviceType[]
                 {
-                    Device.DeviceType.DI,
-                    Device.DeviceType.GS
+                    EplanDevice.DeviceType.DI,
+                    EplanDevice.DeviceType.GS
                 });
             requiredFb.ImageIndex = ImageIndexEnum.ActionSignals;
             actions.Add(requiredFb);
@@ -142,24 +142,24 @@ namespace TechObject
             groupWash.ImageIndex = ImageIndexEnum.ActionWash;
             actions.Add(groupWash);
 
-            var pairsDiDoAllowedDevTypes = new Device.DeviceType[]
+            var pairsDiDoAllowedDevTypes = new EplanDevice.DeviceType[]
             {
-                Device.DeviceType.DI,
-                Device.DeviceType.SB,
-                Device.DeviceType.DO,
-                Device.DeviceType.HL,
-                Device.DeviceType.GS,
-                Device.DeviceType.LS,
-                Device.DeviceType.FS
+                EplanDevice.DeviceType.DI,
+                EplanDevice.DeviceType.SB,
+                EplanDevice.DeviceType.DO,
+                EplanDevice.DeviceType.HL,
+                EplanDevice.DeviceType.GS,
+                EplanDevice.DeviceType.LS,
+                EplanDevice.DeviceType.FS
             };
 
-            var pairsDiDoAllowedInputTypes = new Device.DeviceType[]
+            var pairsDiDoAllowedInputTypes = new EplanDevice.DeviceType[]
             {
-                Device.DeviceType.DI,
-                Device.DeviceType.SB,
-                Device.DeviceType.GS,
-                Device.DeviceType.LS,
-                Device.DeviceType.FS
+                EplanDevice.DeviceType.DI,
+                EplanDevice.DeviceType.SB,
+                EplanDevice.DeviceType.GS,
+                EplanDevice.DeviceType.LS,
+                EplanDevice.DeviceType.FS
             };
 
             // Специальное действие - выдача дискретных сигналов 
@@ -179,31 +179,31 @@ namespace TechObject
             groupInvertedDiDo.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupInvertedDiDo);
 
-            var pairsAiAoAllowedInputTypes = new Device.DeviceType[]
+            var pairsAiAoAllowedInputTypes = new EplanDevice.DeviceType[]
             {
-                Device.DeviceType.AI,
-                Device.DeviceType.PT,
-                Device.DeviceType.LT,
-                Device.DeviceType.FQT,
-                Device.DeviceType.QT,
-                Device.DeviceType.TE,
+                EplanDevice.DeviceType.AI,
+                EplanDevice.DeviceType.PT,
+                EplanDevice.DeviceType.LT,
+                EplanDevice.DeviceType.FQT,
+                EplanDevice.DeviceType.QT,
+                EplanDevice.DeviceType.TE,
             };
 
             // Специальное действие - выдача аналоговых сигналов при
             // наличии входного  аналогового сигнала.
             var groupAiAo = new ActionGroup(groupAIAOActionName, this,
                 "AI_AO",
-                new Device.DeviceType[]
+                new EplanDevice.DeviceType[]
                 {
-                    Device.DeviceType.AI,
-                    Device.DeviceType.AO,
-                    Device.DeviceType.M,
-                    Device.DeviceType.PT,
-                    Device.DeviceType.LT,
-                    Device.DeviceType.FQT,
-                    Device.DeviceType.QT,
-                    Device.DeviceType.TE,
-                    Device.DeviceType.VC
+                    EplanDevice.DeviceType.AI,
+                    EplanDevice.DeviceType.AO,
+                    EplanDevice.DeviceType.M,
+                    EplanDevice.DeviceType.PT,
+                    EplanDevice.DeviceType.LT,
+                    EplanDevice.DeviceType.FQT,
+                    EplanDevice.DeviceType.QT,
+                    EplanDevice.DeviceType.TE,
+                    EplanDevice.DeviceType.VC
                 },
                 null,
                 new OneInManyOutActionProcessingStrategy(pairsAiAoAllowedInputTypes));
@@ -212,9 +212,9 @@ namespace TechObject
 
             var enableStepBySignal = new ActionGroup(
                 "Сигнал для включения шага", this, "enable_step_by_signal",
-                new Device.DeviceType[]
+                new EplanDevice.DeviceType[]
                 {
-                    Device.DeviceType.DI
+                    EplanDevice.DeviceType.DI
                 }, null);
             actions.Add(enableStepBySignal);
 
@@ -362,7 +362,7 @@ namespace TechObject
         public bool AddDev(string actionLuaName, string devName,
             int groupNumber, string subActionLuaName)
         {
-            int devId = Device.DeviceManager.GetInstance()
+            int devId = EplanDevice.DeviceManager.GetInstance()
                 .GetDeviceIndex(devName);
             if (devId == -1)
             {
@@ -765,7 +765,7 @@ namespace TechObject
 
             foreach (int i in FindEqual)
             {
-                Device.IDevice device = Device.DeviceManager.GetInstance()
+                EplanDevice.IDevice device = EplanDevice.DeviceManager.GetInstance()
                     .GetDeviceByIndex(i);
                 string msg = $"Неправильно задано устройство {device.Name} " +
                     $"в действиях \"{openDevicesActionName}\" и " +

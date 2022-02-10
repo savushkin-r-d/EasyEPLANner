@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Device
+namespace EplanDevice
 {
     /// <summary>
     /// Технологическое устройство - датчик текущего уровня.

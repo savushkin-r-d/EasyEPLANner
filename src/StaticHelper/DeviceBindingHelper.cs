@@ -1,4 +1,4 @@
-﻿using Device;
+﻿using EplanDevice;
 using Eplan.EplApi.DataModel;
 using System;
 using System.Text.RegularExpressions;
@@ -44,7 +44,7 @@ namespace StaticHelper
                 .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
 
             bool haveValveTerminal = deviceClampFunction.Name
-                .Contains(global::Device.DeviceManager.ValveTerminalName);
+                .Contains(global::EplanDevice.DeviceManager.ValveTerminalName);
             if (haveValveTerminal)
             {
                 Function IOModuleFunction =

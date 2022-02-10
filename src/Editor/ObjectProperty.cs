@@ -340,8 +340,8 @@ namespace Editor
             return null;
         }
 
-        public virtual void GetDisplayObjects(out Device.DeviceType[] devTypes,
-            out Device.DeviceSubType[] devSubTypes, out bool displayParameters)
+        public virtual void GetDisplayObjects(out EplanDevice.DeviceType[] devTypes,
+            out EplanDevice.DeviceSubType[] devSubTypes, out bool displayParameters)
         {
             devTypes = null;
             devSubTypes = null;

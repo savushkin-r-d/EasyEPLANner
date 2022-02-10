@@ -88,7 +88,7 @@ namespace StaticHelper
             var clampFunction = new Function();
 
             deviceName = Regex.Match(deviceName, 
-                Device.DeviceManager.valveTerminalPattern).Value;
+                EplanDevice.DeviceManager.valveTerminalPattern).Value;
             Function[] subFunctions = IOModuleFunction.SubFunctions;
             if (subFunctions != null)
             {
@@ -126,7 +126,7 @@ namespace StaticHelper
             var isValveTerminalClampFunction = false;
             Function IOModuleFunction = null;
             if (clampFunction.Name
-                .Contains(Device.DeviceManager.ValveTerminalName))
+                .Contains(EplanDevice.DeviceManager.ValveTerminalName))
             {
                 IOModuleFunction = GetValveTerminalIOModuleFunction(
                     clampFunction);
@@ -168,7 +168,7 @@ namespace StaticHelper
             var IOModuleFunction = new Function();
 
             string valveTerminalName = Regex.Match(clampFunction.Name, 
-                Device.DeviceManager.valveTerminalPattern).Value;
+                EplanDevice.DeviceManager.valveTerminalPattern).Value;
             if (string.IsNullOrEmpty(valveTerminalName))
             {
                 const string Message = "Ошибка поиска ОУ пневмоострова";

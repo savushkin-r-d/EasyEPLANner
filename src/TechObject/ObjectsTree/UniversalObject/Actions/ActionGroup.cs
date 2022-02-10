@@ -22,8 +22,8 @@ namespace TechObject
         /// <param name="actionProcessorStrategy">Стратегия обработки
         /// устройств в группе действий</param>
         public ActionGroup(string name, Step owner, string luaName,
-            Device.DeviceType[] devTypes,
-            Device.DeviceSubType[] devSubTypes,
+            EplanDevice.DeviceType[] devTypes,
+            EplanDevice.DeviceSubType[] devSubTypes,
             IDeviceProcessingStrategy actionProcessorStrategy)
             : base(name, owner, luaName)
         {
@@ -41,7 +41,7 @@ namespace TechObject
         /// <param name="devSubTypes">Допустимые подтипы устройств</param>
         /// <param name="devTypes">Допустимые типы устройств</param>
         public ActionGroup(string name, Step owner, string luaName,
-            Device.DeviceType[] devTypes, Device.DeviceSubType[] devSubTypes)
+            EplanDevice.DeviceType[] devTypes, EplanDevice.DeviceSubType[] devSubTypes)
             : this (name, owner, luaName, devTypes, devSubTypes, null) { }
 
         public override void AddDev(int index, int groupNumber,
@@ -129,16 +129,16 @@ namespace TechObject
             return newAction;
         }
 
-        public override void GetDisplayObjects(out Device.DeviceType[] devTypes,
-            out Device.DeviceSubType[] devSubTypes, out bool displayParameters)
+        public override void GetDisplayObjects(out EplanDevice.DeviceType[] devTypes,
+            out EplanDevice.DeviceSubType[] devSubTypes, out bool displayParameters)
         {
             SubActions.First().GetDisplayObjects(out devTypes, out devSubTypes,
                 out displayParameters);
         }
         #endregion
 
-        private IAction AddNewAction(Step owner, Device.DeviceType[] devTypes,
-            Device.DeviceSubType[] devSubTypes,
+        private IAction AddNewAction(Step owner, EplanDevice.DeviceType[] devTypes,
+            EplanDevice.DeviceSubType[] devSubTypes,
             IDeviceProcessingStrategy strategy)
         {
             var newAction = new Action(GroupDefaultName, owner,
@@ -152,8 +152,8 @@ namespace TechObject
         private ITreeViewItem InsertNewAction()
         {
             IAction firstSubAction = SubActions.First();
-            firstSubAction.GetDisplayObjects(out Device.DeviceType[] devTypes,
-                out Device.DeviceSubType[] devSubTypes, out _);
+            firstSubAction.GetDisplayObjects(out EplanDevice.DeviceType[] devTypes,
+                out EplanDevice.DeviceSubType[] devSubTypes, out _);
             IDeviceProcessingStrategy strategy = firstSubAction
                 .GetDeviceProcessingStrategy();
 

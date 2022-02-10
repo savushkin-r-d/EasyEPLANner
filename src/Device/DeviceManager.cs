@@ -9,7 +9,7 @@ using EasyEPlanner;
 /// <summary>
 /// Пространство имен технологических устройств проекта (клапана, насосы...).
 /// </summary>
-namespace Device
+namespace EplanDevice
 {
     public interface IDeviceManager
     {

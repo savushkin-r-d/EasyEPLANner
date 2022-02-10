@@ -30,8 +30,8 @@ namespace IO
             this.physicalNumber = physicalNumber;
             this.function = function;
 
-            devicesChannels = new List<Device.IODevice.IOChannel>[80];
-            devices = new List<Device.IODevice>[80];
+            devicesChannels = new List<EplanDevice.IODevice.IOChannel>[80];
+            devices = new List<EplanDevice.IODevice>[80];
         }
 
         public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
@@ -41,8 +41,8 @@ namespace IO
             // Делегировано в конструктор с 5 параметрами.
         }
 
-        public void AssignChannelToDevice(int chN, Device.IODevice dev,
-            Device.IODevice.IOChannel ch)
+        public void AssignChannelToDevice(int chN, EplanDevice.IODevice dev,
+            EplanDevice.IODevice.IOChannel ch)
         {
             if (devices.GetLength(0) <= chN)
             {
@@ -51,11 +51,11 @@ namespace IO
 
             if (devices[chN] == null)
             {
-                devices[chN] = new List<Device.IODevice>();
+                devices[chN] = new List<EplanDevice.IODevice>();
             }
             if (devicesChannels[chN] == null)
             {
-                devicesChannels[chN] = new List<Device.IODevice.IOChannel>();
+                devicesChannels[chN] = new List<EplanDevice.IODevice.IOChannel>();
             }
 
             devices[chN].Add(dev);
@@ -208,7 +208,7 @@ namespace IO
             else
             {
                 int devIdx = 0;
-                foreach (Device.IODevice dev in devices[clamp])
+                foreach (EplanDevice.IODevice dev in devices[clamp])
                 {
                     devName += dev.EplanName + 
                         dev.GetConnectionType() + 
@@ -239,7 +239,7 @@ namespace IO
                         if (devices[clamp] != null && devices[clamp].Count > 1)
                         {
                             int deviceCounter = 0;
-                            foreach (Device.IODevice dev in devices[clamp])
+                            foreach (EplanDevice.IODevice dev in devices[clamp])
                             {
                                 asConnection[devIdx, 0] = clamp.ToString() + "(" + (deviceCounter + 1).ToString() + ")";
                                 string devDescription = dev.EplanName + dev.GetConnectionType() + dev.GetRange() + ": " +
@@ -308,8 +308,8 @@ namespace IO
                     continue;
                 }
 
-                if(devicesOnClamp[0].DeviceType == Device.DeviceType.Y ||
-                    devicesOnClamp[0].DeviceType == Device.DeviceType.DEV_VTUG)
+                if(devicesOnClamp[0].DeviceType == EplanDevice.DeviceType.Y ||
+                    devicesOnClamp[0].DeviceType == EplanDevice.DeviceType.DEV_VTUG)
                 {
                     devicesSize += devicesOnClamp[0].IOLinkProperties
                         .GetMaxIOLinkSize();
@@ -340,7 +340,7 @@ namespace IO
         /// <param name="devicesOnClamp">Устройства на клемме</param>
         /// <returns></returns>
         private int CalculateDevicesSize(int moduleClamp, 
-            List<Device.IODevice> devicesOnClamp)
+            List<EplanDevice.IODevice> devicesOnClamp)
         {
             int size = 0;
             for (int dev = 0; dev < devicesOnClamp.Count; dev++)
@@ -466,9 +466,9 @@ namespace IO
         }
 
         /// Привязанные устройства.
-        public List<Device.IODevice>[] devices;
+        public List<EplanDevice.IODevice>[] devices;
         /// Привязанные каналы.
-        public List<Device.IODevice.IOChannel>[] devicesChannels;
+        public List<EplanDevice.IODevice.IOChannel>[] devicesChannels;
 
         #region Закрытые поля.
         /// <summary>

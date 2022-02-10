@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Device
+namespace EplanDevice
 {
     public interface IDevice
     {

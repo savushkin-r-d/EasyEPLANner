@@ -220,7 +220,7 @@ namespace EasyEplanner.Tests
 
         [TestCaseSource(nameof(CheckActionsAllowedDevTypes))]
         public void Constructor_NewStep_CheckActionsAllowedDevTypes(
-            bool isMainStep, List<Device.DeviceType[]> devTypesList)
+            bool isMainStep, List<EplanDevice.DeviceType[]> devTypesList)
         {
             var step = new Step(string.Empty, null, null, isMainStep);
 
@@ -229,9 +229,9 @@ namespace EasyEplanner.Tests
             for (int i = 0; i < actions.Count; i++)
             {
                 var action = actions[i];
-                action.GetDisplayObjects(out Device.DeviceType[] actualDevTypes,
+                action.GetDisplayObjects(out EplanDevice.DeviceType[] actualDevTypes,
                     out _, out _);
-                Device.DeviceType[] expectedDevTypes = devTypesList[i];
+                EplanDevice.DeviceType[] expectedDevTypes = devTypesList[i];
 
                 Assert.AreEqual(expectedDevTypes, actualDevTypes);
             }
@@ -243,76 +243,76 @@ namespace EasyEplanner.Tests
             // But action can contain other actions and it means, that main
             // action can't be changed itself, inner can. Null for main if u
             // have inner = it's ok.
-            Device.DeviceType[] allTypesAllowed = null;
+            EplanDevice.DeviceType[] allTypesAllowed = null;
 
-            var openDevice = new Device.DeviceType[]
+            var openDevice = new EplanDevice.DeviceType[]
             {
-                Device.DeviceType.V,
-                Device.DeviceType.DO,
-                Device.DeviceType.M
+                EplanDevice.DeviceType.V,
+                EplanDevice.DeviceType.DO,
+                EplanDevice.DeviceType.M
             };
 
-            var openReverse = new Device.DeviceType[]
+            var openReverse = new EplanDevice.DeviceType[]
             {
-                Device.DeviceType.M
+                EplanDevice.DeviceType.M
             };
 
-            var closeDevice = new Device.DeviceType[]
+            var closeDevice = new EplanDevice.DeviceType[]
             {
-                Device.DeviceType.V,
-                Device.DeviceType.DO,
-                Device.DeviceType.M
+                EplanDevice.DeviceType.V,
+                EplanDevice.DeviceType.DO,
+                EplanDevice.DeviceType.M
             };
 
-            var valveSeats = new Device.DeviceType[]
+            var valveSeats = new EplanDevice.DeviceType[]
             {
-                Device.DeviceType.V,
-                Device.DeviceType.DO
+                EplanDevice.DeviceType.V,
+                EplanDevice.DeviceType.DO
             };
-            Device.DeviceType[] openUpperSeats = valveSeats;
-            Device.DeviceType[] openLowerSeats = valveSeats;
+            EplanDevice.DeviceType[] openUpperSeats = valveSeats;
+            EplanDevice.DeviceType[] openLowerSeats = valveSeats;
 
-            var requiredFb = new Device.DeviceType[]
+            var requiredFb = new EplanDevice.DeviceType[]
             {
-                Device.DeviceType.DI,
-                Device.DeviceType.GS
+                EplanDevice.DeviceType.DI,
+                EplanDevice.DeviceType.GS
             };
 
-            var groupDiDo = new Device.DeviceType[]
+            var groupDiDo = new EplanDevice.DeviceType[]
             {
-                Device.DeviceType.DI,
-                Device.DeviceType.SB,
-                Device.DeviceType.DO,
-                Device.DeviceType.HL,
-                Device.DeviceType.GS,
-                Device.DeviceType.LS,
-                Device.DeviceType.FS
+                EplanDevice.DeviceType.DI,
+                EplanDevice.DeviceType.SB,
+                EplanDevice.DeviceType.DO,
+                EplanDevice.DeviceType.HL,
+                EplanDevice.DeviceType.GS,
+                EplanDevice.DeviceType.LS,
+                EplanDevice.DeviceType.FS
             };
 
             var groupInvertedDIDO = groupDiDo;
 
-            var groupAiAo = new Device.DeviceType[]
+            var groupAiAo = new EplanDevice.DeviceType[]
             {
-                Device.DeviceType.AI,
-                Device.DeviceType.AO,
-                Device.DeviceType.M,
-                Device.DeviceType.PT,
-                Device.DeviceType.LT,
-                Device.DeviceType.FQT,
-                Device.DeviceType.QT,
-                Device.DeviceType.TE,
-                Device.DeviceType.VC
+                EplanDevice.DeviceType.AI,
+                EplanDevice.DeviceType.AO,
+                EplanDevice.DeviceType.M,
+                EplanDevice.DeviceType.PT,
+                EplanDevice.DeviceType.LT,
+                EplanDevice.DeviceType.FQT,
+                EplanDevice.DeviceType.QT,
+                EplanDevice.DeviceType.TE,
+                EplanDevice.DeviceType.VC
             };
 
-            var enableStepBySignal = new Device.DeviceType[]
+            var enableStepBySignal = new EplanDevice.DeviceType[]
             {
-                Device.DeviceType.DI
+                EplanDevice.DeviceType.DI
             };
 
             var mainStep = new object[]
             {
                 true,
-                new List<Device.DeviceType[]>()
+                new List<EplanDevice.DeviceType[]>()
                 {
                     allTypesAllowed,
                     openDevice,
@@ -332,7 +332,7 @@ namespace EasyEplanner.Tests
             var noMainStep = new object[]
             {
                 true,
-                new List<Device.DeviceType[]>()
+                new List<EplanDevice.DeviceType[]>()
                 {
                     allTypesAllowed,
                     openDevice,
@@ -359,7 +359,7 @@ namespace EasyEplanner.Tests
 
         [TestCaseSource(nameof(CheckActionsAllowedDevSubTypesSource))]
         public void Constructor_NewStep_CheckActionsAllowedDevSubTypes(
-            bool isMainStep, List<Device.DeviceSubType[]> devSubTypesList)
+            bool isMainStep, List<EplanDevice.DeviceSubType[]> devSubTypesList)
         {
             var step = new Step(string.Empty, null, null, isMainStep);
 
@@ -369,8 +369,8 @@ namespace EasyEplanner.Tests
             {
                 var action = actions[i];
                 action.GetDisplayObjects(out _,
-                    out Device.DeviceSubType[] actualDevSubTypes, out _);
-                Device.DeviceSubType[] expectedDevTypes = devSubTypesList[i];
+                    out EplanDevice.DeviceSubType[] actualDevSubTypes, out _);
+                EplanDevice.DeviceSubType[] expectedDevTypes = devSubTypesList[i];
 
                 Assert.AreEqual(expectedDevTypes, actualDevSubTypes);
             }
@@ -379,35 +379,35 @@ namespace EasyEplanner.Tests
         private static object[] CheckActionsAllowedDevSubTypesSource()
         {
             // null - it means, that we can use any subtype from defined types.
-            Device.DeviceSubType[] allSubTypesAllowed = null;
+            EplanDevice.DeviceSubType[] allSubTypesAllowed = null;
 
-            var openReverse = new Device.DeviceSubType[]
+            var openReverse = new EplanDevice.DeviceSubType[]
             {
-                Device.DeviceSubType.M_REV_FREQ,
-                Device.DeviceSubType.M_REV_FREQ_2,
-                Device.DeviceSubType.M_REV_FREQ_2_ERROR,
-                Device.DeviceSubType.M_ATV,
-                Device.DeviceSubType.M_ATV_LINEAR,
-                Device.DeviceSubType.M,
-                Device.DeviceSubType.M_VIRT,
+                EplanDevice.DeviceSubType.M_REV_FREQ,
+                EplanDevice.DeviceSubType.M_REV_FREQ_2,
+                EplanDevice.DeviceSubType.M_REV_FREQ_2_ERROR,
+                EplanDevice.DeviceSubType.M_ATV,
+                EplanDevice.DeviceSubType.M_ATV_LINEAR,
+                EplanDevice.DeviceSubType.M,
+                EplanDevice.DeviceSubType.M_VIRT,
             };
 
-            var valveSeats = new Device.DeviceSubType[]
+            var valveSeats = new EplanDevice.DeviceSubType[]
             {
-                Device.DeviceSubType.V_MIXPROOF,
-                Device.DeviceSubType.V_AS_MIXPROOF,
-                Device.DeviceSubType.V_IOLINK_MIXPROOF,
-                Device.DeviceSubType.V_VIRT,
-                Device.DeviceSubType.DO,
-                Device.DeviceSubType.DO_VIRT
+                EplanDevice.DeviceSubType.V_MIXPROOF,
+                EplanDevice.DeviceSubType.V_AS_MIXPROOF,
+                EplanDevice.DeviceSubType.V_IOLINK_MIXPROOF,
+                EplanDevice.DeviceSubType.V_VIRT,
+                EplanDevice.DeviceSubType.DO,
+                EplanDevice.DeviceSubType.DO_VIRT
             };
-            Device.DeviceSubType[] openUpperSeats = valveSeats;
-            Device.DeviceSubType[] openLowerSeats = valveSeats;
+            EplanDevice.DeviceSubType[] openUpperSeats = valveSeats;
+            EplanDevice.DeviceSubType[] openLowerSeats = valveSeats;
 
             var mainStep = new object[]
             {
                 true,
-                new List<Device.DeviceSubType[]>()
+                new List<EplanDevice.DeviceSubType[]>()
                 {
                     allSubTypesAllowed,
                     allSubTypesAllowed,
@@ -427,7 +427,7 @@ namespace EasyEplanner.Tests
             var noMainStep = new object[]
             {
                 true,
-                new List<Device.DeviceSubType[]>()
+                new List<EplanDevice.DeviceSubType[]>()
                 {
                     allSubTypesAllowed,
                     allSubTypesAllowed,

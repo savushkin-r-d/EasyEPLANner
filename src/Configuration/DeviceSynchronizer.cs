@@ -35,7 +35,7 @@ namespace EasyEPlanner
         private void PreparePreviouslyDevices()
         {
             int devicesCount = deviceReader.DevicesCount;
-            prevDevices = new Device.IODevice[devicesCount];
+            prevDevices = new EplanDevice.IODevice[devicesCount];
             deviceReader.CopyDevices(prevDevices);
         }
 
@@ -69,7 +69,7 @@ namespace EasyEPlanner
 
             for (int k = 0; k < prevDevicesCount; k++)                       //2
             {
-                Device.IODevice prevDevice = prevDevices[k];
+                EplanDevice.IODevice prevDevice = prevDevices[k];
                 var prevDeviceEplanFunc = prevDevice.EplanObjectFunction;
 
                 bool addedNewDevice = prevDeviceEplanFunc == null;
@@ -85,7 +85,7 @@ namespace EasyEPlanner
 
                 needSynch = true;
                 int deviceIndex = -1;
-                foreach (Device.IODevice newDevice in deviceReader.Devices)
+                foreach (EplanDevice.IODevice newDevice in deviceReader.Devices)
                 {
                     deviceIndex++;                                         //2.1
                     bool deviceDeleted = prevDeviceEplanFunc.IsValid == false;
@@ -139,7 +139,7 @@ namespace EasyEPlanner
         }
 
         private static IDeviceSynchronizeService synchronizeService;
-        private Device.IODevice[] prevDevices;
+        private EplanDevice.IODevice[] prevDevices;
         private DeviceReader deviceReader;
         private ITechObjectManager techObjectManager;
     }

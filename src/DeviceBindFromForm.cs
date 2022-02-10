@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Device;
+using EplanDevice;
 using IO;
 using StaticHelper;
 

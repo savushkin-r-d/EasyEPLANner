@@ -74,8 +74,8 @@ namespace Tests.TechObject
 
         [TestCaseSource(nameof(CheckAllowedDevicesInEveryAction))]
         public void Constructor_NewAction_CheckAlloweDevicesInEveryAction(
-            List<Device.DeviceType[]> expectedTypes,
-            List<Device.DeviceSubType[]> expectedSubTypes)
+            List<EplanDevice.DeviceType[]> expectedTypes,
+            List<EplanDevice.DeviceSubType[]> expectedSubTypes)
         {
             var action = new ActionToStepByCondition(string.Empty, null,
                 string.Empty);
@@ -84,8 +84,8 @@ namespace Tests.TechObject
 
             for (int i = 0; i < actions.Count; i++)
             {
-                Device.DeviceType[] actualTypes;
-                Device.DeviceSubType[] actualSubTypes;
+                EplanDevice.DeviceType[] actualTypes;
+                EplanDevice.DeviceSubType[] actualSubTypes;
 
                 actions[i].GetDisplayObjects(out actualTypes,
                     out actualSubTypes, out _);
@@ -100,12 +100,12 @@ namespace Tests.TechObject
 
         private static object[] CheckAllowedDevicesInEveryAction()
         {
-            var allowedOnoffDevTypes = new Device.DeviceType[]
+            var allowedOnoffDevTypes = new EplanDevice.DeviceType[]
             {
-                Device.DeviceType.V,
-                Device.DeviceType.GS,
-                Device.DeviceType.DI,
-                Device.DeviceType.DO
+                EplanDevice.DeviceType.V,
+                EplanDevice.DeviceType.GS,
+                EplanDevice.DeviceType.DI,
+                EplanDevice.DeviceType.DO
             };
 
             var onDevsTypes = allowedOnoffDevTypes;
@@ -115,12 +115,12 @@ namespace Tests.TechObject
             {
                 new object[]
                 {
-                    new List<Device.DeviceType[]>()
+                    new List<EplanDevice.DeviceType[]>()
                     {
                         onDevsTypes,
                         offDevsTypes
                     },
-                    new List<Device.DeviceSubType[]>()
+                    new List<EplanDevice.DeviceSubType[]>()
                     {
                         null,
                         null

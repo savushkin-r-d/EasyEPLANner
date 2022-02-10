@@ -60,6 +60,6 @@ namespace InterprojectExchange
             }
         }
 
-        private static string pattern = Device.DeviceManager.DESCRIPTION_PATTERN;
+        private static string pattern = EplanDevice.DeviceManager.DESCRIPTION_PATTERN;
     }
 }

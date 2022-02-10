@@ -2,56 +2,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Device;
+using EplanDevice;
 
-namespace Tests.Devices
+namespace Tests.EplanDevices
 {
-    public class AOTest
+    public class HATest
     {
         const string Incorrect = "Incorrect";
-        const string AOSubType = "AO";
-        const string AO_VIRT = "AO_VIRT";
+        const string HA = "HA";
+        const string HA_VIRT = "HA_VIRT";
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
         const string DI = IODevice.IOChannel.DI;
         const string DO = IODevice.IOChannel.DO;
-
-        /// <summary>
-        /// Тест установки подтипа устройства
-        /// </summary>
-        /// <param name="expectedSubType">Ожидаемый подтип</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(SetSubTypeTestData))]
-        public void SetSubType_NewDev_ReturnsExpectedSubType(
-            DeviceSubType expectedSubType, string subType,
-            IODevice device)
-        {
-            device.SetSubType(subType);
-            Assert.AreEqual(expectedSubType, device.DeviceSubType);
-        }
-
-        /// <summary>
-        /// 1 - Ожидаемое значение подтипа,
-        /// 2 - Задаваемое значение подтипа,
-        /// 3 - Устройство для тестов
-        /// </summary>
-        /// <returns></returns>
-        private static object[] SetSubTypeTestData()
-        {
-            return new object[]
-            {
-                new object[] { DeviceSubType.AO, string.Empty,
-                    GetRandomAODevice() },
-                new object[] { DeviceSubType.AO, AOSubType,
-                    GetRandomAODevice() },
-                new object[] { DeviceSubType.AO_VIRT, AO_VIRT,
-                    GetRandomAODevice() },
-                new object[] { DeviceSubType.NONE, Incorrect,
-                    GetRandomAODevice() },
-            };
-        }
 
         /// <summary>
         /// Тест получения подтипа устройства
@@ -78,10 +42,46 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { AOSubType, string.Empty, GetRandomAODevice() },
-                new object[] { AOSubType, AOSubType, GetRandomAODevice() },
-                new object[] { AO_VIRT, AO_VIRT, GetRandomAODevice() },
-                new object[] { string.Empty, Incorrect, GetRandomAODevice() },
+                new object[] { HA, string.Empty, GetRandomHADevice() },
+                new object[] { string.Empty, Incorrect, GetRandomHADevice() },
+                new object[] { HA, HA, GetRandomHADevice() },
+                new object[] { HA_VIRT, HA_VIRT, GetRandomHADevice() },
+            };
+        }
+
+        /// <summary>
+        /// Тест установки подтипа устройства
+        /// </summary>
+        /// <param name="expectedSubType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(SetSubTypeTestData))]
+        public void SetSubType_NewDev_ReturnsExpectedSubType(
+            DeviceSubType expectedSubType, string subType,
+            IODevice device)
+        {
+            device.SetSubType(subType);
+            Assert.AreEqual(expectedSubType, device.DeviceSubType);
+        }
+
+        /// <summary>
+        /// 1 - Ожидаемое перечисление подтипа,
+        /// 2 - Задаваемое значение подтипа,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] SetSubTypeTestData()
+        {
+            return new object[]
+            {
+                new object[] { DeviceSubType.HA, string.Empty,
+                    GetRandomHADevice() },
+                new object[] { DeviceSubType.HA, HA,
+                    GetRandomHADevice() },
+                new object[] { DeviceSubType.NONE, Incorrect,
+                    GetRandomHADevice() },
+                new object[] { DeviceSubType.HA_VIRT, HA_VIRT,
+                    GetRandomHADevice() },
             };
         }
 
@@ -109,67 +109,18 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForAO = new Dictionary<string, int>()
+            var exportForHA = new Dictionary<string, int>()
             {
+                {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
-                {IODevice.Tag.V, 1},
-                {IODevice.Parameter.P_MIN_V, 1},
-                {IODevice.Parameter.P_MAX_V, 1},
-            };
-
-            var exportForVirtAO = new Dictionary<string, int>()
-            {
-                {IODevice.Tag.M, 1},
-                {IODevice.Tag.V, 1},
             };
 
             return new object[]
             {
-                new object[] {exportForAO, string.Empty, GetRandomAODevice()},
-                new object[] {exportForAO, AOSubType, GetRandomAODevice()},
-                new object[] {exportForVirtAO, AO_VIRT, GetRandomAODevice()},
-                new object[] {null, Incorrect, GetRandomAODevice()},
-            };
-        }
-
-        /// <summary>
-        /// Тестирование диапазона измерения устройства
-        /// </summary>
-        /// <param name="expected">Ожидаемый диапазон</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="value1">Начало диапазона</param>
-        /// <param name="value2">Конец диапазона</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(GetRangeTestData))]
-        public void GetRangeTest(string expected, string subType,
-            double value1, double value2, IODevice device)
-        {
-            device.SetSubType(subType);
-            device.SetParameter(IODevice.Parameter.P_MIN_V, value1);
-            device.SetParameter(IODevice.Parameter.P_MAX_V, value2);
-            Assert.AreEqual(expected, device.GetRange());
-        }
-
-        /// <summary>
-        /// 1 - Ожидаемое значение,
-        /// 2 - Подтип устройства в виде строки,
-        /// 3 - Значение параметра меньшее,
-        /// 4 - Значение параметра большее,
-        /// 5 - Устройство для теста
-        /// </summary>
-        /// <returns></returns>
-        private static object[] GetRangeTestData()
-        {
-            return new object[]
-            {
-                new object[] {$"_{2.0}..{4.0}", string.Empty, 2.0, 4.0,
-                    GetRandomAODevice()},
-                new object[] {$"_{1.0}..{3.0}", AOSubType, 1.0, 3.0,
-                    GetRandomAODevice()},
-                new object[] {string.Empty, AO_VIRT, 4.0, 8.0,
-                    GetRandomAODevice()},
-                new object[] {string.Empty, Incorrect, 7.0, 9.0,
-                    GetRandomAODevice()},
+                new object[] {exportForHA, string.Empty, GetRandomHADevice()},
+                new object[] {exportForHA, HA, GetRandomHADevice()},
+                new object[] {null, Incorrect, GetRandomHADevice()},
+                new object[] {exportForHA, HA_VIRT, GetRandomHADevice()},
             };
         }
 
@@ -199,31 +150,31 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
-            var defaultParameters = new string[]
-            {
-                IODevice.Parameter.P_MIN_V,
-                IODevice.Parameter.P_MAX_V,
-            };
-
             return new object[]
             {
                 new object[]
                 {
-                    defaultParameters,
-                    AOSubType,
-                    GetRandomAODevice()
-                },
-                new object[]
-                {
-                    defaultParameters,
-                    string.Empty,
-                    GetRandomAODevice()
+                    new string[0],
+                    HA,
+                    GetRandomHADevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    AO_VIRT,
-                    GetRandomAODevice()
+                    string.Empty,
+                    GetRandomHADevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    Incorrect,
+                    GetRandomHADevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    HA_VIRT,
+                    GetRandomHADevice()
                 },
             };
         }
@@ -264,12 +215,12 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
-            var oneAnalogOutputChannel = new Dictionary<string, int>()
+            var discreteSirenChannels = new Dictionary<string, int>()
             {
                 { AI, 0 },
-                { AO, 1 },
+                { AO, 0 },
                 { DI, 0 },
-                { DO, 0 },
+                { DO, 1 },
             };
 
             var emptyChannels = new Dictionary<string, int>()
@@ -284,53 +235,53 @@ namespace Tests.Devices
             {
                 new object[]
                 {
-                    oneAnalogOutputChannel,
+                    discreteSirenChannels,
+                    HA,
+                    GetRandomHADevice()
+                },
+                new object[]
+                {
+                    discreteSirenChannels,
                     string.Empty,
-                    GetRandomAODevice()
-                },
-                new object[]
-                {
-                    oneAnalogOutputChannel,
-                    AOSubType,
-                    GetRandomAODevice()
-                },
-                new object[]
-                {
-                    emptyChannels,
-                    AO_VIRT,
-                    GetRandomAODevice()
+                    GetRandomHADevice()
                 },
                 new object[]
                 {
                     emptyChannels,
                     Incorrect,
-                    GetRandomAODevice()
+                    GetRandomHADevice()
                 },
+                new object[]
+                {
+                    emptyChannels,
+                    HA_VIRT,
+                    GetRandomHADevice()
+                }
             };
         }
 
         /// <summary>
-        /// Генератор AO устройств
+        /// Генератор HA устройств
         /// </summary>
         /// <returns></returns>
-        private static IODevice GetRandomAODevice()
+        private static IODevice GetRandomHADevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new AO("KOAG4AO1", "+KOAG4-AO1",
-                        "Test device", 1, "KOAG", 4);
+                    return new HA("KOAG4HA1", "+KOAG4-HA1",
+                        "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new AO("LINE1AO2", "+LINE1-AO2",
-                        "Test device", 2, "LINE", 1);
+                    return new HA("LINE1HA2", "+LINE1-HA2",
+                        "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new AO("TANK2AO1", "+TANK2-AO1",
-                        "Test device", 1, "TANK", 2);
+                    return new HA("TANK2HA1", "+TANK2-HA1",
+                        "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new AO("CW_TANK3AO3", "+CW_TANK3-AO3",
-                        "Test device", 3, "CW_TANK", 3);
+                    return new HA("CW_TANK3HA3", "+CW_TANK3-HA3",
+                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }
     }

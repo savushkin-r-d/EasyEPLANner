@@ -164,8 +164,8 @@ namespace Editor
         /// редактирования.</param>
         /// <param name="displayParameters">Отобразить параметры объекта
         /// </param>
-        void GetDisplayObjects(out Device.DeviceType[] devTypes,
-            out Device.DeviceSubType[] devSubTypes, out bool displayParameters);
+        void GetDisplayObjects(out EplanDevice.DeviceType[] devTypes,
+            out EplanDevice.DeviceSubType[] devSubTypes, out bool displayParameters);
 
         /// <summary>    
         /// Признак необходимости обновления отображения родительского узла.

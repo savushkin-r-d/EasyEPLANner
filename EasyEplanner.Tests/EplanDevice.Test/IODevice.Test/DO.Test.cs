@@ -2,15 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Device;
+using EplanDevice;
 
-namespace Tests.Devices
+namespace Tests.EplanDevices
 {
-    class SBTest
+    public class DOTest
     {
         const string Incorrect = "Incorrect";
-        const string SB = "SB";
-        const string SB_VIRT = "SB_VIRT";
+        const string DOSubType = "DO";
+        const string DO_VIRT = "DO_VIRT";
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
@@ -23,7 +23,7 @@ namespace Tests.Devices
         /// <param name="expectedSubType">Ожидаемый подтип</param>
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(SetSubTypeTestData))]
+        [TestCaseSource(nameof(SetSubTypeTestDevices))]
         public void SetSubType_NewDev_ReturnsExpectedSubType(
             DeviceSubType expectedSubType, string subType,
             IODevice device)
@@ -38,19 +38,18 @@ namespace Tests.Devices
         /// 3 - Устройство для тестов
         /// </summary>
         /// <returns></returns>
-        private static object[] SetSubTypeTestData()
+        private static object[] SetSubTypeTestDevices()
         {
             return new object[]
             {
-                new object[] { DeviceSubType.SB, SB,
-                    GetRandomSBDevice() },
-                new object[] { DeviceSubType.SB_VIRT, SB_VIRT,
-                    GetRandomSBDevice() },
-                new object[] { DeviceSubType.SB, string.Empty,
-                    GetRandomSBDevice() },
+                new object[] { DeviceSubType.DO, string.Empty,
+                    GetRandomDODevice() },
+                new object[] { DeviceSubType.DO, DOSubType,
+                    GetRandomDODevice() },
+                new object[] { DeviceSubType.DO_VIRT, DO_VIRT,
+                    GetRandomDODevice() },
                 new object[] { DeviceSubType.NONE, Incorrect,
-                    GetRandomSBDevice() },
-
+                    GetRandomDODevice() },
             };
         }
 
@@ -79,10 +78,10 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { SB, string.Empty, GetRandomSBDevice() },
-                new object[] { string.Empty, Incorrect, GetRandomSBDevice() },
-                new object[] { SB, SB, GetRandomSBDevice() },
-                new object[] { SB_VIRT, SB_VIRT, GetRandomSBDevice() },
+                new object[] { DOSubType, string.Empty, GetRandomDODevice() },
+                new object[] { DOSubType, DOSubType, GetRandomDODevice() },
+                new object[] { DO_VIRT, DO_VIRT, GetRandomDODevice() },
+                new object[] { string.Empty, Incorrect, GetRandomDODevice() },
             };
         }
 
@@ -92,7 +91,7 @@ namespace Tests.Devices
         /// <param name="expectedProperties">Ожидаемый список свойств</param>
         /// <param name="subType">Актуальный подтип</param>
         /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(GetDevicePropertiesTestData))]
+        [TestCaseSource(nameof(GetDevicePropertiesTestDevices))]
         public void GetDeviceProperties_NewDev_ReturnsExpectedDictOfProperties(
             Dictionary<string, int> expectedProperties, string subType,
             IODevice device)
@@ -108,16 +107,9 @@ namespace Tests.Devices
         /// 3 - Устройство для тестов
         /// </summary>
         /// <returns></returns>
-        private static object[] GetDevicePropertiesTestData()
+        private static object[] GetDevicePropertiesTestDevices()
         {
-            var exportForSB = new Dictionary<string, int>()
-            {
-                {IODevice.Tag.ST, 1},
-                {IODevice.Tag.M, 1},
-                {IODevice.Parameter.P_DT, 1},
-            };
-
-            var exportForSBVirt = new Dictionary<string, int>()
+            var exportForDO = new Dictionary<string, int>()
             {
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
@@ -125,9 +117,10 @@ namespace Tests.Devices
 
             return new object[]
             {
-                new object[] {exportForSB, string.Empty, GetRandomSBDevice()},
-                new object[] {exportForSB, SB, GetRandomSBDevice()},
-                new object[] {exportForSBVirt, SB_VIRT, GetRandomSBDevice()},
+                new object[] {exportForDO, string.Empty, GetRandomDODevice()},
+                new object[] {exportForDO, DOSubType, GetRandomDODevice()},
+                new object[] {exportForDO, DO_VIRT, GetRandomDODevice()},
+                new object[] {exportForDO, Incorrect, GetRandomDODevice()},
             };
         }
 
@@ -162,26 +155,20 @@ namespace Tests.Devices
                 new object[]
                 {
                     new string[0],
-                    SB,
-                    GetRandomSBDevice()
+                    DOSubType,
+                    GetRandomDODevice()
                 },
                 new object[]
                 {
                     new string[0],
                     string.Empty,
-                    GetRandomSBDevice()
+                    GetRandomDODevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    Incorrect,
-                    GetRandomSBDevice()
-                },
-                new object[]
-                {
-                    new string[0],
-                    SB_VIRT,
-                    GetRandomSBDevice()
+                    DO_VIRT,
+                    GetRandomDODevice()
                 },
             };
         }
@@ -222,15 +209,15 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
-            var defaultSignals = new Dictionary<string, int>()
+            var oneDiscreteOutputChannel = new Dictionary<string, int>()
             {
                 { AI, 0 },
                 { AO, 0 },
-                { DI, 1 },
-                { DO, 0 },
+                { DI, 0 },
+                { DO, 1 },
             };
 
-            var emptySignals = new Dictionary<string, int>()
+            var emptyChannels = new Dictionary<string, int>()
             {
                 { AI, 0 },
                 { AO, 0 },
@@ -242,53 +229,53 @@ namespace Tests.Devices
             {
                 new object[]
                 {
-                    defaultSignals,
-                    SB,
-                    GetRandomSBDevice()
-                },
-                new object[]
-                {
-                    defaultSignals,
+                    oneDiscreteOutputChannel,
                     string.Empty,
-                    GetRandomSBDevice()
+                    GetRandomDODevice()
                 },
                 new object[]
                 {
-                    emptySignals,
+                    oneDiscreteOutputChannel,
+                    DOSubType,
+                    GetRandomDODevice()
+                },
+                new object[]
+                {
+                    emptyChannels,
+                    DO_VIRT,
+                    GetRandomDODevice()
+                },
+                new object[]
+                {
+                    emptyChannels,
                     Incorrect,
-                    GetRandomSBDevice()
+                    GetRandomDODevice()
                 },
-                new object[]
-                {
-                    emptySignals,
-                    SB_VIRT,
-                    GetRandomSBDevice()
-                }
             };
         }
 
         /// <summary>
-        /// Генератор SB устройств
+        /// Генератор DO устройств
         /// </summary>
         /// <returns></returns>
-        private static IODevice GetRandomSBDevice()
+        private static IODevice GetRandomDODevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new SB("KOAG4SB1", "+KOAG4-SB1",
-                        "Test device", 1, "KOAG", 4, "DeviceArticle");
+                    return new DO("KOAG4DO1", "+KOAG4-DO1",
+                        "Test device", 1, "KOAG", 4);
                 case 2:
-                    return new SB("LINE1SB2", "+LINE1-SB2",
-                        "Test device", 2, "LINE", 1, "DeviceArticle");
+                    return new DO("LINE1DO2", "+LINE1-DO2",
+                        "Test device", 2, "LINE", 1);
                 case 3:
-                    return new SB("TANK2SB1", "+TANK2-SB1",
-                        "Test device", 1, "TANK", 2, "DeviceArticle");
+                    return new DO("TANK2DO1", "+TANK2-DO1",
+                        "Test device", 1, "TANK", 2);
                 default:
-                    return new SB("CW_TANK3SB3", "+CW_TANK3-SB3",
-                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
+                    return new DO("CW_TANK3DO3", "+CW_TANK3-DO3",
+                        "Test device", 3, "CW_TANK", 3);
             }
         }
     }

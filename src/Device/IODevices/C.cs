@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Device
+namespace EplanDevice
 {
     /// <summary>
     /// ПИД-регулятор

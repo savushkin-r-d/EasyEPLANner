@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using TechObject;
-using Device;
+using EplanDevice;
 using IO;
 using System.Globalization;
 using System.Drawing;
@@ -740,7 +740,7 @@ namespace EasyEPlanner
             devices.Sort((x, y) =>
             {
                 int res = 0;
-                res = Device.Device.Compare(x, y);
+                res = Device.Compare(x, y);
                 return res;
             });
 

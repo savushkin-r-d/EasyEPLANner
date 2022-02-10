@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
 using System.Linq;
 using System.Windows.Forms;
-using Device;
+using EplanDevice;
 
-namespace Tests.Devices
+namespace Tests.EplanDevices
 {
     public class IODeviceTest
     {

@@ -18,12 +18,12 @@ namespace TechObject
         public ActionToStepByCondition(string name, Step owner, 
             string luaName) : base(name, owner, luaName)
         {
-            var allowedDevTypes = new Device.DeviceType[]
+            var allowedDevTypes = new EplanDevice.DeviceType[]
             {
-                Device.DeviceType.V,
-                Device.DeviceType.GS,
-                Device.DeviceType.DI,
-                Device.DeviceType.DO
+                EplanDevice.DeviceType.V,
+                EplanDevice.DeviceType.GS,
+                EplanDevice.DeviceType.DI,
+                EplanDevice.DeviceType.DO
             };
 
             SubActions.Add(new Action("Включение устройств", owner,

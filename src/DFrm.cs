@@ -319,7 +319,7 @@ namespace EasyEPlanner
             {
                 switch(subNode.Tag)
                 {
-                    case Device.Device dev:
+                    case EplanDevice.Device dev:
                         string devName = $" {dev.Name} ";
                         SetUpCheckState(subNode, devName, checkedObjects);
                         break;
@@ -374,8 +374,8 @@ namespace EasyEPlanner
         }
 
         private Editor.ITreeViewItem treeViewItemLastSelected = null;
-        private Device.DeviceType[] devTypesLastSelected = null;
-        private Device.DeviceSubType[] devSubTypesLastSelected = null;
+        private EplanDevice.DeviceType[] devTypesLastSelected = null;
+        private EplanDevice.DeviceSubType[] devSubTypesLastSelected = null;
         private bool displayParametersLastSelected = false;
         private int techObjectIndexLastSelected = -1;
         private bool prevShowChannels = false;
@@ -390,11 +390,11 @@ namespace EasyEPlanner
             {
                 var node = treeNode.Tag as Node;
 
-                if(node.Tag is Device.IODevice)
+                if(node.Tag is EplanDevice.IODevice)
                 {
                     RefreshDevice(node, treeNode);
                 }
-                else if(node.Tag is Device.IODevice.IOChannel)
+                else if(node.Tag is EplanDevice.IODevice.IOChannel)
                 {
                     RefreshChannel(node, treeNode);
                 }
@@ -409,10 +409,10 @@ namespace EasyEPlanner
             /// </summary>
             private static void RefreshDevice(Node node, TreeNodeAdv treeNode)
             {
-                var dev = node.Tag as Device.IODevice;
+                var dev = node.Tag as EplanDevice.IODevice;
 
                 bool isDevHidden = true;
-                foreach (Device.IODevice.IOChannel ch in dev.Channels)
+                foreach (EplanDevice.IODevice.IOChannel ch in dev.Channels)
                 {
                     if (ch.IsEmpty())
                     {
@@ -439,7 +439,7 @@ namespace EasyEPlanner
             /// </summary>
             private static void RefreshChannel(Node node, TreeNodeAdv treeNode)
             {
-                var chn = node.Tag as Device.IODevice.IOChannel;
+                var chn = node.Tag as EplanDevice.IODevice.IOChannel;
                 if (chn.IsEmpty())
                 {
                     node.IsHidden = false;
@@ -615,8 +615,8 @@ namespace EasyEPlanner
 
             Dictionary<string, int> countDev = MakeDevicesCounterDictionary(
                 root.Nodes);
-            var deviceManager = Device.DeviceManager.GetInstance();
-            foreach (Device.IODevice dev in deviceManager.Devices)
+            var deviceManager = EplanDevice.DeviceManager.GetInstance();
+            foreach (EplanDevice.IODevice dev in deviceManager.Devices)
             {
                 string deviceDescription = GenerateDeviceDescription(dev);
                 string devSubType = dev.GetDeviceSubTypeStr(dev.DeviceType,
@@ -669,12 +669,12 @@ namespace EasyEPlanner
         /// <returns></returns>
         private object[] GenerateArrayObjectsForFill(string[] subTypes)
         {
-            Array devicesTypesEnum = Enum.GetValues(typeof(Device.DeviceType));
+            Array devicesTypesEnum = Enum.GetValues(typeof(EplanDevice.DeviceType));
             int publicLength = devicesTypesEnum.Length + subTypes.Length;
             var objectArray = new object[publicLength];
             
             int index = 0;       
-            foreach(Device.DeviceType devType in devicesTypesEnum)
+            foreach(EplanDevice.DeviceType devType in devicesTypesEnum)
             {
                 objectArray[index] = devType;
                 index++;
@@ -700,14 +700,14 @@ namespace EasyEPlanner
             foreach (var devType in deviceEnum)
             {
                 var r = new Node(devType.ToString());
-                if (devType is Device.DeviceType)
+                if (devType is EplanDevice.DeviceType)
                 {
-                    r.Tag = (Device.DeviceType)devType;
+                    r.Tag = (EplanDevice.DeviceType)devType;
                 }
                 else
                 {
-                    var devSubType = (Device.DeviceSubType)Enum
-                        .Parse(typeof(Device.DeviceSubType),
+                    var devSubType = (EplanDevice.DeviceSubType)Enum
+                        .Parse(typeof(EplanDevice.DeviceSubType),
                         devType.ToString());
                     r.Tag = devSubType;
                 }
@@ -741,7 +741,7 @@ namespace EasyEPlanner
         /// <param name="root">Главный узел</param>
         /// <param name="deviceDescription">Описание устройства</param>
         /// <param name="countDev">Словарь для подсчета количества</param>
-        private void FillTypeNode(Device.IODevice dev, Node root,
+        private void FillTypeNode(EplanDevice.IODevice dev, Node root,
             string deviceDescription, Dictionary<string, int> countDev)
         {
             Node devTypeNode = FindDevTypeNode(root, dev);
@@ -766,7 +766,7 @@ namespace EasyEPlanner
         /// <param name="root">Главный узел</param>
         /// <param name="deviceDescription">Описание устройства</param>
         /// <param name="countDev">Словарь для подсчета количества</param>
-        private void FillSubTypeNode(Device.IODevice dev, Node root, 
+        private void FillSubTypeNode(EplanDevice.IODevice dev, Node root, 
             string deviceDescription, Dictionary<string, int> countDev)
         {
             Node devSubTypeNode = FindDevSubTypeNode(root, dev);
@@ -789,12 +789,12 @@ namespace EasyEPlanner
         /// <param name="root">главный узел</param>
         /// <param name="dev">Устройство</param>
         /// <returns></returns>
-        private Node FindDevTypeNode(Node root, Device.IODevice dev)
+        private Node FindDevTypeNode(Node root, EplanDevice.IODevice dev)
         {
             foreach (Node node in root.Nodes)
             {
-                if (node.Tag is Device.DeviceType && 
-                    (Device.DeviceType)node.Tag == dev.DeviceType)
+                if (node.Tag is EplanDevice.DeviceType && 
+                    (EplanDevice.DeviceType)node.Tag == dev.DeviceType)
                 {
                     return node;
                 }
@@ -809,13 +809,13 @@ namespace EasyEPlanner
         /// <param name="dev">Устройство</param>
         /// <param name="root">Главный узел</param>
         /// <returns></returns>
-        private Node FindDevSubTypeNode(Node root, Device.IODevice dev)
+        private Node FindDevSubTypeNode(Node root, EplanDevice.IODevice dev)
         {
             foreach (Node node in root.Nodes)
             {
                 string devSubType = dev.GetDeviceSubTypeStr(dev.DeviceType, 
                     dev.DeviceSubType);
-                if (node.Tag is Device.DeviceSubType && 
+                if (node.Tag is EplanDevice.DeviceSubType && 
                     node.Text == devSubType)
                 {
                     return node;
@@ -830,7 +830,7 @@ namespace EasyEPlanner
         /// </summary>
         /// <param name="dev">Устройство</param>
         /// <returns></returns>
-        private string GenerateDeviceDescription(Device.IODevice dev)
+        private string GenerateDeviceDescription(EplanDevice.IODevice dev)
         {
             string result = "";
             if (dev.Description.Contains('\n'))
@@ -893,7 +893,7 @@ namespace EasyEPlanner
         /// <param name="devObjectNode">Узел объекта или null</param>
         /// <returns>Заполненный узел</returns>
         private Node MakeDeviceNode(Node devTypeNode, Node devObjectNode, 
-            Device.IODevice dev, string deviceDescription)
+            EplanDevice.IODevice dev, string deviceDescription)
         {
             Node devNode;
             if (dev.ObjectName != "")
@@ -926,14 +926,14 @@ namespace EasyEPlanner
         /// <param name="devNode">Узел устройства</param>
         /// <param name="dev">Устройство</param>
         /// <returns></returns>
-        private bool AddDevChannels(Node devNode, Device.IODevice dev)
+        private bool AddDevChannels(Node devNode, EplanDevice.IODevice dev)
         {
             bool isDevVisible = false;
             if (prevShowChannels)
             {
                 Node channelNode;
                 //Показываем каналы.
-                foreach (Device.IODevice.IOChannel ch in dev.Channels)
+                foreach (EplanDevice.IODevice.IOChannel ch in dev.Channels)
                 {
                     if (!ch.IsEmpty())
                     {
@@ -975,7 +975,7 @@ namespace EasyEPlanner
         /// <param name="isDevVisible">Видимость устройства</param>
         private void HideIncorrectDeviceTypeSubType(Node devTypeSubTypeNode,
             bool isDevVisible, Dictionary<string,int> countDev, 
-            Device.IODevice dev)
+            EplanDevice.IODevice dev)
         {
             if (devTypesLastSelected != null &&
                 !devTypesLastSelected.Contains(dev.DeviceType))
@@ -1064,42 +1064,42 @@ namespace EasyEPlanner
                 nodes.Sort((x, y) =>
                {
                    int res = 0;
-                   if (x.Tag is Device.IODevice.IOChannel &&
-                       y.Tag is Device.IODevice.IOChannel)
+                   if (x.Tag is EplanDevice.IODevice.IOChannel &&
+                       y.Tag is EplanDevice.IODevice.IOChannel)
                    {
-                       var wx = x.Tag as Device.IODevice.IOChannel;
-                       var wy = y.Tag as Device.IODevice.IOChannel;
+                       var wx = x.Tag as EplanDevice.IODevice.IOChannel;
+                       var wy = y.Tag as EplanDevice.IODevice.IOChannel;
 
-                       res = Device.IODevice.IOChannel.Compare(wx, wy);
+                       res = EplanDevice.IODevice.IOChannel.Compare(wx, wy);
                        return res;
                    }
 
                    bool checkDevTypeSubType =
-                   (x.Tag is Device.DeviceType || 
-                   x.Tag is Device.DeviceSubType) &&
-                   (y.Tag is Device.DeviceSubType || 
-                   y.Tag is Device.DeviceSubType);
+                   (x.Tag is EplanDevice.DeviceType || 
+                   x.Tag is EplanDevice.DeviceSubType) &&
+                   (y.Tag is EplanDevice.DeviceSubType || 
+                   y.Tag is EplanDevice.DeviceSubType);
                    if (checkDevTypeSubType)
                    {
                        res = x.Text.CompareTo(y.Text);
                        return res;
                    }
 
-                   if (x.Nodes.Count > 0 && x.Nodes[0].Tag is Device.Device &&
-                       y.Nodes.Count > 0 && y.Nodes[0].Tag is Device.Device)
+                   if (x.Nodes.Count > 0 && x.Nodes[0].Tag is EplanDevice.Device &&
+                       y.Nodes.Count > 0 && y.Nodes[0].Tag is EplanDevice.Device)
                    {
-                       res = Device.Device.Compare(
-                           x.Nodes[0].Tag as Device.Device,
-                           y.Nodes[0].Tag as Device.Device);
+                       res = EplanDevice.Device.Compare(
+                           x.Nodes[0].Tag as EplanDevice.Device,
+                           y.Nodes[0].Tag as EplanDevice.Device);
                        return res;
                    }
 
-                   if (x.Tag is Device.Device && y.Tag is Device.Device)
+                   if (x.Tag is EplanDevice.Device && y.Tag is EplanDevice.Device)
                    {
-                       var xDev = x.Tag as Device.Device;
-                       var yDev = y.Tag as Device.Device;
+                       var xDev = x.Tag as EplanDevice.Device;
+                       var yDev = y.Tag as EplanDevice.Device;
 
-                       res = Device.Device.Compare(xDev, yDev);
+                       res = EplanDevice.Device.Compare(xDev, yDev);
                        return res;
                    }
 
@@ -1135,8 +1135,8 @@ namespace EasyEPlanner
             treeViewItemLastSelected = selectedItem;
 
             GetItemDataForShowObjects(treeViewItemLastSelected,
-                out Device.DeviceType[] devTypes,
-                out Device.DeviceSubType[] devSubTypes,
+                out EplanDevice.DeviceType[] devTypes,
+                out EplanDevice.DeviceSubType[] devSubTypes,
                 out bool displayParameters, 
                 out int techObjectIndex,
                 out string checkedObjects);
@@ -1186,8 +1186,8 @@ namespace EasyEPlanner
         /// </param>
         /// <param name="checkedObjects">Выбранные объекты в поле</param>
         private void GetItemDataForShowObjects(
-            Editor.ITreeViewItem item, out Device.DeviceType[] devTypes,
-                out Device.DeviceSubType[] devSubTypes, 
+            Editor.ITreeViewItem item, out EplanDevice.DeviceType[] devTypes,
+                out EplanDevice.DeviceSubType[] devSubTypes, 
                 out bool displayParameters, out int techObjectIndex,
                 out string checkedObjects)
         {
@@ -1263,7 +1263,7 @@ namespace EasyEPlanner
                 {
                     switch(node.Tag)
                     {
-                        case Device.Device dev:
+                        case EplanDevice.Device dev:
                             res += $"{dev.Name} ";
                             break;
 
@@ -1381,7 +1381,7 @@ namespace EasyEPlanner
                 return;
             }
 
-            if (currentNode.Tag is Device.IODevice.IOChannel ch)
+            if (currentNode.Tag is EplanDevice.IODevice.IOChannel ch)
             {
                 e.Font = itemFontNoDevice;
                 if (!ch.IsEmpty())

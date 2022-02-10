@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using StaticHelper;
 using System.Text.RegularExpressions;
 using Eplan.EplApi.Base;
-using Device;
+using EplanDevice;
 
 namespace EasyEPlanner
 {

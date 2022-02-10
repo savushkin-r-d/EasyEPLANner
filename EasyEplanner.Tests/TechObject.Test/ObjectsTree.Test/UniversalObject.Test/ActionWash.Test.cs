@@ -36,8 +36,8 @@ namespace Tests.TechObject
 
         [TestCaseSource(nameof(CheckAllowedDevicesInEveryAction))]
         public void Constructor_NewAction_CheckAlloweDevicesInEveryAction(
-            List<Device.DeviceType[]> expectedTypes,
-            List<Device.DeviceSubType[]> expectedSubTypes)
+            List<EplanDevice.DeviceType[]> expectedTypes,
+            List<EplanDevice.DeviceSubType[]> expectedSubTypes)
         {
             var action = new ActionWash(string.Empty, null, string.Empty);
 
@@ -45,8 +45,8 @@ namespace Tests.TechObject
 
             for (int i = 0; i < actions.Count; i++)
             {
-                Device.DeviceType[] actualTypes;
-                Device.DeviceSubType[] actualSubTypes;
+                EplanDevice.DeviceType[] actualTypes;
+                EplanDevice.DeviceSubType[] actualSubTypes;
 
                 actions[i].GetDisplayObjects(out actualTypes,
                     out actualSubTypes, out _);
@@ -65,85 +65,85 @@ namespace Tests.TechObject
             {
                 new object[]
                 {
-                    new List<Device.DeviceType[]>()
+                    new List<EplanDevice.DeviceType[]>()
                     {
-                        new Device.DeviceType[]
+                        new EplanDevice.DeviceType[]
                         {
-                            Device.DeviceType.DI,
-                            Device.DeviceType.SB,
-                            Device.DeviceType.GS,
-                            Device.DeviceType.LS,
-                            Device.DeviceType.FS
+                            EplanDevice.DeviceType.DI,
+                            EplanDevice.DeviceType.SB,
+                            EplanDevice.DeviceType.GS,
+                            EplanDevice.DeviceType.LS,
+                            EplanDevice.DeviceType.FS
                         },
-                        new Device.DeviceType[]
+                        new EplanDevice.DeviceType[]
                         {
-                            Device.DeviceType.DO
+                            EplanDevice.DeviceType.DO
                         },
-                        new Device.DeviceType[]
+                        new EplanDevice.DeviceType[]
                         {
-                            Device.DeviceType.M,
-                            Device.DeviceType.V,
-                            Device.DeviceType.DO,
-                            Device.DeviceType.AO,
-                            Device.DeviceType.VC,
-                            Device.DeviceType.C
+                            EplanDevice.DeviceType.M,
+                            EplanDevice.DeviceType.V,
+                            EplanDevice.DeviceType.DO,
+                            EplanDevice.DeviceType.AO,
+                            EplanDevice.DeviceType.VC,
+                            EplanDevice.DeviceType.C
                         },
-                        new Device.DeviceType[]
+                        new EplanDevice.DeviceType[]
                         {
-                            Device.DeviceType.M
+                            EplanDevice.DeviceType.M
                         },
                     },
-                    new List<Device.DeviceSubType[]>()
+                    new List<EplanDevice.DeviceSubType[]>()
                     {
                         null,
                         null,
-                        new Device.DeviceSubType[]
+                        new EplanDevice.DeviceSubType[]
                         {
-                            Device.DeviceSubType.M_FREQ,
-                            Device.DeviceSubType.M_REV_FREQ,
-                            Device.DeviceSubType.M_REV_FREQ_2,
-                            Device.DeviceSubType.M_REV_FREQ_2_ERROR,
-                            Device.DeviceSubType.M_ATV,
-                            Device.DeviceSubType.M_ATV_LINEAR,
-                            Device.DeviceSubType.M,
-                            Device.DeviceSubType.M_VIRT,
-                            Device.DeviceSubType.V_AS_DO1_DI2,
-                            Device.DeviceSubType.V_AS_MIXPROOF,
-                            Device.DeviceSubType.V_BOTTOM_MIXPROOF,
-                            Device.DeviceSubType.V_DO1,
-                            Device.DeviceSubType.V_DO1_DI1_FB_OFF,
-                            Device.DeviceSubType.V_DO1_DI1_FB_ON,
-                            Device.DeviceSubType.V_DO1_DI2,
-                            Device.DeviceSubType.V_DO2,
-                            Device.DeviceSubType.V_DO2_DI2,
-                            Device.DeviceSubType.V_DO2_DI2_BISTABLE,
-                            Device.DeviceSubType.V_IOLINK_DO1_DI2,
-                            Device.DeviceSubType.V_IOLINK_MIXPROOF,
-                            Device.DeviceSubType.V_IOLINK_VTUG_DO1,
-                            Device.DeviceSubType.V_IOLINK_VTUG_DO1_DI2,
-                            Device.DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF,
-                            Device.DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON,
-                            Device.DeviceSubType.V_MIXPROOF,
-                            Device.DeviceSubType.V_VIRT,
-                            Device.DeviceSubType.AO,
-                            Device.DeviceSubType.AO_VIRT,
-                            Device.DeviceSubType.DO,
-                            Device.DeviceSubType.DO_VIRT,
-                            Device.DeviceSubType.VC,
-                            Device.DeviceSubType.VC_IOLINK,
-                            Device.DeviceSubType.VC_VIRT,
-                            Device.DeviceSubType.NONE
+                            EplanDevice.DeviceSubType.M_FREQ,
+                            EplanDevice.DeviceSubType.M_REV_FREQ,
+                            EplanDevice.DeviceSubType.M_REV_FREQ_2,
+                            EplanDevice.DeviceSubType.M_REV_FREQ_2_ERROR,
+                            EplanDevice.DeviceSubType.M_ATV,
+                            EplanDevice.DeviceSubType.M_ATV_LINEAR,
+                            EplanDevice.DeviceSubType.M,
+                            EplanDevice.DeviceSubType.M_VIRT,
+                            EplanDevice.DeviceSubType.V_AS_DO1_DI2,
+                            EplanDevice.DeviceSubType.V_AS_MIXPROOF,
+                            EplanDevice.DeviceSubType.V_BOTTOM_MIXPROOF,
+                            EplanDevice.DeviceSubType.V_DO1,
+                            EplanDevice.DeviceSubType.V_DO1_DI1_FB_OFF,
+                            EplanDevice.DeviceSubType.V_DO1_DI1_FB_ON,
+                            EplanDevice.DeviceSubType.V_DO1_DI2,
+                            EplanDevice.DeviceSubType.V_DO2,
+                            EplanDevice.DeviceSubType.V_DO2_DI2,
+                            EplanDevice.DeviceSubType.V_DO2_DI2_BISTABLE,
+                            EplanDevice.DeviceSubType.V_IOLINK_DO1_DI2,
+                            EplanDevice.DeviceSubType.V_IOLINK_MIXPROOF,
+                            EplanDevice.DeviceSubType.V_IOLINK_VTUG_DO1,
+                            EplanDevice.DeviceSubType.V_IOLINK_VTUG_DO1_DI2,
+                            EplanDevice.DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF,
+                            EplanDevice.DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON,
+                            EplanDevice.DeviceSubType.V_MIXPROOF,
+                            EplanDevice.DeviceSubType.V_VIRT,
+                            EplanDevice.DeviceSubType.AO,
+                            EplanDevice.DeviceSubType.AO_VIRT,
+                            EplanDevice.DeviceSubType.DO,
+                            EplanDevice.DeviceSubType.DO_VIRT,
+                            EplanDevice.DeviceSubType.VC,
+                            EplanDevice.DeviceSubType.VC_IOLINK,
+                            EplanDevice.DeviceSubType.VC_VIRT,
+                            EplanDevice.DeviceSubType.NONE
                         },
-                        new Device.DeviceSubType[]
+                        new EplanDevice.DeviceSubType[]
                         {
-                            Device.DeviceSubType.M_FREQ,
-                            Device.DeviceSubType.M_REV_FREQ,
-                            Device.DeviceSubType.M_REV_FREQ_2,
-                            Device.DeviceSubType.M_REV_FREQ_2_ERROR,
-                            Device.DeviceSubType.M_ATV,
-                            Device.DeviceSubType.M_ATV_LINEAR,
-                            Device.DeviceSubType.M,
-                            Device.DeviceSubType.M_VIRT,
+                            EplanDevice.DeviceSubType.M_FREQ,
+                            EplanDevice.DeviceSubType.M_REV_FREQ,
+                            EplanDevice.DeviceSubType.M_REV_FREQ_2,
+                            EplanDevice.DeviceSubType.M_REV_FREQ_2_ERROR,
+                            EplanDevice.DeviceSubType.M_ATV,
+                            EplanDevice.DeviceSubType.M_ATV_LINEAR,
+                            EplanDevice.DeviceSubType.M,
+                            EplanDevice.DeviceSubType.M_VIRT,
                         }
                     },
                 },

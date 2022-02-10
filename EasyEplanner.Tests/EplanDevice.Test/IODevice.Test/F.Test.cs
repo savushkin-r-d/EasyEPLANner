@@ -1,53 +1,21 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Device;
+using NUnit.Framework;
+using EplanDevice;
 
-namespace Tests.Devices
+namespace Tests.EplanDevices
 {
-    public class GSTest
+    public class FTest
     {
         const string Incorrect = "Incorrect";
-        const string GS = "GS";
-        const string GS_VIRT = "GS_VIRT";
+        const string F = "F";
+        const string F_VIRT = "F_VIRT";
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
         const string DI = IODevice.IOChannel.DI;
         const string DO = IODevice.IOChannel.DO;
-
-        /// <summary>
-        /// Тест получения подтипа устройства
-        /// </summary>
-        /// <param name="expectedType">Ожидаемый подтип</param>
-        /// <param name="subType">Актуальный подтип</param>
-        /// <param name="device">Тестируемое устройство</param>
-        [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
-        public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
-            string expectedType, string subType, IODevice device)
-        {
-            device.SetSubType(subType);
-            Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
-                device.DeviceType, device.DeviceSubType));
-        }
-
-        /// <summary>
-        /// 1 - Ожидаемое значение подтипа,
-        /// 2 - Задаваемое значение подтипа,
-        /// 3 - Устройство для тестов
-        /// </summary>
-        /// <returns></returns>
-        private static object[] GetDeviceSubTypeStrTestData()
-        {
-            return new object[]
-            {
-                new object[] { GS, string.Empty, GetRandomGSDevice() },
-                new object[] { string.Empty, Incorrect, GetRandomGSDevice() },
-                new object[] { GS, GS, GetRandomGSDevice() },
-                new object[] { GS_VIRT, GS_VIRT, GetRandomGSDevice() },
-            };
-        }
 
         /// <summary>
         /// Тест установки подтипа устройства
@@ -74,14 +42,46 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { DeviceSubType.GS, string.Empty,
-                    GetRandomGSDevice() },
-                new object[] { DeviceSubType.GS, GS,
-                    GetRandomGSDevice() },
+                new object[] { DeviceSubType.F, string.Empty,
+                    GetRandomFDevice() },
+                new object[] { DeviceSubType.F, F,
+                    GetRandomFDevice() },
                 new object[] { DeviceSubType.NONE, Incorrect,
-                    GetRandomGSDevice() },
-                new object[] { DeviceSubType.GS_VIRT, GS_VIRT,
-                    GetRandomGSDevice() },
+                    GetRandomFDevice() },
+                new object[] { DeviceSubType.F_VIRT, F_VIRT,
+                    GetRandomFDevice() },
+            };
+        }
+
+        /// <summary>
+        /// Тест получения подтипа устройства
+        /// </summary>
+        /// <param name="expectedType">Ожидаемый подтип</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(GetDeviceSubTypeStrTestData))]
+        public void GetDeviceSubTypeStr_NewDev_ReturnsExpectedTypeStr(
+            string expectedType, string subType, IODevice device)
+        {
+            device.SetSubType(subType);
+            Assert.AreEqual(expectedType, device.GetDeviceSubTypeStr(
+                device.DeviceType, device.DeviceSubType));
+        }
+
+        /// <summary>
+        /// 1 - Ожидаемое значение подтипа,
+        /// 2 - Задаваемое значение подтипа,
+        /// 3 - Устройство для тестов
+        /// </summary>
+        /// <returns></returns>
+        private static object[] GetDeviceSubTypeStrTestData()
+        {
+            return new object[]
+            {
+                new object[] { F, string.Empty, GetRandomFDevice() },
+                new object[] { F, F, GetRandomFDevice() },
+                new object[] { F_VIRT, F_VIRT, GetRandomFDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomFDevice() },
             };
         }
 
@@ -109,25 +109,31 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForGS = new Dictionary<string, int>()
+            var exportForF = new Dictionary<string, int>()
             {
-                {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
-                {IODevice.Parameter.P_DT, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.ERR, 1},
+                {IODevice.Tag.ST_CH, 4},
+                {IODevice.Tag.NOMINAL_CURRENT_CH, 4},
+                {IODevice.Tag.LOAD_CURRENT_CH, 4},
+                {IODevice.Tag.ERR_CH, 4},
             };
 
-            var exportForGSVirt = new Dictionary<string, int>()
+            var exportForFVirt = new Dictionary<string, int>()
             {
-                {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.ST, 1},
             };
 
             return new object[]
             {
-                new object[] {exportForGS, string.Empty, GetRandomGSDevice()},
-                new object[] {exportForGS, GS, GetRandomGSDevice()},
-                new object[] {null, Incorrect, GetRandomGSDevice()},
-                new object[] {exportForGSVirt, GS_VIRT, GetRandomGSDevice()},
+                new object[] {exportForF, string.Empty, GetRandomFDevice()},
+                new object[] {exportForF, F, GetRandomFDevice()},
+                new object[] {null, Incorrect, GetRandomFDevice()},
+                new object[] {exportForFVirt, F_VIRT, GetRandomFDevice()},
             };
         }
 
@@ -157,36 +163,31 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
-            var defaultParameters = new string[]
-            {
-                IODevice.Parameter.P_DT
-            };
-
             return new object[]
             {
                 new object[]
                 {
-                    defaultParameters,
-                    GS,
-                    GetRandomGSDevice()
-                },
-                new object[]
-                {
-                    defaultParameters,
+                    new string[0],
                     string.Empty,
-                    GetRandomGSDevice()
+                    GetRandomFDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    GS_VIRT,
-                    GetRandomGSDevice()
+                    F,
+                    GetRandomFDevice()
                 },
                 new object[]
                 {
                     new string[0],
                     Incorrect,
-                    GetRandomGSDevice()
+                    GetRandomFDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    F_VIRT,
+                    GetRandomFDevice()
                 },
             };
         }
@@ -227,11 +228,11 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
-            var discreteSensorChannels = new Dictionary<string, int>()
+            var iolinkDeviceChannels = new Dictionary<string, int>()
             {
-                { AI, 0 },
-                { AO, 0 },
-                { DI, 1 },
+                { AI, 1 },
+                { AO, 1 },
+                { DI, 0 },
                 { DO, 0 },
             };
 
@@ -247,53 +248,53 @@ namespace Tests.Devices
             {
                 new object[]
                 {
-                    discreteSensorChannels,
-                    GS,
-                    GetRandomGSDevice()
+                    iolinkDeviceChannels,
+                    string.Empty,
+                    GetRandomFDevice()
                 },
                 new object[]
                 {
-                    discreteSensorChannels,
-                    string.Empty,
-                    GetRandomGSDevice()
+                    iolinkDeviceChannels,
+                    F,
+                    GetRandomFDevice()
                 },
                 new object[]
                 {
                     emptyChannels,
                     Incorrect,
-                    GetRandomGSDevice()
+                    GetRandomFDevice()
                 },
                 new object[]
                 {
                     emptyChannels,
-                    GS_VIRT,
-                    GetRandomGSDevice()
-                }
+                    F_VIRT,
+                    GetRandomFDevice()
+                },
             };
         }
 
         /// <summary>
-        /// Генератор GS устройств
+        /// Генератор AI устройств
         /// </summary>
         /// <returns></returns>
-        private static IODevice GetRandomGSDevice()
+        private static IODevice GetRandomFDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new GS("KOAG4GS1", "+KOAG4-GS1",
-                        "Test device", 1, "KOAG", 4, "DeviceArticle");
+                    return new F("KOAG4F1", "+KOAG4-F1",
+                        "Test device", 1, "KOAG", 4, string.Empty);
                 case 2:
-                    return new GS("LINE1GS2", "+LINE1-GS2",
-                        "Test device", 2, "LINE", 1, "DeviceArticle");
+                    return new F("LINE1F2", "+LINE1-F2",
+                        "Test device", 2, "LINE", 1, string.Empty);
                 case 3:
-                    return new GS("TANK2GS1", "+TANK2-GS1",
-                        "Test device", 1, "TANK", 2, "DeviceArticle");
+                    return new F("TANK2F1", "+TANK2-F1",
+                        "Test device", 1, "TANK", 2, string.Empty);
                 default:
-                    return new GS("CW_TANK3GS3", "+CW_TANK3-GS3",
-                        "Test device", 3, "CW_TANK", 3, "DeviceArticle");
+                    return new F("CW_TANK3F3", "+CW_TANK3-F3",
+                        "Test device", 3, "CW_TANK", 3, string.Empty);
             }
         }
     }

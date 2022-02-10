@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TechObject;
-using Device;
+using EplanDevice;
 
 namespace EasyEPlanner
 {

@@ -122,13 +122,13 @@ namespace TechObject
             foreach (var property in properties)
             {
                 string oldDevName = property.Value;
-                var device = Device.DeviceManager.GetInstance()
+                var device = EplanDevice.DeviceManager.GetInstance()
                     .GetDevice(oldDevName);
                 if (device.Description != StaticHelper.CommonConst.Cap)
                 {
                     string newDevName = newTechObjName + techNumber + 
                         device.DeviceType.ToString() + device.DeviceNumber;
-                    var newDevice = Device.DeviceManager.GetInstance()
+                    var newDevice = EplanDevice.DeviceManager.GetInstance()
                         .GetDevice(newDevName);
                     if (newDevice.Description != StaticHelper.CommonConst.Cap)
                     {
@@ -147,13 +147,13 @@ namespace TechObject
             foreach (var property in properties)
             {
                 string oldDevName = property.Value;
-                var device = Device.DeviceManager.GetInstance()
+                var device = EplanDevice.DeviceManager.GetInstance()
                     .GetDevice(oldDevName);
                 if (device.Description != StaticHelper.CommonConst.Cap)
                 {
                     string newDevName = eplanName + techNumber +
                         device.DeviceType.ToString() + device.DeviceNumber;
-                    var newDevice = Device.DeviceManager.GetInstance()
+                    var newDevice = EplanDevice.DeviceManager.GetInstance()
                         .GetDevice(newDevName);
                     if (newDevice.Description != StaticHelper.CommonConst.Cap)
                     {
@@ -190,7 +190,7 @@ namespace TechObject
             {
                 string deviceName = owner.NameEplan + owner.TechNumber +
                     equipment.DefaultValue;
-                var device = Device.DeviceManager.GetInstance()
+                var device = EplanDevice.DeviceManager.GetInstance()
                     .GetDevice(deviceName);
                 if (device.Description != StaticHelper.CommonConst.Cap)
                 {
@@ -242,7 +242,7 @@ namespace TechObject
 
             foreach (var deviceStr in devices)
             {
-                var device = Device.DeviceManager.GetInstance()
+                var device = EplanDevice.DeviceManager.GetInstance()
                     .GetDeviceByEplanName(deviceStr);
                 if (device.Description == StaticHelper.CommonConst.Cap)
                 {
@@ -274,7 +274,7 @@ namespace TechObject
         {
             string errors = "";
 
-            var device = Device.DeviceManager.GetInstance()
+            var device = EplanDevice.DeviceManager.GetInstance()
                     .GetDeviceByEplanName(currentValue);
             if (equipment.LuaName == "SET_VALUE")
             {

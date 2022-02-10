@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Device
+namespace EplanDevice
 {
     /// <summary>
     /// Технологическое устройство, подключенное к модулям ввода\вывод IO.

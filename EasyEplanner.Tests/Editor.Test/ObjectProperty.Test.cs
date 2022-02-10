@@ -369,8 +369,8 @@ namespace Tests.Editor
         public void GetDisplayObjects_EmptyObject_ReturnsNullAndFalse()
         {
             ObjectProperty property = GetEmptyProperty();
-            property.GetDisplayObjects(out Device.DeviceType[] devTypes,
-                out Device.DeviceSubType[] devSubTypes,
+            property.GetDisplayObjects(out EplanDevice.DeviceType[] devTypes,
+                out EplanDevice.DeviceSubType[] devSubTypes,
                 out bool displayParameters);
 
             Assert.IsNull(devTypes);

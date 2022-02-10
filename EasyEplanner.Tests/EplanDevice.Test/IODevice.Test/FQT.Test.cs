@@ -2,19 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Device;
+using EplanDevice;
 
-namespace Tests.Devices
+namespace Tests.EplanDevices
 {
-    public class LTTest
+    public class FQTTest
     {
         const string Incorrect = "Incorrect";
-        const string LT = "LT";
-        const string LT_IOLINK = "LT_IOLINK";
-        const string LT_CYL = "LT_CYL";
-        const string LT_CONE = "LT_CONE";
-        const string LT_TRUNC = "LT_TRUNC";
-        const string LT_VIRT = "LT_VIRT";
+        const string FQT = "FQT";
+        const string FQT_F = "FQT_F";
+        const string FQT_F_OK = "FQT_F_OK";
+        const string FQT_VIRT = "FQT_VIRT";
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
@@ -46,22 +44,18 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { DeviceSubType.LT, LT,
-                    GetRandomLTDevice() },
-                new object[] { DeviceSubType.LT_CYL, LT_CYL,
-                    GetRandomLTDevice() },
-                new object[] { DeviceSubType.LT_CONE, LT_CONE,
-                    GetRandomLTDevice() },
-                new object[] { DeviceSubType.LT_TRUNC, LT_TRUNC,
-                    GetRandomLTDevice() },
-                new object[] { DeviceSubType.LT_IOLINK, LT_IOLINK,
-                    GetRandomLTDevice() },
-                new object[] { DeviceSubType.LT_VIRT, LT_VIRT,
-                    GetRandomLTDevice() },
-                new object[] { DeviceSubType.NONE, string.Empty,
-                    GetRandomLTDevice() },
+                new object[] { DeviceSubType.FQT, FQT,
+                    GetRandomFQTDevice() },
+                new object[] { DeviceSubType.FQT_F, FQT_F,
+                    GetRandomFQTDevice() },
+                new object[] { DeviceSubType.FQT_F_OK, FQT_F_OK,
+                    GetRandomFQTDevice() },
+                new object[] { DeviceSubType.FQT_VIRT, FQT_VIRT,
+                    GetRandomFQTDevice() },
                 new object[] { DeviceSubType.NONE, Incorrect,
-                    GetRandomLTDevice() },
+                    GetRandomFQTDevice() },
+                new object[] { DeviceSubType.NONE, string.Empty,
+                    GetRandomFQTDevice() },
             };
         }
 
@@ -90,15 +84,12 @@ namespace Tests.Devices
         {
             return new object[]
             {
-                new object[] { LT, LT, GetRandomLTDevice() },
-                new object[] { LT_CYL, LT_CYL, GetRandomLTDevice() },
-                new object[] { LT_CONE, LT_CONE, GetRandomLTDevice() },
-                new object[] { LT_TRUNC, LT_TRUNC, GetRandomLTDevice() },
-                new object[] { LT_IOLINK, LT_IOLINK, GetRandomLTDevice() },
-                new object[] { LT_VIRT, LT_VIRT, GetRandomLTDevice() },
-                new object[] { string.Empty, string.Empty,
-                    GetRandomLTDevice() },
-                new object[] { string.Empty, Incorrect, GetRandomLTDevice() },
+                new object[] { string.Empty, string.Empty, GetRandomFQTDevice() },
+                new object[] { FQT, FQT, GetRandomFQTDevice() },
+                new object[] { FQT_F, FQT_F, GetRandomFQTDevice() },
+                new object[] { FQT_F_OK, FQT_F_OK, GetRandomFQTDevice() },
+                new object[] { FQT_VIRT, FQT_VIRT, GetRandomFQTDevice() },
+                new object[] { string.Empty, Incorrect, GetRandomFQTDevice() },
             };
         }
 
@@ -126,80 +117,110 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] GetDevicePropertiesTestData()
         {
-            var exportForLT = new Dictionary<string, int>()
+            var exportForFQT = new Dictionary<string, int>()
             {
+                {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
-                {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.V, 1},
-                {IODevice.Parameter.P_ERR, 1},
+                {IODevice.Tag.ABS_V, 1},
             };
 
-            var exportForLTIOLink = new Dictionary<string, int>()
+            var exportForFQTF = new Dictionary<string, int>()
             {
+                {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
-                {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.V, 1},
-                {IODevice.Parameter.P_H_CONE, 1},
-                {IODevice.Parameter.P_MAX_P, 1},
-                {IODevice.Parameter.P_R, 1},
-                {IODevice.Tag.CLEVEL, 1},
-                {IODevice.Parameter.P_ERR, 1},
+                {IODevice.Tag.P_MIN_FLOW, 1},
+                {IODevice.Tag.P_MAX_FLOW, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.F, 1},
+                {IODevice.Parameter.P_DT, 1},
+                {IODevice.Tag.ABS_V, 1},
             };
 
-            var exportForLTCyl = new Dictionary<string, int>()
+            var exportForFQTFOK = new Dictionary<string, int>()
             {
+                {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
-                {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.V, 1},
-                {IODevice.Parameter.P_MAX_P, 1},
-                {IODevice.Parameter.P_R, 1},
-                {IODevice.Tag.CLEVEL, 1},
-                {IODevice.Parameter.P_ERR, 1},
+                {IODevice.Tag.P_MIN_FLOW, 1},
+                {IODevice.Tag.P_MAX_FLOW, 1},
+                {IODevice.Tag.P_CZ, 1},
+                {IODevice.Tag.F, 1},
+                {IODevice.Parameter.P_DT, 1},
+                {IODevice.Tag.ABS_V, 1},
+                {IODevice.Tag.OK, 1},
             };
 
-            var exportForLTCone = new Dictionary<string, int>()
+            var exportForFQTVirt = new Dictionary<string, int>()
             {
+                {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.P_MIN_FLOW, 1},
+                {IODevice.Tag.P_MAX_FLOW, 1},
                 {IODevice.Tag.P_CZ, 1},
-                {IODevice.Tag.V, 1},
-                {IODevice.Parameter.P_MAX_P, 1},
-                {IODevice.Parameter.P_R, 1},
-                {IODevice.Parameter.P_H_CONE, 1},
-                {IODevice.Tag.CLEVEL, 1},
-                {IODevice.Parameter.P_ERR, 1},
-            };
-
-            var exportForLTTrunc = new Dictionary<string, int>()
-            {
-                {IODevice.Tag.M, 1},
-                {IODevice.Tag.P_CZ, 1},
-                {IODevice.Tag.V, 1},
-                {IODevice.Parameter.P_MAX_P, 1},
-                {IODevice.Parameter.P_R, 1},
-                {IODevice.Parameter.P_H_TRUNC, 1},
-                {IODevice.Tag.CLEVEL, 1},
-                {IODevice.Parameter.P_ERR, 1},
-            };
-
-            var exportForLTVirt = new Dictionary<string, int>()
-            {
-                {IODevice.Tag.M, 1},
-                {IODevice.Tag.V, 1},
+                {IODevice.Tag.F, 1},
+                {IODevice.Parameter.P_DT, 1},
+                {IODevice.Tag.ABS_V, 1},
             };
 
             return new object[]
             {
-                new object[] {exportForLT, LT, GetRandomLTDevice()},
-                new object[] {exportForLTIOLink, LT_IOLINK,
-                    GetRandomLTDevice()},
-                new object[] {exportForLTCyl, LT_CYL, GetRandomLTDevice()},
-                new object[] {exportForLTCone, LT_CONE,
-                    GetRandomLTDevice()},
-                new object[] {exportForLTTrunc, LT_TRUNC,
-                    GetRandomLTDevice()},
-                new object[] {exportForLTVirt, LT_VIRT, GetRandomLTDevice()},
-                new object[] {null, Incorrect, GetRandomLTDevice()},
-                new object[] {null, string.Empty, GetRandomLTDevice()},
+                new object[] {exportForFQT, FQT, GetRandomFQTDevice()},
+                new object[] {exportForFQTF, FQT_F, GetRandomFQTDevice()},
+                new object[] {exportForFQTFOK, FQT_F_OK,
+                    GetRandomFQTDevice()},
+                new object[] {exportForFQTVirt, FQT_VIRT,
+                    GetRandomFQTDevice()},
+                new object[] {null, Incorrect, GetRandomFQTDevice()},
+                new object[] {null, string.Empty, GetRandomFQTDevice()},
+            };
+        }
+
+        /// <summary>
+        /// Тестирование диапазона измерения устройства
+        /// </summary>
+        /// <param name="expected">Ожидаемый диапазон</param>
+        /// <param name="subType">Актуальный подтип</param>
+        /// <param name="value1">Начало диапазона</param>
+        /// <param name="value2">Конец диапазона</param>
+        /// <param name="device">Тестируемое устройство</param>
+        [TestCaseSource(nameof(GetRangeTestData))]
+        public void GetRange_NewDev_ReturnsExpectedRangeString(string expected,
+            string subType, double value1, double value2,
+            IODevice device)
+        {
+            device.SetSubType(subType);
+            device.SetParameter(IODevice.Parameter.P_MIN_F, value1);
+            device.SetParameter(IODevice.Parameter.P_MAX_F, value2);
+            Assert.AreEqual(expected, device.GetRange());
+        }
+
+        /// <summary>
+        /// 1 - Ожидаемое значение,
+        /// 2 - Подтип устройства в виде строки,
+        /// 3 - Значение параметра меньшее,
+        /// 4 - Значение параметра большее,
+        /// 5 - Устройство для теста
+        /// </summary>
+        /// <returns></returns>
+        private static object[] GetRangeTestData()
+        {
+            return new object[]
+            {
+                new object[] {$"_{2.0}..{4.0}", FQT_F, 2.0, 4.0,
+                    GetRandomFQTDevice()},
+                new object[] {$"_{1.0}..{3.0}", FQT_F_OK, 1.0, 3.0,
+                    GetRandomFQTDevice()},
+                new object[] {string.Empty, FQT, 4.0, 8.0,
+                    GetRandomFQTDevice()},
+                new object[] {string.Empty, FQT_VIRT, 7.0, 9.0,
+                    GetRandomFQTDevice()},
+                new object[] {string.Empty, string.Empty, 4.0, 8.0,
+                    GetRandomFQTDevice()},
+                new object[] {string.Empty, Incorrect, 7.0, 9.0,
+                    GetRandomFQTDevice()},
             };
         }
 
@@ -229,75 +250,51 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ParametersTestData()
         {
-            var colAndIOLSubTypesParameters = new string[]
+            var defaultParameters = new string[]
             {
+                IODevice.Parameter.P_MIN_F,
+                IODevice.Parameter.P_MAX_F,
                 IODevice.Parameter.P_C0,
-                IODevice.Parameter.P_ERR,
-                IODevice.Parameter.P_MAX_P,
-                IODevice.Parameter.P_R,
-                IODevice.Parameter.P_H_CONE
+                IODevice.Parameter.P_DT
             };
 
             return new object[]
             {
                 new object[]
                 {
-                    new string[]
-                    {
-                        IODevice.Parameter.P_C0,
-                        IODevice.Parameter.P_ERR
-                    },
-                    LT,
-                    GetRandomLTDevice()
+                    new string[0],
+                    FQT,
+                    GetRandomFQTDevice()
                 },
                 new object[]
                 {
-                    new string[]
-                    {
-                        IODevice.Parameter.P_C0,
-                        IODevice.Parameter.P_ERR,
-                        IODevice.Parameter.P_MAX_P,
-                        IODevice.Parameter.P_R
-                    },
-                    LT_CYL,
-                    GetRandomLTDevice()
+                    defaultParameters,
+                    FQT_F,
+                    GetRandomFQTDevice()
                 },
                 new object[]
                 {
-                    colAndIOLSubTypesParameters,
-                    LT_CONE,
-                    GetRandomLTDevice()
-                },
-                new object[]
-                {
-                    new string[]
-                    {
-                        IODevice.Parameter.P_C0,
-                        IODevice.Parameter.P_ERR,
-                        IODevice.Parameter.P_MAX_P,
-                        IODevice.Parameter.P_R,
-                        IODevice.Parameter.P_H_TRUNC
-                    },
-                    LT_TRUNC,
-                    GetRandomLTDevice()
-                },
-                new object[]
-                {
-                    colAndIOLSubTypesParameters,
-                    LT_IOLINK,
-                    GetRandomLTDevice()
+                    defaultParameters,
+                    FQT_F_OK,
+                    GetRandomFQTDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    LT_VIRT,
-                    GetRandomLTDevice()
+                    FQT_VIRT,
+                    GetRandomFQTDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    Incorrect,
+                    GetRandomFQTDevice()
                 },
                 new object[]
                 {
                     new string[0],
                     string.Empty,
-                    GetRandomLTDevice()
+                    GetRandomFQTDevice()
                 },
             };
         }
@@ -338,14 +335,6 @@ namespace Tests.Devices
         /// <returns></returns>
         private static object[] ChannelsTestData()
         {
-            var defaultChannels = new Dictionary<string, int>()
-            {
-                { AI, 1 },
-                { AO, 0 },
-                { DI, 0 },
-                { DO, 0 },
-            };
-
             var emptyChannels = new Dictionary<string, int>()
             {
                 { AI, 0 },
@@ -358,51 +347,57 @@ namespace Tests.Devices
             {
                 new object[]
                 {
-                    defaultChannels,
-                    LT,
-                    GetRandomLTDevice()
+                    new Dictionary<string, int>()
+                    {
+                        { AI, 1 },
+                        { AO, 0 },
+                        { DI, 0 },
+                        { DO, 0 },
+                    },
+                    FQT,
+                    GetRandomFQTDevice()
                 },
                 new object[]
                 {
-                    defaultChannels,
-                    LT_CYL,
-                    GetRandomLTDevice()
+                    new Dictionary<string, int>()
+                    {
+                        { AI, 2 },
+                        { AO, 0 },
+                        { DI, 0 },
+                        { DO, 0 },
+                    },
+                    FQT_F,
+                    GetRandomFQTDevice()
                 },
                 new object[]
                 {
-                    defaultChannels,
-                    LT_CONE,
-                    GetRandomLTDevice()
-                },
-                new object[]
-                {
-                    defaultChannels,
-                    LT_TRUNC,
-                    GetRandomLTDevice()
-                },
-                new object[]
-                {
-                    defaultChannels,
-                    LT_IOLINK,
-                    GetRandomLTDevice()
+                    new Dictionary<string, int>()
+                    {
+                        { AI, 2 },
+                        { AO, 0 },
+                        { DI, 1 },
+                        { DO, 0 },
+                    },
+                    FQT_F_OK,
+                    GetRandomFQTDevice()
                 },
                 new object[]
                 {
                     emptyChannels,
-                    LT_VIRT,
-                    GetRandomLTDevice()
-                },
-                new object[]
-                {
-                    emptyChannels,
-                    string.Empty,
-                    GetRandomLTDevice()
+                    FQT_VIRT,
+                    GetRandomFQTDevice()
                 },
                 new object[]
                 {
                     emptyChannels,
                     Incorrect,
-                    GetRandomLTDevice()
+                    GetRandomFQTDevice()
+                },
+                new object[]
+                {
+                    emptyChannels,
+                    string.Empty,
+                    GetRandomFQTDevice()
                 },
             };
         }
@@ -435,77 +430,71 @@ namespace Tests.Devices
         {
             var defaultProperties = new string[]
             {
-                IODevice.Property.PT,
+                IODevice.Property.MT,
             };
 
             return new object[]
             {
                 new object[]
                 {
-                    defaultProperties,
-                    LT_IOLINK,
-                    GetRandomLTDevice()
+                    new string[0],
+                    FQT,
+                    GetRandomFQTDevice()
                 },
                 new object[]
                 {
-                    new string[0],
-                    string.Empty,
-                    GetRandomLTDevice()
+                    defaultProperties,
+                    FQT_F,
+                    GetRandomFQTDevice()
                 },
                 new object[]
                 {
                     new string[0],
                     Incorrect,
-                    GetRandomLTDevice()
+                    GetRandomFQTDevice()
+                },
+                new object[]
+                {
+                    defaultProperties,
+                    FQT_F_OK,
+                    GetRandomFQTDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    LT_VIRT,
-                    GetRandomLTDevice()
+                    FQT_VIRT,
+                    GetRandomFQTDevice()
                 },
                 new object[]
                 {
                     new string[0],
-                    LT_TRUNC,
-                    GetRandomLTDevice()
-                },
-                new object[]
-                {
-                    new string[0],
-                    LT_CONE,
-                    GetRandomLTDevice()
-                },
-                new object[]
-                {
-                    new string[0],
-                    LT_CYL,
-                    GetRandomLTDevice()
+                    string.Empty,
+                    GetRandomFQTDevice()
                 },
             };
         }
 
         /// <summary>
-        /// Генератор LT устройств
+        /// Генератор FQT устройств
         /// </summary>
         /// <returns></returns>
-        private static IODevice GetRandomLTDevice()
+        private static IODevice GetRandomFQTDevice()
         {
             var randomizer = new Random();
             int value = randomizer.Next(1, 3);
             switch (value)
             {
                 case 1:
-                    return new LT("KOAG4LT1", "+KOAG4-LT1",
+                    return new FQT("KOAG4FQT1", "+KOAG4-FQT1",
                         "Test device", 1, "KOAG", 4, "DeviceArticle");
                 case 2:
-                    return new LT("LINE1LT2", "+LINE1-LT2",
+                    return new FQT("LINE1FQT2", "+LINE1-FQT2",
                         "Test device", 2, "LINE", 1, "DeviceArticle");
                 case 3:
-                    return new LT("TANK2LT1", "+TANK2-LT1",
+                    return new FQT("TANK2FQT1", "+TANK2-FQT1",
                         "Test device", 1, "TANK", 2, "DeviceArticle");
                 default:
-                    return new LT("CW_TANK3LT3", "+CW_TANK3-LT3",
+                    return new FQT("CW_TANK3FQT3", "+CW_TANK3-FQT3",
                         "Test device", 3, "CW_TANK", 3, "DeviceArticle");
             }
         }
