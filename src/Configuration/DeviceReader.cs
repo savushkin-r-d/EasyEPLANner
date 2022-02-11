@@ -186,7 +186,7 @@ namespace EasyEPlanner
                 string properties = GetProperties(function);
                 string runtimeParameters = GetRuntimeParameters(function);
                 int deviceLocation = GetDeviceLocation(function);
-                string articleName = GetArticleName(function);
+                string articleName = ApiHelper.GetArticleName(function);
 
                 string error;
                 deviceManager.AddDeviceAndEFunction(name, description,
@@ -392,26 +392,6 @@ namespace EasyEPlanner
             }
 
             return deviceLocation;
-        }
-
-        /// <summary>
-        /// Получить имя изделия устройства.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        private string GetArticleName(Function function)
-        {
-            var articleName = "";
-
-            var articlesRefs = function.ArticleReferences;
-            if (articlesRefs.Length > 0 &&
-                function.ArticleReferences[0].PartNr != "" &&
-                function.ArticleReferences[0].PartNr != null)
-            {
-                articleName = function.ArticleReferences[0].PartNr;
-            }
-
-            return articleName;
         }
 
         /// <summary>

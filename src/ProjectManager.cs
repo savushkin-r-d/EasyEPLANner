@@ -8,6 +8,9 @@ using System.Windows.Forms;
 using TechObject;
 using System.Threading;
 using System.Threading.Tasks;
+using EasyEPlanner.PxcIolinkConfiguration;
+using System;
+using System.Text;
 
 namespace EasyEPlanner
 {
@@ -70,7 +73,7 @@ namespace EasyEPlanner
             string projectName, bool loadFromLua)
         {
             Logs.Clear();
-            EProjectManager.GetInstance().ProjectDataIsLoaded = false;
+            eProjectManager.ProjectDataIsLoaded = false;
 
             var oProgress = new Eplan.EplApi.Base.Progress("EnhancedProgress");
             oProgress.SetAllowCancel(false);
@@ -130,15 +133,15 @@ namespace EasyEPlanner
                 }
 
                 oProgress.BeginPart(15, "Расчет IO-Link");
-                IOManager.CalculateIOLinkAdresses();
+                ioManager.CalculateIOLinkAdresses();
                 oProgress.EndPart(true);
-                EProjectManager.GetInstance().ProjectDataIsLoaded = true;
+                eProjectManager.ProjectDataIsLoaded = true;
             }
             catch (System.Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 oProgress.EndPart(true);
-                EProjectManager.GetInstance().ProjectDataIsLoaded = false;
+                eProjectManager.ProjectDataIsLoaded = false;
             }
 
             errStr = thrownExceptions;
@@ -286,11 +289,11 @@ namespace EasyEPlanner
 
             editor = Editor.Editor.GetInstance();
             techObjectManager = TechObjectManager.GetInstance();
-            Logs.Init(new LogFrm());           
-            IOManager = IOManager.GetInstance();
-            DeviceManager.GetInstance();
+            Logs.Init(new LogFrm());
+            ioManager = IO.IOManager.GetInstance();
+            deviceManager = DeviceManager.GetInstance();
             projectConfiguration = ProjectConfiguration.GetInstance();
-            EProjectManager.GetInstance();
+            eProjectManager = EProjectManager.GetInstance();
             LoadBaseTechObjectsFromFiles();
         }
 
@@ -774,6 +777,81 @@ namespace EasyEPlanner
         }
         #endregion
 
+        #region Генерация описания IOL-Conf
+        public void GenerateIolConf()
+        {
+            var oProgress = new Eplan.EplApi.Base.Progress("EnhancedProgress");
+            oProgress.SetAllowCancel(false);
+            oProgress.SetTitle("Генерация описания IOL-Conf");
+
+            oProgress.BeginPart(20, "Крутим планету и синхронизируем описание проекта");
+            eProjectManager.SyncAndSave();
+            oProgress.EndPart();
+
+            oProgress.BeginPart(30, "Готовим окружение");
+            IXmlSensorSerializer sensorSerializer = new XmlSensorSerializer();
+            IXmlTemplateReader templateReader = new XmlTemplateReader(sensorSerializer);
+            ISensorDescriptionBuilder sensorDescriptionBuilder = new SensorDescriptionBuilder();
+            IPxcIolinkConfiguration pxcConfiguration = new PxcIolinkModulesConfiguration(
+                sensorSerializer, templateReader, sensorDescriptionBuilder);
+
+            bool exceptionRaised = false;
+            Logs.Clear();
+            oProgress.EndPart();
+
+            try
+            {
+                oProgress.BeginPart(40, "Запускаем фиксиков и проверяем каталоги");
+                string projectName = eProjectManager.GetCurrentProjectName();
+                string projectsFolderPath = GetPtusaProjectsPath(projectName);
+                string projectFilesPath = Path.Combine(projectsFolderPath, projectName);
+                bool foldersCreated = pxcConfiguration.CreateFolders(OriginalAssemblyPath, projectFilesPath);
+                oProgress.EndPart();
+
+                oProgress.BeginPart(50, "Прибиваем обои и читаем шаблоны");
+                bool templatesLoaded = pxcConfiguration.ReadTemplates(foldersCreated);
+                oProgress.EndPart();
+
+                oProgress.BeginPart(70, "Красим потолок и генерируем описание модулей");
+                pxcConfiguration.CreateModulesDescription(templatesLoaded, ioManager);
+                oProgress.EndPart();
+            }
+            catch(AggregateException ae)
+            {
+                foreach(var e in ae.InnerExceptions)
+                {
+                    Logs.AddMessage(SeekExceptionEnd(e));
+                }
+                exceptionRaised = true;
+            }
+            catch (Exception e)
+            {
+                Logs.AddMessage(SeekExceptionEnd(e));
+                exceptionRaised = true;
+            }
+
+            if (exceptionRaised)
+            {
+                Logs.EnableButtons();
+                Logs.Show();
+            }
+
+            oProgress.EndPart(true);
+        }
+
+        private string SeekExceptionEnd(Exception ex)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine(ex.Message);
+            if (ex.InnerException != null)
+            {
+                sb.AppendLine(SeekExceptionEnd(ex.InnerException));
+            }
+
+            return sb.ToString();
+        }
+        #endregion
+
         /// <summary>
         /// Путь к надстройке, к месту, из которого она подключалась к программе
         /// инженером.
@@ -857,7 +935,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Менеджер модулей ввода/вывода.
         /// </summary>
-        private IOManager IOManager;
+        private IIOManager ioManager;
 
         /// <summary>
         /// Конфигурация проекта.
@@ -867,6 +945,16 @@ namespace EasyEPlanner
         /// <summary>
         /// Экземпляр класса ProjectManager
         /// </summary>
-        private static ProjectManager instance;      
+        private static ProjectManager instance;
+
+        /// <summary>
+        /// Менеджер проектов в Eplan (встроенный).
+        /// </summary>
+        private EProjectManager eProjectManager;
+
+        /// <summary>
+        /// Менеджер устройств.
+        /// </summary>
+        private IDeviceManager deviceManager;
     }
 }

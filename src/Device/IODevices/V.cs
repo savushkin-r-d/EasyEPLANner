@@ -40,16 +40,16 @@ namespace EplanDevice
             {
                 // DEV_VTUG - поддержка старых проектов
                 if (
-                    IOManager.GetInstance()[AO[0].Node][AO[0].Module - 1].devices[AO[0].PhysicalClamp][0] != null &&
-                    IOManager.GetInstance()[AO[0].Node][AO[0].Module - 1].devices[AO[0].PhysicalClamp][0].DeviceType != DeviceType.Y &&
-                    IOManager.GetInstance()[AO[0].Node][AO[0].Module - 1].devices[AO[0].PhysicalClamp][0].DeviceType != DeviceType.DEV_VTUG)
+                    IOManager.GetInstance()[AO[0].Node][AO[0].Module - 1].Devices[AO[0].PhysicalClamp][0] != null &&
+                    IOManager.GetInstance()[AO[0].Node][AO[0].Module - 1].Devices[AO[0].PhysicalClamp][0].DeviceType != DeviceType.Y &&
+                    IOManager.GetInstance()[AO[0].Node][AO[0].Module - 1].Devices[AO[0].PhysicalClamp][0].DeviceType != DeviceType.DEV_VTUG)
                 {
                     res += string.Format("\"{0}\" - первым в списке привязанных устройств должен идти пневмоостров Festo VTUG.\n",
                         name);
                 }
                 else
                 {
-                    var vtug = IOManager.GetInstance()[AO[0].Node][AO[0].Module - 1].devices[AO[0].PhysicalClamp][0];
+                    var vtug = IOManager.GetInstance()[AO[0].Node][AO[0].Module - 1].Devices[AO[0].PhysicalClamp][0];
                     switch (vtug.DeviceSubType)
                     {
                         case DeviceSubType.DEV_VTUG_8:

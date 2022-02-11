@@ -260,6 +260,7 @@
     <Compile Include="Main\BindingSynchronizationAction.cs" />
     <Compile Include="Main\ExportTechDevsToExcelAction.cs" />
     <Compile Include="Main\LoadDescriptionAction.cs" />
+    <Compile Include="Main\PxcIolModulesConfigurationAction.cs" />
     <Compile Include="Main\SaveAsXMLAction.cs" />
     <Compile Include="Main\SaveDescriptionAction.cs" />
     <Compile Include="Main\ShowDevicesAction.cs" />
@@ -283,6 +284,18 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="PxcIolinkConfiguration\IPxcIolinkConfiguration.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IolConf\Device.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IolConf\Devices.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IolConf\LinerecorderMultiSensor.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IolConf\LinerecorderSensor.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IolConf\Param.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IolConf\Parameters.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IolConf\Sensor.cs" />
+    <Compile Include="PxcIolinkConfiguration\PxcIolinkModulesConfiguration.cs" />
+    <Compile Include="PxcIolinkConfiguration\SensorDescriptionBuilder.cs" />
+    <Compile Include="PxcIolinkConfiguration\XmlSensorSerializer.cs" />
+    <Compile Include="PxcIolinkConfiguration\XmlTemplateReader.cs" />
     <Compile Include="StaticHelper\DeviceBindingHelper.cs" />
     <Compile Include="StaticHelper\GUIHelper.cs" />
     <Compile Include="StaticHelper\CommonConst.cs" />
@@ -492,6 +505,9 @@
       <Project>{ed4a8f8d-0288-4a79-b63b-416264778a72}</Project>
       <Name>EplanIdleTimeModule</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="PxcIolinkConfiguration\Models\IODD\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
