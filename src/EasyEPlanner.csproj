@@ -285,6 +285,32 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="PxcIolinkConfiguration\IPxcIolinkConfiguration.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\Datatype.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\Datatypes\ArrayT.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\Datatypes\BooleanT.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\Datatypes\Float32T.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\Datatypes\IntegerT.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\Datatypes\OctetStringT.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\Datatypes\RecordT.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\Datatypes\StringT.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\Datatypes\TimeSpanT.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\Datatypes\TimeT.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\Datatypes\UIntegerT.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\Description.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\DeviceFunction.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\DeviceIdentity.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\ExternalTextCollection.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\IODevice.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\Name.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\PrimaryLanguage.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\ProfileBody.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\RecordItem.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\SimpleDatatype.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\SingleValue.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\Text.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\ValueRange.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\Variable.cs" />
+    <Compile Include="PxcIolinkConfiguration\Models\IODD\VariableCollection.cs" />
     <Compile Include="PxcIolinkConfiguration\Models\IolConf\Device.cs" />
     <Compile Include="PxcIolinkConfiguration\Models\IolConf\Devices.cs" />
     <Compile Include="PxcIolinkConfiguration\Models\IolConf\LinerecorderMultiSensor.cs" />
@@ -506,9 +532,7 @@
       <Name>EplanIdleTimeModule</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="PxcIolinkConfiguration\Models\IODD\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
