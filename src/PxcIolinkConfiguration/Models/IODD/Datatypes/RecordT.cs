@@ -1,7 +1,0 @@
-﻿using System.Xml.Serialization;
-
-namespace EasyEPlanner.PxcIolinkConfiguration.Models.IODD.Datatypes
-{
-    [XmlRoot(Namespace = "http://www.io-link.com/IODD/2010/10")]
-    public class RecordT : Datatype { }
-}

@@ -1,7 +1,7 @@
 ﻿using System.Xml.Serialization;
 using System.Collections.Generic;
 
-namespace EasyEPlanner.PxcIolinkConfiguration.Models.IolConf
+namespace EasyEPlanner.PxcIolinkConfiguration.Models
 {
     [XmlRoot(ElementName = "Devices")]
     public class Devices

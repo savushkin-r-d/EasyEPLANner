@@ -1,4 +1,4 @@
-﻿using EasyEPlanner.PxcIolinkConfiguration.Models.IolConf;
+﻿using EasyEPlanner.PxcIolinkConfiguration.Models;
 using IO;
 using System;
 using System.Collections.Generic;
