@@ -1,31 +1,44 @@
 ﻿using Eplan.EplApi.Base;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.HEServices;
-using StaticHelper;
 using System;
 
 namespace StaticHelper
 {
-    public static class ProjectHelper
+    public interface IProjectHelper
     {
         /// <summary>
         /// Получить текущий проект
         /// </summary>
         /// <returns>Проект</returns>
-        public static Project GetProject()
-        {
-            SelectionSet selection = ApiHelper.GetSelectionSet();
-            const bool useDialog = false;
-            Project project = selection.GetCurrentProject(useDialog);
-            return project;
-        }
+        Project GetProject();
 
         /// <summary>
         /// Получить свойство проекта.
         /// </summary>
         /// <param name="propertyName">Имя свойства</param>
         /// <returns></returns>
-        public static string GetProjectProperty(string propertyName)
+        string GetProjectProperty(string propertyName);
+    }
+
+    public class ProjectHelper : IProjectHelper
+    {
+        IApiHelper apiHelper;
+
+        public ProjectHelper(IApiHelper apiHelper)
+        {
+            this.apiHelper = apiHelper;
+        }
+
+        public Project GetProject()
+        {
+            SelectionSet selection = apiHelper.GetSelectionSet();
+            const bool useDialog = false;
+            Project project = selection.GetCurrentProject(useDialog);
+            return project;
+        }
+
+        public string GetProjectProperty(string propertyName)
         {
             var project = GetProject();
             if (project.Properties[propertyName].IsEmpty)

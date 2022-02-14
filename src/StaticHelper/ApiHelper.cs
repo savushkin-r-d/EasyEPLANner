@@ -1,31 +1,53 @@
-﻿using Eplan.EplApi.Base;
+﻿using EasyEPlanner.Extensions;
+using Eplan.EplApi.Base;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.HEServices;
 using System.Text.RegularExpressions;
 
 namespace StaticHelper
 {
-    /// <summary>
-    /// Обертка над Eplan API
-    /// </summary>
-    public static class ApiHelper
+    public interface IApiHelper
     {
+        /// <summary>
+        /// Получить функциональный текст из функции
+        /// </summary>
+        /// <param name="function">Функция</param>
+        string GetFunctionalText(Function function);
+
+        /// <summary>
+        /// Получить выбранный на графической схеме объект
+        /// </summary>
+        /// <returns>Выбранный на схеме объект</returns>
+        StorableObject GetSelectedObject();
+
         /// <summary>
         /// Получить выборку из выбранных объектов в Eplan API
         /// </summary>
         /// <returns></returns>
-        public static SelectionSet GetSelectionSet()
+        SelectionSet GetSelectionSet();
+
+        /// <summary>
+        /// Получить значение свойства функции Доп. поле с номером propertyIndex
+        /// </summary>
+        /// <param name="function">Функция Eplan</param>
+        /// <param name="propertyIndex">Индекс свойства</param>
+        /// <returns></returns>
+        string GetSupplementaryFieldValue(Function function, int propertyIndex);
+    }
+
+    /// <summary>
+    /// Обертка над Eplan API
+    /// </summary>
+    public class ApiHelper : IApiHelper
+    {
+        public SelectionSet GetSelectionSet()
         {
             var selection = new SelectionSet();
             selection.LockSelectionByDefault = false;
             return selection;
         }
 
-        /// <summary>
-        /// Получить выбранный на графической схеме объект
-        /// </summary>
-        /// <returns>Выбранный на схеме объект</returns>
-        public static StorableObject GetSelectedObject()
+        public StorableObject GetSelectedObject()
         {
             SelectionSet selection = GetSelectionSet();
             const bool isFirstObject = true;
@@ -34,35 +56,12 @@ namespace StaticHelper
             return selectedObject;
         }
 
-        /// <summary>
-        /// Получить функциональный текст из функции
-        /// </summary>
-        /// <param name="function">Функция</param>
-        /// <returns></returns>
-        public static string GetFunctionalText(Function function)
+        public string GetFunctionalText(Function function)
         {
-            string functionalText = function.Properties.FUNC_TEXT_AUTOMATIC
-                .ToString(ISOCode.Language.L___);
-
-            if (string.IsNullOrEmpty(functionalText))
-            {
-                functionalText = function.Properties.FUNC_TEXT_AUTOMATIC
-                    .ToString(ISOCode.Language.L_ru_RU);
-            }
-            if (string.IsNullOrEmpty(functionalText))
-            {
-                functionalText = function.Properties.FUNC_TEXT
-                    .ToString(ISOCode.Language.L_ru_RU);
-            }
-            if (string.IsNullOrEmpty(functionalText))
-            {
-                return "";
-            }
-
-            return functionalText;
+            return function.GetFunctionalText();
         }
 
-        public static string GetSupplementaryFieldValue(Function function, int propertyIndex)
+        public string GetSupplementaryFieldValue(Function function, int propertyIndex)
         {
             var propertyValue = string.Empty;
 

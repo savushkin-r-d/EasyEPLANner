@@ -10,8 +10,11 @@ namespace EasyEPlanner
     /// </summary>
     public class ConfigurationChecker
     {
-        public ConfigurationChecker()
+        IProjectHelper projectHelper;
+
+        public ConfigurationChecker(IProjectHelper projectHelper)
         {
+            this.projectHelper = projectHelper;
             deviceManager = EplanDevice.DeviceManager.GetInstance();
             IOManager = IO.IOManager.GetInstance();
             techObjectManager = TechObject.TechObjectManager.GetInstance();
@@ -41,8 +44,8 @@ namespace EasyEPlanner
 
             try
             {
-                startIPstr = ProjectHelper.GetProjectProperty(startIpProperty);
-                endIPstr = ProjectHelper.GetProjectProperty(endIpProperty);
+                startIPstr = projectHelper.GetProjectProperty(startIpProperty);
+                endIPstr = projectHelper.GetProjectProperty(endIpProperty);
 
                 startIPstr = Regex
                     .Match(startIPstr, CommonConst.IPAddressPattern).Value;

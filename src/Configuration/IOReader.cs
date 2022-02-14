@@ -12,16 +12,18 @@ namespace EasyEPlanner
     /// </summary>
     public class IOReader
     {
-        /// <summary>
-        /// Конструктор
-        /// </summary>
-        public IOReader()
+        IDeviceHelper deviceHelper;
+        IProjectHelper projectHelper;
+
+        public IOReader(IProjectHelper projectHelper, IDeviceHelper deviceHelper)
         {
             this.IOManager = IO.IOManager.GetInstance();
             this.isContainsNodes = false;
             this.isContainsA1 = false;
             this.IONameRegex = new Regex(IO.IOManager.IONamePattern);
             this.functionsForSearching = new List<Function>();
+            this.projectHelper = projectHelper;
+            this.deviceHelper = deviceHelper;
         }
 
         /// <summary>
@@ -66,7 +68,7 @@ namespace EasyEPlanner
         /// </summary>
         private void PrepareForReading()
         {
-            var project = ProjectHelper.GetProject();
+            var project = projectHelper.GetProject();
             var objectsFinder = new DMObjectsFinder(project);
             var functionsFilter = new FunctionsFilter();
 
@@ -268,8 +270,9 @@ namespace EasyEPlanner
                     GetInAndOutOffset(shortNodeNumber, moduleInfo,
                         out inOffset, out outOffset);
 
+                    string articleName = deviceHelper.GetArticleName(function);
                     IO.IOModule nodeModule = new IO.IOModule(inOffset,
-                        outOffset, moduleInfo, moduleNumber, function);
+                        outOffset, moduleInfo, moduleNumber, articleName, function);
 
                     node.DI_count += moduleInfo.DICount;
                     node.DO_count += moduleInfo.DOCount;

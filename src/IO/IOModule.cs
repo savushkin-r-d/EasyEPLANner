@@ -20,9 +20,10 @@ namespace IO
         /// <param name="info">Описание модуля.</param>
         /// <param name="physicalNumber">Физический номер (из ОУ) устройства.
         /// </param>
+        /// <param name="articleName">Имя изделия модуля ввода-вывода</param>
         /// <param name="function">Eplan функция модуля.</param>
         public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
-            IOModuleInfo info, int physicalNumber,
+            IOModuleInfo info, int physicalNumber, string articleName,
             Eplan.EplApi.DataModel.Function function)
         {
             this.inAddressSpaceOffset = inAddressSpaceOffset;
@@ -30,7 +31,7 @@ namespace IO
             this.info = info;
             this.physicalNumber = physicalNumber;
             this.function = function;
-            articleName = DeviceHelper.GetArticleName(function);
+            this.articleName = articleName;
 
             devicesChannels = new List<EplanDevice.IODevice.IOChannel>[80];
             devices = new List<EplanDevice.IODevice>[80];
@@ -38,7 +39,7 @@ namespace IO
 
         public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
             IOModuleInfo info) : this(inAddressSpaceOffset,
-                outAddressSpaceOffset, info, 0, null)
+                outAddressSpaceOffset, info, 0, string.Empty, null)
         {
             // Делегировано в конструктор с 5 параметрами.
         }

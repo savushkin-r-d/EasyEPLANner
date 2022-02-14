@@ -13,9 +13,9 @@ namespace EasyEPlanner
             synchronizeService = new DeviceSynchronizeService();
         }
 
-        public DeviceSynchronizer()
+        public DeviceSynchronizer(IDeviceReader deviceReader)
         {
-            deviceReader = new DeviceReader();
+            this.deviceReader = deviceReader;
             techObjectManager = TechObjectManager.GetInstance();
         }
 
@@ -140,7 +140,7 @@ namespace EasyEPlanner
 
         private static IDeviceSynchronizeService synchronizeService;
         private EplanDevice.IODevice[] prevDevices;
-        private DeviceReader deviceReader;
+        private IDeviceReader deviceReader;
         private ITechObjectManager techObjectManager;
     }
 }

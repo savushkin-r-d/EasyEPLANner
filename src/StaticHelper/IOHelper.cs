@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace StaticHelper
 {
-    public static class IOHelper
+    public interface IIOHelper
     {
         /// <summary>
         /// Получить функцию выбранной клеммы
@@ -15,7 +15,35 @@ namespace StaticHelper
         /// <param name="selectedObject">Выбранный на схеме объект
         /// </param>
         /// <returns>Функция клеммы модуля ввода-вывода</returns>
-        public static Function GetClampFunction(StorableObject selectedObject)
+        Function GetClampFunction(StorableObject selectedObject);
+
+        /// <summary>
+        /// Получить функцию выбранной клеммы
+        /// </summary>
+        /// <param name="IOModuleFunction">Функция модуля ввода-вывода</param>
+        /// <param name="deviceName">Привязанное к клемме устройство</param>
+        /// <returns></returns>
+        Function GetClampFunction(Function IOModuleFunction, string deviceName);
+
+        /// <summary>
+        /// Получить функцию модуля ввода-вывода.
+        /// Модуль, куда привязывается устройство.
+        /// </summary>
+        /// <param name="clampFunction">Функция клеммы модуля 
+        /// ввода-вывода</param>
+        Function GetIOModuleFunction(Function clampFunction);
+    }
+
+    public class IOHelper : IIOHelper
+    {
+        IProjectHelper projectHelper;
+
+        public IOHelper(IProjectHelper projectHelper)
+        {
+            this.projectHelper = projectHelper;
+        }
+
+        public Function GetClampFunction(StorableObject selectedObject)
         {
             if (selectedObject is Function == false)
             {
@@ -36,13 +64,7 @@ namespace StaticHelper
             return clampFunction;
         }
 
-        /// <summary>
-        /// Получить функцию выбранной клеммы
-        /// </summary>
-        /// <param name="IOModuleFunction">Функция модуля ввода-вывода</param>
-        /// <param name="deviceName">Привязанное к клемме устройство</param>
-        /// <returns></returns>
-        public static Function GetClampFunction(
+        public Function GetClampFunction(
             Function IOModuleFunction, string deviceName)
         {
             var clampFunction = new Function();
@@ -75,13 +97,7 @@ namespace StaticHelper
             return clampFunction;
         }
 
-        /// <summary>
-        /// Получить функцию модуля ввода-вывода.
-        /// Модуль, куда привязывается устройство.
-        /// </summary>
-        /// <param name="clampFunction">Функция клеммы модуля 
-        /// ввода-вывода</param>
-        public static Function GetIOModuleFunction(Function clampFunction)
+        public Function GetIOModuleFunction(Function clampFunction)
         {
             var isValveTerminalClampFunction = false;
             Function IOModuleFunction = null;
@@ -121,7 +137,7 @@ namespace StaticHelper
         /// <param name="clampFunction">Функция клеммы модуля 
         /// ввода-вывода</param>   
         /// <returns>Функция модуля ввода-вывода</returns>
-        private static Function GetValveTerminalIOModuleFunction(
+        private Function GetValveTerminalIOModuleFunction(
             Function clampFunction)
         {
             var IOModuleFunction = new Function();
@@ -134,7 +150,7 @@ namespace StaticHelper
                 throw new Exception(Message);
             }
 
-            var objectFinder = new DMObjectsFinder(ProjectHelper.GetProject());
+            var objectFinder = new DMObjectsFinder(projectHelper.GetProject());
             var functionsFilter = new FunctionsFilter();
             var properties = new FunctionPropertyList();
             properties.FUNC_MAINFUNCTION = true;

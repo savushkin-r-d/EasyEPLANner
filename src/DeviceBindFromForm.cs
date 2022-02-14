@@ -16,15 +16,20 @@ namespace EasyEPlanner
     /// </summary>
     public sealed class DeviceBinder
     {
+        IApiHelper apiHelper;
+        IIOHelper ioHelper;
+
         /// <summary>
         /// Конструктор, в который передается экземпляр формы для доступа
         /// к объектам формы.
         /// </summary>
         /// <param name="devicesForm">Форма с объектами</param>
-        public DeviceBinder(DFrm devicesForm)
+        public DeviceBinder(DFrm devicesForm, IApiHelper apiHelper, IIOHelper ioHelper)
         {
             this.DevicesForm = devicesForm;
             this.startValues = new StartValuesForBinding(DevicesForm);
+            this.apiHelper = apiHelper;
+            this.ioHelper = ioHelper;
         }
 
         /// <summary>
@@ -73,10 +78,10 @@ namespace EasyEPlanner
                     .GetChannel(NodeFromSelectedNode);
                 SelectedDevice = startValues
                     .GetDevice(NodeFromSelectedNode);
-                SelectedObject = ApiHelper.GetSelectedObject();
-                SelectedClampFunction = IOHelper.GetClampFunction(
+                SelectedObject = apiHelper.GetSelectedObject();
+                SelectedClampFunction = ioHelper.GetClampFunction(
                     SelectedObject);
-                SelectedIOModuleFunction = IOHelper
+                SelectedIOModuleFunction = ioHelper
                     .GetIOModuleFunction(SelectedClampFunction);
             }
             catch
@@ -102,7 +107,7 @@ namespace EasyEPlanner
                 NewFunctionalText = GenerateFunctionalText(isIOLink);
             }
 
-            var oldFunctionalText = ApiHelper.GetFunctionalText(
+            var oldFunctionalText = apiHelper.GetFunctionalText(
                 SelectedClampFunction);
 
             if (SelectedClampFunction.Properties.FUNC_TEXT.IsEmpty ||

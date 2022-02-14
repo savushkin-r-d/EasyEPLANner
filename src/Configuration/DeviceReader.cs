@@ -7,14 +7,48 @@ using EplanDevice;
 
 namespace EasyEPlanner
 {
+    public interface IDeviceReader
+    {
+        /// <summary>
+        /// Считанные устройства
+        /// </summary>
+        List<IODevice> Devices { get; }
+
+        /// <summary>
+        /// Количество считанных устройств
+        /// </summary>
+        int DevicesCount { get; }
+
+        /// <summary>
+        /// Копировать устройства в массив
+        /// </summary>
+        /// <param name="array">Массив для копируемых данных</param>
+        void CopyDevices(IODevice[] array);
+
+        /// <summary>
+        /// Прочитать устройства
+        /// </summary>
+        void Read();
+    }
+
     /// <summary>
     /// Считыватель устройств
     /// </summary>
-    class DeviceReader
+    public class DeviceReader : IDeviceReader
     {
-        public DeviceReader()
+        IApiHelper apiHelper;
+        IProjectHelper projectHelper;
+        IDeviceHelper deviceHelper;
+        IIOHelper ioHelper;
+
+        public DeviceReader(IApiHelper apiHelper, IDeviceHelper deviceHelper,
+            IProjectHelper projectHelper, IIOHelper ioHelper)
         {
             this.deviceManager = DeviceManager.GetInstance();
+            this.apiHelper = apiHelper;
+            this.deviceHelper = deviceHelper;
+            this.projectHelper = projectHelper;
+            this.ioHelper = ioHelper;
         }
 
         /// <summary>
@@ -89,7 +123,7 @@ namespace EasyEPlanner
             IO.IOModuleInfo moduleInfo)
         {
             string clampNumberAsString = DeviceBindingHelper
-                .GetClampNumberAsString(deviceClampFunction);
+                .GetClampNumberAsString(deviceClampFunction, ioHelper);
             bool isDigit = int.TryParse(clampNumberAsString,
                 out int clampNumber);
             if (isDigit == false)
@@ -127,7 +161,7 @@ namespace EasyEPlanner
         {
             if (devicesDescription == string.Empty)
             {
-                devicesDescription = ApiHelper.GetFunctionalText(
+                devicesDescription = apiHelper.GetFunctionalText(
                     deviceClampFunction);
                 if (devicesDescription == string.Empty)
                 {
@@ -138,9 +172,6 @@ namespace EasyEPlanner
             return true;
         }
 
-        /// <summary>
-        /// Прочитать устройства
-        /// </summary>
         public void Read()
         {
             PrepareForReading();
@@ -153,7 +184,7 @@ namespace EasyEPlanner
         private void PrepareForReading() 
         {
             deviceManager.Clear();
-            var objectFinder = new DMObjectsFinder(ProjectHelper.GetProject());
+            var objectFinder = new DMObjectsFinder(projectHelper.GetProject());
 
             var propertyList = new FunctionPropertyList();
             propertyList.FUNC_MAINFUNCTION = true;
@@ -178,14 +209,14 @@ namespace EasyEPlanner
                     continue;
                 }
 
-                string name = DeviceHelper.GetName(function);
-                string description = DeviceHelper.GetDescription(function);
-                string subType = DeviceHelper.GetSubType(function);
-                string parameters = DeviceHelper.GetParameters(function);
-                string properties = DeviceHelper.GetProperties(function);
-                string runtimeParameters = DeviceHelper.GetRuntimeParameters(function);
-                int deviceLocation = DeviceHelper.GetLocation(function);
-                string articleName = DeviceHelper.GetArticleName(function);
+                string name = deviceHelper.GetName(function);
+                string description = deviceHelper.GetDescription(function);
+                string subType = deviceHelper.GetSubType(function);
+                string parameters = deviceHelper.GetParameters(function);
+                string properties = deviceHelper.GetProperties(function);
+                string runtimeParameters = deviceHelper.GetRuntimeParameters(function);
+                int deviceLocation = deviceHelper.GetLocation(function);
+                string articleName = deviceHelper.GetArticleName(function);
 
                 string error;
                 deviceManager.AddDeviceAndEFunction(name, description,
@@ -229,18 +260,11 @@ namespace EasyEPlanner
             return skip;
         }
 
-        /// <summary>
-        /// Копировать устройства в массив
-        /// </summary>
-        /// <param name="array">Массив для копируемых данных</param>
         public void CopyDevices(IODevice[] array)
         {
             deviceManager.Devices.CopyTo(array);
         }
 
-        /// <summary>
-        /// Количество считанных устройств
-        /// </summary>
         public int DevicesCount
         {
             get
@@ -249,9 +273,6 @@ namespace EasyEPlanner
             }
         }
 
-        /// <summary>
-        /// Считанные устройства
-        /// </summary>
         public List<IODevice> Devices
         {
             get

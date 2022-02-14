@@ -4,14 +4,75 @@ using System.Text.RegularExpressions;
 
 namespace StaticHelper
 {
-    public static class DeviceHelper
+    public interface IDeviceHelper
     {
         /// <summary>
         /// Получить имя изделия устройства.
         /// </summary>
         /// <param name="function">Функция устройства</param>
         /// <returns></returns>
-        public static string GetArticleName(Function function)
+        string GetArticleName(Function function);
+
+        /// <summary>
+        /// Получить описание устройства.
+        /// </summary>
+        /// <param name="function">Функция устройства</param>
+        /// <returns></returns>
+        string GetDescription(Function function);
+
+        /// <summary>
+        /// Получить номер шкафа, где располагается устройство.
+        /// </summary>
+        /// <param name="function">Функция устройства</param>
+        /// <returns></returns>
+        int GetLocation(Function function);
+
+        /// <summary>
+        /// Получить имя устройства.
+        /// </summary>
+        /// <param name="function">Функция устройства</param>
+        /// <returns></returns>
+        string GetName(Function function);
+
+        /// <summary>
+        /// Получить параметры устройства.
+        /// </summary>
+        /// <param name="function">Функция устройства</param>
+        /// <returns></returns>
+        string GetParameters(Function function);
+
+        /// <summary>
+        /// Получить свойства устройства.
+        /// </summary>
+        /// <param name="function">Функция устройства</param>
+        /// <returns></returns>
+        string GetProperties(Function function);
+
+        /// <summary>
+        /// Получить параметры времени выполнения.
+        /// </summary>
+        /// <param name="function">Функция устройства</param>
+        /// <returns></returns>
+        string GetRuntimeParameters(Function function);
+
+        /// <summary>
+        /// Получить подтип устройства.
+        /// </summary>
+        /// <param name="function">Функция устройства</param>
+        /// <returns></returns>
+        string GetSubType(Function function);
+    }
+
+    public class DeviceHelper : IDeviceHelper
+    {
+        IApiHelper apiHelper;
+
+        public DeviceHelper(IApiHelper apiHelper)
+        {
+            this.apiHelper = apiHelper;
+        }
+
+        public string GetArticleName(Function function)
         {
             var articleName = string.Empty;
             if (function == null) return articleName;
@@ -26,12 +87,7 @@ namespace StaticHelper
             return articleName;
         }
 
-        /// <summary>
-        /// Получить имя устройства.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        public static string GetName(Function function)
+        public string GetName(Function function)
         {
             var name = function.Name;
             name = Regex.Replace(name, CommonConst.RusAsEngPattern,
@@ -39,12 +95,7 @@ namespace StaticHelper
             return name;
         }
 
-        /// <summary>
-        /// Получить описание устройства.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        public static string GetDescription(Function function)
+        public string GetDescription(Function function)
         {
             var description = string.Empty;
             string descriptionPattern = "([\'\"])";
@@ -54,7 +105,7 @@ namespace StaticHelper
                 description = function.Properties.FUNC_COMMENT
                     .ToString(ISOCode.Language.L___);
 
-                if (description == "")
+                if (description == string.Empty)
                 {
                     description = function.Properties.FUNC_COMMENT
                         .ToString(ISOCode.Language.L_ru_RU);
@@ -72,63 +123,38 @@ namespace StaticHelper
             return description;
         }
 
-        /// <summary>
-        /// Получить подтип устройства.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        public static string GetSubType(Function function)
+        public string GetSubType(Function function)
         {
             int subTypeIndex = 2;
-            return ApiHelper.GetSupplementaryFieldValue(function, subTypeIndex);
+            return apiHelper.GetSupplementaryFieldValue(function, subTypeIndex);
         }
 
-        /// <summary>
-        /// Получить свойства устройства.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        public static string GetProperties(Function function)
+        public string GetParameters(Function function)
+        {
+            int parametersIndex = 3;
+            return apiHelper.GetSupplementaryFieldValue(function, parametersIndex);
+        }
+
+        public string GetProperties(Function function)
         {
             int propertiesIndex = 4;
-            return ApiHelper.GetSupplementaryFieldValue(function, propertiesIndex);
+            return apiHelper.GetSupplementaryFieldValue(function, propertiesIndex);
         }
 
-        /// <summary>
-        /// Получить параметры времени выполнения.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        public static string GetRuntimeParameters(Function function)
+        public string GetRuntimeParameters(Function function)
         {
             int runtimeParametersIndex = 5;
-            return ApiHelper.GetSupplementaryFieldValue(function, runtimeParametersIndex);
+            return apiHelper.GetSupplementaryFieldValue(function, runtimeParametersIndex);
         }
 
-        /// <summary>
-        /// Получить номер шкафа, где располагается устройство.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        public static int GetLocation(Function function)
+        public int GetLocation(Function function)
         {
             int locationIndex = 6;
-            var locationString = ApiHelper.GetSupplementaryFieldValue(function, locationIndex);
+            var locationString = apiHelper.GetSupplementaryFieldValue(function, locationIndex);
             bool parsed = int.TryParse(locationString, out int deviceLocation);
             if (!parsed) deviceLocation = 0;
 
             return deviceLocation;
-        }
-
-        /// <summary>
-        /// Получить параметры устройства.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        public static string GetParameters(Function function)
-        {
-            int parametersIndex = 3;
-            return ApiHelper.GetSupplementaryFieldValue(function, parametersIndex);
         }
     }
 }

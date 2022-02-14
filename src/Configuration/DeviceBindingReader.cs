@@ -13,13 +13,15 @@ namespace EasyEPlanner
     /// </summary>
     class DeviceBindingReader
     {
-        /// <summary>
-        /// Конструктор
-        /// </summary>
-        public DeviceBindingReader()
+        IProjectHelper projectHelper;
+        IApiHelper apiHelper;
+
+        public DeviceBindingReader(IProjectHelper projectHelper, IApiHelper apiHelper)
         {
             this.deviceManager = DeviceManager.GetInstance();
             this.IOManager = IO.IOManager.GetInstance();
+            this.projectHelper = projectHelper;
+            this.apiHelper = apiHelper;
         }
 
         /// <summary>
@@ -36,7 +38,7 @@ namespace EasyEPlanner
         /// </summary>
         private void PrepareForReading()
         {
-            var objectsFinder = new DMObjectsFinder(ProjectHelper.GetProject());
+            var objectsFinder = new DMObjectsFinder(projectHelper.GetProject());
 
             var properties = new FunctionPropertyList();
             properties.FUNC_MAINFUNCTION = true;
@@ -85,7 +87,7 @@ namespace EasyEPlanner
                 return;
             }
 
-            string description = ApiHelper.GetFunctionalText(clampFunction);
+            string description = apiHelper.GetFunctionalText(clampFunction);
             var descriptionMatches = Regex.Matches(description, 
                 DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
             
@@ -141,7 +143,7 @@ namespace EasyEPlanner
                 return skip;
             }
 
-            string description = ApiHelper.GetFunctionalText(
+            string description = apiHelper.GetFunctionalText(
                 clampFunction);
             if (description == "" || description.Contains(CommonConst.Reserve))
             {
@@ -233,7 +235,7 @@ namespace EasyEPlanner
 
                 string clampNumber = function.Properties.
                 FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
-                string clampBindedDevice = ApiHelper.GetFunctionalText(
+                string clampBindedDevice = apiHelper.GetFunctionalText(
                     function);
                 
                 bool isInt = int.TryParse(clampNumber, out _);
