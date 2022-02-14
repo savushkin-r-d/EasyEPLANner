@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using StaticHelper;
 using System.Text.RegularExpressions;
-using Eplan.EplApi.Base;
 using EplanDevice;
 
 namespace EasyEPlanner
@@ -154,7 +153,7 @@ namespace EasyEPlanner
         private void PrepareForReading() 
         {
             deviceManager.Clear();
-            var objectFinder = new DMObjectsFinder(ApiHelper.GetProject());
+            var objectFinder = new DMObjectsFinder(ProjectHelper.GetProject());
 
             var propertyList = new FunctionPropertyList();
             propertyList.FUNC_MAINFUNCTION = true;
@@ -179,14 +178,14 @@ namespace EasyEPlanner
                     continue;
                 }
 
-                string name = GetName(function);
-                string description = GetDescription(function);
-                string subType = GetSubType(function);
-                string parameters = GetParameters(function);
-                string properties = GetProperties(function);
-                string runtimeParameters = GetRuntimeParameters(function);
-                int deviceLocation = GetDeviceLocation(function);
-                string articleName = ApiHelper.GetArticleName(function);
+                string name = DeviceHelper.GetName(function);
+                string description = DeviceHelper.GetDescription(function);
+                string subType = DeviceHelper.GetSubType(function);
+                string parameters = DeviceHelper.GetParameters(function);
+                string properties = DeviceHelper.GetProperties(function);
+                string runtimeParameters = DeviceHelper.GetRuntimeParameters(function);
+                int deviceLocation = DeviceHelper.GetLocation(function);
+                string articleName = DeviceHelper.GetArticleName(function);
 
                 string error;
                 deviceManager.AddDeviceAndEFunction(name, description,
@@ -228,202 +227,6 @@ namespace EasyEPlanner
             }
 
             return skip;
-        }
-
-        /// <summary>
-        /// Получить имя устройства.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        private string GetName(Function function)
-        {
-            var name = function.Name;
-            name = Regex.Replace(name, CommonConst.RusAsEngPattern,
-                    CommonConst.RusAsEngEvaluator);
-            return name;
-        }
-
-        /// <summary>
-        /// Получить описание устройства.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        private string GetDescription(Function function)
-        {
-            var description = "";
-            string descriptionPattern = "([\'\"])";
-
-            if (!function.Properties.FUNC_COMMENT.IsEmpty)
-            {
-                description = function.Properties.FUNC_COMMENT
-                    .ToString(ISOCode.Language.L___);
-
-                if (description == "")
-                {
-                    description = function.Properties.FUNC_COMMENT
-                        .ToString(ISOCode.Language.L_ru_RU);
-                }
-
-                description = Regex.Replace(description,
-                    descriptionPattern, "");
-            }
-
-            if (description == null)
-            {
-                description = "";
-            }
-
-            return description;
-        }
-
-        /// <summary>
-        /// Получить подтип устройства.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        private string GetSubType(Function function)
-        {
-            var subType = "";
-
-            if (!function.Properties.FUNC_SUPPLEMENTARYFIELD[2].IsEmpty)
-            {
-                subType = function.Properties.FUNC_SUPPLEMENTARYFIELD[2]
-                    .ToString(ISOCode.Language.L___);
-
-                if (subType == "")
-                {
-                    subType = function.Properties.FUNC_SUPPLEMENTARYFIELD[2]
-                        .ToString(ISOCode.Language.L_ru_RU);
-                }
-
-                subType = subType.Trim();
-                subType = Regex.Replace(subType, 
-                    CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
-            }
-
-            if (subType == null)
-            {
-                subType = "";
-            }
-
-            return subType;
-        }
-
-        /// <summary>
-        /// Получить свойства устройства.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        private string GetProperties(Function function)
-        {
-            var properties = "";
-
-            if (!function.Properties.FUNC_SUPPLEMENTARYFIELD[4].IsEmpty)
-            {
-                properties = function.Properties.FUNC_SUPPLEMENTARYFIELD[4]
-                    .ToString(ISOCode.Language.L___);
-
-                if (properties == "")
-                {
-                    properties = function.Properties.FUNC_SUPPLEMENTARYFIELD[4]
-                        .ToString(ISOCode.Language.L_ru_RU);
-                };
-
-                properties = Regex.Replace(properties,
-                    CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
-            }
-
-            if (properties == null)
-            {
-                properties = "";
-            }
-
-            return properties;
-        }
-
-        /// <summary>
-        /// Получить параметры времени выполнения.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        private string GetRuntimeParameters(Function function)
-        {
-            var runtimeParameters = "";
-
-            if (!function.Properties.FUNC_SUPPLEMENTARYFIELD[5].IsEmpty)
-            {
-                runtimeParameters = function.Properties
-                    .FUNC_SUPPLEMENTARYFIELD[5]
-                    .ToString(ISOCode.Language.L___);
-
-                if (runtimeParameters == "")
-                {
-                    runtimeParameters = function.Properties.
-                        FUNC_SUPPLEMENTARYFIELD[5]
-                        .ToString(ISOCode.Language.L_ru_RU);
-                };
-
-                if (runtimeParameters == null)
-                {
-                    runtimeParameters = "";
-                }
-
-                runtimeParameters = Regex.Replace(runtimeParameters,
-                    CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
-            }
-
-            return runtimeParameters;
-        }
-
-        /// <summary>
-        /// Получить номер шкафа, где располагается устройство.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        private int GetDeviceLocation(Function function)
-        {
-            int deviceLocation = 0;
-
-            if (!function.Properties.FUNC_SUPPLEMENTARYFIELD[6].IsEmpty)
-            {
-                deviceLocation = int.Parse(function.Properties
-                    .FUNC_SUPPLEMENTARYFIELD[6]
-                    .ToString(ISOCode.Language.L___));
-            }
-
-            return deviceLocation;
-        }
-
-        /// <summary>
-        /// Получить параметры устройства.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        private string GetParameters(Function function)
-        {
-            var parameters = "";
-
-            if (!function.Properties.FUNC_SUPPLEMENTARYFIELD[3].IsEmpty)
-            {
-                parameters = function.Properties.FUNC_SUPPLEMENTARYFIELD[3]
-                    .ToString(ISOCode.Language.L___);
-
-                if (parameters == "")
-                {
-                    parameters = function.Properties.FUNC_SUPPLEMENTARYFIELD[3]
-                        .ToString(ISOCode.Language.L_ru_RU);
-                };
-
-                parameters = Regex.Replace(parameters, 
-                    CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
-            }
-
-            if (parameters == null)
-            {
-                parameters = "";
-            }
-
-            return parameters;
         }
 
         /// <summary>

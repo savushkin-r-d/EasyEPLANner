@@ -48,10 +48,10 @@ namespace StaticHelper
             if (haveValveTerminal)
             {
                 Function IOModuleFunction =
-                    ApiHelper.GetIOModuleFunction(deviceClampFunction);
+                    IOHelper.GetIOModuleFunction(deviceClampFunction);
                 string bindedDevice = deviceClampFunction.Name;
                 Function IOModuleClampFunction =
-                    ApiHelper.GetClampFunction(IOModuleFunction, bindedDevice);
+                    IOHelper.GetClampFunction(IOModuleFunction, bindedDevice);
                 clampNumberAsString = IOModuleClampFunction.Properties
                 .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
             }

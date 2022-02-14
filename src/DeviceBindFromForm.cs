@@ -74,9 +74,9 @@ namespace EasyEPlanner
                 SelectedDevice = startValues
                     .GetDevice(NodeFromSelectedNode);
                 SelectedObject = ApiHelper.GetSelectedObject();
-                SelectedClampFunction = ApiHelper.GetClampFunction(
+                SelectedClampFunction = IOHelper.GetClampFunction(
                     SelectedObject);
-                SelectedIOModuleFunction = ApiHelper
+                SelectedIOModuleFunction = IOHelper
                     .GetIOModuleFunction(SelectedClampFunction);
             }
             catch

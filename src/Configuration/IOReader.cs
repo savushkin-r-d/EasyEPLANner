@@ -66,7 +66,7 @@ namespace EasyEPlanner
         /// </summary>
         private void PrepareForReading()
         {
-            var project = ApiHelper.GetProject();
+            var project = ProjectHelper.GetProject();
             var objectsFinder = new DMObjectsFinder(project);
             var functionsFilter = new FunctionsFilter();
 

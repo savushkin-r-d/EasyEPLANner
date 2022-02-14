@@ -41,8 +41,8 @@ namespace EasyEPlanner
 
             try
             {
-                startIPstr = ApiHelper.GetProjectProperty(startIpProperty);
-                endIPstr = ApiHelper.GetProjectProperty(endIpProperty);
+                startIPstr = ProjectHelper.GetProjectProperty(startIpProperty);
+                endIPstr = ProjectHelper.GetProjectProperty(endIpProperty);
 
                 startIPstr = Regex
                     .Match(startIPstr, CommonConst.IPAddressPattern).Value;

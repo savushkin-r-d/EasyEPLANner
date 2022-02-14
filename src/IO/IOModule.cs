@@ -30,7 +30,7 @@ namespace IO
             this.info = info;
             this.physicalNumber = physicalNumber;
             this.function = function;
-            articleName = ApiHelper.GetArticleName(function);
+            articleName = DeviceHelper.GetArticleName(function);
 
             devicesChannels = new List<EplanDevice.IODevice.IOChannel>[80];
             devices = new List<EplanDevice.IODevice>[80];
