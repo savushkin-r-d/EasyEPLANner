@@ -42,9 +42,10 @@ namespace EasyEPlanner
         IIOHelper ioHelper;
 
         public DeviceReader(IApiHelper apiHelper, IDeviceHelper deviceHelper,
-            IProjectHelper projectHelper, IIOHelper ioHelper)
+            IProjectHelper projectHelper, IIOHelper ioHelper,
+            IDeviceManager deviceManager)
         {
-            this.deviceManager = DeviceManager.GetInstance();
+            this.deviceManager = deviceManager;
             this.apiHelper = apiHelper;
             this.deviceHelper = deviceHelper;
             this.projectHelper = projectHelper;
@@ -217,11 +218,13 @@ namespace EasyEPlanner
                 string runtimeParameters = deviceHelper.GetRuntimeParameters(function);
                 int deviceLocation = deviceHelper.GetLocation(function);
                 string articleName = deviceHelper.GetArticleName(function);
+                string iolConfProperties = deviceHelper.GetIolConfProperties(function);
 
                 string error;
                 deviceManager.AddDeviceAndEFunction(name, description,
                     subType, parameters, runtimeParameters, properties,
-                    deviceLocation, function, out error, articleName);
+                    deviceLocation, function, out error, articleName,
+                    iolConfProperties);
 
                 if (error != "")
                 {
@@ -307,6 +310,6 @@ namespace EasyEPlanner
         /// <summary>
         /// Менеджер устройств.
         /// </summary>
-        DeviceManager deviceManager;
+        IDeviceManager deviceManager;
     }
 }

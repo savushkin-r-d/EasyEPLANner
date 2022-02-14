@@ -1,6 +1,7 @@
 ﻿using Eplan.EplApi.DataModel;
 using System.Collections.Generic;
 using StaticHelper;
+using EplanDevice;
 
 namespace EasyEPlanner
 {
@@ -20,7 +21,8 @@ namespace EasyEPlanner
             IDeviceHelper deviceHelper = new DeviceHelper(apiHelper);
 
             this.configurationChecker = new ConfigurationChecker(projectHelper);
-            this.deviceReader = new DeviceReader(apiHelper, deviceHelper, projectHelper, ioHelper);
+            this.deviceReader = new DeviceReader(apiHelper, deviceHelper, projectHelper, ioHelper,
+                DeviceManager.GetInstance());
             this.deviceBindingReader = new DeviceBindingReader(projectHelper, apiHelper);
             this.deviceSynchronizer = new DeviceSynchronizer(deviceReader);
             this.IOReader = new IOReader(projectHelper, deviceHelper);

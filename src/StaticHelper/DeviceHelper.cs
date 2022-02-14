@@ -21,6 +21,13 @@ namespace StaticHelper
         string GetDescription(Function function);
 
         /// <summary>
+        /// Получить свойства устройства для IOL-Conf.
+        /// </summary>
+        /// <param name="function">Функция устройства</param>
+        /// <returns></returns>
+        string GetIolConfProperties(Function function);
+
+        /// <summary>
         /// Получить номер шкафа, где располагается устройство.
         /// </summary>
         /// <param name="function">Функция устройства</param>
@@ -155,6 +162,12 @@ namespace StaticHelper
             if (!parsed) deviceLocation = 0;
 
             return deviceLocation;
+        }
+
+        public string GetIolConfProperties(Function function)
+        {
+            int iolConfPropertiesIndex = 7;
+            return apiHelper.GetSupplementaryFieldValue(function, iolConfPropertiesIndex);
         }
     }
 }
