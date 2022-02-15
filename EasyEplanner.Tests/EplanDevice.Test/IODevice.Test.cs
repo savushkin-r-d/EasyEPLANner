@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 using EplanDevice;
+using System.Collections.Generic;
 
 namespace Tests.EplanDevices
 {
@@ -195,6 +196,40 @@ namespace Tests.EplanDevices
             var defaultAODev = new object[] { dev, expectedNode };
 
             return new object[] { defaultAODev };
+        }
+
+        [Test]
+        public void SetIolConfProperty_NewDevice_AddNewProperties()
+        {
+            //Arrange
+            var dev = new IODeviceFake(string.Empty, string.Empty,
+                string.Empty, "V", 1, string.Empty, 1);
+            int expectedInitialValueOfProps = 0;
+            int actualInitialValueOfProps = dev.IolConfProperties.Count;
+            var propsToSet = new Dictionary<string, double>
+            {
+                { "t1", 0 },
+                { "t2", 1 },
+                { "t3", 2 },
+            };
+
+            //Act
+            foreach(var prop in propsToSet)
+            {
+                dev.SetIolConfProperty(prop.Key, prop.Value);
+            }
+
+            //Assert
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedInitialValueOfProps, actualInitialValueOfProps);
+                Assert.AreEqual(propsToSet.Count, dev.IolConfProperties.Count);
+                foreach(var prop in propsToSet)
+                {
+                    Assert.AreEqual(prop.Value, dev.IolConfProperties[prop.Key]);
+                    Assert.IsTrue(dev.IolConfProperties.ContainsKey(prop.Key));
+                }
+            });
         }
     }
 }
