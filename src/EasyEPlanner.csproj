@@ -111,6 +111,8 @@
     <Compile Include="AssemblyVersion.cs" />
     <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Configuration\DeviceSynchronizeService.cs" />
+    <Compile Include="Device\IDevice.cs" />
+    <Compile Include="Device\IIODevice.cs" />
     <Compile Include="Device\IODevices\CAM.cs" />
     <Compile Include="Device\Parameter.cs" />
     <Compile Include="Device\Property.cs" />
@@ -195,6 +197,7 @@
     <Compile Include="InterprojectExchange\Forms\UnknownDevTypeForm.Designer.cs">
       <DependentUpon>UnknownDevTypeForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="IO\IIOModule.cs" />
     <Compile Include="IO\IOModuleInfo.cs" />
     <Compile Include="Main\InterprojectExchangeAction.cs" />
     <Compile Include="Configuration\ProjectHealthChecker.cs" />

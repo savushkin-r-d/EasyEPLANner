@@ -26,20 +26,20 @@
             {
                 case "DEV_VTUG_8":
                     sizeOut = 1;
-                    IOLinkProperties.SizeOut = sizeOut;
-                    IOLinkProperties.SizeOutFromFile = sizeOut;
+                    iolinkProperties.SizeOut = sizeOut;
+                    iolinkProperties.SizeOutFromFile = sizeOut;
                     break;
 
                 case "DEV_VTUG_16":
                     sizeOut = 2;
-                    IOLinkProperties.SizeOut = sizeOut;
-                    IOLinkProperties.SizeOutFromFile = sizeOut;
+                    iolinkProperties.SizeOut = sizeOut;
+                    iolinkProperties.SizeOutFromFile = sizeOut;
                     break;
 
                 case "DEV_VTUG_24":
                     sizeOut = 3;
-                    IOLinkProperties.SizeOut = sizeOut;
-                    IOLinkProperties.SizeOutFromFile = sizeOut;
+                    iolinkProperties.SizeOut = sizeOut;
+                    iolinkProperties.SizeOutFromFile = sizeOut;
 
                     break;
 
@@ -97,15 +97,15 @@
             switch (subtype)
             {
                 case "DEV_VTUG_8":
-                    IOLinkProperties.SizeOut = 1;
+                    iolinkProperties.SizeOut = 1;
                     break;
 
                 case "DEV_VTUG_16":
-                    IOLinkProperties.SizeOut = 2;
+                    iolinkProperties.SizeOut = 2;
                     break;
 
                 case "DEV_VTUG_24":
-                    IOLinkProperties.SizeOut = 3;
+                    iolinkProperties.SizeOut = 3;
                     break;
 
                 case "":

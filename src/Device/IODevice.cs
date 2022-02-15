@@ -10,7 +10,7 @@ namespace EplanDevice
     /// <summary>
     /// Технологическое устройство, подключенное к модулям ввода\вывод IO.
     /// </summary>
-    public partial class IODevice : Device
+    public partial class IODevice : Device, IIODevice
     {
         /// <summary>
         /// Получение строкового представления подтипа устройства.
@@ -142,7 +142,7 @@ namespace EplanDevice
             properties = new Dictionary<string, object>();
             iolConfProperties = new Dictionary<string, double>();
 
-            IOLinkProperties = new IOLinkSize();
+            iolinkProperties = new IOLinkSize();
         }
 
         /// <summary>
@@ -158,10 +158,10 @@ namespace EplanDevice
             }
 
             var sizes = articles[articleName];
-            IOLinkProperties.SizeIn = sizes.SizeIn;
-            IOLinkProperties.SizeOut = sizes.SizeOut;
-            IOLinkProperties.SizeInFromFile = sizes.SizeInFromFile;
-            IOLinkProperties.SizeOutFromFile = sizes.SizeOutFromFile;
+            iolinkProperties.SizeIn = sizes.SizeIn;
+            iolinkProperties.SizeOut = sizes.SizeOut;
+            iolinkProperties.SizeInFromFile = sizes.SizeInFromFile;
+            iolinkProperties.SizeOutFromFile = sizes.SizeOutFromFile;
         }
 
         /// <summary>
@@ -852,9 +852,6 @@ namespace EplanDevice
             }
         }
 
-        /// <summary>
-        /// IOL-Conf свойства в устройстве.
-        /// </summary>
         public Dictionary<string, double> IolConfProperties
         {
             get
@@ -863,10 +860,15 @@ namespace EplanDevice
             }
         }
 
-        /// <summary>
-        /// Свойство содержащее изделие, которое используется для устройства
-        /// </summary>
         public string ArticleName { get; set; } = "";
+
+        public IOLinkSize IOLinkProperties
+        {
+            get
+            {
+                return iolinkProperties;
+            }
+        }
 
         #region Закрытые поля.
         protected List<IOChannel> DO; ///Каналы дискретных выходов.
@@ -879,16 +881,25 @@ namespace EplanDevice
         protected Dictionary<string, object> properties; ///Свойства.
         protected Dictionary<string, double> iolConfProperties; ///Свойства IOL-Conf.
 
-        internal IOLinkSize IOLinkProperties; ///IO-Link свойства устройства.
+        protected IOLinkSize iolinkProperties; ///IO-Link свойства устройства.
 
         protected delegate void PropertyChanged();
         protected event PropertyChanged OnPropertyChanged;
         #endregion
 
+        public interface IIOChannel
+        {
+            int LogicalClamp { get; }
+            string Name { get; }
+            string Comment { get; }
+            int ModuleOffset { get; }
+            int FullModule { get; }
+        }
+
         /// <summary>
         /// Канал ввода-вывода.
         /// </summary>
-        public class IOChannel
+        public class IOChannel : IIOChannel
         {
             public static int Compare(IOChannel wx, IOChannel wy)
             {

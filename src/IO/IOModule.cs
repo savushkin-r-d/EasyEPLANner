@@ -8,7 +8,7 @@ namespace IO
     /// <summary>
     /// Модуль ввода-вывода IO.
     /// </summary>
-    public class IOModule
+    public class IOModule : IIOModule
     {
         /// <summary>
         /// Конструктор.
@@ -33,8 +33,8 @@ namespace IO
             this.function = function;
             this.articleName = articleName;
 
-            devicesChannels = new List<EplanDevice.IODevice.IOChannel>[80];
-            devices = new List<EplanDevice.IODevice>[80];
+            devicesChannels = new List<EplanDevice.IODevice.IIOChannel>[80];
+            devices = new List<EplanDevice.IIODevice>[80];
         }
 
         public IOModule(int inAddressSpaceOffset, int outAddressSpaceOffset,
@@ -54,11 +54,11 @@ namespace IO
 
             if (devices[chN] == null)
             {
-                devices[chN] = new List<EplanDevice.IODevice>();
+                devices[chN] = new List<EplanDevice.IIODevice>();
             }
             if (devicesChannels[chN] == null)
             {
-                devicesChannels[chN] = new List<EplanDevice.IODevice.IOChannel>();
+                devicesChannels[chN] = new List<EplanDevice.IODevice.IIOChannel>();
             }
 
             devices[chN].Add(dev);
@@ -343,7 +343,7 @@ namespace IO
         /// <param name="devicesOnClamp">Устройства на клемме</param>
         /// <returns></returns>
         private int CalculateDevicesSize(int moduleClamp, 
-            List<EplanDevice.IODevice> devicesOnClamp)
+            List<EplanDevice.IIODevice> devicesOnClamp)
         {
             int size = 0;
             for (int dev = 0; dev < devicesOnClamp.Count; dev++)
@@ -361,9 +361,6 @@ namespace IO
             return size;
         }
 
-        /// <summary>
-        /// Описание модуля.
-        /// </summary>
         public IOModuleInfo Info
         {
             get
@@ -416,9 +413,6 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// Имя модуля на схеме ПЛК (А***).
-        /// </summary>
         public string Name
         {
             get
@@ -427,9 +421,6 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// Имя изделия в модуле.
-        /// </summary>
         public string ArticleName
         {
             get
@@ -438,11 +429,6 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// Является ли модуль IO-Link 
-        /// </summary>
-        /// <returns></returns>
-        /// <param name="collectOnlyPhoenixContact">Проверять только модули Phoenix Contact</param>
         public bool IsIOLink(bool collectOnlyPhoenixContact = false)
         {
             bool isIOLink = false;
@@ -496,10 +482,7 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// Привязанные устройства.
-        /// </summary>
-        public List<EplanDevice.IODevice>[] Devices
+        public List<EplanDevice.IIODevice>[] Devices
         {
             get
             {
@@ -507,10 +490,7 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// Привязанные каналы.
-        /// </summary>
-        public List<EplanDevice.IODevice.IOChannel>[] DevicesChannels
+        public List<EplanDevice.IODevice.IIOChannel>[] DevicesChannels
         {
             get
             {
@@ -519,8 +499,8 @@ namespace IO
         }
 
         #region Закрытые поля.
-        private List<EplanDevice.IODevice>[] devices;
-        private List<EplanDevice.IODevice.IOChannel>[] devicesChannels;
+        private List<EplanDevice.IIODevice>[] devices;
+        private List<EplanDevice.IODevice.IIOChannel>[] devicesChannels;
         private int inAddressSpaceOffset;
         private int outAddressSpaceOffset;
         private IOModuleInfo info;

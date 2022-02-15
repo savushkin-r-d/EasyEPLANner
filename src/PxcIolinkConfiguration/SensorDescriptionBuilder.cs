@@ -9,14 +9,14 @@ namespace EasyEPlanner.PxcIolinkConfiguration
 {
     internal interface ISensorDescriptionBuilder
     {
-        LinerecorderMultiSensor CreateModuleDescription(IOModule module,
+        LinerecorderMultiSensor CreateModuleDescription(IIOModule module,
             string templateVersion, Dictionary<string, LinerecorderSensor> moduleTemplates,
             Dictionary<string, LinerecorderSensor> deviceTemplates);
     }
 
     internal class SensorDescriptionBuilder : ISensorDescriptionBuilder
     {
-        public LinerecorderMultiSensor CreateModuleDescription(IOModule module,
+        public LinerecorderMultiSensor CreateModuleDescription(IIOModule module,
             string templateVersion, Dictionary<string, LinerecorderSensor> moduleTemplates,
             Dictionary<string, LinerecorderSensor> deviceTemplates)
         {
@@ -45,7 +45,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         }
 
         #region генерация описания модуля
-        private Device CreateModuleFromTemplate(IOModule module,
+        private Device CreateModuleFromTemplate(IIOModule module,
             Dictionary<string, LinerecorderSensor> moduleTemplates)
         {
             var moduleDescription = new Device();
@@ -73,7 +73,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             return moduleDescription;
         }
 
-        private void ConfigureModuleParameters(IOModule module, Device moduleDescription)
+        private void ConfigureModuleParameters(IIOModule module, Device moduleDescription)
         {
             var channels = module.DevicesChannels
                 .Where(x => x != null && x.Count > 0)
@@ -159,7 +159,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         #endregion
 
         #region генерация описания устройств для добавления в модуль
-        private List<Device> CreateDevicesFromTemplate(IOModule module,
+        private List<Device> CreateDevicesFromTemplate(IIOModule module,
             Dictionary<string, LinerecorderSensor> deviceTemplates)
         {
             var deviceList = new List<Device>();
@@ -187,7 +187,7 @@ namespace EasyEPlanner.PxcIolinkConfiguration
         }
 
         private Device CreateDeviceFromTemplate(LinerecorderSensor template,
-            int logicalPort, EplanDevice.IODevice eplanDevice)
+            int logicalPort, EplanDevice.IIODevice eplanDevice)
         {
             var deviceIolConfProperties = eplanDevice.IolConfProperties;
             var copiedParameters = template.Parameters.Clone() as Parameters;
