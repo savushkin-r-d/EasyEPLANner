@@ -54,25 +54,6 @@ namespace EplanDevice
         bool IsMultipleBinding(string devices);
 
         /// <summary>
-        /// Добавление канала ввода\вывода к устройству.
-        /// </summary>
-        /// <param name="devName">Имя устройство.</param>
-        /// <param name="description">Описание устройства.</param>
-        /// <param name="subType">Подтип устройства.</param>
-        /// <param name="paramStr">Дополнительный строковый параметр - параметры.</param>
-        /// <param name="rtParamStr">Дополнительный строковый параметр - рабочие параметры.</param>
-        /// <param name="propStr">Дополнительный строковый параметр - свойства.</param>
-        /// <param name="errStr">Описание ошибки при ее наличии.</param>
-        /// <param name="articleName">Изделие устройства</param>
-        /// <param name="dLocation">Местоположение</param>
-        /// <param name="iolConfProperties">Параметры для IOL-Conf</param>
-        /// <param name="oF">Функция объекта (EPLAN)</param>
-        IODevice AddDeviceAndEFunction(string devName, string description,
-            string subType, string paramStr, string rtParamStr, string propStr,
-            int dLocation, Eplan.EplApi.DataModel.Function oF, out string errStr,
-            string articleName, string iolConfProperties);
-
-        /// <summary>
         /// Очистка устройств  проекта.
         /// </summary>
         void Clear();

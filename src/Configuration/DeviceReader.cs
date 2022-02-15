@@ -221,7 +221,8 @@ namespace EasyEPlanner
                 string iolConfProperties = deviceHelper.GetIolConfProperties(function);
 
                 string error;
-                deviceManager.AddDeviceAndEFunction(name, description,
+                // Зависимости с Eplan API, тесты падают...
+                (deviceManager as DeviceManager).AddDeviceAndEFunction(name, description,
                     subType, parameters, runtimeParameters, properties,
                     deviceLocation, function, out error, articleName,
                     iolConfProperties);
