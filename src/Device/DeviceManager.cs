@@ -650,7 +650,7 @@ namespace EplanDevice
             return dev;
         }
 
-        public void ProcessProperties(string propStr, IODevice dev, StringBuilder errStrBuilder)
+        private void ProcessProperties(string propStr, IODevice dev, StringBuilder errStrBuilder)
         {
             if (string.IsNullOrEmpty(propStr)) return;
 
@@ -689,7 +689,7 @@ namespace EplanDevice
             }
         }
 
-        public void ProcessRuntimeParameters(string rtParamStr, IODevice dev, StringBuilder errStrBuilder)
+        private void ProcessRuntimeParameters(string rtParamStr, IODevice dev, StringBuilder errStrBuilder)
         {
             if (string.IsNullOrEmpty(rtParamStr)) return;
 
@@ -719,7 +719,7 @@ namespace EplanDevice
             }
         }
 
-        public void ProcessParameters(string paramStr, IODevice dev, StringBuilder errStrBuilder)
+        private void ProcessParameters(string paramStr, IODevice dev, StringBuilder errStrBuilder)
         {
             if (string.IsNullOrEmpty(paramStr)) return;
 
@@ -749,7 +749,7 @@ namespace EplanDevice
             }
         }
 
-        public void ProcessIolConfProperties(string iolConfPropsStr, IODevice dev)
+        private void ProcessIolConfProperties(string iolConfPropsStr, IODevice dev)
         {
             if (string.IsNullOrEmpty(iolConfPropsStr)) return;
 
