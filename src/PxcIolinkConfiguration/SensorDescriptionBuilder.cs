@@ -163,10 +163,10 @@ namespace EasyEPlanner.PxcIolinkConfiguration
             Dictionary<string, LinerecorderSensor> deviceTemplates)
         {
             var deviceList = new List<Device>();
-            var devices = module.Devices
+            var iolEplanDevices = module.Devices
                 .Where(x => x != null && x.Count > 0)
                 .Select(x => new { Device = x.First(), Clamp = Array.IndexOf(module.Devices, x) });
-            foreach(var deviceClampPair in devices)
+            foreach(var deviceClampPair in iolEplanDevices)
             {
                 int logicalPort = module.DevicesChannels[deviceClampPair.Clamp]
                     .Select(x => x.LogicalClamp).FirstOrDefault();
@@ -177,19 +177,69 @@ namespace EasyEPlanner.PxcIolinkConfiguration
                 if (templateNotFound || invalidLogicalClamp) continue;
 
                 LinerecorderSensor deviceTemplate = deviceTemplates[articleName];
-                var deviceDescription = new Device
-                {
-                    Port = logicalPort,
-                    Sensor = deviceTemplate.Sensor.Clone() as Sensor,
-                    Parameters = deviceTemplate.Parameters.Clone() as Parameters
-                };
+                var deviceDescription = CreateDeviceFromTemplate(deviceTemplate,
+                    logicalPort, deviceClampPair.Device);
 
                 deviceList.Add(deviceDescription);
             }
 
-            //TODO: Manage parameters
-
             return deviceList;
+        }
+
+        private Device CreateDeviceFromTemplate(LinerecorderSensor template,
+            int logicalPort, EplanDevice.IODevice eplanDevice)
+        {
+            var deviceIolConfProperties = eplanDevice.IolConfProperties;
+            var copiedParameters = template.Parameters.Clone() as Parameters;
+            foreach(var property in deviceIolConfProperties)
+            {
+                var originalTemplateProperty = copiedParameters.Param
+                    .Where(x => x.Id == property.Key)
+                    .FirstOrDefault();
+
+                if (originalTemplateProperty == null) continue;
+
+                double newInternalValue = CalculateNewInternalValue(originalTemplateProperty,
+                    property, eplanDevice.ArticleName);
+
+                originalTemplateProperty.Value = property.Value.ToString();
+                originalTemplateProperty.InternalValue = newInternalValue.ToString();
+            }
+
+            var deviceDescription = new Device
+            {
+                Port = logicalPort,
+                Sensor = template.Sensor.Clone() as Sensor,
+                Parameters = copiedParameters
+            };
+
+            return deviceDescription;
+        }
+
+        private int CalculateNewInternalValue(Param originParam,
+            KeyValuePair<string, double> deviceParamValuePair,
+            string articleName)
+        {
+            int internalValue = 0;
+
+            string correctParamValue = originParam.Value.Replace(',', '.');
+            bool defaultValueParsed = double.TryParse(correctParamValue, out double defaultValue);
+            bool defaultInternalValueParsed = double.TryParse(originParam.InternalValue, out double defaultInternalValue);
+            double newValue = deviceParamValuePair.Value;
+            if (defaultInternalValueParsed && defaultValueParsed)
+            {
+                if (defaultValue == 0 || defaultInternalValue == 0)
+                {
+                    string message = $"В шаблоне изделия {articleName}, параметр {deviceParamValuePair.Key}" +
+                        $" содержит Value или InternalValue равное 0. Деление на 0. " +
+                        $"Установите другие значения в шаблоне.";
+                    throw new ArgumentException(message);
+                }
+
+                internalValue = Convert.ToInt32((defaultInternalValue * newValue) / defaultValue);
+            }
+
+            return internalValue;
         }
         #endregion
     }

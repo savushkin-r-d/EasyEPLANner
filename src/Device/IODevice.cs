@@ -140,6 +140,7 @@ namespace EplanDevice
             parameters = new Dictionary<string, object>();
             rtParameters = new Dictionary<string, object>();
             properties = new Dictionary<string, object>();
+            iolConfProperties = new Dictionary<string, double>();
 
             IOLinkProperties = new IOLinkSize();
         }
@@ -806,6 +807,18 @@ namespace EplanDevice
             return count;
         }
 
+        public void SetIolConfProperty(string propertyName, double value)
+        {
+            if (iolConfProperties.ContainsKey(propertyName))
+            {
+                iolConfProperties[propertyName] = value;
+            }
+            else
+            {
+                iolConfProperties.Add(propertyName, value);
+            }
+        }
+
         /// <summary>
         /// Получить свойства устройства.
         /// </summary>
@@ -840,6 +853,17 @@ namespace EplanDevice
         }
 
         /// <summary>
+        /// IOL-Conf свойства в устройстве.
+        /// </summary>
+        public Dictionary<string, double> IolConfProperties
+        {
+            get
+            {
+                return iolConfProperties;
+            }
+        }
+
+        /// <summary>
         /// Свойство содержащее изделие, которое используется для устройства
         /// </summary>
         public string ArticleName { get; set; } = "";
@@ -853,6 +877,7 @@ namespace EplanDevice
         protected Dictionary<string, object> parameters;   ///Параметры.
         protected Dictionary<string, object> rtParameters; ///Рабочие параметры.
         protected Dictionary<string, object> properties; ///Свойства.
+        protected Dictionary<string, double> iolConfProperties; ///Свойства IOL-Conf.
 
         internal IOLinkSize IOLinkProperties; ///IO-Link свойства устройства.
 

@@ -646,6 +646,7 @@ namespace EplanDevice
                     ProcessParameters(paramStr, dev, errStrBuilder);
                     ProcessRuntimeParameters(rtParamStr, dev, errStrBuilder);
                     ProcessProperties(propStr, dev, errStrBuilder);
+                    ProcessIolConfProperties(iolConfProperties, dev);
 
                     //Установка параметра номер а шкафа для устройства.
                     dev.SetLocation(dLocation);
@@ -761,6 +762,30 @@ namespace EplanDevice
                 if (res != string.Empty)
                 {
                     errStrBuilder.Append(dev.EplanName + " - " + res);
+                }
+
+                paramsMatch = paramsMatch.NextMatch();
+            }
+        }
+
+        public void ProcessIolConfProperties(string iolConfPropsStr, IODevice dev)
+        {
+            if (string.IsNullOrEmpty(iolConfPropsStr)) return;
+
+            const string iolConfPropPattern = @"(?<p_name>\w+)=(?<p_value>-?\d+\.?\d*),*";
+
+            Match paramsMatch = Regex.Match(iolConfPropsStr, iolConfPropPattern, RegexOptions.IgnoreCase);
+            while (paramsMatch.Success)
+            {
+                if (paramsMatch.Groups["p_value"].Value.EndsWith("."))
+                {
+                    string str = paramsMatch.Groups["p_value"].Value.Remove(paramsMatch.Groups["p_value"].Value.Length - 1);
+                    dev.SetIolConfProperty(paramsMatch.Groups["p_name"].Value, Convert.ToDouble(str));
+                }
+                else
+                {
+                    dev.SetIolConfProperty(paramsMatch.Groups["p_name"].Value,
+                       Convert.ToDouble(paramsMatch.Groups["p_value"].Value));
                 }
 
                 paramsMatch = paramsMatch.NextMatch();
