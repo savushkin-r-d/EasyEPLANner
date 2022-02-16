@@ -753,7 +753,7 @@ namespace EplanDevice
         {
             if (string.IsNullOrEmpty(iolConfPropsStr)) return;
 
-            const string iolConfPropPattern = @"(?<p_name>\w+)=(?<p_value>-?\d+\.?\d*),*";
+            const string iolConfPropPattern = @"(?<p_name>[0-9a-zA-Z_-]*)=(?<p_value>-?\d+\.?\d*),*";
 
             Match paramsMatch = Regex.Match(iolConfPropsStr, iolConfPropPattern, RegexOptions.IgnoreCase);
             while (paramsMatch.Success)
