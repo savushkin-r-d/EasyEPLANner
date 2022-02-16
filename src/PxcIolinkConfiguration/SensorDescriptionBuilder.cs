@@ -197,7 +197,12 @@ namespace EasyEPlanner.PxcIolinkConfiguration
                     .Where(x => x.Id == property.Key)
                     .FirstOrDefault();
 
-                if (originalTemplateProperty == null) continue;
+                if (originalTemplateProperty == null)
+                {
+                    throw new ArgumentException($"В устройстве {eplanDevice.EplanName}" +
+                        $" задано свойство {property.Key}, его не существует в шаблоне устройства" +
+                        $" {eplanDevice.ArticleName}.");
+                }
 
                 double newInternalValue = CalculateNewInternalValue(originalTemplateProperty,
                     property, eplanDevice.ArticleName);
