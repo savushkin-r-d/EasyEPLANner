@@ -1,4 +1,5 @@
-﻿using Eplan.EplApi.Base;
+﻿using EasyEPlanner.Extensions;
+using Eplan.EplApi.Base;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.EServices.Ged;
 using System.Linq;
@@ -50,7 +51,7 @@ namespace EasyEPlanner
                     symbolDescription == DefinedMacrosName;
                 if (foundMacros)
                 {
-                    return StaticHelper.ApiHelper.GetFunctionalText(function);
+                    return function.GetFunctionalText();
                 }
             }
 

@@ -3,19 +3,53 @@ using System;
 using System.Collections.Generic;
 using StaticHelper;
 using System.Text.RegularExpressions;
-using Eplan.EplApi.Base;
 using EplanDevice;
 
 namespace EasyEPlanner
 {
+    public interface IDeviceReader
+    {
+        /// <summary>
+        /// Считанные устройства
+        /// </summary>
+        List<IODevice> Devices { get; }
+
+        /// <summary>
+        /// Количество считанных устройств
+        /// </summary>
+        int DevicesCount { get; }
+
+        /// <summary>
+        /// Копировать устройства в массив
+        /// </summary>
+        /// <param name="array">Массив для копируемых данных</param>
+        void CopyDevices(IODevice[] array);
+
+        /// <summary>
+        /// Прочитать устройства
+        /// </summary>
+        void Read();
+    }
+
     /// <summary>
     /// Считыватель устройств
     /// </summary>
-    class DeviceReader
+    public class DeviceReader : IDeviceReader
     {
-        public DeviceReader()
+        IApiHelper apiHelper;
+        IProjectHelper projectHelper;
+        IDeviceHelper deviceHelper;
+        IIOHelper ioHelper;
+
+        public DeviceReader(IApiHelper apiHelper, IDeviceHelper deviceHelper,
+            IProjectHelper projectHelper, IIOHelper ioHelper,
+            IDeviceManager deviceManager)
         {
-            this.deviceManager = DeviceManager.GetInstance();
+            this.deviceManager = deviceManager;
+            this.apiHelper = apiHelper;
+            this.deviceHelper = deviceHelper;
+            this.projectHelper = projectHelper;
+            this.ioHelper = ioHelper;
         }
 
         /// <summary>
@@ -90,7 +124,7 @@ namespace EasyEPlanner
             IO.IOModuleInfo moduleInfo)
         {
             string clampNumberAsString = DeviceBindingHelper
-                .GetClampNumberAsString(deviceClampFunction);
+                .GetClampNumberAsString(deviceClampFunction, ioHelper);
             bool isDigit = int.TryParse(clampNumberAsString,
                 out int clampNumber);
             if (isDigit == false)
@@ -128,7 +162,7 @@ namespace EasyEPlanner
         {
             if (devicesDescription == string.Empty)
             {
-                devicesDescription = ApiHelper.GetFunctionalText(
+                devicesDescription = apiHelper.GetFunctionalText(
                     deviceClampFunction);
                 if (devicesDescription == string.Empty)
                 {
@@ -139,9 +173,6 @@ namespace EasyEPlanner
             return true;
         }
 
-        /// <summary>
-        /// Прочитать устройства
-        /// </summary>
         public void Read()
         {
             PrepareForReading();
@@ -154,7 +185,7 @@ namespace EasyEPlanner
         private void PrepareForReading() 
         {
             deviceManager.Clear();
-            var objectFinder = new DMObjectsFinder(ApiHelper.GetProject());
+            var objectFinder = new DMObjectsFinder(projectHelper.GetProject());
 
             var propertyList = new FunctionPropertyList();
             propertyList.FUNC_MAINFUNCTION = true;
@@ -179,19 +210,22 @@ namespace EasyEPlanner
                     continue;
                 }
 
-                string name = GetName(function);
-                string description = GetDescription(function);
-                string subType = GetSubType(function);
-                string parameters = GetParameters(function);
-                string properties = GetProperties(function);
-                string runtimeParameters = GetRuntimeParameters(function);
-                int deviceLocation = GetDeviceLocation(function);
-                string articleName = ApiHelper.GetArticleName(function);
+                string name = deviceHelper.GetName(function);
+                string description = deviceHelper.GetDescription(function);
+                string subType = deviceHelper.GetSubType(function);
+                string parameters = deviceHelper.GetParameters(function);
+                string properties = deviceHelper.GetProperties(function);
+                string runtimeParameters = deviceHelper.GetRuntimeParameters(function);
+                int deviceLocation = deviceHelper.GetLocation(function);
+                string articleName = deviceHelper.GetArticleName(function);
+                string iolConfProperties = deviceHelper.GetIolConfProperties(function);
 
                 string error;
-                deviceManager.AddDeviceAndEFunction(name, description,
+                // Зависимости с Eplan API, тесты падают...
+                (deviceManager as DeviceManager).AddDeviceAndEFunction(name, description,
                     subType, parameters, runtimeParameters, properties,
-                    deviceLocation, function, out error, articleName);
+                    deviceLocation, function, out error, articleName,
+                    iolConfProperties);
 
                 if (error != "")
                 {
@@ -230,214 +264,11 @@ namespace EasyEPlanner
             return skip;
         }
 
-        /// <summary>
-        /// Получить имя устройства.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        private string GetName(Function function)
-        {
-            var name = function.Name;
-            name = Regex.Replace(name, CommonConst.RusAsEngPattern,
-                    CommonConst.RusAsEngEvaluator);
-            return name;
-        }
-
-        /// <summary>
-        /// Получить описание устройства.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        private string GetDescription(Function function)
-        {
-            var description = "";
-            string descriptionPattern = "([\'\"])";
-
-            if (!function.Properties.FUNC_COMMENT.IsEmpty)
-            {
-                description = function.Properties.FUNC_COMMENT
-                    .ToString(ISOCode.Language.L___);
-
-                if (description == "")
-                {
-                    description = function.Properties.FUNC_COMMENT
-                        .ToString(ISOCode.Language.L_ru_RU);
-                }
-
-                description = Regex.Replace(description,
-                    descriptionPattern, "");
-            }
-
-            if (description == null)
-            {
-                description = "";
-            }
-
-            return description;
-        }
-
-        /// <summary>
-        /// Получить подтип устройства.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        private string GetSubType(Function function)
-        {
-            var subType = "";
-
-            if (!function.Properties.FUNC_SUPPLEMENTARYFIELD[2].IsEmpty)
-            {
-                subType = function.Properties.FUNC_SUPPLEMENTARYFIELD[2]
-                    .ToString(ISOCode.Language.L___);
-
-                if (subType == "")
-                {
-                    subType = function.Properties.FUNC_SUPPLEMENTARYFIELD[2]
-                        .ToString(ISOCode.Language.L_ru_RU);
-                }
-
-                subType = subType.Trim();
-                subType = Regex.Replace(subType, 
-                    CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
-            }
-
-            if (subType == null)
-            {
-                subType = "";
-            }
-
-            return subType;
-        }
-
-        /// <summary>
-        /// Получить свойства устройства.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        private string GetProperties(Function function)
-        {
-            var properties = "";
-
-            if (!function.Properties.FUNC_SUPPLEMENTARYFIELD[4].IsEmpty)
-            {
-                properties = function.Properties.FUNC_SUPPLEMENTARYFIELD[4]
-                    .ToString(ISOCode.Language.L___);
-
-                if (properties == "")
-                {
-                    properties = function.Properties.FUNC_SUPPLEMENTARYFIELD[4]
-                        .ToString(ISOCode.Language.L_ru_RU);
-                };
-
-                properties = Regex.Replace(properties,
-                    CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
-            }
-
-            if (properties == null)
-            {
-                properties = "";
-            }
-
-            return properties;
-        }
-
-        /// <summary>
-        /// Получить параметры времени выполнения.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        private string GetRuntimeParameters(Function function)
-        {
-            var runtimeParameters = "";
-
-            if (!function.Properties.FUNC_SUPPLEMENTARYFIELD[5].IsEmpty)
-            {
-                runtimeParameters = function.Properties
-                    .FUNC_SUPPLEMENTARYFIELD[5]
-                    .ToString(ISOCode.Language.L___);
-
-                if (runtimeParameters == "")
-                {
-                    runtimeParameters = function.Properties.
-                        FUNC_SUPPLEMENTARYFIELD[5]
-                        .ToString(ISOCode.Language.L_ru_RU);
-                };
-
-                if (runtimeParameters == null)
-                {
-                    runtimeParameters = "";
-                }
-
-                runtimeParameters = Regex.Replace(runtimeParameters,
-                    CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
-            }
-
-            return runtimeParameters;
-        }
-
-        /// <summary>
-        /// Получить номер шкафа, где располагается устройство.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        private int GetDeviceLocation(Function function)
-        {
-            int deviceLocation = 0;
-
-            if (!function.Properties.FUNC_SUPPLEMENTARYFIELD[6].IsEmpty)
-            {
-                deviceLocation = int.Parse(function.Properties
-                    .FUNC_SUPPLEMENTARYFIELD[6]
-                    .ToString(ISOCode.Language.L___));
-            }
-
-            return deviceLocation;
-        }
-
-        /// <summary>
-        /// Получить параметры устройства.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        private string GetParameters(Function function)
-        {
-            var parameters = "";
-
-            if (!function.Properties.FUNC_SUPPLEMENTARYFIELD[3].IsEmpty)
-            {
-                parameters = function.Properties.FUNC_SUPPLEMENTARYFIELD[3]
-                    .ToString(ISOCode.Language.L___);
-
-                if (parameters == "")
-                {
-                    parameters = function.Properties.FUNC_SUPPLEMENTARYFIELD[3]
-                        .ToString(ISOCode.Language.L_ru_RU);
-                };
-
-                parameters = Regex.Replace(parameters, 
-                    CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
-            }
-
-            if (parameters == null)
-            {
-                parameters = "";
-            }
-
-            return parameters;
-        }
-
-        /// <summary>
-        /// Копировать устройства в массив
-        /// </summary>
-        /// <param name="array">Массив для копируемых данных</param>
         public void CopyDevices(IODevice[] array)
         {
             deviceManager.Devices.CopyTo(array);
         }
 
-        /// <summary>
-        /// Количество считанных устройств
-        /// </summary>
         public int DevicesCount
         {
             get
@@ -446,9 +277,6 @@ namespace EasyEPlanner
             }
         }
 
-        /// <summary>
-        /// Считанные устройства
-        /// </summary>
         public List<IODevice> Devices
         {
             get
@@ -483,6 +311,6 @@ namespace EasyEPlanner
         /// <summary>
         /// Менеджер устройств.
         /// </summary>
-        DeviceManager deviceManager;
+        IDeviceManager deviceManager;
     }
 }

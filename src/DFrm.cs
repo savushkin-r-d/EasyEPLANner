@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using PInvoke;
 using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
+using StaticHelper;
 
 namespace EasyEPlanner
 {
@@ -1229,7 +1230,10 @@ namespace EasyEPlanner
         private void treeView_DoubleClick(object sender, 
             TreeNodeAdvMouseEventArgs e)
         {
-            var deviceBinder = new DeviceBinder(this);
+            IApiHelper apiHelper = new ApiHelper();
+            IProjectHelper projectHelper = new ProjectHelper(apiHelper);
+            IIOHelper ioHelper = new IOHelper(projectHelper);
+            var deviceBinder = new DeviceBinder(this, apiHelper, ioHelper);
             deviceBinder.Bind();
         }
 

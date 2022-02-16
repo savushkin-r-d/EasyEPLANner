@@ -38,7 +38,7 @@ namespace StaticHelper
         }
 
         public static string GetClampNumberAsString(
-            Function deviceClampFunction)
+            Function deviceClampFunction, IIOHelper ioHelper)
         {
             string clampNumberAsString = deviceClampFunction.Properties
                 .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
@@ -48,10 +48,10 @@ namespace StaticHelper
             if (haveValveTerminal)
             {
                 Function IOModuleFunction =
-                    ApiHelper.GetIOModuleFunction(deviceClampFunction);
+                    ioHelper.GetIOModuleFunction(deviceClampFunction);
                 string bindedDevice = deviceClampFunction.Name;
                 Function IOModuleClampFunction =
-                    ApiHelper.GetClampFunction(IOModuleFunction, bindedDevice);
+                    ioHelper.GetClampFunction(IOModuleFunction, bindedDevice);
                 clampNumberAsString = IOModuleClampFunction.Properties
                 .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
             }

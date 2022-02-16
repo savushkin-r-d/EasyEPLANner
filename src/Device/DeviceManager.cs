@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.IO;
 using EasyEPlanner;
+using System.Text;
 
 /// <summary>
 /// Пространство имен технологических устройств проекта (клапана, насосы...).
@@ -44,6 +45,23 @@ namespace EplanDevice
         /// </summary>
         /// <param name="rootNode">Корневой узел</param>
         void GetObjectForXML(TreeNode rootNode);
+
+        /// <summary>
+        /// Является ли привязка множественной
+        /// </summary>
+        /// <param name="devices">Список устройств</param>
+        /// <returns></returns>
+        bool IsMultipleBinding(string devices);
+
+        /// <summary>
+        /// Очистка устройств  проекта.
+        /// </summary>
+        void Clear();
+
+        /// <summary>
+        /// Сортировка устройств  проекта.
+        /// </summary>
+        void Sort();
     }
 
     /// <summary>
@@ -62,9 +80,6 @@ namespace EplanDevice
             }
         }
 
-        /// <summary>
-        /// Очистка устройств  проекта.
-        /// </summary>
         public void Clear()
         {
             devices.Clear();
@@ -190,9 +205,6 @@ namespace EplanDevice
             return res;
         }
 
-        /// <summary>
-        /// Сортировка устройств  проекта.
-        /// </summary>
         public void Sort()
         {
             devices.Sort();
@@ -412,22 +424,14 @@ namespace EplanDevice
             "CAM"
         };
 
-        /// <summary>
-        /// Добавление канала ввода\вывода к устройству.
-        /// </summary>
-        /// <param name="devName">Имя устройство.</param>
-        /// <param name="description">Описание устройства.</param>
-        /// <param name="subType">Подтип устройства.</param>
-        /// <param name="paramStr">Дополнительный строковый параметр - параметры.</param>
-        /// <param name="rtParamStr">Дополнительный строковый параметр - рабочие параметры.</param>
-        /// <param name="propStr">Дополнительный строковый параметр - свойства.</param>
-        /// <param name="errStr">Описание ошибки при ее наличии.</param>
         public IODevice AddDeviceAndEFunction(string devName, string description,
             string subType, string paramStr, string rtParamStr, string propStr, int dLocation,
-            Eplan.EplApi.DataModel.Function oF, out string errStr, string articleName)
+            Eplan.EplApi.DataModel.Function oF, out string errStr, string articleName,
+            string iolConfProperties)
         {
             IODevice dev = AddDevice(devName, description, subType, paramStr,
-                rtParamStr, propStr, dLocation, out errStr, articleName);
+                rtParamStr, propStr, dLocation, out errStr, articleName,
+                iolConfProperties);
 
             if (dev != null)
             {
@@ -447,11 +451,14 @@ namespace EplanDevice
         /// <param name="rtParamStr">Дополнительный строковый параметр - рабочие параметры.</param>
         /// <param name="propStr">Дополнительный строковый параметр - свойства.</param>
         /// <param name="errStr">Описание ошибки при ее наличии.</param>
+        /// <param name="articleName">Изделие устройства</param>
+        /// <param name="iolConfProperties">Свойства IOL-Conf</param>
+        /// <param name="dLocation">Местоположение устройства</param>
         private IODevice AddDevice(string devName, string description,
             string subType, string paramStr, string rtParamStr, string propStr,
-            int dLocation, out string errStr, string articleName)
+            int dLocation, out string errStr, string articleName,
+            string iolConfProperties)
         {
-            errStr = string.Empty;
             IODevice dev = null;
 
             string name;
@@ -460,7 +467,6 @@ namespace EplanDevice
             int objectNumber;
             string deviceType;
             int deviceNumber;
-
 
             CheckDeviceName(devName, out name, out eplanName, out objectName,
                 out objectNumber, out deviceType, out deviceNumber);
@@ -609,109 +615,19 @@ namespace EplanDevice
                     break;
             }
 
+            var errStrBuilder = new StringBuilder();
             if (dev != null)
             {
                 if (!devices.Contains(dev))
                 {
                     subType = subType.ToUpper();
 
-                    errStr += dev.SetSubType(subType);
+                    errStrBuilder.Append(dev.SetSubType(subType));
 
-                    //Разбор параметров.
-                    if (paramStr != "")
-                    {
-                        //Шаблоны для разбора параметров - 0-20 .
-                        const string paramsPattern = @"(?<p_name>\w+)=(?<p_value>-?\d+\.?\d*),*";
-
-                        Match paramsMatch = Regex.Match(paramStr, paramsPattern, RegexOptions.IgnoreCase);
-                        while (paramsMatch.Success)
-                        {
-                            string res;
-                            if (paramsMatch.Groups["p_value"].Value.EndsWith("."))
-                            {
-                                string str = paramsMatch.Groups["p_value"].Value.Remove(paramsMatch.Groups["p_value"].Value.Length - 1);
-                                res = dev.SetParameter(paramsMatch.Groups["p_name"].Value, Convert.ToDouble(str));
-                            }
-                            else
-                            {
-                                res = dev.SetParameter(paramsMatch.Groups["p_name"].Value,
-                                   Convert.ToDouble(paramsMatch.Groups["p_value"].Value));
-                            }
-                            if (res != "")
-                            {
-                                errStr += devName + " - " + res;
-                            }
-
-                            paramsMatch = paramsMatch.NextMatch();
-                        }
-                    }
-
-                    //Разбор рабочих параметров.
-                    if (rtParamStr != "")
-                    {
-                        //Шаблоны для разбора параметров - 0-20 .
-                        const string paramsPattern = @"(?<p_name>\w+)=(?<p_value>-?\d+\.?\d*),*";
-
-                        Match paramsMatch = Regex.Match(rtParamStr, paramsPattern, RegexOptions.IgnoreCase);
-                        while (paramsMatch.Success)
-                        {
-                            string res;
-                            if (paramsMatch.Groups["p_value"].Value.EndsWith("."))
-                            {
-                                string str = paramsMatch.Groups["p_value"].Value.Remove(paramsMatch.Groups["p_value"].Value.Length - 1);
-                                res = dev.SetRuntimeParameter(paramsMatch.Groups["p_name"].Value, Convert.ToDouble(str));
-                            }
-                            else
-                            {
-                                res = dev.SetRuntimeParameter(paramsMatch.Groups["p_name"].Value,
-                                   Convert.ToDouble(paramsMatch.Groups["p_value"].Value));
-                            }
-                            if (res != "")
-                            {
-                                errStr += devName + " - " + res;
-                            }
-
-                            paramsMatch = paramsMatch.NextMatch();
-                        }
-                    }
-
-                    //Разбор свойств.
-                    if (propStr != "")
-                    {
-                        //Шаблоны для разбора параметров - 0-20 .
-                        const string propPattern = @"(?<p_name>\w+)=(?<p_value>\'[\w.]*\'),*";
-
-                        Match propsMatch = Regex.Match(propStr, propPattern, RegexOptions.IgnoreCase);
-                        while (propsMatch.Success)
-                        {
-                            string res = dev.SetProperty(propsMatch.Groups["p_name"].Value,
-                               propsMatch.Groups["p_value"].Value);
-
-                            if (res != "")
-                            {
-                                errStr += devName + " - " + res;
-                            }
-                            if (propsMatch.Groups["p_name"].Value.Equals("IP"))
-                            {
-                                bool foundMatch = false;
-                                var ipprop = propsMatch.Groups["p_value"].Value.Trim(new char[] { '\'' });
-                                try
-                                {
-                                    foundMatch = Regex.IsMatch(ipprop, @"\A(?:^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$)\Z");
-                                }
-                                catch
-                                {
-                                    // Syntax error in the regular expression
-                                }
-                                if (!foundMatch)
-                                {
-                                    errStr += String.Format("Устройство {0}: неверный IP-адрес - \'{1}\'.\n", devName, ipprop);
-                                }
-                            }
-
-                            propsMatch = propsMatch.NextMatch();
-                        }
-                    }
+                    ProcessParameters(paramStr, dev, errStrBuilder);
+                    ProcessRuntimeParameters(rtParamStr, dev, errStrBuilder);
+                    ProcessProperties(propStr, dev, errStrBuilder);
+                    ProcessIolConfProperties(iolConfProperties, dev);
 
                     //Установка параметра номер а шкафа для устройства.
                     dev.SetLocation(dLocation);
@@ -720,17 +636,141 @@ namespace EplanDevice
                 }
                 else
                 {
-                    errStr = string.Format("\"{0}\"  - дублируется.",
-                        devName);
+                    errStrBuilder.Append(string.Format("\"{0}\"  - дублируется.",
+                        devName));
                 }
-
             }
             else
             {
-                errStr = string.Format("\"{0}\" - неизвестное устройство.",
-                    devName);
+                errStrBuilder.Append(string.Format("\"{0}\" - неизвестное устройство.",
+                    devName));
             }
+
+            errStr = errStrBuilder.ToString();
             return dev;
+        }
+
+        private void ProcessProperties(string propStr, IODevice dev, StringBuilder errStrBuilder)
+        {
+            if (string.IsNullOrEmpty(propStr)) return;
+
+            //Шаблоны для разбора параметров - 0-20 .
+            const string propPattern = @"(?<p_name>\w+)=(?<p_value>\'[\w.]*\'),*";
+
+            Match propsMatch = Regex.Match(propStr, propPattern, RegexOptions.IgnoreCase);
+            while (propsMatch.Success)
+            {
+                string res = dev.SetProperty(propsMatch.Groups["p_name"].Value,
+                   propsMatch.Groups["p_value"].Value);
+
+                if (res != string.Empty)
+                {
+                    errStrBuilder.Append(dev.EplanName + " - " + res);
+                }
+                if (propsMatch.Groups["p_name"].Value.Equals("IP"))
+                {
+                    bool foundMatch = false;
+                    var ipprop = propsMatch.Groups["p_value"].Value.Trim(new char[] { '\'' });
+                    try
+                    {
+                        foundMatch = Regex.IsMatch(ipprop, @"\A(?:^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$)\Z");
+                    }
+                    catch
+                    {
+                        // Syntax error in the regular expression
+                    }
+                    if (!foundMatch)
+                    {
+                        errStrBuilder.Append(string.Format("Устройство {0}: неверный IP-адрес - \'{1}\'.\n", dev.EplanName, ipprop));
+                    }
+                }
+
+                propsMatch = propsMatch.NextMatch();
+            }
+        }
+
+        private void ProcessRuntimeParameters(string rtParamStr, IODevice dev, StringBuilder errStrBuilder)
+        {
+            if (string.IsNullOrEmpty(rtParamStr)) return;
+
+            //Шаблоны для разбора параметров - 0-20 .
+            const string paramsPattern = @"(?<p_name>\w+)=(?<p_value>-?\d+\.?\d*),*";
+
+            Match paramsMatch = Regex.Match(rtParamStr, paramsPattern, RegexOptions.IgnoreCase);
+            while (paramsMatch.Success)
+            {
+                string res;
+                if (paramsMatch.Groups["p_value"].Value.EndsWith("."))
+                {
+                    string str = paramsMatch.Groups["p_value"].Value.Remove(paramsMatch.Groups["p_value"].Value.Length - 1);
+                    res = dev.SetRuntimeParameter(paramsMatch.Groups["p_name"].Value, Convert.ToDouble(str));
+                }
+                else
+                {
+                    res = dev.SetRuntimeParameter(paramsMatch.Groups["p_name"].Value,
+                       Convert.ToDouble(paramsMatch.Groups["p_value"].Value));
+                }
+                if (res != string.Empty)
+                {
+                    errStrBuilder.Append(dev.EplanName + " - " + res);
+                }
+
+                paramsMatch = paramsMatch.NextMatch();
+            }
+        }
+
+        private void ProcessParameters(string paramStr, IODevice dev, StringBuilder errStrBuilder)
+        {
+            if (string.IsNullOrEmpty(paramStr)) return;
+
+            //Шаблоны для разбора параметров - 0-20 .
+            const string paramsPattern = @"(?<p_name>\w+)=(?<p_value>-?\d+\.?\d*),*";
+
+            Match paramsMatch = Regex.Match(paramStr, paramsPattern, RegexOptions.IgnoreCase);
+            while (paramsMatch.Success)
+            {
+                string res;
+                if (paramsMatch.Groups["p_value"].Value.EndsWith("."))
+                {
+                    string str = paramsMatch.Groups["p_value"].Value.Remove(paramsMatch.Groups["p_value"].Value.Length - 1);
+                    res = dev.SetParameter(paramsMatch.Groups["p_name"].Value, Convert.ToDouble(str));
+                }
+                else
+                {
+                    res = dev.SetParameter(paramsMatch.Groups["p_name"].Value,
+                       Convert.ToDouble(paramsMatch.Groups["p_value"].Value));
+                }
+                if (res != string.Empty)
+                {
+                    errStrBuilder.Append(dev.EplanName + " - " + res);
+                }
+
+                paramsMatch = paramsMatch.NextMatch();
+            }
+        }
+
+        private void ProcessIolConfProperties(string iolConfPropsStr, IODevice dev)
+        {
+            if (string.IsNullOrEmpty(iolConfPropsStr)) return;
+
+            const string iolConfPropPattern = @"(?<p_name>\w+)=(?<p_value>-?\d+\.?\d*),*";
+
+            Match paramsMatch = Regex.Match(iolConfPropsStr, iolConfPropPattern, RegexOptions.IgnoreCase);
+            while (paramsMatch.Success)
+            {
+                if (paramsMatch.Groups["p_value"].Value.EndsWith("."))
+                {
+                    string str = paramsMatch.Groups["p_value"].Value.Remove(paramsMatch.Groups["p_value"].Value.Length - 1);
+                    dev.SetIolConfProperty(paramsMatch.Groups["p_name"].Value, Convert.ToDouble(str));
+                }
+                else
+                {
+                    dev.SetIolConfProperty(paramsMatch.Groups["p_name"].Value,
+                       Convert.ToDouble(paramsMatch.Groups["p_value"].Value));
+                }
+
+                paramsMatch = paramsMatch.NextMatch();
+            }
         }
 
         /// <summary>
@@ -1060,11 +1100,6 @@ namespace EplanDevice
             return isValid;
         }
 
-        /// <summary>
-        /// Является ли привязка множественной
-        /// </summary>
-        /// <param name="devices">Список устройств</param>
-        /// <returns></returns>
         public bool IsMultipleBinding(string devices)
         {
             var isMultiple = false;

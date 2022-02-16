@@ -1,45 +1,53 @@
-﻿using Eplan.EplApi.Base;
+﻿using EasyEPlanner.Extensions;
+using Eplan.EplApi.Base;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.HEServices;
-using System;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace StaticHelper
 {
-    /// <summary>
-    /// Обертка над Eplan API
-    /// </summary>
-    public static class ApiHelper
+    public interface IApiHelper
     {
         /// <summary>
-        /// Получить текущий проект
+        /// Получить функциональный текст из функции
         /// </summary>
-        /// <returns>Проект</returns>
-        public static Project GetProject()
-        {
-            SelectionSet selection = GetSelectionSet();
-            const bool useDialog = false;
-            Project project = selection.GetCurrentProject(useDialog);
-            return project;
-        }
+        /// <param name="function">Функция</param>
+        string GetFunctionalText(Function function);
+
+        /// <summary>
+        /// Получить выбранный на графической схеме объект
+        /// </summary>
+        /// <returns>Выбранный на схеме объект</returns>
+        StorableObject GetSelectedObject();
 
         /// <summary>
         /// Получить выборку из выбранных объектов в Eplan API
         /// </summary>
         /// <returns></returns>
-        private static SelectionSet GetSelectionSet()
+        SelectionSet GetSelectionSet();
+
+        /// <summary>
+        /// Получить значение свойства функции Доп. поле с номером propertyIndex
+        /// </summary>
+        /// <param name="function">Функция Eplan</param>
+        /// <param name="propertyIndex">Индекс свойства</param>
+        /// <returns></returns>
+        string GetSupplementaryFieldValue(Function function, int propertyIndex);
+    }
+
+    /// <summary>
+    /// Обертка над Eplan API
+    /// </summary>
+    public class ApiHelper : IApiHelper
+    {
+        public SelectionSet GetSelectionSet()
         {
             var selection = new SelectionSet();
             selection.LockSelectionByDefault = false;
             return selection;
         }
 
-        /// <summary>
-        /// Получить выбранный на графической схеме объект
-        /// </summary>
-        /// <returns>Выбранный на схеме объект</returns>
-        public static StorableObject GetSelectedObject()
+        public StorableObject GetSelectedObject()
         {
             SelectionSet selection = GetSelectionSet();
             const bool isFirstObject = true;
@@ -48,228 +56,36 @@ namespace StaticHelper
             return selectedObject;
         }
 
-        /// <summary>
-        /// Получить функцию выбранной клеммы
-        /// </summary>
-        /// <param name="selectedObject">Выбранный на схеме объект
-        /// </param>
-        /// <returns>Функция клеммы модуля ввода-вывода</returns>
-        public static Function GetClampFunction(
-            StorableObject selectedObject)
+        public string GetFunctionalText(Function function)
         {
-            if (selectedObject is Function == false)
-            {
-                const string Message = "Выбранный на схеме объект не " +
-                    "является функцией";
-                throw new Exception(Message);
-            }
-
-            var clampFunction = selectedObject as Function;
-
-            if (clampFunction.Category != Function.Enums.Category.PLCTerminal)
-            {
-                const string Message = "Выбранная функция не является " +
-                    "клеммой модуля ввода-вывода";
-                throw new Exception(Message);
-            }
-
-            return clampFunction;
+            return function.GetFunctionalText();
         }
 
-        /// <summary>
-        /// Получить функцию выбранной клеммы
-        /// </summary>
-        /// <param name="IOModuleFunction">Функция модуля ввода-вывода</param>
-        /// <param name="deviceName">Привязанное к клемме устройство</param>
-        /// <returns></returns>
-        public static Function GetClampFunction(
-            Function IOModuleFunction, string deviceName)
+        public string GetSupplementaryFieldValue(Function function, int propertyIndex)
         {
-            var clampFunction = new Function();
+            var propertyValue = string.Empty;
 
-            deviceName = Regex.Match(deviceName, 
-                EplanDevice.DeviceManager.valveTerminalPattern).Value;
-            Function[] subFunctions = IOModuleFunction.SubFunctions;
-            if (subFunctions != null)
+            if (!function.Properties.FUNC_SUPPLEMENTARYFIELD[propertyIndex].IsEmpty)
             {
-                foreach (Function subFunction in subFunctions)
+                propertyValue = function.Properties.FUNC_SUPPLEMENTARYFIELD[propertyIndex]
+                    .ToString(ISOCode.Language.L___);
+
+                if (propertyValue == string.Empty)
                 {
-                    var functionalText = subFunction.Properties
-                        .FUNC_TEXT_AUTOMATIC
-                        .ToString(ISOCode.Language.L___);
-                    if (functionalText.Contains(deviceName))
-                    {
-                        clampFunction = subFunction;
-                        return clampFunction;
-                    }
-                }
+                    propertyValue = function.Properties.FUNC_SUPPLEMENTARYFIELD[propertyIndex]
+                        .ToString(ISOCode.Language.L_ru_RU);
+                };
+
+                propertyValue = Regex.Replace(propertyValue,
+                    CommonConst.RusAsEngPattern, CommonConst.RusAsEngEvaluator);
             }
 
-            if (clampFunction.Category != Function.Enums.Category.PLCTerminal)
+            if (propertyValue == null)
             {
-                const string Message = "Выбранная функция не является " +
-                    "клеммой модуля ввода-вывода";
-                throw new Exception(Message);
+                propertyValue = string.Empty;
             }
 
-            return clampFunction;
-        }
-
-        /// <summary>
-        /// Получить функцию модуля ввода-вывода.
-        /// Модуль, куда привязывается устройство.
-        /// </summary>
-        /// <param name="clampFunction">Функция клеммы модуля 
-        /// ввода-вывода</param>
-        public static Function GetIOModuleFunction(Function clampFunction)
-        {
-            var isValveTerminalClampFunction = false;
-            Function IOModuleFunction = null;
-            if (clampFunction.Name
-                .Contains(EplanDevice.DeviceManager.ValveTerminalName))
-            {
-                IOModuleFunction = GetValveTerminalIOModuleFunction(
-                    clampFunction);
-                if (IOModuleFunction != null)
-                {
-                    isValveTerminalClampFunction = true;
-                }
-            }
-
-            if (isValveTerminalClampFunction == false)
-            {
-                IOModuleFunction = clampFunction.ParentFunction;
-            }
-
-            if (IOModuleFunction == null)
-            {
-                MessageBox.Show(
-                    "Данная клемма названа некорректно. Измените" +
-                    " ее название (пример корректного названия " +
-                    "\"===DSS1+CAB4-A409\"), затем повторите " +
-                    "попытку привязки устройства.",
-                    "EPlaner",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Exclamation);
-            }
-
-            return IOModuleFunction;
-        }
-
-        /// <summary>
-        /// Поиск функции модуля ввода-вывода к которой привязан пневмоостров
-        /// </summary>
-        /// <param name="clampFunction">Функция клеммы модуля 
-        /// ввода-вывода</param>   
-        /// <returns>Функция модуля ввода-вывода</returns>
-        private static Function GetValveTerminalIOModuleFunction(
-            Function clampFunction)
-        {
-            var IOModuleFunction = new Function();
-
-            string valveTerminalName = Regex.Match(clampFunction.Name, 
-                EplanDevice.DeviceManager.valveTerminalPattern).Value;
-            if (string.IsNullOrEmpty(valveTerminalName))
-            {
-                const string Message = "Ошибка поиска ОУ пневмоострова";
-                throw new Exception(Message);
-            }
-
-            var objectFinder = new DMObjectsFinder(ApiHelper.GetProject());
-            var functionsFilter = new FunctionsFilter();
-            var properties = new FunctionPropertyList();
-            properties.FUNC_MAINFUNCTION = true;
-            functionsFilter.SetFilteredPropertyList(properties);
-            functionsFilter.Category = Function.Enums.Category.PLCBox;
-            Function[] functions = objectFinder.GetFunctions(functionsFilter);
-
-            foreach (Function function in functions)
-            {
-                Function[] subFunctions = function.SubFunctions;
-                if (subFunctions != null)
-                {
-                    foreach (Function subFunction in subFunctions)
-                    {
-                        var functionalText = subFunction.Properties
-                            .FUNC_TEXT_AUTOMATIC
-                            .ToString(ISOCode.Language.L___);
-                        if (functionalText.Contains(valveTerminalName))
-                        {
-                            IOModuleFunction = subFunction.ParentFunction;
-                            return IOModuleFunction;
-                        }
-                    }
-                }
-            }
-            return IOModuleFunction;
-        }
-
-        /// <summary>
-        /// Получить функциональный текст из функции
-        /// </summary>
-        /// <param name="function">Функция</param>
-        /// <returns></returns>
-        public static string GetFunctionalText(Function function)
-        {
-            string functionalText = function.Properties.FUNC_TEXT_AUTOMATIC
-                .ToString(ISOCode.Language.L___);
-            
-            if (string.IsNullOrEmpty(functionalText))
-            {
-                functionalText = function.Properties.FUNC_TEXT_AUTOMATIC
-                    .ToString(ISOCode.Language.L_ru_RU);
-            }
-            if (string.IsNullOrEmpty(functionalText))
-            {
-                functionalText = function.Properties.FUNC_TEXT
-                    .ToString(ISOCode.Language.L_ru_RU);
-            }
-            if(string.IsNullOrEmpty(functionalText))
-            {
-                return "";
-            }
-
-            return functionalText;
-        }
-
-        /// <summary>
-        /// Получить свойство проекта.
-        /// </summary>
-        /// <param name="propertyName">Имя свойства</param>
-        /// <returns></returns>
-        public static string GetProjectProperty(string propertyName)
-        {
-            string result = "";
-            var project = GetProject();
-            if (project.Properties[propertyName].IsEmpty)
-            {
-                string errMsg = $"Не задано свойство {propertyName}\n";
-                throw new Exception(errMsg);
-            }
-
-            result = project.Properties[propertyName]
-                .ToString(ISOCode.Language.L___);
-            return result;
-        }
-
-        /// <summary>
-        /// Получить имя изделия устройства.
-        /// </summary>
-        /// <param name="function">Функция устройства</param>
-        /// <returns></returns>
-        public static string GetArticleName(Function function)
-        {
-            var articleName = string.Empty;
-            if (function == null) return articleName;
-
-            var articlesRefs = function.ArticleReferences;
-            if (articlesRefs.Length > 0 &&
-                !string.IsNullOrEmpty(function.ArticleReferences[0].PartNr))
-            {
-                articleName = function.ArticleReferences[0].PartNr;
-            }
-
-            return articleName;
+            return propertyValue;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace EplanDevice
     /// <summary>
     /// Технологическое устройство, подключенное к модулям ввода\вывод IO.
     /// </summary>
-    public partial class IODevice : Device
+    public partial class IODevice : Device, IIODevice
     {
         /// <summary>
         /// Получение строкового представления подтипа устройства.
@@ -140,8 +140,9 @@ namespace EplanDevice
             parameters = new Dictionary<string, object>();
             rtParameters = new Dictionary<string, object>();
             properties = new Dictionary<string, object>();
+            iolConfProperties = new Dictionary<string, double>();
 
-            IOLinkProperties = new IOLinkSize();
+            iolinkProperties = new IOLinkSize();
         }
 
         /// <summary>
@@ -157,10 +158,10 @@ namespace EplanDevice
             }
 
             var sizes = articles[articleName];
-            IOLinkProperties.SizeIn = sizes.SizeIn;
-            IOLinkProperties.SizeOut = sizes.SizeOut;
-            IOLinkProperties.SizeInFromFile = sizes.SizeInFromFile;
-            IOLinkProperties.SizeOutFromFile = sizes.SizeOutFromFile;
+            iolinkProperties.SizeIn = sizes.SizeIn;
+            iolinkProperties.SizeOut = sizes.SizeOut;
+            iolinkProperties.SizeInFromFile = sizes.SizeInFromFile;
+            iolinkProperties.SizeOutFromFile = sizes.SizeOutFromFile;
         }
 
         /// <summary>
@@ -806,6 +807,18 @@ namespace EplanDevice
             return count;
         }
 
+        public void SetIolConfProperty(string propertyName, double value)
+        {
+            if (iolConfProperties.ContainsKey(propertyName))
+            {
+                iolConfProperties[propertyName] = value;
+            }
+            else
+            {
+                iolConfProperties.Add(propertyName, value);
+            }
+        }
+
         /// <summary>
         /// Получить свойства устройства.
         /// </summary>
@@ -839,10 +852,23 @@ namespace EplanDevice
             }
         }
 
-        /// <summary>
-        /// Свойство содержащее изделие, которое используется для устройства
-        /// </summary>
+        public Dictionary<string, double> IolConfProperties
+        {
+            get
+            {
+                return iolConfProperties;
+            }
+        }
+
         public string ArticleName { get; set; } = "";
+
+        public IOLinkSize IOLinkProperties
+        {
+            get
+            {
+                return iolinkProperties;
+            }
+        }
 
         #region Закрытые поля.
         protected List<IOChannel> DO; ///Каналы дискретных выходов.
@@ -853,440 +879,12 @@ namespace EplanDevice
         protected Dictionary<string, object> parameters;   ///Параметры.
         protected Dictionary<string, object> rtParameters; ///Рабочие параметры.
         protected Dictionary<string, object> properties; ///Свойства.
+        protected Dictionary<string, double> iolConfProperties; ///Свойства IOL-Conf.
 
-        internal IOLinkSize IOLinkProperties; ///IO-Link свойства устройства.
+        protected IOLinkSize iolinkProperties; ///IO-Link свойства устройства.
 
         protected delegate void PropertyChanged();
         protected event PropertyChanged OnPropertyChanged;
         #endregion
-
-        /// <summary>
-        /// Канал ввода-вывода.
-        /// </summary>
-        public class IOChannel
-        {
-            public static int Compare(IOChannel wx, IOChannel wy)
-            {
-                if (wx == null && wy == null)
-                    return 0;
-
-                if (wx == null)
-                    return -1;
-
-                if (wy == null)
-                    return 1;
-
-                return wx.ToInt().CompareTo(wy.ToInt());
-            }
-
-            /// <param name="node">Номер узла.</param>
-            /// <param name="module">Номер модуля.</param>
-            /// <param name="physicalClamp">Физический номер клеммы.</param>
-            /// <param name="fullModule">Полный номер модуля (101).</param>
-            /// <param name="logicalClamp">Порядковый логический номер клеммы.</param>
-            /// <param name="moduleOffset">Сдвиг модуля к которому привязан канал.</param>
-            public void SetChannel(int node, int module, int physicalClamp, int fullModule,
-                int logicalClamp, int moduleOffset)
-            {
-                this.node = node;
-                this.module = module;
-                this.physicalClamp = physicalClamp;
-
-                this.fullModule = fullModule;
-                this.logicalClamp = logicalClamp;
-                this.moduleOffset = moduleOffset;
-            }
-
-            /// <summary>
-            /// Сброс привязки канала ввода-вывода.
-            /// </summary>
-            public void Clear()
-            {
-                node = -1;
-                module = -1;
-                physicalClamp = -1;
-                fullModule = -1;
-                logicalClamp = -1;
-                moduleOffset = -1;
-            }
-
-            /// <param name="name">Имя канала (DO, DI, AO, AI).</param>
-            /// <param name="node">Номер узла.</param>
-            /// <param name="module">Номер модуля.</param>
-            /// <param name="clamp">Номер клеммы.</param>
-            /// <param name="comment">Комментарий к каналу.</param>
-            public IOChannel(string name, int node, int module, int clamp, string comment)
-            {
-                this.name = name;
-
-                this.node = node;
-                this.module = module;
-                this.physicalClamp = clamp;
-                this.comment = comment;
-            }
-
-            private int ToInt()
-            {
-                switch (name)
-                {
-                    case DO:
-                        return 0;
-
-                    case DI:
-                        return 1;
-
-                    case AI:
-                        return 2;
-
-                    case AO:
-                        return 3;
-
-                    case AIAO:
-                        return 4;
-
-                    case DODI:
-                        return 5;
-
-                    default:
-                        return 6;
-                }
-            }
-
-            /// <summary>
-            /// Сохранение в виде таблицы Lua.
-            /// </summary>
-            /// <param name="prefix">Префикс (для выравнивания).</param>
-            public string SaveAsLuaTable(string prefix)
-            {
-                string res = string.Empty;
-
-                if (IOManager.GetInstance()[node] != null &&
-                    IOManager.GetInstance()[node][module - 1] != null &&
-                    physicalClamp >= 0)
-                {
-                    res += prefix + "{\n";
-
-                    int offset;
-                    switch (name)
-                    {
-                        case DO:
-                            offset = CalculateDO();
-                            break;
-
-                        case AO:
-                            offset = CalculateAO();
-                            break;
-
-                        case DI:
-                            offset = CalculateDI();
-                            break;
-
-                        case AI:
-                            offset = CalculateAI();
-                            break;
-
-                        default:
-                            offset = -1;
-                            break;
-                    }
-
-                    if (comment != string.Empty)
-                    {
-                        res += prefix + "-- " + comment + "\n";
-                    }
-
-                    res += prefix + $"node          = {node},\n";
-                    res += prefix + $"offset        = {offset},\n";
-                    res += prefix + $"physical_port = {physicalClamp},\n";
-                    res += prefix + $"logical_port  = {logicalClamp},\n";
-                    res += prefix + $"module_offset = {moduleOffset}\n";
-
-                    res += prefix + "},\n";
-                }
-
-                return res;
-            }
-
-            /// <summary>
-            /// Расчет AI адреса для сохранения в файл
-            /// </summary>
-            /// <returns>Адрес</returns>
-            private int CalculateAI()
-            {
-                int offset = -1;
-
-                if (physicalClamp <= IOManager.GetInstance()[node][module - 1]
-                    .Info.ChannelAddressesIn.Length)
-                {
-                    IOModule md = IOManager.GetInstance()[node][module - 1];
-                    offset = md.InOffset;
-                    offset += md.Info.ChannelAddressesIn[physicalClamp];
-
-                    return offset;
-                }
-
-                return offset;
-            }
-
-            /// <summary>
-            /// Расчет AO адреса для сохранения в файл
-            /// </summary>
-            /// <returns>Адрес</returns>
-            private int CalculateAO()
-            {
-                int offset = -1;
-
-                if (physicalClamp <= IOManager.GetInstance()[node][module - 1]
-                    .Info.ChannelAddressesOut.Length)
-                {
-                    IOModule md = IOManager.GetInstance()[node][module - 1];
-                    offset = md.OutOffset;
-                    offset += md.Info.ChannelAddressesOut[physicalClamp];
-
-                    return offset;
-                }
-
-                return offset;
-            }
-
-            /// <summary>
-            /// Расчет DI адреса для сохранения в файл
-            /// </summary>
-            /// <returns>Адрес</returns>
-            private int CalculateDI()
-            {
-                int offset = -1;
-
-                if (physicalClamp <= IOManager.GetInstance()[node][module - 1]
-                    .Info.ChannelAddressesIn.Length)
-                {
-                    IOModule md = IOManager.GetInstance()[node][module - 1];
-                    if (md.IsIOLink() == true)
-                    {
-                        offset = 0;
-                    }
-                    else
-                    {
-                        offset = md.InOffset;
-                    }
-                    offset += md.Info.ChannelAddressesIn[physicalClamp];
-
-                    return offset;
-                }
-
-                return offset;
-            }
-
-            /// <summary>
-            /// Расчет DO адреса для сохранения в файл
-            /// </summary>
-            /// <returns>Адрес</returns>
-            private int CalculateDO()
-            {
-                int offset = -1;
-
-                if (physicalClamp <= IOManager.GetInstance()[node][module - 1]
-                    .Info.ChannelAddressesOut.Length)
-                {
-                    IOModule md = IOManager.GetInstance()[node][module - 1];
-                    if (md.IsIOLink() == true)
-                    {
-                        offset = 0;
-                    }
-                    else
-                    {
-                        offset = md.OutOffset;
-                    }
-                    offset += md.Info.ChannelAddressesOut[physicalClamp];
-
-                    return offset;
-                }
-
-                return offset;
-            }
-
-            public bool IsEmpty()
-            {
-                return node == -1;
-            }
-
-            /// <summary>
-            /// Номер узла.
-            /// </summary>
-            public int Node
-            {
-                get
-                {
-                    return node;
-                }
-            }
-
-            /// <summary>
-            /// Номер модуля.
-            /// </summary>
-            public int Module
-            {
-                get
-                {
-                    return module;
-                }
-            }
-
-            /// <summary>
-            /// Физический номер клеммы.
-            /// </summary>
-            public int PhysicalClamp
-            {
-                get
-                {
-                    return physicalClamp;
-                }
-            }
-
-            /// <summary>
-            /// Полный номер модуля
-            /// </summary>
-            public int FullModule
-            {
-                get
-                {
-                    return fullModule;
-                }
-            }
-
-            /// <summary>
-            /// Комментарий
-            /// </summary>
-            public string Comment
-            {
-                get
-                {
-                    return comment;
-                }
-            }
-
-            /// <summary>
-            /// Имя канала (DI,DO, AI,AO)
-            /// </summary>
-            public string Name
-            {
-                get
-                {
-                    return name;
-                }
-            }
-
-            /// <summary>
-            /// Логический номер клеммы (порядковый)
-            /// </summary>
-            public int LogicalClamp
-            {
-                get
-                {
-                    return logicalClamp;
-                }
-            }
-
-            /// <summary>
-            /// Сдвиг начала модуля
-            /// </summary>
-            public int ModuleOffset
-            {
-                get
-                {
-                    return moduleOffset;
-                }
-            }
-
-            /// <summary>
-            /// Шаблон для разбора комментария к устройству.
-            /// </summary>
-            public const string ChannelCommentPattern =
-                @"(Открыть мини(?n:\s+|$))|" +
-                @"(Открыть НС(?n:\s+|$))|" +
-                @"(Открыть ВС(?n:\s+|$))|" +
-                @"(Открыть(?n:\s+|$))|" +
-                @"(Закрыть(?n:\s+|$))|" +
-                @"(Открыт(?n:\s+|$))|" +
-                @"(Закрыт(?n:\s+|$))|" +
-                @"(Объем(?n:\s+|$))|" +
-                @"(Поток(?n:\s+|$))|" +
-                @"(Пуск(?n:\s+|$))|" +
-                @"(Реверс(?n:\s+|$))|" +
-                @"(Обратная связь(?n:\s+|$))|" +
-                @"(Частота вращения(?n:\s+|$))|" +
-                @"(Авария(?n:\s+|$))|" +
-                @"(Напряжение моста\(\+Ud\)(?n:\s+|$))|" +
-                @"(Референсное напряжение\(\+Uref\)(?n:\s+|$))|" +
-                @"(Красный цвет(?n:\s+|$))|" +
-                @"(Желтый цвет(?n:\s+|$))|" +
-                @"(Зеленый цвет(?n:\s+|$))|" +
-                @"(Звуковая сигнализация(?n:\s+|$))|" +
-                @"(Готовность(?n:\s+|$))|" +
-                @"(Сигнал активации(?n:\s+|$))|" +
-                @"(Результат обработки(?n:\s+\d*|$))";
-
-            public const string AI = "AI";
-            public const string AO = "AO";
-            public const string DI = "DI";
-            public const string DO = "DO";
-            const string AIAO = "AIAO";
-            const string DODI = "DODI";
-
-            #region Закрытые поля
-            private int node;            ///Номер узла.
-            private int module;          ///Номер модуля.
-            private int fullModule;      ///Полный номер модуля.
-            private int physicalClamp;   ///Физический номер клеммы.
-            private string comment;      ///Комментарий.
-            private string name;         ///Имя канала (DO, DI, AO ,AI).
-            private int logicalClamp;    ///Логический номер клеммы.
-            private int moduleOffset;    ///Сдвиг начала модуля.
-            #endregion
-        }
-
-        /// <summary>
-        /// Размер IO-Link областей устройства ввода-вывода.
-        /// </summary>
-        public class IOLinkSize
-        {
-            public IOLinkSize()
-            {
-                SizeIn = 0;
-                SizeOut = 0;
-            }
-
-            /// <summary>
-            /// Возвращает максимальны размер байтовой области для модулей ввода
-            /// вывода при расчете IO-Link адресов если используется
-            /// Phoenix Contact
-            /// </summary>
-            /// <returns></returns>
-            public int GetMaxIOLinkSize()
-            {
-                return SizeOut > SizeIn ? SizeOut : SizeIn;
-            }
-
-            /// <summary>
-            /// Размер области входа приведенный к слову (целому)
-            /// </summary>
-            public int SizeIn { get; set; }
-
-            /// <summary>
-            /// Размер области выхода приведенный к слову (целому)
-            /// </summary>
-            public int SizeOut { get; set; }
-
-            /// <summary>
-            /// Размер области входа из файла
-            /// </summary>
-            public float SizeInFromFile { get; set; }
-
-            /// <summary>
-            /// Размер области выхода из файла
-            /// </summary>
-            public float SizeOutFromFile { get; set; }
-        }
-
     }
 }

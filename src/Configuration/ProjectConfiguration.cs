@@ -1,5 +1,7 @@
 ﻿using Eplan.EplApi.DataModel;
 using System.Collections.Generic;
+using StaticHelper;
+using EplanDevice;
 
 namespace EasyEPlanner
 {
@@ -13,11 +15,17 @@ namespace EasyEPlanner
         /// </summary>
         private ProjectConfiguration()
         {
-            this.configurationChecker = new ConfigurationChecker();
-            this.deviceReader = new DeviceReader();
-            this.deviceBindingReader = new DeviceBindingReader();
-            this.deviceSynchronizer = new DeviceSynchronizer();
-            this.IOReader = new IOReader();
+            IApiHelper apiHelper = new ApiHelper();
+            IProjectHelper projectHelper = new ProjectHelper(apiHelper);
+            IIOHelper ioHelper = new IOHelper(projectHelper);
+            IDeviceHelper deviceHelper = new DeviceHelper(apiHelper);
+
+            this.configurationChecker = new ConfigurationChecker(projectHelper);
+            this.deviceReader = new DeviceReader(apiHelper, deviceHelper, projectHelper, ioHelper,
+                DeviceManager.GetInstance());
+            this.deviceBindingReader = new DeviceBindingReader(projectHelper, apiHelper);
+            this.deviceSynchronizer = new DeviceSynchronizer(deviceReader);
+            this.IOReader = new IOReader(projectHelper, deviceHelper);
 
             StartingIPInterval = 0;
             EndingIPInterval = 0;

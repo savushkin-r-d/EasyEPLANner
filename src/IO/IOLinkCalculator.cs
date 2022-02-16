@@ -18,8 +18,8 @@ namespace IO
         /// <param name="devices">Список привязанных устройств</param>
         /// <param name="devicesChannels">Список привязанных каналов</param>
         /// <param name="moduleInfo">Информация о модуле ввода-вывода</param>
-        public IOLinkCalculator(List<EplanDevice.IODevice>[] devices,
-            List<EplanDevice.IODevice.IOChannel>[] devicesChannels,
+        public IOLinkCalculator(List<EplanDevice.IIODevice>[] devices,
+            List<EplanDevice.IODevice.IIOChannel>[] devicesChannels,
             IOModuleInfo moduleInfo)
         {
             this.devices = devices;
@@ -74,9 +74,9 @@ namespace IO
                 if (devices[clamp] != null && devices[clamp][0] != null)
                 {
                     int deviceOffset;
-                    EplanDevice.IODevice.IOChannel channel =
+                    EplanDevice.IODevice.IIOChannel channel =
                         devicesChannels[clamp][0];
-                    EplanDevice.IODevice device = devices[clamp][0];
+                    EplanDevice.IIODevice device = devices[clamp][0];
                     if (channel.Name == "DI" || channel.Name == "DO")
                     {
                         int moduleOffset = channel.ModuleOffset;
@@ -118,8 +118,8 @@ namespace IO
             return discreteOffset;
         }
 
-        List<EplanDevice.IODevice>[] devices;
-        List<EplanDevice.IODevice.IOChannel>[] devicesChannels;
+        List<EplanDevice.IIODevice>[] devices;
+        List<EplanDevice.IODevice.IIOChannel>[] devicesChannels;
         IOModuleInfo moduleInfo;
 
         // Сервисные слова.

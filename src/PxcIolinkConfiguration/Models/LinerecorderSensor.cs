@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace EasyEPlanner.PxcIolinkConfiguration.Models.IolConf
+namespace EasyEPlanner.PxcIolinkConfiguration.Models
 {
     [XmlRoot(ElementName = "Linerecorder_Sensor", Namespace = "http://www.ifm.com/datalink/LinerecorderSensor4")]
     public class LinerecorderSensor

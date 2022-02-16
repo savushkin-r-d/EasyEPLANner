@@ -2,49 +2,6 @@
 
 namespace EplanDevice
 {
-    public interface IDevice
-    {
-        /// <summary>
-        /// Имя устройства (например - А1V12).
-        /// </summary>
-        string Name { get; }
-
-        /// <summary>
-        /// Имя устройства (например "+А1-V12").
-        /// </summary>
-        string EplanName { get; }
-
-        /// <summary>
-        /// Описание устройства.
-        /// </summary>
-        string Description { get; }
-
-        /// <summary>
-        /// Номер объекта устройства.
-        /// </summary>
-        int ObjectNumber { get; }
-
-        /// <summary>
-        /// Объект устройства.
-        /// </summary>
-        string ObjectName { get; }
-
-        /// <summary>
-        /// Номер устройства.
-        /// </summary>
-        long DeviceNumber { get; }
-
-        /// <summary>
-        /// Тип устройства.
-        /// </summary>
-        DeviceType DeviceType { get; }
-
-        /// <summary>
-        /// Подтип устройства.
-        /// </summary>
-        DeviceSubType DeviceSubType { get; }
-    }
-
     /// <summary>
     /// Устройство - клапан, насос и т.д.
     /// </summary>
@@ -132,17 +89,11 @@ namespace EplanDevice
             return string.Empty;
         }
 
-        /// <summary>
-        /// Получение типа подключения для устройства
-        /// </summary>
         public virtual string GetConnectionType()
         {
             return string.Empty;
         }
 
-        /// <summary>
-        /// Получение диапазона настройки
-        /// </summary>
         public virtual string GetRange()
         {
             return string.Empty;
