@@ -162,7 +162,7 @@ namespace EplanDevice
                 if (physicalClamp <= IOManager.GetInstance()[node][module - 1]
                     .Info.ChannelAddressesIn.Length)
                 {
-                    IOModule md = IOManager.GetInstance()[node][module - 1];
+                    IIOModule md = IOManager.GetInstance()[node][module - 1];
                     offset = md.InOffset;
                     offset += md.Info.ChannelAddressesIn[physicalClamp];
 
@@ -183,7 +183,7 @@ namespace EplanDevice
                 if (physicalClamp <= IOManager.GetInstance()[node][module - 1]
                     .Info.ChannelAddressesOut.Length)
                 {
-                    IOModule md = IOManager.GetInstance()[node][module - 1];
+                    IIOModule md = IOManager.GetInstance()[node][module - 1];
                     offset = md.OutOffset;
                     offset += md.Info.ChannelAddressesOut[physicalClamp];
 
@@ -204,7 +204,7 @@ namespace EplanDevice
                 if (physicalClamp <= IOManager.GetInstance()[node][module - 1]
                     .Info.ChannelAddressesIn.Length)
                 {
-                    IOModule md = IOManager.GetInstance()[node][module - 1];
+                    IIOModule md = IOManager.GetInstance()[node][module - 1];
                     if (md.IsIOLink() == true)
                     {
                         offset = 0;
@@ -232,7 +232,7 @@ namespace EplanDevice
                 if (physicalClamp <= IOManager.GetInstance()[node][module - 1]
                     .Info.ChannelAddressesOut.Length)
                 {
-                    IOModule md = IOManager.GetInstance()[node][module - 1];
+                    IIOModule md = IOManager.GetInstance()[node][module - 1];
                     if (md.IsIOLink() == true)
                     {
                         offset = 0;

@@ -648,7 +648,7 @@ namespace EasyEPlanner
             int idx = 0;
             for (int i = 0; i < ioManager.IONodes.Count; i++)
             {
-                IONode currentNode = ioManager.IONodes[i];
+                IIONode currentNode = ioManager.IONodes[i];
                 res[idx, 3] = prjName;
                 idx++;
                 res[idx, 3] = 

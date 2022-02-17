@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Eplan.EplApi.DataModel;
+using EplanDevice;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace IO
 {
@@ -30,10 +33,52 @@ namespace IO
         List<EplanDevice.IODevice.IIOChannel>[] DevicesChannels { get; }
 
         /// <summary>
+        /// Смещение входного адресного пространства модуля.
+        /// </summary>
+        int InOffset { get; }
+
+        /// <summary>
+        /// Смещение выходного адресного пространства модуля.
+        /// </summary>
+        int OutOffset { get; }
+
+        /// <summary>
+        /// Номер устройства (из ОУ) прим., 202.
+        /// </summary>
+        int PhysicalNumber { get; }
+
+        /// <summary>
+        /// Eplan функция модуля.
+        /// </summary>
+        Function Function { get; }
+
+        void AssignChannelToDevice(int chN, IODevice dev, IODevice.IOChannel ch);
+
+        /// <summary>
+        /// Расчет IO-Link адресов привязанных устройств.
+        /// </summary>
+        void CalculateIOLinkAdresses();
+
+        string Check(int moduleIndex, string nodeName);
+
+        /// <summary>
         /// Является ли модуль IO-Link 
         /// </summary>
         /// <returns></returns>
         /// <param name="collectOnlyPhoenixContact">Проверять только модули Phoenix Contact</param>
         bool IsIOLink(bool collectOnlyPhoenixContact = false);
+
+        void SaveAsConnectionArray(ref object[,] res, ref int idx, int p,
+            Dictionary<string, int> modulesCount, Dictionary<string, Color> modulesColor);
+
+        void SaveASInterfaceConnection(int nodeIdx, int moduleIdx,
+            Dictionary<string, object[,]> asInterfaceConnection);
+
+        /// <summary>
+        /// Сохранение в виде таблицы Lua.
+        /// </summary>
+        /// <param name="prefix">Префикс (для выравнивания).</param>
+        /// <returns>Описание в виде таблицы Lua.</returns>
+        string SaveAsLuaTable(string prefix);
     }
 }

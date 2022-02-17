@@ -201,6 +201,7 @@
       <DependentUpon>UnknownDevTypeForm.cs</DependentUpon>
     </Compile>
     <Compile Include="IO\IIOModule.cs" />
+    <Compile Include="IO\IIONode.cs" />
     <Compile Include="IO\IOModuleInfo.cs" />
     <Compile Include="Main\InterprojectExchangeAction.cs" />
     <Compile Include="Configuration\ProjectHealthChecker.cs" />

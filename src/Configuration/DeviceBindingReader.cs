@@ -78,7 +78,7 @@ namespace EasyEPlanner
         /// <param name="node">Узел</param>
         /// <param name="module">Модуль</param>
         /// <param name="clampFunction">Функция клеммы</param>
-        private void ReadModuleClampBinding(IO.IONode node, IO.IOModule module,
+        private void ReadModuleClampBinding(IO.IIONode node, IO.IIOModule module,
             Function clampFunction)
         {
             bool skip = NeedToSkip(module, clampFunction);
@@ -114,7 +114,7 @@ namespace EasyEPlanner
         /// <param name="module">Модуль</param>
         /// <param name="clampFunction">Функция клеммы</param>
         /// <returns></returns>
-        private bool NeedToSkip(IO.IOModule module, Function clampFunction)
+        private bool NeedToSkip(IO.IIOModule module, Function clampFunction)
         {
             var skip = false;
 
@@ -357,7 +357,7 @@ namespace EasyEPlanner
         /// <param name="clampFunction">Функция клеммы</param>
         /// <param name="comment">Комментарий к устройству</param>
         private void SetBind(string description, Match actionMatch, 
-            IO.IOModule module, IO.IONode node, Function clampFunction, 
+            IO.IIOModule module, IO.IIONode node, Function clampFunction, 
             string comment)
         {
             string clampStr = clampFunction.Properties

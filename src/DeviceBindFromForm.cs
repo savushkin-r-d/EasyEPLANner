@@ -358,7 +358,7 @@ namespace EasyEPlanner
             var IOModuleNumber = Convert.ToInt32(IOModuleMatch.Groups["n"]
                 .Value);
 
-            IOModule module = IOManager.GetInstance()
+            IIOModule module = IOManager.GetInstance()
                 .GetModuleByPhysicalNumber(IOModuleNumber);
             isIOLink = module.IsIOLink();
 

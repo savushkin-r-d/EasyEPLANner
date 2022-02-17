@@ -299,7 +299,7 @@ namespace EplanDevice
                     channel.SetChannel(node, module, physicalKlemme,
                         fullModule, logicalPort, moduleOffset);
 
-                    List<IONode> nodes = IOManager.GetInstance().IONodes;
+                    List<IIONode> nodes = IOManager.GetInstance().IONodes;
                     if (nodes.Count > node &&
                         nodes[node].IOModules.Count > module - 1)
                     {

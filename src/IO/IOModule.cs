@@ -262,9 +262,6 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// Расчет IO-Link адресов привязанных устройств.
-        /// </summary>       
         public void CalculateIOLinkAdresses()
         {
             IOLinkCalculator calculator = new IOLinkCalculator(devices,
@@ -369,9 +366,6 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// Смещение входного адресного пространства модуля.
-        /// </summary>
         public int InOffset
         {
             get
@@ -380,9 +374,6 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// Смещение выходного адресного пространства модуля.
-        /// </summary>
         public int OutOffset
         {
             get
@@ -391,9 +382,6 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// Номер устройства (из ОУ) прим., 202.
-        /// </summary>
         public int PhysicalNumber
         {
             get
@@ -402,9 +390,6 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// Eplan функция модуля.
-        /// </summary>
         public Eplan.EplApi.DataModel.Function Function
         {
             get
