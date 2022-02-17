@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace EasyEPlanner.PxcIolinkConfiguration
 {
-    internal class PxcIolinkModulesConfiguration : IPxcIolinkConfiguration
+    public class PxcIolinkModulesConfiguration : IPxcIolinkConfiguration
     {
         private IXmlSensorSerializer sensorSerializer;
         private IXmlTemplateReader templateReader;

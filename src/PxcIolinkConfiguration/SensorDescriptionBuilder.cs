@@ -7,14 +7,14 @@ using System.Linq;
 
 namespace EasyEPlanner.PxcIolinkConfiguration
 {
-    internal interface ISensorDescriptionBuilder
+    public interface ISensorDescriptionBuilder
     {
         LinerecorderMultiSensor CreateModuleDescription(IIOModule module,
             string templateVersion, Dictionary<string, LinerecorderSensor> moduleTemplates,
             Dictionary<string, LinerecorderSensor> deviceTemplates);
     }
 
-    internal class SensorDescriptionBuilder : ISensorDescriptionBuilder
+    public class SensorDescriptionBuilder : ISensorDescriptionBuilder
     {
         public LinerecorderMultiSensor CreateModuleDescription(IIOModule module,
             string templateVersion, Dictionary<string, LinerecorderSensor> moduleTemplates,
