@@ -369,6 +369,9 @@ namespace EasyEPlanner
             string previousfileData = File.ReadAllText(pathToFile);
             string[] previousVersion = Regex
                 .Split(previousfileData.ToString(), splitPattern);
+
+            bool cantCheckVersion = previousVersion.Length <= eplannerVersionId;
+            if (cantCheckVersion) return true;
             previousVersion[eplannerVersionId] = string.Empty;
 
             string[] currentVersion = Regex
