@@ -2,6 +2,11 @@
 using NUnit.Framework;
 using EasyEPlanner.PxcIolinkConfiguration;
 using System.IO;
+using System;
+using System.Collections.Generic;
+using EasyEPlanner.PxcIolinkConfiguration.Models;
+using System.Threading.Tasks;
+using IO;
 
 namespace Tests.PxcIolinkConfigration
 {
@@ -17,6 +22,8 @@ namespace Tests.PxcIolinkConfigration
 
         private string _pathToAssemblyFolder;
         private string _pathToProjectFilesFolder;
+        private string _pathToDeviceTemplatesFolder;
+        private string _pathToModuleTemplatesFolder;
 
         [SetUp]
         public void SetUpMock()
@@ -27,6 +34,8 @@ namespace Tests.PxcIolinkConfigration
             string tempPath = Path.GetTempPath();
             _pathToAssemblyFolder = Path.Combine(tempPath, "EplAssemblyFldr");
             _pathToProjectFilesFolder = Path.Combine(tempPath, "EplProjFldr");
+            _pathToDeviceTemplatesFolder = Path.Combine(_pathToAssemblyFolder, _iolConfFolder, _devicesFolder);
+            _pathToModuleTemplatesFolder = Path.Combine(_pathToAssemblyFolder, _iolConfFolder ,_modulesFolder);
         }
 
         [Test]
@@ -90,6 +99,146 @@ namespace Tests.PxcIolinkConfigration
             Assert.IsTrue(Directory.Exists(Path.Combine(_pathToAssemblyFolder, _iolConfFolder, _devicesFolder)));
             Assert.IsTrue(Directory.Exists(Path.Combine(_pathToAssemblyFolder, _iolConfFolder, _modulesFolder)));
             Assert.IsTrue(Directory.Exists(Path.Combine(_pathToProjectFilesFolder, _iolConfFolder)));
+        }
+
+        [Test]
+        public void ReadTemplates_FoldersNotCreated_ThrowsInvalidOperationException()
+        {
+            var config = new PxcIolinkModulesConfiguration
+                (_sensorSerializerMock.Object, _templateReaderMock.Object,
+                _sensorDescriptionBuilderMock.Object);
+
+            var exception = Assert.Throws<InvalidOperationException>(
+                () => config.ReadTemplates(false));
+            Assert.AreEqual("Каталоги не созданы, сначала создайте каталоги.", exception.Message);
+        }
+
+        [Test]
+        public void ReadTemplates_NoDevicesTemplates_ThrowsException()
+        {
+            _templateReaderMock
+                .Setup(i => i.Read(_pathToDeviceTemplatesFolder,
+                    It.IsAny<Dictionary<string, LinerecorderSensor>>()))
+                .Returns(new List<Task>());
+            _templateReaderMock
+                .Setup(i => i.Read(_pathToModuleTemplatesFolder,
+                    It.IsAny<Dictionary<string, LinerecorderSensor>>()))
+                .Returns(new List<Task>());
+            var config = new PxcIolinkModulesConfiguration
+                (_sensorSerializerMock.Object, _templateReaderMock.Object,
+                _sensorDescriptionBuilderMock.Object);
+
+            // Returns true
+            bool foldersCreated = config.CreateFolders(_pathToAssemblyFolder, _pathToProjectFilesFolder);
+            var exception = Assert.Throws<Exception>(
+                () => config.ReadTemplates(foldersCreated));
+            Assert.AreEqual("Отсутствуют описания устройств.", exception.Message);
+        }
+
+        [Test]
+        public void ReadTemplates_NoModulesTemplates_ThrowsException()
+        {
+            _templateReaderMock
+                .Setup(i => i.Read(_pathToDeviceTemplatesFolder,
+                    It.IsAny<Dictionary<string, LinerecorderSensor>>()))
+                .Returns(new List<Task>() { Task.Run(() => { }), Task.Run(() => { }) });
+            _templateReaderMock
+                .Setup(i => i.Read(_pathToModuleTemplatesFolder,
+                    It.IsAny<Dictionary<string, LinerecorderSensor>>()))
+                .Returns(new List<Task>());
+            var config = new PxcIolinkModulesConfiguration
+                (_sensorSerializerMock.Object, _templateReaderMock.Object,
+                _sensorDescriptionBuilderMock.Object);
+
+            // Returns true
+            bool foldersCreated = config.CreateFolders(_pathToAssemblyFolder, _pathToProjectFilesFolder);
+            var exception = Assert.Throws<Exception>(
+                () => config.ReadTemplates(foldersCreated));
+            Assert.AreEqual("Отсутствуют описания модулей ввода-вывода.", exception.Message);
+        }
+
+        [Test]
+        public void ReadTemplates_ExceptionDuringReadDevicesTemplate_ThrowsAggregateException()
+        {
+            var expectedException = new Exception();
+            _templateReaderMock
+                .Setup(i => i.Read(_pathToDeviceTemplatesFolder,
+                    It.IsAny<Dictionary<string, LinerecorderSensor>>()))
+                .Returns(new List<Task>() { Task.Run(() => { throw expectedException; }) });
+            _templateReaderMock
+                .Setup(i => i.Read(_pathToModuleTemplatesFolder,
+                    It.IsAny<Dictionary<string, LinerecorderSensor>>()))
+                .Returns(new List<Task>() { Task.Run(() => { }) });
+            var config = new PxcIolinkModulesConfiguration
+                (_sensorSerializerMock.Object, _templateReaderMock.Object,
+                _sensorDescriptionBuilderMock.Object);
+
+            // Returns true
+            bool foldersCreated = config.CreateFolders(_pathToAssemblyFolder, _pathToProjectFilesFolder);
+            var exception = Assert.Throws<AggregateException>(
+                () => config.ReadTemplates(foldersCreated));
+            int expectedExceptionsCount = 1;
+            Assert.AreEqual(expectedExceptionsCount, exception.InnerExceptions.Count);
+        }
+
+        [Test]
+        public void ReadTemplates_ExceptionDuringReadModulesTemplate_ThrowsAggregateException()
+        {
+            var expectedException = new Exception();
+            _templateReaderMock
+                .Setup(i => i.Read(_pathToDeviceTemplatesFolder,
+                    It.IsAny<Dictionary<string, LinerecorderSensor>>()))
+                .Returns(new List<Task>() { Task.Run(() => { }) });
+            _templateReaderMock
+                .Setup(i => i.Read(_pathToModuleTemplatesFolder,
+                    It.IsAny<Dictionary<string, LinerecorderSensor>>()))
+                .Returns(new List<Task>() { Task.Run(() => { throw expectedException; }) });
+            var config = new PxcIolinkModulesConfiguration
+                (_sensorSerializerMock.Object, _templateReaderMock.Object,
+                _sensorDescriptionBuilderMock.Object);
+
+            // Returns true
+            bool foldersCreated = config.CreateFolders(_pathToAssemblyFolder, _pathToProjectFilesFolder);
+            var exception = Assert.Throws<AggregateException>(
+                () => config.ReadTemplates(foldersCreated));
+            int expectedExceptionsCount = 1;
+            Assert.AreEqual(expectedExceptionsCount, exception.InnerExceptions.Count);
+        }
+
+        [Test]
+        public void ReadTemplates_ExceptionsInBothReadMethods_ThrowsAggregateException()
+        {
+            var expectedException = new Exception();
+            _templateReaderMock
+                .Setup(i => i.Read(_pathToDeviceTemplatesFolder,
+                    It.IsAny<Dictionary<string, LinerecorderSensor>>()))
+                .Returns(new List<Task>() { Task.Run(() => { throw expectedException; }) });
+            _templateReaderMock
+                .Setup(i => i.Read(_pathToModuleTemplatesFolder,
+                    It.IsAny<Dictionary<string, LinerecorderSensor>>()))
+                .Returns(new List<Task>() { Task.Run(() => { throw expectedException; }) });
+            var config = new PxcIolinkModulesConfiguration
+                (_sensorSerializerMock.Object, _templateReaderMock.Object,
+                _sensorDescriptionBuilderMock.Object);
+
+            // Returns true
+            bool foldersCreated = config.CreateFolders(_pathToAssemblyFolder, _pathToProjectFilesFolder);
+            var exception = Assert.Throws<AggregateException>(
+                () => config.ReadTemplates(foldersCreated));
+            int expectedExceptionsCount = 2;
+            Assert.AreEqual(expectedExceptionsCount, exception.InnerExceptions.Count);
+        }
+
+        [Test]
+        public void CreateModulesDescription_TemplatesNotRead_ThrowsInvalidOperationException()
+        {
+            var config = new PxcIolinkModulesConfiguration
+                (_sensorSerializerMock.Object, _templateReaderMock.Object,
+                _sensorDescriptionBuilderMock.Object);
+
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                config.CreateModulesDescription(false, Mock.Of<IIOManager>()));
+            Assert.AreEqual("Шаблоны не загружены, загрузите шаблоны." , exception.Message);
         }
 
         [TearDown]
