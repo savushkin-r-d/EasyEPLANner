@@ -294,6 +294,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="PxcIolinkConfiguration\IPxcIolinkConfiguration.cs" />
+    <Compile Include="PxcIolinkConfiguration\ISensorDescriptionBuilder.cs" />
+    <Compile Include="PxcIolinkConfiguration\IXmlSensorSerializer.cs" />
+    <Compile Include="PxcIolinkConfiguration\IXmlTemplateReader.cs" />
     <Compile Include="PxcIolinkConfiguration\Models\Device.cs" />
     <Compile Include="PxcIolinkConfiguration\Models\Devices.cs" />
     <Compile Include="PxcIolinkConfiguration\Models\LinerecorderMultiSensor.cs" />
