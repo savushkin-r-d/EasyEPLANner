@@ -47,11 +47,6 @@ namespace IO
         /// </summary>
         int PhysicalNumber { get; }
 
-        /// <summary>
-        /// Eplan функция модуля.
-        /// </summary>
-        Function Function { get; }
-
         void AssignChannelToDevice(int chN, IODevice dev, IODevice.IOChannel ch);
 
         /// <summary>

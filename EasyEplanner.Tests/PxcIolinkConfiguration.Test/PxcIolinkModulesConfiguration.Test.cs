@@ -241,6 +241,129 @@ namespace Tests.PxcIolinkConfigration
             Assert.AreEqual("Шаблоны не загружены, загрузите шаблоны." , exception.Message);
         }
 
+        [Test]
+        public void CreateModulesDescription_TemplatesLoadedButIoManagerEmpty_DoNotCallGenerateAndSerializeMethods()
+        {
+            var config = new PxcIolinkModulesConfiguration
+                (_sensorSerializerMock.Object, _templateReaderMock.Object,
+                _sensorDescriptionBuilderMock.Object);
+            var ioManagerMock = new Mock<IIOManager>();
+            ioManagerMock.Setup(x => x.IONodes).Returns(new List<IIONode>());
+
+            config.CreateModulesDescription(true, ioManagerMock.Object);
+
+            Mock.Get(_sensorSerializerMock.Object).Verify(x => 
+            x.Serialize(It.IsAny<LinerecorderMultiSensor>(), It.IsAny<string>()), Times.Never);
+            Mock.Get(_sensorDescriptionBuilderMock.Object).Verify(x => 
+            x.CreateModuleDescription(It.IsAny<IIOModule>(), It.IsAny<string>(),
+                It.IsAny<Dictionary<string, LinerecorderSensor>>(), 
+                It.IsAny<Dictionary<string, LinerecorderSensor>>()), Times.Never);
+        }
+
+        [Test]
+        public void CreateModulesDescription_TemplatesLoadedButTheyEmpty_DoNotCallSerialize()
+        {
+            //Arrange
+            _sensorDescriptionBuilderMock
+                .Setup(x => x.CreateModuleDescription(It.IsAny<IIOModule>(), It.IsAny<string>(),
+                It.IsAny<Dictionary<string, LinerecorderSensor>>(), It.IsAny<Dictionary<string, LinerecorderSensor>>()))
+                .Returns(new LinerecorderMultiSensor());
+            int iolinkModulesInMockCount = 4;
+            var ioManagerMock = new Mock<IIOManager>();
+            var ioNodeMock = new Mock<IIONode>();
+            var ioModuleMock = new Mock<IIOModule>();
+            ioModuleMock
+                .Setup(x => x.IsIOLink(It.IsAny<bool>()))
+                .Returns(true);
+            ioNodeMock
+                .Setup(x => x.IOModules)
+                .Returns(new List<IIOModule>()
+                {
+                    ioModuleMock.Object,
+                    ioModuleMock.Object,
+                });
+            ioManagerMock
+                .Setup(x => x.IONodes)
+                .Returns(new List<IIONode>()
+                {
+                    ioNodeMock.Object,
+                    ioNodeMock.Object
+                });
+            var config = new PxcIolinkModulesConfiguration
+                (_sensorSerializerMock.Object, _templateReaderMock.Object,
+                _sensorDescriptionBuilderMock.Object);
+            
+            //Act 
+            config.CreateModulesDescription(true, ioManagerMock.Object);
+
+            //Assert
+            Mock.Get(_sensorSerializerMock.Object).Verify(x =>
+                x.Serialize(It.IsAny<LinerecorderMultiSensor>(), It.IsAny<string>()),
+                    Times.Never);
+            Mock.Get(_sensorDescriptionBuilderMock.Object).Verify(x =>
+                x.CreateModuleDescription(It.IsAny<IIOModule>(), It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, LinerecorderSensor>>(),
+                    It.IsAny<Dictionary<string, LinerecorderSensor>>()),
+                    Times.Exactly(iolinkModulesInMockCount));
+        }
+
+        [Test]
+        public void CreateModulesDescription_TemplatesLoaded_DoNotCallSerialize()
+        {
+            //Arrange
+            _sensorDescriptionBuilderMock
+                .Setup(x => x.CreateModuleDescription(It.IsAny<IIOModule>(), It.IsAny<string>(),
+                It.IsAny<Dictionary<string, LinerecorderSensor>>(), It.IsAny<Dictionary<string, LinerecorderSensor>>()))
+                .Returns(new LinerecorderMultiSensor()
+                {
+                    Devices = new Devices()
+                    {
+                        Device = new List<Device>()
+                        {
+                            new Device(),
+                            new Device()
+                        }
+                    }
+                });
+            int iolinkModulesInMockCount = 4;
+            var ioManagerMock = new Mock<IIOManager>();
+            var ioNodeMock = new Mock<IIONode>();
+            var ioModuleMock = new Mock<IIOModule>();
+            ioModuleMock
+                .Setup(x => x.IsIOLink(It.IsAny<bool>()))
+                .Returns(true);
+            ioNodeMock
+                .Setup(x => x.IOModules)
+                .Returns(new List<IIOModule>()
+                {
+                    ioModuleMock.Object,
+                    ioModuleMock.Object,
+                });
+            ioManagerMock
+                .Setup(x => x.IONodes)
+                .Returns(new List<IIONode>()
+                {
+                    ioNodeMock.Object,
+                    ioNodeMock.Object
+                });
+            var config = new PxcIolinkModulesConfiguration
+                (_sensorSerializerMock.Object, _templateReaderMock.Object,
+                _sensorDescriptionBuilderMock.Object);
+
+            //Act 
+            config.CreateModulesDescription(true, ioManagerMock.Object);
+
+            //Assert
+            Mock.Get(_sensorSerializerMock.Object).Verify(x =>
+                x.Serialize(It.IsAny<LinerecorderMultiSensor>(), It.IsAny<string>()),
+                    Times.Exactly(iolinkModulesInMockCount));
+            Mock.Get(_sensorDescriptionBuilderMock.Object).Verify(x =>
+                x.CreateModuleDescription(It.IsAny<IIOModule>(), It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, LinerecorderSensor>>(),
+                    It.IsAny<Dictionary<string, LinerecorderSensor>>()),
+                    Times.Exactly(iolinkModulesInMockCount));
+        }
+
         [TearDown]
         public void ClearTestsData()
         {

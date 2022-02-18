@@ -57,7 +57,9 @@ namespace EasyEPlanner
         {
             foreach (var node in IOManager.IONodes)
             {
-                foreach (var module in node.IOModules)
+                // Конвертируем в IOModule, потому что не тестируется IIOModule
+                // из-за Function (еплановская библиотека).
+                foreach (IO.IOModule module in node.IOModules)
                 {
                     if (module.Function == null)
                     {
@@ -360,6 +362,9 @@ namespace EasyEPlanner
             IO.IIOModule module, IO.IIONode node, Function clampFunction, 
             string comment)
         {
+            // Конвертируем в IOModule, потому что не тестируется IIOModule
+            // из-за Function (еплановская библиотека).
+            var ioModule = module as IO.IOModule;
             string clampStr = clampFunction.Properties
                 .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
             int.TryParse(clampStr, out int clamp);
@@ -370,7 +375,7 @@ namespace EasyEPlanner
             if (devicesCount < 1 && !description.Equals(CommonConst.Reserve))
             {
                 Logs.AddMessage(
-                    $"\"{module.Function.VisibleName}:{clampStr}\"" +
+                    $"\"{ioModule.Function.VisibleName}:{clampStr}\"" +
                     $" - неверное имя привязанного устройства - " +
                     $"\"{description}\".");
             }
@@ -426,7 +431,7 @@ namespace EasyEPlanner
                 if (error != "")
                 {
                     error = string.Format("\"{0}:{1}\" : {2}",
-                        module.Function.VisibleName , clampStr, error);
+                        ioModule.Function.VisibleName , clampStr, error);
                     Logs.AddMessage(error);
                 }
             }
