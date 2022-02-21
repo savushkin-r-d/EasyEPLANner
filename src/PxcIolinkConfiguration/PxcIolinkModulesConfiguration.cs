@@ -5,6 +5,7 @@ using System.IO;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
+using EasyEPlanner.PxcIolinkConfiguration.Interfaces;
 
 namespace EasyEPlanner.PxcIolinkConfiguration
 {

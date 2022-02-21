@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using EasyEPlanner.PxcIolinkConfiguration.Models;
 using System.Threading.Tasks;
 using IO;
+using EasyEPlanner.PxcIolinkConfiguration.Interfaces;
 
 namespace Tests.PxcIolinkConfigration
 {

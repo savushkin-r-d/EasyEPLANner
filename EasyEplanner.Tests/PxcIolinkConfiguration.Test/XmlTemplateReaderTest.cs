@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System;
 using System.Text;
+using EasyEPlanner.PxcIolinkConfiguration.Interfaces;
 
 namespace Tests.PxcIolinkConfigration
 {

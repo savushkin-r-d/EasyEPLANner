@@ -2,7 +2,7 @@
 using IO;
 using System.Collections.Generic;
 
-namespace EasyEPlanner.PxcIolinkConfiguration
+namespace EasyEPlanner.PxcIolinkConfiguration.Interfaces
 {
     public interface ISensorDescriptionBuilder
     {

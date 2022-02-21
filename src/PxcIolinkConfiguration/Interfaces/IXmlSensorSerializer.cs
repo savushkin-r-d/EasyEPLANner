@@ -1,6 +1,6 @@
 ﻿using EasyEPlanner.PxcIolinkConfiguration.Models;
 
-namespace EasyEPlanner.PxcIolinkConfiguration
+namespace EasyEPlanner.PxcIolinkConfiguration.Interfaces
 {
     public interface IXmlSensorSerializer
     {

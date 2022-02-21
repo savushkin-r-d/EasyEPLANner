@@ -293,10 +293,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="PxcIolinkConfiguration\IPxcIolinkConfiguration.cs" />
-    <Compile Include="PxcIolinkConfiguration\ISensorDescriptionBuilder.cs" />
-    <Compile Include="PxcIolinkConfiguration\IXmlSensorSerializer.cs" />
-    <Compile Include="PxcIolinkConfiguration\IXmlTemplateReader.cs" />
+    <Compile Include="PxcIolinkConfiguration\DevicesDescriptionBuilder.cs" />
+    <Compile Include="PxcIolinkConfiguration\Interfaces\IDevicesDescriptionBuilder.cs" />
+    <Compile Include="PxcIolinkConfiguration\Interfaces\IModuleDescriptionBuilder.cs" />
+    <Compile Include="PxcIolinkConfiguration\Interfaces\IPxcIolinkConfiguration.cs" />
+    <Compile Include="PxcIolinkConfiguration\Interfaces\ISensorDescriptionBuilder.cs" />
+    <Compile Include="PxcIolinkConfiguration\Interfaces\IXmlSensorSerializer.cs" />
+    <Compile Include="PxcIolinkConfiguration\Interfaces\IXmlTemplateReader.cs" />
     <Compile Include="PxcIolinkConfiguration\Models\Device.cs" />
     <Compile Include="PxcIolinkConfiguration\Models\Devices.cs" />
     <Compile Include="PxcIolinkConfiguration\Models\LinerecorderMultiSensor.cs" />
@@ -304,6 +307,7 @@
     <Compile Include="PxcIolinkConfiguration\Models\Param.cs" />
     <Compile Include="PxcIolinkConfiguration\Models\Parameters.cs" />
     <Compile Include="PxcIolinkConfiguration\Models\Sensor.cs" />
+    <Compile Include="PxcIolinkConfiguration\ModuleDescriptionBuilder.cs" />
     <Compile Include="PxcIolinkConfiguration\PxcIolinkModulesConfiguration.cs" />
     <Compile Include="PxcIolinkConfiguration\SensorDescriptionBuilder.cs" />
     <Compile Include="PxcIolinkConfiguration\XmlSensorSerializer.cs" />
