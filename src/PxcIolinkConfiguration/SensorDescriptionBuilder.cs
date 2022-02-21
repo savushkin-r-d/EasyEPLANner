@@ -7,14 +7,14 @@ namespace EasyEPlanner.PxcIolinkConfiguration
 {
     public class SensorDescriptionBuilder : ISensorDescriptionBuilder
     {
-        private IModuleDescriptionBuilder _moduleDescriptionBuilder;
-        private IDevicesDescriptionBuilder _devicesDescriptionBuilder;
+        private IModuleDescriptionBuilder moduleDescriptionBuilder;
+        private IDevicesDescriptionBuilder devicesDescriptionBuilder;
 
         public SensorDescriptionBuilder(IModuleDescriptionBuilder moduleDescriptionBuilder,
             IDevicesDescriptionBuilder devicesDescriptionBuilder)
         {
-            _moduleDescriptionBuilder = moduleDescriptionBuilder;
-            _devicesDescriptionBuilder = devicesDescriptionBuilder;
+            this.moduleDescriptionBuilder = moduleDescriptionBuilder;
+            this.devicesDescriptionBuilder = devicesDescriptionBuilder;
         }
 
         public LinerecorderMultiSensor CreateModuleDescription(IIOModule module,
@@ -26,8 +26,8 @@ namespace EasyEPlanner.PxcIolinkConfiguration
 
             try
             {
-                moduleDescription = _moduleDescriptionBuilder.Build(module, moduleTemplates);
-                devicesDescription = _devicesDescriptionBuilder.Build(module, deviceTemplates);
+                moduleDescription = moduleDescriptionBuilder.Build(module, moduleTemplates);
+                devicesDescription = devicesDescriptionBuilder.Build(module, deviceTemplates);
             }
             catch
             {
