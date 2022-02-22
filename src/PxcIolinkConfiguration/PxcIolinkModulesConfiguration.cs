@@ -5,10 +5,11 @@ using System.IO;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
+using EasyEPlanner.PxcIolinkConfiguration.Interfaces;
 
 namespace EasyEPlanner.PxcIolinkConfiguration
 {
-    internal class PxcIolinkModulesConfiguration : IPxcIolinkConfiguration
+    public class PxcIolinkModulesConfiguration : IPxcIolinkConfiguration
     {
         private IXmlSensorSerializer sensorSerializer;
         private IXmlTemplateReader templateReader;

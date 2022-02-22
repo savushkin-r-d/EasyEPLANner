@@ -6,24 +6,6 @@ using System.Windows.Forms;
 
 namespace IO
 {
-    /// <summary>
-    /// Все узлы модулей ввода-вывода IO. Содержит минимальную функциональность, 
-    /// необходимую для экспорта для PAC.
-    /// </summary>
-    public interface IIOManager
-    {
-        /// <summary>
-        /// Узлы ввода вывода
-        /// </summary>
-        List<IONode> IONodes { get; }
-
-        /// <summary>
-        /// Расчет IO-Link адресов привязанных устройств для всех модулей
-        /// ввода-вывода.
-        /// </summary>
-        void CalculateIOLinkAdresses();
-    }
-
     public class IOManager : IIOManager
     {
         /// <summary>
@@ -31,7 +13,7 @@ namespace IO
         /// </summary>
         private IOManager()
         {
-            iONodes = new List<IONode>();
+            iONodes = new List<IIONode>();
             InitIoModulesInfo();
             InitIoNodesInfo();
         }
@@ -57,16 +39,16 @@ namespace IO
         /// <param name="n">Номер (c единицы).</param>
         /// <param name="offset">Смещение.</param>
         /// <param name="addressSpaceType">Тип адресного пространства.</param>
-        public IOModule GetModuleByOffset(int n, int offset,
+        public IIOModule GetModuleByOffset(int n, int offset,
             IOModuleInfo.ADDRESS_SPACE_TYPE addressSpaceType)
         {
-            IOModule res = null;
+            IIOModule res = null;
 
             if (iONodes.Count >= n && n > 0)
             {
                 int idx = 0;
 
-                foreach (IOModule module in IONodes[n - 1].IOModules)
+                foreach (var module in IONodes[n - 1].IOModules)
                 {
                     if (module.Info.AddressSpaceType == addressSpaceType)
                     {
@@ -106,12 +88,12 @@ namespace IO
         /// </summary>
         /// <param name="number">Физический номер</param>
         /// <returns>Модуль ввода-вывода</returns>
-        public IOModule GetModuleByPhysicalNumber(int number)
+        public IIOModule GetModuleByPhysicalNumber(int number)
         {
             IOModule findedModule = null;
-            foreach (IONode node in iONodes)
+            foreach (var node in iONodes)
             {
-                foreach (IOModule module in node.IOModules)
+                foreach (var module in node.IOModules)
                 {
                     if (module.PhysicalNumber == number)
                     {
@@ -152,7 +134,7 @@ namespace IO
         /// </summary>
         /// <param name="iONode">Индекс узла.</param>
         /// <returns>Узел с заданным индексом.</returns>
-        public IONode this[int idx]
+        public IIONode this[int idx]
         {
             get
             {
@@ -183,7 +165,7 @@ namespace IO
         {
             string str = "--Узлы IO\n" +
                 "nodes =\n" + "\t{\n";
-            foreach (IONode node in iONodes)
+            foreach (var node in iONodes)
             {
                 if (node == null)
                 {
@@ -205,7 +187,7 @@ namespace IO
         {
             var str = "";
 
-            foreach (IONode node in iONodes)
+            foreach (var node in iONodes)
             {
                 if (node != null && node.Type == IONode.TYPES.T_EMPTY)
                 {
@@ -237,10 +219,10 @@ namespace IO
         /// </summary>
         /// <param name="node">Узел ввода вывода</param>
         /// <returns></returns>
-        private string CheckNodeIPEquality(IONode node)
+        private string CheckNodeIPEquality(IIONode node)
         {
             string str = string.Empty;
-            foreach (IONode node2 in iONodes)
+            foreach (var node2 in iONodes)
             {
                 if (node == node2) continue;
 
@@ -286,9 +268,9 @@ namespace IO
 
         public void CalculateIOLinkAdresses()
         {
-            foreach (IONode node in IOManager.GetInstance().IONodes)
+            foreach (var node in GetInstance().IONodes)
             {
-                foreach (IOModule module in node.IOModules)
+                foreach (var module in node.IOModules)
                 {
                     if(module.Info == null)
                     {
@@ -419,7 +401,7 @@ namespace IO
             }
         }
 
-        public List<IONode> IONodes
+        public List<IIONode> IONodes
         {
             get
             {
@@ -443,7 +425,7 @@ namespace IO
         public const string IONamePattern = @"=*-A(?<n>\d+)";
 
         #region Закрытые поля.
-        private List<IONode> iONodes;     ///Узлы проекта.
+        private List<IIONode> iONodes;     ///Узлы проекта.
         private static IOManager instance;  ///Экземпляр класса.
         #endregion
     }

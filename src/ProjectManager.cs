@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using EasyEPlanner.PxcIolinkConfiguration;
 using System;
 using System.Text;
+using EasyEPlanner.PxcIolinkConfiguration.Interfaces;
 
 namespace EasyEPlanner
 {
@@ -791,7 +792,10 @@ namespace EasyEPlanner
             oProgress.BeginPart(30, "Готовим окружение");
             IXmlSensorSerializer sensorSerializer = new XmlSensorSerializer();
             IXmlTemplateReader templateReader = new XmlTemplateReader(sensorSerializer);
-            ISensorDescriptionBuilder sensorDescriptionBuilder = new SensorDescriptionBuilder();
+            IModuleDescriptionBuilder moduleDescriptionBuilder = new ModuleDescriptionBuilder();
+            IDevicesDescriptionBuilder devicesDescriptionBuilder = new DevicesDescriptionBuilder();
+            ISensorDescriptionBuilder sensorDescriptionBuilder = new SensorDescriptionBuilder(
+                moduleDescriptionBuilder, devicesDescriptionBuilder);
             IPxcIolinkConfiguration pxcConfiguration = new PxcIolinkModulesConfiguration(
                 sensorSerializer, templateReader, sensorDescriptionBuilder);
 

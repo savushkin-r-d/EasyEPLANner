@@ -4,33 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EasyEPlanner.PxcIolinkConfiguration.Interfaces;
 using EasyEPlanner.PxcIolinkConfiguration.Models;
 
 namespace EasyEPlanner.PxcIolinkConfiguration
 {
-    public interface IXmlTemplateReader
-    {
-        /// <summary>
-        /// Возвращает список тасок с чтением шаблонов в dataStore. Таски
-        /// уже запущены.
-        /// </summary>
-        /// <param name="pathToFolder">Путь к каталогу с шаблонами</param>
-        /// <param name="dataStore">Хранилище, куда будут читаться шаблоны</param>
-        /// <returns></returns>
-        List<Task> Read(string pathToFolder,
-            Dictionary<string, LinerecorderSensor> dataStore);
-
-        /// <summary>
-        /// Возвращает версию шаблона из первого считанного файла-шаблона.
-        /// </summary>
-        string TemplateVersion { get; }
-    }
-
     /// <summary>
     /// Класс с логикой чтения шаблонов Xml с описанием модулей ввода-вывода и
     /// устройств.
     /// </summary>
-    internal class XmlTemplateReader : IXmlTemplateReader
+    public class XmlTemplateReader : IXmlTemplateReader
     {
         private const string lrpFileSearchPattern = "*.lrp";
         private IXmlSensorSerializer sensorSerializer;

@@ -259,7 +259,7 @@ namespace EasyEPlanner
                 }
 
                 string type = GetModuleTypeFromFunction(function);
-                IO.IONode node = IOManager[shortNodeNumber];
+                IO.IIONode node = IOManager[shortNodeNumber];
                 if (IOManager[shortNodeNumber] != null)
                 {
                     IO.IOModuleInfo moduleInfo = GetIOModuleInfo(function, 

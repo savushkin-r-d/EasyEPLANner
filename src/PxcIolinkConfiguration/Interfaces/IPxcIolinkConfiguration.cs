@@ -1,6 +1,6 @@
 ﻿using IO;
 
-namespace EasyEPlanner.PxcIolinkConfiguration
+namespace EasyEPlanner.PxcIolinkConfiguration.Interfaces
 {
     public interface IPxcIolinkConfiguration
     {

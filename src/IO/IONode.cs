@@ -6,7 +6,7 @@ namespace IO
     /// <summary>
     /// Узел модулей ввода-вывода IO.
     /// </summary>
-    public class IONode
+    public class IONode : IIONode
     {
         /// <summary>
         /// Конструктор.
@@ -27,7 +27,7 @@ namespace IO
             this.n = n;
             this.name = name;
 
-            iOModules = new List<IOModule>();
+            iOModules = new List<IIOModule>();
 
             DI_count = 0;
             DO_count = 0;
@@ -35,12 +35,7 @@ namespace IO
             AO_count = 0;
         }
 
-        /// <summary>
-        /// Добавление модуля в узел в заданную позицию.
-        /// </summary>
-        /// <param name="iOModule">Вставляемый модуль.</param>
-        /// <param name="position">Позиция модуля, начиная с 1.</param>
-        public void SetModule(IOModule iOModule, int position)
+        public void SetModule(IIOModule iOModule, int position)
         {
             if (iOModules.Count < position)
             {
@@ -53,12 +48,7 @@ namespace IO
             iOModules[position - 1] = iOModule;
         }
 
-        /// <summary>
-        /// Получение модуля.
-        /// </summary>
-        /// <param name="iONode">Индекс модуля.</param>
-        /// <returns>Модуль с заданным индексом.</returns>
-        public IOModule this[int idx]
+        public IIOModule this[int idx]
         {
             get
             {
@@ -73,10 +63,6 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// Сохранение в виде таблицы Lua.
-        /// </summary>
-        /// <param name="prefix">Префикс (для выравнивания).</param>
         public string SaveAsLuaTable(string prefix)
         {
             string str = prefix + "{\n";
@@ -87,7 +73,7 @@ namespace IO
             str += prefix + "modules =\n";
             str += prefix + "\t{\n";
 
-            foreach (IOModule module in iOModules)
+            foreach (var module in iOModules)
             {
                 if (module != null)
                 {
@@ -135,30 +121,15 @@ namespace IO
             T_PHOENIX_CONTACT_MAIN = 201, /// Контроллер Phoenix Contact
         };
 
-        /// <summary>
-        /// Количество дискретных входов.
-        /// </summary>
         public int DI_count { get; set; }
 
-        /// <summary>
-        /// Количество дискретных выходов.
-        /// </summary>
         public int DO_count { get; set; }
 
-        /// <summary>
-        /// Количество аналоговых входов.
-        /// </summary>
         public int AI_count { get; set; }
 
-        /// <summary>
-        /// Количество аналоговых выходов.
-        /// </summary>
         public int AO_count { get; set; }
 
-        /// <summary>
-        /// Модули ввода-вывода узла.
-        /// </summary>
-        public List<IOModule> IOModules
+        public List<IIOModule> IOModules
         {
             get
             {
@@ -166,9 +137,6 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// Название узла ввода-вывода.
-        /// </summary>
         public string Name
         {
             get
@@ -177,9 +145,6 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// IP-адрес.
-        /// </summary>
         public string IP
         {
             get
@@ -188,9 +153,6 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// Тип узла.
-        /// </summary>
         public TYPES Type
         {
             get
@@ -199,9 +161,6 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// Тип узла (строка).
-        /// </summary>
         public string TypeStr
         {
             get
@@ -210,9 +169,6 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// Номер.
-        /// </summary>
         public int N
         {
             get
@@ -221,9 +177,6 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// Полный номер узла.
-        /// </summary>
         public int FullN
         {
             get
@@ -243,16 +196,13 @@ namespace IO
             }
         }
 
-        /// <summary>
-        /// Является ли узел каплером.
-        /// </summary>
         public bool IsCoupler { get; private set; } = false;
 
         #region Закрытые поля.
         /// <summary>
         /// Модули узла.
         /// </summary>
-        private List<IOModule> iOModules;
+        private List<IIOModule> iOModules;
 
         /// <summary>
         /// Тип узла (строка).
