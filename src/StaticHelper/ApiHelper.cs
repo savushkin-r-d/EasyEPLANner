@@ -85,7 +85,7 @@ namespace StaticHelper
                 propertyValue = string.Empty;
             }
 
-            return propertyValue;
+            return propertyValue.Trim();
         }
     }
 }
