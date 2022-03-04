@@ -1017,11 +1017,6 @@ namespace EasyEPlanner
             object nodeObject = e.Path.LastNode;
             Node checkedNode = nodeObject as Node;
             
-            if (SelectedTreeItem == EditType.AttachedAgregatesToUnit)
-            {
-                UnselectIncorrectValues(e, checkedNode.Text);
-            }
-
             StaticHelper.GUIHelper.CheckCheckState(checkedNode);
         }
 
