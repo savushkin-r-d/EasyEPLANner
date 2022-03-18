@@ -311,16 +311,16 @@ namespace TechObject
             }
             else
             {
-                bool condition = false;
+                bool conditionEmpty = true;
                 foreach (IAction action in actions)
                 {
                     if (action.LuaName == "to_step_if_devices_in_specific_state")
-                    {
-                        foreach(var subAction in action.SubActions)
+                    {       
+                        foreach (var subAction in action.SubActions)
                         {
-                            if (subAction.Empty == false)
+                            if (subAction.IsFilled)
                             {
-                                condition = true;
+                                conditionEmpty = false;
                             }
                         }
                     }    
@@ -336,12 +336,16 @@ namespace TechObject
                     res += prefix + "time_param_n = " + time_param_n + ",\n";
                 }
 
-                string next_step_n = nextStepN.EditText[1].Trim(); 
-                if (condition == false && double.Parse(time_param_n, System.Globalization.CultureInfo.InvariantCulture) <= 0)
+                string next_step_n = nextStepN.EditText[1].Trim();
+                double leadTime = double.Parse(time_param_n,
+                    System.Globalization.CultureInfo.InvariantCulture);
+                
+                if (conditionEmpty && leadTime <= 0)
                 {
                     next_step_n = "-1";
                     nextStepN.SetNewValue("-1");
                 }
+
                 if (next_step_n != string.Empty)
                 {
                     res += prefix + "next_step_n = " + next_step_n + ",\n";
