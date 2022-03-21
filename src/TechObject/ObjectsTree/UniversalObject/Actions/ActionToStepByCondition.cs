@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Editor;
 
 namespace TechObject
 {
@@ -30,6 +31,11 @@ namespace TechObject
                 "on_devices", allowedDevTypes));
             SubActions.Add(new Action("Выключение устройств", owner,
                 "off_devices", allowedDevTypes));
+
+
+            nextStepN = new ObjectProperty(
+                "Переход к шагу", -1, -1);
+            TreeViewItems.Add(nextStepN);
         }
 
         override public IAction Clone()
@@ -63,9 +69,11 @@ namespace TechObject
             {
                 groupData += group.SaveAsLuaTable(prefix + "\t");
             }
-
+            
             if (groupData != string.Empty)
             {
+                groupData += prefix + "\tnext_step_n = " + nextStepN.EditText[1].Trim() + ",\n";
+
                 res += prefix;
                 if (luaName != string.Empty)
                 {
@@ -103,5 +111,7 @@ namespace TechObject
             return false;
         }
         #endregion
+
+        private ObjectProperty nextStepN;
     }
 }

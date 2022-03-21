@@ -10,6 +10,7 @@ namespace TechObject
             : base(name, owner, luaName)
         {
             subActions = new List<IAction>();
+            treeViewItems = new List<ITreeViewItem>();
         }
 
         override public void ModifyDevNames(int newTechObjectN,
@@ -61,6 +62,12 @@ namespace TechObject
             set => subActions = value;
         }
 
+        public List<ITreeViewItem> TreeViewItems
+        {
+            get => treeViewItems;
+            set => treeViewItems = value;
+        }
+
         #region реализация ITreeViewItem
         override public bool IsDeletable
         {
@@ -106,7 +113,9 @@ namespace TechObject
         {
             get
             {
-                return SubActions.Cast<ITreeViewItem>().ToArray();
+                return SubActions.Cast<ITreeViewItem>()
+                    .Concat(treeViewItems)
+                    .ToArray();
             }
         }
 
@@ -142,6 +151,7 @@ namespace TechObject
         }
 
         private List<IAction> subActions;
+        private List<ITreeViewItem> treeViewItems;
 
         protected private const string GroupDefaultName = "Группа";
     }
