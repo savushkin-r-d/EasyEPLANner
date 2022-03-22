@@ -32,10 +32,8 @@ namespace TechObject
             SubActions.Add(new Action("Выключение устройств", owner,
                 "off_devices", allowedDevTypes));
 
-
-            nextStepN = new ObjectProperty(
-                "Переход к шагу", -1, -1);
-            TreeViewItems.Add(nextStepN);
+            Parameters.Add(new ActiveParameter("next_step_n",
+                "Переход к шагу", "-1"));
         }
 
         override public IAction Clone()
@@ -72,7 +70,13 @@ namespace TechObject
             
             if (groupData != string.Empty)
             {
-                groupData += prefix + "\tnext_step_n = " + nextStepN.EditText[1].Trim() + ",\n";
+                groupData += $"{prefix}\tparameters = --Параметры условия\n" +
+                    $"{prefix}\t\t{{\n";
+                foreach ( var parameter in Parameters)
+                {
+                    groupData += $"{prefix}\t\t{parameter.LuaName} = {parameter.EditText[1].Trim()},\n";
+                }
+                groupData += $"{prefix}\t\t}},\n";
 
                 res += prefix;
                 if (luaName != string.Empty)
@@ -90,7 +94,13 @@ namespace TechObject
 
         public override void AddParam(object val, string paramName, int groupNumber)
         {
-            nextStepN.SetNewValue(val.ToString());
+            var parameter = Parameters.Where(x => x.LuaName == paramName)
+                .FirstOrDefault();
+            bool haveParameter = parameter != null;
+            if (haveParameter)
+            {
+                parameter.SetNewValue(val.ToString());
+            }
         }
 
         public override void AddDev(int index, int groupNumber,
@@ -116,7 +126,5 @@ namespace TechObject
             return false;
         }
         #endregion
-
-        private ObjectProperty nextStepN;
     }
 }
