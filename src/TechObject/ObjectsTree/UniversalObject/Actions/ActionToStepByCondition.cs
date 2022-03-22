@@ -88,6 +88,11 @@ namespace TechObject
             return res;
         }
 
+        public override void AddParam(object val, string paramName, int groupNumber)
+        {
+            nextStepN.SetNewValue(val.ToString());
+        }
+
         public override void AddDev(int index, int groupNumber,
             string subActionLuaName)
         {

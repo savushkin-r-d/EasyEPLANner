@@ -311,39 +311,26 @@ namespace TechObject
             }
             else
             {
-                bool conditionEmpty = true;
-                foreach (IAction action in actions)
-                {
-                    if (action.LuaName == "to_step_if_devices_in_specific_state")
-                    {       
-                        foreach (var subAction in action.SubActions)
-                        {
-                            if (subAction.IsFilled)
-                            {
-                                conditionEmpty = false;
-                            }
-                        }
-                    }    
-                }
-
-
                 res += prefix + "{\n";
                 res += prefix + "name = \'" + name + "\',\n";
 
                 string time_param_n = timeParam.EditText[1].Trim();
-                if (time_param_n != string.Empty)
-                {
-                    res += prefix + "time_param_n = " + time_param_n + ",\n";
-                }
-
                 string next_step_n = nextStepN.EditText[1].Trim();
+
                 double leadTime = double.Parse(time_param_n,
                     System.Globalization.CultureInfo.InvariantCulture);
                 
-                if (conditionEmpty && leadTime <= 0)
+                if (leadTime <= 0)
                 {
                     next_step_n = "-1";
+                    time_param_n = "-1";
                     nextStepN.SetNewValue("-1");
+                    timeParam.SetNewValue("-1");
+                }
+
+                if (time_param_n != string.Empty)
+                {
+                    res += prefix + "time_param_n = " + time_param_n + ",\n";
                 }
 
                 if (next_step_n != string.Empty)

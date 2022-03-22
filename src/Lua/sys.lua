@@ -130,9 +130,8 @@ function proc_operation_devices(value, mode, state_n)
 
             local next_step_n = value.next_step_n or 0
             local time_param_n = value.time_param_n or 0
-            local condition = value.to_step_if_devices_in_specific_state
 
-            if time_param_n > 0 or condition then
+            if time_param_n > 0 then
                 step:SetPar(time_param_n, next_step_n)
             end
         end
@@ -251,8 +250,13 @@ function proc_to_step_by_condition(step, value)
 
     if actions then
         for sub_action_name, devices in pairs(actions) do
-            for _, dev_name in pairs(devices) do
-                add_dev(step, action_name, dev_name, 0, sub_action_name)
+            if sub_action_name == "next_step_n" then 
+                step:AddParam(action_name, devices,
+                    sub_action_name, 0)
+            else    
+                for _, dev_name in pairs(devices) do
+                    add_dev(step, action_name, dev_name, 0, sub_action_name)
+                end
             end
         end
     end
