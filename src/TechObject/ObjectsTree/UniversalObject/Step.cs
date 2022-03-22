@@ -311,22 +311,6 @@ namespace TechObject
             }
             else
             {
-                bool conditionEmpty = true;
-                foreach (IAction action in actions)
-                {
-                    if (action.LuaName == "to_step_if_devices_in_specific_state")
-                    {       
-                        foreach (var subAction in action.SubActions)
-                        {
-                            if (subAction.IsFilled)
-                            {
-                                conditionEmpty = false;
-                            }
-                        }
-                    }    
-                }
-
-
                 res += prefix + "{\n";
                 res += prefix + "name = \'" + name + "\',\n";
 
