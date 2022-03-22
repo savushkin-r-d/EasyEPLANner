@@ -3,7 +3,7 @@ name: Feature request
 about: Предложить идею для этого проекта
 title: ''
 labels: enhancement
-assignees: dimabeel
+assignees: KirillGutyrchik
 
 ---
 

@@ -3,7 +3,7 @@ name: Bug report
 about: Отчет об ошибке
 title: ''
 labels: bug
-assignees: dimabeel
+assignees: KirillGutyrchik
 
 ---
 
