@@ -10,7 +10,7 @@ namespace TechObject
             : base(name, owner, luaName)
         {
             subActions = new List<IAction>();
-            treeViewItems = new List<ITreeViewItem>();
+            parameters = new List<BaseParameter>();
         }
 
         override public void ModifyDevNames(int newTechObjectN,
@@ -62,10 +62,10 @@ namespace TechObject
             set => subActions = value;
         }
 
-        public List<ITreeViewItem> TreeViewItems
+        public List<BaseParameter> Parameters
         {
-            get => treeViewItems;
-            set => treeViewItems = value;
+            get => parameters;
+            set => parameters = value;
         }
 
         #region реализация ITreeViewItem
