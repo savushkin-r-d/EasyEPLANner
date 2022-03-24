@@ -130,7 +130,6 @@ function proc_operation_devices(value, mode, state_n)
 
             local next_step_n = value.next_step_n or 0
             local time_param_n = value.time_param_n or 0
-
             if time_param_n > 0 then
                 step:SetPar(time_param_n, next_step_n)
             end

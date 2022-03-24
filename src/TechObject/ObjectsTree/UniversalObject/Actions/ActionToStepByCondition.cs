@@ -33,7 +33,7 @@ namespace TechObject
                 "off_devices", allowedDevTypes));
 
             Parameters.Add(new ActiveParameter("next_step_n",
-                "Переход к шагу", "-1"));
+                "Шаг", "-1"));
         }
 
         override public IAction Clone()
@@ -67,12 +67,12 @@ namespace TechObject
             {
                 groupData += group.SaveAsLuaTable(prefix + "\t");
             }
-            
+
             if (groupData != string.Empty)
             {
                 groupData += $"{prefix}\tparameters = --Параметры условия\n" +
                     $"{prefix}\t\t{{\n";
-                foreach ( var parameter in Parameters)
+                foreach (var parameter in Parameters)
                 {
                     groupData += $"{prefix}\t\t{parameter.LuaName} = {parameter.EditText[1].Trim()},\n";
                 }
