@@ -69,7 +69,7 @@ namespace TechObject
             {
                 groupData += group.SaveAsLuaTable(prefix + "\t");
             }
-            
+
             if (groupData != string.Empty)
             {
                 if(int.Parse(NextStepN.Value.Trim()) <= 0)
