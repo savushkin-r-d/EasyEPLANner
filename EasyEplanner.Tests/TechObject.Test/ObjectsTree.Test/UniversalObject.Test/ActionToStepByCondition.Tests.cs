@@ -153,15 +153,28 @@ namespace Tests.TechObject
         [TestCase(-1, "next_step_n", 0)]
         [TestCase(0, "next_step_n", 0)]
         [TestCase(1, "next_step_n", 0)]
-        public void AddParam_NewAction_CheсkParameterValue(object val,
-            string paramName, int groupNumber)
+        [TestCase("OR-OR-AND", "operator", 0)]
+        [TestCase("AND-AND-AND", "operator", 0)]
+        [TestCase("OR-OR-OR", "operator", 0)]
+        public void AddParam_NewAction_ChekParameterVAlue(object val, string paramName, int groupNumber)
         {
             var action = new ActionToStepByCondition(string.Empty, null,
                 string.Empty);
 
             action.AddParam(val, paramName, groupNumber);
-            
-            Assert.AreEqual(val.ToString(), action.NextStepN.Value);
+            var parameter = action.Parameters.Where(x => x.LuaName == paramName)
+                .FirstOrDefault();
+
+            Assert.Multiple(() =>
+            {
+                if (parameter != null)
+                {
+                    Assert.AreEqual(val.ToString(), parameter.Value);
+                } else
+                {
+                    Assert.IsNull(parameter);
+                }
+            });
         }
     }
 }
