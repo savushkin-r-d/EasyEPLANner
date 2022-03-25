@@ -10,7 +10,6 @@ namespace TechObject
             : base(name, owner, luaName)
         {
             subActions = new List<IAction>();
-            parameters = new List<BaseParameter>();
         }
 
         override public void ModifyDevNames(int newTechObjectN,
@@ -62,12 +61,6 @@ namespace TechObject
             set => subActions = value;
         }
 
-        public List<BaseParameter> Parameters
-        {
-            get => parameters;
-            set => parameters = value;
-        }
-
         #region реализация ITreeViewItem
         override public bool IsDeletable
         {
@@ -114,7 +107,6 @@ namespace TechObject
             get
             {
                 return SubActions.Cast<ITreeViewItem>()
-                    .Concat(parameters)
                     .ToArray();
             }
         }
@@ -151,8 +143,7 @@ namespace TechObject
         }
 
         private List<IAction> subActions;
-        private List<BaseParameter> parameters;
-
+        
         protected private const string GroupDefaultName = "Группа";
     }
 }

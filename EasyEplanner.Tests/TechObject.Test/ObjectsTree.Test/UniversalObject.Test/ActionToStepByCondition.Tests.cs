@@ -160,32 +160,8 @@ namespace Tests.TechObject
                 string.Empty);
 
             action.AddParam(val, paramName, groupNumber);
-            var parameter = action.Parameters.Where(x => x.LuaName == paramName)
-                .FirstOrDefault();
-
-            Assert.Multiple(() =>
-            {
-                Assert.IsNotNull(parameter);
-                if (parameter != null)
-                {
-                    Assert.AreEqual(val.ToString(), parameter.Value);
-                }
-            });
-        }
-
-        [TestCase(1, "wrongname_1", 0)]
-        [TestCase(5, "wrongname_2", 0)]
-        public void AddParam_NewAction_CheckAddingWrongParameter(object val,
-            string paramName, int groupNumber)
-        {
-            var action = new ActionToStepByCondition(string.Empty, null,
-                string.Empty);
-
-            action.AddParam(val, paramName, groupNumber);
-            var parameter = action.Parameters.Where(x => x.LuaName == paramName)
-                .FirstOrDefault();
-
-            Assert.IsNull(parameter);
+            
+            Assert.AreEqual(val.ToString(), action.NextStepN.Value);
         }
     }
 }

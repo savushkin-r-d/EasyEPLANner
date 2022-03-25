@@ -16,9 +16,11 @@ namespace TechObject
         /// <param name="luaName">Имя действия - как оно будет называться в 
         /// таблице Lua.</param>
         /// <param name="owner">Владелец действия (Шаг)</param>
-        public ActionToStepByCondition(string name, Step owner, 
+        public ActionToStepByCondition(string name, Step owner,
             string luaName) : base(name, owner, luaName)
         {
+            items = new List<ITreeViewItem>();
+
             var allowedDevTypes = new EplanDevice.DeviceType[]
             {
                 EplanDevice.DeviceType.V,
@@ -32,8 +34,8 @@ namespace TechObject
             SubActions.Add(new Action("Выключение устройств", owner,
                 "off_devices", allowedDevTypes));
 
-            Parameters.Add(new ActiveParameter("next_step_n",
-                "Шаг", "-1"));
+            nextStepN = new ObjectProperty("Шаг", -1, -1);
+            items.Add(nextStepN);
         }
 
         override public IAction Clone()
@@ -45,7 +47,7 @@ namespace TechObject
             {
                 clone.SubActions.Add(action.Clone());
             }
-
+            clone.NextStepN.SetNewValue(NextStepN.Value);
             return clone;
         }
 
@@ -71,12 +73,9 @@ namespace TechObject
             if (groupData != string.Empty)
             {
                 groupData += $"{prefix}\tparameters = --Параметры условия\n" +
-                    $"{prefix}\t\t{{\n";
-                foreach (var parameter in Parameters)
-                {
-                    groupData += $"{prefix}\t\t{parameter.LuaName} = {parameter.EditText[1].Trim()},\n";
-                }
-                groupData += $"{prefix}\t\t}},\n";
+                    $"{prefix}\t\t{{\n" +
+                    $"{prefix}\t\tnext_step_n = {NextStepN.Value.Trim()},\n" +
+                    $"{prefix}\t\t}},\n";
 
                 res += prefix;
                 if (luaName != string.Empty)
@@ -84,8 +83,8 @@ namespace TechObject
                     res += luaName + " =";
                 }
                 res += " --" + name + "\n" +
-                    prefix +"\t{\n" +
-                    groupData + 
+                    prefix + "\t{\n" +
+                    groupData +
                     prefix + "\t},\n";
             }
 
@@ -94,12 +93,11 @@ namespace TechObject
 
         public override void AddParam(object val, string paramName, int groupNumber)
         {
-            var parameter = Parameters.Where(x => x.LuaName == paramName)
-                .FirstOrDefault();
-            bool haveParameter = parameter != null;
-            if (haveParameter)
+            switch (paramName)
             {
-                parameter.SetNewValue(val.ToString());
+                case "next_step_n":
+                    NextStepN.SetNewValue(val.ToString());
+                    break;
             }
         }
 
@@ -125,6 +123,31 @@ namespace TechObject
 
             return false;
         }
+
+        public override ITreeViewItem[] Items
+        {
+            get
+            {
+                return base.Items.Concat(items).ToArray();
+            }
+        }
         #endregion
+
+        public override string ToString()
+        {
+            string res = base.ToString();
+            res += $" -> {NextStepN.Value.Trim()}";
+
+            return res;
+        }
+
+        public ObjectProperty NextStepN
+        {
+            get => nextStepN;
+            set => nextStepN = value;
+        }
+
+        ObjectProperty nextStepN;
+        List<ITreeViewItem> items;
     }
 }
