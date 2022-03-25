@@ -72,6 +72,11 @@ namespace TechObject
 
             if (groupData != string.Empty)
             {
+                if(int.Parse(NextStepN.Value.Trim()) <= 0)
+                {
+                    NextStepN.SetNewValue("-1");
+                }
+
                 groupData += $"{prefix}\tparameters = --Параметры условия\n" +
                     $"{prefix}\t\t{{\n" +
                     $"{prefix}\t\tnext_step_n = {NextStepN.Value.Trim()},\n" +
@@ -136,8 +141,11 @@ namespace TechObject
         public override string ToString()
         {
             string res = base.ToString();
-            res += $" -> {NextStepN.Value.Trim()}";
 
+            if (int.Parse(nextStepN.Value) > 0)
+                res += $" -> {NextStepN.Value.Trim()}";
+            else if (SubActions[0].IsFilled || SubActions[1].IsFilled)
+                res += " Шаг не указан";
             return res;
         }
 
