@@ -153,7 +153,7 @@ namespace Tests.TechObject
         [TestCase(-1, "next_step_n", 0)]
         [TestCase(0, "next_step_n", 0)]
         [TestCase(1, "next_step_n", 0)]
-        public void AddParam_NewAction_ChekParameterValue(object val,
+        public void AddParam_NewAction_CheсkParameterValue(object val,
             string paramName, int groupNumber)
         {
             var action = new ActionToStepByCondition(string.Empty, null,
