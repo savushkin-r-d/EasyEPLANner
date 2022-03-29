@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System.Collections.Generic;
 using TechObject;
+using System.Linq;
 
 namespace Tests.TechObject
 {
@@ -147,6 +148,20 @@ namespace Tests.TechObject
                 Assert.AreEqual(actionsCount, action.SubActions.Count);
                 Assert.AreNotEqual(cloned.GetHashCode(), action.GetHashCode());
             });
+        }
+
+        [TestCase(-1, "next_step_n", 0)]
+        [TestCase(0, "next_step_n", 0)]
+        [TestCase(1, "next_step_n", 0)]
+        public void AddParam_NewAction_CheсkParameterValue(object val,
+            string paramName, int groupNumber)
+        {
+            var action = new ActionToStepByCondition(string.Empty, null,
+                string.Empty);
+
+            action.AddParam(val, paramName, groupNumber);
+            
+            Assert.AreEqual(val.ToString(), action.NextStepN.Value);
         }
     }
 }

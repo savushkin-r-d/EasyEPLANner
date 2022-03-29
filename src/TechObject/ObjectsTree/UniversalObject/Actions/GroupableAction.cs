@@ -106,7 +106,8 @@ namespace TechObject
         {
             get
             {
-                return SubActions.Cast<ITreeViewItem>().ToArray();
+                return SubActions.Cast<ITreeViewItem>()
+                    .ToArray();
             }
         }
 
@@ -142,7 +143,7 @@ namespace TechObject
         }
 
         private List<IAction> subActions;
-
+        
         protected private const string GroupDefaultName = "Группа";
     }
 }

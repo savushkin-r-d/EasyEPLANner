@@ -315,12 +315,24 @@ namespace TechObject
                 res += prefix + "name = \'" + name + "\',\n";
 
                 string time_param_n = timeParam.EditText[1].Trim();
+                string next_step_n = nextStepN.EditText[1].Trim();
+
+                double leadTime = double.Parse(time_param_n,
+                    System.Globalization.CultureInfo.InvariantCulture);
+                
+                if (leadTime <= 0)
+                {
+                    next_step_n = "-1";
+                    time_param_n = "-1";
+                    nextStepN.SetNewValue("-1");
+                    timeParam.SetNewValue("-1");
+                }
+
                 if (time_param_n != string.Empty)
                 {
                     res += prefix + "time_param_n = " + time_param_n + ",\n";
                 }
 
-                string next_step_n = nextStepN.EditText[1].Trim();
                 if (next_step_n != string.Empty)
                 {
                     res += prefix + "next_step_n = " + next_step_n + ",\n";

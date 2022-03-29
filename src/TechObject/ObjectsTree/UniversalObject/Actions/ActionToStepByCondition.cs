@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Editor;
 
 namespace TechObject
 {
@@ -15,9 +16,11 @@ namespace TechObject
         /// <param name="luaName">Имя действия - как оно будет называться в 
         /// таблице Lua.</param>
         /// <param name="owner">Владелец действия (Шаг)</param>
-        public ActionToStepByCondition(string name, Step owner, 
+        public ActionToStepByCondition(string name, Step owner,
             string luaName) : base(name, owner, luaName)
         {
+            items = new List<ITreeViewItem>();
+
             var allowedDevTypes = new EplanDevice.DeviceType[]
             {
                 EplanDevice.DeviceType.V,
@@ -30,6 +33,9 @@ namespace TechObject
                 "on_devices", allowedDevTypes));
             SubActions.Add(new Action("Выключение устройств", owner,
                 "off_devices", allowedDevTypes));
+
+            nextStepN = new ObjectProperty("Шаг", -1, -1);
+            items.Add(nextStepN);
         }
 
         override public IAction Clone()
@@ -41,7 +47,7 @@ namespace TechObject
             {
                 clone.SubActions.Add(action.Clone());
             }
-
+            clone.NextStepN.SetNewValue(NextStepN.Value);
             return clone;
         }
 
@@ -66,18 +72,38 @@ namespace TechObject
 
             if (groupData != string.Empty)
             {
+                if(int.Parse(NextStepN.Value.Trim()) <= 0)
+                {
+                    NextStepN.SetNewValue("-1");
+                }
+
+                groupData += $"{prefix}\tparameters = --Параметры условия\n" +
+                    $"{prefix}\t\t{{\n" +
+                    $"{prefix}\t\tnext_step_n = {NextStepN.Value.Trim()},\n" +
+                    $"{prefix}\t\t}},\n";
+
                 res += prefix;
                 if (luaName != string.Empty)
                 {
                     res += luaName + " =";
                 }
                 res += " --" + name + "\n" +
-                    prefix +"\t{\n" +
-                    groupData + 
+                    prefix + "\t{\n" +
+                    groupData +
                     prefix + "\t},\n";
             }
 
             return res;
+        }
+
+        public override void AddParam(object val, string paramName, int groupNumber)
+        {
+            switch (paramName)
+            {
+                case "next_step_n":
+                    NextStepN.SetNewValue(val.ToString());
+                    break;
+            }
         }
 
         public override void AddDev(int index, int groupNumber,
@@ -102,6 +128,34 @@ namespace TechObject
 
             return false;
         }
+
+        public override ITreeViewItem[] Items
+        {
+            get
+            {
+                return base.Items.Concat(items).ToArray();
+            }
+        }
         #endregion
+
+        public override string ToString()
+        {
+            string res = base.ToString();
+
+            if (int.Parse(nextStepN.Value) > 0)
+                res += $" -> {NextStepN.Value.Trim()}";
+            else if (SubActions[0].IsFilled || SubActions[1].IsFilled)
+                res += " Шаг не указан";
+            return res;
+        }
+
+        public ObjectProperty NextStepN
+        {
+            get => nextStepN;
+            set => nextStepN = value;
+        }
+
+        ObjectProperty nextStepN;
+        List<ITreeViewItem> items;
     }
 }

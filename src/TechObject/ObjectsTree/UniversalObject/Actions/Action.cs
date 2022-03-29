@@ -41,6 +41,8 @@ namespace TechObject
 
         bool Empty { get; }
 
+        bool IsFilled { get; }
+
         string Name { get; }
 
         /// <summary>

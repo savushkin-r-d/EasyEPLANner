@@ -244,13 +244,19 @@ function proc_wash_group_data(step, wash_data, group_number)
 end
 
 function proc_to_step_by_condition(step, value)
-    local actions = value.to_step_if_devices_in_specific_state
+    local fields = value.to_step_if_devices_in_specific_state
     local action_name = "to_step_if_devices_in_specific_state"
 
-    if actions then
-        for sub_action_name, devices in pairs(actions) do
-            for _, dev_name in pairs(devices) do
-                add_dev(step, action_name, dev_name, 0, sub_action_name)
+    if fields then
+        for field_name, values in pairs(fields) do
+            if field_name == "parameters" then
+                for parameter_name, value in pairs(values) do
+                    step:AddParam(action_name, value, parameter_name, 0)
+                end
+            else
+                for _, dev_name in pairs(values) do
+                    add_dev(step, action_name, dev_name, 0, field_name)
+                end
             end
         end
     end
