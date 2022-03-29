@@ -34,6 +34,23 @@ namespace TechObject
             SubActions.Add(new Action("Выключение устройств", owner,
                 "off_devices", allowedDevTypes));
 
+            operators = new ComboBoxParameter(
+                "operators",
+                "Операторы проверки устройств",
+                new Dictionary<string, string>
+                {
+                    { "И-И-И",       "AND-AND-AND" },
+                    { "И-И-ИЛИ",     "AND-AND-OR" },
+                    { "И-ИЛИ-И",     "ANND-OR-AND" },
+                    { "И-ИЛИ-ИЛИ",   "AND-OR-OR" },
+                    { "ИЛИ-И-И",     "OR-AND-AND" },
+                    { "ИЛИ-И-ИЛИ",   "OR-AND-OR" },
+                    { "ИЛИ-ИЛИ-И",   "OR-OR-AND" },
+                    { "ИЛИ-ИЛИ-ИЛИ", "OR-OR-OR"},
+                },
+                "И-И-И");
+            items.Add(operators);
+
             nextStepN = new ObjectProperty("Шаг", -1, -1);
             items.Add(nextStepN);
         }
@@ -47,6 +64,7 @@ namespace TechObject
             {
                 clone.SubActions.Add(action.Clone());
             }
+            clone.Operators.SetNewValue(Operators.Value, true);
             clone.NextStepN.SetNewValue(NextStepN.Value);
             return clone;
         }
@@ -79,6 +97,7 @@ namespace TechObject
 
                 groupData += $"{prefix}\tparameters = --Параметры условия\n" +
                     $"{prefix}\t\t{{\n" +
+                    $"{prefix}\t\t{operators.LuaName} = '{operators.LuaValue.Trim()}',\n" +
                     $"{prefix}\t\tnext_step_n = {NextStepN.Value.Trim()},\n" +
                     $"{prefix}\t\t}},\n";
 
@@ -100,6 +119,9 @@ namespace TechObject
         {
             switch (paramName)
             {
+                case "operators":
+                    operators.SetNewValue(val.ToString());
+                    break;
                 case "next_step_n":
                     NextStepN.SetNewValue(val.ToString());
                     break;
@@ -149,13 +171,21 @@ namespace TechObject
             return res;
         }
 
+        public ComboBoxParameter Operators
+        {
+            get => operators;
+            set => operators = value;
+        }
+
         public ObjectProperty NextStepN
         {
             get => nextStepN;
             set => nextStepN = value;
         }
 
-        ObjectProperty nextStepN;
-        List<ITreeViewItem> items;
+        private ComboBoxParameter operators;
+        private ObjectProperty nextStepN;
+
+        private List<ITreeViewItem> items;
     }
 }

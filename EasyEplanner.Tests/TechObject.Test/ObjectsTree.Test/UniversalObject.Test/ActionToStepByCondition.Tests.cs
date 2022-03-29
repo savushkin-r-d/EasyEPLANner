@@ -153,6 +153,9 @@ namespace Tests.TechObject
         [TestCase(-1, "next_step_n", 0)]
         [TestCase(0, "next_step_n", 0)]
         [TestCase(1, "next_step_n", 0)]
+        [TestCase("OR-OR-OR", "operators", 0)]
+        [TestCase("AND-AND-AND", "operators", 0)]
+        [TestCase("OR-AND-OR", "operators", 0)]
         public void AddParam_NewAction_CheсkParameterValue(object val,
             string paramName, int groupNumber)
         {
@@ -161,7 +164,16 @@ namespace Tests.TechObject
 
             action.AddParam(val, paramName, groupNumber);
             
-            Assert.AreEqual(val.ToString(), action.NextStepN.Value);
+            switch(paramName)
+            {
+                case "next_step_n":
+                    Assert.AreEqual(val.ToString(), action.NextStepN.Value);
+                    break;
+
+                case "operators":
+                    Assert.AreEqual(val.ToString(), action.Operators.LuaValue);
+                    break;
+            }      
         }
     }
 }
