@@ -29,27 +29,10 @@ namespace TechObject
                 EplanDevice.DeviceType.DO
             };
 
-            SubActions.Add(new Action("Включение устройств", owner,
-                "on_devices", allowedDevTypes));
-            SubActions.Add(new Action("Выключение устройств", owner,
-                "off_devices", allowedDevTypes));
-
-            operators = new ComboBoxParameter(
-                "operators",
-                "Операторы проверки устройств",
-                new Dictionary<string, string>
-                {
-                    { "И-И-И",       "AND-AND-AND" },
-                    { "И-И-ИЛИ",     "AND-AND-OR" },
-                    { "И-ИЛИ-И",     "ANND-OR-AND" },
-                    { "И-ИЛИ-ИЛИ",   "AND-OR-OR" },
-                    { "ИЛИ-И-И",     "OR-AND-AND" },
-                    { "ИЛИ-И-ИЛИ",   "OR-AND-OR" },
-                    { "ИЛИ-ИЛИ-И",   "OR-OR-AND" },
-                    { "ИЛИ-ИЛИ-ИЛИ", "OR-OR-OR"},
-                },
-                "И-И-И");
-            items.Add(operators);
+            SubActions.Add(new ActionGroup("Включение устройств", owner,
+                "on_devices_groups", allowedDevTypes, null));
+            SubActions.Add(new ActionGroup("Выключение устройств", owner,
+                "off_devices_groups", allowedDevTypes, null));            
 
             nextStepN = new ObjectProperty("Шаг", -1, -1);
             items.Add(nextStepN);
@@ -64,7 +47,6 @@ namespace TechObject
             {
                 clone.SubActions.Add(action.Clone());
             }
-            clone.Operators.SetNewValue(Operators.Value, true);
             clone.NextStepN.SetNewValue(NextStepN.Value);
             return clone;
         }
@@ -97,7 +79,6 @@ namespace TechObject
 
                 groupData += $"{prefix}\tparameters = --Параметры условия\n" +
                     $"{prefix}\t\t{{\n" +
-                    $"{prefix}\t\t{operators.LuaName} = '{operators.LuaValue.Trim()}',\n" +
                     $"{prefix}\t\tnext_step_n = {NextStepN.Value.Trim()},\n" +
                     $"{prefix}\t\t}},\n";
 
@@ -119,9 +100,6 @@ namespace TechObject
         {
             switch (paramName)
             {
-                case "operators":
-                    operators.SetNewValue(val.ToString());
-                    break;
                 case "next_step_n":
                     NextStepN.SetNewValue(val.ToString());
                     break;
@@ -135,7 +113,7 @@ namespace TechObject
                 .FirstOrDefault();
             if (action != null)
             {
-                action.AddDev(index, 0, string.Empty);
+                action.AddDev(index, groupNumber, string.Empty);
             }
         }
 
@@ -166,15 +144,7 @@ namespace TechObject
 
             if (int.Parse(nextStepN.Value) > 0)
                 res += $" -> {NextStepN.Value.Trim()}";
-            else if (SubActions[0].IsFilled || SubActions[1].IsFilled)
-                res += " Шаг не указан";
             return res;
-        }
-
-        public ComboBoxParameter Operators
-        {
-            get => operators;
-            set => operators = value;
         }
 
         public ObjectProperty NextStepN
@@ -183,7 +153,6 @@ namespace TechObject
             set => nextStepN = value;
         }
 
-        private ComboBoxParameter operators;
         private ObjectProperty nextStepN;
 
         private List<ITreeViewItem> items;

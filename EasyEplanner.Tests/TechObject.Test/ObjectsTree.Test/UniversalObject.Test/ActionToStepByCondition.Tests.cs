@@ -10,7 +10,7 @@ namespace Tests.TechObject
         [Test]
         public void Constructor_NewAction_ReturnsItemCountEqualTwo()
         {
-            const int expectedCount = 2;
+            const int expectedCount = 3;
             var action = new ActionToStepByCondition(string.Empty,
                 null, string.Empty);
 
@@ -60,15 +60,17 @@ namespace Tests.TechObject
 
         private static object[] CheckActionsSequenceByLuaName()
         {
-            string firstAction = "on_devices";
-            string secondAction = "off_devices";
+            string firstAction = "on_devices_groups";
+            string secondAction = "off_devices_groups";
+            string thirdAction = "next_step_n";
 
             return new object[]
             {
                 new string[]
                 {
                     firstAction,
-                    secondAction
+                    secondAction,
+                    thirdAction,
                 },
             };
         }
@@ -153,9 +155,6 @@ namespace Tests.TechObject
         [TestCase(-1, "next_step_n", 0)]
         [TestCase(0, "next_step_n", 0)]
         [TestCase(1, "next_step_n", 0)]
-        [TestCase("OR-OR-OR", "operators", 0)]
-        [TestCase("AND-AND-AND", "operators", 0)]
-        [TestCase("OR-AND-OR", "operators", 0)]
         public void AddParam_NewAction_CheсkParameterValue(object val,
             string paramName, int groupNumber)
         {
@@ -164,16 +163,7 @@ namespace Tests.TechObject
 
             action.AddParam(val, paramName, groupNumber);
             
-            switch(paramName)
-            {
-                case "next_step_n":
-                    Assert.AreEqual(val.ToString(), action.NextStepN.Value);
-                    break;
-
-                case "operators":
-                    Assert.AreEqual(val.ToString(), action.Operators.LuaValue);
-                    break;
-            }      
+            Assert.AreEqual(val.ToString(), action.NextStepN.Value);
         }
     }
 }
