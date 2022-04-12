@@ -57,7 +57,7 @@ namespace EasyEPlanner
             var res = new string[]
             {
                 modeName,
-                "", "", "", "", "", "", "", "", "", ""
+                "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
             };
             modeNode.Tag = res;
 
@@ -82,49 +82,48 @@ namespace EasyEPlanner
                 commonStep = state.Steps.First();
                 var stateNode = new TreeNode();
 
-                const int OpenedDevices = 1;
-                const int ClosedDevices = 3;
-                const int UpperSeats = 4;
-                const int LowerSeats = 5;
-                const int RequiredFB = 6;
-                const int WashDevices = 7;
-                const int DIDOGroup = 8;
-                const int AIAOGroup = 9;
+                var groupWahs = commonStep.GetActions[
+                    (int)StepActions.GroupWash];
 
-                const int DevicesDI = 0;
-                const int DevicesDO = 1;
-                const int Devices = 2;
-
-                var devicesAction = commonStep.GetActions[WashDevices];
-                
-                var openedDevices = string.Join(spaceStr, commonStep
-                    .GetActions[OpenedDevices].DevicesNames);
-                var closedDevices = string.Join(spaceStr, commonStep
-                    .GetActions[ClosedDevices].DevicesNames);
-                var upperSeats = string.Join(spaceStr, commonStep
-                    .GetActions[UpperSeats].DevicesNames);
-                var lowerSeats = string.Join(spaceStr, commonStep
-                    .GetActions[LowerSeats].DevicesNames);
+                var checkedDevices = string.Join(spaceStr, commonStep
+                    .GetActions[(int)StepActions.CheckedDevices].DevicesNames);
+                var openDevices = string.Join(spaceStr, commonStep
+                    .GetActions[(int)StepActions.OpenDevices].DevicesNames);
+                var openReverse = string.Join(spaceStr, commonStep
+                    .GetActions[(int)StepActions.OpenRevers].DevicesNames);
+                var closeDevices = string.Join(spaceStr, commonStep
+                    .GetActions[(int)StepActions.CloseDevices].DevicesNames);
+                var upperSeats = commonStep
+                    .GetActions[(int)StepActions.UpperSeats];
+                var lowerSeats = commonStep
+                    .GetActions[(int)StepActions.LowerSeats];
                 var requiredFB = string.Join(spaceStr, commonStep
-                    .GetActions[RequiredFB].DevicesNames);
-                var dIDOGroup = string.Join(spaceStr, commonStep
-                    .GetActions[DIDOGroup].DevicesNames);
-                var aIAOGroup = string.Join(spaceStr, commonStep
-                    .GetActions[AIAOGroup].DevicesNames);
+                    .GetActions[(int)StepActions.RequiredFB].DevicesNames);
+                var groupDIDO = commonStep
+                    .GetActions[(int)StepActions.GroupDIDO];
+                var groupInvertedDIDO = commonStep
+                    .GetActions[(int)StepActions.GroupInvertedDIDO];
+                var groupAIAO = commonStep
+                    .GetActions[(int)StepActions.GroupAIAO];
+                var enableStepBySignal = string.Join(spaceStr, commonStep
+                    .GetActions[(int)StepActions.EnableStepBySignal].DevicesNames);
+
 
                 var rowWithState = new string[]
                 {
                     state.DisplayText.First(),
-                    openedDevices,
-                    closedDevices,
-                    upperSeats,
-                    lowerSeats,
+                    checkedDevices,
+                    openDevices,
+                    openReverse,
+                    closeDevices,
+                    GenerateGroupActionText(upperSeats),
+                    GenerateGroupActionText(lowerSeats),
                     requiredFB,
-                    GenerateGroupWashActionText(devicesAction, DevicesDI),
-                    GenerateGroupWashActionText(devicesAction, DevicesDO),
-                    GenerateGroupWashActionText(devicesAction, Devices),
-                    dIDOGroup,
-                    aIAOGroup,
+                    GenerateGroupWashActionText(groupWahs as ActionGroupWash),
+                    GenerateGroupActionText(groupDIDO),
+                    GenerateGroupActionText(groupInvertedDIDO),
+                    GenerateGroupActionText(groupAIAO),
+                    enableStepBySignal,
                 };
                 stateNode.Tag = rowWithState;
                 modeNode.Nodes.Add(stateNode);
@@ -138,26 +137,96 @@ namespace EasyEPlanner
         /// <param name="subGroupNum">Номер подгруппы действия внутри группы
         /// </param>
         /// <returns></returns>
-        private static string GenerateGroupWashActionText(IAction devicesAction,
-            int subGroupNum)
+        private static string GenerateGroupWashActionText(ActionGroupWash action)
         {
             string res = "";
+            int groupIndex = 1;
 
-            for (int i = 0; i < devicesAction.SubActions.Count; i++)
+            foreach (ActionWash group in action.SubActions)
             {
-                int groupNum = i + 1;
-                var group = devicesAction.SubActions[i];
+                var DI = string.Join(spaceStr,
+                    group.SubActions[0].DevicesNames);
+                var DO = string.Join(spaceStr,
+                    group.SubActions[1].DevicesNames);
+                var Devices = string.Join(spaceStr,
+                    group.SubActions[2].DevicesNames);
+                var ReverseDevices = string.Join(spaceStr,
+                    group.SubActions[3].DevicesNames);
+                var PumpFreq = group.Parameters[0].EditText[1].Trim();
 
-                string groupText = string.Join(" ",
-                    group.SubActions[subGroupNum].DevicesNames);
-                bool notEmptyGroup = groupText != string.Empty;
-                if (notEmptyGroup)
+                if (DI != string.Empty
+                    || DO != string.Empty
+                    || Devices != string.Empty
+                    || ReverseDevices != string.Empty
+                    || PumpFreq != string.Empty)
                 {
-                    res += $"Группа {groupNum}: {groupText}.\n";
+                    res += $"Група {groupIndex++}:\n";
+                    res += DI != string.Empty ? $"DI: {DI}.\n" : "";
+                    res += DO != string.Empty ? $"DO: {DO}.\n" : "";
+                    res += Devices != string.Empty ? $"Устройства: {Devices}.\n" : "";
+                    res += ReverseDevices != string.Empty ?
+                        $"Реверсивные устройства: {ReverseDevices}.\n" : "";
+                    res += PumpFreq != string.Empty ?
+                        $"Производительность: {PumpFreq}.\n" : "";
                 }
             }
 
             return res;
+        }
+
+        private static string GenerateActionToStepByConditionText(
+            ActionToStepByCondition Action)
+        {
+            string res = "";
+
+            var onDevices = GenerateGroupActionText(Action.SubActions[0]);
+            var offDevices = GenerateGroupActionText(Action.SubActions[1]);
+            var nextStep = Action.NextStepN.EditText[1].Trim();
+
+            res += onDevices != string.Empty ?
+                $"Включение:\n{onDevices}" : "";
+            res += offDevices != string.Empty ?
+                $"Выключение:\n{offDevices}" : "";
+            res += nextStep != "-1" && nextStep != "0" 
+                ? $"Переход к шагу {nextStep}.\n" : "";
+
+            return res;
+        }
+
+        private static string GenerateGroupActionText(IAction Action)
+        {
+            string res = "";
+            int groupIndex = 1;
+
+
+            foreach (var group in Action.SubActions)
+            {
+                string groupDevices = string.Join(spaceStr,
+                    group.DevicesNames);
+                if(groupDevices != string.Empty)
+                {
+                    res += $"Группа {groupIndex++}: {groupDevices}.\n";
+                }
+            }
+            
+            return res;
+        }
+
+        public enum StepActions
+        {
+            CheckedDevices = 0, ///< Проверяемые устройства
+            OpenDevices, ///< Включать
+            OpenRevers, ///< Включать реверс
+            CloseDevices, ///< Выключать
+            UpperSeats, ///< Верхние седла
+            LowerSeats, ///< Нижние седла
+            RequiredFB, ///< Сигналы для включения
+            GroupWash, ///< Устройства
+            GroupDIDO, ///< Группы DI->DO
+            GroupInvertedDIDO, ///< Группы инвертированный DI->DO
+            GroupAIAO, ///< Группы AI->AO
+            EnableStepBySignal, ///< Сигнал для включения шага
+            ActionToStepByCondition, ///< Переход к шагу по условию
         }
 
         /// <summary>
@@ -172,34 +241,64 @@ namespace EasyEPlanner
                 var stepNode = new TreeNode();
                 Step commonStep = state.Steps[i];
                 string stepName;
-
-                const int OpenedDevices = 0;
-                const int ClosedDevices = 2;
-                const int UpperSeats = 3;
-                const int LowerSeats = 4;
+                
 
                 stepName = i.ToString() + ". " + commonStep.EditText.First();
-                var openedDevices = string.Join(spaceStr, commonStep
-                    .GetActions[OpenedDevices].DevicesNames);
-                var closedDevices = string.Join(spaceStr, commonStep
-                    .GetActions[ClosedDevices].DevicesNames);
-                var upperSeats = string.Join(spaceStr, commonStep
-                    .GetActions[UpperSeats].DevicesNames);
-                var lowerSeats = string.Join(spaceStr, commonStep
-                    .GetActions[LowerSeats].DevicesNames);
+
+                var chekedDevices = string.Join(spaceStr, commonStep
+                    .GetActions[(int)StepActions.CheckedDevices].DevicesNames);
+                var openDevices = string.Join(spaceStr, commonStep
+                    .GetActions[(int)StepActions.OpenDevices].DevicesNames);
+                var openReverse = string.Join(spaceStr, commonStep
+                    .GetActions[(int)StepActions.OpenRevers].DevicesNames);
+                var closeDevices = string.Join(spaceStr, commonStep
+                    .GetActions[(int)StepActions.CloseDevices].DevicesNames);
+                var upperSeats = commonStep
+                    .GetActions[(int)StepActions.UpperSeats];
+                var lowerSeats = commonStep.
+                    GetActions[(int)StepActions.LowerSeats];
+                var requiredFB = string.Join(spaceStr, commonStep
+                    .GetActions[(int)StepActions.RequiredFB].DevicesNames);
+                var groupWash = commonStep
+                    .GetActions[(int)StepActions.GroupWash];
+                var groupDIDO = commonStep
+                    .GetActions[(int)StepActions.GroupDIDO];
+                var groupInvertedDIDO = commonStep
+                    .GetActions[(int)StepActions.GroupInvertedDIDO];
+                var groupAIAO = commonStep
+                    .GetActions[(int)StepActions.GroupAIAO];
+                var enableStepBySignal = commonStep
+                    .GetActions[(int)StepActions.EnableStepBySignal];
+                var actionToStepByCondition = commonStep
+                    .GetActions[(int)StepActions.ActionToStepByCondition];
+
+                var time = commonStep.TimeParam;
+                if (time == "-1" || time == "0") 
+                    time = "";
+                var nextStep = commonStep.NextStepN;
+                if (nextStep == "-1" || nextStep == "0") 
+                    nextStep = "";
+
+
                 var resStep = new string[]
                 {
                     stepName,
-                    openedDevices,
-                    closedDevices,
-                    upperSeats,
-                    lowerSeats,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty
+                    chekedDevices,
+                    openDevices,
+                    openReverse,
+                    closeDevices,
+                    GenerateGroupActionText(upperSeats),
+                    GenerateGroupActionText(lowerSeats),
+                    requiredFB,
+                    GenerateGroupWashActionText(groupWash as ActionGroupWash),
+                    GenerateGroupActionText(groupDIDO),
+                    GenerateGroupActionText(groupInvertedDIDO),
+                    GenerateGroupActionText(groupAIAO),
+                    GenerateGroupActionText(enableStepBySignal),
+                    GenerateActionToStepByConditionText(actionToStepByCondition
+                        as ActionToStepByCondition),
+                    time,
+                    nextStep,
                 };
                 stepNode.Tag = resStep;
                 modeNode.Nodes.Add(stepNode);

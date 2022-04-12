@@ -891,6 +891,16 @@ namespace TechObject
         /// </summary>
         private bool IsMainStep { get; set; }
 
+        public string NextStepN
+        {
+            get { return nextStepN.EditText[1].Trim(); }
+        }
+
+        public string TimeParam
+        {
+            get { return timeParam.EditText[1].Trim(); }
+        }
+
         private GetN getN;
 
         private ObjectProperty nextStepN; ///< Номер следующего шага.

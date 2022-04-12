@@ -274,6 +274,11 @@ namespace TechObject
             return res;
         }
 
+        public List<BaseParameter> Parameters
+        {
+            get { return parameters; }  
+        }
+
         private List<BaseParameter> parameters;
     }
 }

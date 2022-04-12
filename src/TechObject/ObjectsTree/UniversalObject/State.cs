@@ -398,6 +398,21 @@ namespace TechObject
             return null;
         }
 
+        public override ITreeViewItem InsertCopy(object copyObject)
+        {
+            var copy = copyObject as Step;
+            if(copy != null)
+            {
+                var newStep = copy.Clone(GetStepN);
+                steps.Add(newStep);
+                newStep.AddParent(this);
+                newStep.Owner = this;
+                return newStep;
+            }
+
+            return null;
+        }
+
         override public bool IsCopyable
         {
             get
@@ -407,6 +422,14 @@ namespace TechObject
         }
 
         override public bool IsInsertable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool IsInsertableCopy
         {
             get
             {
