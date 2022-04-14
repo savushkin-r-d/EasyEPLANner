@@ -154,6 +154,19 @@ namespace TechObject
             return res;
         }
 
+        public string[] SaveAsExcel()
+        {
+            var res = new List<string>();
+
+            res.Add(name);
+            foreach (IAction action in Steps.First().GetActions)
+            {
+                res.Add(action.SaveAsExcelCell());
+            }
+
+            return res.ToArray();
+        }
+
         /// <summary>
         /// Добавление нового шага.
         /// </summary>

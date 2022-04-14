@@ -96,6 +96,27 @@ namespace TechObject
             return res;
         }
 
+        public override string SaveAsExcelCell()
+        {
+            string res = "";
+
+            foreach (var subAction in SubActions)
+            {
+                var subActionText = subAction.SaveAsExcelCell();
+                if (subActionText != string.Empty)
+                {
+                    res += $"{subAction.Name}:\n{subActionText}";
+                }
+            }
+
+            if (res != string.Empty)
+            {
+                res += $"{NextStepN.Name}: {NextStepN.DisplayText[1]}";
+            }
+
+            return res;
+        }
+
         public override void AddParam(object val, string paramName, int groupNumber)
         {
             switch (paramName)

@@ -351,6 +351,21 @@ namespace TechObject
 
             return res;
         }
+   
+        public string[] SaveAsExcel()
+        {
+            var res = new List<string>();
+
+            res.Add(name);
+            foreach (IAction action in actions)
+            {
+                res.Add(action.SaveAsExcelCell()); 
+            }
+            res.Add(timeParam.DisplayText[1]);
+            res.Add(nextStepN.DisplayText[1]);
+
+            return res.ToArray();
+        }
 
         /// <summary>
         /// Добавление параметров.

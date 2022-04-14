@@ -97,6 +97,23 @@ namespace TechObject
             return res;
         }
 
+        public override string SaveAsExcelCell()
+        {
+            string res = "";
+            int groupIndex = 1;
+
+            foreach (var group in SubActions)
+            {
+                var groupText = group.SaveAsExcelCell();
+                if(groupText != string.Empty)
+                {
+                    res += $"Группа {groupIndex++}: {groupText}.\n";
+                }
+            }
+
+            return res;
+        }
+
         #region Реализация ITreeViewItem
         override public bool Delete(object child)
         {

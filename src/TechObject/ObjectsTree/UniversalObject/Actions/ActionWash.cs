@@ -180,6 +180,35 @@ namespace TechObject
             return res;
         }
 
+        public override string SaveAsExcelCell()
+        {
+            string res = string.Empty;
+            if (SubActions.Count == 0)
+            {
+                return res;
+            }
+
+            foreach (var subAction in SubActions)
+            {
+                var subActionText = subAction.SaveAsExcelCell();
+                if(subActionText != string.Empty)
+                {
+                    res += $"{subAction.Name}: {subActionText}.\n";
+                }
+            }
+
+            foreach (var parameter in parameters)
+            {
+                var parameterText = parameter.Value;
+                if(parameterText != string.Empty)
+                {
+                    res += $"{parameter.Name}: {parameterText}.\n";
+                }
+            }
+
+            return res;
+        }
+
         public override void AddDev(int index, int groupNumber,
             string subActionLuaName)
         {
