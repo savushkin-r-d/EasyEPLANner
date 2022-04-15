@@ -352,6 +352,10 @@ namespace TechObject
             return res;
         }
    
+        /// <summary>
+        /// Сохарение шага в виде таблицы Excel
+        /// </summary>
+        /// <returns>Описание в виде списка строк(клеток) Excel</returns>
         public string[] SaveAsExcel()
         {
             var res = new List<string>();
@@ -359,13 +363,14 @@ namespace TechObject
             res.Add(name);
             foreach (IAction action in actions)
             {
-                res.Add(action.SaveAsExcelCell()); 
+                res.Add(action.SaveAsExcel()); 
             }
-            res.Add(timeParam.DisplayText[1]);
-            res.Add(nextStepN.DisplayText[1]);
+            res.Add(TimeParam);
+            res.Add(NextStepN);
 
             return res.ToArray();
         }
+
 
         /// <summary>
         /// Добавление параметров.
@@ -908,12 +913,12 @@ namespace TechObject
 
         public string NextStepN
         {
-            get { return nextStepN.EditText[1].Trim(); }
+            get { return nextStepN.DisplayText[1].Trim(); }
         }
 
         public string TimeParam
         {
-            get { return timeParam.EditText[1].Trim(); }
+            get { return timeParam.DisplayText[1].Trim(); }
         }
 
         private GetN getN;

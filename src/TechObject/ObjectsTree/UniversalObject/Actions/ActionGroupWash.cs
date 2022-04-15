@@ -104,14 +104,14 @@ namespace TechObject
             return res;
         }
 
-        public override string SaveAsExcelCell()
+        public override string SaveAsExcel()
         {
             string res = "";
             int groupIndex = 1;
 
             foreach (var group in SubActions)
             {
-                var groupText = group.SaveAsExcelCell();
+                var groupText = group.SaveAsExcel();
                 if (groupText != string.Empty)
                 {
                     res += $"Група {groupIndex++}:\n{groupText}\n";

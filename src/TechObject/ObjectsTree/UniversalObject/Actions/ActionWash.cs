@@ -180,7 +180,7 @@ namespace TechObject
             return res;
         }
 
-        public override string SaveAsExcelCell()
+        public override string SaveAsExcel()
         {
             string res = string.Empty;
             if (SubActions.Count == 0)
@@ -190,7 +190,7 @@ namespace TechObject
 
             foreach (var subAction in SubActions)
             {
-                var subActionText = subAction.SaveAsExcelCell();
+                var subActionText = subAction.SaveAsExcel();
                 if(subActionText != string.Empty)
                 {
                     res += $"{subAction.Name}: {subActionText}.\n";

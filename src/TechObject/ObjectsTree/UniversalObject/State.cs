@@ -154,6 +154,11 @@ namespace TechObject
             return res;
         }
 
+
+        /// <summary>
+        /// Сохранениe действия "Во время операции" в таблицу Excel
+        /// </summary>
+        /// <returns>Описание в виде таблицы Excel</returns>
         public string[] SaveAsExcel()
         {
             var res = new List<string>();
@@ -161,7 +166,7 @@ namespace TechObject
             res.Add(name);
             foreach (IAction action in Steps.First().GetActions)
             {
-                res.Add(action.SaveAsExcelCell());
+                res.Add(action.SaveAsExcel());
             }
 
             return res.ToArray();
