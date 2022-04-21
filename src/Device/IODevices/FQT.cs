@@ -56,15 +56,26 @@ namespace EplanDevice
                 case "FQT_VIRT":
                     break;
 
+                case "FQT_IOLINK":
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_DT, null);
+
+                    properties.Add(Property.MT, null); //Связанные моторы.
+                    
+                    SetIOLinkSizes(ArticleName);
+                    break;
+
                 case "":
                     errStr = string.Format("\"{0}\" - не задан тип" +
-                        " (FQT, FQT_F, FQT_F_OK, FQT_VIRT).\n",
+                        " (FQT, FQT_F, FQT_F_OK, FQT_VIRT, FQT_IOLINK).\n",
                         Name);
                     break;
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (FQT, FQT_F, FQT_F_OK, FQT_VIRT).\n",
+                        " (FQT, FQT_F, FQT_F_OK, FQT_VIRT, FQT_IOLINK).\n",
                         Name);
                     break;
             }
@@ -115,6 +126,8 @@ namespace EplanDevice
                             return "FQT_F_OK";
                         case DeviceSubType.FQT_VIRT:
                             return "FQT_VIRT";
+                        case DeviceSubType.FQT_IOLINK:
+                            return "FQT_IOLINK";
                     }
                     break;
             }
@@ -180,6 +193,15 @@ namespace EplanDevice
                                 {Tag.F, 1},
                                 {Parameter.P_DT, 1},
                                 {Tag.ABS_V, 1},
+                            };
+                        case DeviceSubType.FQT_IOLINK:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Tag.ABS_V, 1},
+                                {Tag.T, 1},
                             };
                     }
                     break;
