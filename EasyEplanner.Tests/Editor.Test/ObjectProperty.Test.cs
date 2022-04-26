@@ -60,9 +60,9 @@ namespace Tests.Editor
         [TestCase(5.0, "5")]
         [TestCase(-5.0, "-5")]
         [TestCase(0.0, "0")]
-        [TestCase(5.3, "5.3")]
-        [TestCase(-5.3, "-5.3")]
-        [TestCase(0.3, "0.3")]
+        [TestCase(5.3, "5,3")]
+        [TestCase(-5.3, "-5,3")]
+        [TestCase(0.3, "0,3")]
         public void DefaultValue_NewProperty_ReturnsDefaultValueOrEmptyAsString(
             object defaultValue,string expectedValue)
         {
