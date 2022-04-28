@@ -24,6 +24,7 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: 'recursive'
+        ref: ${{ github.event.pull_request.head.sha }}
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
