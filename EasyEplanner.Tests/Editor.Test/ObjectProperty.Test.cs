@@ -52,24 +52,24 @@ namespace Tests.Editor
 
         [TestCase(null, "")]
         [TestCase("", "")]
-        [TestCase(1, "1")]
-        [TestCase(0, "0")]
-        [TestCase(-1, "-1")]
+        [TestCase(1, 1)]
+        [TestCase(0, 0)]
+        [TestCase(-1, -1)]
         [TestCase("ABC", "ABC")]
         [TestCase("АБВ", "АБВ")]
-        [TestCase(5.0, "5")]
-        [TestCase(-5.0, "-5")]
-        [TestCase(0.0, "0")]
-        [TestCase(5.3, "5,3")]
-        [TestCase(-5.3, "-5,3")]
-        [TestCase(0.3, "0,3")]
+        [TestCase(5.0, 5)]
+        [TestCase(-5.0, -5)]
+        [TestCase(0.0, 0)]
+        [TestCase(5.3, 5.3)]
+        [TestCase(-5.3, -5.3)]
+        [TestCase(0.3, 0.3)]
         public void DefaultValue_NewProperty_ReturnsDefaultValueOrEmptyAsString(
-            object defaultValue,string expectedValue)
+            object defaultValue,object expectedValue)
         {
             var property = new ObjectProperty(string.Empty, string.Empty,
-                defaultValue);
+                defaultValue).DefaultValue;
 
-            Assert.AreEqual(expectedValue, property.DefaultValue);
+            Assert.AreEqual(expectedValue.ToString(), property);
         }
 
         [Test]
