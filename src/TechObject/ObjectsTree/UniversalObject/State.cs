@@ -154,6 +154,24 @@ namespace TechObject
             return res;
         }
 
+
+        /// <summary>
+        /// Сохранениe действия "Во время операции" в таблицу Excel
+        /// </summary>
+        /// <returns>Описание в виде таблицы Excel</returns>
+        public string[] SaveAsExcel()
+        {
+            var res = new List<string>();
+
+            res.Add(name);
+            foreach (IAction action in Steps.First().GetActions)
+            {
+                res.Add(action.SaveAsExcel());
+            }
+
+            return res.ToArray();
+        }
+
         /// <summary>
         /// Добавление нового шага.
         /// </summary>
@@ -398,6 +416,21 @@ namespace TechObject
             return null;
         }
 
+        public override ITreeViewItem InsertCopy(object copyObject)
+        {
+            var copy = copyObject as Step;
+            if(copy != null)
+            {
+                var newStep = copy.Clone(GetStepN);
+                steps.Add(newStep);
+                newStep.AddParent(this);
+                newStep.Owner = this;
+                return newStep;
+            }
+
+            return null;
+        }
+
         override public bool IsCopyable
         {
             get
@@ -407,6 +440,14 @@ namespace TechObject
         }
 
         override public bool IsInsertable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override bool IsInsertableCopy
         {
             get
             {

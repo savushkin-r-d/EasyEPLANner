@@ -104,6 +104,23 @@ namespace TechObject
             return res;
         }
 
+        public override string SaveAsExcel()
+        {
+            string res = "";
+            int groupIndex = 1;
+
+            foreach (var group in SubActions)
+            {
+                var groupText = group.SaveAsExcel();
+                if (groupText != string.Empty)
+                {
+                    res += $"Група {groupIndex++}:\n{groupText}\n";
+                }
+            }
+
+            return res;
+        }
+
         /// <summary>
         /// Сохранить первую группу мойки. Старая функциональность
         /// </summary>

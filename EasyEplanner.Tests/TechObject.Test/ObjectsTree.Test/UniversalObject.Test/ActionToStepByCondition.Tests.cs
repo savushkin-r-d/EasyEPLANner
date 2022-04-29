@@ -10,7 +10,7 @@ namespace Tests.TechObject
         [Test]
         public void Constructor_NewAction_ReturnsItemCountEqualTwo()
         {
-            const int expectedCount = 2;
+            const int expectedCount = 3;
             var action = new ActionToStepByCondition(string.Empty,
                 null, string.Empty);
 
@@ -60,15 +60,17 @@ namespace Tests.TechObject
 
         private static object[] CheckActionsSequenceByLuaName()
         {
-            string firstAction = "on_devices";
-            string secondAction = "off_devices";
+            string firstAction = "on_devices_groups";
+            string secondAction = "off_devices_groups";
+            string thirdAction = "next_step_n";
 
             return new object[]
             {
                 new string[]
                 {
                     firstAction,
-                    secondAction
+                    secondAction,
+                    thirdAction,
                 },
             };
         }

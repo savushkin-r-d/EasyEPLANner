@@ -351,6 +351,26 @@ namespace TechObject
 
             return res;
         }
+   
+        /// <summary>
+        /// Сохарение шага в виде таблицы Excel
+        /// </summary>
+        /// <returns>Описание в виде списка строк(клеток) Excel</returns>
+        public string[] SaveAsExcel()
+        {
+            var res = new List<string>();
+
+            res.Add(name);
+            foreach (IAction action in actions)
+            {
+                res.Add(action.SaveAsExcel()); 
+            }
+            res.Add(TimeParam);
+            res.Add(NextStepN);
+
+            return res.ToArray();
+        }
+
 
         /// <summary>
         /// Добавление параметров.
@@ -890,6 +910,16 @@ namespace TechObject
         /// Признак шага операции.
         /// </summary>
         private bool IsMainStep { get; set; }
+
+        public string NextStepN
+        {
+            get { return nextStepN.DisplayText[1].Trim(); }
+        }
+
+        public string TimeParam
+        {
+            get { return timeParam.DisplayText[1].Trim(); }
+        }
 
         private GetN getN;
 

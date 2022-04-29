@@ -59,6 +59,12 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         string SaveAsLuaTable(string prefix);
 
+        /// <summary>
+        /// Сохранения действия в клетке Excel
+        /// </summary>
+        /// <returns>Описание действия в клетке Excel</returns>
+        string SaveAsExcel();
+
         void ModifyDevNames(int newTechObjectN, int oldTechObjectN,
             string techObjectName);
 
@@ -331,6 +337,16 @@ namespace TechObject
 
             res += $"{prefix}\t}},\n";
             return res;
+        }
+
+        public virtual string SaveAsExcel()
+        {
+            if (deviceIndex.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            return string.Join(", ", DevicesNames);
         }
 
         public virtual void AddDev(int index, int groupNumber,

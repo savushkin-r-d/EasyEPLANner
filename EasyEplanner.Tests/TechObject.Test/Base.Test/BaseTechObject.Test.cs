@@ -436,6 +436,8 @@ namespace Tests.TechObject
                 .Select(x => x.GetHashCode())
                 .ToArray()
                 .Distinct();
+            var provider = new System.Globalization.NumberFormatInfo();
+            provider.NumberDecimalSeparator = ".";
             Assert.Multiple(() =>
             {
                 Assert.AreEqual(paramsCount, differentReferencesCount.Count());
@@ -443,7 +445,8 @@ namespace Tests.TechObject
                 Assert.AreEqual(paramName, firstParam.GetName());
                 Assert.AreEqual(paramLuaName, firstParam.GetNameLua());
                 Assert.AreEqual(paramMeter, firstParam.GetMeter());
-                Assert.AreEqual(paramValue.ToString(), firstParam.GetValue());
+                Assert.AreEqual(paramValue.ToString("0.##", provider),
+                    firstParam.GetValue());
                 Assert.IsNull(emptyObj.ParamsManager.FloatRuntime);
             });
         }

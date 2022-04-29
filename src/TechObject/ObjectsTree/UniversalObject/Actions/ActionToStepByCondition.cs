@@ -29,10 +29,10 @@ namespace TechObject
                 EplanDevice.DeviceType.DO
             };
 
-            SubActions.Add(new Action("Включение устройств", owner,
-                "on_devices", allowedDevTypes));
-            SubActions.Add(new Action("Выключение устройств", owner,
-                "off_devices", allowedDevTypes));
+            SubActions.Add(new ActionGroup("Включение устройств", owner,
+                "on_devices_groups", allowedDevTypes, null));
+            SubActions.Add(new ActionGroup("Выключение устройств", owner,
+                "off_devices_groups", allowedDevTypes, null));            
 
             nextStepN = new ObjectProperty("Шаг", -1, -1);
             items.Add(nextStepN);
@@ -96,6 +96,27 @@ namespace TechObject
             return res;
         }
 
+        public override string SaveAsExcel()
+        {
+            string res = "";
+
+            foreach (var subAction in SubActions)
+            {
+                var subActionText = subAction.SaveAsExcel();
+                if (subActionText != string.Empty)
+                {
+                    res += $"{subAction.Name}:\n{subActionText}";
+                }
+            }
+
+            if (res != string.Empty)
+            {
+                res += $"{NextStepN.Name}: {NextStepN.DisplayText[1]}";
+            }
+
+            return res;
+        }
+
         public override void AddParam(object val, string paramName, int groupNumber)
         {
             switch (paramName)
@@ -113,7 +134,7 @@ namespace TechObject
                 .FirstOrDefault();
             if (action != null)
             {
-                action.AddDev(index, 0, string.Empty);
+                action.AddDev(index, groupNumber, string.Empty);
             }
         }
 
@@ -144,8 +165,6 @@ namespace TechObject
 
             if (int.Parse(nextStepN.Value) > 0)
                 res += $" -> {NextStepN.Value.Trim()}";
-            else if (SubActions[0].IsFilled || SubActions[1].IsFilled)
-                res += " Шаг не указан";
             return res;
         }
 
@@ -155,7 +174,8 @@ namespace TechObject
             set => nextStepN = value;
         }
 
-        ObjectProperty nextStepN;
-        List<ITreeViewItem> items;
+        private ObjectProperty nextStepN;
+
+        private List<ITreeViewItem> items;
     }
 }

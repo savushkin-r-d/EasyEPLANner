@@ -57,7 +57,7 @@ namespace EasyEPlanner
             var res = new string[]
             {
                 modeName,
-                "", "", "", "", "", "", "", "", "", ""
+                "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
             };
             modeNode.Tag = res;
 
@@ -76,88 +76,10 @@ namespace EasyEPlanner
         /// <param name="modeNode">узел дерева операции</param>
         private static void FillState(State state, ref TreeNode modeNode)
         {
-            Step commonStep;
             if (state.Empty == false)
             {
-                commonStep = state.Steps.First();
-                var stateNode = new TreeNode();
-
-                const int OpenedDevices = 1;
-                const int ClosedDevices = 3;
-                const int UpperSeats = 4;
-                const int LowerSeats = 5;
-                const int RequiredFB = 6;
-                const int WashDevices = 7;
-                const int DIDOGroup = 8;
-                const int AIAOGroup = 9;
-
-                const int DevicesDI = 0;
-                const int DevicesDO = 1;
-                const int Devices = 2;
-
-                var devicesAction = commonStep.GetActions[WashDevices];
-                
-                var openedDevices = string.Join(spaceStr, commonStep
-                    .GetActions[OpenedDevices].DevicesNames);
-                var closedDevices = string.Join(spaceStr, commonStep
-                    .GetActions[ClosedDevices].DevicesNames);
-                var upperSeats = string.Join(spaceStr, commonStep
-                    .GetActions[UpperSeats].DevicesNames);
-                var lowerSeats = string.Join(spaceStr, commonStep
-                    .GetActions[LowerSeats].DevicesNames);
-                var requiredFB = string.Join(spaceStr, commonStep
-                    .GetActions[RequiredFB].DevicesNames);
-                var dIDOGroup = string.Join(spaceStr, commonStep
-                    .GetActions[DIDOGroup].DevicesNames);
-                var aIAOGroup = string.Join(spaceStr, commonStep
-                    .GetActions[AIAOGroup].DevicesNames);
-
-                var rowWithState = new string[]
-                {
-                    state.DisplayText.First(),
-                    openedDevices,
-                    closedDevices,
-                    upperSeats,
-                    lowerSeats,
-                    requiredFB,
-                    GenerateGroupWashActionText(devicesAction, DevicesDI),
-                    GenerateGroupWashActionText(devicesAction, DevicesDO),
-                    GenerateGroupWashActionText(devicesAction, Devices),
-                    dIDOGroup,
-                    aIAOGroup,
-                };
-                stateNode.Tag = rowWithState;
-                modeNode.Nodes.Add(stateNode);
+                modeNode.Nodes.Add(new TreeNode { Tag = state.SaveAsExcel() });
             }
-        }
-
-        /// <summary>
-        /// Генерация описания групп действия "Устройства" (старая мойка).
-        /// </summary>
-        /// <param name="devicesAction">Действие</param>
-        /// <param name="subGroupNum">Номер подгруппы действия внутри группы
-        /// </param>
-        /// <returns></returns>
-        private static string GenerateGroupWashActionText(IAction devicesAction,
-            int subGroupNum)
-        {
-            string res = "";
-
-            for (int i = 0; i < devicesAction.SubActions.Count; i++)
-            {
-                int groupNum = i + 1;
-                var group = devicesAction.SubActions[i];
-
-                string groupText = string.Join(" ",
-                    group.SubActions[subGroupNum].DevicesNames);
-                bool notEmptyGroup = groupText != string.Empty;
-                if (notEmptyGroup)
-                {
-                    res += $"Группа {groupNum}: {groupText}.\n";
-                }
-            }
-
-            return res;
         }
 
         /// <summary>
@@ -169,40 +91,8 @@ namespace EasyEPlanner
         {
             for (int i = 1; i < state.Steps.Count; i++)
             {
-                var stepNode = new TreeNode();
-                Step commonStep = state.Steps[i];
-                string stepName;
-
-                const int OpenedDevices = 0;
-                const int ClosedDevices = 2;
-                const int UpperSeats = 3;
-                const int LowerSeats = 4;
-
-                stepName = i.ToString() + ". " + commonStep.EditText.First();
-                var openedDevices = string.Join(spaceStr, commonStep
-                    .GetActions[OpenedDevices].DevicesNames);
-                var closedDevices = string.Join(spaceStr, commonStep
-                    .GetActions[ClosedDevices].DevicesNames);
-                var upperSeats = string.Join(spaceStr, commonStep
-                    .GetActions[UpperSeats].DevicesNames);
-                var lowerSeats = string.Join(spaceStr, commonStep
-                    .GetActions[LowerSeats].DevicesNames);
-                var resStep = new string[]
-                {
-                    stepName,
-                    openedDevices,
-                    closedDevices,
-                    upperSeats,
-                    lowerSeats,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty
-                };
-                stepNode.Tag = resStep;
-                modeNode.Nodes.Add(stepNode);
+                Step step = state.Steps[i]; 
+                modeNode.Nodes.Add(new TreeNode { Tag = step.SaveAsExcel() });
             }
         }
 

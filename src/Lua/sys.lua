@@ -253,9 +253,21 @@ function proc_to_step_by_condition(step, value)
                 for parameter_name, value in pairs(values) do
                     step:AddParam(action_name, value, parameter_name, 0)
                 end
-            else
+            elseif field_name == "on_devices" or
+                    field_name == "off_devices" then --old version
                 for _, dev_name in pairs(values) do
-                    add_dev(step, action_name, dev_name, 0, field_name)
+                    add_dev(step, action_name, dev_name,
+                    0, field_name.."_groups")
+                end
+            elseif field_name == "on_devices_groups" or 
+                    field_name == "off_devices_groups" then --new version
+                for _, group in pairs(values) do
+                    local group_n = 0
+                    for _, dev_name in pairs(group) do
+                        add_dev(step, action_name, dev_name,
+                            group_n, field_name)
+                        group_n = group_n + 1
+                    end
                 end
             end
         end
