@@ -143,3 +143,9 @@ function CAM(dev)
 	devsidx = devsidx + 1
 	return dev
 end
+
+function PDS(TS)
+	devs[devsidx] = {dev, "TS"}
+	devsidx = devsidx + 1
+	return dev
+end

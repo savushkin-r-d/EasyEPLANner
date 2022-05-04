@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System;
 using System.Linq;
@@ -422,6 +422,7 @@ namespace EplanDevice
             "C",
             "HLA",
             "CAM"
+            "TS",
         };
 
         public IODevice AddDeviceAndEFunction(string devName, string description,
@@ -609,6 +610,11 @@ namespace EplanDevice
                 case "CAM":
                     dev = new CAM(name, eplanName, description, deviceNumber,
                         objectName, objectNumber);
+                    break;
+
+                case "TS":
+                    dev = new TS(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
                     break;
 
                 default:
