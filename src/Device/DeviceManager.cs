@@ -616,6 +616,8 @@ namespace EplanDevice
                 case "PDS":
                     dev = new PDS(name, eplanName, description, deviceNumber,
                         objectName, objectNumber, articleName);
+                    break;
+
                 case "TS":
                     dev = new TS(name, eplanName, description, deviceNumber,
                         objectName, objectNumber, articleName);
