@@ -421,7 +421,7 @@ namespace EplanDevice
             "DEV_VTUG", // Совместимость со старыми проектами
             "C",
             "HLA",
-            "CAM"
+            "CAM",
             "TS",
         };
 
