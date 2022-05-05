@@ -422,6 +422,7 @@ namespace EplanDevice
             "C",
             "HLA",
             "CAM",
+            "PDS",
             "TS",
         };
 
@@ -610,6 +611,11 @@ namespace EplanDevice
                 case "CAM":
                     dev = new CAM(name, eplanName, description, deviceNumber,
                         objectName, objectNumber);
+                    break;
+
+                case "PDS":
+                    dev = new PDS(name, eplanName, description, deviceNumber,
+                        objectName, objectNumber, articleName);
                     break;
 
                 case "TS":

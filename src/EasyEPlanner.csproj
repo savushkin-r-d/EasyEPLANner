@@ -116,6 +116,7 @@
     <Compile Include="Device\IIODevice.cs" />
     <Compile Include="Device\IOChannel.cs" />
     <Compile Include="Device\IODevices\CAM.cs" />
+    <Compile Include="Device\IODevices\PDS.cs" />
     <Compile Include="Device\IODevices\TS.cs" />
     <Compile Include="Device\IOLinkSize.cs" />
     <Compile Include="Device\Parameter.cs" />
