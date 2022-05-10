@@ -57,6 +57,24 @@ namespace TechObject
             openDevices.ImageIndex = ImageIndexEnum.ActionON;
             actions.Add(openDevices);
 
+
+            var openedDeviceAction = new ActionCustom("Группа", this, "");   
+            openedDeviceAction.SubActions.Add(new Action("Включать", this,
+                "on_devices",
+                new EplanDevice.DeviceType[]
+                {
+                    EplanDevice.DeviceType.V,
+                    EplanDevice.DeviceType.DO,
+                    EplanDevice.DeviceType.M
+                }));
+            openedDeviceAction.Parameters.Add(new ActiveParameter("on_delay",
+                "Задержка включения"));
+            var openDevicesActionGroup = new ActionGroupCustom(
+                "Включение устройств с задержкой", this, "on_device_delay",
+                openedDeviceAction);
+            actions.Add(openDevicesActionGroup);
+
+
             var openReverse = new Action("Включать реверс", this,
                 "opened_reverse_devices",
                 new EplanDevice.DeviceType[]
