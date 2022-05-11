@@ -84,7 +84,8 @@ namespace TechObject
             if (groupData != string.Empty)
             {
                 res += $"{prefix}{luaName} = --{name}\n" +
-                    $"{prefix}\t{{\n{groupData}{prefix}\t}},\n";
+                    $"{prefix}\t{{\n{groupData}" +
+                    $"{prefix}\t}},\n";
             }
 
             return res;
@@ -162,7 +163,7 @@ namespace TechObject
 
         override public ITreeViewItem Insert()
         {
-            var newAction = SubActions.First().Clone();
+            var newAction = (SubActions.First() as ActionCustom).CopyGroup();
             newAction.DrawStyle = DrawStyle;
             SubActions.Add(newAction);
 

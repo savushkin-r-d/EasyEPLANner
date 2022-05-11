@@ -170,8 +170,20 @@ function proc(step, actions, action_name, group_number, sub_action_name)
         return
     end
 
+    is_old_version = false;
+    if (action_name == "opened_devices") then
+        action_name_new_version = "on_device_delay"
+        is_old_version = true 
+    end
+
     for current_action_name, devices in pairs (actions) do
         if (current_action_name == action_name and devices) then
+            if(is_old_version) then -- Совместимость со старой версией
+                for _, dev_name in pairs (devices) do
+                    add_dev(step, action_name_new_version, dev_name, 
+                        group_number, "on_devices")
+                end
+            end
             for _, dev_name in pairs (devices) do
                 add_dev(step, action_name, dev_name, group_number,
                     sub_action_name)

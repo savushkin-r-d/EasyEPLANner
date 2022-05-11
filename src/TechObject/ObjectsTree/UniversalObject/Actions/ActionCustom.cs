@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Editor;
 
@@ -44,22 +45,42 @@ namespace TechObject
             {
                 EplanDevice.DeviceType[] types = null;
                 EplanDevice.DeviceSubType[] subTypes = null;
-                bool displayParameter = false;
 
-                subAction.GetDisplayObjects(out types, out subTypes, out displayParameter);
+                subAction.GetDisplayObjects(out types, out subTypes, out _);
                 copyGroup.SubActions.Add(new Action(subAction.Name, owner,
                     subAction.LuaName, types, subTypes));
             }
 
             foreach (var parameter in Parameters)
             {
-                copyGroup.Parameters.Add(new ActiveParameter(parameter.LuaName,
-                    parameter.Name, ""));
+                copyGroup.Parameters.Add(
+                    (BaseParameter)Activator
+                    .CreateInstance(
+                    parameter.GetType(),
+                    new object[]{ parameter.LuaName, parameter.Name, "", null})
+                );
             }
 
             return copyGroup;
         }
 
+        /// <summary>
+        /// Добавить действия для группы
+        /// </summary>
+        /// <param name="action"></param>
+        public void CreateAction(Action action)
+        {
+            SubActions.Add(action);
+        }
+
+        /// <summary>
+        /// Добавить параметр для группы
+        /// </summary>
+        /// <param name="parameter"></param>
+        public void CreateParameter(BaseParameter parameter)
+        {
+            Parameters.Add(parameter);
+        }
 
         /// <summary>
         /// Сохранение в виде таблицы Lua.
@@ -69,20 +90,29 @@ namespace TechObject
         public override string SaveAsLuaTable(string prefix)
         {
             string res = string.Empty;
-            res += $"{prefix}--Группа\n{prefix}{{\n";
+            string group = string.Empty;
 
             foreach (var subAction in SubActions)
             {
-                res += subAction.SaveAsLuaTable(prefix + "\t"); 
+                group += subAction.SaveAsLuaTable(prefix + "\t"); 
             }
 
             foreach (var parameter in Parameters)
             {
+                string parameterValue =
+                    (int.TryParse(parameter.Value.ToString(), out _)) ?
+                    parameter.Value : $"\'{parameter.Value}\'";
+
                 if(parameter.Value != string.Empty)
-                    res += $"{prefix}\t{parameter.LuaName} = \"{parameter.Value}\" --{parameter.Name},\n";
+                    group += $"{prefix}\t{parameter.LuaName} = {parameterValue} --{parameter.Name},\n";
             }
 
-            res += $"{prefix}}},\n";
+            if(group != string.Empty)
+            {
+                res = $"{prefix}--Группа\n{prefix}\t{{\n" +
+                    $"{group}" +
+                    $"{prefix}\t}},\n";
+            }
 
             return res;
         }
