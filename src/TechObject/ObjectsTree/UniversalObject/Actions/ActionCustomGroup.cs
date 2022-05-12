@@ -5,18 +5,17 @@ using Editor;
 namespace TechObject
 {
     /// <summary>
-    /// Действие - обработка сигналов во время мойки
-    /// с возможностью группировки объектов
+    /// Действие - группировка кастомного действия
     /// </summary>
     public class ActionGroupCustom : GroupableAction
     {
         /// <summary>
-        /// Создание нового действия.
+        /// Создание действия
         /// </summary>
-        /// <param name="name">Имя действия.</param>
-        /// <param name="luaName">Имя действия - как оно будет называться 
-        /// в таблице Lua.</param>
-        /// <param name="owner">Владелец действия (Шаг)</param>
+        /// <param name="name">Название действия</param>
+        /// <param name="owner">Шаг</param>
+        /// <param name="luaName">Название сохраняниемое в Lua</param>
+        /// <param name="actionCustom">Группируемое кастомное действие</param>
         public ActionGroupCustom(string name, Step owner, string luaName,
             ActionCustom actionCustom)
             : base(name, owner, luaName)
@@ -109,20 +108,7 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Сохранить первую группу мойки. Старая функциональность
-        /// </summary>
-        /// <param name="prefix">Префикс</param>
-        /// <returns></returns>
-        private string SaveSingleGroup(string prefix)
-        {
-            string res = string.Empty;
-            var firstGroup = SubActions.First();
-            res += firstGroup?.SaveAsLuaTable(prefix);
-            return res;
-        }
-
-        /// <summary>
-        /// Сохранить все группы мойки
+        /// Сохранить все группы дейтсвия
         /// </summary>
         /// <param name="prefix">Префикс</param>
         /// <returns></returns>

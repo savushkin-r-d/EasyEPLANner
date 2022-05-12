@@ -60,18 +60,19 @@ namespace TechObject
 
             var openedDeviceAction = new ActionCustom("Группа", this, "");   
             openedDeviceAction.CreateAction(new Action("Включать", this,
-                "on_devices",
+                "opened_devices",
                 new EplanDevice.DeviceType[]
                 {
                     EplanDevice.DeviceType.V,
                     EplanDevice.DeviceType.DO,
                     EplanDevice.DeviceType.M
                 }));
-            openedDeviceAction.CreateParameter(new ActiveParameter("on_delay",
+            openedDeviceAction.CreateParameter(new ActiveParameter("opened_delay",
                 "Задержка включения"));
             var openDevicesActionGroup = new ActionGroupCustom(
-                "Включение устройств с задержкой", this, "on_device_delay",
+                "Включение устройств", this, "opened_devices_delay",
                 openedDeviceAction);
+            openDevicesActionGroup.ImageIndex = ImageIndexEnum.ActionON;
             actions.Add(openDevicesActionGroup);
 
 

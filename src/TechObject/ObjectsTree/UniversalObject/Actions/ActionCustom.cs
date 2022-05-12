@@ -5,9 +5,17 @@ using Editor;
 
 namespace TechObject
 {
+    /// <summary>
+    /// Настраиваемое действие
+    /// </summary>
     public class ActionCustom : GroupableAction
     {
-
+        /// <summary>
+        /// Создание нового действия
+        /// </summary>
+        /// <param name="name">Название действия</param>
+        /// <param name="owner">Шаг</param>
+        /// <param name="luaName">Название в Lua</param>
         public ActionCustom(string name, Step owner, string luaName)
             : base(name, owner, luaName)
         {
@@ -34,7 +42,7 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Создает копию группы для ActionCustomGroup
+        /// Создает копию описания ActionCustomы для ActionCustomGroup
         /// </summary>
         /// <returns>скопированое действие</returns>
         public IAction CopyGroup()
@@ -100,8 +108,9 @@ namespace TechObject
             foreach (var parameter in Parameters)
             {
                 string parameterValue =
-                    (int.TryParse(parameter.Value.ToString(), out _)) ?
-                    parameter.Value : $"\'{parameter.Value}\'";
+                    (parameter.CurrentValueType == BaseParameter.ValueType.Other ) ?
+                    $"\'{parameter.Value}\'" : parameter.Value;
+                
 
                 if(parameter.Value != string.Empty)
                     group += $"{prefix}\t{parameter.LuaName} = {parameterValue} --{parameter.Name},\n";
