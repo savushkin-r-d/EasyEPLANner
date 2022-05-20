@@ -42,32 +42,32 @@ namespace TechObject
         /// <param name="isMainStep">Главный шаг</param>
         private void AddDefaultActions(bool isMainStep)
         {
-            var checkedDevices = new Action("Проверяемые устройства",
-                this, "checked_devices", null, null);
-            actions.Add(checkedDevices);
+            //var checkedDevices = new Action("Проверяемые устройства",
+            //    this, "checked_devices", null, null);
+            //actions.Add(checkedDevices);
 
-            var openDevices = new Action(openDevicesActionName, this,
-                "opened_devices",
-                new EplanDevice.DeviceType[]
-                {
-                    EplanDevice.DeviceType.V,
-                    EplanDevice.DeviceType.DO,
-                    EplanDevice.DeviceType.M
-                });
-            openDevices.ImageIndex = ImageIndexEnum.ActionON;
-            actions.Add(openDevices);
+            //var openDevices = new Action(openDevicesActionName, this,
+            //    "opened_devices",
+            //    new EplanDevice.DeviceType[]
+            //    {
+            //        EplanDevice.DeviceType.V,
+            //        EplanDevice.DeviceType.DO,
+            //        EplanDevice.DeviceType.M
+            //    });
+            // openDevices.ImageIndex = ImageIndexEnum.ActionON;
+            // actions.Add(openDevices);
 
 
             var openedDeviceAction = new ActionCustom("Группа", this, "");   
             openedDeviceAction.CreateAction(new Action("Включать", this,
-                "opened_devices",
+                "",
                 new EplanDevice.DeviceType[]
                 {
                     EplanDevice.DeviceType.V,
                     EplanDevice.DeviceType.DO,
                     EplanDevice.DeviceType.M
                 }));
-            openedDeviceAction.CreateParameter(new ActiveParameter("opened_delay",
+            openedDeviceAction.CreateParameter(new ActiveParameter("",
                 "Задержка включения"));
             var openDevicesActionGroup = new ActionGroupCustom(
                 "Включение устройств", this, "opened_devices_delay",

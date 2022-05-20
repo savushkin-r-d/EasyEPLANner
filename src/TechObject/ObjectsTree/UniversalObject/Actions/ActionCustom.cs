@@ -65,7 +65,7 @@ namespace TechObject
                     (BaseParameter)Activator
                     .CreateInstance(
                     parameter.GetType(),
-                    new object[]{ parameter.LuaName, parameter.Name, "", null})
+                    new object[]{ parameter.LuaName, parameter.Name, "", null})                                         
                 );
             }
 
@@ -92,6 +92,8 @@ namespace TechObject
 
         /// <summary>
         /// Сохранение в виде таблицы Lua.
+        /// Если хотя бы одно поддействие или параметр не имеет Lua-имени,
+        /// то необходимо сохранять все поддействия/параметры в их порядке
         /// </summary>
         /// <param name="prefix">Префикс (для выравнивания).</param>
         /// <returns>Описание в виде таблицы Lua.</returns>
@@ -100,29 +102,72 @@ namespace TechObject
             string res = string.Empty;
             string group = string.Empty;
 
+            // хотя бы одно поддедйствие без Lua-имени
+            bool subactionsWithoutLuaName = SubActions
+                .Any(subaction => subaction.LuaName == string.Empty);
+
+            // хотя бы один параметр без Lua-имени
+            bool parametersWithoutLuaName = Parameters
+                .Any(parameter => parameter.LuaName == string.Empty);
+
             foreach (var subAction in SubActions)
             {
-                group += subAction.SaveAsLuaTable(prefix + "\t"); 
+                if (subactionsWithoutLuaName)
+                {
+                    if (subAction.Empty == false)
+                    {
+                        group += $" {subAction.SaveAsLuaTableInline()},";
+                    }
+                    else
+                    {
+                        group += $" {{}},";
+                    }
+                }
+                else
+                {
+                    group += $"\n{subAction.SaveAsLuaTable(prefix + "\t")}";
+                }
             }
 
             foreach (var parameter in Parameters)
             {
                 string parameterValue =
-                    (parameter.CurrentValueType == BaseParameter.ValueType.Other ) ?
+                    (parameter.CurrentValueType == BaseParameter.ValueType.Other) ?
                     $"\'{parameter.Value}\'" : parameter.Value;
-                
 
-                if(parameter.Value != string.Empty)
-                    group += $"{prefix}\t{parameter.LuaName} = {parameterValue} --{parameter.Name},\n";
+                if (parametersWithoutLuaName)
+                {
+                    if (parameterValue != string.Empty)
+                    {
+                        group += $" {parameterValue},";
+                    }
+                    else
+                    {
+                        group += $" -1,";
+                    }
+                }
+                else
+                {
+                    if (parameterValue != string.Empty)
+                    {
+                        group += $"{prefix}\t{parameter.LuaName} = {parameterValue} --{parameter.Name},\n";
+                    }
+                }
             }
 
             if(group != string.Empty)
             {
-                res = $"{prefix}--Группа\n{prefix}\t{{\n" +
-                    $"{group}" +
-                    $"{prefix}\t}},\n";
+                if (LuaName == string.Empty)
+                {
+                    res = $"{prefix}\t{{{group} }},\n";
+                }
+                else
+                {
+                    res = $"{prefix}{LuaName} = --{Name}\n" +
+                        $"{prefix}\t{{{group} }},\n";
+                }
             }
-
+                
             return res;
         }
 
