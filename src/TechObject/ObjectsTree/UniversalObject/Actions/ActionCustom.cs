@@ -42,37 +42,6 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Создает копию описания ActionCustomы для ActionCustomGroup
-        /// </summary>
-        /// <returns>скопированое действие</returns>
-        public IAction CopyGroup()
-        {
-            var copyGroup = new ActionCustom(name, owner, luaName);
-
-            foreach (var subAction in SubActions)
-            {
-                EplanDevice.DeviceType[] types = null;
-                EplanDevice.DeviceSubType[] subTypes = null;
-
-                subAction.GetDisplayObjects(out types, out subTypes, out _);
-                copyGroup.SubActions.Add(new Action(subAction.Name, owner,
-                    subAction.LuaName, types, subTypes));
-            }
-
-            foreach (var parameter in Parameters)
-            {
-                copyGroup.Parameters.Add(
-                    (BaseParameter)Activator
-                    .CreateInstance(
-                    parameter.GetType(),
-                    new object[]{ parameter.LuaName, parameter.Name, "", null})                                         
-                );
-            }
-
-            return copyGroup;
-        }
-
-        /// <summary>
         /// Добавить действия для группы
         /// </summary>
         /// <param name="action"></param>
@@ -102,6 +71,12 @@ namespace TechObject
             string res = string.Empty;
             string group = string.Empty;
 
+            if (SubActions.All(subaction => subaction.Empty) &&
+                Parameters.All(parameter => parameter.Value == string.Empty))
+            {
+                return res;
+            }
+
             // хотя бы одно поддедйствие без Lua-имени
             bool subactionsWithoutLuaName = SubActions
                 .Any(subaction => subaction.LuaName == string.Empty);
@@ -109,6 +84,7 @@ namespace TechObject
             // хотя бы один параметр без Lua-имени
             bool parametersWithoutLuaName = Parameters
                 .Any(parameter => parameter.LuaName == string.Empty);
+
 
             foreach (var subAction in SubActions)
             {
@@ -159,7 +135,7 @@ namespace TechObject
             {
                 if (LuaName == string.Empty)
                 {
-                    res = $"{prefix}\t{{{group} }},\n";
+                    res = $"{prefix}{{{group} }},\n";
                 }
                 else
                 {

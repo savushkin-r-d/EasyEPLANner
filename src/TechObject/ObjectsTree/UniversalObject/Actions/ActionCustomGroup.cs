@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System;
 using Editor;
 
 namespace TechObject
@@ -15,12 +16,14 @@ namespace TechObject
         /// <param name="name">Название действия</param>
         /// <param name="owner">Шаг</param>
         /// <param name="luaName">Название сохраняниемое в Lua</param>
-        /// <param name="actionCustom">Группируемое кастомное действие</param>
+        /// <param name="actionCustomDeleagate">Делигат описывающий группу</param>
         public ActionGroupCustom(string name, Step owner, string luaName,
-            ActionCustom actionCustom)
+            Func<ActionCustom> actionCustomDeleagate)
             : base(name, owner, luaName)
         {
-            SubActions.Add(actionCustom);
+            //SubActions.Add(actionCustom);
+            ActionCustomDelegate = actionCustomDeleagate;
+            AddNewGroup();
         }
 
         public override IAction Clone()
@@ -59,7 +62,7 @@ namespace TechObject
 
         private void AddNewGroup()
         {
-            var newAction = (SubActions.First() as ActionCustom).CopyGroup();
+            var newAction = ActionCustomDelegate();
             newAction.DrawStyle = DrawStyle;
             SubActions.Add(newAction);
         }
@@ -149,7 +152,7 @@ namespace TechObject
 
         override public ITreeViewItem Insert()
         {
-            var newAction = (SubActions.First() as ActionCustom).CopyGroup();
+            var newAction = ActionCustomDelegate();
             newAction.DrawStyle = DrawStyle;
             SubActions.Add(newAction);
 
@@ -165,5 +168,7 @@ namespace TechObject
             }
         }
         #endregion
+
+        private Func<ActionCustom> ActionCustomDelegate;
     }
 }
