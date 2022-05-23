@@ -77,32 +77,15 @@ namespace TechObject
                 return res;
             }
 
-            // хотя бы одно поддедйствие без Lua-имени
-            bool subactionsWithoutLuaName = SubActions
-                .Any(subaction => subaction.LuaName == string.Empty);
-
-            // хотя бы один параметр без Lua-имени
-            bool parametersWithoutLuaName = Parameters
-                .Any(parameter => parameter.LuaName == string.Empty);
-
+            if (SubActions.Any(sa => sa.LuaName == string.Empty) ||
+                Parameters.Any(param => param.LuaName == string.Empty))
+            {
+                return SaveAsLuaTableShortFormat(prefix);
+            }
 
             foreach (var subAction in SubActions)
             {
-                if (subactionsWithoutLuaName)
-                {
-                    if (subAction.Empty == false)
-                    {
-                        group += $" {subAction.SaveAsLuaTableInline()},";
-                    }
-                    else
-                    {
-                        group += $" {{}},";
-                    }
-                }
-                else
-                {
-                    group += $"\n{subAction.SaveAsLuaTable(prefix + "\t")}";
-                }
+                 group += $"\n{subAction.SaveAsLuaTable(prefix + "\t")}";
             }
 
             foreach (var parameter in Parameters)
@@ -111,40 +94,74 @@ namespace TechObject
                     (parameter.CurrentValueType == BaseParameter.ValueType.Other) ?
                     $"\'{parameter.Value}\'" : parameter.Value;
 
-                if (parametersWithoutLuaName)
+                if (parameterValue != string.Empty)
                 {
-                    if (parameterValue != string.Empty)
-                    {
-                        group += $" {parameterValue},";
-                    }
-                    else
-                    {
-                        group += $" -1,";
-                    }
-                }
-                else
-                {
-                    if (parameterValue != string.Empty)
-                    {
-                        group += $"{prefix}\t{parameter.LuaName} = {parameterValue} --{parameter.Name},\n";
-                    }
+                    group += $"{prefix}\t{parameter.LuaName} = {parameterValue} --{parameter.Name},\n";
                 }
             }
 
             if(group != string.Empty)
             {
-                if (LuaName == string.Empty)
-                {
-                    res = $"{prefix}{{{group} }},\n";
-                }
-                else
-                {
-                    res = $"{prefix}{LuaName} = --{Name}\n" +
-                        $"{prefix}\t{{{group} }},\n";
-                }
+                res += prefix;
+                res += (luaName != string.Empty)? $"{LuaName} = " : "";
+                res += (Name != string.Empty) ? $"--{Name}" : "";
+                res += (LuaName != string.Empty || Name != string.Empty)?
+                    "\n" : "";
+                res += $"{prefix}\t{{{group}\n" +
+                    $"{prefix}\t}},\n";
             }
                 
             return res;
+        }
+
+
+        /// <summary>
+        /// Сохраняет действие в кратком формате:
+        ///  - без Lua-имен переменных
+        ///  - сохраняются даже пустые действия({}) и параметры(-1),
+        ///     так как в случае отсутсвия имен, важен порядок
+        ///  - срабатывает, когда хотя бы у одного поддействия или параметра
+        ///     отсутствует Lua-имя;
+        /// </summary>
+        /// <returns></returns>
+        public string SaveAsLuaTableShortFormat(string prefix)
+        {
+            var subactionsData = string.Empty;
+            var parametersData = string.Empty;
+
+            bool inLine = SubActions.Count <= 1 && Parameters.Count <= 1;
+
+            foreach (var subAction in SubActions)
+            {
+                var subactionData = (subAction.Empty) ?
+                    $" {{}}," : $" {subAction.SaveAsLuaTableInline()},";
+
+                subactionsData += (inLine) ?
+                    subactionData : $"{prefix}\t    {subactionData}\n";
+            }
+
+            foreach (var parameter in Parameters)
+            {
+                string parameterValue =
+                    (parameter.CurrentValueType == BaseParameter.ValueType.Other) ?
+                    $"\'{parameter.Value}\'" : parameter.Value;
+
+                parametersData += (parameterValue == string.Empty) ?
+                    $" -1," : $" {parameterValue},";
+            }
+
+            if (inLine)
+            {
+                return $"{prefix}{{{subactionsData}{parametersData} }},\n";
+            }
+            else
+            {
+                return $"{prefix}{{\n" +
+                    $"{subactionsData}" +
+                    $"{prefix}\t{parametersData}\n" +
+                    $"{prefix}}},\n";
+            }
+            
         }
 
         public override string SaveAsExcel()

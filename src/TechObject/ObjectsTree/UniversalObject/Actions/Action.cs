@@ -355,10 +355,6 @@ namespace TechObject
             }
 
             string res = string.Empty;
-            if (luaName != string.Empty)
-            {
-                res += $"{LuaName} = ";
-            }
 
             res += $"{{ ";
 
