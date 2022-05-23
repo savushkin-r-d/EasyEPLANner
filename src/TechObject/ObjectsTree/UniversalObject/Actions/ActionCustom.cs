@@ -173,8 +173,18 @@ namespace TechObject
         public override void AddDev(int index, int groupNumber,
             string subActionLuaName)
         {
-            var subAction = SubActions.Where(x => x.LuaName == subActionLuaName)
-                .FirstOrDefault();
+            IAction subAction; 
+
+            if (subActionLuaName.StartsWith("A_"))
+            {
+                subAction = SubActions[int.Parse(subActionLuaName.Substring(2))];       
+            }
+            else
+            {
+                subAction = SubActions.Where(x => x.LuaName == subActionLuaName)
+                    .FirstOrDefault();
+            }
+            
             if (subAction != null)
             {
                 subAction.AddDev(index, 0, string.Empty);
@@ -184,8 +194,18 @@ namespace TechObject
         public override void AddParam(object val, string paramName,
             int groupNumber)
         {
-            var parameter = parameters.Where(x => x.LuaName == paramName)
-                .FirstOrDefault();
+            BaseParameter parameter;
+
+            if (paramName.StartsWith("P_"))
+            {
+                parameter = Parameters[int.Parse(paramName.Substring(2))];
+            }
+            else
+            {
+                parameter = parameters.Where(x => x.LuaName == paramName)
+                    .FirstOrDefault();
+            }
+            
             bool haveParameter = parameter != null;
             if (haveParameter)
             {

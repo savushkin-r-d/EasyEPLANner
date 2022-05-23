@@ -291,15 +291,25 @@ function proc_to_step_by_condition(step, value)
 end
 
 function proc_action_custom(step, group, action_name, group_number)
+    local action_number = 0;
+    local parameter_number = 0;
     for sub_action_name, data in pairs (group) do
         if (type(data) == "table") then
             for _, dev_name in pairs (data) do
+                if type(tonumber(sub_action_name)) == 'number' then
+                    sub_action_name = "A_"..tostring(action_number)
+                end
                 add_dev(step, action_name, dev_name, 
                     group_number, sub_action_name)
             end
+            action_number = action_number + 1
         else
+            if type(tonumber(sub_action_name)) == 'number' then
+                sub_action_name = "P_"..tostring(parameter_number)
+            end
             step:AddParam(action_name, data, sub_action_name,
                 group_number)
+            parameter_number = parameter_number + 1
         end
     end
 end
