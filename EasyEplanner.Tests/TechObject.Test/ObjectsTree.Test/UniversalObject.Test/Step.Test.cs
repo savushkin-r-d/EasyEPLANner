@@ -32,8 +32,8 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(actualName, expectedName);
         }
 
-        [TestCase(true, 12)]
-        [TestCase(false, 13)]
+        [TestCase(true, 13)]
+        [TestCase(false, 14)]
         public void Constructor_NewStep_CheckActionsCount(bool isMainStep,
             int expectedCount)
         {
@@ -44,8 +44,8 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(expectedCount, actualCount);
         }
 
-        [TestCase(true, 12)]
-        [TestCase(false, 15)]
+        [TestCase(true, 13)]
+        [TestCase(false, 16)]
         public void Constructor_NewStep_CheckItemsCount(bool isMainStep,
             int expectedCount)
         {
@@ -74,6 +74,7 @@ namespace EasyEplanner.Tests
         {
             var checkedDevices = "checked_devices";
             var openedDevices = "opened_devices";
+            var delayOpenedDevices = "delay_opened_devices";
             var openedReverseDevices = "opened_reverse_devices";
             var closedDevices = "closed_devices";
             var openedUpperSeats = "opened_upper_seat_v";
@@ -94,6 +95,7 @@ namespace EasyEplanner.Tests
                 {
                     checkedDevices,
                     openedDevices,
+                    delayOpenedDevices,
                     openedReverseDevices,
                     closedDevices,
                     openedUpperSeats,
@@ -115,6 +117,7 @@ namespace EasyEplanner.Tests
                 {
                     checkedDevices,
                     openedDevices,
+                    delayOpenedDevices,
                     openedReverseDevices,
                     closedDevices,
                     openedUpperSeats,
@@ -158,6 +161,7 @@ namespace EasyEplanner.Tests
 
             DrawInfo.Style checkedDevices = greenBox;
             DrawInfo.Style openedDevices = greenBox;
+            DrawInfo.Style delayOpenedDevices = redBox;
             DrawInfo.Style openedReverseDevices = greenBox;
             DrawInfo.Style closedDevices = redBox;
             DrawInfo.Style openedUpperSeats = greenUpBox;
@@ -177,6 +181,7 @@ namespace EasyEplanner.Tests
                 {
                     checkedDevices,
                     openedDevices,
+                    delayOpenedDevices,
                     openedReverseDevices,
                     closedDevices,
                     openedUpperSeats,
@@ -198,6 +203,7 @@ namespace EasyEplanner.Tests
                 {
                     checkedDevices,
                     openedDevices,
+                    delayOpenedDevices,
                     openedReverseDevices,
                     closedDevices,
                     openedUpperSeats,
@@ -246,6 +252,13 @@ namespace EasyEplanner.Tests
             EplanDevice.DeviceType[] allTypesAllowed = null;
 
             var openDevice = new EplanDevice.DeviceType[]
+            {
+                EplanDevice.DeviceType.V,
+                EplanDevice.DeviceType.DO,
+                EplanDevice.DeviceType.M
+            };
+
+            var DelayOpenDevice = new EplanDevice.DeviceType[]
             {
                 EplanDevice.DeviceType.V,
                 EplanDevice.DeviceType.DO,
@@ -316,6 +329,7 @@ namespace EasyEplanner.Tests
                 {
                     allTypesAllowed,
                     openDevice,
+                    DelayOpenDevice,
                     openReverse,
                     closeDevice,
                     openUpperSeats,
@@ -336,6 +350,7 @@ namespace EasyEplanner.Tests
                 {
                     allTypesAllowed,
                     openDevice,
+                    DelayOpenDevice,
                     openReverse,
                     closeDevice,
                     openUpperSeats,
@@ -411,6 +426,7 @@ namespace EasyEplanner.Tests
                 {
                     allSubTypesAllowed,
                     allSubTypesAllowed,
+                    allSubTypesAllowed,
                     openReverse,
                     allSubTypesAllowed,
                     openUpperSeats,
@@ -429,6 +445,7 @@ namespace EasyEplanner.Tests
                 true,
                 new List<EplanDevice.DeviceSubType[]>()
                 {
+                    allSubTypesAllowed,
                     allSubTypesAllowed,
                     allSubTypesAllowed,
                     openReverse,
@@ -473,6 +490,7 @@ namespace EasyEplanner.Tests
         {
             var checkedDevices = ImageIndexEnum.NONE;
             var openedDevices = ImageIndexEnum.ActionON;
+            var delayOpenedDevices = ImageIndexEnum.NONE;
             var openedReverseDevices = ImageIndexEnum.NONE;
             var closedDevices = ImageIndexEnum.ActionOFF;
             var openedUpperSeats = ImageIndexEnum.ActionWashUpperSeats;
@@ -492,6 +510,7 @@ namespace EasyEplanner.Tests
                 {
                     checkedDevices,
                     openedDevices,
+                    delayOpenedDevices,
                     openedReverseDevices,
                     closedDevices,
                     openedUpperSeats,
@@ -513,6 +532,7 @@ namespace EasyEplanner.Tests
                 {
                     checkedDevices,
                     openedDevices,
+                    delayOpenedDevices,
                     openedReverseDevices,
                     closedDevices,
                     openedUpperSeats,
@@ -554,6 +574,7 @@ namespace EasyEplanner.Tests
             Type actionGroup = typeof(ActionGroup);
             Type actionGroupWash = typeof(ActionGroupWash);
             Type actionToStepByCondition = typeof(ActionToStepByCondition);
+            Type actionGroupCustom = typeof(ActionGroupCustom);
 
             Type checkedDevices = action;
             Type openedDevices = action;
@@ -572,6 +593,7 @@ namespace EasyEplanner.Tests
             {
                 checkedDevices,
                 openedDevices,
+                actionGroupCustom,
                 openedReverseDevices,
                 closedDevices,
                 openedUpperSeats,
@@ -588,6 +610,7 @@ namespace EasyEplanner.Tests
             {
                 checkedDevices,
                 openedDevices,
+                actionGroupCustom,
                 openedReverseDevices,
                 closedDevices,
                 openedUpperSeats,

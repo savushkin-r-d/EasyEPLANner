@@ -140,6 +140,7 @@ end
 function proc_actions(step, value, is_runtime_step)
     proc(step, value, "checked_devices")
     proc(step, value, "opened_devices")
+    proc_action_custom_groups(step, value, "delay_opened_devices")
     proc(step, value, "opened_reverse_devices")
     proc(step, value, "closed_devices")
     proc_groups(step, value, "opened_upper_seat_v")
@@ -269,6 +270,44 @@ function proc_to_step_by_condition(step, value)
                         group_n = group_n + 1
                     end
                 end
+            end
+        end
+    end
+end
+
+function proc_action_custom(step, group, action_name, group_number)
+    local action_number = 0;
+    local parameter_number = 0;
+    for sub_action_name, data in pairs (group) do
+        if (type(data) == "table") then
+            for _, dev_name in pairs (data) do
+                if type(tonumber(sub_action_name)) == 'number' then
+                    sub_action_name = "A_"..tostring(action_number)
+                end
+                add_dev(step, action_name, dev_name, 
+                    group_number, sub_action_name)
+            end
+            action_number = action_number + 1
+        else
+            if type(tonumber(sub_action_name)) == 'number' then
+                sub_action_name = "P_"..tostring(parameter_number)
+            end
+            if data ~= -1 then
+                step:AddParam(action_name, data, sub_action_name,
+                    group_number)
+            end
+            parameter_number = parameter_number + 1
+        end
+    end
+end
+
+function proc_action_custom_groups(step, actions, action_name)
+    for current_action_name, action in pairs(actions) do
+        if action_name == current_action_name then
+            local group_number = 0       
+            for _, group in pairs(action) do
+                proc_action_custom(step, group, action_name, group_number)
+                group_number = group_number + 1
             end
         end
     end

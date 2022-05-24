@@ -45,7 +45,7 @@ namespace TechObject
             var checkedDevices = new Action("Проверяемые устройства",
                 this, "checked_devices", null, null);
             actions.Add(checkedDevices);
-
+            
             var openDevices = new Action(openDevicesActionName, this,
                 "opened_devices",
                 new EplanDevice.DeviceType[]
@@ -56,6 +56,28 @@ namespace TechObject
                 });
             openDevices.ImageIndex = ImageIndexEnum.ActionON;
             actions.Add(openDevices);
+
+
+            var openDevicesActionGroup = new ActionGroupCustom(
+                "Включать с задержкой", this, "delay_opened_devices",
+                () => 
+                {
+                    var openedDeviceAction = new ActionCustom("Группа",
+                        this, "");
+                    openedDeviceAction.CreateAction(new Action("Включать",
+                        this,"",
+                        new EplanDevice.DeviceType[]
+                        {
+                            EplanDevice.DeviceType.V,
+                            EplanDevice.DeviceType.DO,
+                            EplanDevice.DeviceType.M
+                        }));
+                    openedDeviceAction.CreateParameter(new ActiveParameter("",
+                        "Задержка включения"));
+                    return openedDeviceAction;
+                });
+            actions.Add(openDevicesActionGroup);
+
 
             var openReverse = new Action("Включать реверс", this,
                 "opened_reverse_devices",

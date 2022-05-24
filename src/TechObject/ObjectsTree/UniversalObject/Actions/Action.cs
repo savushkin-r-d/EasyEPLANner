@@ -60,6 +60,13 @@ namespace TechObject
         string SaveAsLuaTable(string prefix);
 
         /// <summary>
+        /// Сохраняет устройства действия в одну строку без префикса:
+        /// "{ 'dev1', 'dev2', 'dev3' }"
+        /// </summary>
+        /// <returns>Описание Lua в виде одной строки</returns>
+        string SaveAsLuaTableInline();
+
+        /// <summary>
         /// Сохранения действия в клетке Excel
         /// </summary>
         /// <returns>Описание действия в клетке Excel</returns>
@@ -336,6 +343,40 @@ namespace TechObject
             res += "\n";
 
             res += $"{prefix}\t}},\n";
+            return res;
+        }
+
+        public string SaveAsLuaTableInline()
+        {
+            if (deviceIndex.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            string res = string.Empty;
+
+            res += $"{{ ";
+
+            int devicesCounter = 0;
+            foreach (int index in deviceIndex)
+            {
+                var device = deviceManager.GetDeviceByIndex(index);
+                string devName = device.Name;
+                if (devName != StaticHelper.CommonConst.Cap)
+                {
+                    devicesCounter++;
+                    res += $"'{devName}', ";
+                }
+            }
+
+            if (devicesCounter == 0)
+            {
+                return string.Empty;
+            }
+
+            res = res.Remove(res.Length - 2, 2);
+            res += $" }}";
+
             return res;
         }
 

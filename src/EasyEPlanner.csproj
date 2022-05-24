@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -342,6 +342,8 @@
     <Compile Include="TechObject\ObjectsTree\S88Object.cs" />
     <Compile Include="TechObject\ObjectsTree\ProcessCell.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\Action.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\ActionCustom.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\ActionCustomGroup.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\ActionGroupWash.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\ActionToStepByCondition.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\ActionWash.cs" />
