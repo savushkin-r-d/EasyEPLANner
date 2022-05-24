@@ -61,7 +61,7 @@ namespace TechObject
 
         /// <summary>
         /// Сохраняет устройства действия в одну строку без префикса:
-        /// "LuaName = { 'dev1', 'dev2', 'dev3' }"
+        /// "{ 'dev1', 'dev2', 'dev3' }"
         /// </summary>
         /// <returns>Описание Lua в виде одной строки</returns>
         string SaveAsLuaTableInline();
@@ -317,10 +317,9 @@ namespace TechObject
             if (LuaName != string.Empty)
             {
                 res += $"{LuaName} = ";
-                res += $"--{name}\n";
             }
 
-            res += $"{prefix}\t{{\n";
+            res += $"--{name}\n{prefix}\t{{\n";
             res += $"{prefix}\t";
 
             int devicesCounter = 0;

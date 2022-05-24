@@ -140,7 +140,7 @@ end
 function proc_actions(step, value, is_runtime_step)
     proc(step, value, "checked_devices")
     proc(step, value, "opened_devices")
-    proc_action_custom_groups(step, value, "opened_devices_delay")
+    proc_action_custom_groups(step, value, "delay_opened_devices")
     proc(step, value, "opened_reverse_devices")
     proc(step, value, "closed_devices")
     proc_groups(step, value, "opened_upper_seat_v")
@@ -171,23 +171,8 @@ function proc(step, actions, action_name, group_number, sub_action_name)
         return
     end
 
-    is_old_version = false;
-    if action_name == "opened_devices"
-        --or action_name == "closed_devices"
-        --or action_name == "opened_reverse_devices" 
-        then
-        action_name_new_version = action_name.."_delay"
-        is_old_version = true 
-    end
-
     for current_action_name, devices in pairs (actions) do
         if (current_action_name == action_name and devices) then
-            if(is_old_version) then -- Совместимость со старой версией
-                for _, dev_name in pairs (devices) do
-                    add_dev(step, action_name_new_version, dev_name, 
-                        group_number, action_name)
-                end
-            end
             for _, dev_name in pairs (devices) do
                 add_dev(step, action_name, dev_name, group_number,
                     sub_action_name)
@@ -307,8 +292,10 @@ function proc_action_custom(step, group, action_name, group_number)
             if type(tonumber(sub_action_name)) == 'number' then
                 sub_action_name = "P_"..tostring(parameter_number)
             end
-            step:AddParam(action_name, data, sub_action_name,
-                group_number)
+            if data ~= -1 then
+                step:AddParam(action_name, data, sub_action_name,
+                    group_number)
+            end
             parameter_number = parameter_number + 1
         end
     end

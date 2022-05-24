@@ -41,9 +41,25 @@ namespace TechObject
         /// </summary>
         /// <param name="isMainStep">Главный шаг</param>
         private void AddDefaultActions(bool isMainStep)
-        {     
+        {
+            var checkedDevices = new Action("Проверяемые устройства",
+                this, "checked_devices", null, null);
+            actions.Add(checkedDevices);
+            
+            var openDevices = new Action(openDevicesActionName, this,
+                "opened_devices",
+                new EplanDevice.DeviceType[]
+                {
+                    EplanDevice.DeviceType.V,
+                    EplanDevice.DeviceType.DO,
+                    EplanDevice.DeviceType.M
+                });
+            openDevices.ImageIndex = ImageIndexEnum.ActionON;
+            actions.Add(openDevices);
+
+
             var openDevicesActionGroup = new ActionGroupCustom(
-                "Включение устройств", this, "opened_devices_delay",
+                "Включать с задержкой", this, "delay_opened_devices",
                 () => 
                 {
                     var openedDeviceAction = new ActionCustom("Группа",
@@ -60,7 +76,6 @@ namespace TechObject
                         "Задержка включения"));
                     return openedDeviceAction;
                 });
-            openDevicesActionGroup.ImageIndex = ImageIndexEnum.ActionON;
             actions.Add(openDevicesActionGroup);
 
 

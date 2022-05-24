@@ -129,16 +129,33 @@ namespace TechObject
             var subactionsData = string.Empty;
             var parametersData = string.Empty;
 
-            bool inLine = SubActions.Count <= 1 && Parameters.Count <= 1;
+            int lastFilledSubaction = SubActions
+                .FindLastIndex(sa => sa.IsFilled);
+            int lastFilledParameter = Parameters
+                .FindLastIndex(p => p.Value != string.Empty);
+
+            bool inLine = lastFilledSubaction <= 1 &&
+                lastFilledParameter <= 1;
+
+            int index = 0;
 
             foreach (var subAction in SubActions)
             {
                 var subactionData = (subAction.Empty) ?
-                    $" {{}}," : $" {subAction.SaveAsLuaTableInline()},";
+                    $" {{}}," : $"{subAction.SaveAsLuaTableInline()},";
 
                 subactionsData += (inLine) ?
-                    subactionData : $"{prefix}\t    {subactionData}\n";
+                    subactionData : $"{prefix}\t{subactionData}\n";
+
+                if (index == lastFilledSubaction)
+                {
+                    break;
+                }
+
+                ++index;
             }
+
+            index = 0;
 
             foreach (var parameter in Parameters)
             {
@@ -148,11 +165,18 @@ namespace TechObject
 
                 parametersData += (parameterValue == string.Empty) ?
                     $" -1," : $" {parameterValue},";
+
+                if (index == lastFilledParameter)
+                {
+                    break;
+                }
+
+                ++index;
             }
 
             if (inLine)
             {
-                return $"{prefix}{{{subactionsData}{parametersData} }},\n";
+                return $"{prefix}{{ {subactionsData.Trim()} {parametersData.Trim()} }},\n";
             }
             else
             {
@@ -167,6 +191,28 @@ namespace TechObject
         public override string SaveAsExcel()
         {
             string res = string.Empty;
+
+            foreach (var subaction in SubActions)
+            {
+                var subactionData = subaction.SaveAsExcel();
+                
+                if (subactionData != string.Empty)
+                {
+                    res += subactionData + ";\n";
+                }
+            }
+
+            int parameterIndex = 1;
+            foreach (var parameter in Parameters)
+            {
+                if (parameter.Value != string.Empty)
+                {
+                    var parameterName = (parameter.LuaName != string.Empty) ?
+                        $"{parameter.LuaName}: " : $"par{parameterIndex++}";
+                    res += $"{parameterName} = {parameter.Value} \n";
+                }
+            }
+
             return res;
         }
 
@@ -236,6 +282,13 @@ namespace TechObject
 
                 return items;
             }
+        }
+
+        public override void GetDisplayObjects(out EplanDevice.DeviceType[] devTypes,
+            out EplanDevice.DeviceSubType[] devSubTypes, out bool displayParameters)
+        {
+            SubActions.First().GetDisplayObjects(out devTypes, out devSubTypes,
+                out displayParameters);
         }
 
         public override bool Delete(object child)

@@ -142,6 +142,13 @@ namespace TechObject
             return false;
         }
 
+        public override void GetDisplayObjects(out EplanDevice.DeviceType[] devTypes,
+            out EplanDevice.DeviceSubType[] devSubTypes, out bool displayParameters)
+        {
+            SubActions.First().GetDisplayObjects(out devTypes, out devSubTypes,
+                out displayParameters);
+        }
+
         override public bool IsInsertable
         {
             get
