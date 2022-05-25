@@ -82,10 +82,10 @@ namespace TechObject
             {
                 return SaveAsLuaTableShortFormat(prefix);
             }
-
+  
             foreach (var subAction in SubActions)
             {
-                 group += $"\n{subAction.SaveAsLuaTable(prefix + "\t")}";
+                 group += $"{subAction.SaveAsLuaTable(prefix + "\t")}";
             }
 
             foreach (var parameter in Parameters)
@@ -96,9 +96,15 @@ namespace TechObject
 
                 if (parameterValue != string.Empty)
                 {
-                    group += $"{prefix}\t{parameter.LuaName} = {parameterValue} --{parameter.Name},\n";
+                    group += $"{prefix}\t{parameter.LuaName} = {parameterValue},";
+                    if (parameter.Name != string.Empty)
+                    {
+                        group += $" --{parameter.Name}";
+                    }
+                    group += "\n";
                 }
             }
+            group = group.TrimEnd('\n');
 
             if(group != string.Empty)
             {
@@ -106,8 +112,9 @@ namespace TechObject
                 res += (luaName != string.Empty)? $"{LuaName} = " : "";
                 res += (Name != string.Empty) ? $"--{Name}" : "";
                 res += (LuaName != string.Empty || Name != string.Empty)?
-                    "\n" : "";
-                res += $"{prefix}\t{{{group}\n" +
+                    $"\n{prefix}" : "";
+                res += $"\t{{\n" +
+                    $"{group}\n" +
                     $"{prefix}\t}},\n";
             }
                 
@@ -134,8 +141,8 @@ namespace TechObject
             int lastFilledParameter = Parameters
                 .FindLastIndex(p => p.Value != string.Empty);
 
-            bool inLine = lastFilledSubaction <= 1 &&
-                lastFilledParameter <= 1;
+            bool inLine = lastFilledSubaction == 0 &&
+                lastFilledParameter == 0;
 
             int index = 0;
 

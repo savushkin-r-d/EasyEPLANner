@@ -501,7 +501,7 @@ namespace Tests.TechObject
             var okCodeNoLua = new object[]
             {
                 name, devName, prefix, new int[] { 2, 4, 6 }, string.Empty,
-                $"{prefix}--{name}\n{prefix}\t{{\n" +
+                $"{prefix} --{name}\n{prefix}\t{{\n" +
                 $"{prefix}\t" +
                 $"'{devName}', " + $"'{devName}', " + $"'{devName}'" +
                 "\n" +
