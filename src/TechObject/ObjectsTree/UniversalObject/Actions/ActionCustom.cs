@@ -149,7 +149,7 @@ namespace TechObject
             foreach (var subAction in SubActions)
             {
                 var subactionData = (subAction.Empty) ?
-                    $" {{}}," : $"{subAction.SaveAsLuaTableInline()},";
+                    $"{{}}," : $"{subAction.SaveAsLuaTableInline()},";
 
                 subactionsData += (inLine) ?
                     subactionData : $"{prefix}\t{subactionData}\n";

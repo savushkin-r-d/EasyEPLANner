@@ -85,13 +85,10 @@ namespace Tests.TechObject
             var deviceName = "device";
             var groupActionLuaName = "groupAction";
             var action1_LuaName = "action1";
-            var action2_LuaName = "action2";
             var parameter1_LuaName = "parameter1";
-            var parameter2_LauName = "parameter2";
 
             var param1_value = 1;
             var param2_value = 2;
-
             var devs = new int[] { 1, 2 };
 
             var validDevMock = new Mock<EplanDevice.IDevice>();
@@ -197,6 +194,46 @@ namespace Tests.TechObject
                 $"{prefix}\t}},\n" +
                 $"{prefix}\t}},\n";
 
+            var actionSF_3A_3P_withEmpties = new ActionGroupCustom("", null, groupActionLuaName,
+                () =>
+                {
+                    var openedDeviceAction = new ActionCustom("",
+                        null, "");
+                    openedDeviceAction.CreateAction(new Action("", null,
+                        "", null, null, null,
+                        deviceManagerMock.Object));
+                    openedDeviceAction.CreateAction(new Action("", null,
+                        "", null, null, null,
+                        deviceManagerMock.Object));
+                    openedDeviceAction.CreateAction(new Action("", null,
+                        "", null, null, null,
+                        deviceManagerMock.Object));
+
+                    openedDeviceAction.CreateParameter(
+                        new ActiveParameter("", ""));
+                    openedDeviceAction.CreateParameter(
+                        new ActiveParameter("", ""));
+                    openedDeviceAction.CreateParameter(
+                        new ActiveParameter("", ""));
+
+                    return openedDeviceAction;
+                });
+
+            actionSF_3A_3P_withEmpties.SubActions[0].SubActions[1]
+                .DeviceIndex.AddRange(devs);
+            actionSF_3A_3P_withEmpties.AddParam(param2_value, "P_1", 0);
+
+            var actionSF_3A_3P_withEmpties_Code =
+                $"{prefix}{groupActionLuaName} =\n" +
+                $"{prefix}\t{{\n" +
+                $"{prefix}\t{{\n" +
+                $"{prefix}\t\t{{}},\n" +
+                $"{prefix}\t\t{{ '{deviceName}', '{deviceName}' }},\n" +
+                $"{prefix}\t\t -1, {param2_value},\n" +
+                $"{prefix}\t}},\n" +
+                $"{prefix}\t}},\n";
+
+
             var SaveDefaultFormat = new object[]
             {
                 actionDF,
@@ -215,11 +252,18 @@ namespace Tests.TechObject
                 actionSF_2A_2P_Code
             };
 
+            var SaveShortFormat_3A_3P_withEmpties = new object[]
+            {
+                actionSF_3A_3P_withEmpties,
+                actionSF_3A_3P_withEmpties_Code
+            };
+
             return new object[]
             {
                 SaveDefaultFormat,
                 SaveShortFormat_1A_1P,
                 SaveShortFormat_2A_2P,
+                SaveShortFormat_3A_3P_withEmpties,
             };
         }
 
