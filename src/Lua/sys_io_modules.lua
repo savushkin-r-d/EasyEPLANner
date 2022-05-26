@@ -824,6 +824,30 @@ local io_modules =
             AI_count = 2,
             Color = 'Green',
             },
+
+    [ 44 ] = {
+            n = 2688666,
+            name = 'AXL F RS UNI 1H',
+            description = 'Axioline F XC, communication module,'..
+                          'interface: RS-232, RS-485, RS-422',
+            addressSpaceType = 5,
+            typeName = 'Коммуникационный модуль',
+            groupName = 'AXL F',
+            channelClamps = {02},
+            channelAddressesIn = {-1,-1,0,-1,-1,-1,-1,-1,-1,-1,
+                                  -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+                                  -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+                                  -1,-1,-1,-1},
+            channelAddressesOut = {-1,-1,0,-1,-1,-1,-1,-1,-1,-1,
+                                  -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+                                  -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+                                  -1,-1,-1,-1},
+            DO_count = 0,
+            DI_count = 0,
+            AO_count = 10,
+            AI_count = 10,
+            Color = 'Gray',
+            },
     }
 
 return io_modules
