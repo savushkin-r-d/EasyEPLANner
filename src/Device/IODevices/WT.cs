@@ -40,9 +40,16 @@ namespace EplanDevice
                 case "WT_VIRT":
                     break;
 
+                case "WT_RS232":
+                    AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+
+                    parameters.Add(Parameter.P_C0, null);
+                    parameters.Add(Parameter.P_DT, null);
+                    break;
+
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (WT, WT_VIRT).\n", Name);
+                        " (WT, WT_RS232, WT_VIRT).\n", Name);
                     break;
             }
 
@@ -75,6 +82,8 @@ namespace EplanDevice
                             return "WT";
                         case DeviceSubType.WT_VIRT:
                             return "WT_VIRT";
+                        case DeviceSubType.WT_RS232:
+                            return "WT_RS232";
                     }
                     break;
             }
@@ -108,6 +117,16 @@ namespace EplanDevice
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
                                 {Tag.V, 1},
+                            };
+
+                        case DeviceSubType.WT_RS232:
+                            return new Dictionary<string, int>()
+                            {
+                                {Tag.ST, 1},
+                                {Tag.M, 1},
+                                {Tag.V, 1},
+                                {Parameter.P_DT, 1},
+                                {Tag.P_CZ, 1},
                             };
                     }
                     break;

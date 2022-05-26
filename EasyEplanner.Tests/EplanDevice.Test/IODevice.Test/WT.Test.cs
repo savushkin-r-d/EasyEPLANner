@@ -11,6 +11,7 @@ namespace Tests.EplanDevices
         const string Incorrect = "Incorrect";
         const string WT = "WT";
         const string WT_VIRT = "WT_VIRT";
+        const string WT_RS232 = "WT_RS232";
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
@@ -46,6 +47,8 @@ namespace Tests.EplanDevices
                 new object[] { DeviceSubType.WT_VIRT, WT_VIRT,
                     GetRandomWTDevice() },
                 new object[] { DeviceSubType.WT, WT, GetRandomWTDevice() },
+                new object[] { DeviceSubType.WT_RS232, WT_RS232,
+                    GetRandomWTDevice() },
                 new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomWTDevice() },
             };
@@ -78,6 +81,7 @@ namespace Tests.EplanDevices
             {
                 new object[] { WT, string.Empty, GetRandomWTDevice() },
                 new object[] { WT, WT, GetRandomWTDevice() },
+                new object[] { WT_RS232, WT_RS232, GetRandomWTDevice() },
                 new object[] { string.Empty, Incorrect, GetRandomWTDevice() },
                 new object[] { WT_VIRT, WT_VIRT, GetRandomWTDevice() },
             };
@@ -125,12 +129,22 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.V, 1},
             };
 
+            var exportForWTRS232 = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Parameter.P_DT, 1},
+                {IODevice.Tag.P_CZ, 1},
+            };
+
             return new object[]
             {
                 new object[] {exportForWT, string.Empty, GetRandomWTDevice() },
                 new object[] {exportForWT, WT, GetRandomWTDevice() },
-                new object[] { exportForWTVirt, WT_VIRT, GetRandomWTDevice() },
+                new object[] {exportForWTVirt, WT_VIRT, GetRandomWTDevice() },
                 new object[] {null, Incorrect, GetRandomWTDevice() },
+                new object[] {exportForWTRS232, WT_RS232, GetRandomWTDevice() },
             };
         }
 
@@ -167,6 +181,12 @@ namespace Tests.EplanDevices
                 IODevice.Parameter.P_DT
             };
 
+            var parametersWT_RS232 = new string[]
+            {
+                IODevice.Parameter.P_C0,
+                IODevice.Parameter.P_DT
+            };
+
             return new object[]
             {
                 new object[]
@@ -192,7 +212,13 @@ namespace Tests.EplanDevices
                     new string[0],
                     Incorrect,
                     GetRandomWTDevice(),
-                }
+                },
+                new object[]
+                {
+                    parametersWT_RS232,
+                    WT_RS232,
+                    GetRandomWTDevice(),
+                },
             };
         }
 
@@ -246,6 +272,13 @@ namespace Tests.EplanDevices
                 { DI, 0 },
                 { DO, 0 },
             };
+            var RS232Channels = new Dictionary<string, int>()
+            {
+                { AI, 1 },
+                { AO, 0 },
+                { DI, 0 },
+                { DO, 0 },
+            };
 
             return new object[]
             {
@@ -272,7 +305,13 @@ namespace Tests.EplanDevices
                     emptyChannels,
                     WT_VIRT,
                     GetRandomWTDevice()
-                }
+                },
+                new object[]
+                {
+                    RS232Channels,
+                    WT_RS232,
+                    GetRandomWTDevice(),
+                },
             };
         }
 
