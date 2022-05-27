@@ -124,7 +124,7 @@ namespace EplanDevice
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
                                 {Tag.V, 1},
-                                {Parameter.P_CZ, 1},
+                                {Tag.P_CZ, 1},
                             };
                     }
                     break;
