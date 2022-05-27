@@ -134,7 +134,6 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.ST, 1},
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
-                {IODevice.Parameter.P_DT, 1},
                 {IODevice.Tag.P_CZ, 1},
             };
 
@@ -184,7 +183,6 @@ namespace Tests.EplanDevices
             var parametersWT_RS232 = new string[]
             {
                 IODevice.Parameter.P_C0,
-                IODevice.Parameter.P_DT
             };
 
             return new object[]
