@@ -316,10 +316,15 @@ namespace TechObject
             string res = prefix;
             if (LuaName != string.Empty)
             {
-                res += $"{LuaName} = ";
+                res += $"{LuaName} =";
             }
 
-            res += $"--{name}\n{prefix}\t{{\n";
+            if (Name != string.Empty)
+            {
+                res += $" --{name}";
+            }
+
+            res += $"\n{prefix}\t{{\n";
             res += $"{prefix}\t";
 
             int devicesCounter = 0;

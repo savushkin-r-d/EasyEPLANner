@@ -161,7 +161,7 @@ namespace EasyEplanner.Tests
 
             DrawInfo.Style checkedDevices = greenBox;
             DrawInfo.Style openedDevices = greenBox;
-            DrawInfo.Style delayOpenedDevices = redBox;
+            DrawInfo.Style delayOpenedDevices = greenBox;
             DrawInfo.Style openedReverseDevices = greenBox;
             DrawInfo.Style closedDevices = redBox;
             DrawInfo.Style openedUpperSeats = greenUpBox;

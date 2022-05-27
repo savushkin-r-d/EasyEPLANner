@@ -16,12 +16,11 @@ namespace TechObject
         /// <param name="name">Название действия</param>
         /// <param name="owner">Шаг</param>
         /// <param name="luaName">Название сохраняниемое в Lua</param>
-        /// <param name="actionCustomDeleagate">Делигат описывающий группу</param>
+        /// <param name="actionCustomDeleagate">Делегат описывающий группу</param>
         public ActionGroupCustom(string name, Step owner, string luaName,
             Func<ActionCustom> actionCustomDeleagate)
             : base(name, owner, luaName)
         {
-            //SubActions.Add(actionCustom);
             ActionCustomDelegate = actionCustomDeleagate;
             AddNewGroup();
         }
@@ -85,7 +84,14 @@ namespace TechObject
 
             if (groupData != string.Empty)
             {
-                res += $"{prefix}{luaName} = --{name}\n" +
+                if (name != string.Empty || luaName != string.Empty)
+                {
+                    res += prefix;
+                    res += luaName != string.Empty ? $"{luaName} =" : "";
+                    res += name != string.Empty ? $" --{name}" : "";
+                    res += "\n";
+                }
+                res += 
                     $"{prefix}\t{{\n{groupData}" +
                     $"{prefix}\t}},\n";
             }
