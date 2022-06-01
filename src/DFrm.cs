@@ -961,6 +961,14 @@ namespace EasyEPlanner
                         isDevVisible = true;
                     }
                 }
+
+                if (dev.DeviceType == EplanDevice.DeviceType.C)
+                {
+                    if (!noAssigmentBtn.Checked)
+                    {
+                        isDevVisible = true;
+                    }
+                }
             }
 
             return isDevVisible;
