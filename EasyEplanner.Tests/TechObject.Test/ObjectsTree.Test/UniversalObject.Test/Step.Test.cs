@@ -32,8 +32,8 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(actualName, expectedName);
         }
 
-        [TestCase(true, 13)]
-        [TestCase(false, 14)]
+        [TestCase(true, 14)]
+        [TestCase(false, 15)]
         public void Constructor_NewStep_CheckActionsCount(bool isMainStep,
             int expectedCount)
         {
@@ -44,8 +44,8 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(expectedCount, actualCount);
         }
 
-        [TestCase(true, 13)]
-        [TestCase(false, 16)]
+        [TestCase(true, 14)]
+        [TestCase(false, 17)]
         public void Constructor_NewStep_CheckItemsCount(bool isMainStep,
             int expectedCount)
         {
@@ -77,6 +77,7 @@ namespace EasyEplanner.Tests
             var delayOpenedDevices = "delay_opened_devices";
             var openedReverseDevices = "opened_reverse_devices";
             var closedDevices = "closed_devices";
+            var delayClosedDevices = "delay_closed_devices";
             var openedUpperSeats = "opened_upper_seat_v";
             var openedLowerSeats = "opened_lower_seat_v";
             var requiredFB = "required_FB";
@@ -98,6 +99,7 @@ namespace EasyEplanner.Tests
                     delayOpenedDevices,
                     openedReverseDevices,
                     closedDevices,
+                    delayClosedDevices,
                     openedUpperSeats,
                     openedLowerSeats,
                     requiredFB,
@@ -120,6 +122,7 @@ namespace EasyEplanner.Tests
                     delayOpenedDevices,
                     openedReverseDevices,
                     closedDevices,
+                    delayClosedDevices,
                     openedUpperSeats,
                     openedLowerSeats,
                     requiredFB,
@@ -164,6 +167,7 @@ namespace EasyEplanner.Tests
             DrawInfo.Style delayOpenedDevices = greenBox;
             DrawInfo.Style openedReverseDevices = greenBox;
             DrawInfo.Style closedDevices = redBox;
+            DrawInfo.Style delayClosedDevices = greenBox;
             DrawInfo.Style openedUpperSeats = greenUpBox;
             DrawInfo.Style openedLowerSeats = greenLowBox;
             DrawInfo.Style requiredFB = greenBox;
@@ -184,6 +188,7 @@ namespace EasyEplanner.Tests
                     delayOpenedDevices,
                     openedReverseDevices,
                     closedDevices,
+                    delayClosedDevices,
                     openedUpperSeats,
                     openedLowerSeats,
                     requiredFB,
@@ -206,6 +211,7 @@ namespace EasyEplanner.Tests
                     delayOpenedDevices,
                     openedReverseDevices,
                     closedDevices,
+                    delayClosedDevices,
                     openedUpperSeats,
                     openedLowerSeats,
                     requiredFB,
@@ -258,7 +264,7 @@ namespace EasyEplanner.Tests
                 EplanDevice.DeviceType.M
             };
 
-            var DelayOpenDevice = new EplanDevice.DeviceType[]
+            var delayOpenDevice = new EplanDevice.DeviceType[]
             {
                 EplanDevice.DeviceType.V,
                 EplanDevice.DeviceType.DO,
@@ -271,6 +277,13 @@ namespace EasyEplanner.Tests
             };
 
             var closeDevice = new EplanDevice.DeviceType[]
+            {
+                EplanDevice.DeviceType.V,
+                EplanDevice.DeviceType.DO,
+                EplanDevice.DeviceType.M
+            };
+
+            var delayCloseDevice = new EplanDevice.DeviceType[]
             {
                 EplanDevice.DeviceType.V,
                 EplanDevice.DeviceType.DO,
@@ -329,9 +342,10 @@ namespace EasyEplanner.Tests
                 {
                     allTypesAllowed,
                     openDevice,
-                    DelayOpenDevice,
+                    delayOpenDevice,
                     openReverse,
                     closeDevice,
+                    delayCloseDevice,
                     openUpperSeats,
                     openLowerSeats,
                     requiredFb,
@@ -350,9 +364,10 @@ namespace EasyEplanner.Tests
                 {
                     allTypesAllowed,
                     openDevice,
-                    DelayOpenDevice,
+                    delayOpenDevice,
                     openReverse,
                     closeDevice,
+                    delayCloseDevice,
                     openUpperSeats,
                     openLowerSeats,
                     requiredFb,
@@ -429,6 +444,7 @@ namespace EasyEplanner.Tests
                     allSubTypesAllowed,
                     openReverse,
                     allSubTypesAllowed,
+                    allSubTypesAllowed,
                     openUpperSeats,
                     openLowerSeats,
                     allSubTypesAllowed,
@@ -449,6 +465,7 @@ namespace EasyEplanner.Tests
                     allSubTypesAllowed,
                     allSubTypesAllowed,
                     openReverse,
+                    allSubTypesAllowed,
                     allSubTypesAllowed,
                     openUpperSeats,
                     openLowerSeats,
@@ -493,6 +510,7 @@ namespace EasyEplanner.Tests
             var delayOpenedDevices = ImageIndexEnum.NONE;
             var openedReverseDevices = ImageIndexEnum.NONE;
             var closedDevices = ImageIndexEnum.ActionOFF;
+            var delayClosedDevices = ImageIndexEnum.NONE;
             var openedUpperSeats = ImageIndexEnum.ActionWashUpperSeats;
             var openedLowerSeats = ImageIndexEnum.ActionWashLowerSeats;
             var requiredFB = ImageIndexEnum.ActionSignals;
@@ -513,6 +531,7 @@ namespace EasyEplanner.Tests
                     delayOpenedDevices,
                     openedReverseDevices,
                     closedDevices,
+                    delayClosedDevices,
                     openedUpperSeats,
                     openedLowerSeats,
                     requiredFB,
@@ -535,6 +554,7 @@ namespace EasyEplanner.Tests
                     delayOpenedDevices,
                     openedReverseDevices,
                     closedDevices,
+                    delayClosedDevices,
                     openedUpperSeats,
                     openedLowerSeats,
                     requiredFB,
@@ -596,6 +616,7 @@ namespace EasyEplanner.Tests
                 actionGroupCustom,
                 openedReverseDevices,
                 closedDevices,
+                actionGroupCustom,
                 openedUpperSeats,
                 openedLowerSeats,
                 requiredFB,
@@ -613,6 +634,7 @@ namespace EasyEplanner.Tests
                 actionGroupCustom,
                 openedReverseDevices,
                 closedDevices,
+                actionGroupCustom,
                 openedUpperSeats,
                 openedLowerSeats,
                 requiredFB,

@@ -109,6 +109,26 @@ namespace TechObject
             closeDevices.ImageIndex = ImageIndexEnum.ActionOFF;
             actions.Add(closeDevices);
 
+            var closeDevicesActionGroup = new ActionGroupCustom(
+                "Выключать с задержкой", this, "delay_closed_devices",
+                () =>
+                {
+                    var closedDeviceAction = new ActionCustom("Группа",
+                        this, "");
+                    closedDeviceAction.CreateAction(new Action("Выключать",
+                        this, "",
+                        new EplanDevice.DeviceType[]
+                        {
+                            EplanDevice.DeviceType.V,
+                            EplanDevice.DeviceType.DO,
+                            EplanDevice.DeviceType.M
+                        }));
+                    closedDeviceAction.CreateParameter(new ActiveParameter("",
+                        "Задержка выключения"));
+                    return closedDeviceAction;
+                });
+            actions.Add(closeDevicesActionGroup);
+
             var openUpperSeats = new ActionGroup("Верхние седла", this,
                 "opened_upper_seat_v",
                 new EplanDevice.DeviceType[]
