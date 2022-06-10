@@ -35,6 +35,7 @@ namespace StaticHelper
         /// элементов</param>
         public static void SetUpAdvTreeView(TreeViewAdv customizingView,
             string columnName, DrawEventHandler drawNodeDelegate,
+            DrawEventHandler drawNodeEditDelegate,
             NodeCheckBox customizingCheckBox,
             CheckStateChangedEventHandler checkStateChangedDelegate = null)
         {
@@ -50,9 +51,12 @@ namespace StaticHelper
             customizingView.RowHeight = 20;
 
             TreeColumn column = SetUpColumn(customizingView, columnName);
+            TreeColumn column2 = SetUpColumn(customizingView, "Значение");
+            
             SetUpNodeCheckBox(customizingView, column, customizingCheckBox,
                 checkStateChangedDelegate);
             SetUpNodeTextBox(customizingView, column, drawNodeDelegate);
+            SetUpNodeEditText(customizingView, column2, drawNodeEditDelegate);
         }
 
         /// <summary>
@@ -116,6 +120,22 @@ namespace StaticHelper
 
             customizingView.NodeControls.Add(nodeTextBox);
         }
+
+        private static void SetUpNodeEditText(TreeViewAdv customizingView,
+            TreeColumn column, DrawEventHandler drawNodeDelegate)
+        {
+            var nodeTextBox = new NodeTextBox();
+            nodeTextBox.DataPropertyName = "Value";
+            nodeTextBox.VerticalAlign = VerticalAlignment.Center;
+            nodeTextBox.TrimMultiLine = true;
+            nodeTextBox.EditEnabled = true;
+            nodeTextBox.ParentColumn = column;
+            nodeTextBox.DrawText +=
+                new EventHandler<DrawTextEventArgs>(drawNodeDelegate);
+
+            customizingView.NodeControls.Add(nodeTextBox);
+        }
+
         #endregion
 
         #region Настройка состояний CheckState для TreeViewAdv чекбоксов

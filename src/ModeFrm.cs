@@ -18,7 +18,8 @@ namespace EasyEPlanner
 
             const string columnName = "Операции";
             StaticHelper.GUIHelper.SetUpAdvTreeView(modesTreeViewAdv,
-                columnName, modesTreeViewAdv_DrawNode, nodeCheckBox);
+                columnName, modesTreeViewAdv_DrawNode,
+                modesTreeViewAdv_DrawNode, nodeCheckBox);
 
             dialogCallbackDelegate =
                 new PI.HookProc(DlgWndHookCallbackFunction);

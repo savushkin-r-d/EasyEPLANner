@@ -11,6 +11,7 @@ using StaticHelper;
 
 namespace EasyEPlanner
 {
+ 
     public partial class DFrm : Form
     {
         private static DFrm frm = null;
@@ -253,7 +254,9 @@ namespace EasyEPlanner
 
             const string columnName = "Устройства";
             StaticHelper.GUIHelper.SetUpAdvTreeView(devicesTreeViewAdv,
-                columnName, devicesTreeViewAdv_DrawNode, nodeCheckBox);
+                columnName, devicesTreeViewAdv_DrawNode,
+                devicesTreeViewAdv_DrawNode,
+                nodeCheckBox);
 
             dialogCallbackDelegate = new PI.HookProc(
                 DlgWndHookCallbackFunction);
@@ -363,7 +366,7 @@ namespace EasyEPlanner
             var model = new TreeModel();
             model.Nodes.Clear();
 
-            var root = new Node("Устройства проекта");
+            var root = new ColumnNode("Устройства проекта", "Значения");
             model.Nodes.Add(root);
             devicesTreeViewAdv.Model = model;
 
@@ -599,7 +602,7 @@ namespace EasyEPlanner
         private void FillDevicesNode(ref TreeModel treeModel)
         {
             string nodeName = "Устройства проекта";
-            var root = new Node(nodeName);
+            var root = new ColumnNode(nodeName, "Значения");
             treeModel.Nodes.Add(root);
 
             // Подтипы, которые отдельно записываем в устройства
@@ -755,7 +758,9 @@ namespace EasyEPlanner
                 dev.ObjectNumber, devTypeNode);
             Node devNode = MakeDeviceNode(devTypeNode, devObjectNode,
                 dev, deviceDescription);
-            bool isDevVisible = AddDevChannels(devNode, dev);
+            bool isDevVisible = AddDevChannels(devNode, dev) |
+                AddDevParametersAndProperties(devNode, dev);
+            
             HideIncorrectDeviceTypeSubType(devNode, isDevVisible, countDev, 
                 dev);
         }
@@ -961,17 +966,51 @@ namespace EasyEPlanner
                         isDevVisible = true;
                     }
                 }
-
-                if (dev.DeviceType == EplanDevice.DeviceType.C)
-                {
-                    if (!noAssigmentBtn.Checked)
-                    {
-                        isDevVisible = true;
-                    }
-                }
             }
 
             return isDevVisible;
+        }
+
+        private bool AddDevParametersAndProperties(Node devNode, EplanDevice.IODevice dev)
+        {
+            if ( (dev.Parameters.Count == 0 && dev.Parameters.Count == 0) || 
+                displayParamsBtn.Checked == false)
+            {
+                return false;
+            }
+
+            var parametersNode = new Node("Параметры");
+            if (dev.Parameters.Count > 0)
+            {     
+                devNode.Nodes.Add(parametersNode);
+                foreach (var parameter in dev.Parameters)
+                {
+                    var parameterNode = new ColumnNode(parameter.Key,
+                        parameter.Value.ToString());
+
+
+                    parameterNode.Tag = parameter;
+
+                    parametersNode.Nodes.Add(parameterNode);
+                }
+            }
+
+            var propertiesNode = new Node("Свойства");
+            if (dev.Properties.Count > 0)
+            {
+                devNode.Nodes.Add(propertiesNode);
+                foreach (var property in dev.Properties)
+                {
+                    var propertyNode = new ColumnNode(property.Key,
+                        property.Value.ToString());
+
+                    propertyNode.Tag = property;
+
+                    propertiesNode.Nodes.Add(propertyNode);
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -1035,7 +1074,8 @@ namespace EasyEPlanner
             int total = 0;
             foreach (var dev in deviceEnum)
             {
-                Node node = root.Nodes.Where(x => x.Text == dev.ToString())
+                Node node = root.Nodes
+                    .Where(x => x.Text == dev.ToString())
                     .FirstOrDefault();
                 total += countDev[dev.ToString()];
                 node.Text = dev.ToString() + 
@@ -1091,6 +1131,7 @@ namespace EasyEPlanner
                    if (checkDevTypeSubType)
                    {
                        res = x.Text.CompareTo(y.Text);
+
                        return res;
                    }
 
@@ -1113,6 +1154,7 @@ namespace EasyEPlanner
                    }
 
                    res = x.Text.CompareTo(y.Text);
+                   
                    return res;
                });
 
@@ -1429,6 +1471,26 @@ namespace EasyEPlanner
             }
         }
 
+        private void DisplayParamsBtn_Click(object sender, EventArgs e)
+        {
+            if (prevShowChannels == true)
+            {
+                if (displayParamsBtn.Checked)
+                {
+                    displayParamsBtn.Checked = false;
+                }
+                else
+                {
+                    displayParamsBtn.Checked = true;
+                }
+
+                OnSetNewValue onSetNewValue = null;
+                bool isRebuiltTree = true;
+                ShowDisplayObjects(treeViewItemLastSelected, onSetNewValue,
+                    isRebuiltTree);
+            }
+        }
+
         private void synchBtn_Click(object sender, EventArgs e)
         {
             bool saveDescrSilentMode = false;
@@ -1489,5 +1551,7 @@ namespace EasyEPlanner
                 devicesTreeViewAdv.AutoSizeColumn(column);
             }
         }
+
+        
     }
 }

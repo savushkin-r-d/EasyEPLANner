@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
             {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DFrm));
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
@@ -35,6 +36,7 @@
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.noAssigmentBtn = new System.Windows.Forms.ToolStripButton();
+            this.displayParamsBtn = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.synchBtn = new System.Windows.Forms.ToolStripButton();
             this.devicesTreeViewAdv = new Aga.Controls.Tree.TreeViewAdv();
@@ -53,11 +55,12 @@
             this.toolStripButton4,
             this.toolStripSeparator1,
             this.noAssigmentBtn,
+            this.displayParamsBtn,
             this.toolStripSeparator2,
             this.synchBtn});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(193, 25);
+            this.toolStrip.Size = new System.Drawing.Size(194, 25);
             this.toolStrip.TabIndex = 1;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -125,6 +128,18 @@
             this.noAssigmentBtn.Text = "Без привязки";
             this.noAssigmentBtn.Click += new System.EventHandler(this.noAssigmentBtn_Click);
             // 
+            // displayParamsBtn
+            // 
+            this.displayParamsBtn.Checked = true;
+            this.displayParamsBtn.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.displayParamsBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.displayParamsBtn.Image = ((System.Drawing.Image)(resources.GetObject("displayParamsBtn.Image")));
+            this.displayParamsBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.displayParamsBtn.Name = "displayParamsBtn";
+            this.displayParamsBtn.Size = new System.Drawing.Size(23, 22);
+            this.displayParamsBtn.Text = "Отображать параметры и свойства";
+            this.displayParamsBtn.Click += new System.EventHandler(this.DisplayParamsBtn_Click);
+            // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
@@ -136,7 +151,7 @@
             this.synchBtn.Image = global::EasyEPlanner.Properties.Resources.refresh;
             this.synchBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.synchBtn.Name = "synchBtn";
-            this.synchBtn.Size = new System.Drawing.Size(23, 22);
+            this.synchBtn.Size = new System.Drawing.Size(23, 20);
             this.synchBtn.Text = "Обновить";
             this.synchBtn.Click += new System.EventHandler(this.synchBtn_Click);
             // 
@@ -159,7 +174,7 @@
             this.devicesTreeViewAdv.NodeFilter = null;
             this.devicesTreeViewAdv.SelectedNode = null;
             this.devicesTreeViewAdv.ShowNodeToolTips = true;
-            this.devicesTreeViewAdv.Size = new System.Drawing.Size(304, 804);
+            this.devicesTreeViewAdv.Size = new System.Drawing.Size(336, 804);
             this.devicesTreeViewAdv.TabIndex = 5;
             this.devicesTreeViewAdv.Text = "devicesTreeViewAdv";
             this.devicesTreeViewAdv.UseColumns = true;
@@ -170,7 +185,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(304, 830);
+            this.ClientSize = new System.Drawing.Size(336, 830);
             this.Controls.Add(this.devicesTreeViewAdv);
             this.Controls.Add(this.toolStrip);
             this.MinimizeBox = false;
@@ -198,5 +213,6 @@
         private System.Windows.Forms.ToolStripButton synchBtn;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private Aga.Controls.Tree.TreeViewAdv devicesTreeViewAdv;
+        private System.Windows.Forms.ToolStripButton displayParamsBtn;
     }
     }
