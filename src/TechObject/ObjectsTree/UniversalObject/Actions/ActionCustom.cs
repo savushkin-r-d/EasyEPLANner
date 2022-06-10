@@ -209,14 +209,13 @@ namespace TechObject
                 }
             }
 
-            int parameterIndex = 1;
             foreach (var parameter in Parameters)
             {
                 if (parameter.Value != string.Empty)
                 {
-                    var parameterName = (parameter.LuaName != string.Empty) ?
-                        $"{parameter.LuaName}: " : $"par{parameterIndex++}";
-                    res += $"{parameterName} = {parameter.Value} \n";
+                    res +=  (parameter.Name == string.Empty)?
+                        $"{parameter.Value};\n" :
+                        $"{parameter.Name} = {parameter.Value};\n";
                 }
             }
 
