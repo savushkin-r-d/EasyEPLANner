@@ -990,9 +990,7 @@ namespace EasyEPlanner
                     var parameterNode = new ColumnNode(parameter.Key,
                         parameter.Value.ToString());
 
-
                     parameterNode.Tag = parameter;
-
                     parametersNode.Nodes.Add(parameterNode);
                 }
             }
@@ -1007,7 +1005,6 @@ namespace EasyEPlanner
                         property.Value.ToString());
 
                     propertyNode.Tag = property;
-
                     propertiesNode.Nodes.Add(propertyNode);
                 }
             }
@@ -1561,7 +1558,5 @@ namespace EasyEPlanner
                 devicesTreeViewAdv.AutoSizeColumn(column);
             }
         }
-
-        
     }
 }
