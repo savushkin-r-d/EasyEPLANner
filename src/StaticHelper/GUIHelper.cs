@@ -167,14 +167,6 @@ namespace StaticHelper
 
             customizingView.NodeControls.Add(nodeTextBox);
         }
-
-
-        private static void Edit(object sender,
-            Aga.Controls.Tree.NodeControls.EditEventArgs e)
-        {
-
-        }
-
         #endregion
 
         #region Настройка состояний CheckState для TreeViewAdv чекбоксов

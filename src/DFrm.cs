@@ -11,7 +11,6 @@ using StaticHelper;
 
 namespace EasyEPlanner
 {
- 
     public partial class DFrm : Form
     {
         private static DFrm frm = null;
@@ -1130,7 +1129,6 @@ namespace EasyEPlanner
                    if (checkDevTypeSubType)
                    {
                        res = x.Text.CompareTo(y.Text);
-
                        return res;
                    }
 
@@ -1153,7 +1151,6 @@ namespace EasyEPlanner
                    }
 
                    res = x.Text.CompareTo(y.Text);
-                   
                    return res;
                });
 
@@ -1195,7 +1192,6 @@ namespace EasyEPlanner
             {
                 functionAfterCheck = fn;
             }
-
 
             if (prevShowCheckboxes)
             {
@@ -1456,7 +1452,6 @@ namespace EasyEPlanner
             DrawTextEventArgs e)
         {
         }
-
 
         private void noAssigmentBtn_Click(object sender, EventArgs e)
         {
