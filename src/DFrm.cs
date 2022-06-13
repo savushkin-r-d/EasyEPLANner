@@ -252,10 +252,12 @@ namespace EasyEPlanner
         {
             InitializeComponent();
 
-            const string columnName = "Устройства";
+            const string columnName1 = "Устройства";
+            const string columnName2 = "Значения"; 
             StaticHelper.GUIHelper.SetUpAdvTreeView(devicesTreeViewAdv,
-                columnName, devicesTreeViewAdv_DrawNode,
-                devicesTreeViewAdv_DrawNode,
+                columnName1, columnName2,
+                devicesTreeViewAdv_DrawNodeColumn1,
+                devicesTreeViewAdv_DrawNodeColumn2,
                 nodeCheckBox);
 
             dialogCallbackDelegate = new PI.HookProc(
@@ -1197,8 +1199,10 @@ namespace EasyEPlanner
                 functionAfterCheck = fn;
             }
 
+
             if (prevShowCheckboxes)
             {
+                displayParamsBtn.Checked = false;
                 devicesTreeViewAdv.NodeControls.Insert(0, nodeCheckBox);
             }
             else
@@ -1420,7 +1424,7 @@ namespace EasyEPlanner
             FontStyle.Strikeout);
         private readonly Font boldFont = new Font(fName, 8, FontStyle.Bold);
 
-        private void devicesTreeViewAdv_DrawNode(object sender,
+        private void devicesTreeViewAdv_DrawNodeColumn1(object sender,
             DrawTextEventArgs e)
         {
             e.TextColor = Color.Black;
@@ -1450,6 +1454,12 @@ namespace EasyEPlanner
                 }
             }
         }
+
+        private void devicesTreeViewAdv_DrawNodeColumn2(object sender,
+            DrawTextEventArgs e)
+        {
+        }
+
 
         private void noAssigmentBtn_Click(object sender, EventArgs e)
         {

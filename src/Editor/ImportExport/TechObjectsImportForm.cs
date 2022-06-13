@@ -18,8 +18,8 @@ namespace Editor
 
             const string columnName = "Объекты";
             StaticHelper.GUIHelper.SetUpAdvTreeView(importingObjectsTree,
-                columnName, nodeTextBox_DrawText, nodeTextBox_DrawText,
-                nodeCheckBox, importingObjectsTree_ChangeCheckBoxState);
+                columnName, nodeTextBox_DrawText, nodeCheckBox,
+                importingObjectsTree_ChangeCheckBoxState);
         }
 
         ///<summary>

@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
             {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DFrm));
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
@@ -60,7 +59,7 @@
             this.synchBtn});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(194, 25);
+            this.toolStrip.Size = new System.Drawing.Size(185, 25);
             this.toolStrip.TabIndex = 1;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -130,10 +129,8 @@
             // 
             // displayParamsBtn
             // 
-            this.displayParamsBtn.Checked = true;
-            this.displayParamsBtn.CheckState = System.Windows.Forms.CheckState.Checked;
             this.displayParamsBtn.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.displayParamsBtn.Image = ((System.Drawing.Image)(resources.GetObject("displayParamsBtn.Image")));
+            this.displayParamsBtn.Image = global::EasyEPlanner.Properties.Resources._params;
             this.displayParamsBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.displayParamsBtn.Name = "displayParamsBtn";
             this.displayParamsBtn.Size = new System.Drawing.Size(23, 22);
@@ -151,7 +148,7 @@
             this.synchBtn.Image = global::EasyEPlanner.Properties.Resources.refresh;
             this.synchBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.synchBtn.Name = "synchBtn";
-            this.synchBtn.Size = new System.Drawing.Size(23, 20);
+            this.synchBtn.Size = new System.Drawing.Size(23, 22);
             this.synchBtn.Text = "Обновить";
             this.synchBtn.Click += new System.EventHandler(this.synchBtn_Click);
             // 

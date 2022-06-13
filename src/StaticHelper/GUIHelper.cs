@@ -24,20 +24,10 @@ namespace StaticHelper
             TreePathEventArgs e);
 
         /// <summary>
-        /// Инициализация дерева TreeViewAdv из Aga библиотеки.
+        /// Предварительная настройка treeViewAdv
         /// </summary>
         /// <param name="customizingView">Дерево для настройки</param>
-        /// <param name="columnName">Имя добавляемой колонки</param>
-        /// <param name="checkStateChangedDelegate">Делегат для обработки
-        /// изменения состояния чекбокса</param>
-        /// <param name="customizingCheckBox">Чекбокс для настройки</param>
-        /// <param name="drawNodeDelegate">Делегат для отрисовки текстовых
-        /// элементов</param>
-        public static void SetUpAdvTreeView(TreeViewAdv customizingView,
-            string columnName, DrawEventHandler drawNodeDelegate,
-            DrawEventHandler drawNodeEditDelegate,
-            NodeCheckBox customizingCheckBox,
-            CheckStateChangedEventHandler checkStateChangedDelegate = null)
+        private static void SetUpCustomizingView(TreeViewAdv customizingView)
         {
             customizingView.FullRowSelect = true;
             customizingView.FullRowSelectActiveColor = Color
@@ -49,15 +39,50 @@ namespace StaticHelper
             customizingView.ShowLines = true;
             customizingView.ShowPlusMinus = true;
             customizingView.RowHeight = 20;
+        }
+
+        /// <summary>
+        /// Инициализация дерева TreeViewAdv из Aga библиотеки.
+        /// </summary>
+        /// <param name="customizingView">Дерево для настройки</param>
+        /// <param name="columnName">Имя добавляемой колонки</param>
+        /// <param name="checkStateChangedDelegate">Делегат для обработки
+        /// изменения состояния чекбокса</param>
+        /// <param name="customizingCheckBox">Чекбокс для настройки</param>
+        /// <param name="drawNodeDelegate">Делегат для отрисовки текстовых
+        /// элементов</param>
+        public static void SetUpAdvTreeView(TreeViewAdv customizingView,
+            string columnName, DrawEventHandler drawNodeDelegate,
+            NodeCheckBox customizingCheckBox,
+            CheckStateChangedEventHandler checkStateChangedDelegate = null)
+        {
+            SetUpCustomizingView(customizingView);
 
             TreeColumn column = SetUpColumn(customizingView, columnName);
-            TreeColumn column2 = SetUpColumn(customizingView, "Значение");
             
+            SetUpNodeCheckBox(customizingView, column, customizingCheckBox,
+                checkStateChangedDelegate);
+            SetUpNodeTextBox(customizingView, column, drawNodeDelegate);
+        }
+
+        public static void SetUpAdvTreeView(TreeViewAdv customizingView,
+            string column1Name, string column2Name,
+            DrawEventHandler drawNodeDelegate,
+            DrawEventHandler drawNodeEditDelegate,
+            NodeCheckBox customizingCheckBox,
+            CheckStateChangedEventHandler checkStateChangedDelegate = null)
+        {
+            SetUpCustomizingView(customizingView);
+
+            TreeColumn column = SetUpColumn(customizingView, column1Name);
+            TreeColumn column2 = SetUpColumn(customizingView, column2Name);
+
             SetUpNodeCheckBox(customizingView, column, customizingCheckBox,
                 checkStateChangedDelegate);
             SetUpNodeTextBox(customizingView, column, drawNodeDelegate);
             SetUpNodeEditText(customizingView, column2, drawNodeEditDelegate);
         }
+
 
         /// <summary>
         /// Инициализация колонки для дерева из Aga библиотеки.
@@ -121,6 +146,12 @@ namespace StaticHelper
             customizingView.NodeControls.Add(nodeTextBox);
         }
 
+        /// <summary>
+        /// Инициализация узла для отображения и редоктирования текста
+        /// </summary>
+        /// <param name="customizingView">Дерево</param>
+        /// <param name="column">Колонка</param>
+        /// <param name="drawNodeDelegate">Метод отрисовки</param>
         private static void SetUpNodeEditText(TreeViewAdv customizingView,
             TreeColumn column, DrawEventHandler drawNodeDelegate)
         {
@@ -134,6 +165,13 @@ namespace StaticHelper
                 new EventHandler<DrawTextEventArgs>(drawNodeDelegate);
 
             customizingView.NodeControls.Add(nodeTextBox);
+        }
+
+
+        private static void Edit(object sender,
+            Aga.Controls.Tree.NodeControls.EditEventArgs e)
+        {
+
         }
 
         #endregion
