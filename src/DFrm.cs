@@ -251,9 +251,13 @@ namespace EasyEPlanner
         {
             InitializeComponent();
 
-            const string columnName = "Устройства";
+            const string columnName1 = "Устройства";
+            const string columnName2 = "Значения"; 
             StaticHelper.GUIHelper.SetUpAdvTreeView(devicesTreeViewAdv,
-                columnName, devicesTreeViewAdv_DrawNode, nodeCheckBox);
+                columnName1, columnName2,
+                devicesTreeViewAdv_DrawNodeColumn1,
+                devicesTreeViewAdv_DrawNodeColumn2,
+                nodeCheckBox);
 
             dialogCallbackDelegate = new PI.HookProc(
                 DlgWndHookCallbackFunction);
@@ -755,7 +759,9 @@ namespace EasyEPlanner
                 dev.ObjectNumber, devTypeNode);
             Node devNode = MakeDeviceNode(devTypeNode, devObjectNode,
                 dev, deviceDescription);
-            bool isDevVisible = AddDevChannels(devNode, dev);
+            bool isDevVisible = AddDevChannels(devNode, dev) |
+                AddDevParametersAndProperties(devNode, dev);
+            
             HideIncorrectDeviceTypeSubType(devNode, isDevVisible, countDev, 
                 dev);
         }
@@ -966,6 +972,45 @@ namespace EasyEPlanner
             return isDevVisible;
         }
 
+        private bool AddDevParametersAndProperties(Node devNode, EplanDevice.IODevice dev)
+        {
+            if ( (dev.Parameters.Count == 0 && dev.Parameters.Count == 0) || 
+                displayParamsBtn.Checked == false)
+            {
+                return false;
+            }
+
+            var parametersNode = new Node("Параметры");
+            if (dev.Parameters.Count > 0)
+            {     
+                devNode.Nodes.Add(parametersNode);
+                foreach (var parameter in dev.Parameters)
+                {
+                    var parameterNode = new ColumnNode(parameter.Key,
+                        parameter.Value.ToString());
+
+                    parameterNode.Tag = parameter;
+                    parametersNode.Nodes.Add(parameterNode);
+                }
+            }
+
+            var propertiesNode = new Node("Свойства");
+            if (dev.Properties.Count > 0)
+            {
+                devNode.Nodes.Add(propertiesNode);
+                foreach (var property in dev.Properties)
+                {
+                    var propertyNode = new ColumnNode(property.Key,
+                        property.Value.ToString());
+
+                    propertyNode.Tag = property;
+                    propertiesNode.Nodes.Add(propertyNode);
+                }
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Скрываем устройства ненужных подтипов и типов
         /// </summary>
@@ -1027,7 +1072,8 @@ namespace EasyEPlanner
             int total = 0;
             foreach (var dev in deviceEnum)
             {
-                Node node = root.Nodes.Where(x => x.Text == dev.ToString())
+                Node node = root.Nodes
+                    .Where(x => x.Text == dev.ToString())
                     .FirstOrDefault();
                 total += countDev[dev.ToString()];
                 node.Text = dev.ToString() + 
@@ -1149,6 +1195,7 @@ namespace EasyEPlanner
 
             if (prevShowCheckboxes)
             {
+                displayParamsBtn.Checked = false;
                 devicesTreeViewAdv.NodeControls.Insert(0, nodeCheckBox);
             }
             else
@@ -1370,7 +1417,7 @@ namespace EasyEPlanner
             FontStyle.Strikeout);
         private readonly Font boldFont = new Font(fName, 8, FontStyle.Bold);
 
-        private void devicesTreeViewAdv_DrawNode(object sender,
+        private void devicesTreeViewAdv_DrawNodeColumn1(object sender,
             DrawTextEventArgs e)
         {
             e.TextColor = Color.Black;
@@ -1401,6 +1448,11 @@ namespace EasyEPlanner
             }
         }
 
+        private void devicesTreeViewAdv_DrawNodeColumn2(object sender,
+            DrawTextEventArgs e)
+        {
+        }
+
         private void noAssigmentBtn_Click(object sender, EventArgs e)
         {
             if (prevShowChannels == true)
@@ -1417,6 +1469,26 @@ namespace EasyEPlanner
                 OnSetNewValue onSetNewValue = null;
                 bool isRebuiltTree = true;
                 ShowDisplayObjects(treeViewItemLastSelected, onSetNewValue, 
+                    isRebuiltTree);
+            }
+        }
+
+        private void DisplayParamsBtn_Click(object sender, EventArgs e)
+        {
+            if (prevShowChannels == true)
+            {
+                if (displayParamsBtn.Checked)
+                {
+                    displayParamsBtn.Checked = false;
+                }
+                else
+                {
+                    displayParamsBtn.Checked = true;
+                }
+
+                OnSetNewValue onSetNewValue = null;
+                bool isRebuiltTree = true;
+                ShowDisplayObjects(treeViewItemLastSelected, onSetNewValue,
                     isRebuiltTree);
             }
         }

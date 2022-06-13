@@ -109,6 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyVersion.cs" />
+    <Compile Include="ColumnNode.cs" />
     <Compile Include="Configuration\ConfigurationChecker.cs" />
     <Compile Include="Configuration\DeviceSynchronizeService.cs" />
     <Compile Include="Device\IDevice.cs" />

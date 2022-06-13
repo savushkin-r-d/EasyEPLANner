@@ -735,6 +735,8 @@ namespace EplanDevice
         {
             if (string.IsNullOrEmpty(paramStr)) return;
 
+            paramStr = paramStr.Replace(" ", "");
+
             //Шаблоны для разбора параметров - 0-20 .
             const string paramsPattern = @"(?<p_name>\w+)=(?<p_value>-?\d+\.?\d*),*";
 

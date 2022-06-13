@@ -24,6 +24,24 @@ namespace StaticHelper
             TreePathEventArgs e);
 
         /// <summary>
+        /// Предварительная настройка treeViewAdv
+        /// </summary>
+        /// <param name="customizingView">Дерево для настройки</param>
+        private static void SetUpCustomizingView(TreeViewAdv customizingView)
+        {
+            customizingView.FullRowSelect = true;
+            customizingView.FullRowSelectActiveColor = Color
+                .FromArgb(192, 192, 255);
+            customizingView.FullRowSelectInactiveColor = Color
+                .FromArgb(192, 255, 192);
+            customizingView.GridLineStyle = GridLineStyle.Horizontal;
+            customizingView.UseColumns = true;
+            customizingView.ShowLines = true;
+            customizingView.ShowPlusMinus = true;
+            customizingView.RowHeight = 20;
+        }
+
+        /// <summary>
         /// Инициализация дерева TreeViewAdv из Aga библиотеки.
         /// </summary>
         /// <param name="customizingView">Дерево для настройки</param>
@@ -38,22 +56,33 @@ namespace StaticHelper
             NodeCheckBox customizingCheckBox,
             CheckStateChangedEventHandler checkStateChangedDelegate = null)
         {
-            customizingView.FullRowSelect = true;
-            customizingView.FullRowSelectActiveColor = Color
-                .FromArgb(192, 192, 255);
-            customizingView.FullRowSelectInactiveColor = Color
-                .FromArgb(192, 255, 192);
-            customizingView.GridLineStyle = GridLineStyle.Horizontal;
-            customizingView.UseColumns = true;
-            customizingView.ShowLines = true;
-            customizingView.ShowPlusMinus = true;
-            customizingView.RowHeight = 20;
+            SetUpCustomizingView(customizingView);
 
             TreeColumn column = SetUpColumn(customizingView, columnName);
+            
             SetUpNodeCheckBox(customizingView, column, customizingCheckBox,
                 checkStateChangedDelegate);
             SetUpNodeTextBox(customizingView, column, drawNodeDelegate);
         }
+
+        public static void SetUpAdvTreeView(TreeViewAdv customizingView,
+            string column1Name, string column2Name,
+            DrawEventHandler drawNodeDelegate,
+            DrawEventHandler drawNodeEditDelegate,
+            NodeCheckBox customizingCheckBox,
+            CheckStateChangedEventHandler checkStateChangedDelegate = null)
+        {
+            SetUpCustomizingView(customizingView);
+
+            TreeColumn column = SetUpColumn(customizingView, column1Name);
+            TreeColumn column2 = SetUpColumn(customizingView, column2Name);
+
+            SetUpNodeCheckBox(customizingView, column, customizingCheckBox,
+                checkStateChangedDelegate);
+            SetUpNodeTextBox(customizingView, column, drawNodeDelegate);
+            SetUpNodeEditText(customizingView, column2, drawNodeEditDelegate);
+        }
+
 
         /// <summary>
         /// Инициализация колонки для дерева из Aga библиотеки.
@@ -66,6 +95,7 @@ namespace StaticHelper
             column.Sortable = false;
             column.Header = name;
             column.Width = 300;
+            column.MinColumnWidth = 100;
 
             view.Columns.Add(column);
 
@@ -110,6 +140,27 @@ namespace StaticHelper
             nodeTextBox.DataPropertyName = "Text";
             nodeTextBox.VerticalAlign = VerticalAlignment.Center;
             nodeTextBox.TrimMultiLine = true;
+            nodeTextBox.ParentColumn = column;
+            nodeTextBox.DrawText +=
+                new EventHandler<DrawTextEventArgs>(drawNodeDelegate);
+
+            customizingView.NodeControls.Add(nodeTextBox);
+        }
+
+        /// <summary>
+        /// Инициализация узла для отображения и редоктирования текста
+        /// </summary>
+        /// <param name="customizingView">Дерево</param>
+        /// <param name="column">Колонка</param>
+        /// <param name="drawNodeDelegate">Метод отрисовки</param>
+        private static void SetUpNodeEditText(TreeViewAdv customizingView,
+            TreeColumn column, DrawEventHandler drawNodeDelegate)
+        {
+            var nodeTextBox = new NodeTextBox();
+            nodeTextBox.DataPropertyName = "Value";
+            nodeTextBox.VerticalAlign = VerticalAlignment.Center;
+            nodeTextBox.TrimMultiLine = true;
+            nodeTextBox.EditEnabled = true;
             nodeTextBox.ParentColumn = column;
             nodeTextBox.DrawText +=
                 new EventHandler<DrawTextEventArgs>(drawNodeDelegate);
