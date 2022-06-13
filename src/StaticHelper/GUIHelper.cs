@@ -95,6 +95,7 @@ namespace StaticHelper
             column.Sortable = false;
             column.Header = name;
             column.Width = 300;
+            column.MinColumnWidth = 100;
 
             view.Columns.Add(column);
 

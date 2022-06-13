@@ -368,7 +368,7 @@ namespace EasyEPlanner
             var model = new TreeModel();
             model.Nodes.Clear();
 
-            var root = new ColumnNode("Устройства проекта", "Значения");
+            var root = new Node("Устройства проекта");
             model.Nodes.Add(root);
             devicesTreeViewAdv.Model = model;
 
@@ -604,7 +604,7 @@ namespace EasyEPlanner
         private void FillDevicesNode(ref TreeModel treeModel)
         {
             string nodeName = "Устройства проекта";
-            var root = new ColumnNode(nodeName, "Значения");
+            var root = new Node(nodeName);
             treeModel.Nodes.Add(root);
 
             // Подтипы, которые отдельно записываем в устройства
