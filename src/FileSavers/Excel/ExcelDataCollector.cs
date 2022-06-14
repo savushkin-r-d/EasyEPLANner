@@ -527,17 +527,30 @@ namespace EasyEPlanner
             const int MAX_COL = 6;
             int MAX_ROW = ioManager.IONodes.Count;
 
+            int IndexPCMain = 0;
+
             foreach (var ioNode in ioManager.IONodes)
             {
                 MAX_ROW += ioNode.IOModules.Count;
+                if (ioNode.Type == IONode.TYPES.T_PHOENIX_CONTACT_MAIN)
+                {
+                    IndexPCMain = ioNode.N - 1;
+                }
             }
 
             MAX_ROW *= 16;
             var res = new object[MAX_ROW, MAX_COL];
-            
+
+            bool PCMainSaved = false;
+
             int idx = 0;
-            for (int i = 0; i < ioManager.IONodes.Count; i++)
+            for (int i = IndexPCMain; i < ioManager.IONodes.Count; i++)
             {
+                if (i == IndexPCMain && PCMainSaved)
+                {
+                    continue;
+                }
+
                 IIONode currentNode = ioManager.IONodes[i];
                 res[idx, 3] = prjName;
                 idx++;
@@ -545,15 +558,17 @@ namespace EasyEPlanner
                     $"'{DateTime.Now.ToString(new CultureInfo("RU-ru"))}";
 
                 string nodeName = "";
-                if (currentNode.FullN != 1)
+                if (currentNode.Type != IONode.TYPES.T_PHOENIX_CONTACT_MAIN)
                 {
-                    nodeName = "Узел №" + (currentNode.N - 1) + " Адрес: " +
-                        ioManager.IONodes[i].IP;
+                    nodeName = "Узел №" + (currentNode.N) + " Адрес: " +
+                        currentNode.IP;
                 }
                 else
                 {
                     nodeName = "Контроллер. " + " Адрес: " +
-                        ioManager.IONodes[i].IP;
+                        currentNode.IP;
+                    i = -1;
+                    PCMainSaved = true;
                 }
 
                 res[idx, 4] = "Вход, бит";
