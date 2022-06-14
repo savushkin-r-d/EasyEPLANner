@@ -131,6 +131,7 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
                 {IODevice.Tag.P_MIN_FLOW, 1},
+                {IODevice.Parameter.P_ERR_MIN_FLOW, 1},
                 {IODevice.Tag.P_MAX_FLOW, 1},
                 {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.F, 1},
@@ -144,6 +145,7 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
                 {IODevice.Tag.P_MIN_FLOW, 1},
+                {IODevice.Parameter.P_ERR_MIN_FLOW, 1},
                 {IODevice.Tag.P_MAX_FLOW, 1},
                 {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.F, 1},
@@ -158,6 +160,7 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
                 {IODevice.Tag.P_MIN_FLOW, 1},
+                {IODevice.Parameter.P_ERR_MIN_FLOW, 1},
                 {IODevice.Tag.P_MAX_FLOW, 1},
                 {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.F, 1},
@@ -253,6 +256,7 @@ namespace Tests.EplanDevices
             var defaultParameters = new string[]
             {
                 IODevice.Parameter.P_MIN_F,
+                IODevice.Parameter.P_ERR_MIN_FLOW,
                 IODevice.Parameter.P_MAX_F,
                 IODevice.Parameter.P_C0,
                 IODevice.Parameter.P_DT

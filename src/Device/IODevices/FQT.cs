@@ -33,6 +33,7 @@ namespace EplanDevice
                     AI.Add(new IOChannel("AI", -1, -1, -1, "Поток"));
 
                     parameters.Add(Parameter.P_MIN_F, null);
+                    Parameters.Add(Parameter.P_ERR_MIN_FLOW, null);
                     parameters.Add(Parameter.P_MAX_F, null);
                     parameters.Add(Parameter.P_C0, null);
                     parameters.Add(Parameter.P_DT, null);
@@ -46,6 +47,7 @@ namespace EplanDevice
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
 
                     parameters.Add(Parameter.P_MIN_F, null);
+                    Parameters.Add(Parameter.P_ERR_MIN_FLOW, null);
                     parameters.Add(Parameter.P_MAX_F, null);
                     parameters.Add(Parameter.P_C0, null);
                     parameters.Add(Parameter.P_DT, null);
@@ -61,6 +63,7 @@ namespace EplanDevice
 
                     parameters.Add(Parameter.P_C0, null);
                     parameters.Add(Parameter.P_DT, null);
+                    parameters.Add(Parameter.P_ERR_MIN_FLOW, null);
 
                     properties.Add(Property.MT, null); //Связанные моторы.
                     
@@ -159,6 +162,7 @@ namespace EplanDevice
                                 {Tag.M, 1},
                                 {Tag.V, 1},
                                 {Tag.P_MIN_FLOW, 1},
+                                {Parameter.P_ERR_MIN_FLOW, 1},
                                 {Tag.P_MAX_FLOW, 1},
                                 {Tag.P_CZ, 1},
                                 {Tag.F, 1},
@@ -173,6 +177,7 @@ namespace EplanDevice
                                 {Tag.M, 1},
                                 {Tag.V, 1},
                                 {Tag.P_MIN_FLOW, 1},
+                                {Parameter.P_ERR_MIN_FLOW, 1},
                                 {Tag.P_MAX_FLOW, 1},
                                 {Tag.P_CZ, 1},
                                 {Tag.F, 1},
@@ -188,6 +193,7 @@ namespace EplanDevice
                                 {Tag.M, 1},
                                 {Tag.V, 1},
                                 {Tag.P_MIN_FLOW, 1},
+                                {Parameter.P_ERR_MIN_FLOW, 1},
                                 {Tag.P_MAX_FLOW, 1},
                                 {Tag.P_CZ, 1},
                                 {Tag.F, 1},
@@ -200,6 +206,7 @@ namespace EplanDevice
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
                                 {Tag.V, 1},
+                                {Parameter.P_ERR_MIN_FLOW, 1},
                                 {Tag.ABS_V, 1},
                                 {Tag.T, 1},
                             };
