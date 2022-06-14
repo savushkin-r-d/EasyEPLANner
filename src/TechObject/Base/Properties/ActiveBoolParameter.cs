@@ -27,8 +27,9 @@ namespace TechObject
         #region реализация ItreeViewItem
         public override bool SetNewValue(string newValue)
         {
-            var value = newValue ==
-                trueDisplayValue ? trueLogicValue : falseLogicValue;
+            var value = newValue == trueDisplayValue ||
+                newValue.ToLower() == trueLogicValue ?
+                trueLogicValue : falseLogicValue;
             base.SetValue(value);
             return true;
         }

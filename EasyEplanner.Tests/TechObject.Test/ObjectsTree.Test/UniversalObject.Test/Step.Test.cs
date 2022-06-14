@@ -607,7 +607,7 @@ namespace EasyEplanner.Tests
             Type pairsDIDO = actionGroup;
             Type pairsInvertedDIDO = actionGroup;
             Type pairsAIAO = actionGroup;
-            Type enableStepBySignal = actionGroup;
+            Type enableStepBySignal = actionGroupCustom;
 
             var mainStepSequence = new Type[]
             {

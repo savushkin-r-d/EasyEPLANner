@@ -71,8 +71,7 @@ namespace TechObject
             string res = string.Empty;
             string group = string.Empty;
 
-            if (SubActions.All(subaction => subaction.Empty) &&
-                Parameters.All(parameter => parameter.Value == string.Empty))
+            if (SubActions.All(subaction => subaction.Empty))
             {
                 return res;
             }
