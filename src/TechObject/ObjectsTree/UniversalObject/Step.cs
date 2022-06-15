@@ -252,12 +252,23 @@ namespace TechObject
             groupAiAo.ImageIndex = ImageIndexEnum.ActionDIDOPairs;
             actions.Add(groupAiAo);
 
-            var enableStepBySignal = new ActionGroup(
+            var enableStepBySignal = new ActionGroupCustom(
                 "Сигнал для включения шага", this, "enable_step_by_signal",
-                new EplanDevice.DeviceType[]
+                () =>
                 {
-                    EplanDevice.DeviceType.DI
-                }, null);
+                    var enableStepBySignalAction = new ActionCustom("Группа",
+                        this, "");
+                    enableStepBySignalAction.CreateAction(new Action("Сигналы",
+                        this, "",
+                        new EplanDevice.DeviceType[]
+                        {
+                            EplanDevice.DeviceType.DI,
+                        }));
+                    enableStepBySignalAction.CreateParameter(new ActiveBoolParameter("",
+                        "Выключать шаг по пропаданию сигнала", "false"));
+                    return enableStepBySignalAction;
+                });
+
             actions.Add(enableStepBySignal);
 
             items.AddRange(actions.Cast<ITreeViewItem>().ToArray());
