@@ -33,10 +33,10 @@ namespace EplanDevice
                     AI.Add(new IOChannel("AI", -1, -1, -1, "Поток"));
 
                     parameters.Add(Parameter.P_MIN_F, null);
-                    Parameters.Add(Parameter.P_ERR_MIN_FLOW, null);
                     parameters.Add(Parameter.P_MAX_F, null);
                     parameters.Add(Parameter.P_C0, null);
                     parameters.Add(Parameter.P_DT, null);
+                    Parameters.Add(Parameter.P_ERR_MIN_FLOW, null);
 
                     properties.Add(Property.MT, null); //Связанные моторы.
                     break;
@@ -47,10 +47,10 @@ namespace EplanDevice
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
 
                     parameters.Add(Parameter.P_MIN_F, null);
-                    Parameters.Add(Parameter.P_ERR_MIN_FLOW, null);
                     parameters.Add(Parameter.P_MAX_F, null);
                     parameters.Add(Parameter.P_C0, null);
                     parameters.Add(Parameter.P_DT, null);
+                    Parameters.Add(Parameter.P_ERR_MIN_FLOW, null);
 
                     properties.Add(Property.MT, null); //Связанные моторы.
                     break;
@@ -162,12 +162,12 @@ namespace EplanDevice
                                 {Tag.M, 1},
                                 {Tag.V, 1},
                                 {Tag.P_MIN_FLOW, 1},
-                                {Parameter.P_ERR_MIN_FLOW, 1},
                                 {Tag.P_MAX_FLOW, 1},
                                 {Tag.P_CZ, 1},
                                 {Tag.F, 1},
                                 {Parameter.P_DT, 1},
                                 {Tag.ABS_V, 1},
+                                {Parameter.P_ERR_MIN_FLOW, 1},
                             };
 
                         case DeviceSubType.FQT_F_OK:
@@ -177,13 +177,13 @@ namespace EplanDevice
                                 {Tag.M, 1},
                                 {Tag.V, 1},
                                 {Tag.P_MIN_FLOW, 1},
-                                {Parameter.P_ERR_MIN_FLOW, 1},
                                 {Tag.P_MAX_FLOW, 1},
                                 {Tag.P_CZ, 1},
                                 {Tag.F, 1},
                                 {Parameter.P_DT, 1},
                                 {Tag.ABS_V, 1},
                                 {Tag.OK, 1},
+                                {Parameter.P_ERR_MIN_FLOW, 1},
                             };
 
                         case DeviceSubType.FQT_VIRT:
@@ -193,12 +193,12 @@ namespace EplanDevice
                                 {Tag.M, 1},
                                 {Tag.V, 1},
                                 {Tag.P_MIN_FLOW, 1},
-                                {Parameter.P_ERR_MIN_FLOW, 1},
                                 {Tag.P_MAX_FLOW, 1},
                                 {Tag.P_CZ, 1},
                                 {Tag.F, 1},
                                 {Parameter.P_DT, 1},
                                 {Tag.ABS_V, 1},
+                                {Parameter.P_ERR_MIN_FLOW, 1},
                             };
                         case DeviceSubType.FQT_IOLINK:
                             return new Dictionary<string, int>()
@@ -206,9 +206,9 @@ namespace EplanDevice
                                 {Tag.ST, 1},
                                 {Tag.M, 1},
                                 {Tag.V, 1},
-                                {Parameter.P_ERR_MIN_FLOW, 1},
                                 {Tag.ABS_V, 1},
                                 {Tag.T, 1},
+                                {Parameter.P_ERR_MIN_FLOW, 1},
                             };
                     }
                     break;
