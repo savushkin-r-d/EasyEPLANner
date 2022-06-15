@@ -176,6 +176,11 @@
             /// Предельное время отсутствия готовности к работе, секунд.
             /// </summary>
             public const string P_READY_TIME = "P_READY_TIME";
+
+            /// <summary>
+            /// Параметр для обработки ошибки счета импульсов.
+            /// </summary>
+            public const string P_ERR_MIN_FLOW = "P_ERR_MIN_FLOW";
         }
     }
 }

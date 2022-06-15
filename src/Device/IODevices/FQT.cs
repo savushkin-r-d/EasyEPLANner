@@ -36,6 +36,7 @@ namespace EplanDevice
                     parameters.Add(Parameter.P_MAX_F, null);
                     parameters.Add(Parameter.P_C0, null);
                     parameters.Add(Parameter.P_DT, null);
+                    Parameters.Add(Parameter.P_ERR_MIN_FLOW, null);
 
                     properties.Add(Property.MT, null); //Связанные моторы.
                     break;
@@ -49,6 +50,7 @@ namespace EplanDevice
                     parameters.Add(Parameter.P_MAX_F, null);
                     parameters.Add(Parameter.P_C0, null);
                     parameters.Add(Parameter.P_DT, null);
+                    Parameters.Add(Parameter.P_ERR_MIN_FLOW, null);
 
                     properties.Add(Property.MT, null); //Связанные моторы.
                     break;
@@ -61,6 +63,7 @@ namespace EplanDevice
 
                     parameters.Add(Parameter.P_C0, null);
                     parameters.Add(Parameter.P_DT, null);
+                    parameters.Add(Parameter.P_ERR_MIN_FLOW, null);
 
                     properties.Add(Property.MT, null); //Связанные моторы.
                     
@@ -164,6 +167,7 @@ namespace EplanDevice
                                 {Tag.F, 1},
                                 {Parameter.P_DT, 1},
                                 {Tag.ABS_V, 1},
+                                {Parameter.P_ERR_MIN_FLOW, 1},
                             };
 
                         case DeviceSubType.FQT_F_OK:
@@ -179,6 +183,7 @@ namespace EplanDevice
                                 {Parameter.P_DT, 1},
                                 {Tag.ABS_V, 1},
                                 {Tag.OK, 1},
+                                {Parameter.P_ERR_MIN_FLOW, 1},
                             };
 
                         case DeviceSubType.FQT_VIRT:
@@ -193,6 +198,7 @@ namespace EplanDevice
                                 {Tag.F, 1},
                                 {Parameter.P_DT, 1},
                                 {Tag.ABS_V, 1},
+                                {Parameter.P_ERR_MIN_FLOW, 1},
                             };
                         case DeviceSubType.FQT_IOLINK:
                             return new Dictionary<string, int>()
@@ -202,6 +208,7 @@ namespace EplanDevice
                                 {Tag.V, 1},
                                 {Tag.ABS_V, 1},
                                 {Tag.T, 1},
+                                {Parameter.P_ERR_MIN_FLOW, 1},
                             };
                     }
                     break;

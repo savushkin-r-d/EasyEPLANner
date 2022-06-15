@@ -13,6 +13,7 @@ namespace Tests.EplanDevices
         const string FQT_F = "FQT_F";
         const string FQT_F_OK = "FQT_F_OK";
         const string FQT_VIRT = "FQT_VIRT";
+        const string FQT_IOLINK = "FQT_IOLINK";
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
@@ -56,6 +57,8 @@ namespace Tests.EplanDevices
                     GetRandomFQTDevice() },
                 new object[] { DeviceSubType.NONE, string.Empty,
                     GetRandomFQTDevice() },
+                new object[] { DeviceSubType.FQT_IOLINK, FQT_IOLINK,
+                    GetRandomFQTDevice() },
             };
         }
 
@@ -90,6 +93,7 @@ namespace Tests.EplanDevices
                 new object[] { FQT_F_OK, FQT_F_OK, GetRandomFQTDevice() },
                 new object[] { FQT_VIRT, FQT_VIRT, GetRandomFQTDevice() },
                 new object[] { string.Empty, Incorrect, GetRandomFQTDevice() },
+                new object[] { FQT_IOLINK, FQT_IOLINK, GetRandomFQTDevice() },
             };
         }
 
@@ -131,6 +135,7 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
                 {IODevice.Tag.P_MIN_FLOW, 1},
+                {IODevice.Parameter.P_ERR_MIN_FLOW, 1},
                 {IODevice.Tag.P_MAX_FLOW, 1},
                 {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.F, 1},
@@ -144,6 +149,7 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
                 {IODevice.Tag.P_MIN_FLOW, 1},
+                {IODevice.Parameter.P_ERR_MIN_FLOW, 1},
                 {IODevice.Tag.P_MAX_FLOW, 1},
                 {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.F, 1},
@@ -158,11 +164,22 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.M, 1},
                 {IODevice.Tag.V, 1},
                 {IODevice.Tag.P_MIN_FLOW, 1},
+                {IODevice.Parameter.P_ERR_MIN_FLOW, 1},
                 {IODevice.Tag.P_MAX_FLOW, 1},
                 {IODevice.Tag.P_CZ, 1},
                 {IODevice.Tag.F, 1},
                 {IODevice.Parameter.P_DT, 1},
                 {IODevice.Tag.ABS_V, 1},
+            };
+
+            var exportForFQTIOLink = new Dictionary<string, int>()
+            {
+                {IODevice.Tag.ST, 1},
+                {IODevice.Tag.M, 1},
+                {IODevice.Tag.V, 1},
+                {IODevice.Tag.ABS_V, 1},
+                {IODevice.Tag.T, 1},
+                {IODevice.Parameter.P_ERR_MIN_FLOW, 1},
             };
 
             return new object[]
@@ -175,6 +192,8 @@ namespace Tests.EplanDevices
                     GetRandomFQTDevice()},
                 new object[] {null, Incorrect, GetRandomFQTDevice()},
                 new object[] {null, string.Empty, GetRandomFQTDevice()},
+                new object[] {exportForFQTIOLink, FQT_IOLINK,
+                    GetRandomFQTDevice()},
             };
         }
 
@@ -221,6 +240,8 @@ namespace Tests.EplanDevices
                     GetRandomFQTDevice()},
                 new object[] {string.Empty, Incorrect, 7.0, 9.0,
                     GetRandomFQTDevice()},
+                new object[] {string.Empty, FQT_IOLINK, 3.0, 5.0,
+                    GetRandomFQTDevice()},
             };
         }
 
@@ -255,7 +276,8 @@ namespace Tests.EplanDevices
                 IODevice.Parameter.P_MIN_F,
                 IODevice.Parameter.P_MAX_F,
                 IODevice.Parameter.P_C0,
-                IODevice.Parameter.P_DT
+                IODevice.Parameter.P_DT,
+                IODevice.Parameter.P_ERR_MIN_FLOW,
             };
 
             return new object[]
@@ -295,6 +317,17 @@ namespace Tests.EplanDevices
                     new string[0],
                     string.Empty,
                     GetRandomFQTDevice()
+                },
+                new object[]
+                {
+                    new string[]
+                    {
+                        "P_C0",
+                        "P_DT",
+                        "P_ERR_MIN_FLOW",
+                    },
+                    FQT_IOLINK,
+                    GetRandomFQTDevice(),
                 },
             };
         }
@@ -399,6 +432,18 @@ namespace Tests.EplanDevices
                     string.Empty,
                     GetRandomFQTDevice()
                 },
+                new object[]
+                {
+                    new Dictionary<string, int>()
+                    {
+                        { AI, 1 },
+                        { AO, 0 },
+                        { DI, 0 },
+                        { DO, 0 },
+                    },
+                    FQT_IOLINK,
+                    GetRandomFQTDevice()
+                },
             };
         }
 
@@ -471,6 +516,12 @@ namespace Tests.EplanDevices
                     string.Empty,
                     GetRandomFQTDevice()
                 },
+                new object[]
+                {
+                    defaultProperties,
+                    FQT_IOLINK,
+                    GetRandomFQTDevice(),
+                }
             };
         }
 
