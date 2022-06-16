@@ -27,7 +27,7 @@ namespace TechObject
 
         public override IAction Clone()
         {
-            var clone = (ActionGroupWash)base.Clone();
+            var clone = (ActionGroupCustom)base.Clone();
             clone.SubActions = new List<IAction>();
             foreach (IAction action in SubActions)
             {
