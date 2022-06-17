@@ -552,6 +552,10 @@ namespace EasyEPlanner
                 }
 
                 IIONode currentNode = ioManager.IONodes[i];
+
+                var nodeIndex = int.Parse(currentNode.Name
+                    .Substring(1, currentNode.Name.Length - 3));
+
                 res[idx, 3] = prjName;
                 idx++;
                 res[idx, 3] = 
@@ -560,8 +564,7 @@ namespace EasyEPlanner
                 string nodeName = "";
                 if (currentNode.Type != IONode.TYPES.T_PHOENIX_CONTACT_MAIN)
                 {
-                    nodeName = $"Узел №{currentNode.Name.Substring(1, currentNode.Name.Length - 3)}" +
-                        $" .Адрес: {currentNode.IP}";
+                    nodeName = $"Узел №{nodeIndex}. Адрес: {currentNode.IP}";
                 }
                 else
                 {
@@ -586,7 +589,7 @@ namespace EasyEPlanner
                 }
                 idx++;
                 currentNode.SaveAsConnectionArray(ref res, ref idx, 
-                    modulesCount, modulesColor, currentNode.N - 1, asInterfaceConnection);
+                    modulesCount, modulesColor, nodeIndex, asInterfaceConnection);
             }
 
             res = DeleteNullObjects(res); 
