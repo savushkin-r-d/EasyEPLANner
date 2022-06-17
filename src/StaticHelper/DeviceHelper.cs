@@ -49,11 +49,25 @@ namespace StaticHelper
         string GetParameters(Function function);
 
         /// <summary>
+        /// Установить параметры устройства
+        /// </summary>
+        /// <param name="function">Eplan-функция устройства</param>
+        /// <param name="value">Параметры</param>
+        void SetParameters(Function function, string value);
+
+        /// <summary>
         /// Получить свойства устройства.
         /// </summary>
         /// <param name="function">Функция устройства</param>
         /// <returns></returns>
         string GetProperties(Function function);
+
+        /// <summary>
+        /// Установить свойства устройства
+        /// </summary>
+        /// <param name="function">Eplan-функция устройства</param>
+        /// <param name="value">Свойства</param>
+        void SetProperties(Function function, string value);
 
         /// <summary>
         /// Получить параметры времени выполнения.
@@ -142,10 +156,20 @@ namespace StaticHelper
             return apiHelper.GetSupplementaryFieldValue(function, parametersIndex);
         }
 
+        public void SetParameters(Function function, string value)
+        {
+            apiHelper.SetSupplementaryFieldValue(function, 3, value);
+        }
+
         public string GetProperties(Function function)
         {
             int propertiesIndex = 4;
             return apiHelper.GetSupplementaryFieldValue(function, propertiesIndex);
+        }
+
+        public void SetProperties(Function function, string value)
+        {
+            apiHelper.SetSupplementaryFieldValue(function, 4, value);
         }
 
         public string GetRuntimeParameters(Function function)

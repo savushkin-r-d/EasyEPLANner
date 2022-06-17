@@ -69,6 +69,7 @@ namespace StaticHelper
             string column1Name, string column2Name,
             DrawEventHandler drawNodeDelegate,
             DrawEventHandler drawNodeEditDelegate,
+            EventHandler<LabelEventArgs> editNodeEdidDelegate,
             NodeCheckBox customizingCheckBox,
             CheckStateChangedEventHandler checkStateChangedDelegate = null)
         {
@@ -80,7 +81,8 @@ namespace StaticHelper
             SetUpNodeCheckBox(customizingView, column, customizingCheckBox,
                 checkStateChangedDelegate);
             SetUpNodeTextBox(customizingView, column, drawNodeDelegate);
-            SetUpNodeEditText(customizingView, column2, drawNodeEditDelegate);
+            SetUpNodeEditText(customizingView, column2, drawNodeEditDelegate,
+                editNodeEdidDelegate);
         }
 
 
@@ -154,16 +156,19 @@ namespace StaticHelper
         /// <param name="column">Колонка</param>
         /// <param name="drawNodeDelegate">Метод отрисовки</param>
         private static void SetUpNodeEditText(TreeViewAdv customizingView,
-            TreeColumn column, DrawEventHandler drawNodeDelegate)
+            TreeColumn column, DrawEventHandler drawNodeDelegate,
+            EventHandler<LabelEventArgs> editNodeEdidDelegate)
         {
             var nodeTextBox = new NodeTextBox();
             nodeTextBox.DataPropertyName = "Value";
             nodeTextBox.VerticalAlign = VerticalAlignment.Center;
             nodeTextBox.TrimMultiLine = true;
             nodeTextBox.EditEnabled = true;
+            nodeTextBox.EditOnClick = true;
             nodeTextBox.ParentColumn = column;
             nodeTextBox.DrawText +=
                 new EventHandler<DrawTextEventArgs>(drawNodeDelegate);
+            nodeTextBox.LabelChanged += editNodeEdidDelegate;
 
             customizingView.NodeControls.Add(nodeTextBox);
         }

@@ -181,6 +181,64 @@
             /// Параметр для обработки ошибки счета импульсов.
             /// </summary>
             public const string P_ERR_MIN_FLOW = "P_ERR_MIN_FLOW";
+
+
+
+            /// <summary>
+            /// Получение строки значения в формате опрделенного по параметру
+            /// </summary>
+            /// <returns>Значение параметра в определенном фомате</returns>
+            public static string GetFormat(string parameter, object value)
+            {
+                switch (parameter)
+                {
+                    // Булевые(Да/Нет)
+                    case P_is_reverse:
+                    case P_is_zero_start:
+                    case P_is_manual_mode:
+                    case P_FB:
+                        return string.Format("{0:Да;-;Нет}", int
+                            .Parse(value.ToString()));
+
+                    // Секунды
+                    case P_READY_TIME:
+                    case P_acceleration_time:
+                        return string.Format("{0}с", value.ToString());
+
+                    // Миллисекунды
+                    case P_ON_TIME:
+                    case P_dt:
+                        return string.Format("{0}мc", value.ToString());
+
+                    // Метры
+                    case P_SHAFT_DIAMETER:
+                    case P_R:
+                    case P_H_CONE:
+                    case P_H_TRUNC: 
+                        return string.Format("{0}м", value.ToString());
+
+                    // Килограммы
+                    case P_NOMINAL_W:
+                        return string.Format("{0}кг", value.ToString());
+
+                    // Бары
+                    case P_MAX_P:
+                        return string.Format("{0}бар", value.ToString());
+
+                    // мВ/В
+                    case P_RKP:
+                        return string.Format("{0}мВ/В", value.ToString());
+
+                    // %
+                    case P_out_max:
+                    case P_out_min:
+                    case P_U_manual:
+                        return string.Format("{0}%", value.ToString());
+
+                    default:
+                        return string.Format("{0}", value.ToString());
+                }
+            }
         }
     }
 }
