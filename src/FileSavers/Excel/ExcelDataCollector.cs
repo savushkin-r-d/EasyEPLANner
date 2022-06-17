@@ -560,13 +560,13 @@ namespace EasyEPlanner
                 string nodeName = "";
                 if (currentNode.Type != IONode.TYPES.T_PHOENIX_CONTACT_MAIN)
                 {
-                    nodeName = "Узел №" + (currentNode.N) + " Адрес: " +
-                        currentNode.IP;
+                    nodeName = $"Узел №{currentNode.Name.Substring(1, currentNode.Name.Length - 3)}" +
+                        $" .Адрес: {currentNode.IP}";
                 }
                 else
                 {
-                    nodeName = "Контроллер. " + " Адрес: " +
-                        currentNode.IP;
+                    nodeName = $"Контроллер -{currentNode.Name}. Адрес:" +
+                        $" {currentNode.IP}";
                     i = -1;
                     PCMainSaved = true;
                 }
