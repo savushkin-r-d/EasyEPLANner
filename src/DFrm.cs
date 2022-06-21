@@ -1462,7 +1462,8 @@ namespace EasyEPlanner
                     (KeyValuePair<string, object>)currentNode.Tag;
 
                 e.Text = IODevice.Parameter
-                    .GetFormat(parameter.Key, (currentNode as ColumnNode).Value);
+                    .GetFormat(parameter.Key, (currentNode as ColumnNode).Value,
+                    currentNode.Parent.Parent.Tag as IODevice);
             }
         }
 

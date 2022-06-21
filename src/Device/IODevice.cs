@@ -201,7 +201,8 @@ namespace EplanDevice
             var parametersList = new List<string>();
             foreach (var parameter in parameters)
             {
-                parametersList.Add($"{parameter.Key}={parameter.Value}");
+                if (parameter.Value != null)
+                    parametersList.Add($"{parameter.Key}={parameter.Value}");
             }
 
             var helper = new DeviceHelper(new ApiHelper());
