@@ -421,6 +421,8 @@ namespace InterprojectExchange
         /// </summary>
         public void Save()
         {
+            interprojectExchange.Models
+                .RemoveAll(model => string.IsNullOrEmpty(model.ProjectName));
             interprojectExchangeSaver = new InterprojectExchangeSaver(
                 interprojectExchange, signalsFile);
             interprojectExchangeSaver.SaveAsync();
