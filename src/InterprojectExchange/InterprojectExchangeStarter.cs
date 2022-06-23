@@ -4,6 +4,7 @@ using System.Text;
 using EasyEPlanner;
 using System.Linq;
 using System.Windows.Forms;
+using System;
 
 namespace InterprojectExchange
 {
@@ -423,6 +424,10 @@ namespace InterprojectExchange
         {
             interprojectExchange.Models
                 .RemoveAll(model => string.IsNullOrEmpty(model.ProjectName));
+            if (interprojectExchange.Models.Count < 1)
+            {
+                throw new ApplicationException();
+            }
             interprojectExchangeSaver = new InterprojectExchangeSaver(
                 interprojectExchange, signalsFile);
             interprojectExchangeSaver.SaveAsync();
