@@ -198,16 +198,20 @@
                     {
                         case DeviceType.WT:
                             if (parameter == P_C0 || parameter == P_DT)
-                                return string.Format("{0}кг", value.ToString());
+                                return string.Format("{0} кг", value.ToString());
                             break;
 
                         case DeviceType.C:
                             if (parameter == P_max || parameter == P_min)
                             {
                                 var signal = device.Properties["IN_VALUE"];
-                                var siganlDevice = DeviceManager.GetInstance()
-                                    .GetDevice(signal.ToString());
-                                switch (siganlDevice.DeviceType)
+
+                                if (signal == null) break;
+                                var signalDevice = EplanDevice.DeviceManager
+                                    .GetInstance().Devices
+                                    .Find(dev => dev.Name == signal.ToString());
+                                if (signalDevice == null) break;
+                                switch (signalDevice.DeviceType)
                                 {
                                     case DeviceType.WT:
                                         return string.Format("{0} кг",
@@ -220,6 +224,23 @@
                                     case DeviceType.TE:
                                         return string.Format("{0} °C",
                                             value.ToString());
+
+                                    case DeviceType.FQT:
+                                        return string.Format("{0} м3/ч",
+                                            value.ToString());
+
+                                    case DeviceType.AI:
+                                    case DeviceType.AO:
+                                    case DeviceType.LT:
+                                    case DeviceType.M:
+                                    case DeviceType.QT:
+                                    case DeviceType.VC:
+                                        return string.Format("{0}%",
+                                            value.ToString());
+
+                                    case DeviceType.C:
+                                        return GetFormat(parameter, value,
+                                            signalDevice);
                                 }
                             }
                             break;
@@ -246,7 +267,7 @@
                     case P_ON_TIME:
                     case P_DT:
                     case P_dt:
-                        return string.Format("{0} мc", value.ToString());
+                        return string.Format("{0} мс", value.ToString());
 
                     // Метры
                     case P_SHAFT_DIAMETER:
