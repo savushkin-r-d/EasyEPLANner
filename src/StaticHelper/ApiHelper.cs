@@ -33,6 +33,15 @@ namespace StaticHelper
         /// <param name="propertyIndex">Индекс свойства</param>
         /// <returns></returns>
         string GetSupplementaryFieldValue(Function function, int propertyIndex);
+
+        /// <summary>
+        /// Установить значение свойства функции Доп.поле
+        /// </summary>
+        /// <param name="function">функция Eplan</param>
+        /// <param name="propertyIndex">Индекс доп.поля</param>
+        /// <param name="value">Устанвливаемое значение</param>
+        void SetSupplementaryFieldValue(Function function, int propertyIndex,
+            string value);
     }
 
     /// <summary>
@@ -86,6 +95,12 @@ namespace StaticHelper
             }
 
             return propertyValue.Trim();
+        }
+
+        public void SetSupplementaryFieldValue(Function function, int propertyIndex,
+            string value)
+        {
+            function.Properties.FUNC_SUPPLEMENTARYFIELD[propertyIndex] = value;
         }
     }
 }

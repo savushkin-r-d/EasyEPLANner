@@ -8,6 +8,8 @@ using PInvoke;
 using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
 using StaticHelper;
+using EplanDevice;
+using System.Text.RegularExpressions;
 
 namespace EasyEPlanner
 {
@@ -257,6 +259,7 @@ namespace EasyEPlanner
                 columnName1, columnName2,
                 devicesTreeViewAdv_DrawNodeColumn1,
                 devicesTreeViewAdv_DrawNodeColumn2,
+                devicesTreeViewAdv_EditNodeColumn2,
                 nodeCheckBox);
 
             dialogCallbackDelegate = new PI.HookProc(
@@ -986,8 +989,8 @@ namespace EasyEPlanner
                 devNode.Nodes.Add(parametersNode);
                 foreach (var parameter in dev.Parameters)
                 {
-                    var parameterNode = new ColumnNode(parameter.Key,
-                        parameter.Value.ToString());
+                    var value = parameter.Value != null ? parameter.Value.ToString() : "";
+                    var parameterNode = new ColumnNode(parameter.Key, value);
 
                     parameterNode.Tag = parameter;
                     parametersNode.Nodes.Add(parameterNode);
@@ -1000,8 +1003,8 @@ namespace EasyEPlanner
                 devNode.Nodes.Add(propertiesNode);
                 foreach (var property in dev.Properties)
                 {
-                    var propertyNode = new ColumnNode(property.Key,
-                        property.Value.ToString());
+                    var value = property.Value != null? property.Value.ToString() : "";
+                    var propertyNode = new ColumnNode(property.Key, value);
 
                     propertyNode.Tag = property;
                     propertiesNode.Nodes.Add(propertyNode);
@@ -1451,6 +1454,44 @@ namespace EasyEPlanner
         private void devicesTreeViewAdv_DrawNodeColumn2(object sender,
             DrawTextEventArgs e)
         {
+            e.TextColor = Color.Black;
+            Node currentNode = (Node)e.Node.Tag;
+            if (currentNode.Tag is KeyValuePair<string, object>)
+            {
+                var parameter =
+                    (KeyValuePair<string, object>)currentNode.Tag;
+
+                e.Text = IODevice.Parameter
+                    .GetFormat(parameter.Key, (currentNode as ColumnNode).Value,
+                    currentNode.Parent.Parent.Tag as IODevice);
+            }
+        }
+
+        private void devicesTreeViewAdv_EditNodeColumn2(object sender,
+            LabelEventArgs e)
+        {
+            var device = (e.Subject as Node).Parent.Parent.Tag
+                as EplanDevice.IODevice;
+
+            switch ((e.Subject as Node).Parent.Text)
+            {
+                case "Параметры":
+                    if (e.NewLabel == string.Empty)
+                    {
+                        (e.Subject as ColumnNode).Value = e.OldLabel;
+                        return;
+                    }
+                    device.SetParameter((e.Subject as ColumnNode).Text,
+                    double.Parse(e.NewLabel));
+                    device.UpdateParameters();
+                    break;
+
+                case "Свойства":
+                    device.SetProperty((e.Subject as ColumnNode).Text,
+                    e.NewLabel);
+                    device.UpdateProperties();
+                    break;
+            }
         }
 
         private void noAssigmentBtn_Click(object sender, EventArgs e)

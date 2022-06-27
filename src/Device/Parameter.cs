@@ -181,6 +181,123 @@
             /// Параметр для обработки ошибки счета импульсов.
             /// </summary>
             public const string P_ERR_MIN_FLOW = "P_ERR_MIN_FLOW";
+
+
+
+            /// <summary>
+            /// Получение строки значения в формате опрделенного по параметру
+            /// </summary>
+            /// <returns>Значение параметра в определенном фомате</returns>
+            public static string GetFormat(string parameter, object value,
+                IODevice device = null)
+            {
+                //единицы измерения параметров в зависимости от типа устройства
+                if (device != null)
+                {
+                    switch (device.DeviceType)
+                    {
+                        case DeviceType.WT:
+                            if (parameter == P_C0 || parameter == P_DT)
+                                return string.Format("{0} кг", value.ToString());
+                            break;
+
+                        case DeviceType.C:
+                            if (parameter == P_max || parameter == P_min)
+                            {
+                                var signal = device.Properties["IN_VALUE"];
+
+                                if (signal == null) break;
+                                var signalDevice = EplanDevice.DeviceManager
+                                    .GetInstance().Devices
+                                    .Find(dev => dev.Name == signal.ToString());
+                                if (signalDevice == null) break;
+                                switch (signalDevice.DeviceType)
+                                {
+                                    case DeviceType.WT:
+                                        return string.Format("{0} кг",
+                                            value.ToString());
+
+                                    case DeviceType.PT:
+                                        return string.Format("{0} бар",
+                                            value.ToString());
+
+                                    case DeviceType.TE:
+                                        return string.Format("{0} °C",
+                                            value.ToString());
+
+                                    case DeviceType.FQT:
+                                        return string.Format("{0} м3/ч",
+                                            value.ToString());
+
+                                    case DeviceType.AI:
+                                    case DeviceType.AO:
+                                    case DeviceType.LT:
+                                    case DeviceType.M:
+                                    case DeviceType.QT:
+                                    case DeviceType.VC:
+                                        return string.Format("{0}%",
+                                            value.ToString());
+
+                                    case DeviceType.C:
+                                        return GetFormat(parameter, value,
+                                            signalDevice);
+                                }
+                            }
+                            break;
+                    }
+                }
+
+                //единцы измерения параметров вне зависимости от типа устройства
+                switch (parameter)
+                {
+                    // Булевые(Да/Нет)
+                    case P_is_reverse:
+                    case P_is_zero_start:
+                    case P_is_manual_mode:
+                    case P_FB:
+                        return string.Format("{0:Да;-;Нет}", int
+                            .Parse(value.ToString()));
+
+                    // Секунды
+                    case P_READY_TIME:
+                    case P_acceleration_time:
+                        return string.Format("{0} с", value.ToString());
+
+                    // Миллисекунды
+                    case P_ON_TIME:
+                    case P_DT:
+                    case P_dt:
+                        return string.Format("{0} мс", value.ToString());
+
+                    // Метры
+                    case P_SHAFT_DIAMETER:
+                    case P_R:
+                    case P_H_CONE:
+                    case P_H_TRUNC: 
+                        return string.Format("{0} м", value.ToString());
+
+                    // Килограммы
+                    case P_NOMINAL_W:
+                        return string.Format("{0} кг", value.ToString());
+
+                    // Бары
+                    case P_MAX_P:
+                        return string.Format("{0} бар", value.ToString());
+
+                    // мВ/В
+                    case P_RKP:
+                        return string.Format("{0} мВ/В", value.ToString());
+
+                    // %
+                    case P_out_max:
+                    case P_out_min:
+                    case P_U_manual:
+                        return string.Format("{0}%", value.ToString());
+
+                    default:
+                        return string.Format("{0}", value.ToString());
+                }
+            }
         }
     }
 }

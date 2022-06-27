@@ -193,6 +193,41 @@ namespace EplanDevice
         }
 
         /// <summary>
+        /// Установка параметров для устройства на схеме
+        /// </summary>
+        /// <returns></returns>
+        public void UpdateParameters()
+        {
+            var parametersList = new List<string>();
+            foreach (var parameter in parameters)
+            {
+                if (parameter.Value != null)
+                    parametersList.Add($"{parameter.Key}={parameter.Value}");
+            }
+
+            var helper = new DeviceHelper(new ApiHelper());
+            helper.SetParameters(EplanObjectFunction,
+                string.Join(",", parametersList));
+        }
+
+        /// <summary>
+        /// Установка свойств для устройства на схеме
+        /// </summary>
+        /// <returns></returns>
+        public void UpdateProperties()
+        {
+            var propertiesList = new List<string>();
+            foreach (var property in properties)
+            {
+                propertiesList.Add($"{property.Key}='{property.Value}'");
+            }
+
+            var helper = new DeviceHelper(new ApiHelper());
+            helper.SetProperties(EplanObjectFunction,
+                string.Join(",", propertiesList));
+        }
+
+        /// <summary>
         /// Установка рабочего параметра.
         /// </summary>
         public string SetRuntimeParameter(string name, double value)
