@@ -307,14 +307,14 @@ function proc_action_custom_groups(step, actions, action_name)
         if action_name == current_action_name then
             local group_number = 0       
             for _, group in pairs(action) do
-                if (action_name == "enable_step_by_signal") then -- Проверка и обработка старой версии
+                if action_name == "enable_step_by_signal" then -- Проверка и обработка старой версии
                     local is_old_version = true
                     for _, data in pairs(group) do
-                        if (type(data) == "table") then 
+                        if type(data) == "table" then 
                            is_old_version = false 
                         end
                     end
-                    if (is_old_version) then
+                    if is_old_version then
                         proc_groups(step, actions, action_name)
                         break
                     end
