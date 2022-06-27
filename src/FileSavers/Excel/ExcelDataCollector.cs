@@ -553,8 +553,13 @@ namespace EasyEPlanner
 
                 IIONode currentNode = ioManager.IONodes[i];
 
-                var nodeIndex = int.Parse(currentNode.Name
-                    .Substring(1, currentNode.Name.Length - 3));
+                var nodeIndexText = currentNode.Name.TrimStart('A');
+                if (nodeIndexText.Length > 1)
+                {
+                    nodeIndexText = nodeIndexText
+                        .Remove(nodeIndexText.Length - 2);
+                }
+                var nodeIndex = int.Parse(nodeIndexText);
 
                 res[idx, 3] = prjName;
                 idx++;
