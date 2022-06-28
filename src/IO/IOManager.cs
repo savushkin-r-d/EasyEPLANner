@@ -116,17 +116,18 @@ namespace IO
         /// <param name="n">Номер (c единицы).</param>
         /// <param name="type">Тип (например 750-352).</param>
         /// <param name="IP">IP-адрес.</param>
-        public void AddNode(int n, string type, string IP, string name)
+        public void AddNode(int n, string type, string IP, string name,
+            string location)
         {
             if (iONodes.Count < n)
             {
                 for (int i = iONodes.Count; i < n; i++)
                 {
-                    iONodes.Add(new IONode("750-xxx", i + 1, "", ""));
+                    iONodes.Add(new IONode("750-xxx", i + 1, "", "", ""));
                 }
             }
 
-            iONodes[n - 1] = new IONode(type, n, IP, name);
+            iONodes[n - 1] = new IONode(type, n, IP, name, location);
         }
 
         /// <summary>

@@ -16,7 +16,8 @@ namespace IO
         /// </param>
         /// <param name="ip">IP-адрес.</param>
         /// <param name="name">Имя на схеме (А100 и др.).</param>
-        public IONode(string typeStr, int n, string ip, string name)
+        public IONode(string typeStr, int n, string ip, string name,
+            string location)
         {
             this.typeStr = typeStr;
             var nodeinfo = IONodeInfo.GetNodeInfo(typeStr, out _);
@@ -26,6 +27,7 @@ namespace IO
             this.ip = ip;
             this.n = n;
             this.name = name;
+            this.location = location;
 
             iOModules = new List<IIOModule>();
 
@@ -196,6 +198,14 @@ namespace IO
             }
         }
 
+        public string Location
+        {
+            get
+            {
+                return location;
+            }
+        }
+
         public bool IsCoupler { get; private set; } = false;
 
         #region Закрытые поля.
@@ -228,6 +238,11 @@ namespace IO
         /// Имя узла (прим., А100).
         /// </summary>
         private string name;
+
+        /// <summary>
+        /// Местоположение узла (прим., +MCC1)
+        /// </summary>
+        private string location;
         #endregion
     }
 }
