@@ -5,6 +5,7 @@ on:
     branches: [ master ]
     types: [ labeled ]
   workflow_dispatch:
+  push:
 
 env:
   # Path to the solution file relative to the root of the project.
