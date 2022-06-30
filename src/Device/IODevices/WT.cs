@@ -42,6 +42,7 @@ namespace EplanDevice
 
                 case "WT_RS232":
                     AI.Add(new IOChannel("AI", -1, -1, -1, ""));
+                    AO.Add(new IOChannel("AO", -1, -1, -1, ""));
 
                     parameters.Add(Parameter.P_C0, null);
                     break;
