@@ -273,7 +273,7 @@ namespace Tests.EplanDevices
             var RS232Channels = new Dictionary<string, int>()
             {
                 { AI, 1 },
-                { AO, 0 },
+                { AO, 1 },
                 { DI, 0 },
                 { DO, 0 },
             };
