@@ -66,6 +66,11 @@ namespace IO
         int AO_count { get; set; }
 
         /// <summary>
+        /// Расположение узла.
+        /// </summary>
+        string Location { get; }
+
+        /// <summary>
         /// Сохранение в виде таблицы Lua.
         /// </summary>
         /// <param name="prefix">Префикс (для выравнивания).</param>

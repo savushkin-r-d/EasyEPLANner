@@ -132,6 +132,8 @@ namespace EasyEPlanner
                 string name = $"A{nodeNumber}";
                 string ipAdress = GetIPAdressFromFunction(function);
                 string type = GetNodeTypeFromFunction(function);
+                string location = function.Properties
+                    .DESIGNATION_FULLLOCATION_WITHPREFIX;
 
                 if (type != "")
                 {
@@ -139,18 +141,19 @@ namespace EasyEPlanner
                     {
                         if (nodeNumber == numberA1)
                         {
-                            IOManager.AddNode(numberA1, type, ipAdress, name);
+                            IOManager.AddNode(numberA1, type, ipAdress, name,
+                                location);
                         }
                         else
                         {
                             IOManager.AddNode(nodeNumber/100 + numberA1, type, 
-                                ipAdress, name);
+                                ipAdress, name, location);
                         }
                     }
                     else
                     {
                         IOManager.AddNode(nodeNumber/100, type, ipAdress, 
-                            name);
+                            name, location);
                     }
                 }
                 else
