@@ -305,25 +305,41 @@ end
 function proc_action_custom_groups(step, actions, action_name)
     for current_action_name, action in pairs(actions) do
         if action_name == current_action_name then
-            local group_number = 0       
-            for _, group in pairs(action) do
-                if action_name == "enable_step_by_signal" then -- Проверка и обработка старой версии
-                    local is_old_version = true
-                    for _, data in pairs(group) do
-                        if type(data) == "table" then 
-                           is_old_version = false 
+            local group_number = 0   
+            local parameter_number = 0;
+            for group_name, group in pairs(action) do
+                if type(group) == "table" then
+                    if has_table(group) then
+                        proc_action_custom(step, group, action_name, group_number)
+                    else
+                        for _, dev_name in pairs (group) do
+                            if type(tonumber(group_name)) == 'number' then
+                                group_name = "A_0"
+                            end
+                            add_dev(step, action_name, dev_name, 
+                                group_number, group_name)
                         end
                     end
-                    if is_old_version then
-                        proc_groups(step, actions, action_name)
-                        break
+                    group_number = group_number + 1
+                else
+                    if type(tonumber(group_name)) == 'number' then
+                        group_name = "P_"..tostring(parameter_number)
                     end
+                    step:AddParam(action_name, group, group_name, -1)
+                    parameter_number = parameter_number + 1
                 end
-                proc_action_custom(step, group, action_name, group_number)
-                group_number = group_number + 1
             end
         end
     end
+end
+
+function  has_table(table)
+	for _, value in pairs(table) do
+        if type(value) == "table" then
+            return true
+        end
+    end
+    return false
 end
 
 function add_dev(step, action_name, dev_name, group_number, sub_action_name)

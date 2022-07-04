@@ -264,10 +264,10 @@ namespace TechObject
                         {
                             EplanDevice.DeviceType.DI,
                         }));
-                    enableStepBySignalAction.CreateParameter(new ActiveBoolParameter("",
-                        "Выключать шаг по пропаданию сигнала", "false"));
                     return enableStepBySignalAction;
                 });
+            enableStepBySignal.CreateParameter(new ActiveBoolParameter("",
+                "Выключать шаг по пропаданию сигнала", "false"));
 
             actions.Add(enableStepBySignal);
 

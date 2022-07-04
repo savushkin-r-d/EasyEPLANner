@@ -21,6 +21,7 @@ namespace TechObject
             Func<ActionCustom> actionCustomDeleagate)
             : base(name, owner, luaName)
         {
+            parameters = new List<BaseParameter>();
             ActionCustomDelegate = actionCustomDeleagate;
             AddNewGroup();
         }
@@ -51,12 +52,43 @@ namespace TechObject
         public override void AddParam(object val, string paramName,
             int groupNumber)
         {
+            if (groupNumber == -1)
+            {
+                BaseParameter parameter = null;
+
+                if (paramName.StartsWith("P_"))
+                {
+                    var index = int.Parse(paramName.Substring(2));
+                    if (Parameters.Count > index)
+                    {
+                        parameter = Parameters[int.Parse(paramName.Substring(2))];
+                    }
+                }
+                else
+                {
+                    parameter = parameters.Where(x => x.LuaName == paramName)
+                        .FirstOrDefault();
+                }
+
+                bool haveParameter = parameter != null;
+                if (haveParameter)
+                {
+                    parameter.SetNewValue(val.ToString());
+                }
+                return;
+            }
+
             while (SubActions.Count <= groupNumber)
             {
                 AddNewGroup();
             }
 
             SubActions[groupNumber].AddParam(val, paramName, groupNumber);
+        }
+
+        public void CreateParameter(BaseParameter parameter)
+        {
+            parameters.Add(parameter);
         }
 
         private void AddNewGroup()
@@ -128,6 +160,15 @@ namespace TechObject
             {
                 res += group.SaveAsLuaTable(prefix + "\t");
             }
+            if (res != string.Empty)
+            {
+                foreach (var parameter in Parameters)
+                {
+                    var parameterLuaName = (parameter.LuaName != string.Empty) ?
+                        $"{parameter.LuaName}=" : string.Empty;
+                    res += $"{prefix + "\t"}{parameterLuaName}{parameter.Value},\n";
+                }
+            }
             return res;
         }
 
@@ -180,8 +221,23 @@ namespace TechObject
                 return true;
             }
         }
+
+        public override ITreeViewItem[] Items
+        {
+            get
+            {
+                return base.Items.Concat(parameters).ToArray();
+            }
+        }
         #endregion
 
+        public List<BaseParameter> Parameters
+        {
+            get { return parameters; }
+        }
+
         private Func<ActionCustom> ActionCustomDelegate;
+
+        private List<BaseParameter> parameters;
     }
 }
