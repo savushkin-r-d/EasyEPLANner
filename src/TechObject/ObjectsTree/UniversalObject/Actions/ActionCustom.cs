@@ -140,8 +140,8 @@ namespace TechObject
             int lastFilledParameter = Parameters
                 .FindLastIndex(p => p.Value != string.Empty);
 
-            bool inLine = lastFilledSubaction == 0 &&
-                lastFilledParameter == 0;
+            bool inLine = lastFilledSubaction <= 0 &&
+                lastFilledParameter <= 0;
 
             int index = 0;
 
@@ -178,6 +178,11 @@ namespace TechObject
                 }
 
                 ++index;
+            }
+
+            if (SubActions.Count == 1 && Parameters.Count == 0)
+            {
+                return $"{prefix}{subactionsData.Trim()}\n";
             }
 
             if (inLine)
@@ -245,11 +250,15 @@ namespace TechObject
         public override void AddParam(object val, string paramName,
             int groupNumber)
         {
-            BaseParameter parameter;
+            BaseParameter parameter = null;
 
             if (paramName.StartsWith("P_"))
             {
-                parameter = Parameters[int.Parse(paramName.Substring(2))];
+                var index = int.Parse(paramName.Substring(2));
+                if (Parameters.Count > index)
+                {
+                    parameter = Parameters[int.Parse(paramName.Substring(2))];
+                }
             }
             else
             {
