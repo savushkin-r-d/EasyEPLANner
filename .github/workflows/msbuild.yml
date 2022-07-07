@@ -18,7 +18,7 @@ env:
 
 jobs:
   build:
-    name: Build
+    name: Build and test
     runs-on: windows-latest
 
     steps:
@@ -48,6 +48,13 @@ jobs:
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
 
+    - name: Test
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: |
+        cd ./EasyEplanner.Tests
+        dotnet test /p:Configuration=${{env.BUILD_CONFIGURATION}}
+
+
     - uses: actions/upload-artifact@v2
       with:
         name: EPLANner
@@ -61,21 +68,24 @@ jobs:
           src/bin/${{env.BUILD_CONFIGURATION}}/Aga.Controls.dll
           src/bin/${{env.BUILD_CONFIGURATION}}/LuaInterface.dll
           src/bin/${{env.BUILD_CONFIGURATION}}/KopiLua.dll
-  
-  test:
-    name: Test
+
+release:
+    #if: contains(github.ref, 'tags/v')
     runs-on: windows-latest
-    #if: contains( github.event.pull_request.labels.*.name, 'safe to test' )
     needs: build
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1.0.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        submodules: 'recursive'
-        ref: ${{ github.event.pull_request.head.sha }}
-        
-    - name: Test
-      working-directory: ${{env.GITHUB_WORKSPACE}}
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Store Release url
       run: |
-        cd ./EasyEplanner.Tests
-        dotnet test /p:Configuration=${{env.BUILD_CONFIGURATION}}
+        echo "${{ steps.create_release.outputs.upload_url }}" > ./upload_url
