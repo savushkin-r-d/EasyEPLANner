@@ -65,7 +65,7 @@ jobs:
   test:
     name: Test
     runs-on: windows-latest
-    if: contains( github.event.pull_request.labels.*.name, 'safe to test' )
+    #if: contains( github.event.pull_request.labels.*.name, 'safe to test' )
     needs: build
 
     steps:
