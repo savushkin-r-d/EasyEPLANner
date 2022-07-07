@@ -70,7 +70,8 @@ jobs:
           src/bin/${{env.BUILD_CONFIGURATION}}/KopiLua.dll
 
   release:
-    #if: contains(github.ref, 'tags/v')
+    if: contains(github.ref, 'tags')
+    name: Release
     runs-on: windows-latest
     needs: build
 
@@ -88,4 +89,37 @@ jobs:
 
     - name: Store Release url
       run: |
-        echo "${{ steps.create_release.outputs.upload_url }}" > ./upload_url
+        echo "${{ steps.create_release.outputs.upload_url }}" > ./
+        
+  publish:
+    if: contains(github.ref, 'tags')
+    name: publish
+    runs-on: windows-latest
+    needs: release
+
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v1
+      with:
+        name: Windows.7z
+        path: ./
+
+    - name: Download URL
+      uses: actions/download-artifact@v1
+      with:
+        name: upload_url
+        path: ./
+    - id: set_upload_url
+      run: |
+        upload_url=`cat ./upload_url`
+        echo ::set-output name=upload_url::$upload_url
+    - name: Upload to Release
+      id: upload_to_release
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.set_upload_url.outputs.upload_url }}
+        asset_path: ./Windows.7z
+        asset_name: Windows.7z
+        asset_content_type: application/x-gtar
