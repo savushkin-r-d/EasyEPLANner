@@ -69,7 +69,7 @@ jobs:
           src/bin/${{env.BUILD_CONFIGURATION}}/LuaInterface.dll
           src/bin/${{env.BUILD_CONFIGURATION}}/KopiLua.dll
 
-release:
+  release:
     #if: contains(github.ref, 'tags/v')
     runs-on: windows-latest
     needs: build
