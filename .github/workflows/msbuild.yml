@@ -108,7 +108,7 @@ jobs:
     - name: Download artifact
       uses: actions/download-artifact@v1
       with:
-        name: Windows.7z
+        name: EPLANner
         path: ./
     
     - name: Download URL
@@ -129,6 +129,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.set_upload_url.outputs.upload_url }}
-        asset_path: ./Windows.7z
-        asset_name: Windows.7z
+        asset_path: ./EPLANner
+        asset_name: EPLANner.7z
         asset_content_type: application/x-gtar
