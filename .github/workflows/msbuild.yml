@@ -75,9 +75,6 @@ jobs:
     if: contains(github.ref, 'tags/v')
     name: Release
     runs-on: ubuntu-latest
-    container:
-      image: owasp/zap2docker-stable
-      options: --user root
     needs: build
 
     steps:
