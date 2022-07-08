@@ -61,8 +61,7 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: EPLANner
-        path: ./EPLANner.zip
-          |
+        path: |
           src/bin/${{env.BUILD_CONFIGURATION}}/EPLAN.EplAddin.EasyEPlanner.dll
           src/bin/${{env.BUILD_CONFIGURATION}}/EPLAN.EplAddin.IdleTimeModule.dll
           src/bin/${{env.BUILD_CONFIGURATION}}/Spire.Pdf.dll
@@ -111,7 +110,7 @@ jobs:
     - name: Download artifact
       uses: actions/download-artifact@v1
       with:
-        name: EPLANner.zip
+        name: EPLANner
         path: ./
     
     - name: Download URL
@@ -132,6 +131,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.set_upload_url.outputs.upload_url }}
-        asset_path: ./EPLANner.zip
-        asset_name: EPLANner.zip
+        asset_path: ./EPLANner
+        asset_name: EPLANner
         asset_content_type: application/zip
