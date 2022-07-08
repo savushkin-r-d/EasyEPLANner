@@ -110,7 +110,7 @@ jobs:
     - name: Download artifact
       uses: actions/download-artifact@v1
       with:
-        name: EPLANner
+        name: EPLANner.zip
         path: ./
     
     - name: Download URL
