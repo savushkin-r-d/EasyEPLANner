@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
   push:
     tags:
+      - 'v*'
 
 env:
   # Path to the solution file relative to the root of the project.
@@ -91,14 +92,12 @@ jobs:
     - name: Store Release url
       run: |
         echo "${{ steps.create_release.outputs.upload_url }}" > ./
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v1
       with:
         path: ./upload_url
         name: upload_url
 
           
-
-
   publish:
     if: contains(github.ref, 'tags')
     name: publish
