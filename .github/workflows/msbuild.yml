@@ -6,6 +6,8 @@ on:
     types: [ labeled ]
   workflow_dispatch:
   push:
+    branches:
+      - master
     tags:
       - 'v*'
 
@@ -58,7 +60,7 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: EPLANner
+        name: EPLANner.zip
         path: |
           src/bin/${{env.BUILD_CONFIGURATION}}/EPLAN.EplAddin.EasyEPlanner.dll
           src/bin/${{env.BUILD_CONFIGURATION}}/EPLAN.EplAddin.IdleTimeModule.dll
@@ -131,4 +133,4 @@ jobs:
         upload_url: ${{ steps.set_upload_url.outputs.upload_url }}
         asset_path: ./EPLANner.zip
         asset_name: EPLANner.zip
-        asset_content_type: application/x-gtar
+        asset_content_type: application/zip
