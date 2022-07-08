@@ -107,6 +107,11 @@ jobs:
     needs: release
 
     steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+        ref: ${{ github.event.pull_request.head.sha }}
+    
     - name: Download artifact
       uses: actions/download-artifact@v1
       with:
