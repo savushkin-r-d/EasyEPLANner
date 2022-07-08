@@ -101,7 +101,7 @@ jobs:
   publish:
     if: contains(github.ref, 'tags/v')
     name: publish
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: release
 
     steps:
