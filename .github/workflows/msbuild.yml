@@ -91,20 +91,12 @@ jobs:
     - name: Store Release url
       run: |
         echo "${{ steps.create_release.outputs.upload_url }}" > ./
-    
     - uses: actions/upload-artifact@v2
       with:
-        name: EPLANner
-        path: |
-          src/bin/${{env.BUILD_CONFIGURATION}}/EPLAN.EplAddin.EasyEPlanner.dll
-          src/bin/${{env.BUILD_CONFIGURATION}}/EPLAN.EplAddin.IdleTimeModule.dll
-          src/bin/${{env.BUILD_CONFIGURATION}}/Spire.Pdf.dll
-          src/bin/${{env.BUILD_CONFIGURATION}}/Spire.XLS.dll
-          src/bin/${{env.BUILD_CONFIGURATION}}/Spire.License.dll
-          src/bin/${{env.BUILD_CONFIGURATION}}/ObjectListView.dll
-          src/bin/${{env.BUILD_CONFIGURATION}}/Aga.Controls.dll
-          src/bin/${{env.BUILD_CONFIGURATION}}/LuaInterface.dll
-          src/bin/${{env.BUILD_CONFIGURATION}}/KopiLua.dll
+        path: ./upload_url
+        name: upload_url
+
+          
 
 
   publish:
