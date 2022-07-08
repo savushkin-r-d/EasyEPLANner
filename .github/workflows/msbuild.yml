@@ -72,9 +72,11 @@ jobs:
 
 
   release:
-    if: contains(github.ref, 'tags')
+    if: contains(github.ref, 'tags/v')
     name: Release
     runs-on: windows-latest
+    container:
+      options: --user root
     needs: build
 
     steps:
@@ -99,7 +101,7 @@ jobs:
 
           
   publish:
-    if: contains(github.ref, 'tags')
+    if: contains(github.ref, 'tags/v')
     name: publish
     runs-on: windows-latest
     needs: release
