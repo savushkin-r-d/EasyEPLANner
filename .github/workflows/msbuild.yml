@@ -76,6 +76,7 @@ jobs:
     name: Release
     runs-on: windows-latest
     container:
+      image: owasp/zap2docker-stable
       options: --user root
     needs: build
 
