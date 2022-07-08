@@ -5,7 +5,7 @@ on:
     branches: [ master ]
     types: [ labeled ]
   workflow_dispatch:
-  push:
+  release:
 
 env:
   # Path to the solution file relative to the root of the project.
@@ -54,7 +54,6 @@ jobs:
         cd ./EasyEplanner.Tests
         dotnet test /p:Configuration=${{env.BUILD_CONFIGURATION}}
 
-
     - uses: actions/upload-artifact@v2
       with:
         name: EPLANner
@@ -68,6 +67,7 @@ jobs:
           src/bin/${{env.BUILD_CONFIGURATION}}/Aga.Controls.dll
           src/bin/${{env.BUILD_CONFIGURATION}}/LuaInterface.dll
           src/bin/${{env.BUILD_CONFIGURATION}}/KopiLua.dll
+
 
   release:
     if: contains(github.ref, 'tags')
@@ -86,11 +86,26 @@ jobs:
         release_name: Release ${{ github.ref }}
         draft: false
         prerelease: false
-
+    
     - name: Store Release url
       run: |
         echo "${{ steps.create_release.outputs.upload_url }}" > ./
-        
+    
+    - uses: actions/upload-artifact@v2
+      with:
+        name: EPLANner
+        path: |
+          src/bin/${{env.BUILD_CONFIGURATION}}/EPLAN.EplAddin.EasyEPlanner.dll
+          src/bin/${{env.BUILD_CONFIGURATION}}/EPLAN.EplAddin.IdleTimeModule.dll
+          src/bin/${{env.BUILD_CONFIGURATION}}/Spire.Pdf.dll
+          src/bin/${{env.BUILD_CONFIGURATION}}/Spire.XLS.dll
+          src/bin/${{env.BUILD_CONFIGURATION}}/Spire.License.dll
+          src/bin/${{env.BUILD_CONFIGURATION}}/ObjectListView.dll
+          src/bin/${{env.BUILD_CONFIGURATION}}/Aga.Controls.dll
+          src/bin/${{env.BUILD_CONFIGURATION}}/LuaInterface.dll
+          src/bin/${{env.BUILD_CONFIGURATION}}/KopiLua.dll
+
+
   publish:
     if: contains(github.ref, 'tags')
     name: publish
@@ -103,16 +118,18 @@ jobs:
       with:
         name: Windows.7z
         path: ./
-
+    
     - name: Download URL
       uses: actions/download-artifact@v1
       with:
         name: upload_url
         path: ./
+    
     - id: set_upload_url
       run: |
         upload_url=`cat ./upload_url`
         echo ::set-output name=upload_url::$upload_url
+    
     - name: Upload to Release
       id: upload_to_release
       uses: actions/upload-release-asset@v1.0.1
