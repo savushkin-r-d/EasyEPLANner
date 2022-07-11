@@ -58,6 +58,11 @@ jobs:
         cd ./EasyEplanner.Tests
         dotnet test /p:Configuration=${{env.BUILD_CONFIGURATION}}
 
+    - name: Download sys_base_object_description
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: | 
+        curl -s https://${{ secrets.EPLAN_API_BIN }}@raw.githubusercontent.com/savushkin-r-d/ptusa-Lua-dairy-system/tree/master/EasyEplannerObjectsDescription/sys_base_objects_description.lua
+        copy sys_base_object_description.lua src/bin/${{env.BUILD_CONFIGURATION}}/Lua/BaseObjectsDescriptionFiles
 
     - name: Pack
       working-directory: src/bin
