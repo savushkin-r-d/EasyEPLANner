@@ -62,7 +62,7 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
         md src/bin/${{env.BUILD_CONFIGURATION}}/Lua/BaseObjectsDescriptionFiles
-        ./fetch_windows_amd64.exe --github-oauth-token="${{ secrets.EPLAN_API_BIN }}" --repo="https://github.com/savushkin-r-d/ptusa-Lua-dairy-system" --ref="master" --source-path="/EasyEplannerObjectsDescription/sys_base_objects_description.lua" "src/bin/${{env.BUILD_CONFIGURATION}}/Lua/BaseObjectsDescriptionFiles"
+        ./fetch_windows_amd64.exe --github-oauth-token="${{ secrets.EPLAN_API_BIN }}" --repo="https://github.com/savushkin-r-d/ptusa-Lua-dairy-system" --ref="master" "/src/bin/${{env.BUILD_CONFIGURATION}}/Lua/BaseObjectsDescriptionFiles"
 
     - name: Pack
       working-directory: src/bin
