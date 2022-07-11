@@ -62,6 +62,7 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: | 
         curl -s https://${{ secrets.EPLAN_API_BIN }}@raw.githubusercontent.com/savushkin-r-d/ptusa-Lua-dairy-system/blob/master/EasyEplannerObjectsDescription/sys_base_objects_description.lua --output sys_base_objects_description.lua
+        md src/bin/${{env.BUILD_CONFIGURATION}}/Lua/BaseObjectsDescriptionFiles
         copy sys_base_objects_description.lua src/bin/${{env.BUILD_CONFIGURATION}}/Lua/BaseObjectsDescriptionFiles/sys_base_objects_description.lua
 
     - name: Pack
