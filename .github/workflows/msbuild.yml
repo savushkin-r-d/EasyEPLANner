@@ -59,7 +59,7 @@ jobs:
         dotnet test /p:Configuration=${{env.BUILD_CONFIGURATION}}
 
     - name: Zip artifact
-      run: tar -czvf EPLANner.zip src/bin/${{env.BUILD_CONFIGURATION}}
+      run: zip -r EPLANner.zip src/bin/${{env.BUILD_CONFIGURATION}}
 
     - uses: actions/upload-artifact@v3
       with:
