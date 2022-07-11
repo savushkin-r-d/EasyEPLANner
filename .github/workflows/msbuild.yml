@@ -110,7 +110,6 @@ jobs:
     - name: Zip artifact
       run: tar -czvf EasyEPLANner.zip src/bin/${{env.BUILD_CONFIGURATION}}
 
-    uses: 
     - uses: actions/upload-artifact@v3
       with:
         name: EasyEPLANner.zip
