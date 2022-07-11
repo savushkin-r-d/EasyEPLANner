@@ -60,8 +60,8 @@ jobs:
 
 
     - name: Pack
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: cmake -E tar cfv EPLANner.zip --format=zip src/bin/${{env.BUILD_CONFIGURATION}}
+      working-directory: src/bin/${{env.BUILD_CONFIGURATION}}
+      run: cmake -E tar cfv EPLANner.zip --format=zip .
 
     - uses: actions/upload-artifact@v3
       with:
@@ -128,4 +128,4 @@ jobs:
         upload_url: ${{ steps.set_upload_url.outputs.upload_url }}
         asset_path: ./EPLANner.zip
         asset_name: EPLANner.zip
-        #asset_content_type: application/zip
+        asset_content_type: application/zip
