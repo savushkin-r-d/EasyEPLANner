@@ -107,11 +107,20 @@ jobs:
     needs: release
 
     steps:
-    - name: Download artifact
-      uses: actions/download-artifact@v1
+    - name: Zip artifact
+      run: tar -czvf EasyEPLANner.zip src/bin/${{env.BUILD_CONFIGURATION}}
+
+    uses: 
+    - uses: actions/upload-artifact@v3
       with:
-        name: EPLANner
-        path: ./EPLANner/
+        name: EasyEPLANner.zip
+        path: EasyEPLANner.zip
+
+    #- name: Download artifact
+    #  uses: actions/download-artifact@v1
+    #  with:
+    #    name: EPLANner
+    #    path: ./EPLANner/
     
     - name: Download URL
       uses: actions/download-artifact@v1
@@ -131,6 +140,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.set_upload_url.outputs.upload_url }}
-        asset_path: ./EPLANner.zip
-        asset_name: EPLANner.zip
+        asset_path: EasyEPLANner.zip
+        asset_name: EasyEPLANner.zip
         asset_content_type: application/zip
