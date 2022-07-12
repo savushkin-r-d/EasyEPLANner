@@ -24,6 +24,7 @@ jobs:
   build:
     name: Build and test
     runs-on: windows-latest
+    if: contains( github.event.pull_request.labels.*.name, 'safe to test' ) || github.ref == 'refs/heads/master' || contains(github.ref, 'tags/v')
 
     steps:
     - uses: actions/checkout@v2
