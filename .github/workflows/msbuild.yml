@@ -61,10 +61,10 @@ jobs:
     - name: Download sys_base_objects_description
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: |
-        md objects_description
+        md /objects_description
         ./fetch_windows_amd64.exe --github-oauth-token="${{ secrets.EPLAN_API_BIN }}" --repo="https://github.com/savushkin-r-d/ptusa-Lua-dairy-system" --ref="master" "/objects_description"
         md src/bin/${{env.BUILD_CONFIGURATION}}/Lua/BaseObjectsDescriptionFiles
-        copy objects_description/EasyEplannerObjectsDescription/sys_base_objects_description.lua src/bin/${{env.BUILD_CONFIGURATION}}/Lua/BaseObjectsDescriptionFiles/sys_base_objects_description.lua
+        copy /objects_description/EasyEplannerObjectsDescription/sys_base_objects_description.lua src/bin/${{env.BUILD_CONFIGURATION}}/Lua/BaseObjectsDescriptionFiles/sys_base_objects_description.lua
 
     - name: Pack
       working-directory: src/bin
