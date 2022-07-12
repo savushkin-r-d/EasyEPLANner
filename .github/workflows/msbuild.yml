@@ -68,12 +68,12 @@ jobs:
 
     - name: Pack
       working-directory: src/bin
-      run: cmake -E tar cfv EPLANner.zip --format=zip ${{env.BUILD_CONFIGURATION}}
+      run: cmake -E tar cfv EasyEPLANner.zip --format=zip ${{env.BUILD_CONFIGURATION}}
 
     - uses: actions/upload-artifact@v3
       with:
-        name: EPLANner
-        path: src/bin/EPLANner.zip
+        name: EasyEPLANner
+        path: src/bin/EasyEPLANner.zip
 
   release:
     if: contains(github.ref, 'tags/v')
@@ -112,7 +112,7 @@ jobs:
     - name: Download artifact
       uses: actions/download-artifact@v1
       with:
-        name: EPLANner
+        name: EasyEPLANner
         path: ./
     
     - name: Download URL
@@ -133,6 +133,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.set_upload_url.outputs.upload_url }}
-        asset_path: ./EPLANner.zip
-        asset_name: EPLANner.zip
+        asset_path: ./EasyEPLANner.zip
+        asset_name: EasyEPLANner.zip
         asset_content_type: application/zip
