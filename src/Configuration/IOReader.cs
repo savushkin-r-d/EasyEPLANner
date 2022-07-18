@@ -141,19 +141,19 @@ namespace EasyEPlanner
                     {
                         if (nodeNumber == numberA1)
                         {
-                            IOManager.AddNode(numberA1, type, ipAdress, name,
+                            IOManager.AddNode(numberA1, nodeNumber, type, ipAdress, name,
                                 location);
                         }
                         else
                         {
-                            IOManager.AddNode(nodeNumber/100 + numberA1, type, 
-                                ipAdress, name, location);
+                            IOManager.AddNode(nodeNumber/100 + numberA1,
+                                nodeNumber, type, ipAdress, name, location);
                         }
                     }
                     else
                     {
-                        IOManager.AddNode(nodeNumber/100, type, ipAdress, 
-                            name, location);
+                        IOManager.AddNode(nodeNumber/100, nodeNumber, type,
+                            ipAdress, name, location);
                     }
                 }
                 else

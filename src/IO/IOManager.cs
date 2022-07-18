@@ -116,18 +116,24 @@ namespace IO
         /// <param name="n">Номер (c единицы).</param>
         /// <param name="type">Тип (например 750-352).</param>
         /// <param name="IP">IP-адрес.</param>
-        public void AddNode(int n, string type, string IP, string name,
-            string location)
+        public void AddNode(int n, int nodeNumber, string type, string IP,
+            string name, string location)
         {
+            int voidNodeNumber = nodeNumber - 100;
             if (iONodes.Count < n)
             {
                 for (int i = iONodes.Count; i < n; i++)
                 {
-                    iONodes.Add(new IONode("750-xxx", i + 1, "", "", ""));
+                    if (voidNodeNumber == 0)
+                        voidNodeNumber = 1;
+                    iONodes.Add(new IONode("750-xxx", i + 1,
+                        voidNodeNumber,
+                        "", "", ""));
+                    voidNodeNumber -= 100;
                 }
             }
 
-            iONodes[n - 1] = new IONode(type, n, IP, name, location);
+            iONodes[n - 1] = new IONode(type, n, nodeNumber, IP, name, location);
         }
 
         /// <summary>
@@ -192,7 +198,7 @@ namespace IO
             {
                 if (node != null && node.Type == IONode.TYPES.T_EMPTY)
                 {
-                    str += "Отсутствует узел \"A" + node.FullN + "\".\n";
+                    str += "Отсутствует узел \"A" + node.NodeNumber + "\".\n";
                 }
 
                 str += CheckNodeIPEquality(node);
@@ -259,7 +265,7 @@ namespace IO
                     .ConvertIPStrToLong(IPstr);
                 if (nodeIP - startingIP < 0 || endingIP - nodeIP < 0)
                 {
-                    errors += $"IP-адрес узла A{node.FullN} " +
+                    errors += $"IP-адрес узла A{node.NodeNumber} " +
                         $"вышел за диапазон.\n";
                 }
             }
