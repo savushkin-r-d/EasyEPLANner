@@ -23,7 +23,7 @@ namespace IO
         /// <summary>
         /// Полный номер узла.
         /// </summary>
-        int FullN { get; }
+        int NodeNumber { get; }
 
         /// <summary>
         /// IP-адрес.

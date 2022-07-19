@@ -528,6 +528,8 @@ namespace EasyEPlanner
             int MAX_ROW = ioManager.IONodes.Count;
 
             int IndexPCMain = 0;
+            int offsetA1 = 0;
+
 
             foreach (var ioNode in ioManager.IONodes)
             {
@@ -536,6 +538,8 @@ namespace EasyEPlanner
                 {
                     IndexPCMain = ioNode.N - 1;
                 }
+                if (ioNode.Name == "A1")
+                    offsetA1 = 1;
             }
 
             MAX_ROW *= 16;
@@ -561,7 +565,7 @@ namespace EasyEPlanner
                 string nodeName = "";
                 if (currentNode.Type != IONode.TYPES.T_PHOENIX_CONTACT_MAIN)
                 {
-                    nodeName = $"Узел №{currentNode.N - 1}. {currentNode.Location}-{currentNode.Name}." +
+                    nodeName = $"Узел №{currentNode.N - offsetA1}. {currentNode.Location}-{currentNode.Name}." +
                         $" Адрес: {currentNode.IP}";
                 }
                 else
@@ -586,7 +590,7 @@ namespace EasyEPlanner
                 }
                 idx++;
                 currentNode.SaveAsConnectionArray(ref res, ref idx, 
-                    modulesCount, modulesColor, currentNode.N - 1, asInterfaceConnection);
+                    modulesCount, modulesColor, currentNode.N - offsetA1, asInterfaceConnection);
             }
 
             res = DeleteNullObjects(res); 

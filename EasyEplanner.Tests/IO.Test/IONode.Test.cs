@@ -12,7 +12,7 @@ namespace Tests.IO
         {
             IOManager.GetInstance(); // Load description from file.
 
-            var testNode = new IONode(typeStr, IntStub, StrStub, StrStub,
+            var testNode = new IONode(typeStr, IntStub, IntStub, StrStub, StrStub,
                 StrStub);
 
             Assert.AreEqual(expectedType, testNode.Type);
@@ -76,7 +76,7 @@ namespace Tests.IO
         {
             IOManager.GetInstance(); // Load description from file.
 
-            var testNode = new IONode(typeStr, IntStub, StrStub, StrStub,
+            var testNode = new IONode(typeStr, IntStub, IntStub, StrStub, StrStub,
                 StrStub);
 
             Assert.AreEqual(expectedValue, testNode.IsCoupler);
@@ -89,7 +89,7 @@ namespace Tests.IO
         public void Name_NewNode_CorrectGetAndSet(string expected,
             string actual)
         {
-            var testNode = new IONode(StrStub, IntStub, StrStub, actual,
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, actual,
                 StrStub);
             Assert.AreEqual(expected, testNode.Name);
         }
@@ -100,7 +100,7 @@ namespace Tests.IO
         [TestCase("12.12.12.12", "12.12.12.12")]
         public void IP_NewNode_CorrectGetAndSet(string expected,string actual)
         {
-            var testNode = new IONode(StrStub, IntStub, actual, StrStub,
+            var testNode = new IONode(StrStub, IntStub, IntStub, actual, StrStub,
                 StrStub);
             Assert.AreEqual(expected, testNode.IP);
         }
@@ -111,7 +111,7 @@ namespace Tests.IO
         [TestCase("Строковый тип", "Строковый тип")]
         public void Type_NewNode_CorrectGetAndSet(string expected, string actual)
         {
-            var testNode = new IONode(actual, IntStub, StrStub, StrStub,
+            var testNode = new IONode(actual, IntStub, IntStub, StrStub, StrStub,
                 StrStub);
             Assert.AreEqual(expected, testNode.TypeStr);
         }
@@ -122,20 +122,20 @@ namespace Tests.IO
         [TestCase(10, 10)]
         public void N_NewNode_CorrectGetAndSet(int expected, int actual)
         {
-            var testNode = new IONode(StrStub, actual, StrStub, StrStub,
+            var testNode = new IONode(StrStub, actual, IntStub, StrStub, StrStub,
                 StrStub);
             Assert.AreEqual(expected, testNode.N);
         }
 
         [TestCase(0, 0)]
         [TestCase(1, 1)]
-        [TestCase(100, 2)]
-        [TestCase(900, 10)]
+        [TestCase(100, 100)]
+        [TestCase(900, 900)]
         public void FullN_NewNode_CorrectGetAndSet(int expected, int actual)
         {
-            var testNode = new IONode(StrStub, actual, StrStub, StrStub,
+            var testNode = new IONode(StrStub, IntStub, actual, StrStub, StrStub,
                 StrStub);
-            Assert.AreEqual(expected, testNode.FullN);
+            Assert.AreEqual(expected, testNode.NodeNumber);
         }
 
         [TestCase(0,0)]
@@ -143,7 +143,7 @@ namespace Tests.IO
         public void AIcount_NewNode_CorrectGetAndSetSignalsCount(int expected,
             int actual)
         {
-            var testNode = new IONode(StrStub, IntStub, StrStub, StrStub,
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub,
                 StrStub);
 
             testNode.AI_count += actual;
@@ -156,7 +156,7 @@ namespace Tests.IO
         public void AOcount_NewNode_CorrectGetAndSetSignalsCount(int expected,
             int actual)
         {
-            var testNode = new IONode(StrStub, IntStub, StrStub, StrStub,
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub,
                 StrStub);
 
             testNode.AO_count += actual;
@@ -169,7 +169,7 @@ namespace Tests.IO
         public void DIcount_NewNode_CorrectGetAndSetSignalsCount(int expected,
             int actual)
         {
-            var testNode = new IONode(StrStub, IntStub, StrStub, StrStub,
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub,
                 StrStub);
 
             testNode.DI_count += actual;
@@ -182,7 +182,7 @@ namespace Tests.IO
         public void DOcount_NewNode_CorrectGetAndSetSignalsCount(int expected,
             int actual)
         {
-            var testNode = new IONode(StrStub, IntStub, StrStub, StrStub,
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub,
                 StrStub);
 
             testNode.DO_count += actual;
@@ -198,7 +198,7 @@ namespace Tests.IO
         public void Location_NewNode_CorrectGetAndSet(string expected,
             string actual)
         {
-            var testNode = new IONode(StrStub, IntStub, StrStub, StrStub,
+            var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub,
                 actual);
             Assert.AreEqual(expected, testNode.Location);
         }
