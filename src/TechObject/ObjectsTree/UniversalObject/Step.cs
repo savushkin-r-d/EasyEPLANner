@@ -267,7 +267,7 @@ namespace TechObject
                     return enableStepBySignalAction;
                 });
             enableStepBySignal.CreateParameter(new ActiveBoolParameter("",
-                "Выключать шаг по пропаданию сигнала", "false"));
+                "Выключать шаг по пропаданию сигнала", "true"));
 
             actions.Add(enableStepBySignal);
 
