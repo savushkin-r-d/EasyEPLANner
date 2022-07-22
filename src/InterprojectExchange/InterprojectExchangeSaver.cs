@@ -355,14 +355,7 @@ namespace InterprojectExchange
 
             foreach (var signal in signals)
             {
-                if (invertSignals)
-                {
-                    digIn += prefix + $"{signal},\n";
-                }
-                else
-                {
-                    digIn += prefix + $"__{signal},\n";
-                }
+                digIn += prefix + $"\"{signal}\",\n";
             }
 
             if (!string.IsNullOrEmpty(digIn))
@@ -399,15 +392,7 @@ namespace InterprojectExchange
 
             foreach (var signal in signals)
             {
-                if (invertSignals)
-                {
-                    digOut += prefix + $"__{signal},\n";
-
-                }
-                else
-                {
-                    digOut += prefix + $"{signal},\n";
-                }
+                digOut += prefix + $"\"{signal}\",\n";
             }
 
             if (!string.IsNullOrEmpty(digOut))
@@ -444,14 +429,7 @@ namespace InterprojectExchange
 
             foreach (var signal in signals)
             {
-                if (invertSignals)
-                {
-                    analogIn += prefix + $"{signal},\n";
-                }
-                else
-                {
-                    analogIn += prefix + $"__{signal},\n";
-                }
+                analogIn += prefix + $"\"{signal}\",\n";
             }
 
             if (!string.IsNullOrEmpty(analogIn))
@@ -487,14 +465,7 @@ namespace InterprojectExchange
 
             foreach (var signal in signals)
             {
-                if (invertSignals)
-                {
-                    analogOut += prefix + $"__{signal},\n";
-                }
-                else
-                {
-                    analogOut += prefix + $"{signal},\n";
-                }
+                analogOut += prefix + $"\"{signal}\",\n";
             }
 
             if (!string.IsNullOrEmpty(analogOut))
