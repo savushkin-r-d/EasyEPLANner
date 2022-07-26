@@ -667,22 +667,32 @@ namespace EplanDevice
             if (string.IsNullOrEmpty(propStr)) return;
 
             //Шаблоны для разбора параметров - 0-20 .
-            const string propPattern = @"(?<p_name>\w+)=(?<p_value>\'[\w.]*\'),*";
+            const string propPattern = @"(?<p_name>\w+)=(?<p_value>\'[\w.,]*\'),*";
 
             Match propsMatch = Regex.Match(propStr, propPattern, RegexOptions.IgnoreCase);
             while (propsMatch.Success)
             {
-                string res = dev.SetProperty(propsMatch.Groups["p_name"].Value,
-                   propsMatch.Groups["p_value"].Value);
+                var propery = propsMatch.Groups["p_name"].Value;
+                var value = propsMatch.Groups["p_value"].Value;
+
+                if (!dev.MultipleProperties().Contains(propery) &&
+                    value.Contains(","))
+                {
+                    errStrBuilder.Append($"Устройство {dev.EplanName} не поддерживает добавления нескольких значений в свойтсво {propery}.\n");
+                    propsMatch = propsMatch.NextMatch();
+                    continue;
+                }
+
+                string res = dev.SetProperty(propery, value);
 
                 if (res != string.Empty)
                 {
                     errStrBuilder.Append(dev.EplanName + " - " + res);
                 }
-                if (propsMatch.Groups["p_name"].Value.Equals("IP"))
+                if (propery.Equals("IP"))
                 {
                     bool foundMatch = false;
-                    var ipprop = propsMatch.Groups["p_value"].Value.Trim(new char[] { '\'' });
+                    var ipprop = value.Trim(new char[] { '\'' });
                     try
                     {
                         foundMatch = Regex.IsMatch(ipprop, @"\A(?:^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$)\Z");
