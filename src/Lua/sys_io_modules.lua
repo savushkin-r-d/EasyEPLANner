@@ -848,6 +848,23 @@ local io_modules =
             AI_count = 10,
             Color = 'Gray',
             },
+
+    [ 45 ] = {
+            n = 1088126,
+            name = 'AXL SE AO4 U 0-10',
+            description = '4-Channel analog output',
+            addressSpaceType = 3,
+            typeName = 'Аналоговый выход',
+            groupName = 'AXL SE',
+            channelClamps = {0, 2, 4, 6},
+            channelAddressesIn = { },
+            channelAddressesOut = {0, -1, 1, -1, 2, -1, 3, -1},
+            DO_count = 0,
+            DI_count = 0,
+            AO_count = 4,
+            AI_count = 0,
+            Color = 'Orange',
+            },
     }
 
 return io_modules
