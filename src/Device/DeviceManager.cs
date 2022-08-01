@@ -672,24 +672,16 @@ namespace EplanDevice
             Match propsMatch = Regex.Match(propStr, propPattern, RegexOptions.IgnoreCase);
             while (propsMatch.Success)
             {
-                var propery = propsMatch.Groups["p_name"].Value;
+                var property = propsMatch.Groups["p_name"].Value;
                 var value = propsMatch.Groups["p_value"].Value;
 
-                if (!dev.MultipleProperties().Contains(propery) &&
-                    value.Contains(","))
-                {
-                    errStrBuilder.Append($"Устройство {dev.EplanName} не поддерживает добавления нескольких значений в свойтсво {propery}.\n");
-                    propsMatch = propsMatch.NextMatch();
-                    continue;
-                }
-
-                string res = dev.SetProperty(propery, value);
+                string res = dev.SetProperty(property, value);
 
                 if (res != string.Empty)
                 {
                     errStrBuilder.Append(dev.EplanName + " - " + res);
                 }
-                if (propery.Equals("IP"))
+                if (property.Equals("IP"))
                 {
                     bool foundMatch = false;
                     var ipprop = value.Trim(new char[] { '\'' });

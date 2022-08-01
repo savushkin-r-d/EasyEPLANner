@@ -1487,8 +1487,17 @@ namespace EasyEPlanner
                     break;
 
                 case "Свойства":
-                    device.SetProperty((e.Subject as ColumnNode).Text,
-                    e.NewLabel);
+                    var property = (e.Subject as ColumnNode).Text;
+                    var value = e.NewLabel;
+
+                    if (!device.MultipleProperties().Contains(property) &&
+                        value.Contains(","))
+                    {
+                        (e.Subject as ColumnNode).Value = e.OldLabel;
+                        break;
+                    }
+                    
+                    device.SetProperty(property, value);
                     device.UpdateProperties();
                     break;
             }
