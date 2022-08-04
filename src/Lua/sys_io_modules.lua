@@ -865,6 +865,24 @@ local io_modules =
             AI_count = 0,
             Color = 'Orange',
             },
+
+    [ 46 ] = {
+            n = 1182190,
+            name = 'AXL SE RTD4 PT1000',
+            description = '4-channel Analog Input Module for RTDs',
+            addressSpaceType = 4,
+            typeName = 'Аналоговый вход',
+            groupName = 'AXL SE',
+            channelClamps = {0, 4, 8, 12},
+            channelAddressesIn = {0, -1, -1, -1, 1, -1, -1, -1, 2, -1, -1, -1,
+                            3, -1, -1, -1},
+            channelAddressesOut = { },
+            DO_count = 0,
+            DI_count = 0,
+            AO_count = 0,
+            AI_count = 4,
+            Color = 'orange',
+            },        
     }
 
 return io_modules

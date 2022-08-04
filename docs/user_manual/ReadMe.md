@@ -404,6 +404,7 @@ Phoenix Contact | AXL F AI2 AO2 1H 0-10V (2702072) | AI/AO | 2 канала AI �
 Phoenix Contact | AXL SE AI4 I 4-20 (1088062) | AI | 4 канала
 Phoenix Contact | AXL SE AI4 U 0-10 (1088126) | AI | 4 канала
 Phoenix Contact | AXL SE RTD4 PT100 (1088106) | AI | 4 канала RTD
+Phoenix Contact | AXL SE RTD4 PT1000 (1182190) | AI | 4 канала RTD
 Phoenix Contact | AXL SE CNT1 (1088131) | AI | 1 канал, счетчик
 Phoenix Contact | AXL SE AO4 I 4-20 (1088123) | AO | 4 канала
 Phoenix Contact | AXL SE IOL4 (1088132) | AI/AO/DI/DO | IO-Link с привязкой DI/DO, 4 канала
