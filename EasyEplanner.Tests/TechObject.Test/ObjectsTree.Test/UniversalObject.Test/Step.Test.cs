@@ -332,7 +332,13 @@ namespace EasyEplanner.Tests
 
             var enableStepBySignal = new EplanDevice.DeviceType[]
             {
-                EplanDevice.DeviceType.DI
+                EplanDevice.DeviceType.DI,
+                EplanDevice.DeviceType.LS,
+                EplanDevice.DeviceType.GS,
+                EplanDevice.DeviceType.SB,
+                EplanDevice.DeviceType.FS,
+                EplanDevice.DeviceType.TS,
+                EplanDevice.DeviceType.PDS,
             };
 
             var mainStep = new object[]
