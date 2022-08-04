@@ -263,6 +263,12 @@ namespace TechObject
                         new EplanDevice.DeviceType[]
                         {
                             EplanDevice.DeviceType.DI,
+                            EplanDevice.DeviceType.LS,
+                            EplanDevice.DeviceType.GS,
+                            EplanDevice.DeviceType.SB,
+                            EplanDevice.DeviceType.FS,
+                            EplanDevice.DeviceType.TS,
+                            EplanDevice.DeviceType.PDS,
                         }));
                     return enableStepBySignalAction;
                 });
