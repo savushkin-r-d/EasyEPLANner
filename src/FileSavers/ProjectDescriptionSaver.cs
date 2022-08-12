@@ -85,7 +85,6 @@ namespace EasyEPlanner
                 }
 
                 SaveTechObjectsFile(par);
-                SaveTechDevicesFile(par);
                 SaveRestrictionsFile(par);
                 SaveMainFile(par);
                 SaveModbusFile(par);
@@ -178,31 +177,6 @@ namespace EasyEPlanner
             fileData.Append(AddDashes());
             fileData.Append(AddDashes());
             fileData.Append(description);
-
-            SaveData(pathToFile, fileData);
-        }
-
-        /// <summary>
-        /// Сохранить устройства проекта в main.devices.lua
-        /// </summary>
-        /// <param name="par">Параметры</param>
-        private static void SaveTechDevicesFile(ParametersForSave par)
-        {
-            string pathToFile = par.path + @"\" + mainTechDevicesFileName;
-
-            string versionForPlc = string.Format(VersionPattern,
-                    mainTechDevicesFileVersion);
-            string pacName = string
-                .Format(PacNamePattern, par.PAC_Name);
-            string devicesdata = deviceManager.SaveAsLuaTableForMainDevices();
-
-            var fileData = new StringBuilder();
-            fileData.AppendLine(versionForPlc);
-            fileData.AppendLine(AssemblyVersion.GetVersionAsLuaComment());
-            fileData.AppendLine(pacName);
-            fileData.Append(AddDashes());
-            fileData.Append(AddDashes());
-            fileData.Append(devicesdata);
 
             SaveData(pathToFile, fileData);
         }
@@ -387,14 +361,12 @@ namespace EasyEPlanner
 
         private const int mainIOFileVersion = 1;
         private const int mainTechObjectsFileVersion = 1;
-        private const int mainTechDevicesFileVersion = 1;
         private const int mainRestrictionsFileVersion = 1;
         private const int mainPRGFileVersion = 1;
         private const int mainModbusSrvFileVersion = 1;
 
         private const string mainIOFileName = "main.io.lua";
         public const string MainTechObjectsFileName = "main.objects.lua";
-        private const string mainTechDevicesFileName = "main.devices.lua";
         public const string MainRestrictionsFileName = "main.restrictions.lua";
         private const string mainProgramFileName = "main.plua";
         private static string mainProgramFilePattern = "";

@@ -1,4 +1,4 @@
-﻿using LuaInterface;
+using LuaInterface;
 using System.IO;
 using System.Text;
 using EasyEPlanner;
@@ -143,7 +143,6 @@ namespace InterprojectExchange
             InitLuaInstance();
             LoadScripts();
             LoadMainIOData(pathToProjectDir, projName);
-            LoadDevicesFile(pathToProjectDir, projName);
             LoadAdvancedProjectSharedLuaData(pathToProjectDir, projName);
             errors = SetIPFromMainModel(projName);
             if (string.IsNullOrEmpty(errors))
@@ -171,7 +170,6 @@ namespace InterprojectExchange
             InitLuaInstance();
             LoadScripts();
             LoadMainIOData(pathToMainProject, projName);
-            LoadDevicesFile(pathToMainProject, projName);
             LoadCurrentProjectSharedLuaData(pathToMainProject, projName);
             interprojectExchange.MainModel.PathToProject = pathToMainProject;
 
@@ -186,7 +184,6 @@ namespace InterprojectExchange
                     LoadScripts();
                     model.Selected = true;
                     LoadMainIOData(pathToProject, alternativeProject);
-                    LoadDevicesFile(pathToProject, alternativeProject);
                     LoadAdvancedProjectSharedLuaData(pathToProject,
                         alternativeProject);
                     model.Selected = false;
@@ -212,11 +209,6 @@ namespace InterprojectExchange
             string pathToInterprojectIOLua = Path.Combine(systemFilesPath, 
                 devicesAndPLCInitializer);
             LoadScript(pathToInterprojectIOLua);
-
-            // Загрузка скрипта с mock функциями для устройств
-            string pathToDevicesMockFile = Path.Combine(systemFilesPath, 
-                devicesMocksFile);
-            LoadScript(pathToDevicesMockFile);
         }
 
         /// <summary>
@@ -257,33 +249,6 @@ namespace InterprojectExchange
             {
                 form.ShowErrorMessage($"Не найден файл main.io.lua проекта" +
                     $" \"{projName}\"");
-            }
-        }
-
-        /// <summary>
-        /// Загрузка devices.lua файла проекта
-        /// </summary>
-        /// <param name="pathToProjectsDir"></param>
-        /// <param name="projName"></param>
-        private void LoadDevicesFile(string pathToProjectsDir,
-            string projName)
-        {
-            string pathToDevices = Path.Combine(pathToProjectsDir, projName,
-                deviceDescriptionFile);
-            if (File.Exists(pathToDevices))
-            {
-                var reader = new StreamReader(pathToDevices,
-                    EncodingDetector.DetectFileEncoding(pathToDevices));
-                string devicesInfo = reader.ReadToEnd();
-                reader.Close();
-                lua.DoString(devicesInfo);
-                // Функция из Lua
-                lua.DoString("system.init_dev_names()");
-            }
-            else
-            {
-                form.ShowErrorMessage($"Не найден файл main.devices.lua " +
-                    $"проекта \"{projName}\"");
             }
         }
 
@@ -435,8 +400,6 @@ namespace InterprojectExchange
 
         const string devicesAndPLCFile = "main.io.lua";
         const string signalsFile = "shared.lua";
-        const string devicesMocksFile = "sys_devices_mock_generator.lua";
-        const string deviceDescriptionFile = "main.devices.lua";
         const string sharedLuaIntializerFile = "sys_shared_initializer.lua";
         const string devicesAndPLCInitializer = "sys_interproject_io.lua";
 
