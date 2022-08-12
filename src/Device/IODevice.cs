@@ -633,7 +633,23 @@ namespace EplanDevice
 
                     foreach (var prop in validProperties)
                     {
-                        res += prefix + $"\t{prop.Key} = \'{prop.Value}\',\n";
+                        var values = prop.Value.ToString().Split(',');
+                        res += prefix + $"\t{prop.Key} = ";
+
+
+                        if (values.Count() > 1)
+                        {
+                            res += "{ ";
+                            foreach (var value in values)
+                            {
+                                res += $"\'{value}\', ";
+                            }
+                            res += "},\n";
+                        }
+                        else
+                        {
+                            res += $"\'{prop.Value}\',\n";
+                        }
                     }
                     res += prefix + "\t},\n";
                 }
@@ -852,6 +868,15 @@ namespace EplanDevice
             {
                 iolConfProperties.Add(propertyName, value);
             }
+        }
+        
+        /// <summary>
+        /// Список свойств устройства, для которых можно установить несколько значений
+        /// </summary>
+        /// <returns></returns>
+        public virtual List<string> MultipleProperties()
+        {
+            return new List<string>();
         }
 
         /// <summary>

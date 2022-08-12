@@ -667,22 +667,24 @@ namespace EplanDevice
             if (string.IsNullOrEmpty(propStr)) return;
 
             //Шаблоны для разбора параметров - 0-20 .
-            const string propPattern = @"(?<p_name>\w+)=(?<p_value>\'[\w.]*\'),*";
+            const string propPattern = @"(?<p_name>\w+)=(?<p_value>\'[\w.,]*\'),*";
 
             Match propsMatch = Regex.Match(propStr, propPattern, RegexOptions.IgnoreCase);
             while (propsMatch.Success)
             {
-                string res = dev.SetProperty(propsMatch.Groups["p_name"].Value,
-                   propsMatch.Groups["p_value"].Value);
+                var property = propsMatch.Groups["p_name"].Value;
+                var value = propsMatch.Groups["p_value"].Value;
+
+                string res = dev.SetProperty(property, value);
 
                 if (res != string.Empty)
                 {
                     errStrBuilder.Append(dev.EplanName + " - " + res);
                 }
-                if (propsMatch.Groups["p_name"].Value.Equals("IP"))
+                if (property.Equals("IP"))
                 {
                     bool foundMatch = false;
-                    var ipprop = propsMatch.Groups["p_value"].Value.Trim(new char[] { '\'' });
+                    var ipprop = value.Trim(new char[] { '\'' });
                     try
                     {
                         foundMatch = Regex.IsMatch(ipprop, @"\A(?:^(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$)\Z");
