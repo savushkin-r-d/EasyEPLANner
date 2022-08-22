@@ -254,7 +254,11 @@ namespace InterprojectExchange
             }
         }
 
-
+        /// <summary>
+        /// Инициализирует переменные с названиями стройств,
+        /// использующиеся в shared.lua 
+        /// </summary>
+        /// <param name="projectName">Имя проекта</param>
         private void GenerateSharedDevices(string projectName)
         {
             var devices = interprojectExchange.
