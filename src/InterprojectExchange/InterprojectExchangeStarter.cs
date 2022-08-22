@@ -170,6 +170,7 @@ namespace InterprojectExchange
             InitLuaInstance();
             LoadScripts();
             LoadMainIOData(pathToMainProject, projName);
+            GenerateSharedDevices(projName);
             LoadCurrentProjectSharedLuaData(pathToMainProject, projName);
             interprojectExchange.MainModel.PathToProject = pathToMainProject;
 
@@ -184,6 +185,7 @@ namespace InterprojectExchange
                     LoadScripts();
                     model.Selected = true;
                     LoadMainIOData(pathToProject, alternativeProject);
+                    GenerateSharedDevices(alternativeProject);
                     LoadAdvancedProjectSharedLuaData(pathToProject,
                         alternativeProject);
                     model.Selected = false;
@@ -250,6 +252,20 @@ namespace InterprojectExchange
                 form.ShowErrorMessage($"Не найден файл main.io.lua проекта" +
                     $" \"{projName}\"");
             }
+        }
+
+
+        private void GenerateSharedDevices(string projectName)
+        {
+            var devices = interprojectExchange.
+                GetModel(projectName).Devices;
+            string devicesLua = string.Empty;
+            foreach (var device in devices)
+            {
+                devicesLua += $"{device.Name} = \"{device.Name}\"\n" +
+                    $"__{device.Name} = \"{device.Name}\"\n"; 
+            }
+            lua.DoString(devicesLua);
         }
 
         /// <summary>
