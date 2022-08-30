@@ -599,7 +599,7 @@ namespace EasyEplanner.Tests
             Type action = typeof(TechObject.Action);
             Type actionGroup = typeof(ActionGroup);
             Type actionGroupWash = typeof(ActionGroupWash);
-            Type actionToStepByCondition = typeof(ActionToStepByCondition);
+            Type actionToStepByCondition = typeof(ActionGroupCustom);
             Type actionGroupCustom = typeof(ActionGroupCustom);
 
             Type checkedDevices = action;
