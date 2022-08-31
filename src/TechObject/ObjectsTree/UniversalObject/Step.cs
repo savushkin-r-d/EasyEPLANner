@@ -281,9 +281,34 @@ namespace TechObject
 
             if (!isMainStep)
             {
-                var toStepByConditionAction = new ActionToStepByCondition(
-                    "Переход к шагу по условию", this,
-                    "to_step_if_devices_in_specific_state");
+                var toStepByConditionAction = new ActionGroupCustom(
+                "переход к шагу по условию", this, "to_step_if_devices_in_specific_state",
+                () =>
+                {
+                    var toStepByCondition = new ActionCustom("Группа", this, "");
+                    toStepByCondition.CreateAction(new Action("Включение устройств",
+                        this, "on_devices",
+                        new EplanDevice.DeviceType[]
+                        {
+                            EplanDevice.DeviceType.V,
+                            EplanDevice.DeviceType.GS,
+                            EplanDevice.DeviceType.DI,
+                            EplanDevice.DeviceType.DO
+                        }));
+                    toStepByCondition.CreateAction(new Action("Выключение устройств",
+                        this, "off_devices",
+                        new EplanDevice.DeviceType[]
+                        {
+                            EplanDevice.DeviceType.V,
+                            EplanDevice.DeviceType.GS,
+                            EplanDevice.DeviceType.DI,
+                            EplanDevice.DeviceType.DO
+                        }));
+
+                    toStepByCondition.CreateParameter(new ActiveParameter("next_step_n",
+                       "Шаг"));
+                    return toStepByCondition;
+                });
                 actions.Add(toStepByConditionAction);
                 items.Add(toStepByConditionAction);
 

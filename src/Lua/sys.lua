@@ -155,7 +155,7 @@ function proc_actions(step, value, is_runtime_step)
 
     local notRuntimeStep = step:GetStepNumber() >= 0
     if (notRuntimeStep) then
-        proc_to_step_by_condition(step, value)
+        proc_action_custom_groups(step, value, "to_step_if_devices_in_specific_state")
     end
 end
 
@@ -241,37 +241,6 @@ function proc_wash_group_data(step, wash_data, group_number)
             local parameter_name = sub_action_name
             step:AddParam(action_name, parameter_value, parameter_name,
                 group_number)
-        end
-    end
-end
-
-function proc_to_step_by_condition(step, value)
-    local fields = value.to_step_if_devices_in_specific_state
-    local action_name = "to_step_if_devices_in_specific_state"
-
-    if fields then
-        for field_name, values in pairs(fields) do
-            if field_name == "parameters" then
-                for parameter_name, value in pairs(values) do
-                    step:AddParam(action_name, value, parameter_name, 0)
-                end
-            elseif field_name == "on_devices" or
-                    field_name == "off_devices" then --old version
-                for _, dev_name in pairs(values) do
-                    add_dev(step, action_name, dev_name,
-                    0, field_name.."_groups")
-                end
-            elseif field_name == "on_devices_groups" or 
-                    field_name == "off_devices_groups" then --new version
-                for _, group in pairs(values) do
-                    local group_n = 0
-                    for _, dev_name in pairs(group) do
-                        add_dev(step, action_name, dev_name,
-                            group_n, field_name)
-                        group_n = group_n + 1
-                    end
-                end
-            end
         end
     end
 end
