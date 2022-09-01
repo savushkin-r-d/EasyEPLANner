@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -168,6 +168,14 @@ namespace EasyEPlanner
             toolStrip.Width = w;
             devicesTreeViewAdv.Width = w;
             devicesTreeViewAdv.Height = h - toolStrip.Height;
+
+
+            if (devicesTreeViewAdv.Columns.Count > 1 &&
+                displayParamsBtn.Checked == true)
+            {
+                w -= 100;
+            }
+            devicesTreeViewAdv.Columns.First().Width = w;
         }
         #endregion
 
@@ -236,6 +244,7 @@ namespace EasyEPlanner
                     isLoaded = true;
                 }           
             }
+            ChangeUISize();
         }
 
         /// <summary>
@@ -1541,6 +1550,7 @@ namespace EasyEPlanner
                 ShowDisplayObjects(treeViewItemLastSelected, onSetNewValue,
                     isRebuiltTree);
             }
+            ChangeUISize();
         }
 
         private void synchBtn_Click(object sender, EventArgs e)
