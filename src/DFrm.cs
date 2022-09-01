@@ -169,7 +169,6 @@ namespace EasyEPlanner
             devicesTreeViewAdv.Width = w;
             devicesTreeViewAdv.Height = h - toolStrip.Height;
 
-
             if (devicesTreeViewAdv.Columns.Count > 1 &&
                 displayParamsBtn.Checked == true)
             {
