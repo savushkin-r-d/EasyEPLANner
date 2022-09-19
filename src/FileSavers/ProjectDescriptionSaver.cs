@@ -104,6 +104,8 @@ namespace EasyEPlanner
                         Logs.Hide();
                     }
                 }
+
+                DeleteMainDevices(par);
             }
             catch (Exception ex)
             {
@@ -356,6 +358,17 @@ namespace EasyEPlanner
             return save;
         }
 
+        /// <summary>
+        /// Проверка наличия файла main.devices.lua и его удаление,
+        /// так как не используется в новой функциональности.
+        /// </summary>
+        /// <param name="par">Параметры</param>
+        private static void DeleteMainDevices(ParametersForSave par)
+        {
+            var mainDevicesPath = par.path + @"\" + mainDevicesLua;
+            File.Delete(mainDevicesPath);
+        }
+
         private const string VersionPattern = "--version  = {0}";
         private const string PacNamePattern = "--PAC_name = \'{0}\'";
 
@@ -375,6 +388,7 @@ namespace EasyEPlanner
         private const string mainProfibusFileName = "main.profibus.lua";
         private const string mainPRGFileName = "prg.lua";
         private const string sharedFileName = "shared.lua";
+        private const string mainDevicesLua = "main.devices.lua";
 
         private const int numberOfDashes = 78;
 
