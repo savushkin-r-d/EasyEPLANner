@@ -282,7 +282,7 @@ namespace TechObject
             if (!isMainStep)
             {
                 var toStepByConditionAction = new ActionGroupCustom(
-                "переход к шагу по условию", this, "to_step_if_devices_in_specific_state",
+                "Переход к шагу по условию", this, "to_step_if_devices_in_specific_state",
                 () =>
                 {
                     var toStepByCondition = new ActionCustom("Группа", this, "");
@@ -318,6 +318,66 @@ namespace TechObject
                 nextStepN = new ObjectProperty("Номер следующего шага", -1, -1);
                 items.Add(nextStepN);
             }
+            
+            if (isMainStep && (Owner.Type == State.StateType.RUN ||
+                               Owner.Type == State.StateType.IDLE))
+            {
+                var toStateByConditionAction = new ActionGroupCustom(
+                "Переход к состоянию по условию", this, "to_state_if_devices_in_specific_state",
+                () =>
+                {
+                    var toStateByCondition = new ActionCustom("Группа", this, "");
+                    toStateByCondition.CreateAction(new Action("Включение устройств",
+                        this, "on_devices",
+                        new EplanDevice.DeviceType[]
+                        {
+                            EplanDevice.DeviceType.V,
+                            EplanDevice.DeviceType.GS,
+                            EplanDevice.DeviceType.DI,
+                            EplanDevice.DeviceType.DO
+                        }));
+                    toStateByCondition.CreateAction(new Action("Выключение устройств",
+                        this, "off_devices",
+                        new EplanDevice.DeviceType[]
+                        {
+                            EplanDevice.DeviceType.V,
+                            EplanDevice.DeviceType.GS,
+                            EplanDevice.DeviceType.DI,
+                            EplanDevice.DeviceType.DO
+                        }));
+                    if (Owner.Type == State.StateType.RUN)
+                    {
+                        toStateByCondition.CreateParameter(new ComboBoxParameter(
+                        "next_state_n",
+                        "К состоянию операции",
+                        new Dictionary<string, string>()
+                        {
+                            { "2. Пауза", "2" },
+                            { "3. Остановка", "3" },
+                            { "4. Простой", "4" },
+                        }
+                        ));
+                    } else if (Owner.Type == State.StateType.IDLE)
+                    {
+                        toStateByCondition.CreateParameter(new ComboBoxParameter(
+                        "next_state_n",
+                        "К состоянию операции",
+                        new Dictionary<string, string>()
+                        {
+                            { "1. Выполнение", "1" },
+                            { "2. Пауза", "2" },
+                            { "3. Остановка", "3" },
+                        }
+                        ));
+                    }
+                    
+
+                    return toStateByCondition;
+                });
+                actions.Add(toStateByConditionAction);
+                items.Add(toStateByConditionAction);
+            }
+            
         }
 
         public Step Clone(GetN getN, string name = "")
