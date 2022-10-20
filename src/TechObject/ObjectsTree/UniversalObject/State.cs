@@ -573,8 +573,9 @@ namespace TechObject
             RUN = 0,    // Выполнение
             PAUSE,      // Пауза
             STOP,       // Остановка
+            IDLE,       // Ожидание
 
-            STATES_CNT = 3,
+            STATES_CNT = 4,
         }
 
         private readonly string[] stateStr =
@@ -582,6 +583,7 @@ namespace TechObject
             "Выполнение",
             "Пауза",
             "Остановка",
+            "Простой"
         };
 
         private string name;        ///< Имя.

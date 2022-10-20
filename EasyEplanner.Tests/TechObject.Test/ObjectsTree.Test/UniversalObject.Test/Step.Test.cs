@@ -8,12 +8,17 @@ namespace EasyEplanner.Tests
 {
     class StepTest
     {
+        private static State RUN  = new State(State.StateType.RUN, null);
+        private static State STOP = new State(State.StateType.STOP, null);
+        private static State PAUSE = new State(State.StateType.PAUSE, null);
+        private static State IDLE = new State(State.StateType.IDLE, null);
+
         [TestCase(true, new int[] { 0, -1 })]
         [TestCase(false, new int[] { 0, 1 })]
         public void EditablePart_StepFromCaseSource_ReturnsArray(
             bool isMainStep, int[] expectedArray)
         {
-            var step = new Step(string.Empty, null, null, isMainStep);
+            var step = new Step(string.Empty, null, RUN, isMainStep);
 
             Assert.AreEqual(expectedArray, step.EditablePart);
         }
@@ -32,24 +37,46 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(actualName, expectedName);
         }
 
-        [TestCase(true, 14)]
-        [TestCase(false, 15)]
-        public void Constructor_NewStep_CheckActionsCount(bool isMainStep,
-            int expectedCount)
+        static object[] Constructor_NewStep_CheckActionsCountCases =
         {
-            var step = new Step(string.Empty, null, null, isMainStep);
+            new object[] { RUN, true, 15 },
+            new object[] { RUN, false, 15 },
+            new object[] { STOP, true, 14 },
+            new object[] { STOP, false, 15 },
+            new object[] { PAUSE, true, 14 },
+            new object[] { PAUSE, false, 15 },
+            new object[] { IDLE, true, 15 },
+            new object[] { IDLE, false, 15 },
+        };
+
+        [TestCaseSource(nameof(Constructor_NewStep_CheckActionsCountCases))]
+        public void Constructor_NewStep_CheckActionsCount(State state,
+            bool isMainStep, int expectedCount)
+        {
+            var step = new Step(string.Empty, null, state, isMainStep);
 
             var actualCount = step.GetActions.Count;
 
             Assert.AreEqual(expectedCount, actualCount);
         }
 
-        [TestCase(true, 14)]
-        [TestCase(false, 17)]
-        public void Constructor_NewStep_CheckItemsCount(bool isMainStep,
-            int expectedCount)
+        static object[] Constructor_NewStep_CheckItemsCountCases =
         {
-            var step = new Step(string.Empty, null, null, isMainStep);
+            new object[] { RUN, true, 15 },
+            new object[] { RUN, false, 17 },
+            new object[] { STOP, true, 14 },
+            new object[] { STOP, false, 17 },
+            new object[] { PAUSE, true, 14 },
+            new object[] { PAUSE, false, 17 },
+            new object[] { IDLE, true, 15 },
+            new object[] { IDLE, false, 17 },
+        };
+
+        [TestCaseSource(nameof(Constructor_NewStep_CheckItemsCountCases))]
+        public void Constructor_NewStep_CheckItemsCount(State state,
+            bool isMainStep, int expectedCount)
+        {
+            var step = new Step(string.Empty, null, state, isMainStep);
 
             var actualCount = step.Items.Length;
 
@@ -60,7 +87,7 @@ namespace EasyEplanner.Tests
         public void Constructor_NewStep_CheckActionsSequenceByLuaname(
             bool isMainStep, string[] expectedLuaNames)
         {
-            var step = new Step(string.Empty, null, null, isMainStep);
+            var step = new Step(string.Empty, null, RUN, isMainStep);
 
             var actions = step.GetActions;
 
@@ -88,6 +115,7 @@ namespace EasyEplanner.Tests
             var enableStepBySignal = "enable_step_by_signal";
             var toStepIfDevicesInSpecificState =
                 "to_step_if_devices_in_specific_state";
+            var toStateIfDevicesInSpecificState = "to_state_if_devices_in_specific_state";
 
             object[] sequenceIfNoMainStep = new object[]
             {
@@ -108,7 +136,7 @@ namespace EasyEplanner.Tests
                     pairsInvertedDIDO,
                     pairsAIAO,
                     enableStepBySignal,
-                    toStepIfDevicesInSpecificState
+                    toStepIfDevicesInSpecificState,
                 }
             };
 
@@ -130,7 +158,8 @@ namespace EasyEplanner.Tests
                     pairsDIDO,
                     pairsInvertedDIDO,
                     pairsAIAO,
-                    enableStepBySignal
+                    enableStepBySignal,
+                    toStateIfDevicesInSpecificState,
                 }
             };
 
@@ -145,7 +174,7 @@ namespace EasyEplanner.Tests
         public void Constructor_NewStep_CheckActionsDrawStyle(bool isMainStep,
             DrawInfo.Style[] drawStyles)
         {
-            var step = new Step(string.Empty, null, null, isMainStep);
+            var step = new Step(string.Empty, null, RUN, isMainStep);
 
             var actions = step.GetActions;
 
@@ -177,6 +206,7 @@ namespace EasyEplanner.Tests
             DrawInfo.Style pairsAIAO = greenBox;
             DrawInfo.Style enableStepBySignal = greenBox;
             DrawInfo.Style toStepByCondition = greenBox;
+            DrawInfo.Style toStateIfDevicesInSpecificState = greenBox;
 
             var noMainStep = new object[]
             {
@@ -220,6 +250,7 @@ namespace EasyEplanner.Tests
                     pairsInvertedDIDO,
                     pairsAIAO,
                     enableStepBySignal,
+                    toStateIfDevicesInSpecificState,
                 }
             };
 
@@ -234,7 +265,7 @@ namespace EasyEplanner.Tests
         public void Constructor_NewStep_CheckActionsAllowedDevTypes(
             bool isMainStep, List<EplanDevice.DeviceType[]> devTypesList)
         {
-            var step = new Step(string.Empty, null, null, isMainStep);
+            var step = new Step(string.Empty, null, RUN, isMainStep);
 
             var actions = step.GetActions;
 
@@ -341,6 +372,14 @@ namespace EasyEplanner.Tests
                 EplanDevice.DeviceType.PDS,
             };
 
+            var byCondition = new EplanDevice.DeviceType[]
+            {
+                EplanDevice.DeviceType.V,
+                EplanDevice.DeviceType.GS,
+                EplanDevice.DeviceType.DI,
+                EplanDevice.DeviceType.DO,
+            };
+
             var mainStep = new object[]
             {
                 true,
@@ -359,7 +398,8 @@ namespace EasyEplanner.Tests
                     groupDiDo,
                     groupInvertedDIDO,
                     groupAiAo,
-                    enableStepBySignal
+                    enableStepBySignal,
+                    byCondition,
                 }
             };
 
@@ -382,7 +422,7 @@ namespace EasyEplanner.Tests
                     groupInvertedDIDO,
                     groupAiAo,
                     enableStepBySignal,
-                    allTypesAllowed
+                    byCondition,
                 }
             };
 
@@ -397,7 +437,7 @@ namespace EasyEplanner.Tests
         public void Constructor_NewStep_CheckActionsAllowedDevSubTypes(
             bool isMainStep, List<EplanDevice.DeviceSubType[]> devSubTypesList)
         {
-            var step = new Step(string.Empty, null, null, isMainStep);
+            var step = new Step(string.Empty, null, RUN, isMainStep);
 
             var actions = step.GetActions;
 
@@ -458,7 +498,8 @@ namespace EasyEplanner.Tests
                     allSubTypesAllowed,
                     allSubTypesAllowed,
                     allSubTypesAllowed,
-                    allSubTypesAllowed
+                    allSubTypesAllowed,
+                    allSubTypesAllowed,
                 }
             };
 
@@ -496,7 +537,7 @@ namespace EasyEplanner.Tests
         public void ImageIndex_SetOfActions_ReturnCorrectImageIndexSequence(
             bool isMainStep, List<ImageIndexEnum> expectedImageIndexes)
         {
-            var step = new Step(string.Empty, null, null, isMainStep);
+            var step = new Step(string.Empty, null, RUN, isMainStep);
 
             var actualImageIndexes = new List<ImageIndexEnum>();
             foreach (var action in step.GetActions)
@@ -526,6 +567,7 @@ namespace EasyEplanner.Tests
             var pairsAIAO = ImageIndexEnum.ActionDIDOPairs;
             var toStepIfDevicesInSpecificState = ImageIndexEnum.NONE;
             var enableStepBySignal = ImageIndexEnum.NONE;
+            var toStateIfDevicesInSpecificState = ImageIndexEnum.NONE;
 
             object[] notMainStepImageIndexes = new object[]
             {
@@ -568,7 +610,8 @@ namespace EasyEplanner.Tests
                     pairsDIDO,
                     pairsInvertedDIDO,
                     pairsAIAO,
-                    enableStepBySignal
+                    enableStepBySignal,
+                    toStateIfDevicesInSpecificState,
                 }
             };
 
@@ -583,7 +626,7 @@ namespace EasyEplanner.Tests
         public void Constructor_NewStep_ReturnsCorrectTypesSequence(
             bool isMainStep, Type[] expectedTypes)
         {
-            var step = new Step(string.Empty, null, null, isMainStep);
+            var step = new Step(string.Empty, null, RUN, isMainStep);
 
             var actualTypes = new List<Type>();
             foreach (var action in step.GetActions)
@@ -631,6 +674,7 @@ namespace EasyEplanner.Tests
                 pairsInvertedDIDO,
                 pairsAIAO,
                 enableStepBySignal,
+                actionGroupCustom,
             };
 
             var notMainStepSequence = new Type[]
