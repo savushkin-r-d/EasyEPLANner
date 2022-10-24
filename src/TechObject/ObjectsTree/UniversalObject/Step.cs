@@ -322,6 +322,21 @@ namespace TechObject
             if (isMainStep && (Owner.Type == State.StateType.RUN ||
                                Owner.Type == State.StateType.IDLE))
             {
+                var RUN = (int)State.StateType.RUN;
+                var PAUSE = (int)State.StateType.PAUSE;
+                var STOP = (int)State.StateType.STOP;
+
+                var CBParameterValues = new Dictionary<string, string>();
+                if (Owner.Type == State.StateType.RUN)
+                {
+                    CBParameterValues.Add("3. " + State.stateStr[PAUSE], PAUSE.ToString());
+                    CBParameterValues.Add("4. " + State.stateStr[STOP], STOP.ToString());
+                }
+                else
+                {
+                    CBParameterValues.Add("2. " + State.stateStr[RUN], RUN.ToString());
+                }  
+
                 var toStateByConditionAction = new ActionGroupCustom(
                 "Переход к состоянию по условию", this, "to_state_if_devices_in_specific_state",
                 () =>
@@ -345,33 +360,12 @@ namespace TechObject
                             EplanDevice.DeviceType.DI,
                             EplanDevice.DeviceType.DO
                         }));
-                    if (Owner.Type == State.StateType.RUN)
-                    {
-                        toStateByCondition.CreateParameter(new ComboBoxParameter(
-                        "next_state_n",
-                        "К состоянию операции",
-                        new Dictionary<string, string>()
-                        {
-                            { "2. Пауза", "2" },
-                            { "3. Остановка", "3" },
-                            { "4. Простой", "4" },
-                        }
-                        ));
-                    } else if (Owner.Type == State.StateType.IDLE)
-                    {
-                        toStateByCondition.CreateParameter(new ComboBoxParameter(
-                        "next_state_n",
-                        "К состоянию операции",
-                        new Dictionary<string, string>()
-                        {
-                            { "1. Выполнение", "1" },
-                            { "2. Пауза", "2" },
-                            { "3. Остановка", "3" },
-                        }
-                        ));
-                    }
-                    
-
+                  
+                    toStateByCondition.CreateParameter(new ComboBoxParameter(
+                    "next_state_n",
+                    "К состоянию операции",
+                    CBParameterValues
+                    ));
                     return toStateByCondition;
                 });
                 actions.Add(toStateByConditionAction);

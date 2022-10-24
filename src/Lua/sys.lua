@@ -53,7 +53,7 @@ function init()
                 --Состояния
                 if value.states then
                     for fields, value in pairs(value.states) do
-                        local state_n = fields - 1
+                        local state_n = fields
                         proc_operation_devices(value, mode, state_n)
                     end
                 end
@@ -119,6 +119,9 @@ function proc_object_properties(par, obj)
 end
 
 function proc_operation_devices(value, mode, state_n)
+    if not mode[state_n] then
+        return
+    end
     local mainStep = mode[state_n][-1]
     proc_actions(mainStep, value)
     if value.steps then

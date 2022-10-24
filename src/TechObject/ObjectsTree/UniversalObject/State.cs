@@ -568,22 +568,22 @@ namespace TechObject
         /// </summary>
         public StateType Type { get; private set; }
 
-        public enum StateType
+        public enum StateType : int
         {
-            RUN = 0,    // Выполнение
+            IDLE = 0,   // Простой
+            RUN,        // Выполнение
             PAUSE,      // Пауза
-            STOP,       // Остановка
-            IDLE,       // Ожидание
+            STOP,       // Остановка       
 
             STATES_CNT = 4,
         }
 
-        private readonly string[] stateStr =
+        static public readonly string[] stateStr =
         {
+            "Простой",
             "Выполнение",
             "Пауза",
             "Остановка",
-            "Простой"
         };
 
         private string name;        ///< Имя.
