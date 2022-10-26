@@ -46,12 +46,20 @@ namespace TechObject
 
             stepsMngr = new List<State>();
 
-            var lastState = State.StateType.STATES_CNT;
-            var secondState = State.StateType.PAUSE;
-            stepsMngr.Add(new State(State.StateType.RUN, this, true));
-            for (var state = secondState; state < lastState; state++)
+            for (State.StateType state = 0; state < State.StateType.STATES_CNT; state++)
             {
-                stepsMngr.Add(new State(state, this));
+                switch(state)
+                {
+
+                    case State.StateType.IDLE:
+                    case State.StateType.RUN:
+                        stepsMngr.Add(new State(state, this, true));
+                        break;
+                    default:
+                        stepsMngr.Add(new State(state, this));
+                        break;
+                }
+                
             }
 
             operPar = new OperationParams();
@@ -160,7 +168,7 @@ namespace TechObject
                 tmp = stepsMngr[j].SaveAsLuaTable(prefix + "\t\t");
                 if (tmp != string.Empty)
                 {
-                    tmp_2 += prefix + "\t[ " + (j + 1) + " ] =\n";
+                    tmp_2 += prefix + "\t[ " + (j) + " ] =\n";
                     tmp_2 += prefix + "\t\t{\n";
                     tmp_2 += tmp;
                     tmp_2 += prefix + "\t\t},\n";
