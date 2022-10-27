@@ -1,4 +1,4 @@
-﻿# EasyEPLANner - Open Source
+# EasyEPLANner - Open Source
 
 ### Repository
 Dieses Repository ist ein Open-Source Projekt - EasyEPLANner.
