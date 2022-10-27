@@ -155,14 +155,7 @@ function proc_actions(step, value, is_runtime_step)
     proc_groups(step, value, "AI_AO")
     proc_wash_data(step, value)
     proc_action_custom_groups(step, value, "enable_step_by_signal")
-    proc_action_custom_groups(step, value, "to_state_if_devices_in_specific_state")
-
-    local notRuntimeStep = step:GetStepNumber() >= 0
-    if (notRuntimeStep) then
-        proc_action_custom_groups(step, value, "to_step_if_devices_in_specific_state")
-    else
-        
-    end
+    proc_action_custom_groups(step, value, "jump_if")
 end
 
 function proc(step, actions, action_name, group_number, sub_action_name)
