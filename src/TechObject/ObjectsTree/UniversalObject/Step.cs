@@ -282,7 +282,7 @@ namespace TechObject
             if (!isMainStep)
             {
                 var toStepByConditionAction = new ActionGroupCustom(
-                "Переход к шагу по условию", this, "to_step_if_devices_in_specific_state",
+                "Переход к шагу по условию", this, "jump_if",
                 () =>
                 {
                     var toStepByCondition = new ActionCustom("Группа", this, "");
@@ -338,7 +338,7 @@ namespace TechObject
                 }  
 
                 var toStateByConditionAction = new ActionGroupCustom(
-                "Переход к состоянию по условию", this, "to_state_if_devices_in_specific_state",
+                "Переход к состоянию по условию", this, "jump_if",
                 () =>
                 {
                     var toStateByCondition = new ActionCustom("Группа", this, "");

@@ -114,8 +114,8 @@ namespace EasyEplanner.Tests
             var pairsAIAO = "AI_AO";
             var enableStepBySignal = "enable_step_by_signal";
             var toStepIfDevicesInSpecificState =
-                "to_step_if_devices_in_specific_state";
-            var toStateIfDevicesInSpecificState = "to_state_if_devices_in_specific_state";
+                "jump_if";
+            var toStateIfDevicesInSpecificState = "jump_if";
 
             object[] sequenceIfNoMainStep = new object[]
             {
