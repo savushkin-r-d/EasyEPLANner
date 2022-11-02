@@ -80,6 +80,7 @@ jobs:
     name: Build and analyze
     runs-on: windows-latest
     if: contains( github.event.pull_request.labels.*.name, 'safe to test' ) || github.ref == 'refs/heads/master' || contains(github.ref, 'tags/v')
+    needs: build
 
     steps:
       - name: Set up JDK 11
