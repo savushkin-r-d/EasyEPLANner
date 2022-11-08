@@ -2,7 +2,7 @@ name: MSBuild
 
 on:
   pull_request_target:
-    branches: [ dev-workflow-sonar ]
+    branches: [ master ]
     types: [ labeled ]
   workflow_dispatch:
   push:
@@ -22,7 +22,7 @@ env:
 
 jobs:
   build:
-    name: Build and test
+    name: Build, analyze and test
     runs-on: windows-latest
     if: contains( github.event.pull_request.labels.*.name, 'safe to test' ) || github.ref == 'refs/heads/master' || contains(github.ref, 'tags/v')
 
@@ -76,7 +76,7 @@ jobs:
 
     - name: Build and analyze
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       shell: powershell
       run: |
