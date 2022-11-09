@@ -37,7 +37,7 @@ namespace EasyEPlanner
                 .Where(x => x is Function func &&
                 func.IsMainFunction == true &&
                 func.Category == Function.Enums.Category.FunctionalFunction);
-            if(functionsInStorableObjects?.Count() < 0)
+            if(functionsInStorableObjects?.Count() == 0)
             {
                 return string.Empty;
             }

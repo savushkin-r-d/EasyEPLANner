@@ -544,7 +544,7 @@ namespace TechObject
         public void SetUpFromBaseTechObject(BaseTechObject baseTechObject)
         {
             var baseOperations = baseTechObject.BaseOperations;
-            if (baseOperations.Count < 0)
+            if (baseOperations.Count == 0)
             {
                 return;
             }

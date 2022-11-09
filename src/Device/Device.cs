@@ -129,7 +129,7 @@ namespace EplanDevice
         public override bool Equals(Object otherDevice)
         {
             if (otherDevice == null)
-                return base.Equals(otherDevice);
+                return ReferenceEquals(this, otherDevice);
 
             return Equals(otherDevice as Device);
         }

@@ -97,16 +97,7 @@ namespace EasyEPlanner
         /// </summary>
         private void PrepareFunctionalText()
         {            
-            bool isIOLink = CheckIOLink();
-            if (isIOLink)
-            {
-                NewFunctionalText = GenerateFunctionalText(isIOLink);
-            }
-            else
-            {
-                NewFunctionalText = GenerateFunctionalText(isIOLink);
-            }
-
+            NewFunctionalText = GenerateFunctionalText(CheckIOLink());
             var oldFunctionalText = apiHelper.GetFunctionalText(
                 SelectedClampFunction);
 

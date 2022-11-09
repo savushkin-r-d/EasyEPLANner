@@ -199,13 +199,13 @@ namespace IO
                 if (node != null && node.Type == IONode.TYPES.T_EMPTY)
                 {
                     str += "Отсутствует узел \"A" + node.NodeNumber + "\".\n";
-                }
 
-                str += CheckNodeIPEquality(node);
+                    str += CheckNodeIPEquality(node);
 
-                for(int i = 0; i < node.IOModules.Count; i++)
-                {
-                    str += node.IOModules[i].Check(i, node.Name);
+                    for (int i = 0; i < node.IOModules.Count; i++)
+                    {
+                        str += node.IOModules[i].Check(i, node.Name);
+                    }
                 }
             }
 

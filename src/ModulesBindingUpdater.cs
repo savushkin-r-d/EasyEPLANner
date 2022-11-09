@@ -394,7 +394,7 @@ namespace EasyEPlanner
                         Split(PlusSymbol).
                         FirstOrDefault(x => x
                         .Contains(EplanDevice.DeviceManager.ValveTerminalName))
-                        .Insert(0, PlusSymbol.ToString());
+                        ?.Insert(0, PlusSymbol.ToString());
                     var clamp = Convert.ToInt32(clampNumberAsString);
                     // Синхронизация пневмоострова.
                     SynchronizeIOModule(synchronizingDevice, clamp,

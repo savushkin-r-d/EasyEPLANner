@@ -985,7 +985,7 @@ namespace EasyEPlanner
 
         private bool AddDevParametersAndProperties(Node devNode, EplanDevice.IODevice dev)
         {
-            if ( (dev.Parameters.Count == 0 && dev.Parameters.Count == 0) || 
+            if ( (dev.Parameters.Count == 0 && dev.Properties.Count == 0) || 
                 displayParamsBtn.Checked == false)
             {
                 return false;
@@ -1087,8 +1087,11 @@ namespace EasyEPlanner
                     .Where(x => x.Text == dev.ToString())
                     .FirstOrDefault();
                 total += countDev[dev.ToString()];
-                node.Text = dev.ToString() + 
-                    " (" + countDev[dev.ToString()] + ")  ";
+                if (node != null)
+                {
+                    node.Text = dev.ToString() +
+                        " (" + countDev[dev.ToString()] + ")  ";
+                }
             }
 
             root.Text = "Устройства проекта (" + total + ")";
@@ -1135,7 +1138,7 @@ namespace EasyEPlanner
                    bool checkDevTypeSubType =
                    (x.Tag is EplanDevice.DeviceType || 
                    x.Tag is EplanDevice.DeviceSubType) &&
-                   (y.Tag is EplanDevice.DeviceSubType || 
+                   (y.Tag is EplanDevice.DeviceType || 
                    y.Tag is EplanDevice.DeviceSubType);
                    if (checkDevTypeSubType)
                    {
