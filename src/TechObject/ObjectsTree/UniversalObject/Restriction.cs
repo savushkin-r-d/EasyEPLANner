@@ -457,7 +457,7 @@ namespace TechObject
                     int idx_end = restrictStr.IndexOf("}", idx);
                     // 2й символ для пробела
                     restrictStr = restrictStr.Remove(idx, idx_end - idx + 2); 
-                    restrictStr.Trim();
+                    restrictStr = restrictStr.Trim();
                     ChangeObjNum(oldNum, markForDelete);
                 }
                 else
@@ -520,7 +520,7 @@ namespace TechObject
                     restrictStr += " ";
                     restrictStr = restrictStr
                         .Replace($"{{ {objNum}, {prev} }} ", "");
-                    restrictStr.Trim();
+                    restrictStr = restrictStr.Trim();
                     ChangeModeNum(objNum, prev, markAsDelete);
                 }
                 else

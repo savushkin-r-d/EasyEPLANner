@@ -51,7 +51,7 @@ namespace TechObject
                         .FirstOrDefault();
                     try
                     {
-                        restrictions.SetValue(newDict);
+                        restrictions?.SetValue(newDict);
                     }
                     catch
                     {
