@@ -88,6 +88,7 @@ jobs:
         dotnet-coverage collect 'dotnet test' -f xml -o 'coverage.xml'
         cd ./EasyEplanner.Tests
         dotnet test --configuration ${{env.BUILD_CONFIGURATION}} --collect "Code Coverage"
+        dotnet-coverage merge -o merged.cobertura.xml -f cobertura -r *.coverage
         cd ..
         .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
