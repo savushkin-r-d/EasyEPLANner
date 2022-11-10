@@ -2,7 +2,7 @@ name: MSBuild
 
 on:
   pull_request_target:
-    branches: [ master ]
+    branches: [ dev-sonar ]
     types: [ labeled ]
   workflow_dispatch:
   push:
