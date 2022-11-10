@@ -83,8 +83,8 @@ jobs:
       shell: powershell
       run: |
         .\.sonar\scanner\dotnet-sonarscanner begin /k:"KirillGutyrchik_EasyEPLANner" /o:"kirillgutyrchik" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-        dotnet build ${{env.SOLUTION_FILE_PATH}} -c ${{env.BUILD_CONFIGURATION}}
-        dotnet test ./EasyEplanner.Tests -c ${{env.BUILD_CONFIGURATION}} --collect "Code Coverage"
+        msbuild -p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+        dotnet test ./EasyEplanner.Tests -p:Configuration${{env.BUILD_CONFIGURATION}} --collect "Code Coverage"
         .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
     - name: Download sys_base_objects_description
