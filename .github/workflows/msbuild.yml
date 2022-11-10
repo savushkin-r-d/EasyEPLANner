@@ -83,11 +83,11 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       shell: powershell
       run: |
-        .\.sonar\scanner\dotnet-sonarscanner begin /k:"KirillGutyrchik_EasyEPLANner" /o:"kirillgutyrchik" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="D:\TestResult\coverage.xml"
+        .\.sonar\scanner\dotnet-sonarscanner begin /k:"KirillGutyrchik_EasyEPLANner" /o:"kirillgutyrchik" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="D:\coverage.xml"
         msbuild -p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
         cd ./EasyEplanner.Tests
         dotnet test --configuration ${{env.BUILD_CONFIGURATION}} --collect "Code Coverage"
-        dotnet-coverage merge -o D:\TestResult\coverage.xml -f xml -r *.coverage
+        dotnet-coverage merge -o D:\coverage.xml -f xml -r *.coverage
         cd ..
         .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
