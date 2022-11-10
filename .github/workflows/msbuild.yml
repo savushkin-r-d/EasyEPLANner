@@ -80,15 +80,10 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       shell: powershell
       run: |
-        .\.sonar\scanner\dotnet-sonarscanner begin /k:"savushkin-r-d_EasyEPLANner" /o:"savushkin-r-d" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+        .\.sonar\scanner\dotnet-sonarscanner begin /k:"KirillGutyrchik_EasyEPLANner" /o:"kirillgutyrchik" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
         msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+        dotnet test --collect "Code Coverage"
         .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-
-    - name: Test
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: |
-        cd ./EasyEplanner.Tests
-        dotnet test /p:Configuration=${{env.BUILD_CONFIGURATION}}
 
     - name: Download sys_base_objects_description
       working-directory: ${{env.GITHUB_WORKSPACE}}
