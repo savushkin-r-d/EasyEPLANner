@@ -85,7 +85,7 @@ jobs:
       run: |
         if ( ${{ github.event_name == 'pull_request_target' }}) {
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"KirillGutyrchik_EasyEPLANner" /o:"kirillgutyrchik" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="D:\coverage.xml" /d:sonar.pullrequest.key=${{ github.event.pull_request.number }} /d:sonar.scm.revision=${{ github.event.pull_request.head.sha }}
-        } esle {
+        } else {
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"KirillGutyrchik_EasyEPLANner" /o:"kirillgutyrchik" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="D:\coverage.xml"
         }
         msbuild -p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
