@@ -406,7 +406,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Сохранение межконтроллерного обмена
         /// </summary>
-        public async void Save()
+        public void Save()
         {
             interprojectExchange.Models
                 .RemoveAll(model => string.IsNullOrEmpty(model.ProjectName));
@@ -417,7 +417,6 @@ namespace InterprojectExchange
             interprojectExchangeSaver = new InterprojectExchangeSaver(
                 interprojectExchange, signalsFile);
             interprojectExchangeSaver.SaveAsync();
-            await Task.Delay(1000);
         }
 
         const string devicesAndPLCFile = "main.io.lua";
