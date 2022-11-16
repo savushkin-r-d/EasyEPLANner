@@ -85,13 +85,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        PULL_REQUEST_DATA: /d:sonar.pullrequest.key=${{ github.event.pull_request.number }} /d:sonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} /d:sonar.scm.revision=${{ github.event.pull_request.head.sha }}
       shell: powershell
       run: |
-        if ( ${{ github.event_name == 'pull_request_target' }}) {
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"savushkin-r-d_EasyEPLANner" /o:"savushkin-r-d" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="D:\coverage.xml" /d:sonar.pullrequest.key=${{ github.event.pull_request.number }} /d:sonar.scm.revision=${{ github.event.pull_request.head.sha }}
-        } else {
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"savushkin-r-d_EasyEPLANner" /o:"savushkin-r-d" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="D:\coverage.xml"
-        }
+        .\.sonar\scanner\dotnet-sonarscanner begin /k:"savushkin-r-d_EasyEPLANner" /o:"savushkin-r-d" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="D:\coverage.xml" ${{ github.event_name == 'pull_request_target' && env.PULL_REQUEST_DATA || '' }}  
         msbuild -p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
         cd ./EasyEplanner.Tests
         dotnet test --configuration ${{env.BUILD_CONFIGURATION}} --collect "Code Coverage"
