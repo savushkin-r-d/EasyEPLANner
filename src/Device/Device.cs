@@ -233,7 +233,7 @@ namespace EplanDevice
         }
 
         #region Защищенные поля.
-        protected string name; /// Имя устройства (А1V12).
+        protected readonly string name; /// Имя устройства (А1V12).
         protected string eplanName; /// Имя из Eplan (+A1-V12)
         protected int deviceNumber;     /// Номер устройства (12 в R1V12).
         protected DeviceType dType = DeviceType.NONE;

@@ -5,6 +5,7 @@ using EasyEPlanner;
 using System.Linq;
 using System.Windows.Forms;
 using System;
+using System.Threading.Tasks;
 
 namespace InterprojectExchange
 {
@@ -405,7 +406,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Сохранение межконтроллерного обмена
         /// </summary>
-        public void Save()
+        public async void Save()
         {
             interprojectExchange.Models
                 .RemoveAll(model => string.IsNullOrEmpty(model.ProjectName));
@@ -416,6 +417,7 @@ namespace InterprojectExchange
             interprojectExchangeSaver = new InterprojectExchangeSaver(
                 interprojectExchange, signalsFile);
             interprojectExchangeSaver.SaveAsync();
+            await Task.Delay(1000);
         }
 
         const string devicesAndPLCFile = "main.io.lua";

@@ -39,11 +39,7 @@ namespace TechObject
         {
             get
             {
-                return false;
-            }
-            set 
-            {
-                // Для этого параметра не предусмотрена установка значения
+                return needDisable;
             }
         }
 
@@ -74,5 +70,7 @@ namespace TechObject
                 }
             }
         }
+
+        private readonly bool needDisable = false;
     }
 }
