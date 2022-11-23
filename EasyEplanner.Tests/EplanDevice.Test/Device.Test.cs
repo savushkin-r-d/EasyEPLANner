@@ -18,6 +18,43 @@ namespace Tests.EplanDevices
             Assert.AreEqual(expected, dev.CompareTo(otherDevice));
         }
 
+        static object[] EqualsTestSource =
+        {
+            new object[]
+            {
+                new EplanDevice.FQT("TANK1FQT2", "+TANK1-FQT2",
+                    "Test device", 2, "TANK", 1, "DeviceArticle"),
+                new EplanDevice.QT("KOAG4QT1", "+KOAG4-QT1",
+                    "Test device", 1, "KOAG", 4, "Test article"),
+                false
+            },
+            new object[]
+            {
+                new EplanDevice.QT("KOAG4QT1", "+KOAG4-QT1",
+                    "Test device", 1, "KOAG", 4, "Test article"),
+                new EplanDevice.QT("KOAG4QT1", "+KOAG4-QT1",
+                    "Test device", 1, "KOAG", 4, "Test article"),
+                true
+            },
+            new object[]
+            {
+                new EplanDevice.FQT("TANK1FQT2", "+TANK1-FQT2",
+                    "Test device", 2, "TANK", 1, "DeviceArticle"),
+                null,
+                false
+            },
+        };
+
+        [TestCaseSource(nameof(EqualsTestSource))]
+        public void EqualsTest(EplanDevice.Device device1,
+            EplanDevice.Device device2, bool expected)
+        {
+            Assert.AreEqual(expected, device1.Equals(device2));
+        }
+
+        
+
+
         /// <summary>
         /// 1 - ожидаемое значение,
         /// 2 - первое устройство
