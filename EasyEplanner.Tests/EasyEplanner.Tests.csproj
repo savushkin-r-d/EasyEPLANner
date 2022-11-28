@@ -27,9 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="LuaInterface">
-      <HintPath>..\..\..\EasyEPlanner 2.9\LuaInterface\LuaInterface.dll</HintPath>
-    </Reference>
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 </Project>
