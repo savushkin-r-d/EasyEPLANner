@@ -7,50 +7,6 @@ namespace TechObject.Tests
 {
     public class LocalRestrictionTest
     {
-        [Test]
-        public void SetNewValue_ReturnTrueWithoutTreeObjects()
-        {
-            var localrestriction = new LocalRestriction("Name", "value",
-                "LuaName",
-                new SortedDictionary<int, List<int>>()
-                { { 1, new List<int>() { 1, 2, 3 } } });
-
-
-            var techObjectManager = TechObjectManager.GetInstance();
-            var techObjects = new List<TechObject>() {
-                new TechObject("TO1", getN => 1, 1, 1, "EplanNameTO1", 1, "BCNameTO1", string.Empty, null),
-                new TechObject("TO2", getN => 2, 2, 2, "EplanNameTO2", 2, "BCNameTO2", string.Empty, null)
-            };
-            var modes = new List<Mode>
-            {
-                new Mode("modeName_1", getN => 1, null),
-                new Mode("modeName_2", getN => 2, null),
-                new Mode("modeName_2", getN => 3, null),
-            };
-            techObjects[0].ModesManager.Modes.AddRange(modes);
-            techObjects[1].ModesManager.Modes.AddRange(modes);
-
-            techObjectManager.TechObjects.AddRange(techObjects);
-
-            var restrictionManager = new RestrictionManager();
-            var modesManager = new ModesManager(null);
-
-            localrestriction.Parent = restrictionManager;
-            restrictionManager.Parent = modes[0];
-            modes[0].Parent = modesManager;
-            modesManager.Parent = techObjects[0];
-            techObjects[0].Parent = techObjectManager;
-
-            bool snv = localrestriction.SetNewValue(
-                new SortedDictionary<int, List<int>>()
-                {
-                    { 1, new List<int>() { 1, 2 } },
-                    { 2, new List<int>() { 1, 3 } },
-                });
-
-            Assert.IsTrue(snv);
-        }
-
         [TestCaseSource(nameof(SetValue_caseSource))]
         public void SetValue_CheckDisplayText(
             SortedDictionary<int, List<int>> restriction, string expected)

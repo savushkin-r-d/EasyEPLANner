@@ -52,7 +52,12 @@ namespace Tests.EplanDevices
             Assert.AreEqual(expected, device1.Equals(device2));
         }
 
-        
+        [TestCaseSource(nameof(EqualsTestSource))]
+        public void EqualsTest(EplanDevice.Device device1,
+            object device2, bool expected)
+        {
+            Assert.AreEqual(expected, device1.Equals(device2));
+        }
 
 
         /// <summary>

@@ -18,7 +18,7 @@ namespace TechObject.Tests
             baseTechObject.AddBaseOperation("LuaName3", "Name3", 3);
 
             modesManager.SetUpFromBaseTechObject(baseTechObject);
-
+            Assert.AreEqual(3, modesManager.Modes.Count);
         }
     }
 }
