@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TechObject;
 using Moq;
+using System.Reflection;
 
 namespace EasyEplanner.Tests
 {
@@ -277,6 +278,24 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(expectedValue, parameter.Value);
         }
 
+        private static object[] SetValueAndSetNewValueTestCaseSource()
+        {
+            return new object[]
+            {
+                new object[] { "1", "1" },
+                new object[] { "200", "200" },
+                new object[] { "-300", "-300" },
+                new object[] { "EDCBSSWE", "EDCBSSWE" },
+                new object[] { "", "" },
+                new object[] { "0", "0" },
+                new object[] { "Два один четыре", "Два один четыре" },
+                new object[] { "4.5", "4.5" },
+                new object[] { "Нет", "Нет" },
+                new object[] { "NORM1DEV2 NORM1DEV1", "NORM1DEV2 NORM1DEV1" },
+                new object[] { "NORM1DEV1 NORM1DEV1", "NORM1DEV1" },
+            };
+        }
+
         [TestCase("1", "1")]
         [TestCase("200", "200")]
         [TestCase("-300", "-300")]
@@ -341,22 +360,50 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(expectedValueType, parameter.CurrentValueType);
         }
 
-        private static object[] SetValueAndSetNewValueTestCaseSource()
+        [TestCase("true", "\t", "\tLuaName = true")]
+        [TestCase("NORM1DEV1", "\t\t", "\t\tLuaName = prg.control_modules.NORM1DEV1")]
+        [TestCase("1", "", "LuaName = prg.0.operations.BASEOPERATIONLUANAME1")]
+        public void SaveToPrgLua_ReturnParameterString(string value, string prefix, string expected)
         {
-            return new object[]
+            var parameter = new BaseParameterImplementation("LuaName", "Name",
+                stub, null, GetMoqForSetValuesAndDisplayTextTest());
+            parameter.SetNewValue(value);
+            if (parameter.CurrentValueType == BaseParameter.ValueType.Number)
             {
-                new object[] { "1", "1" },
-                new object[] { "200", "200" },
-                new object[] { "-300", "-300" },
-                new object[] { "EDCBSSWE", "EDCBSSWE" },
-                new object[] { "", "" },
-                new object[] { "0", "0" },
-                new object[] { "Два один четыре", "Два один четыре" },
-                new object[] { "4.5", "4.5" },
-                new object[] { "Нет", "Нет" },
-                new object[] { "NORM1DEV2 NORM1DEV1", "NORM1DEV2 NORM1DEV1" },
-                new object[] { "NORM1DEV1 NORM1DEV1", "NORM1DEV1" },
+                manageBaseParameter(parameter);
+            }
+            var ret = parameter.SaveToPrgLua(prefix);
+
+            Assert.AreEqual(expected, ret);
+        }
+
+        private void manageBaseParameter(BaseParameter parameter)
+        {
+            parameter.Owner = new BaseTechObject(new TechObject
+               .TechObject("techObjectName", getN => 0, 0,
+                   0, "techObjectEplanName", 0, "techObjectNameBC",
+                   "attachedObjects", null));
+            var modesManager = (parameter.Owner as BaseTechObject)
+                .Owner.ModesManager;
+            var modes = new List<Mode>
+            {
+                new Mode("modeName_1", getN => 1, modesManager),
+                new Mode("modeName_2", getN => 2, modesManager),
+                new Mode("modeName_2", getN => 3, modesManager),
             };
+
+            modes[0].BaseOperation.Name = "baseOperationName1";
+            modes[0].BaseOperation.LuaName = "baseOperationLuaName1";
+
+            modes[1].BaseOperation.Name = "baseOperationName2";
+            modes[1].BaseOperation.LuaName = "baseOperationLuaName2";
+
+            modes[2].BaseOperation.Name = "baseOperationName3";
+            modes[2].BaseOperation.LuaName = "baseOperationLuaName3";
+
+            parameter.Parent = new BaseOperation(modes[0]);
+
+            modesManager.Modes.AddRange(modes);
         }
 
         private EplanDevice.IDeviceManager GetMoqForSetValuesAndDisplayTextTest()

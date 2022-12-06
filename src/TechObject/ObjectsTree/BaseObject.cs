@@ -303,7 +303,7 @@ namespace TechObject
             var copiedObject = copyObject as TechObject;
             bool objectsNotNull = (copiedObject != null && techObject != null);
             bool sameBaseObjectName = 
-                copiedObject.BaseTechObject.Name == baseTechObject.Name;
+                copiedObject?.BaseTechObject.Name == baseTechObject.Name;
             if (objectsNotNull && sameBaseObjectName)
             {
                 int newN = techObject.TechNumber;

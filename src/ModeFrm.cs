@@ -520,7 +520,7 @@ namespace EasyEPlanner
         {
             bool notShowAllOperations = checkedMode != null;
             bool notAllowedTypes = SelectedTreeItem == EditType.None ||
-                checkedMode.IsEditable == false;
+                (checkedMode?.IsEditable ?? false) == false;
             if (notAllowedTypes && notShowAllOperations)
             {
                 ShowNoModes();

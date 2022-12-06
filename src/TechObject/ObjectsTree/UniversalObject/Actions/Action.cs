@@ -765,14 +765,7 @@ namespace TechObject
                             }
                         }
 
-                        if (isValidSubType && isValidSubType)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return isValidType && isValidSubType;
                     }
                 }
 

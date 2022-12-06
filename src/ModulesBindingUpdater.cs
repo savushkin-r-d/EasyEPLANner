@@ -282,7 +282,7 @@ namespace EasyEPlanner
                 bindedDevices = DeleteRepeatedDevices(bindedDevices,
                     deletingComments);
 
-                if (isASInterface == true)
+                if (isASInterface.HasValue && isASInterface.Value)
                 {
                     bool isValidASNumbers = EplanDevice.DeviceManager.GetInstance().
                         CheckASNumbers(bindedDevices, out errors);
@@ -300,7 +300,7 @@ namespace EasyEPlanner
                         continue;
                     }
                 }
-                else if (isASInterface == null)
+                else if (!isASInterface.HasValue)
                 {
                     // Если AS-интерфейс привязан некорректно - пропуск модуля.
                     continue;
@@ -394,7 +394,7 @@ namespace EasyEPlanner
                         Split(PlusSymbol).
                         FirstOrDefault(x => x
                         .Contains(EplanDevice.DeviceManager.ValveTerminalName))
-                        .Insert(0, PlusSymbol.ToString());
+                        ?.Insert(0, PlusSymbol.ToString());
                     var clamp = Convert.ToInt32(clampNumberAsString);
                     // Синхронизация пневмоострова.
                     SynchronizeIOModule(synchronizingDevice, clamp,

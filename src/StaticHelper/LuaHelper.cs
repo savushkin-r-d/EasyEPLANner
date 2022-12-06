@@ -43,9 +43,8 @@ namespace StaticHelper
             {
                 result += obj.ToString() + " ";
             }
-            result.Trim();
-
-            return result;
+            
+            return result.Trim();
         }
     }
 }

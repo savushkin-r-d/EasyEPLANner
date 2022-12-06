@@ -433,7 +433,7 @@ namespace TechObject
                 modes = mainMode.Owner.Modes;
             }
 
-            mainObjDisplayName = $"{baseTechObject.Owner.DisplayText[0]}";
+            mainObjDisplayName = $"{baseTechObject?.Owner.DisplayText[0]}";
 
             Mode modeInParameter = modes
                 .Where(x => x.GetModeNumber().ToString() == Value)
@@ -467,7 +467,7 @@ namespace TechObject
                 string message = $"Ошибка обработки параметра " +
                         $"\"{Name}\"." +
                         $" Указан несуществующий номер операции в операции " +
-                        $"\"{mainMode.DisplayText[0]}\" объекта " +
+                        $"\"{mainMode?.DisplayText[0]}\" объекта " +
                         $"\"{mainObjDisplayName}\".\n";
                 Logs.AddMessage(message);
             }

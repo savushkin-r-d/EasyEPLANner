@@ -103,10 +103,12 @@ namespace TechObject
         /// <returns>Описание</returns>
         private string LoadBaseTechObjectsDescription(string pathToFile)
         {
-            var reader = new StreamReader(pathToFile,
-                EncodingDetector.DetectFileEncoding(pathToFile));
-            string readedDescription = reader.ReadToEnd();
-            return readedDescription;
+            using (var reader = new StreamReader(pathToFile,
+                EncodingDetector.DetectFileEncoding(pathToFile)))
+            {
+                string readedDescription = reader.ReadToEnd();
+                return readedDescription;
+            }
         }
 
         /// <summary>

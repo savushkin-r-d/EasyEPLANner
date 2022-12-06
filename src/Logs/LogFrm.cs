@@ -120,14 +120,7 @@ namespace EasyEPlanner
 
         public bool IsNull()
         {
-            if (this != null)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return this == null;
         }
 
         public void Clear()

@@ -30,7 +30,7 @@ namespace InterprojectExchange
         public async void SaveAsync()
         {
             await Task.Run(() => WriteMainProject());
-            WriteAdvancedProjectsAsync();
+            await WriteAdvancedProjectsAsync();
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Запись альтернативных проектов
         /// </summary>
-        private async void WriteAdvancedProjectsAsync()
+        private async Task WriteAdvancedProjectsAsync()
         {
             string mainProjectName = interprojectExchange.MainProjectName;
             foreach (var model in interprojectExchange.Models)

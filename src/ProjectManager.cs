@@ -218,19 +218,23 @@ namespace EasyEPlanner
                 }
                 path += StaticHelper.CommonConst.ConfigFileName;
 
+                PInvoke.IniFile iniFile;
                 // Поиск файла .ini
                 if (!File.Exists(path))
                 {
                     // Если не нашли - создаем новый, 
                     // записываем дефолтные данные
-                    new PInvoke.IniFile(path);
+                    iniFile = new PInvoke.IniFile(path);
+
                     StreamWriter sr = new StreamWriter(path, true);
                     sr.WriteLine("[path]\nfolder_path=");
                     sr.Close();
                     sr.Flush();
+                } else
+                {
+                    iniFile = new PInvoke.IniFile(path);
                 }
-                var iniFile = new PInvoke.IniFile(path);
-
+               
                 // Считывание и возврат пути каталога проектов
                 string projectsFolders =
                     iniFile.ReadString("path", "folder_path", "");
