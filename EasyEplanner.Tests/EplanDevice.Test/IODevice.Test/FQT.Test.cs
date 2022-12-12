@@ -49,8 +49,6 @@ namespace Tests.EplanDevices
                     GetRandomFQTDevice() },
                 new object[] { DeviceSubType.FQT_F, FQT_F,
                     GetRandomFQTDevice() },
-                new object[] { DeviceSubType.FQT_F_OK, FQT_F_OK,
-                    GetRandomFQTDevice() },
                 new object[] { DeviceSubType.FQT_VIRT, FQT_VIRT,
                     GetRandomFQTDevice() },
                 new object[] { DeviceSubType.NONE, Incorrect,
@@ -90,7 +88,6 @@ namespace Tests.EplanDevices
                 new object[] { string.Empty, string.Empty, GetRandomFQTDevice() },
                 new object[] { FQT, FQT, GetRandomFQTDevice() },
                 new object[] { FQT_F, FQT_F, GetRandomFQTDevice() },
-                new object[] { FQT_F_OK, FQT_F_OK, GetRandomFQTDevice() },
                 new object[] { FQT_VIRT, FQT_VIRT, GetRandomFQTDevice() },
                 new object[] { string.Empty, Incorrect, GetRandomFQTDevice() },
                 new object[] { FQT_IOLINK, FQT_IOLINK, GetRandomFQTDevice() },
@@ -143,21 +140,6 @@ namespace Tests.EplanDevices
                 {IODevice.Tag.ABS_V, 1},
             };
 
-            var exportForFQTFOK = new Dictionary<string, int>()
-            {
-                {IODevice.Tag.ST, 1},
-                {IODevice.Tag.M, 1},
-                {IODevice.Tag.V, 1},
-                {IODevice.Tag.P_MIN_FLOW, 1},
-                {IODevice.Parameter.P_ERR_MIN_FLOW, 1},
-                {IODevice.Tag.P_MAX_FLOW, 1},
-                {IODevice.Tag.P_CZ, 1},
-                {IODevice.Tag.F, 1},
-                {IODevice.Parameter.P_DT, 1},
-                {IODevice.Tag.ABS_V, 1},
-                {IODevice.Tag.OK, 1},
-            };
-
             var exportForFQTVirt = new Dictionary<string, int>()
             {
                 {IODevice.Tag.ST, 1},
@@ -186,8 +168,6 @@ namespace Tests.EplanDevices
             {
                 new object[] {exportForFQT, FQT, GetRandomFQTDevice()},
                 new object[] {exportForFQTF, FQT_F, GetRandomFQTDevice()},
-                new object[] {exportForFQTFOK, FQT_F_OK,
-                    GetRandomFQTDevice()},
                 new object[] {exportForFQTVirt, FQT_VIRT,
                     GetRandomFQTDevice()},
                 new object[] {null, Incorrect, GetRandomFQTDevice()},
@@ -229,8 +209,6 @@ namespace Tests.EplanDevices
             return new object[]
             {
                 new object[] {$"_{2.0}..{4.0}", FQT_F, 2.0, 4.0,
-                    GetRandomFQTDevice()},
-                new object[] {$"_{1.0}..{3.0}", FQT_F_OK, 1.0, 3.0,
                     GetRandomFQTDevice()},
                 new object[] {string.Empty, FQT, 4.0, 8.0,
                     GetRandomFQTDevice()},
@@ -292,12 +270,6 @@ namespace Tests.EplanDevices
                 {
                     defaultParameters,
                     FQT_F,
-                    GetRandomFQTDevice()
-                },
-                new object[]
-                {
-                    defaultParameters,
-                    FQT_F_OK,
                     GetRandomFQTDevice()
                 },
                 new object[]
@@ -404,18 +376,6 @@ namespace Tests.EplanDevices
                 },
                 new object[]
                 {
-                    new Dictionary<string, int>()
-                    {
-                        { AI, 2 },
-                        { AO, 0 },
-                        { DI, 1 },
-                        { DO, 0 },
-                    },
-                    FQT_F_OK,
-                    GetRandomFQTDevice()
-                },
-                new object[]
-                {
                     emptyChannels,
                     FQT_VIRT,
                     GetRandomFQTDevice()
@@ -428,7 +388,13 @@ namespace Tests.EplanDevices
                 },
                 new object[]
                 {
-                    emptyChannels,
+                    new Dictionary<string, int>()
+                    {
+                        { AI, 1 },
+                        { AO, 0 },
+                        { DI, 0 },
+                        { DO, 0 },
+                    },
                     string.Empty,
                     GetRandomFQTDevice()
                 },
@@ -496,12 +462,6 @@ namespace Tests.EplanDevices
                 {
                     new string[0],
                     Incorrect,
-                    GetRandomFQTDevice()
-                },
-                new object[]
-                {
-                    defaultProperties,
-                    FQT_F_OK,
                     GetRandomFQTDevice()
                 },
                 new object[]
