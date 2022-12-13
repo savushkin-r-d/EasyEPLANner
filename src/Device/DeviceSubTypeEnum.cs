@@ -48,7 +48,7 @@ namespace EplanDevice
         //FQT
         FQT = 1, ///< Счетчик.
         FQT_F, ///< Счетчик с расходом.
-        FQT_F_OK, ///< Счетчик c расходом c диагностикой.
+        FQT_F_OK_LEGACY_DELETED, ///< Удаленный подтип
         FQT_VIRT, ///< Виртуальный счётчик (без привязки к модулям).
         FQT_IOLINK, ///< Счетчик IO-Link
 
