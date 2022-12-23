@@ -4,8 +4,16 @@
 Dieses Repository ist ein Open-Source Projekt - EasyEPLANner.
 Wir arbeiten am Projekt und lösen verschiedene mit der Entwicklung des Projekts verbundene Aufgaben.
 
+### EPLAN
+
+[EPLAN Electric P8](https://www.eplan-software.com/solutions/eplan-electric-p8/) ist eine CAE-Lösung zur Projektierung, Dokumentation und Verwaltung von elektrotechnischen Automatisierungsprojekten.
+
+[EPLAN API Help](https://www.eplan.help/de-de/Infoportal/Content/api/2023/index.html) - Beschreibung und Beispiele zur Verwendung der EPLAN API.
+
+Примеры по автоматизации EPLAN Electric P8 на языке программирования C# можной найти у
+[Suplanus](https://github.com/Suplanus)
+
 ### EasyEPLANner
-![](../user_manual/images/EasyEPLANnerPreview.png)
 
 Der EasyEPLANner wurde als Add-In zur EPLAN 2.9-Version entwickelt. Das Add-In wird für EPLAN-Projekte verwendet und hilft Ihnen, die Arbeit eines Automatisierungsingenieurs und eines Softwareentwicklers zu automatisieren. Der Softwareentwickler erstellt den Code in der Programmiersprache Lua für das Projekt.
 
