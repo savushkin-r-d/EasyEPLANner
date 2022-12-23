@@ -22,7 +22,6 @@
 
 ### Обратная связь (Feedback)
 Если вы хотите связаться с нами, можно использовать несколько способов:
-* [Google группа](https://groups.google.com/forum/#!forum/EasyEPLANner);
 * Канал в [Slack](https://slack.com) - EasyEPLANner.slack.com.
 
 ### Нормы поведения (Code of conduct)
