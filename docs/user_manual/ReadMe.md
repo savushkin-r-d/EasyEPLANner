@@ -616,7 +616,7 @@ Phoenix Contact | AXC F 3152
 2. V_DO2: **DO** - _2_;
     - **DO** - _Закрыть_
     - **DO** - _Открыть_
-3. V_DO1_DI1_FB_OFF, V_DO1_DI1_FB_ON: **DO** - _2_;
+3. V_DO1_DI1_FB_OFF, V_DO1_DI1_FB_ON: **DO** - _1_, **DI** - _1_;
 4. V_DO1_DI2: **DO** - _1_, **DI** - _2_;
     - **DI** - _Закрыт_
     - **DI** - _Открыт_
