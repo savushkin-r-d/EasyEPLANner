@@ -22,7 +22,6 @@ Wenn Sie zur Entwicklung unseres Projekts beitragen möchten, lesen Sie vor dem 
 
 ### Feedback
 Kontaktieren Sie uns über Slack oder die Google-Gruppe:
-* [Google Gruppe](https://groups.google.com/forum/#!forum/EasyEPLANner);
 * Kanal in [Slack](https://slack.com) - EasyEPLANner.slack.com.
 
 ### Verhaltensregeln

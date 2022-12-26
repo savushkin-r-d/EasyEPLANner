@@ -43,7 +43,6 @@ If you want to contribute to the development of our project then check out [how 
 
 Feel free to contact us via Slack or Google group.
 
-* [Google group](https://groups.google.com/forum/#!forum/easyEPLANner);
 * Channel in [Slack](https://slack.com) - easyEPLANner.slack.com.
 
 
