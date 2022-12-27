@@ -8,6 +8,14 @@
 This repository is an open source project - EasyEPLANner.
 We are working on the project and solving various issues related to the development and project life.
 
+### EPLAN
+
+[EPLAN Electric P8](https://www.eplan-software.com/solutions/eplan-electric-p8/) is a modular and scalable solution for electrical design, automatic design and working documentation.
+
+[EPLAN API Help](https://www.eplan.help/en-us/Infoportal/Content/api/2023/index.html) - Description and examples of how to use the EPLAN API.
+
+Examples for EPLAN Electric P8 automation in the C# programming language can be found at
+[Suplanus](https://github.com/Suplanus)
 
 ### EasyEPLANner
 
@@ -43,7 +51,6 @@ If you want to contribute to the development of our project then check out [how 
 
 Feel free to contact us via Slack or Google group.
 
-* [Google group](https://groups.google.com/forum/#!forum/easyEPLANner);
 * Channel in [Slack](https://slack.com) - easyEPLANner.slack.com.
 
 
