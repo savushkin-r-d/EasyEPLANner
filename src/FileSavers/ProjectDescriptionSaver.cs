@@ -214,9 +214,11 @@ namespace EasyEPlanner
         /// <param name="par">Параметры</param>
         private static void SaveMainFile(ParametersForSave par)
         {
+            
             string fileName = par.path + @"\" + mainProgramFileName;
             if (!File.Exists(fileName) && mainProgramFilePatternIsLoaded)
             {
+                DialogResult dialogResult = MessageBox.Show("Проект автоматизации молочных технологических процессов?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 //Создаем пустое описание управляющей программы.
                 var fileWriter = new StreamWriter(fileName,
                     false, EncodingDetector.MainFilesEncoding);
@@ -224,7 +226,7 @@ namespace EasyEPlanner
                 mainPluaFilePattern = mainPluaFilePattern
                     .Replace("ProjectName", par.PAC_Name);
                 mainPluaFilePattern = string.Format(mainPluaFilePattern,
-                    AssemblyVersion.GetVersion());
+                    AssemblyVersion.GetVersion(), (dialogResult == DialogResult.Yes) ? "package.path = package.path .. ';./dairy-sys/?.lua'\n" : "");
                 fileWriter.WriteLine(mainPluaFilePattern);
 
                 fileWriter.Flush();
