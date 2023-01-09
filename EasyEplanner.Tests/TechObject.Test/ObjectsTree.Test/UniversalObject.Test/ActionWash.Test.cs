@@ -125,6 +125,7 @@ namespace Tests.TechObject
                             EplanDevice.DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON,
                             EplanDevice.DeviceSubType.V_MIXPROOF,
                             EplanDevice.DeviceSubType.V_VIRT,
+                            EplanDevice.DeviceSubType.V_MINI_FLUSHING,
                             EplanDevice.DeviceSubType.AO,
                             EplanDevice.DeviceSubType.AO_VIRT,
                             EplanDevice.DeviceSubType.DO,
