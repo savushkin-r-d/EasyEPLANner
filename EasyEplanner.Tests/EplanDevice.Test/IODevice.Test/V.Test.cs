@@ -27,6 +27,7 @@ namespace Tests.EplanDevices
         const string V_IOLINK_DO1_DI2 = "V_IOLINK_DO1_DI2";
         const string V_IOLINK_VTUG_DO1_DI2 = "V_IOLINK_VTUG_DO1_DI2";
         const string V_VIRT = "V_VIRT";
+        const string V_MINI_FLUSHING = "V_MINI_FLUSHING";
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
@@ -98,6 +99,8 @@ namespace Tests.EplanDevices
                     GetRandomVDevice() },
                 new object[] { DeviceSubType.V_VIRT, V_VIRT,
                     GetRandomVDevice() },
+                new object[] {DeviceSubType.V_MINI_FLUSHING,
+                    V_MINI_FLUSHING, GetRandomVDevice() },
             };
         }
 
