@@ -35,8 +35,7 @@ namespace EplanDevice
             if ((dSubType == DeviceSubType.V_IOLINK_VTUG_DO1 ||
                     dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF ||
                     dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON ||
-                    dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_DI2 ||
-                    dSubType == DeviceSubType.V_MINI_FLUSHING ) &&
+                    dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_DI2 ) &&
                 AO[0].Node >= 0 && AO[0].Module > 0)
             {
                 // DEV_VTUG - поддержка старых проектов
@@ -232,8 +231,18 @@ namespace EplanDevice
                     parameters.Add(Parameter.P_FB, 1);
                     break;
 
-                case "V_VIRT":
+                case "V_MINI_FLUSHING":
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Открыть"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Открыть мини"));
+                    DI.Add(new IOChannel("DI", -1, -1, -1, "Закрыт"));
+                    DI.Add(new IOChannel("DI", -1, -1, -1, "Открыт"));
+
+                    parameters.Add(Parameter.P_ON_TIME, null);
+                    parameters.Add(Parameter.P_FB, 1);
                     break;
+
+                case "V_VIRT":
+                    break;                
 
                 case "":
                     errStr = string.Format(
