@@ -3,6 +3,7 @@ using TechObject;
 using Editor;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace EasyEplanner.Tests
 {
@@ -468,7 +469,7 @@ namespace EasyEplanner.Tests
                 EplanDevice.DeviceSubType.M_VIRT,
             };
 
-            var valveSeats = new EplanDevice.DeviceSubType[]
+            var openUpperSeats = new EplanDevice.DeviceSubType[]
             {
                 EplanDevice.DeviceSubType.V_MIXPROOF,
                 EplanDevice.DeviceSubType.V_AS_MIXPROOF,
@@ -477,9 +478,16 @@ namespace EasyEplanner.Tests
                 EplanDevice.DeviceSubType.DO,
                 EplanDevice.DeviceSubType.DO_VIRT
             };
-            EplanDevice.DeviceSubType[] openUpperSeats = valveSeats;
-            EplanDevice.DeviceSubType[] openLowerSeats = valveSeats;
-
+            var openLowerSeats = new EplanDevice.DeviceSubType[]
+            {
+                EplanDevice.DeviceSubType.V_MIXPROOF,
+                EplanDevice.DeviceSubType.V_AS_MIXPROOF,
+                EplanDevice.DeviceSubType.V_IOLINK_MIXPROOF,
+                EplanDevice.DeviceSubType.V_MINI_FLUSHING,
+                EplanDevice.DeviceSubType.V_VIRT,
+                EplanDevice.DeviceSubType.DO,
+                EplanDevice.DeviceSubType.DO_VIRT
+            };
             var mainStep = new object[]
             {
                 true,
