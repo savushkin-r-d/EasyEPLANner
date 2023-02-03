@@ -223,8 +223,6 @@ namespace EasyEPlanner
                 string mainPluaFilePattern = mainProgramFilePattern;
                 mainPluaFilePattern = mainPluaFilePattern
                     .Replace("ProjectName", par.PAC_Name);
-                mainPluaFilePattern = string.Format(mainPluaFilePattern,
-                    AssemblyVersion.GetVersion());
                 fileWriter.WriteLine(mainPluaFilePattern);
 
                 fileWriter.Flush();
@@ -245,7 +243,7 @@ namespace EasyEPlanner
                 string filePattern = Properties.Resources.ResourceManager
                     .GetString("modbusSRVFilePattern");
                 string modBusContent = string.Format(filePattern,
-                    mainModbusSrvFileVersion, AssemblyVersion.GetVersion());
+                    mainModbusSrvFileVersion);
                 File.WriteAllText(fileName, modBusContent,
                     EncodingDetector.MainFilesEncoding);
             }
