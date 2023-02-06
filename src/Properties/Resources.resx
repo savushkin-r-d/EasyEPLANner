@@ -533,7 +533,6 @@ end</value>
   </data>
   <data name="modbusSRVFilePattern" xml:space="preserve">
     <value>--version  = {0}
---Eplanner version = {1}
 ------------------------------------------------------------------------------
 function read_holding_registers( n, start_idx, count )
    return read_hr2(n, start_idx, count)
