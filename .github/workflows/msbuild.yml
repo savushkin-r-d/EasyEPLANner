@@ -86,7 +86,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         PULL_REQUEST_DATA: /d:sonar.pullrequest.key=${{ github.event.pull_request.number }} /d:sonar.pullrequest.branch=${{ github.event.pull_request.head.ref }} /d:sonar.scm.revision=${{ github.event.pull_request.head.sha }}
-      run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"savushkin-r-d_EasyEPLANner" /o:"savushkin-r-d" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="D:\coverage.xml" ${{ github.event_name == 'pull_request_target' && env.PULL_REQUEST_DATA || '' }}
+      run: .\.sonar\scanner\dotnet-sonarscanner begin /k:"savushkin-r-d_EasyEPLANner" /o:"savushkin-r-d" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths="EasyEplanner.Tests/coverage.xml" ${{ github.event_name == 'pull_request_target' && env.PULL_REQUEST_DATA || '' }}
       
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -98,7 +98,7 @@ jobs:
       
     - name: Test coverage merge
       working-directory: EasyEplanner.Tests
-      run: dotnet-coverage merge -o D:\coverage.xml -f xml -r *.coverage
+      run: dotnet-coverage merge -o coverage.xml -f xml -r *.coverage
 
     - name: Sonar scanner end
       working-directory: ${{env.GITHUB_WORKSPACE}}
