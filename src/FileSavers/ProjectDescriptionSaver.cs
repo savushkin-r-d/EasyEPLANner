@@ -358,11 +358,11 @@ namespace EasyEPlanner
             bool save = !currentVersion.SequenceEqual(previousVersion);
 
             long fileSpace = currentVersion.Length - previousVersion.Length;
-            if (save && fileSpace > freeSpace * 3)
+            if (save && fileSpace > freeSpace * freeSpaceMultiplier)
             {
-                Logs.AddMessage($"Недостаточно места на диске. Для файла \"{pathToFile.Split('\\').Last()}\" " +
-                    $"необходимо {((fileSpace > 1024) ? (fileSpace / 1024).ToString() + " B" : fileSpace.ToString() + " kB")} свободного места." +
-                    $"Освободите место на диске и повторите попытку.");
+                Logs.AddMessage($"Недостаточно места на диске. Для файла \"{pathToFile.Split('\\').Last()}\" необходимо " +
+                    $"{((fileSpace > byteConversionFactor) ? (fileSpace / byteConversionFactor).ToString() + " B" : fileSpace.ToString() + " kB")}" +
+                    $" свободного места. Освободите место на диске и повторите попытку.");
                 return false;
             }
 
@@ -388,6 +388,8 @@ namespace EasyEPlanner
         private const int mainRestrictionsFileVersion = 1;
         private const int mainPRGFileVersion = 1;
         private const int mainModbusSrvFileVersion = 1;
+        private const int freeSpaceMultiplier = 3;
+        private const int byteConversionFactor = 1024;
 
         private const string mainIOFileName = "main.io.lua";
         public const string MainTechObjectsFileName = "main.objects.lua";
