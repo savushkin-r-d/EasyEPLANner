@@ -6,6 +6,8 @@ using System.Windows.Forms;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Collections.Generic;
+using Microsoft.SqlServer.Server;
 
 namespace EasyEPlanner
 {
@@ -223,11 +225,33 @@ namespace EasyEPlanner
                 string mainPluaFilePattern = mainProgramFilePattern;
                 mainPluaFilePattern = mainPluaFilePattern
                     .Replace("ProjectName", par.PAC_Name);
+
+                if (Packages != null && Packages.Count > 0)
+                {
+                    string packagesLine = "package.path = package.path";
+                    foreach (var package in Packages)
+                    {
+                        packagesLine += $" .. '{package}'";
+                    }
+                    mainPluaFilePattern = string.Format(mainPluaFilePattern, packagesLine);
+                }
+                else
+                {
+                    mainPluaFilePattern = string.Format(mainPluaFilePattern, string.Empty);
+                }
+
                 fileWriter.WriteLine(mainPluaFilePattern);
 
                 fileWriter.Flush();
                 fileWriter.Close();
             }
+        }
+
+        public static void AddPackage(string package)
+        {
+            if (Packages == null)
+                Packages = new List<string>();
+            Packages.Add(package);
         }
 
         /// <summary>
@@ -271,6 +295,7 @@ namespace EasyEPlanner
                     EncodingDetector.MainFilesEncoding);
             }
         }
+
 
         /// <summary>
         /// Сохранить программное описание проекта в prg.lua
@@ -411,6 +436,8 @@ namespace EasyEPlanner
             .GetInstance();
         private static IOManager IOManager = IOManager.GetInstance();
 
+        private static List<string> Packages;
+        
         public static string MainProgramFileName
         {
             get

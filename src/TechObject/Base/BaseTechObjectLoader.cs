@@ -25,9 +25,12 @@ namespace TechObject
         public BaseTechObjectLoader()
         {
             string addObjectMethodName = "AddBaseObject";
+            string addPackageMethotdName = "AddPackage";
             lua = new Lua();
             lua.RegisterFunction(addObjectMethodName, this,
                 GetType().GetMethod(addObjectMethodName));
+            lua.RegisterFunction(addPackageMethotdName, this,
+                GetType().GetMethod(addPackageMethotdName));
         }
 
         public void LoadTo(IBaseTechObjectManager baseTechObjectManager)
@@ -201,6 +204,11 @@ namespace TechObject
             return baseTechObjectManager.AddBaseObject(name, eplanName,
                 s88Level, basicName, bindingName, isPID, luaModuleName,
                 monitorName, deprecated);
+        }
+
+        public void AddPackage(string package)
+        {
+            ProjectDescriptionSaver.AddPackage(package);
         }
 
         const string defaultFileName = "DescriptionTemplate.lua";
