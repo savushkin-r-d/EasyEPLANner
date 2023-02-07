@@ -337,7 +337,7 @@ namespace EasyEPlanner
             StringBuilder currentFileData)
         {
             DriveInfo drive = new DriveInfo(new FileInfo(pathToFile).Directory.Root.FullName);
-            long freeSpace = drive.TotalFreeSpace;
+            long freeSpace = drive.AvailableFreeSpace;
 
             const string splitPattern = "\r\n|\n\r|\r|\n";
             const int eplannerVersionId = 1;
@@ -356,10 +356,13 @@ namespace EasyEPlanner
             currentVersion[eplannerVersionId] = string.Empty;
 
             bool save = !currentVersion.SequenceEqual(previousVersion);
-            
-            if (save && currentVersion.Length - previousVersion.Length >= freeSpace)
+
+            long fileSpace = currentVersion.Length - previousVersion.Length;
+            if (save && fileSpace > freeSpace * 3)
             {
-                Logs.AddMessage($"Недостаточно места на диске. Файл \"{pathToFile.Split('\\').Last()}\" не сохранен.");
+                Logs.AddMessage($"Недостаточно места на диске. Для файла \"{pathToFile.Split('\\').Last()}\" " +
+                    $"необходимо {((fileSpace > 1024) ? (fileSpace / 1024).ToString() + " B" : fileSpace.ToString() + " kB")} свободного места." +
+                    $"Освободите место на диске и повторите попытку.");
                 return false;
             }
 
