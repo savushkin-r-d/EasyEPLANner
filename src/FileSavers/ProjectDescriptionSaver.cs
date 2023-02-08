@@ -336,6 +336,9 @@ namespace EasyEPlanner
         private static bool ShouldSaveFile(string pathToFile,
             StringBuilder currentFileData)
         {
+            DriveInfo drive = new DriveInfo(new FileInfo(pathToFile).Directory.Root.FullName);
+            long freeSpace = drive.AvailableFreeSpace;
+
             const string splitPattern = "\r\n|\n\r|\r|\n";
             const int eplannerVersionId = 1;
             if (!File.Exists(pathToFile)) return true;
@@ -353,6 +356,16 @@ namespace EasyEPlanner
             currentVersion[eplannerVersionId] = string.Empty;
 
             bool save = !currentVersion.SequenceEqual(previousVersion);
+
+            long fileSpace = currentVersion.Length - previousVersion.Length;
+            if (save && fileSpace > freeSpace * freeSpaceMultiplier)
+            {
+                Logs.AddMessage($"Недостаточно места на диске. Для файла \"{pathToFile.Split('\\').Last()}\" необходимо " +
+                    $"{((fileSpace > byteConversionFactor) ? (fileSpace / byteConversionFactor).ToString() + " B" : fileSpace.ToString() + " kB")}" +
+                    $" свободного места. Освободите место на диске и повторите попытку.");
+                return false;
+            }
+
             return save;
         }
 
@@ -375,6 +388,8 @@ namespace EasyEPlanner
         private const int mainRestrictionsFileVersion = 1;
         private const int mainPRGFileVersion = 1;
         private const int mainModbusSrvFileVersion = 1;
+        private const int freeSpaceMultiplier = 3;
+        private const int byteConversionFactor = 1024;
 
         private const string mainIOFileName = "main.io.lua";
         public const string MainTechObjectsFileName = "main.objects.lua";
