@@ -226,12 +226,12 @@ namespace EasyEPlanner
                 mainPluaFilePattern = mainPluaFilePattern
                     .Replace("ProjectName", par.PAC_Name);
 
-                if (Packages != null && Packages.Count > 0)
+                if (packages != null && packages.Count > 0)
                 {
-                    string packagesLine = "package.path = package.path";
-                    foreach (var package in Packages)
+                    StringBuilder packagesLine = new StringBuilder("package.path = package.path");
+                    foreach (var package in packages)
                     {
-                        packagesLine += $" .. '{package}'";
+                        packagesLine.Append($" .. '{package}'");
                     }
                     mainPluaFilePattern = string.Format(mainPluaFilePattern, packagesLine);
                 }
@@ -249,9 +249,12 @@ namespace EasyEPlanner
 
         public static void AddPackage(string package)
         {
-            if (Packages == null)
-                Packages = new List<string>();
-            Packages.Add(package);
+            if (package.Trim() == string.Empty)
+                return;
+
+            if (packages == null)
+                packages = new List<string>();
+            packages.Add(package.Trim());
         }
 
         /// <summary>
@@ -295,7 +298,6 @@ namespace EasyEPlanner
                     EncodingDetector.MainFilesEncoding);
             }
         }
-
 
         /// <summary>
         /// Сохранить программное описание проекта в prg.lua
@@ -436,7 +438,15 @@ namespace EasyEPlanner
             .GetInstance();
         private static IOManager IOManager = IOManager.GetInstance();
 
-        private static List<string> Packages;
+        public static List<string> Packages
+        {
+            get
+            {
+                return packages;
+            }
+        }
+
+        private static List<string> packages;
         
         public static string MainProgramFileName
         {
