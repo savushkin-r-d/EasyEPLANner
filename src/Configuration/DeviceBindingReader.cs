@@ -119,6 +119,23 @@ namespace EasyEPlanner
         private bool NeedToSkip(IO.IIOModule module, Function clampFunction)
         {
             var skip = false;
+            var description = apiHelper.GetFunctionalText(clampFunction);
+            IODevice device = null;
+            string error = string.Empty;
+
+            if (description != string.Empty)
+            {
+                var descriptionMatches = Regex.Matches(description,
+                    DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
+                if (descriptionMatches.Count > 0)
+                {
+                    device = DeviceManager.GetInstance()
+                        .GetDevice(descriptionMatches[0].ToString());
+                    error = $"К не сигнальной клемме \"{clampFunction.Name}\"" +
+                        $" привязано устройство \"{device?.EplanName}\".";
+                }
+                    
+            }
 
             string clampString = clampFunction.Properties
                 .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
@@ -126,6 +143,8 @@ namespace EasyEPlanner
             bool isDigit = int.TryParse(clampString, out clamp);
             if (isDigit == false)
             {
+                if (device != null)
+                    Logs.AddMessage(error);
                 skip = true;
                 return skip;
             }
@@ -133,6 +152,8 @@ namespace EasyEPlanner
             IO.IOModuleInfo moduleInfo = module.Info;
             if (Array.IndexOf(moduleInfo.ChannelClamps, clamp) < 0)
             {
+                if (device != null)
+                    Logs.AddMessage(error);
                 skip = true;
                 return skip;
             }
@@ -145,8 +166,6 @@ namespace EasyEPlanner
                 return skip;
             }
 
-            string description = apiHelper.GetFunctionalText(
-                clampFunction);
             if (description == "" || description.Contains(CommonConst.Reserve))
             {
                 skip = true;
