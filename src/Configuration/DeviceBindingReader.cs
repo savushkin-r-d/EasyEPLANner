@@ -125,16 +125,12 @@ namespace EasyEPlanner
             IODevice device = null;
             string error = string.Empty;
 
-            if (description != string.Empty)
+            if (description != string.Empty && descriptionMatches.Count > 0)
             {
-                if (descriptionMatches.Count > 0)
-                {
                     device = DeviceManager.GetInstance()
                         .GetDevice(descriptionMatches[0].ToString());
                     error = $"К не сигнальной клемме \"{clampFunction.Name}\"" +
-                        $" привязано устройство \"{device?.EplanName}\".";
-                }
-                    
+                        $" привязано устройство \"{device?.EplanName}\".";  
             }
 
             string clampString = clampFunction.Properties
