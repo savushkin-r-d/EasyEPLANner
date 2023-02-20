@@ -83,16 +83,18 @@ namespace EasyEPlanner
         private void ReadModuleClampBinding(IO.IIONode node, IO.IIOModule module,
             Function clampFunction)
         {
-            bool skip = NeedToSkip(module, clampFunction);
+            string description = apiHelper.GetFunctionalText(clampFunction);
+            var descriptionMatches = Regex.Matches(description,
+                DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN,
+                RegexOptions.None,
+                TimeSpan.FromMilliseconds(100));
+
+            bool skip = NeedToSkip(module, clampFunction, description, descriptionMatches);
             if (skip == true)
             {
                 return;
             }
 
-            string description = apiHelper.GetFunctionalText(clampFunction);
-            var descriptionMatches = Regex.Matches(description, 
-                DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
-            
             const string ValveTerminalNamePattern = @"=*-Y(?<n>\d+)";
             var valveTerminalRegex = new Regex(ValveTerminalNamePattern);
             var valveTerminalMatch = valveTerminalRegex.Match(description);
@@ -116,17 +118,15 @@ namespace EasyEPlanner
         /// <param name="module">Модуль</param>
         /// <param name="clampFunction">Функция клеммы</param>
         /// <returns></returns>
-        private bool NeedToSkip(IO.IIOModule module, Function clampFunction)
+        private bool NeedToSkip(IO.IIOModule module, Function clampFunction, string description , MatchCollection descriptionMatches)
         {
             var skip = false;
-            var description = apiHelper.GetFunctionalText(clampFunction);
+
             IODevice device = null;
             string error = string.Empty;
 
             if (description != string.Empty)
             {
-                var descriptionMatches = Regex.Matches(description,
-                    DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
                 if (descriptionMatches.Count > 0)
                 {
                     device = DeviceManager.GetInstance()
