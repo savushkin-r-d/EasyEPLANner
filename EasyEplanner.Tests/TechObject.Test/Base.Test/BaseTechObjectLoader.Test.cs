@@ -30,6 +30,10 @@ namespace Tests.TechObject
         [TestCaseSource(nameof(AddPackageTestCase))]
         public void AddPackage_CheckListPackges(List<string> packages)
         {
+            FieldInfo field = typeof(ProjectDescriptionSaver).GetField(
+                "packages", BindingFlags.NonPublic | BindingFlags.Static);
+            field.SetValue(null, null);
+
             var baseTechObjectLoader = new BaseTechObjectLoader();
             foreach (var package in packages)
             {

@@ -1,4 +1,5 @@
 ﻿using EasyEPlanner;
+using IO;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -17,6 +18,10 @@ namespace Tests.FileSaver
         [TestCase(";./dairy-sys/?.lua")]
         public void SaveMainFile_Checks_FileExists_ProjectName_Packages(string package)
         {
+            FieldInfo field = typeof(ProjectDescriptionSaver).GetField(
+                "packages", BindingFlags.NonPublic | BindingFlags.Static);
+            field.SetValue(null, null);
+
             var projectName = "ProjectName";
             var path = Path.GetTempPath();
             var pathToFile = path + "main.plua";
@@ -50,6 +55,10 @@ namespace Tests.FileSaver
         [TestCaseSource(nameof(AddPackageTestCase))]
         public void AddPackage_CheckListPackges(List<string> packages)
         {
+            FieldInfo field = typeof(ProjectDescriptionSaver).GetField(
+                "packages", BindingFlags.NonPublic | BindingFlags.Static);
+            field.SetValue(null, null);
+
             foreach (var package in packages)
             {
                 ProjectDescriptionSaver.AddPackage(package);

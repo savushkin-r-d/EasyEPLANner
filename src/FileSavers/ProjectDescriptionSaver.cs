@@ -226,19 +226,16 @@ namespace EasyEPlanner
                 mainPluaFilePattern = mainPluaFilePattern
                     .Replace("ProjectName", par.PAC_Name);
 
+                StringBuilder packagesLine = new StringBuilder();
                 if (packages != null && packages.Count > 0)
                 {
-                    StringBuilder packagesLine = new StringBuilder("package.path = package.path");
+                    packagesLine.Append("package.path = package.path");
                     foreach (var package in packages)
                     {
                         packagesLine.Append($" .. '{package}'");
-                    }
-                    mainPluaFilePattern = string.Format(mainPluaFilePattern, packagesLine);
+                    }  
                 }
-                else
-                {
-                    mainPluaFilePattern = string.Format(mainPluaFilePattern, string.Empty);
-                }
+                mainPluaFilePattern = string.Format(mainPluaFilePattern, packagesLine);
 
                 fileWriter.WriteLine(mainPluaFilePattern);
 
