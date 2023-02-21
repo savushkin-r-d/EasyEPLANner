@@ -40,6 +40,10 @@ namespace EasyEPlanner
             try
             {
                 InitStartValues();
+                
+                if (!IsCorrectClampNumber())
+                    return;
+ 
                 PrepareFunctionalText();
 
                 if (!string.IsNullOrEmpty(ResetDevicesChannel))
@@ -61,6 +65,32 @@ namespace EasyEPlanner
                 // TODO: Errors handler
                 return;
             }
+        }
+
+        /// <summary>
+        /// Проверка на корректный номер клемы при привязке. 
+        /// Если для привязки выбрана вспомогательная клема (питание или 0V),
+        /// то функция вернет false и привязки не произойдет.
+        /// </summary>
+        /// <returns></returns>
+        private bool IsCorrectClampNumber()
+        {
+            string clampNumberAsString = DeviceBindingHelper
+                .GetClampNumberAsString(SelectedClampFunction, ioHelper);
+            bool isDigit = int.TryParse(clampNumberAsString,
+                out int clampNumber);
+            
+            if (!isDigit)
+            {
+                return false;
+            }
+
+            int propertyNumber = (int)Eplan.EplApi.DataModel.Properties
+                .Article.ARTICLE_TYPENR;
+            string name = GetSelectedIOModuleArticleProperty(propertyNumber);
+            var moduleInfo = IOModuleInfo.GetModuleInfo(name.Trim(), out _);
+
+            return Array.IndexOf(moduleInfo.ChannelClamps, clampNumber) >= 0;
         }
 
         /// <summary>

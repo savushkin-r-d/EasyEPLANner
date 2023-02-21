@@ -83,16 +83,18 @@ namespace EasyEPlanner
         private void ReadModuleClampBinding(IO.IIONode node, IO.IIOModule module,
             Function clampFunction)
         {
-            bool skip = NeedToSkip(module, clampFunction);
+            string description = apiHelper.GetFunctionalText(clampFunction);
+            var descriptionMatches = Regex.Matches(description,
+                DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN,
+                RegexOptions.None,
+                TimeSpan.FromMilliseconds(100));
+
+            bool skip = NeedToSkip(module, clampFunction, description, descriptionMatches);
             if (skip == true)
             {
                 return;
             }
 
-            string description = apiHelper.GetFunctionalText(clampFunction);
-            var descriptionMatches = Regex.Matches(description, 
-                DeviceManager.BINDING_DEVICES_DESCRIPTION_PATTERN);
-            
             const string ValveTerminalNamePattern = @"=*-Y(?<n>\d+)";
             var valveTerminalRegex = new Regex(ValveTerminalNamePattern);
             var valveTerminalMatch = valveTerminalRegex.Match(description);
@@ -116,9 +118,20 @@ namespace EasyEPlanner
         /// <param name="module">Модуль</param>
         /// <param name="clampFunction">Функция клеммы</param>
         /// <returns></returns>
-        private bool NeedToSkip(IO.IIOModule module, Function clampFunction)
+        private bool NeedToSkip(IO.IIOModule module, Function clampFunction, string description , MatchCollection descriptionMatches)
         {
             var skip = false;
+
+            IODevice device = null;
+            string error = string.Empty;
+
+            if (description != string.Empty && descriptionMatches.Count > 0)
+            {
+                    device = DeviceManager.GetInstance()
+                        .GetDevice(descriptionMatches[0].ToString());
+                    error = $"К не сигнальной клемме \"{clampFunction.Name}\"" +
+                        $" привязано устройство \"{device?.EplanName}\".";  
+            }
 
             string clampString = clampFunction.Properties
                 .FUNC_ADDITIONALIDENTIFYINGNAMEPART.ToString();
@@ -126,6 +139,8 @@ namespace EasyEPlanner
             bool isDigit = int.TryParse(clampString, out clamp);
             if (isDigit == false)
             {
+                if (device != null)
+                    Logs.AddMessage(error);
                 skip = true;
                 return skip;
             }
@@ -133,6 +148,8 @@ namespace EasyEPlanner
             IO.IOModuleInfo moduleInfo = module.Info;
             if (Array.IndexOf(moduleInfo.ChannelClamps, clamp) < 0)
             {
+                if (device != null)
+                    Logs.AddMessage(error);
                 skip = true;
                 return skip;
             }
@@ -145,8 +162,6 @@ namespace EasyEPlanner
                 return skip;
             }
 
-            string description = apiHelper.GetFunctionalText(
-                clampFunction);
             if (description == "" || description.Contains(CommonConst.Reserve))
             {
                 skip = true;
