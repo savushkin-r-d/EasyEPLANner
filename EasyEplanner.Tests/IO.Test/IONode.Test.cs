@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
+using EasyEPlanner;
 using IO;
 using NUnit.Framework;
 
@@ -6,12 +8,18 @@ namespace Tests.IO
 {
     class IONodeTest
     {
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            typeof(IOManager).GetField("instance", BindingFlags.NonPublic | BindingFlags.Static)
+                .SetValue(null, null);
+            IOManager.GetInstance(); // Load description from file.
+        }
+
         [TestCaseSource(nameof(TypeTestCaseSource))]
         public void Type_NewNode_CorrectGetAndSet(string typeStr,
             IONode.TYPES expectedType)
         {
-            IOManager.GetInstance(); // Load description from file.
-
             var testNode = new IONode(typeStr, IntStub, IntStub, StrStub, StrStub,
                 StrStub);
 
@@ -74,8 +82,6 @@ namespace Tests.IO
         public void IsCoupler_NewNode_ReturnsTrueOrFalse(string typeStr,
             bool expectedValue)
         {
-            IOManager.GetInstance(); // Load description from file.
-
             var testNode = new IONode(typeStr, IntStub, IntStub, StrStub, StrStub,
                 StrStub);
 

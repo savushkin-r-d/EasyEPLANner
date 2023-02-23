@@ -4,6 +4,13 @@ init_base_objects = function()
         return
     end
 
+    if get_main_packages ~= nil then
+        local packages = get_main_packages()
+        for _, package in pairs(packages) do
+            AddPackage(package)
+        end
+    end
+
     local objects = base_tech_objects()
     for eplanName, value in pairs(objects) do
         -- Данные для минимальной инициализации

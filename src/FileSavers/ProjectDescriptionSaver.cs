@@ -6,6 +6,8 @@ using System.Windows.Forms;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Collections.Generic;
+using Microsoft.SqlServer.Server;
 
 namespace EasyEPlanner
 {
@@ -223,11 +225,33 @@ namespace EasyEPlanner
                 string mainPluaFilePattern = mainProgramFilePattern;
                 mainPluaFilePattern = mainPluaFilePattern
                     .Replace("ProjectName", par.PAC_Name);
+
+                StringBuilder packagesLine = new StringBuilder();
+                if (packages != null && packages.Count > 0)
+                {
+                    packagesLine.Append("package.path = package.path");
+                    foreach (var package in packages)
+                    {
+                        packagesLine.Append($" .. '{package}'");
+                    }  
+                }
+                mainPluaFilePattern = string.Format(mainPluaFilePattern, packagesLine);
+
                 fileWriter.WriteLine(mainPluaFilePattern);
 
                 fileWriter.Flush();
                 fileWriter.Close();
             }
+        }
+
+        public static void AddPackage(string package)
+        {
+            if (package.Trim() == string.Empty)
+                return;
+
+            if (packages == null)
+                packages = new List<string>();
+            packages.Add(package.Trim());
         }
 
         /// <summary>
@@ -411,6 +435,16 @@ namespace EasyEPlanner
             .GetInstance();
         private static IOManager IOManager = IOManager.GetInstance();
 
+        public static List<string> Packages
+        {
+            get
+            {
+                return packages;
+            }
+        }
+
+        private static List<string> packages;
+        
         public static string MainProgramFileName
         {
             get

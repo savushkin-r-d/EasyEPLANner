@@ -1,4 +1,5 @@
 --Проект 'ProjectName'
+{0}
 
 prg = require("prg")                        --Технологические объекты.
 require( "sharedmodbus" )                   --Межконтроллерный обмен
