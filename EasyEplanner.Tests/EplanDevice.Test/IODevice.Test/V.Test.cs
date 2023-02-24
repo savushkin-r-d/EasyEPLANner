@@ -740,6 +740,13 @@ namespace Tests.EplanDevices
                 IODevice.RuntimeParameter.R_AS_NUMBER,
             };
 
+            var V_IOL_TERMINAL_MIXPROOF_DO3_RTParameters = new string[]
+            {
+                IODevice.RuntimeParameter.R_ID_ON,
+                IODevice.RuntimeParameter.R_ID_UPPER_SEAT,
+                IODevice.RuntimeParameter.R_ID_LOWER_SEAT,
+            };
+
             return new object[]
             {
                 new object[]
@@ -840,7 +847,7 @@ namespace Tests.EplanDevices
                 },
                 new object[]
                 {
-                    vtugParameters,
+                    V_IOL_TERMINAL_MIXPROOF_DO3_RTParameters,
                     V_IOL_TERMINAL_MIXPROOF_DO3,
                     GetRandomVDevice()
                 },

@@ -67,6 +67,11 @@ namespace EplanDevice
                 }
             }
 
+            if(dSubType == DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3)
+            {
+
+            }
+
             bool emptyArticle = ArticleName == string.Empty;
             if (emptyArticle)
             {
@@ -242,12 +247,14 @@ namespace EplanDevice
                     break;
 
                 case "V_IOL_TERMINAL_MIXPROOF_DO3":
-                    rtParameters.Add(RuntimeParameter.R_VTUG_NUMBER, null);
-                    rtParameters.Add(RuntimeParameter.R_VTUG_SIZE, 1);
+                    rtParameters.Add(RuntimeParameter.R_ID_ON, null);
+                    rtParameters.Add(RuntimeParameter.R_ID_UPPER_SEAT, null);
+                    rtParameters.Add(RuntimeParameter.R_ID_LOWER_SEAT, null);
+                    // Параметры по порядку должны соотвествовать каналам AO
 
                     AO.Add(new IOChannel("AO", -1, -1, -1, "Открыть"));
-                    AO.Add(new IOChannel("AO", -1, -1, -1, "Открыть верхнее седло"));
-                    AO.Add(new IOChannel("AO", -1, -1, -1, "Открыть нижнее седло"));
+                    AO.Add(new IOChannel("AO", -1, -1, -1, "Открыть ВС"));
+                    AO.Add(new IOChannel("AO", -1, -1, -1, "Открыть НС"));
                     break;
 
                 case "V_VIRT":

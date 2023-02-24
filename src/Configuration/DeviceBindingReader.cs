@@ -103,13 +103,14 @@ namespace EasyEPlanner
                 description = ReadValveTerminalBinding(description);
             }
 
-            string comment;
-            Match actionMatch;
-            CorrectDataIfMultipleBinding(ref description, out actionMatch, 
-                out comment);
+            List<string> comments = null;
+            List<string> actions = null;
 
-            SetBind(description, actionMatch, module, node, clampFunction, 
-                comment);
+            CorrectDataIfMultipleBinding(ref description, out actions, 
+                out comments);
+
+            SetBind(description, actions, module, node, clampFunction, 
+                comments);
         }
 
         /// <summary>
@@ -265,14 +266,51 @@ namespace EasyEPlanner
                     while (deviceMatch.Success)
                     {
                         string deviceName = deviceMatch.Groups["name"].Value;
+
+                        int endPosition = description.IndexOf(CommonConst.NewLine);
+                        var comment = clampBindedDevice.Substring(endPosition + 1);
+                        var actionMatch = DeviceBindingHelper.FindCorrectClampCommentMatch(comment);
+                        comment = ReplaceClampCommentInComment(comment, actionMatch.Value);
+
+                        var action = actionMatch.Value;
+
                         description += $"{CommonConst.NewLineWithCarriageReturn}" +
                             $"{deviceName}";
+                        if (action != string.Empty)
+                        {
+                            description += $"{CommonConst.NewLineWithCarriageReturn}" +
+                                $"{action}";
+                        }
+                        description += "\t";
 
-                        // Дополнительно установить параметр R_VTUG_NUMBER
+
                         int vtugNumber = Convert.ToInt32(clampNumber);
-                        var runtimeParams = new Dictionary<string, double>();
-                        runtimeParams.Add("R_VTUG_NUMBER", vtugNumber);
-                        SetDeviceRuntimeParameters(runtimeParams, deviceName);
+                        var device = DeviceManager.GetInstance().GetDevice(deviceName);
+                        if (device.DeviceSubType == DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3)
+                        {
+                            string rtParName = string.Empty;
+
+                            
+                            switch (action)
+                            {
+                                case "Открыть":
+                                    rtParName = "R_ID_ON";
+                                    break;
+                                case "Открыть ВС":
+                                    rtParName = "R_ID_UPPER_SEAT";
+                                    break;
+                                case "Открыть НС":
+                                    rtParName = "R_ID_LOWER_SEAT";
+                                    break;
+                            }
+
+                            device.SetRuntimeParameter(rtParName, vtugNumber);
+                        }
+                        else
+                        {
+                            // Дополнительно установить параметр R_VTUG_NUMBER
+                            device.SetRuntimeParameter("R_VTUG_NUMBER", vtugNumber);
+                        }
 
                         deviceMatch = deviceMatch.NextMatch();
                     }
@@ -304,9 +342,13 @@ namespace EasyEPlanner
         /// <param name="actionMatch">Действие канала</param>
         /// <param name="comment">Комментарий к устройству</param>
         private void CorrectDataIfMultipleBinding(ref string description, 
-            out Match actionMatch, out string comment)
+            out List<string> actions, out List<string> comments)
         {
-            comment = string.Empty;
+            actions = new List<string>();
+            comments = new List<string>();
+            
+            var comment = string.Empty;
+
             bool isMultipleBinding = DeviceManager.GetInstance()
                 .IsMultipleBinding(description);
             if (isMultipleBinding == false)
@@ -324,19 +366,48 @@ namespace EasyEPlanner
                     description = description.Substring(0, endPosition);
                 }
 
-                description = DeviceBindingHelper
-                    .ReplaceRusBigLettersByEngBig(description);
-                actionMatch = DeviceBindingHelper
-                    .FindCorrectClampCommentMatch(comment);
-                comment = ReplaceClampCommentInComment(comment,
-                    actionMatch.Value);
+                description = DeviceBindingHelper.ReplaceRusBigLettersByEngBig(description);
+
+                var action = DeviceBindingHelper.FindCorrectClampCommentMatch(comment).Value;            
+                comment = ReplaceClampCommentInComment(comment, action);
+
+                actions.Add(action);
+                comments.Add(comment);
             }
             else
             {
+                int endPos = description.IndexOf(CommonConst.NewLine);
+                
+                if (endPos > 0)
+                {
+                    comment = description.Substring(endPos + 1);
+                    description = description.Substring(0, endPos - 1);
+                }
+
                 description = DeviceBindingHelper
                     .ReplaceRusBigLettersByEngBig(description);
-                actionMatch = DeviceBindingHelper
-                    .FindCorrectClampCommentMatch(comment);
+
+                var splitComment = comment.Split('\t');
+
+                actions.Add(string.Empty);
+                comments.Add(string.Empty);
+                foreach (var commentLine in splitComment)
+                {
+                    var action = DeviceBindingHelper.FindCorrectClampCommentMatch(commentLine).Value;
+                    
+                    actions.Add(action);
+                    comments.Add(ReplaceClampCommentInComment(commentLine, action));
+
+                    if (commentLine.Contains("\r\n"))
+                    {
+                        description += "\r\n" + commentLine.Split(new string[] { "\r\n" },
+                            StringSplitOptions.RemoveEmptyEntries).First();
+                    }
+                    else
+                    {
+                        description += "\r\n" + commentLine;
+                    }
+                }
             }
         }
 
@@ -373,9 +444,9 @@ namespace EasyEPlanner
         /// <param name="node">Узел ввода-вывода</param>
         /// <param name="clampFunction">Функция клеммы</param>
         /// <param name="comment">Комментарий к устройству</param>
-        private void SetBind(string description, Match actionMatch, 
+        private void SetBind(string description, List<string> actions, 
             IO.IIOModule module, IO.IIONode node, Function clampFunction, 
-            string comment)
+            List<string> comments)
         {
             // Конвертируем в IOModule, потому что не тестируется IIOModule
             // из-за Function (еплановская библиотека).
@@ -395,15 +466,17 @@ namespace EasyEPlanner
                     $"\"{description}\".");
             }
 
+            int matchIndex = 0;
+
             foreach (Match descriptionMatch in descriptionMatches)
             {
                 string deviceName = descriptionMatch.Groups["name"].Value;
                 var device = deviceManager.GetDevice(deviceName);
 
                 var clampComment = "";
-                if (actionMatch.Success)
+                if (actions.Count > 0 && actions[matchIndex] != string.Empty)
                 {
-                    clampComment = actionMatch.Value;
+                    clampComment = actions[matchIndex];
                     if (clampComment.Contains(
                         CommonConst.NewLineWithCarriageReturn))
                     {
@@ -433,7 +506,7 @@ namespace EasyEPlanner
                     else
                     {
                         channelName = DeviceBindingHelper
-                            .GetChannelNameForIOLinkModuleFromString(comment);
+                            .GetChannelNameForIOLinkModuleFromString(comments[matchIndex]);
                     }
                 }
 
@@ -449,6 +522,8 @@ namespace EasyEPlanner
                         ioModule.Function.VisibleName , clampStr, error);
                     Logs.AddMessage(error);
                 }
+
+                matchIndex++;
             }
         }
 
