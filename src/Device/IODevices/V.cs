@@ -67,11 +67,6 @@ namespace EplanDevice
                 }
             }
 
-            if(dSubType == DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3)
-            {
-
-            }
-
             bool emptyArticle = ArticleName == string.Empty;
             if (emptyArticle)
             {
