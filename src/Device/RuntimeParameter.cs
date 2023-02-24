@@ -27,6 +27,23 @@
             /// (Постоянный или мигающий). 0 - мигающий, 1 - постоянный.
             /// </summary>
             public const string R_CONST_RED = "R_CONST_RED";
+
+            /// <summary>
+            /// Номер клеммы пневмоострова для сигнала "Открыть"
+            /// </summary>
+            public const string R_ID_ON = "R_ID_ON";
+
+            /// <summary>
+            /// Номер клеммы пневмоострова для сигнала "Открыть верхнее седло"
+            /// </summary>
+            public const string R_ID_UPPER_SEAT = "R_ID_UPPER_SEAT";
+
+            /// <summary>
+            /// Номер клеммы пневмоострова для сигнала "Открыть нижнее седло"
+            /// </summary>
+            public const string R_ID_LOWER_SEAT = "R_ID_LOWER_SEAT";
+
+
         }
     }
 }

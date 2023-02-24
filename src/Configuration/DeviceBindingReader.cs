@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using EplanDevice;
+using System.Text;
+using EasyEPlanner.PxcIolinkConfiguration.Models;
 
 namespace EasyEPlanner
 {
@@ -103,13 +105,14 @@ namespace EasyEPlanner
                 description = ReadValveTerminalBinding(description);
             }
 
-            string comment;
-            Match actionMatch;
-            CorrectDataIfMultipleBinding(ref description, out actionMatch, 
-                out comment);
+            List<string> comments = null;
+            List<string> actions = null;
 
-            SetBind(description, actionMatch, module, node, clampFunction, 
-                comment);
+            CorrectDataIfMultipleBinding(ref description, out actions, 
+                out comments);
+
+            SetBind(description, actions, module, node, clampFunction, 
+                comments);
         }
 
         /// <summary>
@@ -242,7 +245,7 @@ namespace EasyEPlanner
         /// <returns></returns>
         private string ReadValveTerminalClampsBinding(Function[] subFunctions)
         {
-            var description = "";
+            var descriptionBuilder = new StringBuilder();
             foreach (var function in subFunctions)
             {
                 if (function.Category != Function.Enums.Category.PLCTerminal)
@@ -265,35 +268,66 @@ namespace EasyEPlanner
                     while (deviceMatch.Success)
                     {
                         string deviceName = deviceMatch.Groups["name"].Value;
-                        description += $"{CommonConst.NewLineWithCarriageReturn}" +
-                            $"{deviceName}";
+                        var actionMatch = DeviceBindingHelper.FindCorrectClampCommentMatch(clampBindedDevice);
+                        var action = actionMatch.Value;
+                        
+                        descriptionBuilder.Append(CommonConst.NewLineWithCarriageReturn)
+                            .Append(deviceName);
+                        if (action != string.Empty)
+                        {
+                            descriptionBuilder.Append(CommonConst.NewLineWithCarriageReturn)
+                                .Append(action);
+                        }
+                        descriptionBuilder.Append("\t");
 
-                        // Дополнительно установить параметр R_VTUG_NUMBER
+
                         int vtugNumber = Convert.ToInt32(clampNumber);
-                        var runtimeParams = new Dictionary<string, double>();
-                        runtimeParams.Add("R_VTUG_NUMBER", vtugNumber);
-                        SetDeviceRuntimeParameters(runtimeParams, deviceName);
+                        var device = DeviceManager.GetInstance().GetDevice(deviceName);
+                        
+                        SetValveRTParameters(device, action, vtugNumber);
 
                         deviceMatch = deviceMatch.NextMatch();
                     }
                 }
             }
 
-            return description;
+            return descriptionBuilder.ToString();
         }
 
         /// <summary>
-        /// Установка рабочих параметров устройства.
+        /// Установка номера клемы пневмоострова в рабочие параметры для клапана  
         /// </summary>
-        /// <param name="parameters">Словарь параметров</param>
-        /// <param name="deviceName">Имя устройства</param>
-        private void SetDeviceRuntimeParameters(
-            Dictionary<string, double> parameters, string deviceName)
+        /// <param name="device">Клапан</param>
+        /// <param name="action">Действие клеммы</param>
+        /// <param name="vtugNumber">Номер клеммы пневмоострова</param>
+        private void SetValveRTParameters(IODevice device, string action, int vtugNumber)
         {
-            var dev = DeviceManager.GetInstance().GetDevice(deviceName);
-            foreach (KeyValuePair<string, double> parameter in parameters)
+            if (!(device != null && device.DeviceType == DeviceType.V))
+                return;
+
+            if (device.DeviceSubType == DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3)
             {
-                dev.SetRuntimeParameter(parameter.Key, parameter.Value);
+                string rtParName = string.Empty;
+
+
+                switch (action)
+                {
+                    case "Открыть":
+                        rtParName = "R_ID_ON";
+                        break;
+                    case "Открыть ВС":
+                        rtParName = "R_ID_UPPER_SEAT";
+                        break;
+                    case "Открыть НС":
+                        rtParName = "R_ID_LOWER_SEAT";
+                        break;
+                }
+
+                device.SetRuntimeParameter(rtParName, vtugNumber);
+            }
+            else
+            {
+                device.SetRuntimeParameter("R_VTUG_NUMBER", vtugNumber);
             }
         }
 
@@ -304,9 +338,13 @@ namespace EasyEPlanner
         /// <param name="actionMatch">Действие канала</param>
         /// <param name="comment">Комментарий к устройству</param>
         private void CorrectDataIfMultipleBinding(ref string description, 
-            out Match actionMatch, out string comment)
+            out List<string> actions, out List<string> comments)
         {
-            comment = string.Empty;
+            actions = new List<string>();
+            comments = new List<string>();
+            
+            var comment = string.Empty;
+
             bool isMultipleBinding = DeviceManager.GetInstance()
                 .IsMultipleBinding(description);
             if (isMultipleBinding == false)
@@ -324,19 +362,53 @@ namespace EasyEPlanner
                     description = description.Substring(0, endPosition);
                 }
 
-                description = DeviceBindingHelper
-                    .ReplaceRusBigLettersByEngBig(description);
-                actionMatch = DeviceBindingHelper
-                    .FindCorrectClampCommentMatch(comment);
-                comment = ReplaceClampCommentInComment(comment,
-                    actionMatch.Value);
+                description = DeviceBindingHelper.ReplaceRusBigLettersByEngBig(description);
+
+                var action = DeviceBindingHelper.FindCorrectClampCommentMatch(comment).Value;            
+                comment = ReplaceClampCommentInComment(comment, action);
+
+                actions.Add(action);
+                comments.Add(comment);
             }
             else
             {
+                int endPos = description.IndexOf(CommonConst.NewLine);
+                
+                if (endPos > 0)
+                {
+                    comment = description.Substring(endPos + 1);
+                    description = description.Substring(0, endPos - 1);
+                }
+
                 description = DeviceBindingHelper
                     .ReplaceRusBigLettersByEngBig(description);
-                actionMatch = DeviceBindingHelper
-                    .FindCorrectClampCommentMatch(comment);
+
+                var splitComment = comment.Split('\t');
+
+                actions.Add(string.Empty);
+                comments.Add(string.Empty);
+
+                var descriptionBuilder = new StringBuilder(description);
+                foreach (var commentLine in splitComment)
+                {
+                    var action = DeviceBindingHelper.FindCorrectClampCommentMatch(commentLine).Value;
+                    
+                    actions.Add(action);
+                    comments.Add(ReplaceClampCommentInComment(commentLine, action));
+
+                    if (commentLine.Contains(CommonConst.NewLineWithCarriageReturn))
+                    {
+                        descriptionBuilder.Append(CommonConst.NewLineWithCarriageReturn)
+                            .Append(commentLine.Split(new string[] { CommonConst.NewLineWithCarriageReturn }, 
+                                StringSplitOptions.RemoveEmptyEntries).First());
+                    }
+                    else
+                    {
+                        descriptionBuilder.Append(CommonConst.NewLineWithCarriageReturn)
+                            .Append(commentLine);
+                    }
+                }
+                description = descriptionBuilder.ToString();
             }
         }
 
@@ -373,9 +445,9 @@ namespace EasyEPlanner
         /// <param name="node">Узел ввода-вывода</param>
         /// <param name="clampFunction">Функция клеммы</param>
         /// <param name="comment">Комментарий к устройству</param>
-        private void SetBind(string description, Match actionMatch, 
+        private void SetBind(string description, List<string> actions, 
             IO.IIOModule module, IO.IIONode node, Function clampFunction, 
-            string comment)
+            List<string> comments)
         {
             // Конвертируем в IOModule, потому что не тестируется IIOModule
             // из-за Function (еплановская библиотека).
@@ -395,22 +467,14 @@ namespace EasyEPlanner
                     $"\"{description}\".");
             }
 
+            int matchIndex = 0;
+
             foreach (Match descriptionMatch in descriptionMatches)
             {
                 string deviceName = descriptionMatch.Groups["name"].Value;
                 var device = deviceManager.GetDevice(deviceName);
 
-                var clampComment = "";
-                if (actionMatch.Success)
-                {
-                    clampComment = actionMatch.Value;
-                    if (clampComment.Contains(
-                        CommonConst.NewLineWithCarriageReturn))
-                    {
-                        clampComment = clampComment.Replace(
-                            CommonConst.NewLineWithCarriageReturn, "");
-                    }
-                }
+                var clampComment = GetClampComment(actions?[matchIndex]);
 
                 string error;
                 string channelName = "IO-Link";
@@ -422,19 +486,7 @@ namespace EasyEPlanner
                     module.Info.AddressSpaceType == 
                     IO.IOModuleInfo.ADDRESS_SPACE_TYPE.AOAIDODI)
                 {
-                    if (device.Channels.Count == 1)
-                    {
-                        List<IODevice.IOChannel> chanels = 
-                            device.Channels;
-                        channelName = DeviceBindingHelper
-                            .GetChannelNameForIOLinkModuleFromString(
-                            chanels.First().Name);
-                    }
-                    else
-                    {
-                        channelName = DeviceBindingHelper
-                            .GetChannelNameForIOLinkModuleFromString(comment);
-                    }
+                    channelName = GetChannelNameForIOLinkModule(device, comments?[matchIndex]);
                 }
 
                 DeviceManager.GetInstance().AddDeviceChannel(device,
@@ -449,7 +501,45 @@ namespace EasyEPlanner
                         ioModule.Function.VisibleName , clampStr, error);
                     Logs.AddMessage(error);
                 }
+
+                matchIndex++;
             }
+        }
+
+        private string GetClampComment(string action)
+        {
+            if (action == null)
+                return string.Empty;
+
+            if (action.Contains(
+                CommonConst.NewLineWithCarriageReturn))
+            {
+                action = action.Replace(
+                    CommonConst.NewLineWithCarriageReturn, "");
+            }
+
+            return action;
+        }
+
+        private string GetChannelNameForIOLinkModule(IODevice device, string comment)
+        {
+            var channelName = string.Empty;
+
+            if (device.Channels.Count == 1)
+            {
+                List<IODevice.IOChannel> chanels =
+                    device.Channels;
+                channelName = DeviceBindingHelper
+                    .GetChannelNameForIOLinkModuleFromString(
+                    chanels.First().Name);
+            }
+            else
+            {
+                channelName = DeviceBindingHelper
+                    .GetChannelNameForIOLinkModuleFromString(comment);
+            }
+
+            return channelName;
         }
 
         /// <summary>

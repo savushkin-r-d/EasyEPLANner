@@ -28,6 +28,7 @@ namespace Tests.EplanDevices
         const string V_IOLINK_VTUG_DO1_DI2 = "V_IOLINK_VTUG_DO1_DI2";
         const string V_VIRT = "V_VIRT";
         const string V_MINI_FLUSHING = "V_MINI_FLUSHING";
+        const string V_IOL_TERMINAL_MIXPROOF_DO3 = "V_IOL_TERMINAL_MIXPROOF_DO3";   
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
@@ -99,8 +100,10 @@ namespace Tests.EplanDevices
                     GetRandomVDevice() },
                 new object[] { DeviceSubType.V_VIRT, V_VIRT,
                     GetRandomVDevice() },
-                new object[] {DeviceSubType.V_MINI_FLUSHING,
+                new object[] { DeviceSubType.V_MINI_FLUSHING,
                     V_MINI_FLUSHING, GetRandomVDevice() },
+                new object[] { DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3, 
+                    V_IOL_TERMINAL_MIXPROOF_DO3, GetRandomVDevice() },
             };
         }
 
@@ -158,6 +161,8 @@ namespace Tests.EplanDevices
                     V_IOLINK_VTUG_DO1_FB_ON, GetRandomVDevice() },
                 new object[] { V_IOLINK_VTUG_DO1_DI2,
                     V_IOLINK_VTUG_DO1_DI2, GetRandomVDevice() },
+                new object[] { V_IOL_TERMINAL_MIXPROOF_DO3,
+                    V_IOL_TERMINAL_MIXPROOF_DO3, GetRandomVDevice() },
                 new object[] { string.Empty, Incorrect, GetRandomVDevice() },
                 new object[] { string.Empty, string.Empty, GetRandomVDevice() },
                 new object[] { V_VIRT, V_VIRT, GetRandomVDevice() },
@@ -261,6 +266,8 @@ namespace Tests.EplanDevices
                 new object[] {exportForVIOLinkMixproof, V_IOLINK_MIXPROOF,
                     GetRandomVDevice()},
                 new object[] {exportForVIOLinkMixproof, V_IOLINK_DO1_DI2,
+                    GetRandomVDevice()},
+                new object[] { exportForV, V_IOL_TERMINAL_MIXPROOF_DO3,
                     GetRandomVDevice()},
                 new object[] {null, Incorrect, GetRandomVDevice()},
                 new object[] {null, string.Empty, GetRandomVDevice()},
@@ -414,6 +421,12 @@ namespace Tests.EplanDevices
                 {
                     new string[0],
                     V_VIRT,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    new string[0],
+                    V_IOL_TERMINAL_MIXPROOF_DO3,
                     GetRandomVDevice()
                 },
             };
@@ -659,6 +672,18 @@ namespace Tests.EplanDevices
                 },
                 new object[]
                 {
+                    new Dictionary<string, int>()
+                    {
+                        { AI, 0 },
+                        { AO, 3 },
+                        { DI, 0 },
+                        { DO, 0 },
+                    },
+                    V_IOL_TERMINAL_MIXPROOF_DO3,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
                     emptySignals,
                     string.Empty,
                     GetRandomVDevice()
@@ -713,6 +738,13 @@ namespace Tests.EplanDevices
             var interfaceASiParameters = new string[]
             {
                 IODevice.RuntimeParameter.R_AS_NUMBER,
+            };
+
+            var V_IOL_TERMINAL_MIXPROOF_DO3_RTParameters = new string[]
+            {
+                IODevice.RuntimeParameter.R_ID_ON,
+                IODevice.RuntimeParameter.R_ID_UPPER_SEAT,
+                IODevice.RuntimeParameter.R_ID_LOWER_SEAT,
             };
 
             return new object[]
@@ -811,6 +843,12 @@ namespace Tests.EplanDevices
                 {
                     vtugParameters,
                     V_IOLINK_VTUG_DO1_DI2,
+                    GetRandomVDevice()
+                },
+                new object[]
+                {
+                    V_IOL_TERMINAL_MIXPROOF_DO3_RTParameters,
+                    V_IOL_TERMINAL_MIXPROOF_DO3,
                     GetRandomVDevice()
                 },
                 new object[]

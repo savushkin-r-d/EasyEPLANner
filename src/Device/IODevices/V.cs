@@ -35,7 +35,7 @@ namespace EplanDevice
             if ((dSubType == DeviceSubType.V_IOLINK_VTUG_DO1 ||
                     dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_FB_OFF ||
                     dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_FB_ON ||
-                    dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_DI2 ) &&
+                    dSubType == DeviceSubType.V_IOLINK_VTUG_DO1_DI2) &&
                 AO[0].Node >= 0 && AO[0].Module > 0)
             {
                 // DEV_VTUG - поддержка старых проектов
@@ -241,6 +241,17 @@ namespace EplanDevice
                     parameters.Add(Parameter.P_FB, 1);
                     break;
 
+                case "V_IOL_TERMINAL_MIXPROOF_DO3":
+                    rtParameters.Add(RuntimeParameter.R_ID_ON, null);
+                    rtParameters.Add(RuntimeParameter.R_ID_UPPER_SEAT, null);
+                    rtParameters.Add(RuntimeParameter.R_ID_LOWER_SEAT, null);
+                    // Параметры по порядку должны соотвествовать каналам AO
+
+                    AO.Add(new IOChannel("AO", -1, -1, -1, "Открыть"));
+                    AO.Add(new IOChannel("AO", -1, -1, -1, "Открыть ВС"));
+                    AO.Add(new IOChannel("AO", -1, -1, -1, "Открыть НС"));
+                    break;
+
                 case "V_VIRT":
                     break;                
 
@@ -304,6 +315,8 @@ namespace EplanDevice
                             return "V_VIRT";
                         case DeviceSubType.V_MINI_FLUSHING:
                             return "V_MINI_FLUSHING";
+                        case DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3:
+                            return "V_IOL_TERMINAL_MIXPROOF_DO3";
                     }
                     break;
             }
@@ -322,6 +335,7 @@ namespace EplanDevice
                         case DeviceSubType.V_DO1:
                         case DeviceSubType.V_DO2:
                         case DeviceSubType.V_IOLINK_VTUG_DO1:
+                        case DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3:
                             return new Dictionary<string, int>()
                             {
                                 {Tag.ST, 1},
