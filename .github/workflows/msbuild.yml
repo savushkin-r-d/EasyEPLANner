@@ -3,13 +3,14 @@ name: MSBuild
 on:
   pull_request_target:
     branches: [ master ]
-    types: [ labeled ]
+    types: [ opened, labeled, edited ]
   workflow_dispatch:
   push:
-    branches:
-      - master
+    branches: [ master ]
     tags:
       - 'v*'
+  merge_group:
+    branches: [ master ]
 
 env:
   # Path to the solution file relative to the root of the project.
@@ -24,7 +25,7 @@ jobs:
   build:
     name: Build, analyze and test
     runs-on: windows-latest
-    if: contains( github.event.pull_request.labels.*.name, 'safe to test' ) || github.ref == 'refs/heads/master' || contains(github.ref, 'tags/v')
+    if: contains( github.event.pull_request.labels.*.name, 'safe to test' ) || (( github.event_name == 'push' || github.event_name == 'merge_group' ) && github.ref == 'refs/heads/master') || contains(github.ref, 'tags/v')
 
     steps:
     - uses: actions/checkout@v2
