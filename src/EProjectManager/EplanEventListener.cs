@@ -23,6 +23,12 @@ namespace EasyEPlanner
 
         public EplanEventListener()
         {
+            var useTimeModule = ProjectManager.GetInstance().GetAppSetting("UseIdleTimeModule");
+            if (!bool.TryParse(useTimeModule, out UseIdleTimeModule))
+            {
+                UseIdleTimeModule= true;
+            }
+
             onUserPreCloseProject
                 .SetEvent("Eplan.EplApi.OnUserPreCloseProject");
             onUserPreCloseProject.EplanEvent +=
@@ -44,13 +50,16 @@ namespace EasyEPlanner
             onNotifyPageChanged.EplanEvent +=
                 new EventHandlerFunction(OnNotifyPageChanged);
 
-            IEplanHelper eplanHelper = new EplanHelper();
-            IModuleConfiguration moduleConfiguration =
-                new ModuleConfiguration();
-            IRunningProcess runningProcess =
-                new RunningProcess(Process.GetCurrentProcess());
-            idleTimeModule = new IdleTimeModule.IdleTimeModule(
-                eplanHelper, moduleConfiguration, runningProcess);
+            if (UseIdleTimeModule)
+            {
+                IEplanHelper eplanHelper = new EplanHelper();
+                IModuleConfiguration moduleConfiguration =
+                    new ModuleConfiguration();
+                IRunningProcess runningProcess =
+                    new RunningProcess(Process.GetCurrentProcess());
+                idleTimeModule = new IdleTimeModule.IdleTimeModule(
+                    eplanHelper, moduleConfiguration, runningProcess);
+            }
         }
 
         private void OnNotifyPageChanged(IEventParameter eventParameter)
@@ -186,16 +195,23 @@ namespace EasyEPlanner
                 }
             }
 
-            idleTimeModule.Stop();
+            if (UseIdleTimeModule)
+            {
+                idleTimeModule.Stop();
+            }
         }
 
         private void OnMainStart(IEventParameter iEventParameter)
         {
-            idleTimeModule.BeforeClosingProject += 
-                EProjectManager.GetInstance().SyncAndSave;
-            idleTimeModule.Start(AddInModule.OriginalAssemblyPath);
+            if (UseIdleTimeModule)
+            {
+                idleTimeModule.BeforeClosingProject +=
+                    EProjectManager.GetInstance().SyncAndSave;
+                idleTimeModule.Start(AddInModule.OriginalAssemblyPath);
+            }
         }
 
         private IIdleTimeModule idleTimeModule;
+        private readonly bool UseIdleTimeModule;
     }
 }

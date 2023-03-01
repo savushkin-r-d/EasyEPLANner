@@ -12,6 +12,7 @@ using EasyEPlanner.PxcIolinkConfiguration;
 using System;
 using System.Text;
 using EasyEPlanner.PxcIolinkConfiguration.Interfaces;
+using System.Configuration;
 
 namespace EasyEPlanner
 {
@@ -517,6 +518,23 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Получить значение параметра из файла конфигурации. 
+        /// </summary>
+        /// <param name="key">Имя параметра</param>
+        /// <returns>Значение параметра</returns>
+        public string GetAppSetting(string key)
+        {
+            KeyValueConfigurationElement element = config.AppSettings.Settings[key];
+            if (element != null)
+            {
+                string value = element.Value;
+                if (!string.IsNullOrEmpty(value))
+                    return value;
+            }
+            return string.Empty;
+        }
+
+        /// <summary>
         /// Получение экземпляра класса.
         /// </summary>
         /// <returns>Единственный экземпляр класса.</returns>
@@ -928,7 +946,25 @@ namespace EasyEPlanner
             }
         }
 
-        private ProjectManager() { }
+        /// <summary>
+        /// Путь к файлу библиотеки.
+        /// </summary>
+        public string OriginalDLLFilePath
+        {
+            get
+            {
+                return AddInModule.OriginalAssemblyPath;
+            }
+        }
+
+        private ProjectManager() 
+        {
+            try
+            {
+                config = ConfigurationManager.OpenExeConfiguration(OriginalDLLFilePath);
+            }
+            catch (Exception) { }
+        }
 
         /// <summary>
         /// Редактор технологических объектов.
@@ -964,5 +1000,10 @@ namespace EasyEPlanner
         /// Менеджер устройств.
         /// </summary>
         private IDeviceManager deviceManager;
+
+        /// <summary>
+        /// Файл конфигурации для easyeplanner.dll
+        /// </summary>
+        private Configuration config;
     }
 }
