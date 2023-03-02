@@ -10,8 +10,8 @@ on:
     tags:
       - 'v*'
   merge_group:
-    branches: [ master ]
-
+    types: [ checks_requested ]
+    
 env:
   # Path to the solution file relative to the root of the project.
   SOLUTION_FILE_PATH: ./src/EasyEPlanner.sln
@@ -25,7 +25,7 @@ jobs:
   build:
     name: Build, analyze and test
     runs-on: windows-latest
-    if: contains( github.event.pull_request.labels.*.name, 'safe to test' ) || (( github.event_name == 'push' || github.event_name == 'merge_group' ) && github.ref == 'refs/heads/master') || contains(github.ref, 'tags/v')
+    if: contains( github.event.pull_request.labels.*.name, 'safe to test' ) || ( github.event_name == 'push' && github.ref == 'refs/heads/master') || github.event_name == 'merge_group' || contains(github.ref, 'tags/v')
 
     steps:
     - uses: actions/checkout@v2
