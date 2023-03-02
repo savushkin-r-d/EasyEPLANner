@@ -963,7 +963,10 @@ namespace EasyEPlanner
             {
                 config = ConfigurationManager.OpenExeConfiguration(OriginalDLLFilePath);
             }
-            catch (Exception) { }
+            catch (Exception) 
+            {
+                // error open app.config
+            }
         }
 
         /// <summary>
@@ -1004,6 +1007,6 @@ namespace EasyEPlanner
         /// <summary>
         /// Файл конфигурации для easyeplanner.dll
         /// </summary>
-        private Configuration config;
+        private readonly Configuration config;
     }
 }
