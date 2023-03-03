@@ -3,7 +3,7 @@ name: MSBuild
 on:
   pull_request_target:
     branches: [ master ]
-    types: [ synchronize, labeled ]
+    types: [ opened, synchronize, labeled ]
   push:
     branches: [ master ]
     tags:
@@ -36,7 +36,7 @@ jobs:
     - id: pass
       if: >-
         (github.event.action == 'labeled' && github.event.label.name == 'safe to test') ||
-        (github.event.action == 'synchronize' && steps.is_organization_member.outputs.result == true) ||
+        ((github.event.action == 'synchronize' || github.event.action == 'opened') && steps.is_organization_member.outputs.result == true) ||
         (github.event_name == 'push' && github.ref == 'refs/heads/master') ||
         github.event_name == 'merge_group' ||
         contains(github.ref, 'tags/v')
