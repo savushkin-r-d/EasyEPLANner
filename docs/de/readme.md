@@ -15,6 +15,8 @@ Beispiele für die EPLAN Electric P8 Automatisierung in der Programmiersprache C
 
 ### EasyEPLANner
 
+<img src="../user_manual/images/EasyEplannerPreview.png">
+
 Der EasyEPLANner wurde als Add-In zur EPLAN 2.9-Version entwickelt. Das Add-In wird für EPLAN-Projekte verwendet und hilft Ihnen, die Arbeit eines Automatisierungsingenieurs und eines Softwareentwicklers zu automatisieren. Der Softwareentwickler erstellt den Code in der Programmiersprache Lua für das Projekt.
 
 EasyEPLANner hilft bei der Beschreibung von technologischen Objekten (Tank, Kessel usw.), Operationen dieser Objekte, Arbeitsschritten, Betriebsbeschränkungen und vielen anderen Eigenschaften. Schließlich generiert EasyEPLANner LUA-Dateien, die auf einen Kontroller hochgeladen werden. Wir unterstützen die Kontroller folgender Hersteller:
