@@ -28,7 +28,7 @@ jobs:
       result: ${{ steps.pass.outputs.result }}
     steps:
     - id: is_organization_member
-      uses: jamessingleton/is-organization-member@v1
+      uses: jamessingleton/is-organization-member@v1.0.1
       with:
         organization: savushkin-r-d
         username: ${{ github.event.sender.login }}
