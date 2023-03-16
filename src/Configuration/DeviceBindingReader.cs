@@ -13,7 +13,7 @@ namespace EasyEPlanner
     /// <summary>
     /// Читатель привязки устройств.
     /// </summary>
-    class DeviceBindingReader
+    public class DeviceBindingReader
     {
         IProjectHelper projectHelper;
         IApiHelper apiHelper;
@@ -295,7 +295,7 @@ namespace EasyEPlanner
                 }
             }
 
-            return descriptionBuilder.ToString();
+            return descriptionBuilder.ToString().TrimEnd('\t');
         }
 
         /// <summary>
