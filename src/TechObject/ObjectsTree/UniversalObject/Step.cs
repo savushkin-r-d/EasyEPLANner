@@ -141,6 +141,7 @@ namespace TechObject
                     EplanDevice.DeviceSubType.V_MIXPROOF,
                     EplanDevice.DeviceSubType.V_AS_MIXPROOF,
                     EplanDevice.DeviceSubType.V_IOLINK_MIXPROOF,
+                    EplanDevice.DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3,
                     EplanDevice.DeviceSubType.V_VIRT,
                     EplanDevice.DeviceSubType.DO,
                     EplanDevice.DeviceSubType.DO_VIRT
@@ -162,6 +163,7 @@ namespace TechObject
                     EplanDevice.DeviceSubType.V_AS_MIXPROOF,
                     EplanDevice.DeviceSubType.V_IOLINK_MIXPROOF,
                     EplanDevice.DeviceSubType.V_MINI_FLUSHING,
+                    EplanDevice.DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3,
                     EplanDevice.DeviceSubType.V_VIRT,
                     EplanDevice.DeviceSubType.DO,
                     EplanDevice.DeviceSubType.DO_VIRT

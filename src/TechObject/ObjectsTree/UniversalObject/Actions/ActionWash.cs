@@ -73,6 +73,7 @@ namespace TechObject
                     EplanDevice.DeviceSubType.V_MIXPROOF,
                     EplanDevice.DeviceSubType.V_VIRT,
                     EplanDevice.DeviceSubType.V_MINI_FLUSHING,
+                    EplanDevice.DeviceSubType.V_IOL_TERMINAL_MIXPROOF_DO3,
                     EplanDevice.DeviceSubType.AO,
                     EplanDevice.DeviceSubType.AO_VIRT,
                     EplanDevice.DeviceSubType.DO,
