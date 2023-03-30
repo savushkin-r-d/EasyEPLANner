@@ -575,15 +575,22 @@ namespace TechObject
             PAUSE,      // Пауза
             STOP,       // Остановка       
 
-            STATES_CNT = 4,
+            STARTING = 10,   // Запускается
+            PAUSING,    // Становится в паузу
+            UNPAUSING,  // Выходит из паузы
+            STOPPING,   // Останавливается
         }
 
-        static public readonly string[] stateStr =
+        static public readonly Dictionary<int, string> stateStr = new Dictionary<int, string>()
         {
-            "Простой",
-            "Выполнение",
-            "Пауза",
-            "Остановка",
+            [0] = "Простой",
+            [1] = "Выполнение",
+            [2] = "Пауза",
+            [3] = "Остановка",
+            [10] = "Запускается",
+            [11] = "Становится в паузу",
+            [12] = "Выходит из паузы",
+            [13] = "Останавливается",
         };
 
         private string name;        ///< Имя.

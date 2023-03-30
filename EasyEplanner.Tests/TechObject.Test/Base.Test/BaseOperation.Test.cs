@@ -20,7 +20,7 @@ namespace EasyEplanner.Tests
                 Assert.IsEmpty(baseOperation.Name);
                 Assert.IsEmpty(baseOperation.LuaName);
                 Assert.IsNull(baseOperation.Owner);
-                Assert.AreEqual(new List<BaseParameter>(), 
+                Assert.AreEqual(new List<BaseParameter>(),
                     baseOperation.Properties);
                 Assert.AreEqual(new Dictionary<string, List<BaseStep>>(),
                     baseOperation.States);
@@ -43,7 +43,7 @@ namespace EasyEplanner.Tests
                 Assert.AreEqual(name, baseOperation.Name);
                 Assert.AreEqual(luaName, baseOperation.LuaName);
                 Assert.IsNull(baseOperation.Owner);
-                Assert.AreEqual(baseOperationProperties, 
+                Assert.AreEqual(baseOperationProperties,
                     baseOperation.Properties);
                 Assert.AreEqual(baseStates, baseOperation.States);
             });
@@ -65,7 +65,7 @@ namespace EasyEplanner.Tests
                     emptyOpeartion.States);
             });
         }
-        
+
         [TestCaseSource(nameof(AddStepTestCaseSource))]
         public void AddStep_NewOperation_CorrectAddingOfSteps(
             Dictionary<string, List<BaseStep>> addingStates,
@@ -74,7 +74,7 @@ namespace EasyEplanner.Tests
         {
             foreach (var state in addingStates.Keys)
             {
-                foreach(var step in addingStates[state])
+                foreach (var step in addingStates[state])
                 {
                     customizableOper.AddStep(state, step.LuaName, step.Name,
                         step.DefaultPosition);
@@ -83,10 +83,10 @@ namespace EasyEplanner.Tests
 
             Assert.Multiple(() =>
             {
-                foreach(var state in customizableOper.States.Keys)
+                foreach (var state in customizableOper.States.Keys)
                 {
                     Assert.True(expectedStates.ContainsKey(state));
-                    foreach(var step in customizableOper.States[state])
+                    foreach (var step in customizableOper.States[state])
                     {
                         Assert.True(expectedStates[state]
                             .Where(x => x.Name == step.Name &&
@@ -104,34 +104,88 @@ namespace EasyEplanner.Tests
             var noStatesAndSteps = new Dictionary<string, List<BaseStep>>();
             var oper = new BaseOperation(null);
 
+            var step1 = new BaseStep("Шаг 1", "Step Lua 1", 1, oper);
+            var step2 = new BaseStep("Шаг 2", "Step Lua 2", 2, oper);
+            var step3 = new BaseStep("Шаг 3", "Step Lua 3", 3, oper);
+            var step4 = new BaseStep("Шаг 4", "Step Lua 4", 4, oper);
+            var step5 = new BaseStep("Шаг 5", "Step Lua 5", 5, oper);
+            var step6 = new BaseStep("Шаг 6", "Step Lua 6", 6, oper);
+
             var runStep1 = new BaseStep("Шаг 1", "FirstStepLua", 1, oper);
             var runStep3 = new BaseStep("Шаг 3", "ThirdLuaStep", 3, oper);
             var stopStep1 = new BaseStep("Первый шаг", "Step1Lua", 0, oper);
             var stopStep2 = new BaseStep("Второй шаг", "StepLua2", 0, oper);
-            var emptyStep = new BaseStep(string.Empty, string.Empty,0, oper);
+            var emptyStep = new BaseStep(string.Empty, string.Empty, 0, oper);
 
-            var twoStatesWithSteps = new Dictionary<string, List<BaseStep>>()
+            var StatesWithSteps = new Dictionary<string, List<BaseStep>>()
             {
+                {
+                    State.StateType.IDLE.ToString(),
+                    new List<BaseStep> { step1, step2 }
+                },
                 {
                     State.StateType.RUN.ToString(),
                     new List<BaseStep> { runStep1, runStep3 }
                 },
                 {
+                    State.StateType.PAUSE.ToString(),
+                    new List<BaseStep> { step3, step4 }
+                },
+                {
                     State.StateType.STOP.ToString(),
                     new List<BaseStep> { stopStep1, stopStep2 }
                 },
+                {
+                    State.StateType.STARTING.ToString(),
+                    new List<BaseStep> { step1, step3 }
+                },
+                {
+                    State.StateType.PAUSING.ToString(),
+                    new List<BaseStep> { step5, step6 }
+                },
+                {
+                    State.StateType.UNPAUSING.ToString(),
+                    new List<BaseStep> { step6, step1 }
+                },
+                {
+                    State.StateType.STOPPING.ToString(),
+                    new List<BaseStep> { step3, step6 }
+                },
             };
 
-            var expectedTwoStatesWithSteps =
-                new Dictionary<string, List<BaseStep>>()
+            var expectedStatesWithSteps = new Dictionary<string, List<BaseStep>>()
             {
                 {
+                    State.StateType.IDLE.ToString(),
+                    new List<BaseStep> { emptyStep, step1, step2 }
+                },
+                {
                     State.StateType.RUN.ToString(),
-                    new List<BaseStep> {  emptyStep, runStep1, runStep3 }
+                    new List<BaseStep> { emptyStep, runStep1, runStep3 }
+                },
+                {
+                    State.StateType.PAUSE.ToString(),
+                    new List<BaseStep> { emptyStep, step3, step4 }
                 },
                 {
                     State.StateType.STOP.ToString(),
-                    new List<BaseStep>() { emptyStep, stopStep1, stopStep2 }
+                    new List<BaseStep> { emptyStep, stopStep1, stopStep2 }
+                },
+                {
+                    State.StateType.STARTING.ToString(),
+                    new List<BaseStep> { emptyStep, step1, step3 }
+                },
+                {
+                    State.StateType.PAUSING.ToString(),
+                    new List<BaseStep> { emptyStep, step5, step6 }
+                },
+                {
+                    State.StateType.UNPAUSING.ToString(),
+                    new List<BaseStep> { emptyStep, step6, step1 }
+                },
+                {
+                    State.StateType.STOPPING.ToString(),
+                    new List<BaseStep> { emptyStep, step3, step6 }
                 },
             };
 
@@ -145,8 +199,8 @@ namespace EasyEplanner.Tests
                 },
                 new object[]
                 {
-                    twoStatesWithSteps,
-                    expectedTwoStatesWithSteps,
+                    StatesWithSteps,
+                    expectedStatesWithSteps,
                     oper
                 }
             };
@@ -187,6 +241,14 @@ namespace EasyEplanner.Tests
         {
             var oper = new BaseOperation(null);
 
+
+            var step1 = new BaseStep("Шаг 1", "Step Lua 1", 1, oper);
+            var step2 = new BaseStep("Шаг 2", "Step Lua 2", 2, oper);
+            var step3 = new BaseStep("Шаг 3", "Step Lua 3", 3, oper);
+            var step4 = new BaseStep("Шаг 4", "Step Lua 4", 4, oper);
+            var step5 = new BaseStep("Шаг 5", "Step Lua 5", 5, oper);
+            var step6 = new BaseStep("Шаг 6", "Step Lua 6", 6, oper);
+
             var runStep1 = new BaseStep("fRun", "RunFirSt", 1, oper);
             var runStep2 = new BaseStep("sRun", "RunSecSt", 2, oper);
             var stopStep1 = new BaseStep("fSt", "StopFirSt", 0, oper);
@@ -195,6 +257,10 @@ namespace EasyEplanner.Tests
 
             var addingStates = new Dictionary<string, List<BaseStep>>
             {
+                {
+                    State.StateType.IDLE.ToString(),
+                    new List<BaseStep> { step1, step2 }
+                },
                 {
                     State.StateType.RUN.ToString(),
                     new List<BaseStep> { runStep1, runStep2 }
@@ -206,10 +272,34 @@ namespace EasyEplanner.Tests
                 {
                     State.StateType.STOP.ToString(),
                     new List<BaseStep> { stopStep1 }
-                }
+                },
+                {
+                    State.StateType.STARTING.ToString(),
+                    new List<BaseStep> { step1, step3 }
+                },
+                {
+                    State.StateType.PAUSING.ToString(),
+                    new List<BaseStep> { step5, step6 }
+                },
+                {
+                    State.StateType.UNPAUSING.ToString(),
+                    new List<BaseStep> { step6, step1 }
+                },
+                {
+                    State.StateType.STOPPING.ToString(),
+                    new List<BaseStep> { step3, step6 }
+                },
             };
 
             var emptyStep = new BaseStep(string.Empty, string.Empty, 0, oper);
+
+            var returnsIdleSteps = new object[]
+            {
+                addingStates,
+                State.StateType.IDLE,
+                new List<BaseStep> { emptyStep, step1, step2 },
+                oper
+            };
 
             var returnsRunSteps = new object[]
             {
@@ -235,10 +325,40 @@ namespace EasyEplanner.Tests
                 oper
             };
 
+            var returnsStartingSteps = new object[]
+            {
+                addingStates,
+                State.StateType.STARTING,
+                new List<BaseStep> { emptyStep, step1, step3 },
+                oper
+            };
+            var returnsPausingSteps = new object[]
+            {
+                addingStates,
+                State.StateType.PAUSING,
+                new List<BaseStep> { emptyStep, step5, step6 },
+                oper
+            };
+            var returnsUnpausingSteps = new object[]
+            {
+                addingStates,
+                State.StateType.UNPAUSING,
+                new List<BaseStep> { emptyStep, step6, step1 },
+                oper
+            };
+            var returnsStoppingSteps = new object[]
+            {
+                addingStates,
+                State.StateType.STOPPING,
+                new List<BaseStep> { emptyStep, step3, step6 },
+                oper
+            };
+
+
             var returnsEmptyListWrongSelectedType = new object[]
             {
                 addingStates,
-                State.StateType.STATES_CNT,
+                (State.StateType)100,
                 new List<BaseStep>(),
                 oper
             };
@@ -253,9 +373,14 @@ namespace EasyEplanner.Tests
 
             return new object[]
             {
+                returnsIdleSteps,
                 returnsRunSteps,
                 returnsPauseSteps,
                 returnsStopSteps,
+                returnsStartingSteps,
+                returnsPausingSteps, 
+                returnsUnpausingSteps,
+                returnsStoppingSteps,
                 returnsEmptyListNoStates,
                 returnsEmptyListWrongSelectedType
             };
@@ -281,11 +406,25 @@ namespace EasyEplanner.Tests
 
             var oper = new BaseOperation(null);
 
+
+            string step1Name = "Шаг 1";
+            string step2Name = "Шаг 2";
+            string step3Name = "Шаг 3";
+            string step4Name = "Шаг 4";
+            string step5Name = "Шаг 5";
+            string step6Name = "Шаг 6";
             string runStep1Name = "ВыпШаг1";
             string runStep2name = "RunШаг2";
             string stopStep1Name = "StName2";
             string pauseStep1Name = "ПаузаName1";
             string pauseStep2Name = "PauseШаг2";
+
+            var step1 = new BaseStep(step1Name, "Step Lua 1", 1, oper);
+            var step2 = new BaseStep(step2Name, "Step Lua 2", 2, oper);
+            var step3 = new BaseStep(step3Name, "Step Lua 3", 3, oper);
+            var step4 = new BaseStep(step4Name, "Step Lua 4", 4, oper);
+            var step5 = new BaseStep(step5Name, "Step Lua 5", 5, oper);
+            var step6 = new BaseStep(step6Name, "Step Lua 6", 6, oper);
             var runStep1 = new BaseStep(runStep1Name, "Run1Lua", 1, oper);
             var runStep2 = new BaseStep(runStep2name, "Run2Lua", 2, oper);
             var stopStep1 = new BaseStep(stopStep1Name, "Stop1Lua", 1, oper);
@@ -294,6 +433,10 @@ namespace EasyEplanner.Tests
 
             var addingStates = new Dictionary<string, List<BaseStep>>
             {
+                {
+                    State.StateType.IDLE.ToString(),
+                    new List<BaseStep> { step1, step2 }
+                },
                 {
                     State.StateType.RUN.ToString(),
                     new List<BaseStep> { runStep1, runStep2 }
@@ -305,7 +448,31 @@ namespace EasyEplanner.Tests
                 {
                     State.StateType.STOP.ToString(),
                     new List<BaseStep> { stopStep1 }
-                }
+                },
+                {
+                    State.StateType.STARTING.ToString(),
+                    new List<BaseStep> { step1, step3 }
+                },
+                {
+                    State.StateType.PAUSING.ToString(),
+                    new List<BaseStep> { step5, step6 }
+                },
+                {
+                    State.StateType.UNPAUSING.ToString(),
+                    new List<BaseStep> { step6, step1 }
+                },
+                {
+                    State.StateType.STOPPING.ToString(),
+                    new List<BaseStep> { step3, step6 }
+                },
+            };
+
+            var idleStepsNames = new object[]
+            {
+                oper,
+                State.StateType.IDLE,
+                addingStates,
+                new List<string> { emptyStepName, step1Name, step2Name },
             };
 
             var runStepsNames = new object[]
@@ -333,10 +500,42 @@ namespace EasyEplanner.Tests
                     pauseStep2Name }
             };
 
+            var startingStepsNames = new object[]
+            {
+                oper,
+                State.StateType.STARTING,
+                addingStates,
+                new List<string> { emptyStepName, step1Name, step3Name },
+            };
+
+            var pausingStepsNames = new object[]
+            {
+                oper,
+                State.StateType.PAUSING,
+                addingStates,
+                new List<string> { emptyStepName, step5Name, step6Name },
+            };
+
+            var unpausingStepsNames = new object[]
+            {
+                oper,
+                State.StateType.UNPAUSING,
+                addingStates,
+                new List<string> { emptyStepName, step6Name, step1Name },
+            };
+
+            var stoppingStepsNames = new object[]
+            {
+                oper,
+                State.StateType.STOPPING,
+                addingStates,
+                new List<string> { emptyStepName, step3Name, step6Name },
+            };
+
             var emptyStepsWrongStateType = new object[]
             {
                 oper,
-                State.StateType.STATES_CNT,
+                (State.StateType)100,
                 addingStates,
                 new List<string>()
             };
@@ -351,9 +550,14 @@ namespace EasyEplanner.Tests
 
             return new object[]
             {
+                idleStepsNames,
                 runStepsNames,
                 stopStepsNames,
                 pauseStepsNames,
+                startingStepsNames,
+                pausingStepsNames,
+                unpausingStepsNames,
+                stoppingStepsNames,
                 emptyStepsWrongStateType,
                 emptyStepsNoStates
             };
@@ -419,8 +623,8 @@ namespace EasyEplanner.Tests
                 Assert.AreEqual(operation.Name, cloned.Name);
                 Assert.AreEqual(operation.LuaName, cloned.LuaName);
                 Assert.IsNull(cloned.Owner);
-                
-                foreach(var property in operation.Properties)
+
+                foreach (var property in operation.Properties)
                 {
                     bool hasTheSameProperty = cloned.Properties
                         .Where(x => x.Name == property.Name &&

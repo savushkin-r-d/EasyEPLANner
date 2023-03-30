@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using EasyEPlanner;
 using Editor;
 
 namespace TechObject
@@ -19,13 +21,7 @@ namespace TechObject
         {
             get
             {
-                int statesCount = (int)State.StateType.STATES_CNT;
-                if (idy < statesCount)
-                {
-                    return stepsMngr[idy];
-                }
-
-                return null;
+                return stepsMngr.FirstOrDefault(step => (int)step.Type == idy);
             }
         }
 
@@ -46,9 +42,9 @@ namespace TechObject
 
             stepsMngr = new List<State>();
 
-            for (State.StateType state = 0; state < State.StateType.STATES_CNT; state++)
+            foreach (State.StateType state in (State.StateType[])Enum.GetValues(typeof(State.StateType)))
             {
-                switch(state)
+                switch (state)
                 {
 
                     case State.StateType.IDLE:
@@ -59,7 +55,6 @@ namespace TechObject
                         stepsMngr.Add(new State(state, this));
                         break;
                 }
-                
             }
 
             operPar = new OperationParams();
@@ -166,9 +161,10 @@ namespace TechObject
             for (int j = 0; j < stepsMngr.Count; j++)
             {
                 tmp = stepsMngr[j].SaveAsLuaTable(prefix + "\t\t");
+                int stateNumber = (int)stepsMngr[j].Type;
                 if (tmp != string.Empty)
                 {
-                    tmp_2 += prefix + "\t[ " + (j) + " ] =\n";
+                    tmp_2 += prefix + "\t[ " + stateNumber + " ] =\n";
                     tmp_2 += prefix + "\t\t{\n";
                     tmp_2 += tmp;
                     tmp_2 += prefix + "\t\t},\n";
@@ -190,17 +186,14 @@ namespace TechObject
         /// <summary>
         /// Добавление нового шага.
         /// </summary>
+        /// <param name="stateN">Номер(тип) состояния</param>
         /// <param name="stepName">Имя шага.</param>
         /// <param name="baseStepLuaName">Имя базового шага</param>
-        /// <param name="stateN">Номер состояния</param>
         public void AddStep(int stateN, string stepName, 
             string baseStepLuaName = "")
         {
-            int statesCount = (int)State.StateType.STATES_CNT;
-            if (stateN >= 0 && stateN < statesCount)
-            {
-                stepsMngr[stateN].AddStep(stepName, baseStepLuaName);
-            }
+            stepsMngr.FirstOrDefault(step => (int)step.Type == stateN)
+                ?.AddStep(stepName, baseStepLuaName);
         }
 
         #region Синхронизация устройств в объекте.
