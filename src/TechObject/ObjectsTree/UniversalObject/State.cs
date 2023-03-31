@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Editor;
 
@@ -581,17 +582,18 @@ namespace TechObject
             STOPPING,   // Останавливается
         }
 
-        static public readonly Dictionary<int, string> stateStr = new Dictionary<int, string>()
-        {
-            [0] = "Простой",
-            [1] = "Выполнение",
-            [2] = "Пауза",
-            [3] = "Остановка",
-            [10] = "Запускается",
-            [11] = "Становится в паузу",
-            [12] = "Выходит из паузы",
-            [13] = "Останавливается",
-        };
+        public static readonly ReadOnlyDictionary<int, string> stateStr = new ReadOnlyDictionary<int, string>
+            (new Dictionary<int, string>()
+            {
+                [0] = "Простой",
+                [1] = "Выполнение",
+                [2] = "Пауза",
+                [3] = "Остановка",
+                [10] = "Запускается",
+                [11] = "Становится в паузу",
+                [12] = "Выходит из паузы",
+                [13] = "Останавливается",
+            });
 
         private string name;        ///< Имя.
         private List<Step> steps;   ///< Список шагов.

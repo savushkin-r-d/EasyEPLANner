@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using EasyEPlanner;
 using Editor;
 
@@ -15,13 +16,13 @@ namespace TechObject
         /// <summary>
         /// Получение состояния номеру (нумерация с 0).
         /// </summary>
-        /// <param name="idy">Номер состояния.</param>        
+        /// <param name="stateTypeIndex">Номер состояния.</param>        
         /// <returns>Состояние с заданным номером.</returns>
-        public State this[int idy]
+        public State this[int stateTypeIndex]
         {
             get
             {
-                return stepsMngr.FirstOrDefault(step => (int)step.Type == idy);
+                return stepsMngr.FirstOrDefault(state => (int)state.Type == stateTypeIndex);
             }
         }
 
@@ -148,39 +149,36 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix)
         {
-            string res = prefix + "{\n" +
-                prefix + "name = \'" + name + "\',\n" +
-                prefix + "base_operation = \'" + baseOperation.LuaName + 
-                "\',\n";
+            var resBuilder = new StringBuilder();
 
-            res += baseOperation.SaveAsLuaTable(prefix);
+            resBuilder.Append($"{prefix}{{\n")
+                .Append($"{prefix}name = \'{name}\',\n")
+                .Append($"{prefix}base_operation = \'{baseOperation.LuaName}\',\n")
+                .Append(baseOperation.SaveAsLuaTable(prefix));
 
-            string tmp;
-            string tmp_2 = string.Empty;
-
-            for (int j = 0; j < stepsMngr.Count; j++)
+            var statesBuilder = new StringBuilder();
+            foreach (State state in stepsMngr)
             {
-                tmp = stepsMngr[j].SaveAsLuaTable(prefix + "\t\t");
-                int stateNumber = (int)stepsMngr[j].Type;
-                if (tmp != string.Empty)
+                var stateLuaTable = state.SaveAsLuaTable(prefix + "\t\t");
+                int stateTypeNumber = (int)state.Type;
+                if (!string.IsNullOrEmpty(stateLuaTable))
                 {
-                    tmp_2 += prefix + "\t[ " + stateNumber + " ] =\n";
-                    tmp_2 += prefix + "\t\t{\n";
-                    tmp_2 += tmp;
-                    tmp_2 += prefix + "\t\t},\n";
+                    statesBuilder.Append($"{prefix}\t[ {stateTypeNumber} ] =\n")
+                        .Append($"{prefix}\t\t{{\n")
+                        .Append(stateLuaTable)
+                        .Append($"{prefix}\t\t}},\n");
                 }
             }
-            if (tmp_2 != string.Empty)
+            if (statesBuilder.Length > 0)
             {
-                res += prefix + "states =\n" +
-                    prefix + "\t{\n";
-                res += tmp_2;
-                res += prefix + "\t},\n";
+                resBuilder.Append($"{prefix}states =\n")
+                    .Append($"{prefix}\t{{\n")
+                    .Append(statesBuilder)
+                    .Append($"{prefix}\t}},\n");
             }
-
-
-            res += prefix + "},\n";
-            return res;
+            resBuilder.Append($"{prefix}}},\n");
+           
+            return resBuilder.ToString();
         }
 
         /// <summary>

@@ -321,60 +321,78 @@ namespace TechObject
                 nextStepN = new ObjectProperty("Номер следующего шага", -1, -1);
                 items.Add(nextStepN);
             }
-            
-            if (isMainStep && (Owner.Type == State.StateType.RUN ||
-                               Owner.Type == State.StateType.IDLE))
+
+            if (isMainStep) SetJumpToStateIf();
+        }
+
+        public void SetJumpToStateIf()
+        {
+            var RUN = (int)State.StateType.RUN;
+            var PAUSE = (int)State.StateType.PAUSE;
+            var STOP = (int)State.StateType.STOP;
+
+            var CBParameterValues = new Dictionary<string, string>();
+
+            if (Owner.Type == State.StateType.RUN)
             {
-                var RUN = (int)State.StateType.RUN;
-                var PAUSE = (int)State.StateType.PAUSE;
-                var STOP = (int)State.StateType.STOP;
-
-                var CBParameterValues = new Dictionary<string, string>();
-                if (Owner.Type == State.StateType.RUN)
-                {
-                    CBParameterValues.Add("3. " + State.stateStr[PAUSE], PAUSE.ToString());
-                    CBParameterValues.Add("4. " + State.stateStr[STOP], STOP.ToString());
-                }
-                else
-                {
-                    CBParameterValues.Add("2. " + State.stateStr[RUN], RUN.ToString());
-                }  
-
-                var toStateByConditionAction = new ActionGroupCustom(
-                "Переход к состоянию по условию", this, "jump_if",
-                () =>
-                {
-                    var toStateByCondition = new ActionCustom("Группа", this, "");
-                    toStateByCondition.CreateAction(new Action("Включение устройств",
-                        this, "on_devices",
-                        new EplanDevice.DeviceType[]
-                        {
-                            EplanDevice.DeviceType.V,
-                            EplanDevice.DeviceType.GS,
-                            EplanDevice.DeviceType.DI,
-                            EplanDevice.DeviceType.DO
-                        }));
-                    toStateByCondition.CreateAction(new Action("Выключение устройств",
-                        this, "off_devices",
-                        new EplanDevice.DeviceType[]
-                        {
-                            EplanDevice.DeviceType.V,
-                            EplanDevice.DeviceType.GS,
-                            EplanDevice.DeviceType.DI,
-                            EplanDevice.DeviceType.DO
-                        }));
-                  
-                    toStateByCondition.CreateParameter(new ComboBoxParameter(
-                    "next_state_n",
-                    "К состоянию операции",
-                    CBParameterValues
-                    ));
-                    return toStateByCondition;
-                });
-                actions.Add(toStateByConditionAction);
-                items.Add(toStateByConditionAction);
+                CBParameterValues.Add("3. " + State.stateStr[PAUSE], PAUSE.ToString());
+                CBParameterValues.Add("4. " + State.stateStr[STOP], STOP.ToString());
             }
-            
+            else if (Owner.Type == State.StateType.IDLE)
+            {
+                CBParameterValues.Add("2. " + State.stateStr[RUN], RUN.ToString());
+            }
+            else if (Owner.Type == State.StateType.STARTING)
+            {
+                CBParameterValues.Add("2. " + State.stateStr[RUN], RUN.ToString());
+            }
+            else if (Owner.Type == State.StateType.PAUSING)
+            {
+                CBParameterValues.Add("3. " + State.stateStr[PAUSE], PAUSE.ToString());
+            }
+            else if (Owner.Type == State.StateType.UNPAUSING)
+            {
+                CBParameterValues.Add("2. " + State.stateStr[RUN], RUN.ToString());
+            }
+            else if (Owner.Type == State.StateType.STOPPING)
+            {
+                CBParameterValues.Add("4. " + State.stateStr[STOP], STOP.ToString());
+            }
+            else return;
+
+            var toStateByConditionAction = new ActionGroupCustom(
+            "Переход к состоянию по условию", this, "jump_if",
+            () =>
+            {
+                var toStateByCondition = new ActionCustom("Группа", this, "");
+                toStateByCondition.CreateAction(new Action("Включение устройств",
+                    this, "on_devices",
+                    new EplanDevice.DeviceType[]
+                    {
+                            EplanDevice.DeviceType.V,
+                            EplanDevice.DeviceType.GS,
+                            EplanDevice.DeviceType.DI,
+                            EplanDevice.DeviceType.DO
+                    }));
+                toStateByCondition.CreateAction(new Action("Выключение устройств",
+                    this, "off_devices",
+                    new EplanDevice.DeviceType[]
+                    {
+                            EplanDevice.DeviceType.V,
+                            EplanDevice.DeviceType.GS,
+                            EplanDevice.DeviceType.DI,
+                            EplanDevice.DeviceType.DO
+                    }));
+
+                toStateByCondition.CreateParameter(new ComboBoxParameter(
+                "next_state_n",
+                "К состоянию операции",
+                CBParameterValues
+                ));
+                return toStateByCondition;
+            });
+            actions.Add(toStateByConditionAction);
+            items.Add(toStateByConditionAction);
         }
 
         public Step Clone(GetN getN, string name = "")
