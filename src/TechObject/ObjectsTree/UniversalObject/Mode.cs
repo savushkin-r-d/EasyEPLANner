@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using EasyEPlanner;
 using Editor;
 
 namespace TechObject
@@ -13,19 +16,13 @@ namespace TechObject
         /// <summary>
         /// Получение состояния номеру (нумерация с 0).
         /// </summary>
-        /// <param name="idy">Номер состояния.</param>        
+        /// <param name="stateTypeIndex">Номер состояния.</param>        
         /// <returns>Состояние с заданным номером.</returns>
-        public State this[int idy]
+        public State this[int stateTypeIndex]
         {
             get
             {
-                int statesCount = (int)State.StateType.STATES_CNT;
-                if (idy < statesCount)
-                {
-                    return stepsMngr[idy];
-                }
-
-                return null;
+                return stepsMngr.FirstOrDefault(state => (int)state.Type == stateTypeIndex);
             }
         }
 
@@ -46,9 +43,9 @@ namespace TechObject
 
             stepsMngr = new List<State>();
 
-            for (State.StateType state = 0; state < State.StateType.STATES_CNT; state++)
+            foreach (State.StateType state in (State.StateType[])Enum.GetValues(typeof(State.StateType)))
             {
-                switch(state)
+                switch (state)
                 {
 
                     case State.StateType.IDLE:
@@ -59,7 +56,6 @@ namespace TechObject
                         stepsMngr.Add(new State(state, this));
                         break;
                 }
-                
             }
 
             operPar = new OperationParams();
@@ -153,54 +149,49 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix)
         {
-            string res = prefix + "{\n" +
-                prefix + "name = \'" + name + "\',\n" +
-                prefix + "base_operation = \'" + baseOperation.LuaName + 
-                "\',\n";
+            var resBuilder = new StringBuilder();
 
-            res += baseOperation.SaveAsLuaTable(prefix);
+            resBuilder.Append($"{prefix}{{\n")
+                .Append($"{prefix}name = \'{name}\',\n")
+                .Append($"{prefix}base_operation = \'{baseOperation.LuaName}\',\n")
+                .Append(baseOperation.SaveAsLuaTable(prefix));
 
-            string tmp;
-            string tmp_2 = string.Empty;
-
-            for (int j = 0; j < stepsMngr.Count; j++)
+            var statesBuilder = new StringBuilder();
+            foreach (State state in stepsMngr)
             {
-                tmp = stepsMngr[j].SaveAsLuaTable(prefix + "\t\t");
-                if (tmp != string.Empty)
+                var stateLuaTable = state.SaveAsLuaTable(prefix + "\t\t");
+                int stateTypeNumber = (int)state.Type;
+                if (!string.IsNullOrEmpty(stateLuaTable))
                 {
-                    tmp_2 += prefix + "\t[ " + (j) + " ] =\n";
-                    tmp_2 += prefix + "\t\t{\n";
-                    tmp_2 += tmp;
-                    tmp_2 += prefix + "\t\t},\n";
+                    statesBuilder.Append($"{prefix}\t[ {stateTypeNumber} ] =\n")
+                        .Append($"{prefix}\t\t{{\n")
+                        .Append(stateLuaTable)
+                        .Append($"{prefix}\t\t}},\n");
                 }
             }
-            if (tmp_2 != string.Empty)
+            if (statesBuilder.Length > 0)
             {
-                res += prefix + "states =\n" +
-                    prefix + "\t{\n";
-                res += tmp_2;
-                res += prefix + "\t},\n";
+                resBuilder.Append($"{prefix}states =\n")
+                    .Append($"{prefix}\t{{\n")
+                    .Append(statesBuilder)
+                    .Append($"{prefix}\t}},\n");
             }
-
-
-            res += prefix + "},\n";
-            return res;
+            resBuilder.Append($"{prefix}}},\n");
+           
+            return resBuilder.ToString();
         }
 
         /// <summary>
         /// Добавление нового шага.
         /// </summary>
+        /// <param name="stateN">Номер(тип) состояния</param>
         /// <param name="stepName">Имя шага.</param>
         /// <param name="baseStepLuaName">Имя базового шага</param>
-        /// <param name="stateN">Номер состояния</param>
         public void AddStep(int stateN, string stepName, 
             string baseStepLuaName = "")
         {
-            int statesCount = (int)State.StateType.STATES_CNT;
-            if (stateN >= 0 && stateN < statesCount)
-            {
-                stepsMngr[stateN].AddStep(stepName, baseStepLuaName);
-            }
+            stepsMngr.FirstOrDefault(step => (int)step.Type == stateN)
+                ?.AddStep(stepName, baseStepLuaName);
         }
 
         #region Синхронизация устройств в объекте.
