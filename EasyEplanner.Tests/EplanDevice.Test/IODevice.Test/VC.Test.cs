@@ -155,7 +155,7 @@ namespace Tests.EplanDevices
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
-                .Select(x => x.Key)
+                .Select(x => (string)x.Key)
                 .ToArray();
             Assert.AreEqual(parametersSequence, actualParametersSequence);
         }

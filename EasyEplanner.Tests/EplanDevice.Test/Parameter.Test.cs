@@ -34,7 +34,7 @@ namespace Tests.EplanDevices
             string devName, string expected)
         {
             var device = EplanDevice.DeviceManager.GetInstance().GetDevice(devName);
-            var actual = IODevice.Parameter.GetFormat(parameter, value, device);
+            var actual = IODevice.Parameter.GetFormatValue(parameter, value, device);
             Assert.AreEqual(expected, actual);
         }
     }

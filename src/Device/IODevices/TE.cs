@@ -17,6 +17,8 @@ namespace EplanDevice
             ArticleName = articleName;
         }
 
+        public override string PIDUnitFormat => UnitFormat.DegreesCelsius;
+
         public override string SetSubType(string subType)
         {
             base.SetSubType(subType);

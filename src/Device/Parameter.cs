@@ -1,303 +1,240 @@
-﻿namespace EplanDevice
+﻿using System.Collections.Generic;
+using System;
+using System.Reflection;
+using System.Linq;
+
+namespace EplanDevice
 {
     public partial class IODevice
     {
+        public class UnitFormat
+        {
+            public const string Empty = "{0}";
+            public const string Boolean = "{0:Да;-;Нет}";
+            public const string Seconds = "{0} c";
+            public const string Milliseconds = "{0} мс";
+            public const string Meters = "{0} м";
+            public const string Kilograms = "{0} кг";
+            public const string Bars = "{0} бар";
+            public const string RKP = "{0} мВ/В";
+            public const string Percentages = "{0} %";
+            public const string DegreesCelsius = "{0} °C";
+            public const string CubicMeterPerHour = "{0} м3/ч";
+        }
+
+
         /// <summary>
-        /// Параметр устройства.
+        /// Описание параметров устройства.
         /// </summary>
         public class Parameter
         {
-            /// <summary>
-            /// Номинальная нагрузка в кг.
-            /// </summary>
-            public const string P_NOMINAL_W = "P_NOMINAL_W";
+            /// <summary> Номинальная нагрузка в кг. </summary>
+            public static readonly Parameter P_NOMINAL_W = new Parameter("P_NOMINAL_W", "Номинальная нагрузка", UnitFormat.Kilograms);
 
-            /// <summary>
-            /// Рабочий коэффициент передачи
-            /// </summary>
-            public const string P_RKP = "P_RKP";
+            /// <summary> Рабочий коэффициент передачи </summary>
+            public static readonly Parameter P_RKP = new Parameter("P_RKP", "Рабочий коэффициент передачи", UnitFormat.RKP);
 
-            /// <summary>
-            /// Сдвиг нуля.
-            /// </summary>
-            public const string P_C0 = "P_C0";
+            /// <summary> Сдвиг нуля. </summary>
+            public static readonly Parameter P_C0 = new Parameter("P_C0", "Сдивг нуля");
 
-            /// <summary>
-            /// Время порогового фильтра.
-            /// </summary>
-            public const string P_DT = "P_DT";
+            /// <summary> Время порогового фильтра. </summary>
+            public static readonly Parameter P_DT = new Parameter("P_DT", "Время порогового фильтра", UnitFormat.Milliseconds);
 
-            /// <summary>
-            /// Время включения.
-            /// </summary>
-            public const string P_ON_TIME = "P_ON_TIME";
+            /// <summary> Время включения. </summary>
+            public static readonly Parameter P_ON_TIME = new Parameter("P_ON_TIME", "Время включения", UnitFormat.Milliseconds);
 
-            /// <summary>
-            /// Обратная связь, 1/0 (Да/Нет)
-            /// </summary>
-            public const string P_FB = "P_FB";
+            /// <summary> Обратная связь, 1/0 (Да/Нет) </summary>
+            public static readonly Parameter P_FB = new Parameter("P_FB", "Обратная связь", UnitFormat.Boolean);
 
-            /// <summary>
-            /// Аварийное значение.
-            /// </summary>
-            public const string P_ERR = "P_ERR";
+            /// <summary> Аварийное значение. </summary>
+            public static readonly Parameter P_ERR = new Parameter("P_ERR", "Аварийное значение");
 
-            /// <summary>
-            /// Минимальное значение.
-            /// </summary>
-            public const string P_MIN_V = "P_MIN_V";
+            /// <summary> Минимальное значение. </summary>
+            public static readonly Parameter P_MIN_V = new Parameter("P_MIN_V", "Мин. значение");
 
-            /// <summary>
-            /// Максимальное значение.
-            /// </summary>
-            public const string P_MAX_V = "P_MAX_V";
+            /// <summary> Максимальное значение. </summary>
+            public static readonly Parameter P_MAX_V = new Parameter("P_MAX_V", "Мак. значение");
 
-            /// <summary>
-            /// Давление, на которое настроен датчик.
-            /// </summary>
-            public const string P_MAX_P = "P_MAX_P";
+            /// <summary> Давление, на которое настроен датчик. </summary>
+            public static readonly Parameter P_MAX_P = new Parameter("P_MAX_P", "Давление датчика", UnitFormat.Bars);
 
-            /// <summary>
-            /// Радиус танка.
-            /// </summary>
-            public const string P_R = "P_R";
+            /// <summary> Радиус танка. </summary>
+            public static readonly Parameter P_R = new Parameter("P_R", "Радиус танка", UnitFormat.Meters);
 
-            /// <summary>
-            /// Высота конической части танка.
-            /// </summary>
-            public const string P_H_CONE = "P_H_CONE";
+            /// <summary> Высота конической части танка. </summary>
+            public static readonly Parameter P_H_CONE = new Parameter("P_H_CONE", "Высота конической части танка", UnitFormat.Meters);
 
-            /// <summary>
-            /// Высота усеченной части танка.
-            /// </summary>
-            public const string P_H_TRUNC = "P_H_TRUNC";
+            /// <summary> Высота усеченной части танка. </summary>
+            public static readonly Parameter P_H_TRUNC = new Parameter("P_H_TRUNC", "Высота усеченной части танка", UnitFormat.Meters);
 
-            /// <summary>
-            /// Минимальное значение для потока.
-            /// </summary>
-            public const string P_MIN_F = "P_MIN_F";
+            /// <summary> Минимальное значение для потока. </summary>
+            public static readonly Parameter P_MIN_F = new Parameter("P_MIN_F", "Мин. значение для потока");
 
-            /// <summary>
-            /// Максимальное значение для потока.
-            /// </summary>
-            public const string P_MAX_F = "P_MAX_F";
+            /// <summary> Максимальное значение для потока. </summary>
+            public static readonly Parameter P_MAX_F = new Parameter("P_MAX_F", "Макс. значение для потока");
 
-            /// <summary>
-            /// Параметр k.
-            /// </summary>
-            public const string P_k = "P_k";
+            /// <summary> Коэффициент усиления. </summary>
+            public static readonly Parameter P_k = new Parameter("P_k", "Коэффициент усиления");
 
-            /// <summary>
-            /// Параметр Ti.
-            /// </summary>
-            public const string P_Ti = "P_Ti";
+            /// <summary> Время интегрирования. </summary>
+            public static readonly Parameter P_Ti = new Parameter("P_Ti", "Время интегрирования");
 
-            /// <summary>
-            /// Параметр Td.
-            /// </summary>
-            public const string P_Td = "P_Td";
+            /// <summary> Время дифференцирования. </summary>
+            public static readonly Parameter P_Td = new Parameter("P_Td", "Время дифференцирования");
 
-            /// <summary>
-            /// Интервал расчёта.
-            /// </summary>
-            public const string P_dt = "P_dt";
+            /// <summary> Интервал расчёта. </summary>
+            public static readonly Parameter P_dt = new Parameter("P_dt", "Интервал расчета", UnitFormat.Milliseconds);
 
-            /// <summary>
-            /// Максимальное значение входной величины.
-            /// </summary>
-            public const string P_max = "P_max";
+            /// <summary> Максимальное значение входной величины. </summary>
+            public static readonly Parameter P_max = new Parameter("P_max", "Макс. входное значение");
 
-            /// <summary>
-            /// Минимальное значение входной величины.
-            /// </summary>
-            public const string P_min = "P_min";
+            /// <summary> Минимальное значение входной величины. </summary>
+            public static readonly Parameter P_min = new Parameter("P_min", "Мин. входное значение");
 
-            /// <summary>
-            /// Время выхода на режим регулирования.
-            /// </summary>
-            public const string P_acceleration_time = "P_acceleration_time";
+            /// <summary> Время выхода на режим регулирования. </summary>
+            public static readonly Parameter P_acceleration_time = new Parameter("P_acceleration_time", "Время выхода", UnitFormat.Seconds);
 
-            /// <summary>
-            /// Ручной режим, 0 - авто, 1 - ручной.
-            /// </summary>
-            public const string P_is_manual_mode = "P_is_manual_mode";
+            /// <summary> Ручной режим, 0 - авто, 1 - ручной. </summary>
+            public static readonly Parameter P_is_manual_mode = new Parameter("P_is_manual_mode", "Ручной режим", UnitFormat.Boolean);
 
-            /// <summary>
-            /// Заданное ручное значение выходного сигнала.
-            /// </summary>
-            public const string P_U_manual = "P_U_manual";
+            /// <summary> Заданное ручное значение выходного сигнала. </summary>
+            public static readonly Parameter P_U_manual = new Parameter("P_U_manual", "Заданное ручное значение", UnitFormat.Percentages);
 
-            /// <summary>
-            /// Параметр k2.
-            /// </summary>
-            public const string P_k2 = "P_k2";
+            /// <summary> Коэффициент усиления 2. </summary>
+            public static readonly Parameter P_k2 = new Parameter("P_k2", "Коэффициент усиления 2");
 
-            /// <summary>
-            /// Параметр Ti2.
-            /// </summary>
-            public const string P_Ti2 = "P_Ti2";
+            /// <summary> Время интегрирования 2. </summary>
+            public static readonly Parameter P_Ti2 = new Parameter("P_Ti2", "Время интегрирования 2");
 
-            /// <summary>
-            /// Параметр Td2.
-            /// </summary>
-            public const string P_Td2 = "P_Td2";
+            /// <summary> Время дифференцирования 2 </summary>
+            public static readonly Parameter P_Td2 = new Parameter("P_Td2", "Время дифференцирования 2");
 
-            /// <summary>
-            /// Максимальное значение выходной величины.
-            /// </summary>
-            public const string P_out_max = "P_out_max";
+            /// <summary> Максимальное значение выходной величины. </summary>
+            public static readonly Parameter P_out_max = new Parameter("P_out_max", "Макс. выходное значение");
 
-            /// <summary>
-            /// Минимальное значение выходной величины.
-            /// </summary>
-            public const string P_out_min = "P_out_min";
+            /// <summary> Минимальное значение выходной величины. </summary>
+            public static readonly Parameter P_out_min = new Parameter("P_out_min", "Мин. выходное значение");
 
-            /// <summary>
-            /// Обратного (реверсивного) действия, 0 - false, 1 - true.
-            /// </summary>
-            public const string P_is_reverse = "P_is_reverse";
+            /// <summary> Обратного (реверсивного) действия, 0 - false, 1 - true. </summary>
+            public static readonly Parameter P_is_reverse = new Parameter("P_is_reverse", "Выход обратного действия 100-0", UnitFormat.Boolean);
 
-            /// <summary>
-            /// Нулевое стартовое значение, 0 - false, 1 - true.
-            /// </summary>
-            public const string P_is_zero_start = "P_is_zero_start";
+            /// <summary> Нулевое стартовое значение, 0 - false, 1 - true. </summary>
+            public static readonly Parameter P_is_zero_start = new Parameter("P_is_zero_start", "Выход прямого действия 0-100", UnitFormat.Boolean);
 
-            /// <summary>
-            /// Диаметр вала, м.
-            /// </summary>
-            public const string P_SHAFT_DIAMETER = "P_SHAFT_DIAMETER";
+            /// <summary> Диаметр вала, м. </summary>
+            public static readonly Parameter P_SHAFT_DIAMETER = new Parameter("P_SHAFT_DIAMETER", "Диаметр вала", UnitFormat.Meters);
 
-            /// <summary>
-            /// Передаточное число
-            /// </summary>
-            public const string P_TRANSFER_RATIO = "P_TRANSFER_RATIO";
+            /// <summary> Передаточное число </summary>
+            public static readonly Parameter P_TRANSFER_RATIO = new Parameter("P_TRANSFER_RATIO", "Передаточное число");
 
-            /// <summary>
-            /// Предельное время отсутствия готовности к работе, секунд.
-            /// </summary>
-            public const string P_READY_TIME = "P_READY_TIME";
+            /// <summary> Предельное время отсутствия готовности к работе, секунд. </summary>
+            public static readonly Parameter P_READY_TIME = new Parameter("P_READY_TIME", "Предельное время отсутсвя готовности к работе", UnitFormat.Seconds);
 
-            /// <summary>
-            /// Параметр для обработки ошибки счета импульсов.
-            /// </summary>
-            public const string P_ERR_MIN_FLOW = "P_ERR_MIN_FLOW";
+            /// <summary> Параметр для обработки ошибки счета импульсов. </summary>
+            public static readonly Parameter P_ERR_MIN_FLOW = new Parameter("P_ERR_MIN_FLOW", "Ошибка счета импульсов");
 
-
-
-            /// <summary>
-            /// Получение строки значения в формате опрделенного по параметру
-            /// </summary>
-            /// <returns>Значение параметра в определенном фомате</returns>
-            public static string GetFormat(string parameter, object value,
-                IODevice device = null)
+            protected static readonly Lazy<Dictionary<string, Parameter>> AllParameters;
+            
+            static Parameter()
             {
-                //единицы измерения параметров в зависимости от типа устройства
-                if (device != null)
+                AllParameters = new Lazy<Dictionary<string, Parameter>>(() =>
                 {
-                    switch (device.DeviceType)
-                    {
-                        case DeviceType.WT:
-                            if (parameter == P_C0 || parameter == P_DT)
-                                return string.Format("{0} кг", value.ToString());
-                            break;
+                    var parameters = typeof(Parameter)
+                        .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
+                        .Where(x => x.FieldType == typeof(Parameter))
+                        .Select(x => x.GetValue(null))
+                        .Cast<Parameter>()
+                        .ToDictionary(x => x.name, x => x);
+                    return parameters;
+                });
+            }
 
-                        case DeviceType.C:
-                            if (parameter == P_max || parameter == P_min)
-                            {
-                                var signal = device.Properties["IN_VALUE"];
+            /// <summary>
+            /// Конструктор параметра
+            /// </summary>
+            /// <param name="name">Название параметра (CAD-name)</param>
+            /// <param name="description">Описание параметра</param>
+            /// <param name="">Формат string.() (единицы измерения) </param>
+            public Parameter(string name, string description = "", string format = UnitFormat.Empty)
+            {
+                this.name = name;
+                this.description = description;
+                this.format = format;
+            }
 
-                                if (signal == null) break;
-                                var signalDevice = EplanDevice.DeviceManager
-                                    .GetInstance().Devices
-                                    .Find(dev => dev.Name == signal.ToString());
-                                if (signalDevice == null) break;
-                                switch (signalDevice.DeviceType)
-                                {
-                                    case DeviceType.WT:
-                                        return string.Format("{0} кг",
-                                            value.ToString());
-
-                                    case DeviceType.PT:
-                                        return string.Format("{0} бар",
-                                            value.ToString());
-
-                                    case DeviceType.TE:
-                                        return string.Format("{0} °C",
-                                            value.ToString());
-
-                                    case DeviceType.FQT:
-                                        return string.Format("{0} м3/ч",
-                                            value.ToString());
-
-                                    case DeviceType.AI:
-                                    case DeviceType.AO:
-                                    case DeviceType.LT:
-                                    case DeviceType.M:
-                                    case DeviceType.QT:
-                                    case DeviceType.VC:
-                                        return string.Format("{0}%",
-                                            value.ToString());
-
-                                    case DeviceType.C:
-                                        return GetFormat(parameter, value,
-                                            signalDevice);
-                                }
-                            }
-                            break;
-                    }
+            /// <summary>
+            /// Неявное преобразование названия в параметр по его названию
+            /// Если парметр не найден, возвращатся новый параметр с неверным названиемю
+            /// </summary>
+            /// <param name="parameterName">Название параметра</param>
+            public static implicit operator Parameter(string parameterName)
+            {
+                if (AllParameters.Value.TryGetValue(parameterName, out var parameter))
+                {
+                    return parameter;
                 }
-
-                //единцы измерения параметров вне зависимости от типа устройства
-                switch (parameter)
+                else
                 {
-                    // Булевые(Да/Нет)
-                    case P_is_reverse:
-                    case P_is_zero_start:
-                    case P_is_manual_mode:
-                    case P_FB:
-                        return string.Format("{0:Да;-;Нет}", int
-                            .Parse(value.ToString()));
-
-                    // Секунды
-                    case P_READY_TIME:
-                    case P_acceleration_time:
-                        return string.Format("{0} с", value.ToString());
-
-                    // Миллисекунды
-                    case P_ON_TIME:
-                    case P_DT:
-                    case P_dt:
-                        return string.Format("{0} мс", value.ToString());
-
-                    // Метры
-                    case P_SHAFT_DIAMETER:
-                    case P_R:
-                    case P_H_CONE:
-                    case P_H_TRUNC: 
-                        return string.Format("{0} м", value.ToString());
-
-                    // Килограммы
-                    case P_NOMINAL_W:
-                        return string.Format("{0} кг", value.ToString());
-
-                    // Бары
-                    case P_MAX_P:
-                        return string.Format("{0} бар", value.ToString());
-
-                    // мВ/В
-                    case P_RKP:
-                        return string.Format("{0} мВ/В", value.ToString());
-
-                    // %
-                    case P_out_max:
-                    case P_out_min:
-                    case P_U_manual:
-                        return string.Format("{0}%", value.ToString());
-
-                    default:
-                        return string.Format("{0}", value.ToString());
+                    return new Parameter(parameterName, string.Empty, string.Empty);
                 }
             }
+
+            /// <summary>
+            /// Неявное преобразование параметра в строку с названием
+            /// </summary>
+            /// <param name="parameterType">Параметр</param>
+            public static implicit operator string(Parameter parameterType)
+            {
+                return parameterType.name;
+            }
+
+            public static string GetFormatValue(Parameter parameter, object value, IODevice device = null)
+            {
+                if (parameter.description == string.Empty && parameter.format == string.Empty) return value.ToString();
+
+                // Формат параметров в зависимости от типа устройства
+                switch (device.DeviceType)
+                {
+                    case DeviceType.WT:
+                        if (parameter == P_C0 || parameter == P_DT)
+                            return string.Format(UnitFormat.Kilograms, value.ToString());
+                        break;
+                    case DeviceType.C:
+                        if (parameter == P_max || parameter == P_min)
+                        {
+                            var inValue = device.Properties[Property.IN_VALUE];
+
+                            if (inValue == null) break;
+                            var signalDevice = EplanDevice.DeviceManager
+                                .GetInstance().Devices
+                                .Find(dev => dev.Name == inValue.ToString());
+                            if (signalDevice == null) break;
+                            
+                            if (signalDevice.DeviceType == DeviceType.C)
+                            {
+                                return GetFormatValue(parameter, value,
+                                        signalDevice);
+                            }
+
+                            return string.Format(signalDevice.PIDUnitFormat, value.ToString());
+                        }
+                        break;
+                }
+
+                if (!string.IsNullOrEmpty(parameter.format))
+                {
+                    return string.Format(parameter.format, value);
+                }
+                else return value.ToString();
+            }
+
+            public string Name { get => name; }
+            public string Description { get => description; }
+            public string Format { get => format; }
+
+            private string name;
+            private string description;
+            private string format;
         }
     }
 }

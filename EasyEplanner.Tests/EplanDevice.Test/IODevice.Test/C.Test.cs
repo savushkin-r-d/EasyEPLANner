@@ -102,7 +102,7 @@ namespace Tests.EplanDevices
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
-                .Select(x => x.Key)
+                .Select(x => (string)x.Key)
                 .ToArray();
             double[] actualDefaultValuesSequence = device.Parameters
                 .Select(x => Convert.ToDouble(x.Value))
@@ -221,7 +221,7 @@ namespace Tests.EplanDevices
             TreeNode expectedNode = new TreeNode(dev.Name);
             var devProps = dev.GetDeviceProperties(dev.DeviceType,
                 dev.DeviceSubType).Keys.ToList();
-            devProps.AddRange(dev.Parameters.Keys.ToList());
+            devProps.AddRange(dev.Parameters.Select(par => (string)par.Key));
             foreach (var property in devProps)
             {
                 expectedNode.Nodes.Add($"{dev.Name}.{property}",

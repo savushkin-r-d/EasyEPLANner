@@ -17,6 +17,8 @@ namespace EplanDevice
             ArticleName = articleName;
         }
 
+        public override string PIDUnitFormat => UnitFormat.Bars;
+
         public override string SetSubType(string subType)
         {
             base.SetSubType(subType);
