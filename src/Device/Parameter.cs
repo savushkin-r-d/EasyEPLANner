@@ -221,11 +221,7 @@ namespace EplanDevice
                         break;
                 }
 
-                if (!string.IsNullOrEmpty(parameter.format))
-                {
-                    return string.Format(parameter.format, value);
-                }
-                else return value.ToString();
+                return string.Format(parameter.format, value);
             }
 
             public string Name { get => name; }
