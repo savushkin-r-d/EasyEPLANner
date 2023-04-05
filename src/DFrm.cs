@@ -1426,8 +1426,6 @@ namespace EasyEPlanner
         /// <summary>
         /// Соответствующие шрифты узлов дерева.
         /// </summary>
-        private const string fName = "Courier New";//"Microsoft Sans Serif";
-        //private const FontFamily = FontFamily.GenericMonospace;
         private readonly Font itemFontNoDevice = new Font(FontFamily.GenericMonospace, 8);
         private readonly Font itemFontIsDevice = new Font(FontFamily.GenericMonospace, 8, 
             FontStyle.Strikeout);
@@ -1470,10 +1468,9 @@ namespace EasyEPlanner
         {
             e.TextColor = Color.Black;
             Node currentNode = (Node)e.Node.Tag;
-            if (currentNode.Tag is IODevice.Parameter)
+            var parameter = currentNode.Tag as IODevice.Parameter;
+            if (parameter != null)
             {
-                var parameter = (IODevice.Parameter)currentNode.Tag;
-
                 e.Text = IODevice.Parameter.GetFormatValue(parameter,
                     (currentNode as ColumnNode).Value, currentNode.Parent.Parent.Tag as IODevice);
             }

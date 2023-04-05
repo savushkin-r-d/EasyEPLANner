@@ -7,7 +7,7 @@ namespace EplanDevice
 {
     public partial class IODevice
     {
-        public class UnitFormat
+        public static class UnitFormat
         {
             public const string Empty = "{0}";
             public const string Boolean = "{0:Да;-;Нет}";
@@ -133,11 +133,11 @@ namespace EplanDevice
             /// <summary> Параметр для обработки ошибки счета импульсов. </summary>
             public static readonly Parameter P_ERR_MIN_FLOW = new Parameter("P_ERR_MIN_FLOW", "Ошибка счета импульсов");
 
-            protected static readonly Lazy<Dictionary<string, Parameter>> AllParameters;
-            
-            static Parameter()
+            protected static readonly Lazy<Dictionary<string, Parameter>> AllParameters = InitParameters();
+
+            private static Lazy<Dictionary<string, Parameter>> InitParameters()
             {
-                AllParameters = new Lazy<Dictionary<string, Parameter>>(() =>
+                return new Lazy<Dictionary<string, Parameter>>(() =>
                 {
                     var parameters = typeof(Parameter)
                         .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
@@ -232,9 +232,11 @@ namespace EplanDevice
             public string Description { get => description; }
             public string Format { get => format; }
 
-            private string name;
-            private string description;
-            private string format;
+            private readonly string name;
+            private readonly string description;
+            private readonly string format;
         }
     }
+
+
 }
