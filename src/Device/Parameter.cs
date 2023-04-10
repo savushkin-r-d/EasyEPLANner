@@ -221,7 +221,7 @@ namespace EplanDevice
                         break;
                 }
 
-                return string.Format(parameter.format, value);
+                return string.Format(parameter.format, double.Parse(value.ToString())) ;
             }
 
             public string Name { get => name; }
