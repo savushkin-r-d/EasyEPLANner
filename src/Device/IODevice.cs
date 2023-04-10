@@ -2,6 +2,7 @@
 using StaticHelper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -205,6 +206,12 @@ namespace EplanDevice
                     parametersList.Add($"{parameter.Key.Name}={parameter.Value}");
             }
 
+            UpdateParametersInAPI(parametersList);
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void UpdateParametersInAPI(List<string> parametersList)
+        {
             var helper = new DeviceHelper(new ApiHelper());
             helper.SetParameters(EplanObjectFunction,
                 string.Join(", ", parametersList));
