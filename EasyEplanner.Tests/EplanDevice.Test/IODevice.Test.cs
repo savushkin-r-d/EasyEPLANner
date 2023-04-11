@@ -3,6 +3,8 @@ using System.Linq;
 using System.Windows.Forms;
 using EplanDevice;
 using System.Collections.Generic;
+using System.Management.Instrumentation;
+using System;
 
 namespace Tests.EplanDevices
 {
@@ -230,6 +232,32 @@ namespace Tests.EplanDevices
                     Assert.IsTrue(dev.IolConfProperties.ContainsKey(prop.Key));
                 }
             });
+        }
+
+        /// <summary>
+        /// Проверка установки паракметров
+        /// Вызывает исключение, так как связано с API
+        /// </summary>
+        [Test]
+        public void UpdateParameters_ThrowsException()
+        {
+            IODevice dev = new AO("KOAG4AO1", "+KOAG4-AO1", "Test device", 1, "KOAG", 4);
+            dev.SetSubType("AO");
+
+            dev.SetParameter("P_MIN_V", 1);
+
+            Assert.Throws<System.IO.FileNotFoundException>(() => dev.UpdateParameters());
+        }
+
+        [Test]
+        public void Check_CheckEmpty()
+        {
+            IODevice dev = new AO("KOAG4AO1", "+KOAG4-AO1", "Test device", 1, "KOAG", 4);
+            dev.SetSubType("AO");
+
+            string expectedResult = "\"KOAG4AO1\" : не привязанный канал  AO \"\".\n\"KOAG4AO1\" : не задан параметр \"P_MIN_V\".\n\"KOAG4AO1\" : не задан параметр \"P_MAX_V\".\n";
+
+            Assert.AreEqual(expectedResult, dev.Check());
         }
     }
 }

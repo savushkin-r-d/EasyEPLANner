@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using EplanDevice;
+using EasyEPlanner.PxcIolinkConfiguration.Models;
 
 namespace Tests.EplanDevices
 {
@@ -30,12 +31,29 @@ namespace Tests.EplanDevices
         [TestCase("P_C0", 1, "LINE1WT1", "1 кг")]
         [TestCase("P_max", 6, "LINE1PC1", "6 кг")]
         [TestCase("P_min", 2, "LINE1PC2", "2 кг")]
+        [TestCase("", 2, "LINE1PC3", "2")]
         public void GetFormatTest(string parameter, object value,
             string devName, string expected)
         {
             var device = EplanDevice.DeviceManager.GetInstance().GetDevice(devName);
-            var actual = IODevice.Parameter.GetFormat(parameter, value, device);
+            var actual = IODevice.Parameter.GetFormatValue(parameter, value, device);
             Assert.AreEqual(expected, actual);
+        }
+
+        [TestCase("P_DT", "Время порогового фильтра")]
+        [TestCase("P_max", "Макс. входное значение")]
+        public void GetDescription_CheckDescription(string parameterStr, string expectedDescription)
+        {
+            IODevice.Parameter parameter = parameterStr;
+            Assert.AreEqual(expectedDescription, parameter.Description);
+        }
+
+        [TestCase("P_DT", "{0} мс")]
+        [TestCase("P_max", "{0}")]
+        public void GetFormat_CheckFormat(string parameterStr, string expectedFormat)
+        {
+            IODevice.Parameter parameter = parameterStr;
+            Assert.AreEqual(expectedFormat, parameter.Format);
         }
     }
 }

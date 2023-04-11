@@ -2,6 +2,7 @@
 using StaticHelper;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -137,7 +138,7 @@ namespace EplanDevice
             AO = new List<IOChannel>();
             AI = new List<IOChannel>();
 
-            parameters = new Dictionary<string, object>();
+            parameters = new Dictionary<Parameter, object>();
             rtParameters = new Dictionary<string, object>();
             properties = new Dictionary<string, object>();
             iolConfProperties = new Dictionary<string, double>();
@@ -202,12 +203,18 @@ namespace EplanDevice
             foreach (var parameter in parameters)
             {
                 if (parameter.Value != null)
-                    parametersList.Add($"{parameter.Key}={parameter.Value}");
+                    parametersList.Add($"{parameter.Key.Name}={parameter.Value}");
             }
 
+            UpdateParametersInAPI(parametersList);
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void UpdateParametersInAPI(List<string> parametersList)
+        {
             var helper = new DeviceHelper(new ApiHelper());
             helper.SetParameters(EplanObjectFunction,
-                string.Join(",", parametersList));
+                string.Join(", ", parametersList));
         }
 
         /// <summary>
@@ -504,7 +511,7 @@ namespace EplanDevice
                 if (par.Value == null)
                 {
                     res += string.Format("\"{0}\" : не задан параметр \"{1}\".\n",
-                        name, par.Key);
+                        name, par.Key.Name);
                 }
             }
 
@@ -893,13 +900,18 @@ namespace EplanDevice
         /// <summary>
         /// Получить параметры устройства.
         /// </summary>
-        public Dictionary<string, object> Parameters
+        public Dictionary<Parameter, object> Parameters
         {
             get
             {
                 return parameters;
             }
         }
+
+        /// <summary>
+        /// Формат единиц измерения для входных величин ПИД
+        /// </summary>
+        public virtual string PIDUnitFormat { get => UnitFormat.Empty; }
 
         /// <summary>
         /// Рабочие параметры устройства.
@@ -936,7 +948,7 @@ namespace EplanDevice
         protected List<IOChannel> AO; ///Каналы аналоговых выходов.
         protected List<IOChannel> AI; ///Каналы аналоговых входов.
 
-        protected Dictionary<string, object> parameters;   ///Параметры.
+        protected Dictionary<Parameter, object> parameters;   ///Параметры.
         protected Dictionary<string, object> rtParameters; ///Рабочие параметры.
         protected Dictionary<string, object> properties; ///Свойства.
         protected Dictionary<string, double> iolConfProperties; ///Свойства IOL-Conf.

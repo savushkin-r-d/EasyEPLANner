@@ -916,8 +916,7 @@ namespace EasyEPlanner
             Node devNode;
             if (dev.ObjectName != "")
             {
-                string devName = dev.DeviceType + dev.DeviceNumber.ToString() + 
-                    "\t  " + deviceDescription;
+                string devName = $"{dev.EplanName.Split('-').Last()}\t {deviceDescription}";
                 devNode = new Node(devName);
             }
             else
@@ -995,12 +994,14 @@ namespace EasyEPlanner
             if (dev.Parameters.Count > 0)
             {     
                 devNode.Nodes.Add(parametersNode);
+                int padding = dev.Parameters.Select(x => x.Key.Name).Max(parNmae => parNmae.Length);
                 foreach (var parameter in dev.Parameters)
                 {
-                    var value = parameter.Value != null ? parameter.Value.ToString() : "";
-                    var parameterNode = new ColumnNode(parameter.Key, value);
+                    var value = parameter.Value?.ToString() ?? string.Empty;
 
-                    parameterNode.Tag = parameter;
+                    var parameterNode = new ColumnNode($"{parameter.Key.Name.PadRight(padding)} {parameter.Key.Description}", value);
+
+                    parameterNode.Tag = parameter.Key;
                     parametersNode.Nodes.Add(parameterNode);
                 }
             }
@@ -1425,11 +1426,10 @@ namespace EasyEPlanner
         /// <summary>
         /// Соответствующие шрифты узлов дерева.
         /// </summary>
-        private const string fName = "Microsoft Sans Serif";
-        private readonly Font itemFontNoDevice = new Font(fName, 8);
-        private readonly Font itemFontIsDevice = new Font(fName, 8, 
+        private readonly Font itemFontNoDevice = new Font(FontFamily.GenericMonospace, 8);
+        private readonly Font itemFontIsDevice = new Font(FontFamily.GenericMonospace, 8, 
             FontStyle.Strikeout);
-        private readonly Font boldFont = new Font(fName, 8, FontStyle.Bold);
+        private readonly Font boldFont = new Font(FontFamily.GenericMonospace, 8, FontStyle.Bold);
 
         private void devicesTreeViewAdv_DrawNodeColumn1(object sender,
             DrawTextEventArgs e)
@@ -1446,7 +1446,7 @@ namespace EasyEPlanner
                 return;
             }
 
-            if (currentNode.Tag is EplanDevice.IODevice.IOChannel ch)
+            if (currentNode.Tag is IODevice.IOChannel ch)
             {
                 e.Font = itemFontNoDevice;
                 if (!ch.IsEmpty())
@@ -1460,6 +1460,7 @@ namespace EasyEPlanner
                     e.Text = ch.Name + " " + ch.Comment;
                 }
             }
+            else e.Font = itemFontNoDevice;
         }
 
         private void devicesTreeViewAdv_DrawNodeColumn2(object sender,
@@ -1467,14 +1468,11 @@ namespace EasyEPlanner
         {
             e.TextColor = Color.Black;
             Node currentNode = (Node)e.Node.Tag;
-            if (currentNode.Tag is KeyValuePair<string, object>)
+            var parameter = currentNode.Tag as IODevice.Parameter;
+            if (parameter != null)
             {
-                var parameter =
-                    (KeyValuePair<string, object>)currentNode.Tag;
-
-                e.Text = IODevice.Parameter
-                    .GetFormat(parameter.Key, (currentNode as ColumnNode).Value,
-                    currentNode.Parent.Parent.Tag as IODevice);
+                e.Text = IODevice.Parameter.GetFormatValue(parameter,
+                    (currentNode as ColumnNode).Value, currentNode.Parent.Parent.Tag as IODevice);
             }
         }
 
@@ -1487,14 +1485,16 @@ namespace EasyEPlanner
             switch ((e.Subject as Node).Parent.Text)
             {
                 case "Параметры":
-                    if (e.NewLabel == string.Empty)
+                    if (double.TryParse(e.NewLabel, out double parValue))
+                    {
+                        var parameter = (IODevice.Parameter)(e.Subject as ColumnNode).Tag;
+                        device.SetParameter(parameter.Name, parValue);
+                        device.UpdateParameters();
+                    }
+                    else
                     {
                         (e.Subject as ColumnNode).Value = e.OldLabel;
-                        return;
                     }
-                    device.SetParameter((e.Subject as ColumnNode).Text,
-                    double.Parse(e.NewLabel));
-                    device.UpdateParameters();
                     break;
 
                 case "Свойства":

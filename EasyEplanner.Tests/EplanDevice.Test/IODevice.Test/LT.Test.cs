@@ -21,6 +21,12 @@ namespace Tests.EplanDevices
         const string DI = IODevice.IOChannel.DI;
         const string DO = IODevice.IOChannel.DO;
 
+        [Test]
+        public void GetPIDUnitFormat()
+        {
+            Assert.AreEqual(IODevice.UnitFormat.Percentages, GetRandomLTDevice().PIDUnitFormat);
+        }
+
         /// <summary>
         /// Тест установки подтипа устройства
         /// </summary>
@@ -216,7 +222,7 @@ namespace Tests.EplanDevices
         {
             device.SetSubType(subType);
             string[] actualParametersSequence = device.Parameters
-                .Select(x => x.Key)
+                .Select(x => (string)x.Key)
                 .ToArray();
             Assert.AreEqual(parametersSequence, actualParametersSequence);
         }

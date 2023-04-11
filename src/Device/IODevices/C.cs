@@ -108,7 +108,7 @@ namespace EplanDevice
                 .Keys;
             var devParameters = new List<string>();
             devParameters.AddRange(devTagsNames);
-            devParameters.AddRange(parameters.Keys);
+            devParameters.AddRange(parameters.Select(parameter => parameter.Key.Name));
 
             TreeNode newNode;
             if (!rootNode.Nodes.ContainsKey(Name))

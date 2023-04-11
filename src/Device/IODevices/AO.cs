@@ -15,6 +15,8 @@ namespace EplanDevice
             dType = DeviceType.AO;
         }
 
+        public override string PIDUnitFormat => UnitFormat.Percentages;
+
         public override string SetSubType(string subtype)
         {
             base.SetSubType(subtype);
