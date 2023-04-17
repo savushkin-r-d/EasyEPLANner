@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using StaticHelper;
 using EplanDevice;
+using System.Linq;
 
 namespace EasyEPlanner
 {
@@ -106,6 +107,18 @@ namespace EasyEPlanner
         }
 
         /// <summary>
+        /// Проверка принадлежности ip адреса к диапозону адресов проекта.
+        /// </summary>
+        /// <param name="ip">ip</param>
+        /// <returns>
+        ///  true if belong to range
+        /// </returns>
+        public bool BelongToRangesIP(long ip)
+        {
+            return RangesIP.Any(range => ip >= range.Item1 && ip <= range.Item2);
+        }
+
+        /// <summary>
         /// Свойство, указывающее прочитаны устройства или нет.
         /// </summary>
         public bool DevicesIsRead
@@ -127,12 +140,18 @@ namespace EasyEPlanner
         public long EndingIPInterval { get; set; }
 
         /// <summary>
+        /// Интервалы IP-адресов проекта.
+        /// </summary>
+        public (long, long)[] RangesIP { get; set; }
+
+        /// <summary>
         /// Сбросить интервал IP-адресов проекта.
         /// </summary>
         public void ResetIPAddressesInterval()
         {
             StartingIPInterval = 0;
             EndingIPInterval = 0;
+            RangesIP = null;
         }
 
         ConfigurationChecker configurationChecker;
