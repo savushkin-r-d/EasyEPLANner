@@ -9,8 +9,6 @@ namespace StaticHelper
     /// </summary>
     public static class IPConverter
     {
-        const int OctetOffset = 8; 
-        
         /// <summary>
         /// Конвертировать IP-адрес из строкового типа в long.
         /// Из вида "000.000.000.000".

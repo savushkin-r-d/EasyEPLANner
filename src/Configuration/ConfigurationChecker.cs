@@ -49,10 +49,12 @@ namespace EasyEPlanner
                 endIPstr = projectHelper.GetProjectProperty(endIpProperty);
 
                 var startIPArray = Regex
-                    .Matches(startIPstr, CommonConst.IPAddressPattern)
+                    .Matches(startIPstr, CommonConst.IPAddressPattern,
+                        RegexOptions.None, TimeSpan.FromMilliseconds(100))
                     .Cast<Match>().Select(match => match.Value).ToArray();
                 var endIPArray = Regex
-                    .Matches(endIPstr, CommonConst.IPAddressPattern)
+                    .Matches(endIPstr, CommonConst.IPAddressPattern,
+                        RegexOptions.None, TimeSpan.FromMilliseconds(100))
                     .Cast<Match>().Select(match => match.Value).ToArray();
 
                 RangesIP = startIPArray.Zip(endIPArray, (start, end) => 
@@ -83,7 +85,7 @@ namespace EasyEPlanner
                 return errors;
             }
 
-            if (IncorrectIPIntervals(RangesIP))
+            if (RangesIP.All(range => range.Item2 - range.Item1 <= 0))
             {
                 ProjectConfiguration.GetInstance().ResetIPAddressesInterval();
                 errors += "Некорректно задан диапазон IP-адресов проекта.\n";
@@ -92,26 +94,6 @@ namespace EasyEPlanner
 
             ProjectConfiguration.GetInstance().RangesIP = RangesIP;
             return errors;
-        }
-
-
-        /// <summary>
-        /// Проверка диапозонов ip-адресов на корректность
-        /// </summary>
-        /// <param name="ipIntervals">массив диапозонов адресов</param>
-        /// <returns>
-        /// true => incorrect
-        /// false => correct
-        /// </returns>
-        private bool IncorrectIPIntervals((long, long)[] ipIntervals)
-        {
-            if (ipIntervals.Count() <= 0) return true;
-            foreach (var interval in ipIntervals) 
-            {
-                if (interval.Item2 - interval.Item1 <= 0)
-                    return true;
-            }
-            return false;
         }
 
         public string Errors 

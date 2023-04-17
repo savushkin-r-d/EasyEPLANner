@@ -97,11 +97,9 @@ namespace EplanDevice
                 res += dev.Check();
             }
 
-            (long, long)[] IPIntervals = ProjectConfiguration.GetInstance()
-                .RangesIP;
-            if (IPIntervals != null)
+            if (ProjectConfiguration.GetInstance().RangesIP != null)
             {
-                res += CheckDevicesIP(IPIntervals);
+                res += CheckDevicesIP();
             }
 
             res += CheckPIDInputAndOutputProperties();
@@ -115,7 +113,7 @@ namespace EplanDevice
         /// <param name="startingIP">Начало интервала адресов</param>
         /// <param name="endingIP">Конец интервала адресов</param>
         /// <returns>Ошибки</returns>
-        private string CheckDevicesIP((long, long)[] IPIntervals)
+        private string CheckDevicesIP()
         {
             var errors = new List<string>();
             string ipProperty = IODevice.Property.IP;
@@ -146,7 +144,7 @@ namespace EplanDevice
                 }
 
                 long devIP = StaticHelper.IPConverter.ConvertIPStrToLong(IPstr);
-                if (ProjectConfiguration.GetInstance().BelongToRangesIP(devIP) == false)
+                if (!ProjectConfiguration.GetInstance().BelongToRangesIP(devIP))
                 {
                     string error = $"IP-адрес устройства {device.EplanName} " +
                     $"вышел за диапазон.\n";
