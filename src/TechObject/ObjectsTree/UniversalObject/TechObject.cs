@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Editor;
 using System.Text.RegularExpressions;
+using System.Text;
+using Spire.Pdf.Exporting.XPS.Schema.Mc;
 
 namespace TechObject
 {
@@ -113,17 +115,22 @@ namespace TechObject
                 baseObjectName = baseTechObject.EplanName;
             }
 
-            string res = "\t[ " + globalNum + " ] =\n" +
-                prefix + "{\n" +
-                prefix + "n          = " + TechNumber + ",\n" +
-                prefix + "tech_type  = " + TechType + ",\n" +
-                prefix + "name       = \'" + name + "\',\n" +
-                prefix + "name_eplan = \'" + NameEplan + "\',\n" +
-                prefix + "name_BC    = \'" + NameBC + "\',\n" +
-                prefix + "cooper_param_number = " + CooperParamNumber + ",\n" +
-                prefix + "base_tech_object = \'" + baseObjectName + "\',\n" +
-                prefix + AttachedObjects.WorkStrategy.LuaName + " = \'" + 
-                AttachedObjects.Value + "\',\n";
+            string base_tech_object_str = (string.IsNullOrEmpty(baseObjectName)) ? string.Empty :
+                $"{prefix}base_tech_object = '{baseObjectName}',\n";
+            string attached_objects_str = (string.IsNullOrEmpty(AttachedObjects.Value)) ? string.Empty :
+                $"{prefix}{AttachedObjects.WorkStrategy.LuaName} = '{AttachedObjects.Value}',\n";
+
+            StringBuilder resultBuilder = new StringBuilder();
+            resultBuilder.Append($"\t[ {globalNum} ] =\n")
+                .Append(prefix).Append($"{{\n")
+                .Append(prefix).Append($"n          = {TechNumber},\n")
+                .Append(prefix).Append($"tech_type  = {TechType},\n")
+                .Append(prefix).Append($"name       = '{name}',\n")
+                .Append(prefix).Append($"name_eplan = '{NameEplan}',\n")
+                .Append(prefix).Append($"name_BC    = '{NameBC}',\n")
+                .Append(prefix).Append($"cooper_param_number = {CooperParamNumber},\n")
+                .Append(base_tech_object_str)
+                .Append(attached_objects_str);
 
             if (baseTechObject != null &&
                 baseTechObject.ObjectGroupsList.Count > 0)
@@ -143,25 +150,22 @@ namespace TechObject
 
                 if (objectGroups != string.Empty)
                 {
-                    res += prefix + "tank_groups =\n";
-                    res += prefix + "\t{\n";
-                    res += objectGroups;
-                    res += prefix + "\t},\n";
+                    resultBuilder.Append(prefix).Append("tank_groups =\n")
+                        .Append(prefix).Append("\t{\n")
+                        .Append(objectGroups)
+                        .Append(prefix).Append("\t},\n");
                 }
             }
 
-            res += paramsManager.SaveAsLuaTable(prefix);
-            res += systemParams.SaveAsLuaTable(prefix);
-            res += baseProperties.SaveAsLuaTable(prefix);
-            res += "\n";
+            resultBuilder.Append(paramsManager.SaveAsLuaTable(prefix))
+                .Append(systemParams.SaveAsLuaTable(prefix))
+                .Append(baseProperties.SaveAsLuaTable(prefix))
+                .Append("\n")
+                .Append(modes.SaveAsLuaTable(prefix))
+                .Append(equipment.SaveAsLuaTable(prefix))
+                .Append(prefix).Append("},\n");
 
-            res += modes.SaveAsLuaTable(prefix);
-
-            res += equipment.SaveAsLuaTable(prefix);
-
-            res += prefix + "},\n";
-
-            return res;
+            return resultBuilder.ToString();
         }
 
         /// <summary>
