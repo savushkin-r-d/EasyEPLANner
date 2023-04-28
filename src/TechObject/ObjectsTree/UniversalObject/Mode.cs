@@ -151,9 +151,12 @@ namespace TechObject
         {
             var resBuilder = new StringBuilder();
 
+            string base_operation_str = (string.IsNullOrEmpty(baseOperation.LuaName)) ? string.Empty :
+                $"{prefix}base_operation = '{baseOperation.LuaName}',\n";
+
             resBuilder.Append($"{prefix}{{\n")
                 .Append($"{prefix}name = \'{name}\',\n")
-                .Append($"{prefix}base_operation = \'{baseOperation.LuaName}\',\n")
+                .Append(base_operation_str)
                 .Append(baseOperation.SaveAsLuaTable(prefix));
 
             var statesBuilder = new StringBuilder();

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Editor;
 using TechObject.ActionProcessingStrategy;
 
@@ -459,26 +460,23 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix, bool isShortForm = false)
         {
-            string res = string.Empty;
+            var resultBuilder = new StringBuilder();
 
             if (isShortForm)
             {
                 foreach (IAction action in actions)
                 {
-                    res += action.SaveAsLuaTable(prefix);
+                    resultBuilder.Append(action.SaveAsLuaTable(prefix));
                 }
             }
             else
             {
-                res += prefix + "{\n";
-                res += prefix + "name = \'" + name + "\',\n";
-
                 string time_param_n = timeParam.EditText[1].Trim();
                 string next_step_n = nextStepN.EditText[1].Trim();
 
                 double leadTime = double.Parse(time_param_n,
                     System.Globalization.CultureInfo.InvariantCulture);
-                
+
                 if (leadTime <= 0)
                 {
                     next_step_n = "-1";
@@ -487,28 +485,29 @@ namespace TechObject
                     timeParam.SetNewValue("-1");
                 }
 
-                if (time_param_n != string.Empty)
-                {
-                    res += prefix + "time_param_n = " + time_param_n + ",\n";
-                }
+                string time_param_n_str = (string.IsNullOrEmpty(time_param_n))? string.Empty :
+                    $"{prefix}time_param_n = {time_param_n},\n";
+                string next_step_n_str = (string.IsNullOrEmpty(next_step_n)) ? string.Empty :
+                    $"{prefix}next_step_n = {time_param_n},\n";
+                string baseStep_str = (string.IsNullOrEmpty(baseStep.LuaName)) ? string.Empty :
+                    $"{prefix}baseStep = '{baseStep.LuaName}',\n";
 
-                if (next_step_n != string.Empty)
-                {
-                    res += prefix + "next_step_n = " + next_step_n + ",\n";
-                }
 
-                string baseStepName = baseStep.LuaName;
-                res += prefix + $"baseStep = \'{baseStepName}\',\n";
+                resultBuilder.Append(prefix).Append("{\n")
+                    .Append(prefix).Append($"name = '{name}',\n")
+                    .Append(time_param_n_str)
+                    .Append(next_step_n_str)
+                    .Append(baseStep_str);
 
                 foreach (IAction action in actions)
                 {
-                    res += action.SaveAsLuaTable(prefix);
+                    resultBuilder.Append(action.SaveAsLuaTable(prefix));
                 }
 
-                res += prefix + "},\n";
+                resultBuilder.Append(prefix).Append("},\n");
             }
 
-            return res;
+            return resultBuilder.ToString();
         }
    
         /// <summary>
