@@ -488,7 +488,7 @@ namespace TechObject
                 string time_param_n_str = (string.IsNullOrEmpty(time_param_n))? string.Empty :
                     $"{prefix}time_param_n = {time_param_n},\n";
                 string next_step_n_str = (string.IsNullOrEmpty(next_step_n)) ? string.Empty :
-                    $"{prefix}next_step_n = {time_param_n},\n";
+                    $"{prefix}next_step_n = {next_step_n},\n";
                 string baseStep_str = (string.IsNullOrEmpty(baseStep.LuaName)) ? string.Empty :
                     $"{prefix}baseStep = '{baseStep.LuaName}',\n";
 
