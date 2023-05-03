@@ -2,6 +2,8 @@
 using System.Text.RegularExpressions;
 using System;
 using StaticHelper;
+using Spire.Pdf.Exporting.XPS.Schema;
+using EplanDevice;
 
 namespace EasyEPlanner
 {
@@ -38,20 +40,20 @@ namespace EasyEPlanner
         private string CheckProjectIPAddresses()
         {
             string errors = "";
-            string startIPstr, endIPstr;
-            string startIpProperty = "EPLAN.Project.UserSupplementaryField1";
-            string endIpProperty = "EPLAN.Project.UserSupplementaryField2";
+            string rangesIP_str;
+            (long, long)[] RangesIP;
 
             try
             {
-                startIPstr = projectHelper.GetProjectProperty(startIpProperty);
-                endIPstr = projectHelper.GetProjectProperty(endIpProperty);
+                rangesIP_str = projectHelper.GetProjectProperty(rangesIP_FieldName);
 
-                startIPstr = Regex
-                    .Match(startIPstr, CommonConst.IPAddressPattern).Value;
-                endIPstr = Regex
-                    .Match(endIPstr, CommonConst.IPAddressPattern).Value;
-                if (startIPstr == "" || endIPstr == "")
+                RangesIP = Regex
+                    .Matches(rangesIP_str, CommonConst.RangeOfIPAddresses,
+                        RegexOptions.None, TimeSpan.FromMilliseconds(100))
+                    .Cast<Match>().Select(match => (IPConverter.ConvertIPStrToLong(match.Groups["ip"].Captures[0].Value),
+                    IPConverter.ConvertIPStrToLong(match.Groups["ip"].Captures[1].Value))).ToArray();
+
+                if ( RangesIP.Length == 0 )
                 {
                     string errMsg = $"Некорректно задан диапазон " +
                         $"IP-адресов проекта.\n";
@@ -61,8 +63,7 @@ namespace EasyEPlanner
             catch (Exception e)
             {
                 ProjectConfiguration.GetInstance().ResetIPAddressesInterval();
-                if (e.Message.Contains(startIpProperty) || 
-                    e.Message.Contains(endIpProperty))
+                if (e.Message.Contains(rangesIP_FieldName))
                 {
                     errors += "Не задан диапазон IP-адресов проекта.\n";
                 }
@@ -73,17 +74,14 @@ namespace EasyEPlanner
                 return errors;
             }
 
-            long startIP = IPConverter.ConvertIPStrToLong(startIPstr);
-            long endIP = IPConverter.ConvertIPStrToLong(endIPstr);
-            if (endIP - startIP <= 0)
+            if (RangesIP.All(range => range.Item2 - range.Item1 <= 0))
             {
                 ProjectConfiguration.GetInstance().ResetIPAddressesInterval();
                 errors += "Некорректно задан диапазон IP-адресов проекта.\n";
                 return errors;
             }
 
-            ProjectConfiguration.GetInstance().StartingIPInterval = startIP;
-            ProjectConfiguration.GetInstance().EndingIPInterval = endIP;
+            ProjectConfiguration.GetInstance().RangesIP = RangesIP;
             return errors;
         }
 
@@ -101,5 +99,15 @@ namespace EasyEPlanner
         IO.IOManager IOManager;
         TechObject.ITechObjectManager techObjectManager;
         ProjectHealthChecker projectHealthChecker;
+
+        /// <summary>
+        /// Доп.поле 1 из свойств проекта
+        /// </summary>
+        private const string rangesIP_FieldName = "EPLAN.Project.UserSupplementaryField1";
+
+        /// <summary>
+        /// Доп.поле 2 из свойств проекта
+        /// </summary>
+        private const string endIpProperty = "EPLAN.Project.UserSupplementaryField2";
     }
 }

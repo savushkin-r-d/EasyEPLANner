@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace StaticHelper
 {
@@ -15,37 +17,8 @@ namespace StaticHelper
         /// <returns>0 - если не конвертировалось</returns>
         public static long ConvertIPStrToLong(string IP)
         {
-            long convertedIP;
-            const int oneDigit = 1;
-            const int twoDigits = 2;
-
-            string[] IPPairs = IP.Split('.');
-            for (int i = 0; i < IPPairs.Length; i++)
-            {
-                if (IPPairs[i].Length == oneDigit)
-                {
-                    IPPairs[i] = string.Format("00{0}", IPPairs[i]);
-                    continue;
-                }
-
-                if (IPPairs[i].Length == twoDigits)
-                {
-                    IPPairs[i] = string.Format("0{0}", IPPairs[i]);
-                    continue;
-                }
-            }
-
-            string IPstring = string.Concat(IPPairs);
-
-            bool isCorrectIP = long.TryParse(IPstring, out convertedIP);
-            if (isCorrectIP)
-            {
-                return convertedIP;
-            }
-            else
-            {
-                return 0;
-            }
+            long[] IPOctets = IP.Split('.').Select(long.Parse).ToArray();         
+            return IPOctets[0] << 24 | IPOctets[1] << 16 | IPOctets[2] << 8 | IPOctets[3];
         }
     }
 }
