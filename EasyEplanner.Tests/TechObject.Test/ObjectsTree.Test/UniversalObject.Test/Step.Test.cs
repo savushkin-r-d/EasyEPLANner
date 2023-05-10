@@ -379,6 +379,7 @@ namespace EasyEplanner.Tests
                 EplanDevice.DeviceType.GS,
                 EplanDevice.DeviceType.DI,
                 EplanDevice.DeviceType.DO,
+                EplanDevice.DeviceType.SB,
             };
 
             var mainStep = new object[]

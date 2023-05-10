@@ -297,7 +297,8 @@ namespace TechObject
                             EplanDevice.DeviceType.V,
                             EplanDevice.DeviceType.GS,
                             EplanDevice.DeviceType.DI,
-                            EplanDevice.DeviceType.DO
+                            EplanDevice.DeviceType.DO,
+                            EplanDevice.DeviceType.SB,
                         }));
                     toStepByCondition.CreateAction(new Action("Выключение устройств",
                         this, "off_devices",
@@ -306,7 +307,8 @@ namespace TechObject
                             EplanDevice.DeviceType.V,
                             EplanDevice.DeviceType.GS,
                             EplanDevice.DeviceType.DI,
-                            EplanDevice.DeviceType.DO
+                            EplanDevice.DeviceType.DO,
+                            EplanDevice.DeviceType.SB,
                         }));
 
                     toStepByCondition.CreateParameter(new ActiveParameter("next_step_n",
@@ -373,7 +375,8 @@ namespace TechObject
                             EplanDevice.DeviceType.V,
                             EplanDevice.DeviceType.GS,
                             EplanDevice.DeviceType.DI,
-                            EplanDevice.DeviceType.DO
+                            EplanDevice.DeviceType.DO,
+                            EplanDevice.DeviceType.SB,
                     }));
                 toStateByCondition.CreateAction(new Action("Выключение устройств",
                     this, "off_devices",
@@ -382,7 +385,8 @@ namespace TechObject
                             EplanDevice.DeviceType.V,
                             EplanDevice.DeviceType.GS,
                             EplanDevice.DeviceType.DI,
-                            EplanDevice.DeviceType.DO
+                            EplanDevice.DeviceType.DO,
+                            EplanDevice.DeviceType.SB,
                     }));
 
                 toStateByCondition.CreateParameter(new ComboBoxParameter(
