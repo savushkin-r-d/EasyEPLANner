@@ -1078,11 +1078,6 @@ namespace Editor
             }
             else
             {
-                if(hideEmptyItemsBtn.Checked)
-                {
-                    hideEmptyItemsBtn.Checked = false;
-                }
-
                 edit_toolStripButton.Checked = true;
                 Editable = true;
 
@@ -1639,17 +1634,6 @@ namespace Editor
         private void hideEmptyItemsBtn_CheckStateChanged(object sender,
             EventArgs e)
         {
-            if (edit_toolStripButton.Checked && hideEmptyItemsBtn.Checked)
-            {
-                hideEmptyItemsBtn.Checked = false;
-                editorTView.UseFiltering = false;
-                MessageBox.Show("Режим сокрытия пустых элементов можно " +
-                    "включить только при отключенном режиме редактирования.",
-                    "Информация", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-                return;
-            }
-
             if (hideEmptyItemsBtn.Checked)
             {
                 editorTView.UseFiltering = true;
