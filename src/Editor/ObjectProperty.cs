@@ -35,7 +35,7 @@ namespace Editor
         /// Копия объекта
         /// </summary>
         /// <returns></returns>
-        public ObjectProperty Clone()
+        public virtual ObjectProperty Clone()
         {
             return (ObjectProperty)MemberwiseClone();
         }
@@ -193,7 +193,7 @@ namespace Editor
             return null;
         }
 
-        public bool IsInsertableCopy
+        public virtual bool IsInsertableCopy
         {
             get
             {
@@ -201,7 +201,7 @@ namespace Editor
             }
         }
 
-        public ITreeViewItem InsertCopy(object obj)
+        public virtual ITreeViewItem InsertCopy(object obj)
         {
             return null;
         }

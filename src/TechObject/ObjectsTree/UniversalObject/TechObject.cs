@@ -928,6 +928,14 @@ namespace TechObject
                 return equipment;
             }
 
+            var attachedObjectsTarget = child as AttachedObjects;
+            var attachedObjectsCopy = copyObject as AttachedObjects;
+            bool AttachedObjectsIsNotNull = !(attachedObjectsTarget is null || attachedObjectsCopy is null);
+            if (AttachedObjectsIsNotNull)
+            {
+                return attachedObjectsTarget.Replace(child, attachedObjectsCopy);
+            }
+
             return null;
         }
 
@@ -1001,6 +1009,8 @@ namespace TechObject
                 return getLocalNum(this);
             }
         }
+
+        public int GlobalNum => TechObjectManager.GetInstance().GetTechObjectN(this);
 
         public BaseProperties BaseProperties
         {
