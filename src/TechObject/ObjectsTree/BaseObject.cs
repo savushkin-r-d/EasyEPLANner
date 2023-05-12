@@ -297,7 +297,7 @@ namespace TechObject
             return techObj;
         }
 
-        override public ITreeViewItem Replace(object child, object copyObject)
+        public override ITreeViewItem Replace(object child, object copyObject)
         {
             var techObject = child as TechObject;
             var copiedObject = copyObject as TechObject;
@@ -330,6 +330,9 @@ namespace TechObject
                 newObject.ChangeCrossRestriction(techObject);
 
                 newObject.AddParent(this);
+
+                // Оставить старые привязанные агрегаты в заменяемом объекте
+                newObject.AttachedObjects.SetNewValue(techObject.AttachedObjects.Value);
                 return newObject;
             }
 

@@ -354,7 +354,73 @@ namespace TechObject
             return objectNames;
         }
 
+        /// <summary>
+        /// Установить новые значения при вставке или замене при копировании.
+        /// Проверяет подходящие для технологическгого объекта агрегаты.
+        /// </summary>
+        /// <param name="newValues"> Список глобальных номеров привязываемых агрегатов </param>
+        private void SetNewValues(List<int> newValues)
+        {
+            // Исключение агрегатов одинакового типа для танка
+            if (Owner.BaseTechObject.S88Level == (int)BaseTechObjectManager.ObjectType.Unit)
+            {
+                List<TechObject> newObjects = newValues
+                    .Select(x => TechObjectManager.GetInstance().GetTObject(x))
+                    .ToList();
+
+                var usedTypes = new HashSet<int>();
+                newValues = newObjects.Where(techObject => usedTypes.Add(techObject.TechType))
+                    .Select(techObject => techObject.GlobalNum).ToList();
+            }
+
+            // Исключение привязки агргата на самого себя
+            if (Owner.BaseTechObject.S88Level == (int)BaseTechObjectManager.ObjectType.Aggregate)
+            {
+                newValues.Remove(this.Owner.GlobalNum);
+            }
+
+            SetNewValue(string.Join(" ", newValues));
+        }
+
         #region реализация ITreeViewItem
+        public override ITreeViewItem InsertCopy(object obj)
+        {
+            var copy = obj as AttachedObjects;
+
+            if (copy != null)
+            {
+                List<int> copyValues = strategy.GetValidTechObjNums(copy.Value, copy.Owner.GlobalNum);
+                List<int> oldValues = strategy.GetValidTechObjNums(Value, this.Owner.GlobalNum);
+
+                List<int> newValues = oldValues.Union(copyValues).ToList();
+
+                SetNewValues(newValues);
+                return this;
+            }
+
+            return null;
+        }
+
+        public override ITreeViewItem Replace(object child, object copyObject)
+        {
+            var copy = copyObject as AttachedObjects;
+
+            if (copy != null)
+            {
+                List<int> newValues = strategy.GetValidTechObjNums(copy.Value, copy.Owner.GlobalNum);
+
+                SetNewValues(newValues);
+                return this;
+            }
+
+            return null;
+        }
+
+        public override object Copy()
+        {
+            return new AttachedObjects(Value, Owner, strategy);
+        }
+
         public override string[] DisplayText
         {
             get
@@ -392,6 +458,12 @@ namespace TechObject
                 return editable;
             }
         }
+
+        public override bool IsCopyable => true;
+
+        public override bool IsReplaceable => true;
+
+        public override bool IsInsertableCopy => true;
 
         public override bool IsFilled
         {
