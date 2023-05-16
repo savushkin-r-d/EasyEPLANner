@@ -64,13 +64,13 @@ namespace EasyEplanner.Tests
         static object[] Constructor_NewStep_CheckItemsCountCases =
         {
             new object[] { RUN, true, 15 },
-            new object[] { RUN, false, 17 },
+            new object[] { RUN, false, 18 },
             new object[] { STOP, true, 14 },
-            new object[] { STOP, false, 17 },
+            new object[] { STOP, false, 18 },
             new object[] { PAUSE, true, 14 },
-            new object[] { PAUSE, false, 17 },
+            new object[] { PAUSE, false, 18 },
             new object[] { IDLE, true, 15 },
-            new object[] { IDLE, false, 17 },
+            new object[] { IDLE, false, 18 },
         };
 
         [TestCaseSource(nameof(Constructor_NewStep_CheckItemsCountCases))]
