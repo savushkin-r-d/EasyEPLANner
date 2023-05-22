@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using Editor;
 using TechObject.ActionProcessingStrategy;
+using TechObject.AttachedObjectStrategy;
 
 namespace TechObject
 {
@@ -323,9 +324,27 @@ namespace TechObject
 
                 nextStepN = new ObjectProperty("Номер следующего шага", -1, -1);
                 items.Add(nextStepN);
+
+                SetAttachedObject();
             }
 
-            if (isMainStep) SetJumpToStateIf();
+            if (isMainStep)
+            {
+                SetJumpToStateIf();
+            }
+        }
+
+        private void SetAttachedObject()
+        { 
+            attachedObject = new AttachedObjects(string.Empty, null, 
+                new AttachedWithoutInitStrategy("Связанный объект", "attached_object",
+                    new List<BaseTechObjectManager.ObjectType>()
+                        {
+                            BaseTechObjectManager.ObjectType.Unit,
+                            BaseTechObjectManager.ObjectType.Aggregate,
+                            BaseTechObjectManager.ObjectType.UserObject,
+                        }));
+            items.Add(attachedObject);
         }
 
         public void SetJumpToStateIf()
@@ -477,6 +496,7 @@ namespace TechObject
             {
                 string time_param_n = timeParam.EditText[1].Trim();
                 string next_step_n = nextStepN.EditText[1].Trim();
+                string attached_object = attachedObject.Value.ToString();
 
                 double leadTime = double.Parse(time_param_n,
                     System.Globalization.CultureInfo.InvariantCulture);
@@ -495,13 +515,15 @@ namespace TechObject
                     $"{prefix}next_step_n = {next_step_n},\n";
                 string baseStep_str = (string.IsNullOrEmpty(baseStep.LuaName)) ? string.Empty :
                     $"{prefix}baseStep = '{baseStep.LuaName}',\n";
-
+                string attachedObject_str = (string.IsNullOrEmpty(attached_object)) ? string.Empty :
+                    $"{prefix}attached_object = {attached_object},\n";
 
                 resultBuilder.Append(prefix).Append("{\n")
                     .Append(prefix).Append($"name = '{name}',\n")
                     .Append(time_param_n_str)
                     .Append(next_step_n_str)
-                    .Append(baseStep_str);
+                    .Append(baseStep_str)
+                    .Append(attachedObject_str);
 
                 foreach (IAction action in actions)
                 {
@@ -544,6 +566,12 @@ namespace TechObject
         {
             this.timeParam.SetNewValue(timeParamN.ToString());
             this.nextStepN.SetNewValue(nextStepN.ToString());
+        }
+
+        public void SetAttachedObject(int attachedObject)
+        {
+            if (attachedObject != -1)
+                this.attachedObject.SetNewValue(attachedObject.ToString());
         }
 
         /// <summary>
@@ -1087,6 +1115,7 @@ namespace TechObject
 
         private ObjectProperty nextStepN; ///< Номер следующего шага.
         private ObjectProperty timeParam; ///< Параметр времени.
+        private AttachedObjects attachedObject; // Связанный объект
         private List<ITreeViewItem> items;
 
         private string name; ///< Имя шага.

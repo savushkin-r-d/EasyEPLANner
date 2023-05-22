@@ -453,6 +453,8 @@ namespace TechObject
         {
             get
             {
+                if (owner == null) return true; 
+
                 BaseTechObject baseTechObject = owner?.BaseTechObject;
                 bool editable = baseTechObject?.IsAttachable == true;
                 return editable;

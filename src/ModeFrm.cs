@@ -436,6 +436,8 @@ namespace EasyEPlanner
                     bool aggregatesAttaching = item.WorkStrategy.UseInitialization == true;
                     if (aggregatesAttaching)
                     {
+                        
+
                         bool toUnit = item.Owner.BaseTechObject.S88Level == 
                             (int)TechObject.BaseTechObjectManager.ObjectType.Unit;
                         if (toUnit)
@@ -449,6 +451,12 @@ namespace EasyEPlanner
                     }
                     else
                     {
+                        if (item.Owner is null)
+                        {
+                            SelectedTreeItem = EditType.AttachedObjectToStep;
+                            return;
+                        }
+
                         SelectedTreeItem = EditType.AttachedUnitsToObjectGroup;
                     }
                     break;
@@ -867,7 +875,8 @@ namespace EasyEPlanner
                     bool attachToObjEdit = item.IsMainObject &&
                     (selectedEditType == EditType.AttachedAgregatesToUnit ||
                     selectedEditType == EditType.AttachedUnitsToObjectGroup ||
-                    selectedEditType == EditType.AttachedAggregatesToAggregates);
+                    selectedEditType == EditType.AttachedAggregatesToAggregates ||
+                    selectedEditType == EditType.AttachedObjectToStep);
                     bool restrictionEdit = item.IsMode &&
                         selectedEditType == EditType.Restriction;
                     if (attachToObjEdit)
@@ -994,14 +1003,21 @@ namespace EasyEPlanner
                 treeItem_ChangeCheckBoxState(sender, e);
 
                 Node selectedNode = GetSelectedNodeForCheckOperationTree(e);
-                OnCheckOperationTree.Execute(selectedNode, SelectedTreeItem);
-
-                IDictionary<int, List<int>> resDict;
-                resDict = OnCheckOperationTree.GetResDict();
+                
+                if (SelectedTreeItem == EditType.AttachedObjectToStep)
+                {
+                    // обход всего дерева  
+                    OnCheckOperationTree.Execute(e.Path.FirstNode as Node, SelectedTreeItem);
+                    functionAfterCheck(new Dictionary<int, List<int>>()
+                        { [OnCheckOperationTree.GetResDict().Keys.FirstOrDefault()] = null });
+                }
+                else
+                {
+                    OnCheckOperationTree.Execute(selectedNode, SelectedTreeItem);
+                    functionAfterCheck(OnCheckOperationTree.GetResDict());
+                }
                 
                 modesTreeViewAdv.Refresh();
-                
-                functionAfterCheck(resDict);
             }
         }
 
@@ -1022,7 +1038,32 @@ namespace EasyEPlanner
                 UnselectIncorrectValues(e, checkedNode.Text);
             }
 
+            if (SelectedTreeItem == EditType.AttachedObjectToStep)
+            {
+                Unchecked(e.Path.FirstNode as Node, checkedNode);
+            }
+
             StaticHelper.GUIHelper.CheckCheckState(checkedNode);
+        }
+
+        /// <summary>
+        /// Рекурсивная функция обхода дерева для снятия всеъ чекбоксов кроме выбранного
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="checkedNode"></param>
+        private void Unchecked(Node root, Node checkedNode)
+        {
+            foreach (var node in root.Nodes)
+            {
+                if (node == checkedNode) continue;
+
+                if (node.Nodes.Count > 0)
+                    Unchecked(node, checkedNode);
+                
+                node.CheckState = CheckState.Unchecked;
+
+                OnCheckOperationTree.UseParentNode = true;    
+            }
         }
 
         /// <summary>
@@ -1139,7 +1180,8 @@ namespace EasyEPlanner
             Restriction,
             AttachedAgregatesToUnit,
             AttachedUnitsToObjectGroup,
-            AttachedAggregatesToAggregates
+            AttachedAggregatesToAggregates,
+            AttachedObjectToStep, // Привязка объекта к шагу в поле "Связанный объект"
         }
     }
 }
