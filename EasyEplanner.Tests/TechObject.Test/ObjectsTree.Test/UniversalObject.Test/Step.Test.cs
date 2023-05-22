@@ -61,16 +61,20 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(expectedCount, actualCount);
         }
 
+        private static readonly int NotMainStepActionsCount = 18;
+        private static readonly int MainStepActionsCount = 14;
+        private static readonly int MainStepActionsWithToStateCount = 15;
+
         static object[] Constructor_NewStep_CheckItemsCountCases =
         {
-            new object[] { RUN, true, 15 },
-            new object[] { RUN, false, 18 },
-            new object[] { STOP, true, 14 },
-            new object[] { STOP, false, 18 },
-            new object[] { PAUSE, true, 14 },
-            new object[] { PAUSE, false, 18 },
-            new object[] { IDLE, true, 15 },
-            new object[] { IDLE, false, 18 },
+            new object[] { RUN, true, MainStepActionsWithToStateCount },
+            new object[] { RUN, false, NotMainStepActionsCount },
+            new object[] { STOP, true, MainStepActionsCount },
+            new object[] { STOP, false, NotMainStepActionsCount },
+            new object[] { PAUSE, true, MainStepActionsCount },
+            new object[] { PAUSE, false, NotMainStepActionsCount },
+            new object[] { IDLE, true, MainStepActionsWithToStateCount },
+            new object[] { IDLE, false, NotMainStepActionsCount },
         };
 
         [TestCaseSource(nameof(Constructor_NewStep_CheckItemsCountCases))]
