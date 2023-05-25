@@ -224,6 +224,8 @@ namespace EplanDevice
                 return string.Format(parameter.format, double.Parse(value.ToString())) ;
             }
 
+            public override string ToString() => name;
+
             public string Name { get => name; }
             public string Description { get => description; }
             public string Format { get => format; }
