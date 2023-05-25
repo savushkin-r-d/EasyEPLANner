@@ -55,5 +55,18 @@ namespace Tests.EplanDevices
             IODevice.Parameter parameter = parameterStr;
             Assert.AreEqual(expectedFormat, parameter.Format);
         }
+
+        [TestCaseSource(nameof(GetToString_Cases))]
+        public void GetToString_CheckCorrectParameterName(IODevice.Parameter parameter, string parameter_name)
+        {
+            Assert.AreEqual(parameter_name, $"{parameter}");
+        }
+
+        private static object[] GetToString_Cases = new object[]
+        {
+            new object[] { IODevice.Parameter.P_Td, "P_Td" },
+            new object[] { IODevice.Parameter.P_acceleration_time, "P_acceleration_time" },
+            new object[] { IODevice.Parameter.P_is_manual_mode, "P_is_manual_mode" },
+        };
     }
 }
