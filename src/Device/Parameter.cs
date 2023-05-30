@@ -43,6 +43,8 @@ namespace EplanDevice
             /// <summary> Время включения. </summary>
             public static readonly Parameter P_ON_TIME = new Parameter("P_ON_TIME", "Время включения", UnitFormat.Milliseconds);
 
+            public static readonly Parameter P_OFF_TIME = new Parameter(nameof(P_OFF_TIME), "Время выключения", UnitFormat.Milliseconds);
+
             /// <summary> Обратная связь, 1/0 (Да/Нет) </summary>
             public static readonly Parameter P_FB = new Parameter("P_FB", "Обратная связь", UnitFormat.Boolean);
 
@@ -133,6 +135,9 @@ namespace EplanDevice
             /// <summary> Параметр для обработки ошибки счета импульсов. </summary>
             public static readonly Parameter P_ERR_MIN_FLOW = new Parameter("P_ERR_MIN_FLOW", "Ошибка счета импульсов");
 
+            /// <summary> Дельта значение </summary>
+            public static readonly Parameter P_DELTA = new Parameter(nameof(P_DELTA), "Дельта срабатывания");
+
             protected static readonly Lazy<Dictionary<string, Parameter>> AllParameters = InitParameters();
 
             private static Lazy<Dictionary<string, Parameter>> InitParameters()
@@ -188,19 +193,22 @@ namespace EplanDevice
                 return parameterType.name;
             }
 
-            public static string GetFormatValue(Parameter parameter, object value, IODevice device = null)
+            public static string GetFormatValue(Parameter parameter, object valueStr, IODevice device = null)
             {
-                if (parameter.description == string.Empty && parameter.format == string.Empty) return value.ToString();
+                if (parameter.description == string.Empty && parameter.format == string.Empty) return valueStr.ToString();
+
+                if (!double.TryParse(valueStr.ToString(), out double value))
+                    value = 0;
 
                 // Формат параметров в зависимости от типа устройства
                 switch (device.DeviceType)
                 {
                     case DeviceType.WT:
                         if (parameter == P_C0 || parameter == P_DT)
-                            return string.Format(UnitFormat.Kilograms, value.ToString());
+                            return string.Format(UnitFormat.Kilograms, value);
                         break;
                     case DeviceType.C:
-                        if (parameter == P_max || parameter == P_min)
+                        if (parameter == P_max || parameter == P_min || parameter == P_DELTA)
                         {
                             var inValue = device.Properties[Property.IN_VALUE];
 
@@ -212,16 +220,16 @@ namespace EplanDevice
                             
                             if (signalDevice.DeviceType == DeviceType.C)
                             {
-                                return GetFormatValue(parameter, value,
+                                return GetFormatValue(parameter, valueStr,
                                         signalDevice);
                             }
 
-                            return string.Format(signalDevice.PIDUnitFormat, value.ToString());
+                            return string.Format(signalDevice.PIDUnitFormat, value);
                         }
                         break;
                 }
-
-                return string.Format(parameter.format, double.Parse(value.ToString())) ;
+                
+                return string.Format(parameter.format, value);
             }
 
             public override string ToString() => name;
