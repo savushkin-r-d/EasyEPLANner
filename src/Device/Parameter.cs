@@ -193,19 +193,22 @@ namespace EplanDevice
                 return parameterType.name;
             }
 
-            public static string GetFormatValue(Parameter parameter, object valueStr, IODevice device = null)
+            public static string GetFormatValue(Parameter parameter, object value, IODevice device = null)
             {
-                if (parameter.description == string.Empty && parameter.format == string.Empty) return valueStr.ToString();
+                if (parameter.description == string.Empty && parameter.format == string.Empty) return value.ToString();
 
-                if (!double.TryParse(valueStr.ToString(), out double value))
-                    value = 0;
+                string displayedValue = value.ToString();
+                double editedValue = 0;
+
+                if (!double.TryParse(value.ToString(), out editedValue))
+                    displayedValue = "-";
 
                 // Формат параметров в зависимости от типа устройства
                 switch (device.DeviceType)
                 {
                     case DeviceType.WT:
                         if (parameter == P_C0 || parameter == P_DT)
-                            return string.Format(UnitFormat.Kilograms, value);
+                            return string.Format(UnitFormat.Kilograms, displayedValue);
                         break;
                     case DeviceType.C:
                         if (parameter == P_max || parameter == P_min || parameter == P_DELTA)
@@ -220,16 +223,19 @@ namespace EplanDevice
                             
                             if (signalDevice.DeviceType == DeviceType.C)
                             {
-                                return GetFormatValue(parameter, valueStr,
+                                return GetFormatValue(parameter, value,
                                         signalDevice);
                             }
 
-                            return string.Format(signalDevice.PIDUnitFormat, value);
+                            return string.Format(signalDevice.PIDUnitFormat, displayedValue);
                         }
                         break;
                 }
-                
-                return string.Format(parameter.format, value);
+
+                if (parameter.format == UnitFormat.Boolean)
+                    return string.Format(parameter.format, editedValue);
+
+                return string.Format(parameter.format, displayedValue);
             }
 
             public override string ToString() => name;

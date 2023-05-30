@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using EplanDevice;
 using EasyEPlanner.PxcIolinkConfiguration.Models;
+using static Tests.TechObject.DeviceManagerMock;
 
 namespace Tests.EplanDevices
 {
@@ -16,12 +17,14 @@ namespace Tests.EplanDevices
 
             var PID1 = new EplanDevice.C("LINE1PC1", "+LINE1-PC1", "TEST PC1",
                 1, "LINE", 1);
+            PID1.SetSubType("C_PID");
             PID1.SetProperty("IN_VALUE", "LINE1WT1");
             PID1.SetProperty("OUT_VALUE", "LINE1PC2");
             EplanDevice.DeviceManager.GetInstance().Devices.Add(PID1);
 
             var PID2 = new EplanDevice.C("LINE1PC2", "+LINE1-PC2", "TEST PC2",
                 2, "LINE", 1);
+            PID2.SetSubType("C_PID");
             PID2.SetProperty("IN_VALUE", "LINE1PC1");
             EplanDevice.DeviceManager.GetInstance().Devices.Add(PID2);
         }
