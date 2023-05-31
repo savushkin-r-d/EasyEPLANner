@@ -37,12 +37,12 @@ namespace EplanDevice
             return string.Empty;
         }
 
-        public override string SetSubType(string subtype)
+        public override string SetSubType(string subType)
         {
-            base.SetSubType(subtype);
+            base.SetSubType(subType);
             
             string errStr = string.Empty;
-            switch (subtype)
+            switch (subType)
             {
                 case "":
                 case "C_PID":
