@@ -1,0 +1,38 @@
+name: AutoVersion
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+
+jobs:
+  autoversion:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Get month
+        run: $Month = Get-Date -format 'MM'
+
+      - name: Get AssemblyInfo file path
+        run: $File = 'src/Properties/AssemblyInfo.cs' 
+
+      - name: Replace version
+        run: > 
+          (Get-Content $File) -replace 
+          '(?<start>(AssemblyVersion|AssemblyFileVersion)\(\"\d{4}\.)\d{2}(?<end>(\.\*|\.0\.0)"\))',
+          "`${start}$Month`${end}" 
+          | Set-Content $File
+
+      - name: switching from HTTPS to SSH
+        run: git remote set-url origin ${{ secrets.ssh }}
+      - name: check for changes
+        run: git status
+      - name: stage changed files
+        run: git add .
+      - name: commit changed files
+        run: git commit -m "Auto updating version AssemblyInfo.cs"
+      - name: fetch from master
+        run: git fetch origin master
+      - name: push code to master
+        run: git push origin HEAD:master
