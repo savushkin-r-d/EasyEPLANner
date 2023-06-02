@@ -11,6 +11,8 @@ namespace Tests.EplanDevices
     {
         const string Incorrect = "Incorrect";
         const string C = "C";
+        const string C_PID = nameof(C_PID);
+        const string C_THLD = nameof(C_THLD);
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
@@ -42,9 +44,10 @@ namespace Tests.EplanDevices
         {
             return new object[]
             {
-                new object[] { C, string.Empty, GetNewCDevice() },
-                new object[] { C, C, GetNewCDevice() },
-                new object[] { C, Incorrect, GetNewCDevice() },
+                new object[] { C_PID, string.Empty, GetNewCDevice() },
+                new object[] { C_PID, C_PID, GetNewCDevice() },
+                new object[] { C_THLD, C_THLD, GetNewCDevice() },
+                new object[] { string.Empty, Incorrect, GetNewCDevice() },
             };
         }
 
@@ -140,6 +143,15 @@ namespace Tests.EplanDevices
                 IODevice.Parameter.P_is_zero_start
             };
 
+            var paramters_THLD = new string[]
+            {
+                IODevice.Parameter.P_is_reverse,
+                IODevice.Parameter.P_DELTA,
+                IODevice.Parameter.P_ON_TIME,
+                IODevice.Parameter.P_OFF_TIME,
+
+            };
+
             var defaultValues = new double[]
             {
                 1, 15, 0.01, 1000, 100, 0, 30, 0, 65, 0, 0, 0, 100, 0, 0, 1
@@ -151,7 +163,7 @@ namespace Tests.EplanDevices
                 {
                     parameters,
                     defaultValues,
-                    C,
+                    C_PID,
                     GetNewCDevice()
                 },
                 new object[]
@@ -163,16 +175,24 @@ namespace Tests.EplanDevices
                 },
                 new object[]
                 {
-                    parameters,
-                    defaultValues,
+                    new string[]{ },
+                    new double[]{ },
                     Incorrect,
                     GetNewCDevice()
+                },
+                new object[]
+                {
+                    paramters_THLD,
+                    new double[]{ 0, 0, 0, 0, },
+                    C_THLD,
+                    GetNewCDevice(),
                 },
             };
         }
 
-        [Test]
-        public void Properties_NewDev_ReturnsPropertiesArrWithNullValues()
+        [TestCase(C_PID)]
+        [TestCase(C_THLD)]
+        public void Properties_NewDev_ReturnsPropertiesArrWithNullValues(string subtype)
         {
             const int expectedPropertiesCount = 2;
             string[] expectedPropertiesNames = new string[]
@@ -181,6 +201,7 @@ namespace Tests.EplanDevices
                 IODevice.Property.OUT_VALUE
             };
             var dev = GetNewCDevice();
+            dev.SetSubType(subtype);
             var properties = dev.Properties;
 
             bool allNull = properties.All(x => x.Value == null);
