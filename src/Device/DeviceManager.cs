@@ -435,7 +435,7 @@ namespace EplanDevice
             {
                 dev.EplanObjectFunction = oF;
             }
-            
+
             return dev;
         }
 
