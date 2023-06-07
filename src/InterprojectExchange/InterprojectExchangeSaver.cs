@@ -5,6 +5,7 @@ using System.Linq;
 using EasyEPlanner;
 using System.Text.RegularExpressions;
 using System.Text;
+using System;
 
 namespace InterprojectExchange
 {
@@ -130,7 +131,8 @@ namespace InterprojectExchange
         {
             List<string> sharedFileData = savingModel.SharedFileAsStringList;
             
-            var searchPattern = new Regex($@"\[\s*('|""){oppositeModel.ProjectName}\1\s*\]\s*="); 
+            var searchPattern = new Regex($@"\[\s*('|""){oppositeModel.ProjectName}\1\s*\]\s*=",
+                RegexOptions.None, TimeSpan.FromMilliseconds(100)); 
 
             int startIndex = FindModelDescriptionStartIndex(searchPattern,
                 sharedFileData);
@@ -145,7 +147,8 @@ namespace InterprojectExchange
             else
             {
                 string valuePattern = $"remote_gateways =";
-                searchPattern = new Regex(@"remote_gateways\s*=");
+                searchPattern = new Regex(@"remote_gateways\s*=",
+                    RegexOptions.None, TimeSpan.FromMilliseconds(100));
 
                 FillDefaultSharedData(valuePattern, savingModel);
                 startIndex = FindModelDescriptionStartIndex(searchPattern,
@@ -180,7 +183,8 @@ namespace InterprojectExchange
         {
             List<string> sharedFileData = savingModel.SharedFileAsStringList;
 
-            var searchPattern = new Regex($@"projectName\s*=\s*('|""){oppositeModel.ProjectName}\1");
+            var searchPattern = new Regex($@"projectName\s*=\s*('|""){oppositeModel.ProjectName}\1",
+                RegexOptions.None, TimeSpan.FromMilliseconds(100));
             
             int startIndex = FindModelDescriptionStartIndex(searchPattern,
                 sharedFileData);
@@ -197,7 +201,8 @@ namespace InterprojectExchange
             else
             {
                 string valuePattern = $"shared_devices =";
-                searchPattern = new Regex(@"shared_devices\s*=");
+                searchPattern = new Regex(@"shared_devices\s*=",
+                    RegexOptions.None, TimeSpan.FromMilliseconds(100));
                 FillDefaultSharedData(valuePattern, savingModel);
                 startIndex = FindModelDescriptionStartIndex(searchPattern,
                     sharedFileData);
@@ -236,14 +241,14 @@ namespace InterprojectExchange
             }
 
             const string prefix = "\t\t";
-            var res = string.Empty;
 
-            res += SavePACInfo(pacInfo, projectName, prefix);
-            res += SaveSignals(signals, prefix, invertSignals);
-            res += "\t},";
-
-            res = res.Replace("\t", "    ");
-            return res;
+            return new StringBuilder()
+                .Append($"\t['{projectName}'] =\n\t{{\n")
+                .Append(SavePACInfo(pacInfo, prefix))
+                .Append(SaveSignals(signals, prefix, invertSignals))
+                .Append("\t},")
+                .ToString()
+                .Replace("\t", "    "); ;
         }
 
         /// <summary>
@@ -266,13 +271,14 @@ namespace InterprojectExchange
             const string prefix = "\t\t";
             var res = string.Empty;
 
-            res += $"\t[{stationNum}] =\n\t{{\n";
-            res += prefix + $"projectName = \"{projectName}\",\n";
-            res += SaveSignals(signals, prefix, invertSignals);
-            res += "\t},";
-
-            res = res.Replace("\t", "    ");
-            return res;
+            return new StringBuilder()
+                .Append($"\t[{stationNum}] =\n")
+                .Append("\t{\n")
+                .Append($"{prefix}projectName = \"{projectName}\",\n")
+                .Append(SaveSignals(signals, prefix, invertSignals))
+                .Append("\t},")
+                .ToString()
+                .Replace("\t", "    ");
         }
 
         /// <summary>
@@ -282,11 +288,8 @@ namespace InterprojectExchange
         /// <param name="projectName">Имя проекта</param>
         /// <param name="prefix">Префикс</param>
         /// <returns></returns>
-        private string SavePACInfo(PacInfo pacInfo, string projectName,
-            string prefix)
+        private string SavePACInfo(PacInfo pacInfo, string prefix)
         {
-            var res = string.Empty;
-
             string ipComment = "-- адрес удаленного контроллера";
             string ipEmulatorComment = "-- адрес удаленного контроллера при эмуляции на столе";
             string emulationComment = "-- включение эмуляции";
@@ -296,18 +299,26 @@ namespace InterprojectExchange
             string enabledComment = "-- включить/выключить шлюз";
             string stationComment = "-- номер станции modbus удаленного клиента";
 
-            const int margin = -17;
+            var ip = $"'{pacInfo.IP}',";
+            var ipemulator = $"'{pacInfo.IPEmulator}',";
+            var emulation = $"{pacInfo.EmulationEnabled.ToString().ToLower()},";
+            var cycletime = $"{pacInfo.CycleTime},";
+            var timeout = $"{pacInfo.TimeOut},";
+            var port = $"{pacInfo.Port},";
+            var enabled = $"{pacInfo.GateEnabled.ToString().ToLower()},";
+            var station = $"{pacInfo.Station},";
+
+            int width = Math.Max(ip.Length, ipemulator.Length);
 
             return new StringBuilder()
-                .Append($"\t['{projectName}'] =\n\t{{\n")
-                .Append($"{prefix}ip         = {$"'{pacInfo.IP}',", margin} {ipComment}\n")
-                .Append($"{prefix}ipemulator = {$"'{pacInfo.IPEmulator}',", margin} {ipEmulatorComment}\n")
-                .Append($"{prefix}emulation  = {$"{pacInfo.EmulationEnabled.ToString().ToLower()},", margin} {emulationComment}\n")
-                .Append($"{prefix}cycletime  = {$"{pacInfo.CycleTime},", margin} {cycleTimeComment}\n")
-                .Append($"{prefix}timeout    = {$"{pacInfo.TimeOut},", margin} {timeoutComment}\n")
-                .Append($"{prefix}port       = {$"{pacInfo.Port},", margin} {portComment}\n")
-                .Append($"{prefix}enabled    = {$"{pacInfo.GateEnabled.ToString().ToLower()},", margin} {enabledComment}\n")
-                .Append($"{prefix}station    = {$"{pacInfo.Station},", margin} {stationComment}\n")
+                .Append($"{prefix}ip         = {ip.PadRight(width)} {ipComment}\n")
+                .Append($"{prefix}ipemulator = {ipemulator.PadRight(width)} {ipEmulatorComment}\n")
+                .Append($"{prefix}emulation  = {emulation.PadRight(width)} {emulationComment}\n")
+                .Append($"{prefix}cycletime  = {cycletime.PadRight(width)} {cycleTimeComment}\n")
+                .Append($"{prefix}timeout    = {timeout.PadRight(width)} {timeoutComment}\n")
+                .Append($"{prefix}port       = {port.PadRight(width)} {portComment}\n")
+                .Append($"{prefix}enabled    = {enabled.PadRight(width)} {enabledComment}\n")
+                .Append($"{prefix}station    = {station.PadRight(width)} {stationComment}\n")
                 .ToString();
         }
 
