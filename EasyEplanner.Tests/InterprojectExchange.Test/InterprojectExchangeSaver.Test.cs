@@ -267,12 +267,6 @@ namespace EasyEplannerTests.InterprojectExchangeTest
             CollectionAssert.AreEqual(SharedFileAsStringList_ExpectedAfterUpdateSharedDevices(), SharedFileAsStringList);
         }
 
-        [Test]
-        public void UpdateModelSharedDevices_CheckSavingModelSharedFileData()
-        {
-            
-        }
-
         private InterprojectExchangeSaver saver;
         private InterprojectExchange.InterprojectExchange interprojectExchange 
             = InterprojectExchange.InterprojectExchange.GetInstance();

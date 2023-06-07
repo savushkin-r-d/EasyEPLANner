@@ -248,7 +248,7 @@ namespace InterprojectExchange
                 .Append(SaveSignals(signals, prefix, invertSignals))
                 .Append("\t},")
                 .ToString()
-                .Replace("\t", "    "); ;
+                .Replace("\t", "    ");
         }
 
         /// <summary>
