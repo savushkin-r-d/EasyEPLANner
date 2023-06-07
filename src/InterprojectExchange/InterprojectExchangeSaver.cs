@@ -269,7 +269,6 @@ namespace InterprojectExchange
             }
 
             const string prefix = "\t\t";
-            var res = string.Empty;
 
             return new StringBuilder()
                 .Append($"\t[{stationNum}] =\n")
