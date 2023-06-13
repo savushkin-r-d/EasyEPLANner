@@ -293,24 +293,10 @@ namespace TechObject
                     var toStepByCondition = new ActionCustom("Группа", this, "");
                     toStepByCondition.CreateAction(new Action("Включение устройств",
                         this, "on_devices",
-                        new EplanDevice.DeviceType[]
-                        {
-                            EplanDevice.DeviceType.V,
-                            EplanDevice.DeviceType.GS,
-                            EplanDevice.DeviceType.DI,
-                            EplanDevice.DeviceType.DO,
-                            EplanDevice.DeviceType.SB,
-                        }));
+                        jump_if_AllowedDevices));
                     toStepByCondition.CreateAction(new Action("Выключение устройств",
                         this, "off_devices",
-                        new EplanDevice.DeviceType[]
-                        {
-                            EplanDevice.DeviceType.V,
-                            EplanDevice.DeviceType.GS,
-                            EplanDevice.DeviceType.DI,
-                            EplanDevice.DeviceType.DO,
-                            EplanDevice.DeviceType.SB,
-                        }));
+                        jump_if_AllowedDevices));
 
                     toStepByCondition.CreateParameter(new ActiveParameter("next_step_n",
                        "Шаг"));
@@ -389,24 +375,10 @@ namespace TechObject
                 var toStateByCondition = new ActionCustom("Группа", this, "");
                 toStateByCondition.CreateAction(new Action("Включение устройств",
                     this, "on_devices",
-                    new EplanDevice.DeviceType[]
-                    {
-                            EplanDevice.DeviceType.V,
-                            EplanDevice.DeviceType.GS,
-                            EplanDevice.DeviceType.DI,
-                            EplanDevice.DeviceType.DO,
-                            EplanDevice.DeviceType.SB,
-                    }));
+                    jump_if_AllowedDevices));
                 toStateByCondition.CreateAction(new Action("Выключение устройств",
                     this, "off_devices",
-                    new EplanDevice.DeviceType[]
-                    {
-                            EplanDevice.DeviceType.V,
-                            EplanDevice.DeviceType.GS,
-                            EplanDevice.DeviceType.DI,
-                            EplanDevice.DeviceType.DO,
-                            EplanDevice.DeviceType.SB,
-                    }));
+                    jump_if_AllowedDevices));
 
                 toStateByCondition.CreateParameter(new ComboBoxParameter(
                 "next_state_n",
@@ -1110,6 +1082,20 @@ namespace TechObject
         {
             get { return timeParam.DisplayText[1].Trim(); }
         }
+
+        /// <summary>
+        /// Устройства отображаемые в действии "Переход к ... по условию"
+        /// </summary>
+        private static EplanDevice.DeviceType[] jump_if_AllowedDevices 
+            = new EplanDevice.DeviceType[] 
+        {
+            EplanDevice.DeviceType.V,
+            EplanDevice.DeviceType.GS,
+            EplanDevice.DeviceType.DI,
+            EplanDevice.DeviceType.DO,
+            EplanDevice.DeviceType.SB,
+            EplanDevice.DeviceType.LS,
+        };
 
         private GetN getN;
 
