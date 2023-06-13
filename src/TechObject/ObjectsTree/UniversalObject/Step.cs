@@ -293,10 +293,10 @@ namespace TechObject
                     var toStepByCondition = new ActionCustom("Группа", this, "");
                     toStepByCondition.CreateAction(new Action("Включение устройств",
                         this, "on_devices",
-                        jump_if_AllowedDevices));
+                        jump_if_AllowedDevTypes));
                     toStepByCondition.CreateAction(new Action("Выключение устройств",
                         this, "off_devices",
-                        jump_if_AllowedDevices));
+                        jump_if_AllowedDevTypes));
 
                     toStepByCondition.CreateParameter(new ActiveParameter("next_step_n",
                        "Шаг"));
@@ -375,10 +375,10 @@ namespace TechObject
                 var toStateByCondition = new ActionCustom("Группа", this, "");
                 toStateByCondition.CreateAction(new Action("Включение устройств",
                     this, "on_devices",
-                    jump_if_AllowedDevices));
+                    jump_if_AllowedDevTypes));
                 toStateByCondition.CreateAction(new Action("Выключение устройств",
                     this, "off_devices",
-                    jump_if_AllowedDevices));
+                    jump_if_AllowedDevTypes));
 
                 toStateByCondition.CreateParameter(new ComboBoxParameter(
                 "next_state_n",
@@ -1086,7 +1086,7 @@ namespace TechObject
         /// <summary>
         /// Устройства отображаемые в действии "Переход к ... по условию"
         /// </summary>
-        private static EplanDevice.DeviceType[] jump_if_AllowedDevices 
+        private static EplanDevice.DeviceType[] jump_if_AllowedDevTypes 
             = new EplanDevice.DeviceType[] 
         {
             EplanDevice.DeviceType.V,
