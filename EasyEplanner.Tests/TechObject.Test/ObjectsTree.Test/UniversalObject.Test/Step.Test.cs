@@ -384,6 +384,7 @@ namespace EasyEplanner.Tests
                 EplanDevice.DeviceType.DI,
                 EplanDevice.DeviceType.DO,
                 EplanDevice.DeviceType.SB,
+                EplanDevice.DeviceType.LS,
             };
 
             var mainStep = new object[]
