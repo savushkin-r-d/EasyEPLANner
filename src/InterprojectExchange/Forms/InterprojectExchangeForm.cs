@@ -986,6 +986,13 @@ namespace InterprojectExchange
             bindedSignalsList.Items.Clear();
             Dictionary<string, List<string[]>> signals = interprojectExchange
                 .GetBindedSignals();
+
+            if (signals is null)
+            {
+                closeButton_Click(this, null);
+                return;
+            }
+
             foreach(var signalType in signals.Keys)
             {
                 ListViewGroup signalGroup = bindedSignalsList

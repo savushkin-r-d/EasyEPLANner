@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using EasyEPlanner;
 
 namespace InterprojectExchange
@@ -132,9 +133,23 @@ namespace InterprojectExchange
 
             foreach(var channelName in DeviceChannelsNames)
             {
+                var currentProjectSignals = GetCurrentProjectSignals(channelName);
+                var advancedProjectSignals = GetAdvancedProjectSignals(channelName);
+
+                if (currentProjectSignals.Count != advancedProjectSignals.Count)
+                {
+                    MessageBox.Show($"Количество каналов {channelName} не соотвествует " +
+                        $"количеству каналов в связанном проекте" +
+                        $" \"{SelectedModel.ProjectName}\".",
+                        "EPlanner",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return null;
+                }
+
                 List<string[]> channelSignals = GetSignalsPairs(
-                    GetCurrentProjectSignals(channelName), 
-                    GetAdvancedProjectSignals(channelName));
+                    currentProjectSignals,
+                    advancedProjectSignals);
                 signals.Add(channelName, channelSignals);
             }
 
