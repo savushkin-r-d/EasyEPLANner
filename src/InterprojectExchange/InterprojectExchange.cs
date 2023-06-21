@@ -144,7 +144,7 @@ namespace InterprojectExchange
                         "EPlanner",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
-                    return null;
+                    throw new Exception();
                 }
 
                 List<string[]> channelSignals = GetSignalsPairs(

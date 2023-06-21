@@ -984,14 +984,18 @@ namespace InterprojectExchange
             }
 
             bindedSignalsList.Items.Clear();
-            Dictionary<string, List<string[]>> signals = interprojectExchange
-                .GetBindedSignals();
+            var signals = new Dictionary<string, List<string[]>>();
 
-            if (signals is null)
+            try
+            {
+                signals = interprojectExchange.GetBindedSignals();
+            }
+            catch(Exception)
             {
                 closeButton_Click(this, null);
                 return;
             }
+            
 
             foreach(var signalType in signals.Keys)
             {
