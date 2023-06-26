@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using static System.Windows.Forms.ListView;
 
@@ -80,6 +81,13 @@ namespace InterprojectExchange
             }
 
             LoadCurrentProjectDevices();
+            if (CheckBindingSignals())
+            {
+                Close();
+                return;
+            }
+            interprojectExchange.MainModel.SelectedAdvancedProject =
+                interprojectExchange.SelectedModel.ProjectName;
             ReloadListViewWithSignals();
         }
 
@@ -100,6 +108,46 @@ namespace InterprojectExchange
 
             bool hardRefilter = true;
             RefilterListViews(hardRefilter);
+        }
+
+        /// <summary>
+        /// Проверка соответсвия количества связанных сигналов
+        /// </summary>
+        /// <returns>
+        /// true - есть ошибка
+        /// false - ошибки нет
+        /// </returns>
+        private bool CheckBindingSignals()
+        {
+            var err = new StringBuilder();
+            var mainModel = interprojectExchange.MainModel;
+
+            foreach (var model in interprojectExchange.Models)
+            {
+                if (model == mainModel) continue;
+
+                mainModel.SelectedAdvancedProject = model.ProjectName;
+
+                string receiverErr = mainModel.ReceiverSignals.CountCompare(model.SourceSignals);
+                if (!string.IsNullOrEmpty(receiverErr))
+                {
+                    err.Append($"remote_gateways: {model.ProjectName} - {receiverErr}\n");
+                }
+
+                string sourceErr = mainModel.SourceSignals.CountCompare(model.ReceiverSignals);
+                if (!string.IsNullOrEmpty(sourceErr))
+                {
+                    err.Append($"shared_devices: {model.ProjectName} - {sourceErr}\n");
+                }
+            }
+
+            if (err.Length > 0)
+            {
+                ShowErrorMessage($"Несоответсвие количества каналов:\n{err}");
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -984,20 +1032,10 @@ namespace InterprojectExchange
             }
 
             bindedSignalsList.Items.Clear();
-            var signals = new Dictionary<string, List<string[]>>();
 
-            try
-            {
-                signals = interprojectExchange.GetBindedSignals();
-            }
-            catch(Exception)
-            {
-                closeButton_Click(this, null);
-                return;
-            }
-            
+            var signals = interprojectExchange.GetBindedSignals();
 
-            foreach(var signalType in signals.Keys)
+            foreach (var signalType in signals.Keys)
             {
                 ListViewGroup signalGroup = bindedSignalsList
                     .Groups[signalType];

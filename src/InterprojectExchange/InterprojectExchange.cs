@@ -136,17 +136,6 @@ namespace InterprojectExchange
                 var currentProjectSignals = GetCurrentProjectSignals(channelName);
                 var advancedProjectSignals = GetAdvancedProjectSignals(channelName);
 
-                if (currentProjectSignals.Count != advancedProjectSignals.Count)
-                {
-                    MessageBox.Show($"Количество каналов {channelName} не соотвествует " +
-                        $"количеству каналов в связанном проекте" +
-                        $" \"{SelectedModel.ProjectName}\".",
-                        "EPlanner",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-                    throw new Exception();
-                }
-
                 List<string[]> channelSignals = GetSignalsPairs(
                     currentProjectSignals,
                     advancedProjectSignals);
