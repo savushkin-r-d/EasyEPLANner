@@ -119,35 +119,12 @@ namespace InterprojectExchange
         /// </returns>
         private bool CheckBindingSignals()
         {
-            var err = new StringBuilder();
-            var mainModel = interprojectExchange.MainModel;
+            string err = interprojectExchange.CheckBindingSignals();
 
-            foreach (var model in interprojectExchange.Models)
-            {
-                if (model == mainModel) continue;
+            if (string.IsNullOrEmpty(err)) return false;
 
-                mainModel.SelectedAdvancedProject = model.ProjectName;
-
-                string receiverErr = mainModel.ReceiverSignals.CountCompare(model.SourceSignals);
-                if (!string.IsNullOrEmpty(receiverErr))
-                {
-                    err.Append($"remote_gateways: {model.ProjectName} - {receiverErr}\n");
-                }
-
-                string sourceErr = mainModel.SourceSignals.CountCompare(model.ReceiverSignals);
-                if (!string.IsNullOrEmpty(sourceErr))
-                {
-                    err.Append($"shared_devices: {model.ProjectName} - {sourceErr}\n");
-                }
-            }
-
-            if (err.Length > 0)
-            {
-                ShowErrorMessage($"Несоответсвие количества каналов:\n{err}");
-                return true;
-            }
-
-            return false;
+            ShowErrorMessage($"Несоответсвие количества каналов:\n{err}");
+            return true;
         }
 
         /// <summary>

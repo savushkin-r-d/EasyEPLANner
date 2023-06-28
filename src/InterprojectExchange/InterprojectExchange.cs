@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using EasyEPlanner;
 
@@ -11,7 +12,7 @@ namespace InterprojectExchange
     /// </summary>
     public class InterprojectExchange
     {
-        private InterprojectExchange()
+        protected InterprojectExchange()
         {
             interprojectExchangeModels = new List<IProjectModel>();
         }
@@ -133,16 +134,40 @@ namespace InterprojectExchange
 
             foreach(var channelName in DeviceChannelsNames)
             {
-                var currentProjectSignals = GetCurrentProjectSignals(channelName);
-                var advancedProjectSignals = GetAdvancedProjectSignals(channelName);
-
                 List<string[]> channelSignals = GetSignalsPairs(
-                    currentProjectSignals,
-                    advancedProjectSignals);
+                    GetCurrentProjectSignals(channelName),
+                    GetAdvancedProjectSignals(channelName));
                 signals.Add(channelName, channelSignals);
             }
 
             return signals;
+        }
+
+        public string CheckBindingSignals()
+        {
+            var err = new StringBuilder();
+            var mainModel = MainModel;
+
+            foreach (var model in Models)
+            {
+                if (model == MainModel) continue;
+
+                mainModel.SelectedAdvancedProject = model.ProjectName;
+
+                string receiverErr = mainModel.ReceiverSignals.CountCompare(model.SourceSignals);
+                if (!string.IsNullOrEmpty(receiverErr))
+                {
+                    err.Append($"remote_gateways: {model.ProjectName} - {receiverErr}\n");
+                }
+
+                string sourceErr = mainModel.SourceSignals.CountCompare(model.ReceiverSignals);
+                if (!string.IsNullOrEmpty(sourceErr))
+                {
+                    err.Append($"shared_devices: {model.ProjectName} - {sourceErr}\n");
+                }
+            }
+
+            return err.ToString();
         }
 
         /// <summary>
@@ -442,7 +467,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Главная модель
         /// </summary>
-        public CurrentProjectModel MainModel 
+        public virtual CurrentProjectModel MainModel 
         { 
             get
             {
