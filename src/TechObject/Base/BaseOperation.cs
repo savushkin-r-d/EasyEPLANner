@@ -260,6 +260,20 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Сброс доп.свойств привязанных агрегатов
+        /// </summary>
+        public void SetAttachedObjectExtraProperties(List<BaseParameter> extraProperties)
+        {
+
+           var dictionaryExtraProperties = extraProperties.ToDictionary(property => property.LuaName, property => property.Value);
+            
+           foreach (var property in Properties.Where(property => property.Owner != this))
+           {
+                property.SetNewValue(dictionaryExtraProperties[property.LuaName]);
+           }
+        }
+
+        /// <summary>
         /// Добавление полей в массив для отображения на дереве
         /// </summary>
         private void SetItems()

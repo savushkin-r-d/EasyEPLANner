@@ -1039,7 +1039,7 @@ namespace Editor
         }
 
 
-        bool Editable = false;
+        public bool Editable { get; private set; } = false;
 
         /// <summary>
         /// Переход в режим редактирования.

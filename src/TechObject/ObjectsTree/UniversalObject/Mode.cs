@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using EasyEPlanner;
 using Editor;
 
@@ -455,16 +456,50 @@ namespace TechObject
         {
             bool similarBaseOperation = CheckTheSameBaseOperations(
                 newBaseOperationName);
-            // Инициализация базовой операции по имени
-            if (baseOperation.Name != newBaseOperationName &&
-                similarBaseOperation == false)
-            {
-                baseOperation.Init(newBaseOperationName, this);
-                SetItems();
-                return true;
-            }
+            List<BaseParameter> cloneOldExtraProperties = null;
 
-            return false;
+            if (baseOperation.Name == newBaseOperationName ||
+                similarBaseOperation == true)
+                return false;
+
+            if (Editor.Editor.GetInstance().EditorForm.Editable == true && 
+                newBaseOperationName != string.Empty && baseOperation.Name != string.Empty)
+            {
+                DialogResult resetExtraproperties = CheckResetAttachedObjectsExtraProperties();
+                if (resetExtraproperties == DialogResult.Cancel)
+                    return false;
+                if (resetExtraproperties == DialogResult.No)
+                    cloneOldExtraProperties = new List<BaseParameter>(baseOperation.Properties);
+            }
+   
+            // Инициализация базовой операции по имени
+            baseOperation.Init(newBaseOperationName, this);
+            SetItems();
+
+            if (cloneOldExtraProperties != null)
+                baseOperation.SetAttachedObjectExtraProperties(cloneOldExtraProperties);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Вызов диалогового окна с пощдтверждением сброса доп.свойств операции
+        /// </summary>
+        /// <returns>
+        /// DialogResult:
+        /// yes    - сброс доп.свойств для привязанных агрегатов
+        /// no     - не сбрасывать доп.свойства
+        /// cancel - отменить изменение базовой операции.
+        /// </returns>
+        private DialogResult CheckResetAttachedObjectsExtraProperties()
+        {
+            var dialogResult = MessageBox.Show(
+                "Сбросить доп.свойства привязанных агрегатов?",
+                "EPlaner",
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Exclamation);
+
+            return dialogResult;
         }
 
         override public bool IsEditable
