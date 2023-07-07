@@ -46,12 +46,9 @@ namespace TechObject
 
         #region реализация ItreeViewItem
         public override bool SetNewValue(string newValue)
-        {
-            // параметр в доп.свойствах операции
-            var techObj = (Owner as BaseOperation)?.Owner.Owner.Owner;
-            var param = techObj?.GetParamsManager().Float.GetParam(newValue);
-            if (!string.IsNullOrEmpty(newValue) && techObj != null && param is null) 
-                    return false;
+        {   
+            if (DisplayParameters && Owner is BaseOperation) 
+                OneValueOnly = true;
 
             bool notStub = !newValue.ToLower()
                 .Contains(StaticHelper.CommonConst.StubForCells.ToLower());

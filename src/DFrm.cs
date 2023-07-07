@@ -1375,7 +1375,7 @@ namespace EasyEPlanner
                 devicesTreeViewAdv.Refresh();
 
                 res = OnCheckOperationTree.GetResStr();
-                functionAfterCheck(res);
+                functionAfterCheck(res.Trim());
             }
         }
 
