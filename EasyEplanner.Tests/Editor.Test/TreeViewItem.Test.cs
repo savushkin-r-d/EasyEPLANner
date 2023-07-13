@@ -225,7 +225,7 @@ namespace Tests.Editor
         [Test]
         public void IsFilled_NewObject_ReturnsTrue()
         {
-            Assert.IsTrue(GetNewTreeViewItem().IsFilled);
+            Assert.IsFalse(GetNewTreeViewItem().IsFilled);
         }
 
         [Test]

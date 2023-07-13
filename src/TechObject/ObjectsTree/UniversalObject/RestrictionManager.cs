@@ -163,23 +163,6 @@ namespace TechObject
             }
             return null;
         }
-
-        public override bool IsFilled
-        {
-            get
-            {
-                int emptyRestrictionsCount = restrictions
-                    .Where(x => x.RestrictDictionary.Keys.Count == 0).Count();
-                if (emptyRestrictionsCount != restrictions.Count)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
         #endregion
 
         public override string GetLinkToHelpPage()

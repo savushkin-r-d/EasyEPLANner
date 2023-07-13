@@ -89,21 +89,6 @@ namespace TechObject
             }
             return false;
         }
-
-        public override bool IsFilled
-        {
-            get
-            {
-                if (Items.Where(x => x.IsFilled).Count() > 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
         #endregion
 
         public void Clear()

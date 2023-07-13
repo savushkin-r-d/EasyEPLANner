@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Editor
 {
@@ -281,7 +282,8 @@ namespace Editor
         {
             get
             {
-                return true;
+                return (EditText[1].Length > 0 && EditText[1] != "-1") ||
+                    (Items?.Any(item => item.IsFilled) ?? false);
             }
         }
 
