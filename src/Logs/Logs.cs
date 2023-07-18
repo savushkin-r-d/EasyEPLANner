@@ -16,7 +16,7 @@
         /// </summary>
         public static void AddMessage(string msg)
         {
-            log.AddMessage(msg);
+            log?.AddMessage(msg);
         }
 
         /// <summary>
