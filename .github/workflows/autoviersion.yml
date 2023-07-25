@@ -1,38 +1,37 @@
-name: AutoVersion
+name: Auto-update version
 
 on:
   schedule:
-    - cron: '0 0 1 * *'
+  - cron: '33 3 1 * *'
+  workflow_dispatch:
+
+env:
+  AssemblyInfoPath: ./src/Properties/AssemblyInfo.cs
 
 jobs:
   autoversion:
     runs-on: windows-latest
-
     steps:
-      - uses: actions/checkout@v2
-      
-      - name: Get month
-        run: $Month = Get-Date -format 'MM'
-
-      - name: Get AssemblyInfo file path
-        run: $File = 'src/Properties/AssemblyInfo.cs' 
-
-      - name: Replace version
-        run: > 
-          (Get-Content $File) -replace 
+      - uses: actions/checkout@v3
+      - id: date
+        run: |
+          echo "Month=$(date +'%m')" >> $env:GITHUB_OUTPUT
+          echo "Year=$(date +'%Y')" >> $env:GITHUB_OUTPUT
+          echo "MonthName=$(date +'%B')" >> $env:GITHUB_OUTPUT
+      - name: Change version
+        run: >
+          (Get-Content ${{ env.AssemblyInfoPath }}) -replace
           '(?<start>(AssemblyVersion|AssemblyFileVersion)\(\"\d{4}\.)\d{2}(?<end>(\.\*|\.0\.0)"\))',
-          "`${start}$Month`${end}" 
-          | Set-Content $File
-
-      - name: switching from HTTPS to SSH
-        run: git remote set-url origin ${{ secrets.ssh }}
-      - name: check for changes
-        run: git status
-      - name: stage changed files
-        run: git add .
-      - name: commit changed files
-        run: git commit -m "Auto updating version AssemblyInfo.cs"
-      - name: fetch from master
-        run: git fetch origin master
-      - name: push code to master
-        run: git push origin HEAD:master
+          "`${start}${{ steps.date.outputs.Month }}`${end}" 
+          | Set-Content ${{env.AssemblyInfoPath }}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          title: Auto-update version
+          body:
+          commit-message: Auto-update version to ${{ steps.date.outputs.MonthName }} ${{ steps.date.outputs.Year }}
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          branch: autoupdate-version
+          delete-branch: true
+          reviewers: idzm
