@@ -5,6 +5,7 @@ using NUnit.Framework;
 using TechObject;
 using Moq;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace EasyEplanner.Tests
 {
@@ -662,6 +663,43 @@ namespace EasyEplanner.Tests
                         step.DefaultPosition);
                 }
             }
+        }
+
+        private const string SetExtraPropertiesParameter = "TestedParameter";
+        private const string SetExtraPropertiesOldValue = "false";
+        private const string SetExtraPropertiesNewValue = "true";
+        private const string SetExtraPropertiesExpected = "true";
+        
+
+        [Test]
+        public void SetExtraProperties_ListBaseOperation()
+        {
+            var baseOperation = new BaseOperation(
+                string.Empty, string.Empty,
+                new List<BaseParameter>() 
+                    { new ActiveBoolParameter(SetExtraPropertiesParameter, string.Empty, SetExtraPropertiesOldValue) },
+                null);
+
+            baseOperation.SetExtraProperties(new List<BaseParameter>()
+                { new ActiveBoolParameter(SetExtraPropertiesParameter, string.Empty, SetExtraPropertiesNewValue) });
+
+            Assert.AreEqual(SetExtraPropertiesExpected, baseOperation.Properties[0].Value);
+        }
+
+
+        [Test]
+        public void SetExtraProperties_ArrayObjectProperty()
+        {
+            var baseOperation = new BaseOperation(
+                string.Empty, string.Empty,
+                new List<BaseParameter>() 
+                    { new ActiveBoolParameter(SetExtraPropertiesParameter, string.Empty, SetExtraPropertiesOldValue) },
+                null);
+
+            baseOperation.SetExtraProperties(new Editor.ObjectProperty[]
+                { new Editor.ObjectProperty(SetExtraPropertiesParameter, SetExtraPropertiesNewValue) }); 
+
+            Assert.AreEqual(SetExtraPropertiesExpected, baseOperation.Properties[0].Value);
         }
     }
 }

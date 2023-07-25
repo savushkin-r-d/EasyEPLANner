@@ -4,10 +4,62 @@ using Editor;
 
 namespace TechObject
 {
+    public interface IBaseOperation
+    {
+        /// <summary>
+        /// Получить имя операции
+        /// </summary>
+        string Name { get; set; }
+
+        /// <summary>
+        /// Получить Lua-имя операции
+        /// </summary>
+        string LuaName { get; set; }
+
+        /// <summary>
+        /// Получить свойства базовой операции
+        /// </summary>
+        List<BaseParameter> Properties { get; set; }
+
+        /// <summary>
+        /// Инициализация базовой операции по имени
+        /// </summary>
+        /// <param name="baseOperName">Имя операции</param>
+        /// <param name="mode">Операция владелец</param>
+        void Init(string baseOperName, Mode mode);
+
+        /// <summary>
+        /// Копирование объекта
+        /// </summary>
+        /// <param name="owner">Новая операция-владелец объекта</param>
+        /// <returns></returns>
+        BaseOperation Clone(Mode owner);
+
+        /// <summary>
+        /// Сохранение в виде таблицы Lua
+        /// </summary>
+        /// <param name="prefix">Префикс (отступ)</param>
+        /// <returns></returns>
+        string SaveAsLuaTable(string prefix);
+
+        void Synch(int[] array);
+
+        /// <summary>
+        /// Сброс доп.свойств привязанных агрегатов
+        /// </summary>
+        void SetExtraProperties(List<BaseParameter> properties);
+
+        /// <summary>
+        /// Установка свойств базовой операции
+        /// </summary>
+        /// <param name="extraParams">Свойства операции</param>
+        void SetExtraProperties(ObjectProperty[] extraParams);
+    }
+
     /// <summary>
     /// Класс реализующий базовую операцию для технологического объекта
     /// </summary>
-    public class BaseOperation : TreeViewItem
+    public class BaseOperation : TreeViewItem, IBaseOperation
     {
         public BaseOperation(Mode owner)
         {
@@ -108,34 +160,16 @@ namespace TechObject
             Properties.Add(par);
         }
 
-        /// <summary>
-        /// Получить имя операции
-        /// </summary>
         public string Name
         {
-            get
-            {
-                return operationName;
-            }
-            set
-            {
-                operationName = value;
-            }
+            get => operationName;
+            set => operationName = value;
         }
 
-        /// <summary>
-        /// Получить Lua имя операции
-        /// </summary>
         public string LuaName
         {
-            get
-            {
-                return luaOperationName;
-            }
-            set
-            {
-                luaOperationName = value;
-            }
+            get => luaOperationName;
+            set => luaOperationName = value;
         }
 
         /// <summary>
@@ -180,11 +214,6 @@ namespace TechObject
             return states.ContainsKey(stateTypeStr);
         }
 
-        /// <summary>
-        /// Инициализация базовой операции по имени
-        /// </summary>
-        /// <param name="baseOperName">Имя операции</param>
-        /// <param name="mode">Операция владелец</param>
         public void Init(string baseOperName, Mode mode)
         {
             TechObject techObject = owner.Owner.Owner;
@@ -260,20 +289,6 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Сброс доп.свойств привязанных агрегатов
-        /// </summary>
-        public void SetAttachedObjectExtraProperties(List<BaseParameter> extraProperties)
-        {
-
-           var dictionaryExtraProperties = extraProperties.ToDictionary(property => property.LuaName, property => property.Value);
-            
-           foreach (var property in Properties.Where(property => property.Owner != this))
-           {
-                property.SetNewValue(dictionaryExtraProperties[property.LuaName]);
-           }
-        }
-
-        /// <summary>
         /// Добавление полей в массив для отображения на дереве
         /// </summary>
         private void SetItems()
@@ -286,11 +301,6 @@ namespace TechObject
             items = showedParameters.ToArray();
         }
 
-        /// <summary>
-        /// Сохранение в виде таблицы Lua
-        /// </summary>
-        /// <param name="prefix">Префикс (отступ)</param>
-        /// <returns></returns>
         public string SaveAsLuaTable(string prefix)
         {
             var res = string.Empty;
@@ -320,38 +330,29 @@ namespace TechObject
             return res;
         }
 
-        /// <summary>
-        /// Установка свойств базовой операции
-        /// </summary>
-        /// <param name="extraParams">Свойства операции</param>
         public void SetExtraProperties(ObjectProperty[] extraParams)
         {
-            foreach (ObjectProperty extraParam in extraParams)
-            {
-                var property = Properties
-                    .Where(x => x.LuaName.Equals(extraParam.DisplayText[0]))
-                    .FirstOrDefault();
-
-                if (property != null)
-                {
-                    property.SetValue(extraParam.Value);
-                }
-            }
+            SetExtraProperties(extraParams
+                .ToDictionary(prop => prop.DisplayText[0], prop => prop.Value));
         }
 
-        /// <summary>
-        /// Получить свойства базовой операции
-        /// </summary>
+        public void SetExtraProperties(List<BaseParameter> extraProperties)
+        {
+            SetExtraProperties(extraProperties
+                .ToDictionary(prop => prop.LuaName, prop => prop.Value));
+        }
+
+        public void SetExtraProperties(Dictionary<string, string> extraProperties)
+        {
+            foreach (var property in Properties)
+                if (extraProperties.ContainsKey(property.LuaName))
+                    property.SetNewValue(extraProperties[property.LuaName]);
+        }
+
         public List<BaseParameter> Properties
         {
-            get
-            {
-                return baseOperationProperties;
-            }
-            set
-            {
-                baseOperationProperties = value;
-            }
+            get => baseOperationProperties;
+            set => baseOperationProperties = value;
         }
 
         public Mode Owner
@@ -476,11 +477,6 @@ namespace TechObject
             }
         }
 
-        /// <summary>
-        /// Копирование объекта
-        /// </summary>
-        /// <param name="owner">Новая операция-владелец объекта</param>
-        /// <returns></returns>
         public BaseOperation Clone(Mode owner)
         {
             var operation = Clone();

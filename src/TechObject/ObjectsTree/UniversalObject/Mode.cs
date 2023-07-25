@@ -34,7 +34,8 @@ namespace TechObject
         /// <param name="getN">Функция получения номера операции.</param>
         /// <param name="newOwner">Владелец операции (Менеджер операций)
         /// </param>
-        public Mode(string name, GetN getN, ModesManager newOwner)
+        public Mode(string name, GetN getN, ModesManager newOwner,
+            IBaseOperation baseOperation = null)
         {
             this.name = name;
             this.getN = getN;
@@ -62,7 +63,7 @@ namespace TechObject
             operPar = new OperationParams();
 
             // Экземпляр класса базовой операции
-            baseOperation = new BaseOperation(this); 
+            this.baseOperation = baseOperation ?? new BaseOperation(this); 
 
             SetItems();
         }
@@ -84,7 +85,7 @@ namespace TechObject
 
             if (notEmptyBaseOperation && baseOperationHasProperties)
             {
-                itemsList.Add(baseOperation);
+                itemsList.Add(baseOperation as BaseOperation);
             }
 
             items = itemsList.ToArray();
@@ -368,7 +369,7 @@ namespace TechObject
         {
             get
             {
-                return baseOperation;
+                return baseOperation as BaseOperation;
             }
         }
 
@@ -454,52 +455,32 @@ namespace TechObject
         public override bool SetNewValue(string newBaseOperationName, 
             bool isBaseOper)
         {
-            bool similarBaseOperation = CheckTheSameBaseOperations(
-                newBaseOperationName);
-            List<BaseParameter> cloneOldExtraProperties = null;
-
-            if (baseOperation.Name == newBaseOperationName ||
-                similarBaseOperation == true)
+            if (baseOperation.Name.Equals(newBaseOperationName) ||
+                CheckTheSameBaseOperations(newBaseOperationName) is true)
                 return false;
 
-            if (Editor.Editor.GetInstance().EditorForm.Editable == true && 
-                newBaseOperationName != string.Empty && baseOperation.Name != string.Empty)
+            List<BaseParameter> CloneExtraProperties = null;
+
+            if (TechObjectEditor.Editable is true &&
+                !string.IsNullOrEmpty(newBaseOperationName) &&
+                !string.IsNullOrEmpty(baseOperation.Name))
             {
-                DialogResult resetExtraproperties = CheckResetAttachedObjectsExtraProperties();
-                if (resetExtraproperties == DialogResult.Cancel)
+                var reset = TechObjectEditor.DialogResetExtraProperties();
+                if (reset is DialogResult.Cancel)
                     return false;
-                if (resetExtraproperties == DialogResult.No)
-                    cloneOldExtraProperties = new List<BaseParameter>(baseOperation.Properties);
+                if (reset is DialogResult.No)
+                    CloneExtraProperties = new List<BaseParameter>(
+                        baseOperation.Properties);
             }
-   
+
             // Инициализация базовой операции по имени
             baseOperation.Init(newBaseOperationName, this);
             SetItems();
 
-            if (cloneOldExtraProperties != null)
-                baseOperation.SetAttachedObjectExtraProperties(cloneOldExtraProperties);
+            if (CloneExtraProperties != null)
+                baseOperation.SetExtraProperties(CloneExtraProperties);
 
             return true;
-        }
-
-        /// <summary>
-        /// Вызов диалогового окна с пощдтверждением сброса доп.свойств операции
-        /// </summary>
-        /// <returns>
-        /// DialogResult:
-        /// yes    - сброс доп.свойств для привязанных агрегатов
-        /// no     - не сбрасывать доп.свойства
-        /// cancel - отменить изменение базовой операции.
-        /// </returns>
-        private DialogResult CheckResetAttachedObjectsExtraProperties()
-        {
-            var dialogResult = MessageBox.Show(
-                "Сбросить доп.свойства привязанных агрегатов?",
-                "EPlaner",
-                MessageBoxButtons.YesNoCancel,
-                MessageBoxIcon.Exclamation);
-
-            return dialogResult;
         }
 
         override public bool IsEditable
@@ -751,6 +732,8 @@ namespace TechObject
             }
         }
 
+        public static Editor.IEditor TechObjectEditor { get; set; } = Editor.Editor.GetInstance(); 
+
         private GetN getN;
 
         private string name;           /// Имя операции.
@@ -762,7 +745,7 @@ namespace TechObject
 
         private ModesManager owner;
 
-        private BaseOperation baseOperation; /// Базовая операция
+        private IBaseOperation baseOperation; /// Базовая операция
 
         public const string DefaultModeName = "Новая операция";
     }
