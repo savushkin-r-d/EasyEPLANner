@@ -30,8 +30,6 @@ jobs:
           title: Auto-update version
           body:
           commit-message: Auto-update version to ${{ steps.date.outputs.MonthName }} ${{ steps.date.outputs.Year }}
-          committer: GitHub <noreply@github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           branch: autoupdate-version
           delete-branch: true
           reviewers: idzm
