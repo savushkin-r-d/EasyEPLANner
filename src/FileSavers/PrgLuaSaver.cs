@@ -6,7 +6,7 @@ using EplanDevice;
 
 namespace EasyEPlanner
 {
-    static class PrgLuaSaver
+    public static class PrgLuaSaver
     {
         /// <summary>
         /// Сохранить Prg.lua как таблицу Lua
