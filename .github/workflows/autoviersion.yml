@@ -2,7 +2,7 @@ name: Auto-update version
 
 on:
   schedule:
-  - cron: '33 3 1 * *'
+  - cron: '43 4 1 * *'
   workflow_dispatch:
 
 env:
@@ -10,6 +10,7 @@ env:
 
 jobs:
   autoversion:
+    name: Auto-update version
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
@@ -20,10 +21,12 @@ jobs:
           echo "MonthName=$(date +'%B')" >> $env:GITHUB_OUTPUT
       - name: Change version
         run: >
-          (Get-Content ${{ env.AssemblyInfoPath }}) -replace
-          '(?<start>(AssemblyVersion|AssemblyFileVersion)\(\"\d{4}\.)\d{2}(?<end>(\.\*|\.0\.0)"\))',
-          "`${start}${{ steps.date.outputs.Month }}`${end}" 
-          | Set-Content ${{env.AssemblyInfoPath }}
+          (Get-Content ${{ env.AssemblyInfoPath }}) 
+          -replace '(?<start>(AssemblyVersion|AssemblyFileVersion)\(\")\d{4}\.\d{2}',
+          "`${start}${{ steps.date.outputs.Year }}.${{ steps.date.outputs.Month }}" 
+          -replace '(?<start>Copyright ©  2012 - )\d{4}',
+          "`${start}${{ steps.date.outputs.Year }}" 
+          | Set-Content ${{ env.AssemblyInfoPath }}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
