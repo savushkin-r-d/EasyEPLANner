@@ -37,6 +37,7 @@ jobs:
         https://api.github.com/orgs/savushkin-r-d/members/${{ github.event.sender.login }})
         
         echo "response=$response" >> $env:GITHUB_OUTPUT
+      continue-on-error: true
     # --On linux--
     # run: |
     #   response=`curl -L \
