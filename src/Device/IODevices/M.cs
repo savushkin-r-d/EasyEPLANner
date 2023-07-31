@@ -43,16 +43,16 @@ namespace EplanDevice
 
                 case "M_REV":
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Обратная связь"));
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Пуск"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));                    
 
                     parameters.Add(Parameter.P_ON_TIME, null);
                     break;
 
                 case "M_REV_FREQ":
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Обратная связь"));
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Пуск"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));                    
                     AO.Add(new IOChannel("AO", -1, -1, -1, "Частота вращения"));
 
                     parameters.Add(Parameter.P_ON_TIME, null);
@@ -60,16 +60,16 @@ namespace EplanDevice
 
                 case "M_REV_2":
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Обратная связь"));
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Пуск"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));                    
 
                     parameters.Add(Parameter.P_ON_TIME, null);
                     break;
 
                 case "M_REV_FREQ_2":
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Обратная связь"));
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Пуск"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));                    
                     AO.Add(new IOChannel("AO", -1, -1, -1, "Частота вращения"));
 
                     parameters.Add(Parameter.P_ON_TIME, null);
@@ -78,8 +78,8 @@ namespace EplanDevice
 
                 case "M_REV_2_ERROR":
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Авария"));
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Пуск"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));                    
 
                     parameters.Add(Parameter.P_ON_TIME, null);
                     break;
@@ -87,8 +87,8 @@ namespace EplanDevice
                 case "M_REV_FREQ_2_ERROR":
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Обратная связь"));
                     DI.Add(new IOChannel("DI", -1, -1, -1, "Авария"));
-                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));
                     DO.Add(new IOChannel("DO", -1, -1, -1, "Пуск"));
+                    DO.Add(new IOChannel("DO", -1, -1, -1, "Реверс"));                    
                     AO.Add(new IOChannel("AO", -1, -1, -1, "Частота вращения"));
 
                     parameters.Add(Parameter.P_ON_TIME, null);
