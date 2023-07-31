@@ -336,17 +336,15 @@ namespace TechObject
                 .ToDictionary(prop => prop.DisplayText[0], prop => prop.Value));
         }
 
-        public void SetExtraProperties(List<BaseParameter> extraProperties)
+        public void SetExtraProperties(List<BaseParameter> properties)
         {
-            SetExtraProperties(extraProperties
-                .ToDictionary(prop => prop.LuaName, prop => prop.Value));
+            SetExtraProperties(properties.ToDictionary(prop => prop.LuaName, prop => prop.Value));
         }
 
         public void SetExtraProperties(Dictionary<string, string> extraProperties)
         {
-            foreach (var property in Properties)
-                if (extraProperties.ContainsKey(property.LuaName))
-                    property.SetNewValue(extraProperties[property.LuaName]);
+            foreach (var property in Properties.Where(obj => extraProperties.ContainsKey(obj.LuaName)))
+                property.SetNewValue(extraProperties[property.LuaName]);
         }
 
         public List<BaseParameter> Properties
