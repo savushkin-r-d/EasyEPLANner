@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using StaticHelper;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Editor
@@ -282,8 +284,8 @@ namespace Editor
         {
             get
             {
-                return (EditText[1].Length > 0 && EditText[1] != "-1") ||
-                    (Items?.Any(item => item.IsFilled) ?? false);
+                return (EditText[1].Length > 0 && EditText[1] != CommonConst.EmptyValue) ||
+                    (Items != null && Array.Exists(Items, item => item.IsFilled));
             }
         }
 

@@ -425,7 +425,8 @@ namespace Editor
         /// False - скрывать
         /// </summary>
         public virtual bool IsFilled => EditText[1].Length > 0 &&
-            !(EditText[1] == "-1" && DisplayText[1] == CommonConst.StubForCells);
+            !(EditText[1] == CommonConst.EmptyValue &&
+            DisplayText[1] == CommonConst.StubForCells);
 
         public virtual bool ContainsBaseObject
         {
