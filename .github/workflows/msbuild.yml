@@ -1,5 +1,9 @@
 name: MSBuild
 
+concurrency:
+  group: ${{ github.ref }}/${{ github.event_name }}
+  cancel-in-progress: true
+
 on:
   pull_request_target:
     branches: [ master ]
