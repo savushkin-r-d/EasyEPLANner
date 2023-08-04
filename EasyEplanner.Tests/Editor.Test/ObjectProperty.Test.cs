@@ -296,7 +296,7 @@ namespace Tests.Editor
         [Test]
         public void IsFilled_EmptyObject_ReturnsTrue()
         {
-            Assert.IsTrue(GetEmptyProperty().IsFilled);
+            Assert.IsFalse(GetEmptyProperty().IsFilled);
         }
 
         [Test]

@@ -207,21 +207,6 @@ namespace TechObject
                 return true;
             }
         }
-
-        public override bool IsFilled
-        {
-            get
-            {
-                if (Value == "")
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-        }
         #endregion
 
         /// <summary>

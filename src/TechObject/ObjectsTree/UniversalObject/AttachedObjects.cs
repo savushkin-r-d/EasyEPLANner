@@ -467,14 +467,6 @@ namespace TechObject
 
         public override bool IsInsertableCopy => true;
 
-        public override bool IsFilled
-        {
-            get
-            {
-                return Value != string.Empty;
-            }
-        }
-
         public override bool IsDeletable
         {
             get

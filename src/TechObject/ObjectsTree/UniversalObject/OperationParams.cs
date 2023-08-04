@@ -125,21 +125,6 @@ namespace TechObject
                 return items.ToArray();
             }
         }
-
-        public override bool IsFilled
-        {
-            get
-            {
-                if(items.Count > 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
         #endregion
 
         private List<ITreeViewItem> items;

@@ -580,20 +580,7 @@ namespace TechObject
             return devToDraw;
         }
 
-        public override bool IsFilled
-        {
-            get
-            {
-                if (Empty)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-        }
+        public override bool IsFilled => !Empty;
 
         public override bool IsCopyable
         {
@@ -631,20 +618,7 @@ namespace TechObject
             }
         }
 
-        public bool Empty
-        {
-            get
-            {
-                if (deviceIndex.Count == 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
+        public bool Empty => deviceIndex.Count == 0;
 
         public Step Owner
         {

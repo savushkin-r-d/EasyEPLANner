@@ -894,21 +894,6 @@ namespace TechObject
             }
         }
 
-        public override bool IsFilled
-        {
-            get
-            {
-                if (items.Where(x => x.IsFilled).Count() > 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
         public override ImageIndexEnum ImageIndex
         {
             get

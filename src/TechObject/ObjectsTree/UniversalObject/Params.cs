@@ -412,21 +412,6 @@ namespace TechObject
             }
         }
 
-        public override bool IsFilled
-        {
-            get
-            {
-                if(parameters.Count > 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
         public override ImageIndexEnum ImageIndex
         {
             get

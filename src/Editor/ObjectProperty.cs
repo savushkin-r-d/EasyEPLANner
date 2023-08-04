@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using StaticHelper;
+using System.Collections.Generic;
 
 namespace Editor
 {
@@ -423,13 +424,9 @@ namespace Editor
         /// True - отображать
         /// False - скрывать
         /// </summary>
-        public virtual bool IsFilled
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public virtual bool IsFilled => EditText[1].Length > 0 &&
+            !(EditText[1] == CommonConst.EmptyValue &&
+            DisplayText[1] == CommonConst.StubForCells);
 
         public virtual bool ContainsBaseObject
         {

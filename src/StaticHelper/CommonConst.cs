@@ -114,5 +114,10 @@ namespace StaticHelper
         /// Заглушка-триггер для параметров в дополнительных свойствах операции.
         /// </summary>
         public const string StubForCells = "Нет";
+
+        /// <summary>
+        /// Edit-значение некоторых незаполненных полей в дереве тех.объектов
+        /// </summary>
+        public const string EmptyValue = "-1"; 
     }
 }
