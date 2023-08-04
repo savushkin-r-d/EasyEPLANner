@@ -258,7 +258,7 @@ namespace TechObject
             actions.Add(groupAiAo);
 
             var enableStepBySignal = new ActionGroupCustom(
-                "Сигнал для включения шага", this, "enable_step_by_signal",
+                "Сигнал для включения текущего шага", this, "enable_step_by_signal",
                 () =>
                 {
                     var enableStepBySignalAction = new ActionCustom("Группа",
@@ -287,7 +287,7 @@ namespace TechObject
             if (!isMainStep)
             {
                 var toStepByConditionAction = new ActionGroupCustom(
-                "Переход к шагу по условию", this, "jump_if",
+                "Переход к следующему шагу по условию", this, "jump_if",
                 () =>
                 {
                     var toStepByCondition = new ActionCustom("Группа", this, "");
