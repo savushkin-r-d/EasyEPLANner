@@ -330,6 +330,3 @@ ASALocalRun/
 .mfractor/
 /src/Properties/licenses.licx
 /docs/user_manual/.vscode
-/.github
-/.github/workflow
-/.github/workflow/CI-main.yaml
