@@ -391,8 +391,8 @@ namespace TechObject
                 case ValueType.Other:
                     if (Owner is BaseOperation baseOperation)
                     {
-                        // Сброс поля параметра в доп.свойствах операции,
-                        // если указан не существующий параметр
+                        // Сброс поля параметра в доп. свойствах операции,
+                        // если указан несуществующий параметр.
                         var operation = baseOperation.Owner;
                         var techObject = operation.Owner.Owner;
                         SetNewValue(string.Empty);
