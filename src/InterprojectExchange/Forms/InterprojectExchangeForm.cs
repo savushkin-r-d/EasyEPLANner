@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -66,6 +67,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Событие при загрузке формы
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void InterprojectExchangeForm_Load(object sender, EventArgs e)
         {
             // Установка имени текущего проекта
@@ -117,6 +119,7 @@ namespace InterprojectExchange
         /// true - есть ошибка
         /// false - ошибки нет
         /// </returns>
+        [ExcludeFromCodeCoverage]
         private bool CheckBindingSignals()
         {
             string err = interprojectExchange.CheckBindingSignals();
