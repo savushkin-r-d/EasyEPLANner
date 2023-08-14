@@ -35,7 +35,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Имя проекта
         /// </summary>
-        public string ProjectName { get; set; }
+        public virtual string ProjectName { get; set; }
 
         /// <summary>
         /// Устройства проекта

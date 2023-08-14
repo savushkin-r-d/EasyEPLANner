@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using static System.Windows.Forms.ListView;
 
@@ -65,6 +67,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Событие при загрузке формы
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void InterprojectExchangeForm_Load(object sender, EventArgs e)
         {
             // Установка имени текущего проекта
@@ -80,6 +83,13 @@ namespace InterprojectExchange
             }
 
             LoadCurrentProjectDevices();
+            if (CheckBindingSignals())
+            {
+                Close();
+                return;
+            }
+            interprojectExchange.MainModel.SelectedAdvancedProject =
+                interprojectExchange.SelectedModel.ProjectName;
             ReloadListViewWithSignals();
         }
 
@@ -100,6 +110,24 @@ namespace InterprojectExchange
 
             bool hardRefilter = true;
             RefilterListViews(hardRefilter);
+        }
+
+        /// <summary>
+        /// Проверка соответсвия количества связанных сигналов
+        /// </summary>
+        /// <returns>
+        /// true - есть ошибка
+        /// false - ошибки нет
+        /// </returns>
+        [ExcludeFromCodeCoverage]
+        private bool CheckBindingSignals()
+        {
+            string err = interprojectExchange.CheckBindingSignals();
+
+            if (string.IsNullOrEmpty(err)) return false;
+
+            ShowErrorMessage($"Несоответсвие количества каналов:\n{err}");
+            return true;
         }
 
         /// <summary>
@@ -984,9 +1012,10 @@ namespace InterprojectExchange
             }
 
             bindedSignalsList.Items.Clear();
-            Dictionary<string, List<string[]>> signals = interprojectExchange
-                .GetBindedSignals();
-            foreach(var signalType in signals.Keys)
+
+            var signals = interprojectExchange.GetBindedSignals();
+
+            foreach (var signalType in signals.Keys)
             {
                 ListViewGroup signalGroup = bindedSignalsList
                     .Groups[signalType];

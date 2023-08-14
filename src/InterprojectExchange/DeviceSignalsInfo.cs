@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace InterprojectExchange
 {
@@ -66,6 +68,29 @@ namespace InterprojectExchange
                 return AISignals.Count + AOSignals.Count +
                     DISignals.Count + DOSignals.Count;
             }
+        }
+
+        /// <summary>
+        /// Проверка соответсвия количества каналов привязки
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns>
+        /// Список типов каналов с несоответсвующим количеством
+        /// </returns>
+        public string CountCompare(DeviceSignalsInfo other)
+        {
+            var errorsCahnnels = new List<string>();
+
+            if (AO.Count != other.AO.Count)
+                errorsCahnnels.Add("AO");
+            if (AI.Count != other.AI.Count)
+                errorsCahnnels.Add("AI");
+            if (DO.Count != other.DO.Count)
+                errorsCahnnels.Add("DO");
+            if (DI.Count != other.DI.Count)
+                errorsCahnnels.Add("DI");
+
+            return string.Join(", ", errorsCahnnels);
         }
 
         private List<string> AISignals;

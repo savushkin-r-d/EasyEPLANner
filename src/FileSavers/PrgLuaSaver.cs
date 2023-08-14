@@ -6,7 +6,7 @@ using EplanDevice;
 
 namespace EasyEPlanner
 {
-    static class PrgLuaSaver
+    public static class PrgLuaSaver
     {
         /// <summary>
         /// Сохранить Prg.lua как таблицу Lua
@@ -269,7 +269,10 @@ namespace EasyEPlanner
 
             foreach(var obj in bindedObjects)
             {
-                var group = obj.BaseTechObject.BindingName;
+                var baseTechObject = obj.BaseTechObject;
+                if (baseTechObject is null) return dict;
+
+                var group = baseTechObject.BindingName;
                 if (dict.ContainsKey(group))
                 {
                     dict[group].Add(obj);

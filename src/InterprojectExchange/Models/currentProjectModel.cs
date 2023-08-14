@@ -165,7 +165,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Сигналы-источники (отдаем)
         /// </summary>
-        public DeviceSignalsInfo SourceSignals
+        public virtual DeviceSignalsInfo SourceSignals
         {
             get
             {
@@ -181,7 +181,7 @@ namespace InterprojectExchange
         /// <summary>
         /// Сигналы-приемники (принимаем)
         /// </summary>
-        public DeviceSignalsInfo ReceiverSignals
+        public virtual DeviceSignalsInfo ReceiverSignals
         {
             get
             {
