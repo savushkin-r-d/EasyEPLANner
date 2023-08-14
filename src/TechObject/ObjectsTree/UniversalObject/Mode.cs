@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using EasyEPlanner;
 using Editor;
 
@@ -33,7 +34,8 @@ namespace TechObject
         /// <param name="getN">Функция получения номера операции.</param>
         /// <param name="newOwner">Владелец операции (Менеджер операций)
         /// </param>
-        public Mode(string name, GetN getN, ModesManager newOwner)
+        public Mode(string name, GetN getN, ModesManager newOwner,
+            IBaseOperation baseOperation = null)
         {
             this.name = name;
             this.getN = getN;
@@ -61,7 +63,7 @@ namespace TechObject
             operPar = new OperationParams();
 
             // Экземпляр класса базовой операции
-            baseOperation = new BaseOperation(this); 
+            this.baseOperation = baseOperation ?? new BaseOperation(this); 
 
             SetItems();
         }
@@ -83,7 +85,7 @@ namespace TechObject
 
             if (notEmptyBaseOperation && baseOperationHasProperties)
             {
-                itemsList.Add(baseOperation);
+                itemsList.Add(baseOperation as BaseOperation);
             }
 
             items = itemsList.ToArray();
@@ -367,7 +369,7 @@ namespace TechObject
         {
             get
             {
-                return baseOperation;
+                return baseOperation as BaseOperation;
             }
         }
 
@@ -453,18 +455,32 @@ namespace TechObject
         public override bool SetNewValue(string newBaseOperationName, 
             bool isBaseOper)
         {
-            bool similarBaseOperation = CheckTheSameBaseOperations(
-                newBaseOperationName);
-            // Инициализация базовой операции по имени
-            if (baseOperation.Name != newBaseOperationName &&
-                similarBaseOperation == false)
+            if (baseOperation.Name.Equals(newBaseOperationName) ||
+                CheckTheSameBaseOperations(newBaseOperationName) is true)
+                return false;
+
+            List<BaseParameter> CloneExtraProperties = null;
+
+            if (TechObjectEditor.Editable is true &&
+                !string.IsNullOrEmpty(newBaseOperationName) &&
+                !string.IsNullOrEmpty(baseOperation.Name))
             {
-                baseOperation.Init(newBaseOperationName, this);
-                SetItems();
-                return true;
+                var reset = TechObjectEditor.DialogResetExtraProperties();
+                if (reset is DialogResult.Cancel)
+                    return false;
+                if (reset is DialogResult.No)
+                    CloneExtraProperties = new List<BaseParameter>(
+                        baseOperation.Properties);
             }
 
-            return false;
+            // Инициализация базовой операции по имени
+            baseOperation.Init(newBaseOperationName, this);
+            SetItems();
+
+            if (CloneExtraProperties != null)
+                baseOperation.SetExtraProperties(CloneExtraProperties);
+
+            return true;
         }
 
         override public bool IsEditable
@@ -701,6 +717,8 @@ namespace TechObject
             }
         }
 
+        public static Editor.IEditor TechObjectEditor { get; set; } = Editor.Editor.GetInstance(); 
+
         private GetN getN;
 
         private string name;           /// Имя операции.
@@ -712,7 +730,7 @@ namespace TechObject
 
         private ModesManager owner;
 
-        private BaseOperation baseOperation; /// Базовая операция
+        private IBaseOperation baseOperation; /// Базовая операция
 
         public const string DefaultModeName = "Новая операция";
     }

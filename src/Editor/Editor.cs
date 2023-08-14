@@ -1,4 +1,7 @@
-﻿namespace Editor
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Windows.Forms;
+
+namespace Editor
 {      
     /// <summary>    
     /// Класс, реализующий редактор.
@@ -50,6 +53,19 @@
         {
             editorForm.RefreshTree();
         }
+
+        [ExcludeFromCodeCoverage]
+        public DialogResult DialogResetExtraProperties()
+        {
+            return MessageBox.Show(
+                "Сбросить доп.свойства привязанных агрегатов?",
+                "EPlaner",
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Exclamation);
+        }
+
+        [ExcludeFromCodeCoverage]
+        public bool Editable => editorForm.Editable;
 
         /// <summary>
         /// Получение экземпляра класса.

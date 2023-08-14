@@ -1,4 +1,6 @@
-﻿namespace Editor
+﻿using System.Windows.Forms;
+
+namespace Editor
 {
     /// <summary>    
     /// Интерфейс редактора.
@@ -27,5 +29,21 @@
         /// Обновить редактор
         /// </summary>
         void RefreshEditor();
+
+        /// <summary>
+        /// Диалоговое окно с подтверждением сброса доп.свойств агрегатов в операции
+        /// </summary>
+        /// <returns>
+        /// DialogResult:
+        /// yes    - сброс доп.свойств для привязанных агрегатов
+        /// no     - не сбрасывать доп.свойства
+        /// cancel - отменить изменение базовой операции.
+        /// </returns>
+        DialogResult DialogResetExtraProperties();
+
+        /// <summary>
+        /// Режим редактирования
+        /// </summary>
+        bool Editable { get; }
     }
 }
