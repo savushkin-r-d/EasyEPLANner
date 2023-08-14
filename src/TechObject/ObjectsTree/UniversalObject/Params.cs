@@ -263,7 +263,7 @@ namespace TechObject
             else
             {
                 newParam = new Param(GetIdx, "Название параметра", false, 0,
-                    "шт", "");
+                    "шт", "", true);
             }
 
             parameters.Add(newParam);

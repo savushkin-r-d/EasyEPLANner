@@ -46,7 +46,10 @@ namespace TechObject
 
         #region реализация ItreeViewItem
         public override bool SetNewValue(string newValue)
-        {
+        {   
+            if (DisplayParameters && Owner is BaseOperation) 
+                OneValueOnly = true;
+
             bool notStub = !newValue.ToLower()
                 .Contains(StaticHelper.CommonConst.StubForCells.ToLower());
             if (notStub)

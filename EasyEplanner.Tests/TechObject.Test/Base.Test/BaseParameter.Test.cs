@@ -106,7 +106,7 @@ namespace EasyEplanner.Tests
         {
             var newObject = new BaseParameterImplementation(stub, stub);
 
-            foreach(var displayObject in actualEnumNames)
+            foreach (var displayObject in actualEnumNames)
             {
                 newObject.AddDisplayObject(displayObject);
             }
@@ -188,7 +188,7 @@ namespace EasyEplanner.Tests
                 Assert.AreEqual(expectedDisplayParameters, displayParameters);
             });
         }
-        
+
         private static object[] GetDisplayObjectsCaseSource()
         {
             return new object[]
@@ -360,24 +360,24 @@ namespace EasyEplanner.Tests
             Assert.AreEqual(expectedValueType, parameter.CurrentValueType);
         }
 
-        [TestCase("true", "\t", "\tLuaName = true")]
         [TestCase("NORM1DEV1", "\t\t", "\t\tLuaName = prg.control_modules.NORM1DEV1")]
-        [TestCase("1", "", "LuaName = prg.0.operations.BASEOPERATIONLUANAME1")]
-        public void SaveToPrgLua_ReturnParameterString(string value, string prefix, string expected)
+        [TestCase("NORM1DEV1 NORM1DEV2", "\t\t", "\t\tLuaName = { prg.control_modules.NORM1DEV1, prg.control_modules.NORM1DEV2 }")]
+        [TestCase("1", "\t", "\tLuaName = prg.0.operations.BASEOPERATIONLUANAME1")]
+        [TestCase("2", "\t", "\tLuaName = prg.0.operations.BASEOPERATIONLUANAME2")]
+        [TestCase("other", "", "LuaName = other")]
+        public void SaveToPrgLua_CheckBaseTechObjectOwner(string value, string prefix, string expected)
         {
             var parameter = new BaseParameterImplementation("LuaName", "Name",
                 stub, null, GetMoqForSetValuesAndDisplayTextTest());
-            parameter.SetNewValue(value);
-            if (parameter.CurrentValueType == BaseParameter.ValueType.Number)
-            {
-                manageBaseParameter(parameter);
-            }
-            var ret = parameter.SaveToPrgLua(prefix);
+            SetUpParameterBaseTechObjectOwner(parameter);
 
-            Assert.AreEqual(expected, ret);
+            parameter.SetNewValue(value);
+            var res = parameter.SaveToPrgLua(prefix);
+
+            Assert.AreEqual(expected, res);
         }
 
-        private void manageBaseParameter(BaseParameter parameter)
+        private void SetUpParameterBaseTechObjectOwner(BaseParameter parameter)
         {
             parameter.Owner = new BaseTechObject(new TechObject
                .TechObject("techObjectName", getN => 0, 0,
@@ -389,7 +389,6 @@ namespace EasyEplanner.Tests
             {
                 new Mode("modeName_1", getN => 1, modesManager),
                 new Mode("modeName_2", getN => 2, modesManager),
-                new Mode("modeName_2", getN => 3, modesManager),
             };
 
             modes[0].BaseOperation.Name = "baseOperationName1";
@@ -398,12 +397,51 @@ namespace EasyEplanner.Tests
             modes[1].BaseOperation.Name = "baseOperationName2";
             modes[1].BaseOperation.LuaName = "baseOperationLuaName2";
 
-            modes[2].BaseOperation.Name = "baseOperationName3";
-            modes[2].BaseOperation.LuaName = "baseOperationLuaName3";
-
             parameter.Parent = new BaseOperation(modes[0]);
 
             modesManager.Modes.AddRange(modes);
+        }
+
+        [TestCase("parameter1", "\t", "\tLuaName = prg.techobject1.PAR_FLOAT.parameter1")]
+        [TestCase("parameter2", "\t", "\tLuaName = prg.techobject1.PAR_FLOAT.parameter2")]
+        [TestCase("other", "", "")]
+        public void SaveToPrgLua_CheckBaseOperationOwner(string value, string prefix,
+            string expected)
+        {
+            var parameter = new ActiveParameter("LuaName", "Name", "", new List<BaseParameter.DisplayObject>() { BaseParameter.DisplayObject.Parameters });
+            SetUpParameterBaseOperationOwner(parameter);
+
+            parameter.SetNewValue(value);
+            var res = parameter.SaveToPrgLua(prefix);
+            Assert.AreEqual(expected, res);
+        }
+
+        private void SetUpParameterBaseOperationOwner(BaseParameter parameter)
+        {
+            var techObject = new TechObject.TechObject("techObjectName",
+                getN => 1, 1, 1, "techObjectEplanName", 1, "techObjectNameBC",
+                "attachedObjects", null);
+            techObject.NameEplanForFile = "TechObject";
+            techObject.GetParamsManager().AddFloatParam("параметр 1", 1, "unit", "parameter1");
+            techObject.GetParamsManager().AddFloatParam("параметр 2", 5, "unit", "parameter2");
+
+            var operation = new Mode("operation1", getN => 1, new ModesManager(techObject));
+            
+            var baseOperation = new BaseOperation(operation);
+
+            parameter.Owner = baseOperation;
+        }
+
+        [TestCase("true", "\t", "\tLuaName = true")]
+        [TestCase("false", "\t\t", "\t\tLuaName = false")]
+        public void SaveToPrgLua_CheckActiveBoolParameter(string value, string prefix, string expected)
+        {
+            var parameter = new ActiveBoolParameter("LuaName", "Name", "false", null);
+
+            parameter.SetNewValue(value);
+            var res = parameter.SaveToPrgLua(prefix);
+
+            Assert.AreEqual(expected, res);
         }
 
         private EplanDevice.IDeviceManager GetMoqForSetValuesAndDisplayTextTest()

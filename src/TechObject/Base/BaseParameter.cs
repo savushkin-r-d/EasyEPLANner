@@ -266,6 +266,11 @@ namespace TechObject
                 }
             }
         }
+        
+        /// <summary>
+        /// Отображение: true - параметер; false - устройства
+        /// </summary>
+        public bool DisplayParameters => displayParameters;
 
         /// <summary>
         /// Получить строку с устройствами
@@ -381,7 +386,20 @@ namespace TechObject
             switch (CurrentValueType)
             {
                 case ValueType.Boolean:
+                    return $"{prefix}{LuaName} = {Value}";
+
                 case ValueType.Other:
+                    if (Owner is BaseOperation baseOperation)
+                    {
+                        // Сброс поля параметра в доп. свойствах операции,
+                        // если указан несуществующий параметр.
+                        var operation = baseOperation.Owner;
+                        var techObject = operation.Owner.Owner;
+                        SetNewValue(string.Empty);
+                        Logs.AddMessage($"{techObject.DisplayText}: {operation.DisplayText}:" +
+                            $" в доп.свойствах сброшен неверно указанный параметр \"{Name}\"");
+                        return SaveToPrgLua(prefix);
+                    }
                     return $"{prefix}{LuaName} = {Value}";
 
                 case ValueType.Device:
