@@ -590,6 +590,35 @@ namespace TechObject
             }
         }
 
+        public override bool IsCopyable => true;
+
+        public override bool IsInsertableCopy => true;
+
+        /// <summary>
+        /// Копирование доп. свойств базовой операции
+        /// </summary>
+        /// <returns></returns>
+        public override object Copy()
+        {
+            return new List<BaseParameter>(Properties);
+        }
+
+        /// <summary>
+        /// Вставка значений доп. свойств базовой операции:
+        /// заполнение доп. свойтсв по Lua-имени
+        /// </summary>
+        /// <param name="obj">Доп. свойства</param>
+        /// <returns></returns>
+        public override ITreeViewItem InsertCopy(object obj)
+        {
+            if (obj is List<BaseParameter> extraProperties)
+            {
+                SetExtraProperties(extraProperties);
+            }
+
+            return this;
+        }
+
         override public ITreeViewItem[] Items
         {
             get

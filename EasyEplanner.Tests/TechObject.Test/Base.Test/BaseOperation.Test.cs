@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
@@ -700,6 +700,28 @@ namespace EasyEplanner.Tests
                 { new Editor.ObjectProperty(SetExtraPropertiesParameter, SetExtraPropertiesNewValue) }); 
 
             Assert.AreEqual(SetExtraPropertiesExpected, baseOperation.Properties[0].Value);
+        }
+
+        /// <summary>
+        /// Тестирование копирования параметров между базовыми операциями
+        /// </summary>
+        [Test]
+        public void Copy_CheckCopyableAndInsertCopy()
+        {
+            var baseOperation_1 = new BaseOperation(string.Empty, "base_operation_1",
+                new List<BaseParameter>() { new ActiveParameter(string.Empty, "parameter", "value") }, null);
+            var baseOperation_2 = new BaseOperation(string.Empty, "base_operation_2",
+                new List<BaseParameter>() { new ActiveParameter(string.Empty, "parameter")}, null);
+            object copy = baseOperation_1.Copy();
+            baseOperation_2.InsertCopy(copy);
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(baseOperation_1.IsCopyable);
+                Assert.IsTrue(baseOperation_1.IsInsertableCopy);
+                Assert.IsTrue(copy is List<BaseParameter>);
+                Assert.AreEqual("value", baseOperation_2.Properties.ElementAt(0).Value);
+            });
         }
     }
 }
