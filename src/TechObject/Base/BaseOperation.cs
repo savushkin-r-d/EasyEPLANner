@@ -595,7 +595,7 @@ namespace TechObject
         public override bool IsInsertableCopy => true;
 
         /// <summary>
-        /// Копирование доп.свойств базовой операции
+        /// Копирование доп. свойств базовой операции
         /// </summary>
         /// <returns></returns>
         public override object Copy()
@@ -604,10 +604,10 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Вставка значений доп.свойтсв базовой операции:
-        /// заполнение доп.свойтсв по Lua-имени
+        /// Вставка значений доп. свойств базовой операции:
+        /// заполнение доп. свойтсв по Lua-имени
         /// </summary>
-        /// <param name="obj">Доп.свойства</param>
+        /// <param name="obj">Доп. свойства</param>
         /// <returns></returns>
         public override ITreeViewItem InsertCopy(object obj)
         {
