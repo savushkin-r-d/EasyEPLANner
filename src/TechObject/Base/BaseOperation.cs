@@ -611,19 +611,9 @@ namespace TechObject
         /// <returns></returns>
         public override ITreeViewItem InsertCopy(object obj)
         {
-            var extraProperties = (obj as List<BaseParameter>)?.ToDictionary(
-                property => property.LuaName,
-                property => property.Value);
-
-            if (extraProperties is null) return null;
-
-            foreach (var property in Properties)
+            if (obj is List<BaseParameter> extraProperties)
             {
-                string propertyLuaName = property.LuaName;
-                if (extraProperties.ContainsKey(propertyLuaName))
-                {
-                    property.SetNewValue(extraProperties[propertyLuaName]);
-                }
+                SetExtraProperties(extraProperties);
             }
 
             return this;
