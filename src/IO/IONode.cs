@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
 namespace IO
@@ -23,6 +25,7 @@ namespace IO
             var nodeinfo = IONodeInfo.GetNodeInfo(typeStr, out _);
             IsCoupler = nodeinfo.IsCoupler;
             type = nodeinfo.Type;
+            AddressSpaceAmount = AddressSpace.GetAddressSpaceAmount(type);
 
             this.ip = ip;
             this.n = n;
@@ -40,16 +43,25 @@ namespace IO
 
         public void SetModule(IIOModule iOModule, int position)
         {
+            if (position > AddressSpaceAmount?.Amount)
+            {
+                throw new IndexOutOfRangeException($"Модуль \"{iOModule.Name}\" " +
+                    $"выходит за диапозон адрессного пространства узла \"{name}\". ");
+            }
+
             if (iOModules.Count < position)
             {
                 for (int i = iOModules.Count; i < position; i++)
                 {
-                    iOModules.Add(new IOModule(0, 0, null));
+                    iOModules.Add(StubIOModule);
                 }
             }
 
             iOModules[position - 1] = iOModule;
         }
+
+        [ExcludeFromCodeCoverage]
+        public virtual IIOModule StubIOModule => new IOModule(0, 0, null);
 
         public IIOModule this[int idx]
         {
@@ -124,6 +136,42 @@ namespace IO
             T_PHOENIX_CONTACT_MAIN = 201, /// Контроллер Phoenix Contact
         };
 
+        /// <summary>
+        /// Максимальное количество доступных для
+        /// подключения к узлу модулей
+        /// </summary>
+        public class AddressSpace
+        {
+            /// <summary> Узлы Phoenix Contact </summary>
+            public static readonly AddressSpace PHOENIX_CONTACT = new AddressSpace(63);
+            /// <summary> Узлы Wago </summary>
+            public static readonly AddressSpace WAGO = new AddressSpace(64); // 256?
+
+            protected AddressSpace(int amount)
+            {
+                Amount = amount;
+            }
+
+            /// <param name="type"></param>
+            /// <returns></returns>
+            public static AddressSpace GetAddressSpaceAmount(TYPES type)
+            {
+                switch (type)
+                {
+                    case TYPES.T_INTERNAL_750_86x:
+                    case TYPES.T_INTERNAL_750_820x:
+                    case TYPES.T_ETHERNET:
+                        return WAGO;
+                    case TYPES.T_PHOENIX_CONTACT:
+                    case TYPES.T_PHOENIX_CONTACT_MAIN:
+                        return PHOENIX_CONTACT;
+                    default: return null;
+                }
+            }
+
+            public int Amount { get; }
+        }
+
         public int DI_count { get; set; }
 
         public int DO_count { get; set; }
@@ -163,6 +211,11 @@ namespace IO
                 return type;
             }
         }
+
+        /// <summary>
+        /// Объем адрессного пространства
+        /// </summary>
+        public AddressSpace AddressSpaceAmount { get; }
 
         public string TypeStr
         {

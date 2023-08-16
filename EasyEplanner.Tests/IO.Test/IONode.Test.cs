@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using EasyEPlanner;
+using EplanDevice;
 using IO;
+using Moq;
 using NUnit.Framework;
 
 namespace Tests.IO
@@ -30,7 +33,7 @@ namespace Tests.IO
         {
             var testData = new List<object[]>();
 
-            IONode.TYPES internal750_86x = IONode.TYPES.T_INTERNAL_750_86x;         
+            IONode.TYPES internal750_86x = IONode.TYPES.T_INTERNAL_750_86x;
             testData.Add(new object[] { "750-863", internal750_86x });
 
             IONode.TYPES ethernet = IONode.TYPES.T_ETHERNET;
@@ -88,7 +91,7 @@ namespace Tests.IO
             Assert.AreEqual(expectedValue, testNode.IsCoupler);
         }
 
-        [TestCase("NodeName","NodeName")]
+        [TestCase("NodeName", "NodeName")]
         [TestCase(null, null)]
         [TestCase("", "")]
         [TestCase("Имя узла", "Имя узла")]
@@ -104,7 +107,7 @@ namespace Tests.IO
         [TestCase(null, null)]
         [TestCase("255.0.0.0", "255.0.0.0")]
         [TestCase("12.12.12.12", "12.12.12.12")]
-        public void IP_NewNode_CorrectGetAndSet(string expected,string actual)
+        public void IP_NewNode_CorrectGetAndSet(string expected, string actual)
         {
             var testNode = new IONode(StrStub, IntStub, IntStub, actual, StrStub,
                 StrStub);
@@ -144,8 +147,8 @@ namespace Tests.IO
             Assert.AreEqual(expected, testNode.NodeNumber);
         }
 
-        [TestCase(0,0)]
-        [TestCase(4,4)]
+        [TestCase(0, 0)]
+        [TestCase(4, 4)]
         public void AIcount_NewNode_CorrectGetAndSetSignalsCount(int expected,
             int actual)
         {
@@ -207,6 +210,40 @@ namespace Tests.IO
             var testNode = new IONode(StrStub, IntStub, IntStub, StrStub, StrStub,
                 actual);
             Assert.AreEqual(expected, testNode.Location);
+        }
+
+        [Test]
+        public void SetModule_CorrectSet()
+        {
+            const string moduleName = "A101";
+            const string nodeType = "AXC F 1152";
+            const int lastIndex = 63;
+
+            var EmptyIOModuleMock = new Mock<IIOModule>();
+            EmptyIOModuleMock.Setup(m => m.Name).Returns(string.Empty);
+
+            var IOModuleMock = new Mock<IIOModule>();
+            IOModuleMock.Setup(m => m.Name).Returns(moduleName);
+
+            var testNodeMock = new Mock<IONode>(nodeType, 1, 1, string.Empty, string.Empty, string.Empty);
+            testNodeMock.Setup(n => n.StubIOModule).Returns(EmptyIOModuleMock.Object);
+
+            var testNode = testNodeMock.Object;
+
+            testNode.SetModule(IOModuleMock.Object, lastIndex);
+
+            Assert.IsTrue(testNode[lastIndex - 1].Name == moduleName);
+        }
+
+        [TestCase("AXC F 1152", 64)]
+        [TestCase("750-863", 65)]
+        public void SetModule_IndexOutOfRangeException(string type, int index)
+        {
+            var testNode = new IONode(type, 1, 1, string.Empty, string.Empty, string.Empty);
+
+            var IOModuleMock = new Mock<IIOModule>();
+
+            Assert.Throws<IndexOutOfRangeException>(() => { testNode.SetModule(IOModuleMock.Object, index); });
         }
 
         const string StrStub = "";
