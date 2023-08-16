@@ -289,7 +289,7 @@ namespace EasyEPlanner
                         {
                             node.SetModule(nodeModule, shortModuleNumber);
                         }
-                        catch(IndexOutOfRangeException ex)
+                        catch(ArgumentOutOfRangeException ex)
                         {
                             Logs.AddMessage(ex.Message);
                         }

@@ -45,7 +45,7 @@ namespace IO
         {
             if (position > AddressSpaceAmount?.Amount)
             {
-                throw new IndexOutOfRangeException($"Модуль \"{iOModule.Name}\" " +
+                throw new ArgumentOutOfRangeException($"Модуль \"{iOModule.Name}\" " +
                     $"выходит за диапозон адрессного пространства узла \"{name}\". ");
             }
 

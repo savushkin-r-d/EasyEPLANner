@@ -243,7 +243,7 @@ namespace Tests.IO
 
             var IOModuleMock = new Mock<IIOModule>();
 
-            Assert.Throws<IndexOutOfRangeException>(() => { testNode.SetModule(IOModuleMock.Object, index); });
+            Assert.Throws<ArgumentOutOfRangeException>(() => { testNode.SetModule(IOModuleMock.Object, index); });
         }
 
         const string StrStub = "";
