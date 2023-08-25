@@ -30,9 +30,9 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          title: Auto-update version
+          title: Auto-update version to ${{ steps.date.outputs.MonthName }} ${{ steps.date.outputs.Year }}
           body:
-          commit-message: Auto-update version to ${{ steps.date.outputs.MonthName }} ${{ steps.date.outputs.Year }}
+          commit-message: Auto-update version
           branch: autoupdate-version
           delete-branch: true
           reviewers: idzm
