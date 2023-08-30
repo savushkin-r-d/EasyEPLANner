@@ -47,6 +47,11 @@ namespace IO
         /// </summary>
         int PhysicalNumber { get; }
 
+        /// <summary>
+        /// Аддресное пространство занимаемое модулем
+        /// </summary>
+        int AddressArea { get; }
+
         void AssignChannelToDevice(int chN, IODevice dev, IODevice.IOChannel ch);
 
         /// <summary>

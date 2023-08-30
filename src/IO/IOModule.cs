@@ -467,6 +467,22 @@ namespace IO
             }
         }
 
+        /// <summary>
+        /// Адрессное пространство занимаемое модулем
+        /// </summary>
+        public int AddressArea
+        {
+            get
+            {
+                if (info?.Number.ToString().Length > 3) // Phoenix Contact
+                    return 2 + Math.Max(
+                        Math.Max(Info.DOCount / 8, info.DICount / 8),
+                        Math.Max(info.AOCount * 2, info.AICount * 2));
+
+                return 0;
+            }
+        }
+
         public List<EplanDevice.IIODevice>[] Devices
         {
             get

@@ -25,7 +25,8 @@ namespace IO
             var nodeinfo = IONodeInfo.GetNodeInfo(typeStr, out _);
             IsCoupler = nodeinfo.IsCoupler;
             type = nodeinfo.Type;
-            AddressSpaceAmount = AddressSpace.GetAddressSpaceAmount(type);
+            
+            AddressArea = IOAddressArea.GetModulesPerNodeAmount(type);
 
             this.ip = ip;
             this.n = n;
@@ -43,11 +44,19 @@ namespace IO
 
         public void SetModule(IIOModule iOModule, int position)
         {
-            if (position > AddressSpaceAmount?.Amount)
+            if (position > AddressArea?.ModulesPerNodeMax)
             {
-                throw new ArgumentOutOfRangeException($"Модуль \"{iOModule.Name}\" " +
-                    $"выходит за диапозон адрессного пространства узла \"{name}\". ");
+                throw new Exception($"Модуль \"{iOModule.Name}\" " +
+                    $"выходит за диапозон максимального количества модулей для узла \"{name}\". ");
             }
+
+            if (currentAddressArea + iOModule.AddressArea > AddressArea.AddressAreaMax)
+            {
+                throw new Exception($"Модуль \"{iOModule.Name}\" {iOModule.ArticleName} ({iOModule.AddressArea} byte) " +
+                    $"выходит за диапозон адрессного пространства узла \"{name}\" [{currentAddressArea}/{AddressArea.AddressAreaMax}]. ");
+            }
+
+
 
             if (iOModules.Count < position)
             {
@@ -56,6 +65,8 @@ namespace IO
                     iOModules.Add(StubIOModule);
                 }
             }
+
+            currentAddressArea += iOModule.AddressArea;
 
             iOModules[position - 1] = iOModule;
         }
@@ -140,21 +151,20 @@ namespace IO
         /// Максимальное количество доступных для
         /// подключения к узлу модулей
         /// </summary>
-        public class AddressSpace
+        public class IOAddressArea
         {
             /// <summary> Узлы Phoenix Contact </summary>
-            public static readonly AddressSpace PHOENIX_CONTACT = new AddressSpace(63);
+            public static readonly IOAddressArea PHOENIX_CONTACT = new IOAddressArea(63, 1482);
             /// <summary> Узлы Wago </summary>
-            public static readonly AddressSpace WAGO = new AddressSpace(64); // 256?
+            public static readonly IOAddressArea WAGO = new IOAddressArea(64, 0);
 
-            protected AddressSpace(int amount)
+            protected IOAddressArea(int modulesPerNodeMax, int addressAreaMax)
             {
-                Amount = amount;
+                ModulesPerNodeMax = modulesPerNodeMax;
+                AddressAreaMax = addressAreaMax;
             }
 
-            /// <param name="type"></param>
-            /// <returns></returns>
-            public static AddressSpace GetAddressSpaceAmount(TYPES type)
+            public static IOAddressArea GetModulesPerNodeAmount(TYPES type)
             {
                 switch (type)
                 {
@@ -169,7 +179,8 @@ namespace IO
                 }
             }
 
-            public int Amount { get; }
+            public int ModulesPerNodeMax { get; }
+            public int AddressAreaMax { get; }
         }
 
         public int DI_count { get; set; }
@@ -215,7 +226,7 @@ namespace IO
         /// <summary>
         /// Объем адрессного пространства
         /// </summary>
-        public AddressSpace AddressSpaceAmount { get; }
+        public IOAddressArea AddressArea { get; }
 
         public string TypeStr
         {
@@ -291,6 +302,11 @@ namespace IO
         /// Местоположение узла (прим., +MCC1)
         /// </summary>
         private string location;
+
+        /// <summary>
+        /// Текущее занимаемое модулями адресное пространство
+        /// </summary>
+        private int currentAddressArea = 0;
         #endregion
     }
 }
