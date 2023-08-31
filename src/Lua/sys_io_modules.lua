@@ -20,6 +20,8 @@
 -- AO_count - количество аналоговых выходов.
 -- AI_count - количество аналоговых входов.
 -- Color - физический цвет модуля.
+-- LocalbusData - адресное пространство, занимаемое модулем.
+--      Если значение не указано, расчитывается из входов/выходов модуля.
 
 -- adressSpacetype enumeration:
 -- NONE - 0
@@ -513,6 +515,7 @@ local io_modules =
             AO_count = 1,
             AI_count = 1,
             Color = 'Violet',
+            LocalbusData = 3;
             },
 
     [ 28 ] = {
@@ -541,6 +544,7 @@ local io_modules =
             AO_count = 1,
             AI_count = 1,
             Color = 'Violet',
+            LocalbusData = 3;
             },
 
     [ 29 ] = {

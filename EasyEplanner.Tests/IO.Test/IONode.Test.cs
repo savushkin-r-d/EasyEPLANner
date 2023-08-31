@@ -243,7 +243,22 @@ namespace Tests.IO
 
             var IOModuleMock = new Mock<IIOModule>();
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => { testNode.SetModule(IOModuleMock.Object, index); });
+            Assert.Throws<Exception>(() => { testNode.SetModule(IOModuleMock.Object, index); });
+        }
+
+        [TestCase("AXC F 1152", 1)]
+        public void SetModule_AddressAreaOutOfRangeException(string type, int index)
+        {
+            var testNode = new IONode(type, 1, 1, string.Empty, string.Empty, string.Empty);
+
+            var currentAddressArea = typeof(IONode).GetField("currentAddressArea",
+                BindingFlags.NonPublic | BindingFlags.Instance);
+            currentAddressArea.SetValue(testNode, IONode.IOAddressArea.PHOENIX_CONTACT.AddressAreaMax - 4);
+
+            var IOModuleMock = new Mock<IIOModule>();
+            IOModuleMock.Setup(m => m.AddressArea).Returns(6);
+
+            Assert.Throws<Exception>(() => { testNode.SetModule(IOModuleMock.Object, index); });
         }
 
         const string StrStub = "";

@@ -56,8 +56,6 @@ namespace IO
                     $"выходит за диапозон адрессного пространства узла \"{name}\" [{currentAddressArea}/{AddressArea.AddressAreaMax}]. ");
             }
 
-
-
             if (iOModules.Count < position)
             {
                 for (int i = iOModules.Count; i < position; i++)
