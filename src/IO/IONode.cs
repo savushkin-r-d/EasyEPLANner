@@ -42,17 +42,33 @@ namespace IO
             AO_count = 0;
         }
 
+        /// <summary>
+        /// Исключение переполнения количества модулей в узле
+        /// </summary>
+        public class ModulesPerNodeOutOfRageException : Exception
+        {
+            public ModulesPerNodeOutOfRageException(string message) : base(message) { }
+        }
+
+        /// <summary>
+        /// Исключение переполнения адрессного пространства в узле
+        /// </summary>
+        public class AddressAreaOutOfRangeException : Exception
+        {
+            public AddressAreaOutOfRangeException(string message) : base(message) { }
+        }
+
         public void SetModule(IIOModule iOModule, int position)
         {
             if (position > AddressArea?.ModulesPerNodeMax)
             {
-                throw new Exception($"Модуль \"{iOModule.Name}\" " +
+                throw new ModulesPerNodeOutOfRageException($"Модуль \"{iOModule.Name}\" " +
                     $"выходит за диапозон максимального количества модулей для узла \"{name}\". ");
             }
 
             if (currentAddressArea + iOModule.AddressArea > AddressArea.AddressAreaMax)
             {
-                throw new Exception($"Модуль \"{iOModule.Name}\" {iOModule.ArticleName} ({iOModule.AddressArea} byte) " +
+                throw new AddressAreaOutOfRangeException($"Модуль \"{iOModule.Name}\" {iOModule.ArticleName} ({iOModule.AddressArea} byte) " +
                     $"выходит за диапозон адрессного пространства узла \"{name}\" [{currentAddressArea}/{AddressArea.AddressAreaMax}]. ");
             }
 

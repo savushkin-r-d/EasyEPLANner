@@ -243,7 +243,7 @@ namespace Tests.IO
 
             var IOModuleMock = new Mock<IIOModule>();
 
-            Assert.Throws<Exception>(() => { testNode.SetModule(IOModuleMock.Object, index); });
+            Assert.Throws<IONode.ModulesPerNodeOutOfRageException>(() => { testNode.SetModule(IOModuleMock.Object, index); });
         }
 
         [TestCase("AXC F 1152", 1)]
@@ -258,7 +258,7 @@ namespace Tests.IO
             var IOModuleMock = new Mock<IIOModule>();
             IOModuleMock.Setup(m => m.AddressArea).Returns(6);
 
-            Assert.Throws<Exception>(() => { testNode.SetModule(IOModuleMock.Object, index); });
+            Assert.Throws<IONode.AddressAreaOutOfRangeException>(() => { testNode.SetModule(IOModuleMock.Object, index); });
         }
 
         const string StrStub = "";
