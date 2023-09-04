@@ -102,7 +102,7 @@ namespace EplanDevice
                 res += CheckDevicesIP();
             }
 
-            res += CheckPIDInputAndOutputProperties();
+            res += CheckControllerIOProperties();
 
             return res;
         }
@@ -157,10 +157,10 @@ namespace EplanDevice
         }
 
         /// <summary>
-        /// Проверить входы и выходы ПИД-регуляторов
+        /// Проверить входы и выходы регуляторов
         /// </summary>
         /// <returns></returns>
-        private string CheckPIDInputAndOutputProperties()
+        private string CheckControllerIOProperties()
         {
             string res = string.Empty;
             string cap = StaticHelper.CommonConst.Cap;
@@ -181,18 +181,33 @@ namespace EplanDevice
                                 $"{property.Key}.\n";
                         }
 
-                        bool allowedDevices =
+                        if (dev.DeviceSubType is DeviceSubType.C_PID)
+                        {
+                            bool allowedDevices =
                             devInPropery.DeviceType != DeviceType.AO &&
                             devInPropery.DeviceType != DeviceType.VC &&
                             devInPropery.DeviceType != DeviceType.M &&
                             devInPropery.DeviceType != DeviceType.C;
-                        if (property.Key == dev.Properties.Keys.Last() &&
-                            allowedDevices)
+                            if (property.Key == IODevice.Property.OUT_VALUE && allowedDevices)
+                            {
+                                res += $"В выходе {property.Key} ПИД-регулятора" +
+                                    $" {dev.Name} задано некорректное " +
+                                    $"устройство. Нужно указать AO, VC, M или " +
+                                    $"другой регулятор.\n";
+                            }
+                        }
+                        else if (dev.DeviceSubType is DeviceSubType.C_THLD)
                         {
-                            res += $"В выходе {property.Key} ПИД-регулятора" +
-                                $" {dev.Name} задано некорректное " +
-                                $"устройство. Нужно указать AO, VC, M или " +
-                                $"другой ПИД-регулятор.\n";
+                            bool allowedDevices =
+                            devInPropery.DeviceType != DeviceType.DO &&
+                            devInPropery.DeviceType != DeviceType.V &&
+                            devInPropery.DeviceType != DeviceType.M;
+                            if (property.Key == IODevice.Property.OUT_VALUE && allowedDevices)
+                            {
+                                res += $"В выходе {property.Key} порогового регулятора" +
+                                    $" {dev.Name} задано некорректное " +
+                                    $"устройство. Нужно указать DO, V или M.\n";
+                            }
                         }
                     }
                 }
