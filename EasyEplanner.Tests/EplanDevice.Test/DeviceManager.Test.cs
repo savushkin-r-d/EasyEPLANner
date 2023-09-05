@@ -184,5 +184,24 @@ namespace Tests.EplanDevices
             Assert.AreNotEqual(string.Empty, res);
         }
 
+        [Test]
+        public void CheckControllerIOProperties_EmptyAllowedDevice()
+        {
+            var manager = DeviceManager.GetInstance();
+
+            var pid = manager.GetDevice("OBJ1C1");
+            var thld = manager.GetDevice("OBJ1C2");
+
+            pid.Properties[IODevice.Property.IN_VALUE] = "";
+            thld.Properties[IODevice.Property.IN_VALUE] = null;
+            pid.Properties[IODevice.Property.OUT_VALUE] = "";
+            thld.Properties[IODevice.Property.OUT_VALUE] = null;
+
+            var method = typeof(DeviceManager).GetMethod("CheckControllerIOProperties",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var res = method.Invoke(manager, new object[] { });
+            Assert.AreEqual(string.Empty, res);
+        }
+
     }
 }

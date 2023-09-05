@@ -886,6 +886,12 @@ namespace EplanDevice
             return new List<string>();
         }
 
+        public bool AllowedType(params DeviceType[] allowed)
+            => allowed.Contains(DeviceType);
+
+        public bool AllowedSubtype(params DeviceSubType[] allowed) 
+            => allowed.Contains(DeviceSubType);
+
         /// <summary>
         /// Получить свойства устройства.
         /// </summary>
