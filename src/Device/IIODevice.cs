@@ -25,5 +25,17 @@ namespace EplanDevice
         /// <param name="propertyName">Имя свойства</param>
         /// <param name="value">Устанавливаемое значение</param>
         void SetIolConfProperty(string propertyName, double value);
+
+        /// <summary>
+        /// Проверка устройства на разрешенный тип
+        /// </summary>
+        /// <param name="allowed"> Массив разрешенных типов </param>
+        bool AllowedType(params DeviceType[] allowed);
+
+        /// <summary>
+        /// Проверка устройства на разрешенный подтип
+        /// </summary>
+        /// <param name="allowed"> Массив разрешенных подтипов </param>
+        bool AllowedSubtype(params DeviceSubType[] allowed);
     }
 }

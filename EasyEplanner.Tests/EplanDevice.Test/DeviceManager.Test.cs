@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using EplanDevice;
+using NUnit.Framework;
+using System;
 
 namespace Tests.EplanDevices
 {
@@ -7,27 +9,43 @@ namespace Tests.EplanDevices
         [SetUp]
         public void SetUpDevices()
         {
-            var firstValve = new EplanDevice.V("LINE1V2", "+LINE1-V2", "Test valve",
+            //set manager instance null
+            var instance = typeof(DeviceManager).GetField("instance",
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Static);
+            instance.SetValue(null, null);
+
+            var devManager = DeviceManager.GetInstance();
+
+            var firstValve = new V("LINE1V2", "+LINE1-V2", "Test valve",
                 2, "LINE", 1, "Test V article");
             firstValve.SetSubType("V_AS_MIXPROOF");
             firstValve.SetParameter("R_AS_NUMBER", 1);
-            EplanDevice.DeviceManager.GetInstance().Devices.Add(firstValve);
+            devManager.Devices.Add(firstValve);
 
-            var secondValve = new EplanDevice.V("TANK2V1", "+LINE2-V2", "Test valve",
+            var secondValve = new V("TANK2V1", "+LINE2-V2", "Test valve",
                 1, "TANK", 2, "Test V article");
             secondValve.SetSubType("V_AS_MIXPROOF");
             secondValve.SetParameter("R_AS_NUMBER", 2);
-            EplanDevice.DeviceManager.GetInstance().Devices.Add(secondValve);
+            devManager.Devices.Add(secondValve);
 
-            var pressureSensor = new EplanDevice.PT("KOAG3PT1", "+KOAG3-PT1", 
+            var pressureSensor = new PT("KOAG3PT1", "+KOAG3-PT1",
                 "Test PT", 1, "KOAG", 3, "Test PT article");
             pressureSensor.SetSubType("PT_IOLINK");
-            EplanDevice.DeviceManager.GetInstance().Devices.Add(pressureSensor);
+            devManager.Devices.Add(pressureSensor);
 
-            var temperatureSensor = new EplanDevice.TE("BATH4TE2", "+BATH4-TE2",
+            var temperatureSensor = new TE("BATH4TE2", "+BATH4-TE2",
                 "Test TE", 2, "BATH", 4, "Test TE article");
             temperatureSensor.SetSubType("TE");
-            EplanDevice.DeviceManager.GetInstance().Devices.Add(temperatureSensor);
+            devManager.Devices.Add(temperatureSensor);
+
+            var C_PID = new C("OBJ1C1", "+OBJ1-C1", string.Empty, 1, "OBJ", 1);
+            C_PID.SetSubType("C_PID");
+            devManager.Devices.Add(C_PID);
+
+            var C_THLD = new C("OBJ1C2", "+OBJ1-C2", string.Empty, 2, "OBJ", 1);
+            C_THLD.SetSubType("C_THLD");
+            devManager.Devices.Add(C_THLD);
         }
 
         [TestCase("+LINE1-V2", false)]
@@ -126,5 +144,64 @@ namespace Tests.EplanDevices
                 Assert.AreEqual(expectedDevName, actualDevName);
             }
         }
+
+        [Test]
+        public void CheckControllerIOProperties_CorrectAllowedDevices()
+        {
+            var manager = DeviceManager.GetInstance();
+
+            var pid = manager.GetDevice("OBJ1C1");
+            var thld = manager.GetDevice("OBJ1C2");
+
+            pid.Properties[IODevice.Property.IN_VALUE] = "KOAG3PT1"; // PID in: PT
+            thld.Properties[IODevice.Property.IN_VALUE] = "KOAG3PT1"; // THLD in: PT
+            pid.Properties[IODevice.Property.OUT_VALUE] = "OBJ1C2"; // PID out: C_THLD
+            thld.Properties[IODevice.Property.OUT_VALUE] = "LINE1V2"; // THLD out: V
+
+            var method = typeof(DeviceManager).GetMethod("CheckControllerIOProperties",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var res = method.Invoke(manager, new object[] { });
+            Assert.AreEqual(string.Empty, res);
+        }
+
+
+        [Test]
+        public void CheckControllerIOProperties_WrongAllowedDevice()
+        {
+            var manager = DeviceManager.GetInstance();
+
+            var pid = manager.GetDevice("OBJ1C1");
+            var thld = manager.GetDevice("OBJ1C2");
+
+            pid.Properties[IODevice.Property.IN_VALUE] = "KOAG3PT10"; // PID in: WRONG_DEVICE
+            thld.Properties[IODevice.Property.IN_VALUE] = "KOAG3PT10"; // THLD in: WRONG_DEVICE
+            pid.Properties[IODevice.Property.OUT_VALUE] = "LINE1V2"; // PID out: WRONG TYPE
+            thld.Properties[IODevice.Property.OUT_VALUE] = "OBJ1C1"; // THLD out: WRONG TYPE
+
+            var method = typeof(DeviceManager).GetMethod("CheckControllerIOProperties",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var res = method.Invoke(manager, new object[] { });
+            Assert.AreNotEqual(string.Empty, res);
+        }
+
+        [Test]
+        public void CheckControllerIOProperties_EmptyAllowedDevice()
+        {
+            var manager = DeviceManager.GetInstance();
+
+            var pid = manager.GetDevice("OBJ1C1");
+            var thld = manager.GetDevice("OBJ1C2");
+
+            pid.Properties[IODevice.Property.IN_VALUE] = "";
+            thld.Properties[IODevice.Property.IN_VALUE] = null;
+            pid.Properties[IODevice.Property.OUT_VALUE] = "";
+            thld.Properties[IODevice.Property.OUT_VALUE] = null;
+
+            var method = typeof(DeviceManager).GetMethod("CheckControllerIOProperties",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var res = method.Invoke(manager, new object[] { });
+            Assert.AreEqual(string.Empty, res);
+        }
+
     }
 }

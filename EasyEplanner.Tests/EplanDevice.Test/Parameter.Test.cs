@@ -10,19 +10,25 @@ namespace Tests.EplanDevices
         [SetUp]
         public void SetUpDevices()
         {
-            var WT = new EplanDevice.WT("LINE1WT1", "+LINE1-WT1", "TEST WT",
+            //set manager instance null
+            var instance = typeof(DeviceManager).GetField("instance",
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Static);
+            instance.SetValue(null, null);
+
+            var WT = new WT("LINE1WT1", "+LINE1-WT1", "TEST WT",
                 1, "LINE", 1, "Test WT article");
             WT.SetSubType("WT");
             EplanDevice.DeviceManager.GetInstance().Devices.Add(WT);
 
-            var PID1 = new EplanDevice.C("LINE1PC1", "+LINE1-PC1", "TEST PC1",
+            var PID1 = new C("LINE1PC1", "+LINE1-PC1", "TEST PC1",
                 1, "LINE", 1);
             PID1.SetSubType("C_PID");
             PID1.SetProperty("IN_VALUE", "LINE1WT1");
             PID1.SetProperty("OUT_VALUE", "LINE1PC2");
             EplanDevice.DeviceManager.GetInstance().Devices.Add(PID1);
 
-            var PID2 = new EplanDevice.C("LINE1PC2", "+LINE1-PC2", "TEST PC2",
+            var PID2 = new C("LINE1PC2", "+LINE1-PC2", "TEST PC2",
                 2, "LINE", 1);
             PID2.SetSubType("C_PID");
             PID2.SetProperty("IN_VALUE", "LINE1PC1");

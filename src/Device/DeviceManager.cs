@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.IO;
 using EasyEPlanner;
 using System.Text;
+using System.Security.Cryptography;
 
 /// <summary>
 /// Пространство имен технологических устройств проекта (клапана, насосы...).
@@ -102,7 +103,7 @@ namespace EplanDevice
                 res += CheckDevicesIP();
             }
 
-            res += CheckPIDInputAndOutputProperties();
+            res += CheckControllerIOProperties();
 
             return res;
         }
@@ -157,48 +158,62 @@ namespace EplanDevice
         }
 
         /// <summary>
-        /// Проверить входы и выходы ПИД-регуляторов
+        /// Проверить входы и выходы регуляторов
         /// </summary>
         /// <returns></returns>
-        private string CheckPIDInputAndOutputProperties()
+        private string CheckControllerIOProperties()
         {
-            string res = string.Empty;
-            string cap = StaticHelper.CommonConst.Cap;
+            var res = new StringBuilder();
 
-            var PIDs = Devices.Where(x => x.DeviceType == DeviceType.C);
-            foreach (var dev in PIDs)
+            foreach (var dev in Devices.Where(d => d.DeviceType is DeviceType.C))
             {
                 foreach (var property in dev.Properties)
                 {
-                    object value = property.Value;
-                    if (value != null)
-                    {
-                        var devInPropery = GetDevice(value.ToString());
-                        if (devInPropery.Description == cap)
-                        {
-                            res += $"Задано несуществующее устройство для " +
-                                $"ПИД-регулятора {dev.Name}, свойство " +
-                                $"{property.Key}.\n";
-                        }
+                    var value = property.Value?.ToString() ?? string.Empty;
 
-                        bool allowedDevices =
-                            devInPropery.DeviceType != DeviceType.AO &&
-                            devInPropery.DeviceType != DeviceType.VC &&
-                            devInPropery.DeviceType != DeviceType.M &&
-                            devInPropery.DeviceType != DeviceType.C;
-                        if (property.Key == dev.Properties.Keys.Last() &&
-                            allowedDevices)
-                        {
-                            res += $"В выходе {property.Key} ПИД-регулятора" +
-                                $" {dev.Name} задано некорректное " +
-                                $"устройство. Нужно указать AO, VC, M или " +
-                                $"другой ПИД-регулятор.\n";
-                        }
-                    }
+                    if (value == string.Empty ||
+                        GetDevice(value).Description != StaticHelper.CommonConst.Cap)
+                        continue;
+
+                    res.Append($"Для регулятора {dev.Name} в свойстве ")
+                        .Append($"{property.Key} задано ")
+                        .Append($"несуществующее устройство.\n"); 
                 }
+
+                res.Append(CheckControllerOutValue(dev));
             }
 
-            return res;
+            return res.ToString();
+        }
+
+        private string CheckControllerOutValue(IODevice dev)
+        {
+            var outValue = dev.Properties[IODevice.Property.OUT_VALUE]
+                    ?.ToString() ?? string.Empty;
+            var devOutValue = GetDevice(outValue);
+
+            if (outValue == string.Empty ||
+                devOutValue.Description == StaticHelper.CommonConst.Cap)
+                return string.Empty;
+
+            if (dev.DeviceSubType is DeviceSubType.C_PID &&
+                    !devOutValue.AllowedType(DeviceType.AO, DeviceType.VC, DeviceType.M, DeviceType.C))
+            {
+                return $"В выходе {IODevice.Property.OUT_VALUE} ПИД-регулятора" +
+                    $" {dev.Name} задано некорректное " +
+                    $"устройство. Нужно указать AO, VC, M или " +
+                    $"другой регулятор.\n";
+            }
+
+            if (dev.DeviceSubType is DeviceSubType.C_THLD &&
+                !devOutValue.AllowedType(DeviceType.DO, DeviceType.V, DeviceType.M))
+            {
+                return $"В выходе {IODevice.Property.OUT_VALUE} порогового регулятора" +
+                    $" {dev.Name} задано некорректное " +
+                    $"устройство. Нужно указать DO, V или M.\n";
+            }
+
+            return string.Empty;
         }
 
         public void Sort()
