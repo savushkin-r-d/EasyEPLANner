@@ -467,6 +467,11 @@ namespace IO
             }
         }
 
+        /// <summary>
+        /// Адрессное пространство занимаемое модулем
+        /// </summary>
+        public int AddressArea => Info?.LocalbusData ?? 0;
+
         public List<EplanDevice.IIODevice>[] Devices
         {
             get

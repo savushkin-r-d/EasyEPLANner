@@ -31,7 +31,7 @@ namespace IO
             string description, int addressSpaceTypeNum, string typeName,
             string groupName, int[] channelClamps, int[] channelAddressesIn,
             int[] channelAddressesOut, int DOCount, int DICount,
-            int AOCount, int AICount, string colorAsString)
+            int AOCount, int AICount, int localbusData, string colorAsString)
         {
             var addressSpaceType = (ADDRESS_SPACE_TYPE)addressSpaceTypeNum;
             Color color = Color.FromName(colorAsString);
@@ -39,7 +39,7 @@ namespace IO
             var moduleInfo = new IOModuleInfo(number, name, description,
                  addressSpaceType, typeName, groupName, channelClamps,
                  channelAddressesIn, channelAddressesOut, DOCount, DICount,
-                 AOCount, AICount, color);
+                 AOCount, AICount, localbusData, color);
 
             if (modules.Where(x => x.Name == moduleInfo.Name).Count() == 0)
             {
@@ -88,7 +88,7 @@ namespace IO
             ADDRESS_SPACE_TYPE addressSpaceType, string typeName,
             string groupName, int[] channelClamps, int[] channelAddressesIn,
             int[] channelAddressesOut, int DOCount, int DICount, int AOCount,
-            int AICount, Color color)
+            int AICount, int localbusData, Color color)
         {
             Number = n;
             Name = name;
@@ -107,7 +107,22 @@ namespace IO
             this.AOCount = AOCount;
             this.AICount = AICount;
 
+            LocalbusData = localbusData;
+
+            if (LocalbusData == 0)
+                LocalbusData = CalculateLocalbusData();
+
             ModuleColor = color;
+        }
+
+        private int CalculateLocalbusData()
+        {
+            if (Name?.StartsWith("AXL") ?? false) // Phoenix Contact
+                return AXLLocalbusOffset + Math.Max(
+                    Math.Max(DOCount / AXLDIDOCountDivider, DICount / AXLDIDOCountDivider),
+                    Math.Max(AOCount * AXLAIAOCountCoefficient, AICount * AXLAIAOCountCoefficient));
+
+            return 0;
         }
 
         public object Clone()
@@ -119,7 +134,7 @@ namespace IO
             return new IOModuleInfo(Number, Name, Description,
                 AddressSpaceType, TypeName, GroupName, channelClamps,
                 channelAddressesIn, channelAddressesOut, DOCount, DICount,
-                AOCount, AICount, ModuleColor);
+                AOCount, AICount, LocalbusData, ModuleColor);
         }
 
         /// <summary>
@@ -178,6 +193,11 @@ namespace IO
         public int AICount { get; set; }
 
         /// <summary>
+        /// Адресное пространство, занимаеоме модулем.
+        /// </summary>
+        public int LocalbusData { get; set; }
+
+        /// <summary>
         /// Имя типа (дискретный выход, аналоговый выход, ...).
         /// </summary>
         public string TypeName { get; set; }
@@ -227,6 +247,23 @@ namespace IO
         /// </summary>
         public static IOModuleInfo Stub = new IOModuleInfo(0,
             "не определен", "", ADDRESS_SPACE_TYPE.NONE, "", "", new int[0],
-            new int[0], new int[0], 0, 0, 0, 0, Color.LightGray);
+            new int[0], new int[0], 0, 0, 0, 0, 0, Color.LightGray);
+
+        /// <summary>
+        /// Изначальное адрессное пространство, занимаемое любым модулем AXL
+        /// </summary>
+        private static readonly int AXLLocalbusOffset = 2;
+
+        /// <summary>
+        /// Делитель для DO/DI_Count при расчете адресного пространства 
+        /// PhoenixContact
+        /// </summary>
+        private static readonly int AXLDIDOCountDivider = 8;
+
+        /// <summary>
+        /// Множитель для AI/AO_Count при расчете адресного пространства
+        /// Phoenix Contact
+        /// </summary>
+        private static readonly int AXLAIAOCountCoefficient = 2;
     }
 }

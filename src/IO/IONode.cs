@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
 namespace IO
@@ -23,6 +25,8 @@ namespace IO
             var nodeinfo = IONodeInfo.GetNodeInfo(typeStr, out _);
             IsCoupler = nodeinfo.IsCoupler;
             type = nodeinfo.Type;
+            
+            AddressArea = IOAddressArea.GetModulesPerNodeAmount(type);
 
             this.ip = ip;
             this.n = n;
@@ -38,18 +42,51 @@ namespace IO
             AO_count = 0;
         }
 
+        /// <summary>
+        /// Исключение переполнения количества модулей в узле
+        /// </summary>
+        public class ModulesPerNodeOutOfRageException : Exception
+        {
+            public ModulesPerNodeOutOfRageException(string message) : base(message) { }
+        }
+
+        /// <summary>
+        /// Исключение переполнения адрессного пространства в узле
+        /// </summary>
+        public class AddressAreaOutOfRangeException : Exception
+        {
+            public AddressAreaOutOfRangeException(string message) : base(message) { }
+        }
+
         public void SetModule(IIOModule iOModule, int position)
         {
+            if (position > AddressArea?.ModulesPerNodeMax)
+            {
+                throw new ModulesPerNodeOutOfRageException($"Модуль \"{iOModule.Name}\" " +
+                    $"выходит за диапозон максимального количества модулей для узла \"{name}\". ");
+            }
+
+            if (currentAddressArea + iOModule.AddressArea > AddressArea.AddressAreaMax)
+            {
+                throw new AddressAreaOutOfRangeException($"Модуль \"{iOModule.Name}\" {iOModule.ArticleName} ({iOModule.AddressArea} byte) " +
+                    $"выходит за диапозон адрессного пространства узла \"{name}\" [{currentAddressArea}/{AddressArea.AddressAreaMax}]. ");
+            }
+
             if (iOModules.Count < position)
             {
                 for (int i = iOModules.Count; i < position; i++)
                 {
-                    iOModules.Add(new IOModule(0, 0, null));
+                    iOModules.Add(StubIOModule);
                 }
             }
 
+            currentAddressArea += iOModule.AddressArea;
+
             iOModules[position - 1] = iOModule;
         }
+
+        [ExcludeFromCodeCoverage]
+        public virtual IIOModule StubIOModule => new IOModule(0, 0, null);
 
         public IIOModule this[int idx]
         {
@@ -124,6 +161,42 @@ namespace IO
             T_PHOENIX_CONTACT_MAIN = 201, /// Контроллер Phoenix Contact
         };
 
+        /// <summary>
+        /// Максимальное количество доступных для
+        /// подключения к узлу модулей
+        /// </summary>
+        public class IOAddressArea
+        {
+            /// <summary> Узлы Phoenix Contact </summary>
+            public static readonly IOAddressArea PHOENIX_CONTACT = new IOAddressArea(63, 1482);
+            /// <summary> Узлы Wago </summary>
+            public static readonly IOAddressArea WAGO = new IOAddressArea(64, 0);
+
+            protected IOAddressArea(int modulesPerNodeMax, int addressAreaMax)
+            {
+                ModulesPerNodeMax = modulesPerNodeMax;
+                AddressAreaMax = addressAreaMax;
+            }
+
+            public static IOAddressArea GetModulesPerNodeAmount(TYPES type)
+            {
+                switch (type)
+                {
+                    case TYPES.T_INTERNAL_750_86x:
+                    case TYPES.T_INTERNAL_750_820x:
+                    case TYPES.T_ETHERNET:
+                        return WAGO;
+                    case TYPES.T_PHOENIX_CONTACT:
+                    case TYPES.T_PHOENIX_CONTACT_MAIN:
+                        return PHOENIX_CONTACT;
+                    default: return null;
+                }
+            }
+
+            public int ModulesPerNodeMax { get; }
+            public int AddressAreaMax { get; }
+        }
+
         public int DI_count { get; set; }
 
         public int DO_count { get; set; }
@@ -163,6 +236,11 @@ namespace IO
                 return type;
             }
         }
+
+        /// <summary>
+        /// Объем адрессного пространства
+        /// </summary>
+        public IOAddressArea AddressArea { get; }
 
         public string TypeStr
         {
@@ -238,6 +316,11 @@ namespace IO
         /// Местоположение узла (прим., +MCC1)
         /// </summary>
         private string location;
+
+        /// <summary>
+        /// Текущее занимаемое модулями адресное пространство
+        /// </summary>
+        private int currentAddressArea = 0;
         #endregion
     }
 }

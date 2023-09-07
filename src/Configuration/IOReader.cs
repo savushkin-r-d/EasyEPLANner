@@ -285,7 +285,14 @@ namespace EasyEPlanner
                     bool moduleNotExist = node[shortModuleNumber - 1] == null;
                     if(moduleNotExist)
                     {
-                        node.SetModule(nodeModule, shortModuleNumber);
+                        try
+                        {
+                            node.SetModule(nodeModule, shortModuleNumber);
+                        }
+                        catch(Exception ex)
+                        {
+                            Logs.AddMessage(ex.Message);
+                        }
                     }
                     else
                     {

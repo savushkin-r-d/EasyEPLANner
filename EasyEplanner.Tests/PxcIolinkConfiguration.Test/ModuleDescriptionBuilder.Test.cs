@@ -44,7 +44,7 @@ namespace Tests.PxcIolinkConfigration
             string moduleName = "IOLModuleName";
             int moduleClampsCount = 4;
             IOModuleInfo.AddModuleInfo(0, moduleName, string.Empty, 0, string.Empty,
-                string.Empty, new int[moduleClampsCount], new int[0], new int[0], 0, 0, 0, 0, string.Empty);
+                string.Empty, new int[moduleClampsCount], new int[0], new int[0], 0, 0, 0, 0, 0, string.Empty);
             _ioModule.Setup(x => x.ArticleName).Returns(articleName);
             _ioModule.Setup(x => x.Name).Returns(moduleName);
             _ioModule.Setup(x => x.Info).Returns(IOModuleInfo.GetModuleInfo(moduleName, out _));
@@ -82,7 +82,7 @@ namespace Tests.PxcIolinkConfigration
             int expectedModuleClampsCount = 5;
 
             IOModuleInfo.AddModuleInfo(0, expectedModuleName, string.Empty, 0, string.Empty,
-                string.Empty, new int[expectedModuleClampsCount], new int[0], new int[0], 0, 0, 0, 0, string.Empty);
+                string.Empty, new int[expectedModuleClampsCount], new int[0], new int[0], 0, 0, 0, 0, 0, string.Empty);
 
             _ioModule.Setup(x => x.ArticleName).Returns(expectedArticleName);
             _ioModule.Setup(x => x.Name).Returns(expectedModuleName);

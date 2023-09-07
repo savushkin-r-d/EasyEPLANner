@@ -273,7 +273,7 @@ namespace Tests.IO
                     IOModuleInfo.AddModuleInfo(n, name, description,
                         addressSpaceTypeNum, typeName, groupName,
                         channelClamps, channelAddressesIn, channelAddressesOut,
-                        DOCount, DICount, AOCount, AICount, color);
+                        DOCount, DICount, AOCount, AICount, 0, color);
 
                     currentRepeatableCount--;
                     currentCount--;
@@ -282,7 +282,7 @@ namespace Tests.IO
                 IOModuleInfo.AddModuleInfo(n, name, description,
                         addressSpaceTypeNum, typeName, groupName,
                         channelClamps, channelAddressesIn, channelAddressesOut,
-                        DOCount, DICount, AOCount, AICount, color);
+                        DOCount, DICount, AOCount, AICount, 0, color);
 
                 currentCount--;
             }
@@ -316,7 +316,7 @@ namespace Tests.IO
 
             IOModuleInfo.AddModuleInfo(IntStub, name, StrStub, IntStub,
                 StrStub, StrStub, new int[0], new int[0], new int[0], IntStub,
-                IntStub, IntStub, IntStub, ColorStub);
+                IntStub, IntStub, IntStub, IntStub, ColorStub);
 
             return IOModuleInfo.GetModuleInfo(name, out _);
         }

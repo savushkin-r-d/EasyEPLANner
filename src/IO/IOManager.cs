@@ -350,11 +350,13 @@ namespace IO
                     int AIcnt = Convert.ToInt32((double)tableData["AI_count"]);
                     string color = (string)tableData["Color"];
 
+                    int LocalbusData = Convert.ToInt32((tableData["LocalbusData"] ?? 0));
+
                     IOModuleInfo.AddModuleInfo(number, name, description,
                         addressSpaceTypeNumber, typeName, groupName,
                         channelClamps.ToArray(), channelAddressesIn.ToArray(),
                         channelAddrOut.ToArray(), DOcnt, DIcnt, AOcnt, AIcnt,
-                        color);
+                        LocalbusData, color);
                 }
             }
             else
