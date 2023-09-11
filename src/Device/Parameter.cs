@@ -136,7 +136,7 @@ namespace EplanDevice
             public static readonly Parameter P_ERR_MIN_FLOW = new Parameter("P_ERR_MIN_FLOW", "Ошибка счета импульсов");
 
             /// <summary> Дельта значение </summary>
-            public static readonly Parameter P_DELTA = new Parameter(nameof(P_DELTA), "Дельта срабатывания");
+            public static readonly Parameter P_delta = new Parameter(nameof(P_delta), "Дельта срабатывания");
 
             protected static readonly Lazy<Dictionary<string, Parameter>> AllParameters = InitParameters();
 
@@ -211,7 +211,7 @@ namespace EplanDevice
                             return string.Format(UnitFormat.Kilograms, displayedValue);
                         break;
                     case DeviceType.C:
-                        if (parameter == P_max || parameter == P_min || parameter == P_DELTA)
+                        if (parameter == P_max || parameter == P_min || parameter == P_delta)
                         {
                             var inValue = device.Properties[Property.IN_VALUE];
 

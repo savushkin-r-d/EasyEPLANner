@@ -146,10 +146,7 @@ namespace Tests.EplanDevices
             var paramters_THLD = new string[]
             {
                 IODevice.Parameter.P_is_reverse,
-                IODevice.Parameter.P_DELTA,
-                IODevice.Parameter.P_ON_TIME,
-                IODevice.Parameter.P_OFF_TIME,
-
+                IODevice.Parameter.P_delta,
             };
 
             var defaultValues = new double[]
@@ -183,7 +180,7 @@ namespace Tests.EplanDevices
                 new object[]
                 {
                     paramters_THLD,
-                    new double[]{ 0, 0, 0, 0, },
+                    new double[]{ 0, 0, },
                     C_THLD,
                     GetNewCDevice(),
                 },
