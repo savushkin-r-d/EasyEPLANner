@@ -146,7 +146,7 @@ namespace Tests.EplanDevices
             var paramters_THLD = new string[]
             {
                 IODevice.Parameter.P_is_reverse,
-                IODevice.Parameter.P_DELTA,
+                IODevice.Parameter.P_delta,
                 IODevice.Parameter.P_ON_TIME,
                 IODevice.Parameter.P_OFF_TIME,
 

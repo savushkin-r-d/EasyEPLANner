@@ -79,10 +79,7 @@ namespace EplanDevice
                     properties.Add(Property.OUT_VALUE, null);
 
                     parameters.Add(Parameter.P_is_reverse, null);
-                    parameters.Add(Parameter.P_DELTA, null);
-                    parameters.Add(Parameter.P_ON_TIME, null);
-                    parameters.Add(Parameter.P_OFF_TIME, null);
-
+                    parameters.Add(Parameter.P_delta, null);
                     break;
 
                 default:
