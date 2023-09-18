@@ -9,7 +9,7 @@ namespace TechObject
     /// Состояние операции. Содержит группу шагов, выполняемых последовательно
     /// (или в ином порядке).
     /// </summary>
-    public class State : TreeViewItem
+    public class State : TreeViewItem, IOnValueChanged
     {
         /// <summary>
         /// Получение шага по номеру (нумерация с -1 - шаг операции, который 
@@ -91,6 +91,8 @@ namespace TechObject
             {
                 clone.steps.Add(steps[idx].Clone(clone.GetStepN));
             }
+
+            clone.Steps.ForEach(step => step.ValueChanged += (sender) => clone.OnValueChanged(sender));
 
             return clone;
         }
@@ -178,7 +180,7 @@ namespace TechObject
         /// </summary>
         /// <param name="stepName">Имя шага.</param>
         /// <param name="baseStepLuaName">Имя базового шага</param>
-        public void AddStep(string stepName, string baseStepLuaName)
+        public Step AddStep(string stepName, string baseStepLuaName)
         {
             if (NeedMainStep)
             {
@@ -193,6 +195,11 @@ namespace TechObject
             {
                 newStep.SetNewValue(baseStepLuaName, true);
             }
+                
+            newStep.ValueChanged += (sender) => OnValueChanged(sender);
+            OnValueChanged(this);
+
+            return newStep;
         }
 
         public List<Step> Steps
@@ -284,7 +291,10 @@ namespace TechObject
             }
 
             steps.Add(step);
-            
+
+            step.ValueChanged += (sender) => OnValueChanged(sender);
+            OnValueChanged(this);
+
             return step;
         }
 
@@ -468,6 +478,10 @@ namespace TechObject
 
             Step newStep = AddNewStepToItems();
             newStep.AddParent(this);
+
+            newStep.ValueChanged += (sender) => OnValueChanged(sender);
+            OnValueChanged(this);
+
             return newStep;
         }
 
@@ -521,6 +535,37 @@ namespace TechObject
             string ostisLink = EasyEPlanner.ProjectManager.GetInstance()
                 .GetOstisHelpSystemLink();
             return ostisLink + "?sys_id=state";
+        }
+
+        public void UpdateOnGenericTechObject(State genericState)
+        {
+            if (genericState is null)
+            {
+                Steps.ForEach(step => step.UpdateOnGenericTechObject(null));
+                return;
+            }
+
+            foreach (var stepIndex in Enumerable.Range(0, genericState.Steps.Count()))
+            {
+                var step = Steps.ElementAtOrDefault(stepIndex);
+                var genericStep = genericState.Steps.ElementAtOrDefault(stepIndex);
+
+                if (genericStep is null)
+                    continue;
+
+                if (step is null)
+                {
+                    step = AddStep(genericStep.GetStepName(), genericStep.GetBaseStepLuaName());
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(genericStep.GetBaseStepLuaName()))
+                        step.SetNewValue(genericStep.GetBaseStepLuaName());
+                    step.SetNewValue(genericStep.GetStepName());
+                }
+
+                step.UpdateOnGenericTechObject(genericStep);
+            }
         }
 
         public bool Empty
@@ -583,6 +628,9 @@ namespace TechObject
         private string name;        ///< Имя.
         private List<Step> steps;   ///< Список шагов.
         private Step modeStep;      ///< Шаг.
-        private Mode owner;         ///< Владелец элемента
+        private Mode owner;
+
+        //public event OnValueChanged ValueChanged;
+        ///< Владелец элемента
     }
 }

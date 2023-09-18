@@ -142,6 +142,8 @@ namespace TechObject
             return res;
         }
 
+        public override bool Empty => subActions.All(subAction => subAction.Empty);
+
         private List<IAction> subActions;
         
         protected private const string GroupDefaultName = "Группа";

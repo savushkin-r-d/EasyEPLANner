@@ -3,7 +3,31 @@ function init()
         return
     end
 
-    local objects = init_tech_objects_modes()
+    local generic_objects = nil;
+    if init_generic_tech_objects ~= nil then
+        generic_objects = init_generic_tech_objects();
+    end
+    local objects = init_tech_objects_modes();
+
+
+    -- инициализация типовых объектов
+    local initialized_generic_objects = init_objects(generic_objects, true)
+    -- инициализация тех. объектов
+    local initialized_objects = init_objects(objects, false)
+
+    -- инициализация данных тех. объектов
+    init_objects_data(objects, initialized_objects)
+    -- инициализация данных типовых объектов
+    init_objects_data(generic_objects, initialized_generic_objects)
+
+    return 0
+end
+
+function init_objects(objects, is_generic)
+    if objects == nil then
+        return
+    end
+
     local initialized_objects = { }
 	for number, value in ipairs(objects) do
 		-- Проверка пустоты таблицы для импортируемых объектов.
@@ -21,13 +45,22 @@ function init()
 		    local cooper_param_number = value.cooper_param_number or -1
 		    local base_tech_object	  = value.base_tech_object or "" 
 		    local attached_objects	  = value.attached_objects or ""
+            local generic_tech_object_number = value.generic_tech_object or -1;
 
 		    local obj = ADD_TECH_OBJECT(global_number, object_n, object_name,
 			    object_tech_type, object_name_eplan, cooper_param_number,
-			    object_name_BC, base_tech_object, attached_objects)
+			    object_name_BC, base_tech_object, attached_objects,
+                generic_tech_object_number, is_generic)
 		    initialized_objects[number] = obj
         end
 	end
+    return initialized_objects
+end
+
+function init_objects_data(objects, initialized_objects)
+    if objects == nil then
+        return
+    end
 
     for fields, value in ipairs(objects) do
         -- Аналогично с предыдущим циклом.
@@ -86,8 +119,6 @@ function init()
             end
         end
     end
-
-    return 0
 end
 
 function proc_params(par, par_name, obj)

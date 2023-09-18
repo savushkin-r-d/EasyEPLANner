@@ -251,5 +251,9 @@ namespace Editor
         /// Помечен на вырезание
         /// </summary>
         bool MarkToCut { get; set; }
+
+        event OnValueChanged ValueChanged;
+
+        void OnValueChanged(object sender);
     }
 }

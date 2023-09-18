@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using Aga.Controls.Tree;
 using EasyEPlanner;
 using Editor;
 using TechObject.ActionProcessingStrategy;
@@ -16,7 +18,17 @@ namespace TechObject
         /// <summary>
         /// Индексы устройств в дейсвии.
         /// </summary>
-        List<int> DeviceIndex { get; set; }
+        List<int> DevicesIndex { get; set; }
+
+        /// <summary>
+        /// Индексы устройств из типового объекта (с удаленными исключенными устройствами)
+        /// </summary>
+        List<int> GenericDevicesIndexAfterExclude { get; }
+
+        /// <summary>
+        /// Все индексы устройств (в действии и в действии типового объекта)
+        /// </summary>
+        List<int> AllDeviceIndex { get; }
 
         IAction Clone();
 
@@ -78,6 +90,8 @@ namespace TechObject
         void ModifyDevNames(string newTechObjectName, int newTechObjectNumber,
             string oldTechObjectName, int oldTechObjNumber);
 
+        void ModifyDevNames(string TechObjectName, int newTechObjectNumber);
+
         List<DrawInfo> GetObjectToDrawOnEplanPage();
 
         DrawInfo.Style DrawStyle { get; set; }
@@ -92,6 +106,10 @@ namespace TechObject
 
         List<string> DevicesNames { get; }
 
+        List<string> GenericDevicesNames { get; }
+
+        List<string> AllDevicesNames { get; }
+
         IDeviceProcessingStrategy GetDeviceProcessingStrategy();
 
         void SetDeviceProcessingStrategy(IDeviceProcessingStrategy strategy);
@@ -99,12 +117,14 @@ namespace TechObject
         Step Owner { get; set; }
 
         void AddParent(ITreeViewItem parent);
+
+        void UpdateOnGenericTechObject(IAction genericAction);
     }
 
     /// <summary>
     /// Действие над устройствами (включение, выключение и т.д.).
     /// </summary>
-    public class Action : TreeViewItem, IAction
+    public class Action : TreeViewItem, IAction, IOnValueChanged
     {
         /// <summary>
         /// Создание нового действия.
@@ -204,11 +224,9 @@ namespace TechObject
             var clone = (Action)MemberwiseClone();
             clone.SetDeviceProcessingStrategy(deviceProcessingStrategy);
 
-            clone.deviceIndex = new List<int>();
-            foreach (int index in deviceIndex)
-            {
-                clone.deviceIndex.Add(index);
-            }
+            clone.deviceIndex = new List<int>(deviceIndex);
+            clone.genericDeviceIndex = new List<int>();
+            clone.excludedGenericDeviceIndex = new List<int>();
 
             return clone;
         }
@@ -216,13 +234,24 @@ namespace TechObject
         virtual public void ModifyDevNames(int newTechObjectN,
             int oldTechObjectN, string techObjectName)
         {
+            if (oldTechObjectN != 0)
+                deviceIndex = ModifyDevNamesChangeTechNumbers(newTechObjectN,
+                    oldTechObjectN, techObjectName, deviceIndex);
+            genericDeviceIndex = ModifyDevNamesChangeTechNumbers(newTechObjectN,
+                oldTechObjectN, techObjectName, genericDeviceIndex);
+            deviceIndex = IndexesExclude(deviceIndex, genericDeviceIndex);
+        }
+
+        private List<int> ModifyDevNamesChangeTechNumbers(int newTechObjectN,
+            int oldTechObjectN, string techObjectName, List<int> devs)
+        {
             List<int> tmpIndex = new List<int>();
-            foreach (int index in deviceIndex)
+            foreach (int index in devs)
             {
                 tmpIndex.Add(index);
             }
 
-            foreach (int index in deviceIndex)
+            foreach (int index in devs)
             {
                 var newDevName = string.Empty;
                 EplanDevice.IDevice device = deviceManager.GetDeviceByIndex(index);
@@ -231,23 +260,24 @@ namespace TechObject
 
                 if (objNum > 0)
                 {
-                    //Для устройств в пределах объекта меняем номер объекта.
                     if (techObjectName == objName)
-                    {
-                        // COAG2V1 --> COAG1V1
+                    { //Для устройств в пределах объекта меняем номер объекта.
                         if (objNum == newTechObjectN && oldTechObjectN != -1)
-                        {
+                        { // COAG2V1 --> COAG1V1
                             newDevName = objName + oldTechObjectN +
                                 device.DeviceType.ToString() + device.
                                 DeviceNumber;
                         }
                         if (oldTechObjectN == -1 ||
                             oldTechObjectN == objNum)
-                        {
-                            //COAG1V1 --> COAG2V1
+                        { //COAG1V1 --> COAG2V1
                             newDevName = objName + newTechObjectN +
                                 device.DeviceType.ToString() + device
                                 .DeviceNumber;
+                        }
+                        if (oldTechObjectN == 0)
+                        { //COAGxV1 --> x -> 1, 2, 3 
+                            newDevName = $"{objName}{newTechObjectN}{device.DeviceType}{device.DeviceNumber}";
                         }
                     }
                 }
@@ -264,7 +294,7 @@ namespace TechObject
                 }
             }
 
-            deviceIndex = tmpIndex;
+            return tmpIndex;
         }
 
         virtual public void ModifyDevNames(string newTechObjectName,
@@ -306,9 +336,18 @@ namespace TechObject
             deviceIndex = tmpIndex;
         }
 
+        public void ModifyDevNames(string TechObjectName, int newTechObjectNumber)
+        {
+            List<int> tmpIndex = new List<int>();
+            foreach (int index in genericDeviceIndex)
+            {
+                tmpIndex.Add(index);
+            }
+        }
+
         public virtual string SaveAsLuaTable(string prefix)
         {
-            if (deviceIndex.Count == 0)
+            if (AllDeviceIndex.Count == 0)
             {
                 return string.Empty;
             }
@@ -328,7 +367,7 @@ namespace TechObject
             res += $"{prefix}\t";
 
             int devicesCounter = 0;
-            foreach (int index in deviceIndex)
+            foreach (int index in AllDeviceIndex)
             {
                 var device = deviceManager.GetDeviceByIndex(index);
                 string devName = device.Name;
@@ -353,7 +392,7 @@ namespace TechObject
 
         public string SaveAsLuaTableInline()
         {
-            if (deviceIndex.Count == 0)
+            if (AllDeviceIndex.Count == 0)
             {
                 return string.Empty;
             }
@@ -363,7 +402,7 @@ namespace TechObject
             res += $"{{ ";
 
             int devicesCounter = 0;
-            foreach (int index in deviceIndex)
+            foreach (int index in AllDeviceIndex)
             {
                 var device = deviceManager.GetDeviceByIndex(index);
                 string devName = device.Name;
@@ -432,6 +471,18 @@ namespace TechObject
             return deviceProcessingStrategy;
         }
 
+        public virtual void UpdateOnGenericTechObject(IAction genericAction)
+        {
+            if (genericAction is null)
+            {
+                deviceIndex.AddRange(genericDeviceIndex);
+                genericDeviceIndex.Clear();
+                return;
+            }
+
+            SetGenericDevices((genericAction as Action).DevicesIndex);
+        }
+
         #region Синхронизация устройств в объекте.
         virtual public void Synch(int[] array)
         {
@@ -441,16 +492,18 @@ namespace TechObject
         }
         #endregion
 
-        public List<int> DeviceIndex
+        public List<int> DevicesIndex
         {
-            get
-            {
-                return deviceIndex;
-            }
-            set
-            {
-                deviceIndex = value;
-            }
+            get => deviceIndex;
+            set => deviceIndex = value;
+        }
+
+        public List<int> AllDeviceIndex => DevicesIndex
+            .Concat(GenericDevicesIndexAfterExclude).ToList();
+
+        public List<int> GenericDevicesIndexAfterExclude
+        {
+            get => IndexesExclude(genericDeviceIndex, excludedGenericDeviceIndex);
         }
 
         public string LuaName
@@ -472,6 +525,19 @@ namespace TechObject
             }
         }
 
+        public List<string> GenericDevicesNames
+        {
+            get
+            {
+                return GenericDevicesIndexAfterExclude
+                    .Select(x => deviceManager.GetDeviceByIndex(x).Name)
+                    .ToList();
+            }
+        }
+
+        public List<string> AllDevicesNames => DevicesNames
+            .Concat(GenericDevicesNames).ToList();
+
         #region Реализация ITreeViewItem
 
         override public string[] DisplayText
@@ -482,6 +548,14 @@ namespace TechObject
             }
         }
 
+        /// <summary>
+        /// Исключить из списка-источника элементы списка исключений
+        /// </summary>
+        /// <param name="source"> Список-источник </param>
+        /// <param name="exclude"> Список с исключениями </param>
+        private List<int> IndexesExclude(List<int> source, List<int> exclude)
+            => source.Where(dev => !exclude.Any(excludeDev => dev == excludeDev)).ToList();
+
         override public bool SetNewValue(string newName)
         {
             newName = newName.Trim();
@@ -489,10 +563,11 @@ namespace TechObject
             if (newName == string.Empty)
             {
                 Clear();
+                OnValueChanged(this);
                 return true;
             }
 
-            Match strMatch = Regex.Match(newName,
+            Match strMatch = Regex.Match($"{newName}",
                 EplanDevice.DeviceManager.DESCRIPTION_PATTERN_MULTYLINE,
                 RegexOptions.IgnoreCase);
             if (!strMatch.Success)
@@ -500,10 +575,46 @@ namespace TechObject
                 return false;
             }
 
-            IList<int> allowedDevicesId = GetDeviceProcessingStrategy()
-                .ProcessDevices(newName, deviceManager);
-            DeviceIndex.Clear();
+            List<int> allowedDevicesId = GetDeviceProcessingStrategy()
+                .ProcessDevices($"{newName}", deviceManager).ToList();
+
+            excludedGenericDeviceIndex = IndexesExclude(genericDeviceIndex, allowedDevicesId);
+
+            allowedDevicesId = IndexesExclude(allowedDevicesId, genericDeviceIndex);
+            
+            DevicesIndex.Clear();
             deviceIndex.AddRange(allowedDevicesId);
+
+            OnValueChanged(this);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Установить устройства из типового объекта
+        /// </summary>
+        public bool SetGenericDevices(List<int> genericDevicesID)
+        {
+            var devicesID = IndexesExclude(deviceIndex, genericDevicesID);
+            
+            if (Editor.Editor.GetInstance().Editable)
+            {
+                excludedGenericDeviceIndex = excludedGenericDeviceIndex
+                    .Where(excluded => genericDevicesID.Any(generic => generic == excluded)).ToList();
+            }
+            else
+            { // При загрузке из LUA (редактирование выключено)
+                if (genericDevicesID.Count() > 0)
+                {
+                    excludedGenericDeviceIndex = IndexesExclude(genericDevicesID, deviceIndex);
+                }
+            }
+
+            deviceIndex.Clear();
+            deviceIndex.AddRange(devicesID);
+
+            genericDeviceIndex.Clear();
+            genericDeviceIndex.AddRange(genericDevicesID);
 
             return true;
         }
@@ -618,7 +729,7 @@ namespace TechObject
             }
         }
 
-        public bool Empty => deviceIndex.Count == 0;
+        public virtual bool Empty => deviceIndex.Count == 0;
 
         public Step Owner
         {
@@ -628,10 +739,14 @@ namespace TechObject
 
         public override string ToString()
         {
-            bool hasDevices = DeviceIndex.Count > 0;
+            bool hasDevices = (DevicesIndex.Concat(genericDeviceIndex)).ToList().Count > 0;
+
+            var devs = string.Join(" ", DevicesNames);
+            var genDevs = string.Join(" ", GenericDevicesNames);
+
             if (hasDevices)
             {
-                return $"{string.Join(" ", DevicesNames)}";
+                return $"{devs} {genDevs}".Trim();
             }
             else
             {
@@ -639,9 +754,16 @@ namespace TechObject
             }
         }
 
+        public void OnSubActionChanged(object sender)
+        {
+            OnValueChanged(sender);
+        }
+
         protected string luaName;
         protected string name;
         protected List<int> deviceIndex;
+        protected List<int> genericDeviceIndex = new List<int>();
+        protected List<int> excludedGenericDeviceIndex = new List<int>();
 
         protected EplanDevice.DeviceType[] devTypes;
         protected EplanDevice.DeviceSubType[] devSubTypes;
@@ -651,6 +773,8 @@ namespace TechObject
         IDeviceProcessingStrategy deviceProcessingStrategy;
         EplanDevice.IDeviceManager deviceManager = EplanDevice.DeviceManager
             .GetInstance();
+
+        //public event OnValueChanged ValueChanged;
     }
 
     namespace ActionProcessingStrategy
@@ -780,7 +904,7 @@ namespace TechObject
                     foreach (var newInputDevPair in newInputDevs)
                     {
                         var newInputDevId = newInputDevPair.Key;
-                        if (Action.DeviceIndex.Contains(newInputDevId))
+                        if (Action.DevicesIndex.Contains(newInputDevId))
                         {
                             idDevDict.Remove(newInputDevId);
                         }

@@ -12,7 +12,7 @@ namespace TechObject
     /// Операция технологического объекта. Состоит из последовательно 
     /// (или в ином порядке) выполняемых шагов.
     /// </summary>
-    public class Mode : TreeViewItem
+    public class Mode : TreeViewItem, IOnValueChanged
     {
         /// <summary>
         /// Получение состояния номеру (нумерация с 0).
@@ -60,10 +60,17 @@ namespace TechObject
                 }
             }
 
+            foreach (var state in stepsMngr)
+            {
+                state.ValueChanged += (sender) => OnValueChanged(sender);
+            }
+
             operPar = new OperationParams();
 
             // Экземпляр класса базовой операции
-            this.baseOperation = baseOperation ?? new BaseOperation(this); 
+            this.baseOperation = baseOperation ?? new BaseOperation(this);
+            (this.baseOperation as ITreeViewItem).ValueChanged += (sender) => OnValueChanged(sender);
+
 
             SetItems();
         }
@@ -118,6 +125,9 @@ namespace TechObject
 
             clone.restrictionMngr = restrictionMngr.Clone();
             clone.SetItems();
+
+            clone.States.ForEach(state => state.ValueChanged += sender => clone.OnValueChanged(sender));
+            clone.stepsMngr.ForEach(step => step.ValueChanged += sender => clone.OnValueChanged(sender));
 
             return clone;
         }
@@ -449,6 +459,7 @@ namespace TechObject
         override public bool SetNewValue(string newName)
         {
             name = newName;
+            OnValueChanged(this);
             return true;
         }
 
@@ -480,6 +491,7 @@ namespace TechObject
             if (CloneExtraProperties != null)
                 baseOperation.SetExtraProperties(CloneExtraProperties);
 
+            OnValueChanged(this);
             return true;
         }
 
@@ -717,6 +729,29 @@ namespace TechObject
             }
         }
 
+        public void UpdateOnGenericTechObject(Mode genericMode)
+        {
+            if (genericMode is null)
+            {
+                States.ForEach(state => state.UpdateOnGenericTechObject(null));
+                return;
+            }
+
+            foreach (var stateIndex in Enumerable.Range(0, genericMode.States.Count))
+            {
+
+                var genericState = genericMode.States[stateIndex];
+                var state = this.States[stateIndex];
+
+                if (genericMode.States[stateIndex] is null || state is null)
+                    continue;
+
+                state.UpdateOnGenericTechObject(genericState);
+            }
+
+            baseOperation.SetGenericExtraProperties(genericMode.BaseOperation.Properties);
+        }
+
         public static Editor.IEditor TechObjectEditor { get; set; } = Editor.Editor.GetInstance(); 
 
         private GetN getN;
@@ -733,5 +768,7 @@ namespace TechObject
         private IBaseOperation baseOperation; /// Базовая операция
 
         public const string DefaultModeName = "Новая операция";
+
+        //public event OnValueChanged ValueChanged;
     }
 }

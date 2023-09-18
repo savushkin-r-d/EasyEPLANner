@@ -321,6 +321,24 @@ namespace Editor
         }
 
         public virtual bool IsCuttable { get; } = false;
+
+        private OnValueChanged valueChanged;
+        public event OnValueChanged ValueChanged
+        {
+            add
+            {
+                valueChanged = null;
+                valueChanged += value;
+            }
+            remove
+            {
+                valueChanged -= value;
+            }
+        }
+        public void OnValueChanged(object sender)
+        {
+            valueChanged?.Invoke(sender);
+        }
         #endregion
 
         #region реализация IHelperItem
@@ -334,4 +352,6 @@ namespace Editor
         }
         #endregion
     }
+
+    public delegate void OnValueChanged(object sender);
 }

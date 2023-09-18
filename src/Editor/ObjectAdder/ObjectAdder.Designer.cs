@@ -34,6 +34,7 @@
             this.objectSubTypes = new System.Windows.Forms.ListBox();
             this.objectSubTypesLabel = new System.Windows.Forms.Label();
             this.objectTypesLabel = new System.Windows.Forms.Label();
+            this.addGenericGroup = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // acceptButton
@@ -93,6 +94,16 @@
             this.objectTypesLabel.TabIndex = 5;
             this.objectTypesLabel.Text = "Выберите тип объекта:";
             // 
+            // addGenericGroup
+            // 
+            this.addGenericGroup.Location = new System.Drawing.Point(12, 233);
+            this.addGenericGroup.Name = "addGenericGroup";
+            this.addGenericGroup.Size = new System.Drawing.Size(184, 23);
+            this.addGenericGroup.TabIndex = 6;
+            this.addGenericGroup.Text = "Добавить грппу";
+            this.addGenericGroup.UseVisualStyleBackColor = true;
+            this.addGenericGroup.Click += new System.EventHandler(this.addGenericGroupClick);
+            // 
             // ObjectsAdder
             // 
             this.AcceptButton = this.acceptButton;
@@ -101,6 +112,7 @@
             this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(411, 263);
             this.ControlBox = false;
+            this.Controls.Add(this.addGenericGroup);
             this.Controls.Add(this.objectTypesLabel);
             this.Controls.Add(this.objectSubTypesLabel);
             this.Controls.Add(this.objectSubTypes);
@@ -128,5 +140,6 @@
         private System.Windows.Forms.ListBox objectSubTypes;
         private System.Windows.Forms.Label objectSubTypesLabel;
         private System.Windows.Forms.Label objectTypesLabel;
+        private System.Windows.Forms.Button addGenericGroup;
     }
 }

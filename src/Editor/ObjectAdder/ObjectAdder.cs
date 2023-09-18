@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
+using TechObject;
 
 namespace Editor
 {
@@ -79,6 +80,12 @@ namespace Editor
             }
         }
 
+        private void addGenericGroupClick(object sender, EventArgs e)
+        {
+            GenericGroup = true;
+            acceptButton_Click(sender, e);
+        }
+
         private void cancelButton_Click(object sender, EventArgs e)
         {
             LastSelectedType = null;
@@ -115,6 +122,7 @@ namespace Editor
         {
             LastSelectedSubType = null;
             LastSelectedType = null;
+            GenericGroup = false;
         }
 
         /// <summary>
@@ -126,6 +134,8 @@ namespace Editor
         /// Установленное значение подтипа (Танк и др.)
         /// </summary>
         public static string LastSelectedSubType { get; set; }
+
+        public static bool GenericGroup { get; private set; }
 
         TechObject.IBaseTechObjectManager baseTechObjectsManager;
     }

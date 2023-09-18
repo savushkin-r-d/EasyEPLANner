@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using LuaInterface;
 using System.Windows.Forms;
+using System.Text;
 
 namespace TechObject
 {
@@ -24,6 +25,7 @@ namespace TechObject
             InitLua();
 
             treeObjects = new List<ITreeViewItem>();
+            genericTechObjects = new List<GenericTechObject>();
             techObjects = new List<TechObject>();
             techObjectManagerChecker = new TechObjectChecker(this);
             techObjectXMLMaker = new TechObjectXMLMaker(this);
@@ -100,6 +102,13 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Получение типового объекта по номеру
+        /// </summary>
+        /// <param name="index">Номер типового объекта</param>
+        public GenericTechObject GetGenericTObject(int index)
+            => genericTechObjects?.ElementAtOrDefault(index - 1);
+
+        /// <summary>
         /// Получение номера операции в списке операций. 
         /// Нумерация начинается с 1.
         /// </summary>
@@ -131,6 +140,24 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Получить номер операции по названию базового объекта,
+        /// ОУ и тех. номеру
+        /// </summary>
+        /// <param name="baseObjectName"> Название базового объекта </param>
+        /// <param name="nameEplan"> ОУ </param>
+        /// <param name="techNumber"> тех. номер </param>
+        /// <returns></returns>
+        public int GetTechObjectN(string baseObjectName, string nameEplan, int techNumber)
+        {
+            var techObject = TechObjects
+                .Where(to => (to.BaseTechObject?.EplanName.Equals(baseObjectName) ?? false) &&
+                                to.NameEplan.Equals(nameEplan) && to.TechNumber == techNumber)
+                .FirstOrDefault();
+
+            return techObjects.IndexOf(techObject) + 1;
+        }
+
+        /// <summary>
         /// Проверка и исправление ограничений при удалении/перемещении
         /// операции 
         /// </summary>
@@ -149,20 +176,32 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveAsLuaTable(string prefix)
         {
-            string res = string.Empty;
-            res += "init_tech_objects_modes = function()\n";
-            res += "\treturn\n";
-            res += "\t{\n";
+            var res = new StringBuilder();
+
+            res.Append("init_generic_tech_objects = function()\n")
+                .Append("\treturn\n")
+                .Append("\t{\n");
+            foreach (GenericTechObject obj in GenericTechObjects)
+            {
+                int num = GenericTechObjects.IndexOf(obj) + 1;
+                res.Append(obj.SaveAsLuaTable(prefix + "\t\t", num));
+            }
+            res.Append("\t}\n")
+                .Append("end\n\n");
+
+            res.Append("init_tech_objects_modes = function()\n")
+                .Append("\treturn\n")
+                .Append("\t{\n");
             foreach (TechObject obj in TechObjects)
             {
                 int num = TechObjects.IndexOf(obj) + 1;
-                res += obj.SaveAsLuaTable(prefix + "\t\t", num);
+                res.Append(obj.SaveAsLuaTable(prefix + "\t\t", num));
             }
-            res += "\t}\n";
-            res += "end";
+            res.Append("\t}\n")
+                .Append("end");
 
             res = res.Replace("\t", "    ");
-            return res;
+            return res.ToString();
         }
 
         /// <summary>
@@ -196,6 +235,7 @@ namespace TechObject
             ProjectName = projectName;
             treeObjects.Clear();
             techObjects.Clear();
+            genericTechObjects.Clear();
 
             //Сброс описания объектов.
             lua.DoString("init_tech_objects_modes = nil");
@@ -215,6 +255,7 @@ namespace TechObject
             {
                 //Создание объектов C# из скрипта Lua.
                 object[] res = lua.DoString("if init ~= nil then init() end");
+                genericTechObjects.ForEach(obj => obj.Update());
             }
             catch (Exception ex)
             {
@@ -247,32 +288,44 @@ namespace TechObject
         /// при импорте из файла</param>
         public TechObject AddObject(int globalNumber, int techN, string name,
             int techType, string nameEplan, int cooperParamNumber,
-            string NameBC, string baseTechObjectName, string attachedObjects)
+            string NameBC, string baseTechObjectName, string attachedObjects,
+            int genericTechObjectNumber, bool isGeneric)
         {
             // globalNumber игнорируется в этом методе, но используется при
             // импорте описания из файла (аналогичная сигнатура, другое тело).
 
             var baseTechObject = BaseTechObjectManager.GetInstance()
                 .GetTechObjectCopy(baseTechObjectName);
-            // getN - null т.к он будет другой, ниже по функциям.
-            TechObject obj = new TechObject(name, null, techN,
-                techType, nameEplan.ToUpper(), cooperParamNumber, NameBC,
-                attachedObjects, baseTechObject);
 
-            AddObject(obj);
+            if (isGeneric)
+            {
+                var obj = new GenericTechObject(name, techType, nameEplan,
+                    cooperParamNumber, NameBC, attachedObjects, baseTechObject);
 
-            return obj;
+                AddGenericObject(obj);
+                return obj;
+            }
+            else
+            {
+                // getN - null т.к он будет другой, ниже по функциям.
+                TechObject obj = new TechObject(name, null, techN,
+                    techType, nameEplan.ToUpper(), cooperParamNumber, NameBC,
+                    attachedObjects, baseTechObject);
+
+                AddObject(obj, genericTechObjectNumber);
+                return obj;
+            }
         }
 
         /// <summary>
         /// Добавление технологического объекта.
         /// </summary>
         /// <param name="obj">Добавляемый объект</param>
-        private void AddObject(TechObject obj)
+        private void AddObject(TechObject obj, int genericObjectNumber = -1)
         {
             if (obj.BaseTechObject != null)
             {
-                AddIdentifiedObject(obj);
+                AddIdentifiedObject(obj, false, genericObjectNumber);
             }
             else
             {
@@ -282,11 +335,25 @@ namespace TechObject
             techObjects.Add(obj);
         }
 
+        private void AddGenericObject(GenericTechObject obj)
+        {
+            if (obj.BaseTechObject != null)
+            {
+                AddIdentifiedObject(obj, true);
+            }
+            else
+            {
+                //AddUnidentifiedObject(obj);
+            }
+
+            genericTechObjects.Add(obj);
+        }
+
         /// <summary>
         /// Добавить опознанный объект при загрузке из LUA
         /// </summary>
         /// <param name="obj">Объект</param>
-        private void AddIdentifiedObject(TechObject obj)
+        private void AddIdentifiedObject(TechObject obj, bool isGeneric = false, int genericObjectNumber = -1)
         {
             BaseTechObject baseTechObject = obj.BaseTechObject;
             var type = (BaseTechObjectManager.ObjectType)baseTechObject
@@ -300,11 +367,11 @@ namespace TechObject
                     break;
 
                 case BaseTechObjectManager.ObjectType.Unit:
-                    AddS88Object(obj, name);
+                    AddS88Object(obj, name, isGeneric, genericObjectNumber);
                     break;
 
                 case BaseTechObjectManager.ObjectType.Aggregate:
-                    AddS88Object(obj, name);
+                    AddS88Object(obj, name, isGeneric, genericObjectNumber);
                     break;
 
                 case BaseTechObjectManager.ObjectType.UserObject:
@@ -338,7 +405,8 @@ namespace TechObject
         /// <param name="obj">Объект</param>
         /// <param name="name">Имя объекта</param>
         /// <returns></returns>
-        private void AddS88Object(TechObject obj, string name)
+        private void AddS88Object(TechObject obj, string name,
+            bool isGeneric = false, int genericObjectNumber = -1)
         {
             var s88Item = treeObjects
                 .Where(x => x is S88Object && x.DisplayText[0].Contains(name))
@@ -350,7 +418,7 @@ namespace TechObject
                 SortTreeObjectsByCustomComparer();
             }
 
-            s88Item.AddObjectWhenLoadFromLua(obj);
+            s88Item.AddObjectWhenLoadFromLua(obj, isGeneric, genericObjectNumber);
         }
 
         /// <summary>
@@ -884,6 +952,11 @@ namespace TechObject
         private string ProjectName { get;set; }
 
         /// <summary>
+        /// Список типовых тех.объектов в дереве
+        /// </summary>
+        public List<GenericTechObject> GenericTechObjects => genericTechObjects;
+        
+        /// <summary>
         /// Список всех технологических объектов в дереве.
         /// </summary>
         public List<TechObject> TechObjects
@@ -893,6 +966,7 @@ namespace TechObject
                 return techObjects;
             }
         }
+
 
         /// <summary>
         /// Единственный объект менеджера объектов.
@@ -904,6 +978,11 @@ namespace TechObject
         /// </summary>
         private List<ITreeViewItem> treeObjects;
 
+        /// <summary>
+        /// Список типовых тех. объектов в дереве.
+        /// </summary>
+        private List<GenericTechObject> genericTechObjects;
+        
         /// <summary>
         /// Список всех технологических объектов в дереве.
         /// </summary>

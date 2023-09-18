@@ -19,14 +19,19 @@ namespace TechObject
             if(!isRuntime)
             {
                 this.value = new ParamProperty("Значение", value);
+                this.value.ValueChanged += sender => OnValueChanged(sender);
             }
             if(isUseOperation)
             {
                 this.oper = new ParamOperationsProperty("Операция", -1, -1);
                 this.oper.Parent = this;
+                this.oper.ValueChanged += sender => OnValueChanged(sender);
             }
             this.meter = new ParamProperty("Размерность", meter, string.Empty);
             this.nameLua = new ParamProperty("Lua имя", nameLua, string.Empty);
+
+            this.meter.ValueChanged += sender => OnValueChanged(sender);
+            this.nameLua.ValueChanged += sender => OnValueChanged(sender);
 
             items = new List<ITreeViewItem>();
             if(!isRuntime)
@@ -151,6 +156,7 @@ namespace TechObject
         {
             name = newName;
 
+            OnValueChanged(this);
             return true;
         }
 
@@ -291,6 +297,7 @@ namespace TechObject
                 if (oper != null)
                 {
                     oper.EditText[1] = value;
+                    OnValueChanged(this);
                 }
             }
         }
@@ -298,6 +305,15 @@ namespace TechObject
         public bool IsUseOperation()
         {
             return oper != null;
+        }
+
+        public void CloneParam(Param param)
+        {
+            name = param.name;
+            value.SetNewValue(param.value.Value);
+            nameLua.SetNewValue(param.nameLua.Value);
+            oper.SetNewValue(param.oper.Value);
+            meter.SetNewValue(param.meter.Value);
         }
 
         private GetN getN;

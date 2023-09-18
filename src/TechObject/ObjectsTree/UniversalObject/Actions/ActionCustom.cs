@@ -273,6 +273,22 @@ namespace TechObject
             }
         }
 
+        public override void UpdateOnGenericTechObject(IAction genericAction)
+        {
+            if (genericAction is null)
+                return;
+
+            var genericActionCustom = genericAction as ActionCustom;
+            if (genericActionCustom is null)
+                return;            
+
+            foreach (var subActionIndex in Enumerable.Range(0, genericAction.SubActions.Count))
+            {
+                SubActions[subActionIndex]
+                    .UpdateOnGenericTechObject(genericActionCustom.SubActions[subActionIndex]);
+            }
+        }
+
         #region Реализация ITreeViewItem
         override public ITreeViewItem[] Items
         {

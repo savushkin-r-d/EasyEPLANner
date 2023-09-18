@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 
 namespace Editor
-{      
+{
     /// <summary>    
     /// Класс, реализующий редактор.
     /// </summary>
@@ -66,6 +66,8 @@ namespace Editor
 
         [ExcludeFromCodeCoverage]
         public bool Editable => editorForm.Editable;
+
+        public bool GenericGroupCreatable => editorForm.GenericGroupCreatable;
 
         /// <summary>
         /// Получение экземпляра класса.

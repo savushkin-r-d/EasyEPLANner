@@ -1,5 +1,6 @@
 ﻿using StaticHelper;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Editor
 {
@@ -48,18 +49,13 @@ namespace Editor
         public virtual void SetValue(object val)
         {
             value = val;
+            OnValueChanged(this);
         }
 
         /// <summary>
         /// Значение свойства
         /// </summary>
-        public string Value
-        {
-            get
-            {
-                return value.ToString();
-            }
-        }
+        public string Value => value.ToString();
 
         /// <summary>
         /// Имя свойства
@@ -278,7 +274,7 @@ namespace Editor
                     }
                     break;
             }
-
+            OnValueChanged(this);
             return res;
         }
 
@@ -457,6 +453,24 @@ namespace Editor
         }
 
         public  bool IsCuttable { get; } = false;
+
+        private OnValueChanged valueChanged;
+        public event OnValueChanged ValueChanged
+        {
+            add
+            {
+                valueChanged = null;
+                valueChanged += value;
+            }
+            remove
+            {
+                valueChanged -= value;
+            }
+        }
+        public void OnValueChanged(object sender)
+        {
+            valueChanged?.Invoke(sender);
+        }
         #endregion
 
         #region реализация IHelperItem

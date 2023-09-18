@@ -338,7 +338,9 @@
     <Compile Include="TechObject\Base\Properties\ComboBoxParameter.cs" />
     <Compile Include="TechObject\Base\Properties\EquipmentParameter.cs" />
     <Compile Include="TechObject\Base\Properties\MainAggregateParameter.cs" />
+    <Compile Include="TechObject\IOnValueChanged.cs" />
     <Compile Include="TechObject\ITechObjectManager.cs" />
+    <Compile Include="TechObject\GenericObject.cs" />
     <Compile Include="TechObject\ObjectsTree\BaseObject.cs" />
     <Compile Include="TechObject\ObjectsTree\Unidentified.cs" />
     <Compile Include="TechObject\ObjectsTree\S88Object.cs" />

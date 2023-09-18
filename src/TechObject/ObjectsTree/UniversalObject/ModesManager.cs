@@ -7,7 +7,7 @@ namespace TechObject
     /// <summary>
     /// Операции технологического объекта.
     /// </summary>
-    public class ModesManager : TreeViewItem
+    public class ModesManager : TreeViewItem, IOnValueChanged
     {
         public ModesManager(TechObject owner)
         {
@@ -27,6 +27,8 @@ namespace TechObject
             }
 
             clone.owner = owner;
+
+            clone.Modes.ForEach(mode => mode.ValueChanged += (sender) => clone.OnValueChanged(sender));
 
             return clone;
         }
@@ -130,6 +132,9 @@ namespace TechObject
 
             ChangeRestrictionModeOwner(newMode);
 
+            newMode.ValueChanged += (sender) => OnValueChanged(sender);
+            OnValueChanged(this);
+
             return newMode;
         }
 
@@ -156,6 +161,10 @@ namespace TechObject
             newMode.BaseOperation.Check();
 
             ChangeRestrictionModeOwner(newMode);
+
+            newMode.ValueChanged += (sender) => OnValueChanged(sender);   
+            OnValueChanged(this);
+
             return newMode;
         }
 
@@ -499,6 +508,10 @@ namespace TechObject
             ChangeRestrictionModeOwner(newMode);
 
             newMode.AddParent(this);
+
+            newMode.ValueChanged += (sender) => OnValueChanged(sender);
+            OnValueChanged(this);
+
             return newMode;
         }
 
@@ -551,7 +564,40 @@ namespace TechObject
             }
         }
 
+        public void UpdateOnGenericTechObject(ModesManager genericModesManager)
+        {
+            if (genericModesManager is null)
+            {
+                modes.ForEach(mode => mode.UpdateOnGenericTechObject(null));
+                return;
+            }
+
+            foreach (var index in Enumerable.Range(0, genericModesManager.modes.Count)) 
+            {
+                var genericMode = genericModesManager.modes.ElementAtOrDefault(index);
+                var mode = modes.ElementAtOrDefault(index);
+
+                if (genericMode is null)
+                    continue;
+
+                if (mode is null)
+                {
+                    mode = AddMode(genericMode.Name, genericMode.BaseOperation.LuaName);
+                }
+                else
+                {
+                    mode.SetNewValue(genericMode.BaseOperation.LuaName, true);
+                    mode.SetNewValue(genericMode.Name);
+                }
+
+                mode.UpdateOnGenericTechObject(genericMode);
+            }
+        }
+
         private List<Mode> modes; /// Список операций.
-        private TechObject owner; /// Технологический объект.
+        private TechObject owner;
+
+        //public event OnValueChanged ValueChanged;
+        /// Технологический объект.
     }
 }

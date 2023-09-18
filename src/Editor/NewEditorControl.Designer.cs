@@ -53,6 +53,7 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.changeBasesObjBtn = new System.Windows.Forms.ToolStripButton();
             this.hideEmptyItemsBtn = new System.Windows.Forms.ToolStripButton();
+            this.createGenericGroup = new System.Windows.Forms.ToolStripButton();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.editorTView = new BrightIdeasSoftware.TreeListView();
             this.toolStrip.SuspendLayout();
@@ -87,7 +88,8 @@
             this.exportButton,
             this.toolStripSeparator4,
             this.changeBasesObjBtn,
-            this.hideEmptyItemsBtn});
+            this.hideEmptyItemsBtn,
+            this.createGenericGroup});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(426, 27);
@@ -309,6 +311,17 @@
             this.hideEmptyItemsBtn.ToolTipText = "Скрыть пустые элементы";
             this.hideEmptyItemsBtn.CheckStateChanged += new System.EventHandler(this.hideEmptyItemsBtn_CheckStateChanged);
             // 
+            // createGenericGroup
+            // 
+            this.createGenericGroup.CheckOnClick = true;
+            this.createGenericGroup.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.createGenericGroup.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.createGenericGroup.Image = global::EasyEPlanner.Properties.Resources.pairDIDO;
+            this.createGenericGroup.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.createGenericGroup.Name = "createGenericGroup";
+            this.createGenericGroup.Size = new System.Drawing.Size(24, 24);
+            this.createGenericGroup.Text = "toolStripButton1";
+            // 
             // imageList1
             // 
             this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
@@ -415,5 +428,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton hideEmptyItemsBtn;
         private System.Windows.Forms.ToolStripButton changeBasesObjBtn;
+        private System.Windows.Forms.ToolStripButton createGenericGroup;
     }
     }

@@ -15,6 +15,7 @@ namespace TechObject
             base(strategy.Name, attachedObjects)
         {
             this.owner = owner;
+            this.Parent = owner;
             this.strategy = strategy;
             SetValue(attachedObjects);
         }
@@ -421,6 +422,31 @@ namespace TechObject
             return new AttachedObjects(Value, Owner, strategy);
         }
 
+        public void UpdateOnGenericTechObject(AttachedObjects genericAttachedObjects)
+        {
+            var res = new List<int>();
+
+            var value = genericAttachedObjects.Value;
+
+            if (string.IsNullOrEmpty(value))
+            {
+                SetNewValues(res);
+                return;
+            }
+
+            foreach (int index in genericAttachedObjects.Value.Split(' ').Select(int.Parse).ToList())
+            {
+                var manager = TechObjectManager.GetInstance();
+                var techObject = manager.GetTObject(index);
+                var toNumber = manager.GetTechObjectN(techObject.BaseTechObject.EplanName, techObject.NameEplan, Owner.TechNumber);
+                if (toNumber > 0)
+                    res.Add(toNumber);
+                else res.Add(index);
+            }
+
+            SetNewValues(res);
+        }
+
         public override string[] DisplayText
         {
             get
@@ -624,7 +650,7 @@ namespace TechObject
 
                     TechObject obj = TechObjectManager.GetInstance()
                         .GetTObject(number);
-                    if (obj.BaseTechObject == null)
+                    if (obj == null || obj.BaseTechObject == null)
                     {
                         return new List<int>();
                     }

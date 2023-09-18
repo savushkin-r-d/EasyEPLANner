@@ -115,7 +115,7 @@ namespace Tests.TechObject
                 });
 
             actionDF.SubActions[0].SubActions[0]
-                .DeviceIndex.AddRange(devs);
+                .DevicesIndex.AddRange(devs);
             actionDF.AddParam(param1_value, parameter1_LuaName, 0);
 
             var actionDFCode =
@@ -148,7 +148,7 @@ namespace Tests.TechObject
                 });
 
             actionSF_1A_1P.SubActions[0].SubActions[0]
-                .DeviceIndex.AddRange(devs);
+                .DevicesIndex.AddRange(devs);
             actionSF_1A_1P.AddParam(param1_value, "P_0", 0);
 
             var actionSF_1A_1P_Code =
@@ -178,9 +178,9 @@ namespace Tests.TechObject
                 });
 
             actionSF_2A_2P.SubActions[0].SubActions[0]
-                .DeviceIndex.AddRange(devs);
+                .DevicesIndex.AddRange(devs);
             actionSF_2A_2P.SubActions[0].SubActions[1]
-                .DeviceIndex.AddRange(devs);
+                .DevicesIndex.AddRange(devs);
             actionSF_2A_2P.AddParam(param1_value, "P_0", 0);
             actionSF_2A_2P.AddParam(param2_value, "P_1", 0);
 
@@ -220,7 +220,7 @@ namespace Tests.TechObject
                 });
 
             actionSF_3A_3P_withEmpties.SubActions[0].SubActions[1]
-                .DeviceIndex.AddRange(devs);
+                .DevicesIndex.AddRange(devs);
             actionSF_3A_3P_withEmpties.AddParam(param2_value, "P_1", 0);
 
             var actionSF_3A_3P_withEmpties_Code =

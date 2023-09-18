@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Editor;
 
 namespace TechObject
@@ -185,6 +186,11 @@ namespace TechObject
                 clone.items.Add(clone.parUintRuntime);
             }
 
+            foreach (var item in clone.Items)
+            {
+                item.ValueChanged += sender => clone.OnValueChanged(sender);
+            }
+           
             return clone;
         }
 
@@ -358,6 +364,42 @@ namespace TechObject
                         par.GetMeter(), par.GetNameLua());
                 }
             }
+        }
+
+        /// <summary>
+        /// Обновление параметров на основе типового технологического объекта
+        /// </summary>
+        /// <param name="paramsManager"></param>
+        public void UpdateOnGenericTechObject(ParamsManager paramsManager)
+        {
+            if (paramsManager.Float != null)
+            {
+                foreach (Param par in paramsManager.Float.Items)
+                {
+                    var parClone = Float.GetParam(paramsManager.Float.GetIdx(par) - 1);
+
+                    
+                    if (parClone is null)
+                    {
+                        AddFloatParam(par.GetName(), double.Parse(par.GetValue()),
+                            par.GetMeter(), par.GetNameLua());
+                    }
+                    else
+                    {
+                        parClone.CloneParam(par);
+                    }
+
+                }
+            }
+
+            //if (paramsManager.FloatRuntime != null)
+            //{
+            //    foreach (Param par in paramsManager.FloatRuntime.Items)
+            //    {
+            //        AddFloatRuntimeParam(par.GetName(), double.Parse(par.GetValue()),
+            //            par.GetMeter(), par.GetNameLua());
+            //    }
+            //}
         }
 
         private Params parFloat;

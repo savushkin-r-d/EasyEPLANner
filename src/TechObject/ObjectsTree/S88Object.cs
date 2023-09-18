@@ -20,7 +20,8 @@ namespace TechObject
         /// Добавление объекта при загрузке из LUA
         /// </summary>
         /// <param name="obj">Объект</param>
-        public void AddObjectWhenLoadFromLua(TechObject obj)
+        public void AddObjectWhenLoadFromLua(TechObject obj,
+            bool isGeneric = false, int genericObjectNumber = -1)
         {
             var findedBaseObject = objects
                 .Where(x => x.EditText[0] == obj.BaseTechObject.Name)
@@ -32,7 +33,14 @@ namespace TechObject
                 objects.Add(findedBaseObject);
             }
 
-            findedBaseObject.AddObjectWhenLoadFromLua(obj);
+            if(isGeneric)
+            {
+                findedBaseObject.AddGenericObjectWhenLoadFromLua(obj as GenericTechObject);
+            }
+            else
+            {
+                findedBaseObject.AddObjectWhenLoadFromLua(obj, genericObjectNumber);
+            }
         }
 
         #region реализация ITreeViewItem

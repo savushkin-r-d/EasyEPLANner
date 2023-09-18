@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Editor;
+using Eplan.EplApi.Base;
 
 namespace TechObject
 {
@@ -28,6 +30,7 @@ namespace TechObject
             foreach(BaseParameter property in properties)
             {
                 property.Owner = this;
+                property.ValueChanged += Property_ValueChanged;
                 items.Add(property);
             }
             Sort();
@@ -39,8 +42,14 @@ namespace TechObject
         /// <param name="property">Оборудование</param>
         private void AddItem(BaseParameter property)
         {
+            property.ValueChanged += Property_ValueChanged;
             items.Add(property);
             Sort();
+        }
+
+        private void Property_ValueChanged(object sender)
+        {
+            EquipmentChanded?.Invoke(sender);
         }
 
         /// <summary>
@@ -463,9 +472,39 @@ namespace TechObject
             });
         }
 
+        /// <summary>
+        /// Обновление оборудования на основе типового объекта
+        /// </summary>
+        /// <remarks>
+        /// Если поле оборудования в типовом объекте не заполнено,
+        /// то оно не влияет на значение данного поля оборудования,
+        /// иначе изменяет значение на заданное в типовом объекте.
+        /// Список оборудования фиксированный и зависит от базового объекта.
+        /// </remarks>
+        /// <param name="genericEquipment"> Оборудование типового объекта </param>
+        public void UpdateOnGenericTechObject(Equipment genericEquipment)
+        {
+            foreach (var index in Enumerable.Range(0, items.Count()))
+            {
+                var equipmentItem = genericEquipment.items[index] as BaseParameter;
+                if (equipmentItem.IsFilled == false)
+                    continue;
+
+                items[index].SetNewValue(equipmentItem.Value);
+            }
+        }
+
+
         public void Clear() => items.Clear();
 
         private TechObject owner;
         private List<ITreeViewItem> items;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"> Оборудование </param>
+        public delegate void OnEquipmentChanded(object sender);
+        public event OnEquipmentChanded EquipmentChanded;
     }
 }

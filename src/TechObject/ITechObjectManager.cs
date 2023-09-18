@@ -40,6 +40,11 @@ namespace TechObject
         string SaveRestrictionAsLua(string prefixStr);
 
         /// <summary>
+        /// Список типовых объектов
+        /// </summary>
+        List<GenericTechObject> GenericTechObjects { get; }
+
+        /// <summary>
         /// Глобальный список объектов
         /// </summary>
         List<TechObject> TechObjects { get; }
@@ -50,6 +55,12 @@ namespace TechObject
         /// <param name="globalNum">Глобальный номер</param>
         /// <returns></returns>
         TechObject GetTObject(int globalNum);
+
+        /// <summary>
+        /// Получить типовой объект по номеру
+        /// </summary>
+        /// <param name="globalNum">Номер типового объекта</param>
+        GenericTechObject GetGenericTObject(int globalNum);
 
         /// <summary>
         /// Получить глобальный номер объекта

@@ -6,6 +6,8 @@ using Editor;
 using System.Text.RegularExpressions;
 using System.Text;
 using Spire.Pdf.Exporting.XPS.Schema.Mc;
+using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace TechObject
 {
@@ -26,6 +28,7 @@ namespace TechObject
                 : base("OУ", nameEplan)
             {
                 this.owner = owner;
+                Parent = owner;
             }
 
             /// <summary>
@@ -57,12 +60,13 @@ namespace TechObject
         /// <summary>
         /// Класс внутреннего номера технологического объекта
         /// </summary>
-        private class TechObjectN : ObjectProperty
+        protected class TechObjectN : ObjectProperty
         {
             public TechObjectN(TechObject techObject, int value)
                 : base("Номер", techObject.TechNumber.ToString())
             {
                 this.techObject = techObject;
+                this.Parent = techObject;
 
                 SetValue(value);
             }
@@ -132,6 +136,12 @@ namespace TechObject
                 .Append(base_tech_object_str)
                 .Append(attached_objects_str);
 
+            if (genericTecjObject != null)
+            {
+                int genericTechObjectIndex = TechObjectManager.GetInstance().GenericTechObjects.IndexOf(genericTecjObject) + 1;
+                resultBuilder.Append($"{prefix}generic_tech_object = {genericTechObjectIndex},\n");
+            }
+
             if (baseTechObject != null &&
                 baseTechObject.ObjectGroupsList.Count > 0)
             {
@@ -163,7 +173,8 @@ namespace TechObject
                 .Append("\n")
                 .Append(modes.SaveAsLuaTable(prefix))
                 .Append(equipment.SaveAsLuaTable(prefix))
-                .Append(prefix).Append("},\n");
+                .Append(prefix)
+                .Append("},\n");
 
             return resultBuilder.ToString();
         }
@@ -216,7 +227,9 @@ namespace TechObject
             this.techType = new ObjectProperty("Тип", techType);
             this.nameBC = new ObjectProperty("Имя объекта Monitor", 
                 NameBC);
+            this.nameBC.ValueChanged += PropertyChanged;
             this.nameEplan = new NameInEplan(nameEplan, this);
+            this.nameEplan.ValueChanged += PropertyChanged;
             this.cooperParamNumber = new ObjectProperty(
                 "Время совместного перехода шагов (параметр)", 
                 cooperParamNumber, -1);
@@ -245,6 +258,11 @@ namespace TechObject
 
             InitBaseTechObject(baseTechObject);
             SetItems();
+        }
+
+        private void PropertyChanged(object sender)
+        {
+            OnValueChanged(sender);
         }
 
         /// <summary>
@@ -285,6 +303,15 @@ namespace TechObject
             ModesManager.SetUpFromBaseTechObject(BaseTechObject);
             paramsManager.SetUpFromBaseTechObject(BaseTechObject.ParamsManager);
         }
+
+        public void UpdateFromGenericTechObject(GenericTechObject genericTechObject)
+        {
+            nameBC.SetNewValue(genericTechObject.NameBC);
+            nameEplan.SetNewValue(genericTechObject.NameEplan);
+            name = genericTechObject.Name;
+        }
+
+        
 
         /// <summary>
         /// Сравнение имен Eplan базового тех. объекта с текущим.
@@ -352,10 +379,15 @@ namespace TechObject
             return clone;
         }
 
-        private void SetItems()
+        protected void SetItems()
         {
             var itemsList = new List<ITreeViewItem>();
-            itemsList.Add(techNumber);
+            
+            if (this is GenericTechObject == false)
+            {
+                itemsList.Add(techNumber);
+            }
+            
             itemsList.Add(techType);
             itemsList.Add(nameEplan);
             itemsList.Add(nameBC);
@@ -389,7 +421,7 @@ namespace TechObject
                 itemsList.Add(baseProperties);
             }
 
-            items = itemsList.ToArray();
+            items = itemsList;
         }
 
         #region Установить свойства объектов и добавить их по необходимости
@@ -531,7 +563,7 @@ namespace TechObject
 
             set
             {
-                techNumber.SetValue(value.ToString());
+                techNumber.SetNewValue(value.ToString());
             }
         }
 
@@ -809,14 +841,14 @@ namespace TechObject
         {
             get
             {
-                return items;
+                return items.ToArray();
             }
         }
 
         override public bool SetNewValue(string newName)
         {
             name = newName;
-
+            OnValueChanged(this);
             return true;
         }
 
@@ -939,6 +971,26 @@ namespace TechObject
             return null;
         }
 
+
+        public override bool IsInsertable => genericTecjObject is null;
+
+        /// <summary>
+        /// Создать группу с типовым объектом на основе данного объекта.
+        /// Объект переносится в созданную группу.
+        /// </summary>
+        public override ITreeViewItem Insert()
+        {
+            string message = "Создать группу с типовым объектом на основе текущего тех. объекта?";
+            var showWarningResult = MessageBox.Show(message, "Внимание",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (showWarningResult == DialogResult.Yes && Parent is BaseObject baseObject)
+            {
+                return baseObject.CreateGenericGroup(this);
+            }
+            
+            return null;
+        }
+
         public override bool ContainsBaseObject
         {
             get
@@ -1001,6 +1053,14 @@ namespace TechObject
                 return ostisLink + "?sys_id=equipment_module";
             }
         }
+        /// <summary>
+        /// Удалить типовой объект
+        /// </summary>
+        public void RemoveGenericTechObject()
+        {
+            GenericTechObject = null;
+            ModesManager.UpdateOnGenericTechObject(null);
+        }
 
         public int GetLocalNum
         {
@@ -1020,23 +1080,33 @@ namespace TechObject
             }
         }
 
-        private TechObjectN techNumber; /// Номер объекта технологический.
-        private ObjectProperty techType; /// Тип объекта технологический.
+        public GenericTechObject GenericTechObject
+        {
+            get => genericTecjObject;
+            set => genericTecjObject = value;
+        }
 
-        private string name; /// Имя объекта.
-        private ObjectProperty nameBC; /// Имя объекта в Monitor.
-        private ModesManager modes; /// Операции объекта.
-        private ParamsManager paramsManager; /// Менеджер параметров объекта.
-        private SystemParams systemParams; /// Системные параметры объекта.
+        //public event ObjectProperty.OnValueChanged ValueChanged;
 
-        private ITreeViewItem[] items; /// Параметры объекта для редактирования.
+        protected TechObjectN techNumber; /// Номер объекта технологический.
+        protected ObjectProperty techType; /// Тип объекта технологический.
 
-        private GetN getLocalNum; /// Делегат для функции поиска номера объекта.
+        protected string name; /// Имя объекта.
+        protected ObjectProperty nameBC; /// Имя объекта в Monitor.
+        protected ModesManager modes; /// Операции объекта.
+        protected ParamsManager paramsManager; /// Менеджер параметров объекта.
+        protected SystemParams systemParams; /// Системные параметры объекта.
+
+        protected List<ITreeViewItem> items = new List<ITreeViewItem>(); /// Параметры объекта для редактирования.
+
+        protected GetN getLocalNum; /// Делегат для функции поиска номера объекта.
 
         /// Базовый аппарат (технологический объект)
-        private BaseTechObject baseTechObject; 
-        private AttachedObjects attachedObjects; // Привязанные агрегаты
-        private Equipment equipment; // Оборудование объекта
-        private BaseProperties baseProperties; // Доп. свойства объекта
+        protected BaseTechObject baseTechObject;
+        protected AttachedObjects attachedObjects; // Привязанные агрегаты
+        protected Equipment equipment; // Оборудование объекта
+        protected BaseProperties baseProperties; // Доп. свойства объекта
+
+        private GenericTechObject genericTecjObject;
     }
 }

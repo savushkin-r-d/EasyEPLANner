@@ -32,6 +32,8 @@ namespace TechObject
                 clone.InsertCopy(par);
             }
 
+            clone.ValueChanged += sender => clone.OnValueChanged(sender);
+
             return clone;
         }
 
@@ -46,6 +48,10 @@ namespace TechObject
         {
             parameter.Parent = this;
             parameters.Add(parameter);
+
+            OnValueChanged(this);
+            parameter.ValueChanged += sender => OnValueChanged(sender);
+
             return parameter;
         }
 
@@ -216,6 +222,7 @@ namespace TechObject
             {
                 removingParam.ClearOperationsBinding();
                 parameters.Remove(removingParam);
+                OnValueChanged(this);
                 return true;
             }
 
@@ -267,8 +274,11 @@ namespace TechObject
             }
 
             parameters.Add(newParam);
-
             newParam.AddParent(this);
+
+            newParam.ValueChanged += sender => OnValueChanged(sender);
+            OnValueChanged(this);
+
             return newParam;
         }
 
@@ -321,6 +331,9 @@ namespace TechObject
                 parameters.Add(newPar);
 
                 newPar.AddParent(this);
+
+                newPar.ValueChanged += sender => OnValueChanged(sender);
+
                 return newPar;
             }
             else

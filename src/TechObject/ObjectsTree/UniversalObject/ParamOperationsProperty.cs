@@ -43,7 +43,7 @@ namespace TechObject
 
                 SetOperationParameters(numbers);
 
-                SetValue(newValue);
+                base.SetNewValue(newValue);
                 return true;
             }
             catch
