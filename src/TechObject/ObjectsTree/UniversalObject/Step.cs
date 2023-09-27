@@ -39,10 +39,8 @@ namespace TechObject
 
             foreach (var action in actions)
             {
-                if (action is Action aaction)
-                {
-                    aaction.ValueChanged += (sender) => OnValueChanged(sender);
-                }
+                (action as ITreeViewItem)
+                    .ValueChanged += (sender) => OnValueChanged(sender);
             }
         }
 
@@ -430,13 +428,9 @@ namespace TechObject
             clone.baseStep = baseStep.Clone();
             clone.baseStep.Owner = this;
 
-            foreach (var action in clone.actions)
-            {
-                if (action is Action aaction)
-                {
-                    aaction.ValueChanged += (sender) => clone.OnValueChanged(sender);
-                }
-            }
+            clone.actions.ForEach(
+                action => (action as ITreeViewItem).ValueChanged +=
+                sender => clone.OnValueChanged(sender));
 
             return clone;
         }
@@ -1047,10 +1041,9 @@ namespace TechObject
                 var genericAction = genericStep.GetActions.ElementAtOrDefault(actionIndex);
                 var action = GetActions.ElementAtOrDefault(actionIndex);
 
-                if (genericAction is null /*|| genericAction.Empty*/)
-                    continue;
-
-                if (action is null) 
+                if (genericAction is null ||
+                    action is null ||
+                    (genericAction.Empty && action.Empty))
                     continue;
 
                 action.UpdateOnGenericTechObject(genericAction);

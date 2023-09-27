@@ -30,7 +30,7 @@ namespace TechObject
             foreach(BaseParameter property in properties)
             {
                 property.Owner = this;
-                property.ValueChanged += Property_ValueChanged;
+                property.ValueChanged += sender => OnValueChanged(sender);
                 items.Add(property);
             }
             Sort();
@@ -42,14 +42,9 @@ namespace TechObject
         /// <param name="property">Оборудование</param>
         private void AddItem(BaseParameter property)
         {
-            property.ValueChanged += Property_ValueChanged;
+            property.ValueChanged += sender => OnValueChanged(sender);
             items.Add(property);
             Sort();
-        }
-
-        private void Property_ValueChanged(object sender)
-        {
-            EquipmentChanded?.Invoke(sender);
         }
 
         /// <summary>
@@ -85,6 +80,8 @@ namespace TechObject
                 newProperty.Owner = this;
                 equipment.AddItem(newProperty);
             }
+
+            equipment.ValueChanged += sender => OnValueChanged(sender);
 
             return equipment;
         }
@@ -127,22 +124,23 @@ namespace TechObject
 
         public void ModifyDevNames(string newTechObjName, int techNumber)
         {
+            var deviceManager = EplanDevice.DeviceManager.GetInstance();
+
             var properties = items.Select(x => x as BaseParameter).ToArray();
             foreach (var property in properties)
             {
-                string oldDevName = property.Value;
-                var device = EplanDevice.DeviceManager.GetInstance()
-                    .GetDevice(oldDevName);
-                if (device.Description != StaticHelper.CommonConst.Cap)
+                var oldDevsNames = property.Value.Split(' ');
+                var devices = oldDevsNames
+                    .Select(devName => deviceManager.GetDevice(devName));
+
+                var newDevicesNames = devices
+                    .Where(device => device.Description != StaticHelper.CommonConst.Cap)
+                    .Select(device => $"{newTechObjName}{techNumber}{device.DeviceType}{device.DeviceNumber}")
+                    .Where(newDevName => deviceManager.GetDevice(newDevName).Description != StaticHelper.CommonConst.Cap);
+
+                if (newDevicesNames.Count() > 0)
                 {
-                    string newDevName = newTechObjName + techNumber + 
-                        device.DeviceType.ToString() + device.DeviceNumber;
-                    var newDevice = EplanDevice.DeviceManager.GetInstance()
-                        .GetDevice(newDevName);
-                    if (newDevice.Description != StaticHelper.CommonConst.Cap)
-                    {
-                        property.SetNewValue(newDevName);
-                    }
+                    property.SetNewValue(string.Join(" ", newDevicesNames));
                 }
             }
         }
@@ -152,24 +150,7 @@ namespace TechObject
             int techNumber = owner.TechNumber;
             string eplanName = owner.NameEplan;
 
-            var properties = items.Select(x => x as BaseParameter).ToArray();
-            foreach (var property in properties)
-            {
-                string oldDevName = property.Value;
-                var device = EplanDevice.DeviceManager.GetInstance()
-                    .GetDevice(oldDevName);
-                if (device.Description != StaticHelper.CommonConst.Cap)
-                {
-                    string newDevName = eplanName + techNumber +
-                        device.DeviceType.ToString() + device.DeviceNumber;
-                    var newDevice = EplanDevice.DeviceManager.GetInstance()
-                        .GetDevice(newDevName);
-                    if (newDevice.Description != StaticHelper.CommonConst.Cap)
-                    {
-                        property.SetNewValue(newDevName);
-                    }
-                }
-            }
+            ModifyDevNames(eplanName, techNumber);
         }
 
         #region Проверка и автоматическое заполнение оборудования
@@ -499,12 +480,5 @@ namespace TechObject
 
         private TechObject owner;
         private List<ITreeViewItem> items;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"> Оборудование </param>
-        public delegate void OnEquipmentChanded(object sender);
-        public event OnEquipmentChanded EquipmentChanded;
     }
 }

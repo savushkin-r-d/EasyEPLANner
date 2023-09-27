@@ -67,8 +67,6 @@ namespace Editor
         [ExcludeFromCodeCoverage]
         public bool Editable => editorForm.Editable;
 
-        public bool GenericGroupCreatable => editorForm.GenericGroupCreatable;
-
         /// <summary>
         /// Получение экземпляра класса.
         /// </summary>

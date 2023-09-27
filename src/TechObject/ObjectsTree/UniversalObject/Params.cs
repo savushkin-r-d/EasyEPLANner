@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Editor;
 
@@ -417,6 +418,21 @@ namespace TechObject
             return null;
         }
 
+        public void UpdateOnGenericTechObject(Params genericParams)
+        {
+            foreach (Param genericPar in genericParams.parameters)
+            {
+                var par = GetParam(genericParams.GetIdx(genericPar) - 1);
+
+                if (par is null)
+                {
+                    par = Insert() as Param; 
+                }
+
+                par.UpdateOnGenericTechObject(genericPar);
+            }
+        }
+
         public override bool ShowWarningBeforeDelete
         {
             get
@@ -440,6 +456,8 @@ namespace TechObject
                 .GetOstisHelpSystemLink();
             return ostisLink + "?sys_id=process_parameter";
         }
+
+        public ParamsManager ParamsManager => Parent as ParamsManager;
 
         private string name;
         private string nameLua;

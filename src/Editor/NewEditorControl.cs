@@ -7,6 +7,7 @@ using PInvoke;
 using BrightIdeasSoftware;
 using System.Collections;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Editor
 {
@@ -84,8 +85,13 @@ namespace Editor
                     }
                 };
 
-            editorTView.FormatCell += EditorTView_FormatCell;
-
+            // делегат получения отрисовщика для ячейки
+            editorTView.CellRendererGetter =
+                (object rowObject, OLVColumn column) =>
+                {
+                    return (rowObject as ITreeViewItem)?.CellRenderer.ElementAtOrDefault(column.Index);
+                };
+            
             // Делегат получения дочерних элементов
             editorTView.ChildrenGetter = obj => (obj as ITreeViewItem).Items;
 
@@ -116,24 +122,6 @@ namespace Editor
 
             editorTView.Columns.Add(firstColumn);
             editorTView.Columns.Add(secondColumn);
-        }
-
-        private void EditorTView_FormatCell(object sender, FormatCellEventArgs e)
-        {
-            if (e.Model is TechObject.Action action && e.ColumnIndex == 1)
-            {
-                TextMatchFilter filter = TextMatchFilter.Contains(e.ListView, string.Join(" ", action.GenericDevicesNames));
-                e.ListView.ModelFilter = filter;
-
-                var renderer = new HighlightTextRenderer(filter)
-                {
-                    FillBrush = new SolidBrush(Color.LightGreen),
-                    FramePen = new Pen(Color.White),
-                };
-                
-
-                e.ListView.DefaultRenderer = renderer;
-            }
         }
 
         /// <summary>
@@ -1061,7 +1049,7 @@ namespace Editor
 
         public bool Editable { get; private set; } = false;
 
-        public bool GenericGroupCreatable => createGenericGroup.Checked;
+        public bool GenericGroupCreatable => false;
 
         /// <summary>
         /// Переход в режим редактирования.

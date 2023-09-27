@@ -225,14 +225,19 @@ namespace TechObject
 
             this.techNumber = new TechObjectN(this, technologicalNumber);
             this.techType = new ObjectProperty("Тип", techType);
+            this.techType.ValueChanged += sender => OnValueChanged(sender);
+
             this.nameBC = new ObjectProperty("Имя объекта Monitor", 
                 NameBC);
-            this.nameBC.ValueChanged += PropertyChanged;
+            this.nameBC.ValueChanged += sender => OnValueChanged(sender);
+
             this.nameEplan = new NameInEplan(nameEplan, this);
-            this.nameEplan.ValueChanged += PropertyChanged;
+            this.nameEplan.ValueChanged += sender => OnValueChanged(sender);
+
             this.cooperParamNumber = new ObjectProperty(
                 "Время совместного перехода шагов (параметр)", 
                 cooperParamNumber, -1);
+            this.cooperParamNumber.ValueChanged += sender => OnValueChanged(sender);
 
             var allowedObjects = new List<BaseTechObjectManager.ObjectType>()
             {
@@ -258,11 +263,6 @@ namespace TechObject
 
             InitBaseTechObject(baseTechObject);
             SetItems();
-        }
-
-        private void PropertyChanged(object sender)
-        {
-            OnValueChanged(sender);
         }
 
         /// <summary>
@@ -304,11 +304,17 @@ namespace TechObject
             paramsManager.SetUpFromBaseTechObject(BaseTechObject.ParamsManager);
         }
 
-        public void UpdateFromGenericTechObject(GenericTechObject genericTechObject)
-        {
-            nameBC.SetNewValue(genericTechObject.NameBC);
-            nameEplan.SetNewValue(genericTechObject.NameEplan);
+        public void UpdateOnGenericTechObject(GenericTechObject genericTechObject)
+        {   
+            techType.SetNewValue(genericTechObject.techType.Value);
             name = genericTechObject.Name;
+
+            if (genericTechObject.nameBC.IsFilled)
+                nameBC.SetNewValue(genericTechObject.NameBC + TechNumber);
+            if (genericTechObject.nameEplan.IsFilled)
+                nameEplan.SetNewValue(genericTechObject.NameEplan);
+            if (genericTechObject.cooperParamNumber.IsFilled)
+                cooperParamNumber.SetNewValue(genericTechObject.cooperParamNumber.Value);
         }
 
         
@@ -354,6 +360,7 @@ namespace TechObject
             clone.nameEplan = new NameInEplan(NameEplan, clone);
             clone.attachedObjects = new AttachedObjects(AttachedObjects.Value, 
                 clone, AttachedObjects.WorkStrategy);
+            clone.cooperParamNumber = cooperParamNumber.Clone();
 
             clone.getLocalNum = getLocalNum;
 
@@ -653,9 +660,9 @@ namespace TechObject
             }
         }
 
-        public void ChangeModeNum(int objNum, int prev, int curr)
+        public void ChangeModeNum(TechObject techObject, int prev, int curr)
         {
-            modes.ChangeModeNum(objNum, prev, curr);
+            modes.ChangeModeNum(techObject, prev, curr);
         }
 
         public void SetRestrictionOwner()
@@ -683,7 +690,7 @@ namespace TechObject
         /// Номер параметра со временем совместного включения операций 
         /// для шагов.
         /// </summary>
-        private ObjectProperty cooperParamNumber;
+        protected ObjectProperty cooperParamNumber;
 
         public string Name
         {

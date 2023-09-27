@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using Aga.Controls.Tree;
+using BrightIdeasSoftware;
 using EasyEPlanner;
 using Editor;
 using TechObject.ActionProcessingStrategy;
@@ -548,6 +551,29 @@ namespace TechObject
             }
         }
 
+        public override IRenderer[] CellRenderer =>
+            new IRenderer[] { null, GenericDevicesRenderer };
+
+        /// <summary>
+        /// Подсветка устройств из типового объекта
+        /// </summary>
+        private HighlightTextRenderer GenericDevicesRenderer
+        {
+            get
+            {
+                genericDevicesRenderer.Filter.ContainsStrings =
+                    new string[] { string.Join(" ", GenericDevicesNames) };
+                return genericDevicesRenderer;
+            }
+        }
+
+        private HighlightTextRenderer genericDevicesRenderer = new HighlightTextRenderer()
+        {
+            Filter = TextMatchFilter.Contains(Editor.Editor.GetInstance().EditorForm.editorTView, string.Empty),
+            FillBrush = new SolidBrush(Color.YellowGreen),
+            FramePen = new Pen(Color.White),
+        };
+
         /// <summary>
         /// Исключить из списка-источника элементы списка исключений
         /// </summary>
@@ -563,6 +589,7 @@ namespace TechObject
             if (newName == string.Empty)
             {
                 Clear();
+                excludedGenericDeviceIndex = genericDeviceIndex;
                 OnValueChanged(this);
                 return true;
             }
@@ -597,13 +624,13 @@ namespace TechObject
         {
             var devicesID = IndexesExclude(deviceIndex, genericDevicesID);
             
-            if (Editor.Editor.GetInstance().Editable)
+            if (EProjectManager.GetInstance().ProjectDataIsLoaded)
             {
                 excludedGenericDeviceIndex = excludedGenericDeviceIndex
                     .Where(excluded => genericDevicesID.Any(generic => generic == excluded)).ToList();
             }
             else
-            { // При загрузке из LUA (редактирование выключено)
+            { // При загрузке из LUA
                 if (genericDevicesID.Count() > 0)
                 {
                     excludedGenericDeviceIndex = IndexesExclude(genericDevicesID, deviceIndex);
@@ -729,7 +756,7 @@ namespace TechObject
             }
         }
 
-        public virtual bool Empty => deviceIndex.Count == 0;
+        public virtual bool Empty => AllDeviceIndex.Count == 0;
 
         public Step Owner
         {
@@ -773,8 +800,6 @@ namespace TechObject
         IDeviceProcessingStrategy deviceProcessingStrategy;
         EplanDevice.IDeviceManager deviceManager = EplanDevice.DeviceManager
             .GetInstance();
-
-        //public event OnValueChanged ValueChanged;
     }
 
     namespace ActionProcessingStrategy

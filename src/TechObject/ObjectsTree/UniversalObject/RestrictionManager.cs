@@ -49,11 +49,11 @@ namespace TechObject
             }
         }
 
-        public void ChangeModeNum(int objNum, int prev, int curr)
+        public void ChangeModeNum(TechObject techObject, int prev, int curr)
         {
             foreach (Restriction restrict in restrictions)
             {
-                restrict.ChangeModeNum(objNum, prev, curr);
+                restrict.ChangeModeNum(techObject, prev, curr);
             }
         }
 

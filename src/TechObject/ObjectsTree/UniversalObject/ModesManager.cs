@@ -242,10 +242,8 @@ namespace TechObject
                     for (int i = modes.Count; i < oldModesMngr.Modes.Count;
                         i++)
                     {
-                        int tobjNum = TechObjectManager.GetInstance()
-                            .GetTechObjectN(owner);
                         TechObjectManager.GetInstance()
-                            .ChangeModeNum(tobjNum, i + 1, -1);
+                            .ChangeModeNum(owner, i + 1, -1);
                     }
                 }
             }
@@ -260,11 +258,11 @@ namespace TechObject
             }
         }
 
-        public void ChangeModeNum(int objNum, int prev, int curr)
+        public void ChangeModeNum(TechObject techObject, int prev, int curr)
         {
             foreach (Mode mode in modes)
             {
-                mode.ChangeModeNum(objNum, prev, curr);
+                mode.ChangeModeNum(techObject, prev, curr);
             }
         }
 
@@ -328,9 +326,7 @@ namespace TechObject
             if (mode != null)
             {
                 int idx = modes.IndexOf(mode) + 1;
-                int tobjNum = TechObjectManager.GetInstance()
-                    .GetTechObjectN(owner);
-                TechObjectManager.GetInstance().ChangeModeNum(tobjNum, idx, -1);
+                TechObjectManager.GetInstance().ChangeModeNum(owner, idx, -1);
                 modes.Remove(mode);
 
                 foreach (Mode newMode in modes)
@@ -351,11 +347,8 @@ namespace TechObject
                 int index = modes.IndexOf(mode);
                 if (index > 0)
                 {
-
-                    int tobjNum = TechObjectManager.GetInstance()
-                        .GetTechObjectN(owner);
                     TechObjectManager.GetInstance()
-                        .ChangeModeNum(tobjNum, index + 1, index);
+                        .ChangeModeNum(owner, index + 1, index);
 
                     modes.Remove(mode);
                     modes.Insert(index - 1, mode);
@@ -381,11 +374,8 @@ namespace TechObject
                 int index = modes.IndexOf(mode);
                 if (index <= modes.Count - 2)
                 {
-
-                    int tobjNum = TechObjectManager.GetInstance()
-                        .GetTechObjectN(owner);
                     TechObjectManager.GetInstance()
-                        .ChangeModeNum(tobjNum, index + 1, index + 2);
+                        .ChangeModeNum(owner, index + 1, index + 2);
 
                     modes.Remove(mode);
                     modes.Insert(index + 1, mode);

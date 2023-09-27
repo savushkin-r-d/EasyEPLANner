@@ -161,11 +161,11 @@ namespace TechObject
         /// Проверка и исправление ограничений при удалении/перемещении
         /// операции 
         /// </summary>
-        public void ChangeModeNum(int objNum, int oldNum, int newNum)
+        public void ChangeModeNum(TechObject techObject, int oldNum, int newNum)
         {
             foreach (TechObject to in TechObjects)
             {
-                to.ChangeModeNum(objNum, oldNum, newNum);
+                to.ChangeModeNum(techObject, oldNum, newNum);
             }
         }
 
@@ -183,6 +183,7 @@ namespace TechObject
                 .Append("\t{\n");
             foreach (GenericTechObject obj in GenericTechObjects)
             {
+                obj.Update();
                 int num = GenericTechObjects.IndexOf(obj) + 1;
                 res.Append(obj.SaveAsLuaTable(prefix + "\t\t", num));
             }

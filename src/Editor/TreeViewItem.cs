@@ -1,4 +1,5 @@
-﻿using StaticHelper;
+﻿using BrightIdeasSoftware;
+using StaticHelper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -335,6 +336,9 @@ namespace Editor
                 valueChanged -= value;
             }
         }
+
+        public virtual IRenderer[] CellRenderer => new IRenderer[] { null, null };
+
         public void OnValueChanged(object sender)
         {
             valueChanged?.Invoke(sender);

@@ -116,43 +116,28 @@ namespace TechObject
 
         public override ITreeViewItem Insert()
         {
-            if (Editor.Editor.GetInstance().GenericGroupCreatable)
-            {
-                var genericGroup = new GenericGroup(baseTechObject, this,
-                    techObjectManager);
+            const int techTypeNum = 2;
+            const int cooperParamNum = -1;
+            ObjectsAdder.Reset();
 
-                globalGenericTechObjects.Add(genericGroup.GenericTechObject);
-                
-                items.Add(genericGroup);
-                genericGroup.AddParent(this);
+            
+            var newObject = new TechObject(baseTechObject.Name, 
+            GetTechObjectLocalNum, localObjects.Count + 1, techTypeNum, 
+            "TANK", cooperParamNum, string.Empty, string.Empty,
+            baseTechObject);
 
-                return genericGroup;
-            }
-            else
-            {
-                const int techTypeNum = 2;
-                const int cooperParamNum = -1;
-                ObjectsAdder.Reset();
+            // Работа со списком в дереве и общим списком объектов.
+            localObjects.Add(newObject);
+            globalObjectsList.Add(newObject);
+            items.Add(newObject);
 
-                
-                var newObject = new TechObject(baseTechObject.Name, 
-                GetTechObjectLocalNum, localObjects.Count + 1, techTypeNum, 
-                "TANK", cooperParamNum, string.Empty, string.Empty,
-                baseTechObject);
+            // Обозначение начального номера объекта для ограничений.
+            SetRestrictionOwner();
 
-                // Работа со списком в дереве и общим списком объектов.
-                localObjects.Add(newObject);
-                globalObjectsList.Add(newObject);
-                items.Add(newObject);
+            newObject.SetUpFromBaseTechObject();
+            newObject.AddParent(this);
 
-                // Обозначение начального номера объекта для ограничений.
-                SetRestrictionOwner();
-
-                newObject.SetUpFromBaseTechObject();
-                newObject.AddParent(this);
-
-                return newObject;
-            }
+            return newObject;
         }
 
         public ITreeViewItem CreateGenericGroup(TechObject techObject)
@@ -173,6 +158,9 @@ namespace TechObject
 
         public void RemoveLocalObject(TechObject techObject)
             => localObjects.Remove(techObject);
+
+        public void AddLocalObject(TechObject techObject)
+            => localObjects.Add(techObject);
 
         override public bool Delete(object child)
         {
@@ -341,7 +329,8 @@ namespace TechObject
             }
 
             if (techObj.BaseTechObject != null &&
-                techObj.BaseTechObject.Name == baseTechObject.Name)
+                techObj.BaseTechObject.Name == baseTechObject.Name &&
+                techObj.MarkToCut == false)
             {
                 int newN = 1;
                 if (localObjects.Count > 0)
@@ -355,6 +344,7 @@ namespace TechObject
                 var newObject = CloneObject(techObj, newN, oldObjN, newObjN);
 
                 // Работа со списком в дереве и общим списком объектов.
+                items.Add(newObject);
                 localObjects.Add(newObject);
                 globalObjectsList.Add(newObject);
 
@@ -367,7 +357,7 @@ namespace TechObject
             else
             {
                 ObjectsAdder.Reset();
-                if (techObj.MarkToCut)
+                if (techObj.MarkToCut && techObj.BaseTechObject == null)
                 {
                     return InsertCuttedCopy(techObj);
                 }
@@ -386,11 +376,37 @@ namespace TechObject
             var techObjParent = techObj.Parent;
             techObjParent.Cut(techObj);
 
+            items.Add(techObj);
             localObjects.Add(techObj);
             techObj.SetGetLocalN(GetTechObjectLocalNum);
             techObj.InitBaseTechObject(baseTechObject);
             techObj.AddParent(this);
             return techObj;
+        }
+
+        /// <summary>
+        /// Можно вырезать тех. объект только при наличии
+        /// типовой группы в базовом объекте
+        /// </summary>
+        public override bool IsCuttable => items.Any(item => item is GenericGroup);
+
+        /// <summary>
+        /// Вырезать тех. объект из базового объкта.
+        /// Можно вставить только в группу с типовым объектом 
+        /// этого же базового объекта
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public override ITreeViewItem Cut(ITreeViewItem item)
+        {
+            var techObject = item as TechObject;
+            if (techObject != null)
+            {
+                items.Remove(techObject);
+                return techObject;
+            }
+
+            return null;
         }
 
         public override ITreeViewItem Replace(object child, object copyObject)

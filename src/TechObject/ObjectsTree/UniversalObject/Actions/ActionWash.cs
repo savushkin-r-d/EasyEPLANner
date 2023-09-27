@@ -107,6 +107,9 @@ namespace TechObject
             pumpFreqParam.OneValueOnly = true;
             parameters = new List<BaseParameter>();
             parameters.Add(pumpFreqParam);
+
+            SubActions.ForEach(subAction => (subAction as Action).ValueChanged += (sender) => OnSubActionChanged(sender));
+            pumpFreqParam.ValueChanged += (sender) => OnSubActionChanged(sender);
         }
 
         override public IAction Clone()
@@ -124,6 +127,14 @@ namespace TechObject
             {
                 clone.parameters.Add(parameter.Clone());
             }
+
+            clone.SubActions.ForEach(
+                action => (action as ITreeViewItem).ValueChanged +=
+                sender => clone.OnValueChanged(sender));
+
+            clone.parameters.ForEach(
+                par => (par as ITreeViewItem).ValueChanged +=
+                sender => clone.OnValueChanged(sender));
 
             return clone;
         }
@@ -231,6 +242,28 @@ namespace TechObject
             if (haveParameter)
             {
                 parameter.SetNewValue(val.ToString());
+            }
+        }
+
+        public override void UpdateOnGenericTechObject(IAction genericAction)
+        {
+            if (genericAction is null)
+                return;
+
+            var genericActionWash = genericAction as ActionWash;
+            if (genericActionWash is null)
+                return;
+
+            foreach (var subActionIndex in Enumerable.Range(0, genericActionWash.SubActions.Count))
+            {
+                SubActions[subActionIndex]
+                    .UpdateOnGenericTechObject(genericActionWash.SubActions[subActionIndex]);
+            }
+
+            foreach (var parameterIndex in Enumerable.Range(0, genericActionWash.Parameters.Count))
+            {
+                parameters.ElementAtOrDefault(parameterIndex)
+                    ?.SetNewValue(genericActionWash.Parameters.ElementAt(parameterIndex).Value);
             }
         }
 

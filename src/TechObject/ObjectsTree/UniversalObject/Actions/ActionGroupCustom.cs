@@ -2,6 +2,7 @@
 using System.Linq;
 using System;
 using Editor;
+using EplanDevice;
 
 namespace TechObject
 {
@@ -30,9 +31,22 @@ namespace TechObject
         {
             var clone = (ActionGroupCustom)base.Clone();
             clone.SubActions = new List<IAction>();
-            foreach (IAction action in SubActions)
+            clone.parameters = new List<BaseParameter>();
+            
+            foreach (var action in SubActions)
             {
-                clone.SubActions.Add(action.Clone());
+                var cloneAction = action.Clone();
+                clone.SubActions.Add(cloneAction);
+                (cloneAction as ITreeViewItem).ValueChanged += 
+                    sender => clone.OnValueChanged(sender);
+            }
+
+            foreach (var parameter in Parameters)
+            {
+                var cloneParameter = parameter.Clone();
+                clone.parameters.Add(cloneParameter);
+                cloneParameter.ValueChanged += 
+                    sender => clone.OnValueChanged(sender);
             }
 
             return clone;
@@ -96,6 +110,9 @@ namespace TechObject
             var newAction = ActionCustomDelegate();
             newAction.DrawStyle = DrawStyle;
             SubActions.Add(newAction);
+
+            //newAction.ValueChanged += sender => OnValueChanged(sender);
+            SetUpEvents();
         }
 
         /// <summary>
@@ -192,6 +209,12 @@ namespace TechObject
 
                 subAction.UpdateOnGenericTechObject(genericSubAction);
             }
+
+            foreach (var parameterIndex in Enumerable.Range(0, genericActionCustomGroup.Parameters.Count))
+            {
+                parameters.ElementAtOrDefault(parameterIndex)
+                    ?.SetNewValue(genericActionCustomGroup.Parameters.ElementAtOrDefault(parameterIndex).Value);
+            }
         }
 
         #region Реализация ITreeViewItem
@@ -232,6 +255,10 @@ namespace TechObject
             newAction.DrawStyle = DrawStyle;
             SubActions.Add(newAction);
 
+            //newAction.ValueChanged += sender => OnValueChanged(sender);
+            SetUpEvents();
+            OnValueChanged(this);
+
             newAction.AddParent(this);
             return newAction as ITreeViewItem;
         }
@@ -252,6 +279,21 @@ namespace TechObject
             }
         }
         #endregion
+
+        public void SetUpEvents()
+        {
+            foreach (var action in SubActions)
+            {
+                (action as ITreeViewItem).ValueChanged +=
+                    sender => OnValueChanged(sender);
+            }
+
+            foreach (var parameter in Parameters)
+            {
+                parameter.ValueChanged += 
+                    sender => OnValueChanged(sender);
+            }
+        }
 
         public List<BaseParameter> Parameters
         {

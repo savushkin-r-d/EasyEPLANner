@@ -64,6 +64,10 @@ namespace TechObject
                 clone.SubActions.Add(action.Clone());
             }
 
+            clone.SubActions.ForEach(
+                subAction => (subAction as ITreeViewItem).ValueChanged +=
+                sender => clone.OnValueChanged(this));
+
             return clone;
         }
 

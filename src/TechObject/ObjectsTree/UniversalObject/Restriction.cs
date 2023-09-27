@@ -484,8 +484,11 @@ namespace TechObject
         /// <param name="objNum">Номер объекта</param>
         /// <param name="prev">Старый номер операции</param>
         /// <param name="curr">Новый номер операции</param>
-        public void ChangeModeNum(int objNum, int prev, int curr)
+        public void ChangeModeNum(TechObject techObject, int prev, int curr)
         {
+            var objNum = TechObjectManager.GetInstance()
+                .GetTechObjectN(techObject);
+
             const int markAsDelete = -1;
             if (curr != markAsDelete)
             {               
@@ -521,12 +524,11 @@ namespace TechObject
                     restrictStr = restrictStr
                         .Replace($"{{ {objNum}, {prev} }} ", "");
                     restrictStr = restrictStr.Trim();
-                    ChangeModeNum(objNum, prev, markAsDelete);
+                    ChangeModeNum(techObject, prev, markAsDelete);
                 }
                 else
                 {
-                    var modesCount = TechObjectManager.GetInstance()
-                        .TechObjects[objNum - 1].ModesManager.Modes.Count;
+                    var modesCount = techObject.ModesManager.Modes.Count;
                     for (int i = prev + 1; i <= modesCount; i++)
                     {
                         if (restrictStr.Contains($"{{ {objNum}, {i} }}"))

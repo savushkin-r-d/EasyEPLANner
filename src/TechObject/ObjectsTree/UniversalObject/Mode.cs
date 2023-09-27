@@ -324,9 +324,9 @@ namespace TechObject
             restrictionMngr.ModifyRestrictObj(oldObjN, newObjN);
         }
 
-        public void ChangeModeNum(int objNum, int prev, int curr)
+        public void ChangeModeNum(TechObject techObject, int prev, int curr)
         {
-            restrictionMngr.ChangeModeNum(objNum, prev, curr);
+            restrictionMngr.ChangeModeNum(techObject, prev, curr);
         }
 
         public void ChangeCrossRestriction(Mode oldMode = null)
