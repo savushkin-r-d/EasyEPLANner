@@ -69,8 +69,9 @@ namespace TechObject
 
             // Экземпляр класса базовой операции
             this.baseOperation = baseOperation ?? new BaseOperation(this);
-            (this.baseOperation as ITreeViewItem).ValueChanged += (sender) => OnValueChanged(sender);
 
+            if (this.baseOperation is ITreeViewItem itviBaseOperation)
+                itviBaseOperation.ValueChanged += (sender) => OnValueChanged(sender);
 
             SetItems();
         }

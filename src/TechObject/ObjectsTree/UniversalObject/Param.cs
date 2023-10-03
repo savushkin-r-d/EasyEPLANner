@@ -23,24 +23,28 @@ namespace TechObject
             {
                 this.value = new ParamProperty(ValuePropertyName, value);
                 this.value.AddParent(this);
-                items.Add(this.value);
                 this.value.ValueChanged += sender => OnValueChanged(sender);
             }
-            if(isUseOperation)
+            
+            if (isUseOperation)
             {
                 this.oper = new ParamOperationsProperty(OperationPropertyName, -1, -1);
-                items.Add(oper);
                 this.oper.Parent = this;
                 this.oper.ValueChanged += sender => OnValueChanged(sender);
             }
+
             this.meter = new ParamProperty(MeterPropertyName, meter, string.Empty);
             this.nameLua = new ParamProperty(NameLuaPropertyName, nameLua, string.Empty);
-
-            items.Add(this.meter);
-            items.Add(this.nameLua);
-
+            
             this.meter.ValueChanged += sender => OnValueChanged(sender);
             this.nameLua.ValueChanged += sender => OnValueChanged(sender);
+
+            if (!isRuntime)
+                items.Add(this.value);
+            items.Add(this.meter);
+            if (isUseOperation)
+                items.Add(this.oper);
+            items.Add(this.nameLua);
         }
 
         /// <summary>

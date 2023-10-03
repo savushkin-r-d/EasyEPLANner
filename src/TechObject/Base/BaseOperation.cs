@@ -99,7 +99,7 @@ namespace TechObject
             Properties = baseOperationProperties;
             states = baseStates;
 
-            foreach (var property in Properties)
+            foreach (var property in Properties ?? new List<BaseParameter>())
             {
                 property.ValueChanged += (sender) => OnValueChanged(sender);
             }
