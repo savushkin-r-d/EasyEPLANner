@@ -167,7 +167,7 @@ namespace TechObject
             if (genericActionGroupWash is null)
                 return;
 
-            foreach (var subActionIndex in Enumerable.Range(0, genericActionGroupWash.SubActions.Count()))
+            foreach (var subActionIndex in Enumerable.Range(0, genericActionGroupWash.SubActions.Count))
             {
                 var genericSubAction = genericActionGroupWash.SubActions.ElementAtOrDefault(subActionIndex);
                 var subAction = SubActions.ElementAtOrDefault(subActionIndex);

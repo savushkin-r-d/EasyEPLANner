@@ -57,6 +57,12 @@ namespace TechObject
             Update();
         }
 
+        protected override void SetItems()
+        {
+            base.SetItems();
+            items.Remove(techNumber);
+        }
+
         /// <summary>
         /// Установка обработчиков для событий
         /// </summary>
@@ -179,6 +185,6 @@ namespace TechObject
         /// <summary>
         /// Объекты в группе, созданные на основе типового объекта
         /// </summary>
-        private List<TechObject> inheritedTechObjects = new List<TechObject>();
+        private readonly List<TechObject> inheritedTechObjects = new List<TechObject>();
     }
 }

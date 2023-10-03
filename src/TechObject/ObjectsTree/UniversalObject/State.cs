@@ -545,7 +545,7 @@ namespace TechObject
                 return;
             }
 
-            foreach (var stepIndex in Enumerable.Range(0, genericState.Steps.Count()))
+            foreach (var stepIndex in Enumerable.Range(0, genericState.Steps.Count))
             {
                 var step = Steps.ElementAtOrDefault(stepIndex);
                 var genericStep = genericState.Steps.ElementAtOrDefault(stepIndex);
@@ -628,9 +628,6 @@ namespace TechObject
         private string name;        ///< Имя.
         private List<Step> steps;   ///< Список шагов.
         private Step modeStep;      ///< Шаг.
-        private Mode owner;
-
-        //public event OnValueChanged ValueChanged;
-        ///< Владелец элемента
+        private readonly Mode owner;///< Владелец элемента
     }
 }

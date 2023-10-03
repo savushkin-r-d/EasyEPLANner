@@ -117,6 +117,7 @@ namespace EasyEPlanner
                         $"\\{ProjectDescriptionSaver.MainTechObjectsFileName}");
                     thrownExceptions += mainObjectsErrors;
                     techObjectManager.LoadDescription(luaStr, projectName);
+                    techObjectManager.GenericTechObjects.ForEach(obj => obj.Update());
 
                     luaStr = string.Empty;
                     res += LoadDescriptionFromFile(out luaStr,

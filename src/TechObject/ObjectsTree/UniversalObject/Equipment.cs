@@ -138,7 +138,7 @@ namespace TechObject
                     .Select(device => $"{newTechObjName}{techNumber}{device.DeviceType}{device.DeviceNumber}")
                     .Where(newDevName => deviceManager.GetDevice(newDevName).Description != StaticHelper.CommonConst.Cap);
 
-                if (newDevicesNames.Count() > 0)
+                if (newDevicesNames.Any())
                 {
                     property.SetNewValue(string.Join(" ", newDevicesNames));
                 }
@@ -465,10 +465,10 @@ namespace TechObject
         /// <param name="genericEquipment"> Оборудование типового объекта </param>
         public void UpdateOnGenericTechObject(Equipment genericEquipment)
         {
-            foreach (var index in Enumerable.Range(0, items.Count()))
+            foreach (var index in Enumerable.Range(0, items.Count))
             {
                 var equipmentItem = genericEquipment.items[index] as BaseParameter;
-                if (equipmentItem.IsFilled == false)
+                if (equipmentItem.IsFilled is false)
                     continue;
 
                 items[index].SetNewValue(equipmentItem.Value);

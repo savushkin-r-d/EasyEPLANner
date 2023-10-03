@@ -104,9 +104,9 @@ namespace TechObject
         /// <summary>
         /// Получение типового объекта по номеру
         /// </summary>
-        /// <param name="index">Номер типового объекта</param>
-        public GenericTechObject GetGenericTObject(int index)
-            => genericTechObjects?.ElementAtOrDefault(index - 1);
+        /// <param name="globalNum">Номер типового объекта</param>
+        public GenericTechObject GetGenericTObject(int globalNum)
+            => genericTechObjects?.ElementAtOrDefault(globalNum - 1);
 
         /// <summary>
         /// Получение номера операции в списке операций. 
@@ -127,7 +127,7 @@ namespace TechObject
         public int GetTechObjectN(string displayText)
         {
             TechObject findedObject = TechObjects
-                .Where(x => x.DisplayText[0] == displayText).FirstOrDefault();
+                .FirstOrDefault(x => x.DisplayText[0] == displayText);
 
             if(findedObject != null)
             {
@@ -150,9 +150,9 @@ namespace TechObject
         public int GetTechObjectN(string baseObjectName, string nameEplan, int techNumber)
         {
             var techObject = TechObjects
-                .Where(to => (to.BaseTechObject?.EplanName.Equals(baseObjectName) ?? false) &&
-                                to.NameEplan.Equals(nameEplan) && to.TechNumber == techNumber)
-                .FirstOrDefault();
+                .FirstOrDefault(to => 
+                    (to.BaseTechObject?.EplanName.Equals(baseObjectName) ?? false) &&
+                    to.NameEplan.Equals(nameEplan) && to.TechNumber == techNumber);
 
             return techObjects.IndexOf(techObject) + 1;
         }
@@ -256,7 +256,6 @@ namespace TechObject
             {
                 //Создание объектов C# из скрипта Lua.
                 object[] res = lua.DoString("if init ~= nil then init() end");
-                genericTechObjects.ForEach(obj => obj.Update());
             }
             catch (Exception ex)
             {
@@ -341,10 +340,6 @@ namespace TechObject
             if (obj.BaseTechObject != null)
             {
                 AddIdentifiedObject(obj, true);
-            }
-            else
-            {
-                //AddUnidentifiedObject(obj);
             }
 
             genericTechObjects.Add(obj);
@@ -982,7 +977,7 @@ namespace TechObject
         /// <summary>
         /// Список типовых тех. объектов в дереве.
         /// </summary>
-        private List<GenericTechObject> genericTechObjects;
+        private readonly List<GenericTechObject> genericTechObjects;
         
         /// <summary>
         /// Список всех технологических объектов в дереве.

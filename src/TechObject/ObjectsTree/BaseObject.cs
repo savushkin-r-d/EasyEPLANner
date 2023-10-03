@@ -1,5 +1,6 @@
 ﻿    using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 using Editor;
 
@@ -42,7 +43,7 @@ namespace TechObject
             localObjects.Add(obj);
 
             if (genericObject is null)
-                items.Add(obj);
+                techObjects.Add(obj);
             else
                 genericObject.GenericGroup.AddTechObjectWhenLoadFromLua(obj);
         }
@@ -54,19 +55,16 @@ namespace TechObject
         public void AddGenericObjectWhenLoadFromLua(GenericTechObject obj)
         {
             var genericGroup = new GenericGroup(obj, this, techObjectManager);
-            items.Add(genericGroup);
+            genericGroups.Add(genericGroup);
 
             genericGroup.AddParent(this);
         }
 
         #region реализация ITreeViewItem
-        public override ITreeViewItem[] Items
-        {
-            get
-            {
-                return items.ToArray();
-            }
-        }
+        public override ITreeViewItem[] Items =>
+            genericGroups.Cast<ITreeViewItem>()
+            .Concat(techObjects.Cast<ITreeViewItem>())
+            .ToArray();
 
         public override string[] DisplayText
         {
@@ -129,7 +127,7 @@ namespace TechObject
             // Работа со списком в дереве и общим списком объектов.
             localObjects.Add(newObject);
             globalObjectsList.Add(newObject);
-            items.Add(newObject);
+            techObjects.Add(newObject);
 
             // Обозначение начального номера объекта для ограничений.
             SetRestrictionOwner();
@@ -145,10 +143,10 @@ namespace TechObject
             var genericGroup = new GenericGroup(techObject, this, techObjectManager);
 
             globalGenericTechObjects.Add(genericGroup.GenericTechObject);
-            items.Add(genericGroup);
+            genericGroups.Add(genericGroup);
             genericGroup.AddParent(this);
 
-            items.Remove(techObject);
+            techObjects.Remove(techObject);
             genericGroup.AddTechObjectWhenLoadFromLua(techObject);
 
             genericGroup.GenericTechObject.Update();
@@ -178,7 +176,7 @@ namespace TechObject
 
                 // Работа со списком в дереве и общим списком объектов.
                 localObjects.Remove(techObject);
-                items.Remove(techObject);
+                techObjects.Remove(techObject);
                 globalObjectsList.Remove(techObject);
 
                 // Обозначение начального номера объекта для ограничений.
@@ -195,14 +193,14 @@ namespace TechObject
 
             if (child is GenericGroup genericGroup)
             {
-                items.Remove(genericGroup);
+                genericGroups.Remove(genericGroup);
                 globalGenericTechObjects.Remove(genericGroup.GenericTechObject);
 
                 foreach (var TObject in genericGroup.InheritedTechObjects)
                 {
                     TObject.Parent = this;
                     TObject.RemoveGenericTechObject();
-                    items.Add(TObject);
+                    techObjects.Add(TObject);
                 }
 
                 string message = "Удалить также все технологические объекты в группе?";
@@ -231,41 +229,30 @@ namespace TechObject
 
         override public ITreeViewItem MoveDown(object child)
         {
-            var techObject = child as TechObject;
-
-            if (techObject != null)
+            if (child is TechObject techObject)
             {
-                int oldLocalIndex = localObjects.IndexOf(techObject);
-                int lastItemNum = localObjects.Count - 1;
-                if (oldLocalIndex < lastItemNum)
-                {
-                    int newLocalIndex = oldLocalIndex + 1; 
-                    int oldGlobalIndex = globalObjectsList.IndexOf(techObject);
-                    int newGlobalIndex = globalObjectsList
-                        .IndexOf(localObjects[newLocalIndex]);
+                int oldLocalIndex = techObjects.IndexOf(techObject);
+                int lastItemNum = techObjects.Count - 1;
+                if (oldLocalIndex >= lastItemNum)
+                    return null;
+                
+                int newLocalIndex = oldLocalIndex + 1;
+                SwapTechObjects(techObject, oldLocalIndex, newLocalIndex);
+                return techObjects[newLocalIndex];
+            }
 
-                    techObjectManager.CheckRestriction(
-                        oldGlobalIndex + 1, newGlobalIndex + 1);
+            if (child is GenericGroup genericGroup)
+            {
+                var oldID = genericGroups.IndexOf(genericGroup);
 
-                    // Работа со списком в дереве
-                    localObjects.Remove(techObject);
-                    localObjects.Insert(newLocalIndex, techObject);
+                if (oldID >= genericGroups.Count - 1)
+                    return null;
 
-                    // Глобальный список объектов
-                    var temporary = globalObjectsList[oldGlobalIndex];
-                    globalObjectsList[oldGlobalIndex] =
-                        globalObjectsList[newGlobalIndex];
-                    globalObjectsList[newGlobalIndex] = temporary;
+                var newID = oldID + 1;
+                
+                SwapGenericGroups(genericGroup,oldID, newID);
 
-                    // Обозначение начального номера объекта для ограничений.
-                    SetRestrictionOwner();
-
-                    techObjectManager.ChangeAttachedObjectsAfterMove(
-                        oldGlobalIndex + 1, newGlobalIndex + 1);
-
-                    localObjects[newLocalIndex].AddParent(this);
-                    return localObjects[newLocalIndex];
-                }
+                return genericGroups[newID];
             }
 
             return null;
@@ -273,43 +260,70 @@ namespace TechObject
 
         override public ITreeViewItem MoveUp(object child)
         {
-            var techObject = child as TechObject;
-
-            if (techObject != null)
+            if (child is TechObject techObject)
             {
-                int oldLocalIndex = localObjects.IndexOf(techObject);
-                if (oldLocalIndex > 0)
-                {
-                    int newLocalIndex = oldLocalIndex - 1;
-                    int oldGlobalIndex = globalObjectsList.IndexOf(techObject);
-                    int newGlobalIndex = globalObjectsList
-                        .IndexOf(localObjects[newLocalIndex]);
+                int oldLocalIndex = techObjects.IndexOf(techObject);
 
-                    techObjectManager.CheckRestriction(
-                        oldGlobalIndex + 1, newGlobalIndex + 1);
+                if (oldLocalIndex <= 0) 
+                    return null;
+                
+                int newLocalIndex = oldLocalIndex - 1;
+                SwapTechObjects(techObject, oldLocalIndex, newLocalIndex);
+                return techObjects[newLocalIndex];
+            }
 
-                    // Работа со списком в дереве
-                    localObjects.Remove(techObject);
-                    localObjects.Insert(newLocalIndex, techObject);
+            if (child is GenericGroup genericGroup)
+            {
+                var oldID = genericGroups.IndexOf(genericGroup);
 
-                    // Глобальный список
-                    var temporary = globalObjectsList[oldGlobalIndex];
-                    globalObjectsList[oldGlobalIndex] =
-                        globalObjectsList[newGlobalIndex];
-                    globalObjectsList[newGlobalIndex] = temporary;
+                if (oldID <= 0)
+                    return null;
 
-                    // Обозначение начального номера объекта для ограничений.
-                    SetRestrictionOwner();
+                var newID = oldID - 1;
 
-                    techObjectManager.ChangeAttachedObjectsAfterMove(
-                        oldGlobalIndex + 1, newGlobalIndex + 1);
-
-                    localObjects[newLocalIndex].AddParent(this);
-                    return localObjects[newLocalIndex];
-                }
+                SwapGenericGroups(genericGroup, oldID, newID);
+                
+                return genericGroups[newID];
             }
 
             return null;
+        }
+
+        private void SwapTechObjects(TechObject techObject, int oldID, int newID)
+        {
+            int oldGlobalID = globalObjectsList.IndexOf(techObject);
+            int newGlobalID = globalObjectsList
+                .IndexOf(techObjects[newID]);
+
+            techObjectManager.CheckRestriction(
+                   oldGlobalID + 1, newGlobalID + 1);
+
+            // Работа со списком в дереве
+            (techObjects[oldID], techObjects[newID]) = (techObjects[newID], techObjects[oldID]);
+
+            // Глобальный список
+            (globalObjectsList[oldGlobalID], globalObjectsList[newGlobalID]) =
+                (globalObjectsList[newGlobalID], globalObjectsList[oldGlobalID]);
+
+            // Обозначение начального номера объекта для ограничений.
+            SetRestrictionOwner();
+
+            techObjectManager.ChangeAttachedObjectsAfterMove(
+                oldGlobalID + 1, newGlobalID + 1);
+
+            techObjects[newID].AddParent(this);
+        }
+
+        private void SwapGenericGroups(GenericGroup genericGroup, int oldID, int newID)
+        {
+            var oldGlobalGenericID = globalGenericTechObjects
+                   .IndexOf(genericGroup.GenericTechObject);
+            var newGlobalGenericID = globalGenericTechObjects
+                .IndexOf(genericGroups.ElementAt(newID).GenericTechObject);
+
+            (genericGroups[oldID], genericGroups[newID]) = (genericGroups[newID], genericGroups[oldID]);
+            (globalGenericTechObjects[oldGlobalGenericID], globalGenericTechObjects[newGlobalGenericID])
+                = (globalGenericTechObjects[newGlobalGenericID], globalGenericTechObjects[oldGlobalGenericID]);
         }
 
         override public bool IsInsertableCopy
@@ -330,7 +344,7 @@ namespace TechObject
 
             if (techObj.BaseTechObject != null &&
                 techObj.BaseTechObject.Name == baseTechObject.Name &&
-                techObj.MarkToCut == false)
+                techObj.MarkToCut is false)
             {
                 int newN = 1;
                 if (localObjects.Count > 0)
@@ -344,7 +358,7 @@ namespace TechObject
                 var newObject = CloneObject(techObj, newN, oldObjN, newObjN);
 
                 // Работа со списком в дереве и общим списком объектов.
-                items.Add(newObject);
+                techObjects.Add(newObject);
                 localObjects.Add(newObject);
                 globalObjectsList.Add(newObject);
 
@@ -376,8 +390,9 @@ namespace TechObject
             var techObjParent = techObj.Parent;
             techObjParent.Cut(techObj);
 
-            items.Add(techObj);
+            techObjects.Add(techObj);
             localObjects.Add(techObj);
+
             techObj.SetGetLocalN(GetTechObjectLocalNum);
             techObj.InitBaseTechObject(baseTechObject);
             techObj.AddParent(this);
@@ -388,7 +403,7 @@ namespace TechObject
         /// Можно вырезать тех. объект только при наличии
         /// типовой группы в базовом объекте
         /// </summary>
-        public override bool IsCuttable => items.Any(item => item is GenericGroup);
+        public override bool IsCuttable => genericGroups.Count > 0;
 
         /// <summary>
         /// Вырезать тех. объект из базового объкта.
@@ -402,7 +417,7 @@ namespace TechObject
             var techObject = item as TechObject;
             if (techObject != null)
             {
-                items.Remove(techObject);
+                techObjects.Remove(techObject);
                 return techObject;
             }
 
@@ -555,10 +570,12 @@ namespace TechObject
 
         public int Count => localObjects.Count;
 
-        List<ITreeViewItem> items = new List<ITreeViewItem>();
+        readonly List<GenericGroup> genericGroups = new List<GenericGroup>();
+        readonly List<TechObject> techObjects = new List<TechObject>();
+
         List<TechObject> localObjects;
         BaseTechObject baseTechObject;
-        List<GenericTechObject> globalGenericTechObjects;
+        readonly List<GenericTechObject> globalGenericTechObjects;
         List<TechObject> globalObjectsList;
         ITechObjectManager techObjectManager;
     }

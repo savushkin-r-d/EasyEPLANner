@@ -1,4 +1,5 @@
-﻿using Editor;
+﻿using Aga.Controls.Tree;
+using Editor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,9 +56,16 @@ namespace TechObject
         public override string[] DisplayText
             => new string[] { $"{genericTechObject.Name} ({Items.Count() - 1})", string.Empty };
 
-        public override ITreeViewItem[] Items
-            => (new ITreeViewItem[] { genericTechObject }).Concat(InheritedTechObjects).ToArray();
+        public override ITreeViewItem[] Items => GetItems();
 
+        private ITreeViewItem[] GetItems()
+        {
+            return (new List<ITreeViewItem>() { genericTechObject })
+                .Concat(InheritedTechObjects).ToArray();
+        }
+
+
+        public override bool IsMoveable => true;
 
         public override bool IsInsertableCopy => true;
 
@@ -73,7 +81,7 @@ namespace TechObject
 
 
             var clone = techObject.Clone(baseObject.GetTechObjectLocalNum,
-                InheritedTechObjects.Last().TechNumber + 1,
+                InheritedTechObjects[InheritedTechObjects.Count - 1].TechNumber + 1,
                 techObjectManager.TechObjects.IndexOf(techObject) + 1,
                 techObjectManager.TechObjects.Count + 1);
 
@@ -126,29 +134,10 @@ namespace TechObject
 
                 techObjectManager.ChangeAttachedObjectsAfterDelete(globalNum);
 
-                //ReindexingObjects();
-
                 return true;
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// Проверка и нумерации объектов в группе после удаленияэлемента
-        /// </summary>
-        public void ReindexingObjects()
-        {
-            int techNumber = 0;
-            foreach (var techObject in InheritedTechObjects)
-            {
-                techNumber++;
-                if (techObject.TechNumber == techNumber)
-                    continue;
-
-                techObject.TechNumber = techNumber;
-                techObject.ModifyDevNames(0);
-            }
         }
 
         public override bool IsInsertable => true;
@@ -161,11 +150,71 @@ namespace TechObject
             var techObject = genericTechObject.CreateTechObject(baseObject);
 
             techObject.AddParent(this);
-            techObject.TechNumber = InheritedTechObjects.Last().TechNumber + 1;
-
-            //inheritedTechObjects.Add(techObject);
+            techObject.TechNumber = InheritedTechObjects[InheritedTechObjects.Count - 1]
+                .TechNumber + 1;
 
             return techObject;
+        }
+
+        public override ITreeViewItem MoveUp(object child)
+        {
+            if (!(child is TechObject techObject) || child is GenericTechObject)
+                return null;
+
+            var oldID = InheritedTechObjects.IndexOf(techObject);
+
+            if (oldID <= 0)
+                return null;
+
+            var newID = oldID - 1;
+
+            SwapTechObjects(techObject, oldID, newID);
+
+            return techObject;
+        }
+
+        public override ITreeViewItem MoveDown(object child)
+        {
+            if (!(child is TechObject techObject) || child is GenericTechObject)
+                return null;
+
+            var oldID = InheritedTechObjects.IndexOf(techObject);
+
+            if (oldID >= InheritedTechObjects.Count - 1)
+                return null;
+
+            var newID = oldID + 1;
+
+            SwapTechObjects(techObject, oldID, newID);
+
+            return techObject;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="techObject"></param>
+        /// <param name="oldID"></param>
+        /// <param name="newID"></param>
+        private void SwapTechObjects(TechObject techObject, int oldID, int newID)
+        {
+            var oldGlobalID = techObjectManager.TechObjects.IndexOf(techObject);
+            var newGlobalID = techObjectManager.TechObjects.IndexOf(InheritedTechObjects.ElementAt(newID));
+
+            techObjectManager.CheckRestriction(oldGlobalID + 1, newGlobalID + 1);
+
+            (InheritedTechObjects[oldID], InheritedTechObjects[newID]) =
+                (InheritedTechObjects[newID], InheritedTechObjects[oldID]);
+
+            InheritedTechObjects.Remove(techObject);
+            InheritedTechObjects.Insert(newID, techObject);
+
+            (techObjectManager.TechObjects[oldGlobalID], techObjectManager.TechObjects[newGlobalID])
+                = (techObjectManager.TechObjects[newGlobalID], techObjectManager.TechObjects[oldGlobalID]);
+
+            baseObject.SetRestrictionOwner();
+
+            techObjectManager.ChangeAttachedObjectsAfterMove(oldGlobalID + 1, newGlobalID + 1);
         }
 
         /// <summary>
@@ -177,11 +226,9 @@ namespace TechObject
         {
             GenericTechObject.SetUpTechObject(techObject, baseObject);
             techObject.AddParent(this);
-            //inheritedTechObjects.Add(techObject);
         }
 
-
-        private ITechObjectManager techObjectManager;
+        private readonly ITechObjectManager techObjectManager;
 
         /// <summary>
         /// Список тех. объектов в группе
@@ -193,8 +240,7 @@ namespace TechObject
         /// </summary>
         public GenericTechObject GenericTechObject => genericTechObject;
 
-        //private List<TechObject> inheritedTechObjects = new List<TechObject>();
-        private GenericTechObject genericTechObject;
-        private BaseObject baseObject;
+        private readonly GenericTechObject genericTechObject;
+        private readonly BaseObject baseObject;
     }
 }

@@ -136,9 +136,9 @@ namespace TechObject
                 .Append(base_tech_object_str)
                 .Append(attached_objects_str);
 
-            if (genericTecjObject != null)
+            if (GenericTechObject != null)
             {
-                int genericTechObjectIndex = TechObjectManager.GetInstance().GenericTechObjects.IndexOf(genericTecjObject) + 1;
+                int genericTechObjectIndex = TechObjectManager.GetInstance().GenericTechObjects.IndexOf(GenericTechObject) + 1;
                 resultBuilder.Append($"{prefix}generic_tech_object = {genericTechObjectIndex},\n");
             }
 
@@ -386,19 +386,16 @@ namespace TechObject
             return clone;
         }
 
-        protected void SetItems()
+        protected virtual void SetItems()
         {
-            var itemsList = new List<ITreeViewItem>();
-            
-            if (this is GenericTechObject == false)
+            var itemsList = new List<ITreeViewItem>
             {
-                itemsList.Add(techNumber);
-            }
-            
-            itemsList.Add(techType);
-            itemsList.Add(nameEplan);
-            itemsList.Add(nameBC);
-            
+                techNumber,
+                techType,
+                nameEplan,
+                nameBC,
+            };
+
             if (attachedObjects.IsEditable == true)
             {
                 itemsList.Add(attachedObjects);
@@ -979,7 +976,7 @@ namespace TechObject
         }
 
 
-        public override bool IsInsertable => genericTecjObject is null;
+        public override bool IsInsertable => GenericTechObject is null;
 
         /// <summary>
         /// Создать группу с типовым объектом на основе данного объекта.
@@ -1087,13 +1084,7 @@ namespace TechObject
             }
         }
 
-        public GenericTechObject GenericTechObject
-        {
-            get => genericTecjObject;
-            set => genericTecjObject = value;
-        }
-
-        //public event ObjectProperty.OnValueChanged ValueChanged;
+        public GenericTechObject GenericTechObject { get; set; }
 
         protected TechObjectN techNumber; /// Номер объекта технологический.
         protected ObjectProperty techType; /// Тип объекта технологический.
@@ -1113,7 +1104,5 @@ namespace TechObject
         protected AttachedObjects attachedObjects; // Привязанные агрегаты
         protected Equipment equipment; // Оборудование объекта
         protected BaseProperties baseProperties; // Доп. свойства объекта
-
-        private GenericTechObject genericTecjObject;
     }
 }

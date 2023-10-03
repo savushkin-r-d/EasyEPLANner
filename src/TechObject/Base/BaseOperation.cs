@@ -55,6 +55,14 @@ namespace TechObject
         /// <param name="extraParams">Свойства операции</param>
         void SetExtraProperties(ObjectProperty[] extraParams);
 
+        /// <summary>
+        /// Установить свойства базовой операции
+        /// </summary>
+        void SetExtraProperties(Dictionary<string, string> extraProperties);
+
+        /// <summary>
+        /// Установить свойства базовой операции на основе типового объекта
+        /// </summary>
         void SetGenericExtraProperties(List<BaseParameter> properties);
     }
 
@@ -677,7 +685,5 @@ namespace TechObject
         private Dictionary<string, List<BaseStep>> states;
 
         private Mode owner;
-
-        //public event OnValueChanged ValueChanged;
     }
 }

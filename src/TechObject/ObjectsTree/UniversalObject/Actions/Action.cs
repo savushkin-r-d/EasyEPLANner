@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -31,7 +32,7 @@ namespace TechObject
         /// <summary>
         /// Все индексы устройств (в действии и в действии типового объекта)
         /// </summary>
-        List<int> AllDeviceIndex { get; }
+        List<int> GetAllDeviceIndex();
 
         IAction Clone();
 
@@ -109,9 +110,9 @@ namespace TechObject
 
         List<string> DevicesNames { get; }
 
-        List<string> GenericDevicesNames { get; }
+        List<string> GetGenericDevicesNames();
 
-        List<string> AllDevicesNames { get; }
+        List<string> GetAllDevicesNames();
 
         IDeviceProcessingStrategy GetDeviceProcessingStrategy();
 
@@ -248,11 +249,8 @@ namespace TechObject
         private List<int> ModifyDevNamesChangeTechNumbers(int newTechObjectN,
             int oldTechObjectN, string techObjectName, List<int> devs)
         {
-            List<int> tmpIndex = new List<int>();
-            foreach (int index in devs)
-            {
-                tmpIndex.Add(index);
-            }
+            List<int> tmpIndexes = new List<int>();
+            tmpIndexes.AddRange(devs);
 
             foreach (int index in devs)
             {
@@ -261,43 +259,43 @@ namespace TechObject
                 int objNum = device.ObjectNumber;
                 string objName = device.ObjectName;
 
-                if (objNum > 0)
-                {
-                    if (techObjectName == objName)
-                    { //Для устройств в пределах объекта меняем номер объекта.
-                        if (objNum == newTechObjectN && oldTechObjectN != -1)
-                        { // COAG2V1 --> COAG1V1
-                            newDevName = objName + oldTechObjectN +
-                                device.DeviceType.ToString() + device.
-                                DeviceNumber;
-                        }
-                        if (oldTechObjectN == -1 ||
-                            oldTechObjectN == objNum)
-                        { //COAG1V1 --> COAG2V1
-                            newDevName = objName + newTechObjectN +
-                                device.DeviceType.ToString() + device
-                                .DeviceNumber;
-                        }
-                        if (oldTechObjectN == 0)
-                        { //COAGxV1 --> x -> 1, 2, 3 
-                            newDevName = $"{objName}{newTechObjectN}{device.DeviceType}{device.DeviceNumber}";
-                        }
-                    }
+                if (objNum <= 0 || techObjectName != objName)
+                    return tmpIndexes;
+    
+                //Для устройств в пределах объекта меняем номер объекта.
+                if (objNum == newTechObjectN && oldTechObjectN != -1)
+                { // COAG2V1 --> COAG1V1
+                    newDevName = objName + oldTechObjectN +
+                        device.DeviceType.ToString() + device.
+                        DeviceNumber;
+                }
+
+                if (oldTechObjectN == -1 ||
+                    oldTechObjectN == objNum)
+                { //COAG1V1 --> COAG2V1
+                    newDevName = objName + newTechObjectN +
+                        device.DeviceType.ToString() + device
+                        .DeviceNumber;
+                }
+
+                if (oldTechObjectN == 0)
+                { //COAGxV1 --> x -> 1, 2, 3 
+                    newDevName = $"{objName}{newTechObjectN}{device.DeviceType}{device.DeviceNumber}";
                 }
 
                 if (newDevName != string.Empty)
                 {
-                    int indexOfDeletingElement = tmpIndex.IndexOf(index);
-                    tmpIndex.Remove(index);
-                    int tmpDevInd = deviceManager.GetDeviceIndex(newDevName);
-                    if (tmpDevInd >= 0)
+                    int indexOfDeletingElement = tmpIndexes.IndexOf(index);
+                    tmpIndexes.Remove(index);
+                    int tmpDevIndex = deviceManager.GetDeviceIndex(newDevName);
+                    if (tmpDevIndex >= 0)
                     {
-                        tmpIndex.Insert(indexOfDeletingElement, tmpDevInd);
+                        tmpIndexes.Insert(indexOfDeletingElement, tmpDevIndex);
                     }
                 }
             }
 
-            return tmpIndex;
+            return tmpIndexes;
         }
 
         virtual public void ModifyDevNames(string newTechObjectName,
@@ -339,7 +337,7 @@ namespace TechObject
             deviceIndex = tmpIndex;
         }
 
-        public void ModifyDevNames(string TechObjectName, int newTechObjectNumber)
+        virtual public void ModifyDevNames(string TechObjectName, int newTechObjectNumber)
         {
             List<int> tmpIndex = new List<int>();
             foreach (int index in genericDeviceIndex)
@@ -350,7 +348,7 @@ namespace TechObject
 
         public virtual string SaveAsLuaTable(string prefix)
         {
-            if (AllDeviceIndex.Count == 0)
+            if (GetAllDeviceIndex().Count == 0)
             {
                 return string.Empty;
             }
@@ -370,7 +368,7 @@ namespace TechObject
             res += $"{prefix}\t";
 
             int devicesCounter = 0;
-            foreach (int index in AllDeviceIndex)
+            foreach (int index in GetAllDeviceIndex())
             {
                 var device = deviceManager.GetDeviceByIndex(index);
                 string devName = device.Name;
@@ -395,7 +393,7 @@ namespace TechObject
 
         public string SaveAsLuaTableInline()
         {
-            if (AllDeviceIndex.Count == 0)
+            if (GetAllDeviceIndex().Count == 0)
             {
                 return string.Empty;
             }
@@ -405,7 +403,7 @@ namespace TechObject
             res += $"{{ ";
 
             int devicesCounter = 0;
-            foreach (int index in AllDeviceIndex)
+            foreach (int index in GetAllDeviceIndex())
             {
                 var device = deviceManager.GetDeviceByIndex(index);
                 string devName = device.Name;
@@ -501,7 +499,7 @@ namespace TechObject
             set => deviceIndex = value;
         }
 
-        public List<int> AllDeviceIndex => DevicesIndex
+        public List<int> GetAllDeviceIndex() => DevicesIndex
             .Concat(GenericDevicesIndexAfterExclude).ToList();
 
         public List<int> GenericDevicesIndexAfterExclude
@@ -528,18 +526,13 @@ namespace TechObject
             }
         }
 
-        public List<string> GenericDevicesNames
-        {
-            get
-            {
-                return GenericDevicesIndexAfterExclude
-                    .Select(x => deviceManager.GetDeviceByIndex(x).Name)
-                    .ToList();
-            }
-        }
+        public List<string> GetGenericDevicesNames() =>
+            GenericDevicesIndexAfterExclude
+                .Select(x => deviceManager.GetDeviceByIndex(x).Name)
+                .ToList();
 
-        public List<string> AllDevicesNames => DevicesNames
-            .Concat(GenericDevicesNames).ToList();
+        public List<string> GetAllDevicesNames() => DevicesNames
+            .Concat(GetGenericDevicesNames()).ToList();
 
         #region Реализация ITreeViewItem
 
@@ -562,12 +555,12 @@ namespace TechObject
             get
             {
                 genericDevicesRenderer.Filter.ContainsStrings =
-                    new string[] { string.Join(" ", GenericDevicesNames) };
+                    new string[] { string.Join(" ", GetGenericDevicesNames()) };
                 return genericDevicesRenderer;
             }
         }
 
-        private HighlightTextRenderer genericDevicesRenderer = new HighlightTextRenderer()
+        private readonly HighlightTextRenderer genericDevicesRenderer = new HighlightTextRenderer()
         {
             Filter = TextMatchFilter.Contains(Editor.Editor.GetInstance().EditorForm.editorTView, string.Empty),
             FillBrush = new SolidBrush(Color.YellowGreen),
@@ -580,7 +573,7 @@ namespace TechObject
         /// <param name="source"> Список-источник </param>
         /// <param name="exclude"> Список с исключениями </param>
         private List<int> IndexesExclude(List<int> source, List<int> exclude)
-            => source.Where(dev => !exclude.Any(excludeDev => dev == excludeDev)).ToList();
+            => source.Where(dev => !exclude.Contains(dev)).ToList();
 
         override public bool SetNewValue(string newName)
         {
@@ -596,7 +589,7 @@ namespace TechObject
 
             Match strMatch = Regex.Match($"{newName}",
                 EplanDevice.DeviceManager.DESCRIPTION_PATTERN_MULTYLINE,
-                RegexOptions.IgnoreCase);
+                RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
             if (!strMatch.Success)
             {
                 return false;
@@ -627,11 +620,11 @@ namespace TechObject
             if (EProjectManager.GetInstance().ProjectDataIsLoaded)
             {
                 excludedGenericDeviceIndex = excludedGenericDeviceIndex
-                    .Where(excluded => genericDevicesID.Any(generic => generic == excluded)).ToList();
+                    .Where(excluded => genericDevicesID.Contains(excluded)).ToList();
             }
             else
             { // При загрузке из LUA
-                if (genericDevicesID.Count() > 0)
+                if (genericDevicesID.Any())
                 {
                     excludedGenericDeviceIndex = IndexesExclude(genericDevicesID, deviceIndex);
                 }
@@ -756,7 +749,7 @@ namespace TechObject
             }
         }
 
-        public virtual bool Empty => AllDeviceIndex.Count == 0;
+        public virtual bool Empty => GetAllDeviceIndex().Count == 0;
 
         public Step Owner
         {
@@ -769,7 +762,7 @@ namespace TechObject
             bool hasDevices = (DevicesIndex.Concat(genericDeviceIndex)).ToList().Count > 0;
 
             var devs = string.Join(" ", DevicesNames);
-            var genDevs = string.Join(" ", GenericDevicesNames);
+            var genDevs = string.Join(" ", GetGenericDevicesNames());
 
             if (hasDevices)
             {

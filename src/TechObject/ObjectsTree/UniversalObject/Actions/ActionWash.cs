@@ -263,7 +263,7 @@ namespace TechObject
             foreach (var parameterIndex in Enumerable.Range(0, genericActionWash.Parameters.Count))
             {
                 parameters.ElementAtOrDefault(parameterIndex)
-                    ?.SetNewValue(genericActionWash.Parameters.ElementAt(parameterIndex).Value);
+                    ?.SetNewValue(genericActionWash.Parameters[parameterIndex].Value);
             }
         }
 

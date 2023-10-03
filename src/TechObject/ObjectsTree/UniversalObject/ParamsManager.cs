@@ -60,8 +60,8 @@ namespace TechObject
                     break;
             }
 
-            if (parsed == false)
-                res.ValueItem.SetNewValue(valueObj.ToString());
+            if (parsed is false)
+                res?.ValueItem.SetNewValue(valueObj.ToString());
 
             return res;
         }

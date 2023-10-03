@@ -111,7 +111,6 @@ namespace TechObject
             newAction.DrawStyle = DrawStyle;
             SubActions.Add(newAction);
 
-            //newAction.ValueChanged += sender => OnValueChanged(sender);
             SetUpEvents();
         }
 
@@ -198,7 +197,7 @@ namespace TechObject
             if (genericActionCustomGroup is null)
                 return;
 
-            foreach (var subActionIndex in Enumerable.Range(0, genericActionCustomGroup.SubActions.Count()))
+            foreach (var subActionIndex in Enumerable.Range(0, genericActionCustomGroup.SubActions.Count))
             {
                 var genericSubAction = genericActionCustomGroup.SubActions.ElementAtOrDefault(subActionIndex);
                 var subAction = SubActions.ElementAtOrDefault(subActionIndex);
@@ -255,7 +254,6 @@ namespace TechObject
             newAction.DrawStyle = DrawStyle;
             SubActions.Add(newAction);
 
-            //newAction.ValueChanged += sender => OnValueChanged(sender);
             SetUpEvents();
             OnValueChanged(this);
 

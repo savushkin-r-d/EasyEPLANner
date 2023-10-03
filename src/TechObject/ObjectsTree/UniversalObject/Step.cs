@@ -1036,7 +1036,7 @@ namespace TechObject
                 return;
             }
 
-            foreach (var actionIndex in Enumerable.Range(0, genericStep.actions.Count()))
+            foreach (var actionIndex in Enumerable.Range(0, genericStep.actions.Count))
             {
                 var genericAction = genericStep.GetActions.ElementAtOrDefault(actionIndex);
                 var action = GetActions.ElementAtOrDefault(actionIndex);
@@ -1134,7 +1134,5 @@ namespace TechObject
         private string groupAIAOActionName = "Группы AI -> AO AO ...";
 
         private BaseStep baseStep;
-
-        //public event OnValueChanged ValueChanged;
     }
 }

@@ -769,7 +769,5 @@ namespace TechObject
         private IBaseOperation baseOperation; /// Базовая операция
 
         public const string DefaultModeName = "Новая операция";
-
-        //public event OnValueChanged ValueChanged;
     }
 }

@@ -142,7 +142,7 @@ namespace TechObject
             return res;
         }
 
-        public override bool Empty => subActions.All(subAction => subAction.Empty);
+        public override bool Empty => subActions.TrueForAll(subAction => subAction.Empty);
 
         private List<IAction> subActions;
         

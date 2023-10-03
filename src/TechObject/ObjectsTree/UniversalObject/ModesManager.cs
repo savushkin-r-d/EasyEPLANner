@@ -584,10 +584,9 @@ namespace TechObject
             }
         }
 
-        private List<Mode> modes; /// Список операций.
+        /// <summary> Список операций. </summary>
+        private List<Mode> modes;
+        /// <summary> Технологический объект. </summary>
         private TechObject owner;
-
-        //public event OnValueChanged ValueChanged;
-        /// Технологический объект.
     }
 }
