@@ -33,6 +33,14 @@ namespace EplanDevice
                     DI.Add(new IOChannel("DI", -1, -1, -1, ""));
                     break;
 
+                case "GS_INVERSE":
+                    parameters.Add(Parameter.P_DT, null);
+
+                    dSubType = DeviceSubType.GS_INVERSE;
+
+                    DI.Add(new IOChannel("DI", -1, -1, -1, ""));
+                    break;
+
                 case "GS_VIRT":
                     break;
 
@@ -72,6 +80,8 @@ namespace EplanDevice
                             return "GS";
                         case DeviceSubType.GS_VIRT:
                             return "GS_VIRT";
+                        case DeviceSubType.GS_INVERSE:
+                            return nameof(DeviceSubType.GS_INVERSE);
                     }
                     break;
             }
@@ -87,6 +97,7 @@ namespace EplanDevice
                 case DeviceType.GS:
                     switch (dst)
                     {
+                        case DeviceSubType.GS_INVERSE:
                         case DeviceSubType.GS:
                             return new Dictionary<string, int>()
                             {
