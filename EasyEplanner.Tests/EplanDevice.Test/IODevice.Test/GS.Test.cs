@@ -11,6 +11,7 @@ namespace Tests.EplanDevices
         const string Incorrect = "Incorrect";
         const string GS = "GS";
         const string GS_VIRT = "GS_VIRT";
+        const string GS_INVERSE = "GS_INVERSE";
 
         const string AI = IODevice.IOChannel.AI;
         const string AO = IODevice.IOChannel.AO;
@@ -46,6 +47,7 @@ namespace Tests.EplanDevices
                 new object[] { string.Empty, Incorrect, GetRandomGSDevice() },
                 new object[] { GS, GS, GetRandomGSDevice() },
                 new object[] { GS_VIRT, GS_VIRT, GetRandomGSDevice() },
+                new object[] { GS_INVERSE, GS_INVERSE, GetRandomGSDevice() },
             };
         }
 
@@ -81,6 +83,8 @@ namespace Tests.EplanDevices
                 new object[] { DeviceSubType.NONE, Incorrect,
                     GetRandomGSDevice() },
                 new object[] { DeviceSubType.GS_VIRT, GS_VIRT,
+                    GetRandomGSDevice() },
+                new object[] { DeviceSubType.GS_INVERSE, GS_INVERSE,
                     GetRandomGSDevice() },
             };
         }
@@ -128,6 +132,7 @@ namespace Tests.EplanDevices
                 new object[] {exportForGS, GS, GetRandomGSDevice()},
                 new object[] {null, Incorrect, GetRandomGSDevice()},
                 new object[] {exportForGSVirt, GS_VIRT, GetRandomGSDevice()},
+                new object[] {exportForGS, GS_INVERSE, GetRandomGSDevice()},
             };
         }
 
@@ -186,6 +191,12 @@ namespace Tests.EplanDevices
                 {
                     new string[0],
                     Incorrect,
+                    GetRandomGSDevice()
+                },
+                new object[]
+                {
+                    defaultParameters,
+                    GS_INVERSE,
                     GetRandomGSDevice()
                 },
             };
@@ -268,7 +279,13 @@ namespace Tests.EplanDevices
                     emptyChannels,
                     GS_VIRT,
                     GetRandomGSDevice()
-                }
+                },
+                new object[]
+                {
+                    discreteSensorChannels,
+                    GS_INVERSE,
+                    GetRandomGSDevice()
+                },
             };
         }
 
