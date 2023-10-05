@@ -259,30 +259,29 @@ namespace TechObject
                 int objNum = device.ObjectNumber;
                 string objName = device.ObjectName;
 
-                if (objNum <= 0 || techObjectName != objName)
-                    return tmpIndexes;
-    
-                //Для устройств в пределах объекта меняем номер объекта.
-                if (objNum == newTechObjectN && oldTechObjectN != -1)
-                { // COAG2V1 --> COAG1V1
-                    newDevName = objName + oldTechObjectN +
-                        device.DeviceType.ToString() + device.
-                        DeviceNumber;
+                if (objNum > 0 && techObjectName == objName)
+                {
+                    //Для устройств в пределах объекта меняем номер объекта.
+                    if (objNum == newTechObjectN && oldTechObjectN != -1)
+                    { // COAG2V1 --> COAG1V1
+                        newDevName = objName + oldTechObjectN +
+                            device.DeviceType.ToString() + device.
+                            DeviceNumber;
+                    }
+                    if (oldTechObjectN == -1 ||
+                        oldTechObjectN == objNum)
+                    { //COAG1V1 --> COAG2V1
+                        newDevName = objName + newTechObjectN +
+                            device.DeviceType.ToString() + device
+                            .DeviceNumber;
+                    }
+                    if (oldTechObjectN == 0)
+                    { //COAGxV1 --> x -> 1, 2, 3 
+                        newDevName = $"{objName}{newTechObjectN}{device.DeviceType}{device.DeviceNumber}";
+                    }
                 }
 
-                if (oldTechObjectN == -1 ||
-                    oldTechObjectN == objNum)
-                { //COAG1V1 --> COAG2V1
-                    newDevName = objName + newTechObjectN +
-                        device.DeviceType.ToString() + device
-                        .DeviceNumber;
-                }
-
-                if (oldTechObjectN == 0)
-                { //COAGxV1 --> x -> 1, 2, 3 
-                    newDevName = $"{objName}{newTechObjectN}{device.DeviceType}{device.DeviceNumber}";
-                }
-
+                
                 if (newDevName != string.Empty)
                 {
                     int indexOfDeletingElement = tmpIndexes.IndexOf(index);
