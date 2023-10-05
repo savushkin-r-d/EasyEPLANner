@@ -127,7 +127,7 @@ namespace TechObject
         public int GetTechObjectN(string displayText)
         {
             TechObject findedObject = TechObjects
-                .FirstOrDefault(x => x.DisplayText[0] == displayText);
+                .Find(x => x.DisplayText[0] == displayText);
 
             if(findedObject != null)
             {
@@ -150,7 +150,7 @@ namespace TechObject
         public int GetTechObjectN(string baseObjectName, string nameEplan, int techNumber)
         {
             var techObject = TechObjects
-                .FirstOrDefault(to => 
+                .Find(to => 
                     (to.BaseTechObject?.EplanName.Equals(baseObjectName) ?? false) &&
                     to.NameEplan.Equals(nameEplan) && to.TechNumber == techNumber);
 

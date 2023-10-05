@@ -386,7 +386,7 @@ namespace TechObject
             return clone;
         }
 
-        protected virtual void SetItems()
+        protected void SetItems()
         {
             var itemsList = new List<ITreeViewItem>
             {

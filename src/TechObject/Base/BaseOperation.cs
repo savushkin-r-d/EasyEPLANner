@@ -361,16 +361,16 @@ namespace TechObject
             SetExtraProperties(properties.ToDictionary(prop => prop.LuaName, prop => prop.Value));
         }
 
-        public void SetGenericExtraProperties(List<BaseParameter> properties)
-        {
-            SetExtraProperties(properties.Where(property => property.IsFilled)
-                .ToDictionary(prop => prop.LuaName, prop => prop.Value));
-        }
-
         public void SetExtraProperties(Dictionary<string, string> extraProperties)
         {
             foreach (var property in Properties.Where(obj => extraProperties.ContainsKey(obj.LuaName)))
                 property.SetNewValue(extraProperties[property.LuaName]);
+        }
+
+        public void SetGenericExtraProperties(List<BaseParameter> properties)
+        {
+            SetExtraProperties(properties.Where(property => property.IsFilled)
+                .ToDictionary(prop => prop.LuaName, prop => prop.Value));
         }
 
         public List<BaseParameter> Properties

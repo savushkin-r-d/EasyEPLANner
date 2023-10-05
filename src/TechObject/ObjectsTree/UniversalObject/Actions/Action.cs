@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -246,57 +247,6 @@ namespace TechObject
             deviceIndex = IndexesExclude(deviceIndex, genericDeviceIndex);
         }
 
-        private List<int> ModifyDevNamesChangeTechNumbers(int newTechObjectN,
-            int oldTechObjectN, string techObjectName, List<int> devs)
-        {
-            List<int> tmpIndexes = new List<int>();
-            tmpIndexes.AddRange(devs);
-
-            foreach (int index in devs)
-            {
-                var newDevName = string.Empty;
-                EplanDevice.IDevice device = deviceManager.GetDeviceByIndex(index);
-                int objNum = device.ObjectNumber;
-                string objName = device.ObjectName;
-
-                if (objNum > 0 && techObjectName == objName)
-                {
-                    //Для устройств в пределах объекта меняем номер объекта.
-                    if (objNum == newTechObjectN && oldTechObjectN != -1)
-                    { // COAG2V1 --> COAG1V1
-                        newDevName = objName + oldTechObjectN +
-                            device.DeviceType.ToString() + device.
-                            DeviceNumber;
-                    }
-                    if (oldTechObjectN == -1 ||
-                        oldTechObjectN == objNum)
-                    { //COAG1V1 --> COAG2V1
-                        newDevName = objName + newTechObjectN +
-                            device.DeviceType.ToString() + device
-                            .DeviceNumber;
-                    }
-                    if (oldTechObjectN == 0)
-                    { //COAGxV1 --> x -> 1, 2, 3 
-                        newDevName = $"{objName}{newTechObjectN}{device.DeviceType}{device.DeviceNumber}";
-                    }
-                }
-
-                
-                if (newDevName != string.Empty)
-                {
-                    int indexOfDeletingElement = tmpIndexes.IndexOf(index);
-                    tmpIndexes.Remove(index);
-                    int tmpDevIndex = deviceManager.GetDeviceIndex(newDevName);
-                    if (tmpDevIndex >= 0)
-                    {
-                        tmpIndexes.Insert(indexOfDeletingElement, tmpDevIndex);
-                    }
-                }
-            }
-
-            return tmpIndexes;
-        }
-
         virtual public void ModifyDevNames(string newTechObjectName,
             int newTechObjectNumber, string oldTechObjectName,
             int oldTechObjNumber)
@@ -343,6 +293,55 @@ namespace TechObject
             {
                 tmpIndex.Add(index);
             }
+        }
+
+        private List<int> ModifyDevNamesChangeTechNumbers(int newTechObjectN,
+            int oldTechObjectN, string techObjectName, List<int> devs)
+        {
+            List<int> tmpDevs = new List<int>();
+            tmpDevs.AddRange(devs);
+
+            foreach (int dev in devs)
+            {
+                var newDevName = ModifyDevNameChangeTechNumber(techObjectName, dev, newTechObjectN, oldTechObjectN);
+
+                if (string.IsNullOrEmpty(newDevName))
+                    continue;
+
+                int devIndex = tmpDevs.IndexOf(dev);
+                int tmpDev = deviceManager.GetDeviceIndex(newDevName);
+
+                if (tmpDev >= 0)
+                    tmpDevs[devIndex] = tmpDev;
+                else
+                    tmpDevs.RemoveAt(devIndex);
+            }
+
+            return tmpDevs;
+        }
+
+        private string ModifyDevNameChangeTechNumber(string techObjectName, int index, int newID, int oldID)
+        {
+            var newDevName = string.Empty;
+            EplanDevice.IDevice device = deviceManager.GetDeviceByIndex(index);
+            int objNum = device.ObjectNumber;
+            string objName = device.ObjectName;
+
+            if (objNum <= 0 || techObjectName != objName)
+                return string.Empty;
+
+            //Для устройств в пределах объекта меняем номер объекта.
+            if (objNum == newID && oldID != -1)
+            { // COAG2V1 --> COAG1V1
+                return newDevName = $"{objName}{oldID}{device.DeviceType}{device.DeviceNumber}";
+            }
+
+            if (oldID == -1 || oldID == objNum)
+            { //COAG1V1 --> COAG2V1 || COAGxV1 -> COAG1V1, COAG2V1 ...
+                return newDevName = $"{objName}{newID}{device.DeviceType}{device.DeviceNumber}";
+            }
+
+            return string.Empty;
         }
 
         public virtual string SaveAsLuaTable(string prefix)
@@ -780,8 +779,15 @@ namespace TechObject
 
         protected string luaName;
         protected string name;
+
         protected List<int> deviceIndex;
+        /// <summary>
+        /// Типовые устройства для действия
+        /// </summary>
         protected List<int> genericDeviceIndex = new List<int>();
+        /// <summary>
+        /// Исключенные типовые устройства
+        /// </summary>
         protected List<int> excludedGenericDeviceIndex = new List<int>();
 
         protected EplanDevice.DeviceType[] devTypes;

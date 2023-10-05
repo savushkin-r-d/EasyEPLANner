@@ -61,8 +61,9 @@ namespace TechObject
         }
 
         #region реализация ITreeViewItem
-        public override ITreeViewItem[] Items =>
-            genericGroups.Cast<ITreeViewItem>()
+        public override ITreeViewItem[] Items => GetItems();
+
+        private ITreeViewItem[] GetItems() => genericGroups.Cast<ITreeViewItem>()
             .Concat(techObjects.Cast<ITreeViewItem>())
             .ToArray();
 
@@ -319,7 +320,7 @@ namespace TechObject
             var oldGlobalGenericID = globalGenericTechObjects
                    .IndexOf(genericGroup.GenericTechObject);
             var newGlobalGenericID = globalGenericTechObjects
-                .IndexOf(genericGroups.ElementAt(newID).GenericTechObject);
+                .IndexOf(genericGroups[newID].GenericTechObject);
 
             (genericGroups[oldID], genericGroups[newID]) = (genericGroups[newID], genericGroups[oldID]);
             (globalGenericTechObjects[oldGlobalGenericID], globalGenericTechObjects[newGlobalGenericID])

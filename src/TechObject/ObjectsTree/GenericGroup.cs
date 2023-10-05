@@ -199,7 +199,7 @@ namespace TechObject
         private void SwapTechObjects(TechObject techObject, int oldID, int newID)
         {
             var oldGlobalID = techObjectManager.TechObjects.IndexOf(techObject);
-            var newGlobalID = techObjectManager.TechObjects.IndexOf(InheritedTechObjects.ElementAt(newID));
+            var newGlobalID = techObjectManager.TechObjects.IndexOf(InheritedTechObjects[newID]);
 
             techObjectManager.CheckRestriction(oldGlobalID + 1, newGlobalID + 1);
 

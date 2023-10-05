@@ -54,13 +54,9 @@ namespace TechObject
             equipment = techObject.Equipment.Clone(this);
 
             SetItems();
-            Update();
-        }
-
-        protected override void SetItems()
-        {
-            base.SetItems();
             items.Remove(techNumber);
+
+            Update();
         }
 
         /// <summary>
@@ -116,7 +112,7 @@ namespace TechObject
         private void UpdateModesManager(object sender)
         {
             InheritedTechObjects.ForEach(to => to.ModesManager.UpdateOnGenericTechObject(ModesManager));
-            InheritedTechObjects.ForEach(to => to.ModifyDevNames(0));
+            InheritedTechObjects.ForEach(to => to.ModifyDevNames(-1));
         }
 
         /// <summary>
