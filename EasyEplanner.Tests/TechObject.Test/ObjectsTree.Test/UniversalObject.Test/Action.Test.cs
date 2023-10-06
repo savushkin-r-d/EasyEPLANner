@@ -1,4 +1,5 @@
-﻿using Editor;
+﻿using EasyEPlanner.PxcIolinkConfiguration.Models;
+using Editor;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -553,6 +554,7 @@ namespace Tests.TechObject
         [TestCase(new int[] { 1, 2, 3, 4 }, new int[] { 5, 6, 3, 4 }, 2, 1, "TANK")]
         [TestCase(new int[] { 5, 4, 6, 3 }, new int[] { 1, 4, 2, 3 }, 2, 1, "TANK")]
         [TestCase(new int[] { 1, 2, 3, 4, 8 }, new int[] { 5, 6, 3, 4, 7 }, 2, -1, "TANK")]
+        [TestCase(new int[] { 8 }, new int[] { 8 }, 2, 1, "TANK")]
         public void ModifyDevNames(int[] devIds, int[] expectedDevIds,
             int newTechObjectN, int oldTechObjectN, string techObjectName)
         {
@@ -566,6 +568,22 @@ namespace Tests.TechObject
                 techObjectName);
 
             Assert.AreEqual(expectedDevIds, action.DevicesIndex);
+        }
+
+        [TestCase(new int[] { 1, 2, 3, 4 }, new int[] { 5, 6, 3, 4 }, 2, "TANK")]
+        [TestCase(new int[] { 1, 2, 3 }, new int[] { 3 }, 3, "TANK")]
+        public void ModifyDevNames_CheckGenericUpdating(int[] devIds,
+            int[] expectedDevIds, int newDevID, string techObjectName)
+        {
+            EplanDevice.IDeviceManager deviceManager = DeviceManagerMock
+                .DeviceManager;
+            var action = new Action(string.Empty, null, string.Empty, null,
+                null, null, deviceManager);
+            action.DevicesIndex.AddRange(devIds);
+
+            action.ModifyDevNames(newDevID, -1, techObjectName);
+
+            CollectionAssert.AreEqual(expectedDevIds, action.DevicesIndex);
         }
 
         [TestCase(new int[] { 1, 3, 5, 7, 9 })]

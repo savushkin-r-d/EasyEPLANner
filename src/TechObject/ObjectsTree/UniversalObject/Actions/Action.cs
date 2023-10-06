@@ -95,8 +95,6 @@ namespace TechObject
         void ModifyDevNames(string newTechObjectName, int newTechObjectNumber,
             string oldTechObjectName, int oldTechObjNumber);
 
-        void ModifyDevNames(string TechObjectName, int newTechObjectNumber);
-
         List<DrawInfo> GetObjectToDrawOnEplanPage();
 
         DrawInfo.Style DrawStyle { get; set; }
@@ -286,15 +284,6 @@ namespace TechObject
             deviceIndex = tmpIndex;
         }
 
-        virtual public void ModifyDevNames(string TechObjectName, int newTechObjectNumber)
-        {
-            List<int> tmpIndex = new List<int>();
-            foreach (int index in genericDeviceIndex)
-            {
-                tmpIndex.Add(index);
-            }
-        }
-
         private List<int> ModifyDevNamesChangeTechNumbers(int newTechObjectN,
             int oldTechObjectN, string techObjectName, List<int> devs)
         {
@@ -332,13 +321,12 @@ namespace TechObject
 
             //Для устройств в пределах объекта меняем номер объекта.
             if (objNum == newID && oldID != -1)
-            { // COAG2V1 --> COAG1V1
-                return newDevName = $"{objName}{oldID}{device.DeviceType}{device.DeviceNumber}";
+            { // 1 -> 2 - COAG2V1 --> COAG1V1
+                return $"{objName}{oldID}{device.DeviceType}{device.DeviceNumber}";
             }
-
             if (oldID == -1 || oldID == objNum)
-            { //COAG1V1 --> COAG2V1 || COAGxV1 -> COAG1V1, COAG2V1 ...
-                return newDevName = $"{objName}{newID}{device.DeviceType}{device.DeviceNumber}";
+            { // COAG1V1 --> COAG(new_id)V1; COAGxV1 -> COAG1V1, COAG2V1 ...
+                return $"{objName}{newID}{device.DeviceType}{device.DeviceNumber}";
             }
 
             return string.Empty;

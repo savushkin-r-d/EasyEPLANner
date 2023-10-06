@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Editor;
 using Eplan.EplApi.Base;
+using EplanDevice;
 
 namespace TechObject
 {
@@ -124,8 +125,6 @@ namespace TechObject
 
         public void ModifyDevNames(string newTechObjName, int techNumber)
         {
-            var deviceManager = EplanDevice.DeviceManager.GetInstance();
-
             var properties = items.Select(x => x as BaseParameter).ToArray();
             foreach (var property in properties)
             {
@@ -480,5 +479,7 @@ namespace TechObject
 
         private TechObject owner;
         private List<ITreeViewItem> items;
+
+        private IDeviceManager deviceManager { get; set; } = DeviceManager.GetInstance();
     }
 }

@@ -42,6 +42,17 @@ namespace Editor
         DialogResult DialogResetExtraProperties();
 
         /// <summary>
+        /// Диалоговое окно для удаления типовой группы
+        /// </summary>
+        /// <returns>
+        /// /// DialogResult:
+        /// yes    - Удалить также все тех. объекты в группе
+        /// no     - Перенести все тех. объекты к базовому объекту и
+        ///          удалить только группу с типовым объектом
+        /// </returns>
+        DialogResult DialogDeletingGenericGroup();
+
+        /// <summary>
         /// Режим редактирования
         /// </summary>
         bool Editable { get; }

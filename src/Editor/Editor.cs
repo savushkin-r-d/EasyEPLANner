@@ -65,6 +65,16 @@ namespace Editor
         }
 
         [ExcludeFromCodeCoverage]
+        public DialogResult DialogDeletingGenericGroup()
+        {
+            return MessageBox.Show(
+                "Удалить также все технологические объекты в группе ?",
+                "Внимание",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+        }
+
+        [ExcludeFromCodeCoverage]
         public bool Editable => editorForm.Editable;
 
         /// <summary>

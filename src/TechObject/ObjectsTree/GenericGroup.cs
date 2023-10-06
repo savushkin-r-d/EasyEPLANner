@@ -81,7 +81,7 @@ namespace TechObject
 
 
             var clone = techObject.Clone(baseObject.GetTechObjectLocalNum,
-                InheritedTechObjects[InheritedTechObjects.Count - 1].TechNumber + 1,
+                InheritedTechObjects.LastOrDefault()?.TechNumber + 1 ?? 1,
                 techObjectManager.TechObjects.IndexOf(techObject) + 1,
                 techObjectManager.TechObjects.Count + 1);
 
@@ -150,9 +150,8 @@ namespace TechObject
             var techObject = genericTechObject.CreateTechObject(baseObject);
 
             techObject.AddParent(this);
-            techObject.TechNumber = InheritedTechObjects[InheritedTechObjects.Count - 1]
-                .TechNumber + 1;
 
+            genericTechObject.Update();
             return techObject;
         }
 

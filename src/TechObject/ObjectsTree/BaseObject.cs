@@ -105,7 +105,6 @@ namespace TechObject
 
         public void AddObject(TechObject techObject)
         {
-
             localObjects.Add(techObject);
             globalObjectsList.Add(techObject);
 
@@ -119,7 +118,6 @@ namespace TechObject
             const int cooperParamNum = -1;
             ObjectsAdder.Reset();
 
-            
             var newObject = new TechObject(baseTechObject.Name, 
             GetTechObjectLocalNum, localObjects.Count + 1, techTypeNum, 
             "TANK", cooperParamNum, string.Empty, string.Empty,
@@ -199,15 +197,14 @@ namespace TechObject
 
                 foreach (var TObject in genericGroup.InheritedTechObjects)
                 {
-                    TObject.Parent = this;
+                    TObject.AddParent(this);
                     TObject.RemoveGenericTechObject();
+                    
                     techObjects.Add(TObject);
+                    techObjects.Sort((obj1, obj2) => obj1.GlobalNum - obj2.GlobalNum);
                 }
-
-                string message = "Удалить также все технологические объекты в группе?";
-                var showWarningResult = MessageBox.Show(message, "Внимание",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (showWarningResult == DialogResult.Yes)
+           
+                if (editor.DialogDeletingGenericGroup() == DialogResult.Yes)
                 {
                     foreach (var TObject in genericGroup.InheritedTechObjects)
                     {
@@ -415,8 +412,7 @@ namespace TechObject
         /// <returns></returns>
         public override ITreeViewItem Cut(ITreeViewItem item)
         {
-            var techObject = item as TechObject;
-            if (techObject != null)
+            if (item is TechObject techObject)
             {
                 techObjects.Remove(techObject);
                 return techObject;
@@ -571,6 +567,10 @@ namespace TechObject
 
         public int Count => localObjects.Count;
 
+        public List<GenericGroup> GenericGroups => genericGroups;
+
+        public List<TechObject> TechObjects => techObjects;
+
         readonly List<GenericGroup> genericGroups = new List<GenericGroup>();
         readonly List<TechObject> techObjects = new List<TechObject>();
 
@@ -579,5 +579,7 @@ namespace TechObject
         readonly List<GenericTechObject> globalGenericTechObjects;
         List<TechObject> globalObjectsList;
         ITechObjectManager techObjectManager;
+
+        private Editor.IEditor editor { get; set; } = Editor.Editor.GetInstance();
     }
 }

@@ -33,6 +33,8 @@ namespace TechObject
             : base(name, null, 0, techType, nameEplan,
                 cooperParamNumber, NameBC, attachedObjects, baseTechObject)
         {
+            items.Remove(techNumber);
+
             if (Editor.Editor.GetInstance().Editable)
                 Update();
         }
@@ -151,9 +153,10 @@ namespace TechObject
         public TechObject CreateTechObject(BaseObject BaseObject)
         {
             var techObject = new TechObject(this.Name,
-                BaseObject.GetTechObjectLocalNum, 1, this.TechType,
-                this.NameEplan, this.CooperParamNumber, this.NameBC,
-                this.AttachedObjects.Value, this.BaseTechObject);
+                BaseObject.GetTechObjectLocalNum,
+                inheritedTechObjects.LastOrDefault()?.TechNumber + 1 ?? 1,
+                this.TechType, this.NameEplan, this.CooperParamNumber,
+                this.NameBC, this.AttachedObjects.Value, this.BaseTechObject);
 
             techObject.GenericTechObject = this;
             BaseObject.AddObject(techObject);
