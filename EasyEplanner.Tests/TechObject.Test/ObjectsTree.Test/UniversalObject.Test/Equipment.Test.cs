@@ -8,7 +8,7 @@ using Moq;
 using NUnit.Framework;
 using TechObject;
 
-namespace TechObjectTest
+namespace TechObjectTests
 {
     public class EquipmentTest
     {

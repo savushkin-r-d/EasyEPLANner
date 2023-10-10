@@ -138,7 +138,7 @@ namespace TechObject
 
             if (GenericTechObject != null)
             {
-                int genericTechObjectIndex = TechObjectManager.GetInstance().GenericTechObjects.IndexOf(GenericTechObject) + 1;
+                int genericTechObjectIndex = TechObjectManagerInstance.GenericTechObjects.IndexOf(GenericTechObject) + 1;
                 resultBuilder.Append($"{prefix}generic_tech_object = {genericTechObjectIndex},\n");
             }
 
@@ -146,7 +146,7 @@ namespace TechObject
                 baseTechObject.ObjectGroupsList.Count > 0)
             {
                 string objectGroups = string.Empty;
-                foreach(var objectGroup in baseTechObject.ObjectGroupsList)
+                foreach (var objectGroup in baseTechObject.ObjectGroupsList)
                 {
                     if (objectGroup.Value == string.Empty)
                     {
@@ -215,9 +215,9 @@ namespace TechObject
         /// <param name="baseTechObject">Базовый технологический объект</param>
         /// <param name="NameBC">Имя объекта Monitor</param>
         /// <param name="techType">Номер типа</param>
-        public TechObject(string name, GetN getLocalNum, 
-            int technologicalNumber, int techType, string nameEplan, 
-            int cooperParamNumber, string NameBC, string attachedObjects, 
+        public TechObject(string name, GetN getLocalNum,
+            int technologicalNumber, int techType, string nameEplan,
+            int cooperParamNumber, string NameBC, string attachedObjects,
             BaseTechObject baseTechObject)
         {
             this.name = name;
@@ -227,7 +227,7 @@ namespace TechObject
             this.techType = new ObjectProperty("Тип", techType);
             this.techType.ValueChanged += sender => OnValueChanged(sender);
 
-            this.nameBC = new ObjectProperty("Имя объекта Monitor", 
+            this.nameBC = new ObjectProperty("Имя объекта Monitor",
                 NameBC);
             this.nameBC.ValueChanged += sender => OnValueChanged(sender);
 
@@ -235,7 +235,7 @@ namespace TechObject
             this.nameEplan.ValueChanged += sender => OnValueChanged(sender);
 
             this.cooperParamNumber = new ObjectProperty(
-                "Время совместного перехода шагов (параметр)", 
+                "Время совместного перехода шагов (параметр)",
                 cooperParamNumber, -1);
             this.cooperParamNumber.ValueChanged += sender => OnValueChanged(sender);
 
@@ -245,7 +245,7 @@ namespace TechObject
             };
             string attachObjectsName = "Привязанные агрегаты";
             string attachObjectsLuaName = "attached_objects";
-            this.attachedObjects = new AttachedObjects(attachedObjects, 
+            this.attachedObjects = new AttachedObjects(attachedObjects,
                 this, new AttachedObjectStrategy.AttachedWithInitStrategy(
                     attachObjectsName, attachObjectsLuaName, allowedObjects));
 
@@ -256,7 +256,7 @@ namespace TechObject
 
             systemParams = new SystemParams();
             systemParams.Parent = this;
-            
+
             equipment = new Equipment(this);
 
             baseProperties = new BaseProperties();
@@ -293,7 +293,7 @@ namespace TechObject
         /// </summary>
         public void SetUpFromBaseTechObject()
         {
-            if(BaseTechObject == null)
+            if (BaseTechObject == null)
             {
                 return;
             }
@@ -305,7 +305,7 @@ namespace TechObject
         }
 
         public void UpdateOnGenericTechObject(GenericTechObject genericTechObject)
-        {   
+        {
             techType.SetNewValue(genericTechObject.techType.Value);
             name = genericTechObject.Name;
 
@@ -317,7 +317,7 @@ namespace TechObject
                 cooperParamNumber.SetNewValue(genericTechObject.cooperParamNumber.Value);
         }
 
-        
+
 
         /// <summary>
         /// Сравнение имен Eplan базового тех. объекта с текущим.
@@ -358,13 +358,13 @@ namespace TechObject
             clone.techType = new ObjectProperty("Тип", TechType);
             clone.nameBC = new ObjectProperty("Имя объекта Monitor", NameBC);
             clone.nameEplan = new NameInEplan(NameEplan, clone);
-            clone.attachedObjects = new AttachedObjects(AttachedObjects.Value, 
+            clone.attachedObjects = new AttachedObjects(AttachedObjects.Value,
                 clone, AttachedObjects.WorkStrategy);
             clone.cooperParamNumber = cooperParamNumber.Clone();
 
             clone.getLocalNum = getLocalNum;
 
-            if(baseTechObject != null)
+            if (baseTechObject != null)
             {
                 clone.baseTechObject = baseTechObject.Clone(clone);
             }
@@ -436,7 +436,7 @@ namespace TechObject
         /// <param name="baseOperationName">Имя базовой операции.</param>
         /// <param name="operExtraParams">Параметры базовой операции</param>
         /// <returns>Добавленная операция.</returns>
-        public Mode AddMode(string modeName, string baseOperationName, 
+        public Mode AddMode(string modeName, string baseOperationName,
             LuaTable operExtraParams)
         {
             if (operExtraParams.Keys.Count > 0)
@@ -691,9 +691,9 @@ namespace TechObject
 
         public string Name
         {
-            get 
-            { 
-                return name; 
+            get
+            {
+                return name;
             }
         }
 
@@ -832,7 +832,7 @@ namespace TechObject
                 }
                 else
                 {
-                    globalNum = TechObjectManager.GetInstance()
+                    globalNum = TechObjectManagerInstance
                         .GetTechObjectN(this);
                     return new string[] {
                         getLocalNum( this ) + ". " + name + " №" +
@@ -892,7 +892,7 @@ namespace TechObject
         public override bool Delete(object child)
         {
             ITreeViewItem item = child as ITreeViewItem;
-            if(item != null)
+            if (item != null)
             {
                 item.Delete(this);
                 return true;
@@ -950,7 +950,7 @@ namespace TechObject
                     .Select(x => x as BaseParameter).ToArray();
                 foreach (var objEquip in objEquips)
                 {
-                    foreach(var copyEquip in copyEquips)
+                    foreach (var copyEquip in copyEquips)
                     {
                         if (objEquip.LuaName == copyEquip.LuaName)
                         {
@@ -991,7 +991,7 @@ namespace TechObject
             {
                 return baseObject.CreateGenericGroup(this);
             }
-            
+
             return null;
         }
 
@@ -1074,7 +1074,7 @@ namespace TechObject
             }
         }
 
-        public int GlobalNum => TechObjectManager.GetInstance().GetTechObjectN(this);
+        public int GlobalNum => TechObjectManagerInstance.GetTechObjectN(this);
 
         public BaseProperties BaseProperties
         {
@@ -1083,6 +1083,9 @@ namespace TechObject
                 return baseProperties;
             }
         }
+
+        public ITechObjectManager TechObjectManagerInstance { get; private set; }
+            = TechObjectManager.GetInstance();
 
         public GenericTechObject GenericTechObject { get; set; }
 

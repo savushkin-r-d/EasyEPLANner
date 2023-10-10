@@ -537,13 +537,17 @@ namespace TechObject
             return ostisLink + "?sys_id=state";
         }
 
-        public void UpdateOnGenericTechObject(State genericState)
+        public override void UpdateOnGenericTechObject(ITreeViewItem genericObject)
         {
-            if (genericState is null)
+            if (genericObject is null)
             {
                 Steps.ForEach(step => step.UpdateOnGenericTechObject(null));
                 return;
             }
+
+            var genericState = genericObject as State;
+            if (genericState is null)
+                return;
 
             foreach (var stepIndex in Enumerable.Range(0, genericState.Steps.Count))
             {
@@ -560,7 +564,7 @@ namespace TechObject
                 else
                 {
                     if (!string.IsNullOrEmpty(genericStep.GetBaseStepLuaName()))
-                        step.SetNewValue(genericStep.GetBaseStepLuaName());
+                        step.SetNewValue(genericStep.GetBaseStepLuaName(), true);
                     step.SetNewValue(genericStep.GetStepName());
                 }
 

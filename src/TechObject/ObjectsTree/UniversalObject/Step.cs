@@ -1028,13 +1028,16 @@ namespace TechObject
             SetNewValue(baseStep.Name, setBaseStep);
         }
 
-        public void UpdateOnGenericTechObject(Step genericStep)
+        public override void UpdateOnGenericTechObject(ITreeViewItem genericObject)
         {
-            if (genericStep == null)
+            if (genericObject is null)
             {
                 GetActions.ForEach(action => action.UpdateOnGenericTechObject(null));
                 return;
             }
+
+            var genericStep = genericObject as Step;
+            if (genericStep is null) return;
 
             foreach (var actionIndex in Enumerable.Range(0, genericStep.actions.Count))
             {

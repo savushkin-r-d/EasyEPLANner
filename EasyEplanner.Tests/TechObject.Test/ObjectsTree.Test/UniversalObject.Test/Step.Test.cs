@@ -4,6 +4,8 @@ using Editor;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using Moq;
+using EplanDevice;
 
 namespace EasyEplanner.Tests
 {
@@ -717,6 +719,37 @@ namespace EasyEplanner.Tests
                 new object[] { true, mainStepSequence },
                 new object[] { false, notMainStepSequence },
             };
+        }
+
+        [Test]
+        public void UpdateOnGenericTechObject()
+        {
+            var step = new Step("Шаг", GetN => 1, null);
+            var genericStep = new Step("Шаг 1", GetN => 1, null);
+
+            var genericActionMock = new Mock<IAction>();
+            genericActionMock.Setup(a => a.Empty).Returns(false);
+
+            var deviceManagerMock = new Mock<IDeviceManager>();
+
+            genericStep.GetActions[0] = genericActionMock.Object;
+
+            var actionMock = new Mock<IAction>();
+            actionMock.Setup(a => a.UpdateOnGenericTechObject(It.IsAny<IAction>()))
+                .Callback<IAction>((action) => Assert.AreSame(genericActionMock.Object, action));
+            actionMock.Setup(a => a.UpdateOnGenericTechObject(null))
+                .Callback<IAction>((action) => Assert.IsNull(action));
+
+            step.GetActions[0] = actionMock.Object;
+
+            Assert.Multiple(() =>
+            {
+                step.UpdateOnGenericTechObject(genericStep);
+
+                step.GetActions.RemoveRange(1, step.GetActions.Count - 1);
+
+                step.UpdateOnGenericTechObject(null);
+            });
         }
     }
 }

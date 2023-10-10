@@ -2,8 +2,10 @@
 using TechObject;
 using NUnit.Framework;
 using Moq;
+using System.Linq;
+using System.Runtime.InteropServices;
 
-namespace Tests.TechObject
+namespace TechObjectTests
 {
     class ActionGroupCustomTest
     {
@@ -267,5 +269,79 @@ namespace Tests.TechObject
             };
         }
 
+        [Test]
+        public void Clone()
+        {
+            var actionGroupCustom = new ActionGroupCustom("Действие", null, "action", () =>
+            {
+                return new ActionCustom("Устройства", null, "devs");
+            });
+
+            actionGroupCustom.CreateParameter(new ActiveParameter("par", "par"));
+
+            var clone = actionGroupCustom.Clone() as ActionGroupCustom;
+
+            Assert.Multiple(() => 
+            {
+                Assert.AreEqual(actionGroupCustom.SubActions.Count(), clone.SubActions.Count);
+                Assert.AreEqual(actionGroupCustom.Parameters.Count(), clone.Parameters.Count);
+                Assert.AreEqual(actionGroupCustom.Parameters[0].LuaName, clone.Parameters[0].LuaName);
+            });
+        }
+
+        [Test]
+        public void UpdateOnGenericTechObject()
+        {
+            bool updateMethodCalled = false;
+
+            var actionGroupCustom = new ActionGroupCustom("Действие", null, "action", () =>
+            {
+                return new ActionCustom("Устройства", null, "devs");
+            });
+
+            var genericaActionGroupCustom = new ActionGroupCustom("Действие", null, "action", () =>
+            {
+                return new ActionCustom("Устройства", null, "devs");
+            });
+
+            genericaActionGroupCustom.CreateParameter(new ActiveParameter("param", "param"));
+            actionGroupCustom.CreateParameter(new ActiveParameter("param", "param"));
+
+            var subActionMock = new Mock<IAction>();
+            subActionMock.Setup(x => x.UpdateOnGenericTechObject(It.IsAny<IAction>()))
+                .Callback<IAction>((sa) => 
+                {
+                    Assert.AreSame(genericaActionGroupCustom.SubActions[0], sa); 
+                    updateMethodCalled = true;
+                });
+
+            actionGroupCustom.SubActions[0] = subActionMock.Object;
+
+            genericaActionGroupCustom.Insert();
+
+            Assert.Multiple(() =>
+            {
+                actionGroupCustom.UpdateOnGenericTechObject(genericaActionGroupCustom);
+                Assert.AreEqual(2, actionGroupCustom.SubActions.Count);
+                Assert.IsTrue(updateMethodCalled);
+            });
+            
+        }
+
+        [Test]
+        public void UpdateOnGenericTechObject_NullAndWrongType()
+        {
+            var actionGroupCustom = new ActionGroupCustom("Действие", null, "action", () =>
+            {
+                return new ActionCustom("Устройства", null, "devs");
+            });
+
+            actionGroupCustom.CreateParameter(new ActiveParameter("param", "param"));
+            
+            actionGroupCustom.UpdateOnGenericTechObject(null);
+            actionGroupCustom.UpdateOnGenericTechObject(new Action("", null, ""));
+
+            Assert.Pass();
+        }
     }
 }

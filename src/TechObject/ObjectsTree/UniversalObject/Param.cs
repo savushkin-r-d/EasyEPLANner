@@ -313,8 +313,11 @@ namespace TechObject
             return oper != null;
         }
 
-        public void UpdateOnGenericTechObject(Param genericParam)
+        public override void UpdateOnGenericTechObject(ITreeViewItem genericObject)
         {
+            var genericParam = genericObject as Param;
+            if (genericParam is null) return;
+
             name = genericParam.name;
             nameLua.SetNewValue(genericParam.nameLua.Value);
 

@@ -70,6 +70,15 @@ namespace TechObject
         int GetTechObjectN(object techObject);
 
         /// <summary>
+        /// Получить номер объекта по названию базового объекта, ОУ и тех. номеру
+        /// ОУ и тех. номеру
+        /// </summary>
+        /// <param name="baseObjectName"> Название базового объекта </param>
+        /// <param name="nameEplan"> ОУ </param>
+        /// <param name="techNumber"> тех. номер </param>
+        int GetTechObjectN(string baseObjectName, string nameEplan, int techNumber);
+
+        /// <summary>
         /// Импорт объекта в проект.
         /// </summary>
         /// <param name="importingObject">Объект для импорта</param>

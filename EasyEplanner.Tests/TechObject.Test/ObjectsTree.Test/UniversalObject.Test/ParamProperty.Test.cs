@@ -62,5 +62,39 @@ namespace Tests.TechObject
 
             Assert.AreEqual(expectedValue, property.EditablePart);
         }
+
+        [TestCase("-", "-", "-", true)]
+        [TestCase(0.1, "-", "-", true)]
+        [TestCase("-", 0.1, 0.1, true)]
+        [TestCase("-", "abc", "-", false)]
+        public void SetNewValue_GenericValueProperty(object initValue,
+            object setValue, object expectedValue, bool expectedResult)
+        {
+            string name = Param.ValuePropertyName;
+            object defaultValue = null;
+            bool editable = false; // Still allow value editing
+            
+            property = new ParamProperty(name, initValue, defaultValue,
+                editable);
+
+            property.Parent = new Param(GetN => 1, "param")
+            {
+                Parent = new Params("params", "params", false, "params")
+                {
+                    Parent = new ParamsManager()
+                    {
+                        Parent = new GenericTechObject("", 0, "", -1, "", "", new BaseTechObject())
+                    }
+                }
+            };       
+            
+            var result = property.SetNewValue(setValue.ToString());
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedValue.ToString(), property.Value);
+                Assert.AreEqual(expectedResult, result);
+            });
+        }
     }
 }

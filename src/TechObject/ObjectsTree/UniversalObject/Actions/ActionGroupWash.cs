@@ -20,7 +20,6 @@ namespace TechObject
         public ActionGroupWash(string name, Step owner, string luaName)
             : base(name, owner, luaName)
         {
-            SubActions = new List<IAction>();
             var newAction = new ActionWash(GroupDefaultName, owner,
                 string.Empty);
             SubActions.Add(newAction);

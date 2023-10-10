@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -587,7 +588,7 @@ namespace TechObject
             excludedGenericDeviceIndex = IndexesExclude(genericDeviceIndex, allowedDevicesId);
 
             allowedDevicesId = IndexesExclude(allowedDevicesId, genericDeviceIndex);
-            
+
             DevicesIndex.Clear();
             deviceIndex.AddRange(allowedDevicesId);
 
@@ -597,13 +598,33 @@ namespace TechObject
         }
 
         /// <summary>
+        /// Загружены ли данные проекта?
+        /// </summary>
+        [ExcludeFromCodeCoverage]
+        private bool ProjectDataIsLoaded
+        {
+            get
+            {
+                try
+                {
+                    return EProjectManager.GetInstance().ProjectDataIsLoaded;
+                }
+                catch 
+                { 
+                    return true; 
+                }
+            }
+            
+        }
+
+        /// <summary>
         /// Установить устройства из типового объекта
         /// </summary>
         public bool SetGenericDevices(List<int> genericDevicesID)
         {
             var devicesID = IndexesExclude(deviceIndex, genericDevicesID);
-            
-            if (EProjectManager.GetInstance().ProjectDataIsLoaded)
+
+            if (ProjectDataIsLoaded)
             {
                 excludedGenericDeviceIndex = excludedGenericDeviceIndex
                     .Where(excluded => genericDevicesID.Contains(excluded)).ToList();

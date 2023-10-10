@@ -345,6 +345,11 @@ namespace Editor
         }
         #endregion
 
+        public virtual void UpdateOnGenericTechObject(ITreeViewItem genericObject)
+        {
+
+        }
+
         #region реализация IHelperItem
         /// <summary>
         /// Получить ссылку на страницу с справкой

@@ -23,7 +23,7 @@ namespace TechObject
         public override bool SetNewValue(string newValue)
         {
             string oldValue = Value;
-            var thisObjNum = TechObjectManager.GetInstance()
+            var thisObjNum = owner.TechObjectManagerInstance
                 .GetTechObjectN(Owner);
             List<int> newNumbers = strategy.GetValidTechObjNums(newValue,
                 thisObjNum);
@@ -38,11 +38,11 @@ namespace TechObject
                 var replacedObjects = new Dictionary<TechObject, TechObject>();
 
                 List<TechObject> newObjects = newNumbers
-                    .Select(x => TechObjectManager.GetInstance().GetTObject(x))
+                    .Select(x => owner.TechObjectManagerInstance.GetTObject(x))
                     .ToList();
                 List<TechObject> oldObjects = strategy
                     .GetValidTechObjNums(oldValue, thisObjNum)
-                    .Select(x => TechObjectManager.GetInstance().GetTObject(x))
+                    .Select(x => owner.TechObjectManagerInstance.GetTObject(x))
                     .ToList();
                 bool bindToUnit = owner.BaseTechObject
                     .S88Level == (int)BaseTechObjectManager.ObjectType.Unit;
@@ -245,8 +245,8 @@ namespace TechObject
         {
             foreach (var number in objectsNumbrers)
             {
-                TechObject attachedAggregate = TechObjectManager
-                    .GetInstance().GetTObject(number);
+                TechObject attachedAggregate = owner.TechObjectManagerInstance
+                    .GetTObject(number);
                 BaseTechObject attachedBaseTechObject = attachedAggregate
                     .BaseTechObject;
                 List<BaseParameter> properties = attachedBaseTechObject
@@ -436,7 +436,7 @@ namespace TechObject
 
             foreach (int index in genericAttachedObjects.Value.Split(' ').Select(int.Parse).ToList())
             {
-                var manager = TechObjectManager.GetInstance();
+                var manager = owner.TechObjectManagerInstance;
                 var techObject = manager.GetTObject(index);
                 var toNumber = manager.GetTechObjectN(techObject.BaseTechObject.EplanName, techObject.NameEplan, Owner.TechNumber);
                 if (toNumber > 0)
@@ -648,7 +648,7 @@ namespace TechObject
                         continue;
                     }
 
-                    TechObject obj = TechObjectManager.GetInstance()
+                    TechObject obj = techObjectManager
                         .GetTObject(number);
                     if (obj == null || obj.BaseTechObject == null)
                     {
@@ -689,6 +689,8 @@ namespace TechObject
             /// Разрешенные для добавления в группу объекты
             /// </summary>
             public List<BaseTechObjectManager.ObjectType> AllowedObjects { get; set; }
+
+            private ITechObjectManager techObjectManager = TechObjectManager.GetInstance();
         }
     }
 }

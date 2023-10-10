@@ -10,7 +10,7 @@ using System.Threading;
 using Editor;
 using System.Windows.Forms;
 
-namespace TechObjectTest
+namespace TechObjectTests
 {
     public class BaseObjectTest
     {

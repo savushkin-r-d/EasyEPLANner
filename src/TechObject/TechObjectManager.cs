@@ -106,14 +106,13 @@ namespace TechObject
         /// </summary>
         /// <param name="globalNum">Номер типового объекта</param>
         public GenericTechObject GetGenericTObject(int globalNum)
-            => genericTechObjects?.ElementAtOrDefault(globalNum - 1);
+            => genericTechObjects.ElementAtOrDefault(globalNum - 1);
 
         /// <summary>
-        /// Получение номера операции в списке операций. 
+        /// Получение номера объекта в списке тех. объектов. 
         /// Нумерация начинается с 1.
         /// </summary>
-        /// <param name="mode">Операция, номер которой хотим получить.</param>
-        /// <returns>Номер заданной операции.</returns>
+        /// <param name="techObject">Тех. объект</returns>
         public int GetTechObjectN(object techObject)
         {
             return techObjects.IndexOf(techObject as TechObject) + 1;
@@ -139,14 +138,6 @@ namespace TechObject
             }
         }
 
-        /// <summary>
-        /// Получить номер операции по названию базового объекта,
-        /// ОУ и тех. номеру
-        /// </summary>
-        /// <param name="baseObjectName"> Название базового объекта </param>
-        /// <param name="nameEplan"> ОУ </param>
-        /// <param name="techNumber"> тех. номер </param>
-        /// <returns></returns>
         public int GetTechObjectN(string baseObjectName, string nameEplan, int techNumber)
         {
             var techObject = TechObjects

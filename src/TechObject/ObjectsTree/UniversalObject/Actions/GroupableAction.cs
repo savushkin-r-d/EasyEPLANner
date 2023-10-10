@@ -144,7 +144,7 @@ namespace TechObject
 
         public override bool Empty => subActions.TrueForAll(subAction => subAction.Empty);
 
-        private List<IAction> subActions;
+        protected List<IAction> subActions;
         
         protected private const string GroupDefaultName = "Группа";
     }

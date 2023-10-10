@@ -282,8 +282,10 @@ namespace TechObject
         {
             foreach (var action in SubActions)
             {
-                (action as ITreeViewItem).ValueChanged +=
-                    sender => OnValueChanged(sender);
+                if (action is ITreeViewItem item)
+                {
+                    item.ValueChanged += sender => OnValueChanged(sender);
+                }
             }
 
             foreach (var parameter in Parameters)

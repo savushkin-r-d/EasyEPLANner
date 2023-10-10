@@ -730,13 +730,17 @@ namespace TechObject
             }
         }
 
-        public void UpdateOnGenericTechObject(Mode genericMode)
+        public override void UpdateOnGenericTechObject(ITreeViewItem genericObject)
         {
-            if (genericMode is null)
+            if (genericObject is null)
             {
                 States.ForEach(state => state.UpdateOnGenericTechObject(null));
                 return;
             }
+
+            var genericMode = genericObject as Mode;
+            if (genericMode is null)
+                return;
 
             foreach (var stateIndex in Enumerable.Range(0, genericMode.States.Count))
             {

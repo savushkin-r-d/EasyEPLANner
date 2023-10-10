@@ -692,6 +692,36 @@ namespace Tests.TechObject
 
             Assert.IsNull(actualSubActions);
         }
+
+        [Test]
+        public void SetGenericDevices()
+        {
+            var deviceManager = DeviceManagerMock.DeviceManager;
+
+            var action = new Action("Устройства", null, "devs", null, null,
+                null, deviceManager);
+
+            Assert.Multiple(() =>
+            {
+                action.SetNewValue("TANK1V1 TANK1V2 KOAG1V1");
+                CollectionAssert.AreEqual(new List<int>() { 1, 2, 3 },
+                    action.DevicesIndex);
+                CollectionAssert.AreEqual(new List<int>() { },
+                    action.GenericDevicesIndexAfterExclude);
+
+                action.SetGenericDevices(new List<int>() { 2, 3 });
+                CollectionAssert.AreEqual(new List<int>() { 1, },
+                    action.DevicesIndex);
+                CollectionAssert.AreEqual(new List<int>() { 2, 3 },
+                    action.GenericDevicesIndexAfterExclude);
+
+                action.SetNewValue("TANK1V1 TANK1V2");
+                CollectionAssert.AreEqual(new List<int>() { 1, },
+                    action.DevicesIndex);
+                CollectionAssert.AreEqual(new List<int>() { 2, },
+                    action.GenericDevicesIndexAfterExclude);
+            });            
+        }
     }
 
     class DefaultActionProcessingStrategyTest
@@ -1244,4 +1274,5 @@ namespace Tests.TechObject
 
         private static EplanDevice.IDeviceManager deviceManager;
     }
+
 }
