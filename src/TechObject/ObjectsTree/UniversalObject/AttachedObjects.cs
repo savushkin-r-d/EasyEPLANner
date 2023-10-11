@@ -690,7 +690,7 @@ namespace TechObject
             /// </summary>
             public List<BaseTechObjectManager.ObjectType> AllowedObjects { get; set; }
 
-            private ITechObjectManager techObjectManager = TechObjectManager.GetInstance();
+            private readonly ITechObjectManager techObjectManager = TechObjectManager.GetInstance();
         }
     }
 }
