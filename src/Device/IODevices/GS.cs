@@ -46,7 +46,7 @@ namespace EplanDevice
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (пустая строка, GS, GS_VIRT).\n",
+                        " (пустая строка, GS, GS_VIRT, GS_INVERSE).\n",
                         Name);
                     break;
             }

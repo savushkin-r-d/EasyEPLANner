@@ -61,7 +61,7 @@ namespace EplanDevice
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (TE, TE_IOLINK, TE_VIRT).\n", Name);
+                        " (TE, TE_IOLINK, TE_VIRT, TE_ANALOG).\n", Name);
                     break;
             }
 
