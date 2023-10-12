@@ -62,6 +62,8 @@ namespace TechObject
         {
             lua.RegisterFunction("Get_TECH_OBJECT", this,
                 GetType().GetMethod("GetTObject"));
+            lua.RegisterFunction("Get_GENERIC_OBJECT", this,
+                GetType().GetMethod("GetGenericTObject"));
             string restrictionFileName = "sys_restriction.lua";
             string pathToRestrictionInitializer = Path
                 .Combine(ProjectManager.GetInstance().SystemFilesPath,
@@ -85,10 +87,10 @@ namespace TechObject
         }
 
         /// <summary>
-         /// Получение объекта по номеру
-         /// </summary>
-         /// <param name="i">Номер объекта</param>
-         /// <returns></returns>
+        /// Получение объекта по номеру
+        /// </summary>
+        /// <param name="i">Номер объекта</param>
+        /// <returns></returns>
         public TechObject GetTObject(int i)
         {
             if (techObjects != null && techObjects.Count >= i)
@@ -108,6 +110,10 @@ namespace TechObject
         public GenericTechObject GetGenericTObject(int globalNum)
             => genericTechObjects.ElementAtOrDefault(globalNum - 1);
 
+
+        public int GetGenericObjectN(object techObject)
+            => genericTechObjects.IndexOf(techObject as GenericTechObject) + 1;
+
         /// <summary>
         /// Получение номера объекта в списке тех. объектов. 
         /// Нумерация начинается с 1.
@@ -118,11 +124,6 @@ namespace TechObject
             return techObjects.IndexOf(techObject as TechObject) + 1;
         }
 
-        /// <summary>
-        /// Получить номер объекта по его отображаемому имени в дереве.
-        /// </summary>
-        /// <param name="displayText">Отображаемый текст</param>
-        /// <returns></returns>
         public int GetTechObjectN(string displayText)
         {
             TechObject findedObject = TechObjects
@@ -130,13 +131,14 @@ namespace TechObject
 
             if(findedObject != null)
             {
-                return techObjects.IndexOf(findedObject) + 1;
+                return findedObject.GlobalNum;
             }
             else
             {
                 return 0;
             }
         }
+
 
         public int GetTechObjectN(string baseObjectName, string nameEplan, int techNumber)
         {
@@ -179,7 +181,9 @@ namespace TechObject
                 res.Append(obj.SaveAsLuaTable(prefix + "\t\t", num));
             }
             res.Append("\t}\n")
-                .Append("end\n\n");
+                .Append("end\n")
+                .Append($"{new string('-', 80)}\n")
+                .Append($"{new string('-', 80)}\n");
 
             res.Append("init_tech_objects_modes = function()\n")
                 .Append("\treturn\n")
@@ -203,17 +207,28 @@ namespace TechObject
         /// <returns>Описание в виде таблицы Lua.</returns>
         public string SaveRestrictionAsLua(string prefix)
         {
-            var res = string.Empty;
-            res += "restrictions =\n";
-            res += "\t{\n";
+            var res = new StringBuilder();
+
+            res.Append("generic_restrictions =\n")
+                .Append("\t{\n");
+            foreach (GenericTechObject obj in GenericTechObjects)
+            {
+                int num = GenericTechObjects.IndexOf(obj) + 1;
+                res.Append(obj.SaveRestrictionAsLua(prefix + "\t", num));
+            }
+            res.Append("\t}\n")
+                .Append($"{new string('-', 80)}\n")
+                .Append($"{new string('-', 80)}\n")
+                .Append("restrictions =\n")
+                .Append("\t{\n");
             foreach (TechObject obj in TechObjects)
             {
                 int num = TechObjects.IndexOf(obj) + 1;
-                res += obj.SaveRestrictionAsLua(prefix + "\t", num);
+                res.Append(obj.SaveRestrictionAsLua(prefix + "\t", num));
             }
-            res += "\t}";
+            res.Append("\t}");
             res = res.Replace("\t", "    ");
-            return res;
+            return res.ToString();
         }
 
         #region Загрузка описания из LUA
@@ -262,11 +277,12 @@ namespace TechObject
         /// Загрузка ограничений объектов
         /// </summary>
         /// <param name="LuaStr">Описание ограничений объектов</param>
-        public void LoadRestriction(string LuaStr)
+        public void LoadRestrictions(string LuaStr)
         {
             //Выполнения Lua скрипта с описанием объектов.
             lua.DoString(LuaStr);
-            lua.DoString("init_restriction()");
+            lua.DoString("init_restrictions()");
+            lua.DoString("init_generic_restrictions()");
         }
         #endregion
 

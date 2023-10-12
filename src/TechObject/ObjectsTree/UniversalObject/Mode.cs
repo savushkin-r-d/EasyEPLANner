@@ -268,7 +268,8 @@ namespace TechObject
         /// <param name="value">Новая строка ограничений</param>
         public void AddRestriction(string luaName, int ObjNum, int ModeNum)
         {
-
+            if (owner?.Owner is GenericTechObject)
+                ObjNum = 0;
             foreach (Restriction restrict in restrictionMngr.Restrictions)
             {
                 if (restrict.LuaName == luaName)
@@ -578,8 +579,7 @@ namespace TechObject
                         copiedRestrMan.Items[i]);
                 }
 
-                int objNum = TechObjectManager.GetInstance()
-                    .GetTechObjectN(owner.Owner);
+                int objNum = owner.Owner.GlobalNum;
                 int modeNum = getN(this);
 
                 foreach (var restrict in selectesRestrMan.Restrictions)

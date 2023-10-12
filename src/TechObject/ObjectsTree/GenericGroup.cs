@@ -189,6 +189,9 @@ namespace TechObject
             return techObject;
         }
 
+        public override ImageIndexEnum ImageIndex
+            => ImageIndexEnum.GenericGroup;
+
         /// <summary>
         /// 
         /// </summary>

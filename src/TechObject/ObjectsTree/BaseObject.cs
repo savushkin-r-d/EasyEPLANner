@@ -567,9 +567,20 @@ namespace TechObject
 
         public int Count => localObjects.Count;
 
+        /// <summary>
+        /// Группы с типовыми объектами
+        /// </summary>
         public List<GenericGroup> GenericGroups => genericGroups;
 
+        /// <summary>
+        /// Технологические объекты без групп
+        /// </summary>
         public List<TechObject> TechObjects => techObjects;
+
+        /// <summary>
+        /// Все технологические объекты в базовом объекте
+        /// </summary>
+        public List<TechObject> LocalObjects => localObjects;
 
         readonly List<GenericGroup> genericGroups = new List<GenericGroup>();
         readonly List<TechObject> techObjects = new List<TechObject>();

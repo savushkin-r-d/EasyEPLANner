@@ -23,7 +23,7 @@ namespace TechObject
         /// Загрузка ограничений проекта
         /// </summary>
         /// <param name="LuaStr">Описание ограничений</param>
-        void LoadRestriction(string LuaStr);
+        void LoadRestrictions(string LuaStr);
 
         /// <summary>
         /// Сохранить описание проекта
@@ -62,12 +62,21 @@ namespace TechObject
         /// <param name="globalNum">Номер типового объекта</param>
         GenericTechObject GetGenericTObject(int globalNum);
 
+        int GetGenericObjectN(object techObject);
+
         /// <summary>
         /// Получить глобальный номер объекта
         /// </summary>
         /// <param name="techObject">Объект</param>
         /// <returns></returns>
         int GetTechObjectN(object techObject);
+
+        /// <summary>
+        /// Получить номер объекта по его отображаемому имени в дереве.
+        /// </summary>
+        /// <param name="displayText">Отображаемый текст</param>
+        /// <returns></returns>
+        int GetTechObjectN(string displayText);
 
         /// <summary>
         /// Получить номер объекта по названию базового объекта, ОУ и тех. номеру

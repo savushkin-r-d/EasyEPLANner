@@ -16,7 +16,6 @@ namespace TechObject.Tests
                 new SortedDictionary<int, List<int>>()
                 { { 1, new List<int>() { 1, 2, 3 } } });
 
-
             var techObjectManager = TechObjectManager.GetInstance();
             var techObjects = new List<TechObject>() {
                 new TechObject("TO1", getN => 1, 1, 1, "EplanNameTO1", 1, "BCNameTO1", string.Empty, null),
@@ -32,6 +31,7 @@ namespace TechObject.Tests
             techObjects[1].ModesManager.Modes.AddRange(modes);
 
             techObjectManager.TechObjects.AddRange(techObjects);
+
 
             localrestriction.SetValue(restriction);
             Assert.AreEqual(localrestriction.DisplayText[1], expected);

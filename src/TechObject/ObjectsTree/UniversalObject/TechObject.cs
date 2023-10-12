@@ -1074,7 +1074,7 @@ namespace TechObject
             }
         }
 
-        public int GlobalNum => TechObjectManagerInstance.GetTechObjectN(this);
+        public virtual int GlobalNum => TechObjectManagerInstance.GetTechObjectN(this);
 
         public BaseProperties BaseProperties
         {

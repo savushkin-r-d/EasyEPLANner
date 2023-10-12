@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Editor;
 
 namespace TechObject
@@ -236,7 +237,9 @@ namespace TechObject
                 foreach (int key in keyColl)
                 {
                     TechObject to = TechObjectManager.GetInstance()
-                        .TechObjects[key - 1];
+                        .TechObjects.ElementAtOrDefault(key - 1);
+                    if (to is null)
+                        to = (Parent.Parent as Mode).Owner.Owner;
                     foreach (int val in restrictList[key])
                     {
                         Mode mode = to.GetMode(val - 1);
@@ -270,7 +273,9 @@ namespace TechObject
                 foreach (int key in keyColl)
                 {
                     TechObject to = TechObjectManager.GetInstance()
-                        .TechObjects[key - 1];
+                        .TechObjects.ElementAtOrDefault(key - 1);
+                    if (to is null)
+                        to = (Parent.Parent as Mode).Owner.Owner;
                     foreach (int val in diffDict[key])
                     {
                         Mode mode = to.GetMode(val - 1);

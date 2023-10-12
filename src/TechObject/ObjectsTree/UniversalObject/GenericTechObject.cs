@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Eplan.EplApi.DataModel.E3D.BasePointMate.Enums;
-using TechObject;
 
 namespace TechObject
 {
@@ -143,8 +141,7 @@ namespace TechObject
             InheritedTechObjects.ForEach(to => to.UpdateOnGenericTechObject(this));
         }
 
-        public override string[] DisplayText
-            => new string[] { $"{Name} - типовой объект", string.Empty };
+
 
 
         /// <summary>
@@ -174,10 +171,21 @@ namespace TechObject
             return techObject;
         }
 
+        #region implementation ITreeViewItems
+
+        public override string[] DisplayText
+            => new string[] { $"{Name} [#{GlobalNum}]", string.Empty };
+
+        public override ImageIndexEnum ImageIndex 
+            => ImageIndexEnum.GenericTechObject;
+        #endregion
+
         /// <summary>
         /// Группа типового объекта
         /// </summary>
         public GenericGroup GenericGroup { get; set; } = null;
+
+        public override int GlobalNum => TechObjectManagerInstance.GetGenericObjectN(this);
 
         public List<TechObject> InheritedTechObjects => inheritedTechObjects;
 

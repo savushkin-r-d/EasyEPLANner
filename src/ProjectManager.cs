@@ -124,7 +124,7 @@ namespace EasyEPlanner
                         out string restrictionsErrors, projectName,
                         $"\\{ProjectDescriptionSaver.MainRestrictionsFileName}");
                     thrownExceptions += restrictionsErrors;
-                    techObjectManager.LoadRestriction(luaStr);
+                    techObjectManager.LoadRestrictions(luaStr);
                     oProgress.EndPart();
                 }
                 else

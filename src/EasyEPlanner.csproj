@@ -513,6 +513,9 @@
     <None Include="Resources\equipment.ico" />
     <Content Include="Resources\equipment.png" />
     <None Include="Resources\hideEmptyItems.png" />
+    <None Include="Resources\group.ico" />
+    <None Include="Resources\generic.png" />
+    <None Include="Resources\group.png" />
     <Content Include="Resources\highlight.ico" />
     <None Include="Resources\refresh.png" />
     <None Include="Resources\save.png" />
