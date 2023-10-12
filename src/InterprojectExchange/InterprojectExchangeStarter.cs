@@ -36,6 +36,8 @@ namespace InterprojectExchange
                 GetType().GetMethod("GetMainProjectName"));
             lua.RegisterFunction("GetSelectedModel", this,
                 GetType().GetMethod("GetSelectedModel"));
+            lua.RegisterFunction("WarningProjectNameInIOFile", this,
+                GetType().GetMethod("WarningProjectNameInIOFile"));
         }
 
         /// <summary>
@@ -246,13 +248,22 @@ namespace InterprojectExchange
                 reader.Close();
                 lua.DoString(ioInfo);
                 // Функция из Lua
-                lua.DoString("init_io_file()");
+                lua.DoString($"init_io_file('{projName}')");
             }
             else
             {
                 form.ShowErrorMessage($"Не найден файл main.io.lua проекта" +
                     $" \"{projName}\"");
             }
+        }
+
+        public void WarningProjectNameInIOFile(string projectName)
+        {
+            form.ShowWarningMessage($"Имя проекта PAC_Name = '{projectName}' в" +
+                $" файле main.io.lua не совпадает с именем проекта" +
+                $" '{GetSelectedModel().ProjectName}'. Для создания модели" +
+                $" будет использовано имя проекта. Рекомендуется" +
+                $" обновить связанный проект.", MessageBoxButtons.OK);
         }
 
         /// <summary>
