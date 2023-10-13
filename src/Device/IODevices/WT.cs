@@ -56,7 +56,7 @@ namespace EplanDevice
 
                 default:
                     errStr = string.Format("\"{0}\" - неверный тип" +
-                        " (WT, WT_RS232, WT_VIRT).\n", Name);
+                        " (WT, WT_RS232, WT_VIRT, WT_ETH).\n", Name);
                     break;
             }
 
