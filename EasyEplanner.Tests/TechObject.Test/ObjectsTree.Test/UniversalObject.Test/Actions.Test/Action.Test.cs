@@ -1,4 +1,5 @@
-﻿using Editor;
+﻿using EasyEPlanner.PxcIolinkConfiguration.Models;
+using Editor;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -112,13 +113,13 @@ namespace Tests.TechObject
             var action = new Action(string.Empty, null, string.Empty);
 
             int addingValue = new System.Random().Next();
-            action.DeviceIndex.Add(addingValue);
+            action.DevicesIndex.Add(addingValue);
 
-            Assert.AreEqual(expectedCountAfterAdd, action.DeviceIndex.Count);
+            Assert.AreEqual(expectedCountAfterAdd, action.DevicesIndex.Count);
 
-            action.DeviceIndex.Remove(addingValue);
+            action.DevicesIndex.Remove(addingValue);
 
-            Assert.AreEqual(expectedCountAfterDel, action.DeviceIndex.Count);
+            Assert.AreEqual(expectedCountAfterDel, action.DevicesIndex.Count);
         }
 
         [Test]
@@ -127,11 +128,11 @@ namespace Tests.TechObject
             const int expectedDevsCount = 0;
             var newDevs = new List<int> { 8, 6, 4, 3, 2, 9 };
             var action = new Action(string.Empty, null, string.Empty);
-            action.DeviceIndex = newDevs;
+            action.DevicesIndex = newDevs;
 
             action.Clear();
 
-            Assert.AreEqual(expectedDevsCount, action.DeviceIndex.Count);
+            Assert.AreEqual(expectedDevsCount, action.DevicesIndex.Count);
         }
 
         [Test]
@@ -175,7 +176,7 @@ namespace Tests.TechObject
 
             foreach (var devId in devicesIds)
             {
-                action.DeviceIndex.Add(devId);
+                action.DevicesIndex.Add(devId);
             }
 
             Assert.AreEqual(action.Empty, expectedResult);
@@ -198,7 +199,7 @@ namespace Tests.TechObject
 
             foreach (var devId in devicesIds)
             {
-                action.DeviceIndex.Add(devId);
+                action.DevicesIndex.Add(devId);
             }
 
             Assert.AreEqual(action.IsFilled, expectedResult);
@@ -223,7 +224,7 @@ namespace Tests.TechObject
             var action = new Action(string.Empty, null, string.Empty, null,
                 null, null, deviceManagerMock.Object);
             action.DrawStyle = drawStyle;
-            action.DeviceIndex.AddRange(devIds);
+            action.DevicesIndex.AddRange(devIds);
 
             List<DrawInfo> drawObjs = action.GetObjectToDrawOnEplanPage();
 
@@ -354,7 +355,7 @@ namespace Tests.TechObject
                 .Returns(deviceMock.Object);
             var action = new Action(string.Empty, null, string.Empty, null,
                 null, null, deviceManagerMock.Object);
-            action.DeviceIndex.AddRange(devIds);
+            action.DevicesIndex.AddRange(devIds);
             var preExpectedText = new string[devIds.Length];
             for (int i = 0; i < preExpectedText.Length; i++)
             {
@@ -383,7 +384,7 @@ namespace Tests.TechObject
                 .Returns(deviceMock.Object);
             var action = new Action(string.Empty, null, string.Empty, null,
                 null, null, deviceManagerMock.Object);
-            action.DeviceIndex.AddRange(devIds);
+            action.DevicesIndex.AddRange(devIds);
             var preExpectedText = new string[devIds.Length];
             for (int i = 0; i < preExpectedText.Length; i++)
             {
@@ -418,7 +419,7 @@ namespace Tests.TechObject
             Assert.Multiple(() =>
             {
                 Assert.AreEqual(expectedResult, result);
-                Assert.AreEqual(expectedDevsCount, action.DeviceIndex.Count);
+                Assert.AreEqual(expectedDevsCount, action.DevicesIndex.Count);
             });
         }
 
@@ -449,7 +450,7 @@ namespace Tests.TechObject
                 action.AddDev(devId, 0, string.Empty);
             }
 
-            Assert.AreEqual(expectedDevCount, action.DeviceIndex.Count);
+            Assert.AreEqual(expectedDevCount, action.DevicesIndex.Count);
         }
 
         [Description("If devId mod 2 == 0 -> Valid device," +
@@ -473,7 +474,7 @@ namespace Tests.TechObject
                 .Returns(invalidDevMock.Object);
             var action = new Action(actionName, null, luaName, null, null,
                 null, deviceManagerMock.Object);
-            action.DeviceIndex.AddRange(devIds);
+            action.DevicesIndex.AddRange(devIds);
 
             var actualCode = action.SaveAsLuaTable(prefix);
 
@@ -542,17 +543,18 @@ namespace Tests.TechObject
                 .DeviceManager;
             var action = new Action(string.Empty, null, string.Empty, null,
                 null, null, deviceManager);
-            action.DeviceIndex.AddRange(devIds);
+            action.DevicesIndex.AddRange(devIds);
 
             action.ModifyDevNames(newTechObjectName, newTechObjectNumber,
                 oldTechObjectName, oldTechObjNumber);
 
-            Assert.AreEqual(expectedDevIds, action.DeviceIndex);
+            Assert.AreEqual(expectedDevIds, action.DevicesIndex);
         }
 
         [TestCase(new int[] { 1, 2, 3, 4 }, new int[] { 5, 6, 3, 4 }, 2, 1, "TANK")]
         [TestCase(new int[] { 5, 4, 6, 3 }, new int[] { 1, 4, 2, 3 }, 2, 1, "TANK")]
         [TestCase(new int[] { 1, 2, 3, 4, 8 }, new int[] { 5, 6, 3, 4, 7 }, 2, -1, "TANK")]
+        [TestCase(new int[] { 8 }, new int[] { 8 }, 2, 1, "TANK")]
         public void ModifyDevNames(int[] devIds, int[] expectedDevIds,
             int newTechObjectN, int oldTechObjectN, string techObjectName)
         {
@@ -560,12 +562,28 @@ namespace Tests.TechObject
                 .DeviceManager;
             var action = new Action(string.Empty, null, string.Empty, null,
                 null, null, deviceManager);
-            action.DeviceIndex.AddRange(devIds);
+            action.DevicesIndex.AddRange(devIds);
 
             action.ModifyDevNames(newTechObjectN, oldTechObjectN,
                 techObjectName);
 
-            Assert.AreEqual(expectedDevIds, action.DeviceIndex);
+            Assert.AreEqual(expectedDevIds, action.DevicesIndex);
+        }
+
+        [TestCase(new int[] { 1, 2, 3, 4 }, new int[] { 5, 6, 3, 4 }, 2, "TANK")]
+        [TestCase(new int[] { 1, 2, 3 }, new int[] { 3 }, 3, "TANK")]
+        public void ModifyDevNames_CheckGenericUpdating(int[] devIds,
+            int[] expectedDevIds, int newDevID, string techObjectName)
+        {
+            EplanDevice.IDeviceManager deviceManager = DeviceManagerMock
+                .DeviceManager;
+            var action = new Action(string.Empty, null, string.Empty, null,
+                null, null, deviceManager);
+            action.DevicesIndex.AddRange(devIds);
+
+            action.ModifyDevNames(newDevID, -1, techObjectName);
+
+            CollectionAssert.AreEqual(expectedDevIds, action.DevicesIndex);
         }
 
         [TestCase(new int[] { 1, 3, 5, 7, 9 })]
@@ -573,7 +591,7 @@ namespace Tests.TechObject
         public void Clone_NewAction_ReturnsCopy(int[] devIds)
         {
             var action = new Action(string.Empty, null, string.Empty);
-            action.DeviceIndex.AddRange(devIds);
+            action.DevicesIndex.AddRange(devIds);
 
             int actionStrategyHashCode = action.GetDeviceProcessingStrategy()
                 .GetHashCode();
@@ -585,14 +603,14 @@ namespace Tests.TechObject
             Assert.Multiple(() =>
             {
                 Assert.AreNotEqual(action.GetHashCode(), cloned.GetHashCode());
-                Assert.AreEqual(action.DeviceIndex.Count,
-                    cloned.DeviceIndex.Count);
+                Assert.AreEqual(action.DevicesIndex.Count,
+                    cloned.DevicesIndex.Count);
                 Assert.AreEqual(actionStrategyHashCode,
                     clonedStrategyHashCode);
-                for (int i = 0; i < action.DeviceIndex.Count; i++)
+                for (int i = 0; i < action.DevicesIndex.Count; i++)
                 {
-                    Assert.AreEqual(action.DeviceIndex[i],
-                        cloned.DeviceIndex[i]);
+                    Assert.AreEqual(action.DevicesIndex[i],
+                        cloned.DevicesIndex[i]);
                 }
             });
         }
@@ -613,7 +631,7 @@ namespace Tests.TechObject
                 .DeviceManager;
             var action = new Action(string.Empty, null, string.Empty, null,
                 null, null, deviceManager);
-            action.DeviceIndex.AddRange(devIdsToSet);
+            action.DevicesIndex.AddRange(devIdsToSet);
 
             List<string> actualNames = action.DevicesNames;
 
@@ -673,6 +691,36 @@ namespace Tests.TechObject
             List<IAction> actualSubActions = action.SubActions;
 
             Assert.IsNull(actualSubActions);
+        }
+
+        [Test]
+        public void SetGenericDevices()
+        {
+            var deviceManager = DeviceManagerMock.DeviceManager;
+
+            var action = new Action("Устройства", null, "devs", null, null,
+                null, deviceManager);
+
+            Assert.Multiple(() =>
+            {
+                action.SetNewValue("TANK1V1 TANK1V2 KOAG1V1");
+                CollectionAssert.AreEqual(new List<int>() { 1, 2, 3 },
+                    action.DevicesIndex);
+                CollectionAssert.AreEqual(new List<int>() { },
+                    action.GenericDevicesIndexAfterExclude);
+
+                action.SetGenericDevices(new List<int>() { 2, 3 });
+                CollectionAssert.AreEqual(new List<int>() { 1, },
+                    action.DevicesIndex);
+                CollectionAssert.AreEqual(new List<int>() { 2, 3 },
+                    action.GenericDevicesIndexAfterExclude);
+
+                action.SetNewValue("TANK1V1 TANK1V2");
+                CollectionAssert.AreEqual(new List<int>() { 1, },
+                    action.DevicesIndex);
+                CollectionAssert.AreEqual(new List<int>() { 2, },
+                    action.GenericDevicesIndexAfterExclude);
+            });            
         }
     }
 
@@ -1040,7 +1088,7 @@ namespace Tests.TechObject
             var actionMock = new Mock<IAction>();
             actionMock.Setup(x => x.GetDisplayObjects(out allowedDevTypes,
                 out allowedDevSubTypes, out displayParameters));
-            actionMock.Setup(x => x.DeviceIndex).Returns(expectedDevsIds);
+            actionMock.Setup(x => x.DevicesIndex).Returns(expectedDevsIds);
 
             return actionMock.Object;
         }
@@ -1226,4 +1274,5 @@ namespace Tests.TechObject
 
         private static EplanDevice.IDeviceManager deviceManager;
     }
+
 }

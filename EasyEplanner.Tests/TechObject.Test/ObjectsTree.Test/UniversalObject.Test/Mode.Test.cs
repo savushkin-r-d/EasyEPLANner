@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Editor;
 using Moq;
 using NUnit.Framework;
 using TechObject;
@@ -160,6 +162,51 @@ namespace EasyEplannerTests.TechObjectTest.ObjectsTreeTest.UniversalObjectTest
                     clonedExtraProperties != extraProperties &&
                     clonedExtraProperties.SequenceEqual(extraProperties));
             });  
+        }
+
+        [Test]
+        public void UpdateOnGenericTechObject()
+        {
+            bool stateUpdateMethodCalled = false;
+
+            var mode = new Mode("operation", GetN => 1, null);
+            var genericMode = new Mode("operation", GetN => 1, null);
+
+            var stateMock = new Mock<State>(State.StateType.IDLE, mode, false);
+            stateMock.Setup(s => s.UpdateOnGenericTechObject(It.IsAny<ITreeViewItem>()))
+                .Callback<ITreeViewItem>(t =>
+                {
+                    Assert.AreSame(genericMode[0], t);
+                    stateUpdateMethodCalled = true;
+                });
+
+            mode.States[0] = stateMock.Object;
+
+            Assert.Multiple(() =>
+            {
+                mode.UpdateOnGenericTechObject(genericMode);
+                Assert.IsTrue(stateUpdateMethodCalled);
+            });
+            
+        }
+
+        [Test]
+        public void UpdateOnGenericTechObject_NullValue()
+        {
+            bool stateUpdateMethodCalled = false;
+
+            var mode = new Mode("operation", GetN => 1, null);
+            var stateMock = new Mock<State>(State.StateType.IDLE, mode, false);
+            stateMock.Setup(s => s.UpdateOnGenericTechObject(null))
+                .Callback<ITreeViewItem>(t =>
+                {
+                    stateUpdateMethodCalled = true;
+                });
+
+            mode.States[0] = stateMock.Object;
+
+            mode.UpdateOnGenericTechObject(null);
+            Assert.IsTrue(stateUpdateMethodCalled);
         }
     }
 }

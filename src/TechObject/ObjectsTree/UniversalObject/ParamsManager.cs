@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Editor;
+using Eplan.EplApi.HEServices;
 
 namespace TechObject
 {
@@ -14,6 +17,7 @@ namespace TechObject
 
             parFloat = new Params("Параметры float", ParFloatLuaName, false,
                 "S_PAR_F", true);
+            parFloat.ValueChanged += sender => OnValueChanged(sender);
             parFloat.Parent = this;
             items.Add(parFloat);
         }
@@ -26,10 +30,17 @@ namespace TechObject
         /// <param name="value">Значение.</param>
         /// <param name="meter">Размерность.</param>
         /// <param name="nameLua">Имя в Lua.</param>
-        public Param AddParam(string group, string name, float value,
+        public Param AddParam(string group, string name, object valueObj,
             string meter, string nameLua = "")
         {
             Param res = null;
+            bool parsed = true;
+            if (!double.TryParse(valueObj.ToString(), out var value))
+            {
+                parsed = false;
+                value = 0;
+            }
+
             switch (group)
             {
                 case ParFloatLuaName:
@@ -48,6 +59,9 @@ namespace TechObject
                     res = AddUintRuntimeParam(name, value, meter, nameLua);
                     break;
             }
+
+            if (parsed is false)
+                res?.ValueItem.SetNewValue(valueObj.ToString());
 
             return res;
         }
@@ -83,6 +97,7 @@ namespace TechObject
             {
                 parFloatRuntime = new Params("Рабочие параметры float",
                     ParFloatRuntimeLuaName, true, "RT_PAR_F");
+                parFloatRuntime.ValueChanged += sender => OnValueChanged(sender);
                 parFloatRuntime.Parent = this;
                 items.Add(parFloatRuntime);
             }
@@ -108,6 +123,7 @@ namespace TechObject
             {
                 parUint = new Params("Параметры uint", ParUintLuaName, false,
                     "S_PAR_UI");
+                parUint.ValueChanged += sender => OnValueChanged(sender);
                 parUint.Parent = this;
                 items.Add(parUint);
             }
@@ -132,6 +148,7 @@ namespace TechObject
             {
                 parUintRuntime = new Params("Рабочие параметры uint",
                     ParUintRuntimeLuaName, false, "RT_PAR_UI");
+                parUintRuntime.ValueChanged += sender => OnValueChanged(sender);
                 parUintRuntime.Parent = this;
                 items.Add(parUintRuntime);
             }
@@ -185,6 +202,11 @@ namespace TechObject
                 clone.items.Add(clone.parUintRuntime);
             }
 
+            foreach (var item in clone.Items)
+            {
+                item.ValueChanged += sender => clone.OnValueChanged(sender);
+            }
+           
             return clone;
         }
 
@@ -359,6 +381,20 @@ namespace TechObject
                 }
             }
         }
+
+        /// <summary>
+        /// Обновление параметров на основе типового технологического объекта
+        /// </summary>
+        /// <param name="genericParamsManager"></param>
+        public void UpdateOnGenericTechObject(ParamsManager genericParamsManager)
+        {
+            Float?.UpdateOnGenericTechObject(genericParamsManager.Float);
+            FloatRuntime?.UpdateOnGenericTechObject(genericParamsManager.Float);
+            parUint?.UpdateOnGenericTechObject(genericParamsManager.Float);
+            parUintRuntime?.UpdateOnGenericTechObject(genericParamsManager.Float);
+        }
+
+        public TechObject TechObject => Parent as TechObject;
 
         private Params parFloat;
         private Params parFloatRuntime;

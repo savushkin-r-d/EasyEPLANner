@@ -23,7 +23,7 @@ namespace TechObject
         /// Загрузка ограничений проекта
         /// </summary>
         /// <param name="LuaStr">Описание ограничений</param>
-        void LoadRestriction(string LuaStr);
+        void LoadRestrictions(string LuaStr);
 
         /// <summary>
         /// Сохранить описание проекта
@@ -40,6 +40,11 @@ namespace TechObject
         string SaveRestrictionAsLua(string prefixStr);
 
         /// <summary>
+        /// Список типовых объектов
+        /// </summary>
+        List<GenericTechObject> GenericTechObjects { get; }
+
+        /// <summary>
         /// Глобальный список объектов
         /// </summary>
         List<TechObject> TechObjects { get; }
@@ -52,11 +57,35 @@ namespace TechObject
         TechObject GetTObject(int globalNum);
 
         /// <summary>
+        /// Получить типовой объект по номеру
+        /// </summary>
+        /// <param name="globalNum">Номер типового объекта</param>
+        GenericTechObject GetGenericTObject(int globalNum);
+
+        int GetGenericObjectN(object techObject);
+
+        /// <summary>
         /// Получить глобальный номер объекта
         /// </summary>
         /// <param name="techObject">Объект</param>
         /// <returns></returns>
         int GetTechObjectN(object techObject);
+
+        /// <summary>
+        /// Получить номер объекта по его отображаемому имени в дереве.
+        /// </summary>
+        /// <param name="displayText">Отображаемый текст</param>
+        /// <returns></returns>
+        int GetTechObjectN(string displayText);
+
+        /// <summary>
+        /// Получить номер объекта по названию базового объекта, ОУ и тех. номеру
+        /// ОУ и тех. номеру
+        /// </summary>
+        /// <param name="baseObjectName"> Название базового объекта </param>
+        /// <param name="nameEplan"> ОУ </param>
+        /// <param name="techNumber"> тех. номер </param>
+        int GetTechObjectN(string baseObjectName, string nameEplan, int techNumber);
 
         /// <summary>
         /// Импорт объекта в проект.

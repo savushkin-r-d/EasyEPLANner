@@ -11,7 +11,7 @@ namespace TechObject
     /// Шаг технологического объекта. Состоит из параллельно выполняемых 
     /// действий.
     /// </summary>
-    public class Step : TreeViewItem
+    public class Step : TreeViewItem, IOnValueChanged
     {
         /// <summary>
         /// Создание нового шага.
@@ -36,6 +36,12 @@ namespace TechObject
             actions = new List<IAction>();
 
             AddDefaultActions(isMainStep);
+
+            foreach (var action in actions)
+            {
+                (action as ITreeViewItem)
+                    .ValueChanged += (sender) => OnValueChanged(sender);
+            }
         }
 
         /// <summary>
@@ -422,6 +428,10 @@ namespace TechObject
             clone.baseStep = baseStep.Clone();
             clone.baseStep.Owner = this;
 
+            clone.actions.ForEach(
+                action => (action as ITreeViewItem).ValueChanged +=
+                sender => clone.OnValueChanged(sender));
+
             return clone;
         }
 
@@ -694,6 +704,7 @@ namespace TechObject
         override public bool SetNewValue(string newName)
         {
             name = newName;
+            OnValueChanged(this);
             return true;
         }
 
@@ -736,6 +747,7 @@ namespace TechObject
                     name = baseStep.Name;
                 }
 
+                OnValueChanged(this);
                 return true;
             }
 
@@ -933,7 +945,7 @@ namespace TechObject
             var checkingActionsDevs = actions
                 .Where(x => x.Name == openDevicesActionName ||
                 x.Name == closeDevicesActionName)
-                .Select(y => y.DeviceIndex);
+                .Select(y => y.DevicesIndex);
             foreach(var devList in checkingActionsDevs)
             {
                 devicesInAction.AddRange(devList);
@@ -979,7 +991,7 @@ namespace TechObject
                         continue;
                     }
 
-                    int devsCount = groupAction.DeviceIndex.Count;
+                    int devsCount = groupAction.DevicesIndex.Count;
                     if (devsCount == 1)
                     {
                         hasError = true;
@@ -1014,6 +1026,31 @@ namespace TechObject
         {
             bool setBaseStep = true;
             SetNewValue(baseStep.Name, setBaseStep);
+        }
+
+        public override void UpdateOnGenericTechObject(ITreeViewItem genericObject)
+        {
+            if (genericObject is null)
+            {
+                GetActions.ForEach(action => action.UpdateOnGenericTechObject(null));
+                return;
+            }
+
+            var genericStep = genericObject as Step;
+            if (genericStep is null) return;
+
+            foreach (var actionIndex in Enumerable.Range(0, genericStep.actions.Count))
+            {
+                var genericAction = genericStep.GetActions.ElementAtOrDefault(actionIndex);
+                var action = GetActions.ElementAtOrDefault(actionIndex);
+
+                if (genericAction is null ||
+                    action is null ||
+                    (genericAction.Empty && action.Empty))
+                    continue;
+
+                action.UpdateOnGenericTechObject(genericAction);
+            }
         }
 
         public bool Empty

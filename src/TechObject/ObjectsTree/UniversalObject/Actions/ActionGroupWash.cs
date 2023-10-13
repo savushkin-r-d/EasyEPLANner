@@ -20,10 +20,11 @@ namespace TechObject
         public ActionGroupWash(string name, Step owner, string luaName)
             : base(name, owner, luaName)
         {
-            SubActions = new List<IAction>();
             var newAction = new ActionWash(GroupDefaultName, owner,
                 string.Empty);
             SubActions.Add(newAction);
+
+            newAction.ValueChanged += (sender) => OnSubActionChanged(sender);
         }
 
         public override IAction Clone()
@@ -34,6 +35,10 @@ namespace TechObject
             {
                 clone.SubActions.Add(action.Clone());
             }
+
+            clone.SubActions.ForEach(
+                action => (action as ITreeViewItem).ValueChanged +=
+                sender => clone.OnValueChanged(sender));
 
             return clone;
         }
@@ -66,6 +71,8 @@ namespace TechObject
                 string.Empty);
             newAction.DrawStyle = DrawStyle;
             SubActions.Add(newAction);
+
+            newAction.ValueChanged += (sender) => OnSubActionChanged(sender);
         }
 
         /// <summary>
@@ -149,6 +156,30 @@ namespace TechObject
             return res;
         }
 
+        public override void UpdateOnGenericTechObject(IAction genericAction)
+        {
+            if (genericAction is null)
+                return;
+
+            var genericActionGroupWash = genericAction as ActionGroupWash;
+
+            if (genericActionGroupWash is null)
+                return;
+
+            foreach (var subActionIndex in Enumerable.Range(0, genericActionGroupWash.SubActions.Count))
+            {
+                var genericSubAction = genericActionGroupWash.SubActions.ElementAtOrDefault(subActionIndex);
+                var subAction = SubActions.ElementAtOrDefault(subActionIndex);
+                
+                if (subAction is null)
+                {
+                    subAction = Insert() as IAction;
+                }
+
+                subAction.UpdateOnGenericTechObject(genericSubAction);
+            }
+        }
+
         #region Реализация ITreeViewItem
         override public bool Delete(object child)
         {
@@ -180,6 +211,9 @@ namespace TechObject
                 string.Empty);
             newAction.DrawStyle = DrawStyle;
             SubActions.Add(newAction);
+
+            newAction.ValueChanged += (sender) => OnSubActionChanged(sender);
+            OnValueChanged(this);
 
             newAction.AddParent(this);
             return newAction;

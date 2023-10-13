@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using BrightIdeasSoftware;
+using System.Collections.Generic;
 
 namespace Editor
 {
@@ -251,5 +252,15 @@ namespace Editor
         /// Помечен на вырезание
         /// </summary>
         bool MarkToCut { get; set; }
+
+        /// <summary>
+        /// Визуализатор для ячеек
+        /// </summary>
+        
+        IRenderer[] CellRenderer { get; }
+
+        event OnValueChanged ValueChanged;
+
+        void OnValueChanged(object sender);
     }
 }

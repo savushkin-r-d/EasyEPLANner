@@ -22,22 +22,7 @@ namespace TechObject
             return newProperty;
         }
 
-        public override bool IsEmpty
-        {
-            get
-            {
-                bool isEmpty = Value == DefaultValue &&
-                    DefaultValue == "";
-                if (isEmpty)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
+        public override bool IsEmpty => Value == DefaultValue && DefaultValue == "";
 
         /// <summary>
         /// Записывается только одно значение, которое может быть перезаписано.

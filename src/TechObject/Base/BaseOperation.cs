@@ -54,12 +54,22 @@ namespace TechObject
         /// </summary>
         /// <param name="extraParams">Свойства операции</param>
         void SetExtraProperties(ObjectProperty[] extraParams);
+
+        /// <summary>
+        /// Установить свойства базовой операции
+        /// </summary>
+        void SetExtraProperties(Dictionary<string, string> extraProperties);
+
+        /// <summary>
+        /// Установить свойства базовой операции на основе типового объекта
+        /// </summary>
+        void SetGenericExtraProperties(List<BaseParameter> properties);
     }
 
     /// <summary>
     /// Класс реализующий базовую операцию для технологического объекта
     /// </summary>
-    public class BaseOperation : TreeViewItem, IBaseOperation
+    public class BaseOperation : TreeViewItem, IBaseOperation, IOnValueChanged
     {
         public BaseOperation(Mode owner)
         {
@@ -96,6 +106,11 @@ namespace TechObject
             LuaName = luaName;
             Properties = baseOperationProperties;
             states = baseStates;
+
+            foreach (var property in Properties ?? new List<BaseParameter>())
+            {
+                property.ValueChanged += (sender) => OnValueChanged(sender);
+            }
         }
 
         /// <summary>
@@ -142,6 +157,7 @@ namespace TechObject
             var par = new ActiveParameter(luaName, name, defaultValue);
             par.Owner = this;
             Properties.Add(par);
+            par.ValueChanged += (sender) => OnValueChanged(sender);
             return par;
         }
         
@@ -158,6 +174,8 @@ namespace TechObject
                 defaultValue);
             par.Owner = this;
             Properties.Add(par);
+
+            par.ValueChanged += (sender) => OnValueChanged(sender);
         }
 
         public string Name
@@ -272,6 +290,8 @@ namespace TechObject
 
             techObject.AttachedObjects.Check();
             SetItems();
+
+            Properties.ForEach(prop => prop.ValueChanged += (sender) => OnValueChanged(sender));
         }
 
         /// <summary>
@@ -347,6 +367,12 @@ namespace TechObject
                 property.SetNewValue(extraProperties[property.LuaName]);
         }
 
+        public void SetGenericExtraProperties(List<BaseParameter> properties)
+        {
+            SetExtraProperties(properties.Where(property => property.IsFilled)
+                .ToDictionary(prop => prop.LuaName, prop => prop.Value));
+        }
+
         public List<BaseParameter> Properties
         {
             get => baseOperationProperties;
@@ -383,6 +409,8 @@ namespace TechObject
                     newProperty.Owner = owner;
                     newProperty.Parent = this;
                     Properties.Add(newProperty);
+
+                    newProperty.ValueChanged += (sender) => OnValueChanged(sender);
                 }
             }
 
@@ -500,6 +528,9 @@ namespace TechObject
             operation.DefaultPosition = DefaultPosition;
 
             operation.SetItems();
+
+            Properties.ForEach(prop => prop.ValueChanged +=
+                (sender) => OnValueChanged(sender));
 
             return operation;
         }

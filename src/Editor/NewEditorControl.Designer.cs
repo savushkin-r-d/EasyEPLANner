@@ -327,6 +327,8 @@
             this.imageList1.Images.SetKeyName(11, "wash.ico");
             this.imageList1.Images.SetKeyName(12, "params.ico");
             this.imageList1.Images.SetKeyName(13, "equipment.ico");
+            this.imageList1.Images.SetKeyName(14, "generic.png");
+            this.imageList1.Images.SetKeyName(15, "group.png");
             // 
             // editorTView
             // 

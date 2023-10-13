@@ -142,7 +142,9 @@ namespace TechObject
             return res;
         }
 
-        private List<IAction> subActions;
+        public override bool Empty => subActions.TrueForAll(subAction => subAction.Empty);
+
+        protected List<IAction> subActions;
         
         protected private const string GroupDefaultName = "Группа";
     }

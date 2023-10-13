@@ -15,6 +15,7 @@ namespace TechObject
             base(strategy.Name, attachedObjects)
         {
             this.owner = owner;
+            this.Parent = owner;
             this.strategy = strategy;
             SetValue(attachedObjects);
         }
@@ -22,7 +23,7 @@ namespace TechObject
         public override bool SetNewValue(string newValue)
         {
             string oldValue = Value;
-            var thisObjNum = TechObjectManager.GetInstance()
+            var thisObjNum = owner.TechObjectManagerInstance
                 .GetTechObjectN(Owner);
             List<int> newNumbers = strategy.GetValidTechObjNums(newValue,
                 thisObjNum);
@@ -37,11 +38,11 @@ namespace TechObject
                 var replacedObjects = new Dictionary<TechObject, TechObject>();
 
                 List<TechObject> newObjects = newNumbers
-                    .Select(x => TechObjectManager.GetInstance().GetTObject(x))
+                    .Select(x => owner.TechObjectManagerInstance.GetTObject(x))
                     .ToList();
                 List<TechObject> oldObjects = strategy
                     .GetValidTechObjNums(oldValue, thisObjNum)
-                    .Select(x => TechObjectManager.GetInstance().GetTObject(x))
+                    .Select(x => owner.TechObjectManagerInstance.GetTObject(x))
                     .ToList();
                 bool bindToUnit = owner.BaseTechObject
                     .S88Level == (int)BaseTechObjectManager.ObjectType.Unit;
@@ -244,8 +245,8 @@ namespace TechObject
         {
             foreach (var number in objectsNumbrers)
             {
-                TechObject attachedAggregate = TechObjectManager
-                    .GetInstance().GetTObject(number);
+                TechObject attachedAggregate = owner.TechObjectManagerInstance
+                    .GetTObject(number);
                 BaseTechObject attachedBaseTechObject = attachedAggregate
                     .BaseTechObject;
                 List<BaseParameter> properties = attachedBaseTechObject
@@ -419,6 +420,31 @@ namespace TechObject
         public override object Copy()
         {
             return new AttachedObjects(Value, Owner, strategy);
+        }
+
+        public void UpdateOnGenericTechObject(AttachedObjects genericAttachedObjects)
+        {
+            var res = new List<int>();
+
+            var value = genericAttachedObjects.Value;
+
+            if (string.IsNullOrEmpty(value))
+            {
+                SetNewValues(res);
+                return;
+            }
+
+            foreach (int index in genericAttachedObjects.Value.Split(' ').Select(int.Parse).ToList())
+            {
+                var manager = owner.TechObjectManagerInstance;
+                var techObject = manager.GetTObject(index);
+                var toNumber = manager.GetTechObjectN(techObject.BaseTechObject.EplanName, techObject.NameEplan, Owner.TechNumber);
+                if (toNumber > 0)
+                    res.Add(toNumber);
+                else res.Add(index);
+            }
+
+            SetNewValues(res);
         }
 
         public override string[] DisplayText
@@ -622,9 +648,9 @@ namespace TechObject
                         continue;
                     }
 
-                    TechObject obj = TechObjectManager.GetInstance()
+                    TechObject obj = techObjectManager
                         .GetTObject(number);
-                    if (obj.BaseTechObject == null)
+                    if (obj == null || obj.BaseTechObject == null)
                     {
                         return new List<int>();
                     }
@@ -663,6 +689,8 @@ namespace TechObject
             /// Разрешенные для добавления в группу объекты
             /// </summary>
             public List<BaseTechObjectManager.ObjectType> AllowedObjects { get; set; }
+
+            private readonly ITechObjectManager techObjectManager = TechObjectManager.GetInstance();
         }
     }
 }

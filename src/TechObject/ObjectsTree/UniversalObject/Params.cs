@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Editor;
 
@@ -32,6 +33,8 @@ namespace TechObject
                 clone.InsertCopy(par);
             }
 
+            clone.ValueChanged += sender => clone.OnValueChanged(sender);
+
             return clone;
         }
 
@@ -46,6 +49,10 @@ namespace TechObject
         {
             parameter.Parent = this;
             parameters.Add(parameter);
+
+            OnValueChanged(this);
+            parameter.ValueChanged += sender => OnValueChanged(sender);
+
             return parameter;
         }
 
@@ -216,6 +223,7 @@ namespace TechObject
             {
                 removingParam.ClearOperationsBinding();
                 parameters.Remove(removingParam);
+                OnValueChanged(this);
                 return true;
             }
 
@@ -267,8 +275,11 @@ namespace TechObject
             }
 
             parameters.Add(newParam);
-
             newParam.AddParent(this);
+
+            newParam.ValueChanged += sender => OnValueChanged(sender);
+            OnValueChanged(this);
+
             return newParam;
         }
 
@@ -321,6 +332,9 @@ namespace TechObject
                 parameters.Add(newPar);
 
                 newPar.AddParent(this);
+
+                newPar.ValueChanged += sender => OnValueChanged(sender);
+
                 return newPar;
             }
             else
@@ -404,6 +418,21 @@ namespace TechObject
             return null;
         }
 
+        public void UpdateOnGenericTechObject(Params genericParams)
+        {
+            foreach (Param genericPar in genericParams.parameters)
+            {
+                var par = GetParam(genericParams.GetIdx(genericPar) - 1);
+
+                if (par is null)
+                {
+                    par = Insert() as Param; 
+                }
+
+                par.UpdateOnGenericTechObject(genericPar);
+            }
+        }
+
         public override bool ShowWarningBeforeDelete
         {
             get
@@ -427,6 +456,8 @@ namespace TechObject
                 .GetOstisHelpSystemLink();
             return ostisLink + "?sys_id=process_parameter";
         }
+
+        public ParamsManager ParamsManager => Parent as ParamsManager;
 
         private string name;
         private string nameLua;

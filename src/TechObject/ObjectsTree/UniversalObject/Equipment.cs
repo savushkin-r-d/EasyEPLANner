@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Editor;
+using Eplan.EplApi.Base;
+using EplanDevice;
 
 namespace TechObject
 {
@@ -28,6 +31,7 @@ namespace TechObject
             foreach(BaseParameter property in properties)
             {
                 property.Owner = this;
+                property.ValueChanged += sender => OnValueChanged(sender);
                 items.Add(property);
             }
             Sort();
@@ -39,6 +43,7 @@ namespace TechObject
         /// <param name="property">Оборудование</param>
         private void AddItem(BaseParameter property)
         {
+            property.ValueChanged += sender => OnValueChanged(sender);
             items.Add(property);
             Sort();
         }
@@ -76,6 +81,8 @@ namespace TechObject
                 newProperty.Owner = this;
                 equipment.AddItem(newProperty);
             }
+
+            equipment.ValueChanged += sender => OnValueChanged(sender);
 
             return equipment;
         }
@@ -121,19 +128,18 @@ namespace TechObject
             var properties = items.Select(x => x as BaseParameter).ToArray();
             foreach (var property in properties)
             {
-                string oldDevName = property.Value;
-                var device = EplanDevice.DeviceManager.GetInstance()
-                    .GetDevice(oldDevName);
-                if (device.Description != StaticHelper.CommonConst.Cap)
+                var oldDevsNames = property.Value.Split(' ');
+                var devices = oldDevsNames
+                    .Select(devName => deviceManager.GetDevice(devName));
+
+                var newDevicesNames = devices
+                    .Where(device => device.Description != StaticHelper.CommonConst.Cap)
+                    .Select(device => $"{newTechObjName}{techNumber}{device.DeviceType}{device.DeviceNumber}")
+                    .Where(newDevName => deviceManager.GetDevice(newDevName).Description != StaticHelper.CommonConst.Cap);
+
+                if (newDevicesNames.Any())
                 {
-                    string newDevName = newTechObjName + techNumber + 
-                        device.DeviceType.ToString() + device.DeviceNumber;
-                    var newDevice = EplanDevice.DeviceManager.GetInstance()
-                        .GetDevice(newDevName);
-                    if (newDevice.Description != StaticHelper.CommonConst.Cap)
-                    {
-                        property.SetNewValue(newDevName);
-                    }
+                    property.SetNewValue(string.Join(" ", newDevicesNames));
                 }
             }
         }
@@ -143,24 +149,7 @@ namespace TechObject
             int techNumber = owner.TechNumber;
             string eplanName = owner.NameEplan;
 
-            var properties = items.Select(x => x as BaseParameter).ToArray();
-            foreach (var property in properties)
-            {
-                string oldDevName = property.Value;
-                var device = EplanDevice.DeviceManager.GetInstance()
-                    .GetDevice(oldDevName);
-                if (device.Description != StaticHelper.CommonConst.Cap)
-                {
-                    string newDevName = eplanName + techNumber +
-                        device.DeviceType.ToString() + device.DeviceNumber;
-                    var newDevice = EplanDevice.DeviceManager.GetInstance()
-                        .GetDevice(newDevName);
-                    if (newDevice.Description != StaticHelper.CommonConst.Cap)
-                    {
-                        property.SetNewValue(newDevName);
-                    }
-                }
-            }
+            ModifyDevNames(eplanName, techNumber);
         }
 
         #region Проверка и автоматическое заполнение оборудования
@@ -463,9 +452,34 @@ namespace TechObject
             });
         }
 
+        /// <summary>
+        /// Обновление оборудования на основе типового объекта
+        /// </summary>
+        /// <remarks>
+        /// Если поле оборудования в типовом объекте не заполнено,
+        /// то оно не влияет на значение данного поля оборудования,
+        /// иначе изменяет значение на заданное в типовом объекте.
+        /// Список оборудования фиксированный и зависит от базового объекта.
+        /// </remarks>
+        /// <param name="genericEquipment"> Оборудование типового объекта </param>
+        public void UpdateOnGenericTechObject(Equipment genericEquipment)
+        {
+            foreach (var index in Enumerable.Range(0, items.Count))
+            {
+                var equipmentItem = genericEquipment.items[index] as BaseParameter;
+                if (equipmentItem.IsFilled is false)
+                    continue;
+
+                items[index].SetNewValue(equipmentItem.Value);
+            }
+        }
+
+
         public void Clear() => items.Clear();
 
         private TechObject owner;
         private List<ITreeViewItem> items;
+
+        private IDeviceManager deviceManager { get; set; } = DeviceManager.GetInstance();
     }
 }

@@ -26,6 +26,8 @@ namespace Editor
         ActionDIDOPairs = 10,
         ParamsManager = 12,
         Equipment = 13,
+        GenericTechObject = 14,
+        GenericGroup = 15,
         NONE = 100,
     }
 }

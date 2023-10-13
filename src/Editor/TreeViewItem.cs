@@ -1,4 +1,5 @@
-﻿using StaticHelper;
+﻿using BrightIdeasSoftware;
+using StaticHelper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -321,7 +322,33 @@ namespace Editor
         }
 
         public virtual bool IsCuttable { get; } = false;
+
+        private OnValueChanged valueChanged;
+        public event OnValueChanged ValueChanged
+        {
+            add
+            {
+                valueChanged = null;
+                valueChanged += value;
+            }
+            remove
+            {
+                valueChanged -= value;
+            }
+        }
+
+        public virtual IRenderer[] CellRenderer => new IRenderer[] { null, null };
+
+        public void OnValueChanged(object sender)
+        {
+            valueChanged?.Invoke(sender);
+        }
         #endregion
+
+        public virtual void UpdateOnGenericTechObject(ITreeViewItem genericObject)
+        {
+
+        }
 
         #region реализация IHelperItem
         /// <summary>
@@ -334,4 +361,6 @@ namespace Editor
         }
         #endregion
     }
+
+    public delegate void OnValueChanged(object sender);
 }

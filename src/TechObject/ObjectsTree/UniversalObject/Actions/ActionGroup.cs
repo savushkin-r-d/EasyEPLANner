@@ -64,6 +64,10 @@ namespace TechObject
                 clone.SubActions.Add(action.Clone());
             }
 
+            clone.SubActions.ForEach(
+                subAction => (subAction as ITreeViewItem).ValueChanged +=
+                sender => clone.OnValueChanged(this));
+
             return clone;
         }
 
@@ -114,6 +118,27 @@ namespace TechObject
             return res;
         }
 
+        public override void UpdateOnGenericTechObject(IAction genericAction)
+        {
+            if (genericAction is null)
+                return;
+
+            var genericActionGroup = genericAction as ActionGroup;
+            if (genericActionGroup is null)
+                return;
+
+            foreach (var subActionIndex in Enumerable.Range(0, genericActionGroup.SubActions.Count))
+            {
+                var genericSubAction = genericActionGroup.SubActions.ElementAtOrDefault(subActionIndex);
+                var subAction = SubActions.ElementAtOrDefault(subActionIndex);
+                if (subAction is null)
+                {
+                    subAction = InsertNewAction() as IAction;
+                }
+                subAction.UpdateOnGenericTechObject(genericSubAction);
+            }
+        }
+
         #region Реализация ITreeViewItem
         override public bool Delete(object child)
         {
@@ -143,6 +168,9 @@ namespace TechObject
         {
             ITreeViewItem newAction = InsertNewAction();
             newAction.AddParent(this);
+
+            (newAction as Action).ValueChanged += (sender) => OnSubActionChanged(sender);
+
             return newAction;
         }
 
@@ -162,6 +190,8 @@ namespace TechObject
                 string.Empty, devTypes, devSubTypes, strategy);
             newAction.DrawStyle = DrawStyle;
             SubActions.Add(newAction);
+
+            newAction.ValueChanged += (sender) => OnSubActionChanged(sender);
 
             return newAction;
         }

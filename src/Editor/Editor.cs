@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 
 namespace Editor
-{      
+{
     /// <summary>    
     /// Класс, реализующий редактор.
     /// </summary>
@@ -62,6 +62,16 @@ namespace Editor
                 "EPlaner",
                 MessageBoxButtons.YesNoCancel,
                 MessageBoxIcon.Exclamation);
+        }
+
+        [ExcludeFromCodeCoverage]
+        public DialogResult DialogDeletingGenericGroup()
+        {
+            return MessageBox.Show(
+                "Удалить также все технологические объекты в группе ?",
+                "Внимание",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
         }
 
         [ExcludeFromCodeCoverage]

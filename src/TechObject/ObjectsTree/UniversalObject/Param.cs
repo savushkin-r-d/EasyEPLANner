@@ -13,31 +13,37 @@ namespace TechObject
             double value = 0, string meter = "шт", string nameLua = "",
             bool isUseOperation = false)
         {
+            items = new List<ITreeViewItem>();
+
             this.isRuntime = isRuntime;
             this.name = name;
             this.getN = getN;
+            
             if(!isRuntime)
             {
-                this.value = new ParamProperty("Значение", value);
+                this.value = new ParamProperty(ValuePropertyName, value);
+                this.value.AddParent(this);
+                this.value.ValueChanged += sender => OnValueChanged(sender);
             }
-            if(isUseOperation)
+            
+            if (isUseOperation)
             {
-                this.oper = new ParamOperationsProperty("Операция", -1, -1);
+                this.oper = new ParamOperationsProperty(OperationPropertyName, -1, -1);
                 this.oper.Parent = this;
+                this.oper.ValueChanged += sender => OnValueChanged(sender);
             }
-            this.meter = new ParamProperty("Размерность", meter, string.Empty);
-            this.nameLua = new ParamProperty("Lua имя", nameLua, string.Empty);
 
-            items = new List<ITreeViewItem>();
-            if(!isRuntime)
-            {
+            this.meter = new ParamProperty(MeterPropertyName, meter, string.Empty);
+            this.nameLua = new ParamProperty(NameLuaPropertyName, nameLua, string.Empty);
+            
+            this.meter.ValueChanged += sender => OnValueChanged(sender);
+            this.nameLua.ValueChanged += sender => OnValueChanged(sender);
+
+            if (!isRuntime)
                 items.Add(this.value);
-            }
             items.Add(this.meter);
-            if(isUseOperation) 
-            {
-                items.Add(oper);
-            }
+            if (isUseOperation)
+                items.Add(this.oper);
             items.Add(this.nameLua);
         }
 
@@ -51,9 +57,14 @@ namespace TechObject
             string res = prefix + "[ " + getN(this) + " ] =\n";
             res += prefix + "\t{\n";
             res += prefix + "\tname = \'" + name + "\',\n";
-            if(!isRuntime)
+            if (!isRuntime)
             {
-                res += prefix + "\tvalue = " + value.EditText[1] + ",\n";
+                var valueAsString = value.EditText[1].Trim();
+                if (valueAsString == "-")
+                {
+                    valueAsString = "'-'";
+                }
+                res += $"{prefix}\tvalue = {valueAsString},\n";
             }
             res += prefix + "\tmeter = \'" + meter.EditText[1] + "\',\n";
             if (oper != null)
@@ -151,6 +162,7 @@ namespace TechObject
         {
             name = newName;
 
+            OnValueChanged(this);
             return true;
         }
 
@@ -291,6 +303,7 @@ namespace TechObject
                 if (oper != null)
                 {
                     oper.EditText[1] = value;
+                    OnValueChanged(this);
                 }
             }
         }
@@ -299,6 +312,32 @@ namespace TechObject
         {
             return oper != null;
         }
+
+        public override void UpdateOnGenericTechObject(ITreeViewItem genericObject)
+        {
+            var genericParam = genericObject as Param;
+            if (genericParam is null) return;
+
+            name = genericParam.name;
+            nameLua.SetNewValue(genericParam.nameLua.Value);
+
+            if (genericParam.value.Value != "-")
+                value.SetNewValue(genericParam.value.Value);
+            if (genericParam.oper.IsFilled)
+                oper.SetNewValue(genericParam.oper.Value);
+            if (genericParam.meter.IsFilled)
+                meter.SetNewValue(genericParam.meter.Value);
+        }
+
+        public Params Params => Parent as Params;
+
+        public ParamProperty ValueItem => value;
+
+        public const string ValuePropertyName = "Значение";
+        public const string OperationPropertyName = "Операция";
+        public const string MeterPropertyName = "Размерность";
+        public const string NameLuaPropertyName = "Lua имя";
+
 
         private GetN getN;
 

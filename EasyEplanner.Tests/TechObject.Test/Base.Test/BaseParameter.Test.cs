@@ -65,7 +65,7 @@ namespace EasyEplanner.Tests
                 Assert.AreEqual(obj.LuaName, stub);
                 Assert.AreEqual(obj.Name, stub);
                 Assert.IsTrue(obj.IsUseDevList);
-                Assert.IsFalse(obj.IsEmpty);
+                Assert.IsTrue(obj.IsEmpty);
                 Assert.IsNull(obj.Owner);
                 Assert.AreEqual(expectedEditText, obj.EditText);
                 Assert.AreEqual(obj.CurrentValueType,

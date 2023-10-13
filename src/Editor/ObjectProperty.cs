@@ -1,5 +1,7 @@
-﻿using StaticHelper;
+﻿using BrightIdeasSoftware;
+using StaticHelper;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Editor
 {
@@ -48,18 +50,13 @@ namespace Editor
         public virtual void SetValue(object val)
         {
             value = val;
+            OnValueChanged(this);
         }
 
         /// <summary>
         /// Значение свойства
         /// </summary>
-        public string Value
-        {
-            get
-            {
-                return value.ToString();
-            }
-        }
+        public string Value => value.ToString();
 
         /// <summary>
         /// Имя свойства
@@ -278,7 +275,7 @@ namespace Editor
                     }
                     break;
             }
-
+            OnValueChanged(this);
             return res;
         }
 
@@ -457,6 +454,26 @@ namespace Editor
         }
 
         public  bool IsCuttable { get; } = false;
+
+        public virtual IRenderer[] CellRenderer => new IRenderer[] { null, null };
+
+        private OnValueChanged valueChanged;
+        public event OnValueChanged ValueChanged
+        {
+            add
+            {
+                valueChanged = null;
+                valueChanged += value;
+            }
+            remove
+            {
+                valueChanged -= value;
+            }
+        }
+        public void OnValueChanged(object sender)
+        {
+            valueChanged?.Invoke(sender);
+        }
         #endregion
 
         #region реализация IHelperItem
@@ -472,8 +489,8 @@ namespace Editor
 
         ITreeViewItem parent;
         private string name;  ///Имя свойства.
-        private object value; ///Значение свойства.
-        private object defaultValue; ///Стандартное значение
+        protected object value; ///Значение свойства.
+        protected object defaultValue; ///Стандартное значение
 
         private bool needDisable;
     }

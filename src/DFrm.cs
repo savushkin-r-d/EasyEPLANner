@@ -581,8 +581,8 @@ namespace EasyEPlanner
 
             FillDevicesNode(ref treeModel);
 
-            bool showParameters = displayParametersLastSelected &&
-                techObjectIndex >= 0;
+            bool showParameters = displayParametersLastSelected 
+                && techObjectIndex >= 0;
             if (showParameters)
             {
                 TechObject.TechObject techObject = TechObject.TechObjectManager

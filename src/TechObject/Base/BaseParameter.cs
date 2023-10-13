@@ -134,13 +134,7 @@ namespace TechObject
         /// <summary>
         /// Пустой ли параметр (nil or '')
         /// </summary>
-        public virtual bool IsEmpty
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public virtual bool IsEmpty => !IsFilled;
 
         /// <summary>
         /// Объект-владелец параметра.

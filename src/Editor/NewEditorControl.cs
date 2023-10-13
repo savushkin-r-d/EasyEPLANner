@@ -7,6 +7,7 @@ using PInvoke;
 using BrightIdeasSoftware;
 using System.Collections;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Editor
 {
@@ -84,6 +85,13 @@ namespace Editor
                     }
                 };
 
+            // делегат получения отрисовщика для ячейки
+            editorTView.CellRendererGetter =
+                (object rowObject, OLVColumn column) =>
+                {
+                    return (rowObject as ITreeViewItem)?.CellRenderer.ElementAtOrDefault(column.Index);
+                };
+            
             // Делегат получения дочерних элементов
             editorTView.ChildrenGetter = obj => (obj as ITreeViewItem).Items;
 
@@ -1040,6 +1048,8 @@ namespace Editor
 
 
         public bool Editable { get; private set; } = false;
+
+        public bool GenericGroupCreatable => false;
 
         /// <summary>
         /// Переход в режим редактирования.

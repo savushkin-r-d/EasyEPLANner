@@ -117,13 +117,14 @@ namespace EasyEPlanner
                         $"\\{ProjectDescriptionSaver.MainTechObjectsFileName}");
                     thrownExceptions += mainObjectsErrors;
                     techObjectManager.LoadDescription(luaStr, projectName);
+                    techObjectManager.GenericTechObjects.ForEach(obj => obj.Update());
 
                     luaStr = string.Empty;
                     res += LoadDescriptionFromFile(out luaStr,
                         out string restrictionsErrors, projectName,
                         $"\\{ProjectDescriptionSaver.MainRestrictionsFileName}");
                     thrownExceptions += restrictionsErrors;
-                    techObjectManager.LoadRestriction(luaStr);
+                    techObjectManager.LoadRestrictions(luaStr);
                     oProgress.EndPart();
                 }
                 else

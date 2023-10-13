@@ -63,6 +63,13 @@ namespace EplanDevice
         /// Сортировка устройств  проекта.
         /// </summary>
         void Sort();
+
+        /// <summary>
+        /// Получение устройства по его имени (ОУ) из глобального списка.
+        /// </summary>
+        /// <param name="devName">Имя устройства.</param>
+        /// <returns>Устройство с заданными именем или заглушка.</returns>
+        IODevice GetDevice(string devName);
     }
 
     /// <summary>
@@ -246,11 +253,6 @@ namespace EplanDevice
                 deviceType, deviceNumber, objectName, objectNumber);
         }
 
-        /// <summary>
-        /// Получение устройства по его имени (ОУ) из глобального списка.
-        /// </summary>
-        /// <param name="devName">Имя устройства.</param>
-        /// <returns>Устройство с заданными именем или устройство-заглушка.</returns>
         public IODevice GetDevice(string devName)
         {
             string name;

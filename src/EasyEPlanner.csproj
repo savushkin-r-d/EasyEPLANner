@@ -338,8 +338,10 @@
     <Compile Include="TechObject\Base\Properties\ComboBoxParameter.cs" />
     <Compile Include="TechObject\Base\Properties\EquipmentParameter.cs" />
     <Compile Include="TechObject\Base\Properties\MainAggregateParameter.cs" />
+    <Compile Include="TechObject\IOnValueChanged.cs" />
     <Compile Include="TechObject\ITechObjectManager.cs" />
     <Compile Include="TechObject\ObjectsTree\BaseObject.cs" />
+    <Compile Include="TechObject\ObjectsTree\GenericGroup.cs" />
     <Compile Include="TechObject\ObjectsTree\Unidentified.cs" />
     <Compile Include="TechObject\ObjectsTree\S88Object.cs" />
     <Compile Include="TechObject\ObjectsTree\ProcessCell.cs" />
@@ -352,6 +354,7 @@
     <Compile Include="TechObject\ObjectsTree\UniversalObject\AttachedObjects.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Equipment.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Actions\GroupableAction.cs" />
+    <Compile Include="TechObject\ObjectsTree\UniversalObject\GenericTechObject.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\LocalRestriction.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\Mode.cs" />
     <Compile Include="TechObject\ObjectsTree\UniversalObject\ModesManager.cs" />
@@ -510,6 +513,9 @@
     <None Include="Resources\equipment.ico" />
     <Content Include="Resources\equipment.png" />
     <None Include="Resources\hideEmptyItems.png" />
+    <None Include="Resources\group.ico" />
+    <None Include="Resources\generic.png" />
+    <None Include="Resources\group.png" />
     <Content Include="Resources\highlight.ico" />
     <None Include="Resources\refresh.png" />
     <None Include="Resources\save.png" />

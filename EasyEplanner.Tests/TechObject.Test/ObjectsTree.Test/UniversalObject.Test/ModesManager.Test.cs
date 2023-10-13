@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Moq;
+using NUnit.Framework;
 
 
 namespace TechObject.Tests
@@ -19,6 +20,45 @@ namespace TechObject.Tests
 
             modesManager.SetUpFromBaseTechObject(baseTechObject);
             Assert.AreEqual(3, modesManager.Modes.Count);
+        }
+
+        [Test]
+        public void UpdateOnGenericTechObject()
+        {
+            var modeSetNameMethodCalled = false;
+            var modeSetBaseOperationMethodCalled = false;
+
+            var modesManager = new ModesManager(null);
+            var genericModesManager = new ModesManager(null);
+
+            genericModesManager.AddMode("operation 1", "");
+            genericModesManager.AddMode("operation 2", "");
+
+            modesManager.AddMode("operation", "");
+
+            var modeMock = new Mock<Mode>("operation", new GetN(n => 1), modesManager, null);
+            modeMock.Setup(x => x.SetNewValue(It.IsAny<string>()))
+                .Callback<string>(name =>
+                {
+                    Assert.AreEqual(genericModesManager.Modes[0].Name, name);
+                    modeSetNameMethodCalled = true;
+                });
+            modeMock.Setup(x => x.SetNewValue(It.IsAny<string>(), true))
+                .Callback<string, bool>((baseOperationLuaName, _) =>
+                {
+                    Assert.AreEqual(genericModesManager.Modes[0].BaseOperation.LuaName,
+                        baseOperationLuaName);
+                    modeSetBaseOperationMethodCalled = true;
+                });
+
+            modesManager.Modes[0] = modeMock.Object;
+
+            Assert.Multiple(() =>
+            {
+                modesManager.UpdateOnGenericTechObject(genericModesManager);
+                Assert.IsTrue(modeSetNameMethodCalled);
+                Assert.IsTrue(modeSetBaseOperationMethodCalled);
+            });
         }
     }
 }

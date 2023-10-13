@@ -29,13 +29,19 @@ namespace TechObject
             clone.SubActions = new List<IAction>();
             foreach (var action in SubActions)
             {
-                clone.SubActions.Add(action.Clone());
+                var cloneAction = action.Clone();
+                clone.SubActions.Add(cloneAction);
+                (cloneAction as ITreeViewItem).ValueChanged +=
+                    sender => clone.OnValueChanged(sender);
             }
 
             clone.parameters = new List<BaseParameter>();
             foreach (var parameter in parameters)
             {
-                clone.parameters.Add(parameter.Clone());
+                var cloneParameter = parameter.Clone();
+                clone.parameters.Add(cloneParameter);
+                cloneParameter.ValueChanged += 
+                    sender => clone.OnValueChanged(sender);
             }
 
             return clone;
@@ -48,6 +54,7 @@ namespace TechObject
         public void CreateAction(Action action)
         {
             SubActions.Add(action);
+            action.ValueChanged += sender => OnValueChanged(sender);
         }
 
         /// <summary>
@@ -57,6 +64,7 @@ namespace TechObject
         public void CreateParameter(BaseParameter parameter)
         {
             Parameters.Add(parameter);
+            parameter.ValueChanged += sender => OnValueChanged(sender);
         }
 
         /// <summary>
@@ -270,6 +278,28 @@ namespace TechObject
             if (haveParameter)
             {
                 parameter.SetNewValue(val.ToString());
+            }
+        }
+
+        public override void UpdateOnGenericTechObject(IAction genericAction)
+        {
+            if (genericAction is null)
+                return;
+
+            var genericActionCustom = genericAction as ActionCustom;
+            if (genericActionCustom is null)
+                return;            
+
+            foreach (var subActionIndex in Enumerable.Range(0, genericActionCustom.SubActions.Count))
+            {
+                SubActions[subActionIndex]
+                    .UpdateOnGenericTechObject(genericActionCustom.SubActions[subActionIndex]);
+            }
+
+            foreach (var parameterIndex in Enumerable.Range(0, genericActionCustom.Parameters.Count))
+            {
+                parameters.ElementAtOrDefault(parameterIndex)
+                    ?.SetNewValue(genericActionCustom.Parameters.ElementAtOrDefault(parameterIndex).Value);
             }
         }
 

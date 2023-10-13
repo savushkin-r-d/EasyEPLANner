@@ -26,10 +26,13 @@ namespace TechObject
             var selectedMode = selectedRestrictionManager.Parent as Mode;
             var selectedModesManager = selectedMode.Parent;
             var selectedTechObject = selectedModesManager.Parent as TechObject;
-            var selectedTechObjectManager = selectedTechObject.Parent;
+            var selectedBaseObject = selectedTechObject.Parent as BaseObject;
+            if (selectedTechObject.Parent is GenericGroup)
+                selectedBaseObject = selectedTechObject.Parent.Parent as BaseObject;
 
             int objTechTypeNum = 0;
-            foreach (TechObject techObject in selectedTechObjectManager.Items)
+            foreach (TechObject techObject in selectedBaseObject.LocalObjects
+                .Concat(selectedBaseObject.GenericGroups.Select(x => x.GenericTechObject)))
             {
                 bool skipObjectBecauseTechType =
                     techObject.TechType != selectedTechObject.TechType;

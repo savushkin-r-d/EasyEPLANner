@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using TechObject;
 using NUnit.Framework;
+using System.Security.Cryptography.X509Certificates;
 
-namespace Tests.TechObject
+namespace TechObjectTests
 {
     class ActionWashTest
     {
@@ -160,6 +161,17 @@ namespace Tests.TechObject
             int expectedLength = 5;
 
             Assert.AreEqual(expectedLength, action.Items.Length);
+        }
+
+        [Test]
+        public void UpdateOnGenericTechObject_NullAndWrongType()
+        {
+            var actionWash = new ActionWash("Устройства", null, "devs");
+            
+            actionWash.UpdateOnGenericTechObject(null);
+            actionWash.UpdateOnGenericTechObject(new Action("", null, ""));
+
+            Assert.Pass();
         }
     }
 }
