@@ -55,6 +55,7 @@
             this.hideEmptyItemsBtn = new System.Windows.Forms.ToolStripButton();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.editorTView = new BrightIdeasSoftware.TreeListView();
+            this.cutButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.editorTView)).BeginInit();
             this.SuspendLayout();
@@ -79,6 +80,7 @@
             this.toolStripSeparator2,
             this.insertButton,
             this.deleteButton,
+            this.cutButton,
             this.copyButton,
             this.pasteButton,
             this.replaceButton,
@@ -375,6 +377,17 @@
             this.editorTView.MouseEnter += new System.EventHandler(this.editorTView_MouseEnter);
             this.editorTView.MouseLeave += new System.EventHandler(this.editorTView_MouseLeave);
             // 
+            // cutButton
+            // 
+            this.cutButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.cutButton.Image = global::EasyEPlanner.Properties.Resources.cut;
+            this.cutButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.cutButton.Name = "cutButton";
+            this.cutButton.Size = new System.Drawing.Size(24, 24);
+            this.cutButton.Text = "copyButton";
+            this.cutButton.ToolTipText = "Вырезать (Ctrl + X)";
+            this.cutButton.Click += new System.EventHandler(this.cutButton_Click);
+            // 
             // NewEditorControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -417,5 +430,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton hideEmptyItemsBtn;
         private System.Windows.Forms.ToolStripButton changeBasesObjBtn;
+        private System.Windows.Forms.ToolStripButton cutButton;
     }
     }

@@ -1578,6 +1578,15 @@ namespace Editor
             }
         }
 
+        private void cutButton_Click(object sender, EventArgs e)
+        {
+            ITreeViewItem item = GetActiveItem();
+            if (item != null && Editable == true)
+            {
+                CutItem(item);
+            }
+        }
+
         private void copyButton_Click(object sender, EventArgs e)
         {
             ITreeViewItem item = GetActiveItem();
@@ -1683,5 +1692,7 @@ namespace Editor
                 }
             }
         }
+
+
     }
 }
