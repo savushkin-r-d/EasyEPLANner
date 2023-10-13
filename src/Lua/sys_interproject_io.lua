@@ -1,7 +1,12 @@
 -- Чтение описания main.io.lua для межпроектного обмена
-init_io_file = function()
+init_io_file = function(projectName)
     if (devices == nil or nodes == nil or PAC_name == "") then
         return
+    end
+
+    if (PAC_name ~= projectName) then
+        WarningProjectNameInIOFile(PAC_name)
+        PAC_name = projectName
     end
 
     local isMainModel = false
