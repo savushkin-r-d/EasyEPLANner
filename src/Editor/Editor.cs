@@ -58,7 +58,7 @@ namespace Editor
         public DialogResult DialogResetExtraProperties()
         {
             return MessageBox.Show(
-                "Сбросить доп.свойства привязанных агрегатов?",
+                "Сбросить доп.свойства привязанных агрегатов и базовые шаги?",
                 "EPlaner",
                 MessageBoxButtons.YesNoCancel,
                 MessageBoxIcon.Exclamation);
@@ -68,7 +68,7 @@ namespace Editor
         public DialogResult DialogDeletingGenericGroup()
         {
             return MessageBox.Show(
-                "Удалить также все технологические объекты в группе ?",
+                "Удалить также все технологические объекты в группе?",
                 "Внимание",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
