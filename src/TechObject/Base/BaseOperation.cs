@@ -29,6 +29,11 @@ namespace TechObject
         void Init(string baseOperName, Mode mode);
 
         /// <summary>
+        /// Сбросить базовые шаги базовой операции
+        /// </summary>
+        void ResetOperationSteps();
+
+        /// <summary>
         /// Копирование объекта
         /// </summary>
         /// <param name="owner">Новая операция-владелец объекта</param>
@@ -238,8 +243,6 @@ namespace TechObject
             BaseTechObject baseTechObject = techObject.BaseTechObject;
             string baseTechObjectName = baseTechObject?.Name ?? string.Empty;
 
-            ResetOperationSteps();
-
             if (baseTechObjectName != string.Empty)
             {
                 BaseOperation operation;
@@ -294,10 +297,7 @@ namespace TechObject
             Properties.ForEach(prop => prop.ValueChanged += (sender) => OnValueChanged(sender));
         }
 
-        /// <summary>
-        /// Сбросить базовые шаги базовой операции
-        /// </summary>
-        private void ResetOperationSteps()
+        public void ResetOperationSteps()
         {
             foreach (var state in owner.States)
             {

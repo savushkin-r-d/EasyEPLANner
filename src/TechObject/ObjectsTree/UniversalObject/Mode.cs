@@ -468,6 +468,8 @@ namespace TechObject
         public override bool SetNewValue(string newBaseOperationName, 
             bool isBaseOper)
         {
+            var reset = DialogResult.Yes;
+
             if (baseOperation.Name.Equals(newBaseOperationName) ||
                 CheckTheSameBaseOperations(newBaseOperationName) is true)
                 return false;
@@ -478,12 +480,18 @@ namespace TechObject
                 !string.IsNullOrEmpty(newBaseOperationName) &&
                 !string.IsNullOrEmpty(baseOperation.Name))
             {
-                var reset = TechObjectEditor.DialogResetExtraProperties();
+                reset = TechObjectEditor.DialogResetExtraProperties();
                 if (reset is DialogResult.Cancel)
                     return false;
                 if (reset is DialogResult.No)
                     CloneExtraProperties = new List<BaseParameter>(
                         baseOperation.Properties);
+            }
+
+
+            if (reset == DialogResult.Yes)
+            {
+                baseOperation.ResetOperationSteps();
             }
 
             // Инициализация базовой операции по имени
