@@ -1757,7 +1757,7 @@ namespace Editor
             contextMenuStrip.Items[nameof(copyToolStripMenuItem)]
                 .Enabled = Editable && item.IsCopyable;
             contextMenuStrip.Items[nameof(cutToolStripMenuItem)]
-                .Enabled = Editable && item.Parent.IsCuttable;
+                .Enabled = Editable && (item.Parent?.IsCuttable ?? false);
 
             // Возможность вставки и замены скопированного элемента
             contextMenuStrip.Items[nameof(pasteToolStripMenuItem)]
@@ -1769,9 +1769,9 @@ namespace Editor
 
             // Возможность перемещения объектов
             contextMenuStrip.Items[nameof(moveUpToolStripMenuItem)]
-                .Enabled = Editable && item.Parent.CanMoveUp(item);
+                .Enabled = Editable && (item.Parent?.CanMoveUp(item) ?? false);
             contextMenuStrip.Items[nameof(moveDownToolStripMenuItem)]
-                .Enabled = Editable && item.Parent.CanMoveDown(item);
+                .Enabled = Editable && (item.Parent?.CanMoveDown(item) ?? false);
 
             // toolTip показывает скопированный или вырезанный элемент
             var copy = copyItem as ITreeViewItem;
