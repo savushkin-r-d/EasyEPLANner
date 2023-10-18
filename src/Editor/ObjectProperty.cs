@@ -181,6 +181,10 @@ namespace Editor
             }
         }
 
+        public bool CanMoveUp(object child) => false;
+
+        public bool CanMoveDown(object child) => false;
+
         public ITreeViewItem MoveDown(object child)
         {
             return null;

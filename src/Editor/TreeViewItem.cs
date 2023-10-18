@@ -117,6 +117,12 @@ namespace Editor
             }
         }
 
+        virtual public bool CanMoveUp(object child) 
+            => (child as ITreeViewItem).IsMoveable;
+
+        virtual public bool CanMoveDown(object child) 
+            => (child as ITreeViewItem).IsMoveable;
+
         virtual public bool IsReplaceable
         {
             get

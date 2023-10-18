@@ -42,6 +42,16 @@ namespace Editor
         /// </summary>
         bool IsMoveable { get; }
 
+        /// <summary>
+        /// Возможность перемещать дочерний элемент вверх
+        /// </summary>
+        bool CanMoveUp(object child);
+
+        /// <summary>
+        /// Возможность перемещать дочерний элемент вниз
+        /// </summary>
+        bool CanMoveDown(object child);
+
         /// <summary>    
         /// Перемещение узла вниз. Shift + Down
         /// </summary>

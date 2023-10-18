@@ -225,63 +225,75 @@ namespace TechObject
             }
         }
 
-        override public ITreeViewItem MoveDown(object child)
+        public override bool CanMoveDown(object child)
         {
             if (child is TechObject techObject)
             {
-                int oldLocalIndex = techObjects.IndexOf(techObject);
-                int lastItemNum = techObjects.Count - 1;
-                if (oldLocalIndex >= lastItemNum)
-                    return null;
-                
-                int newLocalIndex = oldLocalIndex + 1;
-                SwapTechObjects(techObject, oldLocalIndex, newLocalIndex);
-                return techObjects[newLocalIndex];
+                return techObjects.Last() != techObject;
             }
 
             if (child is GenericGroup genericGroup)
             {
-                var oldID = genericGroups.IndexOf(genericGroup);
+                return genericGroups.Last() != genericGroup;
+            }
 
-                if (oldID >= genericGroups.Count - 1)
-                    return null;
+            return false;
+        }
 
-                var newID = oldID + 1;
-                
-                SwapGenericGroups(genericGroup,oldID, newID);
+        override public ITreeViewItem MoveDown(object child)
+        {
+            if (CanMoveDown(child) is false)
+                return null;
 
-                return genericGroups[newID];
+            if (child is TechObject techObject)
+            {
+                int oldLocalIndex = techObjects.IndexOf(techObject);
+                SwapTechObjects(techObject, oldLocalIndex, oldLocalIndex + 1);
+                return techObject;
+            }
+
+            if (child is GenericGroup genericGroup)
+            {
+                var oldID = genericGroups.IndexOf(genericGroup);                
+                SwapGenericGroups(genericGroup,oldID, oldID + 1);
+                return genericGroup;
             }
 
             return null;
         }
 
-        override public ITreeViewItem MoveUp(object child)
+        public override bool CanMoveUp(object child)
         {
             if (child is TechObject techObject)
             {
-                int oldLocalIndex = techObjects.IndexOf(techObject);
+                return techObjects.First() != techObject;
+            }
 
-                if (oldLocalIndex <= 0) 
-                    return null;
-                
-                int newLocalIndex = oldLocalIndex - 1;
-                SwapTechObjects(techObject, oldLocalIndex, newLocalIndex);
-                return techObjects[newLocalIndex];
+            if (child is GenericGroup genericGroup)
+            {
+                return genericGroups.First() != genericGroup;
+            }
+
+            return false;
+        }
+
+        override public ITreeViewItem MoveUp(object child)
+        {
+            if (CanMoveUp(child) is false)
+                return null;
+
+            if (child is TechObject techObject)
+            {
+                int oldLocalIndex = techObjects.IndexOf(techObject);
+                SwapTechObjects(techObject, oldLocalIndex, oldLocalIndex - 1);
+                return techObject;
             }
 
             if (child is GenericGroup genericGroup)
             {
                 var oldID = genericGroups.IndexOf(genericGroup);
-
-                if (oldID <= 0)
-                    return null;
-
-                var newID = oldID - 1;
-
-                SwapGenericGroups(genericGroup, oldID, newID);
-                
-                return genericGroups[newID];
+                SwapGenericGroups(genericGroup, oldID, oldID - 1);
+                return genericGroup;
             }
 
             return null;

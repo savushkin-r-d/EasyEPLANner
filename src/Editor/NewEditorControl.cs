@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -8,6 +9,8 @@ using BrightIdeasSoftware;
 using System.Collections;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Editor
 {
@@ -17,6 +20,7 @@ namespace Editor
         {
             InitializeComponent();
             InitObjectListView();
+            SetUpToolsHideFromConfig();
 
             dialogCallbackDelegate = new PI.HookProc(DlgWndHookCallbackFunction);
             mainWndKeyboardCallbackDelegate =
@@ -30,7 +34,7 @@ namespace Editor
 
             wasInit = false;
         }
-
+            
         /// <summary>
         /// Инициализация ObjectListView
         /// </summary>
@@ -488,6 +492,8 @@ namespace Editor
             globalKeyboardHookPtr = IntPtr.Zero;
 
             PI.SetParent(editorTView.Handle, this.Handle);
+            PI.SetParent(tableLayoutPanel.Handle, this.Handle);
+            PI.SetParent(toolSettingsStrip.Handle, this.Handle);
             PI.SetParent(toolStrip.Handle, this.Handle);
 
             drawDev_toolStripButton.Checked = false;
@@ -537,8 +543,8 @@ namespace Editor
 
             toolStrip.Location = new Point(0, 0);
             editorTView.Location = new Point(0, toolStrip.Height);
-
-            toolStrip.Width = w;
+            
+            tableLayoutPanel.Width = w;
             editorTView.Width = w;
             editorTView.Height = h - toolStrip.Height;
         }
@@ -582,6 +588,8 @@ namespace Editor
                 // Переносим на найденное окно свои элементы (SetParent) и
                 // подгоняем их размеры и позицию.
                 PI.SetParent(editorTView.Handle, dialogHandle);
+                PI.SetParent(tableLayoutPanel.Handle, dialogHandle);
+                PI.SetParent(toolSettingsStrip.Handle, dialogHandle);
                 PI.SetParent(toolStrip.Handle, dialogHandle);
                 ChangeUISize();
 
@@ -765,6 +773,9 @@ namespace Editor
         /// <param name="item">Элемент в котором создается новый элемент</param>
         private void CreateItem(ITreeViewItem item)
         {
+            if (item is TechObject.TechObject)
+                editorTView.Collapse(item);
+
             if (item.IsInsertable == true)
             {
                 ITreeViewItem newItem = item.Insert();
@@ -972,7 +983,7 @@ namespace Editor
         private void toolStripButton_Click(object sender, EventArgs e)
         {
             editorTView.BeginUpdate();
-            int level = Convert.ToInt32((sender as ToolStripButton).Tag);
+            int level = Convert.ToInt32((sender as ToolStripMenuItem).Tag);
             editorTView.SelectedIndex = 0;
             editorTView.CollapseAll();
             ExpandToLevel(level, editorTView.Objects);
@@ -1693,6 +1704,118 @@ namespace Editor
             }
         }
 
+        [ExcludeFromCodeCoverage]
+        private void toolSettingItem_Click(object sender, EventArgs e)
+        {
+            var menuItem = sender as ToolStripMenuItem;
+            var toolMenuItem = menuItem?.Tag as ToolStripItem;
+        
+            if (toolMenuItem != null)
+            {
+                toolMenuItem.Visible = menuItem.Checked;
+                SaveToolsHideToConfig();
+            }
 
+            toolSettingDropDownButton.ShowDropDown();
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void moveUpButton_Click(object sender, EventArgs e)
+        {
+            ITreeViewItem item = GetActiveItem();
+            if (item != null && Editable == true)
+            {
+                MoveUpItem(item);
+                editorTView.SelectedIndex++;
+            }
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void moveDownButton_Click(object sender, EventArgs e)
+        {
+            ITreeViewItem item = GetActiveItem();
+            if (item != null && Editable == true)
+            {
+                MoveDownItem(item);
+                editorTView.SelectedIndex--;
+            }
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void contextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var item = GetActiveItem();
+            if (item is null) return;
+            
+            // Возможность создания и удаления объекта
+            contextMenuStrip.Items[nameof(createToolStripMenuItem)]
+                .Enabled = Editable && item.IsInsertable;
+            contextMenuStrip.Items[nameof(deleteToolStripMenuItem)]
+                .Enabled = Editable && item.IsDeletable;
+
+            // Возможность копирования и вырезки объекта
+            contextMenuStrip.Items[nameof(copyToolStripMenuItem)]
+                .Enabled = Editable && item.IsCopyable;
+            contextMenuStrip.Items[nameof(cutToolStripMenuItem)]
+                .Enabled = Editable && item.Parent.IsCuttable;
+
+            // Возможность вставки и замены скопированного элемента
+            contextMenuStrip.Items[nameof(pasteToolStripMenuItem)]
+                .Enabled = Editable && item.IsInsertableCopy && copyItem != null;
+            contextMenuStrip.Items[nameof(replaceToolStripMenuItem)]
+                .Enabled = Editable && item.IsReplaceable && copyItem != null &&
+                (copyItem as ITreeViewItem).MarkToCut is false &&
+                (copyItem?.GetType() == item.GetType());
+
+            // Возможность перемещения объектов
+            contextMenuStrip.Items[nameof(moveUpToolStripMenuItem)]
+                .Enabled = Editable && item.Parent.CanMoveUp(item);
+            contextMenuStrip.Items[nameof(moveDownToolStripMenuItem)]
+                .Enabled = Editable && item.Parent.CanMoveDown(item);
+
+            // toolTip показывает скопированный или вырезанный элемент
+            var copy = copyItem as ITreeViewItem;
+            contextMenuStrip.Items[nameof(pasteToolStripMenuItem)]
+                .ToolTipText = (copy is null) ? null : $"{copy?.DisplayText[0]} | {copy?.DisplayText[1]}";
+            contextMenuStrip.Items[nameof(replaceToolStripMenuItem)]
+                .ToolTipText = (copy is null) ? null : $"{copy?.DisplayText[0]} | {copy?.DisplayText[1]}";
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void SetUpToolsHideFromConfig()
+        {
+            var hidenTools = AppConfiguarationManager.GetAppSetting("hidenTools");
+
+            foreach(string tool in hidenTools.Split(';'))
+            {
+                var menuItem = (toolSettingDropDownButton.DropDownItems[$"settingMenuItem_{tool}"] as ToolStripMenuItem);
+                if (menuItem is null)
+                    continue;
+
+                menuItem.Checked = false;
+                var tag = menuItem.Tag as ToolStripItem;
+                if (tag is null)
+                    continue;
+
+                tag.Visible = false;
+            }
+            
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void SaveToolsHideToConfig()
+        {
+            var result = new StringBuilder();
+            foreach(ToolStripMenuItem menuItem in toolSettingDropDownButton.DropDownItems)
+            {
+                if (menuItem.Checked == false)
+                {
+                    result.Append($"{menuItem.Name.Split('_').Last()};");
+                }
+            }
+
+            AppConfiguarationManager.SetAppSetting("hidenTools",
+                result.ToString().TrimEnd(';'));
+        }
     }
 }
