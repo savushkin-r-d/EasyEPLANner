@@ -12,22 +12,23 @@ namespace EasyEPlanner
 {
     public class AppConfiguarationManager
     {
-        static AppConfiguarationManager()
+        protected AppConfiguarationManager() { }
+
+        private static Configuration InitConfig()
         {
             try
             {
                 var original = ProjectManager.GetInstance().OriginalAssemblyPath;
                 var location = Assembly.GetExecutingAssembly().Location;
 
-                var path = Path.Combine(original, location.Split('\\').Last());
+                var path = Path.Combine(original, location.Split('\\').LastOrDefault());
 
-                config = ConfigurationManager
-                    .OpenExeConfiguration(path);
+                return ConfigurationManager.OpenExeConfiguration(path);
             }
             catch
             {
-                //
-            }   
+                return null;
+            }
         }
 
         public static string GetAppSetting(string key)
@@ -49,6 +50,6 @@ namespace EasyEPlanner
             config.Save();
         }
 
-        private static Configuration config = null;
+        private static Configuration config = InitConfig();
     }
 }

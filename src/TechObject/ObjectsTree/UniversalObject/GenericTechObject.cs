@@ -179,11 +179,6 @@ namespace TechObject
         public override bool IsInsertable => false;
 
         public override bool IsReplaceable => false;
-
-        public override ITreeViewItem Replace(object child, object copyObject)
-        {
-            return base.Replace(child, copyObject);
-        }
         #endregion
 
         /// <summary>

@@ -229,12 +229,12 @@ namespace TechObject
         {
             if (child is TechObject techObject)
             {
-                return techObjects.Last() != techObject;
+                return techObjects.LastOrDefault() != techObject;
             }
 
             if (child is GenericGroup genericGroup)
             {
-                return genericGroups.Last() != genericGroup;
+                return genericGroups.LastOrDefault() != genericGroup;
             }
 
             return false;
@@ -266,12 +266,12 @@ namespace TechObject
         {
             if (child is TechObject techObject)
             {
-                return techObjects.First() != techObject;
+                return techObjects.FirstOrDefault() != techObject;
             }
 
             if (child is GenericGroup genericGroup)
             {
-                return genericGroups.First() != genericGroup;
+                return genericGroups.FirstOrDefault() != genericGroup;
             }
 
             return false;

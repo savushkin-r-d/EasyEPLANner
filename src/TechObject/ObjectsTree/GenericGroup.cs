@@ -160,7 +160,7 @@ namespace TechObject
             if (!(child is TechObject) || child is GenericTechObject)
                 return false;
 
-            return InheritedTechObjects.First() != child;
+            return InheritedTechObjects.FirstOrDefault() != child;
         }
 
         public override ITreeViewItem MoveUp(object child)
@@ -181,7 +181,7 @@ namespace TechObject
             if (!(child is TechObject) || child is GenericTechObject)
                 return false;
 
-            return InheritedTechObjects.Last() != child;
+            return InheritedTechObjects.LastOrDefault() != child;
         }
 
         public override ITreeViewItem MoveDown(object child)

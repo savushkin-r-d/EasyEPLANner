@@ -343,7 +343,7 @@ namespace TechObject
         {
             if(child is Mode mode)
             {
-                return modes.First() != mode;
+                return modes.FirstOrDefault() != mode;
             }
 
             return false;
@@ -380,7 +380,7 @@ namespace TechObject
         {
             if (child is Mode mode)
             {
-                return modes.Last() != mode;
+                return modes.LastOrDefault() != mode;
             }
 
             return false;

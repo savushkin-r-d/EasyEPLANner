@@ -1723,7 +1723,7 @@ namespace Editor
         private void moveUpButton_Click(object sender, EventArgs e)
         {
             ITreeViewItem item = GetActiveItem();
-            if (item != null && Editable == true)
+            if (item != null && Editable is true)
             {
                 MoveUpItem(item);
                 editorTView.SelectedIndex++;
@@ -1734,7 +1734,7 @@ namespace Editor
         private void moveDownButton_Click(object sender, EventArgs e)
         {
             ITreeViewItem item = GetActiveItem();
-            if (item != null && Editable == true)
+            if (item != null && Editable is true)
             {
                 MoveDownItem(item);
                 editorTView.SelectedIndex--;
@@ -1765,7 +1765,7 @@ namespace Editor
             contextMenuStrip.Items[nameof(replaceToolStripMenuItem)]
                 .Enabled = Editable && item.IsReplaceable && copyItem != null &&
                 (copyItem as ITreeViewItem).MarkToCut is false &&
-                (copyItem?.GetType() == item.GetType());
+                (copyItem.GetType() == item.GetType());
 
             // Возможность перемещения объектов
             contextMenuStrip.Items[nameof(moveUpToolStripMenuItem)]
@@ -1776,9 +1776,9 @@ namespace Editor
             // toolTip показывает скопированный или вырезанный элемент
             var copy = copyItem as ITreeViewItem;
             contextMenuStrip.Items[nameof(pasteToolStripMenuItem)]
-                .ToolTipText = (copy is null) ? null : $"{copy?.DisplayText[0]} | {copy?.DisplayText[1]}";
+                .ToolTipText = (copy is null) ? null : $"{copy.DisplayText[0]} | {copy.DisplayText[1]}";
             contextMenuStrip.Items[nameof(replaceToolStripMenuItem)]
-                .ToolTipText = (copy is null) ? null : $"{copy?.DisplayText[0]} | {copy?.DisplayText[1]}";
+                .ToolTipText = (copy is null) ? null : $"{copy.DisplayText[0]} | {copy.DisplayText[1]}";
         }
 
         [ExcludeFromCodeCoverage]
@@ -1808,9 +1808,9 @@ namespace Editor
             var result = new StringBuilder();
             foreach(ToolStripMenuItem menuItem in toolSettingDropDownButton.DropDownItems)
             {
-                if (menuItem.Checked == false)
+                if (menuItem.Checked is false)
                 {
-                    result.Append($"{menuItem.Name.Split('_').Last()};");
+                    result.Append($"{menuItem.Name.Split('_').LastOrDefault()};");
                 }
             }
 
