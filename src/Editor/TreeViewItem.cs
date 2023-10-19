@@ -303,7 +303,7 @@ namespace Editor
                 DisplayText[1].ToUpper().Contains(value) ||
                 EditText[0].ToUpper().Contains(value) ||
                 EditText[1].ToUpper().Contains(value) ||
-                (Items?.Any(item => item.Contains(value)) ?? false);
+                (Items != null && Array.Exists(Items, item => item.Contains(value)));
         }
            
 
