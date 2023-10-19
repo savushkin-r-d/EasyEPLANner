@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Diagnostics.CodeAnalysis;
+using System.ComponentModel;
 
 namespace Editor
 {
@@ -29,8 +30,11 @@ namespace Editor
             //Фильтр
             editorTView.ModelFilter = new ModelFilter(delegate (object obj)
             {
-                return ((ITreeViewItem)obj).IsFilled;
+                return ((searchText != string.Empty) ? (obj as ITreeViewItem).Contains(searchText) : true) &&
+                    (hideEmptyItemsBtn.Checked ? (obj as ITreeViewItem).IsFilled : true);
             });
+
+            
 
             wasInit = false;
         }
@@ -547,6 +551,8 @@ namespace Editor
             tableLayoutPanel.Width = w;
             editorTView.Width = w;
             editorTView.Height = h - toolStrip.Height;
+
+            tableLayoutPanelSearchBox.Refresh();
         }
         
         public static bool editIsShown = false; //Показано ли окно.
@@ -1487,7 +1493,7 @@ namespace Editor
             {
                 return;
             }
-
+            
             editorTView.BeginUpdate();
 
             if (edit_toolStripButton.Checked)
@@ -1664,14 +1670,7 @@ namespace Editor
         private void hideEmptyItemsBtn_CheckStateChanged(object sender,
             EventArgs e)
         {
-            if (hideEmptyItemsBtn.Checked)
-            {
-                editorTView.UseFiltering = true;
-            }
-            else
-            {
-                editorTView.UseFiltering = false;
-            }
+            UpdateModelFilter();
         }
 
         private void changeBasesObjBtn_Click(object sender, EventArgs e)
@@ -1708,14 +1707,19 @@ namespace Editor
         private void toolSettingItem_Click(object sender, EventArgs e)
         {
             var menuItem = sender as ToolStripMenuItem;
-            var toolMenuItem = menuItem?.Tag as ToolStripItem;
-        
+            var toolMenuItem = menuItem?.Tag as ToolStripButton;
+            var searchItem = menuItem?.Tag as Control;
+
             if (toolMenuItem != null)
             {
                 toolMenuItem.Visible = menuItem.Checked;
-                SaveToolsHideToConfig();
+            }
+            else if (searchItem != null)
+            {
+                searchItem.Visible = menuItem.Checked;
             }
 
+            SaveToolsHideToConfig();
             toolSettingDropDownButton.ShowDropDown();
         }
 
@@ -1793,11 +1797,18 @@ namespace Editor
                     continue;
 
                 menuItem.Checked = false;
-                var tag = menuItem.Tag as ToolStripItem;
-                if (tag is null)
-                    continue;
+                
+                var toolStripButton = menuItem.Tag as ToolStripButton;
+                var searchItem = menuItem.Tag as Control;
 
-                tag.Visible = false;
+                if (toolStripButton != null)
+                {
+                    toolStripButton.Visible = false;
+                }
+                if (searchItem != null)
+                {
+                    searchItem.Visible = false;
+                }
             }
             
         }
@@ -1817,5 +1828,93 @@ namespace Editor
             AppConfiguarationManager.SetAppSetting("hidenTools",
                 result.ToString().TrimEnd(';'));
         }
+
+        private void tableLayoutPanelSearchBox_Paint(object sender, PaintEventArgs e)
+        {
+            var rect = e.ClipRectangle;
+            rect.Inflate(-1, -1);
+
+            e.Graphics.Clear(Color.White);
+            e.Graphics.DrawRectangle(new Pen(new SolidBrush(Color.Black)), rect);
+        }
+
+        private void tableLayoutPanelSearchBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            textBox_search.Focus();
+        }
+
+        private void textBox_search_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox_search.Text == "Поиск..." || textBox_search.Text == string.Empty)
+            {
+                searchText = string.Empty;
+                editorTView.UseFiltering = false;
+                return;
+            }
+
+            if (textBoxSearchTypingTimer is null)
+            {
+                textBoxSearchTypingTimer = new Timer()
+                {
+                    Interval = 300,
+
+                };
+                textBoxSearchTypingTimer.Tick += TextBoxSearchTypingTimer_Tick;
+            }
+
+            textBoxSearchTypingTimer.Stop();
+            textBoxSearchTypingTimer.Tag = textBox_search.Text;
+            textBoxSearchTypingTimer.Start();
+
+            searchText = textBox_search.Text;  
+        }
+
+        private void TextBoxSearchTypingTimer_Tick(object sender, EventArgs e)
+        {
+            if (textBoxSearchTypingTimer is null)
+                return;
+
+            var isbn = textBoxSearchTypingTimer.Tag.ToString();
+            
+            searchText = isbn;
+
+            UpdateModelFilter();
+
+            textBoxSearchTypingTimer.Stop();
+        }
+
+        private void textBox_search_Enter(object sender, EventArgs e)
+        {
+            if (textBox_search.Text == "Поиск...")
+            {
+                textBox_search.ForeColor = Color.Black;
+                textBox_search.Text = string.Empty;
+            }
+        }
+
+        private void textBox_search_Leave(object sender, EventArgs e)
+        {
+            if (textBox_search.Text == string.Empty)
+            {
+                textBox_search.ForeColor = Color.Gray;
+                textBox_search.Text = "Поиск...";
+            }
+        }
+
+        private void UpdateModelFilter()
+        {
+            if (hideEmptyItemsBtn.Checked || searchText != string.Empty)
+            {
+                editorTView.UseFiltering = false;
+                editorTView.UseFiltering = true;
+            }
+            else
+            {
+                editorTView.UseFiltering = false;
+            }
+        }
+
+        private Timer textBoxSearchTypingTimer;
+        private string searchText;
     }
 }

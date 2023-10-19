@@ -476,6 +476,7 @@
     <None Include="Resources\plus4.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\search.png" />
     <None Include="Resources\moveup.png" />
     <None Include="Resources\movedown.png" />
     <None Include="Resources\toolSettings.png" />

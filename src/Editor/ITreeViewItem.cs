@@ -228,6 +228,12 @@ namespace Editor
         bool IsFilled { get; }
 
         /// <summary>
+        /// Содержит ли элемент значение
+        /// </summary>
+        /// <param name="value">Искомое значение</param>
+        bool Contains(string value);
+
+        /// <summary>
         /// Индекс картинки из формы, для вставки в элемент.
         /// </summary>
         ImageIndexEnum ImageIndex { get; set; }

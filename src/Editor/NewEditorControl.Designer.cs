@@ -84,18 +84,24 @@ namespace Editor
             this.settingMenuItem_cut = new System.Windows.Forms.ToolStripMenuItem();
             this.settingMenuItem_copy = new System.Windows.Forms.ToolStripMenuItem();
             this.settingMenuItem_paste = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingMenuItem_replace = new System.Windows.Forms.ToolStripMenuItem();
             this.settingMenuItem_moveUp = new System.Windows.Forms.ToolStripMenuItem();
             this.settingMenuItem_moveDown = new System.Windows.Forms.ToolStripMenuItem();
-            this.settingMenuItem_replace = new System.Windows.Forms.ToolStripMenuItem();
             this.settingMenuItem_import = new System.Windows.Forms.ToolStripMenuItem();
             this.settingMenuItem_export = new System.Windows.Forms.ToolStripMenuItem();
             this.settingMenuItem_changeBaseObj = new System.Windows.Forms.ToolStripMenuItem();
             this.settingMenuItem_hideEmptyItems = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingMenuItem_search = new System.Windows.Forms.ToolStripMenuItem();
+            this.tableLayoutPanelSearchBox = new System.Windows.Forms.TableLayoutPanel();
+            this.textBox_search = new System.Windows.Forms.TextBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.editorTView)).BeginInit();
             this.contextMenuStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             this.toolSettingsStrip.SuspendLayout();
+            this.tableLayoutPanelSearchBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // toolStrip
@@ -126,7 +132,7 @@ namespace Editor
             this.hideEmptyItemsBtn});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(976, 29);
+            this.toolStrip.Size = new System.Drawing.Size(789, 29);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -425,6 +431,7 @@ namespace Editor
             this.editorTView.GridLines = true;
             this.editorTView.HideSelection = false;
             this.editorTView.LabelWrap = false;
+            this.editorTView.LargeImageList = this.imageList1;
             this.editorTView.Location = new System.Drawing.Point(3, 28);
             this.editorTView.MinimumSize = new System.Drawing.Size(200, 250);
             this.editorTView.MultiSelect = false;
@@ -564,11 +571,13 @@ namespace Editor
             // 
             // tableLayoutPanel
             // 
-            this.tableLayoutPanel.ColumnCount = 2;
+            this.tableLayoutPanel.ColumnCount = 3;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel.Controls.Add(this.toolStrip, 0, 0);
-            this.tableLayoutPanel.Controls.Add(this.toolSettingsStrip, 1, 0);
+            this.tableLayoutPanel.Controls.Add(this.toolSettingsStrip, 2, 0);
+            this.tableLayoutPanel.Controls.Add(this.tableLayoutPanelSearchBox, 1, 0);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
@@ -610,7 +619,8 @@ namespace Editor
             this.settingMenuItem_import,
             this.settingMenuItem_export,
             this.settingMenuItem_changeBaseObj,
-            this.settingMenuItem_hideEmptyItems});
+            this.settingMenuItem_hideEmptyItems,
+            this.settingMenuItem_search});
             this.toolSettingDropDownButton.Image = global::EasyEPlanner.Properties.Resources.toolSettings;
             this.toolSettingDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolSettingDropDownButton.Name = "toolSettingDropDownButton";
@@ -727,6 +737,18 @@ namespace Editor
             this.settingMenuItem_paste.Text = "Вставить";
             this.settingMenuItem_paste.Click += new System.EventHandler(this.toolSettingItem_Click);
             // 
+            // settingMenuItem_replace
+            // 
+            this.settingMenuItem_replace.Checked = true;
+            this.settingMenuItem_replace.CheckOnClick = true;
+            this.settingMenuItem_replace.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.settingMenuItem_replace.Image = global::EasyEPlanner.Properties.Resources.replace;
+            this.settingMenuItem_replace.Name = "settingMenuItem_replace";
+            this.settingMenuItem_replace.Size = new System.Drawing.Size(237, 22);
+            this.settingMenuItem_replace.Tag = this.replaceButton;
+            this.settingMenuItem_replace.Text = "Заменить";
+            this.settingMenuItem_replace.Click += new System.EventHandler(this.toolSettingItem_Click);
+            // 
             // settingMenuItem_moveUp
             // 
             this.settingMenuItem_moveUp.Checked = true;
@@ -750,18 +772,6 @@ namespace Editor
             this.settingMenuItem_moveDown.Tag = this.moveDownButton;
             this.settingMenuItem_moveDown.Text = "Переместить вниз";
             this.settingMenuItem_moveDown.Click += new System.EventHandler(this.toolSettingItem_Click);
-            // 
-            // settingMenuItem_replace
-            // 
-            this.settingMenuItem_replace.Checked = true;
-            this.settingMenuItem_replace.CheckOnClick = true;
-            this.settingMenuItem_replace.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.settingMenuItem_replace.Image = global::EasyEPlanner.Properties.Resources.replace;
-            this.settingMenuItem_replace.Name = "settingMenuItem_replace";
-            this.settingMenuItem_replace.Size = new System.Drawing.Size(237, 22);
-            this.settingMenuItem_replace.Tag = this.replaceButton;
-            this.settingMenuItem_replace.Text = "Заменить";
-            this.settingMenuItem_replace.Click += new System.EventHandler(this.toolSettingItem_Click);
             // 
             // settingMenuItem_import
             // 
@@ -811,6 +821,72 @@ namespace Editor
             this.settingMenuItem_hideEmptyItems.Text = "Скрыть пустые элементы";
             this.settingMenuItem_hideEmptyItems.Click += new System.EventHandler(this.toolSettingItem_Click);
             // 
+            // settingMenuItem_search
+            // 
+            this.settingMenuItem_search.Checked = true;
+            this.settingMenuItem_search.CheckOnClick = true;
+            this.settingMenuItem_search.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.settingMenuItem_search.Image = global::EasyEPlanner.Properties.Resources.search;
+            this.settingMenuItem_search.Name = "settingMenuItem_search";
+            this.settingMenuItem_search.Size = new System.Drawing.Size(237, 22);
+            this.settingMenuItem_search.Tag = this.tableLayoutPanelSearchBox;
+            this.settingMenuItem_search.Text = "Поиск";
+            this.settingMenuItem_search.Click += new System.EventHandler(this.toolSettingItem_Click);
+            // 
+            // tableLayoutPanelSearchBox
+            // 
+            this.tableLayoutPanelSearchBox.AutoSize = true;
+            this.tableLayoutPanelSearchBox.BackColor = System.Drawing.SystemColors.Window;
+            this.tableLayoutPanelSearchBox.ColumnCount = 2;
+            this.tableLayoutPanelSearchBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 19F));
+            this.tableLayoutPanelSearchBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanelSearchBox.Controls.Add(this.textBox_search, 1, 0);
+            this.tableLayoutPanelSearchBox.Controls.Add(this.pictureBox1, 0, 0);
+            this.tableLayoutPanelSearchBox.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.tableLayoutPanelSearchBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanelSearchBox.Location = new System.Drawing.Point(792, 3);
+            this.tableLayoutPanelSearchBox.Name = "tableLayoutPanelSearchBox";
+            this.tableLayoutPanelSearchBox.RowCount = 1;
+            this.tableLayoutPanelSearchBox.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanelSearchBox.Size = new System.Drawing.Size(181, 23);
+            this.tableLayoutPanelSearchBox.TabIndex = 4;
+            this.tableLayoutPanelSearchBox.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanelSearchBox_Paint);
+            this.tableLayoutPanelSearchBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.tableLayoutPanelSearchBox_MouseClick);
+            // 
+            // textBox_search
+            // 
+            this.textBox_search.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox_search.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.textBox_search.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_search.ForeColor = System.Drawing.Color.Gray;
+            this.textBox_search.Location = new System.Drawing.Point(20, 5);
+            this.textBox_search.Margin = new System.Windows.Forms.Padding(1, 5, 1, 5);
+            this.textBox_search.MaximumSize = new System.Drawing.Size(160, 0);
+            this.textBox_search.MinimumSize = new System.Drawing.Size(160, 0);
+            this.textBox_search.Name = "textBox_search";
+            this.textBox_search.Size = new System.Drawing.Size(160, 13);
+            this.textBox_search.TabIndex = 0;
+            this.textBox_search.Text = "Поиск...";
+            this.textBox_search.TextChanged += new System.EventHandler(this.textBox_search_TextChanged);
+            this.textBox_search.GotFocus += new System.EventHandler(this.textBox_search_Enter);
+            this.textBox_search.LostFocus += new System.EventHandler(this.textBox_search_Leave);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.ErrorImage = global::EasyEPlanner.Properties.Resources.hideEmptyItems;
+            this.pictureBox1.Image = global::EasyEPlanner.Properties.Resources.search;
+            this.pictureBox1.InitialImage = null;
+            this.pictureBox1.Location = new System.Drawing.Point(3, 5);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(3, 5, 2, 4);
+            this.pictureBox1.MaximumSize = new System.Drawing.Size(14, 14);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(14, 14);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 1;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.tableLayoutPanelSearchBox_MouseClick);
+            // 
             // NewEditorControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -827,6 +903,9 @@ namespace Editor
             this.tableLayoutPanel.PerformLayout();
             this.toolSettingsStrip.ResumeLayout(false);
             this.toolSettingsStrip.PerformLayout();
+            this.tableLayoutPanelSearchBox.ResumeLayout(false);
+            this.tableLayoutPanelSearchBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
             }
@@ -891,5 +970,9 @@ namespace Editor
         private ToolStripMenuItem moveDownToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator5;
         private ToolStripSeparator toolStripSeparator6;
+        private TableLayoutPanel tableLayoutPanelSearchBox;
+        public TextBox textBox_search;
+        private PictureBox pictureBox1;
+        private ToolStripMenuItem settingMenuItem_search;
     }
     }

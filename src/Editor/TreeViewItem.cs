@@ -296,6 +296,17 @@ namespace Editor
             }
         }
 
+        public virtual bool Contains(string value)
+        {
+            value = value.Trim().ToUpper();
+            return DisplayText[0].ToUpper().Contains(value) ||
+                DisplayText[1].ToUpper().Contains(value) ||
+                EditText[0].ToUpper().Contains(value) ||
+                EditText[1].ToUpper().Contains(value) ||
+                (Items?.Any(item => item.Contains(value)) ?? false);
+        }
+           
+
         public virtual ImageIndexEnum ImageIndex { get; set; } =
             ImageIndexEnum.NONE;
 

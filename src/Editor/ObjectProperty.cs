@@ -2,6 +2,7 @@
 using StaticHelper;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Editor
 {
@@ -428,6 +429,15 @@ namespace Editor
         public virtual bool IsFilled => EditText[1].Length > 0 &&
             !(EditText[1] == CommonConst.EmptyValue &&
             DisplayText[1] == CommonConst.StubForCells);
+
+        public virtual bool Contains(string value)
+        {
+            value = value.Trim().ToUpper();
+            return DisplayText[0].ToUpper().Contains(value) ||
+                DisplayText[1].ToUpper().Contains(value) ||
+                EditText[0].ToUpper().Contains(value) ||
+                EditText[1].ToUpper().Contains(value);
+        }
 
         public virtual bool ContainsBaseObject
         {
