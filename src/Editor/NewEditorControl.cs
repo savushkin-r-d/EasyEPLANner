@@ -1707,7 +1707,7 @@ namespace Editor
         private void toolSettingItem_Click(object sender, EventArgs e)
         {
             var menuItem = sender as ToolStripMenuItem;
-            var toolMenuItem = menuItem?.Tag as ToolStripButton;
+            var toolMenuItem = menuItem?.Tag as ToolStripItem;
             var searchItem = menuItem?.Tag as Control;
 
             if (toolMenuItem != null)
@@ -1798,7 +1798,7 @@ namespace Editor
 
                 menuItem.Checked = false;
                 
-                var toolStripButton = menuItem.Tag as ToolStripButton;
+                var toolStripButton = menuItem.Tag as ToolStripItem;
                 var searchItem = menuItem.Tag as Control;
 
                 if (toolStripButton != null)
@@ -1829,6 +1829,7 @@ namespace Editor
                 result.ToString().TrimEnd(';'));
         }
 
+        [ExcludeFromCodeCoverage]
         private void tableLayoutPanelSearchBox_Paint(object sender, PaintEventArgs e)
         {
             var rect = e.ClipRectangle;
@@ -1838,11 +1839,13 @@ namespace Editor
             e.Graphics.DrawRectangle(new Pen(new SolidBrush(Color.Black)), rect);
         }
 
+        [ExcludeFromCodeCoverage]
         private void tableLayoutPanelSearchBox_MouseClick(object sender, MouseEventArgs e)
         {
             textBox_search.Focus();
         }
 
+        [ExcludeFromCodeCoverage]
         private void textBox_search_TextChanged(object sender, EventArgs e)
         {
             if (textBox_search.Text == "Поиск..." || textBox_search.Text == string.Empty)
@@ -1869,6 +1872,7 @@ namespace Editor
             searchText = textBox_search.Text;  
         }
 
+        [ExcludeFromCodeCoverage]
         private void TextBoxSearchTypingTimer_Tick(object sender, EventArgs e)
         {
             if (textBoxSearchTypingTimer is null)
@@ -1883,6 +1887,7 @@ namespace Editor
             textBoxSearchTypingTimer.Stop();
         }
 
+        [ExcludeFromCodeCoverage]
         private void textBox_search_Enter(object sender, EventArgs e)
         {
             if (textBox_search.Text == "Поиск...")
@@ -1892,6 +1897,7 @@ namespace Editor
             }
         }
 
+        [ExcludeFromCodeCoverage]
         private void textBox_search_Leave(object sender, EventArgs e)
         {
             if (textBox_search.Text == string.Empty)
@@ -1901,6 +1907,7 @@ namespace Editor
             }
         }
 
+        [ExcludeFromCodeCoverage]
         private void UpdateModelFilter()
         {
             if (hideEmptyItemsBtn.Checked || searchText != string.Empty)
