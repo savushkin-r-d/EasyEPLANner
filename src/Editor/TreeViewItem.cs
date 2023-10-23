@@ -299,12 +299,20 @@ namespace Editor
         public virtual bool Contains(string value)
         {
             value = value.Trim().ToUpper();
-            return DisplayText[0].ToUpper().Contains(value) ||
+            MarkedAsFound = DisplayText[0].ToUpper().Contains(value) ||
                 DisplayText[1].ToUpper().Contains(value) ||
                 EditText[0].ToUpper().Contains(value) ||
                 EditText[1].ToUpper().Contains(value) ||
-                (Items != null && Array.Exists(Items, item => item.Contains(value)));
+                ((Parent as TreeViewItem)?.MarkedAsFound ?? false);
+
+            return MarkedAsFound || (Items != null && Array.Exists(Items, item => item.Contains(value)));
         }
+
+        /// <summary>
+        /// Флаг, указывающий что данный элемент или его родительские элементы,
+        /// содержат искомую строку
+        /// </summary>
+        public bool MarkedAsFound { get; set; }
            
 
         public virtual ImageIndexEnum ImageIndex { get; set; } =

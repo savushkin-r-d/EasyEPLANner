@@ -436,7 +436,8 @@ namespace Editor
             return DisplayText[0].ToUpper().Contains(value) ||
                 DisplayText[1].ToUpper().Contains(value) ||
                 EditText[0].ToUpper().Contains(value) ||
-                EditText[1].ToUpper().Contains(value);
+                EditText[1].ToUpper().Contains(value) ||
+                ((Parent as TreeViewItem)?.MarkedAsFound ?? false);
         }
 
         public virtual bool ContainsBaseObject
