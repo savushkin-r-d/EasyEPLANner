@@ -188,34 +188,6 @@ namespace TechObject
             return res;
         }
 
-        public override void UpdateOnGenericTechObject(IAction genericAction)
-        {
-            if (genericAction is null)
-                return;
-
-            var genericActionCustomGroup = genericAction as ActionGroupCustom;
-            if (genericActionCustomGroup is null)
-                return;
-
-            foreach (var subActionIndex in Enumerable.Range(0, genericActionCustomGroup.SubActions.Count))
-            {
-                var genericSubAction = genericActionCustomGroup.SubActions.ElementAtOrDefault(subActionIndex);
-                var subAction = SubActions.ElementAtOrDefault(subActionIndex);
-                if (subAction is null)
-                {
-                    subAction = Insert() as IAction;
-                }
-
-                subAction.UpdateOnGenericTechObject(genericSubAction);
-            }
-
-            foreach (var parameterIndex in Enumerable.Range(0, genericActionCustomGroup.Parameters.Count))
-            {
-                parameters.ElementAtOrDefault(parameterIndex)
-                    ?.SetNewValue(genericActionCustomGroup.Parameters.ElementAtOrDefault(parameterIndex).Value);
-            }
-        }
-
         #region Реализация ITreeViewItem
         override public bool Delete(object child)
         {
@@ -295,13 +267,6 @@ namespace TechObject
             }
         }
 
-        public List<BaseParameter> Parameters
-        {
-            get { return parameters; }
-        }
-
         private Func<ActionCustom> ActionCustomDelegate;
-
-        private List<BaseParameter> parameters;
     }
 }
