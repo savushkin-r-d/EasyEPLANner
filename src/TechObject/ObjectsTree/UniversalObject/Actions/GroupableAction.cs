@@ -142,10 +142,47 @@ namespace TechObject
             return res;
         }
 
+        public override void UpdateOnGenericTechObject(IAction genericAction)
+        {
+            if (genericAction is null)
+                return;
+
+            var genericGroupbaleAction = genericAction as GroupableAction;
+            if (genericGroupbaleAction is null)
+                return;
+
+            foreach (var subActionIndex in Enumerable.Range(0, genericGroupbaleAction.SubActions.Count))
+            {
+                var genericSubAction = genericGroupbaleAction.SubActions.ElementAtOrDefault(subActionIndex);
+                var subAction = SubActions.ElementAtOrDefault(subActionIndex);
+                if (subAction is null)
+                {
+                    subAction = Insert() as IAction;
+                }
+                
+                subAction.UpdateOnGenericTechObject(genericSubAction);
+            }
+
+            foreach (var parameterIndex in Enumerable.Range(0, genericGroupbaleAction.Parameters.Count))
+            {
+                var genericParameter = genericGroupbaleAction.Parameters.ElementAtOrDefault(parameterIndex);
+
+                if (genericParameter.IsFilled)
+                {
+                    parameters.ElementAtOrDefault(parameterIndex)
+                        ?.SetNewValue(genericParameter.Value);
+                }
+            }
+        }
+
         public override bool Empty => subActions.TrueForAll(subAction => subAction.Empty);
 
+        public List<BaseParameter> Parameters => parameters;
+
         protected List<IAction> subActions;
-        
+
+        protected List<BaseParameter> parameters;
+
         protected private const string GroupDefaultName = "Группа";
     }
 }

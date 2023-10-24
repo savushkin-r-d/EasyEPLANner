@@ -281,28 +281,6 @@ namespace TechObject
             }
         }
 
-        public override void UpdateOnGenericTechObject(IAction genericAction)
-        {
-            if (genericAction is null)
-                return;
-
-            var genericActionCustom = genericAction as ActionCustom;
-            if (genericActionCustom is null)
-                return;            
-
-            foreach (var subActionIndex in Enumerable.Range(0, genericActionCustom.SubActions.Count))
-            {
-                SubActions[subActionIndex]
-                    .UpdateOnGenericTechObject(genericActionCustom.SubActions[subActionIndex]);
-            }
-
-            foreach (var parameterIndex in Enumerable.Range(0, genericActionCustom.Parameters.Count))
-            {
-                parameters.ElementAtOrDefault(parameterIndex)
-                    ?.SetNewValue(genericActionCustom.Parameters.ElementAtOrDefault(parameterIndex).Value);
-            }
-        }
-
         #region Реализация ITreeViewItem
         override public ITreeViewItem[] Items
         {
@@ -380,12 +358,5 @@ namespace TechObject
 
             return res;
         }
-
-        public List<BaseParameter> Parameters
-        {
-            get { return parameters; }
-        }
-
-        private List<BaseParameter> parameters;
     }
 }
