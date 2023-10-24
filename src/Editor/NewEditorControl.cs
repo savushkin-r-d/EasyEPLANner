@@ -29,19 +29,6 @@ namespace Editor
 
             //Фильтр
             editorTView.ModelFilter = new ModelFilter(ModelFileter);
-                
-                /*delegate (object obj)
-            {
-                if (searchText != string.Empty && hideEmptyItemsBtn.Checked)
-                    return (obj as ITreeViewItem).ContainsAndIsFilled(searchText);
-                else if (searchText != string.Empty)
-                    return (obj as ITreeViewItem).Contains(searchText);
-                else if (hideEmptyItemsBtn.Checked)
-                    return (obj as ITreeViewItem).IsFilled;
-                else return true;
-            });*/
-
-            
 
             wasInit = false;
         }
@@ -486,6 +473,7 @@ namespace Editor
         /// <summary>
         /// Функция для обработки завершения работы окна редактора.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         public void CloseEditor()
         {
             cancelChanges = true;
@@ -542,6 +530,7 @@ namespace Editor
         /// <summary>
         /// Изменить размер UI.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void ChangeUISize()
         {
             IntPtr dialogPtr = PI.GetParent(editorTView.Handle);
@@ -569,6 +558,7 @@ namespace Editor
         /// <summary>
         /// Показать диалог (окно с редактором).
         /// </summary>
+        [ExcludeFromCodeCoverage]
         public void ShowDlg()
         {
             Process currentProcess = Process.GetCurrentProcess();
@@ -784,6 +774,7 @@ namespace Editor
         /// Создать элемент (в выделенной точке)
         /// </summary>
         /// <param name="item">Элемент в котором создается новый элемент</param>
+        [ExcludeFromCodeCoverage]
         private void CreateItem(ITreeViewItem item)
         {
             if (item is TechObject.TechObject)
