@@ -308,6 +308,19 @@ namespace Editor
             return MarkedAsFound || (Items != null && Array.Exists(Items, item => item.Contains(value)));
         }
 
+        public virtual bool ContainsAndIsFilled(string value)
+        {
+            value = value.Trim().ToUpper();
+            MarkedAsFound = DisplayText[0].ToUpper().Contains(value) ||
+                DisplayText[1].ToUpper().Contains(value) ||
+                EditText[0].ToUpper().Contains(value) ||
+                EditText[1].ToUpper().Contains(value) ||
+                ((Parent as TreeViewItem)?.MarkedAsFound ?? false);
+            MarkedAsFound = MarkedAsFound && IsFilled;
+
+            return MarkedAsFound || (Items != null && Array.Exists(Items, item => item.ContainsAndIsFilled(value)));
+        }
+
         /// <summary>
         /// Флаг, указывающий что данный элемент или его родительские элементы,
         /// содержат искомую строку

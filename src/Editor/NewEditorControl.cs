@@ -28,11 +28,18 @@ namespace Editor
                 new PI.LowLevelKeyboardProc(GlobalHookKeyboardCallbackFunction);
 
             //Фильтр
-            editorTView.ModelFilter = new ModelFilter(delegate (object obj)
+            editorTView.ModelFilter = new ModelFilter(ModelFileter);
+                
+                /*delegate (object obj)
             {
-                return ((searchText != string.Empty) ? (obj as ITreeViewItem).Contains(searchText) : true) &&
-                    (hideEmptyItemsBtn.Checked ? (obj as ITreeViewItem).IsFilled : true);
-            });
+                if (searchText != string.Empty && hideEmptyItemsBtn.Checked)
+                    return (obj as ITreeViewItem).ContainsAndIsFilled(searchText);
+                else if (searchText != string.Empty)
+                    return (obj as ITreeViewItem).Contains(searchText);
+                else if (hideEmptyItemsBtn.Checked)
+                    return (obj as ITreeViewItem).IsFilled;
+                else return true;
+            });*/
 
             
 
@@ -1921,7 +1928,19 @@ namespace Editor
             }
         }
 
+        [ExcludeFromCodeCoverage]
+        private bool ModelFileter(object obj)
+        {
+            if (searchText != string.Empty && hideEmptyItemsBtn.Checked)
+                return (obj as ITreeViewItem).ContainsAndIsFilled(searchText);
+            else if (searchText != string.Empty)
+                return (obj as ITreeViewItem).Contains(searchText);
+            else if (hideEmptyItemsBtn.Checked)
+                return (obj as ITreeViewItem).IsFilled;
+            else return true;
+        }
+
         private Timer textBoxSearchTypingTimer;
-        private string searchText;
+        private string searchText = "";
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Configuration.Assemblies;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace EasyEPlanner
 {
+    [ExcludeFromCodeCoverage]
     public class AppConfiguarationManager
     {
         protected AppConfiguarationManager() { }

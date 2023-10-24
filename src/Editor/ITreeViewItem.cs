@@ -234,6 +234,13 @@ namespace Editor
         bool Contains(string value);
 
         /// <summary>
+        /// Поиск при скрытых пустых значениях
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        bool ContainsAndIsFilled(string value);
+
+        /// <summary>
         /// Индекс картинки из формы, для вставки в элемент.
         /// </summary>
         ImageIndexEnum ImageIndex { get; set; }
