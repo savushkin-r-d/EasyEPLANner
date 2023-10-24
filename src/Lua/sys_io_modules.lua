@@ -886,7 +886,27 @@ local io_modules =
             AO_count = 0,
             AI_count = 4,
             Color = 'orange',
-            },        
+            },
+
+    [ 47 ] = {
+            n = 2688064,
+            name = 'AXL F AI8 1F',
+            description = 'Axioline F, analog input module, analog inputs: 8',
+            addressSpaceType = 4,
+            typeName = 'Аналоговый вход',
+            groupName = 'AXL F',
+            channelClamps = { 00, 01, 02, 03, 04, 05, 06, 07 },
+            channelAddressesIn = { 0, 1, 2, 3, 4, 5, 6, 7, -1, -1,
+                                -1, -1, -1, -1, -1, -1, -1, -1, -1,
+                                -1, -1, -1, -1, -1, -1, -1, -1, -1,
+                                -1, -1, -1, -1, -1, -1, -1, -1, -1 },
+            channelAddressesOut = {},
+            DO_count = 0,
+            DI_count = 0,
+            AO_count = 0,
+            AI_count = 8,
+            Color = 'Green',
+            },
     }
 
 return io_modules
