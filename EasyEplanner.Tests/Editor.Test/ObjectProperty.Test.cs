@@ -388,6 +388,22 @@ namespace Tests.Editor
             Assert.AreEqual(child.Parent.GetHashCode(), parent.GetHashCode());
         }
 
+
+        [Test]
+        public void Contains()
+        {
+            var property = new ObjectProperty("property", "value");
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(property.Contains("prop"));
+                Assert.IsTrue(property.Contains("value"));
+                Assert.IsFalse(property.Contains("123"));
+            });
+
+            
+        }
+
         private ObjectProperty GetEmptyProperty()
         {
             return new ObjectProperty(string.Empty, string.Empty);

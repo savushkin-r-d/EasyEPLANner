@@ -97,6 +97,7 @@
       <HintPath>libs\Spire.XLS.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
@@ -108,6 +109,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppConfiguarationManager.cs" />
     <Compile Include="AssemblyVersion.cs" />
     <Compile Include="ColumnNode.cs" />
     <Compile Include="Configuration\ConfigurationChecker.cs" />
@@ -474,6 +476,10 @@
     <None Include="Resources\plus4.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\search.png" />
+    <None Include="Resources\moveup.png" />
+    <None Include="Resources\movedown.png" />
+    <None Include="Resources\toolSettings.png" />
     <None Include="Resources\import.png" />
     <None Include="Resources\refresh1.png" />
     <None Include="Resources\replace.png" />
@@ -517,6 +523,12 @@
     <None Include="Resources\group.ico" />
     <None Include="Resources\generic.png" />
     <None Include="Resources\group.png" />
+    <None Include="Resources\expand.png" />
+    <None Include="Resources\expand1.png" />
+    <None Include="Resources\expand2.png" />
+    <None Include="Resources\expand3.png" />
+    <None Include="Resources\expand4.png" />
+    <None Include="Resources\expand5.png" />
     <Content Include="Resources\highlight.ico" />
     <None Include="Resources\refresh.png" />
     <None Include="Resources\save.png" />

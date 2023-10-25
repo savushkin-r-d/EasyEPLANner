@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -8,6 +9,9 @@ using BrightIdeasSoftware;
 using System.Collections;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
+using System.Diagnostics.CodeAnalysis;
+using System.ComponentModel;
 
 namespace Editor
 {
@@ -17,20 +21,18 @@ namespace Editor
         {
             InitializeComponent();
             InitObjectListView();
+            SetUpToolsHideFromConfig();
 
             dialogCallbackDelegate = new PI.HookProc(DlgWndHookCallbackFunction);
             mainWndKeyboardCallbackDelegate =
                 new PI.LowLevelKeyboardProc(GlobalHookKeyboardCallbackFunction);
 
             //Фильтр
-            editorTView.ModelFilter = new ModelFilter(delegate (object obj)
-            {
-                return ((ITreeViewItem)obj).IsFilled;
-            });
+            editorTView.ModelFilter = new ModelFilter(ModelFileter);
 
             wasInit = false;
         }
-
+            
         /// <summary>
         /// Инициализация ObjectListView
         /// </summary>
@@ -471,6 +473,7 @@ namespace Editor
         /// <summary>
         /// Функция для обработки завершения работы окна редактора.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         public void CloseEditor()
         {
             cancelChanges = true;
@@ -488,6 +491,8 @@ namespace Editor
             globalKeyboardHookPtr = IntPtr.Zero;
 
             PI.SetParent(editorTView.Handle, this.Handle);
+            PI.SetParent(tableLayoutPanel.Handle, this.Handle);
+            PI.SetParent(toolSettingsStrip.Handle, this.Handle);
             PI.SetParent(toolStrip.Handle, this.Handle);
 
             drawDev_toolStripButton.Checked = false;
@@ -525,6 +530,7 @@ namespace Editor
         /// <summary>
         /// Изменить размер UI.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void ChangeUISize()
         {
             IntPtr dialogPtr = PI.GetParent(editorTView.Handle);
@@ -537,10 +543,12 @@ namespace Editor
 
             toolStrip.Location = new Point(0, 0);
             editorTView.Location = new Point(0, toolStrip.Height);
-
-            toolStrip.Width = w;
+            
+            tableLayoutPanel.Width = w;
             editorTView.Width = w;
             editorTView.Height = h - toolStrip.Height;
+
+            tableLayoutPanelSearchBox.Refresh();
         }
         
         public static bool editIsShown = false; //Показано ли окно.
@@ -550,6 +558,7 @@ namespace Editor
         /// <summary>
         /// Показать диалог (окно с редактором).
         /// </summary>
+        [ExcludeFromCodeCoverage]
         public void ShowDlg()
         {
             Process currentProcess = Process.GetCurrentProcess();
@@ -582,6 +591,8 @@ namespace Editor
                 // Переносим на найденное окно свои элементы (SetParent) и
                 // подгоняем их размеры и позицию.
                 PI.SetParent(editorTView.Handle, dialogHandle);
+                PI.SetParent(tableLayoutPanel.Handle, dialogHandle);
+                PI.SetParent(toolSettingsStrip.Handle, dialogHandle);
                 PI.SetParent(toolStrip.Handle, dialogHandle);
                 ChangeUISize();
 
@@ -763,8 +774,12 @@ namespace Editor
         /// Создать элемент (в выделенной точке)
         /// </summary>
         /// <param name="item">Элемент в котором создается новый элемент</param>
+        [ExcludeFromCodeCoverage]
         private void CreateItem(ITreeViewItem item)
         {
+            if (item is TechObject.TechObject)
+                editorTView.Collapse(item);
+
             if (item.IsInsertable == true)
             {
                 ITreeViewItem newItem = item.Insert();
@@ -972,7 +987,7 @@ namespace Editor
         private void toolStripButton_Click(object sender, EventArgs e)
         {
             editorTView.BeginUpdate();
-            int level = Convert.ToInt32((sender as ToolStripButton).Tag);
+            int level = Convert.ToInt32((sender as ToolStripMenuItem).Tag);
             editorTView.SelectedIndex = 0;
             editorTView.CollapseAll();
             ExpandToLevel(level, editorTView.Objects);
@@ -1476,7 +1491,7 @@ namespace Editor
             {
                 return;
             }
-
+            
             editorTView.BeginUpdate();
 
             if (edit_toolStripButton.Checked)
@@ -1653,14 +1668,7 @@ namespace Editor
         private void hideEmptyItemsBtn_CheckStateChanged(object sender,
             EventArgs e)
         {
-            if (hideEmptyItemsBtn.Checked)
-            {
-                editorTView.UseFiltering = true;
-            }
-            else
-            {
-                editorTView.UseFiltering = false;
-            }
+            UpdateModelFilter();
         }
 
         private void changeBasesObjBtn_Click(object sender, EventArgs e)
@@ -1693,6 +1701,237 @@ namespace Editor
             }
         }
 
+        [ExcludeFromCodeCoverage]
+        private void toolSettingItem_Click(object sender, EventArgs e)
+        {
+            var menuItem = sender as ToolStripMenuItem;
+            var toolMenuItem = menuItem?.Tag as ToolStripItem;
+            var searchItem = menuItem?.Tag as Control;
 
+            if (toolMenuItem != null)
+            {
+                toolMenuItem.Visible = menuItem.Checked;
+            }
+            else if (searchItem != null)
+            {
+                searchItem.Visible = menuItem.Checked;
+            }
+
+            SaveToolsHideToConfig();
+            toolSettingDropDownButton.ShowDropDown();
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void moveUpButton_Click(object sender, EventArgs e)
+        {
+            ITreeViewItem item = GetActiveItem();
+            if (item != null && Editable is true)
+            {
+                MoveUpItem(item);
+                editorTView.SelectedIndex++;
+            }
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void moveDownButton_Click(object sender, EventArgs e)
+        {
+            ITreeViewItem item = GetActiveItem();
+            if (item != null && Editable is true)
+            {
+                MoveDownItem(item);
+                editorTView.SelectedIndex--;
+            }
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void contextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var item = GetActiveItem();
+            if (item is null) return;
+            
+            // Возможность создания и удаления объекта
+            contextMenuStrip.Items[nameof(createToolStripMenuItem)]
+                .Enabled = Editable && item.IsInsertable;
+            contextMenuStrip.Items[nameof(deleteToolStripMenuItem)]
+                .Enabled = Editable && item.IsDeletable;
+
+            // Возможность копирования и вырезки объекта
+            contextMenuStrip.Items[nameof(copyToolStripMenuItem)]
+                .Enabled = Editable && item.IsCopyable;
+            contextMenuStrip.Items[nameof(cutToolStripMenuItem)]
+                .Enabled = Editable && (item.Parent?.IsCuttable ?? false);
+
+            // Возможность вставки и замены скопированного элемента
+            contextMenuStrip.Items[nameof(pasteToolStripMenuItem)]
+                .Enabled = Editable && item.IsInsertableCopy && copyItem != null;
+            contextMenuStrip.Items[nameof(replaceToolStripMenuItem)]
+                .Enabled = Editable && item.IsReplaceable && copyItem != null &&
+                (copyItem as ITreeViewItem).MarkToCut is false &&
+                (copyItem.GetType() == item.GetType());
+
+            // Возможность перемещения объектов
+            contextMenuStrip.Items[nameof(moveUpToolStripMenuItem)]
+                .Enabled = Editable && (item.Parent?.CanMoveUp(item) ?? false);
+            contextMenuStrip.Items[nameof(moveDownToolStripMenuItem)]
+                .Enabled = Editable && (item.Parent?.CanMoveDown(item) ?? false);
+
+            // toolTip показывает скопированный или вырезанный элемент
+            var copy = copyItem as ITreeViewItem;
+            contextMenuStrip.Items[nameof(pasteToolStripMenuItem)]
+                .ToolTipText = (copy is null) ? null : $"{copy.DisplayText[0]} | {copy.DisplayText[1]}";
+            contextMenuStrip.Items[nameof(replaceToolStripMenuItem)]
+                .ToolTipText = (copy is null) ? null : $"{copy.DisplayText[0]} | {copy.DisplayText[1]}";
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void SetUpToolsHideFromConfig()
+        {
+            var hidenTools = AppConfiguarationManager.GetAppSetting("hidenTools");
+
+            foreach(string tool in hidenTools.Split(';'))
+            {
+                var menuItem = (toolSettingDropDownButton.DropDownItems[$"settingMenuItem_{tool}"] as ToolStripMenuItem);
+                if (menuItem is null)
+                    continue;
+
+                menuItem.Checked = false;
+                
+                var toolStripButton = menuItem.Tag as ToolStripItem;
+                var searchItem = menuItem.Tag as Control;
+
+                if (toolStripButton != null)
+                {
+                    toolStripButton.Visible = false;
+                }
+                if (searchItem != null)
+                {
+                    searchItem.Visible = false;
+                }
+            }
+            
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void SaveToolsHideToConfig()
+        {
+            var result = new StringBuilder();
+            foreach(ToolStripMenuItem menuItem in toolSettingDropDownButton.DropDownItems)
+            {
+                if (menuItem.Checked is false)
+                {
+                    result.Append($"{menuItem.Name.Split('_').LastOrDefault()};");
+                }
+            }
+
+            AppConfiguarationManager.SetAppSetting("hidenTools",
+                result.ToString().TrimEnd(';'));
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void tableLayoutPanelSearchBox_Paint(object sender, PaintEventArgs e)
+        {
+            var rect = e.ClipRectangle;
+            rect.Inflate(-1, -1);
+
+            e.Graphics.Clear(Color.White);
+            e.Graphics.DrawRectangle(new Pen(new SolidBrush(Color.Black)), rect);
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void tableLayoutPanelSearchBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            textBox_search.Focus();
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void textBox_search_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox_search.Text == "Поиск..." || textBox_search.Text == string.Empty)
+            {
+                searchText = string.Empty;
+                editorTView.UseFiltering = false;
+                return;
+            }
+
+            if (textBoxSearchTypingTimer is null)
+            {
+                textBoxSearchTypingTimer = new Timer()
+                {
+                    Interval = 300,
+
+                };
+                textBoxSearchTypingTimer.Tick += TextBoxSearchTypingTimer_Tick;
+            }
+
+            textBoxSearchTypingTimer.Stop();
+            textBoxSearchTypingTimer.Tag = textBox_search.Text;
+            textBoxSearchTypingTimer.Start();
+
+            searchText = textBox_search.Text;  
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void TextBoxSearchTypingTimer_Tick(object sender, EventArgs e)
+        {
+            if (textBoxSearchTypingTimer is null)
+                return;
+
+            var isbn = textBoxSearchTypingTimer.Tag.ToString();
+            
+            searchText = isbn;
+
+            UpdateModelFilter();
+
+            textBoxSearchTypingTimer.Stop();
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void textBox_search_Enter(object sender, EventArgs e)
+        {
+            if (textBox_search.Text == "Поиск...")
+            {
+                textBox_search.ForeColor = Color.Black;
+                textBox_search.Text = string.Empty;
+            }
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void textBox_search_Leave(object sender, EventArgs e)
+        {
+            if (textBox_search.Text == string.Empty)
+            {
+                textBox_search.ForeColor = Color.Gray;
+                textBox_search.Text = "Поиск...";
+            }
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void UpdateModelFilter()
+        {
+            if (hideEmptyItemsBtn.Checked || searchText != string.Empty)
+            {
+                editorTView.UseFiltering = false;
+                editorTView.UseFiltering = true;
+            }
+            else
+            {
+                editorTView.UseFiltering = false;
+            }
+        }
+
+        [ExcludeFromCodeCoverage]
+        private bool ModelFileter(object obj)
+        {
+            if (searchText != string.Empty && hideEmptyItemsBtn.Checked)
+                return (obj as ITreeViewItem).ContainsAndIsFilled(searchText);
+            else if (searchText != string.Empty)
+                return (obj as ITreeViewItem).Contains(searchText);
+            else if (hideEmptyItemsBtn.Checked)
+                return (obj as ITreeViewItem).IsFilled;
+            else return true;
+        }
+
+        private Timer textBoxSearchTypingTimer;
+        private string searchText = "";
     }
 }

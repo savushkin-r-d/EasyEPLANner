@@ -2,6 +2,7 @@
 using StaticHelper;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Editor
 {
@@ -180,6 +181,10 @@ namespace Editor
                 return false;
             }
         }
+
+        public bool CanMoveUp(object child) => false;
+
+        public bool CanMoveDown(object child) => false;
 
         public ITreeViewItem MoveDown(object child)
         {
@@ -424,6 +429,21 @@ namespace Editor
         public virtual bool IsFilled => EditText[1].Length > 0 &&
             !(EditText[1] == CommonConst.EmptyValue &&
             DisplayText[1] == CommonConst.StubForCells);
+
+        public virtual bool Contains(string value)
+        {
+            value = value.Trim().ToUpper();
+            return DisplayText[0].ToUpper().Contains(value) ||
+                DisplayText[1].ToUpper().Contains(value) ||
+                EditText[0].ToUpper().Contains(value) ||
+                EditText[1].ToUpper().Contains(value) ||
+                ((Parent as TreeViewItem)?.MarkedAsFound ?? false);
+        }
+
+        public virtual bool ContainsAndIsFilled(string value)
+        {
+            return Contains(value) && IsFilled; 
+        }
 
         public virtual bool ContainsBaseObject
         {

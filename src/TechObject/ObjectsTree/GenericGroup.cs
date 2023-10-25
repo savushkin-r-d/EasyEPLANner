@@ -155,36 +155,44 @@ namespace TechObject
             return techObject;
         }
 
+        public override bool CanMoveUp(object child)
+        {
+            if (!(child is TechObject) || child is GenericTechObject)
+                return false;
+
+            return InheritedTechObjects.FirstOrDefault() != child;
+        }
+
         public override ITreeViewItem MoveUp(object child)
         {
-            if (!(child is TechObject techObject) || child is GenericTechObject)
+            if (CanMoveUp(child) is false)
                 return null;
 
+            var techObject = (TechObject)child;
             var oldID = InheritedTechObjects.IndexOf(techObject);
 
-            if (oldID <= 0)
-                return null;
-
-            var newID = oldID - 1;
-
-            SwapTechObjects(techObject, oldID, newID);
+            SwapTechObjects(techObject, oldID, oldID - 1);
 
             return techObject;
         }
 
+        public override bool CanMoveDown(object child)
+        {
+            if (!(child is TechObject) || child is GenericTechObject)
+                return false;
+
+            return InheritedTechObjects.LastOrDefault() != child;
+        }
+
         public override ITreeViewItem MoveDown(object child)
         {
-            if (!(child is TechObject techObject) || child is GenericTechObject)
+            if (CanMoveDown(child) is false)
                 return null;
 
+            var techObject = (TechObject)child;
             var oldID = InheritedTechObjects.IndexOf(techObject);
 
-            if (oldID >= InheritedTechObjects.Count - 1)
-                return null;
-
-            var newID = oldID + 1;
-
-            SwapTechObjects(techObject, oldID, newID);
+            SwapTechObjects(techObject, oldID, oldID + 1);
 
             return techObject;
         }

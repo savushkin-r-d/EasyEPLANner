@@ -9,6 +9,14 @@ namespace Tests.Editor
         public class InheritedTreeViewItem : TreeViewItem
         {
             public InheritedTreeViewItem() : base() { }
+
+            public override string[] EditText => new string[] { "", Value };
+
+            public override ITreeViewItem[] Items => Childs;
+
+            public string Value { get; set; } = string.Empty;
+
+            public ITreeViewItem[] Childs { get; set; } = null;
         }
 
         [TestCase(ImageIndexEnum.NONE)]
@@ -317,6 +325,81 @@ namespace Tests.Editor
 
             Assert.AreEqual(child.Parent.GetHashCode(), parent.GetHashCode());
         }
+
+        [Test]
+        public void Contains_FoundInChild()
+        {
+            InheritedTreeViewItem child = GetNewTreeViewItem();
+            InheritedTreeViewItem parent = GetNewTreeViewItem();
+            
+            child.AddParent(parent);
+            parent.Childs = new ITreeViewItem[] { child };
+
+            child.Value = "qwerty";
+
+            var result = parent.Contains("qwer");
+
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void Contains_FoundInParent()
+        {
+            InheritedTreeViewItem child = GetNewTreeViewItem();
+            InheritedTreeViewItem parent = GetNewTreeViewItem();
+
+            child.AddParent(parent);
+            parent.Childs = new ITreeViewItem[] { child };
+
+            parent.Value = "qwerty";
+
+            var result = parent.Contains("qwer");
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(result);
+                Assert.IsTrue(parent.MarkedAsFound);
+            });
+        }
+
+
+        [Test]
+        public void ContainsAndIsFilled_FoundInChild()
+        {
+            InheritedTreeViewItem child = GetNewTreeViewItem();
+            InheritedTreeViewItem parent = GetNewTreeViewItem();
+
+            child.AddParent(parent);
+            parent.Childs = new ITreeViewItem[] { child };
+
+            child.Value = "qwerty";
+
+            var result = parent.ContainsAndIsFilled("qwer");
+
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void ContainsAndIsFilled_FoundInParent()
+        {
+            InheritedTreeViewItem child = GetNewTreeViewItem();
+            InheritedTreeViewItem parent = GetNewTreeViewItem();
+
+            child.AddParent(parent);
+            parent.Childs = new ITreeViewItem[] { child };
+
+            parent.Value = "qwerty";
+
+            var result = parent.ContainsAndIsFilled("qwer");
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(result);
+                Assert.IsTrue(parent.MarkedAsFound);
+            });
+        }
+
+
 
         public InheritedTreeViewItem GetNewTreeViewItem()
         {

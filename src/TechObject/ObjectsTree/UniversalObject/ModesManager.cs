@@ -339,6 +339,16 @@ namespace TechObject
             return false;
         }
 
+        public override bool CanMoveUp(object child)
+        {
+            if(child is Mode mode)
+            {
+                return modes.FirstOrDefault() != mode;
+            }
+
+            return false;
+        }
+
         override public ITreeViewItem MoveUp(object child)
         {
             var mode = child as Mode;
@@ -364,6 +374,16 @@ namespace TechObject
             }
 
             return null;
+        }
+
+        public override bool CanMoveDown(object child)
+        {
+            if (child is Mode mode)
+            {
+                return modes.LastOrDefault() != mode;
+            }
+
+            return false;
         }
 
         override public ITreeViewItem MoveDown(object child)

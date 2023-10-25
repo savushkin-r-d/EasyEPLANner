@@ -42,6 +42,16 @@ namespace Editor
         /// </summary>
         bool IsMoveable { get; }
 
+        /// <summary>
+        /// Возможность перемещать дочерний элемент вверх
+        /// </summary>
+        bool CanMoveUp(object child);
+
+        /// <summary>
+        /// Возможность перемещать дочерний элемент вниз
+        /// </summary>
+        bool CanMoveDown(object child);
+
         /// <summary>    
         /// Перемещение узла вниз. Shift + Down
         /// </summary>
@@ -216,6 +226,19 @@ namespace Editor
         /// False - скрывать
         /// </summary>
         bool IsFilled { get; }
+
+        /// <summary>
+        /// Содержит ли элемент значение
+        /// </summary>
+        /// <param name="value">Искомое значение</param>
+        bool Contains(string value);
+
+        /// <summary>
+        /// Поиск при скрытых пустых значениях
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        bool ContainsAndIsFilled(string value);
 
         /// <summary>
         /// Индекс картинки из формы, для вставки в элемент.

@@ -141,9 +141,6 @@ namespace TechObject
             InheritedTechObjects.ForEach(to => to.UpdateOnGenericTechObject(this));
         }
 
-
-
-
         /// <summary>
         /// Создать экземпляр тех. объекта
         /// </summary>
@@ -178,6 +175,10 @@ namespace TechObject
 
         public override ImageIndexEnum ImageIndex 
             => ImageIndexEnum.GenericTechObject;
+
+        public override bool IsInsertable => false;
+
+        public override bool IsReplaceable => false;
         #endregion
 
         /// <summary>

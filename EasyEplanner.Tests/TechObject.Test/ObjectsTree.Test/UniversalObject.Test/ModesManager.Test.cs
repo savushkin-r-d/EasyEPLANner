@@ -60,5 +60,22 @@ namespace TechObject.Tests
                 Assert.IsTrue(modeSetBaseOperationMethodCalled);
             });
         }
+
+        [Test]
+        public void CanMove()
+        {
+            var modesManager = new ModesManager(null);
+            
+            var mode1 = modesManager.AddMode("operation 1", "");
+            var mode2 = modesManager.AddMode("operation 2", "");
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(modesManager.CanMoveDown(mode1));
+                Assert.IsFalse(modesManager.CanMoveDown(mode2));
+                Assert.IsFalse(modesManager.CanMoveUp(mode1));
+                Assert.IsTrue(modesManager.CanMoveUp(mode2));
+            });
+        }
     }
 }
