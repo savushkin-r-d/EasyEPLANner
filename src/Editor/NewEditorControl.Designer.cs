@@ -93,6 +93,7 @@ namespace Editor
             this.settingMenuItem_hideEmptyItems = new System.Windows.Forms.ToolStripMenuItem();
             this.settingMenuItem_search = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanelSearchBox = new System.Windows.Forms.TableLayoutPanel();
+            this.formatNumericUpDown_SearchSelectedItem = new EditorControls.FormatNumericUpDown();
             this.textBox_search = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.toolStrip.SuspendLayout();
@@ -101,6 +102,7 @@ namespace Editor
             this.tableLayoutPanel.SuspendLayout();
             this.toolSettingsStrip.SuspendLayout();
             this.tableLayoutPanelSearchBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.formatNumericUpDown_SearchSelectedItem)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -132,7 +134,7 @@ namespace Editor
             this.hideEmptyItemsBtn});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(789, 29);
+            this.toolStrip.Size = new System.Drawing.Size(719, 29);
             this.toolStrip.TabIndex = 2;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -837,21 +839,45 @@ namespace Editor
             // 
             this.tableLayoutPanelSearchBox.AutoSize = true;
             this.tableLayoutPanelSearchBox.BackColor = System.Drawing.SystemColors.Window;
-            this.tableLayoutPanelSearchBox.ColumnCount = 2;
+            this.tableLayoutPanelSearchBox.ColumnCount = 3;
             this.tableLayoutPanelSearchBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 19F));
             this.tableLayoutPanelSearchBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanelSearchBox.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 70F));
+            this.tableLayoutPanelSearchBox.Controls.Add(this.formatNumericUpDown_SearchSelectedItem, 2, 0);
             this.tableLayoutPanelSearchBox.Controls.Add(this.textBox_search, 1, 0);
             this.tableLayoutPanelSearchBox.Controls.Add(this.pictureBox1, 0, 0);
             this.tableLayoutPanelSearchBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.tableLayoutPanelSearchBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanelSearchBox.Location = new System.Drawing.Point(792, 3);
+            this.tableLayoutPanelSearchBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tableLayoutPanelSearchBox.Location = new System.Drawing.Point(722, 3);
             this.tableLayoutPanelSearchBox.Name = "tableLayoutPanelSearchBox";
             this.tableLayoutPanelSearchBox.RowCount = 1;
             this.tableLayoutPanelSearchBox.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanelSearchBox.Size = new System.Drawing.Size(181, 23);
+            this.tableLayoutPanelSearchBox.Size = new System.Drawing.Size(251, 23);
             this.tableLayoutPanelSearchBox.TabIndex = 4;
             this.tableLayoutPanelSearchBox.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanelSearchBox_Paint);
             this.tableLayoutPanelSearchBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.tableLayoutPanelSearchBox_MouseClick);
+            // 
+            // formatNumericUpDown_SearchSelectedItem
+            // 
+            this.formatNumericUpDown_SearchSelectedItem.BackColor = System.Drawing.Color.White;
+            this.formatNumericUpDown_SearchSelectedItem.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.formatNumericUpDown_SearchSelectedItem.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.formatNumericUpDown_SearchSelectedItem.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.formatNumericUpDown_SearchSelectedItem.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.formatNumericUpDown_SearchSelectedItem.Location = new System.Drawing.Point(182, 5);
+            this.formatNumericUpDown_SearchSelectedItem.Margin = new System.Windows.Forms.Padding(1, 5, 1, 5);
+            this.formatNumericUpDown_SearchSelectedItem.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.formatNumericUpDown_SearchSelectedItem.Name = "formatNumericUpDown_SearchSelectedItem";
+            this.formatNumericUpDown_SearchSelectedItem.ReadOnly = true;
+            this.formatNumericUpDown_SearchSelectedItem.Size = new System.Drawing.Size(68, 16);
+            this.formatNumericUpDown_SearchSelectedItem.TabIndex = 6;
+            this.formatNumericUpDown_SearchSelectedItem.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.formatNumericUpDown_SearchSelectedItem.ValueChanged += new System.EventHandler(this.formatNumericUpDown_SearchSelectedItem_ValueChanged);
             // 
             // textBox_search
             // 
@@ -905,6 +931,7 @@ namespace Editor
             this.toolSettingsStrip.PerformLayout();
             this.tableLayoutPanelSearchBox.ResumeLayout(false);
             this.tableLayoutPanelSearchBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.formatNumericUpDown_SearchSelectedItem)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
@@ -974,5 +1001,6 @@ namespace Editor
         public TextBox textBox_search;
         private PictureBox pictureBox1;
         private ToolStripMenuItem settingMenuItem_search;
+        private EditorControls.FormatNumericUpDown formatNumericUpDown_SearchSelectedItem;
     }
     }

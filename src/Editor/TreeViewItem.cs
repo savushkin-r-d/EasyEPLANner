@@ -296,36 +296,71 @@ namespace Editor
             }
         }
 
+
+        public void ResetFilter()
+        {
+            Filtred = null;
+            ThisOrParentsContains = false;
+            if (Items != null)
+            {
+                foreach (var item in Items)
+                {
+                    item.ResetFilter();
+                }
+            }
+        }
+
+        public bool? Filtred { get; private set; } = null;
+
+        public bool Filter(string searchString, bool hideEmptyItems)
+        {
+            if (Filtred.HasValue)
+                return Filtred.Value;
+
+            if (string.IsNullOrEmpty(searchString))
+            {
+                Filtred = IsFilled;
+                return Filtred.Value;
+            }
+
+            if (Contains(searchString) && (IsFilled || !hideEmptyItems))
+            {
+                if (!NewEditorControl.FoundTreeViewItemsList.Contains(this))
+                    NewEditorControl.FoundTreeViewItemsList.Add(this);
+                ThisOrParentsContains = true;
+                Filtred = true;
+            }
+
+            ThisOrParentsContains |= ((Parent as TreeViewItem)?.ThisOrParentsContains ?? false);
+
+            var childsPassedFilter = false;
+
+            if (Items != null)
+            {
+                foreach (var item in Items)
+                {
+                    childsPassedFilter |= item.Filter(searchString, hideEmptyItems);
+                }
+            }
+
+            Filtred = (childsPassedFilter || ThisOrParentsContains) && (IsFilled || !hideEmptyItems);
+            return Filtred.Value;
+        }
+
         public virtual bool Contains(string value)
         {
             value = value.Trim().ToUpper();
-            MarkedAsFound = DisplayText[0].ToUpper().Contains(value) ||
+            return DisplayText[0].ToUpper().Contains(value) ||
                 DisplayText[1].ToUpper().Contains(value) ||
                 EditText[0].ToUpper().Contains(value) ||
-                EditText[1].ToUpper().Contains(value) ||
-                ((Parent as TreeViewItem)?.MarkedAsFound ?? false);
-
-            return MarkedAsFound || (Items != null && Array.Exists(Items, item => item.Contains(value)));
-        }
-
-        public virtual bool ContainsAndIsFilled(string value)
-        {
-            value = value.Trim().ToUpper();
-            MarkedAsFound = DisplayText[0].ToUpper().Contains(value) ||
-                DisplayText[1].ToUpper().Contains(value) ||
-                EditText[0].ToUpper().Contains(value) ||
-                EditText[1].ToUpper().Contains(value) ||
-                ((Parent as TreeViewItem)?.MarkedAsFound ?? false);
-            MarkedAsFound = MarkedAsFound && IsFilled;
-
-            return MarkedAsFound || (Items != null && Array.Exists(Items, item => item.ContainsAndIsFilled(value)));
+                EditText[1].ToUpper().Contains(value);
         }
 
         /// <summary>
         /// Флаг, указывающий что данный элемент или его родительские элементы,
         /// содержат искомую строку
         /// </summary>
-        public bool MarkedAsFound { get; set; }
+        public bool ThisOrParentsContains { get; set; } = false;
            
 
         public virtual ImageIndexEnum ImageIndex { get; set; } =

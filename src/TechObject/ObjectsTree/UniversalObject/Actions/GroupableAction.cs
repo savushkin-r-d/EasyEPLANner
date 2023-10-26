@@ -175,7 +175,7 @@ namespace TechObject
             }
         }
 
-        public override bool Empty => subActions.TrueForAll(subAction => subAction.Empty);
+        public override bool Empty => subActions.TrueForAll(subAction => subAction.Empty) && (parameters?.TrueForAll(parameter => !parameter.IsFilled) ?? true);
 
         public List<BaseParameter> Parameters => parameters;
 
