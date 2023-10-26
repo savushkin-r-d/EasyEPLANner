@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ using System.Windows.Forms;
 
 namespace EditorControls
 {
+    [ExcludeFromCodeCoverage]
     public partial class FormatNumericUpDown : NumericUpDown
     {
         protected override void UpdateEditText()

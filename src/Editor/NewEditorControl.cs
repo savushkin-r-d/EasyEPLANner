@@ -1912,7 +1912,7 @@ namespace Editor
             if (hideEmptyItemsBtn.Checked || searchText != string.Empty)
             {
                 editorTView.UseFiltering = true;
-                formatNumericUpDown_SearchSelectedItem.Maximum = FoundTreeViewItemsList.Count();
+                formatNumericUpDown_SearchSelectedItem.Maximum = FoundTreeViewItemsList.Count;
             }
         }
 
@@ -1922,19 +1922,12 @@ namespace Editor
             var item = FoundTreeViewItemsList?.ElementAtOrDefault((int)formatNumericUpDown_SearchSelectedItem.Value - 1);
 
             if (item != null)
-            { 
-                try
-                {
-                    RecursiveExpand(item.Parent);
-                    if (editorTView.CanExpand(item))
-                        editorTView.Expand(item);
-                    editorTView.SelectObject(item, true);
-                    editorTView.EnsureModelVisible(item);
-                }
-                catch
-                {
-
-                }
+            {
+                RecursiveExpand(item.Parent);
+                if (editorTView.CanExpand(item))
+                    editorTView.Expand(item);
+                editorTView.SelectObject(item, true);
+                editorTView.EnsureModelVisible(item);
             }
         }
 
