@@ -5,10 +5,17 @@ using System.Linq;
 
 namespace IO
 {
+    public interface IIOModuleInfo
+    {
+        /// <summary>
+        /// задает клеммы, к которым не возможна одноверменная привязка
+        /// </summary>
+        List<List<int>> AlternateChannelsClamps { get; set;}
+    }
     /// <summary>
     /// Описание модуля ввода-вывода IO.
     /// </summary>
-    public class IOModuleInfo : ICloneable
+    public class IOModuleInfo : IIOModuleInfo, ICloneable
     {
         /// <summary>
         /// Добавить информацию о модуле ввода вывода
@@ -169,10 +176,6 @@ namespace IO
         /// </summary>
         public int[] ChannelClamps { get; set; }
 
-        /// <summary>
-        /// задает клеммы,
-        /// к которым не возможна одноверменная привязка
-        /// </summary>
         public List<List<int>> AlternateChannelsClamps { get; set; }
 
         /// <summary>

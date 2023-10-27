@@ -20,7 +20,6 @@ namespace EasyEPlanner
     {
         IProjectHelper projectHelper;
         IApiHelper apiHelper;
-        IIOHelper ioHelper;
 
         public DeviceBindingReader(IProjectHelper projectHelper, IApiHelper apiHelper)
         {
@@ -28,7 +27,6 @@ namespace EasyEPlanner
             this.IOManager = IO.IOManager.GetInstance();
             this.projectHelper = projectHelper;
             this.apiHelper = apiHelper;
-            this.ioHelper = new IOHelper(projectHelper);
         }
 
         /// <summary>
@@ -60,6 +58,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Чтение привязки.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void ReadBinding()
         {
             foreach (var node in IOManager.IONodes)
@@ -73,7 +72,7 @@ namespace EasyEPlanner
                         continue;
                     }
 
-                    CurrentReadingModuleClampFunctions.Clear();
+                    CurrentReadingModuleClampsDescription.Clear();
 
                     foreach (var function in module.Function.SubFunctions)
                     {
@@ -183,12 +182,7 @@ namespace EasyEPlanner
                 return skip;
             }
 
-            int? alternateClampBinded = moduleInfo.AlternateChannelsClamps
-                .Find(altClamps => altClamps.Contains(clamp) && altClamps.Count > 1)?
-                .Where(altClamp => altClamp != clamp && CurrentReadingModuleClampFunctions.TryGetValue(altClamp, out var value) && value != string.Empty)
-                .Select(altClamp => (int?)altClamp)
-                .FirstOrDefault()
-                ?? null;
+            int? alternateClampBinded = AlternateClampBinded(moduleInfo, clamp, CurrentReadingModuleClampsDescription);
 
             if (alternateClampBinded.HasValue)
             {
@@ -196,11 +190,31 @@ namespace EasyEPlanner
                 return true; //skip
             }
 
-            CurrentReadingModuleClampFunctions[clamp] = description;
+            CurrentReadingModuleClampsDescription[clamp] = description;
             return skip;
         }
 
-        private Dictionary<int, string> CurrentReadingModuleClampFunctions = new Dictionary<int, string>();
+        /// <summary>
+        /// Проверка одновременной привязки на альтернативных клемах
+        /// </summary>
+        /// <returns>
+        /// null - альтернативные клеммы не привязаны
+        /// n - номер привязанной альернативной клеммы
+        /// </returns>
+        private int? AlternateClampBinded(IIOModuleInfo moduleInfo, int clamp, Dictionary<int, string> currentBinding)
+        {
+            return moduleInfo.AlternateChannelsClamps
+                .Find(altClamps => altClamps.Contains(clamp) && altClamps.Count > 1)?
+                .Where(altClamp => altClamp != clamp && currentBinding.TryGetValue(altClamp, out var value) && value != string.Empty)
+                .Select(altClamp => (int?)altClamp)
+                .FirstOrDefault()
+                ?? null;
+        }
+
+        /// <summary>
+        /// Описание привязки текущего читаемого модуля
+        /// </summary>
+        private readonly Dictionary<int, string> CurrentReadingModuleClampsDescription = new Dictionary<int, string>();
 
         /// <summary>
         /// Чтение привязки пневмоострова.

@@ -2,6 +2,7 @@ using EasyEPlanner;
 using LuaInterface;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Windows.Forms;
 
@@ -280,7 +281,7 @@ namespace IO
             {
                 foreach (var module in node.IOModules)
                 {
-                    if(module.Info == null)
+                    if (module.Info == null)
                     {
                         continue;
                     }
@@ -301,89 +302,89 @@ namespace IO
             string pathToFile = Path.Combine(
                 ProjectManager.GetInstance().SystemFilesPath, fileName);
 
-            if (File.Exists(pathToFile))
+            if (!File.Exists(pathToFile))
+                NoFileErrorShow(templateName, pathToFile);
+
+            object[] result = lua.DoFile(pathToFile);
+            if (result == null)
+                return;
+
+            var dataTables = result[0] as LuaInterface.LuaTable;
+            foreach (var table in dataTables.Values)
             {
-                object[] result = lua.DoFile(pathToFile);
-                if (result == null)
+                var tableData = table as LuaInterface.LuaTable;
+
+                int number = Convert.ToInt32((double)tableData["n"]);
+                string name = (string)tableData["name"];
+                string description = (string)tableData["description"];
+                int addressSpaceTypeNumber = Convert.ToInt32(
+                    (double)tableData["addressSpaceType"]);
+                string typeName = (string)tableData["typeName"];
+                string groupName = (string)tableData["groupName"];
+
+                var channelClamps = new List<int>();
+                var alternateChannalClamps = new List<List<int>>();
+                var channelAddressesIn = new List<int>();
+                var channelAddrOut = new List<int>();
+
+                var channelClampsTable = tableData[
+                    "channelClamps"] as LuaInterface.LuaTable;
+                var channelAddressesInTable = tableData[
+                    "channelAddressesIn"] as LuaInterface.LuaTable;
+                var channelAddressesOutTable = tableData[
+                    "channelAddressesOut"] as LuaInterface.LuaTable;
+                foreach (object item in channelClampsTable.Values)
                 {
-                    return;
+                    var nums = item as LuaTable;
+                    if (nums is null)
+                    {
+                        channelClamps.Add(Convert.ToInt32((double)item));
+                        alternateChannalClamps.Add(new List<int>() { Convert.ToInt32((double)item) });
+                        continue;
+                    }
+                    var list = new List<int>();
+                    foreach (var num in nums.Values)
+                    {
+                        channelClamps.Add(Convert.ToInt32((double)num));
+                        list.Add(Convert.ToInt32((double)num));
+                    }
+                    alternateChannalClamps.Add(list);
+                }
+                foreach (var num in channelAddressesInTable.Values)
+                {
+                    channelAddressesIn.Add(Convert.ToInt32((double)num));
+                }
+                foreach (var num in channelAddressesOutTable.Values)
+                {
+                    channelAddrOut.Add(Convert.ToInt32((double)num));
                 }
 
-                var dataTables = result[0] as LuaInterface.LuaTable;
-                foreach (var table in dataTables.Values)
-                {
-                    var tableData = table as LuaInterface.LuaTable;
+                int DOcnt = Convert.ToInt32((double)tableData["DO_count"]);
+                int DIcnt = Convert.ToInt32((double)tableData["DI_count"]);
+                int AOcnt = Convert.ToInt32((double)tableData["AO_count"]);
+                int AIcnt = Convert.ToInt32((double)tableData["AI_count"]);
+                string color = (string)tableData["Color"];
 
-                    int number = Convert.ToInt32((double)tableData["n"]);
-                    string name = (string)tableData["name"];
-                    string description = (string)tableData["description"];
-                    int addressSpaceTypeNumber = Convert.ToInt32(
-                        (double)tableData["addressSpaceType"]);
-                    string typeName = (string)tableData["typeName"];
-                    string groupName = (string)tableData["groupName"];
+                int LocalbusData = Convert.ToInt32((tableData["LocalbusData"] ?? 0));
 
-                    var channelClamps = new List<int>();
-                    var alternateChannalClamps = new List<List<int>>();
-                    var channelAddressesIn = new List<int>();
-                    var channelAddrOut = new List<int>();
-
-                    var channelClampsTable = tableData[
-                        "channelClamps"] as LuaInterface.LuaTable;
-                    var channelAddressesInTable = tableData[
-                        "channelAddressesIn"] as LuaInterface.LuaTable;
-                    var channelAddressesOutTable = tableData[
-                        "channelAddressesOut"] as LuaInterface.LuaTable;
-                    foreach (object item in channelClampsTable.Values)
-                    {
-                        if (item is LuaTable nums)
-                        {
-                            var list = new List<int>();
-                            foreach (var num in nums.Values)
-                            {
-                                channelClamps.Add(Convert.ToInt32((double)num));
-                                list.Add(Convert.ToInt32((double)num));
-                            }
-                            alternateChannalClamps.Add(list);
-                        }
-                        else
-                        {
-                            channelClamps.Add(Convert.ToInt32((double)item));
-                            alternateChannalClamps.Add(new List<int>() { Convert.ToInt32((double)item) });
-                        }
-                    }
-                    foreach (var num in channelAddressesInTable.Values)
-                    {
-                        channelAddressesIn.Add(Convert.ToInt32((double)num));
-                    }
-                    foreach (var num in channelAddressesOutTable.Values)
-                    {
-                        channelAddrOut.Add(Convert.ToInt32((double)num));
-                    }
-
-                    int DOcnt = Convert.ToInt32((double)tableData["DO_count"]);
-                    int DIcnt = Convert.ToInt32((double)tableData["DI_count"]);
-                    int AOcnt = Convert.ToInt32((double)tableData["AO_count"]);
-                    int AIcnt = Convert.ToInt32((double)tableData["AI_count"]);
-                    string color = (string)tableData["Color"];
-
-                    int LocalbusData = Convert.ToInt32((tableData["LocalbusData"] ?? 0));
-
-                    IOModuleInfo.AddModuleInfo(number, name, description,
-                        addressSpaceTypeNumber, typeName, groupName,
-                        channelClamps.ToArray(), alternateChannalClamps, channelAddressesIn.ToArray(),
-                        channelAddrOut.ToArray(), DOcnt, DIcnt, AOcnt, AIcnt,
-                        LocalbusData, color);
-                }
+                IOModuleInfo.AddModuleInfo(number, name, description,
+                    addressSpaceTypeNumber, typeName, groupName,
+                    channelClamps.ToArray(), alternateChannalClamps, channelAddressesIn.ToArray(),
+                    channelAddrOut.ToArray(), DOcnt, DIcnt, AOcnt, AIcnt,
+                    LocalbusData, color);
             }
-            else
-            {
-                string template = EasyEPlanner.Properties.Resources
-                    .ResourceManager.GetString(templateName);
-                File.WriteAllText(pathToFile, template);
-                MessageBox.Show("Файл с описанием модулей ввода-вывода" +
-                    " не найден. Будет создан пустой файл (без описания).", 
-                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+
+        }
+
+        [ExcludeFromCodeCoverage]
+        private void NoFileErrorShow(string templateName, string pathToFile)
+        {
+            string template = EasyEPlanner.Properties.Resources
+                   .ResourceManager.GetString(templateName);
+            File.WriteAllText(pathToFile, template);
+            MessageBox.Show("Файл с описанием модулей ввода-вывода" +
+                " не найден. Будет создан пустой файл (без описания).",
+                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void InitIoNodesInfo()

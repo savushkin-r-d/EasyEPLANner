@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using EasyEPlanner;
 using EasyEPlanner.PxcIolinkConfiguration.Models;
+using IO;
+using Moq;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 using StaticHelper;
@@ -43,5 +45,32 @@ namespace EasyEplannerTests.ConfigurationTest
                 CollectionAssert.AreEqual(expectedComments, comments);
             });
         }
+
+        [TestCaseSource(nameof(AlternateClampBinded_Cases))]
+        public void AlternateClampBinded(List<List<int>> AlternateChannelClamps, int clamp, Dictionary<int, string> currentBinding, int? expected)
+        {
+            var apiHelper = new ApiHelper();
+            var deviceBindingReader = new DeviceBindingReader(new ProjectHelper(apiHelper), apiHelper);
+
+            var method = typeof(DeviceBindingReader).GetMethod("AlternateClampBinded",
+                BindingFlags.NonPublic | BindingFlags.Instance);
+
+            var ioModuleMock = new Mock<IIOModuleInfo>();
+            ioModuleMock.Setup(m => m.AlternateChannelsClamps).Returns(AlternateChannelClamps);
+
+            var arguments = new object[] { ioModuleMock.Object, clamp, currentBinding };
+
+            int? result = method.Invoke(deviceBindingReader, arguments) as int?;
+
+            Assert.AreEqual(expected, result);
+        }
+
+        private static readonly object[] AlternateClampBinded_Cases = new object[]
+        {
+            new object[] { new List<List<int>> { new List<int> { 0, 20 }, new List<int> { 1, 21 } }, 21, new Dictionary<int, string> { { 1, "bind" } }, 1 },
+            new object[] { new List<List<int>> { new List<int> { 0, 20 }, new List<int> { 1, 21 } }, 20, new Dictionary<int, string> { { 0, "bind" } }, 0 },
+            new object[] { new List<List<int>> { new List<int> { 0, 20 }, new List<int> { 1, 21 } }, 20, new Dictionary<int, string> { { 0, "" } }, null },
+            new object[] { new List<List<int>> { new List<int> { 0 }, new List<int> { 1 } }, 1, new Dictionary<int, string> { { 0, "bind" } }, null },
+        };
     }
 }
