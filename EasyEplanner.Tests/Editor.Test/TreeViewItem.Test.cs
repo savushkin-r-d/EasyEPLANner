@@ -327,25 +327,23 @@ namespace Tests.Editor
         }
 
         [Test]
-        public void Contains_FoundInChild()
+        public void Filter_FoundInChild()
         {
-            InheritedTreeViewItem child = GetNewTreeViewItem();
+            var child = new ObjectProperty("par", "qwerty");
             InheritedTreeViewItem parent = GetNewTreeViewItem();
-            
+
             child.AddParent(parent);
             parent.Childs = new ITreeViewItem[] { child };
 
-            child.Value = "qwerty";
-
-            var result = parent.Contains("qwer");
+            var result = parent.Filter("qwer", false);
 
             Assert.IsTrue(result);
         }
 
         [Test]
-        public void Contains_FoundInParent()
+        public void Filter_FoundInParent()
         {
-            InheritedTreeViewItem child = GetNewTreeViewItem();
+            var child = new ObjectProperty("par", "");
             InheritedTreeViewItem parent = GetNewTreeViewItem();
 
             child.AddParent(parent);
@@ -353,36 +351,19 @@ namespace Tests.Editor
 
             parent.Value = "qwerty";
 
-            var result = parent.Contains("qwer");
+            var result = parent.Filter("qwer", false);
 
             Assert.Multiple(() =>
             {
                 Assert.IsTrue(result);
-                Assert.IsTrue(parent.MarkedAsFound);
+                Assert.IsTrue(parent.ThisOrParentsContains);
             });
         }
 
-
         [Test]
-        public void ContainsAndIsFilled_FoundInChild()
+        public void Filter_FoundInParent_HideEmpty()
         {
-            InheritedTreeViewItem child = GetNewTreeViewItem();
-            InheritedTreeViewItem parent = GetNewTreeViewItem();
-
-            child.AddParent(parent);
-            parent.Childs = new ITreeViewItem[] { child };
-
-            child.Value = "qwerty";
-
-            var result = parent.ContainsAndIsFilled("qwer");
-
-            Assert.IsTrue(result);
-        }
-
-        [Test]
-        public void ContainsAndIsFilled_FoundInParent()
-        {
-            InheritedTreeViewItem child = GetNewTreeViewItem();
+            var child = new ObjectProperty("par", "");
             InheritedTreeViewItem parent = GetNewTreeViewItem();
 
             child.AddParent(parent);
@@ -390,15 +371,70 @@ namespace Tests.Editor
 
             parent.Value = "qwerty";
 
-            var result = parent.ContainsAndIsFilled("qwer");
+            var result = parent.Filter("qwer", true);
 
             Assert.Multiple(() =>
             {
                 Assert.IsTrue(result);
-                Assert.IsTrue(parent.MarkedAsFound);
+                Assert.IsTrue(parent.ThisOrParentsContains);
             });
         }
 
+        [Test]
+        public void Filter_HideEmpty()
+        {
+            var child = new ObjectProperty("par", "");
+            InheritedTreeViewItem parent = GetNewTreeViewItem();
+
+            child.AddParent(parent);
+            parent.Childs = new ITreeViewItem[] { child };
+
+            parent.Value = "";
+
+            var result = parent.Filter("", true) || child.Filter("", true);
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsFalse(result);
+                Assert.IsFalse(parent.ThisOrParentsContains);
+            });
+        }
+
+        [Test]
+        public void Filter_ReapeatFilterAndReset()
+        {
+            var child = new ObjectProperty("par", "qwerty");
+            InheritedTreeViewItem parent = GetNewTreeViewItem();
+
+            child.AddParent(parent);
+            parent.Childs = new ITreeViewItem[] { child };
+
+            parent.Value = "qwerty";
+
+            Assert.Multiple(() =>
+            {
+                var result = parent.Filter("qwer", false);
+                
+                Assert.IsTrue(result);
+                Assert.IsTrue(parent.Filtred);
+                Assert.IsTrue(parent.ThisOrParentsContains);
+
+                result = parent.Filter("qwer", false);
+
+                Assert.IsTrue(result);
+                Assert.IsTrue(parent.Filtred);
+                Assert.IsTrue(parent.ThisOrParentsContains);
+
+                result = child.Filter("qwer", false);
+                Assert.IsTrue(result);
+
+                parent.ResetFilter();
+
+                Assert.IsNull(parent.Filtred);
+                Assert.IsNull(child.Filtred);
+                Assert.IsFalse(parent.ThisOrParentsContains);
+            });
+        }
 
 
         public InheritedTreeViewItem GetNewTreeViewItem()

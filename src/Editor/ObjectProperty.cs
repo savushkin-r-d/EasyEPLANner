@@ -430,19 +430,45 @@ namespace Editor
             !(EditText[1] == CommonConst.EmptyValue &&
             DisplayText[1] == CommonConst.StubForCells);
 
+        public bool? Filtred { get; private set; } = null;
+
+        public void ResetFilter()
+        {
+            Filtred = null;
+        }
+
+        public bool Filter(string searchString, bool hideEmptyItems)
+        {
+            if (Filtred.HasValue)
+                return Filtred.Value;
+
+            if (string.IsNullOrEmpty(searchString))
+            {
+                Filtred = IsFilled;
+                return Filtred.Value;
+            }
+
+            if (Contains(searchString) && (IsFilled || !hideEmptyItems))
+            {
+                if (!NewEditorControl.FoundTreeViewItemsList.Contains(this))
+                    NewEditorControl.FoundTreeViewItemsList.Add(this);
+                Filtred = true;
+            }
+            else
+            {
+                Filtred = ((Parent as TreeViewItem)?.ThisOrParentsContains ?? false) && (IsFilled || !hideEmptyItems);
+            }
+
+            return Filtred.Value;
+        }
+
         public virtual bool Contains(string value)
         {
             value = value.Trim().ToUpper();
             return DisplayText[0].ToUpper().Contains(value) ||
                 DisplayText[1].ToUpper().Contains(value) ||
                 EditText[0].ToUpper().Contains(value) ||
-                EditText[1].ToUpper().Contains(value) ||
-                ((Parent as TreeViewItem)?.MarkedAsFound ?? false);
-        }
-
-        public virtual bool ContainsAndIsFilled(string value)
-        {
-            return Contains(value) && IsFilled; 
+                EditText[1].ToUpper().Contains(value);
         }
 
         public virtual bool ContainsBaseObject

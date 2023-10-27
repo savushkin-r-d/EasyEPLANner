@@ -157,6 +157,12 @@
     </Compile>
     <Compile Include="Editor\IEditor.cs" />
     <Compile Include="Editor\ObjectProperty.cs" />
+    <Compile Include="Editor\Controls\FormatNumericUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Editor\Controls\FormatNumericUpDown.Designer.cs">
+      <DependentUpon>FormatNumericUpDown.cs</DependentUpon>
+    </Compile>
     <Compile Include="Editor\ObjectAdder\ObjectAdder.cs">
       <SubType>Form</SubType>
     </Compile>

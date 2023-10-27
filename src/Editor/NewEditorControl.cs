@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
+using System.Threading;
 
 namespace Editor
 {
@@ -28,7 +29,8 @@ namespace Editor
                 new PI.LowLevelKeyboardProc(GlobalHookKeyboardCallbackFunction);
 
             //Фильтр
-            editorTView.ModelFilter = new ModelFilter(ModelFileter);
+            editorTView.ModelFilter = new ModelFilter((obj) 
+                => (obj as ITreeViewItem).Filter(searchText, hideEmptyItemsBtn.Checked));
 
             wasInit = false;
         }
@@ -142,14 +144,6 @@ namespace Editor
 
             return null;
         }
-
-        public bool wasInit { get; set; }
-        private bool IsCellEditing;
-        public List<ITreeViewItem> treeViewItemsList;
-
-        // Редакторы для editorTView
-        ComboBox comboBoxCellEditor;
-        TextBox textBoxCellEditor;
 
         /// <summary>
         /// Инициализация ComboBox редактора
@@ -1848,14 +1842,16 @@ namespace Editor
         {
             if (textBox_search.Text == "Поиск..." || textBox_search.Text == string.Empty)
             {
+                formatNumericUpDown_SearchSelectedItem.Value = 0;
                 searchText = string.Empty;
-                editorTView.UseFiltering = false;
+
+                UpdateModelFilter();
                 return;
             }
 
             if (textBoxSearchTypingTimer is null)
             {
-                textBoxSearchTypingTimer = new Timer()
+                textBoxSearchTypingTimer = new System.Windows.Forms.Timer()
                 {
                     Interval = 300,
 
@@ -1866,8 +1862,6 @@ namespace Editor
             textBoxSearchTypingTimer.Stop();
             textBoxSearchTypingTimer.Tag = textBox_search.Text;
             textBoxSearchTypingTimer.Start();
-
-            searchText = textBox_search.Text;  
         }
 
         [ExcludeFromCodeCoverage]
@@ -1876,11 +1870,12 @@ namespace Editor
             if (textBoxSearchTypingTimer is null)
                 return;
 
-            var isbn = textBoxSearchTypingTimer.Tag.ToString();
+            var search = textBoxSearchTypingTimer.Tag.ToString();
             
-            searchText = isbn;
+            searchText = search;
 
             UpdateModelFilter();
+            
 
             textBoxSearchTypingTimer.Stop();
         }
@@ -1908,30 +1903,57 @@ namespace Editor
         [ExcludeFromCodeCoverage]
         private void UpdateModelFilter()
         {
+            editorTView.UseFiltering = false;
+
+            FoundTreeViewItemsList.Clear();
+            formatNumericUpDown_SearchSelectedItem.Value = 0;
+            treeViewItemsList.ForEach(item => item.ResetFilter());
+
             if (hideEmptyItemsBtn.Checked || searchText != string.Empty)
             {
-                editorTView.UseFiltering = false;
                 editorTView.UseFiltering = true;
-            }
-            else
-            {
-                editorTView.UseFiltering = false;
+                formatNumericUpDown_SearchSelectedItem.Maximum = FoundTreeViewItemsList.Count;
             }
         }
 
         [ExcludeFromCodeCoverage]
-        private bool ModelFileter(object obj)
+        private void formatNumericUpDown_SearchSelectedItem_ValueChanged(object sender, EventArgs e)
         {
-            if (searchText != string.Empty && hideEmptyItemsBtn.Checked)
-                return (obj as ITreeViewItem).ContainsAndIsFilled(searchText);
-            else if (searchText != string.Empty)
-                return (obj as ITreeViewItem).Contains(searchText);
-            else if (hideEmptyItemsBtn.Checked)
-                return (obj as ITreeViewItem).IsFilled;
-            else return true;
+            var item = FoundTreeViewItemsList?.ElementAtOrDefault((int)formatNumericUpDown_SearchSelectedItem.Value - 1);
+
+            if (item != null)
+            {
+                RecursiveExpand(item.Parent);
+                if (editorTView.CanExpand(item))
+                    editorTView.Expand(item);
+                editorTView.SelectObject(item, true);
+                editorTView.EnsureModelVisible(item);
+            }
         }
 
-        private Timer textBoxSearchTypingTimer;
+        [ExcludeFromCodeCoverage]
+        private void RecursiveExpand(ITreeViewItem parent)
+        {
+            if (parent is null)
+                return;
+
+            RecursiveExpand(parent.Parent);
+            
+            if (editorTView.CanExpand(parent))
+                editorTView.Expand(parent);
+        }
+
+        public bool wasInit { get; set; }
+        private bool IsCellEditing;
+        
+        public List<ITreeViewItem> treeViewItemsList;
+        public static List<ITreeViewItem> FoundTreeViewItemsList { get; set; } = new List<ITreeViewItem>();
+        
+        private System.Windows.Forms.Timer textBoxSearchTypingTimer;
         private string searchText = "";
+
+        // Редакторы для editorTView
+        ComboBox comboBoxCellEditor;
+        TextBox textBoxCellEditor;
     }
 }

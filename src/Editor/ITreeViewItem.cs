@@ -228,17 +228,30 @@ namespace Editor
         bool IsFilled { get; }
 
         /// <summary>
-        /// Содержит ли элемент значение
+        /// Состояние фильтра элемента:
+        /// null - фильтрация не проводилась
+        /// true/false - результат фильтрации
+        /// </summary>
+        bool? Filtred { get; }
+
+        /// <summary>
+        /// Фильтрация элементов дерева
+        /// </summary>
+        /// <param name="searchString"> Искомая строка </param>
+        /// <param name="hideEmptyItems"> Скрывать пустые элементы </param>
+        /// <returns></returns>
+        bool Filter(string searchString, bool hideEmptyItems);
+
+        /// <summary>
+        /// Сбросить фильтр
+        /// </summary>
+        void ResetFilter();
+
+        /// <summary>
+        /// Содержит ли элемент искомую строку
         /// </summary>
         /// <param name="value">Искомое значение</param>
         bool Contains(string value);
-
-        /// <summary>
-        /// Поиск при скрытых пустых значениях
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        bool ContainsAndIsFilled(string value);
 
         /// <summary>
         /// Индекс картинки из формы, для вставки в элемент.
