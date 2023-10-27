@@ -1,4 +1,4 @@
-﻿using Eplan.EplApi.DataModel;
+using Eplan.EplApi.DataModel;
 using StaticHelper;
 using System;
 using System.Collections.Generic;
@@ -7,6 +7,9 @@ using System.Text.RegularExpressions;
 using EplanDevice;
 using System.Text;
 using EasyEPlanner.PxcIolinkConfiguration.Models;
+using Aga.Controls.Tree;
+using IO;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
@@ -17,6 +20,7 @@ namespace EasyEPlanner
     {
         IProjectHelper projectHelper;
         IApiHelper apiHelper;
+        IIOHelper ioHelper;
 
         public DeviceBindingReader(IProjectHelper projectHelper, IApiHelper apiHelper)
         {
@@ -24,6 +28,7 @@ namespace EasyEPlanner
             this.IOManager = IO.IOManager.GetInstance();
             this.projectHelper = projectHelper;
             this.apiHelper = apiHelper;
+            this.ioHelper = new IOHelper(projectHelper);
         }
 
         /// <summary>
@@ -67,6 +72,8 @@ namespace EasyEPlanner
                     {
                         continue;
                     }
+
+                    CurrentReadingModuleClampFunctions.Clear();
 
                     foreach (var function in module.Function.SubFunctions)
                     {
@@ -115,7 +122,7 @@ namespace EasyEPlanner
                     out comments);
             }
 
-            SetBind(description, actions, module, node, clampFunction, 
+            SetBind(description, actions, module, node, clampFunction,
                 comments);
         }
 
@@ -125,6 +132,7 @@ namespace EasyEPlanner
         /// <param name="module">Модуль</param>
         /// <param name="clampFunction">Функция клеммы</param>
         /// <returns></returns>
+        [ExcludeFromCodeCoverage]
         private bool NeedToSkip(IO.IIOModule module, Function clampFunction, string description , MatchCollection descriptionMatches)
         {
             var skip = false;
@@ -175,8 +183,24 @@ namespace EasyEPlanner
                 return skip;
             }
 
+            int? alternateClampBinded = moduleInfo.AlternateChannelsClamps
+                .Find(altClamps => altClamps.Contains(clamp) && altClamps.Count > 1)?
+                .Where(altClamp => altClamp != clamp && CurrentReadingModuleClampFunctions.TryGetValue(altClamp, out var value) && value != string.Empty)
+                .Select(altClamp => (int?)altClamp)
+                .FirstOrDefault()
+                ?? null;
+
+            if (alternateClampBinded.HasValue)
+            {
+                Logs.AddMessage($"'-{module.Name}:{clamp:D2}': нельзя одновременно привязывать устройства к клеммам: {alternateClampBinded:D2} и {clamp:D2}.\n");
+                return true; //skip
+            }
+
+            CurrentReadingModuleClampFunctions[clamp] = description;
             return skip;
         }
+
+        private Dictionary<int, string> CurrentReadingModuleClampFunctions = new Dictionary<int, string>();
 
         /// <summary>
         /// Чтение привязки пневмоострова.

@@ -1,4 +1,5 @@
-﻿using EasyEPlanner;
+using EasyEPlanner;
+using LuaInterface;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -322,6 +323,7 @@ namespace IO
                     string groupName = (string)tableData["groupName"];
 
                     var channelClamps = new List<int>();
+                    var alternateChannalClamps = new List<List<int>>();
                     var channelAddressesIn = new List<int>();
                     var channelAddrOut = new List<int>();
 
@@ -331,9 +333,23 @@ namespace IO
                         "channelAddressesIn"] as LuaInterface.LuaTable;
                     var channelAddressesOutTable = tableData[
                         "channelAddressesOut"] as LuaInterface.LuaTable;
-                    foreach (var num in channelClampsTable.Values)
+                    foreach (object item in channelClampsTable.Values)
                     {
-                        channelClamps.Add(Convert.ToInt32((double)num));
+                        if (item is LuaTable nums)
+                        {
+                            var list = new List<int>();
+                            foreach (var num in nums.Values)
+                            {
+                                channelClamps.Add(Convert.ToInt32((double)num));
+                                list.Add(Convert.ToInt32((double)num));
+                            }
+                            alternateChannalClamps.Add(list);
+                        }
+                        else
+                        {
+                            channelClamps.Add(Convert.ToInt32((double)item));
+                            alternateChannalClamps.Add(new List<int>() { Convert.ToInt32((double)item) });
+                        }
                     }
                     foreach (var num in channelAddressesInTable.Values)
                     {
@@ -354,7 +370,7 @@ namespace IO
 
                     IOModuleInfo.AddModuleInfo(number, name, description,
                         addressSpaceTypeNumber, typeName, groupName,
-                        channelClamps.ToArray(), channelAddressesIn.ToArray(),
+                        channelClamps.ToArray(), alternateChannalClamps, channelAddressesIn.ToArray(),
                         channelAddrOut.ToArray(), DOcnt, DIcnt, AOcnt, AIcnt,
                         LocalbusData, color);
                 }

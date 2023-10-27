@@ -1,4 +1,4 @@
-﻿using Aga.Controls.Tree;
+using Aga.Controls.Tree;
 using Eplan.EplApi.DataModel;
 using System;
 using System.Collections.Generic;

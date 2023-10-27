@@ -29,7 +29,7 @@ namespace IO
         /// <param name="colorAsString">Физический цвет модуля</param>
         public static void AddModuleInfo(int number, string name,
             string description, int addressSpaceTypeNum, string typeName,
-            string groupName, int[] channelClamps, int[] channelAddressesIn,
+            string groupName, int[] channelClamps, List<List<int>> alternateChannelsClamps, int[] channelAddressesIn,
             int[] channelAddressesOut, int DOCount, int DICount,
             int AOCount, int AICount, int localbusData, string colorAsString)
         {
@@ -39,7 +39,10 @@ namespace IO
             var moduleInfo = new IOModuleInfo(number, name, description,
                  addressSpaceType, typeName, groupName, channelClamps,
                  channelAddressesIn, channelAddressesOut, DOCount, DICount,
-                 AOCount, AICount, localbusData, color);
+                 AOCount, AICount, localbusData, color)
+            {
+                AlternateChannelsClamps = alternateChannelsClamps,
+            };
 
             if (modules.Where(x => x.Name == moduleInfo.Name).Count() == 0)
             {
@@ -130,11 +133,15 @@ namespace IO
             var channelClamps = ChannelClamps.Clone() as int[];
             var channelAddressesIn = ChannelAddressesIn.Clone() as int[];
             var channelAddressesOut = ChannelAddressesOut.Clone() as int[];
+            var alternateChannelClamps = new List<List<int>>(AlternateChannelsClamps);
 
             return new IOModuleInfo(Number, Name, Description,
                 AddressSpaceType, TypeName, GroupName, channelClamps,
                 channelAddressesIn, channelAddressesOut, DOCount, DICount,
-                AOCount, AICount, LocalbusData, ModuleColor);
+                AOCount, AICount, LocalbusData, ModuleColor)
+            {
+                AlternateChannelsClamps = alternateChannelClamps,
+            };
         }
 
         /// <summary>
@@ -161,6 +168,12 @@ namespace IO
         /// Клеммы каналов ввода-вывода.
         /// </summary>
         public int[] ChannelClamps { get; set; }
+
+        /// <summary>
+        /// задает клеммы,
+        /// к которым не возможна одноверменная привязка
+        /// </summary>
+        public List<List<int>> AlternateChannelsClamps { get; set; }
 
         /// <summary>
         /// Адреса каналов ввода.
