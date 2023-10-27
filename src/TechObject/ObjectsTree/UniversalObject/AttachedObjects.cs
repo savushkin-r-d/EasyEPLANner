@@ -23,8 +23,7 @@ namespace TechObject
         public override bool SetNewValue(string newValue)
         {
             string oldValue = Value;
-            var thisObjNum = owner.TechObjectManagerInstance
-                .GetTechObjectN(Owner);
+            var thisObjNum = owner?.GlobalNum ?? 0;
             List<int> newNumbers = strategy.GetValidTechObjNums(newValue,
                 thisObjNum);
 
