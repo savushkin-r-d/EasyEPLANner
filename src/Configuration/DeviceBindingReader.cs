@@ -1,4 +1,4 @@
-﻿using Eplan.EplApi.DataModel;
+using Eplan.EplApi.DataModel;
 using StaticHelper;
 using System;
 using System.Collections.Generic;
@@ -7,6 +7,9 @@ using System.Text.RegularExpressions;
 using EplanDevice;
 using System.Text;
 using EasyEPlanner.PxcIolinkConfiguration.Models;
+using Aga.Controls.Tree;
+using IO;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyEPlanner
 {
@@ -55,6 +58,7 @@ namespace EasyEPlanner
         /// <summary>
         /// Чтение привязки.
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void ReadBinding()
         {
             foreach (var node in IOManager.IONodes)
@@ -67,6 +71,8 @@ namespace EasyEPlanner
                     {
                         continue;
                     }
+
+                    CurrentReadingModuleClampsDescription.Clear();
 
                     foreach (var function in module.Function.SubFunctions)
                     {
@@ -115,7 +121,7 @@ namespace EasyEPlanner
                     out comments);
             }
 
-            SetBind(description, actions, module, node, clampFunction, 
+            SetBind(description, actions, module, node, clampFunction,
                 comments);
         }
 
@@ -125,6 +131,7 @@ namespace EasyEPlanner
         /// <param name="module">Модуль</param>
         /// <param name="clampFunction">Функция клеммы</param>
         /// <returns></returns>
+        [ExcludeFromCodeCoverage]
         private bool NeedToSkip(IO.IIOModule module, Function clampFunction, string description , MatchCollection descriptionMatches)
         {
             var skip = false;
@@ -175,8 +182,39 @@ namespace EasyEPlanner
                 return skip;
             }
 
+            int? alternateClampBinded = AlternateClampBinded(moduleInfo, clamp, CurrentReadingModuleClampsDescription);
+
+            if (alternateClampBinded.HasValue)
+            {
+                Logs.AddMessage($"'-{module.Name}:{clamp:D2}': нельзя одновременно привязывать устройства к клеммам: {alternateClampBinded:D2} и {clamp:D2}.\n");
+                return true; //skip
+            }
+
+            CurrentReadingModuleClampsDescription[clamp] = description;
             return skip;
         }
+
+        /// <summary>
+        /// Проверка одновременной привязки на альтернативных клемах
+        /// </summary>
+        /// <returns>
+        /// null - альтернативные клеммы не привязаны
+        /// n - номер привязанной альернативной клеммы
+        /// </returns>
+        private int? AlternateClampBinded(IIOModuleInfo moduleInfo, int clamp, Dictionary<int, string> currentBinding)
+        {
+            return moduleInfo.AlternateChannelsClamps
+                .Find(altClamps => altClamps.Contains(clamp) && altClamps.Count > 1)?
+                .Where(altClamp => altClamp != clamp && currentBinding.TryGetValue(altClamp, out var value) && value != string.Empty)
+                .Select(altClamp => (int?)altClamp)
+                .FirstOrDefault()
+                ?? null;
+        }
+
+        /// <summary>
+        /// Описание привязки текущего читаемого модуля
+        /// </summary>
+        private readonly Dictionary<int, string> CurrentReadingModuleClampsDescription = new Dictionary<int, string>();
 
         /// <summary>
         /// Чтение привязки пневмоострова.

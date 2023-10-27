@@ -272,7 +272,7 @@ namespace Tests.IO
                 {
                     IOModuleInfo.AddModuleInfo(n, name, description,
                         addressSpaceTypeNum, typeName, groupName,
-                        channelClamps, channelAddressesIn, channelAddressesOut,
+                        channelClamps, new List<List<int>>(), channelAddressesIn, channelAddressesOut,
                         DOCount, DICount, AOCount, AICount, 0, color);
 
                     currentRepeatableCount--;
@@ -281,7 +281,7 @@ namespace Tests.IO
 
                 IOModuleInfo.AddModuleInfo(n, name, description,
                         addressSpaceTypeNum, typeName, groupName,
-                        channelClamps, channelAddressesIn, channelAddressesOut,
+                        channelClamps, new List<List<int>>(), channelAddressesIn, channelAddressesOut,
                         DOCount, DICount, AOCount, AICount, 0, color);
 
                 currentCount--;
@@ -315,7 +315,7 @@ namespace Tests.IO
             string name = expectedName ?? string.Empty;
 
             IOModuleInfo.AddModuleInfo(IntStub, name, StrStub, IntStub,
-                StrStub, StrStub, new int[0], new int[0], new int[0], IntStub,
+                StrStub, StrStub, new int[0], new List<List<int>>(), new int[0], new int[0], IntStub,
                 IntStub, IntStub, IntStub, IntStub, ColorStub);
 
             return IOModuleInfo.GetModuleInfo(name, out _);
