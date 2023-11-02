@@ -150,6 +150,16 @@ namespace TechObject
             return techObjects.IndexOf(techObject) + 1;
         }
 
+        public int GetTechObjectN(string baseObjectName, int techType, int techNumber)
+        {
+            var techObject = TechObjects
+                .Find(to =>
+                    (to.BaseTechObject?.EplanName.Equals(baseObjectName) ?? false) &&
+                    to.TechType == techType && to.TechNumber == techNumber);
+
+            return techObjects.IndexOf(techObject) + 1;
+        }
+
         /// <summary>
         /// Проверка и исправление ограничений при удалении/перемещении
         /// операции 

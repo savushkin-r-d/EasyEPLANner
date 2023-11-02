@@ -533,6 +533,13 @@ namespace Editor
         }
         #endregion
 
+        public void UpdateOnGenericTechObject(ObjectProperty genericProperty)
+        {
+            this.value = genericProperty.Value;
+            this.defaultValue = genericProperty.DefaultValue;
+            this.needDisable = genericProperty.NeedDisable;
+        }
+
         ITreeViewItem parent;
         private string name;  ///Имя свойства.
         protected object value; ///Значение свойства.

@@ -48,10 +48,15 @@ namespace TechObjectTests
             var attachedObjects = techObject.AttachedObjects;
             var genericAttachedObjects = genericTechObject.AttachedObjects;
 
+            var attachedObjectsManagerField = typeof(AttachedObjects).GetField("techObjectManager",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+
             var TOManagerField = typeof(BaseStrategy).GetField("techObjectManager",
                 System.Reflection.BindingFlags.NonPublic |
                 System.Reflection.BindingFlags.Instance);
 
+            attachedObjectsManagerField.SetValue(attachedObjects, techObjectManagerMock.Object);
+            attachedObjectsManagerField.SetValue(genericAttachedObjects, techObjectManagerMock.Object);
             TOManagerField.SetValue(attachedObjects.WorkStrategy, techObjectManagerMock.Object);
 
             genericAttachedObjects.SetValue("1 2 3");
