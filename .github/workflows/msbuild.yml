@@ -9,7 +9,6 @@ on:
     branches: [ master ]
     types: [ opened, synchronize, labeled ]
   push:
-    branches: [ master ]
     tags:
       - 'v*'
   merge_group:
@@ -52,7 +51,6 @@ jobs:
       if: >-
         (github.event.action == 'labeled' && github.event.label.name == 'safe to test') ||
         ((github.event.action == 'synchronize' || github.event.action == 'opened') && ${{ steps.is_organization_member.outputs.response == '204' }}) ||
-        (github.event_name == 'push' && github.ref == 'refs/heads/master') ||
         github.event_name == 'merge_group' ||
         contains(github.ref, 'tags/v')
       run: echo "result=success" >> $env:GITHUB_OUTPUT
