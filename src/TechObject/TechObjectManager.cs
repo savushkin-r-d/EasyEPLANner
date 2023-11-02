@@ -171,32 +171,44 @@ namespace TechObject
         {
             var res = new StringBuilder();
 
-            res.Append("init_generic_tech_objects = function()\n")
-                .Append("\treturn\n")
-                .Append("\t{\n");
-            foreach (GenericTechObject obj in GenericTechObjects)
+            GenericTechObjects.ForEach(obj => obj.Update());
+
+            var genericObjectsData = SaveObjects(GenericTechObjects.Cast<TechObject>().ToList(), prefix);
+            var techObjectsData = SaveObjects(TechObjects, prefix);
+
+            if (genericObjectsData != string.Empty)
             {
-                obj.Update();
-                int num = GenericTechObjects.IndexOf(obj) + 1;
-                res.Append(obj.SaveAsLuaTable(prefix + "\t\t", num));
+                res.Append("init_generic_tech_objects = function()\n")
+                    .Append("\treturn\n")
+                    .Append("\t{\n")
+                    .Append($"{genericObjectsData}")
+                    .Append("\t}\n")
+                    .Append("end\n")
+                    .Append($"{new string('-', 80)}\n")
+                    .Append($"{new string('-', 80)}\n");
             }
-            res.Append("\t}\n")
-                .Append("end\n")
-                .Append($"{new string('-', 80)}\n")
-                .Append($"{new string('-', 80)}\n");
 
             res.Append("init_tech_objects_modes = function()\n")
                 .Append("\treturn\n")
-                .Append("\t{\n");
-            foreach (TechObject obj in TechObjects)
-            {
-                int num = TechObjects.IndexOf(obj) + 1;
-                res.Append(obj.SaveAsLuaTable(prefix + "\t\t", num));
-            }
-            res.Append("\t}\n")
+                .Append("\t{\n")
+                .Append($"{techObjectsData}")
+                .Append("\t}\n")
                 .Append("end");
 
             res = res.Replace("\t", "    ");
+            return res.ToString();
+        }
+
+        public string SaveObjects(List<TechObject> Objects, string prefix)
+        {
+            var res = new StringBuilder();
+
+            foreach (TechObject obj in Objects)
+            {
+                int num = Objects.IndexOf(obj) + 1;
+                res.Append(obj.SaveAsLuaTable(prefix + "\t\t", num));
+            }
+
             return res.ToString();
         }
 
