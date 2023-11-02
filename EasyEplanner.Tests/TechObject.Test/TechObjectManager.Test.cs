@@ -17,7 +17,7 @@ namespace TechObjectTests
                 System.Reflection.BindingFlags.NonPublic |
                 System.Reflection.BindingFlags.Static);
             instance.SetValue(null, null);
-            
+
             techObjectManager = TechObjectManager.GetInstance();
             techObjects = techObjectManager.TechObjects;
             genericTechObjects = techObjectManager.GenericTechObjects;
