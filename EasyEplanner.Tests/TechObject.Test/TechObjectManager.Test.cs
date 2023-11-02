@@ -21,8 +21,15 @@ namespace TechObjectTests
             techObjectManager = TechObjectManager.GetInstance();
             techObjects = techObjectManager.TechObjects;
             genericTechObjects = techObjectManager.GenericTechObjects;
-        
-        
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            var instance = typeof(TechObjectManager).GetField("instance",
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Static);
+            instance.SetValue(null, null);
         }
 
         [SetUp]
