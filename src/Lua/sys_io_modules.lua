@@ -864,7 +864,7 @@ local io_modules =
             DI_count = 0,
             AO_count = 10,
             AI_count = 10,
-            Color = 'Gray',
+            Color = 'Orange',
             },
 
     [ 45 ] = {
@@ -899,7 +899,7 @@ local io_modules =
             DI_count = 0,
             AO_count = 0,
             AI_count = 4,
-            Color = 'orange',
+            Color = 'Orange',
             },
 
     [ 47 ] = {
@@ -925,6 +925,42 @@ local io_modules =
             AO_count = 0,
             AI_count = 8,
             Color = 'Green',
+            },
+
+    [ 48 ] = {
+            n = 1337223,
+            name = 'AXL SE PD16 24V',
+            description = 'Axioline Smart Elements, ' ..
+                          'potential distribution module, 24 V DC',
+            addressSpaceType = 0,
+            typeName = "Распределитель потенциала",
+            groupName = 'AXL SE',
+            channelClamps = { },
+            channelAddressesIn = { },
+            channelAddressesOut = { },
+            DO_count = 0,
+            DI_count = 0,
+            AO_count = 0,
+            AI_count = 0,
+            Color = 'Black',
+            },
+
+    [ 49 ] = {
+            n = 1337224,
+            name = 'AXL SE PD16 GND',
+            description = 'Axioline Smart Elements, ' ..
+                          'potential distribution module, GND',
+            addressSpaceType = 0,
+            typeName = "Распределитель потенциала",
+            groupName = 'AXL SE',
+            channelClamps = { },
+            channelAddressesIn = { },
+            channelAddressesOut = { },
+            DO_count = 0,
+            DI_count = 0,
+            AO_count = 0,
+            AI_count = 0,
+            Color = 'Black',
             },
     }
 
