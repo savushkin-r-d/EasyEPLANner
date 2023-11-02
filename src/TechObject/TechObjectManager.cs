@@ -7,6 +7,7 @@ using System.Linq;
 using LuaInterface;
 using System.Windows.Forms;
 using System.Text;
+using System.Reflection;
 
 namespace TechObject
 {
@@ -158,6 +159,16 @@ namespace TechObject
                     to.TechType == techType && to.TechNumber == techNumber);
 
             return techObjects.IndexOf(techObject) + 1;
+        }
+
+        public int TypeAdjacentTObjectIdByTNum(int targetObjectIndex, int techNumber)
+        {
+            var techObject = GetTObject(targetObjectIndex);
+            var indexByTechNumber = GetTechObjectN(techObject.BaseTechObject.EplanName, techObject.TechType, techNumber);
+            if (indexByTechNumber > 0)
+                return indexByTechNumber;
+            else
+                return targetObjectIndex;
         }
 
         /// <summary>

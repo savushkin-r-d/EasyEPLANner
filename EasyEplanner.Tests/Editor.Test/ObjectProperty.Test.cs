@@ -400,8 +400,23 @@ namespace Tests.Editor
                 Assert.IsTrue(property.Contains("value"));
                 Assert.IsFalse(property.Contains("123"));
             });
+        }
 
-            
+        [Test]
+        public void UpdateOnGenericTechObject()
+        {
+            var genericProperty = new ObjectProperty("property", "value", "defaultvalue");
+            genericProperty.NeedDisable = true;
+            var property = new ObjectProperty("property", "");
+
+            property.UpdateOnGenericTechObject(genericProperty);
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(genericProperty.Value, property.Value);
+                Assert.AreEqual(genericProperty.DefaultValue, property.DefaultValue);
+                Assert.AreEqual(genericProperty.NeedDisable, property.NeedDisable);
+            });
         }
 
         private ObjectProperty GetEmptyProperty()

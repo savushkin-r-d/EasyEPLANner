@@ -95,6 +95,16 @@ namespace TechObject
         int GetTechObjectN(string baseObjectName, int techType, int techNumber);
 
         /// <summary>
+        /// Получить номер смежного объекта: по типу целевого объекта и искомому тех.номеру
+        /// </summary>
+        /// <param name="targetObjectIndex">Целевой объект</param>
+        /// <param name="techNumber">Технологический номер</param>
+        /// <returns>
+        /// Смежный объект, если таковой имеется, иначе целевой объект
+        /// </returns>
+        int TypeAdjacentTObjectIdByTNum(int targetObjectIndex, int techNumber);
+
+        /// <summary>
         /// Импорт объекта в проект.
         /// </summary>
         /// <param name="importingObject">Объект для импорта</param>

@@ -319,8 +319,7 @@ namespace TechObject
             var objectNames = new List<string>();
             foreach (var objNum in objectNums)
             {
-                TechObject findedObject = TechObjectManager.GetInstance()
-                    .GetTObject(objNum);
+                TechObject findedObject = techObjectManager.GetTObject(objNum);
                 if (findedObject != null)
                 {
                     string name = $"\"{findedObject.Name} " +
@@ -424,20 +423,6 @@ namespace TechObject
             return new AttachedObjects(Value, Owner, strategy);
         }
 
-        /// <summary>
-        /// Получить тех. объект по технологическому номеру объекта-владельца этого свойства
-        /// </summary>
-        /// <param name="index"></param>
-        private int AttachedObjectByGeneric(int index)
-        {
-            var techObject = techObjectManager.GetTObject(index);
-            var indexByTechNumber = techObjectManager.GetTechObjectN(techObject.BaseTechObject.EplanName, techObject.TechType, Owner.TechNumber);
-            if (indexByTechNumber > 0)
-                return indexByTechNumber;
-            else
-                return index;
-        }
-
         public void UpdateOnGenericTechObject(AttachedObjects genericAttachedObjects)
         {
             var res = new List<int>();
@@ -447,7 +432,7 @@ namespace TechObject
 
             var newGenericValue = genericAttachedObjects.Value
                 .Split(' ').Where(num => num != string.Empty)
-                .Select(int.Parse).Select(AttachedObjectByGeneric).ToList();
+                .Select(int.Parse).Select(idx => techObjectManager.TypeAdjacentTObjectIdByTNum(idx, owner.TechNumber)).ToList();
            
             genericValue = string.Join(" ", newGenericValue);
 
@@ -578,7 +563,7 @@ namespace TechObject
         private TechObject owner;
         private IAttachedObjectsStrategy strategy;
 
-        private ITechObjectManager techObjectManager;
+        private readonly ITechObjectManager techObjectManager;
 
         /// <summary>
         /// Значения объектов из типового объекта,
