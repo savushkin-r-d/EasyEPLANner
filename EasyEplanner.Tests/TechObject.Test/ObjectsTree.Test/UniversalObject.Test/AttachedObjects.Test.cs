@@ -52,14 +52,13 @@ namespace TechObjectTests
             var genericAttachedObjects = genericTechObject.AttachedObjects;
 
             var attachedObjectsManagerField = typeof(AttachedObjects).GetField("techObjectManager",
-                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
 
             var TOManagerField = typeof(BaseStrategy).GetField("techObjectManager",
                 System.Reflection.BindingFlags.NonPublic |
                 System.Reflection.BindingFlags.Instance);
 
-            attachedObjectsManagerField.SetValue(attachedObjects, techObjectManagerMock.Object);
-            attachedObjectsManagerField.SetValue(genericAttachedObjects, techObjectManagerMock.Object);
+            attachedObjectsManagerField.SetValue(null, techObjectManagerMock.Object);
             TOManagerField.SetValue(attachedObjects.WorkStrategy, techObjectManagerMock.Object);
 
             genericAttachedObjects.SetValue("1 3");
@@ -97,9 +96,9 @@ namespace TechObjectTests
             techObjectManagerMock.Setup(m => m.GetTObject(3)).Returns(techObject_3);
 
             var attachedObjectsManagerField = typeof(AttachedObjects).GetField("techObjectManager",
-                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                 System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
 
-            attachedObjectsManagerField.SetValue(attachedObjects, techObjectManagerMock.Object);
+            attachedObjectsManagerField.SetValue(null, techObjectManagerMock.Object);
 
             var res = method.Invoke(attachedObjects, new object[] { objects });
 

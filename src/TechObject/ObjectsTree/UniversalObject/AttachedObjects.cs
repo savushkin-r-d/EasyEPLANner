@@ -20,7 +20,6 @@ namespace TechObject
             this.owner = owner;
             this.Parent = owner;
             this.strategy = strategy;
-            this.techObjectManager = owner?.TechObjectManagerInstance; 
             SetValue(attachedObjects);
         }
 
@@ -563,7 +562,7 @@ namespace TechObject
         private TechObject owner;
         private IAttachedObjectsStrategy strategy;
 
-        private readonly ITechObjectManager techObjectManager;
+        private static readonly ITechObjectManager techObjectManager = TechObjectManager.GetInstance();
 
         /// <summary>
         /// Значения объектов из типового объекта,
