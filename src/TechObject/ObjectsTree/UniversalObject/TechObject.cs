@@ -1026,6 +1026,13 @@ namespace TechObject
                 return ImageIndexEnum.TechObject;
             }
         }
+
+        public override List<ITreeViewItem> QuickMultiSelect()
+        {
+            return Parent?.Items?
+                .Where(adjItem => (adjItem as TechObject)?.TechType == TechType 
+                                  && !(adjItem is GenericTechObject)).ToList();
+        }
         #endregion
 
         /// <summary>

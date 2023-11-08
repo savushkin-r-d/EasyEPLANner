@@ -1,4 +1,5 @@
-﻿using BrightIdeasSoftware;
+﻿using Aga.Controls.Tree;
+using BrightIdeasSoftware;
 using System.Collections.Generic;
 
 namespace Editor
@@ -292,8 +293,12 @@ namespace Editor
         /// <summary>
         /// Визуализатор для ячеек
         /// </summary>
-        
         IRenderer[] CellRenderer { get; }
+
+        /// <summary>
+        /// Быстрое выделение смежных элементов
+        /// </summary>
+        List<ITreeViewItem> QuickMultiSelect();
 
         event OnValueChanged ValueChanged;
 

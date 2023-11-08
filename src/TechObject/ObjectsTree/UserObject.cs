@@ -199,6 +199,9 @@ namespace TechObject
             techObjParent.Cut(techObj);
 
             objects.Add(techObj);
+
+            techObj.AddParent(this);
+
             techObj.SetGetLocalN(GetTechObjectLocalNum);
             techObj.InitBaseTechObject(baseTechObject);
 

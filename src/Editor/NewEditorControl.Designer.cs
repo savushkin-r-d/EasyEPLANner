@@ -436,7 +436,6 @@ namespace Editor
             this.editorTView.LargeImageList = this.imageList1;
             this.editorTView.Location = new System.Drawing.Point(3, 28);
             this.editorTView.MinimumSize = new System.Drawing.Size(200, 250);
-            this.editorTView.MultiSelect = false;
             this.editorTView.Name = "editorTView";
             this.editorTView.OwnerDrawnHeader = true;
             this.editorTView.PersistentCheckBoxes = false;
@@ -467,6 +466,8 @@ namespace Editor
             this.editorTView.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.editorTView_ColumnWidthChanging);
             this.editorTView.SelectedIndexChanged += new System.EventHandler(this.editorTView_SelectedIndexChanged);
             this.editorTView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.editorTView_KeyDown);
+            this.editorTView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.editorTView_MouseClick);
+            this.editorTView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.editorTView_MouseDoubleClick);
             this.editorTView.MouseEnter += new System.EventHandler(this.editorTView_MouseEnter);
             this.editorTView.MouseLeave += new System.EventHandler(this.editorTView_MouseLeave);
             // 
