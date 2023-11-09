@@ -3,7 +3,7 @@ using Editor;
 
 namespace TechObject
 {
-    class UserObject : TreeViewItem, IBaseObjChangeable
+    public class UserObject : TreeViewItem, IBaseObjChangeable
     {
         public UserObject(ITechObjectManager techObjectManager)
         {

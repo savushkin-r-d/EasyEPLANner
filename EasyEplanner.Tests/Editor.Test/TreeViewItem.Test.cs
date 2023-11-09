@@ -436,6 +436,24 @@ namespace Tests.Editor
             });
         }
 
+        [Test]
+        public void QuickMultiSelect()
+        {
+            var item1 = GetNewTreeViewItem();
+            var item2 = GetNewTreeViewItem();
+            var item3 = GetNewTreeViewItem();
+            var parent = GetNewTreeViewItem();
+
+            item1.Parent = parent;
+            item2.Parent = parent;
+            item3.Parent = parent;
+
+            parent.Childs = new ITreeViewItem[] { item1, item2, item3 };
+
+            var multiselect = item2.QuickMultiSelect();
+
+            CollectionAssert.AreEqual(new List<ITreeViewItem>() { item1, item2, item3 }, multiselect);
+        }
 
         public InheritedTreeViewItem GetNewTreeViewItem()
         {

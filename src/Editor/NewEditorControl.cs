@@ -18,6 +18,7 @@ using TechObject;
 
 namespace Editor
 {
+    [ExcludeFromCodeCoverage]
     public partial class NewEditorControl : UserControl
     {
         public NewEditorControl()
@@ -138,7 +139,7 @@ namespace Editor
         {
             try
             {
-                return editorTView.SelectedObjects.Cast<ITreeViewItem>().ToList().SingleOrDefault();
+                return editorTView.SelectedObjects.Cast<ITreeViewItem>().SingleOrDefault();
             }
             catch { return null; }
         }
@@ -894,7 +895,9 @@ namespace Editor
         /// <param name="item">Вставляемый элемент</param>
         private void PasteItem(ITreeViewItem item)
         {
-            if (item.IsInsertableCopy is false || copyItems is null || copyItems?.Count() <= 0)
+            var a = copyItems?.Count() <= 0;
+
+            if (item.IsInsertableCopy is false || (!copyItems?.Any() ?? true))
                 return;
 
             bool itemsHasMarkToCut = false;
@@ -1000,8 +1003,11 @@ namespace Editor
         /// <param name="item"></param>
         private void CutItem(List<ITreeViewItem> items)
         {
-            var parent = items.FirstOrDefault().Parent;
-            if (items.All(item => item.Parent == parent) is false)
+            if (items is null || items.Count <= 0)
+                return;
+
+            var parent = items.FirstOrDefault()?.Parent;
+            if (items.TrueForAll(item => item.Parent == parent) is false)
                 return;
 
             if (parent.IsCuttable is false)
@@ -1756,7 +1762,6 @@ namespace Editor
             }
         }
 
-        [ExcludeFromCodeCoverage]
         private void toolSettingItem_Click(object sender, EventArgs e)
         {
             var menuItem = sender as ToolStripMenuItem;
@@ -1776,7 +1781,6 @@ namespace Editor
             toolSettingDropDownButton.ShowDropDown();
         }
 
-        [ExcludeFromCodeCoverage]
         private void moveUpButton_Click(object sender, EventArgs e)
         {
             ITreeViewItem item = GetActiveItem();
@@ -1787,7 +1791,6 @@ namespace Editor
             }
         }
 
-        [ExcludeFromCodeCoverage]
         private void moveDownButton_Click(object sender, EventArgs e)
         {
             ITreeViewItem item = GetActiveItem();
@@ -1798,7 +1801,6 @@ namespace Editor
             }
         }
 
-        [ExcludeFromCodeCoverage]
         private void contextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
             var items = GetActiveItems();
@@ -1829,7 +1831,7 @@ namespace Editor
                 .Enabled = Editable && item.IsReplaceable && copyItems != null 
                 && (copyItems.Count() == 1)
                 && (copyItems.SingleOrDefault() as ITreeViewItem)?.MarkToCut is false 
-                && (copyItems.SingleOrDefault().GetType() == item.GetType()) 
+                && (copyItems.SingleOrDefault()?.GetType() == item.GetType()) 
                 && singleSelection;
 
             // Возможность перемещения объектов
@@ -1848,7 +1850,6 @@ namespace Editor
                 .ToolTipText = contextMenuStrip.Items[nameof(pasteToolStripMenuItem)].ToolTipText;
         }
 
-        [ExcludeFromCodeCoverage]
         private void SetUpToolsHideFromConfig()
         {
             var hidenTools = AppConfiguarationManager.GetAppSetting("hidenTools");
@@ -1876,7 +1877,6 @@ namespace Editor
 
         }
 
-        [ExcludeFromCodeCoverage]
         private void SaveToolsHideToConfig()
         {
             var result = new StringBuilder();
@@ -1892,7 +1892,6 @@ namespace Editor
                 result.ToString().TrimEnd(';'));
         }
 
-        [ExcludeFromCodeCoverage]
         private void tableLayoutPanelSearchBox_Paint(object sender, PaintEventArgs e)
         {
             var rect = e.ClipRectangle;
@@ -1902,13 +1901,11 @@ namespace Editor
             e.Graphics.DrawRectangle(new Pen(new SolidBrush(Color.Black)), rect);
         }
 
-        [ExcludeFromCodeCoverage]
         private void tableLayoutPanelSearchBox_MouseClick(object sender, MouseEventArgs e)
         {
             textBox_search.Focus();
         }
 
-        [ExcludeFromCodeCoverage]
         private void textBox_search_TextChanged(object sender, EventArgs e)
         {
             if (textBox_search.Text == "Поиск..." || textBox_search.Text == string.Empty)
@@ -1935,7 +1932,6 @@ namespace Editor
             textBoxSearchTypingTimer.Start();
         }
 
-        [ExcludeFromCodeCoverage]
         private void TextBoxSearchTypingTimer_Tick(object sender, EventArgs e)
         {
             if (textBoxSearchTypingTimer is null)
@@ -1951,7 +1947,6 @@ namespace Editor
             textBoxSearchTypingTimer.Stop();
         }
 
-        [ExcludeFromCodeCoverage]
         private void textBox_search_Enter(object sender, EventArgs e)
         {
             if (textBox_search.Text == "Поиск...")
@@ -1961,7 +1956,6 @@ namespace Editor
             }
         }
 
-        [ExcludeFromCodeCoverage]
         private void textBox_search_Leave(object sender, EventArgs e)
         {
             if (textBox_search.Text == string.Empty)
@@ -1971,7 +1965,6 @@ namespace Editor
             }
         }
 
-        [ExcludeFromCodeCoverage]
         private void UpdateModelFilter()
         {
             editorTView.UseFiltering = false;
@@ -1987,7 +1980,6 @@ namespace Editor
             }
         }
 
-        [ExcludeFromCodeCoverage]
         private void formatNumericUpDown_SearchSelectedItem_ValueChanged(object sender, EventArgs e)
         {
             var item = FoundTreeViewItemsList?.ElementAtOrDefault((int)formatNumericUpDown_SearchSelectedItem.Value - 1);
@@ -2002,7 +1994,6 @@ namespace Editor
             }
         }
 
-        [ExcludeFromCodeCoverage]
         private void RecursiveExpand(ITreeViewItem parent)
         {
             if (parent is null)
@@ -2017,7 +2008,6 @@ namespace Editor
         /// <summary>
         /// Быстрое выделение нескольких элементов
         /// </summary>
-        [ExcludeFromCodeCoverage]
         private void editorTView_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (editorTView.MouseMoveHitTest.Item is null)

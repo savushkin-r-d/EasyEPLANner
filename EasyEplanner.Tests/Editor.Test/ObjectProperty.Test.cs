@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Editor;
+using Moq;
 using NUnit.Framework;
 
 namespace Tests.Editor
@@ -417,6 +418,24 @@ namespace Tests.Editor
                 Assert.AreEqual(genericProperty.DefaultValue, property.DefaultValue);
                 Assert.AreEqual(genericProperty.NeedDisable, property.NeedDisable);
             });
+        }
+
+        [Test]
+        public void QuickMultiSelect()
+        {
+            var item1 = GetEmptyProperty();
+            var item2 = GetEmptyProperty();
+            var item3 = GetEmptyProperty();
+            var parentMock = new Mock<ITreeViewItem>();
+            parentMock.Setup(o => o.Items).Returns(new[] { item1, item2, item3 });
+
+            item1.Parent = parentMock.Object;
+            item2.Parent = parentMock.Object;
+            item3.Parent = parentMock.Object;
+
+            var multiselect = item2.QuickMultiSelect();
+
+            CollectionAssert.AreEqual(new List<ITreeViewItem>() { item1, item2, item3 }, multiselect);
         }
 
         private ObjectProperty GetEmptyProperty()

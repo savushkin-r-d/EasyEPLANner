@@ -83,7 +83,6 @@ namespace TechObject
             if (techObject.MarkToCut)
                 return InsertCuttedCopy(techObject);
 
-
             var clone = techObject.Clone(baseObject.GetTechObjectLocalNum,
                 InheritedTechObjects.LastOrDefault()?.TechNumber + 1 ?? 1,
                 techObjectManager.TechObjects.IndexOf(techObject) + 1,

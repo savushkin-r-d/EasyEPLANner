@@ -44,7 +44,14 @@ namespace TechObjectTests
             var baseTechObject = new BaseTechObject()
             {
                 EplanName = "BTO",
+                Name = "BTO_NAME",
             };
+            var baseTechObject_2 = new BaseTechObject()
+            {
+                EplanName = "BTO2",
+                Name = "BTO2_NAME",
+            };
+
             var baseObject = new BaseObject("BTO", techObjectManagerMock.Object);
 
             var techObject1 = new TechObject.TechObject("Танк", GetN => 1, 1, 2, "TANK", -1, "", "", baseTechObject);
@@ -52,7 +59,7 @@ namespace TechObjectTests
             techObject2.MarkToCut = true;
             techObject2.AddParent(baseObject);
 
-            var techObject3 = new TechObject.TechObject("Танк", GetN => 2, 2, 2, "TANK", -1, "", "", baseTechObject);
+            var techObject3 = new TechObject.TechObject("Танк", GetN => 2, 2, 2, "TANK", -1, "", "", baseTechObject_2);
             techObject3.MarkToCut = true;
 
             techObjects.Add(techObject1);
