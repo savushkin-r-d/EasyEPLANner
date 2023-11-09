@@ -464,9 +464,8 @@ namespace Editor
             this.editorTView.CellEditStarting += new BrightIdeasSoftware.CellEditEventHandler(this.editorTView_CellEditStarting);
             this.editorTView.FormatCell += new System.EventHandler<BrightIdeasSoftware.FormatCellEventArgs>(this.editorTView_FormatCell);
             this.editorTView.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.editorTView_ColumnWidthChanging);
-            this.editorTView.SelectedIndexChanged += new System.EventHandler(this.editorTView_SelectedIndexChanged);
+            this.editorTView.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.editorTView_ItemSelectionChanged);
             this.editorTView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.editorTView_KeyDown);
-            this.editorTView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.editorTView_MouseClick);
             this.editorTView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.editorTView_MouseDoubleClick);
             this.editorTView.MouseEnter += new System.EventHandler(this.editorTView_MouseEnter);
             this.editorTView.MouseLeave += new System.EventHandler(this.editorTView_MouseLeave);

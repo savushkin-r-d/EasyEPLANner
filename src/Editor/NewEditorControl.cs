@@ -13,6 +13,8 @@ using System.Text;
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Threading;
+using static System.Windows.Forms.LinkLabel;
+using TechObject;
 
 namespace Editor
 {
@@ -134,15 +136,11 @@ namespace Editor
         /// <returns>Активный элемент дерева.</returns>
         public ITreeViewItem GetActiveItem()
         {
-            if (editorTView.SelectedObject != null)
+            try
             {
-                if (editorTView.SelectedObject is ITreeViewItem)
-                {
-                    return editorTView.SelectedObject as ITreeViewItem;
-                }
+                return editorTView.SelectedObjects.Cast<ITreeViewItem>().ToList().SingleOrDefault();
             }
-
-            return null;
+            catch { return null; }
         }
 
         /// <summary>
@@ -664,47 +662,78 @@ namespace Editor
         /// </summary>
         private void editorTView_KeyDown(object sender, KeyEventArgs e)
         {
-            ITreeViewItem item = null;
-            var selectedItems = editorTView.SelectedObjects.Cast<ITreeViewItem>().ToList();
-            item = selectedItems.FirstOrDefault();
+            var items = GetActiveItems();
+            var item = GetActiveItem();
 
-            bool singleSelection = selectedItems.Count == 1;
+            bool singleSelection = item != null;
 
             switch (e.KeyCode)
             {
                 // Перемещение элемента вверх
-                case Keys.Up when e.Shift && singleSelection:
+                case Keys.Up when e.Control && singleSelection:
                     if (Editable)
                         MoveUpItem(item);
                     break;
 
                 // Перемещение элемента вниз
-                case Keys.Down when e.Shift && singleSelection:
+                case Keys.Down when e.Control && singleSelection:
                     if (Editable)
                         MoveDownItem(item);
                     break;
 
+                // Выделение элементов
+                case Keys.Up when e.Shift:
+                    if (items.FirstOrDefault() == editorTView.FocusedObject && items.Count > 1)
+                    {
+                        editorTView.SelectObjects(items.Take(items.Count - 1).ToList());
+                    }
+                    else
+                    {
+                        editorTView.SelectObject(items.FirstOrDefault());
+                        editorTView.SelectedIndex--;
+                        editorTView.SelectObjects(new[] { editorTView.SelectedObject as ITreeViewItem }.Concat(items).ToList());
+                    }
+                    break;
+
+                // Выделение элементов
+                case Keys.Down when e.Shift:
+                    if (items.LastOrDefault() == editorTView.FocusedObject && items.Count > 1)
+                    {
+                        editorTView.SelectObjects(items.Skip(1).ToList());
+                    }
+                    else
+                    {
+                        editorTView.SelectObject(items.LastOrDefault());
+                        editorTView.SelectedIndex++;
+                        editorTView.SelectObjects(items.Concat(new[] { editorTView.SelectedObject as ITreeViewItem }).ToArray());
+                    }
+                    break;
+
                 // Переход к предыдущему элементу
                 case Keys.Up:
-                    editorTView.SelectObject(selectedItems.FirstOrDefault(), true);
-                    if (selectedItems.Count == 0)
+                    if (singleSelection is false)
+                        editorTView.SelectObject(items.FirstOrDefault());
+                    if (items.Count == 0)
                         editorTView.SelectedIndex = editorTView.Items.Count - 1;
                     else
                         editorTView.SelectedIndex--;
+                    editorTView.FocusedObject = editorTView.SelectedObject;
                     break;
-
-                // Переходу к следующему элементу
+                
+                //// Переходу к следующему элементу
                 case Keys.Down:
-                    editorTView.SelectObject(selectedItems.LastOrDefault(), true);
-                    if (selectedItems.Count == 0)
+                    if (singleSelection is false)
+                        editorTView.SelectObject(items.LastOrDefault());
+                    if (items.Count == 0)
                         editorTView.SelectedIndex = 0;
                     else
                         editorTView.SelectedIndex++;
+                    editorTView.FocusedObject = editorTView.SelectedObject;
                     break;
 
                 // Копирование
                 case Keys.C when e.Control && Editable:
-                    CopyItem(selectedItems);
+                    CopyItem(items);
                     break;
 
                 // Вставка
@@ -714,7 +743,7 @@ namespace Editor
 
                 // Вырезать
                 case Keys.X when e.Control && Editable:
-                    CutItem(selectedItems);
+                    CutItem(items);
                     break;
 
                 // Замена
@@ -729,7 +758,7 @@ namespace Editor
 
                 // Удаление
                 case Keys.Delete when Editable:
-                    DeleteItems(selectedItems);
+                    DeleteItems(items);
                     break;
 
                 // Отмена вырезки
@@ -739,22 +768,24 @@ namespace Editor
 
                 // Окно справки по элементам
                 case Keys.F1 when singleSelection:
-                    var itemHelper = item as IHelperItem;
-                    string link = itemHelper.GetLinkToHelpPage();
-                    if (link == null)
+                    if (item is IHelperItem itemHelper)
                     {
-                        link = ProjectManager.GetInstance()
-                            .GetOstisHelpSystemMainPageLink();
+                        string link = itemHelper.GetLinkToHelpPage();
                         if (link == null)
                         {
-                            MessageBox.Show("Ошибка поиска адреса системы помощи");
-                            return;
+                            link = ProjectManager.GetInstance().GetOstisHelpSystemMainPageLink();
+                            if (link == null)
+                            {
+                                MessageBox.Show("Ошибка поиска адреса системы помощи");
+                                return;
+                            }
                         }
+                        Process.Start(link);
                     }
-                    Process.Start(link);
                     break;
 
-                default: return; // exit withot handled
+                default:
+                    return; // exit withot handled
             }
 
             e.Handled = true;
@@ -993,7 +1024,7 @@ namespace Editor
         }
 
         /// <summary>
-        /// Отменить вырезку объекта.
+        /// Отменить вырезку объектов.
         /// </summary>
         /// <param name="item"></param>
         private void CancelCut(object[] objects)
@@ -1005,34 +1036,14 @@ namespace Editor
 
             foreach (var item in items)
             {
-                if (item is null || item.MarkToCut is false)
+                if (item is null)
                     continue;
 
-                DisableCutting(treeViewItemsList.ToArray());
+                item.MarkToCut = false;
             }
 
             editorTView.RefreshObjects(items);
             copyItems = null;
-        }
-
-        /// <summary>
-        /// Снять флаг, что объект вырезан.
-        /// </summary>
-        private void DisableCutting(ITreeViewItem[] items)
-        {
-            foreach (var item in items)
-            {
-
-                if (item.MarkToCut)
-                {
-                    item.MarkToCut = false;
-                }
-
-                if (item.Items != null && item.Items.Length != 0)
-                {
-                    DisableCutting(item.Items);
-                }
-            }
         }
 
         /// <summary>
@@ -1538,75 +1549,53 @@ namespace Editor
         /// <summary>
         /// Обработка изменения выбранной строки.
         /// </summary>
-        private void editorTView_SelectedIndexChanged(object sender, EventArgs e)
+        private void editorTView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
-            //ITreeViewItem item = editorTView.SelectedObject as ITreeViewItem;
-            if (SelectedItems.Count <= 0 || noOnChange)
-            {
+            if (GetActiveItems().Count <= 0 || noOnChange)
                 return;
-            }
 
             editorTView.BeginUpdate();
 
             var devsDrawInfo = new List<DrawInfo>();
 
-            foreach (var item in SelectedItems)
+            var item = GetActiveItem();
+
+            DFrm.CheckShown();
+            if (edit_toolStripButton.Checked && DFrm.GetInstance().IsVisible() == true)
             {
-                if (edit_toolStripButton.Checked)
-                {
-                    DFrm.CheckShown();
-                    //Обновление списка устройств при его наличии.
-                    if (DFrm.GetInstance().IsVisible() == true)
-                    {
-                        if (item.IsUseDevList == false)
-                        {
-                            DFrm.CheckShown();
-                            if (DFrm.GetInstance().IsVisible())
-                            {
-                                DFrm.GetInstance().ShowNoDevices();
-                            }
-                        }
-                        else
-                        {
-                            DFrm.CheckShown();
-                            if (DFrm.GetInstance().IsVisible())
-                            {
-                                DFrm.GetInstance().ShowDisplayObjects(item, SetNewVal);
-                                editorTView.RefreshObjects(treeViewItemsList);
-                                HiglihtItems();
-                            }
-                        }
-                    }
-
-                    ModeFrm.CheckShown();
-                    if (ModeFrm.GetInstance().IsVisible() == true)
-                    {
-                        ITreeViewItem parentItem = GetParentBranch(item);
-                        ModeFrm.GetInstance().ShowModes(
-                            TechObject.TechObjectManager.GetInstance(), true,
-                            item.IsLocalRestrictionUse, parentItem,
-                            item, SetNewVal, true);
-                        ModeFrm.GetInstance().SelectDevices(item, SetNewVal);
-                        HiglihtItems();
-                    }
-                }
-
-                //Отображение (подсветка) участвующих в режиме устройств на карте
-                //Eplan'a.
-                if (drawDev_toolStripButton.Checked)
-                {
-                    ProjectManager.GetInstance().RemoveHighLighting();
-                    if (item.IsDrawOnEplanPage)
-                    {
-                        devsDrawInfo.AddRange(item.GetObjectToDrawOnEplanPage());
-                        //ProjectManager.GetInstance().SetHighLighting(
-                        //    item.GetObjectToDrawOnEplanPage());
-                    }
-                }
+                //Обновление списка устройств при его наличии.
+                if (item is null || item.IsUseDevList == false)
+                    DFrm.GetInstance().ShowNoDevices();
+                else
+                    DFrm.GetInstance().ShowDisplayObjects(item, SetNewVal, (e.Item is IAction) == false);
             }
 
+            ModeFrm.CheckShown();
+            if (edit_toolStripButton.Checked && ModeFrm.GetInstance().IsVisible() == true && item != null)
+            {
+                ITreeViewItem parentItem = GetParentBranch(item);
+                ModeFrm.GetInstance().ShowModes(
+                    TechObject.TechObjectManager.GetInstance(), true,
+                    item.IsLocalRestrictionUse, parentItem,
+                    item, SetNewVal, true);
+                ModeFrm.GetInstance().SelectDevices(item, SetNewVal);
+            }
+            
             if (drawDev_toolStripButton.Checked)
             {
+                //Отображение (подсветка) участвующих в режиме устройств на карте
+                //Eplan'a.
+                foreach (var itemDraw in GetActiveItems())
+                {
+
+                    if (drawDev_toolStripButton.Checked)
+                    {
+                        ProjectManager.GetInstance().RemoveHighLighting();
+                        if (itemDraw.IsDrawOnEplanPage)
+                            devsDrawInfo.AddRange(itemDraw.GetObjectToDrawOnEplanPage());
+                    }
+                }
+
                 ProjectManager.GetInstance().RemoveHighLighting();
                 ProjectManager.GetInstance().SetHighLighting(devsDrawInfo);
             }
@@ -1653,7 +1642,7 @@ namespace Editor
 
         private void deleteButton_Click(object sender, EventArgs e)
         {
-            List<ITreeViewItem> items = SelectedItems;
+            var items = GetActiveItems();
             if (items.Count > 0 && Editable == true)
             {
                 DeleteItems(items);
@@ -1662,15 +1651,15 @@ namespace Editor
 
         private void cutButton_Click(object sender, EventArgs e)
         {
-            if (SelectedItems.Count > 0 && Editable == true)
+            if (GetActiveItems().Count > 0 && Editable == true)
             {
-                CutItem(SelectedItems);
+                CutItem(GetActiveItems());
             }
         }
 
         private void copyButton_Click(object sender, EventArgs e)
         {
-            List<ITreeViewItem> items = editorTView.SelectedObjects.Cast<ITreeViewItem>().ToList();
+            List<ITreeViewItem> items = GetActiveItems();
             if (items?.Count > 0 && Editable == true)
             {
                 CopyItem(items);
@@ -1838,8 +1827,9 @@ namespace Editor
                 && copyItems != null && singleSelection;
             contextMenuStrip.Items[nameof(replaceToolStripMenuItem)]
                 .Enabled = Editable && item.IsReplaceable && copyItems != null 
-                && (copyItems.FirstOrDefault() as ITreeViewItem)?.MarkToCut is false 
-                && (copyItems.FirstOrDefault().GetType() == item.GetType()) 
+                && (copyItems.Count() == 1)
+                && (copyItems.SingleOrDefault() as ITreeViewItem)?.MarkToCut is false 
+                && (copyItems.SingleOrDefault().GetType() == item.GetType()) 
                 && singleSelection;
 
             // Возможность перемещения объектов
@@ -1855,7 +1845,7 @@ namespace Editor
             contextMenuStrip.Items[nameof(pasteToolStripMenuItem)]
                 .ToolTipText = string.Join("\n", copies?.Select(copy => (copy is null) ? null : $"{copy.DisplayText[0]} | {copy.DisplayText[1]}") ?? new List<string>());
             contextMenuStrip.Items[nameof(replaceToolStripMenuItem)]
-                .ToolTipText = string.Join("\n", copies?.Select(copy => (copy is null) ? null : $"{copy.DisplayText[0]} | {copy.DisplayText[1]}") ?? new List<string>());
+                .ToolTipText = contextMenuStrip.Items[nameof(pasteToolStripMenuItem)].ToolTipText;
         }
 
         [ExcludeFromCodeCoverage]
@@ -2025,34 +2015,9 @@ namespace Editor
         }
 
         /// <summary>
-        /// Выделение одного или нескольких элементов(Ctrl)
-        /// </summary>
-        private void editorTView_MouseClick(object sender, MouseEventArgs e)
-        {
-            editorTView.BeginUpdate();
-
-            var selectedItems = editorTView.SelectedObjects.Cast<ITreeViewItem>().ToList();
-
-            if (e.Button == MouseButtons.Right)
-            {
-                if (SelectedItems.SequenceEqual(selectedItems) is false)
-                {
-                    SelectedItems.Clear();
-                    SelectedItems.Add(selectedItems.SingleOrDefault());
-                }
-            }
-            else
-            {
-                SelectedItems = selectedItems;
-            }
-
-            editorTView.SelectObjects(SelectedItems);
-            editorTView.EndUpdate();
-        }
-
-        /// <summary>
         /// Быстрое выделение нескольких элементов
         /// </summary>
+        [ExcludeFromCodeCoverage]
         private void editorTView_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (editorTView.MouseMoveHitTest.Item is null)
