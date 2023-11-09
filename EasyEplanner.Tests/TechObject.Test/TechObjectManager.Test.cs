@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,7 +47,7 @@ namespace TechObjectTests
             Tank = new TechObject.TechObject("Танк", GetN => 1, 1, 2, "TANK", -1, "TANK1", "", baseTechObject);
             CreamTank = new TechObject.TechObject("Сливки танк", GetN => 2, 1, 3, "CREAM_TANK", -1, "CREAM_TANK1", "", baseTechObject);
             SkimmilkTank = new TechObject.TechObject("Обрат танк", GetN => 3, 1, 4, "SKIMMILK_TANK", -1, "SKIMMILK_TANK1", "", baseTechObject);
-
+            
 
             genericTechObjects.Add(genericTank);
             genericTechObjects.Add(genericCreamTank);
@@ -68,7 +68,7 @@ namespace TechObjectTests
         [Test]
         public void GetGenericTObject()
         {
-            Assert.Multiple(() => 
+            Assert.Multiple(() =>
             {
                 var genericTechObject = techObjectManager.GetGenericTObject(1);
                 Assert.AreSame(genericTank, genericTechObject);
@@ -84,7 +84,7 @@ namespace TechObjectTests
         [Test]
         public void GetTechObjectN_ByDisplayText()
         {
-            Assert.Multiple(() => 
+            Assert.Multiple(() =>
             {
                 var techObjectN = techObjectManager.GetTechObjectN("1. Танк №1 (#1)");
                 Assert.AreEqual(1, techObjectN);
@@ -115,6 +115,42 @@ namespace TechObjectTests
                 techObjectN = techObjectManager.GetTechObjectN("TANK", "CREAM_TANK", 2);
                 Assert.AreEqual(0, techObjectN);
             });
+        }
+
+        [Test]
+        public void GetTechObjectN_By_BaseObjectName_TechType_TechNumber()
+        {
+            Assert.Multiple(() =>
+            {
+                var techObjectN = techObjectManager.GetTechObjectN("TANK", 2, 1);
+                Assert.AreEqual(1, techObjectN);
+
+                techObjectN = techObjectManager.GetTechObjectN("TANK", 3, 1);
+                Assert.AreEqual(2, techObjectN);
+
+                techObjectN = techObjectManager.GetTechObjectN("TANK", 3, 0);
+                Assert.AreEqual(0, techObjectN);
+
+                techObjects.Add(new TechObject.TechObject("TANK", GetN => 4, 2, 2, "TANK", -1, "TANK2", "", null));
+                techObjectN = techObjectManager.GetTechObjectN("TANK", 3, 2);
+                Assert.AreEqual(0, techObjectN);
+            });
+        }
+
+        [TestCase(1, 2, 1)]
+        [TestCase(2, 3, 2)]
+        [TestCase(3, 2, 4)]
+        [TestCase(3, 3, 3)]
+        public void TypeAdjacentTObjectIdByTNum(int targetObjectId, int techNumber, int expectedResult)
+        {
+            var baseTechObject = new BaseTechObject()
+            {
+                EplanName = "TANK",
+            };
+            SkimmilkTank2 = new TechObject.TechObject("Обрат танк", GetN => 4, 2, 4, "SKIMMILK_TANK", -1, "SKIMMILK_TANK1", "", baseTechObject);
+            techObjects.Add(SkimmilkTank2);
+
+            Assert.AreEqual(expectedResult, techObjectManager.TypeAdjacentTObjectIdByTNum(targetObjectId, techNumber));
         }
 
         [Test]
@@ -211,5 +247,6 @@ namespace TechObjectTests
         private TechObject.TechObject Tank;
         private TechObject.TechObject CreamTank;
         private TechObject.TechObject SkimmilkTank;
+        private TechObject.TechObject SkimmilkTank2;
     }
 }

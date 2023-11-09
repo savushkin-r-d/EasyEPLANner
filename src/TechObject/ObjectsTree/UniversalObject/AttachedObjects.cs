@@ -1,5 +1,8 @@
-﻿using Editor;
+﻿using BrightIdeasSoftware;
+using Editor;
+using IO;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using TechObject.AttachedObjectStrategy;
 
@@ -304,20 +307,18 @@ namespace TechObject
             return res;
         }
 
-        private string GenerateAttachedObjectsString()
+        private string GenerateAttachedObjectsString(string attachedObjects)
         {
-            string value = Value ?? string.Empty;
-            if (value == string.Empty)
+            if (attachedObjects == string.Empty)
             {
-                return value;
+                return attachedObjects;
             }
 
-            var objectNums = value.Split(' ').Select(int.Parse);
+            var objectNums = attachedObjects.Split(' ').Select(int.Parse);
             var objectNames = new List<string>();
             foreach (var objNum in objectNums)
             {
-                TechObject findedObject = TechObjectManager.GetInstance()
-                    .GetTObject(objNum);
+                TechObject findedObject = techObjectManager.GetTObject(objNum);
                 if (findedObject != null)
                 {
                     string name = $"\"{findedObject.Name} " +
@@ -425,25 +426,28 @@ namespace TechObject
         {
             var res = new List<int>();
 
-            var value = genericAttachedObjects.Value;
+            var oldValue = Value.Split(' ').Where(num => num != string.Empty).Select(int.Parse).ToList();
+            var oldGenericValue = genericValue.Split(' ').Where(num => num != string.Empty).Select(int.Parse).ToList();
 
-            if (string.IsNullOrEmpty(value))
+            var newGenericValue = genericAttachedObjects.Value
+                .Split(' ').Where(num => num != string.Empty)
+                .Select(int.Parse).Select(idx => techObjectManager.TypeAdjacentTObjectIdByTNum(idx, owner.TechNumber)).ToList();
+           
+            genericValue = string.Join(" ", newGenericValue);
+
+            var op1 = oldValue.Except(oldGenericValue).ToList();
+            var op2 = newGenericValue.Except(op1).ToList();
+                
+            var value = op1.Union(op2).ToList(); 
+
+
+            if (value.Count <= 0)
             {
                 SetNewValues(res);
                 return;
             }
 
-            foreach (int index in genericAttachedObjects.Value.Split(' ').Select(int.Parse).ToList())
-            {
-                var manager = owner.TechObjectManagerInstance;
-                var techObject = manager.GetTObject(index);
-                var toNumber = manager.GetTechObjectN(techObject.BaseTechObject.EplanName, techObject.NameEplan, Owner.TechNumber);
-                if (toNumber > 0)
-                    res.Add(toNumber);
-                else res.Add(index);
-            }
-
-            SetNewValues(res);
+            SetNewValues(value);
         }
 
         public override string[] DisplayText
@@ -453,7 +457,7 @@ namespace TechObject
                 return new string[]
                 {
                         Name,
-                        GenerateAttachedObjectsString()
+                        GenerateAttachedObjectsString(Value ?? string.Empty)
                 };
             }
         }
@@ -513,6 +517,29 @@ namespace TechObject
                 return true;
             }
         }
+
+        public override IRenderer[] CellRenderer =>
+            new IRenderer[] { null, GenericAttachedObjectsRenderer };
+
+        /// <summary>
+        /// Подсветка устройств из типового объекта
+        /// </summary>
+        private HighlightTextRenderer GenericAttachedObjectsRenderer
+        {
+            get
+            {
+                genericDevicesRenderer.Filter.ContainsStrings =
+                    GenerateAttachedObjectsString(genericValue ?? string.Empty).Split(',').Select(obj => obj.Trim(' ', '"'));
+                return genericDevicesRenderer;
+            }
+        }
+
+        private readonly HighlightTextRenderer genericDevicesRenderer = new HighlightTextRenderer()
+        {
+            Filter = TextMatchFilter.Contains(Editor.Editor.GetInstance().EditorForm.editorTView, string.Empty),
+            FillBrush = new SolidBrush(Color.YellowGreen),
+            FramePen = new Pen(Color.White),
+        };
         #endregion
 
         public TechObject Owner
@@ -534,6 +561,14 @@ namespace TechObject
 
         private TechObject owner;
         private IAttachedObjectsStrategy strategy;
+
+        private static readonly ITechObjectManager techObjectManager = TechObjectManager.GetInstance();
+
+        /// <summary>
+        /// Значения объектов из типового объекта,
+        /// Vlue так же содержит эти значения
+        /// </summary>
+        private string genericValue = "";
     }
 
     namespace AttachedObjectStrategy

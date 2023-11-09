@@ -733,6 +733,9 @@ namespace EasyEplanner.Tests
             var deviceManagerMock = new Mock<IDeviceManager>();
 
             genericStep.GetActions[0] = genericActionMock.Object;
+            
+            genericStep.SetPar(2, 3);
+
 
             var actionMock = new Mock<IAction>();
             actionMock.Setup(a => a.UpdateOnGenericTechObject(It.IsAny<IAction>()))
@@ -749,6 +752,9 @@ namespace EasyEplanner.Tests
                 step.GetActions.RemoveRange(1, step.GetActions.Count - 1);
 
                 step.UpdateOnGenericTechObject(null);
+
+                Assert.AreEqual("2", step.TimeParam);
+                Assert.AreEqual("3", step.NextStepN);
             });
         }
     }

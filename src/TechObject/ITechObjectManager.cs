@@ -80,12 +80,29 @@ namespace TechObject
 
         /// <summary>
         /// Получить номер объекта по названию базового объекта, ОУ и тех. номеру
-        /// ОУ и тех. номеру
         /// </summary>
         /// <param name="baseObjectName"> Название базового объекта </param>
         /// <param name="nameEplan"> ОУ </param>
         /// <param name="techNumber"> тех. номер </param>
         int GetTechObjectN(string baseObjectName, string nameEplan, int techNumber);
+
+        /// <summary>
+        /// Получить номер объекта по названию базового объекта, тех. типу и тех. номеру
+        /// </summary>
+        /// <param name="baseObjectName"> Название базового объекта </param>
+        /// <param name="techType"> тех. тип </param>
+        /// <param name="techNumber"> тех. номер </param>
+        int GetTechObjectN(string baseObjectName, int techType, int techNumber);
+
+        /// <summary>
+        /// Получить номер смежного объекта: по типу целевого объекта и искомому тех.номеру
+        /// </summary>
+        /// <param name="targetObjectIndex">Целевой объект</param>
+        /// <param name="techNumber">Технологический номер</param>
+        /// <returns>
+        /// Смежный объект, если таковой имеется, иначе целевой объект
+        /// </returns>
+        int TypeAdjacentTObjectIdByTNum(int targetObjectIndex, int techNumber);
 
         /// <summary>
         /// Импорт объекта в проект.

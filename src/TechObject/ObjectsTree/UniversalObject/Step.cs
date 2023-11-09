@@ -37,10 +37,9 @@ namespace TechObject
 
             AddDefaultActions(isMainStep);
 
-            foreach (var action in actions)
+            foreach (var item in Items)
             {
-                (action as ITreeViewItem)
-                    .ValueChanged += (sender) => OnValueChanged(sender);
+                item.ValueChanged += (sender) => OnValueChanged(sender);
             }
         }
 
@@ -1051,6 +1050,12 @@ namespace TechObject
 
                 action.UpdateOnGenericTechObject(genericAction);
             }
+
+            if (genericStep.timeParam?.IsFilled ?? false)
+                timeParam?.UpdateOnGenericTechObject(genericStep.timeParam);
+
+            if (genericStep.nextStepN?.IsFilled ?? false)
+                nextStepN?.UpdateOnGenericTechObject(genericStep.nextStepN);
         }
 
         public bool Empty
