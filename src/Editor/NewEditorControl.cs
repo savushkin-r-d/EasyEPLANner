@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Configuration;
 using System.Collections.Generic;
 using System.Drawing;
@@ -1774,7 +1774,6 @@ namespace Editor
             if (item != null && Editable is true)
             {
                 MoveUpItem(item);
-                editorTView.SelectedIndex++;
             }
         }
 
@@ -1784,7 +1783,6 @@ namespace Editor
             if (item != null && Editable is true)
             {
                 MoveDownItem(item);
-                editorTView.SelectedIndex--;
             }
         }
 
