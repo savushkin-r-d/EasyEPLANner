@@ -520,6 +520,11 @@ namespace Editor
         {
             valueChanged?.Invoke(sender);
         }
+
+        public virtual List<ITreeViewItem> QuickMultiSelect()
+        {
+            return Parent?.Items?.Where(adjItem => adjItem.GetType() == GetType()).ToList();
+        }
         #endregion
 
         #region реализация IHelperItem

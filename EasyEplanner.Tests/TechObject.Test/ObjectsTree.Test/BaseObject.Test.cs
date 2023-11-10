@@ -287,5 +287,38 @@ namespace TechObjectTests
                 Assert.IsNull(baseObject.Cut(baseObject));
             });
         }
+
+        [Test]
+        public void Replace()
+        {
+            var techObjects = new List<TechObject.TechObject>();
+
+            var techObject1 = new TechObject.TechObject("1", GetN => 1, 1, 2, "TANK", -1, "", string.Empty, new BaseTechObject());
+            var techObject2 = new TechObject.TechObject("2", GetN => 2, 2, 3, "TANK_COPY", -1, "", string.Empty, new BaseTechObject());
+
+            techObjects.Add(techObject1);
+            techObjects.Add(techObject2);
+
+            var techObjectManagerMock = new Mock<ITechObjectManager>();
+            techObjectManagerMock.Setup(obj => obj.TechObjects).Returns(techObjects);
+
+            var baseObject = new BaseObject("bto", techObjectManagerMock.Object);
+
+            var baseTechObjectField = typeof(BaseObject).GetField("baseTechObject",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            baseTechObjectField.SetValue(baseObject, new BaseTechObject());
+
+            baseObject.AddObject(techObject1);
+            baseObject.TechObjects.Add(techObject1);
+
+            baseObject.Replace(techObject1, techObject2);
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(techObject2.TechType, baseObject.TechObjects[0].TechType);
+                Assert.AreEqual(techObject2.NameEplan, baseObject.TechObjects[0].NameEplan);
+            });
+        }
     }
 }

@@ -333,7 +333,7 @@ namespace Editor
             this.moveUpButton.Name = "moveUpButton";
             this.moveUpButton.Size = new System.Drawing.Size(24, 26);
             this.moveUpButton.Text = "toolStripButton2";
-            this.moveUpButton.ToolTipText = "Переместить вверх (Shift + Up)";
+            this.moveUpButton.ToolTipText = "Переместить вверх (Ctrl + Up)";
             this.moveUpButton.Click += new System.EventHandler(this.moveUpButton_Click);
             // 
             // moveDownButton
@@ -344,7 +344,7 @@ namespace Editor
             this.moveDownButton.Name = "moveDownButton";
             this.moveDownButton.Size = new System.Drawing.Size(24, 26);
             this.moveDownButton.Text = "toolStripButton1";
-            this.moveDownButton.ToolTipText = "Переместить вниз (Shift + Down)";
+            this.moveDownButton.ToolTipText = "Переместить вниз (Ctrl + Down)";
             this.moveDownButton.Click += new System.EventHandler(this.moveDownButton_Click);
             // 
             // toolStripSeparator3
@@ -436,7 +436,6 @@ namespace Editor
             this.editorTView.LargeImageList = this.imageList1;
             this.editorTView.Location = new System.Drawing.Point(3, 28);
             this.editorTView.MinimumSize = new System.Drawing.Size(200, 250);
-            this.editorTView.MultiSelect = false;
             this.editorTView.Name = "editorTView";
             this.editorTView.OwnerDrawnHeader = true;
             this.editorTView.PersistentCheckBoxes = false;
@@ -465,8 +464,9 @@ namespace Editor
             this.editorTView.CellEditStarting += new BrightIdeasSoftware.CellEditEventHandler(this.editorTView_CellEditStarting);
             this.editorTView.FormatCell += new System.EventHandler<BrightIdeasSoftware.FormatCellEventArgs>(this.editorTView_FormatCell);
             this.editorTView.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.editorTView_ColumnWidthChanging);
-            this.editorTView.SelectedIndexChanged += new System.EventHandler(this.editorTView_SelectedIndexChanged);
+            this.editorTView.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.editorTView_ItemSelectionChanged);
             this.editorTView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.editorTView_KeyDown);
+            this.editorTView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.editorTView_MouseDoubleClick);
             this.editorTView.MouseEnter += new System.EventHandler(this.editorTView_MouseEnter);
             this.editorTView.MouseLeave += new System.EventHandler(this.editorTView_MouseLeave);
             // 
@@ -484,7 +484,7 @@ namespace Editor
             this.moveUpToolStripMenuItem,
             this.moveDownToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(231, 192);
+            this.contextMenuStrip.Size = new System.Drawing.Size(226, 192);
             this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
             // 
             // createToolStripMenuItem
@@ -557,8 +557,8 @@ namespace Editor
             // 
             this.moveUpToolStripMenuItem.Image = global::EasyEPlanner.Properties.Resources.moveup;
             this.moveUpToolStripMenuItem.Name = "moveUpToolStripMenuItem";
-            this.moveUpToolStripMenuItem.ShortcutKeyDisplayString = "Shift + ↑";
-            this.moveUpToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.moveUpToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl + ↑";
+            this.moveUpToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.moveUpToolStripMenuItem.Text = "Переместить вверх";
             this.moveUpToolStripMenuItem.Click += new System.EventHandler(this.moveUpButton_Click);
             // 
@@ -566,8 +566,8 @@ namespace Editor
             // 
             this.moveDownToolStripMenuItem.Image = global::EasyEPlanner.Properties.Resources.movedown;
             this.moveDownToolStripMenuItem.Name = "moveDownToolStripMenuItem";
-            this.moveDownToolStripMenuItem.ShortcutKeyDisplayString = "Shift + ↓";
-            this.moveDownToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
+            this.moveDownToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl + ↓";
+            this.moveDownToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.moveDownToolStripMenuItem.Text = "Переместить вниз";
             this.moveDownToolStripMenuItem.Click += new System.EventHandler(this.moveDownButton_Click);
             // 

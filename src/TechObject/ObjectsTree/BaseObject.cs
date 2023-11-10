@@ -452,8 +452,13 @@ namespace TechObject
                 var newObject = CloneObject(copyObject, newN, oldObjNum,
                     newObjNum);
 
+                // Список тех. объектов вне групп
+                int toindex = techObjects.IndexOf(techObject);
+                techObjects.Remove(techObject);
+                techObjects.Insert(toindex, newObject);
+
+                // Список локальных объектов
                 int localIndex = localObjects.IndexOf(techObject);
-                // Работа со списком в дереве
                 localObjects.Remove(techObject);
                 localObjects.Insert(localIndex, newObject);
 

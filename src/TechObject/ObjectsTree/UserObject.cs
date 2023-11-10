@@ -3,7 +3,7 @@ using Editor;
 
 namespace TechObject
 {
-    class UserObject : TreeViewItem, IBaseObjChangeable
+    public class UserObject : TreeViewItem, IBaseObjChangeable
     {
         public UserObject(ITechObjectManager techObjectManager)
         {
@@ -199,6 +199,9 @@ namespace TechObject
             techObjParent.Cut(techObj);
 
             objects.Add(techObj);
+
+            techObj.AddParent(this);
+
             techObj.SetGetLocalN(GetTechObjectLocalNum);
             techObj.InitBaseTechObject(baseTechObject);
 

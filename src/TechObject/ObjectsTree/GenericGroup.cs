@@ -76,9 +76,12 @@ namespace TechObject
             if (techObject is null)
                 return null;
 
+            if (techObject.BaseTechObject.Name != genericTechObject.BaseTechObject.Name 
+                && techObject.BaseTechObject != null)
+                return null;
+
             if (techObject.MarkToCut)
                 return InsertCuttedCopy(techObject);
-
 
             var clone = techObject.Clone(baseObject.GetTechObjectLocalNum,
                 InheritedTechObjects.LastOrDefault()?.TechNumber + 1 ?? 1,
