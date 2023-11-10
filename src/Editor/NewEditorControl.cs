@@ -903,8 +903,6 @@ namespace Editor
         /// <param name="item">Вставляемый элемент</param>
         private void PasteItem(ITreeViewItem item)
         {
-            var a = copyItems?.Count() <= 0;
-
             if (item.IsInsertableCopy is false || (!copyItems?.Any() ?? true))
                 return;
 
@@ -1569,8 +1567,6 @@ namespace Editor
                 return;
 
             editorTView.BeginUpdate();
-
-            var devsDrawInfo = new List<DrawInfo>();
 
             var item = GetActiveItem();
 
