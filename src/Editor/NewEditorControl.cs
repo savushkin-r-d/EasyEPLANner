@@ -636,18 +636,24 @@ namespace Editor
         /// </summary>
         private void HiglihtItems()
         {
-            //Отображение (подсветка) участвующих в операции устройств на карте
-            //Eplan'a.
+            var drawInfoList = new List<DrawInfo>();
+
             if (drawDev_toolStripButton.Checked)
             {
-                ITreeViewItem item = GetActiveItem();
+                //Отображение (подсветка) участвующих в режиме устройств на карте
+                //Eplan'a.
+                foreach (var itemDraw in GetActiveItems())
+                {
+                    if (drawDev_toolStripButton.Checked is false)
+                        continue;
+                        
+                    ProjectManager.GetInstance().RemoveHighLighting();
+                    if (itemDraw.IsDrawOnEplanPage)
+                        drawInfoList.AddRange(itemDraw.GetObjectToDrawOnEplanPage());
+                }
 
                 ProjectManager.GetInstance().RemoveHighLighting();
-                if (item != null && item.IsDrawOnEplanPage)
-                {
-                    ProjectManager.GetInstance().SetHighLighting(
-                        item.GetObjectToDrawOnEplanPage());
-                }
+                ProjectManager.GetInstance().SetHighLighting(drawInfoList);
             }
         }
 
@@ -846,6 +852,8 @@ namespace Editor
             bool permissionToDelete = false;
             bool isDelete = false;
             bool itemsDeleted = false;
+
+            editorTView.SelectObject(items.FirstOrDefault(), true);
 
             foreach (var item in items)
             {
@@ -1586,25 +1594,8 @@ namespace Editor
                     item, SetNewVal, true);
                 ModeFrm.GetInstance().SelectDevices(item, SetNewVal);
             }
-            
-            if (drawDev_toolStripButton.Checked)
-            {
-                //Отображение (подсветка) участвующих в режиме устройств на карте
-                //Eplan'a.
-                foreach (var itemDraw in GetActiveItems())
-                {
 
-                    if (drawDev_toolStripButton.Checked)
-                    {
-                        ProjectManager.GetInstance().RemoveHighLighting();
-                        if (itemDraw.IsDrawOnEplanPage)
-                            devsDrawInfo.AddRange(itemDraw.GetObjectToDrawOnEplanPage());
-                    }
-                }
-
-                ProjectManager.GetInstance().RemoveHighLighting();
-                ProjectManager.GetInstance().SetHighLighting(devsDrawInfo);
-            }
+            HiglihtItems();
 
             editorTView.EndUpdate();
             editorTView.Focus();
