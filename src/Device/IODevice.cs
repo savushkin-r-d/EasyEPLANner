@@ -510,7 +510,7 @@ namespace EplanDevice
             {
                 if (par.Value == null)
                 {
-                    res += string.Format("\"{0}\" : не задан параметр \"{1}\".\n",
+                    res += string.Format("\"{0}\" : не задан параметр (доп. поле 3) \"{1}\".\n",
                         name, par.Key.Name);
                 }
             }
@@ -519,7 +519,7 @@ namespace EplanDevice
             {
                 if (par.Value == null)
                 {
-                    res += string.Format("\"{0}\" : не задан рабочий параметр \"{1}\".\n",
+                    res += string.Format("\"{0}\" : не задан рабочий параметр (доп. поле 5) \"{1}\".\n",
                         name, par.Key);
                 }
             }
@@ -528,7 +528,7 @@ namespace EplanDevice
             {
                 if (prop.Value == null)
                 {
-                    res += string.Format("\"{0}\" : не задано свойство \"{1}\".\n",
+                    res += string.Format("\"{0}\" : не задано свойство (доп. поле 4) \"{1}\".\n",
                         name, prop.Key);
                 }
             }

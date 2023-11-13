@@ -255,7 +255,7 @@ namespace Tests.EplanDevices
             IODevice dev = new AO("KOAG4AO1", "+KOAG4-AO1", "Test device", 1, "KOAG", 4);
             dev.SetSubType("AO");
 
-            string expectedResult = "\"KOAG4AO1\" : не привязанный канал  AO \"\".\n\"KOAG4AO1\" : не задан параметр \"P_MIN_V\".\n\"KOAG4AO1\" : не задан параметр \"P_MAX_V\".\n";
+            string expectedResult = "\"KOAG4AO1\" : не привязанный канал  AO \"\".\n\"KOAG4AO1\" : не задан параметр (доп. поле 3) \"P_MIN_V\".\n\"KOAG4AO1\" : не задан параметр (доп. поле 3) \"P_MAX_V\".\n";
 
             Assert.AreEqual(expectedResult, dev.Check());
         }
