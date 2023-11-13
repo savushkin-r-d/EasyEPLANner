@@ -604,6 +604,26 @@ namespace TechObject
             }
         }
 
+        public void CreteGenericByTechObjects(List<ModesManager> modesManagers)
+        {
+            var refModesManagerModes = modesManagers.OrderBy(manager => manager.Modes.Count).FirstOrDefault()?.modes;
+
+            foreach (var modeIndex in Enumerable.Range(0, refModesManagerModes.Count))
+            {
+                var refMode = refModesManagerModes[modeIndex];
+                foreach (var managerIndex in Enumerable.Range(0, modesManagers.Count)) 
+                {
+                    var mode = modesManagers.ElementAtOrDefault(managerIndex)?.modes.ElementAtOrDefault(modeIndex);
+                    if (mode is null || mode.BaseOperation.LuaName != refMode.BaseOperation.LuaName)
+                        return;
+                }
+
+                var newGenericMode = AddMode(refMode.Name, refMode.BaseOperation.Name);
+                newGenericMode.CreteGenericByTechObjects(modesManagers.Select(manager => manager.modes[modeIndex]).ToList());
+                // 1 1 1 1
+            }
+        }
+
         /// <summary> Список операций. </summary>
         private List<Mode> modes;
         /// <summary> Технологический объект. </summary>

@@ -1058,6 +1058,22 @@ namespace TechObject
                 nextStepN?.UpdateOnGenericTechObject(genericStep.nextStepN);
         }
 
+        public void CreteGenericByTechObjects(List<Step> steps)
+        {
+            foreach (var actionIndex in Enumerable.Range(0, GetActions.Count))
+            {
+                GetActions[actionIndex]
+                    .CreteGenericByTechObjects(steps.Select(step => step.GetActions[actionIndex]).ToList());
+            }
+
+            var refStep = steps.FirstOrDefault();
+            if (steps.TrueForAll(step => step.timeParam != null && step.timeParam.Value == refStep.timeParam.Value))
+                timeParam?.SetNewValue(refStep.timeParam.Value);
+
+            if (steps.TrueForAll(step => step.nextStepN != null && step.nextStepN.Value == refStep.nextStepN.Value))
+                nextStepN?.SetNewValue(refStep.nextStepN.Value);
+        }
+
         public bool Empty
         {
             get

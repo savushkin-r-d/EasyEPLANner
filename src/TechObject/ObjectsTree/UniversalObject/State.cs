@@ -21,7 +21,7 @@ namespace TechObject
         {
             get
             {
-                if (NeedMainStep)
+                if (MissingMainStep)
                 {
                    modeStep = AddNewStepToItems(true);
                    modeStep.AddParent(this);
@@ -61,6 +61,8 @@ namespace TechObject
             Type = stateType;
             this.owner = owner;
             steps = new List<Step>();
+
+            NeedMainStep = needMainStep;
 
             if (needMainStep)
             {
@@ -182,9 +184,9 @@ namespace TechObject
         /// <param name="baseStepLuaName">Имя базового шага</param>
         public Step AddStep(string stepName, string baseStepLuaName)
         {
-            if (NeedMainStep)
+            if (MissingMainStep)
             {
-                modeStep = AddNewStepToItems(NeedMainStep);
+                modeStep = AddNewStepToItems(MissingMainStep);
                 modeStep.AddParent(this);
             }
 
@@ -334,8 +336,7 @@ namespace TechObject
             var step = child as Step;
             if (step != null)
             {
-                bool ignoreDeleting = steps.IndexOf(step) == 0 &&
-                    steps.First().Owner.Type == StateType.RUN;
+                bool ignoreDeleting = steps.IndexOf(step) == 0 && NeedMainStep;
                 if (ignoreDeleting)
                 {
                     return false;
@@ -468,9 +469,9 @@ namespace TechObject
 
         override public ITreeViewItem Insert()
         {
-            if (NeedMainStep)
+            if (MissingMainStep)
             {
-                modeStep = AddNewStepToItems(NeedMainStep);
+                modeStep = AddNewStepToItems(MissingMainStep);
                 modeStep.AddParent(this);
 
                 return modeStep;
@@ -572,6 +573,31 @@ namespace TechObject
             }
         }
 
+        public void CreteGenericByTechObjects(List<State> states)
+        {
+            var refState = states.OrderBy(state => state.Steps.Count).FirstOrDefault();
+
+            foreach (var stepIndex in Enumerable.Range(0, refState.steps.Count))
+            {
+                var refStep = refState.steps[stepIndex];
+                foreach (var stateIndex in Enumerable.Range(0, states.Count))
+                {
+                    var step = states.ElementAtOrDefault(stateIndex)?.steps.ElementAtOrDefault(stepIndex);
+                    if (step is null || step.GetBaseStepName() != refStep.GetBaseStepName())
+                        return;
+                }
+
+                Step newGenericStep;
+                if (stepIndex == 0 && MissingMainStep is false)
+                    newGenericStep = Steps[0];
+                else
+                    newGenericStep = AddStep(refStep.GetStepName(), refStep.GetBaseStepLuaName());
+
+                newGenericStep
+                    .CreteGenericByTechObjects(states.Select(state => state.Steps[stepIndex]).ToList());
+            }
+        }
+
         public bool Empty
         {
             get
@@ -588,15 +614,14 @@ namespace TechObject
         }
 
         /// <summary>
-        /// Нужен главный шаг (Во время операции)
+        /// Отсутствует главный шаг (Во время операции)
         /// </summary>
-        private bool NeedMainStep
-        {
-            get
-            {
-                return modeStep == null || Items.Count() == 0;
-            }
-        }
+        public bool MissingMainStep => modeStep == null || Items.Count() == 0;
+
+        /// <summary>
+        /// Нужен главный шаг
+        /// </summary>
+        public bool NeedMainStep { get; private set; }
 
         /// <summary>
         /// Тип состояния

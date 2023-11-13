@@ -433,6 +433,26 @@ namespace TechObject
             }
         }
 
+        public void CreteGenericByTechObjects(List<Params> paramsList)
+        {
+            var refParams = paramsList.OrderBy(pars => pars.parameters.Count).FirstOrDefault();
+
+            foreach (var parId in Enumerable.Range(0, refParams.parameters.Count))
+            {
+                var refParameter = refParams.parameters[parId];
+                foreach (var paramsId in Enumerable.Range(0, paramsList.Count))
+                {
+                    var parameter = paramsList[paramsId].parameters[parId];
+                    if (refParameter.GetName() != parameter.GetName()
+                        || refParameter.GetNameLua() != parameter.GetNameLua())
+                        return;
+                }
+
+                var newGenericParam = AddParam(new Param(GetIdx, refParameter.GetName(), false, 0, "", refParameter.GetNameLua(), true));   
+                newGenericParam.CreteGenericByTechObjects(paramsList.Select(pars => pars.parameters[parId]).ToList());
+            }
+        }
+
         public override bool ShowWarningBeforeDelete
         {
             get

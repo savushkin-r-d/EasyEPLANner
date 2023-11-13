@@ -765,6 +765,14 @@ namespace TechObject
             baseOperation.SetGenericExtraProperties(genericMode.BaseOperation.Properties);
         }
 
+        public void CreteGenericByTechObjects(List<Mode> modes)
+        {
+            foreach (int stateIndex in Enum.GetValues(typeof(State.StateType)))
+            {
+                this[stateIndex].CreteGenericByTechObjects(modes.Select(mode => mode[stateIndex]).ToList());
+            }
+        }
+
         public static Editor.IEditor TechObjectEditor { get; set; } = Editor.Editor.GetInstance(); 
 
         private GetN getN;

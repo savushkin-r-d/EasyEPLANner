@@ -320,5 +320,119 @@ namespace TechObjectTests
                 Assert.AreEqual(techObject2.NameEplan, baseObject.TechObjects[0].NameEplan);
             });
         }
+
+        [OneTimeTearDown]
+        public void CreateGenericTearDown()
+        {
+            var baseTechObjectManagerInstanceField = typeof(BaseTechObjectManager).GetField("baseTechObjectManager",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+            baseTechObjectManagerInstanceField.SetValue(null, null);
+        }
+
+        [Test]
+        public void CreateNewGenericGroup()
+        {
+            BaseTechObjectManager.GetInstance().AddBaseObject("BaseTechObjectName", "BaseTechObjectName", 2,
+                "basicName", "bindingName", false, "luaModuleName", "monitorName", false);
+
+            var techObjects = new List<TechObject.TechObject>();
+            var genericTechObjects = new List<TechObject.GenericTechObject>();
+
+            var techObjectManagerMock = new Mock<ITechObjectManager>();
+            techObjectManagerMock.Setup(obj => obj.TechObjects).Returns(techObjects);
+            techObjectManagerMock.Setup(obj => obj.GenericTechObjects).Returns(genericTechObjects);
+
+            var baseObject = new BaseObject("BaseTechObjectName", techObjectManagerMock.Object);
+
+            var newGenericGroup =  baseObject.CreateNewGenericGroup();
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreSame((newGenericGroup as GenericGroup).GenericTechObject, genericTechObjects[0]);
+            });
+
+
+
+            var baseTechObjectManagerInstanceField = typeof(BaseTechObjectManager).GetField("baseTechObjectManager",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+            baseTechObjectManagerInstanceField.SetValue(null, null);
+        }
+
+        [Test]
+        public void CreateGenericGroup_FromManyTechObjects()
+        {
+            var baseTechObject = BaseTechObjectManager.GetInstance().AddBaseObject("BaseTechObjectName", "BaseTechObjectName", 2,
+                "basicName", "bindingName", false, "luaModuleName", "monitorName", false);
+            baseTechObject.Equipment.Add(new EquipmentParameter("equip", "оборудование", "LS1"));
+
+            var techObjects = new List<TechObject.TechObject>();
+            var genericTechObjects = new List<TechObject.GenericTechObject>();
+
+            // Определяем тех. объекты
+            var name = "Танк";
+            var techType = 2;
+            var nameEplan = "TANK";
+            var cooperParamNumber = 1;
+            var nameBC = "Tank";
+
+            var techObject1 = new TechObject.TechObject(name, GetN => 1, 1, techType, nameEplan, cooperParamNumber, $"{nameBC}1",
+                string.Empty, BaseTechObjectManager.GetInstance().GetTechObjectCopy("BaseTechObjectName"));
+
+            var techObject2 = new TechObject.TechObject(name, GetN => 2, 2, techType, nameEplan, cooperParamNumber, $"{nameBC}2",
+                string.Empty, BaseTechObjectManager.GetInstance().GetTechObjectCopy("BaseTechObjectName"));
+
+            // Параметры тех. объектов
+            var expT1Par1 =  techObject1.GetParamsManager().AddFloatParam("параметр 1", 1, "g", "par_1");
+            var expT1Par2 = techObject1.GetParamsManager().AddFloatParam("параметр 2", 2, "g", "par_2");
+            techObject1.GetParamsManager().AddFloatParam("параметр 3", 1, "g", "WRONG_LUA_NAME");
+
+            var expT2Par1 = techObject2.GetParamsManager().AddFloatParam("параметр 1", 1, "g", "par_1");
+            var expT2Par2 = techObject2.GetParamsManager().AddFloatParam("параметр 2", 1, "othermeter", "par_2");
+            techObject2.GetParamsManager().AddFloatParam("параметр 3", 1, "g", "par_3");
+
+            // Оборудование тех. объектов
+            //techObject1.Equipment.SetEquipmentValue("equip", "LS2");
+            //techObject2.Equipment.SetEquipmentValue("equip", "LS2");
+
+
+            // Мок менеджера тех. объектов
+            var techObjectManagerMock = new Mock<ITechObjectManager>();
+            techObjectManagerMock.Setup(obj => obj.TechObjects).Returns(techObjects);
+            techObjectManagerMock.Setup(obj => obj.GenericTechObjects).Returns(genericTechObjects);
+
+            // Создание базового объекта и тестирование метода
+            var baseObject = new BaseObject("BaseTechObjectName", techObjectManagerMock.Object);
+
+            var newGenericGroup = baseObject.CreateGenericGroup(new List<TechObject.TechObject>() { techObject1, techObject2 }) as GenericGroup;
+            var newGenericTechObject = newGenericGroup.GenericTechObject;
+
+            Assert.Multiple(() =>
+            {
+                // Данные объекта
+                Assert.IsTrue(newGenericGroup.DisplayText[0].Contains(name));
+                Assert.AreEqual(name, newGenericTechObject.Name);
+                Assert.AreEqual(techType, newGenericTechObject.TechType);
+                Assert.AreEqual(nameEplan, newGenericTechObject.NameEplan);
+                Assert.AreEqual(cooperParamNumber, newGenericTechObject.CooperParamNumber);
+                Assert.AreEqual(nameBC, newGenericTechObject.NameBC);
+
+                // Параметры
+                var parameters = (newGenericTechObject.GetParamsManager().Items[0] as Params).Items.Cast<Param>().ToList();
+                Assert.AreEqual(2, parameters.Count());
+                Assert.AreEqual(expT1Par1.GetName(), parameters[0].GetName());
+                Assert.AreEqual(expT1Par2.GetName(), parameters[1].GetName());
+                Assert.AreEqual(expT1Par1.GetNameLua(), parameters[0].GetNameLua());
+                Assert.AreEqual(expT1Par2.GetNameLua(), parameters[1].GetNameLua());
+                Assert.AreEqual(expT1Par1.GetValue(), parameters[0].GetValue());
+                Assert.AreEqual("-", parameters[1].GetValue());
+                Assert.AreEqual(expT1Par1.GetMeter(), parameters[0].GetMeter());
+                Assert.AreEqual("", parameters[1].GetMeter());
+                Assert.AreEqual(expT1Par1.GetOperationN(), parameters[0].GetOperationN());
+                Assert.AreEqual("-1", parameters[1].GetOperationN());
+
+                // Оборудование
+                Assert.AreEqual("LS1", (newGenericTechObject.Equipment.Items[0] as EquipmentParameter).Value);
+            });
+        }
     }
 }

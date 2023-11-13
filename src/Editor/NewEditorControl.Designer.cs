@@ -1,4 +1,4 @@
-﻿using System.Windows.Forms;
+using System.Windows.Forms;
 
 namespace Editor
     {
@@ -63,6 +63,8 @@ namespace Editor
             this.editorTView = new BrightIdeasSoftware.TreeListView();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.createToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uniteToGenericToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createGenericToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -477,6 +479,8 @@ namespace Editor
             // 
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.createToolStripMenuItem,
+            this.uniteToGenericToolStripMenuItem,
+            this.createGenericToolStripMenuItem,
             this.deleteToolStripMenuItem,
             this.toolStripSeparator5,
             this.cutToolStripMenuItem,
@@ -487,7 +491,7 @@ namespace Editor
             this.moveUpToolStripMenuItem,
             this.moveDownToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(226, 192);
+            this.contextMenuStrip.Size = new System.Drawing.Size(225, 236);
             this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
             // 
             // createToolStripMenuItem
@@ -499,6 +503,28 @@ namespace Editor
             this.createToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.createToolStripMenuItem.Text = "Создать";
             this.createToolStripMenuItem.Click += new System.EventHandler(this.insertButton_Click);
+            // 
+            // uniteToGenericToolStripMenuItem
+            // 
+            this.uniteToGenericToolStripMenuItem.Image = global::EasyEPlanner.Properties.Resources.group;
+            this.uniteToGenericToolStripMenuItem.Name = "uniteToGenericToolStripMenuItem";
+            this.uniteToGenericToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
+            this.uniteToGenericToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.uniteToGenericToolStripMenuItem.Text = "Сгруппировать";
+            this.uniteToGenericToolStripMenuItem.ToolTipText = "Сгруппировать";
+            this.uniteToGenericToolStripMenuItem.Visible = false;
+            this.uniteToGenericToolStripMenuItem.Click += new System.EventHandler(this.uniteToGenericToolStripMenuItem_Click);
+            // 
+            // createGenericToolStripMenuItem
+            // 
+            this.createGenericToolStripMenuItem.Image = global::EasyEPlanner.Properties.Resources.generic;
+            this.createGenericToolStripMenuItem.Name = "createGenericToolStripMenuItem";
+            this.createGenericToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Insert)));
+            this.createGenericToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.createGenericToolStripMenuItem.Text = "Создать типовой...";
+            this.createGenericToolStripMenuItem.ToolTipText = "Создать типовой объект";
+            this.createGenericToolStripMenuItem.Visible = false;
+            this.createGenericToolStripMenuItem.Click += new System.EventHandler(this.createGenericToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem
             // 
@@ -561,8 +587,9 @@ namespace Editor
             this.moveUpToolStripMenuItem.Image = global::EasyEPlanner.Properties.Resources.moveup;
             this.moveUpToolStripMenuItem.Name = "moveUpToolStripMenuItem";
             this.moveUpToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl + ↑";
-            this.moveUpToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
-            this.moveUpToolStripMenuItem.Text = "Переместить вверх";
+            this.moveUpToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.moveUpToolStripMenuItem.Text = "Переместить";
+            this.moveUpToolStripMenuItem.ToolTipText = "Переместить вверх";
             this.moveUpToolStripMenuItem.Click += new System.EventHandler(this.moveUpButton_Click);
             // 
             // moveDownToolStripMenuItem
@@ -570,8 +597,9 @@ namespace Editor
             this.moveDownToolStripMenuItem.Image = global::EasyEPlanner.Properties.Resources.movedown;
             this.moveDownToolStripMenuItem.Name = "moveDownToolStripMenuItem";
             this.moveDownToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl + ↓";
-            this.moveDownToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
-            this.moveDownToolStripMenuItem.Text = "Переместить вниз";
+            this.moveDownToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
+            this.moveDownToolStripMenuItem.Text = "Переместить";
+            this.moveDownToolStripMenuItem.ToolTipText = "Переместить вниз";
             this.moveDownToolStripMenuItem.Click += new System.EventHandler(this.moveDownButton_Click);
             // 
             // toolStripTableLayoutPanel
@@ -1021,5 +1049,7 @@ namespace Editor
         private ToolStripMenuItem settingMenuItem_search;
         private EditorControls.FormatNumericUpDown formatNumericUpDown_SearchSelectedItem;
         private TableLayoutPanel mainTableLayoutPanel;
+        private ToolStripMenuItem createGenericToolStripMenuItem;
+        private ToolStripMenuItem uniteToGenericToolStripMenuItem;
     }
     }

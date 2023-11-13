@@ -678,6 +678,16 @@ namespace Editor
                     ReplaceItem(item);
                     break;
 
+                // Объеденить в группу с типовым объектом
+                case Keys.G when e.Control && Editable:
+                    uniteToGenericToolStripMenuItem_Click(null, null);
+                    break;
+
+                // Создание новой группы с типовым объектом
+                case Keys.Insert when e.Control && Editable && singleSelection:
+                    createGenericToolStripMenuItem_Click(null, null);
+                    break;
+
                 // Создание нового элемента
                 case Keys.Insert when Editable && singleSelection:
                     CreateItem(item);
@@ -1706,6 +1716,28 @@ namespace Editor
             }
         }
 
+        private void uniteToGenericToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var items = GetActiveItems();
+            var baseObject = items.FirstOrDefault()?.Parent as BaseObject;
+            if ((items?.TrueForAll(item => item is TechObject.TechObject && item.Parent == baseObject) ?? false) && baseObject is BaseObject)
+            {
+                var genericGroup = baseObject.CreateGenericGroup(items.Cast<TechObject.TechObject>().ToList());
+                RefreshTree();
+                editorTView.SelectObject(genericGroup, true);
+            }
+        }
+
+        private void createGenericToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var item = GetActiveItem();
+            if (item is BaseObject baseObject && Editable)
+            {
+                baseObject.CreateNewGenericGroup();
+                RefreshTree();
+            }
+        }
+
         private void contextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
             var items = GetActiveItems();
@@ -1714,7 +1746,16 @@ namespace Editor
 
             var item = items.FirstOrDefault();
             
-            if (item is null) return;
+            if (items is null || items.Count <= 0) 
+                return;
+
+            // Создание нового типового объекта
+            contextMenuStrip.Items[nameof(createGenericToolStripMenuItem)].Visible = item is BaseObject && singleSelection;
+            contextMenuStrip.Items[nameof(createGenericToolStripMenuItem)].Enabled = Editable;
+
+            // Объеденение технологических объектов в группу с типовым объектом
+            contextMenuStrip.Items[nameof(uniteToGenericToolStripMenuItem)].Visible = items.TrueForAll(o => o is TechObject.TechObject && o.Parent is BaseObject);
+            contextMenuStrip.Items[nameof(uniteToGenericToolStripMenuItem)].Enabled = Editable;
 
             // Возможность создания и удаления объекта
             contextMenuStrip.Items[nameof(createToolStripMenuItem)]

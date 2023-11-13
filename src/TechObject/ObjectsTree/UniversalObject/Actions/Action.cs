@@ -123,6 +123,8 @@ namespace TechObject
         void AddParent(ITreeViewItem parent);
 
         void UpdateOnGenericTechObject(IAction genericAction);
+
+        void CreteGenericByTechObjects(List<IAction> actions);
     }
 
     /// <summary>
@@ -469,6 +471,12 @@ namespace TechObject
             }
 
             SetGenericDevices((genericAction as Action).DevicesIndex);
+        }
+
+        public virtual void CreteGenericByTechObjects(List<IAction> actions)
+        {
+            deviceIndex = actions.Skip(1).Aggregate(new HashSet<int>(actions.First().DevicesIndex),
+                (h, e) => { h.IntersectWith(e.DevicesIndex); return h; }).ToList();
         }
 
         #region Синхронизация устройств в объекте.

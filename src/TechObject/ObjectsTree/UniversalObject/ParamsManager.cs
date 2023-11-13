@@ -394,6 +394,11 @@ namespace TechObject
             parUintRuntime?.UpdateOnGenericTechObject(genericParamsManager.Float);
         }
 
+        public void CreteGenericByTechObjects(List<ParamsManager> paramsManagerList)
+        {
+            parFloat.CreteGenericByTechObjects(paramsManagerList.Select(manager => manager.parFloat).ToList());
+        }
+
         public TechObject TechObject => Parent as TechObject;
 
         private Params parFloat;

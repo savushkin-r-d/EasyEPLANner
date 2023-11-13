@@ -475,6 +475,23 @@ namespace TechObject
         }
 
 
+        public void CreteGenericByTechObjects(List<Equipment> equipmentList)
+        {
+            var refEquipment = equipmentList.FirstOrDefault();
+
+            equipmentList.Skip(1).ToList()
+                .ForEach(item => item.ModifyDevNames(refEquipment.owner.NameEplan, refEquipment.owner.TechNumber));
+
+            foreach (var index in Enumerable.Range(0, refEquipment.items.Count))
+            {
+                var refEquipmentItem = refEquipment.items[index] as BaseParameter;
+                if (equipmentList.TrueForAll(equipmentItem => (equipmentItem.items[index] as BaseParameter).Value == refEquipmentItem.Value))
+                    items[index].SetNewValue(refEquipmentItem.Value);
+                else
+                    items[index].SetNewValue("");
+            }
+        }
+
         public void Clear() => items.Clear();
 
         private TechObject owner;

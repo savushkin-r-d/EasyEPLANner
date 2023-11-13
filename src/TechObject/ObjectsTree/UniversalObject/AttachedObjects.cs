@@ -426,7 +426,7 @@ namespace TechObject
         {
             var res = new List<int>();
 
-            var oldValue = Value.Split(' ').Where(num => num != string.Empty).Select(int.Parse).ToList();
+            var oldValue = ValueIndexes;
             var oldGenericValue = genericValue.Split(' ').Where(num => num != string.Empty).Select(int.Parse).ToList();
 
             var newGenericValue = genericAttachedObjects.Value
@@ -448,6 +448,17 @@ namespace TechObject
             }
 
             SetNewValues(value);
+        }
+
+        public List<int> ValueIndexes => Value.Split(' ').Where(num => num != string.Empty).Select(int.Parse).ToList();
+
+        public void CreteGenericByTechObjects(List<AttachedObjects> attachedObjectsList)
+        {
+            var refTechNumber = attachedObjectsList.FirstOrDefault().owner.TechNumber;
+            SetNewValues(attachedObjectsList.Skip(1)
+                .Aggregate(new HashSet<int>(attachedObjectsList.First().ValueIndexes
+                .Select(idx => techObjectManager.TypeAdjacentTObjectIdByTNum(idx, refTechNumber))),
+                    (h, e) => { h.IntersectWith(e.ValueIndexes.Select(idx => techObjectManager.TypeAdjacentTObjectIdByTNum(idx, refTechNumber))); return h; }).ToList());
         }
 
         public override string[] DisplayText

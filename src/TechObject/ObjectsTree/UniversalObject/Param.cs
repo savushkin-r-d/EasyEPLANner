@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Editor;
 
 namespace TechObject
@@ -328,6 +329,28 @@ namespace TechObject
             if (genericParam.meter.IsFilled)
                 meter.SetNewValue(genericParam.meter.Value);
         }
+
+        public void CreteGenericByTechObjects(List<Param> paramList)
+        {
+            var refParam = paramList.FirstOrDefault();
+
+            if (paramList.TrueForAll(param => param.value.Value == refParam.value.Value))
+                value.SetNewValue(refParam.value.Value);
+            else 
+                value.SetNewValue("-");
+
+            if (paramList.TrueForAll(param => param.oper.Value == refParam.oper.Value))
+                oper.SetNewValue(refParam.oper.Value);
+            else
+                oper.SetNewValue("");
+
+            if (paramList.TrueForAll(param => param.meter.Value == refParam.meter.Value))
+                meter.SetNewValue(refParam.meter.Value);
+            else
+                meter.SetNewValue("");
+        }
+
+
 
         public Params Params => Parent as Params;
 
