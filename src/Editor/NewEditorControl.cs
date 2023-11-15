@@ -13,7 +13,6 @@ using System.Text;
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel;
 using System.Threading;
-using static System.Windows.Forms.LinkLabel;
 using TechObject;
 
 namespace Editor
@@ -167,6 +166,7 @@ namespace Editor
             comboBoxCellEditor.Enabled = true;
             comboBoxCellEditor.Visible = true;
             comboBoxCellEditor.LostFocus += editorTView_LostFocus;
+            comboBoxCellEditor.KeyDown += CellEditor_KeyDown;
             editorTView.Controls.Add(comboBoxCellEditor);
         }
 
@@ -179,7 +179,28 @@ namespace Editor
             textBoxCellEditor.Enabled = true;
             textBoxCellEditor.Visible = true;
             textBoxCellEditor.LostFocus += editorTView_LostFocus;
+            textBoxCellEditor.KeyDown += CellEditor_KeyDown;
             editorTView.Controls.Add(textBoxCellEditor);
+        }
+
+        private void CellEditor_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Enter:
+                    editorTView.FinishCellEdit();
+                    break;
+
+                case Keys.Escape:
+                    cancelChanges = true;
+                    editorTView.FinishCellEdit();
+                    break;
+
+                default:
+                    return; // exit without e.Handled
+            }
+
+            e.Handled = true;
         }
 
         /// <summary>
@@ -298,179 +319,89 @@ namespace Editor
         private IntPtr GlobalHookKeyboardCallbackFunction(int code,
             PI.WM wParam, PI.KBDLLHOOKSTRUCT lParam)
         {
-            if (code < 0 || editorTView == null)
+            const short SHIFTED = 0x80;
+            bool Ctrl = (PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_CONTROL) & SHIFTED) > 0;
+            uint vkCode = lParam.vkCode;
+
+            // Перехватываем комбинации Ctrl + PgDn/PgUp для всех окон,
+            // так как они ломают отрисовку
+            // (переключаются вкладки дерево-список на оригинальном окне)
+            if (wParam == PI.WM.KEYDOWN && Ctrl && 
+                (vkCode == PI.VIRTUAL_KEY.VK_PRIOR ||
+                 vkCode == PI.VIRTUAL_KEY.VK_NEXT))
             {
-                return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
+                return (IntPtr)1;
             }
 
-            if (!(IsCellEditing || editorTView.Focused))
-            {
-                return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
-            }
 
-            uint c = (uint)lParam.vkCode;
+            if (code < 0 || editorTView == null || (editorTView.Focused is false && IsCellEditing is false))
+                return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
+
             //Отпускание клавиш - если активно окно редактора, то не пускаем
             //дальше.
             if (wParam == PI.WM.KEYUP || wParam == PI.WM.CHAR)
             {
-                if (c == PI.VIRTUAL_KEY.VK_DELETE ||
-                    ((c == (uint)Keys.C ||
-                    c == (uint)Keys.V ||
-                    c == (uint)Keys.A ||
-                    c == (uint)Keys.X ||
-                    c == (uint)Keys.B) &&
-                    PI.GetKeyState((int)PI.VIRTUAL_KEY.VK_CONTROL) != -0))
+                switch ((Keys)vkCode)
                 {
-                    if (IsCellEditing || editorTView.Focused)
-                    {
-                        return (IntPtr)1;
-                    }
+                    case Keys.Delete:
+                    case Keys.C when Ctrl:
+                    case Keys.V when Ctrl:
+                    case Keys.A when Ctrl:
+                    case Keys.X when Ctrl:
+                    case Keys.B when Ctrl:
+                        if (IsCellEditing || editorTView.Focused)
+                            return (IntPtr)1;
+                        break;
                 }
             }
-
-            const short SHIFTED = 0x80;
 
             //Нажатие клавиш - если активно окно редактора, то обрабатываем и
             //не пускаем дальше.
             if (wParam == PI.WM.KEYDOWN)
             {
-                switch (c)
+                switch (vkCode)
                 {
-                    case PI.VIRTUAL_KEY.VK_ESCAPE:                       //Esc
-                        if (IsCellEditing)
-                        {
-                            cancelChanges = true;
-                            editorTView.FinishCellEdit();
-                            return (IntPtr)1;
-                        }
+                    // Если активен текстовый редактор
+                    // - команды работы с текстом
+                    case uint keycode when KeyCommands.ContainsKey(keycode) && Ctrl && IsCellEditing:
+                        PI.SendMessage(PI.GetFocus(), KeyCommands[vkCode], 0, 0);
+                        return (IntPtr)1;
 
-                        if (editorTView.Focused)
-                        {
-                            PI.SendMessage(PI.GetFocus(),
-                                (int)PI.WM.KEYDOWN,
-                                (int)Keys.Escape, 0);
+                    // Перехватываем используемые
+                    // комбинации клавиш:
+                    case (int)Keys.C when Ctrl:     // Ctrl + C
+                    case (int)Keys.X when Ctrl:     // Ctrl + X
+                    case (int)Keys.V when Ctrl:     // Ctrl + V
+                    case (int)Keys.B when Ctrl:     // Ctrl + B
 
-                            return (IntPtr)1;
-                        }
+                    case PI.VIRTUAL_KEY.VK_ESCAPE:  // Esc
+                    case PI.VIRTUAL_KEY.VK_RETURN:  // Enter
+                    case PI.VIRTUAL_KEY.VK_DELETE:  // Delete
+                    case PI.VIRTUAL_KEY.VK_INSERT:  // Insert
 
-                        break;
-
-                    case PI.VIRTUAL_KEY.VK_RETURN:                       //Enter
-                        if (IsCellEditing)
-                        {
-                            editorTView.FinishCellEdit();
-                            return (IntPtr)1;
-                        }
-                        break;
-
-                    case (uint)Keys.C:                                   //C
-                        short ctrlState = PI.GetKeyState(
-                            (int)PI.VIRTUAL_KEY.VK_CONTROL);
-                        if ((ctrlState & SHIFTED) > 0)
-                        {
-                            if (IsCellEditing)
-                            {
-                                PI.SendMessage(PI.GetFocus(),
-                                    (int)PI.WM.COPY, 0, 0);
-
-                                return (IntPtr)1;
-                            }
-
-                            if (editorTView.Focused)
-                            {
-                                PI.SendMessage(PI.GetFocus(),
-                                    (int)PI.WM.KEYDOWN,
-                                    (int)Keys.C, 0);
-
-                                return (IntPtr)1;
-                            }
-                        }
-                        break;
-
-                    case (uint)Keys.X:                                  //X
-                        ctrlState = PI.GetKeyState((int)
-                            PI.VIRTUAL_KEY.VK_CONTROL);
-                        if ((ctrlState & SHIFTED) > 0)
-                        {
-                            if (IsCellEditing)
-                            {
-                                PI.SendMessage(PI.GetFocus(),
-                                    (int)PI.WM.CUT, 0, 0);
-                                return (IntPtr)1;
-                            }
-
-                            if (editorTView.Focused)
-                            {
-                                PI.SendMessage(PI.GetFocus(),
-                                    (int)PI.WM.KEYDOWN,
-                                    (int)Keys.X, 0);
-
-                                return (IntPtr)1;
-                            }
-                        }
-                        break;
-
-                    case (uint)Keys.V:                                   //V
-                        ctrlState = PI.GetKeyState(
-                            (int)PI.VIRTUAL_KEY.VK_CONTROL);
-                        if ((ctrlState & SHIFTED) > 0)
-                        {
-                            if (IsCellEditing)
-                            {
-                                PI.SendMessage(PI.GetFocus(),
-                                    (int)PI.WM.PASTE, 0, 0);
-                                return (IntPtr)1;
-                            }
-
-                            if (editorTView.Focused)
-                            {
-                                PI.SendMessage(PI.GetFocus(),
-                                    (int)PI.WM.KEYDOWN,
-                                    (int)Keys.V, 0);
-                                return (IntPtr)1;
-                            }
-                        }
-                        break;
-
-                    case (uint)Keys.B:                                   //B
-                        ctrlState = PI.GetKeyState(
-                            (int)PI.VIRTUAL_KEY.VK_CONTROL);
-                        if ((ctrlState & SHIFTED) > 0)
-                        {
-                            if (editorTView.Focused)
-                            {
-                                PI.SendMessage(PI.GetFocus(),
-                                    (int)PI.WM.KEYDOWN,
-                                    (int)Keys.B, 0);
-                                return (IntPtr)1;
-                            }
-                        }
-                        break;
-
-                    case (uint)Keys.Delete:                             //Delete
-                        if (IsCellEditing || editorTView.Focused)
-                        {
-                            PI.SendMessage(PI.GetFocus(), (int)PI.WM.KEYDOWN,
-                                (int)PI.VIRTUAL_KEY.VK_DELETE, 0);
-                            return (IntPtr)1;
-                        }
-
-                        break;
-
-                    case (uint)Keys.Insert:                             //Insert
-                    case PI.VIRTUAL_KEY.VK_UP:                          //Up
-                    case PI.VIRTUAL_KEY.VK_DOWN:                        //Down
-                    case PI.VIRTUAL_KEY.VK_LEFT:                        //Left
-                    case PI.VIRTUAL_KEY.VK_RIGHT:                       //Right
-                    case PI.VIRTUAL_KEY.VK_F1:
-                        PI.SendMessage(PI.GetFocus(),
-                            (int)PI.WM.KEYDOWN, (int)c, 0);
+                    case PI.VIRTUAL_KEY.VK_UP:      // Up
+                    case PI.VIRTUAL_KEY.VK_DOWN:    // Down
+                    case PI.VIRTUAL_KEY.VK_LEFT:    // Left
+                    case PI.VIRTUAL_KEY.VK_RIGHT:   // Right
+                    case PI.VIRTUAL_KEY.VK_F1:      // F1
+                        PI.SendMessage(PI.GetFocus(), (int)PI.WM.KEYDOWN, (int)vkCode, 0);
                         return (IntPtr)1;
                 }
             }
 
             return PI.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }
+
+        /// <summary>
+        /// Комманды работы с текстом по соответствующим клавишам
+        /// </summary>
+        private static readonly Dictionary<uint, uint> KeyCommands 
+            = new Dictionary<uint, uint>
+        {
+            [(uint)Keys.X] = (int)PI.WM.CUT,    // Вырезать
+            [(uint)Keys.C] = (int)PI.WM.COPY,   // Копировать
+            [(uint)Keys.V] = (int)PI.WM.PASTE,  // Втсавить
+        };
 
         /// <summary>
         /// Функция для обработки завершения работы окна редактора.
@@ -492,10 +423,7 @@ namespace Editor
 
             globalKeyboardHookPtr = IntPtr.Zero;
 
-            PI.SetParent(editorTView.Handle, this.Handle);
-            PI.SetParent(tableLayoutPanel.Handle, this.Handle);
-            PI.SetParent(toolSettingsStrip.Handle, this.Handle);
-            PI.SetParent(toolStrip.Handle, this.Handle);
+            PI.SetParent(mainTableLayoutPanel.Handle, this.Handle);
 
             drawDev_toolStripButton.Checked = false;
 
@@ -535,20 +463,15 @@ namespace Editor
         [ExcludeFromCodeCoverage]
         private void ChangeUISize()
         {
-            IntPtr dialogPtr = PI.GetParent(editorTView.Handle);
+            IntPtr dialogPtr = PI.GetParent(mainTableLayoutPanel.Handle);
 
-            PI.RECT rctDialog;
-            PI.GetWindowRect(dialogPtr, out rctDialog);
+            PI.RECT rect;
+            PI.GetWindowRect(dialogPtr, out rect);
 
-            int w = rctDialog.Right - rctDialog.Left;
-            int h = rctDialog.Bottom - rctDialog.Top;
-
-            toolStrip.Location = new Point(0, 0);
-            editorTView.Location = new Point(0, toolStrip.Height);
-
-            tableLayoutPanel.Width = w;
-            editorTView.Width = w;
-            editorTView.Height = h - toolStrip.Height;
+            mainTableLayoutPanel.Location = new Point(0, 0);
+            
+            mainTableLayoutPanel.Width = rect.Right - rect.Left; ;
+            mainTableLayoutPanel.Height = rect.Bottom - rect.Top;
 
             tableLayoutPanelSearchBox.Refresh();
         }
@@ -592,10 +515,7 @@ namespace Editor
 
                 // Переносим на найденное окно свои элементы (SetParent) и
                 // подгоняем их размеры и позицию.
-                PI.SetParent(editorTView.Handle, dialogHandle);
-                PI.SetParent(tableLayoutPanel.Handle, dialogHandle);
-                PI.SetParent(toolSettingsStrip.Handle, dialogHandle);
-                PI.SetParent(toolStrip.Handle, dialogHandle);
+                PI.SetParent(mainTableLayoutPanel.Handle, dialogHandle);
                 ChangeUISize();
 
                 // Устанавливаем свой хук для найденного окна

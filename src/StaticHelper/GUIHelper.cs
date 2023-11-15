@@ -423,7 +423,8 @@ namespace StaticHelper
                 PI.ShowWindow(dialogHandle, 1);
             }
 
-            PI.ShowWindow(panelPtr, 0);
+            // Скрываем все старые дочерние элементы
+            panelList.ForEach(panel => PI.ShowWindow(panel, 0));
         }
 
         /// <summary>
