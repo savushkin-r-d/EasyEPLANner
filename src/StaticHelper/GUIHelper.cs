@@ -4,6 +4,7 @@ using PInvoke;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace StaticHelper
     /// <summary>
     /// Обработчик форм. Повторяющихся действий и др.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class GUIHelper
     {
         #region Настройка TreeViewAdv

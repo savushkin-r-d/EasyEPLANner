@@ -470,7 +470,7 @@ namespace Editor
 
             mainTableLayoutPanel.Location = new Point(0, 0);
             
-            mainTableLayoutPanel.Width = rect.Right - rect.Left; ;
+            mainTableLayoutPanel.Width = rect.Right - rect.Left;
             mainTableLayoutPanel.Height = rect.Bottom - rect.Top;
 
             tableLayoutPanelSearchBox.Refresh();
