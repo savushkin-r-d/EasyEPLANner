@@ -1,7 +1,7 @@
 name: MSBuild
 
 concurrency:
-  group: "${{ github.event_name }} : ${{ github.ref }}"
+  group: "${{ github.workflow }}:${{ github.event_name }}:${{ github.head_ref || github.ref_name }}"
   cancel-in-progress: true
 
 on:
@@ -50,12 +50,16 @@ jobs:
     - id: pass
       if: >-
         (github.event.action == 'labeled' && github.event.label.name == 'safe to test') ||
-        ((github.event.action == 'synchronize' || github.event.action == 'opened') && ${{ steps.is_organization_member.outputs.response == '204' }}) ||
+        ((github.event.action == 'synchronize' || github.event.action == 'opened') && steps.is_organization_member.outputs.response == '204') ||
         github.event_name == 'merge_group' ||
         contains(github.ref, 'tags/v')
       run: echo "result=success" >> $env:GITHUB_OUTPUT
     # On linux: >> $GITHUB_OUTPUT
     
+    - name: exit with failure
+      if: steps.pass.outputs.result != 'success'
+      run: exit 1
+
   build:
     name: Build, analyze and test
     runs-on: windows-latest
