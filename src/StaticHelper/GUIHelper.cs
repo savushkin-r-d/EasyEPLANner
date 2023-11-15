@@ -4,6 +4,7 @@ using PInvoke;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace StaticHelper
     /// <summary>
     /// Обработчик форм. Повторяющихся действий и др.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class GUIHelper
     {
         #region Настройка TreeViewAdv
@@ -423,7 +425,8 @@ namespace StaticHelper
                 PI.ShowWindow(dialogHandle, 1);
             }
 
-            PI.ShowWindow(panelPtr, 0);
+            // Скрываем все старые дочерние элементы
+            panelList.ForEach(panel => PI.ShowWindow(panel, 0));
         }
 
         /// <summary>
