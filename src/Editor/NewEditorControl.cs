@@ -1746,7 +1746,7 @@ namespace Editor
 
             var item = items.FirstOrDefault();
             
-            if ((items is null || items.Count <= 0) && item is null) 
+            if (items is null || items.Count <= 0 || item is null) 
                 return;
 
             // Создание нового типового объекта

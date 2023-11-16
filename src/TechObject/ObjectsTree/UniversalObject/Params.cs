@@ -435,7 +435,7 @@ namespace TechObject
 
         public void CreateGenericByTechObjects(List<Params> paramsList)
         {
-            var refParams = paramsList.OrderBy(pars => pars.parameters.Count).FirstOrDefault();
+            var refParams = paramsList.OrderBy(pars => pars.parameters.Count).First();
 
             foreach (var parId in Enumerable.Range(0, refParams?.parameters.Count ?? 0))
             {

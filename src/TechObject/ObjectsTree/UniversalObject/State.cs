@@ -575,7 +575,7 @@ namespace TechObject
 
         public void CreateGenericByTechObjects(List<State> states)
         {
-            var refState = states.OrderBy(state => state.Steps.Count).FirstOrDefault();
+            var refState = states.OrderBy(state => state.Steps.Count).First();
 
             foreach (var stepIndex in Enumerable.Range(0, refState?.steps.Count ?? 0))
             {
