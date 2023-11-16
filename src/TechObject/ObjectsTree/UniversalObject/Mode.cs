@@ -765,12 +765,19 @@ namespace TechObject
             baseOperation.SetGenericExtraProperties(genericMode.BaseOperation.Properties);
         }
 
-        public void CreateGenericByTechObjects(List<Mode> modes)
+        public override void CreateGenericByTechObjects(IEnumerable<ITreeViewItem> itemList)
         {
+            var modes = itemList.Cast<Mode>().ToList();
+
             foreach (int stateIndex in Enum.GetValues(typeof(State.StateType)))
             {
-                this[stateIndex].CreateGenericByTechObjects(modes.Select(mode => mode[stateIndex]).ToList());
+                this[stateIndex].CreateGenericByTechObjects(modes.Select(mode => mode[stateIndex]));
             }
+        }
+
+        public override void UpdateOnDeleteGeneric()
+        {
+            States.ForEach(state => state.UpdateOnDeleteGeneric());
         }
 
         public static Editor.IEditor TechObjectEditor { get; set; } = Editor.Editor.GetInstance(); 

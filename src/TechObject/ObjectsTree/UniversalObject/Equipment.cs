@@ -475,8 +475,10 @@ namespace TechObject
         }
 
 
-        public void CreateGenericByTechObjects(List<Equipment> equipmentList)
+        public override void CreateGenericByTechObjects(IEnumerable<ITreeViewItem> itemList)
         {
+           var equipmentList = itemList.Cast<Equipment>().ToList();
+
             var refEquipment = equipmentList.FirstOrDefault();
 
             equipmentList.Skip(1).ToList()

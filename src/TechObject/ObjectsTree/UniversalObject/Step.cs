@@ -1058,12 +1058,14 @@ namespace TechObject
                 nextStepN?.UpdateOnGenericTechObject(genericStep.nextStepN);
         }
 
-        public void CreateGenericByTechObjects(List<Step> steps)
+        public override void CreateGenericByTechObjects(IEnumerable<ITreeViewItem> itemList)
         {
+            var steps = itemList.Cast<Step>().ToList();
+
             foreach (var actionIndex in Enumerable.Range(0, GetActions.Count))
             {
                 GetActions[actionIndex]
-                    .CreateGenericByTechObjects(steps.Select(step => step.GetActions[actionIndex]).ToList());
+                    .CreateGenericByTechObjects(steps.Select(step => step.GetActions[actionIndex]));
             }
 
             var refStep = steps.FirstOrDefault();
@@ -1072,6 +1074,11 @@ namespace TechObject
 
             if (steps.TrueForAll(step => step.nextStepN != null && step.nextStepN.Value == refStep.nextStepN.Value))
                 nextStepN?.SetNewValue(refStep.nextStepN.Value);
+        }
+
+        public override void UpdateOnDeleteGeneric()
+        {
+            actions.ForEach(action => action.UpdateOnDeleteGeneric());
         }
 
         public bool Empty

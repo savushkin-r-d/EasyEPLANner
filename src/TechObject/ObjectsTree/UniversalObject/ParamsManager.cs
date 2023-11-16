@@ -394,9 +394,23 @@ namespace TechObject
             parUintRuntime?.UpdateOnGenericTechObject(genericParamsManager.Float);
         }
 
-        public void CreateGenericByTechObjects(List<ParamsManager> paramsManagerList)
+        public override void CreateGenericByTechObjects(IEnumerable<ITreeViewItem> itemList)
         {
-            parFloat.CreateGenericByTechObjects(paramsManagerList.Select(manager => manager.parFloat).ToList());
+            var paramsManagerList = itemList.Cast<ParamsManager>().ToList();
+
+            var parFloatList = paramsManagerList.Select(manager => manager.parFloat);
+            var parFloatRuntimeList = paramsManagerList.Select(manager => manager.parFloatRuntime);
+            var parUintList = paramsManagerList.Select(manager => manager.parUint);
+            var parUintRuntimeList = paramsManagerList.Select(manager => manager.parUintRuntime);
+
+            if (parFloatList.All(par => par != null))
+                parFloat.CreateGenericByTechObjects(parFloatList);
+            if (parFloatRuntimeList.All(par => par != null))
+                parFloatRuntime.CreateGenericByTechObjects(parFloatRuntimeList);
+            if (parUintList.All(par => par != null))
+                parUint.CreateGenericByTechObjects(parUintList);
+            if (parUintRuntimeList.All(par => par != null))
+                parUintRuntime.CreateGenericByTechObjects(parUintRuntimeList);
         }
 
         public TechObject TechObject => Parent as TechObject;

@@ -573,8 +573,10 @@ namespace TechObject
             }
         }
 
-        public void CreateGenericByTechObjects(List<State> states)
+        public override void CreateGenericByTechObjects(IEnumerable<ITreeViewItem> itemList)
         {
+            var states = itemList.Cast<State>().ToList();
+
             var refState = states.OrderBy(state => state.Steps.Count).First();
 
             foreach (var stepIndex in Enumerable.Range(0, refState?.steps.Count ?? 0))
@@ -594,8 +596,13 @@ namespace TechObject
                     newGenericStep = AddStep(refStep.GetStepName(), refStep.GetBaseStepLuaName());
 
                 newGenericStep
-                    .CreateGenericByTechObjects(states.Select(state => state.Steps[stepIndex]).ToList());
+                    .CreateGenericByTechObjects(states.Select(state => state.Steps[stepIndex]));
             }
+        }
+
+        public override void UpdateOnDeleteGeneric()
+        {
+            Steps.ForEach(step => step.UpdateOnDeleteGeneric());
         }
 
         public bool Empty

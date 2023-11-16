@@ -197,10 +197,10 @@ namespace TechObject
             var newGenericGroup = new GenericGroup(newGenericTechObject, this, techObjectManager);
 
 
-            newGenericTechObject.AttachedObjects.CreateGenericByTechObjects(techObjects.Select(to => to.AttachedObjects).ToList());
-            newGenericTechObject.ModesManager.CreateGenericByTechObjects(techObjects.Select(to => to.ModesManager).ToList());
-            newGenericTechObject.GetParamsManager().CreateGenericByTechObjects(techObjects.Select(to => to.GetParamsManager()).ToList());
-            newGenericTechObject.Equipment.CreateGenericByTechObjects(techObjects.Select(to => to.Equipment).ToList());
+            newGenericTechObject.AttachedObjects.CreateGenericByTechObjects(techObjects.Select(to => to.AttachedObjects));
+            newGenericTechObject.ModesManager.CreateGenericByTechObjects(techObjects.Select(to => to.ModesManager));
+            newGenericTechObject.GetParamsManager().CreateGenericByTechObjects(techObjects.Select(to => to.GetParamsManager()));
+            newGenericTechObject.Equipment.CreateGenericByTechObjects(techObjects.Select(to => to.Equipment));
 
             globalGenericTechObjects.Add(newGenericGroup.GenericTechObject);
             genericGroups.Add(newGenericGroup);
@@ -273,6 +273,14 @@ namespace TechObject
                     foreach (var TObject in genericGroup.InheritedTechObjects)
                     {
                         Delete(TObject);
+                    }
+                }
+                else
+                {
+                    foreach (var TObject in genericGroup.InheritedTechObjects)
+                    {
+                        TObject.AttachedObjects.UpdateOnDeleteGeneric();
+                        TObject.ModesManager.UpdateOnDeleteGeneric();
                     }
                 }
                 return true;

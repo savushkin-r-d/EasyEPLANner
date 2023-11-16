@@ -1761,13 +1761,14 @@ namespace Editor
             contextMenuStrip.Items[nameof(createToolStripMenuItem)]
                 .Enabled = Editable && item.IsInsertable && singleSelection;
             contextMenuStrip.Items[nameof(deleteToolStripMenuItem)]
-                .Enabled = Editable && item.IsDeletable;
+                .Enabled = Editable && items.TrueForAll(i => i.IsDeletable);
 
             // Возможность копирования и вырезки объекта
             contextMenuStrip.Items[nameof(copyToolStripMenuItem)]
-                .Enabled = Editable && item.IsCopyable;
+                .Enabled = Editable && items.TrueForAll(i => i.IsCopyable);
             contextMenuStrip.Items[nameof(cutToolStripMenuItem)]
-                .Enabled = Editable && (item.Parent?.IsCuttable ?? false);
+                .Enabled = Editable && (item.Parent?.IsCuttable ?? false) 
+                && items.TrueForAll(i => i.Parent == item.Parent);
 
             // Возможность вставки и замены скопированного элемента
             contextMenuStrip.Items[nameof(pasteToolStripMenuItem)]

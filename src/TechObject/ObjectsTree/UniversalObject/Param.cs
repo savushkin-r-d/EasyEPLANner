@@ -330,8 +330,10 @@ namespace TechObject
                 meter.SetNewValue(genericParam.meter.Value);
         }
 
-        public void CreateGenericByTechObjects(List<Param> paramList)
+        public override void CreateGenericByTechObjects(IEnumerable<ITreeViewItem> itemList)
         {
+            var paramList = itemList.Cast<Param>().ToList();
+
             var refParam = paramList.FirstOrDefault();
 
             if (paramList.TrueForAll(param => param.value.Value == refParam.value.Value))

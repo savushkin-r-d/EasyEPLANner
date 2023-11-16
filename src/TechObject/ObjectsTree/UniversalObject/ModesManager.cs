@@ -604,8 +604,10 @@ namespace TechObject
             }
         }
 
-        public void CreateGenericByTechObjects(List<ModesManager> modesManagers)
+        public override void CreateGenericByTechObjects(IEnumerable<ITreeViewItem> itemList)
         {
+            var modesManagers = itemList.Cast<ModesManager>().ToList();
+
             var refModesManagerModes = modesManagers.OrderBy(manager => manager.Modes.Count)
                 .FirstOrDefault()?.modes ?? new List<Mode>();
 
@@ -620,8 +622,13 @@ namespace TechObject
                 }
 
                 var newGenericMode = AddMode(refMode.Name, refMode.BaseOperation.Name);
-                newGenericMode.CreateGenericByTechObjects(modesManagers.Select(manager => manager.modes[modeIndex]).ToList());
+                newGenericMode.CreateGenericByTechObjects(modesManagers.Select(manager => manager.modes[modeIndex]));
             }
+        }
+
+        public override void UpdateOnDeleteGeneric()
+        {
+            modes.ForEach(mode => mode.UpdateOnDeleteGeneric());
         }
 
         /// <summary> Список операций. </summary>

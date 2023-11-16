@@ -124,7 +124,9 @@ namespace TechObject
 
         void UpdateOnGenericTechObject(IAction genericAction);
 
-        void CreateGenericByTechObjects(List<IAction> actions);
+        void CreateGenericByTechObjects(IEnumerable<IAction> actions);
+
+        void UpdateOnDeleteGeneric();
     }
 
     /// <summary>
@@ -473,17 +475,25 @@ namespace TechObject
             SetGenericDevices((genericAction as Action).DevicesIndex);
         }
 
-        public virtual void CreateGenericByTechObjects(List<IAction> actions)
+        public virtual void CreateGenericByTechObjects(IEnumerable<IAction> actions)
         {
-            var refTechObject = actions[0].Owner.Owner.Owner.Owner.Owner;
+            var refTechObject = actions.First().Owner.Owner.Owner.Owner.Owner;
             actions.Skip(1).ToList().ForEach(action 
                 => action.ModifyDevNames(refTechObject.TechNumber,
                     action.Owner.Owner.Owner.Owner.Owner.TechNumber,
                     refTechObject.NameEplan));
 
-            deviceIndex = actions.Skip(1).Aggregate(new HashSet<int>(actions[0].DevicesIndex),
+            deviceIndex = actions.Skip(1).Aggregate(new HashSet<int>(actions.First().DevicesIndex),
                 (h, e) => { h.IntersectWith(e.DevicesIndex); return h; }).ToList();
         }
+
+        public override void UpdateOnDeleteGeneric()
+        {
+            deviceIndex = deviceIndex.Concat(GenericDevicesIndexAfterExclude).ToList();
+            genericDeviceIndex.Clear();
+            excludedGenericDeviceIndex.Clear();
+        }
+        
 
         #region Синхронизация устройств в объекте.
         virtual public void Synch(int[] array)

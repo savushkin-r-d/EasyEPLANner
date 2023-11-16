@@ -453,8 +453,10 @@ namespace TechObject
         public List<int> GetValueIndexes() 
             => Value.Split(' ').Where(num => num != string.Empty).Select(int.Parse).ToList();
 
-        public void CreateGenericByTechObjects(List<AttachedObjects> attachedObjectsList)
+        public void CreateGenericByTechObjects(IEnumerable<ITreeViewItem> itemList)
         {
+            var attachedObjectsList = itemList.Cast<AttachedObjects>().ToList();
+
             var refTechNumber = attachedObjectsList[0].owner.TechNumber;
 
             SetNewValues(attachedObjectsList.Skip(1)
@@ -467,6 +469,16 @@ namespace TechObject
                             .Select(idx => techObjectManager.TypeAdjacentTObjectIdByTNum(idx, refTechNumber)));
                         return h; 
                     }).ToList());
+        }
+
+        /// <summary>
+        /// Обновление после удаления типового объекта
+        /// </summary>
+        public void UpdateOnDeleteGeneric()
+        {
+            SetNewValues(GetValueIndexes()
+                .Concat(genericValue.Split(' ').Where(num => num != string.Empty).Select(int.Parse)).ToList());
+            genericValue = "";
         }
 
         public override string[] DisplayText
