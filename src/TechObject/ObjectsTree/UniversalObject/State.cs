@@ -573,11 +573,11 @@ namespace TechObject
             }
         }
 
-        public void CreteGenericByTechObjects(List<State> states)
+        public void CreateGenericByTechObjects(List<State> states)
         {
             var refState = states.OrderBy(state => state.Steps.Count).FirstOrDefault();
 
-            foreach (var stepIndex in Enumerable.Range(0, refState.steps.Count))
+            foreach (var stepIndex in Enumerable.Range(0, refState?.steps.Count ?? 0))
             {
                 var refStep = refState.steps[stepIndex];
                 foreach (var stateIndex in Enumerable.Range(0, states.Count))
@@ -594,7 +594,7 @@ namespace TechObject
                     newGenericStep = AddStep(refStep.GetStepName(), refStep.GetBaseStepLuaName());
 
                 newGenericStep
-                    .CreteGenericByTechObjects(states.Select(state => state.Steps[stepIndex]).ToList());
+                    .CreateGenericByTechObjects(states.Select(state => state.Steps[stepIndex]).ToList());
             }
         }
 
@@ -616,7 +616,7 @@ namespace TechObject
         /// <summary>
         /// Отсутствует главный шаг (Во время операции)
         /// </summary>
-        public bool MissingMainStep => modeStep == null || Items.Count() == 0;
+        public bool MissingMainStep => modeStep is null || Items.Any() is false;
 
         /// <summary>
         /// Нужен главный шаг

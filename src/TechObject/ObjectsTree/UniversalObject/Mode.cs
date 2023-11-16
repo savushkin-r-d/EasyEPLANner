@@ -765,11 +765,11 @@ namespace TechObject
             baseOperation.SetGenericExtraProperties(genericMode.BaseOperation.Properties);
         }
 
-        public void CreteGenericByTechObjects(List<Mode> modes)
+        public void CreateGenericByTechObjects(List<Mode> modes)
         {
             foreach (int stateIndex in Enum.GetValues(typeof(State.StateType)))
             {
-                this[stateIndex].CreteGenericByTechObjects(modes.Select(mode => mode[stateIndex]).ToList());
+                this[stateIndex].CreateGenericByTechObjects(modes.Select(mode => mode[stateIndex]).ToList());
             }
         }
 

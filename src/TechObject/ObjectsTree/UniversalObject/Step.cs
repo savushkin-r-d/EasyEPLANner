@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using Editor;
+using EplanDevice;
 using TechObject.ActionProcessingStrategy;
 using TechObject.AttachedObjectStrategy;
 
@@ -565,8 +566,7 @@ namespace TechObject
         public bool AddDev(string actionLuaName, string devName,
             int groupNumber, string subActionLuaName)
         {
-            int devId = EplanDevice.DeviceManager.GetInstance()
-                .GetDeviceIndex(devName);
+            int devId = deviceManager.GetDeviceIndex(devName);
             if (devId == -1)
             {
                 return false;
@@ -1058,12 +1058,12 @@ namespace TechObject
                 nextStepN?.UpdateOnGenericTechObject(genericStep.nextStepN);
         }
 
-        public void CreteGenericByTechObjects(List<Step> steps)
+        public void CreateGenericByTechObjects(List<Step> steps)
         {
             foreach (var actionIndex in Enumerable.Range(0, GetActions.Count))
             {
                 GetActions[actionIndex]
-                    .CreteGenericByTechObjects(steps.Select(step => step.GetActions[actionIndex]).ToList());
+                    .CreateGenericByTechObjects(steps.Select(step => step.GetActions[actionIndex]).ToList());
             }
 
             var refStep = steps.FirstOrDefault();
@@ -1139,6 +1139,8 @@ namespace TechObject
             EplanDevice.DeviceType.SB,
             EplanDevice.DeviceType.LS,
         };
+
+        private static IDeviceManager deviceManager { get; set; } = DeviceManager.GetInstance();
 
         private GetN getN;
 

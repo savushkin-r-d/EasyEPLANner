@@ -475,7 +475,7 @@ namespace TechObject
         }
 
 
-        public void CreteGenericByTechObjects(List<Equipment> equipmentList)
+        public void CreateGenericByTechObjects(List<Equipment> equipmentList)
         {
             var refEquipment = equipmentList.FirstOrDefault();
 
@@ -497,6 +497,6 @@ namespace TechObject
         private TechObject owner;
         private List<ITreeViewItem> items;
 
-        private IDeviceManager deviceManager { get; set; } = DeviceManager.GetInstance();
+        private static IDeviceManager deviceManager { get; set; } = DeviceManager.GetInstance();
     }
 }

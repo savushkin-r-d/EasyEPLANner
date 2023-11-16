@@ -124,7 +124,7 @@ namespace TechObject
 
         void UpdateOnGenericTechObject(IAction genericAction);
 
-        void CreteGenericByTechObjects(List<IAction> actions);
+        void CreateGenericByTechObjects(List<IAction> actions);
     }
 
     /// <summary>
@@ -152,7 +152,7 @@ namespace TechObject
             EplanDevice.IDeviceManager deviceManager) : this(name, owner, luaName,
                 devTypes, devSubTypes, actionProcessorStrategy)
         {
-            this.deviceManager = deviceManager;
+            Action.deviceManager = deviceManager;
         }
 
         /// <summary>
@@ -473,9 +473,15 @@ namespace TechObject
             SetGenericDevices((genericAction as Action).DevicesIndex);
         }
 
-        public virtual void CreteGenericByTechObjects(List<IAction> actions)
+        public virtual void CreateGenericByTechObjects(List<IAction> actions)
         {
-            deviceIndex = actions.Skip(1).Aggregate(new HashSet<int>(actions.First().DevicesIndex),
+            var refTechObject = actions[0].Owner.Owner.Owner.Owner.Owner;
+            actions.Skip(1).ToList().ForEach(action 
+                => action.ModifyDevNames(refTechObject.TechNumber,
+                    action.Owner.Owner.Owner.Owner.Owner.TechNumber,
+                    refTechObject.NameEplan));
+
+            deviceIndex = actions.Skip(1).Aggregate(new HashSet<int>(actions[0].DevicesIndex),
                 (h, e) => { h.IntersectWith(e.DevicesIndex); return h; }).ToList();
         }
 
@@ -813,7 +819,8 @@ namespace TechObject
         protected Step owner;
 
         IDeviceProcessingStrategy deviceProcessingStrategy;
-        EplanDevice.IDeviceManager deviceManager = EplanDevice.DeviceManager
+        
+        private static EplanDevice.IDeviceManager deviceManager = EplanDevice.DeviceManager
             .GetInstance();
     }
 

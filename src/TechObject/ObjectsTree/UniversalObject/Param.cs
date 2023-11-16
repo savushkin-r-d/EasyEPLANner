@@ -330,7 +330,7 @@ namespace TechObject
                 meter.SetNewValue(genericParam.meter.Value);
         }
 
-        public void CreteGenericByTechObjects(List<Param> paramList)
+        public void CreateGenericByTechObjects(List<Param> paramList)
         {
             var refParam = paramList.FirstOrDefault();
 

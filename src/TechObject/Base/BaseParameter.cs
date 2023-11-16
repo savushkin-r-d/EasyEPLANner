@@ -25,8 +25,8 @@ namespace TechObject
             this.luaName = luaName;
             currentValueType = ValueType.None;
             devicesIndexes = new List<int>();
-            this.deviceManager = deviceManager != null ?
-                deviceManager : DeviceManager.GetInstance();
+            if (deviceManager != null)
+                BaseParameter.deviceManager = deviceManager;
 
             if(displayObjects != null)
             {
@@ -579,7 +579,7 @@ namespace TechObject
             Stub,
         }
 
-        protected IDeviceManager deviceManager;
+        protected static IDeviceManager deviceManager = DeviceManager.GetInstance();
 
         private object owner;
         private string luaName;

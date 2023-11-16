@@ -604,9 +604,10 @@ namespace TechObject
             }
         }
 
-        public void CreteGenericByTechObjects(List<ModesManager> modesManagers)
+        public void CreateGenericByTechObjects(List<ModesManager> modesManagers)
         {
-            var refModesManagerModes = modesManagers.OrderBy(manager => manager.Modes.Count).FirstOrDefault()?.modes;
+            var refModesManagerModes = modesManagers.OrderBy(manager => manager.Modes.Count)
+                .FirstOrDefault()?.modes ?? new List<Mode>();
 
             foreach (var modeIndex in Enumerable.Range(0, refModesManagerModes.Count))
             {
@@ -619,8 +620,7 @@ namespace TechObject
                 }
 
                 var newGenericMode = AddMode(refMode.Name, refMode.BaseOperation.Name);
-                newGenericMode.CreteGenericByTechObjects(modesManagers.Select(manager => manager.modes[modeIndex]).ToList());
-                // 1 1 1 1
+                newGenericMode.CreateGenericByTechObjects(modesManagers.Select(manager => manager.modes[modeIndex]).ToList());
             }
         }
 

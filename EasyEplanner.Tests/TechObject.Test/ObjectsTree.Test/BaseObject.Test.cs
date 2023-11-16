@@ -9,6 +9,9 @@ using Moq;
 using System.Threading;
 using Editor;
 using System.Windows.Forms;
+using EplanDevice;
+using Tests.TechObject;
+using NUnit.Framework.Constraints;
 
 namespace TechObjectTests
 {
@@ -21,7 +24,7 @@ namespace TechObjectTests
             baseTechObject.EplanName = "BaseTechObjectName";
 
             var genericTechObject = new GenericTechObject("", 2, "", -1, "", string.Empty, baseTechObject);
-            
+
 
             var techObjects = new List<TechObject.TechObject>();
 
@@ -57,7 +60,7 @@ namespace TechObjectTests
             techObjectManagerMock.Setup(obj => obj.TechObjects).Returns(new List<TechObject.TechObject>());
             techObjectManagerMock.Setup(obj => obj.GetGenericTObject(It.IsAny<int>()))
                 .Returns((GenericTechObject)null);
-            
+
             var baseObject = new BaseObject("BaseTechObjectName", techObjectManagerMock.Object);
 
             var genericTechObject = new GenericTechObject("", 2, "", -1, "", string.Empty, baseTechObject);
@@ -69,14 +72,14 @@ namespace TechObjectTests
         [Test]
         public void GetItems()
         {
-            var techObjects = new List<TechObject.TechObject>() 
-            { 
-                new TechObject.TechObject("", GetN => 1, 1, 2, "TANK", -1, "", string.Empty, new BaseTechObject()) 
+            var techObjects = new List<TechObject.TechObject>()
+            {
+                new TechObject.TechObject("", GetN => 1, 1, 2, "TANK", -1, "", string.Empty, new BaseTechObject())
             };
 
             var techObjectManagerMock = new Mock<ITechObjectManager>();
             techObjectManagerMock.Setup(obj => obj.TechObjects).Returns(techObjects);
-            
+
             var baseObject = new BaseObject("BaseTechObjectName", techObjectManagerMock.Object);
             baseObject.AddObjectWhenLoadFromLua(techObjects[0], 0);
 
@@ -87,10 +90,10 @@ namespace TechObjectTests
         public void AddObject()
         {
             var techObjects = new List<TechObject.TechObject>();
-            
+
             var techObjectManagerMock = new Mock<ITechObjectManager>();
             techObjectManagerMock.Setup(obj => obj.TechObjects).Returns(techObjects);
-            
+
             var baseObject = new BaseObject("BaseTechObjectName", techObjectManagerMock.Object);
 
             var techObject = new TechObject.TechObject("", GetN => 1, 1, 2, "TANK", -1, "", string.Empty, new BaseTechObject());
@@ -142,7 +145,7 @@ namespace TechObjectTests
         {
             var techObjects = new List<TechObject.TechObject>();
             var genericTechObjects = new List<TechObject.GenericTechObject>();
-            var techObject = new TechObject.TechObject("", GetN => 1, 1, 2, "TANK", -1, "", string.Empty, new BaseTechObject()); 
+            var techObject = new TechObject.TechObject("", GetN => 1, 1, 2, "TANK", -1, "", string.Empty, new BaseTechObject());
             var techObjectOther = new TechObject.TechObject("", GetN => 2, 1, 2, "TANK", -1, "", string.Empty, new BaseTechObject());
 
             var techObjectManagerMock = new Mock<ITechObjectManager>();
@@ -344,7 +347,7 @@ namespace TechObjectTests
 
             var baseObject = new BaseObject("BaseTechObjectName", techObjectManagerMock.Object);
 
-            var newGenericGroup =  baseObject.CreateNewGenericGroup();
+            var newGenericGroup = baseObject.CreateNewGenericGroup();
 
             Assert.Multiple(() =>
             {
@@ -358,12 +361,25 @@ namespace TechObjectTests
             baseTechObjectManagerInstanceField.SetValue(null, null);
         }
 
+        [TearDown]
+        public void ResetBaseParameterDeviceManagerToDefault()
+        {
+            typeof(BaseParameter).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, DeviceManager.GetInstance());
+        }
+
         [Test]
         public void CreateGenericGroup_FromManyTechObjects()
         {
+            SetupDeviceManagerMock();
+
             var baseTechObject = BaseTechObjectManager.GetInstance().AddBaseObject("BaseTechObjectName", "BaseTechObjectName", 2,
                 "basicName", "bindingName", false, "luaModuleName", "monitorName", false);
-            baseTechObject.Equipment.Add(new EquipmentParameter("equip", "оборудование", "LS1"));
+
+            var equipParameter = new EquipmentParameter("equip", "оборудование", "LS1");
+
+            baseTechObject.Equipment.Add(equipParameter);
 
             var techObjects = new List<TechObject.TechObject>();
             var genericTechObjects = new List<TechObject.GenericTechObject>();
@@ -391,8 +407,33 @@ namespace TechObjectTests
             techObject2.GetParamsManager().AddFloatParam("параметр 3", 1, "g", "par_3");
 
             // Оборудование тех. объектов
-            //techObject1.Equipment.SetEquipmentValue("equip", "LS2");
-            //techObject2.Equipment.SetEquipmentValue("equip", "LS2");
+            techObject1.Equipment.SetEquipmentValue("equip", "TANK1V1");
+            techObject2.Equipment.SetEquipmentValue("equip", "TANK2V1");
+
+            // Операции
+            var expT1Mode =  techObject1.ModesManager.AddMode("Операция 1", "");
+            techObject1.ModesManager.AddMode("Операция 2", "");
+
+            var expT2Mode = techObject2.ModesManager.AddMode("Операция 1", "");
+
+            // Шаги
+            var expT1Step = expT1Mode.States[0].AddStep("Шаг 1", "");
+            expT1Mode.States[0].AddStep("Шаг 2", "");
+            
+            var expT2Step = expT2Mode.States[0].AddStep("Шаг 1", "");
+
+            // Действия
+            expT1Step.AddDev("opened_devices", "TANK1V1", 0, "");
+            expT2Step.AddDev("opened_devices", "TANK2V1", 0, "");
+            expT1Step.AddDev("opened_devices", "DO1", 0, "");
+            expT2Step.AddDev("opened_devices", "DO1", 0, "");
+
+            expT1Step.AddDev("delay_opened_devices", "TANK1V1", 0, "A_0");
+            expT1Step.AddDev("delay_opened_devices", "DO1", 0, "A_0");
+            expT2Step.AddDev("delay_opened_devices", "TANK2V1", 0, "A_0");
+            expT1Step.AddDev("delay_opened_devices", "TANK1V1", 1, "A_0");
+            expT2Step.AddDev("delay_opened_devices", "TANK2V1", 1, "A_0");
+            expT2Step.AddDev("delay_opened_devices", "DO1", 1, "A_0");
 
 
             // Мок менеджера тех. объектов
@@ -405,6 +446,8 @@ namespace TechObjectTests
 
             var newGenericGroup = baseObject.CreateGenericGroup(new List<TechObject.TechObject>() { techObject1, techObject2 }) as GenericGroup;
             var newGenericTechObject = newGenericGroup.GenericTechObject;
+
+
 
             Assert.Multiple(() =>
             {
@@ -431,8 +474,70 @@ namespace TechObjectTests
                 Assert.AreEqual("-1", parameters[1].GetOperationN());
 
                 // Оборудование
-                Assert.AreEqual("LS1", (newGenericTechObject.Equipment.Items[0] as EquipmentParameter).Value);
+                Assert.AreEqual("TANK1V1", (newGenericTechObject.Equipment.Items[0] as EquipmentParameter).Value);
+
+                // Операции
+                var modes = newGenericTechObject.ModesManager.Modes;
+                var steps = modes[0].States[0].Steps;
+                var actionOnDevices = steps[1].GetActions[1];
+                var actionDelayOnDevices = steps[1].GetActions[2];
+
+                Assert.AreEqual(1, modes.Count);
+                Assert.AreEqual(expT1Mode.Name, modes[0].Name);
+                Assert.AreEqual(2, steps.Count);
+                Assert.AreEqual("Во время операции", steps[0].GetStepName());
+                Assert.AreEqual(expT1Step.GetStepName(), steps[1].GetStepName());
+                CollectionAssert.AreEqual(new[] { "TANK1V1", "DO1" }, actionOnDevices.DevicesNames);
+                CollectionAssert.AreEqual(new[] { "TANK1V1" }, actionDelayOnDevices.SubActions[0].SubActions[0].DevicesNames);
+                CollectionAssert.AreEqual(new[] { "TANK1V1" }, actionDelayOnDevices.SubActions[0].SubActions[0].DevicesNames);
             });
+        }
+
+        private void SetupDeviceManagerMock()
+        {
+            var deviceManagerMock = new Mock<IDeviceManager>();
+
+            var capDevice = new LS("", "", StaticHelper.CommonConst.Cap, 0, "", 0, "");
+            var DO1 = new DO("DO1", "DO1", "desc", 1, "", 0);
+            var LS1 = new LS("LS1", "LS1", "desc", 1, "", 0, "");
+            var TANK1V1 = new V("TANK1V1", "+TANK1-V1", "desc", 1, "TANK", 1, "");
+            var TANK2V1 = new V("TANK2V1", "+TANK2V-1", "desc", 1, "TANK", 2, "");
+
+
+            deviceManagerMock.Setup(m => m.GetDeviceByEplanName("LS1")).Returns(LS1);
+            deviceManagerMock.Setup(m => m.GetDeviceByEplanName("TANK1V1")).Returns(TANK1V1);
+            deviceManagerMock.Setup(m => m.GetDeviceByEplanName("TANK2V1")).Returns(TANK2V1);
+            deviceManagerMock.Setup(m => m.GetDeviceByEplanName("DO1")).Returns(DO1);
+            deviceManagerMock.Setup(m => m.GetDeviceByEplanName(It.IsAny<string>())).Returns(capDevice);
+
+            deviceManagerMock.Setup(m => m.GetDevice("LS1")).Returns(LS1);
+            deviceManagerMock.Setup(m => m.GetDevice("TANK1V1")).Returns(TANK1V1);
+            deviceManagerMock.Setup(m => m.GetDevice("TANK2V1")).Returns(TANK2V1);
+            deviceManagerMock.Setup(m => m.GetDevice("DO1")).Returns(DO1);
+
+            deviceManagerMock.Setup(m => m.GetDeviceIndex("LS1")).Returns(0);
+            deviceManagerMock.Setup(m => m.GetDeviceIndex("TANK1V1")).Returns(1);
+            deviceManagerMock.Setup(m => m.GetDeviceIndex("TANK2V1")).Returns(2);
+            deviceManagerMock.Setup(m => m.GetDeviceIndex("DO1")).Returns(3);
+
+            deviceManagerMock.Setup(m => m.GetDeviceByIndex(0)).Returns(LS1);
+            deviceManagerMock.Setup(m => m.GetDeviceByIndex(1)).Returns(TANK1V1);
+            deviceManagerMock.Setup(m => m.GetDeviceByIndex(2)).Returns(TANK2V1);
+            deviceManagerMock.Setup(m => m.GetDeviceByIndex(3)).Returns(DO1);
+
+
+            typeof(BaseParameter).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManagerMock.Object);
+            typeof(Equipment).GetProperty("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManagerMock.Object);
+            typeof(Step).GetProperty("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManagerMock.Object);
+            typeof(TechObject.Action).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManagerMock.Object);
         }
     }
 }

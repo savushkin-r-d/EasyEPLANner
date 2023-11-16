@@ -1720,7 +1720,7 @@ namespace Editor
         {
             var items = GetActiveItems();
             var baseObject = items.FirstOrDefault()?.Parent as BaseObject;
-            if ((items?.TrueForAll(item => item is TechObject.TechObject && item.Parent == baseObject) ?? false) && baseObject is BaseObject)
+            if ((items?.TrueForAll(item => item is TechObject.TechObject && item.Parent == baseObject) ?? false) && baseObject != null)
             {
                 var genericGroup = baseObject.CreateGenericGroup(items.Cast<TechObject.TechObject>().ToList());
                 RefreshTree();
@@ -1746,7 +1746,7 @@ namespace Editor
 
             var item = items.FirstOrDefault();
             
-            if (items is null || items.Count <= 0) 
+            if ((items is null || items.Count <= 0) && item is null) 
                 return;
 
             // Создание нового типового объекта

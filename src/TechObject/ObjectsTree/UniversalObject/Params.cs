@@ -433,11 +433,11 @@ namespace TechObject
             }
         }
 
-        public void CreteGenericByTechObjects(List<Params> paramsList)
+        public void CreateGenericByTechObjects(List<Params> paramsList)
         {
             var refParams = paramsList.OrderBy(pars => pars.parameters.Count).FirstOrDefault();
 
-            foreach (var parId in Enumerable.Range(0, refParams.parameters.Count))
+            foreach (var parId in Enumerable.Range(0, refParams?.parameters.Count ?? 0))
             {
                 var refParameter = refParams.parameters[parId];
                 foreach (var paramsId in Enumerable.Range(0, paramsList.Count))
@@ -449,7 +449,7 @@ namespace TechObject
                 }
 
                 var newGenericParam = AddParam(new Param(GetIdx, refParameter.GetName(), false, 0, "", refParameter.GetNameLua(), true));   
-                newGenericParam.CreteGenericByTechObjects(paramsList.Select(pars => pars.parameters[parId]).ToList());
+                newGenericParam.CreateGenericByTechObjects(paramsList.Select(pars => pars.parameters[parId]).ToList());
             }
         }
 

@@ -426,7 +426,7 @@ namespace TechObject
         {
             var res = new List<int>();
 
-            var oldValue = ValueIndexes;
+            var oldValue = GetValueIndexes();
             var oldGenericValue = genericValue.Split(' ').Where(num => num != string.Empty).Select(int.Parse).ToList();
 
             var newGenericValue = genericAttachedObjects.Value
@@ -450,15 +450,23 @@ namespace TechObject
             SetNewValues(value);
         }
 
-        public List<int> ValueIndexes => Value.Split(' ').Where(num => num != string.Empty).Select(int.Parse).ToList();
+        public List<int> GetValueIndexes() 
+            => Value.Split(' ').Where(num => num != string.Empty).Select(int.Parse).ToList();
 
-        public void CreteGenericByTechObjects(List<AttachedObjects> attachedObjectsList)
+        public void CreateGenericByTechObjects(List<AttachedObjects> attachedObjectsList)
         {
-            var refTechNumber = attachedObjectsList.FirstOrDefault().owner.TechNumber;
+            var refTechNumber = attachedObjectsList[0].owner.TechNumber;
+
             SetNewValues(attachedObjectsList.Skip(1)
-                .Aggregate(new HashSet<int>(attachedObjectsList.First().ValueIndexes
+                .Aggregate(new HashSet<int>(attachedObjectsList[0].GetValueIndexes()
                 .Select(idx => techObjectManager.TypeAdjacentTObjectIdByTNum(idx, refTechNumber))),
-                    (h, e) => { h.IntersectWith(e.ValueIndexes.Select(idx => techObjectManager.TypeAdjacentTObjectIdByTNum(idx, refTechNumber))); return h; }).ToList());
+                    (h, e) => 
+                    { 
+                        h.IntersectWith(
+                            e.GetValueIndexes()
+                            .Select(idx => techObjectManager.TypeAdjacentTObjectIdByTNum(idx, refTechNumber)));
+                        return h; 
+                    }).ToList());
         }
 
         public override string[] DisplayText

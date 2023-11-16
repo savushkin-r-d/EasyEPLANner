@@ -175,14 +175,14 @@ namespace TechObject
             }
         }
 
-        public override void CreteGenericByTechObjects(List<IAction> actions)
+        public override void CreateGenericByTechObjects(List<IAction> actions)
         {
             var refAction = actions.OrderBy(a => a.SubActions.Count).First();
 
             foreach (var subActionIndex in Enumerable.Range(0, refAction.SubActions.Count))
             {
                 var subaction = SubActions.ElementAtOrDefault(subActionIndex) ?? Insert() as IAction;
-                subaction.CreteGenericByTechObjects(actions.Select(sa => sa.SubActions.ElementAtOrDefault(subActionIndex)).ToList());
+                subaction.CreateGenericByTechObjects(actions.Select(sa => sa.SubActions.ElementAtOrDefault(subActionIndex)).ToList());
             }
 
             if (parameters is null) return;
