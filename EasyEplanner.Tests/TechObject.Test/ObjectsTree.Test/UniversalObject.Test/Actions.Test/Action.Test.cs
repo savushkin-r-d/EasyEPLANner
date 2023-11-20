@@ -221,8 +221,13 @@ namespace Tests.TechObject
             var deviceManagerMock = new Mock<EplanDevice.IDeviceManager>();
             deviceManagerMock.Setup(x => x.GetDeviceByIndex(It.IsAny<int>()))
                 .Returns(new Mock<EplanDevice.IDevice>().Object);
+
+            typeof(Action).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManagerMock.Object);
+
             var action = new Action(string.Empty, null, string.Empty, null,
-                null, null, deviceManagerMock.Object);
+                null, null);
             action.DrawStyle = drawStyle;
             action.DevicesIndex.AddRange(devIds);
 
@@ -353,8 +358,12 @@ namespace Tests.TechObject
             var deviceManagerMock = new Mock<EplanDevice.IDeviceManager>();
             deviceManagerMock.Setup(x => x.GetDeviceByIndex(It.IsAny<int>()))
                 .Returns(deviceMock.Object);
+            typeof(Action).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManagerMock.Object);
+
             var action = new Action(string.Empty, null, string.Empty, null,
-                null, null, deviceManagerMock.Object);
+                null, null);
             action.DevicesIndex.AddRange(devIds);
             var preExpectedText = new string[devIds.Length];
             for (int i = 0; i < preExpectedText.Length; i++)
@@ -382,8 +391,12 @@ namespace Tests.TechObject
             var deviceManagerMock = new Mock<EplanDevice.IDeviceManager>();
             deviceManagerMock.Setup(x => x.GetDeviceByIndex(It.IsAny<int>()))
                 .Returns(deviceMock.Object);
+            typeof(Action).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManagerMock.Object);
+
             var action = new Action(string.Empty, null, string.Empty, null,
-                null, null, deviceManagerMock.Object);
+                null, null);
             action.DevicesIndex.AddRange(devIds);
             var preExpectedText = new string[devIds.Length];
             for (int i = 0; i < preExpectedText.Length; i++)
@@ -441,8 +454,13 @@ namespace Tests.TechObject
             deviceManagerMock
                 .Setup(x => x.GetDeviceByIndex(It.Is<int>(y => y % 2 != 0)))
                 .Returns(invalidDevMock.Object);
+            typeof(Action).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManagerMock.Object);
+
+
             var action = new Action(string.Empty, null, string.Empty, null,
-                null, null, deviceManagerMock.Object);
+                null, null);
 
             foreach (var devId in devIds)
             {
@@ -472,8 +490,12 @@ namespace Tests.TechObject
             deviceManagerMock
                 .Setup(x => x.GetDeviceByIndex(It.Is<int>(y => y % 2 != 0)))
                 .Returns(invalidDevMock.Object);
+            typeof(Action).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManagerMock.Object);
+
             var action = new Action(actionName, null, luaName, null, null,
-                null, deviceManagerMock.Object);
+                null);
             action.DevicesIndex.AddRange(devIds);
 
             var actualCode = action.SaveAsLuaTable(prefix);
@@ -539,10 +561,13 @@ namespace Tests.TechObject
             string newTechObjectName, int newTechObjectNumber,
             string oldTechObjectName, int oldTechObjNumber)
         {
-            EplanDevice.IDeviceManager deviceManager = DeviceManagerMock
-                .DeviceManager;
+            EplanDevice.IDeviceManager deviceManager = DeviceManagerMock.DeviceManager;
+            typeof(Action).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManager);
+
             var action = new Action(string.Empty, null, string.Empty, null,
-                null, null, deviceManager);
+                null, null);
             action.DevicesIndex.AddRange(devIds);
 
             action.ModifyDevNames(newTechObjectName, newTechObjectNumber,
@@ -558,10 +583,13 @@ namespace Tests.TechObject
         public void ModifyDevNames(int[] devIds, int[] expectedDevIds,
             int newTechObjectN, int oldTechObjectN, string techObjectName)
         {
-            EplanDevice.IDeviceManager deviceManager = DeviceManagerMock
-                .DeviceManager;
+            EplanDevice.IDeviceManager deviceManager = DeviceManagerMock.DeviceManager;
+            typeof(Action).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManager);
+
             var action = new Action(string.Empty, null, string.Empty, null,
-                null, null, deviceManager);
+                null, null);
             action.DevicesIndex.AddRange(devIds);
 
             action.ModifyDevNames(newTechObjectN, oldTechObjectN,
@@ -575,10 +603,13 @@ namespace Tests.TechObject
         public void ModifyDevNames_CheckGenericUpdating(int[] devIds,
             int[] expectedDevIds, int newDevID, string techObjectName)
         {
-            EplanDevice.IDeviceManager deviceManager = DeviceManagerMock
-                .DeviceManager;
+            EplanDevice.IDeviceManager deviceManager = DeviceManagerMock.DeviceManager;
+            typeof(Action).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManager);
+
             var action = new Action(string.Empty, null, string.Empty, null,
-                null, null, deviceManager);
+                null, null);
             action.DevicesIndex.AddRange(devIds);
 
             action.ModifyDevNames(newDevID, -1, techObjectName);
@@ -627,10 +658,13 @@ namespace Tests.TechObject
         public void DeviceNames_ActionWithDevs_ReturnsCorrectNamesList(
             List<string> expectedNames, List<int> devIdsToSet)
         {
-            EplanDevice.IDeviceManager deviceManager = DeviceManagerMock
-                .DeviceManager;
+            EplanDevice.IDeviceManager deviceManager = DeviceManagerMock.DeviceManager;
+            typeof(Action).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManager);
+
             var action = new Action(string.Empty, null, string.Empty, null,
-                null, null, deviceManager);
+                null, null);
             action.DevicesIndex.AddRange(devIdsToSet);
 
             List<string> actualNames = action.DevicesNames;
@@ -697,9 +731,11 @@ namespace Tests.TechObject
         public void SetGenericDevices()
         {
             var deviceManager = DeviceManagerMock.DeviceManager;
+            typeof(Action).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManager);
 
-            var action = new Action("Устройства", null, "devs", null, null,
-                null, deviceManager);
+            var action = new Action("Устройства", null, "devs", null, null, null);
 
             Assert.Multiple(() =>
             {

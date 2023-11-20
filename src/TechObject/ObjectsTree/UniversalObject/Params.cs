@@ -441,7 +441,7 @@ namespace TechObject
             if (refParams is null)
                 return;
 
-            foreach (var parId in Enumerable.Range(0, refParams?.parameters.Count ?? 0))
+            foreach (var parId in Enumerable.Range(0, refParams.parameters.Count))
             {
                 var refParameter = refParams.parameters[parId];
                 foreach (var paramsId in Enumerable.Range(0, paramsList.Count))

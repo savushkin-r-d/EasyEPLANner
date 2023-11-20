@@ -60,13 +60,10 @@ namespace TechObjectTests
             var action = new ActionGroupCustom("", null, "",
                 () =>
                 {
-                    var openedDeviceAction = new ActionCustom("",
-                        null, "");
-                    openedDeviceAction.CreateAction(new Action("", null,
-                        "", null));
+                    var openedDeviceAction = new ActionCustom("", null, "");
+                    openedDeviceAction.CreateAction(new Action("", null, "", null));
 
-                    openedDeviceAction.CreateParameter(
-                        new ActiveParameter("", ""));
+                    openedDeviceAction.CreateParameter(new ActiveParameter("", ""));
 
                     return openedDeviceAction;
                 });
@@ -99,19 +96,17 @@ namespace TechObjectTests
             deviceManagerMock
                 .Setup(x => x.GetDeviceByIndex(It.Is<int>(y => true)))
                 .Returns(validDevMock.Object);
+            typeof(Action).GetField("deviceManager",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .SetValue(null, deviceManagerMock.Object);
 
             var actionDF = new ActionGroupCustom("", null, groupActionLuaName,
                 () =>
                 {
-                    var openedDeviceAction = new ActionCustom("",
-                        null, "");
-                    openedDeviceAction.CreateAction(new Action("", null,
-                        action1_LuaName,
-                        null, null, null,
-                        deviceManagerMock.Object));
+                    var openedDeviceAction = new ActionCustom("", null, "");
+                    openedDeviceAction.CreateAction(new Action("", null, action1_LuaName, null, null, null));
 
-                    openedDeviceAction.CreateParameter(
-                        new ActiveParameter(parameter1_LuaName, ""));
+                    openedDeviceAction.CreateParameter(new ActiveParameter(parameter1_LuaName, ""));
 
                     return openedDeviceAction;
                 });
@@ -136,15 +131,10 @@ namespace TechObjectTests
             var actionSF_1A_1P = new ActionGroupCustom("", null, groupActionLuaName,
                 () =>
                 {
-                    var openedDeviceAction = new ActionCustom("",
-                        null, "");
-                    openedDeviceAction.CreateAction(new Action("", null,
-                        "",
-                        null, null, null,
-                        deviceManagerMock.Object));
+                    var openedDeviceAction = new ActionCustom("", null, "");
+                    openedDeviceAction.CreateAction(new Action("", null, "", null, null, null));
 
-                    openedDeviceAction.CreateParameter(
-                        new ActiveParameter("", ""));
+                    openedDeviceAction.CreateParameter(new ActiveParameter("", ""));
 
                     return openedDeviceAction;
                 });
@@ -164,17 +154,11 @@ namespace TechObjectTests
                 {
                     var openedDeviceAction = new ActionCustom("",
                         null, "");
-                    openedDeviceAction.CreateAction(new Action("", null,
-                        "", null, null, null,
-                        deviceManagerMock.Object));
-                    openedDeviceAction.CreateAction(new Action("", null,
-                        "", null, null, null,
-                        deviceManagerMock.Object));
+                    openedDeviceAction.CreateAction(new Action("", null, "", null, null, null));
+                    openedDeviceAction.CreateAction(new Action("", null, "", null, null, null));
 
-                    openedDeviceAction.CreateParameter(
-                        new ActiveParameter("", ""));
-                    openedDeviceAction.CreateParameter(
-                        new ActiveParameter("", ""));
+                    openedDeviceAction.CreateParameter(new ActiveParameter("", ""));
+                    openedDeviceAction.CreateParameter(new ActiveParameter("", ""));
 
                     return openedDeviceAction;
                 });
@@ -201,22 +185,13 @@ namespace TechObjectTests
                 {
                     var openedDeviceAction = new ActionCustom("",
                         null, "");
-                    openedDeviceAction.CreateAction(new Action("", null,
-                        "", null, null, null,
-                        deviceManagerMock.Object));
-                    openedDeviceAction.CreateAction(new Action("", null,
-                        "", null, null, null,
-                        deviceManagerMock.Object));
-                    openedDeviceAction.CreateAction(new Action("", null,
-                        "", null, null, null,
-                        deviceManagerMock.Object));
+                    openedDeviceAction.CreateAction(new Action("", null, "", null, null, null));
+                    openedDeviceAction.CreateAction(new Action("", null, "", null, null, null));
+                    openedDeviceAction.CreateAction(new Action("", null, "", null, null, null));
 
-                    openedDeviceAction.CreateParameter(
-                        new ActiveParameter("", ""));
-                    openedDeviceAction.CreateParameter(
-                        new ActiveParameter("", ""));
-                    openedDeviceAction.CreateParameter(
-                        new ActiveParameter("", ""));
+                    openedDeviceAction.CreateParameter(new ActiveParameter("", ""));
+                    openedDeviceAction.CreateParameter(new ActiveParameter("", ""));
+                    openedDeviceAction.CreateParameter(new ActiveParameter("", ""));
 
                     return openedDeviceAction;
                 });

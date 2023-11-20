@@ -147,29 +147,6 @@ namespace TechObject
         /// <param name="owner">Владелец действия (Шаг)</param>
         /// <param name="actionProcessorStrategy">Стратегия обработки
         /// устройств в действии</param>
-        /// <param name="deviceManager">Менеджер устройств</param>
-        public Action(string name, Step owner, string luaName,
-            EplanDevice.DeviceType[] devTypes, EplanDevice.DeviceSubType[] devSubTypes,
-            IDeviceProcessingStrategy actionProcessorStrategy,
-            EplanDevice.IDeviceManager deviceManager) : this(name, owner, luaName,
-                devTypes, devSubTypes, actionProcessorStrategy)
-        {
-            Action.deviceManager = deviceManager;
-        }
-
-        /// <summary>
-        /// Создание нового действия.
-        /// </summary>
-        /// <param name="name">Имя действия.</param>
-        /// <param name="luaName">Имя действия - как оно будет называться 
-        /// в таблице Lua.</param>
-        /// <param name="devTypes">Типы устройств, допустимые для 
-        /// редактирования.</param>
-        /// <param name="devSubTypes">Подтипы устройств, допустимые 
-        /// для редактирования.</param>
-        /// <param name="owner">Владелец действия (Шаг)</param>
-        /// <param name="actionProcessorStrategy">Стратегия обработки
-        /// устройств в действии</param>
         public Action(string name, Step owner, string luaName,
             EplanDevice.DeviceType[] devTypes, EplanDevice.DeviceSubType[] devSubTypes,
             IDeviceProcessingStrategy actionProcessorStrategy)

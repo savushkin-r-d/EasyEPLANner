@@ -259,25 +259,21 @@ namespace TechObject
                 genericGroups.Remove(genericGroup);
                 globalGenericTechObjects.Remove(genericGroup.GenericTechObject);
 
+                var deleteInherited = editor.DialogDeletingGenericGroup();
+
                 foreach (var TObject in genericGroup.InheritedTechObjects)
                 {
                     TObject.AddParent(this);
                     TObject.RemoveGenericTechObject();
-                    
+
                     techObjects.Add(TObject);
                     techObjects.Sort((obj1, obj2) => obj1.GlobalNum - obj2.GlobalNum);
-                }
-           
-                if (editor.DialogDeletingGenericGroup() == DialogResult.Yes)
-                {
-                    foreach (var TObject in genericGroup.InheritedTechObjects)
+
+                    if (deleteInherited == DialogResult.Yes)
                     {
                         Delete(TObject);
                     }
-                }
-                else
-                {
-                    foreach (var TObject in genericGroup.InheritedTechObjects)
+                    else
                     {
                         TObject.AttachedObjects.UpdateOnDeleteGeneric();
                         TObject.ModesManager.UpdateOnDeleteGeneric();

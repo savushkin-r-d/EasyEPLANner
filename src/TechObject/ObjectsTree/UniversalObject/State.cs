@@ -577,9 +577,11 @@ namespace TechObject
         {
             var states = itemList.Cast<State>().ToList();
 
-            var refState = states.OrderBy(state => state.Steps.Count).First();
+            var refState = states.OrderBy(state => state.Steps.Count).FirstOrDefault();
+            if (refState is null)
+                return;
 
-            foreach (var stepIndex in Enumerable.Range(0, refState?.steps.Count ?? 0))
+            foreach (var stepIndex in Enumerable.Range(0, refState.steps.Count))
             {
                 var refStep = refState.steps[stepIndex];
                 foreach (var stateIndex in Enumerable.Range(0, states.Count))

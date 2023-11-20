@@ -18,15 +18,12 @@ namespace TechObject
         public abstract new BaseParameter Clone();
 
         public BaseParameter(string luaName, string name,
-            string defaultValue = "", List<DisplayObject> displayObjects = null,
-            IDeviceManager deviceManager = null) : base(name, defaultValue,
-                defaultValue)
+            string defaultValue = "", List<DisplayObject> displayObjects = null) 
+            : base(name, defaultValue, defaultValue)
         {
             this.luaName = luaName;
             currentValueType = ValueType.None;
             devicesIndexes = new List<int>();
-            if (deviceManager != null)
-                BaseParameter.deviceManager = deviceManager;
 
             if(displayObjects != null)
             {
@@ -579,7 +576,7 @@ namespace TechObject
             Stub,
         }
 
-        protected static IDeviceManager deviceManager = DeviceManager.GetInstance();
+        protected static readonly IDeviceManager deviceManager = DeviceManager.GetInstance();
 
         private object owner;
         private string luaName;
