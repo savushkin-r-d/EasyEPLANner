@@ -191,7 +191,7 @@ namespace TechObject
             var cooperParamNumber = techObjects.TrueForAll(item => item.CooperParamNumber == first.CooperParamNumber) ? first.CooperParamNumber : -1;
 
             var refNameBC = first.NameBC.Replace($"{first.TechNumber}", "");
-            var nameBC = techObjects.TrueForAll(item => item.NameBC.Replace($"{item.TechNumber}", "") == refNameBC) ? refNameBC : "";
+            var nameBC = techObjects.TrueForAll(item => item.NameBC.Replace($"{item.TechNumber}", "") == refNameBC && item.NameBC != "TankObj") ? refNameBC : "";
 
             var newGenericTechObject = new GenericTechObject(name, techType, nameEplan, cooperParamNumber, nameBC, "", baseTechObject);
             var newGenericGroup = new GenericGroup(newGenericTechObject, this, techObjectManager);

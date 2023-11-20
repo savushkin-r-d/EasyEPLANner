@@ -224,7 +224,7 @@ namespace TechObject
             this.getLocalNum = getLocalNum;
 
             this.techNumber = new TechObjectN(this, technologicalNumber);
-            this.techType = new ObjectProperty("Тип", techType);
+            this.techType = new ObjectProperty("Тип", techType, -1);
             this.techType.ValueChanged += sender => OnValueChanged(sender);
 
             this.nameBC = new ObjectProperty("Имя объекта Monitor",
@@ -305,10 +305,11 @@ namespace TechObject
         }
 
         public void UpdateOnGenericTechObject(GenericTechObject genericTechObject)
-        {
-            techType.SetNewValue(genericTechObject.techType.Value);
+        {            
             name = genericTechObject.Name;
 
+            if (genericTechObject.techType.Value != "-1")
+                techType.SetNewValue(genericTechObject.techType.Value);
             if (genericTechObject.nameBC.IsFilled)
                 nameBC.SetNewValue(genericTechObject.NameBC + TechNumber);
             if (genericTechObject.nameEplan.IsFilled)

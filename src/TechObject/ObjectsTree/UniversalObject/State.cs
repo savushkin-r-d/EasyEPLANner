@@ -592,7 +592,10 @@ namespace TechObject
                 }
 
                 Step newGenericStep;
-                if (stepIndex == 0 && MissingMainStep is false)
+
+                if (stepIndex == 0 && MissingMainStep)
+                    newGenericStep = Insert() as Step;
+                else if (stepIndex == 0)
                     newGenericStep = Steps[0];
                 else
                     newGenericStep = AddStep(refStep.GetStepName(), refStep.GetBaseStepLuaName());
